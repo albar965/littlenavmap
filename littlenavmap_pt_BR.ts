@@ -23973,73 +23973,73 @@ Tentando novamente em três minutos.</translation>
         <location filename="src/options/options.ui" line="1161"/>
         <location filename="src/options/options.ui" line="1183"/>
         <location filename="src/options/options.ui" line="1231"/>
-        <location filename="src/options/options.ui" line="2623"/>
-        <location filename="src/options/options.ui" line="3000"/>
-        <location filename="src/options/options.ui" line="3038"/>
-        <location filename="src/options/options.ui" line="3096"/>
-        <location filename="src/options/options.ui" line="3134"/>
-        <location filename="src/options/options.ui" line="3175"/>
-        <location filename="src/options/options.ui" line="3200"/>
-        <location filename="src/options/options.ui" line="3289"/>
-        <location filename="src/options/options.ui" line="3328"/>
-        <location filename="src/options/options.ui" line="3353"/>
-        <location filename="src/options/options.ui" line="3404"/>
-        <location filename="src/options/options.ui" line="3472"/>
-        <location filename="src/options/options.ui" line="3497"/>
-        <location filename="src/options/options.ui" line="3522"/>
-        <location filename="src/options/options.ui" line="3591"/>
-        <location filename="src/options/options.ui" line="3642"/>
-        <location filename="src/options/options.ui" line="3667"/>
-        <location filename="src/options/options.ui" line="3692"/>
-        <location filename="src/options/options.ui" line="3808"/>
-        <location filename="src/options/options.ui" line="3833"/>
-        <location filename="src/options/options.ui" line="3918"/>
-        <location filename="src/options/options.ui" line="3943"/>
-        <location filename="src/options/options.ui" line="4142"/>
-        <location filename="src/options/options.ui" line="4271"/>
-        <location filename="src/options/options.ui" line="4553"/>
-        <location filename="src/options/options.ui" line="4578"/>
-        <location filename="src/options/options.ui" line="4603"/>
-        <location filename="src/options/options.ui" line="4668"/>
-        <location filename="src/options/options.ui" line="4694"/>
-        <location filename="src/options/options.ui" line="4783"/>
-        <location filename="src/options/options.ui" line="4824"/>
-        <location filename="src/options/options.ui" line="4856"/>
-        <location filename="src/options/options.ui" line="4881"/>
-        <location filename="src/options/options.ui" line="4943"/>
-        <location filename="src/options/options.ui" line="4968"/>
-        <location filename="src/options/options.ui" line="5035"/>
-        <location filename="src/options/options.ui" line="5070"/>
-        <location filename="src/options/options.ui" line="5095"/>
-        <location filename="src/options/options.ui" line="5966"/>
-        <location filename="src/options/options.ui" line="5989"/>
+        <location filename="src/options/options.ui" line="2622"/>
+        <location filename="src/options/options.ui" line="2999"/>
+        <location filename="src/options/options.ui" line="3037"/>
+        <location filename="src/options/options.ui" line="3095"/>
+        <location filename="src/options/options.ui" line="3133"/>
+        <location filename="src/options/options.ui" line="3174"/>
+        <location filename="src/options/options.ui" line="3199"/>
+        <location filename="src/options/options.ui" line="3288"/>
+        <location filename="src/options/options.ui" line="3327"/>
+        <location filename="src/options/options.ui" line="3352"/>
+        <location filename="src/options/options.ui" line="3403"/>
+        <location filename="src/options/options.ui" line="3471"/>
+        <location filename="src/options/options.ui" line="3496"/>
+        <location filename="src/options/options.ui" line="3521"/>
+        <location filename="src/options/options.ui" line="3590"/>
+        <location filename="src/options/options.ui" line="3641"/>
+        <location filename="src/options/options.ui" line="3666"/>
+        <location filename="src/options/options.ui" line="3691"/>
+        <location filename="src/options/options.ui" line="3807"/>
+        <location filename="src/options/options.ui" line="3832"/>
+        <location filename="src/options/options.ui" line="3917"/>
+        <location filename="src/options/options.ui" line="3942"/>
+        <location filename="src/options/options.ui" line="4141"/>
+        <location filename="src/options/options.ui" line="4270"/>
+        <location filename="src/options/options.ui" line="4552"/>
+        <location filename="src/options/options.ui" line="4577"/>
+        <location filename="src/options/options.ui" line="4602"/>
+        <location filename="src/options/options.ui" line="4667"/>
+        <location filename="src/options/options.ui" line="4693"/>
+        <location filename="src/options/options.ui" line="4782"/>
+        <location filename="src/options/options.ui" line="4823"/>
+        <location filename="src/options/options.ui" line="4855"/>
+        <location filename="src/options/options.ui" line="4880"/>
+        <location filename="src/options/options.ui" line="4942"/>
+        <location filename="src/options/options.ui" line="4967"/>
+        <location filename="src/options/options.ui" line="5034"/>
+        <location filename="src/options/options.ui" line="5069"/>
+        <location filename="src/options/options.ui" line="5094"/>
+        <location filename="src/options/options.ui" line="5965"/>
+        <location filename="src/options/options.ui" line="5988"/>
         <source> %</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="1970"/>
-        <location filename="src/options/options.ui" line="2008"/>
+        <location filename="src/options/options.ui" line="1969"/>
+        <location filename="src/options/options.ui" line="2007"/>
         <source> % Brightness</source>
         <translation> % Brilho</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="6393"/>
+        <location filename="src/options/options.ui" line="6392"/>
         <source> %alt%</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="2696"/>
-        <location filename="src/options/options.ui" line="2730"/>
-        <location filename="src/options/options.ui" line="5536"/>
-        <location filename="src/options/options.ui" line="5572"/>
-        <location filename="src/options/options.ui" line="5634"/>
-        <location filename="src/options/options.ui" line="5650"/>
-        <location filename="src/options/options.ui" line="5692"/>
-        <location filename="src/options/options.ui" line="5708"/>
-        <location filename="src/options/options.ui" line="5724"/>
-        <location filename="src/options/options.ui" line="5750"/>
-        <location filename="src/options/options.ui" line="6043"/>
-        <location filename="src/options/options.ui" line="6126"/>
+        <location filename="src/options/options.ui" line="2695"/>
+        <location filename="src/options/options.ui" line="2729"/>
+        <location filename="src/options/options.ui" line="5535"/>
+        <location filename="src/options/options.ui" line="5571"/>
+        <location filename="src/options/options.ui" line="5633"/>
+        <location filename="src/options/options.ui" line="5649"/>
+        <location filename="src/options/options.ui" line="5691"/>
+        <location filename="src/options/options.ui" line="5707"/>
+        <location filename="src/options/options.ui" line="5723"/>
+        <location filename="src/options/options.ui" line="5749"/>
+        <location filename="src/options/options.ui" line="6042"/>
+        <location filename="src/options/options.ui" line="6125"/>
         <source> %dist%</source>
         <translation></translation>
     </message>
@@ -24048,32 +24048,32 @@ Tentando novamente em três minutos.</translation>
         <translation type="vanished"> %dist% por 1000 %alt%</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="7813"/>
-        <location filename="src/options/options.ui" line="7848"/>
+        <location filename="src/options/options.ui" line="7844"/>
+        <location filename="src/options/options.ui" line="7879"/>
         <source> MB</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="2468"/>
-        <location filename="src/options/options.ui" line="2512"/>
+        <location filename="src/options/options.ui" line="2467"/>
+        <location filename="src/options/options.ui" line="2511"/>
         <source> pixels</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="4407"/>
+        <location filename="src/options/options.ui" line="4406"/>
         <source> points</source>
         <translation> Pontos</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="6094"/>
-        <location filename="src/options/options.ui" line="6169"/>
-        <location filename="src/options/options.ui" line="7484"/>
+        <location filename="src/options/options.ui" line="6093"/>
+        <location filename="src/options/options.ui" line="6168"/>
+        <location filename="src/options/options.ui" line="7483"/>
         <source> seconds</source>
         <translation> Segundos</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="6501"/>
-        <location filename="src/options/options.ui" line="6597"/>
+        <location filename="src/options/options.ui" line="6500"/>
+        <location filename="src/options/options.ui" line="6596"/>
         <source>&amp;Active Sky</source>
         <translation></translation>
     </message>
@@ -24082,18 +24082,18 @@ Tentando novamente em três minutos.</translation>
         <translation type="vanished">&amp;Adicionar ...</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="2182"/>
-        <location filename="src/options/options.ui" line="2355"/>
+        <location filename="src/options/options.ui" line="2181"/>
+        <location filename="src/options/options.ui" line="2354"/>
         <source>&amp;Airports</source>
         <translation>&amp;Aeroportos</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="2984"/>
+        <location filename="src/options/options.ui" line="2983"/>
         <source>&amp;Airports:</source>
         <translation>&amp;Aeroportos:</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="2209"/>
+        <location filename="src/options/options.ui" line="2208"/>
         <source>&amp;Airspaces</source>
         <translation>&amp;Espaços Aéreos</translation>
     </message>
@@ -24107,17 +24107,17 @@ Tentando novamente em três minutos.</translation>
         <translation>&amp;Altitude e elevação:</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="1745"/>
+        <location filename="src/options/options.ui" line="1744"/>
         <source>&amp;Avoid overwriting Flight Plan with not matching departure and destination</source>
         <translation>&amp;Evite substituir o Plano de voo com a saída e o destino não correspondentes</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="5940"/>
+        <location filename="src/options/options.ui" line="5939"/>
         <source>&amp;Center map on aircraft and next flight plan waypoint</source>
         <translation>&amp;Mapa centralizado na aeronave e no próximo ponto de referência do plano de voo</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="7803"/>
+        <location filename="src/options/options.ui" line="7834"/>
         <source>&amp;Clear Memory Cache</source>
         <translation>&amp;Limpar o Cache de Memória</translation>
     </message>
@@ -24139,7 +24139,7 @@ Tentando novamente em três minutos.</translation>
         <translation>&amp;Coordenadas:</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="7364"/>
+        <location filename="src/options/options.ui" line="7363"/>
         <source>&amp;Custom</source>
         <translation>&amp;Customizado</translation>
     </message>
@@ -24200,7 +24200,7 @@ abrir arquivos, modificar o plano de voo e outras operações.</translation>
         <translation type="vanished">Aumentar janelas relacionadas às ações (por exemplo, mostrar plano de voo após abrir o arquivo)</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="2365"/>
+        <location filename="src/options/options.ui" line="2364"/>
         <source>Show tooltips for waypoints, VOR, NDB, ILS, airways,
 userpoints and logbook entries when hovering the cursor over the map</source>
         <oldsource>Show tooltips for waypoints, VOR, NDB, ILS, airways,
@@ -24209,25 +24209,25 @@ userpoints and logbook entries when hovering the cursor over the mapmap</oldsour
 userpoints e entradas do logbook ao passar o cursor sobre o mapa</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="2196"/>
-        <location filename="src/options/options.ui" line="2369"/>
+        <location filename="src/options/options.ui" line="2195"/>
+        <location filename="src/options/options.ui" line="2368"/>
         <source>&amp;Navaids, airways, userpoints and logbook</source>
         <translation>&amp;Navaids, aerovias, userpoints e logbook</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="2392"/>
+        <location filename="src/options/options.ui" line="2391"/>
         <source>Show a tooltip for high altitude winds when hovering the cursor over a wind barb.</source>
         <translation>Mostre uma dica para ventos em alta altitude ao passar o cursor sobre uma farpa de vento.</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="2192"/>
+        <location filename="src/options/options.ui" line="2191"/>
         <source>Show information for waypoints, VOR, NDB, airways,
 userpoints and logbook entries when clicking on the map</source>
         <translation>Mostre informações para waypoints, VOR, NDB aerovias,
 userpoints e entradas do logbook ao clicar no mapa</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="2557"/>
+        <location filename="src/options/options.ui" line="2556"/>
         <source>Navigation</source>
         <translation>Navegação</translation>
     </message>
@@ -24238,7 +24238,7 @@ Enable &quot;Navigation Aids&quot;, &quot;Screen Areas&quot; on options page &qu
 Ative &quot;Auxílios de navegação(navaids)&quot;, &quot;Áreas da tela&quot; na página de opções &quot;Exibição no mapa 2&quot; para exibir dicas no mapa.</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="2582"/>
+        <location filename="src/options/options.ui" line="2581"/>
         <source>Use map &amp;areas for navigation. Useful when using touchscreens.</source>
         <oldsource>Use map &amp;areas for easier navigation. Useful when using touchscreens.</oldsource>
         <translation>Use &amp;áreas do mapa para navegação. Útil ao usar telas sensíveis ao toque.</translation>
@@ -24256,17 +24256,17 @@ options page &quot;Map Display 2&quot; to display a screen center hint.</oldsour
 página de opções &quot;Exibição do Mapa 2&quot; para exibir uma dica no centro da tela.</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="2613"/>
+        <location filename="src/options/options.ui" line="2612"/>
         <source>Click &amp;map to center position. Mouse wheel zooms to the map center position.</source>
         <translation>Clique no &amp;mapa para a posição central. A roda do mouse aumenta o zoom para a posição central do mapa.</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="2599"/>
+        <location filename="src/options/options.ui" line="2598"/>
         <source>&amp;Click and drag map to move. Mouse wheel zooms to cursor position.</source>
         <translation>&amp;Clique e arraste o mapa para mover. A roda do mouse amplia a posição do cursor.</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="2620"/>
+        <location filename="src/options/options.ui" line="2619"/>
         <source>Size of a screen area (virtual button) in percent of screen size.</source>
         <translation>Tamanho de uma área da tela (botão virtual) em porcentagem do tamanho da tela.</translation>
     </message>
@@ -24277,12 +24277,12 @@ to next best step</source>
 para o próximo melhor passo</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="2243"/>
+        <location filename="src/options/options.ui" line="2242"/>
         <source>Show procedures in procedure search tab on airport click</source>
         <translation>Mostrar procedimentos na guia de pesquisa de procedimento no clique do aeroporto</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="2246"/>
+        <location filename="src/options/options.ui" line="2245"/>
         <source>Show &amp;procedures on airport click</source>
         <oldsource>Update &amp;procedures on airport click</oldsource>
         <translation>Mostrar &amp;procedimentos no clique do aeroporto</translation>
@@ -24294,12 +24294,12 @@ Affects map and elevation profile.</source>
 Afeta o mapa e o perfil de elevação.</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="3469"/>
+        <location filename="src/options/options.ui" line="3468"/>
         <source>Size of airport weather symbols</source>
         <translation>Tamanho dos símbolos de clima do Aeroporto</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="3035"/>
+        <location filename="src/options/options.ui" line="3034"/>
         <source>Size of high altitude wind barbs</source>
         <translation>Tamanho das farpas de vento em alta altitude</translation>
     </message>
@@ -24386,7 +24386,7 @@ As alterações são aplicadas imediatamente. </translation>
     </message>
     <message>
         <location filename="src/options/options.ui" line="679"/>
-        <location filename="src/options/options.ui" line="2937"/>
+        <location filename="src/options/options.ui" line="2936"/>
         <source>&amp;Reset Font to Default</source>
         <translation>&amp;Redefinir a fonte para o Padrão</translation>
     </message>
@@ -24403,7 +24403,7 @@ O tamanho da fonte é limitado a 30 pontos/pixels.</translation>
     </message>
     <message>
         <location filename="src/options/options.ui" line="692"/>
-        <location filename="src/options/options.ui" line="2927"/>
+        <location filename="src/options/options.ui" line="2926"/>
         <source>Select &amp;Font ...</source>
         <translation>Selecione a &amp;Fonte ....</translation>
     </message>
@@ -24454,64 +24454,64 @@ Isso não afeta a janela do mapa, que pode ser alterada separadamente na página
         <translation></translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="2272"/>
+        <location filename="src/options/options.ui" line="2271"/>
         <source>Map Tooltips</source>
         <translation>Dicas de ferramentas do mapa</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="2293"/>
+        <location filename="src/options/options.ui" line="2292"/>
         <source>Show detailed information about map objects if checked</source>
         <translation>Mostrar informações detalhadas sobre os objetos do mapa, se marcado</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="2296"/>
+        <location filename="src/options/options.ui" line="2295"/>
         <source>&amp;Verbose tooltips</source>
         <translation>&amp;Dicas detalhadas</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="2313"/>
+        <location filename="src/options/options.ui" line="2312"/>
         <source>Show tooltips for the user aircraft when hovering the cursor over the map</source>
         <translation>Mostrar dicas de ferramentas para a aeronave do usuário ao passar o cursor sobre o mapa</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="2149"/>
-        <location filename="src/options/options.ui" line="2316"/>
+        <location filename="src/options/options.ui" line="2148"/>
+        <location filename="src/options/options.ui" line="2315"/>
         <source>&amp;User aircraft</source>
         <translation>&amp;Aeronaves do usuário</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="2339"/>
+        <location filename="src/options/options.ui" line="2338"/>
         <source>Show tooltips for AI or multiplayer aircraft / ship when hovering the cursor over the map</source>
         <translation>Mostrar dicas para AI ou aeronaves multiplayer / navio ao passar o cursor sobre o mapa</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="2162"/>
-        <location filename="src/options/options.ui" line="2342"/>
+        <location filename="src/options/options.ui" line="2161"/>
+        <location filename="src/options/options.ui" line="2341"/>
         <source>AI / multiplayer vehicles</source>
         <translation>AI / Multiplayer veículos</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="2382"/>
+        <location filename="src/options/options.ui" line="2381"/>
         <source>Air&amp;spaces</source>
         <translation>Espaço &amp;Aéreo</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="2395"/>
+        <location filename="src/options/options.ui" line="2394"/>
         <source>High altitude &amp;wind barbs</source>
         <translation>Alta Altitude &amp;farpas de vento</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="2125"/>
+        <location filename="src/options/options.ui" line="2124"/>
         <source>Map Information Clicks</source>
         <translation>Cliques de Informação do Mapa</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="2146"/>
+        <location filename="src/options/options.ui" line="2145"/>
         <source>Show information for the user aircraft when clicking on the map</source>
         <translation>Mostre informações para a aeronave do usuário ao clicar no mapa</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="2159"/>
+        <location filename="src/options/options.ui" line="2158"/>
         <source>Show information for AI or multiplayer aircraft / ship when clicking on the map</source>
         <translation>Mostrar informações para AI ou aeronaves multiplayer / navio ao clicar no mapa</translation>
     </message>
@@ -24521,7 +24521,7 @@ Isso não afeta a janela do mapa, que pode ser alterada separadamente na página
         <translation type="vanished">&amp;Raios do anel de alcance para anéis de alcance vermelho (máximo de 10 valores de 0.01 a 4.000 %dist%):</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="1881"/>
+        <location filename="src/options/options.ui" line="1880"/>
         <source>Allow to &amp;undock  the map window</source>
         <translation>Permitir &amp;desencaixar a janela do mapa</translation>
     </message>
@@ -24544,24 +24544,24 @@ Use &quot;Janela&quot; -&gt; &quot;Reiniciar o Layout da Janela para o Padrão&q
         <translation type="vanished">Mapa e Fonte do Perfil de Elevação</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="2923"/>
+        <location filename="src/options/options.ui" line="2922"/>
         <source>Select a font for the map and the elevation profile.
 Note that some fonts, especially large fonts, can result in display errors on the map.</source>
         <translation>Selecione uma fonte para o mapa e o perfil de elevação.
 Observe que algumas fontes, especialmente fontes grandes, podem resultar em erros de exibição no mapa.</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="2934"/>
+        <location filename="src/options/options.ui" line="2933"/>
         <source>Reset font for the map and the elevation profile back to default</source>
         <translation>Redefina a fonte do mapa e o perfil de elevação de volta ao padrão</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="3060"/>
+        <location filename="src/options/options.ui" line="3059"/>
         <source>Draw white background for airway text labels</source>
         <translation>Desenhe um fundo branco para os rótulos de texto das aerovias</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="3426"/>
+        <location filename="src/options/options.ui" line="3425"/>
         <source>Draw white background for user aircraft text labels</source>
         <translation>Desenhe um fundo branco para o rótulo de texto da aeronave do usuário</translation>
     </message>
@@ -24570,28 +24570,28 @@ Observe que algumas fontes, especialmente fontes grandes, podem resultar em erro
         <translation type="vanished">&amp;Escurecer ao passar pelos Fixos</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="3574"/>
+        <location filename="src/options/options.ui" line="3573"/>
         <source>Air&amp;ways:</source>
         <translation>Aero&amp;vias:</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="3388"/>
+        <location filename="src/options/options.ui" line="3387"/>
         <source>Draw white background for AI and multiplayer aircraft labels</source>
         <translation>Desenhe um fundo branco para rótulos de aeronaves multiplayer e AI</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="3022"/>
+        <location filename="src/options/options.ui" line="3021"/>
         <source>Draw yellow circle around add-on airport symbols</source>
         <translation>Desenhe um círculo amarelo ao redor dos símbolos de aeroportos complementares (Add-on)</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="3025"/>
+        <location filename="src/options/options.ui" line="3024"/>
         <source>&amp;Highlight add-on airports</source>
         <oldsource>Highlight add-on airports</oldsource>
         <translation>&amp;Destacar aeroportos adicionais (Add-on)</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="5067"/>
+        <location filename="src/options/options.ui" line="5066"/>
         <source>Text size for labels</source>
         <translation>Tamanho do texto para rótulos</translation>
     </message>
@@ -24614,12 +24614,12 @@ destaques das aerovias e
 entradas do logbook:</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="4878"/>
+        <location filename="src/options/options.ui" line="4877"/>
         <source>Text size of the MORA altitude labels</source>
         <translation>Tamanho do texto dos rótulos de altitude MORA</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="4664"/>
+        <location filename="src/options/options.ui" line="4663"/>
         <source>Transparency of the MORA text and grid.
 Value 0 is opaque and 90 is most transparent.</source>
         <oldsource>Text size of the MORA text and grid.
@@ -24628,20 +24628,20 @@ Value 0 is opaque and 90 is most transparent.</oldsource>
 O valor 0 é opaco e 90 é o mais transparente.</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="4145"/>
-        <location filename="src/options/options.ui" line="4671"/>
-        <location filename="src/options/options.ui" line="4697"/>
-        <location filename="src/options/options.ui" line="4946"/>
+        <location filename="src/options/options.ui" line="4144"/>
+        <location filename="src/options/options.ui" line="4670"/>
+        <location filename="src/options/options.ui" line="4696"/>
+        <location filename="src/options/options.ui" line="4945"/>
         <source>Transparency </source>
         <translation>Transparente </translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="4130"/>
+        <location filename="src/options/options.ui" line="4129"/>
         <source>&amp;Passed Leg Color</source>
         <translation>&amp;Cor após Passar pelo Fixo</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="4164"/>
+        <location filename="src/options/options.ui" line="4163"/>
         <source>Draw the active flight plan leg in a different color.
 Change the color of this leg with the &quot;Active Leg Color&quot;.
 Also used in the elevation profile.</source>
@@ -24650,7 +24650,7 @@ Altere a cor deste fixo com o &quot;Cor de fixo ativo&quot;.
 Também usado no perfil de elevação.</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="4169"/>
+        <location filename="src/options/options.ui" line="4168"/>
         <source>&amp;Highlight active leg</source>
         <translation>&amp;Destaque o fixo ativo</translation>
     </message>
@@ -24661,7 +24661,7 @@ Também usado no perfil de elevação.</translation>
 (MORA):</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="4726"/>
+        <location filename="src/options/options.ui" line="4725"/>
         <source>&amp;MSA sector diagram:</source>
         <translation>&amp;Diagrama do setor MSA:</translation>
     </message>
@@ -24678,24 +24678,24 @@ destaques das aerovias e
 entradas do logbook:</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="5092"/>
+        <location filename="src/options/options.ui" line="5091"/>
         <source>Text size for measurement labels</source>
         <translation>Tamanho do texto para rótulos de medição</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="4939"/>
+        <location filename="src/options/options.ui" line="4938"/>
         <source>Transparency of the selection highlight circles.
 Value 0 is opaque and 90 is most transparent.</source>
         <translation>A transparência dos círculos de destaque da seleção.
 O valor 0 é opaco e 90 é o mais transparente.</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="4780"/>
+        <location filename="src/options/options.ui" line="4779"/>
         <source>Text size of the MSA sector diagram altitude labels</source>
         <translation>Tamanho do texto dos rótulos de altitude do diagrama de setor MSA</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="4909"/>
+        <location filename="src/options/options.ui" line="4908"/>
         <source>Color for distance measurement lines.
 Does not apply to lines originating from airports or navaids.</source>
         <oldsource>Color for distance measurment lines.
@@ -24704,39 +24704,39 @@ Does not apply to lines originating from airports or navaids.</oldsource>
 Não se aplica a linhas originadas de aeroportos ou navaids.</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="4913"/>
+        <location filename="src/options/options.ui" line="4912"/>
         <source>Distance &amp;Measurement Line Color</source>
         <translation>Cor da linha de &amp;Medição de distância</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="4521"/>
+        <location filename="src/options/options.ui" line="4520"/>
         <source>Highlight color on the map for selected legs in the flight plan table.</source>
         <translation>Destaque a cor no mapa para as pernas selecionadas na tabela de plano de voo.</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="4853"/>
+        <location filename="src/options/options.ui" line="4852"/>
         <source>Line width for measurement lines</source>
         <translation>Largura da linha para linhas de medição</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="4600"/>
+        <location filename="src/options/options.ui" line="4599"/>
         <source>Line width for these user features</source>
         <translation>Largura da linha para esses recursos do usuário</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="4755"/>
+        <location filename="src/options/options.ui" line="4754"/>
         <source>Highlight color on the map for selected entries in the search result tables.</source>
         <translation>Destaque a cor no mapa para entradas selecionadas nas tabelas de resultados de pesquisa.</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="4690"/>
+        <location filename="src/options/options.ui" line="4689"/>
         <source>Transparency of the MSA sector diagram text and lines.
 Value 0 is opaque and 90 is most transparent.</source>
         <translation>Transparência do texto e das linhas do diagrama de setores do MSA.
 O valor 0 é opaco e 90 é o mais transparente.</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="4765"/>
+        <location filename="src/options/options.ui" line="4764"/>
         <source>Change the display of circles highlighting selected features on the map.
 These are shown when a flight plan leg is selected, an entry in a search result table is selected or 
 if you hover over the elevation profile.</source>
@@ -24745,17 +24745,17 @@ Eles são mostrados quando um fixo do plano de voo é selecionado, uma entrada e
 se você passar o mouse sobre o perfil de elevação.</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="4770"/>
+        <location filename="src/options/options.ui" line="4769"/>
         <source>&amp;Transparent Circles</source>
         <translation>&amp;Círculos Transparentes</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="4575"/>
+        <location filename="src/options/options.ui" line="4574"/>
         <source>Symbol size for selection highlight circles</source>
         <translation>Tamanho do símbolo para círculos de destaque de seleção</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="4581"/>
+        <location filename="src/options/options.ui" line="4580"/>
         <source>Circle Size </source>
         <translation>Tamanho do Círculo </translation>
     </message>
@@ -24804,36 +24804,36 @@ Não mostre essas informações publicamente em fóruns nas capturas de tela.&lt
 </translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="5324"/>
+        <location filename="src/options/options.ui" line="5323"/>
         <source>Add MapBox &amp;User Map</source>
         <translation>Adicionar Mapa de &amp;Usuário do MapBox</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="5371"/>
+        <location filename="src/options/options.ui" line="5370"/>
         <source>Online Center Boundary Lookup in User Airspaces</source>
         <translation>Pesquisa de limite do centro online em espaços aéreos do usuário</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="5392"/>
+        <location filename="src/options/options.ui" line="5391"/>
         <source>Look in the user airspaces for a boundary where the
 airspace name has to match the callsign of the online center.</source>
         <translation>Procurar nos espaços aéreos do usuário um limite onde o
 nome do espaço aéreo deve corresponder ao callsign do centro online.</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="5396"/>
+        <location filename="src/options/options.ui" line="5395"/>
         <source>By airspace &amp;name vs. callsign</source>
         <translation>Por &amp;nome do espaço aéreo vs. callsign</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="5406"/>
+        <location filename="src/options/options.ui" line="5405"/>
         <source>Look in the user airspaces for a boundary where the
 airspace filename has to match the callsign of the online center.</source>
         <translation>Procure nos espaços aéreos do usuário um limite onde o
 nome do arquivo relacionado ao espaço aéreo deve corresponder ao callsign do centro online.</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="5410"/>
+        <location filename="src/options/options.ui" line="5409"/>
         <source>By airspace &amp;file name vs. callsign</source>
         <translation>Pelo &amp;arquivo do espaço aéreo vs. callsign</translation>
     </message>
@@ -24872,13 +24872,13 @@ também definem a ordem ao ler as coordenadas na interface do usuário, se habil
         <translation>Longitude e Latitude com sinal</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="1547"/>
+        <location filename="src/options/options.ui" line="1546"/>
         <source>&lt;b&gt;A restart is recommended after changing units.&lt;/b&gt;</source>
         <oldsource>&lt;b&gt;A restart is recommended after changing units&lt;/b&gt;</oldsource>
         <translation>&lt;b&gt;Recomenda-se reiniciar após a troca de unidades.&lt;/b&gt;</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="1570"/>
+        <location filename="src/options/options.ui" line="1569"/>
         <source>Shows true course or heading values as small text besides magnetic course
 in information displays and tooltips .
 Only magnetic course is shown if both values are equal.
@@ -24889,7 +24889,7 @@ Somente o curso magnético é mostrado se os dois valores forem iguais.
 Também afeta rótulos em orbitas e padrões de tráfego.</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="1576"/>
+        <location filename="src/options/options.ui" line="1575"/>
         <source>Show &amp;true course and heading besides magnetic course in information displays</source>
         <oldsource>Show &amp;true course and heading besides magntic course in information displays</oldsource>
         <translation>Mostrar a proa e o curso &amp;verdadeiro, além do curso magnético nas exibições de informações</translation>
@@ -24899,12 +24899,12 @@ Também afeta rótulos em orbitas e padrões de tráfego.</translation>
         <translation type="vanished">Mostre dicas sobre recursos do usuário, como anéis de alcance, linhas de medição, MSA do aeroporto, orbitas ou padrões de tráfego.</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="2408"/>
+        <location filename="src/options/options.ui" line="2407"/>
         <source>&amp;User Features</source>
         <translation>&amp;Recursos do Úsuário</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="2030"/>
+        <location filename="src/options/options.ui" line="2029"/>
         <source>Empty Airports</source>
         <translation>Aeroportos Vazios</translation>
     </message>
@@ -24913,73 +24913,73 @@ Também afeta rótulos em orbitas e padrões de tráfego.</translation>
         <translation type="vanished">Detalhes durante a rolagem (clique e arraste, zoom in e out)</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="2792"/>
+        <location filename="src/options/options.ui" line="2791"/>
         <source>High - Full details and reload all data while scrolling or zooming</source>
         <translation>Alto - Detalhes completos e recarregue todos os dados enquanto rola ou aplica zoom</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="2797"/>
+        <location filename="src/options/options.ui" line="2796"/>
         <source>Normal - Full details while scrolling or zooming. Loading of map objects delayed.</source>
         <translation>Normal - Detalhes completos durante a rolagem ou zoom. Carregamento de objetos do mapa com atraso.</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="2802"/>
+        <location filename="src/options/options.ui" line="2801"/>
         <source>Low - Low details while scrolling or zooming. Loading of map objects delayed.</source>
         <translation>Baixo - Detalhes baixos durante a rolagem ou zoom. Carregamento de objetos do mapa com atraso.</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="1854"/>
+        <location filename="src/options/options.ui" line="1853"/>
         <source>Map Window</source>
         <translation>Janela do mapa</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="2578"/>
+        <location filename="src/options/options.ui" line="2577"/>
         <source>You can still use the default click and drag method to scroll and the mouse wheel to zoom in this mode.
 Enable &quot;Navigation Aids&quot;, &quot;Screen Areas&quot; on options page &quot;Map Labels&quot; to display hints on the map.</source>
         <translation>Você ainda pode usar o método padrão de clicar e arrastar para rolar e a roda do mouse para ampliar neste modo.
 Ative &quot;Auxílios à Navegação&quot;, &quot;Áreas da tela&quot; na página de opções &quot;Rótulos de Exibição do Mapa&quot; para exibir dicas no mapa.</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="2609"/>
+        <location filename="src/options/options.ui" line="2608"/>
         <source>Enable &quot;Navigation Aids&quot;, &quot;Center Cross&quot; on
 options page &quot;Map Labels&quot; to display a screen center hint.</source>
         <translation>Habilite &quot;Auxílios à Navegação&quot;, &quot;Cruz Central&quot; em
 página de opções &quot;Rótulos de Exibição do Mapa&quot; para exibir uma dica central da tela.</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="2963"/>
+        <location filename="src/options/options.ui" line="2962"/>
         <source>Symbol, Text Sizes and Colors for Map Display</source>
         <translation>Símbolo, Tamanhos de Texto e Cores para Exibição de Mapa</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="3286"/>
+        <location filename="src/options/options.ui" line="3285"/>
         <source>For VOR, NDB, ILS,waypoints, holdings, airways, top of climb and top of descent. Not for flight plan labels.</source>
         <translation>Para VOR, NDB, ILS, waypoints, orbitas, aerovias, ponto de subida e ponto de descida. Não para rótulos de planos de voo.</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="3222"/>
+        <location filename="src/options/options.ui" line="3221"/>
         <source>Draw white background for navaid labels.
 For VOR, NDB, ILS, waypoints and holdings. Not for flight plan labels.</source>
         <translation>Desenhe fundo branco para rótulos de navaid.
 Para VOR, NDB, ILS, waypoints e orbitas. Não para rótulos de planos de voo.</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="3350"/>
+        <location filename="src/options/options.ui" line="3349"/>
         <source>Text size for labels along airway lines</source>
         <translation>Tamanho do texto para rótulos ao longo das linhas aéreas</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="2813"/>
+        <location filename="src/options/options.ui" line="2812"/>
         <source>Mouse Wheel</source>
         <translation>Roda do Mouse</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="2834"/>
+        <location filename="src/options/options.ui" line="2833"/>
         <source>Reverses mouse wheel function for map zoom (Wheel and Shift+Wheel), map details (Ctrl+Wheel) and elevation profile (Wheel and Shift+Wheel).</source>
         <translation>Inverte a função de roda do mouse para zoom do mapa (Wheel e Shift+Wheel), detalhes do mapa (Ctrl+Wheel) e perfil de elevação (Wheel e Shift+Wheel).</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="2837"/>
+        <location filename="src/options/options.ui" line="2836"/>
         <source>Reverse mouse &amp;wheel direction in map and elevation profile</source>
         <translation>Inverta a direção da &amp;roda do mouse no mapa e no perfil de elevação</translation>
     </message>
@@ -25018,7 +25018,7 @@ Isso não afeta a janela do mapa, que pode ser alterada separadamente na página
         <translation>Grau, Minutos Decimais para Google</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="2405"/>
+        <location filename="src/options/options.ui" line="2404"/>
         <source>Show tooltip at the hotspot of user features like range rings, measurement lines, MSA diagrams, user holdings or traffic patterns.</source>
         <translation>Mostre a dica de ferramenta no ponto de acesso dos recursos do usuário, como anéis de alcance, linhas de medição, diagramas MSA, orbitas do usuário ou padrões de tráfego.</translation>
     </message>
@@ -25039,41 +25039,41 @@ será exibido abaixo de todos os outros aeroportos e usará um símbolo cinza.
 O botão da barra de ferramentas de aeroportos pode ser usado para desativá-los se esta caixa de seleção estiver ativada.</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="2589"/>
+        <location filename="src/options/options.ui" line="2588"/>
         <source>&amp;Screen click area size:</source>
         <translation>&amp;Tamanho da área de clique na tela:</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="3325"/>
+        <location filename="src/options/options.ui" line="3324"/>
         <source>Airway line width</source>
         <translation>Largura da linha das aerovias</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="3203"/>
-        <location filename="src/options/options.ui" line="3331"/>
-        <location filename="src/options/options.ui" line="3811"/>
-        <location filename="src/options/options.ui" line="3921"/>
-        <location filename="src/options/options.ui" line="4274"/>
-        <location filename="src/options/options.ui" line="4606"/>
-        <location filename="src/options/options.ui" line="4827"/>
-        <location filename="src/options/options.ui" line="4859"/>
+        <location filename="src/options/options.ui" line="3202"/>
+        <location filename="src/options/options.ui" line="3330"/>
+        <location filename="src/options/options.ui" line="3810"/>
+        <location filename="src/options/options.ui" line="3920"/>
+        <location filename="src/options/options.ui" line="4273"/>
+        <location filename="src/options/options.ui" line="4605"/>
+        <location filename="src/options/options.ui" line="4826"/>
+        <location filename="src/options/options.ui" line="4858"/>
         <source>Line Width </source>
         <translation>Espessura da linha </translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="3093"/>
+        <location filename="src/options/options.ui" line="3092"/>
         <source>For VOR, NDB, waypoints, holdings, top of climb and top of descent. Not for flight plan symbols.</source>
         <translation>Para VOR, NDB, waypoints, orbitas, ponto de subida e ponto de descida. Não para símbolos de plano de voo.</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="3455"/>
+        <location filename="src/options/options.ui" line="3454"/>
         <source>Hide on ground AI/multiplayer aircraft at higher zoom distances
 to avoid a cluttered up airports</source>
         <translation>Ocultar aeronaves IA/multijogador no solo em maiores distâncias de zoom
 para evitar aeroportos congestionados</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="3459"/>
+        <location filename="src/options/options.ui" line="3458"/>
         <source>&amp;Hide aircraft on ground</source>
         <translation>&amp;Ocultar aeronaves no solo</translation>
     </message>
@@ -25118,51 +25118,51 @@ Não usado no perfil de elevação.</translation>
         <translation type="vanished">Cores do Plano de Voo para o Mapa e o Perfil de Elevação</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="4108"/>
+        <location filename="src/options/options.ui" line="4107"/>
         <source>Color for the active flight plan leg.
 Also used in the elevation profile.</source>
         <translation>Cor para a perna ativa do plano de voo.
 Também usado no perfil de elevação.</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="4112"/>
+        <location filename="src/options/options.ui" line="4111"/>
         <source>&amp;Active Leg Color</source>
         <translation>&amp;Cor no Fixo Ativo</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="4011"/>
+        <location filename="src/options/options.ui" line="4010"/>
         <source>Color for flight plan line.
 Also used in the elevation profile.</source>
         <translation>Cor para a linha do plano de voo.
 Também usado no perfil de elevação.</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="4015"/>
+        <location filename="src/options/options.ui" line="4014"/>
         <source>&amp;Flight Plan Color</source>
         <translation>&amp;Cor do Plano de Voo</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="4026"/>
+        <location filename="src/options/options.ui" line="4025"/>
         <source>&amp;Transparent line</source>
         <translation>&amp;Linha Transparente</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="4061"/>
+        <location filename="src/options/options.ui" line="4060"/>
         <source>&amp;Procedure Leg Color</source>
         <translation>&amp;Cor do Fixo no Procedimento</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="4095"/>
+        <location filename="src/options/options.ui" line="4094"/>
         <source>&amp;Outline Color</source>
         <translation>&amp;Cor do Contorno</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="4041"/>
+        <location filename="src/options/options.ui" line="4040"/>
         <source>&amp;Dim passed legs</source>
         <translation>&amp;Escurecer ao passar pelos fixos</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="4125"/>
+        <location filename="src/options/options.ui" line="4124"/>
         <source>Color for passed flight plan legs.
 Enable &quot;Dim passed Legs&quot; to see his color.
 Also used in the elevation profile.</source>
@@ -25177,12 +25177,12 @@ Também usado no perfil de elevação.</translatorcomment>
         <translation type="vanished">&lt;b&gt;É necessário reiniciar para detectar novos temas de mapa após alterar o caminho ou instalar novos temas de mapa.&lt;/b&gt;</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="8377"/>
+        <location filename="src/options/options.ui" line="8408"/>
         <source>Scenery library directories to include when loading</source>
         <translation>Diretórios da biblioteca de cenários a serem incluídos durante o carregamento</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="8407"/>
+        <location filename="src/options/options.ui" line="8438"/>
         <source>All add-ons in this list will be included in the scenery library when the Little Navmap 
 database is loaded, regardless of whether they are included the simulator or not.
 These paths apply to all Flight Simulators like MSFS (extending the directory &quot;Community&quot;) and 
@@ -25193,7 +25193,7 @@ Esses caminhos se aplicam a todos os simuladores de voo, como MSFS (estendendo o
 Você precisa recarregar a biblioteca de cenários para que as alterações tenham efeito.</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="4036"/>
+        <location filename="src/options/options.ui" line="4035"/>
         <source>Draw already flown legs in a different color and hide waypoint texts to unclutter the map.
 Change the color of these legs with the &quot;Passed Leg Color&quot;.
 Also used in the elevation profile.</source>
@@ -25202,14 +25202,14 @@ Altere a cor dessas pernas com a &quot;Cor da perna passada&quot;.
 Também usado no perfil de elevação.</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="4057"/>
+        <location filename="src/options/options.ui" line="4056"/>
         <source>Color for the procedure legs of a flight plan.
 Also used in the elevation profile.</source>
         <translation>Cor para as pernas de procedimento de um plano de voo.
 Também usado no perfil de elevação.</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="4090"/>
+        <location filename="src/options/options.ui" line="4089"/>
         <source>Color for flight plan outline. 
 Only used if &quot;Transparent Line&quot; is not selected.
 Not used in the elevation profile.</source>
@@ -25222,7 +25222,7 @@ Não usado no perfil de elevação.</translation>
         <translation type="vanished">Cor do Contorno</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="4137"/>
+        <location filename="src/options/options.ui" line="4136"/>
         <source>Transparency of the flight plan line. Only used if &quot;Transparent Line&quot; is checked.
 Value 0 is opaque and 90 is most transparent.
 Not used in the elevation profile.</source>
@@ -25231,7 +25231,7 @@ O valor 0 é opaco e 90 é o mais transparente.
 Não usado no perfil de elevação.</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="4022"/>
+        <location filename="src/options/options.ui" line="4021"/>
         <source>Draw the flight plan line using a transparent line without outline.
 Not used in the elevation profile.</source>
         <translation>Desenhe a linha do plano de voo usando uma linha transparente sem contorno.
@@ -25246,22 +25246,22 @@ Não usado no perfil de elevação.</translation>
         <translation type="vanished">Plano de Voo no Perfil de Elevação</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="3940"/>
+        <location filename="src/options/options.ui" line="3939"/>
         <source>Label and symbol size for flight plan navaids and airports in the elevation profile.</source>
         <translation>Tamanho do rótulo e do símbolo para navaids e aeroportos do plano de voo no perfil de elevação.</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="3946"/>
+        <location filename="src/options/options.ui" line="3945"/>
         <source>Text and Symbols </source>
         <translation>Texto e Símbolos </translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="3915"/>
+        <location filename="src/options/options.ui" line="3914"/>
         <source>Flight plan and aircraft trail line width in the elevation profile</source>
         <translation>Plano de voo e largura da linha de trilha da aeronave no perfil de elevação</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="3905"/>
+        <location filename="src/options/options.ui" line="3904"/>
         <source>&amp;Flight plan line:</source>
         <translation>&amp;Linha do plano de voo:</translation>
     </message>
@@ -25280,22 +25280,22 @@ Eles são mostrados quando uma perna do plano de voo ou uma entrada em uma tabel
         <translation type="vanished">&amp;Anéis transparentes</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="5057"/>
+        <location filename="src/options/options.ui" line="5056"/>
         <source>Draw white background for userpoint text labels</source>
         <translation>Draw white background for userpoint text labels</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="4625"/>
+        <location filename="src/options/options.ui" line="4624"/>
         <source>&amp;Userpoints:</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="4811"/>
+        <location filename="src/options/options.ui" line="4810"/>
         <source>Color for highlighted flight plan position for cursor in the elevation profile.</source>
         <translation>Cor da posição destacada do plano de voo para o cursor no perfil de elevação.</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="4814"/>
+        <location filename="src/options/options.ui" line="4813"/>
         <source>Elevation &amp;Profile Highlight Color</source>
         <translation>Cor de &amp;Destaque do Perfil de Elevação</translation>
     </message>
@@ -25306,7 +25306,7 @@ Value 0 is opaque and 90 is most transparent.</source>
 O valor 0 é opaco e 90 é o mais transparente.</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="4550"/>
+        <location filename="src/options/options.ui" line="4549"/>
         <source>Symbol size for userpoints</source>
         <translation>Tamanho do símbolo para userpoints</translation>
     </message>
@@ -25333,7 +25333,7 @@ O valor 0 é opaco e 90 é o mais transparente.</translation>
         <translation type="vanished">Cor para as pernas destacadas na tabela de plano de voo.</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="4524"/>
+        <location filename="src/options/options.ui" line="4523"/>
         <source>&amp;Flight Plan Highlight Color</source>
         <translation>&amp;Cor de Destaque do Plano de Voo</translation>
     </message>
@@ -25352,7 +25352,7 @@ destaques das aerovias e
 entradas do logbook:</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="5032"/>
+        <location filename="src/options/options.ui" line="5031"/>
         <source>Label text size for userpoints</source>
         <translation>Tamanho do texto da etiqueta para userpoints</translation>
     </message>
@@ -25361,7 +25361,7 @@ entradas do logbook:</translation>
         <translation type="vanished">Cor para destaque dos resultados de pesquisa selecionados.</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="4758"/>
+        <location filename="src/options/options.ui" line="4757"/>
         <source>&amp;Search Highlight Color</source>
         <translation>&amp;Pesquisar cor de destaque</translation>
     </message>
@@ -25370,17 +25370,17 @@ entradas do logbook:</translation>
         <translation type="vanished">Opções Gerais de Exibição</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="5198"/>
+        <location filename="src/options/options.ui" line="5197"/>
         <source>Map Labels</source>
         <translation>Rótulos de Exibição do Mapa</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="5232"/>
+        <location filename="src/options/options.ui" line="5231"/>
         <source>Option</source>
         <translation>Opção</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="5237"/>
+        <location filename="src/options/options.ui" line="5236"/>
         <source>Description</source>
         <translation>Descrição</translation>
     </message>
@@ -25403,46 +25403,46 @@ Não mostre essas informações publicamente em fóruns nas capturas de tela.&lt
 </translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="5296"/>
+        <location filename="src/options/options.ui" line="5295"/>
         <source>Key</source>
         <translation>Chave</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="5301"/>
+        <location filename="src/options/options.ui" line="5300"/>
         <source>Value</source>
         <translation>Valor</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="5950"/>
+        <location filename="src/options/options.ui" line="5949"/>
         <source>Zoom &amp;distance:</source>
         <translation>&amp;Distância do zoom:</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="5985"/>
+        <location filename="src/options/options.ui" line="5984"/>
         <source>Adjust zoom distance when flying with &quot;Center map on aircraft and next flight plan waypoint&quot; checked.
 Smaller values zoom closer.</source>
         <translation>Ajuste a distância do zoom ao voar com a opção &quot;Centralizar mapa na aeronave e próximo waypoint do plano de voo&quot; marcada.
 Valores menores aproximam o zoom.</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="6018"/>
+        <location filename="src/options/options.ui" line="6017"/>
         <source>While flying - Map</source>
         <translation>Ao voar - Mapa</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="6039"/>
+        <location filename="src/options/options.ui" line="6038"/>
         <source>Zoom distance that should be applied after touchdown.
 Smaller means closer.</source>
         <translation>Distância de zoom que deve ser aplicada após o touchdown.
 Menor significa mais próximo.</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="6065"/>
+        <location filename="src/options/options.ui" line="6064"/>
         <source>Zoom in to see airport details after touchdown</source>
         <translation>Aumente o zoom para ver os detalhes do aeroporto após o pouso</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="6075"/>
+        <location filename="src/options/options.ui" line="6074"/>
         <source>The map will stop following the aircraft for the given time if the user does any interaction with the map like scrolling or zooming.
 This setting is also used in the elevation profile.
 See notes in the manual for details of this setting and how to move around in the map.</source>
@@ -25454,24 +25454,24 @@ Essa configuração também é usada no perfil de elevação.
 Veja as notas no manual para detalhes sobre essa configuração e como se movimentar no mapa.</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="5914"/>
+        <location filename="src/options/options.ui" line="5913"/>
         <source>&amp;Do not use box mode for following the aircraft. Move the map constantly.</source>
         <translation>&amp;Não use o modo de caixa para seguir a aeronave. Mova o mapa constantemente.</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="6110"/>
+        <location filename="src/options/options.ui" line="6109"/>
         <source>Zoom out after takeoff.
 Not applicable if &quot;Center map on aircraft and next flight plan waypoint&quot; is selected.</source>
         <translation>Diminuir o zoom após a decolagem.
 Não aplicável se &quot;Centralizar mapa na aeronave e próximo ponto de referência do plano de voo&quot; estiver selecionado.</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="6114"/>
+        <location filename="src/options/options.ui" line="6113"/>
         <source>&amp;Zoom out on takeoff:</source>
         <translation>&amp;Diminuir o zoom na decolagem:</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="6121"/>
+        <location filename="src/options/options.ui" line="6120"/>
         <source>Zoom distance to be applied after takeoff.
 Not applicable if &quot;Center map on aircraft and next flight plan waypoint&quot; is selected.
 Smaller means closer.</source>
@@ -25480,12 +25480,12 @@ Não aplicável se &quot;Centralizar mapa na aeronave e próximo ponto de refer�
 Menor significa mais próximo.</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="6213"/>
+        <location filename="src/options/options.ui" line="6212"/>
         <source>Active flight plan legs are highlighted with magenta color</source>
         <translation>Os fixos do plano de voo ativo são destacadas com a cor magenta</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="6216"/>
+        <location filename="src/options/options.ui" line="6215"/>
         <source>&amp;Highlight active flight plan legs</source>
         <translation>&amp;Destaque as pernas do plano de voo ativo</translation>
     </message>
@@ -25494,19 +25494,19 @@ Menor significa mais próximo.</translation>
         <translation type="vanished">Trilha das aeronaves</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="4390"/>
+        <location filename="src/options/options.ui" line="4389"/>
         <source>Maximum number of aircraft &amp;trail points:</source>
         <translation>Número máximo de pontos de &amp;trilha da aeronave:</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="4400"/>
+        <location filename="src/options/options.ui" line="4399"/>
         <source>The user aircraft trail will be pruned if it contains more than this number of points. 
 Lower this value to avoid too long tracks and avoid stutters in map display.</source>
         <translation>A trilha da aeronave do usuário será &quot;podada&quot; se contiver mais do que esse número de pontos.
 Diminua esse valor para evitar trilhas muito longas e interrupções na exibição do mapa.</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="1625"/>
+        <location filename="src/options/options.ui" line="1624"/>
         <source>Loading, Saving and Export</source>
         <translation>Carregamento, Salvamento e Exportação</translation>
     </message>
@@ -25546,12 +25546,12 @@ CRUISEALT: Altitude de cruzeiro</translation>
         <translation type="vanished">&amp;Plano de Voo</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="3868"/>
+        <location filename="src/options/options.ui" line="3867"/>
         <source>&amp;Flight plan:</source>
         <translation>&amp;Plano de Voo:</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="7540"/>
+        <location filename="src/options/options.ui" line="7539"/>
         <source>&amp;Format:</source>
         <translation>&amp;Formato:</translation>
     </message>
@@ -25561,7 +25561,7 @@ CRUISEALT: Altitude de cruzeiro</translation>
         <translation>&amp;Combustível e Peso:</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="5879"/>
+        <location filename="src/options/options.ui" line="5878"/>
         <source>&amp;High - Aircraft position and label is updated often, even for small course or altitude changes.</source>
         <translation>&amp;Alto - A posição e o rótulo da aeronave são atualizados frequentemente, mesmo para pequenas mudanças de curso ou altitude.</translation>
     </message>
@@ -25572,14 +25572,14 @@ CRUISEALT: Altitude de cruzeiro</translation>
         <translation>Mostrar &amp;última posição</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="6531"/>
-        <location filename="src/options/options.ui" line="6627"/>
-        <location filename="src/options/options.ui" line="7334"/>
+        <location filename="src/options/options.ui" line="6530"/>
+        <location filename="src/options/options.ui" line="6626"/>
+        <location filename="src/options/options.ui" line="7333"/>
         <source>&amp;IVAO</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="7222"/>
+        <location filename="src/options/options.ui" line="7221"/>
         <source>&amp;IVAO Weather Download URL:</source>
         <translation>URL de Download do Clima da &amp;IVAO:</translation>
     </message>
@@ -25596,17 +25596,17 @@ CRUISEALT: Altitude de cruzeiro</translation>
         <translation type="vanished">&amp;Última posição</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="5862"/>
+        <location filename="src/options/options.ui" line="5861"/>
         <source>&amp;Low - Aircraft position and label is updated rarely, only for large course or altitude changes.</source>
         <translation>&amp;Baixo - A posição e o rótulo da aeronave raramente são atualizados, apenas para grandes mudanças de curso ou altitude.</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="7867"/>
+        <location filename="src/options/options.ui" line="7898"/>
         <source>&amp;Maximum size of memory cache:</source>
         <translation>&amp;Tamanho máximo do cache de memória:</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="5869"/>
+        <location filename="src/options/options.ui" line="5868"/>
         <source>&amp;Medium</source>
         <translation>&amp;Médio</translation>
     </message>
@@ -25646,7 +25646,7 @@ CRUISEALT: Altitude de cruzeiro</translation>
         <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;img src=&quot;:/littlenavmap/resources/icons/bulb.svg&quot;/&gt;&lt;span style=&quot; font-style:italic;&quot;&gt;Você pode temporariamente alterar o tamanho do texto para páginas de informações e progresso usando Ctrl+Scroll do Mouse.&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="1722"/>
+        <location filename="src/options/options.ui" line="1721"/>
         <source>Applies to new filenames when saving LNMPLN flight plans.
 File patterns for other flight plan files are defined in the multiexport options dialog.
 The file suffix &quot;.lnmpln&quot; is appended automatically.
@@ -25670,7 +25670,7 @@ DESTNAME: Nome do aeroporto de destino
 CRUISEALT: Altitude de cruzeiro</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="1689"/>
+        <location filename="src/options/options.ui" line="1688"/>
         <source>Centers a loaded flight plan or a loaded GPX trail.
 Does not apply to the flight plan loaded after startup.
 </source>
@@ -25679,37 +25679,37 @@ Não se aplica ao plano de voo carregado após a inicialização.
 </translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="1694"/>
+        <location filename="src/options/options.ui" line="1693"/>
         <source>Center &amp;flight plan or aircraft trail on map after loading</source>
         <translation>Centralizar &amp;plano de voo ou trilha da aeronave no mapa após o carregamento</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="1708"/>
+        <location filename="src/options/options.ui" line="1707"/>
         <source>&amp;Short Pattern</source>
         <translation>&amp;Padrão Curto</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="1650"/>
+        <location filename="src/options/options.ui" line="1649"/>
         <source>&amp;Long Pattern</source>
         <translation>&amp;Padrão Longo</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="1673"/>
+        <location filename="src/options/options.ui" line="1672"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;img src=&quot;:/littlenavmap/resources/icons/bulb.svg&quot;/&gt;&lt;span style=&quot; font-style:italic;&quot;&gt;You can set more file patterns and export locations in the &amp;quot;Multiexport Flight Plan Options&amp;quot; in the main menu &amp;quot;File&amp;quot;.&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;img src=&quot;:/littlenavmap/resources/icons/bulb.svg&quot;/&gt;&lt;span style=&quot; font-style:italic;&quot;&gt;Você pode temporariamente alterar o tamanho do texto para páginas de informações e progresso usando Ctrl+Scroll do Mouse.&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="1781"/>
+        <location filename="src/options/options.ui" line="1780"/>
         <source>KML Files</source>
         <translation>Arquivos KML</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="1936"/>
+        <location filename="src/options/options.ui" line="1935"/>
         <source>Map Display Options</source>
         <translation>Opções de Exibição de Mapa</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="2051"/>
+        <location filename="src/options/options.ui" line="2050"/>
         <source>Empty airports are not add-ons, have no taxiways, no parking and no aprons.
 These airports are drawn underneath all other airports and use a gray symbol.
 The airports toolbar button can be used to hide empty airports if this box is checked.</source>
@@ -25736,97 +25736,97 @@ O botão da barra de ferramentas de aeroportos pode ser usado para ocultar aerop
         <translation type="vanished">&amp;Aeroportos 2D do X-Plane são mostrados como vazios</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="2083"/>
+        <location filename="src/options/options.ui" line="2082"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;img src=&quot;:/littlenavmap/resources/icons/bulb.svg&quot;/&gt;You can hide empty airports in the map display by deselecting the menu item &amp;quot;Empty&amp;quot; in menu &amp;quot;View&amp;quot; -&amp;gt; &amp;quot;Airports&amp;quot; or using the related toolbar button.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;img src=&quot;:/littlenavmap/resources/icons/bulb.svg&quot;/&gt;Você pode ocultar aeroportos vazios na exibição do mapa desmarcando o item de menu &amp;quot;Vazio&amp;quot; no menu &amp;quot;Exibir&amp;quot; -&amp;gt; &amp;quot;Aeroportos&amp;quot; ou usando o botão de barra de ferramentas relacionado.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="2222"/>
+        <location filename="src/options/options.ui" line="2221"/>
         <source>Other Click Actions </source>
         <translation>Outras Ações de Clique </translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="2256"/>
+        <location filename="src/options/options.ui" line="2255"/>
         <source>Select flight plan leg clicked on the map</source>
         <translation>Selecionar perna do plano de voo clicada no mapa</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="2259"/>
+        <location filename="src/options/options.ui" line="2258"/>
         <source>&amp;Select Flight Plan legs on navaid or airport click</source>
         <translation>&amp;Selecionar pernas do plano de voo em navaid ou clique no aeroporto</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="2326"/>
+        <location filename="src/options/options.ui" line="2325"/>
         <source>Show tooltips for points on the user aircraft trail</source>
         <translation>Mostrar dicas de ferramentas para pontos na trilha da aeronave do usuário</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="2329"/>
+        <location filename="src/options/options.ui" line="2328"/>
         <source>User aircraft &amp;trail</source>
         <translation>&amp;Trilha da aeronave do usuário</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="2447"/>
+        <location filename="src/options/options.ui" line="2446"/>
         <source>Tooltip Click Sensitivity</source>
         <translation>Sensibilidade ao clique da dica</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="2490"/>
+        <location filename="src/options/options.ui" line="2489"/>
         <source>&amp;Click Sensitivity for Map Objects</source>
         <translation>&amp;Sensibilidade ao clique para objetos no mapa</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="2642"/>
+        <location filename="src/options/options.ui" line="2641"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;img src=&quot;:/littlenavmap/resources/icons/bulb.svg&quot;/&gt;&lt;span style=&quot; font-style:italic;&quot;&gt;Enable &amp;quot;Navigation Aids&amp;quot;, &amp;quot;Center Cross&amp;quot; on options page &lt;/span&gt;&lt;a href=&quot;lnm://12&quot;&gt;&lt;span style=&quot; font-style:italic; text-decoration: underline; color:#0057ae;&quot;&gt;Map Labels&lt;/span&gt;&lt;/a&gt;&lt;span style=&quot; font-style:italic;&quot;&gt; to display a screen center hint.&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;img src=&quot;:/littlenavmap/resources/icons/bulb.svg&quot;/&gt;&lt;span style=&quot; font-style:italic;&quot;&gt;Ative &quot;Navaids&quot;, &quot;Cruz Central&quot; na página de opções &lt;/span&gt;&lt;a href=&quot;lnm://12&quot;&gt;&lt;span style=&quot; font-style:italic; text-decoration: underline; color:#0057ae;&quot;&gt;Rótulos do Mapa&lt;/span&gt;&lt;/a&gt;&lt;span style=&quot; font-style:italic;&quot;&gt; para exibir uma dica de centro de tela.&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="2767"/>
+        <location filename="src/options/options.ui" line="2766"/>
         <source>Details while scrolling the map (click and drag, zoom in and out)</source>
         <translation>Detalhes ao rolar o mapa (clique e arraste, ampliar e reduzir)</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="2886"/>
+        <location filename="src/options/options.ui" line="2885"/>
         <source>Map Display and Elevation Profile Font</source>
         <translation>Exibição de Mapa e Fonte de Perfil de Elevação</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="2944"/>
+        <location filename="src/options/options.ui" line="2943"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;img src=&quot;:/littlenavmap/resources/icons/bulb.svg&quot;/&gt;&lt;span style=&quot; font-style:italic;&quot;&gt;Change the font for the whole application on page &lt;/span&gt;&lt;a href=&quot;lnm://2&quot;&gt;&lt;span style=&quot; font-style:italic; text-decoration: underline; color:#0057ae;&quot;&gt;Display and Text&lt;/span&gt;&lt;/a&gt;&lt;span style=&quot; font-style:italic;&quot;&gt;.&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;img src=&quot;:/littlenavmap/resources/icons/bulb.svg&quot;/&gt;&lt;span style=&quot; font-style:italic;&quot;&gt;Altere a fonte para toda a aplicação na página &lt;/span&gt;&lt;a href=&quot;lnm://2&quot;&gt;&lt;span style=&quot; font-style:italic; text-decoration: underline; color:#0057ae;&quot;&gt;Exibição e Texto&lt;/span&gt;&lt;/a&gt;&lt;span style=&quot; font-style:italic;&quot;&gt;.&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="3233"/>
+        <location filename="src/options/options.ui" line="3232"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;img src=&quot;:/littlenavmap/resources/icons/bulb.svg&quot;/&gt;&lt;span style=&quot; font-style:italic;&quot;&gt;More airport settings can be found on page &lt;/span&gt;&lt;a href=&quot;lnm://12&quot;&gt;&lt;span style=&quot; font-style:italic; text-decoration: underline; color:#0057ae;&quot;&gt;Map Labels&lt;/span&gt;&lt;/a&gt;&lt;span style=&quot; font-style:italic;&quot;&gt; in the branches &amp;quot;Airport&amp;quot; and &amp;quot;Airport Details&amp;quot;.&lt;/span&gt;&lt;/p&gt;&lt;p&gt;&lt;span style=&quot; font-style:italic;&quot;&gt;Exclude add-on directories on page &lt;/span&gt;&lt;a href=&quot;lnm://21&quot;&gt;&lt;span style=&quot; font-style:italic; text-decoration: underline; color:#0057ae;&quot;&gt;Cache and Files&lt;/span&gt;&lt;/a&gt;&lt;span style=&quot; font-style:italic;&quot;&gt; if add-on airports are detected wrongly for certain scenery.&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;img src=&quot;:/littlenavmap/resources/icons/bulb.svg&quot;/&gt;&lt;span style=&quot; font-style:italic;&quot;&gt;Mais configurações de aeroporto podem ser encontradas na página &lt;/span&gt;&lt;a href=&quot;lnm://12&quot;&gt;&lt;span style=&quot; font-style:italic; text-decoration: underline; color:#0057ae;&quot;&gt;Rótulos do Mapa&lt;/span&gt;&lt;/a&gt;&lt;span style=&quot; font-style:italic;&quot;&gt; nos ramos &quot;Aeroporto&quot; e &quot;Detalhes do Aeroporto&quot;.&lt;/span&gt;&lt;/p&gt;&lt;p&gt;&lt;span style=&quot; font-style:italic;&quot;&gt;Exclua diretórios de complementos na página &lt;/span&gt;&lt;a href=&quot;lnm://21&quot;&gt;&lt;span style=&quot; font-style:italic; text-decoration: underline; color:#0057ae;&quot;&gt;Cache e Arquivos&lt;/span&gt;&lt;/a&gt;&lt;span style=&quot; font-style:italic;&quot;&gt; se os aeroportos adicionais forem detectados erroneamente para determinados cenários.&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="3439"/>
+        <location filename="src/options/options.ui" line="3438"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;img src=&quot;:/littlenavmap/resources/icons/bulb.svg&quot;/&gt;&lt;span style=&quot; font-style:italic;&quot;&gt;Label settings for the AI or multiplayer aircraft can be found on page &lt;/span&gt;&lt;a href=&quot;lnm://12&quot;&gt;&lt;span style=&quot; font-style:italic; text-decoration: underline; color:#0057ae;&quot;&gt;Map Labels&lt;/span&gt;&lt;/a&gt;&lt;span style=&quot; font-style:italic;&quot;&gt; in branch &amp;quot;AI, Multiplayer and Online Client Aircraft&amp;quot;.&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;img src=&quot;:/littlenavmap/resources/icons/bulb.svg&quot;/&gt;&lt;span style=&quot; font-style:italic;&quot;&gt;As configurações de rótulo para as aeronaves AI ou multiplayer podem ser encontradas na página &lt;/span&gt;&lt;a href=&quot;lnm://12&quot;&gt;&lt;span style=&quot; font-style:italic; text-decoration: underline; color:#0057ae;&quot;&gt;Rótulos do Mapa&lt;/span&gt;&lt;/a&gt;&lt;span style=&quot; font-style:italic;&quot;&gt; no ramo &quot;Aeronaves AI, Multiplayer e Cliente Online&quot;.&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="3401"/>
+        <location filename="src/options/options.ui" line="3400"/>
         <source>Text size for airspaces.</source>
         <translation>Tamanho do texto para espaços aéreos.</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="3558"/>
+        <location filename="src/options/options.ui" line="3557"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;img src=&quot;:/littlenavmap/resources/icons/bulb.svg&quot;/&gt;&lt;span style=&quot; font-style:italic;&quot;&gt;Label settings for the user aircraft can be found on page &lt;/span&gt;&lt;a href=&quot;lnm://12&quot;&gt;&lt;span style=&quot; font-style:italic; text-decoration: underline; color:#0057ae;&quot;&gt;Map Labels&lt;/span&gt;&lt;/a&gt;&lt;span style=&quot; font-style:italic;&quot;&gt; in branch &amp;quot;User Aircraft&amp;quot;.&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;img src=&quot;:/littlenavmap/resources/icons/bulb.svg&quot;/&gt;&lt;span style=&quot; font-style:italic;&quot;&gt;As configurações de rótulo para a aeronave do usuário podem ser encontradas na página &lt;/span&gt;&lt;a href=&quot;lnm://12&quot;&gt;&lt;span style=&quot; font-style:italic; text-decoration: underline; color:#0057ae;&quot;&gt;Rótulos do Mapa&lt;/span&gt;&lt;/a&gt;&lt;span style=&quot; font-style:italic;&quot;&gt; no ramo &quot;Aeronave do Usuário&quot;.&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="3197"/>
+        <location filename="src/options/options.ui" line="3196"/>
         <source>Airspace contour line width</source>
         <translation>Largura da linha de contorno do espaço aéreo</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="3156"/>
+        <location filename="src/options/options.ui" line="3155"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;img src=&quot;:/littlenavmap/resources/icons/bulb.svg&quot;/&gt;&lt;span style=&quot; font-style:italic;&quot;&gt;Airspace label settings can be found on page &lt;/span&gt;&lt;a href=&quot;lnm://12&quot;&gt;&lt;span style=&quot; font-style:italic; text-decoration: underline; color:#0057ae;&quot;&gt;Map Labels&lt;/span&gt;&lt;/a&gt;&lt;span style=&quot; font-style:italic;&quot;&gt; in branch &amp;quot;Airspaces&amp;quot;.&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;img src=&quot;:/littlenavmap/resources/icons/bulb.svg&quot;/&gt;&lt;span style=&quot; font-style:italic;&quot;&gt;As configurações de rótulo do espaço aéreo podem ser encontradas na página &lt;/span&gt;&lt;a href=&quot;lnm://12&quot;&gt;&lt;span style=&quot; font-style:italic; text-decoration: underline; color:#0057ae;&quot;&gt;Rótulos do Mapa&lt;/span&gt;&lt;/a&gt;&lt;span style=&quot; font-style:italic;&quot;&gt; no ramo &amp;quot;Espaços Aéreos&amp;quot;.&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="3587"/>
+        <location filename="src/options/options.ui" line="3586"/>
         <source>Transparency of the airspace fill area.
 Lower values make the airspace more opaque and higher values more transparent.</source>
         <translation>Transparência da área de preenchimento do espaço aéreo.
@@ -25869,42 +25869,42 @@ Valores mais baixos tornam o espaço aéreo mais opaco e valores mais altos, mai
         <translation>Tamanho do texto do &amp;cabeçalho do plano de voo:</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="1891"/>
+        <location filename="src/options/options.ui" line="1890"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;A restart is required after changing the map window docking option.&lt;br/&gt;&lt;/span&gt;&lt;img src=&quot;:/littlenavmap/resources/icons/bulb.svg&quot;/&gt;&lt;span style=&quot; font-style:italic;&quot;&gt;Use &amp;quot;Window&amp;quot; -&amp;gt; &amp;quot;Reset Window Layout&amp;quot; in the main menu to clean up the layout after the restart, if necessary.&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;É necessário reiniciar após alterar a opção de ancoragem da janela do mapa.&lt;br/&gt;&lt;/span&gt;&lt;img src=&quot;:/littlenavmap/resources/icons/bulb.svg&quot;/&gt;&lt;span style=&quot; font-style:italic;&quot;&gt;Use &amp;quot;Janela&amp;quot; -&amp;gt; &amp;quot;Redefinir Layout da Janela&amp;quot; no menu principal para limpar o layout após a reinicialização, se necessário.&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="1992"/>
+        <location filename="src/options/options.ui" line="1991"/>
         <source>Map &amp;dimming in dark style:</source>
         <translation>&amp;Escurecimento do mapa em estilo escuro:</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="2002"/>
+        <location filename="src/options/options.ui" line="2001"/>
         <source>Darken the map and the flight plan elevation profile for the user interface style &quot;Dark&quot;. Lower values result in a darker display.</source>
         <translation>Escureça o mapa e o perfil de elevação do plano de voo para o estilo de interface do usuário &quot;Dark&quot;. Valores mais baixos resultam em uma exibição mais escura.</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="3594"/>
+        <location filename="src/options/options.ui" line="3593"/>
         <source>Fill Transparency </source>
         <translation>Transparência de preenchimento </translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="3259"/>
+        <location filename="src/options/options.ui" line="3258"/>
         <source>Hide flight buffer zones (FBZ) and redundant airspaces having a multiple code of &quot;Z&quot;.</source>
         <translation>Ocultar zonas de amortecimento de voo (FBZ) e espaços aéreos redundantes com um código múltiplo de &quot;Z&quot;.</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="1765"/>
+        <location filename="src/options/options.ui" line="1764"/>
         <source>Add departure parking, runway or airport to an empty flight plan after connecting to simulator.</source>
         <translation>Adicione estacionamento de partida, pista ou aeroporto a um plano de voo vazio após conectar ao simulador.</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="1768"/>
+        <location filename="src/options/options.ui" line="1767"/>
         <source>Add &amp;departure position to flight plan after connecting to simulator</source>
         <translation>Adicione &amp;posição de partida ao plano de voo após conectar ao simulador</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="2066"/>
+        <location filename="src/options/options.ui" line="2065"/>
         <source>All X-Plane 11 airports which are 2D and stock airports
 are drawn underneath all other airports and use a gray symbol.
 The airports toolbar button can be used to hide empty airports if this box is checked.
@@ -25917,286 +25917,286 @@ O botão da barra de ferramentas de aeroportos pode ser usado para esconder aero
 Note que esta função está desabilitada para o X-Plane 12, já que a flag 3D não é confiável lá.</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="2073"/>
+        <location filename="src/options/options.ui" line="2072"/>
         <source>&amp;X-Plane 11 2D airports are shown as empty</source>
         <translation>&amp;Os aeroportos 2D do X-Plane 11 são mostrados como vazios</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="3178"/>
+        <location filename="src/options/options.ui" line="3177"/>
         <source>Runway Text </source>
         <translation>Texto da Pista </translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="3262"/>
+        <location filename="src/options/options.ui" line="3261"/>
         <source>Hide Multiple Code &amp;Z airspaces and FBZ areas</source>
         <translation>Ocultar vários espaços aéreos de código &amp;Z e áreas FBZ</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="3375"/>
+        <location filename="src/options/options.ui" line="3374"/>
         <source>Air&amp;spaces:</source>
         <translation>Espaço &amp;Aéreo:</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="3670"/>
+        <location filename="src/options/options.ui" line="3669"/>
         <source>Label Text </source>
         <translation>Texto do Rótulo </translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="3695"/>
+        <location filename="src/options/options.ui" line="3694"/>
         <source>Taxiway Text </source>
         <translation>Texto da Taxiway </translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="3717"/>
+        <location filename="src/options/options.ui" line="3716"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;img src=&quot;:/littlenavmap/resources/icons/bulb.svg&quot;/&gt;&lt;span style=&quot; font-style:italic;&quot;&gt;More label options for the elevation profile can be found in menu &amp;quot;Tools&amp;quot; -&amp;gt; &amp;quot;Elevation Profile Display Options&amp;quot;.&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;img src=&quot;:/littlenavmap/resources/icons/bulb.svg&quot;/&gt;&lt;span style=&quot; font-style:italic;&quot;&gt;Mais opções de rótulo para o perfil de elevação podem ser encontradas no menu &amp;quot;Ferramentas&amp;quot; -&amp;gt; &amp;quot;Opções de Exibição do Perfil de Elevação&amp;quot;.&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="3784"/>
+        <location filename="src/options/options.ui" line="3783"/>
         <source>Flight Plan for the Map Display</source>
         <translation>Plano de Voo Para a Exibição do Mapa</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="3805"/>
+        <location filename="src/options/options.ui" line="3804"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Flight plan line width on the map.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Largura da linha do plano de voo no mapa.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="3830"/>
+        <location filename="src/options/options.ui" line="3829"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Label size for flight plan navaids as well as labels along flight plan lines.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Tamanho da etiqueta para navaids do plano de voo, bem como etiquetas ao longo das linhas do plano de voo.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="3855"/>
+        <location filename="src/options/options.ui" line="3854"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Draw bright yellow background for flight plan labels.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Desenhe um fundo amarelo brilhante para os rótulos do plano de voo.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="3884"/>
+        <location filename="src/options/options.ui" line="3883"/>
         <source>Flight Plan for the Elevation Profile</source>
         <translation>Plano de Voo para o Perfil de Elevação</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="3965"/>
+        <location filename="src/options/options.ui" line="3964"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;img src=&quot;:/littlenavmap/resources/icons/bulb.svg&quot;/&gt;&lt;span style=&quot; font-style:italic;&quot;&gt;Label options for the elevation profile can be found in menu &amp;quot;Tools&amp;quot; -&amp;gt; &amp;quot;Elevation Profile Display Options&amp;quot;.&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;img src=&quot;:/littlenavmap/resources/icons/bulb.svg&quot;/&gt;&lt;span style=&quot; font-style:italic;&quot;&gt;Opções de rótulo para o perfil de elevação pode ser encontrado no menu &amp;quot;Ferramentas&amp;quot; -&amp;gt; &amp;quot;Opções de exibição do perfil de elevação&amp;quot;.&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="3984"/>
+        <location filename="src/options/options.ui" line="3983"/>
         <source>Flight Plan Colors for both the Map Display and the Elevation Profile</source>
         <translation>Cores do Plano de Voo para a Exibição do Mapa e o Perfil de Elevação</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="4068"/>
+        <location filename="src/options/options.ui" line="4067"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;img src=&quot;:/littlenavmap/resources/icons/bulb.svg&quot;/&gt;&lt;span style=&quot; font-style:italic;&quot;&gt;Flight plan label settings can be found on page &lt;/span&gt;&lt;a href=&quot;lnm://12&quot;&gt;&lt;span style=&quot; font-style:italic; text-decoration: underline; color:#0057ae;&quot;&gt;Map Labels&lt;/span&gt;&lt;/a&gt;&lt;span style=&quot; font-style:italic;&quot;&gt; in branch &amp;quot;Flight Plan&amp;quot;.&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;img src=&quot;:/littlenavmap/resources/icons/bulb.svg&quot;/&gt;&lt;span style=&quot; font-style:italic;&quot;&gt;As configurações de rótulo do plano de voo podem pode ser encontrado na página &lt;/span&gt;&lt;a href=&quot;lnm://12&quot;&gt;&lt;span style=&quot; font-style:italic; text-decoration: underline; color:#0057ae;&quot;&gt;Rótulos do Mapa&lt;/span&gt; &lt;/a&gt;&lt;span style=&quot; font-style:italic;&quot;&gt; no ramo &amp;quot;Plano de voo&amp;quot;.&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="4218"/>
+        <location filename="src/options/options.ui" line="4217"/>
         <source>User Aircraft Trail Style on Map Display and Elevation Profile</source>
         <translation>Estilo de Trilha da Aeronave do Usuário na Exibição do Mapa e Perfil de Elevação</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="4246"/>
+        <location filename="src/options/options.ui" line="4245"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Line style&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Estilo de linha&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="4299"/>
+        <location filename="src/options/options.ui" line="4298"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Set color for aircraft trail in map and elevation profile.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Definir a cor da trilha da aeronave no mapa e no perfil de elevação.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="4302"/>
+        <location filename="src/options/options.ui" line="4301"/>
         <source>&amp;Color</source>
         <translation>&amp;Cor</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="4322"/>
+        <location filename="src/options/options.ui" line="4321"/>
         <source>&amp;Use gradient to indicate flown altitude.</source>
         <translation>&amp;Use o gradiente para indicar a altitude voada.</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="4332"/>
+        <location filename="src/options/options.ui" line="4331"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Shows a color gradient indicating the flown actual altitude between minimum and maximum altitude in the trail. Always uses a solid line.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Mostra um gradiente de cores indicando a altitude real voada entre a altitude mínima e a máxima na trilha. Sempre usa uma linha sólida.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="4336"/>
+        <location filename="src/options/options.ui" line="4335"/>
         <source>Yellow, Green Cyan to Blue</source>
         <translation>Amarelo, Verde Ciano a Azul</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="4345"/>
+        <location filename="src/options/options.ui" line="4344"/>
         <source>Red, Yellow, Green Cyan, Blue to Magenta</source>
         <translation>Vermelho, Amarelo, Verde Ciano, Azul a Magenta</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="4354"/>
+        <location filename="src/options/options.ui" line="4353"/>
         <source>White to Black</source>
         <translation>Branco para Preto</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="4369"/>
+        <location filename="src/options/options.ui" line="4368"/>
         <source>Aircraft Trail Points</source>
         <translation>Pontos de Trilha de Aeronaves</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="4429"/>
+        <location filename="src/options/options.ui" line="4428"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;img src=&quot;:/littlenavmap/resources/icons/bulb.svg&quot;/&gt;&lt;span style=&quot; font-style:italic;&quot;&gt;Aircraft trails can be loaded and saved in the menu &amp;quot;File&amp;quot; -&amp;gt; &amp;quot;GPS Exchange Format (GPX)&amp;quot;.&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;img src=&quot;:/littlenavmap/resources/icons/bulb.svg&quot;/&gt;&lt;span style=&quot; font-style:italic;&quot;&gt;Trilhas de aeronaves podem ser carregadas e salvo no menu &amp;quot;Arquivo&amp;quot; -&amp;gt; &amp;quot;Formato de troca GPS (GPX).&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="4494"/>
+        <location filename="src/options/options.ui" line="4493"/>
         <source>Map Display Options for User Features</source>
         <translation>Opções de Exibição de Mapas para Recursos do Usuário</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="4531"/>
+        <location filename="src/options/options.ui" line="4530"/>
         <source>&amp;Highlights for selection in search tables, flight plan table or elevation profile hover:</source>
         <translation>&amp;Destaques para seleção em tabelas de pesquisa, tabela de planos de voo ou perfil de elevação:</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="4648"/>
+        <location filename="src/options/options.ui" line="4647"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;img src=&quot;:/littlenavmap/resources/icons/bulb.svg&quot;/&gt;&lt;span style=&quot; font-style:italic;&quot;&gt;Compass rose label settings can be found on page &lt;/span&gt;&lt;a href=&quot;lnm://12&quot;&gt;&lt;span style=&quot; font-style:italic; text-decoration: underline; color:#0057ae;&quot;&gt;Map Labels&lt;/span&gt;&lt;/a&gt;&lt;span style=&quot; font-style:italic;&quot;&gt; in branch &amp;quot;Compass Rose&amp;quot;.&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;img src=&quot;:/littlenavmap/resources/icons/bulb.svg&quot;/&gt;&lt;span style=&quot; font-style:italic;&quot;&gt;As configurações do rótulo Rosa dos Ventos podem pode ser encontrado na página &lt;/span&gt;&lt;a href=&quot;lnm://12&quot;&gt;&lt;span style=&quot; font-style:italic; text-decoration: underline; color:#0057ae;&quot;&gt;Rótulos do Mapa&lt;/span&gt; &lt;/a&gt;&lt;span style=&quot; font-style:italic;&quot;&gt; no ramo &amp;quot;Rosa dos Ventos&amp;quot;.&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="4920"/>
+        <location filename="src/options/options.ui" line="4919"/>
         <source>&amp;Distance measurements:</source>
         <translation>&amp;Medições de distância:</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="4993"/>
+        <location filename="src/options/options.ui" line="4992"/>
         <source>&amp;Minimum altitude grid (MORA):</source>
         <translation>&amp;Grade de altitude mínima (MORA):</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="5013"/>
+        <location filename="src/options/options.ui" line="5012"/>
         <source>&amp;Range rings, traffic patterns, user holdings, airway highlights and logbook entries:</source>
         <translation>&amp;Anéis de alcance, padrões de tráfego, orbitas de usuários, destaques de aerovias e entradas de diário de bordo:</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="5117"/>
+        <location filename="src/options/options.ui" line="5116"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;img src=&quot;:/littlenavmap/resources/icons/bulb.svg&quot;/&gt;&lt;span style=&quot; font-style:italic;&quot;&gt;Label settings for distance measurement lines can be found on page &lt;/span&gt;&lt;a href=&quot;lnm://12&quot;&gt;&lt;span style=&quot; font-style:italic; text-decoration: underline; color:#0057ae;&quot;&gt;Map Labels&lt;/span&gt;&lt;/a&gt;&lt;span style=&quot; font-style:italic;&quot;&gt; in branch &amp;quot;Measurement Lines&amp;quot;.&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;img src=&quot;:/littlenavmap/resources/icons/bulb.svg&quot;/&gt;&lt;span style=&quot; font-style:italic;&quot;&gt;As configurações de rótulo para linhas de medição de distância podem ser encontradas na página &lt;/span&gt;&lt;a href=&quot;lnm://12&quot;&gt;&lt;span style=&quot; font-style:italic; text-decoration: underline; color:#0057ae;&quot;&gt;Rótulos do Mapa&lt;/span&gt;&lt;/a&gt;&lt;span style=&quot; font-style:italic;&quot;&gt; no ramo &amp;quot;Linhas de Medição&amp;quot;.&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="5156"/>
+        <location filename="src/options/options.ui" line="5155"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;img src=&quot;:/littlenavmap/resources/icons/bulb.svg&quot;/&gt;&lt;span style=&quot; font-style:italic;&quot;&gt;Right click on a MSA symbol and select &amp;quot;Add MSA diagram at ...&amp;quot; to get a true-to-scale MSA sector.&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;img src=&quot;:/littlenavmap/resources/icons/bulb.svg&quot;/&gt;&lt;span style=&quot; font-style:italic;&quot;&gt;Clique com o botão direito em um símbolo MSA e selecione &amp;quot;Adicionar diagrama MSA em ...&amp;quot; para obter um setor MSA verdadeiro em escala.&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="5252"/>
+        <location filename="src/options/options.ui" line="5251"/>
         <source>API Keys, Usernames or Tokens for Map Services</source>
         <translation>Chaves de API, Nomes de Usuário ou Tokens para Serviços de Mapas</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="5258"/>
+        <location filename="src/options/options.ui" line="5257"/>
         <source>&lt;p&gt;You can enter login information, tokens or API keys for map services which need an user account. The required keys shown below are extracted from the installed map themes. &lt;/p&gt;&lt;p&gt;Click one of the following links to go directly to the account pages of the respective map services. You may need to sign in or create an account.&lt;br/&gt;- &lt;a href=&quot;https://account.mapbox.com/&quot;&gt;&lt;b&gt;Mapbox Account page&lt;/b&gt;&lt;/a&gt;&lt;br/&gt;- &lt;a href=&quot;https://manage.thunderforest.com/dashboard&quot;&gt;&lt;b&gt;Thunderforest Console&lt;/b&gt;&lt;/a&gt;&lt;br/&gt;- &lt;a href=&quot;https://cloud.maptiler.com/account/keys/&quot;&gt;&lt;b&gt;Maptiler Cloud Account API key page&lt;/b&gt;&lt;/a&gt;&lt;br/&gt;- &lt;a href=&quot;https://stadiamaps.com/stamen/onboarding/create-account/&quot;&gt;&lt;b&gt;Stadia Maps / StamenTerrain&lt;/b&gt;&lt;/a&gt;&lt;/p&gt;&lt;p&gt;&lt;b&gt;A restart might be needed after changing keys. Note that all accounts are free. You do not have to enter any payment information there. Click the help button for details.&lt;br/&gt;Do not show this information publicly in forums on screenshots.&lt;/b&gt;&lt;/p&gt;&lt;p&gt;Double click a value to edit.&lt;/p&gt;</source>
         <oldsource>&lt;p&gt;You can enter login information, tokens or API keys for map services which need an user account. The required keys shown below are extracted from the installed map themes. &lt;/p&gt;&lt;p&gt;Click one of the following links to go directly to the account pages of the respective map services. You may need to sign in or create an account.&lt;br/&gt;- &lt;a href=&quot;https://account.mapbox.com/&quot;&gt;&lt;b&gt;Mapbox Account page&lt;/b&gt;&lt;/a&gt;&lt;br/&gt;- &lt;a href=&quot;https://manage.thunderforest.com/dashboard&quot;&gt;&lt;b&gt;Thunderforest Console&lt;/b&gt;&lt;/a&gt;&lt;br/&gt;- &lt;a href=&quot;https://cloud.maptiler.com/account/keys/&quot;&gt;&lt;b&gt;Maptiler Cloud Account API key page&lt;/b&gt;&lt;/a&gt;&lt;br/&gt;- &lt;a href=&quot;https://stadiamaps.com/stamen/onboarding/create-account/&quot;&gt;&lt;b&gt;Stadia Maps / StamenTerrain&lt;/span&gt;&lt;/a&gt;&lt;/p&gt;&lt;p&gt;&lt;b&gt;A restart might be needed after changing keys. Note that all accounts are free. You do not have to enter any payment information there. Click the help button for details.&lt;br/&gt;Do not show this information publicly in forums on screenshots.&lt;/b&gt;&lt;/p&gt;&lt;p&gt;Double click a value to edit.&lt;/p&gt;</oldsource>
         <translation>&lt;p&gt;Você pode inserir informações de login, tokens ou chaves de API para serviços de mapas que precisam de uma conta de usuário. As chaves necessárias mostradas abaixo são extraídas dos temas de mapas instalados. &lt;/p&gt;&lt;p&gt;Clique em um dos links a seguir para ir diretamente às páginas de contas dos respectivos serviços de mapas. Pode ser necessário fazer login ou criar uma conta.&lt;br/&gt;- &lt;a href=&quot;https://account.mapbox.com/&quot;&gt;&lt;b&gt;Página da conta do Mapbox&lt;/b&gt;&lt;/a&gt;&lt;br/&gt;- &lt;a href=&quot;https://manage.thunderforest.com/dashboard&quot;&gt;&lt;b&gt;Console Thunderforest&lt;/b&gt;&lt;/a&gt;&lt;br/&gt;- &lt;a href=&quot;https://cloud.maptiler.com/account/keys/&quot;&gt;&lt;b&gt;Página de chaves de API da conta do Maptiler Cloud&lt;/b&gt;&lt;/a&gt;&lt;br/&gt;- &lt;a href=&quot;https://stadiamaps.com/stamen/onboarding/create-account/&quot;&gt;&lt;b&gt;Stadia Maps / StamenTerrain&lt;/b&gt;&lt;/a&gt;&lt;/p&gt;&lt;p&gt;&lt;b&gt;Talvez seja necessário reiniciar após alterar as chaves. Note que todas as contas são gratuitas. Você não precisa inserir nenhuma informação de pagamento. Clique no botão de ajuda para mais detalhes.&lt;br/&gt;Não mostre essas informações publicamente em fóruns ou capturas de tela.&lt;/b&gt;&lt;/p&gt;&lt;p&gt;Duplo clique em um valor para editar.&lt;/p&gt;</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="5333"/>
+        <location filename="src/options/options.ui" line="5332"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;img src=&quot;:/littlenavmap/resources/icons/bulb.svg&quot;/&gt;&lt;span style=&quot; font-style:italic;&quot;&gt;Change the path to additional map themes on page &lt;/span&gt;&lt;a href=&quot;lnm://21&quot;&gt;&lt;span style=&quot; font-style:italic; text-decoration: underline; color:#0057ae;&quot;&gt;Cache and Files&lt;/span&gt;&lt;/a&gt;&lt;span style=&quot; font-style:italic;&quot;&gt;. Click the help button for installation instructions.&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;img src=&quot;:/littlenavmap/resources/icons/bulb.svg&quot;/&gt;&lt;span style=&quot; font-style:italic;&quot;&gt;Altere o caminho para temas de mapa adicionais na página &lt;/span&gt;&lt;a href=&quot;lnm://21&quot;&gt;&lt;span style=&quot; font-style:italic; text-decoration: underline; color:#0057ae;&quot;&gt;Cache e Arquivos&lt;/span&gt;&lt;/a&gt;&lt;span style=&quot; font-style:italic;&quot;&gt;. Clique no botão de ajuda para instruções de instalação.&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="5799"/>
+        <location filename="src/options/options.ui" line="5798"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;img src=&quot;:/littlenavmap/resources/icons/bulb.svg&quot;/&gt;&lt;span style=&quot; font-style:italic;&quot;&gt;Enable online networks on page &lt;/span&gt;&lt;a href=&quot;lnm://19&quot;&gt;&lt;span style=&quot; font-style:italic; color:#0057ae;&quot;&gt;Online Flying&lt;/span&gt;&lt;/a&gt;&lt;span style=&quot; font-style:italic;&quot;&gt;.&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;img src=&quot;:/littlenavmap/resources/icons/bulb.svg&quot;/&gt;&lt;span style=&quot; font-style:italic;&quot;&gt;Ative as redes online na página &lt;/span&gt;&lt;a href=&quot;lnm://19&quot;&gt;&lt;span style=&quot; font-style:italic; color:#0057ae;&quot;&gt;Voo Online&lt;/span&gt;&lt;/a&gt;&lt;span style=&quot; font-style:italic;&quot;&gt;.&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="6236"/>
+        <location filename="src/options/options.ui" line="6235"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;img src=&quot;:/littlenavmap/resources/icons/bulb.svg&quot;/&gt;&lt;span style=&quot; font-style:italic;&quot;&gt;Click the Help button to read more about aircraft movement in the user manual. The options on this page are intended to minimize interactions with Little Navmap during flight, but may be confusing to new users.&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;img src=&quot;:/littlenavmap/resources/icons/bulb.svg&quot;/&gt;&lt;span style=&quot; font-style:italic;&quot;&gt;Clique no botão de Ajuda para ler mais sobre o movimento da aeronave no manual do usuário. As opções nesta página são destinadas a minimizar as interações com o Little Navmap durante o voo, mas podem ser confusas para novos usuários.&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="6370"/>
+        <location filename="src/options/options.ui" line="6369"/>
         <source>&amp;Minimum altitude buffer to ground in elevation profile (red line):</source>
         <translation>&amp;Limite de altitude mínimo para o solo no perfil de elevação (linha vermelha):</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="6511"/>
-        <location filename="src/options/options.ui" line="6607"/>
+        <location filename="src/options/options.ui" line="6510"/>
+        <location filename="src/options/options.ui" line="6606"/>
         <source>&amp;NOAA</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="6689"/>
+        <location filename="src/options/options.ui" line="6688"/>
         <source>X-Plane 11 Weather and Wind Files</source>
         <translation>Arquivos de Clima e Vento do X-Plane 11</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="6714"/>
+        <location filename="src/options/options.ui" line="6713"/>
         <source>No &quot;global_winds.grib&quot; selected. Using default.</source>
         <translation>Nenhum &quot;global_winds.grib&quot; selecionado. Usando padrão.</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="6724"/>
+        <location filename="src/options/options.ui" line="6723"/>
         <source>Wind &amp;File:</source>
         <translation>&amp;Arquivo de Vento:</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="6763"/>
+        <location filename="src/options/options.ui" line="6762"/>
         <source>No &quot;METAR.rwx&quot; selected. Using default.</source>
         <translation>Nenhum &quot;METAR.rwx&quot; selecionado. Usando padrão.</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="6773"/>
+        <location filename="src/options/options.ui" line="6772"/>
         <source>&amp;Weather file:</source>
         <translation>&amp;Arquivo de clima:</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="6831"/>
+        <location filename="src/options/options.ui" line="6830"/>
         <source>X-Plane 12 Weather and Wind Path</source>
         <translation>X-Plane 12 Caminho para os Arquivos de Clima e Vento</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="6852"/>
+        <location filename="src/options/options.ui" line="6851"/>
         <source>Select the &quot;X-Plane 12/Output/real weather&quot; directory from the X-Plane base directory.</source>
         <translation>Selecione o diretório &quot;X-Plane 12/Output/real weather&quot; no diretório base do X-Plane.</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="6862"/>
+        <location filename="src/options/options.ui" line="6861"/>
         <source>This directory &quot;X-Plane 12/Output/real weather&quot; will be used to get METAR and winds aloft data if X-Plane 12 is selected.
 The default X-Plane 12 weather directory in the X-Plane base path will be used if this field is empty.</source>
         <translation>Este diretório &quot;X-Plane 12/Output/real weather&quot; será usado para obter dados de METAR e ventos elevados se o X-Plane 12 for selecionado.
 O diretório climático padrão do X-Plane 12 no caminho base do X-Plane será usado se este campo estiver vazio.</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="6866"/>
+        <location filename="src/options/options.ui" line="6865"/>
         <source>No &quot;Output/real weather&quot; selected. Using default.</source>
         <translation>Nenhuma &quot;saída/clima real&quot; selecionada. Usando padrão.</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="6876"/>
+        <location filename="src/options/options.ui" line="6875"/>
         <source>&amp;Weather Directory:</source>
         <translation>&amp;Diretório do Clima:</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="6930"/>
+        <location filename="src/options/options.ui" line="6929"/>
         <source>Active Sky Weather File</source>
         <translation>Arquivo de Meteorologia do Active Sky</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="6980"/>
+        <location filename="src/options/options.ui" line="6979"/>
         <source>No &quot;current_wx_snapshot.txt&quot; selected. Using default.</source>
         <translation>Nenhum &quot;current_wx_snapshot.txt&quot; selecionado. Usando padrão.</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="7003"/>
+        <location filename="src/options/options.ui" line="7002"/>
         <source>Online Weather and Wind Forecast Web Addresses</source>
         <translation>Endereços da Web de Previsão de Clima e Vento Online</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="7027"/>
+        <location filename="src/options/options.ui" line="7026"/>
         <source>Send a test request to the NOAA wind service.</source>
         <translation>Envie uma solicitação de teste para o serviço de vento NOAA.</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="7037"/>
+        <location filename="src/options/options.ui" line="7036"/>
         <source>Complete URL of the VATSIM network weather download service.
 There is usually no need to change this URL.
 Entering a wrong value will cause errors when downloading weather reports.</source>
@@ -26205,7 +26205,7 @@ Geralmente não há necessidade de alterar esse URL.
 Inserir um valor errado causará erros ao baixar boletins meteorológicos.</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="7058"/>
+        <location filename="src/options/options.ui" line="7057"/>
         <source>Base URL of the NOAA wind service.
 There is usually no need to change this URL.
 Entering a wrong value will cause errors when downloading wind reports.</source>
@@ -26214,7 +26214,7 @@ Geralmente não há necessidade de alterar esse URL.
 Inserir um valor errado causará erros ao baixar relatórios de vento.</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="7079"/>
+        <location filename="src/options/options.ui" line="7078"/>
         <source>&amp;NOAA Weather Service URL:</source>
         <translation>URL do Serviço de Clima da &amp;NOAA:</translation>
     </message>
@@ -26223,7 +26223,7 @@ Inserir um valor errado causará erros ao baixar relatórios de vento.</translat
         <translation type="vanished">&amp;Navaids e aerovias</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="7311"/>
+        <location filename="src/options/options.ui" line="7310"/>
         <source>&amp;None</source>
         <translation>&amp;Nenhum</translation>
     </message>
@@ -26244,9 +26244,9 @@ Inserir um valor errado causará erros ao baixar relatórios de vento.</translat
         <translation type="vanished">&amp;Regra geral para calcular o ponto de decida:</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="6786"/>
-        <location filename="src/options/options.ui" line="6796"/>
-        <location filename="src/options/options.ui" line="6993"/>
+        <location filename="src/options/options.ui" line="6785"/>
+        <location filename="src/options/options.ui" line="6795"/>
+        <location filename="src/options/options.ui" line="6992"/>
         <source>&amp;Select File ...</source>
         <translation>&amp;Selecione o Arquivo ...</translation>
     </message>
@@ -26261,7 +26261,7 @@ Inserir um valor errado causará erros ao baixar relatórios de vento.</translat
         <translation type="vanished">Arquivos e Endereços da Web para Relatórios de Vento</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="7141"/>
+        <location filename="src/options/options.ui" line="7140"/>
         <source>NOAA &amp;Wind Service Base URL:</source>
         <translation>&amp;URL Base do Serviço de Vento da NOAA:</translation>
     </message>
@@ -26274,7 +26274,7 @@ Inserir um valor errado causará erros ao baixar relatórios de vento.</translat
         <translation type="vanished">&amp;Permitir rolar e ampliar o mapa e voltar para a aeronave após o tempo abaixo</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="6199"/>
+        <location filename="src/options/options.ui" line="6198"/>
         <source>User can scroll in the flight plan table but the program will  
 put the active leg back on top after the given timeout while flying.</source>
         <translation>O usuário pode rolar na tabela de plano de voo, mas o programa irá
@@ -26295,7 +26295,7 @@ após o tempo limite fornecido durante o voo.</translation>
         <translation type="vanished">&amp;Limpar a seleção na tabela de plano de voo após o tempo abaixo</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="1646"/>
+        <location filename="src/options/options.ui" line="1645"/>
         <source>Set flight plan file pattern to long name &quot;PLANTYPE DEPARTNAME (DEPARTIDENT) to DESTNAME (DESTIDENT)&quot;
 Example: &quot;IFR Frankfurt Am Main (EDDF) to Fiumicino (LIRF).lnmpln&quot;</source>
         <translation>Defina o padrão de arquivo do plano de voo para o nome longo &quot;PLANTYPE DEPARTNAME (DEPARTIDENT) para DESTNAME (DESTIDENT)&quot;
@@ -26306,7 +26306,7 @@ Exemplo: &quot;IFR Frankfurt Am Main (EDDF) para Fiumicino (LIRF) .lnmpln&quot;<
         <translation type="vanished">&amp;Longo</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="1704"/>
+        <location filename="src/options/options.ui" line="1703"/>
         <source>Set flight plan file pattern to short name &quot;DEPARTIDENT DESTIDENT&quot;.
 Example: &quot;EDDF LIRF.lnmpln&quot;</source>
         <oldsource>Set flight plan file pattern to short name &quot;DEPARTIDENT DESTIDENT&quot;.
@@ -26353,13 +26353,13 @@ CRUISEALT: Altitude de cruzeiro</translation>
         <translation type="vanished">&amp;Padrão para os nomes dos planos de voo:</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="6349"/>
+        <location filename="src/options/options.ui" line="6348"/>
         <source>Elevation Profile</source>
         <translation>Perfil de Elevação</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="6491"/>
-        <location filename="src/options/options.ui" line="6587"/>
+        <location filename="src/options/options.ui" line="6490"/>
+        <location filename="src/options/options.ui" line="6586"/>
         <source>&amp;Flight Simulator (FSX, P3D and X-Plane)</source>
         <translation>&amp;Flight Simulator (FSX, P3D e X-Plane)</translation>
     </message>
@@ -26376,7 +26376,7 @@ Default is &quot;https://metar.vatsim.net/metar.php?id=ALL&quot;.</source>
 O padrão é &quot;https://metar.vatsim.net/metar.php?id=ALL&quot;.</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="6759"/>
+        <location filename="src/options/options.ui" line="6758"/>
         <source>The file &quot;METAR.rwx&quot; will be used to get airport weather if X-Plane is selected.
 The default X-Plane weather file in the X-Plane base path will be used if this field is empty.</source>
         <translation>O arquivo &quot;METAR.rwx&quot; será usado para obter o clima do aeroporto se X-Plane for selecionado.
@@ -26401,7 +26401,7 @@ Inserir um valor incorreto causará erros ao baixar relatórios de vento.
 O padrão é &quot;https://nomads.ncep.noaa.gov/cgi-bin/filter_gfs_1p00.pl&quot;.</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="6793"/>
+        <location filename="src/options/options.ui" line="6792"/>
         <source>Select the &quot;global_winds.grib&quot; file from the X-Plane base directory.</source>
         <translation>Selecione o arquivo &quot;global_winds.grib&quot; do diretório base do X-Plane.</translation>
     </message>
@@ -26410,13 +26410,13 @@ O padrão é &quot;https://nomads.ncep.noaa.gov/cgi-bin/filter_gfs_1p00.pl&quot;
         <translation type="vanished">&amp;Arquivo de Vento do X-Plane:</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="7341"/>
+        <location filename="src/options/options.ui" line="7340"/>
         <source>Use the PilotEdge network predefined configuration for online flying</source>
         <oldsource>Use the PilotEdge network pre-defined configuration for online flying</oldsource>
         <translation>Use a configuração pré-definida da rede PilotEdge para voos online</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="7344"/>
+        <location filename="src/options/options.ui" line="7343"/>
         <source>&amp;PilotEdge</source>
         <translation></translation>
     </message>
@@ -26425,50 +26425,50 @@ O padrão é &quot;https://nomads.ncep.noaa.gov/cgi-bin/filter_gfs_1p00.pl&quot;
         <translation type="vanished">Baixe o arquivo &quot;whazzup.txt&quot; ou &quot;status.txt&quot; periodicamente.</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="7527"/>
+        <location filename="src/options/options.ui" line="7526"/>
         <source>JSON (VATSIM)</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="7532"/>
+        <location filename="src/options/options.ui" line="7531"/>
         <source>JSON (IVAO)</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="7589"/>
+        <location filename="src/options/options.ui" line="7588"/>
         <source>Web Server</source>
         <translation>Servidor Web</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="7724"/>
+        <location filename="src/options/options.ui" line="7684"/>
         <source>Server is running.</source>
         <translation>O servidor está em execução.</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="7610"/>
+        <location filename="src/options/options.ui" line="7742"/>
         <source>&amp;Document root directory:</source>
         <translation>&amp;Diretório raiz do documento:</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="7665"/>
+        <location filename="src/options/options.ui" line="7609"/>
         <source>&amp;Port number:</source>
         <translation>&amp;Número da porta:</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="7717"/>
+        <location filename="src/options/options.ui" line="7654"/>
         <source>&amp;Start Server</source>
         <translation>&amp;Iniciar servidor</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="7675"/>
+        <location filename="src/options/options.ui" line="7619"/>
         <source>Port number for the web server.  Default is 8965.
 Change this if you get an error message like &quot;Bound address already in use&quot; when running the server.</source>
         <translation>Número da porta do servidor da web. O padrão é 8965.
 Altere isso se você receber uma mensagem de erro como &quot;Endereço vinculado já em uso&quot; ao executar o servidor.</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="6855"/>
-        <location filename="src/options/options.ui" line="7635"/>
+        <location filename="src/options/options.ui" line="6854"/>
+        <location filename="src/options/options.ui" line="7677"/>
         <source>&amp;Select Directory ...</source>
         <translation>&amp;Selecione o Diretório ...</translation>
     </message>
@@ -26477,7 +26477,7 @@ Altere isso se você receber uma mensagem de erro como &quot;Endereço vinculado
         <translation type="vanished">&amp;Use uma conexão criptografada (HTTPS / SSL)</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="8010"/>
+        <location filename="src/options/options.ui" line="8041"/>
         <source>&amp;Select GLOBE Directory ...</source>
         <translation>&amp;Selecione o Diretório do GLOBE ...</translation>
     </message>
@@ -26528,18 +26528,18 @@ Atualmente, apenas o OpenAir é suportado (* .txt). </translation>
         <translation type="vanished">&amp;Extensões de arquivo:</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="8239"/>
-        <location filename="src/options/options.ui" line="8451"/>
+        <location filename="src/options/options.ui" line="8270"/>
+        <location filename="src/options/options.ui" line="8482"/>
         <source>&amp;Add Directory ...</source>
         <translation>&amp;Adicionar Diretório ...</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="8246"/>
+        <location filename="src/options/options.ui" line="8277"/>
         <source>&amp;Add Files ...</source>
         <translation>&amp;Adicionar Arquivos ...</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="8196"/>
+        <location filename="src/options/options.ui" line="8227"/>
         <source>All directories including sub-directories and files in this list will be omitted when loading the scenery library into the Little Navmap database.
 You can also use this list to speed up database loading if you exclude directories that do not contain airports or navaids.
 These paths apply to all Flight Simulators (FSX, Prepar3D, MSFS and X-Plane).
@@ -26563,12 +26563,12 @@ Você precisa recarregar a biblioteca de cenários para que as alterações entr
         <translation>&amp;Menor Distância (p. ex.Comprimento da Pista):</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="7883"/>
+        <location filename="src/options/options.ui" line="7914"/>
         <source>&amp;Show Disk Cache in File Manager</source>
         <translation>&amp;Mostrar Cache de Disco no Gerenciador de arquivos</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="5921"/>
+        <location filename="src/options/options.ui" line="5920"/>
         <source>&amp;Simulator aircraft scroll box size (percent of map window size):</source>
         <translatorcomment>Pássivel de Revisão</translatorcomment>
         <translation>&amp;Simular o tamanho da caixa de rolagem da aeronave (porcentagem do tamanho da janela do mapa):</translation>
@@ -26579,7 +26579,7 @@ Você precisa recarregar a biblioteca de cenários para que as alterações entr
         <translation>&amp;Velocidade:</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="7455"/>
+        <location filename="src/options/options.ui" line="7454"/>
         <source>&amp;Status File URL:</source>
         <translation>&amp;Status do Arquivo URL:</translation>
     </message>
@@ -26588,44 +26588,44 @@ Você precisa recarregar a biblioteca de cenários para que as alterações entr
         <translation type="vanished">&amp;Estilo para interface gráfica do usuário (reinício necessário após a mudança):</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="7030"/>
-        <location filename="src/options/options.ui" line="7174"/>
-        <location filename="src/options/options.ui" line="7184"/>
-        <location filename="src/options/options.ui" line="7194"/>
-        <location filename="src/options/options.ui" line="7428"/>
-        <location filename="src/options/options.ui" line="7468"/>
+        <location filename="src/options/options.ui" line="7029"/>
+        <location filename="src/options/options.ui" line="7173"/>
+        <location filename="src/options/options.ui" line="7183"/>
+        <location filename="src/options/options.ui" line="7193"/>
+        <location filename="src/options/options.ui" line="7427"/>
+        <location filename="src/options/options.ui" line="7467"/>
         <source>&amp;Test</source>
         <translation>&amp;Teste</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="2056"/>
+        <location filename="src/options/options.ui" line="2055"/>
         <source>&amp;Treat empty airports special</source>
         <translation>&amp;Trate os aeroportos vazios como especiais</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="7500"/>
+        <location filename="src/options/options.ui" line="7499"/>
         <source>&amp;Update every:</source>
         <translation>&amp;Atualizar a cada:</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="6336"/>
+        <location filename="src/options/options.ui" line="6335"/>
         <source>&amp;Use simplified rule to determine cruise altitude</source>
         <translation>&amp;Use regra simplificada para determinar a altitude de cruzeiro</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="3070"/>
+        <location filename="src/options/options.ui" line="3069"/>
         <source>&amp;User aircraft:</source>
         <translation>&amp;Aeronaves do usuário:</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="6521"/>
-        <location filename="src/options/options.ui" line="6617"/>
-        <location filename="src/options/options.ui" line="7324"/>
+        <location filename="src/options/options.ui" line="6520"/>
+        <location filename="src/options/options.ui" line="6616"/>
+        <location filename="src/options/options.ui" line="7323"/>
         <source>&amp;VATSIM</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="7089"/>
+        <location filename="src/options/options.ui" line="7088"/>
         <source>&amp;VATSIM Weather Service URL:</source>
         <translation>URL do Serviço de Clima da &amp;VATSIM:</translation>
     </message>
@@ -26641,22 +26641,22 @@ aerovias:</translation>
         <translation>&amp;Velocidade Vertical:</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="7435"/>
+        <location filename="src/options/options.ui" line="7434"/>
         <source>&amp;Whazzup File URL:</source>
         <translation>&amp;Arquivo Whazzup URL:</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="2715"/>
+        <location filename="src/options/options.ui" line="2714"/>
         <source>&amp;Zoom distance for &quot;Show on Map&quot; menu item:</source>
         <translation>&amp;Zoom para o item de menu &quot;Mostrar no Mapa&quot;:</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="2682"/>
+        <location filename="src/options/options.ui" line="2681"/>
         <source>&amp;Zoom distance for double click on object:</source>
         <translation>&amp;Distância de zoom para duplo clique no objeto:</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="6080"/>
+        <location filename="src/options/options.ui" line="6079"/>
         <source>&amp;Allow scrolling and zooming in the map and jump back to aircraft after:</source>
         <translation>&amp;Permita a rolagem e o zoom no mapa e volte para a aeronave após:</translation>
     </message>
@@ -26665,34 +26665,34 @@ aerovias:</translation>
         <translation type="vanished">Distância de zoom que deve ser aplicada após o touchdown</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="6068"/>
+        <location filename="src/options/options.ui" line="6067"/>
         <source>&amp;Zoom in on touchdown:</source>
         <translation>&amp;Zoom no touchdown:</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="6145"/>
+        <location filename="src/options/options.ui" line="6144"/>
         <source>While flying - Flight Plan table</source>
         <translation>Ao voar - tabela Plano de voo</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="6185"/>
+        <location filename="src/options/options.ui" line="6184"/>
         <source>Clears selected (blue) rows in the flight plan table and the related map highlights
 after the given timeout while flying.</source>
         <translation>Limpa as linhas selecionadas (azuis) na tabela do plano de voo e os destaques do mapa relacionado
 após o tempo limite dado durante o voo.</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="6189"/>
+        <location filename="src/options/options.ui" line="6188"/>
         <source>&amp;Clear selection in flight plan table after:</source>
         <translation>&amp;Limpar seleção na tabela de plano de voo após:</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="6203"/>
+        <location filename="src/options/options.ui" line="6202"/>
         <source>&amp;Scroll flight plan table back to active leg after:</source>
         <translation>&amp;Role a tabela do plano de voo de volta para a perna ativa após:</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="6166"/>
+        <location filename="src/options/options.ui" line="6165"/>
         <source>Time until the selection is cleared and/or the active leg is put back on top of the flight plan table after user actions like scrolling or selecting.</source>
         <translation>Tempo até que a seleção seja desmarcada e/ou a perna ativa seja colocada de volta no topo da tabela de plano de voo após ações do usuário, como rolagem ou seleção.</translation>
     </message>
@@ -26720,7 +26720,7 @@ DESTNAME: Nome do aeroporto de destino
 CRUISEALT: Altitude de cruzeiro</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="1755"/>
+        <location filename="src/options/options.ui" line="1754"/>
         <source>&amp;Pattern for default flight plan file names used when saving LNMPLN:</source>
         <translation>&amp;Padrão para nomes de arquivo de plano de voo padrão usados ao salvar LNMPLN:</translation>
     </message>
@@ -26761,23 +26761,23 @@ Padrão é &quot;https://api.ivao.aero/v2/airports/all/metar&quot;.</translation
         <translation type="vanished">Nenhum &quot;METAR.rwx&quot; selecionado. Usando arquivo padrão.</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="7099"/>
-        <location filename="src/options/options.ui" line="7131"/>
-        <location filename="src/options/options.ui" line="7151"/>
-        <location filename="src/options/options.ui" line="7161"/>
+        <location filename="src/options/options.ui" line="7098"/>
+        <location filename="src/options/options.ui" line="7130"/>
+        <location filename="src/options/options.ui" line="7150"/>
+        <location filename="src/options/options.ui" line="7160"/>
         <source>Reset the URL back to default</source>
         <translation>Redefina o URL de volta ao padrão</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="7102"/>
-        <location filename="src/options/options.ui" line="7134"/>
-        <location filename="src/options/options.ui" line="7154"/>
-        <location filename="src/options/options.ui" line="7164"/>
+        <location filename="src/options/options.ui" line="7101"/>
+        <location filename="src/options/options.ui" line="7133"/>
+        <location filename="src/options/options.ui" line="7153"/>
+        <location filename="src/options/options.ui" line="7163"/>
         <source>&amp;Reset</source>
         <translation>&amp;Redefinir</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="6710"/>
+        <location filename="src/options/options.ui" line="6709"/>
         <source>This file &quot;global_winds.grib&quot; will be used to get wind aloft data if X-Plane is selected.
 The default X-Plane wind file in the X-Plane base path will be used if this field is empty.</source>
         <oldsource>This file &quot;global_winds.grib&quot; will be used only if X-Plane is selected.
@@ -26794,12 +26794,12 @@ Geralmente, não há necessidade de alterar esta URL.
 A inserção de um valor errado causará erros ao fazer o download dos relatórios de vento.</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="7714"/>
+        <location filename="src/options/options.ui" line="7651"/>
         <source>Start or stop the server to test the values above.</source>
         <translation>Inicie ou pare o servidor para testar os valores acima.</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="7626"/>
+        <location filename="src/options/options.ui" line="7661"/>
         <source>Base directory of the web server. This is the directory containing the &quot;index.html&quot; file.
 There is usually no need to change this value.
 Use this to serve your own modified Little Navmap web page.</source>
@@ -26808,7 +26808,7 @@ Geralmente, não há necessidade de alterar esse valor.
 Use isso para servir como sua própria página da Web Little Navmap personalizada.</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="7692"/>
+        <location filename="src/options/options.ui" line="7636"/>
         <source>Use a so-called self-signed example certificate for an encrypted connection.
 Browsers will show a warning when using such a connection and you have to add an security exception in the browser.
 You have to use &quot;https//...&quot; instead of &quot;http://...&quot; when accessing the page. Otherwise you will get an error in the web browser.
@@ -26823,7 +26823,7 @@ repositório do Little Navmap GIT.
 </translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="7700"/>
+        <location filename="src/options/options.ui" line="7644"/>
         <source>&amp;Use encrypted connection (HTTPS / SSL)</source>
         <translation>&amp;Use uma conexão criptografada (HTTPS / SSL)</translation>
     </message>
@@ -26852,7 +26852,7 @@ Download do link &lt;b&gt;&lt;i&gt;Todos os títulos em .zip (all10g.zip)&lt;/i&
 &lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="2179"/>
+        <location filename="src/options/options.ui" line="2178"/>
         <source>Show information for airports when clicking on the map</source>
         <oldsource>A restart is recommended after changing the style.</oldsource>
         <translation>Mostrar informações para aeroportos ao clicar no mapa</translation>
@@ -26862,7 +26862,7 @@ Download do link &lt;b&gt;&lt;i&gt;Todos os títulos em .zip (all10g.zip)&lt;/i&
         <translation type="vanished">A&amp;dicionar ...</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="3613"/>
+        <location filename="src/options/options.ui" line="3612"/>
         <source>AI or &amp;multiplayer aircraft:</source>
         <translation>AI ou &amp;Aeronave multiplayer:</translation>
     </message>
@@ -26893,7 +26893,7 @@ fornecer um botão na barra de ferramentas para desabilitá-los se esta caixa de
 juntos vão &quot;Tratar dos aeroportos especiais&quot;.</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="8303"/>
+        <location filename="src/options/options.ui" line="8334"/>
         <source>All airports found outside the default &quot;scenery&quot; directory will be considered add-ons.
 You can use this list to modify this behavior.
 Any airports found in these directories and their sub-directories will not be considered add-ons.
@@ -26933,7 +26933,7 @@ Você precisa recarregar a biblioteca de cenários para que as mudanças entrem 
         <translation type="vanished">Centralizar o &amp;Plano de voo após o carregamento</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="1805"/>
+        <location filename="src/options/options.ui" line="1804"/>
         <source>Center Google Earth &amp;KML after loading</source>
         <translation>Centralizar &amp;KML do Google Earth após o carregamento</translation>
     </message>
@@ -26957,14 +26957,14 @@ Você precisa recarregar a biblioteca de cenários para que as mudanças entrem 
         <translation type="vanished">Tamanho do texto para o relatório de performance da &amp;aeronave:</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="1741"/>
+        <location filename="src/options/options.ui" line="1740"/>
         <source>Check this option to avoid overwriting flight plans with a new departure or destination after changing these.
 The &quot;Save as&quot; dialog will show up instead of overwriting the current flight plan when you reverse the route for example.</source>
         <translation>Marque esta opção para evitar a substituição de planos de voo por uma nova partida ou destino depois de alterá-los.
 A caixa de diálogo &quot;Salvar como&quot; será exibida em vez de sobrescrever o plano de voo atual quando você inverter a rota, por exemplo.</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="2749"/>
+        <location filename="src/options/options.ui" line="2748"/>
         <source>Zooms the map one step out for actions like center flight plan or double click to achieve a sharp map display.
 This works best with the Mercator projection and online maps.
 Map views might be shown with a larger zoom distance than expected if this option is selected.</source>
@@ -26973,12 +26973,12 @@ Isso funciona melhor com a projeção Mercator e mapas online.
 As visualizações de mapa podem ser mostradas com uma distância de zoom maior do que o esperado se essa opção for selecionada.</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="2754"/>
+        <location filename="src/options/options.ui" line="2753"/>
         <source>&amp;Avoid blurred map display by zooming out to next best step</source>
         <translation>&amp;Evite a exibição de mapa borrado, diminuindo o zoom para a próxima melhor etapa</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="1875"/>
+        <location filename="src/options/options.ui" line="1874"/>
         <source>Allows to undock and put the map window into a floating state.
 This can cause several unwanted effects when arranging dock windows.
 Uncheck this if you do experience strange effects when resizing dock windows.
@@ -27001,7 +27001,7 @@ Reinicie o programa depois de alterar essa opção. Você também pode precisar 
         <translation type="vanished">Tamanhos de símbolo e texto para o perfil do mapa e elevação</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="1957"/>
+        <location filename="src/options/options.ui" line="1956"/>
         <source>&amp;Sun shading darkness:</source>
         <translation>&amp;Escuridão do sombreamento do sol:</translation>
     </message>
@@ -27010,7 +27010,7 @@ Reinicie o programa depois de alterar essa opção. Você também pode precisar 
         <translation type="vanished">Espessura das linhas de medição do anel de alcance, padrão e distância</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="1967"/>
+        <location filename="src/options/options.ui" line="1966"/>
         <source>Sun shading level. Lower values result in a darker display.</source>
         <translation>Nível de sombreamento. Valores menores resultam em uma exibição mais escura.</translation>
     </message>
@@ -27031,17 +27031,17 @@ distance measurement:</source>
 medição de distância:</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="5143"/>
+        <location filename="src/options/options.ui" line="5142"/>
         <source>&amp;Compass rose:</source>
         <translation>&amp;Rosa dos Ventos:</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="4965"/>
+        <location filename="src/options/options.ui" line="4964"/>
         <source>Text size of the compass rose line labels</source>
         <translation>Tamanho do texto nos rótulos das linhas de rosa dos ventos</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="3626"/>
+        <location filename="src/options/options.ui" line="3625"/>
         <source>&amp;Navaids:</source>
         <translation></translation>
     </message>
@@ -27062,70 +27062,70 @@ medição de distância:</translation>
         <translation type="vanished">Exibição do mapa Online</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="5452"/>
+        <location filename="src/options/options.ui" line="5451"/>
         <source>Display Size for Online Airspaces / Centers</source>
         <translation>Tamanho de exibição para Espaços aéreos / Centros Online</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="5789"/>
+        <location filename="src/options/options.ui" line="5788"/>
         <source>&amp;Approach Control:</source>
         <translation>&amp;Controle de Aproximação:</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="5497"/>
-        <location filename="src/options/options.ui" line="5510"/>
-        <location filename="src/options/options.ui" line="5523"/>
-        <location filename="src/options/options.ui" line="5588"/>
-        <location filename="src/options/options.ui" line="5601"/>
-        <location filename="src/options/options.ui" line="5666"/>
-        <location filename="src/options/options.ui" line="5679"/>
-        <location filename="src/options/options.ui" line="5766"/>
+        <location filename="src/options/options.ui" line="5496"/>
+        <location filename="src/options/options.ui" line="5509"/>
+        <location filename="src/options/options.ui" line="5522"/>
+        <location filename="src/options/options.ui" line="5587"/>
+        <location filename="src/options/options.ui" line="5600"/>
+        <location filename="src/options/options.ui" line="5665"/>
+        <location filename="src/options/options.ui" line="5678"/>
+        <location filename="src/options/options.ui" line="5765"/>
         <source>Use visual range provided from online network</source>
         <translation>Use o alcance visual fornecido pela rede online</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="5614"/>
+        <location filename="src/options/options.ui" line="5613"/>
         <source>&amp;Departure Control:</source>
         <translation>&amp;Controle de Partida:</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="5779"/>
+        <location filename="src/options/options.ui" line="5778"/>
         <source>&amp;Tower:</source>
         <translation>&amp;Torre:</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="5740"/>
+        <location filename="src/options/options.ui" line="5739"/>
         <source>&amp;Clearance Delivery:</source>
         <translation>&amp;Autorização de Tráfego:</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="5480"/>
+        <location filename="src/options/options.ui" line="5479"/>
         <source>&amp;Ground Control:</source>
         <translation>&amp;Controle de Solo:</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="5562"/>
+        <location filename="src/options/options.ui" line="5561"/>
         <source>&amp;Area Control Center:</source>
         <translation>&amp;Controle de Centro da Área:</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="5624"/>
+        <location filename="src/options/options.ui" line="5623"/>
         <source>&amp;Center:</source>
         <oldsource>&amp;Center</oldsource>
         <translation>&amp;Centro:</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="5552"/>
+        <location filename="src/options/options.ui" line="5551"/>
         <source>&amp;Online Observer:</source>
         <translation>&amp;Observador Online:</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="5473"/>
+        <location filename="src/options/options.ui" line="5472"/>
         <source>Range Circle Size</source>
         <translation>Tamanho do Círculo de Alcance</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="5490"/>
+        <location filename="src/options/options.ui" line="5489"/>
         <source>Use Size</source>
         <translation>Tamanho do uso</translation>
     </message>
@@ -27134,7 +27134,7 @@ medição de distância:</translation>
         <translation type="vanished">Recomenda-se uma reinicialização após a troca das unidades.</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="6090"/>
+        <location filename="src/options/options.ui" line="6089"/>
         <source>Time until aircraft following is activated again after any map interaction like scrolling or zooming.
 This setting is also used in the elevation profile.</source>
         <translation>Tempo até que a sequência de aeronaves seja ativada novamente após qualquer interação no mapa, como rolagem ou zoom.
@@ -27213,7 +27213,7 @@ Garmin GTN e GNS para evitar waypoints bloqueados</translation>
 &quot;%1&quot; é um espaço reservado que será substituído pelo aeroporto ICAO ident.</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="7354"/>
+        <location filename="src/options/options.ui" line="7353"/>
         <source>Custom with &amp;Status File</source>
         <translation>Personalizado com &amp;Arquivo de status</translation>
     </message>
@@ -27227,7 +27227,7 @@ Garmin GTN e GNS para evitar waypoints bloqueados</translation>
         <translation type="vanished">Escureça o mapa e o perfil de elevação do plano de voo para o estilo &quot;Noite&quot;. Os valores mais baixos resultam em uma exibição mais escura.</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="4250"/>
+        <location filename="src/options/options.ui" line="4249"/>
         <source>Dashed</source>
         <translation>Tracejadas</translation>
     </message>
@@ -27237,12 +27237,12 @@ Garmin GTN e GNS para evitar waypoints bloqueados</translation>
         <translation>Grau Decimal</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="6472"/>
+        <location filename="src/options/options.ui" line="6471"/>
         <source>Define which weather service METARs are to be shown in the information dock window for an airport.</source>
         <translation>Defina quais os METARs do clima que devem ser exibidos na janela da dock de informações para um aeroporto.</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="6568"/>
+        <location filename="src/options/options.ui" line="6567"/>
         <source>Define which weather service METARs are to be shown in the map tooltip of an airport.</source>
         <translation>Defina quais METAR dos serviços climáticos devem ser mostrados na dicas de ferramentas do mapa de um aeroporto.</translation>
     </message>
@@ -27269,18 +27269,18 @@ Garmin GTN e GNS para evitar waypoints bloqueados</translation>
         <translation type="vanished">Opções de exibição para etiquetas</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="6488"/>
-        <location filename="src/options/options.ui" line="6584"/>
+        <location filename="src/options/options.ui" line="6487"/>
+        <location filename="src/options/options.ui" line="6583"/>
         <source>Display current weather from the flight simulator when connected. </source>
         <translation>Exibir o clima atual do simulador de voo quando conectado. </translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="7308"/>
+        <location filename="src/options/options.ui" line="7307"/>
         <source>Do not use any online flying services</source>
         <translation>Não use nenhum serviço de voo online</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="1802"/>
+        <location filename="src/options/options.ui" line="1801"/>
         <source>Does not apply to the KML files loaded after startup.</source>
         <translation>Não se aplica aos arquivos KML carregados após a inicialização.</translation>
     </message>
@@ -27289,17 +27289,17 @@ Garmin GTN e GNS para evitar waypoints bloqueados</translation>
         <translation type="vanished">Não se aplica ao plano de voo carregado após a inicialização.</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="4255"/>
+        <location filename="src/options/options.ui" line="4254"/>
         <source>Dotted</source>
         <translation>Pontilhado</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="7465"/>
+        <location filename="src/options/options.ui" line="7464"/>
         <source>Download &quot;status.txt&quot; file from given URL and check validity</source>
         <translation>Faça o download do arquivo &quot;status.txt&quot; de determinado URL e verifique a validade</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="7425"/>
+        <location filename="src/options/options.ui" line="7424"/>
         <source>Download &quot;whazzup.txt&quot; file from given URL and check validity</source>
         <translation>Faça o download do arquivo &quot;whazzup.txt&quot; de determinado URL e verifique a validade</translation>
     </message>
@@ -27342,7 +27342,7 @@ Mude a cor com o &quot;Cor ao Passar pelo Fixo&quot;.</translation>
         <translation type="vanished">Desenhe o limite de fundo branco em torno do diagrama do aeroporto</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="3118"/>
+        <location filename="src/options/options.ui" line="3117"/>
         <source>Draw white background for airport labels</source>
         <translation>Desenhar fundo branco para rótulos do aeroporto</translation>
     </message>
@@ -27351,12 +27351,12 @@ Mude a cor com o &quot;Cor ao Passar pelo Fixo&quot;.</translation>
         <translation type="vanished">Desenhar fundo branco para marcadores de ajuda</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="6315"/>
+        <location filename="src/options/options.ui" line="6314"/>
         <source>East / West</source>
         <translation>Leste / oeste</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="6309"/>
+        <location filename="src/options/options.ui" line="6308"/>
         <source>East / West: Rounds up  cruise altitude to the nearest odd thousand feet for eastward flight plans and nearest even thousand feet for westward flight plans.
 North / South: Rounds up  cruise altitude to the nearest odd thousand feet for southward flight plans and nearest even thousand feet for northward flight plans.
 South / North: Same as North / South but reverses odd and even.</source>
@@ -27396,12 +27396,12 @@ forneça um botão da barra de ferramentas para desativá-los se esta caixa de s
         <translation type="vanished">Plano de Voo</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="6288"/>
+        <location filename="src/options/options.ui" line="6287"/>
         <source>Flight Plan Calculation</source>
         <translation>Cálculo do Plano de Voo</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="7989"/>
+        <location filename="src/options/options.ui" line="8020"/>
         <source>Flight Plan Elevation Profile</source>
         <translation>Perfil de Elevação do Plano de Voo</translation>
     </message>
@@ -27427,7 +27427,7 @@ forneça um botão da barra de ferramentas para desativá-los se esta caixa de s
         <translation>Com que frequência verificar atualizações na inicialização.</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="7522"/>
+        <location filename="src/options/options.ui" line="7521"/>
         <source>IVAO</source>
         <translation></translation>
     </message>
@@ -27440,7 +27440,7 @@ forneça um botão da barra de ferramentas para desativá-los se esta caixa de s
         <translation type="vanished">Os itens no cache expiram após duas semanas.</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="5937"/>
+        <location filename="src/options/options.ui" line="5936"/>
         <source>Keeps the aircraft and the next flight plan waypoint visible on the map instead of simply centering the aircraft</source>
         <translation>Mantém a aeronave e o próximo waypoint do plano de voo visíveis no mapa, em vez de simplesmente centralizar a aeronave</translation>
     </message>
@@ -27465,14 +27465,14 @@ forneça um botão da barra de ferramentas para desativá-los se esta caixa de s
         <translation>Linguagem</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="2508"/>
+        <location filename="src/options/options.ui" line="2507"/>
         <source>Larger values will catch more objects.
 Smaller values will allow a finer selection.</source>
         <translation>Valores maiores pegarão mais objetos.
 Valores menores permitirão uma seleção mais ajustada.</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="2465"/>
+        <location filename="src/options/options.ui" line="2464"/>
         <source>Larger values will list more objects in the tooltip.</source>
         <oldsource>Larger values will list more more objects in the tooltip.</oldsource>
         <translation>Valores maiores irão listar mais objetos nas dicas de ferramentas.</translation>
@@ -27525,12 +27525,12 @@ Valores menores permitirão uma seleção mais ajustada.</translation>
         <translation type="vanished">Exibição do Mapa</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="5889"/>
+        <location filename="src/options/options.ui" line="5888"/>
         <source>Map Movement</source>
         <translation>Movimento do mapa</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="5910"/>
+        <location filename="src/options/options.ui" line="5909"/>
         <source>Map will follow the aircraft constantly when checked.
 This is also used for &quot;Center map on aircraft and next flight plan waypoint&quot;.</source>
         <oldsource>Map will follow the aircraft constantly when checked.
@@ -27543,7 +27543,7 @@ Isso também é usado para &quot;Centralize o mapa na aeronave e no próximo way
         <translation type="vanished">Número máximo de pontos de &amp;trilha da aeronave:</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="7832"/>
+        <location filename="src/options/options.ui" line="7863"/>
         <source>Maximum size of &amp;disk cache:</source>
         <translation>Tamanho máximo do &amp;cache do disco:</translation>
     </message>
@@ -27572,13 +27572,13 @@ Isso também é usado para &quot;Centralize o mapa na aeronave e no próximo way
         <translation type="vanished">Não há &quot;current_wx_snapshot.txt&quot; selecionado. Usando o caminho padrão.</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="7212"/>
+        <location filename="src/options/options.ui" line="7211"/>
         <source>No URL set. IVAO weather reports are disabled.</source>
         <translation>Nenhum conjunto de URLs. Os boletins meteorológicos da IVAO estão desativados.</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="7069"/>
-        <location filename="src/options/options.ui" line="7121"/>
+        <location filename="src/options/options.ui" line="7068"/>
+        <location filename="src/options/options.ui" line="7120"/>
         <source>No URL set. NOAA weather reports are disabled.</source>
         <translation>Nenhuma URL foi ajustado. Informações da NOAA-Weather estão desativados.</translation>
     </message>
@@ -27588,27 +27588,27 @@ Isso também é usado para &quot;Centralize o mapa na aeronave e no próximo way
         <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;img src=&quot;:/littlenavmap/resources/icons/bulb.svg&quot;/&gt;&lt;span style=&quot; font-style:italic;&quot;&gt;O Little Navmap altera automaticamente o canal para &amp;quot;Beta&amp;quot; se você estiver usando uma versão beta para evitar a perda de atualizações importantes. O mesmo se aplica às versões de desenvolvimento.&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="5420"/>
+        <location filename="src/options/options.ui" line="5419"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;img src=&quot;:/littlenavmap/resources/icons/bulb.svg&quot;/&gt;&lt;span style=&quot; font-style:italic;&quot;&gt;Load airspaces and select &amp;quot;Online&amp;quot; for &amp;quot;Airspace Libraries&amp;quot; in menu &amp;quot;Scenery Library&amp;quot; to see online centers. Click the help button for more information.&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;img src=&quot;:/littlenavmap/resources/icons/bulb.svg&quot;/&gt;&lt;span style=&quot; font-style:italic;&quot;&gt;Carregue os espaços aéreos e selecione &amp;quot;Online&amp;quot; para &amp;quot;Bibliotecas de Espaço Aéreo&amp;quot; no menu &amp;quot;Biblioteca de Cenários&amp;quot; para ver os centros online. Clique no botão de ajuda para mais informações.&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="6640"/>
+        <location filename="src/options/options.ui" line="6639"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;img src=&quot;:/littlenavmap/resources/icons/bulb.svg&quot;/&gt;&lt;span style=&quot; font-style:italic;&quot;&gt;See in the main menu &amp;quot;Weather&amp;quot; for more options to display winds aloft and weather at airports.&lt;br/&gt;The page &lt;/span&gt;&lt;a href=&quot;lnm://18&quot;&gt;&lt;span style=&quot; font-style:italic; text-decoration: underline; color:#0057ae;&quot;&gt;Weather Files&lt;/span&gt;&lt;/a&gt;&lt;span style=&quot; font-style:italic;&quot;&gt; allows to select paths if non-standard simulator installations are used.&lt;/span&gt;&lt;/p&gt;&lt;p&gt;&lt;span style=&quot; font-style:italic;&quot;&gt;Disable unneeded options to improve performance.&lt;/span&gt;&lt;/p&gt;&lt;p&gt;&lt;span style=&quot; font-style:italic;&quot;&gt;The source for selection &amp;quot;Flight Simulator&amp;quot; depends on the simulator connection and the selected scenery library.&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;img src=&quot;:/littlenavmap/resources/icons/bulb.svg&quot;/&gt;&lt;span style=&quot; font-style:italic;&quot;&gt;Veja no menu principal &amp;quot;Clima&amp;quot; para mais opções de exibição de ventos em altitude e clima nos aeroportos.&lt;br/&gt;A página &lt;/span&gt;&lt;a href=&quot;lnm://18&quot;&gt;&lt;span style=&quot; font-style:italic; text-decoration: underline; color:#0057ae;&quot;&gt;Arquivos Meteorológicos&lt;/span&gt;&lt;/a&gt;&lt;span style=&quot; font-style:italic;&quot;&gt; permite selecionar caminhos se instalações de simulador não padrão forem usadas.&lt;/span&gt;&lt;/p&gt;&lt;p&gt;&lt;span style=&quot; font-style:italic;&quot;&gt;Desative opções desnecessárias para melhorar o desempenho.&lt;/span&gt;&lt;/p&gt;&lt;p&gt;&lt;span style=&quot; font-style:italic;&quot;&gt;A fonte para a seleção &amp;quot;Simulador de Voo&amp;quot; depende da conexão do simulador e da biblioteca de cenários selecionada.&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="6914"/>
+        <location filename="src/options/options.ui" line="6913"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;img src=&quot;:/littlenavmap/resources/icons/bulb.svg&quot;/&gt;&lt;span style=&quot; font-style:italic;&quot;&gt;Note that the X-Plane default weather location is determined by the flight simulator base path in the dialog &amp;quot;Load Scenery Library&amp;quot;. The simulator selection in the &amp;quot;Scenery Library&amp;quot; menu also determines which weather files are loaded. &lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;img src=&quot;:/littlenavmap/resources/icons/bulb.svg&quot;/&gt;&lt;span style=&quot; font-style:italic;&quot;&gt;Observe que a localização padrão do clima do X-Plane é determinada pelo caminho base do simulador de voo no diálogo &amp;quot;Carregar Biblioteca de Cenários&amp;quot;. A seleção do simulador de voo no menu &amp;quot;Biblioteca de Cenários&amp;quot; também determina quais arquivos de clima são carregados.&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="7048"/>
+        <location filename="src/options/options.ui" line="7047"/>
         <source>No URL set. VATSIM weather reports are disabled.</source>
         <translation>Nenhuma URL foi ajustado. Informações da VATSIM-Weather estão desativados.</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="7109"/>
+        <location filename="src/options/options.ui" line="7108"/>
         <source>Complete URL of the NOAA weather service file.
 &quot;%1&quot; is a placeholder that will be substituted with the current two-digit UTC hour.
 There is usually no need to change this URL.
@@ -27619,17 +27619,17 @@ Geralmente não há necessidade de alterar esse URL.
 Inserir um valor errado causará erros ao baixar boletins meteorológicos.</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="7171"/>
+        <location filename="src/options/options.ui" line="7170"/>
         <source>Send a test request to a IVAO weather service.</source>
         <translation>Envie uma solicitação de teste para um serviço meteorológico da IVAO.</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="7181"/>
+        <location filename="src/options/options.ui" line="7180"/>
         <source>Send a test request to a VATSIM weather service.</source>
         <translation>Envie uma solicitação de teste para um serviço meteorológico VATSIM.</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="7201"/>
+        <location filename="src/options/options.ui" line="7200"/>
         <source>Download URL for the IVAO weather file.
 There is usually no need to change this URL.
 Entering a wrong value will cause errors when downloading weather reports.</source>
@@ -27638,77 +27638,95 @@ Geralmente não há necessidade de alterar esse URL.
 Inserir um valor errado causará erros ao baixar boletins meteorológicos.</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="7235"/>
+        <location filename="src/options/options.ui" line="7234"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;img src=&quot;:/littlenavmap/resources/icons/bulb.svg&quot;/&gt;&lt;span style=&quot; font-style:italic;&quot;&gt;Leave these options at default or empty (press &amp;quot;Reset&amp;quot;) if you are not running special setups such as networked connections where weather needs to be loaded from network shares, for example.&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;img src=&quot;:/littlenavmap/resources/icons/bulb.svg&quot;/&gt;&lt;span style=&quot; font-style:italic;&quot;&gt;Deixe essas opções no padrão ou vazias (pressione &amp;quot;Redefinir&amp;quot;) se você não estiver executando configurações especiais, como conexões em rede, onde o clima precisa ser carregado a partir de compartilhamentos de rede, por exemplo.&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="7378"/>
+        <location filename="src/options/options.ui" line="7377"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Little Navmap fetches data from online networks using an interval of 15 to 180 seconds depending on settings and network.&lt;/p&gt;&lt;p&gt;The program also fetches AI or multiplayer aircraft from the simulator which are updated several times a second. These aircraft are injected into the simulator by the various online clients so they are visible there. Therefore, the user aircraft and other multiplayer aircraft can appear duplicated on the map.&lt;/p&gt;&lt;p&gt;Little Navmap tries to remove these duplicates by matching the aircraft position, altitude and more parameters if this option is enabled.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Little Navmap busca dados de redes online usando um intervalo de 15 a 180 segundos, dependendo das configurações e da rede.&lt;/p&gt;&lt;p&gt;O programa também busca AI ou aeronaves multiplayer do simulador que são atualizados várias vezes por segundo. Essas aeronaves são injetadas no simulador pelos vários clientes online para que fiquem visíveis lá. Portanto, a aeronave do usuário e outras aeronaves multiplayer podem aparecer duplicadas no mapa.&lt;/p&gt;&lt;p&gt;O Little Navmap tenta remover essas duplicatas combinando a posição da aeronave, altitude e mais parâmetros se esta opção estiver ativada.&lt;/p&gt; &lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="7381"/>
+        <location filename="src/options/options.ui" line="7380"/>
         <source>&amp;Remove duplicate aircraft from online service and simulator</source>
         <translation>&amp;Remova aeronaves duplicadas do serviço online e do simulador</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="7481"/>
+        <location filename="src/options/options.ui" line="7480"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Download the &amp;quot;whazzup.txt&amp;quot; or &amp;quot;status.txt&amp;quot; file periodically.&lt;/p&gt;&lt;p&gt;Use low values only for private servers.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Baixe o arquivo &amp;quot;whazzup.txt&amp;quot; ou &amp;quot;status.txt&amp;quot; periodicamente.&lt;/p&gt;&lt;p&gt;Use valores baixos apenas para servidores privados.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="7782"/>
+        <location filename="src/options/options.ui" line="7726"/>
+        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;A restart is required after changing document root directory.&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="src/options/options.ui" line="7758"/>
+        <source>This will deliver map images scaled according to your user interface scale level if checked and 
+if you use the web server with high resolution monitors.
+This is the default behavior but can cause issues when using certain web interfaces. 
+Uncheck if you use such an add-on or see issues like a corruped map display.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="src/options/options.ui" line="7764"/>
+        <source>&amp;Scale delivered images accoring to system user interface scale level (125%, 150%, etc.)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="src/options/options.ui" line="7813"/>
         <source>Map Display Cache</source>
         <translation>Cache de Exibição do Mapa</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="7890"/>
+        <location filename="src/options/options.ui" line="7921"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;img src=&quot;:/littlenavmap/resources/icons/bulb.svg&quot;/&gt;&lt;span style=&quot; font-style:italic;&quot;&gt;Items in the disk cache expire after two weeks as a standard. The actual time depends on the used map theme.&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;img src=&quot;:/littlenavmap/resources/icons/bulb.svg&quot;/&gt;&lt;span style=&quot; font-style:italic;&quot;&gt;Os itens no cache de disco expiram após duas semanas como padrão. O tempo real depende do tema do mapa usado.&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="7909"/>
+        <location filename="src/options/options.ui" line="7940"/>
         <source>Map Display Themes</source>
         <translation>Temas de Exibição do Mapa</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="7930"/>
+        <location filename="src/options/options.ui" line="7961"/>
         <source>Select a directory to search for additional map themes.</source>
         <translation>Selecione um diretório para buscar temas de mapas adicionais.</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="7933"/>
+        <location filename="src/options/options.ui" line="7964"/>
         <source>No map theme directory selected.</source>
         <translation>Nenhum diretório de temas selecionado.</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="7940"/>
+        <location filename="src/options/options.ui" line="7971"/>
         <source>Directory for additional &amp;map themes:</source>
         <translation>Diretório para temas de &amp;mapa adicionais:</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="7950"/>
+        <location filename="src/options/options.ui" line="7981"/>
         <source>Select &amp;Themes Directory ...</source>
         <translation>Selecione o diretório de &amp;Temas ...</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="7957"/>
+        <location filename="src/options/options.ui" line="7988"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;A restart is required to detect new map themes after changing the path or after installing new map themes.&lt;br/&gt;&lt;/span&gt;&lt;img src=&quot;:/littlenavmap/resources/icons/bulb.svg&quot;/&gt;&lt;span style=&quot; font-style:italic;&quot;&gt;Map theme API keys for themes requiring an account can be entered on page &lt;/span&gt;&lt;a href=&quot;lnm://13&quot;&gt;&lt;span style=&quot; font-style:italic; text-decoration: underline; color:#0057ae;&quot;&gt;Map Keys&lt;/span&gt;&lt;/a&gt;&lt;span style=&quot; font-style:italic;&quot;&gt;.&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;É necessário reiniciar para detectar novos temas de mapa após alterar o caminho ou após instalar novos temas de mapa.&lt;br/&gt;&lt;/span&gt;&lt;img src=&quot;:/littlenavmap/resources/icons/bulb.svg&quot;/&gt;&lt;span style=&quot; font-style:italic;&quot;&gt;As chaves de API do tema do mapa para temas que requerem uma conta podem ser inseridas na página &lt;/span&gt;&lt;a href=&quot;lnm://13&quot;&gt;&lt;span style=&quot; font-style:italic; text-decoration: underline; color:#0057ae;&quot;&gt;Chaves do Mapa&lt;/span&gt;&lt;/a&gt;&lt;span style=&quot; font-style:italic;&quot;&gt;.&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="8020"/>
+        <location filename="src/options/options.ui" line="8051"/>
         <source>No elevation data directory selected.</source>
         <translation>Nenhum diretório de dados de elevação selecionado.</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="7448"/>
+        <location filename="src/options/options.ui" line="7447"/>
         <source>No web address for &quot;status.txt&quot; entered.</source>
         <translation>Nenhum endereço da Web para &quot;status.txt&quot; inserido.</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="7418"/>
+        <location filename="src/options/options.ui" line="7417"/>
         <source>No web address for &quot;whazzup.txt&quot; entered.</source>
         <translation>Nenhum endereço da Web para &quot;whazzup.txt&quot; inserido.</translation>
     </message>
@@ -27721,7 +27739,7 @@ Inserir um valor errado causará erros ao baixar boletins meteorológicos.</tran
         <translation type="vanished">Normal - Use detalhes limitados durante a rolagem e carregamento após rolagem ou zoom</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="6320"/>
+        <location filename="src/options/options.ui" line="6319"/>
         <source>North / South (e.g. Italy, France and Portugal)</source>
         <translation>Norte / Sul (por exemplo, Itália, França e Portugal)</translation>
     </message>
@@ -27735,12 +27753,12 @@ Inserir um valor errado causará erros ao baixar boletins meteorológicos.</tran
         <translation type="vanished">Voo Online</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="7287"/>
+        <location filename="src/options/options.ui" line="7286"/>
         <source>Online Service</source>
         <translation>Serviço Online</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="7880"/>
+        <location filename="src/options/options.ui" line="7911"/>
         <source>Opens the cache directory in a file manager.</source>
         <translation>Abre o diretório do cache em um gerenciador de arquivos.</translation>
     </message>
@@ -27792,7 +27810,7 @@ quando haver uma transição do aeroporto para uma aerovia.</translation>
         <translation type="vanished">R&amp;emover</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="8027"/>
+        <location filename="src/options/options.ui" line="8058"/>
         <source>Recommended.
 Use Offline GLOBE Elevation Data. Can be downloaded for free.
 Resolution is lower than the online source but updates are very fast.
@@ -27803,12 +27821,12 @@ A resolução é menor do que a fonte online, mas as atualizações são muito r
 Tem uma grade de 30 segundos de arco (aproximadamente 900 metros perto do equador).</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="8033"/>
+        <location filename="src/options/options.ui" line="8064"/>
         <source>Use Offline &amp;GLOBE Elevation Data</source>
         <translation>Usar Dados Offline de Elevação &amp;GLOBE</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="8040"/>
+        <location filename="src/options/options.ui" line="8071"/>
         <source>&lt;p&gt;&lt;a href=&quot;https://www.ngdc.noaa.gov/mgg/topo/gltiles.html&quot;&gt;&lt;b&gt;Click here to open the download page for the GLOBE data in your browser&lt;/b&gt;&lt;/a&gt;&lt;br/&gt;
 Download the file &lt;b&gt;&lt;i&gt;All Tiles in One .zip (all10g.zip)&lt;/i&gt;&lt;/b&gt; from the page and extract the archive to an arbitrary place, e.g in &lt;i&gt;Documents&lt;/i&gt;. Then click &lt;i&gt;Select GLOBE Directory ...&lt;/i&gt; above and select the directory with the extracted files.&lt;/p&gt;
 
@@ -27819,38 +27837,38 @@ Baixe o arquivo &lt;b&gt;&lt;i&gt;All Tiles in One .zip (all10g.zip)&lt;/i&gt;&l
 &lt;p&gt;&lt;a href=&quot;%1&quot;&gt;&lt;b&gt;Clique aqui para obter mais informações no manual online do &lt;i&gt;Little Navmap&lt;/i&gt;&lt;/b&gt;&lt;/a&gt;&lt;/p&gt;</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="8080"/>
+        <location filename="src/options/options.ui" line="8111"/>
         <source>Use &amp;Online Elevation Data</source>
         <translation>Use Dados de Elevação &amp;Online</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="8169"/>
+        <location filename="src/options/options.ui" line="8200"/>
         <source>Scenery library directories or files to exclude from loading</source>
         <translation>Diretórios ou arquivos da biblioteca de cenários a serem excluídos do carregamento</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="8253"/>
-        <location filename="src/options/options.ui" line="8458"/>
+        <location filename="src/options/options.ui" line="8284"/>
+        <location filename="src/options/options.ui" line="8489"/>
         <source>&amp;Remove Selected</source>
         <translation>&amp;Remover selecionado</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="8276"/>
+        <location filename="src/options/options.ui" line="8307"/>
         <source>Scenery library directories to exclude from add-on recognition</source>
         <translation>Diretórios da biblioteca de cenários a serem excluídos do reconhecimento de complementos</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="8347"/>
+        <location filename="src/options/options.ui" line="8378"/>
         <source>A&amp;dd Directory ...</source>
         <translation>A&amp;dicionar Diretório ...</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="8354"/>
+        <location filename="src/options/options.ui" line="8385"/>
         <source>R&amp;emove Selected</source>
         <translation>R&amp;emover selecionado</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="8153"/>
+        <location filename="src/options/options.ui" line="8184"/>
         <source>&lt;b&gt;You have to reload the scenery library for the changes to take effect.&lt;/b&gt;</source>
         <oldsource>&lt;b&gt;You have to re-import the scenery library for the changes to take effect.&lt;/b&gt;</oldsource>
         <translation>&lt;b&gt;Você precisa recarregar a biblioteca de cenários para que as alterações tenham efeito.&lt;/b&gt;</translation>
@@ -27889,7 +27907,7 @@ logbook and other search tabs</source>
 logbook e outras guias de pesquisa</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="6333"/>
+        <location filename="src/options/options.ui" line="6332"/>
         <source>Rounds up flight plan cruise altitude according to selected rule.</source>
         <translation>Ronda a altitude de cruzeiro do plano de voo de acordo com a regra selecionada.</translation>
     </message>
@@ -27906,13 +27924,13 @@ logbook e outras guias de pesquisa</translation>
         <translation type="vanished">Selecione os &amp;caminhos a serem excluídos do reconhecimento adicional:</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="6783"/>
-        <location filename="src/options/options.ui" line="6990"/>
+        <location filename="src/options/options.ui" line="6782"/>
+        <location filename="src/options/options.ui" line="6989"/>
         <source>Select the &quot;current_wx_snapshot.txt&quot; file.</source>
         <translation>Selecione o arquivo &quot;current_wx_snapshot.txt.</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="8017"/>
+        <location filename="src/options/options.ui" line="8048"/>
         <source>Select the directory that contains the files &quot;a10g&quot; to &quot;p10g&quot;.</source>
         <translation>Selecione o diretório que contém os arquivos &quot;a10g&quot; para &quot;p10g&quot;.</translation>
     </message>
@@ -27922,7 +27940,7 @@ logbook e outras guias de pesquisa</translation>
         <translation>Selecione os canais de atualização para verificar.</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="7191"/>
+        <location filename="src/options/options.ui" line="7190"/>
         <source>Send a test request to the NOAA weather service.</source>
         <translation>Envie um pedido de teste para o servidor de meteorologia da NOAA.</translation>
     </message>
@@ -27947,7 +27965,7 @@ logbook e outras guias de pesquisa</translation>
         <translation type="vanished">Mostrar &amp;espaços aéreos</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="2206"/>
+        <location filename="src/options/options.ui" line="2205"/>
         <source>Show information for airspaces when clicking on the map</source>
         <translation>Mostrar informações de espaços aéreos ao clicar no mapa</translation>
     </message>
@@ -27966,12 +27984,12 @@ logbook e outras guias de pesquisa</translation>
         <translation>Mostre a posição inicial do mapa após a inicialização.</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="2352"/>
+        <location filename="src/options/options.ui" line="2351"/>
         <source>Show tooltips for airports, parking, towers and helipads when hovering the cursor over the map</source>
         <translation>Mostre dicas de ferramentas para aeroportos, estacionamentos, torres e heliportos ao passar o cursor sobre o mapa</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="2379"/>
+        <location filename="src/options/options.ui" line="2378"/>
         <source>Show tooltips for airspaces when hovering the cursor over the map</source>
         <translation>Mostrar dicas de ferramentas para espaços aéreos ao passar o cursor sobre o mapa</translation>
     </message>
@@ -27984,12 +28002,12 @@ logbook e outras guias de pesquisa</translation>
         <translation type="vanished">Simulador de Aeronave</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="5841"/>
+        <location filename="src/options/options.ui" line="5840"/>
         <source>Simulator Aircraft Updates</source>
         <translation>Atualizações do Simulador de Aviões</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="5960"/>
+        <location filename="src/options/options.ui" line="5959"/>
         <source>Defines a box in percent of the map size. 
 A small value keeps the aircraft centered and will move the map often. 
 A large value will update the map only when aircraft reaches the map boundary.
@@ -28003,12 +28021,12 @@ Um grande valor atualizará o mapa apenas quando a aeronave atingir o limite do 
 Vai ser ignorado quando o &quot;Mapa centralizado na aeronave e no próximo ponto de referência do plano de voo&quot; estiver ativo e um plano de voo com uma perna ativa for detectado.</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="4260"/>
+        <location filename="src/options/options.ui" line="4259"/>
         <source>Solid</source>
         <translation>Sólido</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="6325"/>
+        <location filename="src/options/options.ui" line="6324"/>
         <source>South / North (e.g. New Zealand)</source>
         <translation>Sul / Norte (por exemplo, Nova Zelândia)</translation>
     </message>
@@ -28068,12 +28086,12 @@ Isso dimensionará os gráficos e ícones do mapa Little Navmap para melhor visi
         <translation type="vanished">Símbolo, Tamanhos de Texto e Cores para o Mapa e o Perfil de Elevação</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="3083"/>
+        <location filename="src/options/options.ui" line="3082"/>
         <source>Wind &amp;Barbs:</source>
         <translation>&amp;Farpas de Vento:</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="3249"/>
+        <location filename="src/options/options.ui" line="3248"/>
         <source>Airport &amp;Weather:</source>
         <translation>&amp;Clima do Aeroporto:</translation>
     </message>
@@ -28094,13 +28112,13 @@ Isso dimensionará os gráficos e ícones do mapa Little Navmap para melhor visi
         <translation type="vanished">Estilo</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="3003"/>
-        <location filename="src/options/options.ui" line="3041"/>
-        <location filename="src/options/options.ui" line="3099"/>
-        <location filename="src/options/options.ui" line="3137"/>
-        <location filename="src/options/options.ui" line="3475"/>
-        <location filename="src/options/options.ui" line="3500"/>
-        <location filename="src/options/options.ui" line="4556"/>
+        <location filename="src/options/options.ui" line="3002"/>
+        <location filename="src/options/options.ui" line="3040"/>
+        <location filename="src/options/options.ui" line="3098"/>
+        <location filename="src/options/options.ui" line="3136"/>
+        <location filename="src/options/options.ui" line="3474"/>
+        <location filename="src/options/options.ui" line="3499"/>
+        <location filename="src/options/options.ui" line="4555"/>
         <source>Symbol </source>
         <translation>Simbolo </translation>
     </message>
@@ -28113,29 +28131,29 @@ Isso dimensionará os gráficos e ícones do mapa Little Navmap para melhor visi
         <translation type="vanished">Teste o URL de download da IVAO</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="3292"/>
-        <location filename="src/options/options.ui" line="3356"/>
-        <location filename="src/options/options.ui" line="3407"/>
-        <location filename="src/options/options.ui" line="3525"/>
-        <location filename="src/options/options.ui" line="3645"/>
-        <location filename="src/options/options.ui" line="3836"/>
-        <location filename="src/options/options.ui" line="4786"/>
-        <location filename="src/options/options.ui" line="4884"/>
-        <location filename="src/options/options.ui" line="4971"/>
-        <location filename="src/options/options.ui" line="5038"/>
-        <location filename="src/options/options.ui" line="5073"/>
-        <location filename="src/options/options.ui" line="5098"/>
+        <location filename="src/options/options.ui" line="3291"/>
+        <location filename="src/options/options.ui" line="3355"/>
+        <location filename="src/options/options.ui" line="3406"/>
+        <location filename="src/options/options.ui" line="3524"/>
+        <location filename="src/options/options.ui" line="3644"/>
+        <location filename="src/options/options.ui" line="3835"/>
+        <location filename="src/options/options.ui" line="4785"/>
+        <location filename="src/options/options.ui" line="4883"/>
+        <location filename="src/options/options.ui" line="4970"/>
+        <location filename="src/options/options.ui" line="5037"/>
+        <location filename="src/options/options.ui" line="5072"/>
+        <location filename="src/options/options.ui" line="5097"/>
         <source>Text </source>
         <translation>Texto </translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="3063"/>
-        <location filename="src/options/options.ui" line="3121"/>
-        <location filename="src/options/options.ui" line="3226"/>
-        <location filename="src/options/options.ui" line="3391"/>
-        <location filename="src/options/options.ui" line="3429"/>
-        <location filename="src/options/options.ui" line="3858"/>
-        <location filename="src/options/options.ui" line="5060"/>
+        <location filename="src/options/options.ui" line="3062"/>
+        <location filename="src/options/options.ui" line="3120"/>
+        <location filename="src/options/options.ui" line="3225"/>
+        <location filename="src/options/options.ui" line="3390"/>
+        <location filename="src/options/options.ui" line="3428"/>
+        <location filename="src/options/options.ui" line="3857"/>
+        <location filename="src/options/options.ui" line="5059"/>
         <source>Text &amp;Background</source>
         <translation>Texto &amp;de Fundo</translation>
     </message>
@@ -28178,7 +28196,7 @@ Isso dimensionará os gráficos e ícones do mapa Little Navmap para melhor visi
         <translation type="vanished">O mapa deixará de seguir a aeronave por um determinado período de tempo se o usuário fizer qualquer interação com o mapa, como rolagem ou zoom</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="6386"/>
+        <location filename="src/options/options.ui" line="6385"/>
         <source>The red line value is always rounded up to the next 500 ft.
 Note that this value does not affect flight plan calculation or saving of flight plans.</source>
         <translation>O valor da linha vermelha é sempre arredondado para os próximos 500 pés.
@@ -28189,7 +28207,7 @@ Observe que esse valor não afeta o cálculo do plano de voo ou na salvação do
         <translation type="vanished">A trilha da aeronave do usuário será retirada se contiver mais do que esse número de pontos. Abaixe esse valor para evitar faixas muito longas e manter o desempenho.</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="4821"/>
+        <location filename="src/options/options.ui" line="4820"/>
         <source>Thickness of the compass rose lines</source>
         <translation>Espessura das linhas da rosa dos ventos</translation>
     </message>
@@ -28198,7 +28216,7 @@ Observe que esse valor não afeta o cálculo do plano de voo ou na salvação do
         <translation type="vanished">Espessura do anel de alcance e linhas de medição de distância</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="6976"/>
+        <location filename="src/options/options.ui" line="6975"/>
         <source>This file (usually &quot;current_wx_snapshot.txt&quot;) will be used for all simulators if set here.
 If this field is empty, the default Active Sky weather file path will be used which is different for each flight simulator.</source>
         <translation>Este arquivo (geralmente &quot;current_wx_snapshot.txt&quot;) será usado para todos os simuladores, se configurado aqui.
@@ -28259,17 +28277,17 @@ Se este campo estiver vazio, será utilizado o caminho padrão do arquivo do cli
         <translation type="vanished">Use uma &amp;abreviação &quot;ICAO_ICAO.pln&quot; ao salvar planos de voo FSX, P3D ou FlightGear em vez do nome longo</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="7351"/>
+        <location filename="src/options/options.ui" line="7350"/>
         <source>Use a custom web address for the &quot;status.txt&quot; file</source>
         <translation>Use um endereço da Web personalizado para o arquivo &quot;status.txt&quot;</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="7361"/>
+        <location filename="src/options/options.ui" line="7360"/>
         <source>Use a custom web address for the &quot;whazzup.txt&quot; file</source>
         <translation>Use um endereço da Web personalizado para o arquivo &quot;whazzup.txt&quot;</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="8075"/>
+        <location filename="src/options/options.ui" line="8106"/>
         <source>Use online elevation data to display ground in flight plan elevation profile.
 Has a higher resolution than the offline data source but updates are slow.
 Source data has many errors.</source>
@@ -28278,13 +28296,13 @@ Tem uma resolução maior do que a fonte de dados offline, mas as atualizações
 Os dados originais têm muitos erros.</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="7331"/>
+        <location filename="src/options/options.ui" line="7330"/>
         <source>Use the IVAO network predefined configuration for online flying</source>
         <oldsource>Use the IVAO network pre-defined configuration for online flying</oldsource>
         <translation>Use a configuração pré-definida da rede IVAO para voos online</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="7321"/>
+        <location filename="src/options/options.ui" line="7320"/>
         <source>Use the VATSIM network predefined configuration for online flying</source>
         <oldsource>Use the VATSIM network pre-defined configuration for online flying</oldsource>
         <translation>Use a configuração pré-definida da rede VATSIM para voos online</translation>
@@ -28294,35 +28312,35 @@ Os dados originais têm muitos erros.</translation>
         <translation type="vanished">Interface do usuário</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="4309"/>
+        <location filename="src/options/options.ui" line="4308"/>
         <source>User aircraft &amp;trail:</source>
         <translation>&amp;Trilha da aeronave do usuário:</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="7517"/>
+        <location filename="src/options/options.ui" line="7516"/>
         <source>VATSIM</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="6740"/>
-        <location filename="src/options/options.ui" line="6809"/>
-        <location filename="src/options/options.ui" line="6892"/>
-        <location filename="src/options/options.ui" line="6957"/>
-        <location filename="src/options/options.ui" line="7642"/>
-        <location filename="src/options/options.ui" line="7973"/>
-        <location filename="src/options/options.ui" line="8062"/>
+        <location filename="src/options/options.ui" line="6739"/>
+        <location filename="src/options/options.ui" line="6808"/>
+        <location filename="src/options/options.ui" line="6891"/>
+        <location filename="src/options/options.ui" line="6956"/>
+        <location filename="src/options/options.ui" line="7710"/>
+        <location filename="src/options/options.ui" line="8004"/>
+        <location filename="src/options/options.ui" line="8093"/>
         <source>Valid</source>
         <translation>Válido</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="2692"/>
+        <location filename="src/options/options.ui" line="2691"/>
         <source>Viewpoint distance above earth surface when zooming after double clicking on an object in a table or in the map..
 Smaller values will zoom in closer to an airport or navaid. </source>
         <translation>Distância do ponto de vista acima da superfície da terra ao fazer zoom após clicar duas vezes em um objeto em uma tabela ou no mapa..
 Valores mais baixos irão aproximar-se mais de um aeroporto ou de uma navaid. </translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="2725"/>
+        <location filename="src/options/options.ui" line="2724"/>
         <source>Viewpoint distance above earth surface when zooming after selecting &quot;Show on map&quot; or clicking the map links in the information windows.
 Smaller values will zoom in closer to an airport or navaid.
 </source>
@@ -28335,28 +28353,28 @@ Valores menores aproximarão o zoom de um aeroporto ou navaid.
         <translation type="vanished">Tempo</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="6451"/>
+        <location filename="src/options/options.ui" line="6450"/>
         <source>Weather Display in Information Panels</source>
         <translation>Visualização do Clima em Painéis de Informação</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="6547"/>
+        <location filename="src/options/options.ui" line="6546"/>
         <source>Weather Display in Tooltip</source>
         <translation>Exibição do Clima em Ferramentas</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="7394"/>
+        <location filename="src/options/options.ui" line="7393"/>
         <source>Web Addresses</source>
         <oldsource>Web Adresses</oldsource>
         <translation>Endereço da Web</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="7445"/>
+        <location filename="src/options/options.ui" line="7444"/>
         <source>Web address of the &quot;status.txt&quot; file</source>
         <translation>Endereço da Web do arquivo &quot;status.txt&quot;</translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="7415"/>
+        <location filename="src/options/options.ui" line="7414"/>
         <source>Web address of the &quot;whazzup.txt&quot; file</source>
         <translation>Endereço da Web do arquivo &quot;whazzup.txt&quot;</translation>
     </message>
@@ -28374,7 +28392,7 @@ Valores menores aproximarão o zoom de um aeroporto ou navaid.
         <translation type="vanished">Largura </translation>
     </message>
     <message>
-        <location filename="src/options/options.ui" line="2661"/>
+        <location filename="src/options/options.ui" line="2660"/>
         <source>Zoom and Click</source>
         <translation>Zoom e clique</translation>
     </message>
@@ -28406,53 +28424,53 @@ Valores menores aproximarão o zoom de um aeroporto ou navaid.
         <translation type="vanished">&lt;span style=&quot;font-weight: bold; color: red;&quot;&gt;Não foram encontrados dados GLOBE válidos.&lt;/span&gt;</translation>
     </message>
     <message>
-        <location filename="src/options/optionsdialog.cpp" line="339"/>
+        <location filename="src/options/optionsdialog.cpp" line="340"/>
         <source>AI, Multiplayer and Online Client Aircraft</source>
         <translation>AI, Multiplayer e Aeronave do Cliente Online</translation>
     </message>
     <message>
-        <location filename="src/options/optionsdialog.cpp" line="272"/>
+        <location filename="src/options/optionsdialog.cpp" line="273"/>
         <source>ATIS / ASOS / AWOS Frequency</source>
         <translation>Frequência ATIS /ASOS/ AWOS</translation>
     </message>
     <message>
-        <location filename="src/options/optionsdialog.cpp" line="2746"/>
+        <location filename="src/options/optionsdialog.cpp" line="2751"/>
         <source>Active Sky Weather Snapshot Files %1;;All Files (*)</source>
         <translation>Arquivos de Snapshot Climático do Active Sky%1;;Todos os Arquivos (*)</translation>
     </message>
     <message>
-        <location filename="src/options/optionsdialog.cpp" line="320"/>
-        <location filename="src/options/optionsdialog.cpp" line="342"/>
+        <location filename="src/options/optionsdialog.cpp" line="321"/>
+        <location filename="src/options/optionsdialog.cpp" line="343"/>
         <source>Airline</source>
         <translation>Linha Aérea</translation>
     </message>
     <message>
-        <location filename="src/options/optionsdialog.cpp" line="200"/>
+        <location filename="src/options/optionsdialog.cpp" line="201"/>
         <source>Resize options list.</source>
         <translation>Redimensione a lista de opções.</translation>
     </message>
     <message>
-        <location filename="src/options/optionsdialog.cpp" line="217"/>
+        <location filename="src/options/optionsdialog.cpp" line="218"/>
         <source>Startup and Updates</source>
         <translation>Inicialização e atualizações</translation>
     </message>
     <message>
-        <location filename="src/options/optionsdialog.cpp" line="217"/>
+        <location filename="src/options/optionsdialog.cpp" line="218"/>
         <source>Select what should be reloaded on startup and change update settings.</source>
         <translation>Selecione o que deve ser recarregado na inicialização e altere as configurações de atualização.</translation>
     </message>
     <message>
-        <location filename="src/options/optionsdialog.cpp" line="218"/>
+        <location filename="src/options/optionsdialog.cpp" line="219"/>
         <source>User Interface</source>
         <translation>Interface do usuário</translation>
     </message>
     <message>
-        <location filename="src/options/optionsdialog.cpp" line="218"/>
+        <location filename="src/options/optionsdialog.cpp" line="219"/>
         <source>Change language settings, window options and other user interface behavior.</source>
         <translation>Altere as configurações de idioma, opções de janela e outros comportamentos da interface do usuário.</translation>
     </message>
     <message>
-        <location filename="src/options/optionsdialog.cpp" line="219"/>
+        <location filename="src/options/optionsdialog.cpp" line="220"/>
         <source>Display and Text</source>
         <translation>Display e Texto</translation>
     </message>
@@ -28461,7 +28479,7 @@ Valores menores aproximarão o zoom de um aeroporto ou navaid.
         <translation type="vanished">Altere o tamanho do texto, a fonte da interface do usuário e outras opções de exibição.</translation>
     </message>
     <message>
-        <location filename="src/options/optionsdialog.cpp" line="222"/>
+        <location filename="src/options/optionsdialog.cpp" line="223"/>
         <source>Map</source>
         <translation>Mapa</translation>
     </message>
@@ -28470,7 +28488,7 @@ Valores menores aproximarão o zoom de um aeroporto ou navaid.
         <translation type="vanished">Configurações gerais do mapa: configurações de zoom, clique e dica de ferramenta.</translation>
     </message>
     <message>
-        <location filename="src/options/optionsdialog.cpp" line="224"/>
+        <location filename="src/options/optionsdialog.cpp" line="225"/>
         <source>Map Navigation</source>
         <translation>Navegação no Mapa</translation>
     </message>
@@ -28479,7 +28497,7 @@ Valores menores aproximarão o zoom de um aeroporto ou navaid.
         <translation type="vanished">Configurações de zoom, clique e navegação na tela.</translation>
     </message>
     <message>
-        <location filename="src/options/optionsdialog.cpp" line="225"/>
+        <location filename="src/options/optionsdialog.cpp" line="226"/>
         <source>Map Display</source>
         <translation>Exibição do Mapa</translation>
     </message>
@@ -28500,23 +28518,23 @@ Valores menores aproximarão o zoom de um aeroporto ou navaid.
         <translation type="vanished">Exibição do Mapa Online</translation>
     </message>
     <message>
-        <location filename="src/options/optionsdialog.cpp" line="231"/>
+        <location filename="src/options/optionsdialog.cpp" line="232"/>
         <source>Map display online center options.</source>
         <translation>Exibir opções de centro online no mapa.</translation>
     </message>
     <message>
-        <location filename="src/options/optionsdialog.cpp" line="220"/>
+        <location filename="src/options/optionsdialog.cpp" line="221"/>
         <source>Units</source>
         <translation>Unidades</translation>
     </message>
     <message>
-        <location filename="src/options/optionsdialog.cpp" line="232"/>
+        <location filename="src/options/optionsdialog.cpp" line="233"/>
         <source>Simulator Aircraft</source>
         <translation>Aeronave do Simulador</translation>
     </message>
     <message>
-        <location filename="src/options/optionsdialog.cpp" line="233"/>
-        <location filename="src/options/optionsdialog.cpp" line="287"/>
+        <location filename="src/options/optionsdialog.cpp" line="234"/>
+        <location filename="src/options/optionsdialog.cpp" line="288"/>
         <source>Flight Plan</source>
         <translation>Plano de Voo</translation>
     </message>
@@ -28525,7 +28543,7 @@ Valores menores aproximarão o zoom de um aeroporto ou navaid.
         <translation type="vanished">Opções para cálculo, salvamento e carregamento do plano de voo.</translation>
     </message>
     <message>
-        <location filename="src/options/optionsdialog.cpp" line="234"/>
+        <location filename="src/options/optionsdialog.cpp" line="235"/>
         <source>Weather</source>
         <translation>Clima</translation>
     </message>
@@ -28534,47 +28552,47 @@ Valores menores aproximarão o zoom de um aeroporto ou navaid.
         <translation type="vanished">Defina caminhos bem como fontes meteorológicas para informações e dicas de ferramentas.</translation>
     </message>
     <message>
-        <location filename="src/options/optionsdialog.cpp" line="236"/>
+        <location filename="src/options/optionsdialog.cpp" line="237"/>
         <source>Online Flying</source>
         <translation>Voo Online</translation>
     </message>
     <message>
-        <location filename="src/options/optionsdialog.cpp" line="236"/>
+        <location filename="src/options/optionsdialog.cpp" line="237"/>
         <source>Select online flying services like VATSIM, IVAO or custom.</source>
         <translation>Selecione serviços de voo online como VATSIM, IVAO ou personalizado.</translation>
     </message>
     <message>
-        <location filename="src/options/optionsdialog.cpp" line="237"/>
+        <location filename="src/options/optionsdialog.cpp" line="238"/>
         <source>Web Server</source>
         <translation>Servidor Web</translation>
     </message>
     <message>
-        <location filename="src/options/optionsdialog.cpp" line="237"/>
+        <location filename="src/options/optionsdialog.cpp" line="238"/>
         <source>Change settings for the internal web server.</source>
         <translation>Altere as configurações para o servidor web interno.</translation>
     </message>
     <message>
-        <location filename="src/options/optionsdialog.cpp" line="238"/>
+        <location filename="src/options/optionsdialog.cpp" line="239"/>
         <source>Cache and Files</source>
         <translation>Cache e Arquivos</translation>
     </message>
     <message>
-        <location filename="src/options/optionsdialog.cpp" line="239"/>
+        <location filename="src/options/optionsdialog.cpp" line="240"/>
         <source>Scenery Library Database</source>
         <translation>Banco de Dados da Biblioteca de Cenários</translation>
     </message>
     <message>
-        <location filename="src/options/optionsdialog.cpp" line="250"/>
+        <location filename="src/options/optionsdialog.cpp" line="251"/>
         <source>Top of Map</source>
         <translation>Topo do Mapa</translation>
     </message>
     <message>
-        <location filename="src/options/optionsdialog.cpp" line="250"/>
+        <location filename="src/options/optionsdialog.cpp" line="251"/>
         <source>Select information that is displayed on top of the map.</source>
         <translation>Selecione as informações exibidas na parte superior do mapa.</translation>
     </message>
     <message>
-        <location filename="src/options/optionsdialog.cpp" line="256"/>
+        <location filename="src/options/optionsdialog.cpp" line="257"/>
         <source>Center Cross</source>
         <translation>Cruz Central</translation>
     </message>
@@ -28589,12 +28607,12 @@ Only shown if &quot;Use map areas&quot; on page &quot;Map Navigation&quot; is en
 Exibido apenas se &quot;Usar áreas do mapa&quot; na página &quot;Navegação no mapa&quot; também estiver ativada.</translation>
     </message>
     <message>
-        <location filename="src/options/optionsdialog.cpp" line="260"/>
+        <location filename="src/options/optionsdialog.cpp" line="261"/>
         <source>Screen Areas Marks</source>
         <translation>Marcas de Áreas da Tela</translation>
     </message>
     <message>
-        <location filename="src/options/optionsdialog.cpp" line="263"/>
+        <location filename="src/options/optionsdialog.cpp" line="264"/>
         <source>Screen Area Icons</source>
         <translation>Ícones de Área da Tela</translation>
     </message>
@@ -28609,13 +28627,13 @@ Somente se a opção &quot;Usar áreas do mapa&quot; na página &quot;Navegaçã
         <translation type="vanished">Aeroporto</translation>
     </message>
     <message>
-        <location filename="src/options/optionsdialog.cpp" line="287"/>
+        <location filename="src/options/optionsdialog.cpp" line="288"/>
         <source>Select display options for the flight plan line.</source>
         <translation>Selecione as opções de exibição para a linha do plano de voo.</translation>
     </message>
     <message>
-        <location filename="src/options/optionsdialog.cpp" line="288"/>
-        <location filename="src/options/optionsdialog.cpp" line="377"/>
+        <location filename="src/options/optionsdialog.cpp" line="289"/>
+        <location filename="src/options/optionsdialog.cpp" line="378"/>
         <source>Distance</source>
         <translation>Distância</translation>
     </message>
@@ -28644,8 +28662,8 @@ Indicated with &quot;R&quot; if both rhumb and great circle are selected.</sourc
 Indicando com &quot;R&quot; se estiver selecionado rumo e o círculo grande.</translation>
     </message>
     <message>
-        <location filename="src/options/optionsdialog.cpp" line="292"/>
-        <location filename="src/options/optionsdialog.cpp" line="378"/>
+        <location filename="src/options/optionsdialog.cpp" line="293"/>
+        <location filename="src/options/optionsdialog.cpp" line="379"/>
         <source>Magnetic Course</source>
         <oldsource>Magnetic great circle course</oldsource>
         <translation>Curso Magnético</translation>
@@ -28657,8 +28675,8 @@ Indicated with &quot;GC&quot; if both rhumb and great circle are selected.</sour
 Indicando com &quot;GC&quot; se ambos rumos e os círculos estiverem selecionados.</translation>
     </message>
     <message>
-        <location filename="src/options/optionsdialog.cpp" line="295"/>
-        <location filename="src/options/optionsdialog.cpp" line="379"/>
+        <location filename="src/options/optionsdialog.cpp" line="296"/>
+        <location filename="src/options/optionsdialog.cpp" line="380"/>
         <source>True Course</source>
         <oldsource>True great circle course</oldsource>
         <translation>Curso Verdadeiro</translation>
@@ -28670,87 +28688,87 @@ Indicated with &quot;GC&quot; if rhumb and great circle are selected.</source>
 Indicando com &quot;GC&quot; se rumo e o grande círculo estiverem selecionados.</translation>
     </message>
     <message>
-        <location filename="src/options/optionsdialog.cpp" line="352"/>
+        <location filename="src/options/optionsdialog.cpp" line="353"/>
         <source>Departure and Destination</source>
         <translation>Saída e Destino</translation>
     </message>
     <message>
-        <location filename="src/options/optionsdialog.cpp" line="361"/>
+        <location filename="src/options/optionsdialog.cpp" line="362"/>
         <source>Compass Rose</source>
         <translation>Rosa dos ventos</translation>
     </message>
     <message>
-        <location filename="src/options/optionsdialog.cpp" line="361"/>
+        <location filename="src/options/optionsdialog.cpp" line="362"/>
         <source>Select display options for the compass rose.</source>
         <translation>Selecione as opções de exibição para a rosa dos ventos.</translation>
     </message>
     <message>
-        <location filename="src/options/optionsdialog.cpp" line="362"/>
+        <location filename="src/options/optionsdialog.cpp" line="363"/>
         <source>Direction Labels</source>
         <translation>Etiquetas de direção</translation>
     </message>
     <message>
-        <location filename="src/options/optionsdialog.cpp" line="362"/>
+        <location filename="src/options/optionsdialog.cpp" line="363"/>
         <source>Show N, S, E and W labels.</source>
         <translation>Mostrar etiquetas N, S, E e W.</translation>
     </message>
     <message>
-        <location filename="src/options/optionsdialog.cpp" line="363"/>
+        <location filename="src/options/optionsdialog.cpp" line="364"/>
         <source>Degree Tick Marks</source>
         <translation>Marcas Grau Tick</translation>
     </message>
     <message>
-        <location filename="src/options/optionsdialog.cpp" line="363"/>
+        <location filename="src/options/optionsdialog.cpp" line="364"/>
         <source>Show tick marks for degrees on ring.</source>
         <translation>Mostrar marcas de escala para graus no anel.</translation>
     </message>
     <message>
-        <location filename="src/options/optionsdialog.cpp" line="364"/>
+        <location filename="src/options/optionsdialog.cpp" line="365"/>
         <source>Degree Labels</source>
         <translation>Rótulos de Grau</translation>
     </message>
     <message>
-        <location filename="src/options/optionsdialog.cpp" line="364"/>
+        <location filename="src/options/optionsdialog.cpp" line="365"/>
         <source>Show degree labels on ring.</source>
         <translation>Mostrar etiquetas de grau no anel.</translation>
     </message>
     <message>
-        <location filename="src/options/optionsdialog.cpp" line="365"/>
+        <location filename="src/options/optionsdialog.cpp" line="366"/>
         <source>Range Rings</source>
         <translation>Anéis de Escala</translation>
     </message>
     <message>
-        <location filename="src/options/optionsdialog.cpp" line="365"/>
+        <location filename="src/options/optionsdialog.cpp" line="366"/>
         <source>Show range rings and distance labels inside.</source>
         <translation>Mostrar anéis de escala e rótulos de distância dentro.</translation>
     </message>
     <message>
-        <location filename="src/options/optionsdialog.cpp" line="366"/>
+        <location filename="src/options/optionsdialog.cpp" line="367"/>
         <source>Heading Line</source>
         <translation>Linha de Proa</translation>
     </message>
     <message>
-        <location filename="src/options/optionsdialog.cpp" line="366"/>
+        <location filename="src/options/optionsdialog.cpp" line="367"/>
         <source>Show the dashed heading line for user aircraft.</source>
         <translation>Mostrar a linha de proa tracejada para aeronaves de usuários.</translation>
     </message>
     <message>
-        <location filename="src/options/optionsdialog.cpp" line="367"/>
+        <location filename="src/options/optionsdialog.cpp" line="368"/>
         <source>Show the solid track line for user aircraft.</source>
         <translation>Mostre a linha sólida da trilha para as aeronaves do usuário.</translation>
     </message>
     <message>
-        <location filename="src/options/optionsdialog.cpp" line="368"/>
+        <location filename="src/options/optionsdialog.cpp" line="369"/>
         <source>Track Label</source>
         <translation>Rótulo de faixa</translation>
     </message>
     <message>
-        <location filename="src/options/optionsdialog.cpp" line="368"/>
+        <location filename="src/options/optionsdialog.cpp" line="369"/>
         <source>Show track label for user aircraft.</source>
         <translation>Mostrar rótulo de pista para aeronaves dos usuários.</translation>
     </message>
     <message>
-        <location filename="src/options/optionsdialog.cpp" line="369"/>
+        <location filename="src/options/optionsdialog.cpp" line="370"/>
         <source>Heading Indicator</source>
         <oldsource>Crab Angle Indicator</oldsource>
         <translation>Indicador de Proa</translation>
@@ -28760,7 +28778,7 @@ Indicando com &quot;GC&quot; se rumo e o grande círculo estiverem selecionados.
         <translation type="vanished">Mostre o ângulo de caranguejo para o avião do usuário como um pequeno círculo magenta.</translation>
     </message>
     <message>
-        <location filename="src/options/optionsdialog.cpp" line="371"/>
+        <location filename="src/options/optionsdialog.cpp" line="372"/>
         <source>Course to Next Waypoint</source>
         <translation>Curso para o Próximo Waypoint</translation>
     </message>
@@ -28769,49 +28787,49 @@ Indicando com &quot;GC&quot; se rumo e o grande círculo estiverem selecionados.
         <translation type="vanished">Mostre o percurso ao próximo waypoint para o avião do usuário como uma pequena linha magenta.</translation>
     </message>
     <message>
-        <location filename="src/options/optionsdialog.cpp" line="376"/>
+        <location filename="src/options/optionsdialog.cpp" line="377"/>
         <source>Measurement Lines</source>
         <translation>Linhas de Medição</translation>
     </message>
     <message>
-        <location filename="src/options/optionsdialog.cpp" line="376"/>
+        <location filename="src/options/optionsdialog.cpp" line="377"/>
         <source>Select display options for measurement lines.</source>
         <translation>Selecione as opções de exibição das linhas de medição.</translation>
     </message>
     <message>
-        <location filename="src/options/optionsdialog.cpp" line="377"/>
+        <location filename="src/options/optionsdialog.cpp" line="378"/>
         <source>Great circle distance for measurement line.</source>
         <translation>Grande distância do círculo para linha de medição.</translation>
     </message>
     <message>
-        <location filename="src/options/optionsdialog.cpp" line="378"/>
+        <location filename="src/options/optionsdialog.cpp" line="379"/>
         <source>Show magnetic course for start and end of line.</source>
         <translation>Mostra o curso magnético para início e fim da linha.</translation>
     </message>
     <message>
-        <location filename="src/options/optionsdialog.cpp" line="225"/>
+        <location filename="src/options/optionsdialog.cpp" line="226"/>
         <source>Change colors, symbols, texts and font for map display and elevation profile objects.</source>
         <translation>Altere cores, símbolos, textos e fonte para exibição de mapa e objetos de perfil de elevação.</translation>
     </message>
     <message>
-        <location filename="src/options/optionsdialog.cpp" line="164"/>
+        <location filename="src/options/optionsdialog.cpp" line="165"/>
         <source>Apply changes and close dialog.</source>
         <translation>Aplique as alterações e feche a caixa de diálogo.</translation>
     </message>
     <message>
-        <location filename="src/options/optionsdialog.cpp" line="165"/>
+        <location filename="src/options/optionsdialog.cpp" line="166"/>
         <source>Discard all changes and close dialog.</source>
         <translation>Descarte todas as alterações e feche a caixa de diálogo.</translation>
     </message>
     <message>
-        <location filename="src/options/optionsdialog.cpp" line="166"/>
+        <location filename="src/options/optionsdialog.cpp" line="167"/>
         <source>Reset all settings back to default.
 Changes only settings that can be done with this dialog.</source>
         <translation>Redefina todas as configurações de volta ao padrão.
 Altera apenas as configurações que podem ser feitas com esta caixa de diálogo.</translation>
     </message>
     <message>
-        <location filename="src/options/optionsdialog.cpp" line="169"/>
+        <location filename="src/options/optionsdialog.cpp" line="170"/>
         <source>Apply changes.
 Move the dialog aside to see changes in main window or map.</source>
         <translation>Aplicar mudanças.
@@ -28822,7 +28840,7 @@ Mova a caixa de diálogo para o lado para ver as alterações na janela principa
         <translation type="vanished">Plano de Voo de Exibição de Mapa</translation>
     </message>
     <message>
-        <location filename="src/options/optionsdialog.cpp" line="226"/>
+        <location filename="src/options/optionsdialog.cpp" line="227"/>
         <source>Adjust display style and colors for the flight plan on the map and the elevation profile.</source>
         <translation>Ajuste o estilo de exibição e as cores para o plano de voo no mapa e o perfil de elevação.</translation>
     </message>
@@ -28835,7 +28853,7 @@ Mova a caixa de diálogo para o lado para ver as alterações na janela principa
         <translation type="vanished">Altere cores, símbolos e textos para marcas, linhas de medição e outros recursos do usuário para mapa e perfil de elevação.</translation>
     </message>
     <message>
-        <location filename="src/options/optionsdialog.cpp" line="229"/>
+        <location filename="src/options/optionsdialog.cpp" line="230"/>
         <source>Map Labels</source>
         <translation>Rótulos de Exibição do Mapa</translation>
     </message>
@@ -28844,24 +28862,24 @@ Mova a caixa de diálogo para o lado para ver as alterações na janela principa
         <translation type="vanished">Altere a exibição do mapa e as opções de legenda do perfil de elevação para marcas, aeronaves do usuário e muito mais.</translation>
     </message>
     <message>
-        <location filename="src/options/optionsdialog.cpp" line="230"/>
+        <location filename="src/options/optionsdialog.cpp" line="231"/>
         <source>Map Keys</source>
         <translation>Teclas de Exibição do Mapa</translation>
     </message>
     <message>
-        <location filename="src/options/optionsdialog.cpp" line="230"/>
+        <location filename="src/options/optionsdialog.cpp" line="231"/>
         <source>Enter username, API keys or tokens for map services which require a login.</source>
         <translation>Digite o nome de usuário, chaves de API ou tokens para serviços de mapa que requerem um login.</translation>
     </message>
     <message>
-        <location filename="src/options/optionsdialog.cpp" line="256"/>
+        <location filename="src/options/optionsdialog.cpp" line="257"/>
         <source>Shows the map center. Useful if &quot;Click map to center position&quot;
 on page &quot;Map Navigation&quot; is enabled.</source>
         <translation>Mostra o centro do mapa. Útil se &quot;Clique no mapa para a posição central&quot;
 na página &quot;Navegação do Mapa&quot; está habilitado.</translation>
     </message>
     <message>
-        <location filename="src/options/optionsdialog.cpp" line="258"/>
+        <location filename="src/options/optionsdialog.cpp" line="259"/>
         <source>Highlight click- or touchable areas on screen.
 Only shown if &quot;Use map areas&quot;
 on page &quot;Map Navigation&quot; is enabled as well.</source>
@@ -28870,7 +28888,7 @@ Exibido apenas se &quot;Usar áreas do mapa&quot;
 na página &quot;Navegação do Mapa&quot; também está habilitado.</translation>
     </message>
     <message>
-        <location filename="src/options/optionsdialog.cpp" line="260"/>
+        <location filename="src/options/optionsdialog.cpp" line="261"/>
         <source>Shows corner marks to highlight the screen areas.
 Helps if map areas are used for touchscreen navigation.
 Only shown if &quot;Use map areas&quot; on page &quot;Map Navigation&quot; is enabled as well.</source>
@@ -28879,7 +28897,7 @@ Ajuda se as áreas do mapa forem usadas para navegação na tela sensível ao to
 Exibido apenas se &quot;Usar áreas do mapa&quot; na página &quot;Navegação do Mapa&quot; também estiver ativado.</translation>
     </message>
     <message>
-        <location filename="src/options/optionsdialog.cpp" line="263"/>
+        <location filename="src/options/optionsdialog.cpp" line="264"/>
         <source>Shows icons for the screen areas.
 Useful if map areas are used for touchscreen navigation.
 Only shown if &quot;Use map areas&quot; on page &quot;Map Navigation&quot; is enabled as well.</source>
@@ -28888,45 +28906,45 @@ Only shown if &quot;Use map areas&quot; on page &quot;Map Navigation&quot; is en
 Exibido apenas se &quot;Usar áreas do mapa&quot; na página &quot;Navegação do mapa&quot; também estiver ativado.</translation>
     </message>
     <message>
-        <location filename="src/options/optionsdialog.cpp" line="273"/>
+        <location filename="src/options/optionsdialog.cpp" line="274"/>
         <source>Show runway elevation, light indicator &quot;L&quot; and length text.</source>
         <translation>Mostrar elevação da pista, indicador de luz &quot;L&quot; e texto de comprimento.</translation>
     </message>
     <message>
-        <location filename="src/options/optionsdialog.cpp" line="288"/>
+        <location filename="src/options/optionsdialog.cpp" line="289"/>
         <source>Show distance along flight plan leg.
 The label moves to keep it visible while scrolling.</source>
         <translation>Mostrar distância ao longo do fixo do plano de voo. 
 A etiqueta se move para mantê-la visível enquanto rola.</translation>
     </message>
     <message>
-        <location filename="src/options/optionsdialog.cpp" line="290"/>
+        <location filename="src/options/optionsdialog.cpp" line="291"/>
         <source>Airway</source>
         <translation>Aerovia</translation>
     </message>
     <message>
-        <location filename="src/options/optionsdialog.cpp" line="290"/>
+        <location filename="src/options/optionsdialog.cpp" line="291"/>
         <source>Show airway.
 The label moves to keep it visible while scrolling.</source>
         <translation>Mostrar aerovia.
 O rótulo se move para permanecer visível durante a rolagem.</translation>
     </message>
     <message>
-        <location filename="src/options/optionsdialog.cpp" line="292"/>
+        <location filename="src/options/optionsdialog.cpp" line="293"/>
         <source>Show great circle magnetic start course at flight plan leg.
 Does not consider VOR calibrated declination.
 The label moves to keep it visible while scrolling.</source>
         <translation>Mostrar curso magnético de início do círculo grande na perna do plano de voo. Não leva em consideração a declinação calibrada do VOR. A etiqueta se move para mantê-la visível enquanto rola.</translation>
     </message>
     <message>
-        <location filename="src/options/optionsdialog.cpp" line="295"/>
+        <location filename="src/options/optionsdialog.cpp" line="296"/>
         <source>Show great circle true start course at flight plan leg.
 The label moves to keep it visible while scrolling.</source>
         <translation>Mostrar curso verdadeiro de início do círculo grande na perna do plano de voo. 
 A etiqueta se move para mantê-la visível enquanto rola.</translation>
     </message>
     <message>
-        <location filename="src/options/optionsdialog.cpp" line="298"/>
+        <location filename="src/options/optionsdialog.cpp" line="299"/>
         <source>Magnetic Start and End Course</source>
         <translation>Curso de Início e Fim Magnético</translation>
     </message>
@@ -28939,7 +28957,7 @@ A etiqueta é fixa. O curso também depende da declinação calibrada do VOR e �
  Não mostrado nas pernas do procedimento.</translation>
     </message>
     <message>
-        <location filename="src/options/optionsdialog.cpp" line="304"/>
+        <location filename="src/options/optionsdialog.cpp" line="305"/>
         <source>True Start and End Course</source>
         <translation>Curso de Início e Fim Verdadeiro</translation>
     </message>
@@ -28950,35 +28968,35 @@ The label is fixed. Not shown at procedure legs.</source>
 A etiqueta é fixa e não é exibida em fixos de procedimentos.</translation>
     </message>
     <message>
-        <location filename="src/options/optionsdialog.cpp" line="318"/>
-        <location filename="src/options/optionsdialog.cpp" line="340"/>
+        <location filename="src/options/optionsdialog.cpp" line="319"/>
+        <location filename="src/options/optionsdialog.cpp" line="341"/>
         <source>Aircraft registration like &quot;N1000A&quot; or &quot;D-MABC&quot;.</source>
         <translation>Matrícula do avião como &quot;N1000A&quot; ou &quot;D-MABC&quot;.</translation>
     </message>
     <message>
-        <location filename="src/options/optionsdialog.cpp" line="320"/>
-        <location filename="src/options/optionsdialog.cpp" line="342"/>
+        <location filename="src/options/optionsdialog.cpp" line="321"/>
+        <location filename="src/options/optionsdialog.cpp" line="343"/>
         <source>Airline like &quot;Orbit Airlines&quot;.</source>
         <translation>Companhia Aérea como &quot;Orbit Airlines&quot;.</translation>
     </message>
     <message>
-        <location filename="src/options/optionsdialog.cpp" line="321"/>
-        <location filename="src/options/optionsdialog.cpp" line="343"/>
+        <location filename="src/options/optionsdialog.cpp" line="322"/>
+        <location filename="src/options/optionsdialog.cpp" line="344"/>
         <source>Flight number like &quot;123&quot;.</source>
         <translation>Número do voo como &quot;123&quot;.</translation>
     </message>
     <message>
-        <location filename="src/options/optionsdialog.cpp" line="349"/>
+        <location filename="src/options/optionsdialog.cpp" line="350"/>
         <source>Aircraft magnetic heading prefixed with &quot;HDG&quot; on the map</source>
         <translation>Direção magnética do avião com o prefixo &quot;HDG&quot; no mapa</translation>
     </message>
     <message>
-        <location filename="src/options/optionsdialog.cpp" line="341"/>
+        <location filename="src/options/optionsdialog.cpp" line="342"/>
         <source>Show the AI aircraft type, like B738, B350 or M20T.</source>
         <translation>Exibir o tipo de avião AI, como B738, B350 ou M20T.</translation>
     </message>
     <message>
-        <location filename="src/options/optionsdialog.cpp" line="352"/>
+        <location filename="src/options/optionsdialog.cpp" line="353"/>
         <source>Departure and destination airport idents</source>
         <translation>Identificadores do aeroporto de partida e destino</translation>
     </message>
@@ -28987,24 +29005,24 @@ A etiqueta é fixa e não é exibida em fixos de procedimentos.</translation>
         <translation type="vanished">Distância e rumo magnético do avião do usuário prefixado com &quot;Do usuário&quot;.</translation>
     </message>
     <message>
-        <location filename="src/options/optionsdialog.cpp" line="379"/>
+        <location filename="src/options/optionsdialog.cpp" line="380"/>
         <source>Show true course for start and end of line.</source>
         <translation>Mostra o curso verdadeiro para o início e o fim da linha.</translation>
     </message>
     <message>
-        <location filename="src/options/optionsdialog.cpp" line="382"/>
+        <location filename="src/options/optionsdialog.cpp" line="383"/>
         <source>Navaid or airport ident</source>
         <translation>Navaid ou identificação(ident) do aeroporto</translation>
     </message>
     <message>
-        <location filename="src/options/optionsdialog.cpp" line="382"/>
+        <location filename="src/options/optionsdialog.cpp" line="383"/>
         <source>Show ident if attached to navaid or airport.
 Also show frequency if attached to a radio navaid. </source>
         <translation>Mostrar ident se estiver conectado a um navaid ou aeroporto.
 Também mostra a frequência se estiver conectado a um auxiliar de rádio navegação. </translation>
     </message>
     <message>
-        <location filename="src/options/optionsdialog.cpp" line="1037"/>
+        <location filename="src/options/optionsdialog.cpp" line="1039"/>
         <source>Do not use an update period smaller than %1 seconds for official networks like VATSIM, IVAO or PilotEdge.
 
 Resetting update period back to %1 seconds.</source>
@@ -29013,120 +29031,120 @@ Resetting update period back to %1 seconds.</source>
 Reiniciando o período de atualização de volta para %1 segundos.</translation>
     </message>
     <message>
-        <location filename="src/options/optionsdialog.cpp" line="1076"/>
-        <location filename="src/options/optionsdialog.cpp" line="1635"/>
-        <location filename="src/options/optionsdialog.cpp" line="1652"/>
-        <location filename="src/options/optionsdialog.cpp" line="1676"/>
+        <location filename="src/options/optionsdialog.cpp" line="1078"/>
+        <location filename="src/options/optionsdialog.cpp" line="1637"/>
+        <location filename="src/options/optionsdialog.cpp" line="1654"/>
+        <location filename="src/options/optionsdialog.cpp" line="1678"/>
         <source>&lt;p&gt;Success. First lines in file:&lt;/p&gt;&lt;hr/&gt;&lt;code&gt;%1&lt;/code&gt;&lt;hr/&gt;&lt;br/&gt;</source>
         <translation>&lt;p&gt;Sucesso. Primeiras linhas no arquivo:&lt;/p&gt;&lt;hr/&gt;&lt;code&gt;%1&lt;/code&gt;&lt;hr/&gt;&lt;br/&gt;</translation>
     </message>
     <message>
-        <location filename="src/options/optionsdialog.cpp" line="1086"/>
+        <location filename="src/options/optionsdialog.cpp" line="1088"/>
         <source>&lt;p&gt;Downloaded successfully but the file does not look like a whazzup.txt file.&lt;/p&gt;&lt;p&gt;&lt;b&gt;One of the sections &lt;i&gt;!GENERAL&lt;/i&gt; and/or &lt;i&gt;!CLIENTS&lt;/i&gt; is missing.&lt;/b&gt;&lt;/p&gt;&lt;p&gt;First lines in file:&lt;/p&gt;&lt;hr/&gt;&lt;code&gt;%1&lt;/code&gt;&lt;hr/&gt;&lt;br/&gt;</source>
         <translation>&lt;p&gt;Baixado com sucesso, mas o arquivo não se parece com um arquivo whazzup.txt.&lt;/p&gt;&lt;p&gt;&lt;b&gt;Uma das seções&lt;i&gt;!GERAL&lt;/i&gt; e/ou &lt;i&gt;!CLIENTES&lt;/i&gt; está faltando.&lt;/b&gt;&lt;/p&gt;&lt;p&gt;Primeiras linhas no arquivo:&lt;/p&gt;&lt;hr/&gt;&lt;code&gt;%1&lt;/code&gt;&lt;hr/&gt;&lt;br/&gt;</translation>
     </message>
     <message>
-        <location filename="src/options/optionsdialog.cpp" line="1406"/>
+        <location filename="src/options/optionsdialog.cpp" line="1408"/>
         <source>%1, %2</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="src/options/optionsdialog.cpp" line="1719"/>
+        <location filename="src/options/optionsdialog.cpp" line="1721"/>
         <source>Open Directory to include</source>
         <translation>Abrir diretório para inclusão</translation>
     </message>
     <message>
-        <location filename="src/options/optionsdialog.cpp" line="2522"/>
+        <location filename="src/options/optionsdialog.cpp" line="2527"/>
         <source>Select directory for map themes</source>
         <translation>Selecione o diretório para os temas de mapa</translation>
     </message>
     <message>
-        <location filename="src/options/optionsdialog.cpp" line="2543"/>
+        <location filename="src/options/optionsdialog.cpp" line="2548"/>
         <source>No map theme directory set.</source>
         <translation>Nenhum diretório de tema de mapa definido.</translation>
     </message>
     <message>
-        <location filename="src/options/optionsdialog.cpp" line="2658"/>
+        <location filename="src/options/optionsdialog.cpp" line="2663"/>
         <source>No Active Sky weather snapshot file selected. Using default for ASP5 for %1.</source>
         <translation>Nenhum arquivo de snapshot de clima do Active Sky selecionado. Usando o padrão para ASP5 para %1.</translation>
     </message>
     <message>
-        <location filename="src/options/optionsdialog.cpp" line="2663"/>
+        <location filename="src/options/optionsdialog.cpp" line="2668"/>
         <source>No Active Sky weather snapshot file selected. Using default for Active Sky XP 11 for %1.</source>
         <translation>Nenhum arquivo de snapshot de clima do Active Sky selecionado. Usando o padrão para o Active Sky XP 11 para %1.</translation>
     </message>
     <message>
-        <location filename="src/options/optionsdialog.cpp" line="2668"/>
+        <location filename="src/options/optionsdialog.cpp" line="2673"/>
         <source>No Active Sky weather snapshot file selected. Using default for Active Sky XP 12 for %1.</source>
         <translation>Nenhum arquivo de snapshot de clima do Active Sky selecionado. Usando o padrão para o Active Sky XP 12 para %1.</translation>
     </message>
     <message>
-        <location filename="src/options/optionsdialog.cpp" line="2673"/>
+        <location filename="src/options/optionsdialog.cpp" line="2678"/>
         <source>No Active Sky weather snapshot file selected. Using default for Active Sky FS for %1.</source>
         <translation>Nenhum arquivo de snapshot de clima do Active Sky selecionado. Usando o padrão para Active Sky FS para %1.</translation>
     </message>
     <message>
-        <location filename="src/options/optionsdialog.cpp" line="2876"/>
+        <location filename="src/options/optionsdialog.cpp" line="2881"/>
         <source>No valid address found.</source>
         <translation>Nenhum endereço válido foi encontrado.</translation>
     </message>
     <message>
-        <location filename="src/options/optionsdialog.cpp" line="2878"/>
+        <location filename="src/options/optionsdialog.cpp" line="2883"/>
         <source>Web Server is running at the address:&lt;br/&gt;%1</source>
         <translation>O servidor da Web está sendo executado no endereço:&lt;br/&gt;%1</translation>
     </message>
     <message>
-        <location filename="src/options/optionsdialog.cpp" line="2880"/>
+        <location filename="src/options/optionsdialog.cpp" line="2885"/>
         <source>Web Server is running at addresses:&lt;br/&gt;%1</source>
         <translation>O servidor da Web está sendo executado em endereços:&lt;br/&gt;%1</translation>
     </message>
     <message>
-        <location filename="src/options/optionsdialog.cpp" line="3155"/>
+        <location filename="src/options/optionsdialog.cpp" line="3160"/>
         <source>Font too large for user interface. Size was corrected. Maximum is 30 pixels/points.</source>
         <translation>Fonte muito grande para a interface do usuário. O tamanho foi corrigido. O máximo é 30 pixels/points.</translation>
     </message>
     <message>
-        <location filename="src/options/optionsdialog.cpp" line="3189"/>
+        <location filename="src/options/optionsdialog.cpp" line="3194"/>
         <source>&lt;p&gt;Here you can enter a Mapbox User Style URL.&lt;/p&gt;&lt;p&gt;Open the Mapbox Studio, login and click on the three-dot menu button of your style.&lt;br/&gt; Then click on the copy icon of the &quot;Style URL&quot; to add it to the clipboard and enter it below.&lt;/p&gt;&lt;p&gt;A style URL looks like &quot;mapbox://styles/USERNAME/STYLEID&quot;.&lt;/p&gt;&lt;p&gt;&lt;a href=&quot;https://studio.mapbox.com/&quot;&gt;&lt;b&gt;Click here to open the Mapbox Studio page in your browser&lt;/b&gt;&lt;/a&gt;&lt;/p&gt;</source>
         <translation>&lt;p&gt;Aqui você pode inserir uma URL de Estilo de Usuário Mapbox.&lt;/p&gt;&lt;p&gt;Abra o Mapbox Studio, faça login e clique no botão de menu de três pontos do seu estilo.&lt;br/&gt; Então clique no ícone de cópia da &quot;URL de Estilo&quot; para adicioná-lo na área de transferência e insira-o abaixo.&lt;/p&gt;&lt;p&gt;Uma URL de estilo é semelhante a &quot;mapbox://styles/USERNAME/STYLEID&quot;.&lt;/p&gt;&lt;p&gt;&lt;a href=&quot;https://studio.mapbox.com/&quot;&gt;&lt;b&gt;Clique aqui para abrir a página do Mapbox Studio no seu navegador&lt;/b&gt;&lt;/a&gt;&lt;/p&gt;</translation>
     </message>
     <message>
-        <location filename="src/options/optionsdialog.cpp" line="3196"/>
+        <location filename="src/options/optionsdialog.cpp" line="3201"/>
         <source>&lt;p&gt;You can also to provide you Mapbox Access Token below if not already done.&lt;br/&gt;You can find the Token on your Mapbox Account page.&lt;/p&gt;&lt;p&gt;&lt;a href=&quot;https://account.mapbox.com/&quot;&gt;&lt;b&gt;Click here to open the Mapbox Account page in your browser&lt;/b&gt;&lt;/a&gt;&lt;/p&gt;</source>
         <translation>&lt;p&gt;Você também pode fornecer seu Token de Acesso Mapbox abaixo, caso ainda não tenha feito isso.&lt;br/&gt;Você pode encontrar o Token na sua página de conta Mapbox.&lt;/p&gt;&lt;p&gt;&lt;a href=&quot;https://account.mapbox.com/&quot;&gt;&lt;b&gt;Clique aqui para abrir a página de conta Mapbox no seu navegador&lt;/b&gt;&lt;/a&gt;&lt;/p&gt;</translation>
     </message>
     <message>
-        <location filename="src/options/optionsdialog.cpp" line="3204"/>
+        <location filename="src/options/optionsdialog.cpp" line="3209"/>
         <source>&lt;p&gt;&lt;b&gt;You have to clear the map cache manually after updating or changing your Mapbox style.&lt;/b&gt;&lt;/p&gt;&lt;p&gt;&lt;a href=&quot;%1&quot;&gt;&lt;b&gt;Click here to open cache folder for the Mapbox user style.&lt;/b&gt;&lt;/a&gt; Backup the folder if needed and then delete the folder contents manually to clear the cache.&lt;/p&gt;</source>
         <translation>&lt;p&gt;&lt;b&gt;Você precisa limpar o cache do mapa manualmente após atualizar ou alterar seu estilo Mapbox.&lt;/b&gt;&lt;/p&gt;&lt;p&gt;&lt;a href=&quot;%1&quot;&gt;&lt;b&gt;Clique aqui para abrir a pasta de cache para o estilo de usuário Mapbox.&lt;/b&gt;&lt;/a&gt; Faça um backup da pasta, se necessário, e depois delete o conteúdo da pasta manualmente para limpar o cache.&lt;/p&gt;</translation>
     </message>
     <message>
-        <location filename="src/options/optionsdialog.cpp" line="3223"/>
+        <location filename="src/options/optionsdialog.cpp" line="3228"/>
         <source> - Enter Mapbox Keys</source>
         <translation> - Insira as chaves Mapbox</translation>
     </message>
     <message>
-        <location filename="src/options/optionsdialog.cpp" line="3254"/>
+        <location filename="src/options/optionsdialog.cpp" line="3259"/>
         <source>Mapbox Token is empty.</source>
         <translation>Token Mapbox está vazio.</translation>
     </message>
     <message>
-        <location filename="src/options/optionsdialog.cpp" line="3257"/>
+        <location filename="src/options/optionsdialog.cpp" line="3262"/>
         <source>Mapbox User Style not found in URL.</source>
         <translation>Estilo de usuário Mapbox não encontrado na URL.</translation>
     </message>
     <message>
-        <location filename="src/options/optionsdialog.cpp" line="3260"/>
+        <location filename="src/options/optionsdialog.cpp" line="3265"/>
         <source>Mapbox Username not found in URL.</source>
         <translation>Nome de usuário Mapbox não encontrado na URL.</translation>
     </message>
     <message>
-        <location filename="src/options/optionsdialog.cpp" line="3263"/>
+        <location filename="src/options/optionsdialog.cpp" line="3268"/>
         <source>Style URL has to start with &quot;mapbox://styles/&quot;.</source>
         <translation>A URL do estilo tem que começar com &quot;mapbox://styles/&quot;.</translation>
     </message>
     <message>
-        <location filename="src/options/optionsdialog.cpp" line="3267"/>
+        <location filename="src/options/optionsdialog.cpp" line="3272"/>
         <source>One or more Mapbox keys are missing. Installation might be incomplete since map themes are missing.</source>
         <translation>Uma ou mais chaves Mapbox estão faltando. A instalação pode estar incompleta, pois faltam temas de mapas.</translation>
     </message>
@@ -29135,82 +29153,82 @@ Reiniciando o período de atualização de volta para %1 segundos.</translation>
         <translation type="vanished">&lt;p&gt;Sucesso. Primeiros METARs no arquivo:&lt;/p&gt;&lt;hr/&gt;&lt;code&gt;%1&lt;/code&gt;&lt;hr/&gt;&lt;br/&gt;</translation>
     </message>
     <message>
-        <location filename="src/options/optionsdialog.cpp" line="1690"/>
+        <location filename="src/options/optionsdialog.cpp" line="1692"/>
         <source>Success.</source>
         <translation>Sucesso.</translation>
     </message>
     <message>
-        <location filename="src/options/optionsdialog.cpp" line="2694"/>
+        <location filename="src/options/optionsdialog.cpp" line="2699"/>
         <source>Weather file is valid. Using selected for X-Plane 11.</source>
         <translation>Arquivo meteorológico é válido. Usando selecionado para X-Plane 11.</translation>
     </message>
     <message>
-        <location filename="src/options/optionsdialog.cpp" line="2698"/>
+        <location filename="src/options/optionsdialog.cpp" line="2703"/>
         <source>Using default weather from X-Plane 11 base path.</source>
         <translation>Usando clima padrão do caminho base X-Plane 11.</translation>
     </message>
     <message>
-        <location filename="src/options/optionsdialog.cpp" line="2711"/>
+        <location filename="src/options/optionsdialog.cpp" line="2716"/>
         <source>Is not a directory.</source>
         <translation>Não é um diretório.</translation>
     </message>
     <message>
-        <location filename="src/options/optionsdialog.cpp" line="2713"/>
+        <location filename="src/options/optionsdialog.cpp" line="2718"/>
         <source>Weather directory is valid. Using selected for X-Plane 12.</source>
         <translation>Diretório de clima é válido. Usando o selecionado para o X-Plane 12.</translation>
     </message>
     <message>
-        <location filename="src/options/optionsdialog.cpp" line="2717"/>
+        <location filename="src/options/optionsdialog.cpp" line="2722"/>
         <source>Using default weather from X-Plane 12 base path.</source>
         <translation>Usando o clima padrão do caminho de base do X-Plane 12.</translation>
     </message>
     <message>
-        <location filename="src/options/optionsdialog.cpp" line="2732"/>
+        <location filename="src/options/optionsdialog.cpp" line="2737"/>
         <source>Is not a X-Plane 11 wind file.</source>
         <translation>Não é um arquivo de vento X-Plane 11.</translation>
     </message>
     <message>
-        <location filename="src/options/optionsdialog.cpp" line="2734"/>
+        <location filename="src/options/optionsdialog.cpp" line="2739"/>
         <source>X-Plane 11 wind file is valid.</source>
         <translation>Arquivo de vento X-Plane 11 é válido.</translation>
     </message>
     <message>
-        <location filename="src/options/optionsdialog.cpp" line="2737"/>
+        <location filename="src/options/optionsdialog.cpp" line="2742"/>
         <source>Using default X-Plane 11 wind file.</source>
         <translation>Usando arquivo de vento X-Plane 11 padrão.</translation>
     </message>
     <message>
-        <location filename="src/options/optionsdialog.cpp" line="2745"/>
+        <location filename="src/options/optionsdialog.cpp" line="2750"/>
         <source>Select Active Sky Weather Snapshot File</source>
         <translation>Selecionar arquivo de instantâneo de clima Active Sky</translation>
     </message>
     <message>
-        <location filename="src/options/optionsdialog.cpp" line="2764"/>
+        <location filename="src/options/optionsdialog.cpp" line="2769"/>
         <source>Select X-Plane 11 METAR File</source>
         <translation>Selecionar arquivo METAR X-Plane 11</translation>
     </message>
     <message>
-        <location filename="src/options/optionsdialog.cpp" line="2786"/>
+        <location filename="src/options/optionsdialog.cpp" line="2791"/>
         <source>Select X-Plane 12 Weather Directory</source>
         <translation>Selecionar diretório de clima X-Plane 12</translation>
     </message>
     <message>
-        <location filename="src/options/optionsdialog.cpp" line="2803"/>
+        <location filename="src/options/optionsdialog.cpp" line="2808"/>
         <source>Select X-Plane 11 Wind File</source>
         <translation>Selecionar arquivo de vento X-Plane 11</translation>
     </message>
     <message>
-        <location filename="src/options/optionsdialog.cpp" line="2804"/>
+        <location filename="src/options/optionsdialog.cpp" line="2809"/>
         <source>X-Plane 11 Wind Files %1;;All Files (*)</source>
         <translation>Arquivos de vento X-Plane 11 %1;;Todos os arquivos (*)</translation>
     </message>
     <message>
-        <location filename="src/options/optionsdialog.cpp" line="3040"/>
+        <location filename="src/options/optionsdialog.cpp" line="3045"/>
         <source>Example: &quot;%1&quot;</source>
         <translation>Exemplo: &quot;%1&quot;</translation>
     </message>
     <message>
-        <location filename="src/options/optionsdialog.cpp" line="3043"/>
+        <location filename="src/options/optionsdialog.cpp" line="3048"/>
         <source>&lt;br/&gt;</source>
         <translation></translation>
     </message>
@@ -29223,12 +29241,12 @@ Reiniciando o período de atualização de volta para %1 segundos.</translation>
         <translation type="vanished">Não permitidos são:  \  /  :  &apos;  *  &amp;amp;  &amp;gt;  &amp;lt;  ?  $  |</translation>
     </message>
     <message>
-        <location filename="src/options/optionsdialog.cpp" line="3049"/>
+        <location filename="src/options/optionsdialog.cpp" line="3054"/>
         <source>Pattern is empty. Using default &quot;%1&quot;.</source>
         <translation>O padrão está vazio. Usando o padrão &quot;%1&quot;.</translation>
     </message>
     <message>
-        <location filename="src/options/optionsdialog.cpp" line="3093"/>
+        <location filename="src/options/optionsdialog.cpp" line="3098"/>
         <source>%1 - Select font</source>
         <translation>%1 - Selecione a fonte</translation>
     </message>
@@ -29237,7 +29255,7 @@ Reiniciando o período de atualização de volta para %1 segundos.</translation>
         <translation type="vanished">&lt;p&gt;Sucesso. Resultado:&lt;/p&gt;&lt;hr/&gt;&lt;code&gt;%1&lt;/code&gt;&lt;hr/&gt;&lt;br/&gt;</translation>
     </message>
     <message>
-        <location filename="src/options/optionsdialog.cpp" line="1749"/>
+        <location filename="src/options/optionsdialog.cpp" line="1751"/>
         <source>Open Files to exclude from Scenery Loading</source>
         <translation>Abrir arquivos para excluir do carregamento do cenário</translation>
     </message>
@@ -29246,8 +29264,8 @@ Reiniciando o período de atualização de volta para %1 segundos.</translation>
         <translation type="vanished">Selecione Diretório para os espaços aéreos do usuário</translation>
     </message>
     <message>
-        <location filename="src/options/optionsdialog.cpp" line="2571"/>
-        <location filename="src/options/optionsdialog.cpp" line="2709"/>
+        <location filename="src/options/optionsdialog.cpp" line="2576"/>
+        <location filename="src/options/optionsdialog.cpp" line="2714"/>
         <source>Directory does not exist.</source>
         <translation>Diretório não existe.</translation>
     </message>
@@ -29256,31 +29274,31 @@ Reiniciando o período de atualização de volta para %1 segundos.</translation>
         <translation type="vanished">Diretório é válido.</translation>
     </message>
     <message>
-        <location filename="src/options/optionsdialog.cpp" line="2575"/>
+        <location filename="src/options/optionsdialog.cpp" line="2580"/>
         <source>No valid GLOBE data found.</source>
         <translation>Nenhum dado GLOBE válido encontrado.</translation>
     </message>
     <message>
-        <location filename="src/options/optionsdialog.cpp" line="2617"/>
-        <location filename="src/options/optionsdialog.cpp" line="2690"/>
-        <location filename="src/options/optionsdialog.cpp" line="2728"/>
+        <location filename="src/options/optionsdialog.cpp" line="2622"/>
+        <location filename="src/options/optionsdialog.cpp" line="2695"/>
+        <location filename="src/options/optionsdialog.cpp" line="2733"/>
         <source>File does not exist.</source>
         <translation>Arquivo não existe.</translation>
     </message>
     <message>
-        <location filename="src/options/optionsdialog.cpp" line="2619"/>
-        <location filename="src/options/optionsdialog.cpp" line="2692"/>
-        <location filename="src/options/optionsdialog.cpp" line="2730"/>
+        <location filename="src/options/optionsdialog.cpp" line="2624"/>
+        <location filename="src/options/optionsdialog.cpp" line="2697"/>
+        <location filename="src/options/optionsdialog.cpp" line="2735"/>
         <source>Is not a file.</source>
         <translation>Não é válido.</translation>
     </message>
     <message>
-        <location filename="src/options/optionsdialog.cpp" line="2621"/>
+        <location filename="src/options/optionsdialog.cpp" line="2626"/>
         <source>Is not an Active Sky weather snapshot file.</source>
         <translation>Não é um arquivo de snapshot meteorológico do Active Sky.</translation>
     </message>
     <message>
-        <location filename="src/options/optionsdialog.cpp" line="2624"/>
+        <location filename="src/options/optionsdialog.cpp" line="2629"/>
         <source>Weather snapshot file is valid. Using selected for all simulators</source>
         <translation>Arquivo de instantâneo de clima é válido. Usando selecionado para todos os simuladores</translation>
     </message>
@@ -29313,7 +29331,7 @@ Reiniciando o período de atualização de volta para %1 segundos.</translation>
         <translation type="vanished">Abrindo Arquivo de METAR do X-Plane</translation>
     </message>
     <message>
-        <location filename="src/options/optionsdialog.cpp" line="2765"/>
+        <location filename="src/options/optionsdialog.cpp" line="2770"/>
         <source>X-Plane METAR Files %1;;All Files (*)</source>
         <translation>Arquivos de METAR do X-Plane %1;;Todos os Arquivos (*)</translation>
     </message>
@@ -29346,17 +29364,17 @@ Este processo será executado em segundo plano e pode demorar um pouco.</transla
         <translation type="vanished">O Servidor da Web está sendo executado em %1</translation>
     </message>
     <message>
-        <location filename="src/options/optionsdialog.cpp" line="2882"/>
+        <location filename="src/options/optionsdialog.cpp" line="2887"/>
         <source>&amp;Stop Web Server</source>
         <translation>&amp;Parar Servidor Web</translation>
     </message>
     <message>
-        <location filename="src/options/optionsdialog.cpp" line="2886"/>
+        <location filename="src/options/optionsdialog.cpp" line="2891"/>
         <source>Web Server is not running.</source>
         <translation>Servidor Web não está sendo executado.</translation>
     </message>
     <message>
-        <location filename="src/options/optionsdialog.cpp" line="2887"/>
+        <location filename="src/options/optionsdialog.cpp" line="2892"/>
         <source>&amp;Start Web Server</source>
         <translation>&amp;Iniciar Servidor Web</translation>
     </message>
@@ -29373,28 +29391,28 @@ Este processo será executado em segundo plano e pode demorar um pouco.</transla
         <translation type="vanished">Aviso: Nenhum arquivo &quot;index.html&quot; foi encontrado.</translation>
     </message>
     <message>
-        <location filename="src/options/optionsdialog.cpp" line="2930"/>
+        <location filename="src/options/optionsdialog.cpp" line="2935"/>
         <source>Using default document root &quot;%1&quot;.</source>
         <translation>Usando o caminho padrão do documento &quot;%1&quot;.</translation>
     </message>
     <message>
-        <location filename="src/options/optionsdialog.cpp" line="2910"/>
+        <location filename="src/options/optionsdialog.cpp" line="2915"/>
         <source>Document root is valid.</source>
         <translation>Diretório raiz do documento é válido.</translation>
     </message>
     <message>
-        <location filename="src/options/optionsdialog.cpp" line="2935"/>
+        <location filename="src/options/optionsdialog.cpp" line="2940"/>
         <source>Not initialized.</source>
         <translation>Não inicializado.</translation>
     </message>
     <message>
-        <location filename="src/options/optionsdialog.cpp" line="2943"/>
+        <location filename="src/options/optionsdialog.cpp" line="2948"/>
         <source>Open Document Root Directory</source>
         <translation>Abra o Diretório Raiz do Documento</translation>
     </message>
     <message>
-        <location filename="src/options/optionsdialog.cpp" line="326"/>
-        <location filename="src/options/optionsdialog.cpp" line="348"/>
+        <location filename="src/options/optionsdialog.cpp" line="327"/>
+        <location filename="src/options/optionsdialog.cpp" line="349"/>
         <source>Climb- and Sinkrate</source>
         <translation>Subir- e Sinkrate</translation>
     </message>
@@ -29411,7 +29429,7 @@ and other user interface behavior.</source>
 e outros comportamentos da interface do usuário.</translation>
     </message>
     <message>
-        <location filename="src/options/optionsdialog.cpp" line="220"/>
+        <location filename="src/options/optionsdialog.cpp" line="221"/>
         <source>Fuel, distance, speed and coordinate units as well as
 options for course and heading display.</source>
         <translation>Unidades de combustível, distância, velocidade e coordenadas, bem como
@@ -29422,35 +29440,35 @@ opções para exibição de curso e proa.</translation>
         <translation type="vanished">Opções de atualização e movimento para a aeronave do usuário e trilha.</translation>
     </message>
     <message>
-        <location filename="src/options/optionsdialog.cpp" line="234"/>
+        <location filename="src/options/optionsdialog.cpp" line="235"/>
         <source>Change weather sources for information and tooltips.</source>
         <translation>Altere as fontes meteorológicas para obter informações e dicas de ferramentas.</translation>
     </message>
     <message>
-        <location filename="src/options/optionsdialog.cpp" line="235"/>
+        <location filename="src/options/optionsdialog.cpp" line="236"/>
         <source>Weather Files</source>
         <oldsource>Weather URLs</oldsource>
         <translation>Arquivos Meteorológicos</translation>
     </message>
     <message>
-        <location filename="src/options/optionsdialog.cpp" line="238"/>
+        <location filename="src/options/optionsdialog.cpp" line="239"/>
         <source>Change map cache, select elevation data source and the path for user airspaces.</source>
         <translation>Altere o cache do mapa, selecione a fonte de dados de elevação e o caminho para os espaços aéreos do usuário.</translation>
     </message>
     <message>
-        <location filename="src/options/optionsdialog.cpp" line="239"/>
+        <location filename="src/options/optionsdialog.cpp" line="240"/>
         <source>Exclude scenery files from loading and
 add-on recognition.</source>
         <translation>Excluir arquivos de cenário do carregamento e
 reconhecimento de complemento.</translation>
     </message>
     <message>
-        <location filename="src/options/optionsdialog.cpp" line="255"/>
+        <location filename="src/options/optionsdialog.cpp" line="256"/>
         <source>Map Navigation Aids</source>
         <translation>Auxílios de navegação(navaids) no mapa</translation>
     </message>
     <message>
-        <location filename="src/options/optionsdialog.cpp" line="258"/>
+        <location filename="src/options/optionsdialog.cpp" line="259"/>
         <source>Screen Area</source>
         <translation>Área da Tela</translation>
     </message>
@@ -29467,7 +29485,7 @@ Only shown if &quot;Use map areas&quot; on page &quot;Map Navigation&quot; is en
 Exibido somente se a opção &quot;Usar áreas do mapa&quot; na página &quot;Navegação no Mapa&quot; também estiver ativada.</translation>
     </message>
     <message>
-        <location filename="src/options/optionsdialog.cpp" line="269"/>
+        <location filename="src/options/optionsdialog.cpp" line="270"/>
         <source>Airport name and ident in brackets depending on zoom factor.
 Ident can be internal, ICAO, FAA, IATA or local depending on availability.</source>
         <translation>Nome e identificação do aeroporto entre colchetes, depende do fator de zoom.
@@ -29478,27 +29496,27 @@ A identificação pode ser interno, ICAO, FAA, IATA ou local dependendo da dispo
         <translation type="vanished">Mostre o comprimento da pista, largura e texto indicador de iluminação.</translation>
     </message>
     <message>
-        <location filename="src/options/optionsdialog.cpp" line="276"/>
+        <location filename="src/options/optionsdialog.cpp" line="277"/>
         <source>Airport Details</source>
         <translation>Detalhes do aeroporto</translation>
     </message>
     <message>
-        <location filename="src/options/optionsdialog.cpp" line="276"/>
+        <location filename="src/options/optionsdialog.cpp" line="277"/>
         <source>Select airport diagram elements.</source>
         <translation>Selecione os elementos do diagrama do aeroporto.</translation>
     </message>
     <message>
-        <location filename="src/options/optionsdialog.cpp" line="277"/>
+        <location filename="src/options/optionsdialog.cpp" line="278"/>
         <source>Runways</source>
         <translation>Pistas</translation>
     </message>
     <message>
-        <location filename="src/options/optionsdialog.cpp" line="277"/>
+        <location filename="src/options/optionsdialog.cpp" line="278"/>
         <source>Show runways.</source>
         <translation>Mostrar pistas.</translation>
     </message>
     <message>
-        <location filename="src/options/optionsdialog.cpp" line="278"/>
+        <location filename="src/options/optionsdialog.cpp" line="279"/>
         <source>Taxiways</source>
         <translation></translation>
     </message>
@@ -29507,32 +29525,32 @@ A identificação pode ser interno, ICAO, FAA, IATA ou local dependendo da dispo
         <translation type="vanished">Mostrar linhas de taxiway e plano de fundo.</translation>
     </message>
     <message>
-        <location filename="src/options/optionsdialog.cpp" line="282"/>
+        <location filename="src/options/optionsdialog.cpp" line="283"/>
         <source>Aprons</source>
         <translation>Pátio de aeronaves</translation>
     </message>
     <message>
-        <location filename="src/options/optionsdialog.cpp" line="282"/>
+        <location filename="src/options/optionsdialog.cpp" line="283"/>
         <source>Display aprons.</source>
         <translation>Mostrar pátio de aeronaves.</translation>
     </message>
     <message>
-        <location filename="src/options/optionsdialog.cpp" line="283"/>
+        <location filename="src/options/optionsdialog.cpp" line="284"/>
         <source>Parking</source>
         <translation>Estacionamento</translation>
     </message>
     <message>
-        <location filename="src/options/optionsdialog.cpp" line="283"/>
+        <location filename="src/options/optionsdialog.cpp" line="284"/>
         <source>Show fuel, tower, helipads, gates and ramp parking.</source>
         <translation>Mostrar combustível, torre, heliporto, portões e estacionamento em rampa.</translation>
     </message>
     <message>
-        <location filename="src/options/optionsdialog.cpp" line="284"/>
+        <location filename="src/options/optionsdialog.cpp" line="285"/>
         <source>Boundary</source>
         <translation>Limite</translation>
     </message>
     <message>
-        <location filename="src/options/optionsdialog.cpp" line="284"/>
+        <location filename="src/options/optionsdialog.cpp" line="285"/>
         <source>Display a white boundary around and below the airport diagram.</source>
         <translation>Exibir um limite branco ao redor e abaixo do diagrama do aeroporto.</translation>
     </message>
@@ -29545,34 +29563,34 @@ A identificação pode ser interno, ICAO, FAA, IATA ou local dependendo da dispo
         <translation type="vanished">Mostre o verdadeiro grande curso de início do círculo na perna(leg) do plano de voo.</translation>
     </message>
     <message>
-        <location filename="src/options/optionsdialog.cpp" line="322"/>
-        <location filename="src/options/optionsdialog.cpp" line="344"/>
+        <location filename="src/options/optionsdialog.cpp" line="323"/>
+        <location filename="src/options/optionsdialog.cpp" line="345"/>
         <source>Transponder Code</source>
         <translation>Código Transponder</translation>
     </message>
     <message>
-        <location filename="src/options/optionsdialog.cpp" line="344"/>
+        <location filename="src/options/optionsdialog.cpp" line="345"/>
         <source>Transponder code prefixed with &quot;XPDR&quot; on the map</source>
         <translation>Código transponder prefixado com &quot;XPDR&quot; no mapa</translation>
     </message>
     <message>
-        <location filename="src/options/optionsdialog.cpp" line="345"/>
+        <location filename="src/options/optionsdialog.cpp" line="346"/>
         <source>Value prefixed with &quot;IAS&quot; on the map</source>
         <translation>Valor prefixado com &quot;IAS&quot; no mapa</translation>
     </message>
     <message>
-        <location filename="src/options/optionsdialog.cpp" line="346"/>
+        <location filename="src/options/optionsdialog.cpp" line="347"/>
         <source>Value prefixed with &quot;GS&quot; on the map</source>
         <translation>Valor prefixado com &quot;GS&quot; no mapa</translation>
     </message>
     <message>
-        <location filename="src/options/optionsdialog.cpp" line="325"/>
-        <location filename="src/options/optionsdialog.cpp" line="347"/>
+        <location filename="src/options/optionsdialog.cpp" line="326"/>
+        <location filename="src/options/optionsdialog.cpp" line="348"/>
         <source>True Airspeed</source>
         <translation>Velocidade Relativa Verdadeira (TAS)</translation>
     </message>
     <message>
-        <location filename="src/options/optionsdialog.cpp" line="347"/>
+        <location filename="src/options/optionsdialog.cpp" line="348"/>
         <source>Value prefixed with &quot;TAS&quot; on the map</source>
         <translation>Valor prefixado com &quot;TAS&quot; no mapa</translation>
     </message>
@@ -29581,29 +29599,29 @@ A identificação pode ser interno, ICAO, FAA, IATA ou local dependendo da dispo
         <translation type="vanished">Proa da aeronave prefixado com &quot;HDG&quot; no mapa</translation>
     </message>
     <message>
-        <location filename="src/options/optionsdialog.cpp" line="328"/>
-        <location filename="src/options/optionsdialog.cpp" line="350"/>
+        <location filename="src/options/optionsdialog.cpp" line="329"/>
+        <location filename="src/options/optionsdialog.cpp" line="351"/>
         <source>Actual Altitude</source>
         <translation>Altitude Real</translation>
     </message>
     <message>
-        <location filename="src/options/optionsdialog.cpp" line="350"/>
+        <location filename="src/options/optionsdialog.cpp" line="351"/>
         <source>Real aircraft altitude prefixed with &quot;ALT&quot; on the map</source>
         <translation>Altitude real da aeronave prefixada com &quot;ALT&quot; no mapa</translation>
     </message>
     <message>
-        <location filename="src/options/optionsdialog.cpp" line="329"/>
-        <location filename="src/options/optionsdialog.cpp" line="351"/>
+        <location filename="src/options/optionsdialog.cpp" line="330"/>
+        <location filename="src/options/optionsdialog.cpp" line="352"/>
         <source>Indicated Altitude</source>
         <translation>Altitude Indicada</translation>
     </message>
     <message>
-        <location filename="src/options/optionsdialog.cpp" line="351"/>
+        <location filename="src/options/optionsdialog.cpp" line="352"/>
         <source>Indicated aircraft altitude prefixed with &quot;IND&quot; on the map</source>
         <translation>Altitude indicada da aeronave com o prefixo &quot;IND&quot; no mapa</translation>
     </message>
     <message>
-        <location filename="src/options/optionsdialog.cpp" line="330"/>
+        <location filename="src/options/optionsdialog.cpp" line="331"/>
         <source>Altitude above ground</source>
         <translation>Altitude acima do solo</translation>
     </message>
@@ -29612,8 +29630,8 @@ A identificação pode ser interno, ICAO, FAA, IATA ou local dependendo da dispo
         <translation type="vanished">Altitude atual acima do solo. Prefixada com &quot;AGL&quot; no mapa</translation>
     </message>
     <message>
-        <location filename="src/options/optionsdialog.cpp" line="333"/>
-        <location filename="src/options/optionsdialog.cpp" line="353"/>
+        <location filename="src/options/optionsdialog.cpp" line="334"/>
+        <location filename="src/options/optionsdialog.cpp" line="354"/>
         <source>Coordinates</source>
         <translation>Coordenadas</translation>
     </message>
@@ -29622,7 +29640,7 @@ A identificação pode ser interno, ICAO, FAA, IATA ou local dependendo da dispo
         <translation type="vanished">Mostrar coordenadas do avião usando o formato selecionado na página de opções &quot;Unidades&quot;.</translation>
     </message>
     <message>
-        <location filename="src/options/optionsdialog.cpp" line="335"/>
+        <location filename="src/options/optionsdialog.cpp" line="336"/>
         <source>Icing</source>
         <translation>Formação de gelo</translation>
     </message>
@@ -29635,17 +29653,17 @@ A identificação pode ser interno, ICAO, FAA, IATA ou local dependendo da dispo
         <translation type="vanished">Mostre a proa da aeronave do usuário como um pequeno círculo na cor magenta.</translation>
     </message>
     <message>
-        <location filename="src/options/optionsdialog.cpp" line="373"/>
+        <location filename="src/options/optionsdialog.cpp" line="374"/>
         <source>True Heading</source>
         <translation>Rumo Verdadeiro</translation>
     </message>
     <message>
-        <location filename="src/options/optionsdialog.cpp" line="373"/>
+        <location filename="src/options/optionsdialog.cpp" line="374"/>
         <source>Show the whole circle and tick marks using true heading.</source>
         <translation>Exibir todo o círculo e marcas de tick usando rumo verdadeiro.</translation>
     </message>
     <message>
-        <location filename="src/options/optionsdialog.cpp" line="380"/>
+        <location filename="src/options/optionsdialog.cpp" line="381"/>
         <source>Radial Number</source>
         <translation>Número radial</translation>
     </message>
@@ -29658,13 +29676,13 @@ A identificação pode ser interno, ICAO, FAA, IATA ou local dependendo da dispo
         <translation type="obsolete">Perfil de Elevação</translation>
     </message>
     <message>
-        <location filename="src/options/optionsdialog.cpp" line="355"/>
+        <location filename="src/options/optionsdialog.cpp" line="356"/>
         <source>Distance and Bearing from User</source>
         <oldsource>Distance on top Label</oldsource>
         <translation>Distância e rumo a partir do usuário</translation>
     </message>
     <message>
-        <location filename="src/options/optionsdialog.cpp" line="1081"/>
+        <location filename="src/options/optionsdialog.cpp" line="1083"/>
         <source>&lt;p&gt;Downloaded successfully but the file does not look like a status.txt file.&lt;/p&gt;&lt;p&gt;&lt;b&gt;One of the keys &lt;i&gt;url0&lt;/i&gt; and/or &lt;i&gt;url1&lt;/i&gt; is missing.&lt;/b&gt;&lt;/p&gt;&lt;p&gt;First lines in file:&lt;/p&gt;&lt;hr/&gt;&lt;code&gt;%1&lt;/code&gt;&lt;hr/&gt;&lt;br/&gt;</source>
         <translation>&lt;p&gt;Baixado com sucesso, mas o arquivo não se parece com um arquivo status.txt.&lt;/p&gt;&lt;p&gt;&lt;b&gt;Uma das chaves &lt;i&gt;url0&lt;/i&gt; e/ou &lt;i&gt;url1&lt;/i&gt; falhou.&lt;/b&gt;&lt;/p&gt;&lt;p&gt;Primeiras linhas do arquivo:&lt;/p&gt;&lt;hr/&gt;&lt;code&gt;%1&lt;/code&gt;&lt;hr/&gt;&lt;br/</translation>
     </message>
@@ -29673,7 +29691,7 @@ A identificação pode ser interno, ICAO, FAA, IATA ou local dependendo da dispo
         <translation type="vanished">Selecione Diretório para os Espaços Aéreos do Usuário</translation>
     </message>
     <message>
-        <location filename="src/options/optionsdialog.cpp" line="2577"/>
+        <location filename="src/options/optionsdialog.cpp" line="2582"/>
         <source>Directory and files are valid.</source>
         <translation>Diretório e arquivos são válidos.</translation>
     </message>
@@ -29686,11 +29704,11 @@ A identificação pode ser interno, ICAO, FAA, IATA ou local dependendo da dispo
         <translation type="vanished">Erro em abrir o site de ajuda &quot;%1&quot;</translation>
     </message>
     <message>
-        <location filename="src/options/optionsdialog.cpp" line="1093"/>
-        <location filename="src/options/optionsdialog.cpp" line="1638"/>
-        <location filename="src/options/optionsdialog.cpp" line="1655"/>
-        <location filename="src/options/optionsdialog.cpp" line="1678"/>
-        <location filename="src/options/optionsdialog.cpp" line="1692"/>
+        <location filename="src/options/optionsdialog.cpp" line="1095"/>
+        <location filename="src/options/optionsdialog.cpp" line="1640"/>
+        <location filename="src/options/optionsdialog.cpp" line="1657"/>
+        <location filename="src/options/optionsdialog.cpp" line="1680"/>
+        <location filename="src/options/optionsdialog.cpp" line="1694"/>
         <source>Failed. Reason:
 %1</source>
         <translation>Failhou. Razão:
@@ -29701,66 +29719,66 @@ A identificação pode ser interno, ICAO, FAA, IATA ou local dependendo da dispo
         <translation type="vanished">Altere cores, símbolos, textos e fontes para objetos de exibição do mapa.</translation>
     </message>
     <message>
-        <location filename="src/options/optionsdialog.cpp" line="235"/>
+        <location filename="src/options/optionsdialog.cpp" line="236"/>
         <source>Change web download addresses or file paths of weather sources.</source>
         <translation>Altere endereços de download da web ou caminhos de arquivo de fontes meteorológicas.</translation>
     </message>
     <message>
-        <location filename="src/options/optionsdialog.cpp" line="321"/>
-        <location filename="src/options/optionsdialog.cpp" line="343"/>
+        <location filename="src/options/optionsdialog.cpp" line="322"/>
+        <location filename="src/options/optionsdialog.cpp" line="344"/>
         <source>Flight Number</source>
         <translation>Número do Voo</translation>
     </message>
     <message>
-        <location filename="src/options/optionsdialog.cpp" line="324"/>
-        <location filename="src/options/optionsdialog.cpp" line="346"/>
+        <location filename="src/options/optionsdialog.cpp" line="325"/>
+        <location filename="src/options/optionsdialog.cpp" line="347"/>
         <source>Ground Speed</source>
         <translation>Velocidade em relação ao Solo</translation>
     </message>
     <message>
-        <location filename="src/options/optionsdialog.cpp" line="327"/>
-        <location filename="src/options/optionsdialog.cpp" line="349"/>
+        <location filename="src/options/optionsdialog.cpp" line="328"/>
+        <location filename="src/options/optionsdialog.cpp" line="350"/>
         <source>Heading</source>
         <translation>Proa</translation>
     </message>
     <message>
-        <location filename="src/options/optionsdialog.cpp" line="323"/>
-        <location filename="src/options/optionsdialog.cpp" line="345"/>
+        <location filename="src/options/optionsdialog.cpp" line="324"/>
+        <location filename="src/options/optionsdialog.cpp" line="346"/>
         <source>Indicated Airspeed</source>
         <translation>Velocidade Indicada</translation>
     </message>
     <message>
-        <location filename="src/options/optionsdialog.cpp" line="2829"/>
+        <location filename="src/options/optionsdialog.cpp" line="2834"/>
         <source>Memory cache cleared.</source>
         <translation>Cache de memória limpo.</translation>
     </message>
     <message>
-        <location filename="src/options/optionsdialog.cpp" line="269"/>
+        <location filename="src/options/optionsdialog.cpp" line="270"/>
         <source>Name (Ident)</source>
         <translation>Nome (Ident)</translation>
     </message>
     <message>
-        <location filename="src/options/optionsdialog.cpp" line="2648"/>
+        <location filename="src/options/optionsdialog.cpp" line="2653"/>
         <source>No Active Sky weather snapshot file selected. Using default for AS16 for %1.</source>
         <translation>Nenhum arquivo climático snapshot do Active Sky foi selecionado. Usando  o padrão AS16 para %1.</translation>
     </message>
     <message>
-        <location filename="src/options/optionsdialog.cpp" line="2653"/>
+        <location filename="src/options/optionsdialog.cpp" line="2658"/>
         <source>No Active Sky weather snapshot file selected. Using default for ASP4 for %1.</source>
         <translation>Nenhum arquivo climático snapshot do Active Sky foi selecionado. Usando o padrão ASP4 para %1.</translation>
     </message>
     <message>
-        <location filename="src/options/optionsdialog.cpp" line="2644"/>
+        <location filename="src/options/optionsdialog.cpp" line="2649"/>
         <source>No Active Sky weather snapshot file selected. Using default for Active Sky Next for %1.</source>
         <translation>Nenhum arquivo climático snapshot do Active Sky foi selecionado. Usando o padrão Active Sky Next para %1.</translation>
     </message>
     <message>
-        <location filename="src/options/optionsdialog.cpp" line="2636"/>
+        <location filename="src/options/optionsdialog.cpp" line="2641"/>
         <source>No Active Sky weather snapshot found. Active Sky METARs are not available.</source>
         <translation>Nenhum clima snapshot do Active Sky encontrado. Metar do Active Sky não está disponível.</translation>
     </message>
     <message>
-        <location filename="src/options/optionsdialog.cpp" line="2580"/>
+        <location filename="src/options/optionsdialog.cpp" line="2585"/>
         <source>No directory selected.</source>
         <translation>Nenhum diretório selecionado.</translation>
     </message>
@@ -29769,52 +29787,52 @@ A identificação pode ser interno, ICAO, FAA, IATA ou local dependendo da dispo
         <translation type="vanished">Abrir Arquivo de Tempo Snapshot do Active Sky</translation>
     </message>
     <message>
-        <location filename="src/options/optionsdialog.cpp" line="1770"/>
+        <location filename="src/options/optionsdialog.cpp" line="1772"/>
         <source>Open Directory to exclude from Add-On Recognition</source>
         <translation>Abrir o Diretório para excluir o Reconhecimento do Add-On</translation>
     </message>
     <message>
-        <location filename="src/options/optionsdialog.cpp" line="1737"/>
+        <location filename="src/options/optionsdialog.cpp" line="1739"/>
         <source>Open Directory to exclude from Scenery Loading</source>
         <translation>Abra o Diretório para excluir do Cenário Carregando</translation>
     </message>
     <message>
-        <location filename="src/options/optionsdialog.cpp" line="2551"/>
+        <location filename="src/options/optionsdialog.cpp" line="2556"/>
         <source>Open GLOBE data directory</source>
         <translation>Abrir o diretório de dados do GLOBE</translation>
     </message>
     <message>
-        <location filename="src/options/optionsdialog.cpp" line="318"/>
+        <location filename="src/options/optionsdialog.cpp" line="319"/>
         <source>Registration</source>
         <translation>Registração</translation>
     </message>
     <message>
-        <location filename="src/options/optionsdialog.cpp" line="340"/>
+        <location filename="src/options/optionsdialog.cpp" line="341"/>
         <source>Registration, Number or Callsign</source>
         <translation>Registro, Número ou Callsing</translation>
     </message>
     <message>
-        <location filename="src/options/optionsdialog.cpp" line="968"/>
+        <location filename="src/options/optionsdialog.cpp" line="970"/>
         <source>Reset all options to default?</source>
         <translation>Redefinir todas as opções para padrão?</translation>
     </message>
     <message>
-        <location filename="src/options/optionsdialog.cpp" line="273"/>
+        <location filename="src/options/optionsdialog.cpp" line="274"/>
         <source>Runway Information</source>
         <translation>Informações da Pista</translation>
     </message>
     <message>
-        <location filename="src/options/optionsdialog.cpp" line="268"/>
+        <location filename="src/options/optionsdialog.cpp" line="269"/>
         <source>Select airport labels to display on the map.</source>
         <translation>Selecione os rótulos do aeroporto para exibir no mapa.</translation>
     </message>
     <message>
-        <location filename="src/options/optionsdialog.cpp" line="317"/>
+        <location filename="src/options/optionsdialog.cpp" line="318"/>
         <source>Select text labels and other options for the user aircraft.</source>
         <translation>Selecione os rótulos de texto e outras opções para a aeronave do usuário.</translation>
     </message>
     <message>
-        <location filename="src/options/optionsdialog.cpp" line="339"/>
+        <location filename="src/options/optionsdialog.cpp" line="340"/>
         <source>Select text labels for the AI, multiplayer and online client aircraft.</source>
         <translation>Selecione rótulos de texto para a aeronave AI, multiplayer e cliente on-line.</translation>
     </message>
@@ -29823,17 +29841,17 @@ A identificação pode ser interno, ICAO, FAA, IATA ou local dependendo da dispo
         <translation type="vanished">Mostre a trilha da aeronave como uma agulha preta que sai do nariz da aeronave.</translation>
     </message>
     <message>
-        <location filename="src/options/optionsdialog.cpp" line="319"/>
+        <location filename="src/options/optionsdialog.cpp" line="320"/>
         <source>Show the aircraft type, like B738, B350 or M20T.</source>
         <translation>Mostre o tipo de aeronave, como B738, B350 ou M20T.</translation>
     </message>
     <message>
-        <location filename="src/options/optionsdialog.cpp" line="251"/>
+        <location filename="src/options/optionsdialog.cpp" line="252"/>
         <source>Show wind direction and speed on the top center of the map.</source>
         <translation>Mostre a direção do vento e a velocidade no centro superior do mapa.</translation>
     </message>
     <message>
-        <location filename="src/options/optionsdialog.cpp" line="252"/>
+        <location filename="src/options/optionsdialog.cpp" line="253"/>
         <source>Show wind direction pointer on the top center of the map.</source>
         <translation>Mostre o ponteiro da direção do vento no centro superior do mapa.</translation>
     </message>
@@ -29856,137 +29874,137 @@ A identificação pode ser interno, ICAO, FAA, IATA ou local dependendo da dispo
 %1</translation>
     </message>
     <message>
-        <location filename="src/options/optionsdialog.cpp" line="271"/>
+        <location filename="src/options/optionsdialog.cpp" line="272"/>
         <source>Tower Frequency</source>
         <translation>Frequência da Torre</translation>
     </message>
     <message>
-        <location filename="src/options/optionsdialog.cpp" line="331"/>
-        <location filename="src/options/optionsdialog.cpp" line="367"/>
+        <location filename="src/options/optionsdialog.cpp" line="332"/>
+        <location filename="src/options/optionsdialog.cpp" line="368"/>
         <source>Track Line</source>
         <translation>Linha de Trilha</translation>
     </message>
     <message>
-        <location filename="src/options/optionsdialog.cpp" line="312"/>
-        <location filename="src/options/optionsdialog.cpp" line="319"/>
-        <location filename="src/options/optionsdialog.cpp" line="341"/>
+        <location filename="src/options/optionsdialog.cpp" line="313"/>
+        <location filename="src/options/optionsdialog.cpp" line="320"/>
+        <location filename="src/options/optionsdialog.cpp" line="342"/>
         <source>Type</source>
         <translation>Tipo</translation>
     </message>
     <message>
-        <location filename="src/options/optionsdialog.cpp" line="219"/>
+        <location filename="src/options/optionsdialog.cpp" line="220"/>
         <source>Change text sizes, user interface font, tooltips and more display options.</source>
         <translation>Altere o tamanho do texto, a fonte da interface do usuário, as dicas de ferramentas e outras opções de exibição.</translation>
     </message>
     <message>
-        <location filename="src/options/optionsdialog.cpp" line="221"/>
+        <location filename="src/options/optionsdialog.cpp" line="222"/>
         <source>Files</source>
         <translation>Arquivos</translation>
     </message>
     <message>
-        <location filename="src/options/optionsdialog.cpp" line="221"/>
+        <location filename="src/options/optionsdialog.cpp" line="222"/>
         <source>Edit flight plan file pattern and more file related actions.</source>
         <translation>Editar o padrão do arquivo de plano de voo e outras ações relacionadas ao arquivo.</translation>
     </message>
     <message>
-        <location filename="src/options/optionsdialog.cpp" line="222"/>
+        <location filename="src/options/optionsdialog.cpp" line="223"/>
         <source>Change map window behavior, handling of empty airports, and general display options.</source>
         <translation>Altere o comportamento da janela do mapa, o tratamento de aeroportos vazios e as opções gerais de exibição.</translation>
     </message>
     <message>
-        <location filename="src/options/optionsdialog.cpp" line="223"/>
+        <location filename="src/options/optionsdialog.cpp" line="224"/>
         <source>Map Tooltips and Clicks</source>
         <translation>Dicas de Ferramentas e Cliques no Mapa</translation>
     </message>
     <message>
-        <location filename="src/options/optionsdialog.cpp" line="223"/>
+        <location filename="src/options/optionsdialog.cpp" line="224"/>
         <source>Tooltip and map click settings.</source>
         <translation>Configurações de dica de ferramenta e clique no mapa.</translation>
     </message>
     <message>
-        <location filename="src/options/optionsdialog.cpp" line="224"/>
+        <location filename="src/options/optionsdialog.cpp" line="225"/>
         <source>Zoom, click, screen navigation and mouse wheel settings.</source>
         <translation>Configurações de zoom, clique, navegação na tela e roda do mouse.</translation>
     </message>
     <message>
-        <location filename="src/options/optionsdialog.cpp" line="226"/>
+        <location filename="src/options/optionsdialog.cpp" line="227"/>
         <source>Map Flight Plan</source>
         <translation>Mapa do Plano de Voo</translation>
     </message>
     <message>
-        <location filename="src/options/optionsdialog.cpp" line="227"/>
+        <location filename="src/options/optionsdialog.cpp" line="228"/>
         <source>Map Aircraft Trail</source>
         <translation>Trilha da Aeronave no Mapa</translation>
     </message>
     <message>
-        <location filename="src/options/optionsdialog.cpp" line="227"/>
+        <location filename="src/options/optionsdialog.cpp" line="228"/>
         <source>Edit display of the user aircraft trail and number of trail points.</source>
         <translation>Editar a visualização do rastro da aeronave do usuário e o número de pontos de rastro.</translation>
     </message>
     <message>
-        <location filename="src/options/optionsdialog.cpp" line="228"/>
+        <location filename="src/options/optionsdialog.cpp" line="229"/>
         <source>Map User</source>
         <translation>Usuário do Mapa</translation>
     </message>
     <message>
-        <location filename="src/options/optionsdialog.cpp" line="228"/>
+        <location filename="src/options/optionsdialog.cpp" line="229"/>
         <source>Change colors, symbols and texts for highlights, measurement lines and other user features for map and elevation profile.</source>
         <translation>Altere cores, símbolos e textos para destaques, linhas de medição e outras características do utilizador para mapas e perfis de elevação.</translation>
     </message>
     <message>
-        <location filename="src/options/optionsdialog.cpp" line="229"/>
+        <location filename="src/options/optionsdialog.cpp" line="230"/>
         <source>Change map display and elevation profile label options for all map features.</source>
         <translation>Alterar a apresentação do mapa e as opções de etiqueta do perfil de elevação para todas as características do mapa.</translation>
     </message>
     <message>
-        <location filename="src/options/optionsdialog.cpp" line="231"/>
+        <location filename="src/options/optionsdialog.cpp" line="232"/>
         <source>Map Online</source>
         <translation>Mapa Online</translation>
     </message>
     <message>
-        <location filename="src/options/optionsdialog.cpp" line="232"/>
+        <location filename="src/options/optionsdialog.cpp" line="233"/>
         <source>Update and movement options for the user aircraft.</source>
         <translation>Opções de atualização e movimento para o avião do usuário.</translation>
     </message>
     <message>
-        <location filename="src/options/optionsdialog.cpp" line="233"/>
+        <location filename="src/options/optionsdialog.cpp" line="234"/>
         <source>Options for flight plan calculation and elevation profile altitude buffer.</source>
         <translation>Opções para cálculo de plano de vôo e buffer de altitude de perfil de elevação.</translation>
     </message>
     <message>
-        <location filename="src/options/optionsdialog.cpp" line="268"/>
+        <location filename="src/options/optionsdialog.cpp" line="269"/>
         <source>Airports</source>
         <translation>Aeroportos</translation>
     </message>
     <message>
-        <location filename="src/options/optionsdialog.cpp" line="278"/>
+        <location filename="src/options/optionsdialog.cpp" line="279"/>
         <source>Show taxiways. This applies partially to MSFS and fully to FSX and P3D.
 X-Plane simulators have taxiways integrated into the apron geometry.</source>
         <translation>Mostrar taxiways. Isso se aplica parcialmente ao MSFS e totalmente ao FSX e P3D.
 Simuladores X-Plane têm taxiways integradas na geometria da área de estacionamento.</translation>
     </message>
     <message>
-        <location filename="src/options/optionsdialog.cpp" line="280"/>
+        <location filename="src/options/optionsdialog.cpp" line="281"/>
         <source>Taxiway Lines</source>
         <translation>Linhas de Taxiamento</translation>
     </message>
     <message>
-        <location filename="src/options/optionsdialog.cpp" line="280"/>
+        <location filename="src/options/optionsdialog.cpp" line="281"/>
         <source>Show taxiway lines.</source>
         <translation>Mostrar linhas de taxiamento.</translation>
     </message>
     <message>
-        <location filename="src/options/optionsdialog.cpp" line="281"/>
+        <location filename="src/options/optionsdialog.cpp" line="282"/>
         <source>Taxiway Names</source>
         <translation>Nomes das Taxiways</translation>
     </message>
     <message>
-        <location filename="src/options/optionsdialog.cpp" line="281"/>
+        <location filename="src/options/optionsdialog.cpp" line="282"/>
         <source>Show taxiway names.</source>
         <translation>Mostrar nomes das taxiways.</translation>
     </message>
     <message>
-        <location filename="src/options/optionsdialog.cpp" line="298"/>
+        <location filename="src/options/optionsdialog.cpp" line="299"/>
         <source>Display great circle initial and final magnetic course
 at the start and end of flight plan legs.
 The label is fixed. Course also depends on
@@ -30001,7 +30019,7 @@ declinação calibrada do VOR e
 Não é mostrado nas pernas do procedimento.</translation>
     </message>
     <message>
-        <location filename="src/options/optionsdialog.cpp" line="304"/>
+        <location filename="src/options/optionsdialog.cpp" line="305"/>
         <source>Display great circle initial and final true course at
 the start and end of flight plan legs.
 The label is fixed. Not shown at procedure legs.</source>
@@ -30010,179 +30028,179 @@ no início e no final das pernas do plano de voo.
 O rótulo é fixo. Não é mostrado nas pernas do procedimento.</translation>
     </message>
     <message>
-        <location filename="src/options/optionsdialog.cpp" line="309"/>
+        <location filename="src/options/optionsdialog.cpp" line="310"/>
         <source>Airspaces</source>
         <translation>Espaços Aéreos</translation>
     </message>
     <message>
-        <location filename="src/options/optionsdialog.cpp" line="310"/>
+        <location filename="src/options/optionsdialog.cpp" line="311"/>
         <source>Name</source>
         <translation>Nome</translation>
     </message>
     <message>
-        <location filename="src/options/optionsdialog.cpp" line="310"/>
+        <location filename="src/options/optionsdialog.cpp" line="311"/>
         <source>Shows the airspace name.</source>
         <translation>Mostra o nome do espaço aéreo.</translation>
     </message>
     <message>
-        <location filename="src/options/optionsdialog.cpp" line="311"/>
+        <location filename="src/options/optionsdialog.cpp" line="312"/>
         <source>Restrictive Name</source>
         <translation>Nome Restritivo</translation>
     </message>
     <message>
-        <location filename="src/options/optionsdialog.cpp" line="311"/>
+        <location filename="src/options/optionsdialog.cpp" line="312"/>
         <source>Shows the restrictive name like &quot;P-51&quot; of an airspace.</source>
         <translation>Mostra o nome restritivo, como &quot;P-51&quot;, de um espaço aéreo.</translation>
     </message>
     <message>
-        <location filename="src/options/optionsdialog.cpp" line="312"/>
+        <location filename="src/options/optionsdialog.cpp" line="313"/>
         <source>Type of airspace like &quot;Prohibited&quot;.</source>
         <translation>Tipo de espaço aéreo como &quot;Proibido&quot;.</translation>
     </message>
     <message>
-        <location filename="src/options/optionsdialog.cpp" line="313"/>
+        <location filename="src/options/optionsdialog.cpp" line="314"/>
         <source>Altitude</source>
         <translation>Altitude</translation>
     </message>
     <message>
-        <location filename="src/options/optionsdialog.cpp" line="313"/>
+        <location filename="src/options/optionsdialog.cpp" line="314"/>
         <source>Display the altitude restrictions of airspaces.</source>
         <translation>Exibir as restrições de altitude dos espaços aéreos.</translation>
     </message>
     <message>
-        <location filename="src/options/optionsdialog.cpp" line="314"/>
+        <location filename="src/options/optionsdialog.cpp" line="315"/>
         <source>COM Frequency</source>
         <translation>Frequência COM</translation>
     </message>
     <message>
-        <location filename="src/options/optionsdialog.cpp" line="314"/>
+        <location filename="src/options/optionsdialog.cpp" line="315"/>
         <source>Airspace COM frequency if available.</source>
         <translation>Frequência COM do espaço aéreo, se disponível.</translation>
     </message>
     <message>
-        <location filename="src/options/optionsdialog.cpp" line="317"/>
+        <location filename="src/options/optionsdialog.cpp" line="318"/>
         <source>User Aircraft</source>
         <translation>Aeronave do Usuário</translation>
     </message>
     <message>
-        <location filename="src/options/optionsdialog.cpp" line="322"/>
+        <location filename="src/options/optionsdialog.cpp" line="323"/>
         <source>Transponder code prefixed with &quot;XPDR&quot; on the map.</source>
         <translation>Código do transponder prefixado com &quot;XPDR&quot; no mapa.</translation>
     </message>
     <message>
-        <location filename="src/options/optionsdialog.cpp" line="323"/>
+        <location filename="src/options/optionsdialog.cpp" line="324"/>
         <source>Value prefixed with &quot;IAS&quot; on the map.</source>
         <translation>Valor prefixado com &quot;IAS&quot; no mapa.</translation>
     </message>
     <message>
-        <location filename="src/options/optionsdialog.cpp" line="324"/>
+        <location filename="src/options/optionsdialog.cpp" line="325"/>
         <source>Value prefixed with &quot;GS&quot; on the map.</source>
         <translation>Valor prefixado com &quot;GS&quot; no mapa.</translation>
     </message>
     <message>
-        <location filename="src/options/optionsdialog.cpp" line="325"/>
+        <location filename="src/options/optionsdialog.cpp" line="326"/>
         <source>Value prefixed with &quot;TAS&quot; on the map.</source>
         <translation>Valor prefixado com &quot;TAS&quot; no mapa.</translation>
     </message>
     <message>
-        <location filename="src/options/optionsdialog.cpp" line="327"/>
+        <location filename="src/options/optionsdialog.cpp" line="328"/>
         <source>Aircraft magnetic heading prefixed with &quot;HDG&quot; on the map.</source>
         <translation>Rumo magnético da aeronave prefixado com &quot;HDG&quot; no mapa.</translation>
     </message>
     <message>
-        <location filename="src/options/optionsdialog.cpp" line="328"/>
+        <location filename="src/options/optionsdialog.cpp" line="329"/>
         <source>Real aircraft altitude prefixed with &quot;ALT&quot; on the map.</source>
         <translation>Altitude real da aeronave prefixada com &quot;ALT&quot; no mapa.</translation>
     </message>
     <message>
-        <location filename="src/options/optionsdialog.cpp" line="329"/>
+        <location filename="src/options/optionsdialog.cpp" line="330"/>
         <source>Indicated aircraft altitude prefixed with &quot;IND&quot; on the map.</source>
         <translation>Altitude indicada da aeronave prefixada com &quot;IND&quot; no mapa.</translation>
     </message>
     <message>
-        <location filename="src/options/optionsdialog.cpp" line="330"/>
+        <location filename="src/options/optionsdialog.cpp" line="331"/>
         <source>Actual altitude above ground. Prefixed with &quot;AGL&quot; on the map.</source>
         <translation>Altitude atual acima do solo. Prefixada com &quot;AGL&quot; no mapa.</translation>
     </message>
     <message>
-        <location filename="src/options/optionsdialog.cpp" line="331"/>
+        <location filename="src/options/optionsdialog.cpp" line="332"/>
         <source>Show the aircraft trail as a black needle at
 the from of the user aircraft.</source>
         <translation>Mostrar o rastro da aeronave como uma agulha preta na
 a partir da aeronave do usuário.</translation>
     </message>
     <message>
-        <location filename="src/options/optionsdialog.cpp" line="333"/>
-        <location filename="src/options/optionsdialog.cpp" line="353"/>
+        <location filename="src/options/optionsdialog.cpp" line="334"/>
+        <location filename="src/options/optionsdialog.cpp" line="354"/>
         <source>Show aircraft coordinates using the format selected on
 options page &quot;Units&quot;.</source>
         <translation>Mostrar coordenadas da aeronave usando o formato selecionado em
 página de opções &quot;Unidades&quot;.</translation>
     </message>
     <message>
-        <location filename="src/options/optionsdialog.cpp" line="335"/>
+        <location filename="src/options/optionsdialog.cpp" line="336"/>
         <source>Show a red label &quot;ICE&quot; and icing values in percent
 when aircraft icing occurs.</source>
         <translation>Mostre uma etiqueta vermelha &quot;ICE&quot; e valores de formação de gelo em porcentagem
 quando houver formação de gelo na aeronave.</translation>
     </message>
     <message>
-        <location filename="src/options/optionsdialog.cpp" line="355"/>
+        <location filename="src/options/optionsdialog.cpp" line="356"/>
         <source>Distance and magnetic bearing from user aircraft
 prefixed with &quot;From User&quot;.</source>
         <translation>Distância e rumo magnético da aeronave do usuário
 prefixado com &quot;Do usuário&quot;.</translation>
     </message>
     <message>
-        <location filename="src/options/optionsdialog.cpp" line="357"/>
+        <location filename="src/options/optionsdialog.cpp" line="358"/>
         <source>Object ID</source>
         <translation>ID do Objeto</translation>
     </message>
     <message>
-        <location filename="src/options/optionsdialog.cpp" line="357"/>
+        <location filename="src/options/optionsdialog.cpp" line="358"/>
         <source>Internal object ID for traffic development or debugging.
 Value is prefixed with &quot;ID&quot; and depends on simulator.</source>
         <translation>ID interno do objeto para desenvolvimento de tráfego ou depuração.
 O valor é prefixado com &quot;ID&quot; e depende do simulador.</translation>
     </message>
     <message>
-        <location filename="src/options/optionsdialog.cpp" line="369"/>
+        <location filename="src/options/optionsdialog.cpp" line="370"/>
         <source>Show the heading for the user aircraft as a
 small magenta circle.</source>
         <translation>Mostra o rumo da aeronave do usuário como um
 pequeno círculo magenta.</translation>
     </message>
     <message>
-        <location filename="src/options/optionsdialog.cpp" line="371"/>
+        <location filename="src/options/optionsdialog.cpp" line="372"/>
         <source>Show the course to next waypoint for the user aircraft as
 a small magenta line.</source>
         <translation>Mostra o curso para o próximo waypoint da aeronave do usuário como
 uma pequena linha magenta.</translation>
     </message>
     <message>
-        <location filename="src/options/optionsdialog.cpp" line="380"/>
+        <location filename="src/options/optionsdialog.cpp" line="381"/>
         <source>Shows the radial prefixed with &quot;R&quot; for VOR, VORDME,
 VORTAC, TACAN or NDB.</source>
         <translation>Mostra a radial prefixada com &quot;R&quot; para VOR, VORDME,
 VORTAC, TACAN ou NDB.</translation>
     </message>
     <message>
-        <location filename="src/options/optionsdialog.cpp" line="2486"/>
+        <location filename="src/options/optionsdialog.cpp" line="2491"/>
         <source>No keys found in DGML map configuration files.</source>
         <translation>Nenhuma chave encontrada nos arquivos de configuração de mapa DGML.</translation>
     </message>
     <message>
-        <location filename="src/options/optionsdialog.cpp" line="2494"/>
+        <location filename="src/options/optionsdialog.cpp" line="2499"/>
         <source> API Key / Username / Token </source>
         <translation> Chave da API / Nome de usuário / Token </translation>
     </message>
     <message>
-        <location filename="src/options/optionsdialog.cpp" line="2494"/>
+        <location filename="src/options/optionsdialog.cpp" line="2499"/>
         <source> Value </source>
         <translation> Valor </translation>
     </message>
     <message>
-        <location filename="src/options/optionsdialog.cpp" line="2508"/>
+        <location filename="src/options/optionsdialog.cpp" line="2513"/>
         <source>Double click to edit key value</source>
         <translation>Clique duas vezes para editar o valor da chave</translation>
     </message>
@@ -30191,17 +30209,17 @@ VORTAC, TACAN ou NDB.</translation>
         <translation type="vanished">O arquivo snapshot de tempo é válido. Utilizando este para todos os simuladores</translation>
     </message>
     <message>
-        <location filename="src/options/optionsdialog.cpp" line="2640"/>
+        <location filename="src/options/optionsdialog.cpp" line="2645"/>
         <source>Will use default weather snapshot after confirming change.</source>
         <translation>Usará clima  snapshot padrão após confirmar a alteração.</translation>
     </message>
     <message>
-        <location filename="src/options/optionsdialog.cpp" line="251"/>
+        <location filename="src/options/optionsdialog.cpp" line="252"/>
         <source>Wind Direction and Speed</source>
         <translation>Direção do Vento e Velocidade</translation>
     </message>
     <message>
-        <location filename="src/options/optionsdialog.cpp" line="252"/>
+        <location filename="src/options/optionsdialog.cpp" line="253"/>
         <source>Wind Pointer</source>
         <translation>Ponteira do vento</translation>
     </message>

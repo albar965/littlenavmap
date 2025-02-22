@@ -135,6 +135,7 @@ OptionsDialog::OptionsDialog(QMainWindow *parentWindow)
     ui->labelOptionsUnitsTextSizeHint,
     ui->labelOptionsFilePatternsHint,
     ui->labelOptionsResetLayoutHint,
+    ui->labelOptionsRestartWebServer,
     ui->labelOptionsResetEmptyHint,
     ui->labelOptionsNavigationAidsHint,
     ui->labelOptionsAppFontHint,
@@ -591,6 +592,7 @@ OptionsDialog::OptionsDialog(QMainWindow *parentWindow)
      ui->checkBoxOptionsSimCenterLegTable,
      ui->spinBoxOptionsSimCleanupTableTime,
      ui->checkBoxOptionsSimClearSelection,
+     ui->checkBoxOptionsWebScale,
 
      ui->radioButtonOptionsOnlineNone,
      ui->radioButtonOptionsOnlineVatsim,
@@ -1977,6 +1979,8 @@ void OptionsDialog::widgetsToOptionData()
   data.weatherVatsimUrl = ui->lineEditOptionsWeatherVatsimUrl->text().trimmed();
   data.weatherIvaoUrl = ui->lineEditOptionsWeatherIvaoUrl->text().trimmed();
 
+  toFlags(data.flags2, ui->checkBoxOptionsWebScale, opts2::MAP_WEB_USE_UI_SCALE);
+
   data.databaseInclude.clear();
   for(int row = 0; row < ui->tableWidgetOptionsDatabaseInclude->rowCount(); row++)
     data.databaseInclude.append(ui->tableWidgetOptionsDatabaseInclude->item(row, 0)->text());
@@ -2248,6 +2252,7 @@ void OptionsDialog::optionDataToWidgets(const OptionData& data)
   fromFlags(data.flags2, ui->checkBoxOptionsSimCenterLegTable, opts2::ROUTE_CENTER_ACTIVE_LEG);
   fromFlags(data.flags2, ui->checkBoxOptionsSimClearSelection, opts2::ROUTE_CLEAR_SELECTION);
   fromFlags(data.flags2, ui->checkBoxOptionsSimHighlightActiveTable, opts2::ROUTE_HIGHLIGHT_ACTIVE_TABLE);
+  fromFlags(data.flags2, ui->checkBoxOptionsWebScale, opts2::MAP_WEB_USE_UI_SCALE);
 
   fromFlags(data.flags2, ui->checkBoxDisplayOnlineNameLookup, opts2::ONLINE_AIRSPACE_BY_NAME);
   fromFlags(data.flags2, ui->checkBoxDisplayOnlineFileLookup, opts2::ONLINE_AIRSPACE_BY_FILE);

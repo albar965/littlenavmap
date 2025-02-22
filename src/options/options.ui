@@ -628,7 +628,7 @@ opening files, modifying the flight plan and other operations.</string>
              <x>0</x>
              <y>0</y>
              <width>617</width>
-             <height>970</height>
+             <height>976</height>
             </rect>
            </property>
            <layout class="QVBoxLayout" name="verticalLayout_23">
@@ -1539,7 +1539,6 @@ also define the order when reading coordinates in the user interface if enabled.
                 <widget class="QLabel" name="label_2">
                  <property name="font">
                   <font>
-                   <weight>50</weight>
                    <bold>false</bold>
                   </font>
                  </property>
@@ -2874,9 +2873,9 @@ Map views might be shown with a larger zoom distance than expected if this optio
            <property name="geometry">
             <rect>
              <x>0</x>
-             <y>-25</y>
+             <y>0</y>
              <width>617</width>
-             <height>1053</height>
+             <height>1055</height>
             </rect>
            </property>
            <layout class="QVBoxLayout" name="verticalLayout_20">
@@ -4207,8 +4206,8 @@ Also used in the elevation profile.</string>
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>554</width>
-             <height>260</height>
+             <width>631</width>
+             <height>531</height>
             </rect>
            </property>
            <layout class="QVBoxLayout" name="verticalLayout_57">
@@ -4470,8 +4469,8 @@ Lower this value to avoid too long tracks and avoid stutters in map display.</st
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>452</width>
-             <height>748</height>
+             <width>617</width>
+             <height>655</height>
             </rect>
            </property>
            <layout class="QGridLayout" name="gridLayout_35">
@@ -5360,8 +5359,8 @@ Value 0 is opaque and 90 is most transparent.</string>
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>328</width>
-             <height>535</height>
+             <width>631</width>
+             <height>531</height>
             </rect>
            </property>
            <layout class="QGridLayout" name="gridLayout_39">
@@ -5830,8 +5829,8 @@ airspace filename has to match the callsign of the online center.</string>
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>572</width>
-             <height>629</height>
+             <width>617</width>
+             <height>618</height>
             </rect>
            </property>
            <layout class="QVBoxLayout" name="verticalLayout_25">
@@ -6277,8 +6276,8 @@ put the active leg back on top after the given timeout while flying.</string>
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>318</width>
-             <height>241</height>
+             <width>631</width>
+             <height>531</height>
             </rect>
            </property>
            <layout class="QVBoxLayout" name="verticalLayout_26">
@@ -6437,8 +6436,8 @@ Note that this value does not affect flight plan calculation or saving of flight
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>272</width>
-             <height>750</height>
+             <width>617</width>
+             <height>612</height>
             </rect>
            </property>
            <layout class="QVBoxLayout" name="verticalLayout_27">
@@ -6678,8 +6677,8 @@ Note that this value does not affect flight plan calculation or saving of flight
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>360</width>
-             <height>931</height>
+             <width>617</width>
+             <height>876</height>
             </rect>
            </property>
            <layout class="QVBoxLayout" name="verticalLayout_28">
@@ -7276,8 +7275,8 @@ Entering a wrong value will cause errors when downloading weather reports.</stri
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>389</width>
-             <height>375</height>
+             <width>631</width>
+             <height>531</height>
             </rect>
            </property>
            <layout class="QVBoxLayout" name="verticalLayout_29">
@@ -7578,8 +7577,8 @@ Entering a wrong value will cause errors when downloading weather reports.</stri
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>363</width>
-             <height>258</height>
+             <width>631</width>
+             <height>531</height>
             </rect>
            </property>
            <layout class="QGridLayout" name="gridLayout_37">
@@ -7604,19 +7603,55 @@ Entering a wrong value will cause errors when downloading weather reports.</stri
                <property name="spacing">
                 <number>2</number>
                </property>
-               <item row="0" column="0">
-                <widget class="QLabel" name="labelOptionsWebDocroot">
+               <item row="5" column="0">
+                <widget class="QLabel" name="labelOptionsWebPort">
                  <property name="text">
-                  <string>&amp;Document root directory:</string>
-                 </property>
-                 <property name="wordWrap">
-                  <bool>true</bool>
-                 </property>
-                 <property name="textInteractionFlags">
-                  <set>Qt::LinksAccessibleByMouse|Qt::TextSelectableByMouse</set>
+                  <string>&amp;Port number:</string>
                  </property>
                  <property name="buddy">
-                  <cstring>lineEditOptionsWebDocroot</cstring>
+                  <cstring>spinBoxOptionsWebPort</cstring>
+                 </property>
+                </widget>
+               </item>
+               <item row="5" column="1">
+                <widget class="QSpinBox" name="spinBoxOptionsWebPort">
+                 <property name="toolTip">
+                  <string>Port number for the web server.  Default is 8965.
+Change this if you get an error message like &quot;Bound address already in use&quot; when running the server.</string>
+                 </property>
+                 <property name="minimum">
+                  <number>1024</number>
+                 </property>
+                 <property name="maximum">
+                  <number>65535</number>
+                 </property>
+                 <property name="value">
+                  <number>8965</number>
+                 </property>
+                </widget>
+               </item>
+               <item row="6" column="1" colspan="2">
+                <widget class="QCheckBox" name="checkBoxOptionsWebEncrypted">
+                 <property name="toolTip">
+                  <string>Use a so-called self-signed example certificate for an encrypted connection.
+Browsers will show a warning when using such a connection and you have to add an security exception in the browser.
+You have to use &quot;https//...&quot; instead of &quot;http://...&quot; when accessing the page. Otherwise you will get an error in the web browser.
+Be aware that the used example certificate does not provide security since the private key is available publicly in the
+Little Navmap GIT repository.
+</string>
+                 </property>
+                 <property name="text">
+                  <string>&amp;Use encrypted connection (HTTPS / SSL)</string>
+                 </property>
+                </widget>
+               </item>
+               <item row="8" column="0" alignment="Qt::AlignTop">
+                <widget class="QPushButton" name="pushButtonOptionsWebStart">
+                 <property name="toolTip">
+                  <string>Start or stop the server to test the values above.</string>
+                 </property>
+                 <property name="text">
+                  <string>&amp;Start Server</string>
                  </property>
                 </widget>
                </item>
@@ -7629,10 +7664,43 @@ Use this to serve your own modified Little Navmap web page.</string>
                  </property>
                 </widget>
                </item>
+               <item row="4" column="0" colspan="3">
+                <widget class="Line" name="line_15">
+                 <property name="orientation">
+                  <enum>Qt::Horizontal</enum>
+                 </property>
+                </widget>
+               </item>
                <item row="0" column="2">
                 <widget class="QPushButton" name="pushButtonOptionsWebSelectDocroot">
                  <property name="text">
                   <string>&amp;Select Directory ...</string>
+                 </property>
+                </widget>
+               </item>
+               <item row="8" column="1" colspan="2">
+                <widget class="QLabel" name="labelOptionsWebStatus">
+                 <property name="text">
+                  <string>Server is running.</string>
+                 </property>
+                 <property name="wordWrap">
+                  <bool>true</bool>
+                 </property>
+                 <property name="margin">
+                  <number>5</number>
+                 </property>
+                 <property name="openExternalLinks">
+                  <bool>true</bool>
+                 </property>
+                 <property name="textInteractionFlags">
+                  <set>Qt::LinksAccessibleByMouse|Qt::TextSelectableByMouse</set>
+                 </property>
+                </widget>
+               </item>
+               <item row="7" column="0" colspan="3">
+                <widget class="Line" name="line_14">
+                 <property name="orientation">
+                  <enum>Qt::Horizontal</enum>
                  </property>
                 </widget>
                </item>
@@ -7653,94 +7721,57 @@ Use this to serve your own modified Little Navmap web page.</string>
                 </widget>
                </item>
                <item row="2" column="0" colspan="3">
-                <widget class="Line" name="line_15">
-                 <property name="orientation">
-                  <enum>Qt::Horizontal</enum>
-                 </property>
-                </widget>
-               </item>
-               <item row="3" column="0">
-                <widget class="QLabel" name="labelOptionsWebPort">
+                <widget class="QLabel" name="labelOptionsRestartWebServer">
                  <property name="text">
-                  <string>&amp;Port number:</string>
-                 </property>
-                 <property name="buddy">
-                  <cstring>spinBoxOptionsWebPort</cstring>
-                 </property>
-                </widget>
-               </item>
-               <item row="3" column="1">
-                <widget class="QSpinBox" name="spinBoxOptionsWebPort">
-                 <property name="toolTip">
-                  <string>Port number for the web server.  Default is 8965.
-Change this if you get an error message like &quot;Bound address already in use&quot; when running the server.</string>
-                 </property>
-                 <property name="minimum">
-                  <number>1024</number>
-                 </property>
-                 <property name="maximum">
-                  <number>65535</number>
-                 </property>
-                 <property name="value">
-                  <number>8965</number>
-                 </property>
-                </widget>
-               </item>
-               <item row="4" column="1" colspan="2">
-                <widget class="QCheckBox" name="checkBoxOptionsWebEncrypted">
-                 <property name="toolTip">
-                  <string>Use a so-called self-signed example certificate for an encrypted connection.
-Browsers will show a warning when using such a connection and you have to add an security exception in the browser.
-You have to use &quot;https//...&quot; instead of &quot;http://...&quot; when accessing the page. Otherwise you will get an error in the web browser.
-Be aware that the used example certificate does not provide security since the private key is available publicly in the
-Little Navmap GIT repository.
-</string>
-                 </property>
-                 <property name="text">
-                  <string>&amp;Use encrypted connection (HTTPS / SSL)</string>
-                 </property>
-                </widget>
-               </item>
-               <item row="5" column="0" colspan="3">
-                <widget class="Line" name="line_14">
-                 <property name="orientation">
-                  <enum>Qt::Horizontal</enum>
-                 </property>
-                </widget>
-               </item>
-               <item row="6" column="0" alignment="Qt::AlignTop">
-                <widget class="QPushButton" name="pushButtonOptionsWebStart">
-                 <property name="toolTip">
-                  <string>Start or stop the server to test the values above.</string>
-                 </property>
-                 <property name="text">
-                  <string>&amp;Start Server</string>
-                 </property>
-                </widget>
-               </item>
-               <item row="6" column="1" colspan="2">
-                <widget class="QLabel" name="labelOptionsWebStatus">
-                 <property name="text">
-                  <string>Server is running.</string>
+                  <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;A restart is required after changing document root directory.&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
                  </property>
                  <property name="wordWrap">
                   <bool>true</bool>
                  </property>
                  <property name="margin">
-                  <number>5</number>
-                 </property>
-                 <property name="openExternalLinks">
-                  <bool>true</bool>
+                  <number>10</number>
                  </property>
                  <property name="textInteractionFlags">
                   <set>Qt::LinksAccessibleByMouse|Qt::TextSelectableByMouse</set>
                  </property>
                 </widget>
                </item>
+               <item row="0" column="0">
+                <widget class="QLabel" name="labelOptionsWebDocroot">
+                 <property name="text">
+                  <string>&amp;Document root directory:</string>
+                 </property>
+                 <property name="wordWrap">
+                  <bool>true</bool>
+                 </property>
+                 <property name="textInteractionFlags">
+                  <set>Qt::LinksAccessibleByMouse|Qt::TextSelectableByMouse</set>
+                 </property>
+                 <property name="buddy">
+                  <cstring>lineEditOptionsWebDocroot</cstring>
+                 </property>
+                </widget>
+               </item>
+               <item row="3" column="0" colspan="3">
+                <widget class="QCheckBox" name="checkBoxOptionsWebScale">
+                 <property name="toolTip">
+                  <string>This will deliver map images scaled according to your user interface scale level if checked and 
+if you use the web server with high resolution monitors.
+This is the default behavior but can cause issues when using certain web interfaces. 
+Uncheck if you use such an add-on or see issues like a corruped map display.</string>
+                 </property>
+                 <property name="text">
+                  <string>&amp;Scale delivered images accoring to system user interface scale level (125%, 150%, etc.)</string>
+                 </property>
+                 <property name="checked">
+                  <bool>true</bool>
+                 </property>
+                </widget>
+               </item>
               </layout>
              </widget>
             </item>
-            <item row="1" column="0">
+            <item row="2" column="0">
              <spacer name="verticalSpacer_15">
               <property name="orientation">
                <enum>Qt::Vertical</enum>
@@ -7771,8 +7802,8 @@ Little Navmap GIT repository.
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>437</width>
-             <height>699</height>
+             <width>617</width>
+             <height>634</height>
             </rect>
            </property>
            <layout class="QVBoxLayout" name="verticalLayout_30">
@@ -8133,8 +8164,8 @@ Source data has many errors.</string>
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>631</width>
-             <height>531</height>
+             <width>395</width>
+             <height>507</height>
             </rect>
            </property>
            <layout class="QGridLayout" name="gridLayout_38">

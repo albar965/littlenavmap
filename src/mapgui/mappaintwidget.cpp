@@ -639,7 +639,7 @@ QPixmap MapPaintWidget::getPixmap(int pixmapWidth, int pixmapHeight, bool ignore
   {
     // QWidget::grab() increases the pixel size by devicePixelRatio
     // Shrink it here to get the requested size as result
-    if(devicePixelRatioF() > 1.f && ignoreUiScale)
+    if(!OptionData::instance().getFlags2().testFlag(opts2::MAP_WEB_USE_UI_SCALE) && devicePixelRatioF() > 1.f && ignoreUiScale)
     {
       pixmapWidth = atools::roundToInt(pixmapWidth / devicePixelRatioF());
       pixmapHeight = atools::roundToInt(pixmapHeight / devicePixelRatioF());

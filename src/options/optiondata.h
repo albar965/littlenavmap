@@ -422,7 +422,10 @@ enum Flag2 : quint64
   ROUTE_ZOOM_LANDING = 1ULL << 29,
 
   /* checkBoxOptionsMapFlightplanTransparent */
-  MAP_ROUTE_TRANSPARENT = 1ULL << 30
+  MAP_ROUTE_TRANSPARENT = 1ULL << 30,
+
+  /* checkBoxOptionsWebScale */
+  MAP_WEB_USE_UI_SCALE = 1ULL << 31
 
 };
 
@@ -1422,7 +1425,7 @@ private:
                          opts2::ONLINE_AIRSPACE_BY_FILE | opts2::ONLINE_AIRSPACE_BY_NAME | opts2::RAISE_WINDOWS |
                          opts2::HIGH_DPI_DISPLAY_SUPPORT | opts2::ROUTE_CENTER_ACTIVE_LEG |
                          opts2::ROUTE_CENTER_ACTIVE_LEG | opts2::ROUTE_NO_FOLLOW_ON_MOVE | opts2::MAP_ROUTE_HIGHLIGHT_ACTIVE |
-                         opts2::MAP_ROUTE_TRANSPARENT | opts2::MAP_HIGHLIGHT_TRANSPARENT;
+                         opts2::MAP_ROUTE_TRANSPARENT | opts2::MAP_HIGHLIGHT_TRANSPARENT | opts2::MAP_WEB_USE_UI_SCALE;
 
   opts::DisplayOnlineFlags displayOnlineFlags = opts::DISPLAY_ONLINE_OBSERVER | opts::DISPLAY_ONLINE_CLEARANCE |
                                                 opts::DISPLAY_ONLINE_DEPARTURE;
