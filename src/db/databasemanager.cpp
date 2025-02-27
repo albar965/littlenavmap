@@ -1709,11 +1709,15 @@ void DatabaseManager::loadSceneryInternal()
   }
   catch(atools::Exception& e)
   {
-    ATOOLS_HANDLE_EXCEPTION(e);
+    databaseLoader->setResultFlag(atools::fs::COMPILE_FAILED);
+    atools::gui::Dialog::critical(nullptr,
+                                  tr("<b>Caught exception while compiling scenery library.</b>%3").
+                                  arg(atools::strJoin("<ul><li>", QString(e.what()).split("\n"), "</li><li>", "</li><li>", "</li></ul>")));
   }
   catch(...)
   {
-    ATOOLS_HANDLE_UNKNOWN_EXCEPTION;
+    databaseLoader->setResultFlag(atools::fs::COMPILE_FAILED);
+    atools::gui::Dialog::critical(nullptr, tr("<b>Caught unknown exception while compiling scenery library.</b>%3"));
   }
 }
 
