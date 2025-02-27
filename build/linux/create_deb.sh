@@ -76,6 +76,8 @@ sed -i "s;YOUR_PATH/Little\\\\sNavmap/Little\\\\sNavconnect;/opt/${DEPLOY_NAVMAP
 
 # postinst file
 cat << EOT > "${WORKDIR}/DEBIAN/postinst"
+rm -f "/usr/bin/${PKG_NAME_NAVMAP}"
+rm -f "/usr/bin/${PKG_NAME_NAVCON}"
 ln -s "/opt/${DEPLOY_NAVMAP_NAME}/${PKG_NAME_NAVMAP}" "/usr/bin/${PKG_NAME_NAVMAP}"
 ln -s "/opt/${DEPLOY_NAVMAP_NAME}/${DEPLOY_NAVCON_NAME}/${PKG_NAME_NAVCON}" "/usr/bin/${PKG_NAME_NAVCON}"
 EOT
