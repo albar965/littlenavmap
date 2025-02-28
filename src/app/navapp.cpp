@@ -151,6 +151,7 @@ void NavApp::init(MainWindow *mainWindowParam)
   moraReader = new atools::fs::common::MoraReader(getDatabaseNav(), getDatabaseSim());
   moraReader->readFromTable();
 
+  // Cache for aircraft and other icons
   vehicleIcons = new VehicleIcons();
 
   // Need to set this later to avoid circular database dependency

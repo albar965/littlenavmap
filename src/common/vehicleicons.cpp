@@ -60,12 +60,10 @@ uint qHash(const PixmapKey& key)
 
 VehicleIcons::VehicleIcons()
 {
-
 }
 
 VehicleIcons::~VehicleIcons()
 {
-
 }
 
 QIcon VehicleIcons::iconFromCache(const atools::fs::sc::SimConnectAircraft& ac, int size, int rotate)
@@ -172,15 +170,14 @@ const QPixmap *VehicleIcons::pixmapFromCache(const atools::fs::sc::SimConnectAir
     else
       key.type = internal::AC_SHIP;
   }
-  else if(ac.getCategory() == atools::fs::sc::AIRPLANE)
+  else // if(ac.getCategory() == atools::fs::sc::AIRPLANE)
   {
+    // Also look at category UNKNOWN which can appear for X-Plane
     if(ac.getEngineType() == atools::fs::sc::JET)
       key.type = internal::AC_JET;
     else
       key.type = internal::AC_SMALL;
   }
-  else
-    key.type = internal::AC_UNKNOWN;
 
   // Dark icon for online aircraft or simulator shadow aircraft but not user
   key.online = (ac.isOnline() || ac.isOnlineShadow()) && !ac.isUser();
