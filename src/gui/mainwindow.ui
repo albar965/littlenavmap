@@ -757,24 +757,7 @@ Searches for partial text in all fields. Note that not all fields are available 
              <item>
               <widget class="QPushButton" name="pushButtonAirportHelpSearch">
                <property name="toolTip">
-                <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;
-&lt;p&gt;All set search conditions have to match.&lt;/p&gt;
-&lt;p&gt;Search tips for text fields: &lt;/p&gt;
-&lt;ul&gt;
-&lt;li&gt;Default is search for entries that start with text.&lt;/li&gt;
-&lt;li&gt;Use &amp;quot;*&amp;quot; as a placeholder for any text. &lt;/li&gt;
-&lt;li&gt;Prefix with &amp;quot;-&amp;quot; as first character to negate search.&lt;/li&gt;
-&lt;li&gt;Only ident field: Use double quotes like &amp;quot;FRA&amp;quot; to force exact search.&lt;/li&gt;
-&lt;li&gt;Only ident field: Enter a space separated list of idents to look for more than one airport.&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;p&gt;Check boxes: &lt;/p&gt;
-&lt;ul&gt;
-&lt;li&gt;Gray means: Condition is ignored.&lt;/li&gt;
-&lt;li&gt;Checked means: Condition must match.&lt;/li&gt;
-&lt;li&gt;Unchecked means: Condition must not match.&lt;/li&gt;
-&lt;/ul&gt;
-&lt;/body&gt;&lt;/html&gt;</string>
+                <string/>
                </property>
                <property name="statusTip">
                 <string>Show help for the airport search tab</string>
@@ -3063,15 +3046,7 @@ Hides all items not beginning with the specified search term.</string>
            <item>
             <widget class="QPushButton" name="pushButtonUserdataHelp">
              <property name="toolTip">
-              <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;
-&lt;p&gt;All set search conditions have to match.&lt;/p&gt;
-&lt;p&gt;Search tips for text fields: &lt;/p&gt;
-&lt;ul&gt;
-&lt;li&gt;Default is search for entries that start with text.&lt;/li&gt;
-&lt;li&gt;Use &amp;quot;*&amp;quot; as a placeholder for any text. &lt;/li&gt;
-&lt;li&gt;Prefix with &amp;quot;-&amp;quot; as first character to negate search.&lt;/li&gt;
-&lt;/ul&gt;
-&lt;/body&gt;&lt;/html&gt;</string>
+              <string/>
              </property>
              <property name="statusTip">
               <string>Show help for the userpoints search tab</string>
@@ -3975,7 +3950,7 @@ Matches any visited airport.</string>
            <item>
             <widget class="QPushButton" name="pushButtonOnlineClientHelpSearch">
              <property name="toolTip">
-              <string/>
+              <string>Show help for the navaid search tab</string>
              </property>
              <property name="statusTip">
               <string>Show help for the navaid search tab</string>
@@ -4230,7 +4205,7 @@ Matches any visited airport.</string>
            <item>
             <widget class="QPushButton" name="pushButtonOnlineCenterHelpSearch">
              <property name="toolTip">
-              <string/>
+              <string>Show help for the navaid search tab</string>
              </property>
              <property name="statusTip">
               <string>Show help for the navaid search tab</string>

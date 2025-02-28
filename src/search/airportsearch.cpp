@@ -67,7 +67,7 @@ AirportSearch::AirportSearch(QMainWindow *parent, QTableView *tableView, si::Tab
 
   /* *INDENT-OFF* */
   ui->pushButtonAirportHelpSearch->setToolTip(
-    "<p>All set search conditions have to match.</p>"
+    tr("<p>All set search conditions have to match.</p>"
     "<p>Search tips for text fields:</p>"
     "<ul>"
       "<li>Default is to search for airports that contain entered text or words in all data fields like ident or city name, for example.</li>"
@@ -80,7 +80,7 @@ AirportSearch::AirportSearch(QMainWindow *parent, QTableView *tableView, si::Tab
       "<li>Gray means: Condition is ignored.</li>"
       "<li>Checked means: Condition must match.</li>"
       "<li>Unchecked means: Condition must not match.</li>"
-    "</ul>" );
+    "</ul>"));
   /* *INDENT-ON* */
 
   // All widgets that will have their state and visibility saved and restored

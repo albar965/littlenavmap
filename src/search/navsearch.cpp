@@ -44,7 +44,7 @@ NavSearch::NavSearch(QMainWindow *parent, QTableView *tableView, si::TabSearchId
 {
   /* *INDENT-OFF* */
   ui->pushButtonNavHelpSearch->setToolTip(
-    "<p>All set search conditions have to match.</p>"
+    tr("<p>All set search conditions have to match.</p>"
     "<p>Search tips for text fields: </p>"
     "<ul>"
       "<li>Default is search for navaids that contain the entered text.</li>"
@@ -52,7 +52,7 @@ NavSearch::NavSearch(QMainWindow *parent, QTableView *tableView, si::TabSearchId
       "<li>Prefix with &quot;-&quot; as first character to negate search.</li>"
       "<li>Only ident field: Use double quotes like &quot;TAU&quot; or &quot;BOMBI&quot; to force exact search.</li>"
       "<li>Only ident field: Enter a space separated list of idents to look for more than one navaid.</li>"
-    "</ul>");
+    "</ul>"));
   /* *INDENT-ON* */
 
 

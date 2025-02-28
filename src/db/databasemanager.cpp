@@ -1717,7 +1717,7 @@ void DatabaseManager::loadSceneryInternal()
   catch(...)
   {
     databaseLoader->setResultFlag(atools::fs::COMPILE_FAILED);
-    atools::gui::Dialog::critical(nullptr, tr("<b>Caught unknown exception while compiling scenery library.</b>%3"));
+    atools::gui::Dialog::critical(nullptr, tr("<b>Caught unknown exception while compiling scenery library.</b>"));
   }
 }
 
