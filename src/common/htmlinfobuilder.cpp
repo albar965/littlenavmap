@@ -3712,7 +3712,7 @@ void HtmlInfoBuilder::aircraftText(const atools::fs::sc::SimConnectAircraft& air
     if(info && num == 1 && !(NavApp::getShownMapTypes().testFlag(map::AIRCRAFT_AI)))
       html.p(tr("No %2 shown on map.").arg(typeText), ahtml::BOLD);
 
-    if(info && num == 1 && !(NavApp::getShownMapTypes().testFlag(map::AIRCRAFT_ONLINE)))
+    if(info && num == 1 && !(NavApp::getShownMapTypes().testFlag(map::AIRCRAFT_ONLINE)) && NavApp::isOnlineNetworkActive())
       html.p(tr("No online aircraft shown on map."), ahtml::BOLD);
   }
 
