@@ -2396,7 +2396,7 @@ found in the airport search result table.</source>
     <message>
         <location filename="src/search/airportsearch.cpp" line="70"/>
         <source>&lt;p&gt;All set search conditions have to match.&lt;/p&gt;&lt;p&gt;Search tips for text fields:&lt;/p&gt;&lt;ul&gt;&lt;li&gt;Default is to search for airports that contain entered text or words in all data fields like ident or city name, for example.&lt;/li&gt;&lt;li&gt;Use &amp;quot;*&amp;quot; as a placeholder for any text.&lt;/li&gt;&lt;li&gt;Use double quotes like &amp;quot;FRA&amp;quot; or &amp;quot;EDDF&amp;quot; to force exact search.&lt;/li&gt;&lt;li&gt;Only fields that search for idents: Enter a space separated list of words or idents to look for more than one airport.&lt;/li&gt;&lt;/ul&gt;&lt;p&gt;Check boxes: &lt;/p&gt;&lt;ul&gt;&lt;li&gt;Gray means: Condition is ignored.&lt;/li&gt;&lt;li&gt;Checked means: Condition must match.&lt;/li&gt;&lt;li&gt;Unchecked means: Condition must not match.&lt;/li&gt;&lt;/ul&gt;</source>
-        <translation type="unfinished"></translation>
+        <translation>&lt;p&gt;所有的搜索条件均会进行匹配。&lt;/p&gt;&lt;p&gt;搜索小贴士 (°o°; &lt;/p&gt;&lt;ul&gt;&lt;li&gt;默认在所有字段如:识别码或城市, 搜索包含输入文本的机场。&lt;/li&gt;&lt;li&gt;使用 &amp;quot;*&amp;quot; 作为占位符来表示任意文本。&lt;/li&gt;&lt;li&gt;使用双引号如 &amp;quot;FRA&amp;quot; 或 &amp;quot;EDDF&amp;quot; 以强制精准匹配。&lt;/li&gt;&lt;li&gt;仅限识别码: 输入以空格分隔的一系列识别码来寻找多个机场。&lt;/li&gt;&lt;/ul&gt;&lt;p&gt;勾选框: &lt;/p&gt;&lt;ul&gt;&lt;li&gt;灰色表示: 条件被忽略。&lt;/li&gt;&lt;li&gt;勾选表示: 条件必须符合。&lt;/li&gt;&lt;li&gt;未勾选表示: 条件必须不符合。&lt;/li&gt;&lt;/ul&gt;</translation>
     </message>
     <message>
         <location filename="src/search/airportsearch.cpp" line="712"/>
@@ -4069,13 +4069,13 @@ Note that the loading process can take a while. Expect about %1 minutes.</source
     <message>
         <location filename="src/db/databasemanager.cpp" line="1714"/>
         <source>&lt;b&gt;Caught exception while compiling scenery library.&lt;/b&gt;%3</source>
-        <translation type="unfinished"></translation>
+        <translation>&lt;b&gt;在编译地景库时捕获到异常。&lt;/b&gt;%3</translation>
     </message>
     <message>
         <location filename="src/db/databasemanager.cpp" line="1720"/>
         <source>&lt;b&gt;Caught unknown exception while compiling scenery library.&lt;/b&gt;</source>
         <oldsource>&lt;b&gt;Caught unknown exception while compiling scenery library.&lt;/b&gt;%3</oldsource>
-        <translation type="unfinished"></translation>
+        <translation>&lt;b&gt;在编译地景库时捕获到未知异常。&lt;/b&gt;</translation>
     </message>
     <message>
         <location filename="src/db/databasemanager.cpp" line="1930"/>
@@ -10327,7 +10327,8 @@ from either the departure parking or the user aircraft while taxiing.</source>
         <location filename="src/gui/mainwindow.ui" line="8540"/>
         <location filename="src/gui/mainwindow.ui" line="8543"/>
         <source>Add an approach runway and a final leg to the flight plan</source>
-        <translation type="unfinished"></translation>
+        <translatorcomment>右键菜单 将机场和跑道添加至目的地</translatorcomment>
+        <translation>添加进近跑道以及最终边至飞行计划</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="8714"/>
@@ -10474,7 +10475,8 @@ from either the departure parking or the user aircraft while taxiing.</source>
         <location filename="src/gui/mainwindow.ui" line="11504"/>
         <location filename="src/gui/mainwindow.ui" line="11507"/>
         <source>Add a departure runway and extended runway leg to the flight plan</source>
-        <translation type="unfinished"></translation>
+        <translatorcomment>右键菜单 将机场和跑道添加至出发地</translatorcomment>
+        <translation>添加离场跑道以及离场边至飞行计划</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="11519"/>
@@ -22530,7 +22532,7 @@ Ensure that the map fills the window completely.</source>
     <message>
         <location filename="src/search/navsearch.cpp" line="47"/>
         <source>&lt;p&gt;All set search conditions have to match.&lt;/p&gt;&lt;p&gt;Search tips for text fields: &lt;/p&gt;&lt;ul&gt;&lt;li&gt;Default is search for navaids that contain the entered text.&lt;/li&gt;&lt;li&gt;Use &amp;quot;*&amp;quot; as a placeholder for any text. &lt;/li&gt;&lt;li&gt;Prefix with &amp;quot;-&amp;quot; as first character to negate search.&lt;/li&gt;&lt;li&gt;Only ident field: Use double quotes like &amp;quot;TAU&amp;quot; or &amp;quot;BOMBI&amp;quot; to force exact search.&lt;/li&gt;&lt;li&gt;Only ident field: Enter a space separated list of idents to look for more than one navaid.&lt;/li&gt;&lt;/ul&gt;</source>
-        <translation type="unfinished"></translation>
+        <translation>&lt;p&gt;所有的搜索条件均会进行匹配。&lt;/p&gt;&lt;p&gt;搜索小贴士 (°o°; &lt;/p&gt;&lt;ul&gt;&lt;li&gt;默认搜索包含输入文本的助航设备。&lt;/li&gt;&lt;li&gt;使用 &amp;quot;*&amp;quot; 作为占位符来表示任意文本。&lt;/li&gt;&lt;li&gt;以 &amp;quot;-&amp;quot; 开头搜索不包含该字段结果。&lt;/li&gt;&lt;li&gt;仅限识别号: 使用双引号如 &amp;quot;BOMBI&amp;quot; 以强制精准匹配。或输入以空格分隔的一系列识别码来寻找多个助航设备。&lt;/li&gt;&lt;/ul&gt;</translation>
     </message>
     <message>
         <location filename="src/search/navsearch.cpp" line="158"/>
@@ -22627,7 +22629,7 @@ Decl.°</translation>
     <message>
         <location filename="src/search/onlinecentersearch.cpp" line="42"/>
         <source>&lt;p&gt;All set search conditions have to match.&lt;/p&gt;&lt;p&gt;Search tips for text fields: &lt;/p&gt;&lt;ul&gt;&lt;li&gt;Default is search for online centers that contain the entered text.&lt;/li&gt;&lt;li&gt;Use &amp;quot;*&amp;quot; as a placeholder for any text. &lt;/li&gt;&lt;li&gt;Prefix with &amp;quot;-&amp;quot; as first character to negate search.&lt;/li&gt;&lt;li&gt;Only callsign field: Use double quotes like &amp;quot;EGGB_TWR&amp;quot; to force exact search.&lt;/li&gt;&lt;/ul&gt;</source>
-        <translation type="unfinished"></translation>
+        <translation>&lt;p&gt;所有的搜索条件均会进行匹配。&lt;/p&gt;&lt;p&gt;搜索小贴士 (°o°; &lt;/p&gt;&lt;ul&gt;&lt;li&gt;默认搜索包含输入文本的在线管制中心。&lt;/li&gt;&lt;li&gt;使用 &amp;quot;*&amp;quot; 作为占位符来表示任意文本。&lt;/li&gt;&lt;li&gt;以 &amp;quot;-&amp;quot; 开头搜索不包含该字段结果。&lt;/li&gt;&lt;li&gt;仅限呼号: 使用双引号如 &amp;quot;EGGB_TWR&amp;quot; 以强制精准匹配。&lt;/li&gt;&lt;/ul&gt;</translation>
     </message>
     <message>
         <location filename="src/search/onlinecentersearch.cpp" line="70"/>
@@ -22741,7 +22743,7 @@ Time</source>
     <message>
         <location filename="src/search/onlineclientsearch.cpp" line="39"/>
         <source>&lt;p&gt;All set search conditions have to match.&lt;/p&gt;&lt;p&gt;Search tips for text fields: &lt;/p&gt;&lt;ul&gt;&lt;li&gt;Default is search for online clients that contain the entered text.&lt;/li&gt;&lt;li&gt;Use &amp;quot;*&amp;quot; as a placeholder for any text. &lt;/li&gt;&lt;li&gt;Prefix with &amp;quot;-&amp;quot; as first character to negate search.&lt;/li&gt;&lt;li&gt;Only callsign field: Use double quotes like &amp;quot;TAU&amp;quot; to force exact search.&lt;/li&gt;&lt;/ul&gt;</source>
-        <translation type="unfinished"></translation>
+        <translation>&lt;p&gt;所有的搜索条件均会进行匹配。&lt;/p&gt;&lt;p&gt;搜索小贴士 (°o°; &lt;/p&gt;&lt;ul&gt;&lt;li&gt;默认搜索包含输入文本的在线客户。&lt;/li&gt;&lt;li&gt;使用 &amp;quot;*&amp;quot; 作为占位符来表示任意文本。&lt;/li&gt;&lt;li&gt;以 &amp;quot;-&amp;quot; 开头搜索不包含该字段结果。&lt;/li&gt;&lt;li&gt;仅限呼号: 使用双引号如 &amp;quot;TAU&amp;quot; 以强制精准匹配。&lt;/li&gt;&lt;/ul&gt;</translation>
     </message>
     <message>
         <location filename="src/search/onlineclientsearch.cpp" line="68"/>
@@ -43391,7 +43393,7 @@ Required for export to X-Plane &quot;user_fix.dat&quot;.</source>
         <location filename="src/search/userdatasearch.cpp" line="44"/>
         <source>&lt;p&gt;All set search conditions have to match.&lt;/p&gt;&lt;p&gt;Search tips for text fields: &lt;/p&gt;&lt;ul&gt;&lt;li&gt;Default is search for userpoints that contain the entered text.&lt;/li&gt;&lt;li&gt;Use &amp;quot;*&amp;quot; as a placeholder for any text. &lt;/li&gt;&lt;li&gt;Prefix with &amp;quot;-&amp;quot; as first character to negate search.&lt;/li&gt;&lt;li&gt;Use double quotes like &amp;quot;TAU&amp;quot; or &amp;quot;Sindal&amp;quot; to force exact search.&lt;/li&gt;&lt;li&gt;Only ident field: Enter a space separated list of idents to look for more than one userpoint.&lt;/li&gt;&lt;/ul&gt;</source>
         <oldsource>&lt;p&gt;All set search conditions have to match.&lt;/p&gt;&lt;p&gt;Search tips for text fields: &lt;/p&gt;&lt;ul&gt;&lt;li&gt;Default is search for userpoints that contain the entered text.&lt;/li&gt;&lt;li&gt;Use &amp;quot;*&amp;quot; as a placeholder for any text. &lt;/li&gt;&lt;li&gt;Prefix with &amp;quot;-&amp;quot; as first character to negate search.&lt;/li&gt;&lt;li&gt;Use double quotes like &amp;quot;TAU&amp;quot; or &amp;quot;Sindal&amp;quot; to force exact search.&lt;/li&gt;&lt;li&gt;Only ident field: Enter a space separated list of idents to look for more than one navaid.&lt;/li&gt;&lt;/ul&gt;</oldsource>
-        <translation type="unfinished"></translation>
+        <translation>&lt;p&gt;所有的搜索条件均会进行匹配。&lt;/p&gt;&lt;p&gt;搜索小贴士 (°o°; &lt;/p&gt;&lt;ul&gt;&lt;li&gt;默认搜索包含输入文本的用户航路点。&lt;/li&gt;&lt;li&gt;使用 &amp;quot;*&amp;quot; 作为占位符来表示任意文本。&lt;/li&gt;&lt;li&gt;以 &amp;quot;-&amp;quot; 开头搜索不包含该字段结果。&lt;/li&gt;&lt;li&gt;使用双引号如 &amp;quot;TAU&amp;quot; 或 &amp;quot;Sindal&amp;quot; 以强制精准匹配。&lt;/li&gt;&lt;li&gt;仅限识别码: 输入以空格分隔的一系列识别码来寻找多个用户航路点。&lt;/li&gt;&lt;/ul&gt;</translation>
     </message>
     <message>
         <location filename="src/search/userdatasearch.cpp" line="76"/>
