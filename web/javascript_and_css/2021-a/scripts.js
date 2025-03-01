@@ -115,12 +115,12 @@ function injectUpdates(origin) {
      * returns integer id of current update "cycle", will have the negative value of the current update "cycle" if this function call did not request a new image due to locking
      */
     // width and height are as delivered by JS (= in CSS pixels (which are real when devicePixelRatio == 1))
-    var updateMapImage_cssPixels = function(command, quality, force, notifiable, nolock) {
+    var updateMapImage_devicePixels = function(command, quality, force, notifiable, nolock) {
       mapUpdateNotifiables.push(notifiable);
       if(mapImageLoaded || force && !forceLock) {
         mapImageLoaded = false;
         forceLock = force && !nolock;
-        mapElement.src = "/mapimage?format=jpg&quality=" + quality + "&width=" + mapWidth + "&height=" + ~~mapHeight + "&session&" + command + "=" + Math.random();
+        mapElement.src = "/mapimage?format=jpg&quality=" + quality + "&width=" + ~~(mapWidth * devicePixelRatio) + "&height=" + ~~(mapHeight * devicePixelRatio) + "&session&" + command + "=" + Math.random();
         clearTimeout(mapUpdateTimeout);
         mapUpdateTimeout = setTimeout((function(mapUpdateCounter) {
           return function() {
@@ -134,7 +134,7 @@ function injectUpdates(origin) {
     };
 
     function setMapImageUpdateFunction() {
-      window.updateMapImage = updateMapImage_cssPixels;
+      window.updateMapImage = updateMapImage_devicePixels;
     }
     setMapImageUpdateFunction();
 
