@@ -160,7 +160,7 @@ bool TreeEventFilter::eventFilter(QObject *object, QEvent *event)
     {
       QTreeWidgetItem *item = search->treeWidget->itemAt(mouseEvent->pos());
       if(item == nullptr || object == NavApp::getMainUi()->labelProcedureSearch || object == NavApp::getMainUi()->labelProcedureSearchWarn)
-        search->treeWidget->clearSelection();
+        search->clearSelectionClicked();
     }
   }
   return QObject::eventFilter(object, event);
@@ -1384,15 +1384,6 @@ void ProcedureSearch::showAllToggled(bool checked)
   updateWidgets();
 }
 
-void ProcedureSearch::clearSelectionClicked()
-{
-  NavApp::getMainUi()->pushButtonProcedureShowAll->setChecked(false);
-  treeWidget->clearSelection();
-
-  emit procedureSelected(proc::MapProcedureRef());
-  emit procedureLegSelected(proc::MapProcedureRef());
-}
-
 void ProcedureSearch::contextMenu(const QPoint& pos)
 {
   qDebug() << Q_FUNC_INFO;
@@ -1683,6 +1674,7 @@ void ProcedureSearch::procedureAttachSelected()
 {
   // ui->actionInfoApproachAttach,
   attachProcedure();
+  clearSelection();
 }
 
 void ProcedureSearch::showEntry(QTreeWidgetItem *item, bool doubleClick, bool zoom)
@@ -2061,10 +2053,19 @@ void ProcedureSearch::updateTableSelection(bool noFollow)
     itemSelectionChangedInternal(noFollow);
 }
 
+void ProcedureSearch::clearSelectionClicked()
+{
+  NavApp::getMainUi()->pushButtonProcedureShowAll->setChecked(false);
+  treeWidget->clearSelection();
+
+  emit procedureSelected(proc::MapProcedureRef());
+  emit procedureLegSelected(proc::MapProcedureRef());
+}
+
 void ProcedureSearch::clearSelection()
 {
-  treeWidget->clearSelection();
   NavApp::getMainUi()->pushButtonProcedureShowAll->setChecked(false);
+  treeWidget->clearSelection();
   updateWidgets();
 }
 
