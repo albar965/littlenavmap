@@ -181,6 +181,7 @@ public:
   const atools::geo::Pos& getProfileHighlight() const;
 
   void clearSearchHighlights();
+  void clearRouteHighlights();
 
   /* true if any highlighting circles are to be drawn on the map */
   bool hasHighlights() const;

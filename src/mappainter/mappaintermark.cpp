@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2024 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2025 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -352,13 +352,10 @@ void MapPainterMark::paintHighlights()
   if(transparent)
     radius *= 0.75f;
 
-  const QList<int>& routeHighlightResults = mapPaintWidget->getRouteHighlights();
-  QVector<atools::geo::Pos> positions;
-  for(int idx : routeHighlightResults)
-  {
-    const RouteLeg& routeLeg = NavApp::getRouteConst().value(idx);
-    positions.append(routeLeg.getPosition());
-  }
+  atools::geo::LineString positions;
+  const Route& route = NavApp::getRouteConst();
+  for(int idx : mapPaintWidget->getRouteHighlights())
+    positions.append(route.value(idx).getPosition());
 
   QColor routeHighlightColor = OptionData::instance().getHighlightFlightplanColor();
   const QPen outerPenRoute(mapcolors::routeHighlightBackColor, radius / 3. + 2., Qt::SolidLine, Qt::FlatCap);

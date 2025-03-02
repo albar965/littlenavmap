@@ -423,6 +423,7 @@ RouteController::RouteController(QMainWindow *parentWindow, QTableView *tableVie
   connect(ui->actionRouteTableSelectNothing, &QAction::triggered, this, &RouteController::clearTableSelection);
   connect(ui->actionRouteTableSelectAll, &QAction::triggered, this, &RouteController::selectAllTriggered);
   connect(ui->pushButtonRouteClearSelection, &QPushButton::clicked, this, &RouteController::clearTableSelection);
+  connect(ui->pushButtonRouteClearSelection, &QPushButton::clicked, NavApp::getMapWidgetGui(), &MapPaintWidget::clearRouteHighlights);
   connect(ui->pushButtonRouteHelp, &QPushButton::clicked, this, &RouteController::helpClicked);
   connect(ui->actionRouteActivateLeg, &QAction::triggered, this, &RouteController::activateLegTriggered);
   connect(ui->actionRouteDisplayOptions, &QAction::triggered, this, &RouteController::routeTableOptions);

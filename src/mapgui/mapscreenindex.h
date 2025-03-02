@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2024 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2025 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -148,7 +148,7 @@ public:
   }
 
   /* Get objects that are highlighted because of selected rows in a search result table */
-  void changeSearchHighlights(const map::MapResult& newHighlights);
+  void setSearchHighlights(const map::MapResult& newHighlights);
 
   const map::MapResult& getSearchHighlights() const
   {
@@ -270,12 +270,12 @@ public:
     return airwayHighlights;
   }
 
-  void changeAirspaceHighlights(const QList<map::MapAirspace>& value)
+  void setAirspaceHighlights(const QList<map::MapAirspace>& value)
   {
     airspaceHighlights = value;
   }
 
-  void changeAirwayHighlights(const QList<QList<map::MapAirway> >& value)
+  void setAirwayHighlights(const QList<QList<map::MapAirway> >& value)
   {
     airwayHighlights = value;
   }

@@ -1000,23 +1000,29 @@ const atools::geo::Pos& MapPaintWidget::getProfileHighlight() const
 
 void MapPaintWidget::clearSearchHighlights()
 {
-  screenIndex->changeSearchHighlights(map::MapResult());
+  screenIndex->setSearchHighlights(map::MapResult());
 
   screenIndex->updateLogEntryScreenGeometry(getCurrentViewBoundingBox());
   screenIndex->updateAirspaceScreenGeometry(getCurrentViewBoundingBox());
   update();
 }
 
+void MapPaintWidget::clearRouteHighlights()
+{
+  screenIndex->setRouteHighlights(QList<int>());
+  update();
+}
+
 void MapPaintWidget::clearAirspaceHighlights()
 {
-  screenIndex->changeAirspaceHighlights(QList<map::MapAirspace>());
+  screenIndex->setAirspaceHighlights(QList<map::MapAirspace>());
   screenIndex->updateAirspaceScreenGeometry(getCurrentViewBoundingBox());
   update();
 }
 
 void MapPaintWidget::clearAirwayHighlights()
 {
-  screenIndex->changeAirwayHighlights(QList<QList<map::MapAirway> >());
+  screenIndex->setAirwayHighlights(QList<QList<map::MapAirway> >());
   screenIndex->updateAirwayScreenGeometry(getCurrentViewBoundingBox());
   update();
 }
@@ -1095,7 +1101,7 @@ void MapPaintWidget::changeProcedureLegHighlight(const proc::MapProcedureLeg& pr
 /* Also clicked airspaces in the info window */
 void MapPaintWidget::changeAirspaceHighlights(const QList<map::MapAirspace>& airspaces)
 {
-  screenIndex->changeAirspaceHighlights(airspaces);
+  screenIndex->setAirspaceHighlights(airspaces);
   screenIndex->updateAirspaceScreenGeometry(getCurrentViewBoundingBox());
   update();
 }
@@ -1103,7 +1109,7 @@ void MapPaintWidget::changeAirspaceHighlights(const QList<map::MapAirspace>& air
 /* Also clicked airways in the info window */
 void MapPaintWidget::changeAirwayHighlights(const QList<QList<map::MapAirway> >& airways)
 {
-  screenIndex->changeAirwayHighlights(airways);
+  screenIndex->setAirwayHighlights(airways);
   screenIndex->updateAirwayScreenGeometry(getCurrentViewBoundingBox());
   update();
 }
@@ -1115,7 +1121,7 @@ void MapPaintWidget::updateLogEntryScreenGeometry()
 
 void MapPaintWidget::changeSearchHighlights(const map::MapResult& newHighlights, bool updateAirspace, bool updateLogEntries)
 {
-  screenIndex->changeSearchHighlights(newHighlights);
+  screenIndex->setSearchHighlights(newHighlights);
   if(updateLogEntries)
     screenIndex->updateLogEntryScreenGeometry(getCurrentViewBoundingBox());
   if(updateAirspace)
