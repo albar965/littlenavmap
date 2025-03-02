@@ -3323,17 +3323,21 @@ void RouteController::cleanupTableTimeout()
     else
     {
       opts2::Flags2 flags2 = OptionData::instance().getFlags2();
-      if(hasTableSelection() && flags2.testFlag(opts2::ROUTE_CLEAR_SELECTION))
+      if(flags2.testFlag(opts2::ROUTE_CLEAR_SELECTION))
       {
-        // Ignore events triggering follow due to selection changes
-        atools::util::ContextSaverBool saver(ignoreFollowSelection);
+        if(hasTableSelection())
+        {
+          // Ignore events triggering follow due to selection changes
+          atools::util::ContextSaverBool saver(ignoreFollowSelection);
 
-        // Clear selection and move cursor to current row and first column
-        QModelIndex idx = tableViewRoute->model()->index(tableViewRoute->currentIndex().row(),
-                                                         tableViewRoute->horizontalHeader()->logicalIndex(0));
+          // Clear selection and move cursor to current row and first column
+          QModelIndex idx = tableViewRoute->model()->index(tableViewRoute->currentIndex().row(),
+                                                           tableViewRoute->horizontalHeader()->logicalIndex(0));
 
-        if(tableViewRoute->selectionModel() != nullptr)
-          tableViewRoute->selectionModel()->setCurrentIndex(idx, QItemSelectionModel::Clear);
+          if(tableViewRoute->selectionModel() != nullptr)
+            tableViewRoute->selectionModel()->setCurrentIndex(idx, QItemSelectionModel::Clear);
+        }
+        NavApp::getMapPaintWidgetGui()->clearRouteHighlights();
       }
 
       if(flags2.testFlag(opts2::ROUTE_CENTER_ACTIVE_LEG))
@@ -3358,8 +3362,7 @@ void RouteController::updateCleanupTimer()
   if(NavApp::isConnectedAndAircraftFlying())
   {
     opts2::Flags2 flags2 = OptionData::instance().getFlags2();
-    if((hasTableSelection() && flags2.testFlag(opts2::ROUTE_CLEAR_SELECTION)) ||
-       flags2.testFlag(opts2::ROUTE_CENTER_ACTIVE_LEG))
+    if((hasTableSelection() && flags2.testFlag(opts2::ROUTE_CLEAR_SELECTION)) || flags2.testFlag(opts2::ROUTE_CENTER_ACTIVE_LEG))
     {
 #ifdef DEBUG_INFORMATION
       qDebug() << Q_FUNC_INFO << "tableCleanupTimer.start()";
