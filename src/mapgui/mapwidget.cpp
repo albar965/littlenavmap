@@ -805,7 +805,7 @@ bool MapWidget::mousePressCheckModifierActions(QMouseEvent *event)
 
       if(NavApp::getRouteConst().value(routeIndex).isAnyProcedure())
       {
-        NavApp::getRouteController()->routeDelete(routeIndex);
+        NavApp::getRouteController()->routeDelete(routeIndex, false /* selectCurrent */);
         return true;
       }
 
@@ -816,7 +816,7 @@ bool MapWidget::mousePressCheckModifierActions(QMouseEvent *event)
       if(routeIndex != -1)
       {
         // Position is editable - remove
-        NavApp::getRouteController()->routeDelete(routeIndex);
+        NavApp::getRouteController()->routeDelete(routeIndex, false /* selectCurrent */);
         return true;
       }
 
@@ -2182,7 +2182,7 @@ void MapWidget::contextMenuEvent(QContextMenuEvent *event)
           break;
 
         case mc::DELETEROUTEWAYPOINT:
-          NavApp::getRouteController()->routeDelete(contextMenu.getSelectedRouteIndex());
+          NavApp::getRouteController()->routeDelete(contextMenu.getSelectedRouteIndex(), true /* selectCurrent */);
           break;
 
         case mc::EDITROUTEUSERPOINT:

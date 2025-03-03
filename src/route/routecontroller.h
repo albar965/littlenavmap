@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2024 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2025 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -21,6 +21,7 @@
 #include "routing/routenetworktypes.h"
 #include "route/route.h"
 
+#include <QItemSelection>
 #include <QTimer>
 
 class QUndoStack;
@@ -196,7 +197,7 @@ public:
   void routeReplace(int id, atools::geo::Pos userPos, map::MapTypes type, int legIndex);
 
   /* Delete waypoint at the given index. Will also delete departure or destination. From map click or map context menu. */
-  void routeDelete(int index);
+  void routeDelete(int index, bool selectCurrent);
 
   /* Called by action ui->actionRouteDeleteLeg */
   void deleteSelectedLegsTriggered();
@@ -433,7 +434,7 @@ private:
 
   void tableContextMenu(const QPoint& pos);
 
-  void tableSelectionChanged(const QItemSelection&, const QItemSelection&);
+  void tableSelectionChanged(const QItemSelection& = QItemSelection(), const QItemSelection& = QItemSelection());
 
   /* Convert given procedure type to waypoints */
   void convertProcedure(proc::MapProcedureTypes types);
@@ -441,7 +442,7 @@ private:
   void moveSelectedLegsDownTriggered();
   void moveSelectedLegsUpTriggered();
   void moveSelectedLegsInternal(MoveDirection direction);
-  void deleteSelectedLegs(const QList<int>& rows);
+  void deleteSelectedLegs(const QList<int>& rows, bool selectCurrent);
   void deleteSelectedLegsInternal(const QList<int>& rows);
 
   QList<int> getSelectedRows(bool reverseRoute) const;

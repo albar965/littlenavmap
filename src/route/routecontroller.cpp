@@ -2261,8 +2261,6 @@ bool RouteController::calculateRouteInternal(atools::routing::RouteFinder *route
         selectRange(fromIndex, newToIndex);
       }
 
-      tableSelectionChanged(QItemSelection(), QItemSelection());
-
       emit routeChanged(true /* geometryChanged */);
     }
     else
@@ -3298,7 +3296,7 @@ void RouteController::dockVisibilityChanged(bool visible)
   if(!atools::gui::Application::isShuttingDown())
     // Visible - send update to show map highlights
     // Not visible - send update to hide highlights
-    tableSelectionChanged(QItemSelection(), QItemSelection());
+    tableSelectionChanged();
 }
 
 bool RouteController::canCleanupTable()
@@ -3379,14 +3377,23 @@ void RouteController::tableSelectionChanged(const QItemSelection&, const QItemSe
   selectedRows = getSelectedRows(false /* reverse */);
 
   updateActions();
+
+  NavApp::getMainUi()->pushButtonRouteClearSelection->setEnabled(hasTableSelection());
+  if(!hasTableSelection())
+    NavApp::getMapPaintWidgetGui()->clearRouteHighlights();
+
+  routeCalcDialog->selectionChanged();
+  routeLabel->updateFooterSelectionLabel();
+
+  int selectedRowSize = 0;
   QItemSelectionModel *selectionModel = tableViewRoute->selectionModel();
+  if(selectionModel != nullptr && selectionModel->hasSelection())
+    selectedRowSize = selectionModel->selectedRows().size();
+
+  emit routeSelectionChanged(selectedRowSize, model->rowCount());
 
   if(selectionModel == nullptr || modelUpdatesBlocked)
     return;
-
-  int selectedRowSize = 0;
-  if(selectionModel != nullptr && selectionModel->hasSelection())
-    selectedRowSize = selectionModel->selectedRows().size();
 
 #ifdef DEBUG_INFORMATION
   if(selectionModel != nullptr && selectionModel->hasSelection())
@@ -3396,13 +3403,6 @@ void RouteController::tableSelectionChanged(const QItemSelection&, const QItemSe
       qDebug() << r << "#" << route.value(r);
   }
 #endif
-
-  NavApp::getMainUi()->pushButtonRouteClearSelection->setEnabled(selectionModel != nullptr && selectionModel->hasSelection());
-
-  routeCalcDialog->selectionChanged();
-  routeLabel->updateFooterSelectionLabel();
-
-  emit routeSelectionChanged(selectedRowSize, model->rowCount());
 
   updateCleanupTimer();
 
@@ -3432,6 +3432,7 @@ void RouteController::changeRouteRedo(const atools::fs::pln::Flightplan& newFlig
 void RouteController::changeRouteUndoRedo(const atools::fs::pln::Flightplan& newFlightplan)
 {
   int currentRow = tableViewRoute->currentIndex().isValid() ? tableViewRoute->currentIndex().row() : -1;
+  bool currentRowSelected = tableViewRoute->selectionModel()->isRowSelected(currentRow);
 
   // Ignore events triggering follow due to selection changes
   atools::util::ContextSaverBool saver(ignoreFollowSelection);
@@ -3456,7 +3457,7 @@ void RouteController::changeRouteUndoRedo(const atools::fs::pln::Flightplan& new
   updateActiveLeg();
   highlightNextWaypoint(route.getActiveLegIndexCorrected());
 
-  setCurrentRow(currentRow, false /* select */);
+  setCurrentRow(currentRow, currentRowSelected);
 
   emit routeChanged(true /* geometryChanged */);
 }
@@ -3572,7 +3573,6 @@ void RouteController::moveSelectedLegsDownTriggered()
   atools::util::ContextSaverBool saver(ignoreFollowSelection);
 
   moveSelectedLegsInternal(MOVE_DOWN);
-  tableSelectionChanged(QItemSelection(), QItemSelection());
 }
 
 /* Called by action */
@@ -3586,7 +3586,6 @@ void RouteController::moveSelectedLegsUpTriggered()
   atools::util::ContextSaverBool saver(ignoreFollowSelection);
 
   moveSelectedLegsInternal(MOVE_UP);
-  tableSelectionChanged(QItemSelection(), QItemSelection());
 }
 
 void RouteController::moveSelectedLegsInternal(MoveDirection direction)
@@ -3669,17 +3668,17 @@ void RouteController::moveSelectedLegsInternal(MoveDirection direction)
   }
 }
 
-void RouteController::routeDelete(int index)
+void RouteController::routeDelete(int index, bool selectCurrent)
 {
-  deleteSelectedLegs({index});
+  deleteSelectedLegs({index}, selectCurrent);
 }
 
 void RouteController::deleteSelectedLegsTriggered()
 {
-  deleteSelectedLegs(getSelectedRows(true /* reverse */));
+  deleteSelectedLegs(getSelectedRows(true /* reverse */), true /* selectCurrent */);
 }
 
-void RouteController::deleteSelectedLegs(const QList<int>& rows)
+void RouteController::deleteSelectedLegs(const QList<int>& rows, bool selectCurrent)
 {
   if(!rows.isEmpty())
   {
@@ -3697,8 +3696,7 @@ void RouteController::deleteSelectedLegs(const QList<int>& rows)
     updateTableModelAndErrors();
     updateActions();
 
-    setCurrentRow(rows.constLast(), true /* select */);
-    tableSelectionChanged(QItemSelection(), QItemSelection());
+    setCurrentRow(rows.constLast(), selectCurrent);
 
     postChange(undoCommand);
     emit routeChanged(true /* geometryChanged */);
@@ -4768,7 +4766,7 @@ void RouteController::routeDirectTo(int id, const atools::geo::Pos& userPos, map
     updateActiveLeg();
     updateTableModelAndErrors();
     updateActions();
-    tableSelectionChanged(QItemSelection(), QItemSelection());
+    tableSelectionChanged();
     routeCleanAlternates();
 
     postChange(undoCommand);

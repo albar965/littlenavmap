@@ -158,22 +158,23 @@ void MapPainterAirport::render()
     if(context->objCount())
       return;
 
-    if(context->dOptAp(optsd::ITEM_AIRPORT_DETAIL_RUNWAY) &&
-       airport.longestRunwayLength >= RUNWAY_OVERVIEW_MIN_LENGTH_FEET &&
-       context->mapLayer->isAirportOverviewRunway() && !context->mapLayer->isAirportDiagramRunway() &&
-       !context->routeProcIdMap.contains(airport.getRef()) &&
-       !airport.closed() && !airport.waterOnly())
-      // Draw simplified runway lines if big enough and not water or closed - runways with white fill but not if already drawn for route
-      drawAirportSymbolOverview(airport, x, y, minor ? symsizeMinor : symsize);
-    // More detailed symbol will be drawn by the route or log painter - skip here
-    else if(!context->routeProcIdMap.contains(airport.getRef()))
-      drawAirportSymbol(airport, x, y, minor ? symsizeMinor : symsize);
+    if(!context->routeProcIdMap.contains(airport.getRef()))
+    {
+      if(context->dOptAp(optsd::ITEM_AIRPORT_DETAIL_RUNWAY) &&
+         airport.longestRunwayLength >= RUNWAY_OVERVIEW_MIN_LENGTH_FEET &&
+         context->mapLayer->isAirportOverviewRunway() && !context->mapLayer->isAirportDiagramRunway() &&
+         !airport.closed() && !airport.waterOnly())
+        // Draw simplified runway lines if big enough and not water or closed - runways with white fill but not if already drawn for route
+        drawAirportSymbolOverview(airport, x, y, minor ? symsizeMinor : symsize);
+      // More detailed symbol will be drawn by the route or log painter - skip here
+      else
+        drawAirportSymbol(airport, x, y, minor ? symsizeMinor : symsize);
 
-    context->szFont(context->textSizeAirport * (minor ? airportSoftFontScale : airportFontScale));
-
-    symbolPainter->drawAirportText(context->painter, airport, x, y, context->dispOptsAirport, minor ? textFlagsMinor : textFlags,
-                                   minor ? apMinorSymSize : apSymSize, context->mapLayer->isAirportDiagram(),
-                                   context->mapLayerText->getMaxTextLengthAirport());
+      context->szFont(context->textSizeAirport * (minor ? airportSoftFontScale : airportFontScale));
+      symbolPainter->drawAirportText(context->painter, airport, x, y, context->dispOptsAirport, minor ? textFlagsMinor : textFlags,
+                                     minor ? apMinorSymSize : apSymSize, context->mapLayer->isAirportDiagram(),
+                                     context->mapLayerText->getMaxTextLengthAirport());
+    }
   }
   context->endTimer("Airport");
 }
