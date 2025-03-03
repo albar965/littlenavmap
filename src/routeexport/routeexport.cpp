@@ -354,12 +354,10 @@ bool RouteExport::routeExportInternalPln(const RouteExportFormat& format)
     else
       shortName = "Pln";
 
+    bool normalize = format.getType() == rexp::PLNMSFS || format.getType() == rexp::PLNMSFS24 || format.getType() == rexp::PLNMSFSCOMPAT;
     QString routeFile = exportFile(format, "Route/Pln" % shortName,
                                    NavApp::getCurrentSimulatorFilesPath(),
-                                   buildDefaultFilename(format,
-                                                        format.getType() == rexp::PLNMSFS || format.getType() == rexp::PLNMSFS24 ||
-                                                        format.getType() == rexp::PLNMSFSCOMPAT),
-                                   false /* dontComfirmOverwrite */);
+                                   buildDefaultFilename(format, normalize), false /* dontComfirmOverwrite */);
 
     if(!routeFile.isEmpty())
     {

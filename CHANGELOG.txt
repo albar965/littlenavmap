@@ -54,6 +54,8 @@ A big thank you to everyone who reported bugs and issues!
   clicking into the empty space of the tree widget or when adding a procedure to a flight plan.
 * The distance for the inclusion of airports in the METAR interpolation has been increased
   from 200 to 600 NM.
+* Removing `&` from file names and airport names in MSFS 2020 and MSFS 2024 exported flight plans
+  to avoid simulator hiccups.
 
 ## Web Interface
 
