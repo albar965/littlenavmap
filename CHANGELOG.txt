@@ -8,40 +8,86 @@ This text is partially Markdown, so the formatting is sometimes strange.
 
 ## Notes
 
-**This is a test version of Little Navmap which attempts to fix issues with AI in MSFS 2020 and
-MSFS 2024 and has additional facilities to diagnose issues. In addition, issues with in-game panels
-in MSFS that use the Little Navmap web server have been fixed.**
+**This is a stable release of Little Navmap which fixes issues with AI display in MSFS 2020 and MSFS 2024. In addition, issues with in-game panels in MSFS that use the Little Navmap web server have been fixed.**
 
-**Please read the release notes below before reporting an issue.**
+**macOS users: Keep in mind that you have to clear the quarantine flag when updating Little Xpconnect. See
+[Clearing the Quarantine Flag on macOS](https://www.littlenavmap.org/manuals/littlenavmap/release/latest/en/XPCONNECT.html#clearing-the-quarantine-flag-on-macos).**
 
-This version was tested by me and shows the following results here:
+A big thank you to everyone who reported bugs and issues!
 
-* Stock AI aircraft and ship traffic on MSFS 2020 (GAIST 6.1 add-on) are visible. Other traffic add-ons
-  not tested.
-* Stock AI aircraft and ship traffic on both MSFS 2024 stable and beta versions are visible. Traffic
-  add-ons not tested.
-* No MSFS simulator shows stock ground traffic vehicles anymore. No add-ons like pushback or GSX tested.
-  Let me know if you see issues with an add-on.
+# Version 3.0.16
 
-## How to report an issue
+## Changes from 3.0.15 to 3.0.16
 
-If you see the wrong vehicles at the wrong place or an aircraft with a question mark inside the symbol:
+* Added check for mismatch between simulator and scenery library database. This will show a dialog
+  window if you start to fly MSFS 2024 while having the MSFS 2020 scenery library enabled.
+  Click `Do not show again` to switch automatically to the right scenery library.
+* Now showing a notification dialog when a user tries to export a MSFS 2020 plan while using the
+  MSFS 2024 scenery library, for example. Click `Do not show again` to continue saving without the
+  message.
+* Reworked SimConnect code. This helps to fix problems with disappearing AI traffic, multiplayer
+  aircraft and other issues.
+* Added better message in the information window when no weather station can be found near an
+  airport. A lack of weather stations prevents the display of interpolated and nearest weather.
+* Fix for wrong navaid selection in procedures. Example: LOWW SID SNU2A used the wrong navaid SNU
+  in Sweden.
+* Corrected saving of map image and copying to clipboard using the wrong image size when using a
+  scaled user interface.
+* Fixed crashes due to invalid aircraft data sent through SimConnect by MSFS.
+* From 3.0.15.rc1: Fixed the white aircraft with question mark seen when using X-Plane due to
+  missing category.
+* From 3.0.15.rc1: Now hiding message `No online aircraft shown on map` in window `Simulator
+  aircraft` which appeared wrongly without an online network selected.
+* From 3.0.15.rc1: Fix for error message when installing the Debian package on Linux. The error
+  appeared when calling ´apt upgrade´. Now removing link before.
+* From 3.0.15.rc1: Now avoiding program abort on exception when reading the scenery library.
+  This keeps *Little Navmap* running in case of exceptions while loading the scenery library.
+* From 3.0.15.rc1: Improved error handling when loading the scenery library from MSFS 2024.
+* From 3.0.15.rc1: Added option to add missing navaids to MSFS 2024.
+  See [User Manual - Additional Navaids for MSFS 2024](https://www.littlenavmap.org/manuals/littlenavmap/release/latest/en/FILES.html#additional-navaids-for-msfs-2024) for more information.
+* Limiting vehicle size to avoid over sized ship icons.
+* More detailed information in log when clicking on AI or user aircraft helping to diagnose AI
+  issues.
+* Now clearing remaining wrong map highlights for selected legs in flight plan.
+* Fixed double labels for airports which are a part of the flight plan.
+* Procedure highlights from `Preview all Procedures` are now cleared with the selection when
+  clicking into the empty space of the tree widget or when adding a procedure to a flight plan.
+* The distance for the inclusion of airports in the METAR interpolation has been increased
+  from 200 to 600 NM.
 
-1. Run the simulator and connect Little Navmap as usual.
-2. Click on the wrong vehicle, ship or aircraft on the map. This pops up the window `Simulator Aircraft`
-   and the tab `AI / Multiplayer`.
-3. Right click into the tab `AI / Multiplayer`, click `Select all` and then `Copy` from the
-   context menu.
-4. Paste the formatted content into the
-   [Avsim forum](https://www.avsim.com/forums/forum/780-little-navmap-little-navconnect-little-logbook-support-forum/)
-   into one of the related threads.
-5. Please always mention the used simulator (2020 or 2024) and version (beta or stable) as well as
-   any traffic, pushback or other add-on you use. A link to the add-on can help.
-6. Optional but better: Send me your log file (menu `Tools` -> `Files and Directories`). Also mention
-   the simulator used and related add-ons as explained above.
-   [Contact](https://albar965.github.io/contact.html).
+## Web Interface
 
-## Changes from 3.0.14 to 3.0.15.rc1
+* Fixed display for web interface map `Dynamic Touch and Drag` also when using a scaled user interface.
+* Fixed issues with the MSFS add-ons
+  [Little Navmap VR](https://flightsim.to/file/43086/little-navmap-vr-panel) (MSFS 2020),
+  [ALL IN ONE](https://flightsimulator.me) (MSFS 2020 and MSFS 2024)
+  and
+  [Little NavMap EFB Client](https://flightsim.to/file/85446/little-navmap-efb-client) (MSFS 2024)
+  all now work correctly when using a scaled or a non-scaled user interface.
+* Added setting `Scale delivered images according to system user interface scale level` in options
+  on page `Web Server`. Note that this applies only to add-ons using the Little Navmap WebAPI. This
+  will deliver map images scaled according to the user interface scale level if checked and if you use
+  the web server with high resolution monitors. This is the default behavior but can cause issues
+  when using certain web interfaces. Deselect this if you use such an add-on or see issues like a corrupted
+  map display. Does not apply to the OpenLayers API.
+* The OpenLayers API now returns images scaled by the system user interface scale factor
+  (125%, 150% or 200%). This means that the returned image might be larger than the requested size
+  depending on the user interface scale factor.
+* OpenLayers API returned requested images with a minimum height of 300 due to an internal bug.
+  This is fixed now and images are returned in the requested size.
+* From 3.0.15.rc1: Adjusting map image request for display scaling by [u-an-i](https://github.com/u-an-i).
+
+## Translations
+
+* From 3.0.15.rc1: Fixed untranslatable texts in help buttons in search tabs
+* Updated Chinese translation by Eyderoe.
+* Updated Italian translation by Flavio.
+* Updated Brazilian Portuguese translation by Ricardo.
+* Updated German translation.
+
+==<<=============================================================================
+
+# Version 3.0.15.rc1
 
 * Added check for mismatch between simulator and scenery library database. This will show a dialog
   window if you start to fly MSFS 2024 while having the MSFS 2020 scenery library enabled.
@@ -87,7 +133,7 @@ If you see the wrong vehicles at the wrong place or an aircraft with a question 
   This is fixed now and images are returned in the requested size. Dynamic Touch and Drag uses
   256x256 pixels, while other add-ons use larger images.
 
-==<<=============================================================================
+=================================================================================
 
 # Version 3.0.13.beta2
 
