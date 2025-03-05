@@ -81,11 +81,12 @@ A big thank you to everyone who reported bugs and issues!
 
 ## Translations
 
-* From 3.0.15.rc1: Fixed untranslatable texts in help buttons in search tabs
+* From 3.0.15.rc1: Fixed untranslatable texts in help buttons in search tabs.
 * Updated Chinese translation by Eyderoe.
-* Updated Italian translation by Flavio.
 * Updated Brazilian Portuguese translation by Ricardo.
+* Updated French translation by Patrick.
 * Updated German translation.
+* Updated Italian translation by Flavio.
 
 ==<<=============================================================================
 
