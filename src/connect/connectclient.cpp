@@ -401,23 +401,24 @@ void ConnectClient::postSimConnectData(atools::fs::sc::SimConnectData dataPacket
     if(!dataPacket.getMetars().isEmpty())
     {
       if(verbose)
-        qDebug() << "Metars number" << dataPacket.getMetars().size();
+        qDebug() << Q_FUNC_INFO << "Metars number" << dataPacket.getMetars().size();
 
       for(atools::fs::weather::Metar metar : dataPacket.getMetars())
       {
         QString ident = metar.getRequestIdent();
         if(verbose)
         {
-          qDebug() << "ConnectClient::postSimConnectData metar ident to cache ident" << ident << "pos" << metar.getRequestPos().toString();
-          qDebug() << "Station" << metar.getStationMetar();
-          qDebug() << "Nearest" << metar.getNearestMetar();
-          qDebug() << "Interpolated" << metar.getInterpolatedMetar();
+          qDebug() << Q_FUNC_INFO << "ConnectClient::postSimConnectData metar ident to cache ident" << ident << "pos"
+                   << metar.getRequestPos().toString();
+          qDebug() << Q_FUNC_INFO << "Station" << metar.getStationMetar();
+          qDebug() << Q_FUNC_INFO << "Nearest" << metar.getNearestMetar();
+          qDebug() << Q_FUNC_INFO << "Interpolated" << metar.getInterpolatedMetar();
         }
 
         if(metar.getStationMetar().isEmpty())
         {
           if(verbose)
-            qDebug() << "Station" << metar.getRequestIdent() << "not available";
+            qDebug() << Q_FUNC_INFO << "Station" << metar.getRequestIdent() << "not available";
 
           // Remember airports that have no station reports to avoid recurring requests by airport weather
           notAvailableStations.insert(metar.getRequestIdent(), metar.getRequestIdent());
@@ -577,7 +578,7 @@ void ConnectClient::fetchOptionsChanged(cd::ConnectSimType type)
 const atools::fs::weather::Metar& ConnectClient::requestWeatherFsxP3d(const QString& station, const atools::geo::Pos& pos, bool onlyStation)
 {
   if(verbose)
-    qDebug() << "ConnectClient::requestWeather" << station << "onlyStation" << onlyStation;
+    qDebug() << Q_FUNC_INFO << "ConnectClient::requestWeather" << station << "onlyStation" << onlyStation;
 
   if(!isConnected())
     // Ignore cache if not connected
@@ -591,7 +592,7 @@ const atools::fs::weather::Metar& ConnectClient::requestWeatherFsxP3d(const QStr
   {
     // No nearest or interpolated and airport is in blacklist
     if(verbose)
-      qDebug() << "Station" << station << "in negative cache for only station";
+      qDebug() << Q_FUNC_INFO << "Station" << station << "in negative cache for only station";
     return atools::fs::weather::Metar::EMPTY;
   }
 
@@ -609,7 +610,7 @@ const atools::fs::weather::Metar& ConnectClient::requestWeatherFsxP3d(const QStr
     if(!metarIdentCache.containsNoTimeout(station) || metarIdentCache.isTimedOut(station))
     {
       if(verbose)
-        qDebug() << "ConnectClient::requestWeather timed out" << station;
+        qDebug() << Q_FUNC_INFO << "ConnectClient::requestWeather timed out" << station;
 
       if((socket != nullptr && socket->isOpen()) || (dataReader->isSimConnectHandler() && dataReader->isConnected()))
       {
@@ -629,8 +630,8 @@ const atools::fs::weather::Metar& ConnectClient::requestWeatherFsxP3d(const QStr
 
         if(verbose)
         {
-          qDebug() << "requestWeather === queuedRequestIdents" << queuedRequestIdents;
-          qDebug() << "requestWeather === outstandingReplies" << outstandingReplies;
+          qDebug() << Q_FUNC_INFO << "requestWeather === queuedRequestIdents" << queuedRequestIdents;
+          qDebug() << Q_FUNC_INFO << "requestWeather === outstandingReplies" << outstandingReplies;
         }
       }
     }
@@ -667,7 +668,7 @@ void ConnectClient::requestWeather(const atools::fs::sc::WeatherRequest& weather
   if(socket != nullptr && socketConnected && socket->isOpen() && outstandingReplies.isEmpty())
   {
     if(verbose)
-      qDebug() << "requestWeather" << weatherRequest.getStation();
+      qDebug() << Q_FUNC_INFO << "requestWeather" << weatherRequest.getStation();
     atools::fs::sc::SimConnectReply reply;
     reply.setCommand(atools::fs::sc::CMD_WEATHER_REQUEST);
     reply.setWeatherRequest(weatherRequest);
@@ -684,9 +685,9 @@ void ConnectClient::autoConnectToggled(bool state)
 
     if(dataReader->isReconnecting())
     {
-      qDebug() << "Stopping reconnect";
+      qDebug() << Q_FUNC_INFO << "Stopping reconnect";
       dataReader->terminateThread();
-      qDebug() << "Stopping reconnect done";
+      qDebug() << Q_FUNC_INFO << "Stopping reconnect done";
     }
     mainWindow->setConnectionStatusMessageText(tr("Disconnected"), tr("Auto connect switched off."));
   }
@@ -695,7 +696,7 @@ void ConnectClient::autoConnectToggled(bool state)
 /* Called by signal ConnectDialog::disconnectClicked */
 void ConnectClient::disconnectClicked()
 {
-  qDebug() << Q_FUNC_INFO;
+  qDebug() << Q_FUNC_INFO << Q_FUNC_INFO;
   errorState = false;
 
   reconnectNetworkTimer.stop();
@@ -770,7 +771,7 @@ void ConnectClient::connectInternal()
 {
   if(connectDialog->isAnyConnectDirect() && !simconnectPaused)
   {
-    qDebug() << "Starting direct connection";
+    qDebug() << Q_FUNC_INFO << "Starting direct connection";
 
     // Datareader has its own reconnect mechanism
     dataReader->setHandler(handlerByDialogSettings());
@@ -800,7 +801,7 @@ void ConnectClient::connectInternal()
   }
   else if(socket == nullptr && !connectDialog->getRemoteHostname().isEmpty())
   {
-    // qDebug() << "Starting network connection";
+    qDebug() << Q_FUNC_INFO << "Starting network connection";
 
     // Create new socket and connect signals
     socket = new QTcpSocket(this);
@@ -810,7 +811,7 @@ void ConnectClient::connectInternal()
     connect(socket, static_cast<void (QAbstractSocket::*)(QAbstractSocket::SocketError)>(&QAbstractSocket::error),
             this, &ConnectClient::readFromSocketError);
 
-    qDebug() << "Connecting to" << connectDialog->getRemoteHostname() << ":" << connectDialog->getRemotePort();
+    qDebug() << Q_FUNC_INFO << "Connecting to" << connectDialog->getRemoteHostname() << ":" << connectDialog->getRemotePort();
     socket->connectToHost(connectDialog->getRemoteHostname(), connectDialog->getRemotePort(),
                           QAbstractSocket::ReadWrite, QAbstractSocket::AnyIPProtocol);
 
@@ -860,7 +861,7 @@ void ConnectClient::readFromSocketError(QAbstractSocket::SocketError)
 
   reconnectNetworkTimer.stop();
 
-  qWarning() << "Error reading from" << socket->peerName() << ":" << connectDialog->getRemotePort()
+  qWarning() << Q_FUNC_INFO << "Error reading from" << socket->peerName() << ":" << connectDialog->getRemotePort()
              << socket->errorString() << "open" << socket->isOpen() << "state" << socket->state();
 
   if(!silent)
@@ -980,7 +981,7 @@ void ConnectClient::writeReplyToSocket(atools::fs::sc::SimConnectReply& reply)
     }
 
     if(!socket->flush())
-      qWarning() << "Reply to server not flushed";
+      qWarning() << Q_FUNC_INFO << "Reply to server not flushed";
   }
 }
 
@@ -1017,7 +1018,7 @@ void ConnectClient::readFromSocket()
     while(socket->bytesAvailable())
     {
       if(verbose)
-        qDebug() << "readFromSocket" << socket->bytesAvailable();
+        qDebug() << Q_FUNC_INFO << "readFromSocket" << socket->bytesAvailable();
       if(simConnectDataNet == nullptr)
         // Need to keep the data in background since this method can be called multiple times until the data is filled
         simConnectDataNet = new atools::fs::sc::SimConnectData;
@@ -1037,16 +1038,16 @@ void ConnectClient::readFromSocket()
       }
 
       if(verbose)
-        qDebug() << "readFromSocket 2" << socket->bytesAvailable();
+        qDebug() << Q_FUNC_INFO << "readFromSocket 2" << socket->bytesAvailable();
       if(read)
       {
         if(verbose)
-          qDebug() << "readFromSocket id " << simConnectDataNet->getPacketId();
+          qDebug() << Q_FUNC_INFO << "readFromSocket id " << simConnectDataNet->getPacketId();
 
         if(simConnectDataNet->getPacketId() > 0)
         {
           if(verbose)
-            qDebug() << "readFromSocket id " << simConnectDataNet->getPacketId() << "replying";
+            qDebug() << Q_FUNC_INFO << "readFromSocket id " << simConnectDataNet->getPacketId() << "replying";
 
           // Data was read completely and successfully - reply to server
           atools::fs::sc::SimConnectReply reply;
@@ -1056,7 +1057,7 @@ void ConnectClient::readFromSocket()
         else if(!simConnectDataNet->getMetars().isEmpty())
         {
           if(verbose)
-            qDebug() << "readFromSocket id " << simConnectDataNet->getPacketId() << "metars";
+            qDebug() << Q_FUNC_INFO << "readFromSocket id " << simConnectDataNet->getPacketId() << "metars";
 
           for(const atools::fs::weather::Metar& metar : simConnectDataNet->getMetars())
             outstandingReplies.remove(metar.getRequestIdent());
@@ -1075,8 +1076,8 @@ void ConnectClient::readFromSocket()
     }
     if(verbose)
     {
-      qDebug() << "readFromSocket === queuedRequestIdents" << queuedRequestIdents;
-      qDebug() << "readFromSocket outstanding" << outstandingReplies;
+      qDebug() << Q_FUNC_INFO << "readFromSocket === queuedRequestIdents" << queuedRequestIdents;
+      qDebug() << Q_FUNC_INFO << "readFromSocket outstanding" << outstandingReplies;
     }
   }
 }
