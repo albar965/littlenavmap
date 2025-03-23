@@ -55,7 +55,7 @@ const static int NOT_AVAILABLE_TIMEOUT_FS_SECS = 300;
 ConnectClient::ConnectClient(MainWindow *parent)
   : QObject(parent), mainWindow(parent), metarIdentCache(WEATHER_TIMEOUT_FS_SECS), notAvailableStations(NOT_AVAILABLE_TIMEOUT_FS_SECS),
 
-  // VERSION_NUMBER_TODO
+  // VERSION_NUMBER_TODO update minimum Xpconnect version
   minimumXpconnectVersion("1.2.0.beta")
 {
   // Create global context to load and unload DLLs
