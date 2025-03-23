@@ -189,7 +189,6 @@ const QLatin1String MAP_HOMELONX("Map/HomeLonX");
 const QLatin1String MAP_KMLFILES("Map/KmlFiles");
 const QLatin1String MAP_MARKLATY("Map/MarkLatY");
 const QLatin1String MAP_MARKLONX("Map/MarkLonX");
-const QLatin1String MAP_RANGEMARKERS("Map/RangeMarkers1");
 const QLatin1String MAP_OVERLAY_VISIBLE("Map/OverlayVisible");
 const QLatin1String MAP_WEATHER_SOURCE("Map/WeatherSource");
 const QLatin1String MAP_SUN_SHADING_TIME_OPTION("Map/SunShadingTimeOption");
@@ -200,10 +199,13 @@ const QLatin1String MAP_MAX_NEAREST_AI_LABELS("Map/MaxNearestAiLabels");
 const QLatin1String MAP_MAX_NEAREST_AI_LABELS_DIST_NM("Map/MaxNearestAiLabelsDistNm");
 const QLatin1String MAP_MAX_NEAREST_AI_LABELS_VERT_DIST_FT("Map/MaxNearestAiLabelsVertDistFt");
 
+/* User defined features */
 const QLatin1String MAP_DISTANCEMARKERS("Map/DistanceMarkers1");
+const QLatin1String MAP_RANGEMARKERS("Map/RangeMarkers1");
 const QLatin1String MAP_TRAFFICPATTERNS("Map/TrafficPatterns2");
 const QLatin1String MAP_HOLDINGS("Map/Holdings1");
 const QLatin1String MAP_AIRPORT_MSA("Map/AirportMsa1");
+
 const QLatin1String MAP_MARK_DISPLAY("Map/MarkDisplay1");
 const QLatin1String MAP_AIRPORT("Map/Airports3");
 const QLatin1String MAP_AIRPORT_RUNWAY_LENGTH("Map/AirportsRunwayLength");
