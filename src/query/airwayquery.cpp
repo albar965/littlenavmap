@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2024 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2025 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -18,7 +18,7 @@
 #include "query/airwayquery.h"
 
 #include "common/constants.h"
-#include "common/mapresult.h"
+#include "common/mapresult.h" // Needed for delete operator
 #include "common/maptypesfactory.h"
 #include "mapgui/maplayer.h"
 #include "settings/settings.h"
@@ -262,10 +262,9 @@ const QList<map::MapAirway> *AirwayQuery::getAirways(const GeoDataLatLonBox& rec
   if(airwayCache.list.isEmpty() && !lazy)
   {
     QSet<int> ids;
-    for(const GeoDataLatLonBox& r :
-        query::splitAtAntiMeridian(rect, queryRectInflationFactor, queryRectInflationIncrement))
+    for(const GeoDataLatLonBox& box : query::splitAtAntiMeridian(rect, queryRectInflationFactor, queryRectInflationIncrement))
     {
-      query::bindRect(r, airwayByRectQuery);
+      query::bindRect(box, airwayByRectQuery);
       airwayByRectQuery->exec();
       while(airwayByRectQuery->next())
       {

@@ -472,7 +472,7 @@ const QVector<QPolygonF *> CoordinateConverter::createPolylinesInternal(const at
     {
       for(int i = 0; i < linestring.size() - 1; i++)
       {
-        for(const Line& splitLine : Line(linestring.at(i), linestring.at(i + 1)).splitAtAntiMeridian())
+        for(const Line& splitLine : atools::geo::splitAtAntiMeridian(linestring.at(i), linestring.at(i + 1)))
         {
           // Split long lines to work around the buggy visibility check in Marble resulting in disappearing line segments
           // Do a quick check using Manhattan distance in degree

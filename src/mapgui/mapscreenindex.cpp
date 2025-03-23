@@ -456,11 +456,12 @@ void MapScreenIndex::updateLineScreenGeometry(QList<std::pair<int, QLine> >& ind
   Marble::GeoDataLineString geoLineStr = mconvert::toGdcStr(line);
   QRect mapGeo = mapWidget->rect();
 
-  QList<Marble::GeoDataLatLonBox> curBoxCorrectedList = query::splitAtAntiMeridian(curBox);
-  QVector<Marble::GeoDataLineString *> geoLineStringVector = geoLineStr.toDateLineCorrected();
-  for(const Marble::GeoDataLatLonBox& curBoxCorrected : qAsConst(curBoxCorrectedList))
+  const QList<Marble::GeoDataLatLonBox> curBoxCorrectedList = query::splitAtAntiMeridian(curBox);
+  const QVector<Marble::GeoDataLineString *> geoLineStringVector = geoLineStr.toDateLineCorrected();
+
+  for(const Marble::GeoDataLatLonBox& curBoxCorrected : curBoxCorrectedList)
   {
-    for(const Marble::GeoDataLineString *lineCorrected : qAsConst(geoLineStringVector))
+    for(const Marble::GeoDataLineString *lineCorrected : geoLineStringVector)
     {
       if(lineCorrected->latLonAltBox().intersects(curBoxCorrected))
       {
