@@ -652,7 +652,9 @@ enum DisplayTooltipOption : quint32
   TOOLTIP_AIRCRAFT_USER = 1 << 6,
   TOOLTIP_VERBOSE = 1 << 7,
   TOOLTIP_MARKS = 1 << 8,
-  TOOLTIP_AIRCRAFT_TRAIL = 1 << 9
+  TOOLTIP_AIRCRAFT_TRAIL = 1 << 9,
+  TOOLTIP_DISTBRG_USER = 1 << 10,
+  TOOLTIP_DISTBRG_ROUTE = 1 << 11
 };
 
 ATOOLS_DECLARE_FLAGS_32(DisplayTooltipOptions, optsd::DisplayTooltipOption)
@@ -1757,7 +1759,9 @@ private:
   optsd::DisplayTooltipOptions displayTooltipOptions = optsd::TOOLTIP_AIRCRAFT_USER | optsd::TOOLTIP_AIRCRAFT_AI |
                                                        optsd::TOOLTIP_AIRPORT | optsd::TOOLTIP_AIRSPACE |
                                                        optsd::TOOLTIP_NAVAID | optsd::TOOLTIP_WIND | optsd::TOOLTIP_VERBOSE |
-                                                       optsd::TOOLTIP_MARKS | optsd::TOOLTIP_AIRCRAFT_TRAIL;
+                                                       optsd::TOOLTIP_MARKS | optsd::TOOLTIP_AIRCRAFT_TRAIL |
+                                                       optsd::TOOLTIP_DISTBRG_ROUTE | optsd::TOOLTIP_DISTBRG_USER;
+
   optsd::DisplayClickOptions displayClickOptions = optsd::CLICK_AIRCRAFT_USER | optsd::CLICK_AIRCRAFT_AI |
                                                    optsd::CLICK_AIRPORT | optsd::CLICK_AIRSPACE | optsd::CLICK_NAVAID;
 

@@ -2535,7 +2535,8 @@ void HtmlInfoBuilder::distanceMarkerText(const DistanceMarker& marker, atools::u
 void HtmlInfoBuilder::bearingAndDistanceTexts(const atools::geo::Pos& pos, float magvar, atools::util::HtmlBuilder& html, bool bearing,
                                               bool distance)
 {
-  if(pos.isValid())
+  optsd::DisplayTooltipOptions tooltipOpts = OptionData::instance().getDisplayTooltipOptions();
+  if(pos.isValid() && (tooltipOpts.testFlag(optsd::TOOLTIP_DISTBRG_ROUTE) || tooltipOpts.testFlag(optsd::TOOLTIP_DISTBRG_USER)))
   {
     bool added = false;
     atools::util::HtmlBuilder temp = html.cleared();
@@ -3088,38 +3089,44 @@ void HtmlInfoBuilder::waypointAirwayText(const MapWaypoint& waypoint, HtmlBuilde
 
 bool HtmlInfoBuilder::distanceToRouteText(const ageo::Pos& pos, HtmlBuilder& html) const
 {
-  const Route& route = NavApp::getRouteConst();
-  if(!route.isEmpty())
+  if(OptionData::instance().getDisplayTooltipOptions().testFlag(optsd::TOOLTIP_DISTBRG_ROUTE))
   {
-    const RouteLeg& lastLeg = route.getDestinationLeg();
-    float distance = pos.distanceMeterTo(lastLeg.getPosition());
-    html.row2(tr("To last flight plan leg:"), Unit::distMeter(distance), ahtml::NO_ENTITIES);
-    return true;
+    const Route& route = NavApp::getRouteConst();
+    if(!route.isEmpty())
+    {
+      const RouteLeg& lastLeg = route.getDestinationLeg();
+      float distance = pos.distanceMeterTo(lastLeg.getPosition());
+      html.row2(tr("To last flight plan leg:"), Unit::distMeter(distance), ahtml::NO_ENTITIES);
+      return true;
+    }
   }
   return false;
 }
 
 bool HtmlInfoBuilder::bearingToUserText(const ageo::Pos& pos, float magVar, HtmlBuilder& html) const
 {
-  if(NavApp::isConnectedAndAircraft())
+  if(OptionData::instance().getDisplayTooltipOptions().testFlag(optsd::TOOLTIP_DISTBRG_USER))
   {
-    const atools::fs::sc::SimConnectUserAircraft& userAircraft = NavApp::getUserAircraft();
-
-    float distance = pos.distanceMeterTo(userAircraft.getPosition());
-    if(distance < MAX_DISTANCE_FOR_BEARING_METER)
+    if(NavApp::isConnectedAndAircraft())
     {
-      html.row2(tr("Bearing and distance from user aircraft:"),
-                tr("%1, %2").
-                arg(courseTextFromTrue(normalizeCourse(userAircraft.getPosition().angleDegTo(pos)), magVar)).
-                arg(Unit::distMeter(distance)),
-                ahtml::NO_ENTITIES);
+      const atools::fs::sc::SimConnectUserAircraft& userAircraft = NavApp::getUserAircraft();
+
+      float distance = pos.distanceMeterTo(userAircraft.getPosition());
+      if(distance < MAX_DISTANCE_FOR_BEARING_METER)
+      {
+        html.row2(tr("Bearing and distance from user aircraft:"),
+                  tr("%1, %2").
+                  arg(courseTextFromTrue(normalizeCourse(userAircraft.getPosition().angleDegTo(pos)), magVar)).
+                  arg(Unit::distMeter(distance)),
+                  ahtml::NO_ENTITIES);
 
 #ifdef DEBUG_INFORMATION_INFO
-      static bool heartbeat = false;
-      html.row2(heartbeat ? " X" : " 0");
-      heartbeat = !heartbeat;
+        static bool heartbeat = false;
+        html.row2(heartbeat ? " X" : " 0");
+        heartbeat = !heartbeat;
 #endif
-      return true;
+        return true;
+      }
     }
   }
   return false;
