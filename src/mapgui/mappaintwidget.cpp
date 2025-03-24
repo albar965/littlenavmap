@@ -753,7 +753,7 @@ void MapPaintWidget::adjustMapDistance()
 {
 #ifdef DEBUG_INFORMATION
   qDebug() << Q_FUNC_INFO << "Adjusted view zoom FROM" << zoom() << "distance"
-           << atools::geo::kmToNm(distance()) << "NM" << distance() << "KM";
+           << atools::geo::kmToNm(distance()) << "NM" << distance() << "KM" << "step" << zoomStep();
 #endif
 
   // Zoom out to next step to get a sharper map display
@@ -761,7 +761,7 @@ void MapPaintWidget::adjustMapDistance()
 
 #ifdef DEBUG_INFORMATION
   qDebug() << Q_FUNC_INFO << "Adjusted view zoom TO" << zoom() << "distance"
-           << atools::geo::kmToNm(distance()) << "NM" << distance() << "KM";
+           << atools::geo::kmToNm(distance()) << "NM" << distance() << "KM" << "step" << zoomStep();
 #endif
 }
 

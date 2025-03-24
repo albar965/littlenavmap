@@ -494,11 +494,8 @@ void MapWidget::jumpBackToAircraftStart()
       // Simply restart
       jumpBack->restart();
     else
-    {
       // Start and save coordinates
-      bool saveDistance = isCenterLegAndAircraftActive();
-      jumpBack->start(saveDistance ? getCenterPosAndDistance() : getCenterPos());
-    }
+      jumpBack->start(isCenterLegAndAircraftActive() ? getCenterPosAndDistance() : getCenterPos() /* saveDistance */);
   }
 }
 
@@ -532,7 +529,20 @@ void MapWidget::jumpBackToAircraftTimeout(const atools::geo::Pos& pos)
       centerPosOnMap(pos);
 
       if(pos.getAltitude() > 0.f)
-        setDistanceToMap(pos.getAltitude(), false /* Allow adjust zoom */);
+      {
+#ifdef DEBUG_INFORMATION_JUMPBACK
+        qDebug() << Q_FUNC_INFO << "Adjusting distance" << pos.getAltitude();
+#endif
+
+        setDistanceToMap(pos.getAltitude(), false /* allowAdjust */);
+
+        if(isCenterLegAndAircraftActive() && avoidBlurredMap)
+        {
+          zoomOut(Marble::Instant);
+          zoomIn(Marble::Instant);
+        }
+      }
+
       mainWindow->setStatusMessage(tr("Jumped back to aircraft."));
     }
   }
@@ -2724,7 +2734,7 @@ void MapWidget::simDataChanged(const atools::fs::sc::SimConnectData& simulatorDa
       getScreenIndex()->updateLastSimData(simulatorData);
 
     // Option to udpate always
-    bool updateAlways = od.getFlags() & opts::SIM_UPDATE_MAP_CONSTANTLY;
+    bool updateAlways = od.getFlags().testFlag(opts::SIM_UPDATE_MAP_CONSTANTLY);
 
     // Check if centering of leg is reqired =======================================
     const Route& route = NavApp::getRouteConst();
@@ -3144,7 +3154,7 @@ void MapWidget::connectOverlayMenus()
 bool MapWidget::isCenterLegAndAircraftActive()
 {
   const Route& route = NavApp::getRouteConst();
-  return OptionData::instance().getFlags2() & opts2::ROUTE_AUTOZOOM && // Waypoint and aircraft center enabled
+  return OptionData::instance().getFlags2().testFlag(opts2::ROUTE_AUTOZOOM) && // Waypoint and aircraft center enabled
          !route.isEmpty() && // Have a route
          route.getActiveLegIndex() < map::INVALID_INDEX_VALUE && // Active leg present - special case 0 for one waypoint only
          getScreenIndexConst()->getUserAircraft().isFlying() && // Aircraft in air
