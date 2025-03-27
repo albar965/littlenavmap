@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2023 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2025 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -30,7 +30,7 @@ namespace fc {
 /* Read all properties from startup or data exchange for compatible file types. Also checks non positional arguments.
  * Checks the filenames for compatible file types and fills the given strings with file names in case of matches. */
 void fromStartupProperties(const atools::util::Properties& properties, QString *flightplan, QString *flightplanDescr = nullptr,
-                           QString *perf = nullptr, QString *layout = nullptr);
+                           QString *perf = nullptr, QString *layout = nullptr, bool *flightPlanIsOther = nullptr);
 
 /* Checks the given filename for compatible file types and fills the given strings with file names in case of matches.
  * The file types are checked by content.

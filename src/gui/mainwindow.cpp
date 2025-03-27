@@ -644,7 +644,9 @@ void MainWindow::dataExchangeDataFetched(atools::util::Properties properties)
 
     // Extract filenames from known options ================================
     QString flightplan, flightplanDescr, perf, layout;
-    fc::fromStartupProperties(properties, &flightplan, &flightplanDescr, &perf, &layout);
+    bool flightPlanIsOther = false; // true if passed in by double click on a plan file
+
+    fc::fromStartupProperties(properties, &flightplan, &flightplanDescr, &perf, &layout, &flightPlanIsOther);
 
     // Quit without activate =====================================================
     if(properties.contains(lnm::STARTUP_COMMAND_QUIT))
@@ -653,10 +655,17 @@ void MainWindow::dataExchangeDataFetched(atools::util::Properties properties)
     {
       // Load files if found and exist ===========================================
       if(!flightplan.isEmpty() && atools::checkFile(Q_FUNC_INFO, flightplan, true /* warn */))
-        routeOpenFile(flightplan, true /* correctAndWarn */);
+      {
+        if(flightPlanIsOther)
+          // Double clicked on file - open normally with warnings
+          routeOpenFile(flightplan);
+        else
+          // Open silently without correction and no warnings
+          routeOpenFileFromDataExchange(flightplan);
+      }
 
       if(!flightplanDescr.isEmpty())
-        routeOpenDescr(flightplanDescr);
+        routeOpenDescrFromDataExchange(flightplanDescr);
 
       if(!layout.isEmpty() && atools::checkFile(Q_FUNC_INFO, layout, true /* warn */))
         loadLayoutDelayed(layout);
@@ -700,7 +709,7 @@ void MainWindow::debugActionTriggeredForceUpdates()
 void MainWindow::debugActionTriggeredReloadPlan()
 {
   QString file = routeController->getRouteFilePath();
-  routeController->loadFlightplan(file, true /* correctAndWarn */);
+  routeController->loadFlightplan(file, true /* correctAndWarn */, false /* clearUndoState */);
 }
 
 void MainWindow::debugActionTriggeredPlanEdit()
@@ -1292,7 +1301,7 @@ void MainWindow::connectAllSlots()
           logdataController, &LogdataController::convertUserdata);
 
   connect(searchController->getLogdataSearch(), &SearchBaseTable::loadRouteFile,
-          this, std::bind(&MainWindow::routeOpenFile, this, std::placeholders::_1 /* filepath */, true /* correctAndWarn */));
+          this, std::bind(&MainWindow::routeOpenFile, this, std::placeholders::_1 /* filepath */));
   connect(searchController->getLogdataSearch(), &SearchBaseTable::loadPerfFile,
           NavApp::getAircraftPerfController(), &AircraftPerfController::loadFile);
 
@@ -2403,7 +2412,8 @@ void MainWindow::routeFromFlightplan(const atools::fs::pln::Flightplan& flightpl
   {
     // Transfer flag to new flightplan to avoid silently overwriting non LNMPLN files with own format
     bool lnmpln = routeController->getRouteConst().getFlightplanConst().isLnmFormat();
-    routeController->loadFlightplan(flightplan, atools::fs::pln::LNM_PLN, QString(), changed, adjustAltitude, undo, correctProfile);
+    routeController->loadFlightplan(flightplan, atools::fs::pln::LNM_PLN, QString(), changed, adjustAltitude, undo, correctProfile,
+                                    false /* clearUndoState */);
     routeController->getRoute().getFlightplan().setLnmFormat(lnmpln);
     if(OptionData::instance().getFlags() & opts::GUI_CENTER_ROUTE)
       routeCenter();
@@ -2436,7 +2446,7 @@ void MainWindow::routeNewFromAirports(const map::MapAirport& departure, const ma
 
 void MainWindow::routeOpen()
 {
-  routeOpenFile(QString() /* filepath */, true /* correctAndWarn */);
+  routeOpenFile(QString() /* filepath */);
 }
 
 QString MainWindow::routeOpenFileDialog()
@@ -2445,20 +2455,38 @@ QString MainWindow::routeOpenFileDialog()
                                 "Route/LnmPln", atools::documentsDir());
 }
 
-void MainWindow::routeOpenDescr(const QString& routeString)
+void MainWindow::routeOpenDescrFromDataExchange(const QString& routeString)
 {
   if(routeCheckForChanges())
   {
-    routeController->loadFlightplanRouteStr(routeString);
-
-    if(OptionData::instance().getFlags().testFlag(opts::GUI_CENTER_ROUTE))
-      routeCenter();
-    showFlightplan();
-    setStatusMessage(tr("Flight plan opened from route description."));
+    if(routeController->loadFlightplanRouteStrCmdOrDataExchange(routeString))
+    {
+      if(OptionData::instance().getFlags().testFlag(opts::GUI_CENTER_ROUTE))
+        routeCenter();
+      showFlightplan();
+      setStatusMessage(tr("Flight plan opened from route description."));
+    }
   }
 }
 
-void MainWindow::routeOpenFile(QString filepath, bool correctAndWarn)
+void MainWindow::routeOpenFileFromDataExchange(const QString& filepath)
+{
+  qDebug() << Q_FUNC_INFO << filepath;
+  if(routeCheckForChanges() && !filepath.isEmpty())
+  {
+    if(routeController->loadFlightplanCmdOrDataExchange(filepath))
+    {
+      routeFileHistory->addFile(filepath);
+      if(OptionData::instance().getFlags().testFlag(opts::GUI_CENTER_ROUTE))
+        routeCenter();
+      showFlightplan();
+      setStatusMessage(tr("Flight plan opened."));
+    }
+  }
+  saveFileHistoryStates();
+}
+
+void MainWindow::routeOpenFile(QString filepath)
 {
   qDebug() << Q_FUNC_INFO << filepath;
   if(routeCheckForChanges())
@@ -2468,7 +2496,7 @@ void MainWindow::routeOpenFile(QString filepath, bool correctAndWarn)
 
     if(!filepath.isEmpty())
     {
-      if(routeController->loadFlightplan(filepath, correctAndWarn))
+      if(routeController->loadFlightplan(filepath, true /* correctAndWarn */, false /* clearUndoState */))
       {
         routeFileHistory->addFile(filepath);
         if(OptionData::instance().getFlags().testFlag(opts::GUI_CENTER_ROUTE))
@@ -2481,11 +2509,11 @@ void MainWindow::routeOpenFile(QString filepath, bool correctAndWarn)
   saveFileHistoryStates();
 }
 
-void MainWindow::routeOpenFileLnmStr(const QString& string)
+void MainWindow::routeOpenFileLnmLogdataStr(const QString& string)
 {
   if(routeCheckForChanges())
   {
-    if(routeController->loadFlightplanLnmStr(string))
+    if(routeController->loadFlightplanLnmLogdataStr(string))
     {
       if(OptionData::instance().getFlags().testFlag(opts::GUI_CENTER_ROUTE))
         routeCenter();
@@ -2659,7 +2687,7 @@ void MainWindow::routeOpenRecent(const QString& routeFile)
   {
     if(QFile::exists(routeFile))
     {
-      if(routeController->loadFlightplan(routeFile, true /* correctAndWarn */))
+      if(routeController->loadFlightplan(routeFile, true /* correctAndWarn */, false /* clearUndoState */))
       {
         if(OptionData::instance().getFlags() & opts::GUI_CENTER_ROUTE)
           routeCenter();
@@ -5040,12 +5068,12 @@ void MainWindow::dropEvent(QDropEvent *event)
   {
     // Load all plans and export them using multiexport for testing
     std::sort(urls.begin(), urls.end());
-    for(const QUrl& url : urls)
+    for(const QUrl& url : qAsConst(urls))
     {
       QString filepath = url.toLocalFile();
       qDebug() << Q_FUNC_INFO << "Dropped file:" << filepath;
 
-      routeOpenFile(filepath, true /* correctAndWarn */);
+      routeOpenFile(filepath);
       routeExport->routeMultiExport();
     }
   }
@@ -5066,7 +5094,7 @@ void MainWindow::dropEvent(QDropEvent *event)
       trailLoadGpxFile(filepath);
     else
       // Load flight plan
-      routeOpenFile(filepath, true /* correctAndWarn */);
+      routeOpenFile(filepath);
   }
 }
 

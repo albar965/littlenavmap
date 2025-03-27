@@ -41,6 +41,7 @@
 #include "gui/errorhandler.h"
 #include "gui/helphandler.h"
 #include "gui/itemviewzoomhandler.h"
+#include "gui/mainwindow.h"
 #include "gui/tabwidgethandler.h"
 #include "gui/tools.h"
 #include "gui/treedialog.h"
@@ -175,7 +176,7 @@ using namespace atools::geo;
 
 namespace pln = atools::fs::pln;
 
-RouteController::RouteController(QMainWindow *parentWindow, QTableView *tableView)
+RouteController::RouteController(MainWindow* parentWindow, QTableView *tableView)
   : QObject(parentWindow), mainWindow(parentWindow), tableViewRoute(tableView)
 {
   routeFilenameDefault = atools::settings::Settings::getConfigFilename(lnm::ROUTE_DEFAULT_SUFFIX);
@@ -981,14 +982,13 @@ void RouteController::saveState() const
 {
   Ui::MainWindow *ui = NavApp::getMainUi();
 
-  atools::gui::WidgetState(lnm::ROUTE_VIEW).save(
-    QList<const QObject *>({ui->comboBoxRouteType, ui->spinBoxRouteAlt, ui->actionRouteFollowSelection}));
+  atools::gui::WidgetState(lnm::ROUTE_VIEW).save(QList<const QObject *>({ui->comboBoxRouteType, ui->spinBoxRouteAlt,
+                                                                         ui->actionRouteFollowSelection}));
 
   // Use own state for table
   atools::gui::WidgetState(lnm::ROUTE_VIEW_TABLE).save(tableViewRoute);
 
-  atools::settings::Settings& settings = atools::settings::Settings::instance();
-  settings.setValue(lnm::ROUTE_FILENAME, routeFilename);
+  atools::settings::Settings::instance().setValue(lnm::ROUTE_FILENAME, routeFilename);
 
   routeLabel->saveState();
   tabHandlerRoute->saveState();
@@ -1022,10 +1022,52 @@ void RouteController::restoreState()
   try
   {
     QString cmdLineFlightplanFile, cmdLineFlightplanDescr;
+    bool flightPlanIsOther = false; // true if passed in by double click on a plan file
 
     // Load plan from command line or last used =============================================
-    fc::fromStartupProperties(atools::gui::Application::getStartupOptionsConst(), &cmdLineFlightplanFile, &cmdLineFlightplanDescr);
+    fc::fromStartupProperties(atools::gui::Application::getStartupOptionsConst(), &cmdLineFlightplanFile, &cmdLineFlightplanDescr,
+                              nullptr, nullptr, &flightPlanIsOther);
 
+    bool hasCmdLine = !cmdLineFlightplanDescr.isEmpty() || !cmdLineFlightplanFile.isEmpty();
+    bool isDefaultLoad = atools::checkFile(Q_FUNC_INFO, routeFilenameDefault, false /* warn */);
+
+    // Load default plan first to avoid data loss ================================================
+    if(OptionData::instance().getFlags().testFlag(opts::STARTUP_LOAD_ROUTE))
+    {
+      if(!atools::gui::Application::isSafeMode())
+      {
+        atools::settings::Settings& settings = atools::settings::Settings::instance();
+        QString lastUsedFlightplanFile = settings.valueStr(lnm::ROUTE_FILENAME);
+        QString flightplanFile = lastUsedFlightplanFile;
+        bool changed = false, defaultLoad = false;
+
+        if(isDefaultLoad)
+        {
+          // Default file "ABarthel/little_navmap.lnmpln" in settings exists from last save - load it and set new file to changed
+          flightplanFile = routeFilenameDefault;
+          changed = defaultLoad = true;
+        }
+
+        // Do not load last used if unchanged to avoid change state due to altitude adaption ==============
+        if(!flightplanFile.isEmpty() && (!hasCmdLine || isDefaultLoad))
+        {
+          Flightplan fp;
+          atools::fs::pln::FileFormat format = flightplanIO->load(fp, flightplanFile);
+
+          // Do not warn on missing altitude after loading - do not change altitude
+          loadFlightplanInternal(fp, format, flightplanFile, changed, false /* adjustAltitude */, false /* undo */,
+                                 false /* warnAltitude */, false /* correctProfile */, false /* clearUndoState */);
+
+          if(defaultLoad && settings.contains(lnm::ROUTE_DEFAULT_FILE_LNMPLN))
+            // Restore LNMPLN status after loading since this set the status to true
+            route.getFlightplan().setLnmFormat(settings.valueBool(lnm::ROUTE_DEFAULT_FILE_LNMPLN));
+
+          routeFilename = lastUsedFlightplanFile;
+        }
+      }
+    }
+
+    // Command line options ===========================================================================
     if(!cmdLineFlightplanFile.isEmpty())
     {
       // Load from file from command line ===================================================
@@ -1034,65 +1076,36 @@ void RouteController::restoreState()
       {
         if(atools::fs::pln::FlightplanIO::isFlightplanFile(cmdLineFlightplanFile))
         {
-          // Load file silently without change and without correction
-          if(!loadFlightplan(cmdLineFlightplanFile, false /* correctAndWarn */))
-            // Cannot be loaded - clear current filename
-            clearFlightplan();
-          // else Centered in MainWindow::mainWindowShownDelayed()
+          if(mainWindow->routeCheckForChanges())
+          {
+            if(flightPlanIsOther)
+            {
+              if(!loadFlightplan(cmdLineFlightplanFile, true /* correctAndWarn */, false /* clearUndoState */))
+                // Cannot be loaded - clear current filename
+                clearFlightplan();
+            }
+            else
+            {
+              // Load file silently
+              if(!loadFlightplanCmdOrDataExchange(cmdLineFlightplanFile))
+                // Cannot be loaded - clear current filename
+                clearFlightplan();
+            }
+          }
         }
         else
-        {
           // Not a flight plan file
-          clearFlightplan();
           dialog->warning(tr("File \"%1\" is a not supported flight plan format or not a flight plan.").arg(cmdLineFlightplanFile));
-        }
       }
       else
-      {
         // No file or not readable
-        clearFlightplan();
         dialog->warning(message);
-      }
     }
     else if(!cmdLineFlightplanDescr.isEmpty())
-      // Parse route description from command line ===================================================
-      loadFlightplanRouteStr(cmdLineFlightplanDescr);
-    else
     {
-      // Nothing given on command line ==================================
-      if(OptionData::instance().getFlags().testFlag(opts::STARTUP_LOAD_ROUTE))
-      {
-        if(!atools::gui::Application::isSafeMode())
-        {
-          atools::settings::Settings& settings = atools::settings::Settings::instance();
-          QString lastUsedFlightplanFile = settings.valueStr(lnm::ROUTE_FILENAME);
-          QString flightplanFile = lastUsedFlightplanFile;
-          bool changed = false, defaultLoad = false;
-
-          if(atools::checkFile(Q_FUNC_INFO, routeFilenameDefault, false /* warn */))
-          {
-            // Default file "ABarthel/little_navmap.lnmpln" in settings exists from last save - load it and set new file to changed
-            flightplanFile = routeFilenameDefault;
-            changed = defaultLoad = true;
-          }
-
-          if(!flightplanFile.isEmpty())
-          {
-            Flightplan fp;
-            atools::fs::pln::FileFormat format = flightplanIO->load(fp, flightplanFile);
-
-            // Do not warn on missing altitude after loading - do not change altitude
-            loadFlightplanInternal(fp, format, flightplanFile, changed, false /* adjustAltitude */, false /* undo */,
-                                   false /* warnAltitude */, true /* correctProfile */);
-
-            if(defaultLoad && settings.contains(lnm::ROUTE_DEFAULT_FILE_LNMPLN))
-              // Restore LNMPLN status after loading since this set the status to true
-              route.getFlightplan().setLnmFormat(settings.valueBool(lnm::ROUTE_DEFAULT_FILE_LNMPLN));
-
-            routeFilename = lastUsedFlightplanFile;
-          }
-        }
-      }
+      // Parse route description from command line ===================================================
+      if(mainWindow->routeCheckForChanges())
+        loadFlightplanRouteStrCmdOrDataExchange(cmdLineFlightplanDescr);
     }
   }
   catch(atools::Exception& e)
@@ -1195,12 +1208,13 @@ void RouteController::routeNewFromAirports(const map::MapAirport& departure, con
 
 void RouteController::loadFlightplanInternal(atools::fs::pln::Flightplan flightplan, atools::fs::pln::FileFormat format,
                                              const QString& filename, bool changed, bool adjustAltitude, bool undo, bool warnAltitude,
-                                             bool correctProfile)
+                                             bool correctProfile, bool clearUndoState)
 {
   qDebug() << Q_FUNC_INFO << filename << "format" << format << "changed" << changed
            << "adjustAltitude" << adjustAltitude
            << "warnAltitude" << warnAltitude // Loaded manually - show warning dialog
-           << "correctProfile" << correctProfile;
+           << "correctProfile" << correctProfile
+           << "clearUndoState" << clearUndoState;
 
 #ifdef DEBUG_INFORMATION_ROUTE
   qDebug() << flightplan;
@@ -1213,7 +1227,7 @@ void RouteController::loadFlightplanInternal(atools::fs::pln::Flightplan flightp
   clearTableSelection();
 
   RouteCommand *undoCommand = nullptr;
-  if(undo)
+  if(undo && !clearUndoState)
     undoCommand = preChange(tr("Flight Plan Changed"));
 
   // Keep this since it is overwritten by widgets later
@@ -1386,7 +1400,9 @@ void RouteController::loadFlightplanInternal(atools::fs::pln::Flightplan flightp
 
         // Set the old altitude for the undo command to store
         route.setCruiseAltitudeFt(origCruiseAlt);
-        undoCommand = preChange(tr("Flight Plan Changed"));
+
+        if(!clearUndoState)
+          undoCommand = preChange(tr("Flight Plan Changed"));
 
         // Assign new cruise altitude again
         route.setCruiseAltitudeFt(newCruise);
@@ -1416,6 +1432,9 @@ void RouteController::loadFlightplanInternal(atools::fs::pln::Flightplan flightp
   fileIfrVfr = routeFlightplan.getFlightplanType();
   fileCruiseAltFt = route.getCruiseAltitudeFt();
 
+  if(clearUndoState)
+    clearUndo();
+
   // Get number from user waypoint from user defined waypoint in fs flight plan
   entryBuilder->setCurUserpointNumber(route.getNextUserWaypointNumber());
 
@@ -1429,6 +1448,8 @@ void RouteController::loadFlightplanInternal(atools::fs::pln::Flightplan flightp
 #endif
 
   postChange(undoCommand);
+
+  qDebug() << Q_FUNC_INFO << "routeFilename" << routeFilename << "undoIndex" << undoIndex << "undoIndexClean" << undoIndexClean;
 
   emit routeChanged(true /* geometryChanged */, true /* newFlightPlan */);
 }
@@ -1456,7 +1477,7 @@ void RouteController::loadProceduresFromFlightplan(bool clearOldProcedurePropert
   route.updateProcedureLegs(entryBuilder, clearOldProcedureProperties, cleanupRoute);
 }
 
-bool RouteController::loadFlightplanLnmStr(const QString& string)
+bool RouteController::loadFlightplanLnmLogdataStr(const QString& string)
 {
   qDebug() << Q_FUNC_INFO;
 
@@ -1467,8 +1488,8 @@ bool RouteController::loadFlightplanLnmStr(const QString& string)
     flightplanIO->loadLnmStr(fp, string);
 
     loadFlightplanInternal(fp, atools::fs::pln::LNM_PLN, QString(),
-                           false /*changed*/, false /* adjustAltitude */, false /* undo */, false /* warnAltitude */,
-                           true /* correctProfile */);
+                           false /*changed*/, false /* adjustAltitude */, false /* undo */, true /* warnAltitude */,
+                           true /* correctProfile */, false /* clearUndoState */);
   }
   catch(atools::Exception& e)
   {
@@ -1483,7 +1504,33 @@ bool RouteController::loadFlightplanLnmStr(const QString& string)
   return true;
 }
 
-void RouteController::loadFlightplanRouteStr(const QString& routeString)
+bool RouteController::loadFlightplanCmdOrDataExchange(const QString& filename)
+{
+  qDebug() << Q_FUNC_INFO << filename;
+  Flightplan fp;
+  try
+  {
+    qDebug() << Q_FUNC_INFO << "loadFlightplan" << filename;
+    // Will throw an exception if something goes wrong
+    atools::fs::pln::FileFormat format = flightplanIO->load(fp, filename);
+    loadFlightplanInternal(fp, format, filename,
+                           false /* changed */, false /* adjustAltitude */, false /* undo */, false /* warnAltitude */,
+                           false /* correctProfile */, true /* clearUndoState */);
+  }
+  catch(atools::Exception& e)
+  {
+    atools::gui::ErrorHandler(mainWindow).handleException(e);
+    return false;
+  }
+  catch(...)
+  {
+    atools::gui::ErrorHandler(mainWindow).handleUnknownException();
+    return false;
+  }
+  return true;
+}
+
+bool RouteController::loadFlightplanRouteStrCmdOrDataExchange(const QString& routeString)
 {
   qDebug() << Q_FUNC_INFO << routeString;
 
@@ -1497,16 +1544,25 @@ void RouteController::loadFlightplanRouteStr(const QString& routeString)
 
   // Use settings from dialog
   if(reader.createRouteFromString(routeString, RouteStringDialog::getOptionsFromSettings(), &fp, nullptr, nullptr, &altIncluded))
+  {
+    fp.setFlightplanType(atools::fs::pln::IFR);
+    if(!altIncluded)
+      fp.setCruiseAltitudeFt(0.f);
+
     loadFlightplanInternal(fp, atools::fs::pln::LNM_PLN, QString(),
                            false /* changed */, !altIncluded /* adjustAltitude */, false /* undo */, false /* warnAltitude */,
-                           true /* correctProfile */);
+                           true /* correctProfile */, true /* clearUndoState */);
+    return true;
+  }
 
   if(reader.hasErrorMessages() || reader.hasWarningMessages())
     dialog->warning(tr("<p>Errors reading flight plan route description<br/><b>%1</b><br/>from command line:</p><p>%2</p>").
                     arg(routeString).arg(reader.getAllMessages().join("<br>")));
+
+  return false;
 }
 
-bool RouteController::loadFlightplan(const QString& filename, bool correctAndWarn)
+bool RouteController::loadFlightplan(const QString& filename, bool correctAndWarn, bool clearUndoState)
 {
   qDebug() << Q_FUNC_INFO << filename;
   Flightplan fp;
@@ -1517,7 +1573,7 @@ bool RouteController::loadFlightplan(const QString& filename, bool correctAndWar
     atools::fs::pln::FileFormat format = flightplanIO->load(fp, filename);
     loadFlightplanInternal(fp, format, filename,
                            false /*changed*/, false /* adjustAltitude */, false /* undo */, correctAndWarn /* warnAltitude */,
-                           correctAndWarn /* correctProfile */);
+                           correctAndWarn /* correctProfile */, clearUndoState);
   }
   catch(atools::Exception& e)
   {
@@ -5934,11 +5990,16 @@ void RouteController::clearRouteAndUndo()
   fileDestinationIdent.clear();
   fileIfrVfr = pln::VFR;
   fileCruiseAltFt = 0.f;
+  clearUndo();
+  entryBuilder->setCurUserpointNumber(1);
+  updateFlightplanFromWidgets();
+}
+
+void RouteController::clearUndo()
+{
   undoStack->clear();
   undoIndex = 0;
   undoIndexClean = 0;
-  entryBuilder->setCurUserpointNumber(1);
-  updateFlightplanFromWidgets();
 }
 
 /* Reset route and clear undo stack (new route) */

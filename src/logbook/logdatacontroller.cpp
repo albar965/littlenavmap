@@ -1197,7 +1197,7 @@ void LogdataController::planOpen(atools::sql::SqlRecord *record, QWidget *parent
   {
     qDebug() << Q_FUNC_INFO;
     // Open flight plan in table replacing the current plan - attachement is always LNMPLN
-    mainWindow->routeOpenFileLnmStr(QString(atools::zip::gzipDecompress(record->value("flightplan").toByteArray())));
+    mainWindow->routeOpenFileLnmLogdataStr(QString(atools::zip::gzipDecompress(record->value("flightplan").toByteArray())));
   }
   catch(atools::Exception& e)
   {

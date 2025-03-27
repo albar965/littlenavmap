@@ -56,7 +56,7 @@ class FlightplanEntry;
 
 class FlightplanEntryBuilder;
 class QItemSelection;
-class QMainWindow;
+class MainWindow;
 class QStandardItemModel;
 class QTableView;
 class QTextCursor;
@@ -79,7 +79,7 @@ class RouteController :
   Q_OBJECT
 
 public:
-  explicit RouteController(QMainWindow *parent, QTableView *tableView);
+  explicit RouteController(MainWindow *parent, QTableView *tableView);
   virtual ~RouteController() override;
 
   RouteController(const RouteController& other) = delete;
@@ -93,21 +93,22 @@ public:
 
   /* Loads flight plan from FSX PLN file, checks for proper start position (shows notification dialog)
    * and emits routeChanged. Uses file name as new current name  */
-  bool loadFlightplan(const QString& filename, bool correctAndWarn);
+  bool loadFlightplan(const QString& filename, bool correctAndWarn, bool clearUndoState);
 
   /* Does not show a warning dialog if altitude or an invalid profile is corrected */
   void loadFlightplan(const atools::fs::pln::Flightplan& flightplan, atools::fs::pln::FileFormat format,
-                      const QString& filename, bool changed, bool adjustAltitude, bool undo, bool correctProfile)
+                      const QString& filename, bool changed, bool adjustAltitude, bool undo, bool correctProfile, bool clearUndoState)
   {
     loadFlightplanInternal(flightplan, format, filename, changed, adjustAltitude, undo, false /* warnAltitude */,
-                           correctProfile /* correctProfile */);
+                           correctProfile, clearUndoState);
   }
 
   /* Load the plan from a string in LNMPLN format */
-  bool loadFlightplanLnmStr(const QString& string);
+  bool loadFlightplanLnmLogdataStr(const QString& string);
 
-  /* Load from route description */
-  void loadFlightplanRouteStr(const QString& routeString);
+  /* Load from route description from command line or data exchange. Always clears undo state and set file to unchanged. */
+  bool loadFlightplanRouteStrCmdOrDataExchange(const QString& routeString);
+  bool loadFlightplanCmdOrDataExchange(const QString& filename);
 
   /* Loads flight plan from FSX PLN file and appends it to the current flight plan.
    * Use -1 for insertBefore to append.
@@ -406,7 +407,7 @@ private:
    * correctProfile: Correct elevation profile if invalid
    */
   void loadFlightplanInternal(atools::fs::pln::Flightplan flightplan, atools::fs::pln::FileFormat format, const QString& filename,
-                              bool changed, bool adjustAltitude, bool undo, bool warnAltitude, bool correctProfile);
+                              bool changed, bool adjustAltitude, bool undo, bool warnAltitude, bool correctProfile, bool clearUndoState);
 
   /* Saves flight plan using LNM format. Returns true on success. */
   bool saveFlightplanLnmInternal(const QString& filename, bool silentShutdown, bool clearUndo);
@@ -473,9 +474,14 @@ private:
 
   void routeTypeChanged();
 
+  /* Reset route */
+  void clearRoute();
+
   /* Reset route and clear undo stack (new route) */
   void clearRouteAndUndo();
-  void clearRoute();
+
+  /* Clear undo stack and set plan as not changed */
+  void clearUndo();
 
   /* Calculate flight plan pressed in dock window */
   void calculateRoute();
@@ -610,7 +616,10 @@ private:
   Route route; /* real route containing all segments */
 
   /* Current filename of empty if no route - also remember start and dest to avoid accidental overwriting */
-  QString routeFilename, routeFilenameDefault, fileDepartureIdent, fileDestinationIdent;
+  QString routeFilename, fileDepartureIdent, fileDestinationIdent;
+
+  /* Flight plan default name for temporary file in settings dir.  */
+  QString routeFilenameDefault;
 
   /* Same as above for cruise altitude */
   float fileCruiseAltFt;
@@ -620,7 +629,7 @@ private:
 
   bool contextMenuOpen = false;
 
-  QMainWindow *mainWindow;
+  MainWindow *mainWindow;
   QTableView *tableViewRoute;
   QStandardItemModel *model;
   QUndoStack *undoStack = nullptr;

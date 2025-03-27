@@ -230,7 +230,7 @@ public:
   void routeNewFromAirports(const map::MapAirport& departure, const map::MapAirport& destination);
 
   /* Load a flight plan in LNMPLN format from a string */
-  void routeOpenFileLnmStr(const QString& string);
+  void routeOpenFileLnmLogdataStr(const QString& string);
 
   /* Open file dialog for saving a LNMPLN flight plan. Filename will be built if empty. */
   QString routeSaveFileDialogLnm(const QString& filename = QString());
@@ -258,6 +258,11 @@ public:
   /* Called from SimBrief handler or non-modal route string dialog to create new plan */
   void routeFromFlightplan(const atools::fs::pln::Flightplan& flightplan, bool adjustAltitude, bool changed, bool undo,
                            bool correctProfile);
+
+  /* Ask user if flight plan can be deleted or overwritten by loading a new one.
+   * Might call routeSaveAsLnm() or routeSaveLnm() depending on user selection.
+   * @return true continue with new flight plan, exit, etc. */
+  bool routeCheckForChanges();
 
   MapThemeHandler *getMapThemeHandler() const
   {
@@ -413,7 +418,7 @@ private:
 
   /* Called from menu or toolbar by action */
   void routeOpen();
-  void routeOpenFile(QString filepath, bool correctAndWarn);
+  void routeOpenFile(QString filepath);
 
   /* Called from menu or toolbar by action - append flight plan to current one */
   void routeAppend();
@@ -424,7 +429,10 @@ private:
 
   /* Called from menu or toolbar by action */
   void routeOpenRecent(const QString& routeFile);
-  void routeOpenDescr(const QString& routeString);
+
+  /* From other instance by shared memory */
+  void routeOpenDescrFromDataExchange(const QString& routeString);
+  void routeOpenFileFromDataExchange(const QString& filepath);
 
   /* Flight plan save functions */
   /* Called from menu or toolbar by action */
@@ -436,10 +444,6 @@ private:
 
   /* Show airport search with random calc enabled */
   void calculateRouteRandom();
-
-  /* Ask user if flight plan can be deleted when quitting.
-   * @return true continue with new flight plan, exit, etc. */
-  bool routeCheckForChanges();
 
   /* Reset all "do not show this again" message box status values */
   void resetMessages();

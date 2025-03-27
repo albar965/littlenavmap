@@ -46,10 +46,12 @@ void checkFileType(const QString& filename, QString *flightplan, QString *perf, 
 }
 
 void fromStartupProperties(const atools::util::Properties& properties, QString *flightplan, QString *flightplanDescr, QString *perf,
-                           QString *layout)
+                           QString *layout, bool *flightPlanIsOther)
 {
-  if(flightplan != nullptr)
-    *flightplan = properties.getPropertyStr(lnm::STARTUP_FLIGHTPLAN);
+  if(flightPlanIsOther != nullptr)
+    *flightPlanIsOther = false;
+
+  QString planOption = properties.getPropertyStr(lnm::STARTUP_FLIGHTPLAN);
 
   if(perf != nullptr)
     *perf = properties.getPropertyStr(lnm::STARTUP_AIRCRAFT_PERF);
@@ -63,7 +65,21 @@ void fromStartupProperties(const atools::util::Properties& properties, QString *
   // Extract filenames from positional arguments without options ================================
   const QStringList propertyStrList = properties.getPropertyStrList(lnm::STARTUP_OTHER_ARGUMENTS);
   for(const QString& otherFile : propertyStrList)
-    fc::checkFileType(otherFile, flightplan, perf, layout);
+  {
+    QString planOther;
+    fc::checkFileType(otherFile, &planOther, perf, layout);
+
+    // Replace plan name with other if option is not set
+    if(planOption.isEmpty() && !planOther.isEmpty())
+    {
+      planOption = planOther;
+      if(flightPlanIsOther != nullptr)
+        *flightPlanIsOther = true;
+    }
+  }
+
+  if(flightplan != nullptr)
+    *flightplan = planOption;
 }
 
 } // namespace fc
