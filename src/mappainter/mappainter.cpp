@@ -43,6 +43,11 @@ using namespace Marble;
 using namespace atools::geo;
 using atools::roundToInt;
 
+/* Minimum points to use for a circle */
+const float CIRCLE_MIN_POINTS = 32.f;
+/* Maximum points to use for a circle */
+const float CIRCLE_MAX_POINTS = 92.f;
+
 AirportPaintData::AirportPaintData(const map::MapAirport& ap, float x, float y)
   : airport(new map::MapAirport(ap)), point(x, y)
 {
@@ -191,8 +196,8 @@ void MapPainter::paintArc(GeoPainter *painter, const Pos& centerPos, float radiu
     return;
 
   // Calculate the number of points to use depending on screen resolution
-  int pixel = scale->getPixelIntForMeter(nmToMeter(radiusNm));
-  int numPoints = std::min(std::max(pixel / (fast ? 20 : 2), CIRCLE_MIN_POINTS), CIRCLE_MAX_POINTS);
+  float pixel = scale->getPixelForMeter(nmToMeter(radiusNm));
+  int numPoints = atools::minmax(CIRCLE_MIN_POINTS, CIRCLE_MAX_POINTS, pixel / (fast ? 20.f : 1.f));
 
   float radiusMeter = nmToMeter(radiusNm);
 
@@ -306,9 +311,16 @@ void MapPainter::paintCircleSmallInternal(GeoPainter *painter, const Pos& center
 
 void MapPainter::paintCircleLargeInternal(GeoPainter *painter, const Pos& centerPos, float radiusNm, bool fast, QPoint *textPos) const
 {
+  // float PIXEL_PER_SEGMENT = 10;
+  // float circumferenceNm = 2.f * radiusNm * 3.1415926f;
+  // float circumferencePixel = scale->getPixelForMeter(nmToMeter(circumferenceNm));
+  // float numSegments = circumferencePixel / PIXEL_PER_SEGMENT;
+
   // Calculate the number of points to use depending on screen resolution
-  int pixel = scale->getPixelIntForMeter(nmToMeter(radiusNm));
-  int numPoints = std::min(std::max(pixel / (fast ? 20 : 2), CIRCLE_MIN_POINTS), CIRCLE_MAX_POINTS);
+  float pixel = scale->getPixelForMeter(nmToMeter(radiusNm));
+  int numPoints = atools::minmax(CIRCLE_MIN_POINTS, CIRCLE_MAX_POINTS, pixel / (fast ? 20.f : 1.5f));
+
+  qDebug() << Q_FUNC_INFO << "pixel" << pixel << "numPoints" << numPoints;
 
   float radiusMeter = nmToMeter(radiusNm);
 

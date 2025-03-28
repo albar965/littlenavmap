@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2024 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2025 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -441,18 +441,11 @@ protected:
   void paintCircleLargeInternal(Marble::GeoPainter *painter, const atools::geo::Pos& centerPos, float radiusNm, bool fast,
                                 QPoint *textPos) const;
 
-  /* Minimum points to use for a circle */
-  const int CIRCLE_MIN_POINTS = 16;
-  /* Maximum points to use for a circle */
-  const int CIRCLE_MAX_POINTS = 72;
-
   PaintContext *context = nullptr;
   SymbolPainter *symbolPainter = nullptr;
   MapPaintWidget *mapPaintWidget = nullptr;
   MapScale *scale = nullptr;
   const Queries *queries = nullptr; // Derived from MapPaintWidget which can be GUI or web queries
-
-private:
 };
 
 #endif // LITTLENAVMAP_MAPPAINTER_H
