@@ -76,6 +76,9 @@ public:
   /* Fill tree widget and index with all approaches and transitions of an airport */
   void showProcedures(const map::MapAirport& airport, bool departureFilter, bool arrivalFilter);
 
+  /* Clear preview and selection */
+  void clearSelectionAndPreviews();
+
   /* Save tree view state */
   virtual void saveState() override;
   virtual void restoreState() override;

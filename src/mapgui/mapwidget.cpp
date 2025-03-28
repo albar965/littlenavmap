@@ -59,6 +59,7 @@
 #include "query/procedurequery.h"
 #include "route/routealtitude.h"
 #include "route/routecontroller.h"
+#include "search/searchcontroller.h"
 #include "settings/settings.h"
 #include "ui_mainwindow.h"
 #include "userdata/userdatacontroller.h"
@@ -2124,7 +2125,10 @@ void MapWidget::contextMenuEvent(QContextMenuEvent *event)
 
         case mc::PROCEDUREADD:
           if(legs != nullptr)
+          {
             emit routeInsertProcedure(*legs);
+            NavApp::getSearchController()->clearProcedureSelectionAndPreviews();
+          }
           break;
 
         case mc::CUSTOMAPPROACH:

@@ -2053,6 +2053,11 @@ void ProcedureSearch::updateTableSelection(bool noFollow)
     itemSelectionChangedInternal(noFollow);
 }
 
+void ProcedureSearch::clearSelectionAndPreviews()
+{
+  clearSelectionClicked();
+}
+
 void ProcedureSearch::clearSelectionClicked()
 {
   NavApp::getMainUi()->pushButtonProcedureShowAll->setChecked(false);
