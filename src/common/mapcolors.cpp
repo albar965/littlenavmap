@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2024 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2025 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -139,6 +139,7 @@ QColor distanceMarkerTextBackgroundColor(255, 255, 255, 220);
 QColor distanceMarkerTextColor(Qt::black);
 
 QPen markEndurancePen(Qt::black, 2., Qt::DotLine, Qt::FlatCap, Qt::MiterJoin);
+QPen markEnduranceCritPen(Qt::red, 2., Qt::DotLine, Qt::FlatCap, Qt::MiterJoin);
 QPen markSelectedAltitudeRangePen(Qt::darkGreen, 1.5, Qt::SolidLine, Qt::FlatCap);
 QPen markTurnPathPen(Qt::darkGreen, 1.5, Qt::SolidLine, Qt::FlatCap);
 
@@ -762,6 +763,7 @@ void loadColors()
   loadPen(colorSettings, "Marker/TouchMarkBackPen", touchMarkBackPen);
   loadPen(colorSettings, "Marker/TouchMarkFillPen", touchMarkFillPen);
   loadPen(colorSettings, "Marker/EndurancePen", markEndurancePen);
+  loadPen(colorSettings, "Marker/EnduranceCritPen", markEnduranceCritPen);
   loadPen(colorSettings, "Marker/SelectedAltitudeRangePen", markSelectedAltitudeRangePen);
   loadPen(colorSettings, "Marker/TurnPathPen", markTurnPathPen);
   loadColorArgb(colorSettings, "Marker/TouchRegionFillColor", touchRegionFillColor);

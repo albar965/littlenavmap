@@ -922,86 +922,92 @@ void MapPainterMark::paintSelectedAltitudeRange()
   }
 }
 
+void MapPainterMark::paintEnduranceRing(float enduranceHours, float enduranceNm, bool critical)
+{
+  if(enduranceNm < map::INVALID_DISTANCE_VALUE)
+  {
+    Marble::GeoPainter *painter = context->painter;
+    const atools::fs::sc::SimConnectUserAircraft& userAircraft = mapPaintWidget->getUserAircraft();
+    ageo::Pos pos = userAircraft.getPosition();
+    bool labelAtCenter = false, visibleCenter = false;
+    QPoint textPos;
+    QPen pen = critical ? mapcolors::markEnduranceCritPen : mapcolors::markEndurancePen;
+
+    if(enduranceNm > 1.f)
+    {
+      float lineWidth = context->szF(context->thicknessUserFeature, pen.width());
+      painter->setPen(mapcolors::adjustWidth(pen, lineWidth));
+      painter->setBrush(Qt::NoBrush);
+      context->szFont(context->textSizeRangeUserFeature);
+
+      // Draw circle and get a text placement position
+      paintCircle(painter, pos, enduranceNm, context->drawFast, &textPos);
+      visibleCenter = true;
+    }
+    else
+    {
+      visibleCenter = wToS(pos, textPos.rx(), textPos.ry());
+      labelAtCenter = true;
+    }
+
+    if(visibleCenter && !textPos.isNull())
+    {
+      // paintCircle found a text position - draw text
+
+      if(critical)
+        painter->setPen(mapcolors::markEnduranceCritPen);
+      else
+        painter->setPen(mapcolors::rangeRingTextColor);
+
+      textatt::TextAttributes atts = textatt::CENTER;
+
+      const Route& route = NavApp::getRouteConst();
+      if(route.getSizeWithoutAlternates() <= 1 || route.getActiveLegIndexCorrected() == map::INVALID_INDEX_VALUE)
+      {
+        // Show error colors only for free flight
+        if(enduranceHours < 0.5f)
+          atts |= textatt::ERROR_COLOR;
+        else if(enduranceHours < 0.75f)
+          atts |= textatt::WARNING_COLOR;
+      }
+      else if(enduranceHours < 0.1f)
+        // Show error color even with flight plan if fuel gets really low
+        atts |= textatt::ERROR_COLOR;
+
+      QStringList texts;
+
+      texts.append(Unit::distNm(enduranceNm, true, 5, true) + (critical ? QString() : tr(" (RSV)")));
+
+      if(enduranceHours < map::INVALID_TIME_VALUE)
+        texts.append(formatter::formatMinutesHoursLong(enduranceHours));
+
+      if(labelAtCenter)
+      {
+        int size = std::max(context->sz(context->symbolSizeAircraftUser, 32), scale->getPixelIntForFeet(userAircraft.getModelSize()));
+        textPos.ry() -= size * 2;
+      }
+      else
+        textPos.ry() += painter->fontMetrics().height() / 2 - painter->fontMetrics().descent();
+
+      symbolPainter->textBox(painter, texts, painter->pen(), textPos.x(), textPos.y(), atts);
+    }
+  }
+}
+
 void MapPainterMark::paintEndurance()
 {
-  const atools::fs::sc::SimConnectUserAircraft& userAircraft = mapPaintWidget->getUserAircraft();
-  if(context->objectDisplayTypes.testFlag(map::AIRCRAFT_ENDURANCE) && userAircraft.isFlying())
+  if(context->objectDisplayTypes.testFlag(map::AIRCRAFT_ENDURANCE))
   {
-    ageo::Pos pos = mapPaintWidget->getUserAircraft().getPosition();
-    if(pos.isValid())
+    if(mapPaintWidget->getUserAircraft().isFullyValid() && mapPaintWidget->getUserAircraft().isFlying())
     {
       // Get endurance
       float enduranceHours = 0.f, enduranceNm = 0.f;
-      NavApp::getAircraftPerfController()->getEnduranceAverage(enduranceHours, enduranceNm);
-      if(enduranceNm < map::INVALID_DISTANCE_VALUE)
-      {
-        Marble::GeoPainter *painter = context->painter;
-        atools::util::PainterContextSaver saver(painter);
-        bool labelAtCenter;
-        QPoint textPos;
-        bool visibleCenter = false;
-        if(enduranceNm > 1.f)
-        {
-          float lineWidth = context->szF(context->thicknessUserFeature, mapcolors::markEndurancePen.width());
-          painter->setPen(mapcolors::adjustWidth(mapcolors::markEndurancePen, lineWidth));
-          painter->setBrush(Qt::NoBrush);
-          context->szFont(context->textSizeRangeUserFeature);
+      NavApp::getAircraftPerfController()->getEnduranceAverage(enduranceHours, enduranceNm, false /* critical */);
+      paintEnduranceRing(enduranceHours, enduranceNm, false /* critical */);
 
-          // Draw circle and get a text placement position
-          paintCircle(painter, pos, enduranceNm, context->drawFast, &textPos);
-          visibleCenter = true;
-          labelAtCenter = false;
-        }
-        else
-        {
-          visibleCenter = wToS(pos, textPos.rx(), textPos.ry());
-          labelAtCenter = true;
-        }
-
-        if(visibleCenter && !textPos.isNull())
-        {
-          // paintCircle found a text position - draw text
-          painter->setPen(mapcolors::rangeRingTextColor);
-
-          textatt::TextAttributes atts = textatt::CENTER;
-
-          const Route& route = NavApp::getRouteConst();
-          if(route.getSizeWithoutAlternates() <= 1 || route.getActiveLegIndexCorrected() == map::INVALID_INDEX_VALUE)
-          {
-            // Show error colors only for free flight
-            if(enduranceHours < 0.5f)
-              atts |= textatt::ERROR_COLOR;
-            else if(enduranceHours < 0.75f)
-              atts |= textatt::WARNING_COLOR;
-          }
-          else if(enduranceHours < 0.1f)
-            // Show error color even with flight plan if fuel gets really low
-            atts |= textatt::ERROR_COLOR;
-
-          QStringList texts;
-          // if(!userAircraft.getAirplaneRegistration().isEmpty())
-          // texts.append(atools::elideTextShort(userAircraft.getAirplaneRegistration(), 15));
-          // else if(!userAircraft.getAirplaneTitle().isEmpty())
-          // texts.append(atools::elideTextShort(userAircraft.getAirplaneTitle(), 15));
-          // if(!userAircraft.getAirplaneModel().isEmpty())
-          // texts.append(userAircraft.getAirplaneModel());
-
-          texts.append(Unit::distNm(enduranceNm, true, 5, true));
-
-          if(enduranceHours < map::INVALID_TIME_VALUE)
-            texts.append(formatter::formatMinutesHoursLong(enduranceHours));
-
-          if(labelAtCenter)
-          {
-            int size = std::max(context->sz(context->symbolSizeAircraftUser, 32), scale->getPixelIntForFeet(userAircraft.getModelSize()));
-            textPos.ry() -= size * 2;
-          }
-          else
-            textPos.ry() += painter->fontMetrics().height() / 2 - painter->fontMetrics().descent();
-
-          symbolPainter->textBox(painter, texts, painter->pen(), textPos.x(), textPos.y(), atts);
-        }
-      }
+      float enduranceCriticalHours = 0.f, enduranceCriticalNm = 0.f;
+      NavApp::getAircraftPerfController()->getEnduranceAverage(enduranceCriticalHours, enduranceCriticalNm, true /* critical */);
+      paintEnduranceRing(enduranceCriticalHours, enduranceCriticalNm, true /* critical */);
     }
   }
 }

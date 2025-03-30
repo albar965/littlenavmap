@@ -167,8 +167,9 @@ public:
   /* Current aircraft endurance with full fuel load */
   void getEnduranceFull(float& enduranceHours, float& enduranceNm);
 
-  /* Current aircraft endurance based on current fuel flow. This is the rolling average over ten seconds or current value. */
-  void getEnduranceAverage(float& enduranceHours, float& enduranceNm);
+  /* Current aircraft endurance based on current fuel flow. This is the rolling average over ten seconds or current value.
+   * Critical = true gives zero fuel range. */
+  void getEnduranceAverage(float& enduranceHours, float& enduranceNm, bool critical = false);
 
   /* Get collected major errors */
   bool hasErrors() const;

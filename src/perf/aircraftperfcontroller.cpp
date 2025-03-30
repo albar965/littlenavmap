@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2024 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2025 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -1304,7 +1304,7 @@ void AircraftPerfController::getEnduranceFull(float& enduranceHours, float& endu
   }
 }
 
-void AircraftPerfController::getEnduranceAverage(float& enduranceHours, float& enduranceNm)
+void AircraftPerfController::getEnduranceAverage(float& enduranceHours, float& enduranceNm, bool critical)
 {
   const atools::fs::sc::SimConnectUserAircraft& userAircraft = lastSimData->getUserAircraftConst();
 
@@ -1319,8 +1319,14 @@ void AircraftPerfController::getEnduranceAverage(float& enduranceHours, float& e
 
     if(fuelFlowPph > 0.f && groundspeedKts > 0.f)
     {
-      float realFuelFlow = fuelFlowPph * perf->getContingencyFuelFactor();
-      enduranceHours = std::max((userAircraft.getFuelTotalWeightLbs() - perf->getReserveFuelLbs()) / realFuelFlow, 0.f);
+      if(critical)
+        enduranceHours = std::max(userAircraft.getFuelTotalWeightLbs() / fuelFlowPph, 0.f);
+      else
+      {
+        float realFuelFlow = fuelFlowPph * perf->getContingencyFuelFactor();
+        enduranceHours = std::max((userAircraft.getFuelTotalWeightLbs() - perf->getReserveFuelLbs()) / realFuelFlow, 0.f);
+      }
+
       enduranceNm = enduranceHours * groundspeedKts;
     }
   }
