@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2024 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2025 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -294,12 +294,12 @@ QString courseText(float magCourse, float trueCourse, bool magBold, bool magBig,
 {
   QString magStr, trueStr;
   if(magCourse < map::INVALID_COURSE_VALUE / 2.f)
-    magStr = QLocale().toString(magCourse, 'f', 0);
+    magStr = directionStr(magCourse);
 
   if(forceBoth || OptionData::instance().getFlags2().testFlag(opts2::UNIT_TRUE_COURSE) || magStr.isEmpty())
   {
     if(trueCourse < map::INVALID_COURSE_VALUE / 2.f)
-      trueStr = QLocale().toString(trueCourse, 'f', 0);
+      trueStr = directionStr(trueCourse);
   }
 
   // Formatting for magnetic course
@@ -381,6 +381,24 @@ QString formatDateTimeSeconds(const QDateTime& datetime, bool overrideLocale)
                                                          "https://doc.qt.io/qt-5/qdate.html#toString-2 "
                                                          "Look at your operating system settings to find suitable format");
   return QLocale().toString(datetime, dateTimeStr);
+}
+
+QString directionStr(float directionDeg)
+{
+  const static QString str360 = QLocale().toString(360);
+  const static QString str0 = QLocale().toString(0);
+
+  QString windDirStr;
+  if(directionDeg < map::INVALID_METAR_VALUE / 2.f)
+  {
+    windDirStr = QLocale().toString(atools::geo::normalizeCourse(directionDeg), 'f', 0);
+
+    // 7110.65P, the FAA ATC manual.
+    // "Use heading 360 degrees to indicate a north heading". Spoken words are "Heading three six zero."
+    if(windDirStr == str0)
+      windDirStr = str360;
+  }
+  return windDirStr;
 }
 
 } // namespace formatter

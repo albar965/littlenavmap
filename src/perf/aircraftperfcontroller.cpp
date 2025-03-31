@@ -1343,7 +1343,7 @@ void AircraftPerfController::windText(atools::util::HtmlBuilder& html, const QSt
     if(std::abs(windSpeed) >= 1.f)
       // Display direction and speed if wind is not manually selected and available ====================
       windText.append(tr("%1°T, %2").
-                      arg(windDirection, 0, 'f', 0).
+                      arg(formatter::directionStr(windDirection)).
                       arg(Unit::speedKts(windSpeed)));
 
     // Display manual wind - only head- or tailwind =======================
