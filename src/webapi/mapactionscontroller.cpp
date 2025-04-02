@@ -361,14 +361,19 @@ MapPixmap MapActionsController::getPixmapRect(int width, int height, atools::geo
       // Copy all map settings except trail
       mapPaintWidget->copySettings(*NavApp::getMapWidgetGui(), false /* deep */);
 
-      mapPaintWidget->showRectStreamlined(rect, false);
-
       // Disable dynamic/live features
       mapPaintWidget->setShowMapObject(map::AIRCRAFT_ALL, false);
       mapPaintWidget->setShowMapObject(map::AIRCRAFT_TRAIL, false);
 
+      mapPaintWidget->setShowMapObjectDisplay(map::COMPASS_ROSE, false);
+      mapPaintWidget->setShowMapObjectDisplay(map::AIRCRAFT_ENDURANCE, false);
+      mapPaintWidget->setShowMapObjectDisplay(map::AIRCRAFT_SELECTED_ALT_RANGE, false);
+      mapPaintWidget->setShowMapObjectDisplay(map::AIRCRAFT_TURN_PATH, false);
+
       // Set detail factor
       mapPaintWidget->getMapPaintLayer()->setDetailLevel(detailFactor, detailFactor);
+
+      mapPaintWidget->showRectStreamlined(rect, false);
 
       // Disable copyright note and wind
       mapPaintWidget->setPaintCopyright(false);
