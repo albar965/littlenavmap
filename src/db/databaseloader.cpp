@@ -478,7 +478,7 @@ void DatabaseLoader::showErrors()
 
     QString texts;
     texts.append(tr("<h3>Found %1 in %2 scenery entries when loading the scenery database</h3>").
-                 arg(atools::strJoin(headerText, tr(", "), tr(" and "))).arg(navDatabaseErrors->sceneryErrors.size()));
+                 arg(atools::strJoin(headerText, tr(", "), tr(" and "))).arg(navDatabaseErrors->getSceneryErrors().size()));
 
     if(totalErrors > 0)
     {
@@ -501,7 +501,7 @@ void DatabaseLoader::showErrors()
                         "due to encrypted airport data.<hr/>"));
 
     int numScenery = 0;
-    for(const atools::fs::NavDatabaseErrors::SceneryErrors& scErr : qAsConst(navDatabaseErrors->sceneryErrors))
+    for(const atools::fs::SceneryErrors& sceneryError : navDatabaseErrors->getSceneryErrors())
     {
       if(numScenery >= MAX_ERROR_SCENERY_MESSAGES)
       {
@@ -510,12 +510,12 @@ void DatabaseLoader::showErrors()
       }
 
       int numBgl = 0;
-      texts.append(tr("<b>Scenery Title: %1</b><br/>").arg(scErr.scenery.getTitle()));
+      texts.append(tr("<b>Scenery Title: %1</b><br/>").arg(sceneryError.getScenery().getTitle()));
 
-      for(const QString& err : scErr.sceneryErrorsMessages)
+      for(const QString& err : sceneryError.getSceneryErrorsMessages())
         texts.append(err + "<br/>");
 
-      for(const atools::fs::NavDatabaseErrors::SceneryFileError& bglErr : scErr.fileErrors)
+      for(const atools::fs::SceneryFileError& fileErr : sceneryError.getFileErrors())
       {
         if(numBgl >= MAX_ERROR_BGL_MESSAGES)
         {
@@ -525,7 +525,7 @@ void DatabaseLoader::showErrors()
         numBgl++;
 
         texts.append(tr("<b>File:</b> \"%1\"<br/><b>Message:</b> %2<br/>").
-                     arg(bglErr.filepath).arg(bglErr.errorMessage));
+                     arg(fileErr.getFilepath()).arg(fileErr.getErrorMessage()));
       }
       texts.append("<br/>");
       numScenery++;
