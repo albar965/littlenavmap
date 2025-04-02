@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2024 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2025 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -142,18 +142,12 @@ void MapPaintLayer::setShowMapObjects(map::MapTypes type, map::MapTypes mask)
 
 void MapPaintLayer::setShowMapObject(map::MapTypes type, bool show)
 {
-  if(show)
-    objectTypes |= type;
-  else
-    objectTypes &= ~type;
+  objectTypes.setFlag(type, show);
 }
 
 void MapPaintLayer::setShowMapObjectDisplay(map::MapDisplayTypes type, bool show)
 {
-  if(show)
-    objectDisplayTypes |= type;
-  else
-    objectDisplayTypes &= ~type;
+  objectDisplayTypes.setFlag(type, show);
 }
 
 void MapPaintLayer::setShowAirspaces(map::MapAirspaceFilter types)
@@ -375,6 +369,7 @@ bool MapPaintLayer::render(GeoPainter *painter, ViewportParams *viewport, const 
       const OptionData& od = OptionData::instance();
 
       context.symbolSizeAircraftAi = od.getDisplaySymbolSizeAircraftAi() / 100.f;
+      context.symbolSizeWeb = od.getWebIconScale() / 100.f;
       context.symbolSizeAircraftUser = od.getDisplaySymbolSizeAircraftUser() / 100.f;
       context.symbolSizeAirport = od.getDisplaySymbolSizeAirport() / 100.f;
       context.symbolSizeAirportWeather = od.getDisplaySymbolSizeAirportWeather() / 100.f;

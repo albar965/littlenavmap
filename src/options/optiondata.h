@@ -1400,6 +1400,11 @@ public:
     return displayTextSizeAirspace;
   }
 
+  int getWebIconScale() const
+  {
+    return webIconScale;
+  }
+
 private:
   friend class OptionsDialog;
 
@@ -1790,6 +1795,8 @@ private:
   /* Webserver values */
   QString webDocumentRoot;
   int webPort = 8965;
+  int webIconScale = 100;
+
   /* true for HTTPS / SSL */
   bool webEncrypted = false;
 

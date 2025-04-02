@@ -320,7 +320,9 @@ void MapPainter::paintCircleLargeInternal(GeoPainter *painter, const Pos& center
   float pixel = scale->getPixelForMeter(nmToMeter(radiusNm));
   int numPoints = atools::minmax(CIRCLE_MIN_POINTS, CIRCLE_MAX_POINTS, pixel / (fast ? 20.f : 1.5f));
 
+#ifdef DEBUG_INFORMATION_PAINT_CIRCLE
   qDebug() << Q_FUNC_INFO << "pixel" << pixel << "numPoints" << numPoints;
+#endif
 
   float radiusMeter = nmToMeter(radiusNm);
 
@@ -572,10 +574,9 @@ void MapPainter::paintArc(QPainter *painter, const QPointF& p1, const QPointF& p
 }
 
 void MapPainter::paintHoldWithText(QPainter *painter, float x, float y, float direction,
-                                   float lengthNm, float minutes, bool left,
-                                   const QString& text, const QString& text2,
+                                   float lengthNm, float minutes, bool left, const QString& text, const QString& text2,
                                    const QColor& textColor, const QColor& textColorBackground,
-                                   QVector<float> inboundArrows, QVector<float> outboundArrows) const
+                                   const QVector<float>& inboundArrows, const QVector<float>& outboundArrows) const
 {
   // Scale to total length given in the leg
   // length = 2 * p + 2 * PI * p / 2
@@ -772,7 +773,7 @@ void MapPainter::paintProcedureTurnWithText(QPainter *painter, float x, float y,
 
   // Calculate intersection with extension to get the end point
   QPointF intersect;
-  bool intersects = extension.intersect(returnSegment, &intersect) != QLineF::NoIntersection;
+  bool intersects = extension.intersects(returnSegment, &intersect) != QLineF::NoIntersection;
   if(intersects)
     returnSegment.setP2(intersect);
   // Make return segment a bit shorter than turn segment
@@ -931,14 +932,12 @@ void MapPainter::initQueries()
 
 void MapPainter::getPixmap(QPixmap& pixmap, const QString& resource, int size) const
 {
-  QPixmap *pixmapPtr = QPixmapCache::find(resource % "_" % QString::number(size));
-  if(pixmapPtr == nullptr)
+  if(!QPixmapCache::find(resource % "_" % QString::number(size), &pixmap))
   {
+    // Not found - create new one from resource
     pixmap = QIcon(resource).pixmap(QSize(size, size));
     QPixmapCache::insert(pixmap);
   }
-  else
-    pixmap = *pixmapPtr;
 }
 
 void MapPainter::paintMsaMarks(const QList<map::MapAirportMsa>& airportMsa, bool user, bool drawFast) const

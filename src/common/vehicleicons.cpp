@@ -66,7 +66,7 @@ VehicleIcons::~VehicleIcons()
 {
 }
 
-QIcon VehicleIcons::iconFromCache(const atools::fs::sc::SimConnectAircraft& ac, int size, int rotate)
+const QIcon VehicleIcons::iconFromCache(const atools::fs::sc::SimConnectAircraft& ac, int size, int rotate)
 {
   return QIcon(*pixmapFromCache(ac, size, rotate));
 }

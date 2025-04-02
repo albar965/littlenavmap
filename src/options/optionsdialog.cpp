@@ -631,6 +631,7 @@ OptionsDialog::OptionsDialog(QMainWindow *parentWindow)
      ui->checkBoxOptionsUnitTrueCourse,
 
      ui->spinBoxOptionsWebPort,
+     ui->spinBoxOptionWebIconSize,
      ui->checkBoxOptionsWebEncrypted,
      ui->lineEditOptionsWebDocroot});
 
@@ -2134,6 +2135,7 @@ void OptionsDialog::widgetsToOptionData()
   data.displayOnlineTower = ui->spinBoxDisplayOnlineTower->value();
 
   data.webPort = ui->spinBoxOptionsWebPort->value();
+  data.webIconScale = ui->spinBoxOptionWebIconSize->value();
   data.webDocumentRoot = QDir::fromNativeSeparators(ui->lineEditOptionsWebDocroot->text());
   data.webEncrypted = ui->checkBoxOptionsWebEncrypted->isChecked();
 
@@ -2453,6 +2455,7 @@ void OptionsDialog::optionDataToWidgets(const OptionData& data)
   ui->spinBoxDisplayOnlineTower->setValue(data.displayOnlineTower);
 
   ui->spinBoxOptionsWebPort->setValue(data.webPort);
+  ui->spinBoxOptionWebIconSize->setValue(data.webIconScale);
   ui->checkBoxOptionsWebEncrypted->setChecked(data.webEncrypted);
   ui->lineEditOptionsWebDocroot->setText(atools::nativeCleanPath(data.webDocumentRoot));
 

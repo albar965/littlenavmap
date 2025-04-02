@@ -147,6 +147,7 @@ struct PaintContext
   float symbolSizeAirportWeather = 1.f;
   float symbolSizeWindBarbs = 1.f;
   float symbolSizeAircraftAi = 1.f;
+  float symbolSizeWeb = 1.f;
   float textSizeFlightplan = 1.f;
   float textSizeAircraftUser = 1.f;
   float symbolSizeAircraftUser = 1.f;
@@ -402,10 +403,9 @@ protected:
   void paintArc(QPainter *painter, const QPointF& p1, const QPointF& p2, const QPointF& center, bool left) const;
 
   void paintHoldWithText(QPainter *painter, float x, float y, float direction, float lengthNm, float minutes, bool left,
-                         const QString& text, const QString& text2,
-                         const QColor& textColor, const QColor& textColorBackground,
-                         QVector<float> inboundArrows = QVector<float>(),
-                         QVector<float> outboundArrows = QVector<float>()) const;
+                         const QString& text, const QString& text2, const QColor& textColor, const QColor& textColorBackground,
+                         const QVector<float>& inboundArrows = QVector<float>(),
+                         const QVector<float>& outboundArrows = QVector<float>()) const;
 
   /* Draw PI turn */
   void paintProcedureTurnWithText(QPainter *painter, float x, float y, float turnHeading, float distanceNm, bool left,
