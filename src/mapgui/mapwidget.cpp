@@ -80,6 +80,7 @@
 #if QT_VERSION >= QT_VERSION_CHECK(5, 14, 0)
 using Qt::hex;
 using Qt::dec;
+using Qt::endl;
 #endif
 
 /* Stores delta values depending on fast or slow update. User aircraft is only updated if
@@ -1295,7 +1296,7 @@ void MapWidget::wheelEvent(QWheelEvent *event)
            << "event->angleDelta()" << event->angleDelta() << "event->modifiers()" << event->modifiers();
 #endif
 
-  if(!rect().contains(event->pos()))
+  if(!rect().contains(event->position().toPoint()))
     // Ignore wheel events that appear outside of the view and on the scrollbars
     return;
 
@@ -1374,7 +1375,7 @@ void MapWidget::wheelEvent(QWheelEvent *event)
       // Zoom in/out ========================================================================
       // Check for threshold
       qreal lon, lat;
-      if(geoCoordinates(event->pos().x(), event->pos().y(), lon, lat, Marble::GeoDataCoordinates::Degree))
+      if(geoCoordinates(event->position().x(), event->position().y(), lon, lat, Marble::GeoDataCoordinates::Degree))
       {
         // Position is visible
         qreal centerLat = centerLatitude();
@@ -1384,7 +1385,7 @@ void MapWidget::wheelEvent(QWheelEvent *event)
 
         // Get global coordinates of cursor in new zoom level
         qreal lon2, lat2;
-        geoCoordinates(event->pos().x(), event->pos().y(), lon2, lat2, Marble::GeoDataCoordinates::Degree);
+        geoCoordinates(event->position().x(), event->position().y(), lon2, lat2, Marble::GeoDataCoordinates::Degree);
 
         opts::MapNavigation nav = OptionData::instance().getMapNavigation();
         if(nav == opts::MAP_NAV_CLICK_DRAG_MOVE || nav == opts::MAP_NAV_TOUCHSCREEN)
@@ -3226,6 +3227,8 @@ void MapWidget::saveState() const
   atools::gui::WidgetState state(lnm::MAP_OVERLAY_VISIBLE, false /*save visibility*/, true /*block signals*/);
   for(QAction *action : qAsConst(mapOverlays))
     state.save(action);
+
+  settings.setValue(lnm::LOGDATA_TAKEOFF_LANDING_DISTANCE, takeoffLandingDistanceNm);
 }
 
 void MapWidget::restoreState()
@@ -3296,6 +3299,9 @@ void MapWidget::restoreState()
     paintLayer->setShowAirspaces(map::MapAirspaceFilter());
 
   history.restoreState(atools::settings::Settings::getConfigFilename(".history"));
+
+  takeoffLandingDistanceNm = settings.valueDouble(lnm::LOGDATA_TAKEOFF_LANDING_DISTANCE);
+
   updateMapVisibleUiPostDatabaseLoad();
 }
 
@@ -4124,18 +4130,18 @@ void MapWidget::setDetailLevel(int level, int levelText)
 
 void MapWidget::printMapTypesToLog()
 {
-  qDebug() << Q_FUNC_INFO << "Shown on map ===============================================" << endl
-           << " - getShownMapDisplayTypes" << getShownMapDisplayTypes() << endl
-           << " - getShownMapTypes" << getShownMapTypes() << endl
-           << " - getShownAirspaces" << getShownAirspaces() << endl
-           << " - getAirspaceSources" << queries->getAirspaceQueries()->getAirspaceSources() << endl
-           << " - getMapWeatherSource" << getMapWeatherSource() << endl
-           << " - getShownMinimumRunwayFt" << getShownMinimumRunwayFt() << endl
-           << " - Userdata getSelectedTypes" << NavApp::getUserdataController()->getSelectedTypes() << endl
-           << " - getMarkTypes" << NavApp::getMapMarkHandler()->getMarkTypes() << endl
-           << " - projection" << projection() << "getCurrentThemeId" << getCurrentThemeId() << endl
+  qDebug() << Q_FUNC_INFO << "Shown on map ===============================================" << Qt::endl
+           << " - getShownMapDisplayTypes" << getShownMapDisplayTypes() << Qt::endl
+           << " - getShownMapTypes" << getShownMapTypes() << Qt::endl
+           << " - getShownAirspaces" << getShownAirspaces() << Qt::endl
+           << " - getAirspaceSources" << queries->getAirspaceQueries()->getAirspaceSources() << Qt::endl
+           << " - getMapWeatherSource" << getMapWeatherSource() << Qt::endl
+           << " - getShownMinimumRunwayFt" << getShownMinimumRunwayFt() << Qt::endl
+           << " - Userdata getSelectedTypes" << NavApp::getUserdataController()->getSelectedTypes() << Qt::endl
+           << " - getMarkTypes" << NavApp::getMapMarkHandler()->getMarkTypes() << Qt::endl
+           << " - projection" << projection() << "getCurrentThemeId" << getCurrentThemeId() << Qt::endl
            << " - getDetailLevel" << NavApp::getMapDetailHandler()->getDetailLevel()
-           << "getDetailLevelText" << NavApp::getMapDetailHandler()->getDetailLevelText() << endl
+           << "getDetailLevelText" << NavApp::getMapDetailHandler()->getDetailLevelText() << Qt::endl
            << "===============================================";
 }
 

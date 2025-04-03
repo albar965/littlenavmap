@@ -325,6 +325,7 @@ const QLatin1String LOGDATA_EDIT_ADD_DIALOG("LogdataDialog/Widget");
 const QLatin1String LOGDATA_STATS_DIALOG("LogdataStatsDialog/Widget");
 const QLatin1String LOGDATA_EXPORT_CSV("Logdata/CsvExport");
 const QLatin1String LOGDATA_ENTRY_ID("Logdata/LogEntryIdTakeoff");
+const QLatin1String LOGDATA_TAKEOFF_LANDING_DISTANCE("Logdata/TakeoffLandingDistance");
 
 /* Options dialog */
 const QLatin1String OPTIONS_DIALOG_WIDGET("OptionsDialog/Widget");
