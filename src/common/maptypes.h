@@ -1079,7 +1079,7 @@ struct MapLogbookEntry
           destinationName, destinationIdent, destinationRunway,
           description, simulator, aircraftType,
           aircraftRegistration, routeString, routeFile, performanceFile;
-  float distanceNm, distanceGcNm, travelTimeRealHours, travelTimeSimHours;
+  float distanceNm, distanceFlownNm, distanceGcNm, travelTimeRealHours, travelTimeSimHours;
   atools::geo::Pos departurePos, destinationPos;
 
   map::MapAirport departure, destination;

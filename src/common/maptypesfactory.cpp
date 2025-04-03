@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2024 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2025 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -352,6 +352,7 @@ void MapTypesFactory::fillLogbookEntry(const atools::sql::SqlRecord& rec, MapLog
   obj.aircraftRegistration = rec.valueStr("aircraft_registration");
   obj.simulator = rec.valueStr("simulator");
   obj.distanceNm = rec.valueFloat("distance");
+  obj.distanceFlownNm = rec.valueFloat("distance_flown", 0.f);
   obj.distanceGcNm = atools::geo::meterToNm(obj.lineString().lengthMeter());
 
   if(!rec.isNull("departure_time") && !rec.isNull("destination_time"))

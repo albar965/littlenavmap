@@ -438,25 +438,31 @@ void SearchController::searchSelectionChanged(const SearchBaseTable *source, int
     map::MapResult result;
     source->getSelectedMapObjects(result);
 
-    float travelTimeRealHours = 0.f, travelTimeSimHours = 0.f, distanceNm = 0.f;
+    float travelTimeRealHours = 0.f, travelTimeSimHours = 0.f, distanceNm = 0.f, distanceFlownNm = 0.f;
     for(const map::MapLogbookEntry& entry : qAsConst(result.logbookEntries))
     {
       travelTimeRealHours += entry.travelTimeRealHours;
       travelTimeSimHours += entry.travelTimeSimHours;
       distanceNm += entry.distanceNm;
+      distanceFlownNm += entry.distanceFlownNm;
     }
 
     QStringList logInformation;
     if(travelTimeRealHours > 1.f / 60.f)
-      logInformation.append(tr("Real time %1").arg(formatter::formatMinutesHoursLong(travelTimeRealHours)));
+      logInformation.append(tr("real %1").arg(formatter::formatMinutesHoursLong(travelTimeRealHours)));
+
     if(travelTimeSimHours > 1.f / 60.f)
-      logInformation.append(tr("Sim. time %1").arg(formatter::formatMinutesHoursLong(travelTimeSimHours)));
+      logInformation.append(tr("sim. %1").arg(formatter::formatMinutesHoursLong(travelTimeSimHours)));
+
     if(distanceNm > 0.f)
-      logInformation.append(tr("Dist. %1").arg(Unit::distNm(distanceNm)));
+      logInformation.append(tr("%1 plan").arg(Unit::distNm(distanceNm)));
+
+    if(distanceFlownNm > 0.f)
+      logInformation.append(tr("%1 flown").arg(Unit::distNm(distanceFlownNm)));
 
     QString logText;
     if(!logInformation.isEmpty())
-      logText = tr("\nTravel Totals: %1.").arg(logInformation.join(tr(". ")));
+      logText = tr("\nTotals: %1.").arg(atools::strJoin(logInformation, tr(", ")));
 
     ui->labelLogdata->setText(selectionLabelText.arg(selected).arg(total).arg(type).arg(visible).arg(logText));
   }
