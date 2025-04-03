@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2024 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2025 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -23,6 +23,8 @@
 #include "common/mapcolors.h"
 #include "common/unit.h"
 #include "export/csvexporter.h"
+#include "fs/userdata/logdatamanager.h"
+#include "fs/userdata/userdatamanager.h"
 #include "geo/calculations.h"
 #include "gui/actiontool.h"
 #include "gui/dialog.h"
@@ -1070,6 +1072,7 @@ void SearchBaseTable::contextMenu(const QPoint& pos)
   map::MapResult result, msaResult;
   int routeIndex = -1;
   const Route& route = NavApp::getRouteConst();
+  LogdataController *logdataController = NavApp::getLogdataController();
 
   if(index.isValid())
   {
@@ -1103,8 +1106,8 @@ void SearchBaseTable::contextMenu(const QPoint& pos)
     else if(mapObjType == map::LOGBOOK)
     {
       // Prepare airport for menu items in logbook
-      logEntry = NavApp::getLogdataController()->getLogEntryById(id);
-      logRecord = NavApp::getLogdataController()->getLogEntryRecordById(id);
+      logEntry = logdataController->getLogEntryById(id);
+      logRecord = logdataController->getLogEntryRecordById(id);
 
       QString name = columnDescriptor->getColumnName();
       QList<map::MapAirport> airports;
@@ -1350,7 +1353,7 @@ void SearchBaseTable::contextMenu(const QPoint& pos)
     }
 
     // Logbook open or save attached files sub menu =====================================
-    bool hasRoute = NavApp::getLogdataController()->hasRouteAttached(logEntry.id);
+    bool hasRoute = logdataController->hasRouteAttached(logEntry.id);
     ui->actionSearchLogdataOpenPlan->setEnabled(hasRoute);
     ui->actionSearchLogdataSavePlanAs->setEnabled(hasRoute);
 
@@ -1360,7 +1363,7 @@ void SearchBaseTable::contextMenu(const QPoint& pos)
       ui->actionSearchLogdataSavePlanAs->setText(ui->actionSearchLogdataSavePlanAs->text() + tr(" (no attachment)"));
     }
 
-    bool perf = NavApp::getLogdataController()->hasPerfAttached(logEntry.id);
+    bool perf = logdataController->hasPerfAttached(logEntry.id);
     ui->actionSearchLogdataOpenPerf->setEnabled(perf);
     ui->actionSearchLogdataSavePerfAs->setEnabled(perf);
 
@@ -1370,7 +1373,7 @@ void SearchBaseTable::contextMenu(const QPoint& pos)
       ui->actionSearchLogdataSavePerfAs->setText(ui->actionSearchLogdataSavePerfAs->text() + tr(" (no attachment)"));
     }
 
-    bool gpx = NavApp::getLogdataController()->hasTrackAttached(logEntry.id);
+    bool gpx = logdataController->hasTrackAttached(logEntry.id);
     ui->actionSearchLogdataSaveGpxAs->setEnabled(gpx);
     if(!gpx)
       ui->actionSearchLogdataSaveGpxAs->setText(ui->actionSearchLogdataSaveGpxAs->text() + tr(" (no attachment)"));
@@ -1452,13 +1455,19 @@ void SearchBaseTable::contextMenu(const QPoint& pos)
       ui->actionUserdataDelete->setText(tr("&Delete Userpoint %1").arg(objectText));
     }
 
+    ui->actionUserdataEdit->setDisabled(selectedRows == 0);
+    ui->actionUserdataDelete->setDisabled(selectedRows == 0);
+
     menu.addAction(ui->actionUserdataAdd);
     menu.addAction(ui->actionUserdataEdit);
     menu.addAction(ui->actionUserdataDelete);
     menu.addSeparator();
 
+    ui->actionUserdataCleanup->setEnabled(NavApp::getUserdataManager()->hasData());
     menu.addAction(ui->actionUserdataCleanup);
     menu.addSeparator();
+
+    ui->actionSearchShowAll->setEnabled(NavApp::getUserdataManager()->hasData());
   } // if(tabIndex == si::SEARCH_USER)
 
   if(atools::contains(tabIndex, {si::SEARCH_AIRPORT}))
@@ -1517,12 +1526,15 @@ void SearchBaseTable::contextMenu(const QPoint& pos)
 
   if(tabIndex == si::SEARCH_LOG)
   {
+    ui->actionLogdataEdit->setDisabled(selectedRows == 0);
+    ui->actionLogdataDelete->setDisabled(selectedRows == 0);
+
     menu.addAction(ui->actionLogdataAdd);
     menu.addAction(ui->actionLogdataEdit);
     menu.addAction(ui->actionLogdataDelete);
-    menu.addAction(ui->actionLogdataDelete);
     menu.addSeparator();
 
+    ui->actionLogdataCleanup->setEnabled(NavApp::getLogdataManager()->hasData());
     menu.addAction(ui->actionLogdataCleanup);
     menu.addSeparator();
 
@@ -1553,6 +1565,7 @@ void SearchBaseTable::contextMenu(const QPoint& pos)
     filesSub->addAction(ui->actionSearchLogdataSaveGpxAs);
     menu.addSeparator();
 
+    ui->actionSearchShowAll->setEnabled(NavApp::getLogdataManager()->hasData());
   } // if(tabIndex == si::SEARCH_LOG)
 
   if(atools::contains(tabIndex, {si::SEARCH_AIRPORT, si::SEARCH_NAV, si::SEARCH_USER, si::SEARCH_LOG, si::SEARCH_ONLINE_CENTER,
@@ -1693,15 +1706,15 @@ void SearchBaseTable::contextMenu(const QPoint& pos)
       emit loadPerfFile(logEntry.performanceFile);
     // Logbook actions are not connected to anything - execute here =========
     else if(action == ui->actionSearchLogdataOpenPlan)
-      NavApp::getLogdataController()->planOpen(&logRecord, mainWindow);
+      logdataController->planOpen(&logRecord, mainWindow);
     else if(action == ui->actionSearchLogdataSavePlanAs)
-      NavApp::getLogdataController()->planSaveAs(&logRecord, mainWindow);
+      logdataController->planSaveAs(&logRecord, mainWindow);
     else if(action == ui->actionSearchLogdataOpenPerf)
-      NavApp::getLogdataController()->perfOpen(&logRecord, mainWindow);
+      logdataController->perfOpen(&logRecord, mainWindow);
     else if(action == ui->actionSearchLogdataSavePerfAs)
-      NavApp::getLogdataController()->perfSaveAs(&logRecord, mainWindow);
+      logdataController->perfSaveAs(&logRecord, mainWindow);
     else if(action == ui->actionSearchLogdataSaveGpxAs)
-      NavApp::getLogdataController()->gpxSaveAs(&logRecord, mainWindow);
+      logdataController->gpxSaveAs(&logRecord, mainWindow);
 
     // Other actions are connected
   }
