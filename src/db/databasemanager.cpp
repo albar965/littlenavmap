@@ -1090,10 +1090,17 @@ void DatabaseManager::openAllDatabases()
   QString navAirspaceDbFile = navDbFile;
 
   if(navDatabaseStatus == navdb::ALL)
+  {
     simDbFile = navDbFile;
+    qDebug() << Q_FUNC_INFO << "Using database mode navdb::ALL";
+  }
   else if(navDatabaseStatus == navdb::OFF)
+  {
     navDbFile = simDbFile;
-  // else if(usingNavDatabase == MIXED)
+    qDebug() << Q_FUNC_INFO << "Using database mode navdb::OFF";
+  }
+  else if(navDatabaseStatus == navdb::MIXED)
+    qDebug() << Q_FUNC_INFO << "Using database mode navdb::MIXED";
 
   dbtools::openDatabaseFile(databaseSim, simDbFile, true /* readonly */, true /* createSchema */);
   dbtools::openDatabaseFile(databaseNav, navDbFile, true /* readonly */, true /* createSchema */);
