@@ -7878,7 +7878,7 @@ This is the default behavior but can cause issues when using certain web interfa
 Uncheck if you use such an add-on or see issues like a corruped map display.</string>
                  </property>
                  <property name="text">
-                  <string>&amp;Scale delivered images accoring to system user interface scale level (125%, 150%, etc.)</string>
+                  <string>&amp;Scale delivered images according to system user interface scale level (125%, 150%, etc.)</string>
                  </property>
                  <property name="checked">
                   <bool>true</bool>

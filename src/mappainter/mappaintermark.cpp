@@ -976,7 +976,7 @@ void MapPainterMark::paintEnduranceRing(float enduranceHours, float enduranceNm,
 
       QStringList texts;
 
-      texts.append(Unit::distNm(enduranceNm, true, 5, true) + (critical ? QString() : tr(" (RSV)")));
+      texts.append(Unit::distNm(enduranceNm, true, 5, true) + (critical ? QString() : tr(" (RSV)", "Acronym for reserve on the map")));
 
       if(enduranceHours < map::INVALID_TIME_VALUE)
         texts.append(formatter::formatMinutesHoursLong(enduranceHours));
