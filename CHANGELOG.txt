@@ -4,16 +4,64 @@ This text is partially Markdown, so the formatting is sometimes strange.
 
 ==>>=============================================================================
 
-# Version 3.0.15.rc1
+# Version 3.0.17
 
 ## Notes
 
-**This is a stable release of Little Navmap which fixes issues with AI display in MSFS 2020 and MSFS 2024. In addition, issues with in-game panels in MSFS that use the Little Navmap web server have been fixed.**
+**This is a stable release of Little Navmap that fixes several small issues.**
 
-**macOS users: Keep in mind that you have to clear the quarantine flag when updating Little Xpconnect. See
-[Clearing the Quarantine Flag on macOS](https://www.littlenavmap.org/manuals/littlenavmap/release/latest/en/XPCONNECT.html#clearing-the-quarantine-flag-on-macos).**
+**macOS users:** Keep in mind that you have to clear the quarantine flag when updating Little Xpconnect.
+See [Clearing the Quarantine Flag on macOS](https://www.littlenavmap.org/manuals/littlenavmap/release/latest/en/XPCONNECT.html#clearing-the-quarantine-flag-on-macos).
 
-A big thank you to everyone who reported bugs and issues!
+Thanks to everyone who reported issues!
+
+## Changes from 3.0.16 to 3.0.17
+
+* Fixed an issue where all VORTACs were loaded as TACAN in MSFS 2020, resulting in incorrect
+  bearings and type display.
+* Now omitting the channel for VOR, VORDME, and DME for all MSFS simulators. The channel applies
+  only to VORTAC and TACAN.
+* Fixed the issue with double runways when using the Navigraph navdata update in MSFS 2020.
+  Example: The add-on for FHSH (no stock airport available) `kychungdotcom-airport-fhsh-sthelena`
+  showed duplicate runways.
+* Cleaned up error handling for the scenery library loader to allow loading to continue after an
+  error in XML or JSON files.
+* Fixed the issue where a broken CSV import resulted in errors for further imports of userpoints or
+  logbook entries.
+* More filtering has been implemented to eliminate incorrect MSFS aircraft indications before
+  starting a flight in the simulator. The incorrect aircraft resulted in an aircraft trail crossing
+  all over the world, causing display issues and crashes.
+* Saving flown distance is now maintained between restarts. This avoids a zero flown distance in
+  logbook entries.
+* Now properly disabling context menu items in the logbook and user data search to avoid crashes.
+* Added flown distance alongside flight plan distance to the bottom summary line in the logbook.
+* Added an option to scale aircraft icons separately for web pages on high-resolution displays.
+  This can be changed in the options on the `Web Server` page.
+* Disabled the compass rose and other features on the `Dynamic Touch and Drag` web map.
+* The compass rose, endurance, altitude range, and turn path are disabled to avoid a cluttered
+  display when using the `Dynamic Touch and Drag` web map.
+* Added a red extra range ring for zero fuel range. While the black dotted range ring shows the
+  range with reserves, the red range ring shows the range without fuel.
+* Clearing the procedure preview now occurs when adding a procedure from the map context menu. This
+  is now consistent with the behavior when adding a procedure from the search tab.
+* Improved circle drawing for range rings to avoid edges.
+* Changes in command line handling: Opening flight plans using `-f` from the command line now
+  leaves plans in an unchanged state to avoid question dialogs and ease automation. Passing a
+  filename without an option might still change a plan on loading to adjust cruise and leave it
+  changed.
+* Plans created  from descriptions from the command line are not temporary and will be cleared on
+  restart. Save the  plan manually to avoid this.
+* Fixed issues where a changed flight plan was erased when loading from the command line or by
+  double-clicking on the plan file.
+* Enabled a warning when loading a plan with the wrong cruise altitude from a logbook entry.
+* Fixed the blurry map issue when jumping back to the user aircraft after user interaction.
+* Fixed issue where the map center was shifted with airspaces enabled. This placed the compass
+  rose out of center at the right corner of the map.
+* Added two options to disable distance and bearing display on top of the map tooltip. Change
+  these in the options on the `Map Tooltips and Clicks` page.
+* Attempt to fix crashes with long aircraft trails.
+
+==<<=============================================================================
 
 # Version 3.0.16
 
@@ -88,7 +136,7 @@ A big thank you to everyone who reported bugs and issues!
 * Updated German translation.
 * Updated Italian translation by Flavio.
 
-==<<=============================================================================
+=================================================================================
 
 # Version 3.0.15.rc1
 
@@ -123,7 +171,7 @@ A big thank you to everyone who reported bugs and issues!
   and
   [Little NavMap EFB Client](https://flightsim.to/file/85446/little-navmap-efb-client) (MSFS 2024)
   all now work correctly when using a scaled or a non-scaled user interface.
-* Added setting `Scale delivered images accoring to system user interface scale level` in options
+* Added setting `Scale delivered images according to system user interface scale level` in options
   on page `Web Server`. Note that this applies only to add-ons using the Little Navmap WebAPI. This
   will deliver map images scaled according to the user interface scale level if checked and if you use
   the web server with high resolution monitors. This is the default behavior but can cause issues
@@ -306,7 +354,7 @@ to be fixed by the developers of the MSFS online flight planner. #1234
 * Display of marker beacons now disabled if ILS or airports are not shown.
 * Fixed missing circles for online towers and centers not having a matching geometry in the user
   airspace database. This also disabled the tooltips on the map.
-* Corrected online center size settings in options on page 'Map Online`. *Little Navmap* now falls
+* Corrected online center size settings in options on page `Map Online`. *Little Navmap* now falls
   back to user defined value if an online center does not provide a visual range value. Fixed values
   reset back to default when applying options.
 * Fixed several issues in X-Plane database when assigning airports to procedures. As a result
