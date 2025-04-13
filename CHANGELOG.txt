@@ -60,6 +60,7 @@ Thanks to everyone who reported issues!
 * Added two options to disable distance and bearing display on top of the map tooltip. Change
   these in the options on the `Map Tooltips and Clicks` page.
 * Attempt to fix crashes with long aircraft trails.
+* Updated user manual for changes in command line and endurance.
 
 ==<<=============================================================================
 
