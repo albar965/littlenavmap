@@ -2,18 +2,18 @@
 
 <!-- VERSION_NUMBER_TODO -->
 
-[**► Windows 64-bit Installer \(*MSFS 2020, MSFS 2024 and X-Plane*\)** - LittleNavmap-win64-3.0.16-Install.exe](https://github.com/albar965/littlenavmap/releases/download/v3.0.16/LittleNavmap-win64-3.0.16-Install.exe)<br/>
-[**► macOS** - LittleNavmap-macOS-3.0.16.zip](https://github.com/albar965/littlenavmap/releases/download/v3.0.16/LittleNavmap-macOS-3.0.16.zip)<br/>
-[**► Linux \(64 bit, based on Ubuntu 22.04\)** - LittleNavmap-linux-ubuntu-22.04-3.0.16.tar.xz](https://github.com/albar965/littlenavmap/releases/download/v3.0.16/LittleNavmap-linux-ubuntu-22.04-3.0.16.tar.xz)<br/>
-[**► Linux Debian Installation Package \(64 bit, based on Ubuntu 22.04\)** - LittleNavmap-linux-ubuntu-22.04-3.0.16-1_amd64.deb](https://github.com/albar965/littlenavmap/releases/download/v3.0.16/LittleNavmap-linux-ubuntu-22.04-3.0.16-1_amd64.deb)
+[**► Windows 64-bit Installer \(*MSFS 2020, MSFS 2024 and X-Plane*\)** - LittleNavmap-win64-3.0.17-Install.exe](https://github.com/albar965/littlenavmap/releases/download/v3.0.17/LittleNavmap-win64-3.0.17-Install.exe)<br/>
+[**► macOS** - LittleNavmap-macOS-3.0.17.zip](https://github.com/albar965/littlenavmap/releases/download/v3.0.17/LittleNavmap-macOS-3.0.17.zip)<br/>
+[**► Linux \(64 bit, based on Ubuntu 22.04\)** - LittleNavmap-linux-ubuntu-22.04-3.0.17.tar.xz](https://github.com/albar965/littlenavmap/releases/download/v3.0.17/LittleNavmap-linux-ubuntu-22.04-3.0.17.tar.xz)<br/>
+[**► Linux Debian Installation Package \(64 bit, based on Ubuntu 22.04\)** - LittleNavmap-linux-ubuntu-22.04-3.0.17-1_amd64.deb](https://github.com/albar965/littlenavmap/releases/download/v3.0.17/LittleNavmap-linux-ubuntu-22.04-3.0.17-1_amd64.deb)
 
 **Other Versions:**
 
-[► Windows 32-bit Installer \(*only for FSX and P3D*\) - LittleNavmap-win32-3.0.16-Install.exe](https://github.com/albar965/littlenavmap/releases/download/v3.0.16/LittleNavmap-win32-3.0.16-Install.exe)<br/>
-[► Linux \(64 bit, based on Ubuntu 20.04 for Debian or older systems\) - LittleNavmap-linux-ubuntu-20.04-3.0.16.tar.xz](https://github.com/albar965/littlenavmap/releases/download/v3.0.16/LittleNavmap-linux-ubuntu-20.04-3.0.16.tar.xz)<br/>
-[► Linux Debian Installation Package \(64 bit, based on Ubuntu 20.04\) - LittleNavmap-linux-ubuntu-20.04-3.0.16-1_amd64.deb](https://github.com/albar965/littlenavmap/releases/download/v3.0.16/LittleNavmap-linux-ubuntu-20.04-3.0.16-1_amd64.deb)
+[► Windows 32-bit Installer \(*only for FSX and P3D*\) - LittleNavmap-win32-3.0.17-Install.exe](https://github.com/albar965/littlenavmap/releases/download/v3.0.17/LittleNavmap-win32-3.0.17-Install.exe)<br/>
+[► Linux \(64 bit, based on Ubuntu 20.04 for Debian or older systems\) - LittleNavmap-linux-ubuntu-20.04-3.0.17.tar.xz](https://github.com/albar965/littlenavmap/releases/download/v3.0.17/LittleNavmap-linux-ubuntu-20.04-3.0.17.tar.xz)<br/>
+[► Linux Debian Installation Package \(64 bit, based on Ubuntu 20.04\) - LittleNavmap-linux-ubuntu-20.04-3.0.17-1_amd64.deb](https://github.com/albar965/littlenavmap/releases/download/v3.0.17/LittleNavmap-linux-ubuntu-20.04-3.0.17-1_amd64.deb)
 
-Zipped Windows releases without installer are available in the alternative download locations below or from the release assets at [GitHub - Little Navmap Releases - Version 3.0.16](https://github.com/albar965/littlenavmap/releases/v3.0.16) \(scroll down to `Assets`\).
+Zipped Windows releases without installer are available in the alternative download locations below or from the release assets at [GitHub - Little Navmap Releases - Version 3.0.17](https://github.com/albar965/littlenavmap/releases/v3.0.17) \(scroll down to `Assets`\).
 
 **[► Alternative Download Locations](https://albar965.github.io/downloads.html).** Look into sub-folders for beta, development or release candidates.
 
