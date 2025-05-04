@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2020 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2024 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -18,6 +18,7 @@
 #include "query/waypointtrackquery.h"
 
 #include "common/maptools.h"
+#include "geo/marbleconverter.h"
 #include "query/waypointquery.h"
 #include "mapgui/maplayer.h"
 
@@ -28,10 +29,6 @@ using map::MapWaypoint;
 
 WaypointTrackQuery::WaypointTrackQuery(WaypointQuery *waypointQueryParam, WaypointQuery *trackQueryParam)
   : waypointQuery(waypointQueryParam), trackQuery(trackQueryParam)
-{
-}
-
-WaypointTrackQuery::~WaypointTrackQuery()
 {
 }
 
@@ -59,13 +56,14 @@ MapWaypoint WaypointTrackQuery::getWaypointByNavId(int navId, map::MapType type)
   return waypoint;
 }
 
-void WaypointTrackQuery::getWaypointByIdent(QList<map::MapWaypoint>& waypoints, const QString& ident, const QString& region)
+void WaypointTrackQuery::getWaypointByIdent(QList<map::MapWaypoint>& waypoints, const QString& ident, const QString& region,
+                                            const QString& airport)
 {
   if(useTracks)
-    trackQuery->getWaypointByByIdent(waypoints, ident, region);
+    trackQuery->getWaypointByByIdent(waypoints, ident, region, airport);
 
   QList<map::MapWaypoint> navWaypoints;
-  waypointQuery->getWaypointByByIdent(navWaypoints, ident, region);
+  waypointQuery->getWaypointByByIdent(navWaypoints, ident, region, airport);
   copy(navWaypoints, waypoints);
 }
 
@@ -150,10 +148,8 @@ void WaypointTrackQuery::getWaypointsAirway(QList<map::MapWaypoint>& waypoints, 
 const QList<map::MapWaypoint> WaypointTrackQuery::getWaypointsByRect(const atools::geo::Rect& rect, const MapLayer *mapLayer,
                                                                      bool lazy, bool& overflow)
 {
-  const GeoDataLatLonBox latLonBox = GeoDataLatLonBox(rect.getNorth(), rect.getSouth(), rect.getEast(),
-                                                      rect.getWest(), GeoDataCoordinates::Degree);
   QList<map::MapWaypoint> waypoints = QList<map::MapWaypoint>();
-  getWaypoints(waypoints, latLonBox, mapLayer, lazy, overflow);
+  getWaypoints(waypoints, mconvert::toGdc(rect), mapLayer, lazy, overflow);
   return waypoints;
 }
 
@@ -186,8 +182,8 @@ void WaypointTrackQuery::clearCache()
 
 void WaypointTrackQuery::deleteChildren()
 {
-  ATOOLS_DELETE(trackQuery);
-  ATOOLS_DELETE(waypointQuery);
+  ATOOLS_DELETE_LOG(trackQuery);
+  ATOOLS_DELETE_LOG(waypointQuery);
 }
 
 SqlQuery *WaypointTrackQuery::getWaypointsByRectQuery() const

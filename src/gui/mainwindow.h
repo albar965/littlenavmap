@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2023 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2025 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -57,7 +57,14 @@ class ElevationModel;
 }
 
 namespace atools {
+
+namespace util {
+class Properties;
+}
 namespace fs {
+namespace sc {
+class SimConnectUserAircraft;
+}
 namespace pln {
 class Flightplan;
 }
@@ -73,6 +80,7 @@ namespace gui {
 class Dialog;
 class ErrorHandler;
 class HelpHandler;
+class DesktopServices;
 class FileHistoryHandler;
 class DockWidgetHandler;
 }
@@ -148,21 +156,26 @@ public:
   }
 
   /* Update the window title after switching simulators, flight plan name or change status. */
+  /* Updates main window title with simulator type, flight plan name and change status */
   void updateWindowTitle();
 
   /* Update tooltip state in recent menus */
   void setToolTipsEnabledMainMenu(bool enabled);
 
   /* Update coordinate display in status bar */
-  void updateMapPosLabel(const atools::geo::Pos& pos, int x, int y);
+  void updateMapPosLabel(const atools::geo::Pos& pos, int screenX, int screenY);
 
   /* Sets the text and tooltip of the statusbar label that indicates what objects are shown on the map */
+  /* Updates label and tooltip for objects shown on map */
   void setMapObjectsShownMessageText(const QString& text = QString(), const QString& tooltipText = QString());
+
+  /* Updates label and tooltip for connection status */
   void setConnectionStatusMessageText(const QString& text, const QString& tooltipText);
   void setOnlineConnectionStatusMessageText(const QString& text, const QString& tooltipText);
 
   /* Sets a general status bar message which is shared with all widgets/actions status text */
-  void setStatusMessage(const QString& message, bool addToLog = false);
+  /* Set a general status message */
+  void setStatusMessage(const QString& message, bool addToLog = false, bool popup = false);
   void statusMessageChanged(const QString& text);
 
   void setDetailLabelText(const QString& text);
@@ -177,6 +190,7 @@ public:
   void renderStatusUpdateLabel(Marble::RenderStatus status, bool forceUpdate);
 
   /* Show "Too many objects" label if number of map features was truncated */
+  /* Called after each query */
   void resultTruncated();
 
   void setDatabaseErased(bool value)
@@ -189,7 +203,10 @@ public:
     return searchController;
   }
 
+  /* Enable or disable actions */
   void updateMarkActionStates();
+
+  /* Enable or disable actions */
   void updateHighlightActionStates();
 
   const InfoController *getInfoController() const
@@ -203,16 +220,17 @@ public:
   }
 
   /* Show and raise windows after loading or creating new files */
-  void showFlightPlan();
+  void showFlightplan();
   void showAircraftPerformance();
   void showLogbookSearch();
   void showUserpointSearch();
 
   /* create a new flightplan from passed airports */
-  void routeNewFromAirports(map::MapAirport departure, map::MapAirport destination);
+  /* called from AirportSearch (random flight generator) */
+  void routeNewFromAirports(const map::MapAirport& departure, const map::MapAirport& destination);
 
   /* Load a flight plan in LNMPLN format from a string */
-  void routeOpenFileLnmStr(const QString& string);
+  void routeOpenFileLnmLogdataStr(const QString& string);
 
   /* Open file dialog for saving a LNMPLN flight plan. Filename will be built if empty. */
   QString routeSaveFileDialogLnm(const QString& filename = QString());
@@ -226,6 +244,7 @@ public:
   /* Load or append trail from GPX file */
   void trailLoadGpx();
   void trailAppendGpx();
+  void warnTrailPoints(int numTruncated, bool doNotShowAgain);
 
   /* true if map window is maximized */
   bool isFullScreen() const;
@@ -237,7 +256,13 @@ public:
   void routeFromStringSimBrief(const QString& routeString);
 
   /* Called from SimBrief handler or non-modal route string dialog to create new plan */
-  void routeFromFlightplan(const atools::fs::pln::Flightplan& flightplan, bool adjustAltitude, bool changed, bool undo);
+  void routeFromFlightplan(const atools::fs::pln::Flightplan& flightplan, bool adjustAltitude, bool changed, bool undo,
+                           bool correctProfile);
+
+  /* Ask user if flight plan can be deleted or overwritten by loading a new one.
+   * Might call routeSaveAsLnm() or routeSaveLnm() depending on user selection.
+   * @return true continue with new flight plan, exit, etc. */
+  bool routeCheckForChanges();
 
   MapThemeHandler *getMapThemeHandler() const
   {
@@ -245,13 +270,14 @@ public:
   }
 
   /* Clear route */
+  /* Called from menu or toolbar by action */
   void routeNew();
 
   /* Question dialog and then delete map and profile trail */
   void deleteAircraftTrail(bool quiet);
 
   /* Silently deletes track on takeoff */
-  void deleteProfileAircraftTrail();
+  void deleteProfileAircraftTrailPoints();
 
   atools::gui::DockWidgetHandler *getDockHandler() const
   {
@@ -274,6 +300,12 @@ public:
   /* Called by QApplication::fontChanged() */
   void fontChanged(const QFont& font);
 
+  /* Start installation for Little Xpconnect */
+  void installXpconnect();
+
+  /* If enabled an aircraft can be moved around the map using Ctr+Shift+Movement, Ctr+Shift+Whell changes altitude */
+  bool isDebugMovingAircraft() const;
+
 signals:
   /* Emitted when window is shown the first time */
   void windowShown();
@@ -287,7 +319,12 @@ private:
   virtual void dragEnterEvent(QDragEnterEvent *event) override;
   virtual void dropEvent(QDropEvent *event) override;
 
+  /* Shutdown all services after close with following application exit */
+  void deInit();
+
   void connectAllSlots();
+
+  /* Called by window shown event when the main window is visible the first time */
   void mainWindowShown();
   void mainWindowShownDelayed();
 
@@ -296,12 +333,16 @@ private:
   void hideTitleBar();
   void allowDockingWindows();
   void allowMovingWindows();
+  void windowFrameDocking();
 
   /* Signal from action */
   void stayOnTop();
 
   /* Map dock widget floating state changed */
   void mapDockTopLevelChanged(bool topLevel);
+
+  /* Map dock visible or not. Adjust window frame. */
+  void mapDockVisibilityChanged(bool visible);
 
   /* Called by action */
   void fullScreenMapToggle();
@@ -310,14 +351,22 @@ private:
   void fullScreenOn();
   void fullScreenOff();
 
+  /* Write settings for all windows, docks, controller and manager classes */
   void saveStateMain();
   void saveActionStates();
   void saveMainWindowStates();
   void saveFileHistoryStates();
 
+  /* Read settings for all windows, docks, controller and manager classes */
   void restoreStateMain();
+
+  /* Enable or disable actions */
   void updateActionStates();
 
+  /* Show warning if scenery library does not match connection type after fetching first valid user aircraft */
+  void checkSceneryLibrary(const atools::fs::sc::SimConnectUserAircraft& userAircraft);
+
+  /* Enable or disable actions related to online networks */
   void updateOnlineActionStates();
 
   void runDirToolManual();
@@ -331,11 +380,23 @@ private:
 
   void updateStatusBarStyle();
 
+  /* Call other other classes to close queries and clear caches */
   void preDatabaseLoad();
+
+  /* Call other other classes to reopen queries */
   void postDatabaseLoad(atools::fs::FsPaths::SimulatorType type);
 
+  /* Clear and reinit database queries and cache */
+  void preDatabaseLoadAirspaces();
+  void postDatabaseLoadAirspaces();
+
+  /* Oceanic tracks have changed */
+  void postTrackLoad();
+
+  /* Map history has changed */
   void updateMapHistoryActions(int minIndex, int curIndex, int maxIndex);
 
+  /* A button like airport, vor, ndb, etc. was pressed - update the map */
   void updateMapObjectsShown();
 
   /* Reset drawing settings */
@@ -349,35 +410,59 @@ private:
   void proceduresSelected(const QVector<proc::MapProcedureRef>& refs); /* Multi preview for all procedures */
   void proceduresSelectedInternal(const QVector<proc::MapProcedureRef>& refs, bool previewAll);
 
-  void routeSelectionChanged(int selected, int total);
+  /* Selection in flight plan table has changed */
+  void routeSelectionChanged(int, int);
 
   /* New flight plan from opening route string dialog using current plan for prefill */
   void routeFromStringCurrent();
 
+  /* Called from menu or toolbar by action */
   void routeOpen();
   void routeOpenFile(QString filepath);
+
+  /* Called from menu or toolbar by action - append flight plan to current one */
   void routeAppend();
   bool routeSaveSelection();
+
+  /* Called by route controller - insert flight plan into current one */
   void routeInsert(int insertBefore);
+
+  /* Called from menu or toolbar by action */
   void routeOpenRecent(const QString& routeFile);
-  void routeOpenDescr(const QString& routeString);
+
+  /* From other instance by shared memory */
+  void routeOpenDescrFromDataExchange(const QString& routeString);
+  void routeOpenFileFromDataExchange(const QString& filepath);
 
   /* Flight plan save functions */
+  /* Called from menu or toolbar by action */
   bool routeSaveLnm();
   bool routeSaveAsLnm();
 
+  /* Route center action */
   void routeCenter();
-  bool routeCheckForChanges();
+
+  /* Show airport search with random calc enabled */
+  void calculateRouteRandom();
 
   /* Reset all "do not show this again" message box status values */
   void resetMessages();
   void resetAllSettings();
 
-  /* Manual issue report triggered from the menu */
+  /* Save all and create an issue report */
   void createIssueReport();
+
+  /* Menu item */
   void showDatabaseFiles();
+
+  /* Menu item */
   void showShowMapCache();
+
+  /* Menu item */
   void showMapInstallation();
+
+  /* Menu item */
+  void showGlobeInstallation();
 
   /* Save map as images */
   void mapSaveImage();
@@ -385,33 +470,38 @@ private:
   void mapCopyToClipboard();
 
   /* Opens dialog for image resolution and returns pixmap and optionally AviTab JSON */
-  bool createMapImage(QPixmap& pixmap, const QString& dialogTitle, const QString& optionPrefx, QString *json = nullptr);
+  bool createMapImage(QPixmap& pixmap, const QString& dialogTitle, const QString& optionPrefx, QString *json, bool dynamicFeatures);
 
   void distanceChanged();
   void showDonationPage();
+  void showManualDownloadPage();
   void showFaqPage();
 
   /* Loading of KML files */
+  /* Called from menu or toolbar by action */
   void kmlOpenRecent(const QString& kmlFile);
+
+  /* Called from menu or toolbar by action */
   void kmlOpen();
+
+  /* Called from menu or toolbar by action. Remove all KML from map */
   void kmlClear();
 
   /* Loading and saving of window layout files */
   void layoutOpen();
   void layoutSaveAs();
+
+  /* Called from menu or toolbar by action */
   void layoutOpenRecent(const QString& layoutFile);
   void layoutOpenDrag(const QString& layoutFile); /* Open from drag and drop event */
   bool layoutOpenInternal(const QString& layoutFile);
   void loadLayoutDelayed(const QString& filename);
-
-  void legendAnchorClicked(const QUrl& url);
 
   void trailLoadGpxFile(const QString& file);
 
   void showOfflineHelp();
   void showOnlineDownloads();
   void showChangelog();
-  void showNavmapLegend();
   bool openInSkyVector();
   void clearProcedureCache();
 
@@ -420,12 +510,15 @@ private:
 
   /* Emit a signal windowShown after first appearance */
   virtual void showEvent(QShowEvent *event) override;
+
+  /* Update the info weather */
   void weatherUpdateTimeout();
   void updateAirspaceTypes(const map::MapAirspaceFilter& filter);
   void updateAirspaceSources();
   void resetWindowLayout();
   void resetTabLayout();
 
+  /* Check manually for updates as triggered by the action */
   void checkForUpdates();
   void updateClock() const;
 
@@ -440,9 +533,10 @@ private:
   void actionShortcutProfileTriggered();
   void actionShortcutAirportSearchTriggered();
   void actionShortcutNavaidSearchTriggered();
+  void actionShortcutProcedureSearchTriggered();
   void actionShortcutUserpointSearchTriggered();
   void actionShortcutLogbookSearchTriggered();
-  void actionShortcutFlightPlanTriggered();
+  void actionShortcutFlightplanTriggered();
   void actionShortcutCalcRouteTriggered();
   void actionShortcutAircraftPerformanceTriggered();
   void actionShortcutAirportInformationTriggered();
@@ -456,6 +550,7 @@ private:
   void openWebserver();
   void saveStateNow();
   void optionsChanged();
+  void updateXpconnectInstallOptions();
 
   /* Update API keys or tokens in GUI map widget and web API map widget */
   void updateMapKeys();
@@ -470,17 +565,20 @@ private:
   /* Reduce status bar size if no mouse movement */
   void shrinkStatusBar();
 
-#ifdef DEBUG_INFORMATION
-  void debugActionTriggered1();
-  void debugActionTriggered2();
-  void debugActionTriggered3();
-  void debugActionTriggered4();
-  void debugActionTriggered5();
-  void debugActionTriggered6();
-  void debugActionTriggered7();
-  void debugActionTriggered8();
+  /* Called by DataExchangeFetcher::dataExchangeDataFetched(). Takes command line options from another instance. */
+  void dataExchangeDataFetched(atools::util::Properties properties);
 
-#endif
+  void debugActionTriggeredDumpRoute();
+  void debugActionTriggeredDumpFlightplan();
+  void debugActionTriggeredForceUpdates();
+  void debugActionTriggeredReloadPlan();
+  void debugActionTriggeredPlanEdit();
+  void debugActionTriggeredPerfEdit();
+  void debugActionTriggeredDumpLayers();
+  void debugActionTriggeredResetUpdate();
+  void debugActionTriggeredThrowException();
+  void debugActionTriggeredSegfault();
+  void debugActionTriggeredAssert();
 
 #ifdef DEBUG_DUMP_SHORTCUTS
   void printShortcuts();
@@ -531,6 +629,7 @@ private:
   atools::gui::Dialog *dialog = nullptr;
   atools::gui::ErrorHandler *errorHandler = nullptr;
   atools::gui::HelpHandler *helpHandler = nullptr;
+  atools::gui::DesktopServices *desktopServices = nullptr;
   atools::gui::DockWidgetHandler *dockHandler = nullptr;
 
   /* Managment and controller classes */
@@ -570,6 +669,15 @@ private:
 
   /* Call debugDumpContainerSizes() every 30 seconds */
   QTimer debugDumpContainerSizesTimer;
+
+  bool deInitCalled = false; /* Avoid double call */
+
+  QAction *debugActionDumpRoute = nullptr, *debugActionDumpFlightplan = nullptr, *debugActionForceUpdates = nullptr,
+          *debugActionReloadPlan = nullptr, *debugActionPlanEdit = nullptr,
+          *debugActionPerfEdit = nullptr, *debugActionDumpLayers = nullptr, *debugActionResetUpdate = nullptr,
+          *debugActionThrowException = nullptr, *debugActionSegfault = nullptr,
+          *debugActionAssert = nullptr, *debugActionMoveAircraft = nullptr, *debugActionExportPlans = nullptr;
+
 };
 
 #endif // LITTLENAVMAP_MAINWINDOW_H

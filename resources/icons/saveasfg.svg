@@ -2,20 +2,20 @@
 <!-- Created with Inkscape (http://www.inkscape.org/) -->
 
 <svg
-   xmlns:dc="http://purl.org/dc/elements/1.1/"
-   xmlns:cc="http://creativecommons.org/ns#"
-   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
-   xmlns:svg="http://www.w3.org/2000/svg"
-   xmlns="http://www.w3.org/2000/svg"
-   xmlns:xlink="http://www.w3.org/1999/xlink"
-   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
-   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
    id="svg2704"
    height="24"
    width="24"
    version="1.0"
-   inkscape:version="0.92.5 (2060ec1f9f, 2020-04-08)"
-   sodipodi:docname="saveasfg.svg">
+   inkscape:version="1.2.2 (b0a8486541, 2022-12-01)"
+   sodipodi:docname="saveasfg.svg"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns:xlink="http://www.w3.org/1999/xlink"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:dc="http://purl.org/dc/elements/1.1/">
   <metadata
      id="metadata87">
     <rdf:RDF>
@@ -47,7 +47,10 @@
      inkscape:window-x="38"
      inkscape:window-y="24"
      inkscape:window-maximized="1"
-     inkscape:current-layer="svg2704" />
+     inkscape:current-layer="svg2704"
+     inkscape:showpageshadow="2"
+     inkscape:pagecheckerboard="0"
+     inkscape:deskcolor="#d1d1d1" />
   <defs
      id="defs2706">
     <linearGradient
@@ -655,18 +658,16 @@
      height="12.943802"
      x="4.5833254"
      y="10.175385" />
-  <text
-     xml:space="preserve"
-     style="font-style:normal;font-weight:normal;font-size:11.25004768px;line-height:125%;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;fill:#3a80bd;fill-opacity:1;stroke:none;stroke-width:0.89617676px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;"
-     x="15.538852"
-     y="18.876173"
+  <g
+     aria-label="F"
+     transform="scale(0.89617675,1.1158513)"
      id="text3303"
-     transform="scale(0.89617675,1.1158513)"><tspan
-       sodipodi:role="line"
-       id="tspan3305"
-       x="15.538852"
-       y="18.876173"
-       style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-family:sans-serif;-inkscape-font-specification:'sans-serif Bold';stroke-width:0.89617676px;fill:#3a80bd;fill-opacity:1;">F</tspan></text>
+     style="font-size:11.25px;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#3a80bd;stroke-width:0.896177px">
+    <path
+       d="m 18.227602,18.876173 h -1.67625 v -8.0325 h 4.60125 v 1.395 h -2.925 v 2.07 h 2.7225 v 1.395 h -2.7225 z"
+       style="font-weight:bold;-inkscape-font-specification:'sans-serif Bold'"
+       id="path359" />
+  </g>
   <g
      id="g1050"
      transform="matrix(0.94863631,0,0,0.88764195,0.51317045,1.2035835)"

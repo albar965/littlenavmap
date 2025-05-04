@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2023 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2024 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -16,9 +16,10 @@
 *****************************************************************************/
 
 #include "mapgui/aprongeometrycache.h"
-#include "fs/common/xpgeometry.h"
-#include "common/coordinateconverter.h"
+
 #include "common/maptypes.h"
+#include "fs/common/xpgeometry.h"
+#include "geo/coordinateconverter.h"
 
 #include <QPainterPath>
 
@@ -87,8 +88,7 @@ QPainterPath ApronGeometryCache::getApronGeometry(const map::MapApron& apron, fl
 
     // Calculate the coordinates of the reference point (first one) and move the whole path into required place for drawing
     bool visible;
-    QPointF refPoint = converter->wToSF(apron.geometry.boundary.constFirst().node,
-                                        CoordinateConverter::DEFAULT_WTOS_SIZE, &visible);
+    QPointF refPoint = converter->wToSF(apron.geometry.boundary.constFirst().node, CoordinateConverter::DEFAULT_WTOS_SIZE, &visible);
     boundaryPath.translate(refPoint.x(), refPoint.y());
 
     return boundaryPath;
@@ -109,8 +109,7 @@ QPainterPath ApronGeometryCache::getApronGeometry(const map::MapApron& apron, fl
 
     // Calculate reference point (first)
     bool visible;
-    QPointF refPoint = converter->wToSF(
-      apron.geometry.boundary.constFirst().node, CoordinateConverter::DEFAULT_WTOS_SIZE, &visible);
+    QPointF refPoint = converter->wToSF(apron.geometry.boundary.constFirst().node, CoordinateConverter::DEFAULT_WTOS_SIZE, &visible);
 
     // Create a copy for the cache
     painterPath = new QPainterPath(boundaryPath);

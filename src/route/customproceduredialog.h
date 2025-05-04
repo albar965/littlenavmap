@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2023 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2024 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -45,7 +45,8 @@ class CustomProcedureDialog :
   Q_OBJECT
 
 public:
-  explicit CustomProcedureDialog(QWidget *parent, const map::MapAirport& mapAirport, bool departureParam, const QString& dialogHeader);
+  explicit CustomProcedureDialog(QWidget *parent, const map::MapAirport& mapAirport, bool departureParam, const QString& dialogHeader,
+                                 int preselectRunwayEndSim);
   virtual ~CustomProcedureDialog() override;
 
   CustomProcedureDialog(const CustomProcedureDialog& other) = delete;
@@ -70,7 +71,7 @@ public:
 
 private:
   void restoreState();
-  void saveState();
+  void saveState() const;
 
   void buttonBoxClicked(QAbstractButton *button);
   void updateWidgets();

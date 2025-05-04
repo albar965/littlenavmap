@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2023 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2024 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -23,6 +23,7 @@
 #include <QCache>
 #include <QSet>
 
+class Queries;
 namespace Marble {
 class GeoDataLatLonBox;
 }
@@ -54,8 +55,8 @@ class CoordinateConverter;
 class MapTypesFactory;
 class MapLayer;
 
-/* Key for nearestCache combining all query parameters */
-class NearestCacheKeyAirport;
+/* Keys for nearestCache combining all query parameters */
+typedef std::tuple<atools::geo::Pos, QString, float> NearestCacheKeyPosIdentDist;
 
 /*
  * Provides map related database queries. Fill objects of the maptypes namespace and maintains a cache.
@@ -66,11 +67,6 @@ class NearestCacheKeyAirport;
 class AirportQuery
 {
 public:
-  /*
-   * @param sqlDb database for simulator scenery data
-   * @param sqlDbNav for updated navaids
-   */
-  AirportQuery(atools::sql::SqlDatabase *sqlDb, bool nav);
   ~AirportQuery();
 
   AirportQuery(const AirportQuery& other) = delete;
@@ -111,10 +107,10 @@ public:
                                             float maxDistanceMeter = map::INVALID_DISTANCE_VALUE,
                                             map::AirportQueryFlags flags = map::AP_QUERY_ALL);
 
-  /* Try to get airport by ident, icao or position as a fallback if pos is valid,
-   * Need to get ident, icao and pos as copies to avoid overwriting.
-   * Does not use cache. */
-  void getAirportFuzzy(map::MapAirport& airport, const map::MapAirport airportCopy);
+  /* Try to get airport by ident, icao, local or position as a fallback if pos is valid,
+   * Need to get ident, icao and pos as copies to avoid overwriting. Uses cache. */
+  const map::MapAirport getAirportFuzzy(const map::MapAirport& airport);
+  void getAirportFuzzy(map::MapAirport& airport, const map::MapAirport airportParam);
 
   /* Get display ident (ICAO, IATA, FAA or local) based on internal ident */
   QString getDisplayIdent(const QString& ident);
@@ -194,6 +190,9 @@ public:
    * Uses distance * 4 and searches again if nothing was found.*/
   const map::MapResultIndex *getNearestProcAirports(const atools::geo::Pos& pos, const QString& ident, float distanceNm);
 
+  /* Get index with parking and start positions */
+  const map::MapResultIndex *getNearestAirportObjects(const atools::geo::Pos& pos, float distanceNm);
+
   /* Get the best fitting runway end from the given list of runways according to heading.
    * Only the rearest airport is returned if no runway was found */
   void bestRunwayEndAndAirport(map::MapRunwayEnd& runwayEnd, map::MapAirport& airport, const map::MapResultIndex& runwayAirports,
@@ -205,12 +204,6 @@ public:
   map::MapRunwayEnd getOpposedRunwayEnd(int airportId, const map::MapRunwayEnd& runwayEnd);
   map::MapRunway getRunwayByEndId(int airportId, int runwayEndId);
 
-  /* Close all query objects thus disconnecting from the database */
-  void initQueries();
-
-  /* Create and prepare all queries */
-  void deInitQueries();
-
   /* Get copies of cached objects */
   QHash<int, QList<map::MapParking> > getParkingCache() const;
   QHash<int, QList<map::MapHelipad> > getHelipadCache() const;
@@ -219,7 +212,19 @@ public:
   static QStringList airportOverviewColumns(const atools::sql::SqlDatabase *db);
 
 private:
-  friend inline uint qHash(const NearestCacheKeyAirport& key);
+  friend Queries;
+
+  /*
+   * @param sqlDb database for simulator scenery data
+   * @param sqlDbNav for updated navaids
+   */
+  explicit AirportQuery(atools::sql::SqlDatabase *sqlDb, const Queries *queriesParam, bool nav);
+
+  /* Close all query objects thus disconnecting from the database */
+  void initQueries();
+
+  /* Create and prepare all queries */
+  void deInitQueries();
 
   const map::MapResultIndex *nearestProcAirportsInternal(const atools::geo::Pos& pos, const QString& ident, float distanceNm);
 
@@ -260,11 +265,16 @@ private:
 
   QCache<QString, map::MapAirport> airportIdentCache;
   QCache<int, map::MapAirport> airportIdCache, airportFuzzyIdCache;
-  QCache<NearestCacheKeyAirport, map::MapResultIndex> nearestAirportCache;
+
+  QCache<NearestCacheKeyPosIdentDist, map::MapResultIndex> nearestAirportObjectCache, nearestAirportProcCache;
+
   QSet<QString> airportsWithProceduresIdent, airportsWithProceduresIata;
 
   /* Available ident columns in airport table. Set to true if column exists and has not null values. */
   bool icaoCol = false, faaCol = false, iataCol = false, localCol = false;
+
+  /* Need access to "other" airport query (nav/sim) */
+  const Queries *queries;
 
   /* Database queries */
   atools::sql::SqlQuery *runwayOverviewQuery = nullptr, *apronQuery = nullptr,
@@ -274,8 +284,8 @@ private:
                         *parkingNameQuery = nullptr;
 
   atools::sql::SqlQuery *airportByIdentQuery = nullptr, *airportsByTruncatedIdentQuery = nullptr,
-                        *airportByOfficialQuery = nullptr, *airportByPosQuery = nullptr,
-                        *airportCoordsByIdentQuery = nullptr, *airportCoordsByIdentOrIcaoQuery = nullptr,
+                        *airportByOfficialQuery = nullptr, *airportByPosQuery = nullptr, *airportParkingQuery = nullptr,
+                        *airportStartQuery = nullptr, *airportCoordsByIdentQuery = nullptr, *airportCoordsByIdentOrIcaoQuery = nullptr,
                         *airportByRectAndProcQuery = nullptr, *runwayEndByIdQuery = nullptr, *runwayEndByNameQuery = nullptr,
                         *airportByIdQuery = nullptr, *airportAdminByIdQuery = nullptr, *airportProcByIdQuery = nullptr,
                         *procArrivalByAirportIdQuery = nullptr, *procDepartureByAirportIdQuery = nullptr;

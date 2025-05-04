@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>601</width>
-    <height>732</height>
+    <width>611</width>
+    <height>774</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -32,7 +32,7 @@
             <string>&amp;Simulator</string>
            </property>
            <property name="buddy">
-            <cstring>lineEditName</cstring>
+            <cstring>comboBoxSimulator</cstring>
            </property>
           </widget>
          </item>
@@ -61,9 +61,9 @@ A performance file can often be used for all simulators.</string>
             </property>
            </item>
            <item>
-           <property name="text">
+            <property name="text">
              <string notr="true">XP12</string>
-           </property>
+            </property>
            </item>
            <item>
             <property name="text">
@@ -450,7 +450,7 @@ captain or the dispatcher</string>
           <item row="9" column="1">
            <widget class="QSpinBox" name="spinBoxContingencyFuel">
             <property name="toolTip">
-             <string>This accounts for additional enroute fuel consumption
+             <string>This accounts for additional en-route fuel consumption
 caused by wind or routing changes.
 This will increase the trip fuel by the given percentage.</string>
             </property>
@@ -689,9 +689,6 @@ This will increase the trip fuel by the given percentage.</string>
             <property name="showGroupSeparator" stdset="0">
              <bool>true</bool>
             </property>
-            <property name="suffix">
-             <string> %vspeed% ▲</string>
-            </property>
             <property name="decimals">
              <number>0</number>
             </property>
@@ -917,9 +914,6 @@ This will increase the trip fuel by the given percentage.</string>
            <widget class="QDoubleSpinBox" name="doubleSpinBoxDescentVertSpeed">
             <property name="showGroupSeparator" stdset="0">
              <bool>true</bool>
-            </property>
-            <property name="suffix">
-             <string> %vspeed% ▼</string>
             </property>
             <property name="decimals">
              <number>0</number>

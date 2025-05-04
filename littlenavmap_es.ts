@@ -1037,7 +1037,7 @@ an alternate is not required</source>
     </message>
     <message>
         <location filename="src/perf/aircraftperfdialog.ui" line="443"/>
-        <source>This accounts for additional enroute fuel consumption
+        <source>This accounts for additional en-route fuel consumption
 caused by wind or routing changes.
 This will increase the trip fuel by the given percentage.</source>
         <translation type="unfinished"></translation>
@@ -1466,7 +1466,7 @@ calibrated declination.</source>
         <source>Estimated endurance based on current fuel flow and groundspeed
 considering reserves and contingency. Only shown if airborne.
 Shows orange warning if below reserve and red error text if insufficient
-when no flightplan is used.</source>
+when no flight plan is used.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -2184,8 +2184,8 @@ Magn.°</translation>
     </message>
     <message>
         <location filename="src/db/airspacedialog.ui" line="58"/>
-        <source>Select the directoy that contains the user airspace text files.</source>
-        <oldsource>Select the directoy that contains the user airspace text files.
+        <source>Select the directory that contains the user airspace text files.</source>
+        <oldsource>Select the directory that contains the user airspace text files.
 Little Navmap can currently only read OpenAIR files.</oldsource>
         <translation type="unfinished"></translation>
     </message>
@@ -2515,7 +2515,7 @@ You have to restart %1 to resume.</source>
     </message>
     <message>
         <location filename="src/connect/connectclient.cpp" line="593"/>
-        <source>Autoconnect switched off.</source>
+        <source>Auto connect switched off.</source>
         <translation>Autoconexión desactivada.</translation>
     </message>
     <message>
@@ -2582,11 +2582,11 @@ Lower values will result in a more fluid aircraft movement but can potentially i
         <source>Changes the radius around the user aircraft that is used to include AI or multiplayer aircraft.
 Using higher values with a lot of AI or multiplayer aircraft might induce stutters in the simulator.
 The unit is always nautical miles (1 NM equals to 1.852 km).
-FSX, Prepar3D and MSFS allow a maxium of 105 NM.</source>
+FSX, Prepar3D and MSFS allow a maximum of 105 NM.</source>
         <oldsource>Changes the radius around the user aircraft that is used to include AI or multiplayer aircraft.
 Using higher values with a lot of AI or multiplayer aircraft might induce stutters in the simulator.
 The unit is always nautical miles (1 NM equals to 1852 km).
-FSX, Prepar3D and MSFS allow a maxium of 105 NM.</oldsource>
+FSX, Prepar3D and MSFS allow a maximum of 105 NM.</oldsource>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -2608,7 +2608,7 @@ FSX, Prepar3D and MSFS allow a maxium of 105 NM.</oldsource>
         <location filename="src/connect/connectdialog.ui" line="416"/>
         <source>Automatically connect to given address and port of a remote simulator or to the local flight simulator.
 You have to click &quot;Connect&quot; to start the constant connection checking.
-Unchecking this will stop all automatic connection attempts immediately.</source>
+Deselecting this will stop all automatic connection attempts immediately.</source>
         <translation>Conectarse automáticamente a la dirección y puerto dados de un simulador remoto o al simulador de vuelo local.
 Debe hacer clic en &quot;Conectar&quot; para iniciar la comprobación de conexión constante.
 Desmarcar esto detendrá todos los intentos de conexión automática de inmediato.</translation>
@@ -2815,7 +2815,7 @@ Los valores más bajos darán como resultado un movimiento más fluido de la aer
         <translation>Intervalo de actualización &amp;U:</translation>
     </message>
     <message>
-        <source>Automatically connect to given address/port of a remote simulator or to the local flight simulator when program starts.\nYou have to click &quot;Connect&quot; to start the constant connection checking.\nUnchecking this will stop all automatic connection attempts immediately.</source>
+        <source>Automatically connect to given address/port of a remote simulator or to the local flight simulator when program starts.\nYou have to click &quot;Connect&quot; to start the constant connection checking.\nDeselecting this will stop all automatic connection attempts immediately.</source>
         <translation type="vanished">Conéctese automáticamente a una dirección/puerto determinado de un simulador remoto o al simulador de vuelo local cuando se inicie el programa.\nTiene que hacer clic en &quot;Conectar&quot; para iniciar la comprobación de conexión constante.\nDesmarcar esto detendrá inmediatamente todos los intentos de conexión automática.</translation>
     </message>
 </context>
@@ -2919,7 +2919,7 @@ Los formatos anteriores deben darse exactamente como se muestra en los ejemplos.
     </message>
     <message>
         <location filename="src/route/customproceduredialog.ui" line="69"/>
-        <source>Positive angles turn the final leg clockwise in relation to the runway heading and negative values turn it counter clockwise.</source>
+        <source>Positive angles turn the final leg clockwise in relation to the runway heading and negative values turn it counterclockwise.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -3255,7 +3255,7 @@ Useful if you use tools to disable and enable certain scenery for each flight.</
     </message>
     <message>
         <location filename="src/db/databasemanager.cpp" line="329"/>
-        <source>The database for the simulator below is not compatible with this program version or was incompletly loaded:&lt;br/&gt;&lt;br/&gt;%1&lt;br/&gt;&lt;br/&gt;Erase it?&lt;br/&gt;&lt;br/&gt;%2</source>
+        <source>The database for the simulator below is not compatible with this program version or was incompletely loaded:&lt;br/&gt;&lt;br/&gt;%1&lt;br/&gt;&lt;br/&gt;Erase it?&lt;br/&gt;&lt;br/&gt;%2</source>
         <translation>La base de datos del simulador mostrada no es compatible con esta versión del programa o está cargada de manera incompleta: &lt;br/&gt;&lt;br/&gt;%1&lt;br/&gt;&lt;br/&gt;¿Borrar?&lt;br/&gt;&lt;br/&gt;%2</translation>
     </message>
     <message>
@@ -3642,7 +3642,7 @@ Useful if you use tools to disable and enable certain scenery for each flight.</
     </message>
     <message>
         <location filename="src/db/databasemanager.cpp" line="336"/>
-        <source>The databases for the simulators below are not compatible with this program version or were incompletly loaded:&lt;br/&gt;&lt;br/&gt;%1&lt;br/&gt;&lt;br/&gt;Erase them?&lt;br/&gt;&lt;br/&gt;%2</source>
+        <source>The databases for the simulators below are not compatible with this program version or were incompletely loaded:&lt;br/&gt;&lt;br/&gt;%1&lt;br/&gt;&lt;br/&gt;Erase them?&lt;br/&gt;&lt;br/&gt;%2</source>
         <translation>Las bases de datos para estos simuladores no son compatibles con esta versión del programa o estaban mal cargadas:&lt;br/&gt;&lt;br/&gt;%1&lt;br/&gt;&lt;br/&gt;¿Borrarlas?&lt;br/&gt;&lt;br/&gt;%2</translation>
     </message>
     <message>
@@ -3768,7 +3768,7 @@ Saliendo ahora.</translation>
     </message>
     <message>
         <location filename="src/common/dirtool.cpp" line="93"/>
-        <source>&lt;li&gt;&lt;b&gt;%1&lt;/b&gt;&lt;br/&gt;A place to store PDF, text, image or other files that are linked in the aiport information</source>
+        <source>&lt;li&gt;&lt;b&gt;%1&lt;/b&gt;&lt;br/&gt;A place to store PDF, text, image or other files that are linked in the Airport information</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -4881,7 +4881,7 @@ hours</source>
         <location filename="src/logbook/logstatisticsdialog.cpp" line="440"/>
         <location filename="src/logbook/logstatisticsdialog.cpp" line="452"/>
         <location filename="src/logbook/logstatisticsdialog.cpp" line="464"/>
-        <source>Total realtime
+        <source>Total real time
 hours</source>
         <translation type="unfinished"></translation>
     </message>
@@ -5003,7 +5003,7 @@ Note that you can undo this change.</source>
     </message>
     <message>
         <location filename="src/logbook/logdatacontroller.cpp" line="678"/>
-        <source>&amp;Either departure or destinaion ident empty</source>
+        <source>&amp;Either departure or destination ident empty</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -5140,7 +5140,7 @@ Columns will be empty on export if disabled.</source>
     </message>
     <message>
         <location filename="src/logbook/logdatacontroller.cpp" line="1145"/>
-        <source>Empty Flightplan</source>
+        <source>Empty Flight Plan</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -5214,7 +5214,7 @@ Columns will be empty on export if disabled.</source>
     </message>
     <message>
         <location filename="src/logbook/logdatacontroller.cpp" line="924"/>
-        <source>Some warnings might appear because of terminated flights, repeated langings and/or takeoffs. These can be ignored.</source>
+        <source>Some warnings might appear because of terminated flights, repeated landings and/or takeoffs. These can be ignored.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -5733,7 +5733,7 @@ This updates only the path and does not attach the file to the logbook entry.</s
     </message>
     <message>
         <location filename="src/logbook/logdatadialog.ui" line="1192"/>
-        <source>&amp;Grossweight at takeoff:</source>
+        <source>&amp;Gross weight at takeoff:</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -6454,7 +6454,7 @@ Apply the loaded window layout anyway?</source>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="7018"/>
-        <source>Goto &amp;Home</source>
+        <source>Go to &amp;Home</source>
         <translation>Ir a Inicio &amp;H</translation>
     </message>
     <message>
@@ -7470,7 +7470,7 @@ Solo se permiten JPG, PNG y BMP.</translation>
     <message>
         <location filename="src/gui/mainwindow.ui" line="7021"/>
         <location filename="src/gui/mainwindow.ui" line="7024"/>
-        <source>Goto home view</source>
+        <source>Go to home view</source>
         <translation>Ir a la vista principal (home)</translation>
     </message>
     <message>
@@ -7562,7 +7562,7 @@ Solo se permiten JPG, PNG y BMP.</translation>
     <message>
         <location filename="src/gui/mainwindow.ui" line="1729"/>
         <location filename="src/gui/mainwindow.ui" line="1732"/>
-        <source>Name of the scenery file containg the airport</source>
+        <source>Name of the scenery file containing the airport</source>
         <translation>Nombre del archivo de escenario conteniendo el aeropuerto</translation>
     </message>
     <message>
@@ -8044,7 +8044,7 @@ Solo se permiten JPG, PNG y BMP.</translation>
     <message>
         <location filename="src/gui/mainwindow.ui" line="2438"/>
         <location filename="src/gui/mainwindow.ui" line="2441"/>
-        <source>Name of the scenery file containg the navaid</source>
+        <source>Name of the scenery file containing the navaid</source>
         <translation>Nombre de archivo de escenario conteniendo la navaid</translation>
     </message>
     <message>
@@ -8211,7 +8211,7 @@ Solo se permiten JPG, PNG y BMP.</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="7072"/>
-        <source>Goto Center for &amp;Distance Search</source>
+        <source>Go to Center for &amp;Distance Search</source>
         <translation>Ir al centro para búsqueda de &amp;Distancia</translation>
     </message>
     <message>
@@ -8544,7 +8544,7 @@ A simulator might not be able to load the flight plan.</source>
         <location filename="src/gui/mainwindow.ui" line="8515"/>
         <location filename="src/gui/mainwindow.ui" line="8530"/>
         <location filename="src/gui/mainwindow.ui" line="8533"/>
-        <source>Unselect all entries in the table</source>
+        <source>Deselect all entries in the table</source>
         <translation>Deseleccionar todas las entradas en la tabla</translation>
     </message>
     <message>
@@ -8558,7 +8558,7 @@ A simulator might not be able to load the flight plan.</source>
     <message>
         <location filename="src/gui/mainwindow.ui" line="7075"/>
         <location filename="src/gui/mainwindow.ui" line="7078"/>
-        <source>Goto center mark for distance search</source>
+        <source>Go to center mark for distance search</source>
         <translation>Ir a marca central para buscar distancia</translation>
     </message>
     <message>
@@ -9336,7 +9336,7 @@ A simulator might not be able to load the flight plan.</source>
         <translation>Barra de herramientas de Mapa de espacios aéreos</translation>
     </message>
     <message>
-        <source>Append flight plan to the corte.in file for the Flight Factor Airbus</source>
+        <source>Append flight plan to the corte.in file for the FlightFactor Airbus</source>
         <translation type="vanished">Agregar Plan de Vuelo para archivo corte.in de FlightFactor A320</translation>
     </message>
     <message>
@@ -10428,13 +10428,13 @@ Wind speed will be interpolated between this altitude and ground level.</source>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="11544"/>
-        <source>Show &amp;Vertical Track</source>
+        <source>Show &amp;Vertical Aircraft Trail</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="11547"/>
         <location filename="src/gui/mainwindow.ui" line="11550"/>
-        <source>Show vertical track line</source>
+        <source>Show vertical aircraft trail</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -10626,7 +10626,7 @@ Wind speed will be interpolated between this altitude and ground level.</source>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="6280"/>
-        <source>Information about AI or multplayer aircraft or ships</source>
+        <source>Information about AI or multiplayer aircraft or ships</source>
         <translation>Información acerca de naves o aeronaves de IA/Multijugador</translation>
     </message>
     <message>
@@ -10707,8 +10707,8 @@ Wind speed will be interpolated between this altitude and ground level.</source>
         <translation type="vanished">Exportar Plan de Vuelo como IXEG &amp;FPL ...</translation>
     </message>
     <message>
-        <source>Export Flight Plan to &amp;corte.in for Flight Factor Airbus ...</source>
-        <translation type="vanished">Exportar Plan de Vuelo a &amp;corte.in para Flight Factor Airbus ...</translation>
+        <source>Export Flight Plan to &amp;corte.in for FlightFactor Airbus ...</source>
+        <translation type="vanished">Exportar Plan de Vuelo a &amp;corte.in para FlightFactor Airbus ...</translation>
     </message>
     <message>
         <source>Show Compass Rose</source>
@@ -11104,7 +11104,7 @@ Wind speed will be interpolated between this altitude and ground level.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Create a Userpoint of type Logbook including flight information for each takeoff and landing</source>
+        <source>Create a userpoint of type Logbook including flight information for each takeoff and landing</source>
         <translation type="vanished">Crear un punto de usuario del tipo libro de registro incluyendo información de vuelo para cada despegue y aterrizaje</translation>
     </message>
     <message>
@@ -11515,9 +11515,9 @@ Reduce map details in the &quot;View&quot; menu.</source>
     </message>
     <message>
         <location filename="src/gui/mainwindow.cpp" line="124"/>
-        <source>&lt;p style=&apos;white-space:pre&apos;&gt;is a free open source flight planner, navigation tool, moving map,&lt;br/&gt;airport search and airport information system&lt;br/&gt;for X-Plane 11, X-Plane 12, Flight Simulator X, Prepar3D and Microsoft Flight Simulator 2020.&lt;/p&gt;&lt;p&gt;&lt;b&gt;If you would like to show your appreciation you can donate&amp;nbsp;&lt;a href=&quot;%1&quot;&gt;here&lt;/a&gt;.&lt;/b&gt;&lt;/p&gt;&lt;p&gt;This software is licensed under &lt;a href=&quot;http://www.gnu.org/licenses/gpl-3.0&quot;&gt;GPL3&lt;/a&gt; or any later version.&lt;/p&gt;&lt;p&gt;The source code for this application is available at &lt;a href=&quot;https://github.com/albar965&quot;&gt;GitHub&lt;/a&gt;.&lt;/p&gt;&lt;p&gt;More about my projects at &lt;a href=&quot;https://www.littlenavmap.org&quot;&gt;www.littlenavmap.org&lt;/a&gt;.&lt;/p&gt;&lt;p&gt;&lt;b&gt;Copyright 2015-2023 Alexander Barthel&lt;/b&gt;&lt;/p&gt;</source>
-        <oldsource>&lt;p style=&apos;white-space:pre&apos;&gt;is a free open source flight planner, navigation tool, moving map,&lt;br/&gt;airport search and airport information system&lt;br/&gt;for X-Plane 11, Flight Simulator X, Prepar3D and Microsoft Flight Simulator 2020.&lt;/p&gt;&lt;p&gt;&lt;b&gt;If you would like to show your appreciation you can donate&amp;nbsp;&lt;a href=&quot;%1&quot;&gt;here&lt;/a&gt;.&lt;/b&gt;&lt;/p&gt;&lt;p&gt;This software is licensed under &lt;a href=&quot;http://www.gnu.org/licenses/gpl-3.0&quot;&gt;GPL3&lt;/a&gt; or any later version.&lt;/p&gt;&lt;p&gt;The source code for this application is available at &lt;a href=&quot;https://github.com/albar965&quot;&gt;GitHub&lt;/a&gt;.&lt;/p&gt;&lt;p&gt;More about my projects at &lt;a href=&quot;https://www.littlenavmap.org&quot;&gt;www.littlenavmap.org&lt;/a&gt;.&lt;/p&gt;&lt;p&gt;&lt;b&gt;Copyright 2015-2022 Alexander Barthel&lt;/b&gt;&lt;/p&gt;</oldsource>
-        <translation type="unfinished">&lt;p&gt;es un planificador de vuelo de código abierto, herramienta de navegación, mapa en movimiento, búsqueda de aeropuerto y sistema de información aeroportuaria para X-Plane, Flight Simulator X y Prepar3D.&lt;/p&gt;&lt;p&gt;&lt;b&gt;Si desea mostrar su agradecimiento, puede donar&amp;nbsp;&lt;a href=&quot;%1&quot;&gt;aquí&lt;/a&gt;.&lt;/b&gt;&lt;/p&gt;&lt;p&gt;Software licenciado bajo &lt;a href=&quot;http://www.gnu.org/licenses/gpl-3.0&quot;&gt;GPL3&lt;/a&gt; o cualquier versión posterior.&lt;/p&gt;&lt;p&gt;El código fuente de esta aplicación está disponible en &lt;a href=&quot;https://github.com/albar965&quot;&gt;GitHub&lt;/a&gt;.&lt;/p&gt;&lt;p&gt;Más de mis proyectos personales en &lt;a href=&quot;https://www.littlenavmap.org&quot;&gt;www.littlenavmap.org&lt;/a&gt;.&lt;/p&gt;&lt;p&gt;&lt;b&gt;Copyright 2015-2023 Alexander Barthel &lt;/b&gt;.&lt;/p&gt; - Traducción al Español: Daniel &quot;Wolf&quot; Machini - wolfinformatica@gmail.com - http://www.wolfinformatica.com - www.facebook.com/servicewolf&lt;/b&gt;&lt;/p&gt; {11,?} {3D?} {2020.?} {1&quot;?} {3.0&quot;?} {3&lt;?} {965&quot;?} {2015-2022 ?}</translation>
+        <source>&lt;p style=&apos;white-space:pre&apos;&gt;is a free open source flight planner, navigation tool, moving map,&lt;br/&gt;airport search and airport information system&lt;br/&gt;for X-Plane 11, X-Plane 12, Flight Simulator X, Prepar3D and Microsoft Flight Simulator 2020.&lt;/p&gt;&lt;p&gt;&lt;b&gt;If you would like to show your appreciation you can donate&amp;nbsp;&lt;a href=&quot;%1&quot;&gt;here&lt;/a&gt;.&lt;/b&gt;&lt;/p&gt;&lt;p&gt;This software is licensed under &lt;a href=&quot;http://www.gnu.org/licenses/gpl-3.0&quot;&gt;GPL3&lt;/a&gt; or any later version.&lt;/p&gt;&lt;p&gt;The source code for this application is available at &lt;a href=&quot;https://github.com/albar965&quot;&gt;GitHub&lt;/a&gt;.&lt;/p&gt;&lt;p&gt;More about my projects at &lt;a href=&quot;https://www.littlenavmap.org&quot;&gt;www.littlenavmap.org&lt;/a&gt;.&lt;/p&gt;&lt;p&gt;&lt;b&gt;Copyright 2015-2025 Alexander Barthel&lt;/b&gt;&lt;/p&gt;</source>
+        <oldsource>&lt;p style=&apos;white-space:pre&apos;&gt;is a free open source flight planner, navigation tool, moving map,&lt;br/&gt;airport search and airport information system&lt;br/&gt;for X-Plane 11, Flight Simulator X, Prepar3D and Microsoft Flight Simulator 2020.&lt;/p&gt;&lt;p&gt;&lt;b&gt;If you would like to show your appreciation you can donate&amp;nbsp;&lt;a href=&quot;%1&quot;&gt;here&lt;/a&gt;.&lt;/b&gt;&lt;/p&gt;&lt;p&gt;This software is licensed under &lt;a href=&quot;http://www.gnu.org/licenses/gpl-3.0&quot;&gt;GPL3&lt;/a&gt; or any later version.&lt;/p&gt;&lt;p&gt;The source code for this application is available at &lt;a href=&quot;https://github.com/albar965&quot;&gt;GitHub&lt;/a&gt;.&lt;/p&gt;&lt;p&gt;More about my projects at &lt;a href=&quot;https://www.littlenavmap.org&quot;&gt;www.littlenavmap.org&lt;/a&gt;.&lt;/p&gt;&lt;p&gt;&lt;b&gt;Copyright 2015-2025 Alexander Barthel&lt;/b&gt;&lt;/p&gt;</oldsource>
+        <translation type="unfinished">&lt;p&gt;es un planificador de vuelo de código abierto, herramienta de navegación, mapa en movimiento, búsqueda de aeropuerto y sistema de información aeroportuaria para X-Plane, Flight Simulator X y Prepar3D.&lt;/p&gt;&lt;p&gt;&lt;b&gt;Si desea mostrar su agradecimiento, puede donar&amp;nbsp;&lt;a href=&quot;%1&quot;&gt;aquí&lt;/a&gt;.&lt;/b&gt;&lt;/p&gt;&lt;p&gt;Software licenciado bajo &lt;a href=&quot;http://www.gnu.org/licenses/gpl-3.0&quot;&gt;GPL3&lt;/a&gt; o cualquier versión posterior.&lt;/p&gt;&lt;p&gt;El código fuente de esta aplicación está disponible en &lt;a href=&quot;https://github.com/albar965&quot;&gt;GitHub&lt;/a&gt;.&lt;/p&gt;&lt;p&gt;Más de mis proyectos personales en &lt;a href=&quot;https://www.littlenavmap.org&quot;&gt;www.littlenavmap.org&lt;/a&gt;.&lt;/p&gt;&lt;p&gt;&lt;b&gt;Copyright 2015-2025 Alexander Barthel &lt;/b&gt;.&lt;/p&gt; - Traducción al Español: Daniel &quot;Wolf&quot; Machini - wolfinformatica@gmail.com - http://www.wolfinformatica.com - www.facebook.com/servicewolf&lt;/b&gt;&lt;/p&gt; {11,?} {3D?} {2020.?} {1&quot;?} {3.0&quot;?} {3&lt;?} {965&quot;?} {2015-2022 ?}</translation>
     </message>
     <message>
         <source>, </source>
@@ -11803,7 +11803,7 @@ Really quit and cancel the loading process?</source>
     </message>
     <message>
         <location filename="src/gui/mainwindow.cpp" line="3360"/>
-        <source>&lt;p&gt;The online elevation data which is used by default for the elevation profile is limited and has a lot of errors.&lt;br/&gt;Therefore, it is recommended to download and use the offline GLOBE elevation data which provides world wide coverage.&lt;/p&gt;&lt;p&gt;Go to the main menu -&amp;gt; &quot;Tools&quot; -&amp;gt; &quot;Options&quot; and then to page &quot;Cache and files&quot; to add the GLOBE data.&lt;/p&gt;&lt;p&gt;&lt;a href=&quot;%1&quot;&gt;Click here for more information in the Little Navmap online manual&lt;/a&gt;&lt;/p&gt;</source>
+        <source>&lt;p&gt;The online elevation data which is used by default for the elevation profile is limited and has some small issues.&lt;br/&gt;Therefore, it is recommended to download and use the offline GLOBE elevation data which provides world wide coverage.&lt;/p&gt;&lt;p&gt;Go to the main menu -&amp;gt; &quot;Tools&quot; -&amp;gt; &quot;Options&quot; and then to page &quot;Cache and files&quot; to add the GLOBE data.&lt;/p&gt;&lt;p&gt;&lt;a href=&quot;%1&quot;&gt;Click here for more information in the Little Navmap online manual&lt;/a&gt;&lt;/p&gt;</source>
         <comment>Keep instructions in sync with translated menus</comment>
         <translation type="unfinished"></translation>
     </message>
@@ -12214,7 +12214,7 @@ Online Network:
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="5291"/>
-        <source>Aiport overview</source>
+        <source>Airport overview</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -12444,7 +12444,7 @@ Online Network:
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="11283"/>
-        <source>Goto &amp;User Aircraft</source>
+        <source>Go to &amp;User Aircraft</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -12735,7 +12735,7 @@ Online Network:
     <message>
         <location filename="src/gui/mainwindow.ui" line="11068"/>
         <location filename="src/gui/mainwindow.ui" line="11071"/>
-        <source>Download tracks for Australian Organised Track Structure</source>
+        <source>Download tracks for Australian Organized Track Structure</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -12833,18 +12833,18 @@ Online Network:
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="10751"/>
-        <source>Save attached Aircraft &amp;Perfomance as ...</source>
+        <source>Save attached Aircraft &amp;Performance as ...</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="10754"/>
-        <source>Save aircraft perfomance as a new file</source>
+        <source>Save aircraft performance as a new file</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="10757"/>
         <location filename="src/gui/mainwindow.ui" line="10760"/>
-        <source>Save attached aircraft perfomance as a new file</source>
+        <source>Save attached aircraft performance as a new file</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -14244,7 +14244,7 @@ Button is highlighted if any filter is selected.</source>
     </message>
     <message>
         <location filename="src/mapgui/mapcontextmenu.cpp" line="882"/>
-        <source>Add airport, navaid or position to nearest flight plan leg</source>
+        <source>Add airport, navaid or position to the nearest flight plan leg</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -14323,7 +14323,7 @@ Button is highlighted if any filter is selected.</source>
     </message>
     <message>
         <location filename="src/mapgui/mapcontextmenu.cpp" line="1010"/>
-        <source>Add an userpoint at this position</source>
+        <source>Add a userpoint at this position</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -16311,7 +16311,7 @@ Button is highlighted if detail level is not default.</source>
     </message>
     <message>
         <location filename="src/common/htmlinfobuilder.cpp" line="2055"/>
-        <source>Dewpoint:</source>
+        <source>Dew point:</source>
         <translation>Punto de Rocío:</translation>
     </message>
     <message>
@@ -17693,7 +17693,7 @@ kHz/MHz</translation>
     </message>
     <message>
         <location filename="src/common/htmlinfobuilder.cpp" line="3039"/>
-        <source>Bearing and distance to user aircraft:</source>
+        <source>Bearing and distance from user aircraft:</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -17894,7 +17894,7 @@ kHz/MHz</translation>
     </message>
     <message>
         <location filename="src/common/htmlinfobuilder.cpp" line="3855"/>
-        <source>%1 since takoff at %2</source>
+        <source>%1 since takeoff at %2</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -19107,7 +19107,7 @@ kHz/MHz</translation>
     </message>
     <message>
         <location filename="src/mapgui/mapthemehandler.cpp" line="690"/>
-        <source>&lt;p&gt;The map theme &quot;%1&quot; requires additional information.&lt;/p&gt;&lt;p&gt;You have to create an user account at the related website and then create an username, an access key or a token.&lt;br/&gt;Most of these services offer a free plan for hobbyists.&lt;/p&gt;&lt;p&gt;Then go to menu &quot;Tools&quot; -&gt; &quot;Options&quot; and to page &quot;Map Display Keys&quot; in Little Navmap and enter the information for the key(s) below:&lt;/p&gt;&lt;ul&gt;&lt;li&gt;%2&lt;/li&gt;&lt;/ul&gt;&lt;p&gt;The map will not show correctly until this is done.&lt;/p&gt;%3</source>
+        <source>&lt;p&gt;The map theme &quot;%1&quot; requires additional information.&lt;/p&gt;&lt;p&gt;You have to create an user account at the related website and then create an username, an access key or a token.&lt;br/&gt;Most of these services offer a free plan for hobbyists.&lt;/p&gt;&lt;p&gt;Then go to menu &quot;Tools&quot; -&gt; &quot;Options&quot; and to page &quot;Map Keys&quot; in Little Navmap and enter the information for the key(s) below:&lt;/p&gt;&lt;ul&gt;&lt;li&gt;%2&lt;/li&gt;&lt;/ul&gt;&lt;p&gt;The map will not show correctly until this is done.&lt;/p&gt;%3</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -21607,8 +21607,8 @@ userpoints and logbook entries when hovering the cursor over the map</source>
     </message>
     <message>
         <location filename="src/options/options.ui" line="5277"/>
-        <source>East / West: Rounds up  cruise altitude to nearest odd thousand feet for eastward flight plans and nearest even thousand feet for westward flight plans.
-North / South: Rounds up  cruise altitude to nearest odd thousand feet for southward flight plans and nearest even thousand feet for northward flight plans.
+        <source>East / West: Rounds up  cruise altitude to the nearest odd thousand feet for eastward flight plans and nearest even thousand feet for westward flight plans.
+North / South: Rounds up  cruise altitude to the nearest odd thousand feet for southward flight plans and nearest even thousand feet for northward flight plans.
 South / North: Same as North / South but reverses odd and even.</source>
         <translation>Este / Oeste:Redondea la altitud de crucero a los mil pies impares más cercanos para los planes de vuelo hacia el este y los mil pies más cercanos para los planes de vuelo hacia el oeste..
 Norte / Sur: Redondea la altitud de crucero a los mil pies impares más cercanos para los planes de vuelo hacia el sur y los mil pies más cercanos para los planes de vuelo hacia el norte..
@@ -21646,7 +21646,7 @@ The default X-Plane wind file will be used if this field is empty.</oldsource>
         <location filename="src/options/options.ui" line="6656"/>
         <source>Base directory of the web server. This is the directory containing the &quot;index.html&quot; file.
 There is usually no need to change this value.
-Use this to serve your own modifed Little Navmap web page.</source>
+Use this to serve your own modified Little Navmap web page.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -21796,7 +21796,7 @@ Little Navmap GIT repository.
     </message>
     <message>
         <source>The user aircraft trail will be pruned if it contains more than this number of points. Lower this value to avoid too long tracks and save performance.</source>
-        <translation type="vanished">La huella de aeronave del usuario será eliminada si contiene mas de este número de puntos. Bajos valores evitan largos trazos y mejora perfomance.</translation>
+        <translation type="vanished">La huella de aeronave del usuario será eliminada si contiene mas de este número de puntos. Bajos valores evitan largos trazos y mejora performance.</translation>
     </message>
     <message>
         <location filename="src/options/options.ui" line="4809"/>
@@ -22297,7 +22297,7 @@ Los valores más pequeños se acercarán más a un aeropuerto o navaid. </transl
     </message>
     <message>
         <location filename="src/options/options.ui" line="6962"/>
-        <source>Select the directoy that contains the files &quot;a10g&quot; to &quot;p10g&quot;.</source>
+        <source>Select the directory that contains the files &quot;a10g&quot; to &quot;p10g&quot;.</source>
         <translation>Seleccione el directorio que contiene los archivos de&quot;a10g&quot; a &quot;p10g&quot;.</translation>
     </message>
     <message>
@@ -22404,7 +22404,7 @@ Los valores más pequeños se acercarán más a un aeropuerto o una navaid.
         <location filename="src/options/options.ui" line="1781"/>
         <source>Empty airports are not add-ons, have no taxiways, no parking and no aprons.
 These are displayed underneath all other airports and use a gray symbol.
-The aiports toolbar button can be used to disable them if this checkbox is enabled.</source>
+The \bairports\b toolbar button can be used to disable them if this checkbox is enabled.</source>
         <oldsource>All X-Plane airports which are not 3D and not add-on
 will be displayed underneath all other airports, use a gray symbol and
 provide a toolbar button for disabling them if this checkbox is enabled
@@ -22484,11 +22484,11 @@ Cambie el color con el &quot;Color del tramo volado&quot;.</translation>
         <translation type="vanished">Fondo blanco para etiquetas de navaids</translation>
     </message>
     <message>
-        <source>Thickness of the range ring and distance measurment lines</source>
+        <source>Thickness of the range ring and distance measurement lines</source>
         <translation type="vanished">Grosor del anillo de rango y líneas de medidas de distancia</translation>
     </message>
     <message>
-        <source>&amp;Range rings and distanc measurement lines:</source>
+        <source>&amp;Range rings and distance measurement lines:</source>
         <translation type="vanished">Anillos de &amp;Rango y medidas de líneas de distancia:</translation>
     </message>
     <message>
@@ -23104,14 +23104,14 @@ Also affects labels at holds and traffic patterns.</source>
     </message>
     <message>
         <location filename="src/options/options.ui" line="1974"/>
-        <source>You can still use the default click and drag method to scroll and the mousewheel to zoom in this mode.
-Enable &quot;Navigation Aids&quot;, &quot;Screen Areas&quot; on options page &quot;Map Display Labels&quot; to display hints on the map.</source>
+        <source>You can still use the default click and drag method to scroll and the mouse wheel to zoom in this mode.
+Enable &quot;Navigation Aids&quot;, &quot;Screen Areas&quot; on options page &quot;Map Labels&quot; to display hints on the map.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="src/options/options.ui" line="1995"/>
         <source>Enable &quot;Navigation Aids&quot;, &quot;Center Cross&quot; on
-options page &quot;Map Display Labels&quot; to display a screen center hint.</source>
+options page &quot;Map Labels&quot; to display a screen center hint.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -23349,7 +23349,7 @@ Value 0 is opaque and 90 is most transparent.</oldsource>
     </message>
     <message>
         <location filename="src/options/options.ui" line="4163"/>
-        <source>Map Display Labels</source>
+        <source>Map Labels</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -23449,7 +23449,7 @@ after the given timeout while flying.</source>
         <location filename="src/options/options.ui" line="1796"/>
         <source>All X-Plane airports which are not 3D and not add-on
 will be displayed underneath all other airports and use a gray symbol.
-The aiports toolbar button can be used to disable them if this checkbox is enabled.</source>
+The \bairports\b toolbar button can be used to disable them if this checkbox is enabled.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -23526,7 +23526,7 @@ Value 0 is opaque and 90 is most transparent.</source>
     </message>
     <message>
         <location filename="src/options/options.ui" line="3694"/>
-        <source>Color for distance measurment lines.
+        <source>Color for distance measurement lines.
 Does not apply to lines originating from airports or navaids.</source>
         <translation type="unfinished"></translation>
     </message>
@@ -23588,7 +23588,7 @@ elevation profile hover:</source>
     </message>
     <message>
         <location filename="src/options/options.ui" line="4023"/>
-        <source>&amp;Distance measurments:</source>
+        <source>&amp;Distance measurements:</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -23747,7 +23747,7 @@ See notes in the manual for details of this setting and how to move around in th
         <translation>Archivos y directorio válidos.</translation>
     </message>
     <message>
-        <source>Show runway length, width and light inidcator text.</source>
+        <source>Show runway length, width and light indicator text.</source>
         <translation type="vanished">Muestra el largo, el ancho y texto del indicador luminoso.</translation>
     </message>
     <message>
@@ -24189,7 +24189,7 @@ Move the dialog aside to see changes in main window or map.</source>
     </message>
     <message>
         <location filename="src/options/optionsdialog.cpp" line="125"/>
-        <source>Map Display Labels</source>
+        <source>Map Labels</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -24199,7 +24199,7 @@ Move the dialog aside to see changes in main window or map.</source>
     </message>
     <message>
         <location filename="src/options/optionsdialog.cpp" line="126"/>
-        <source>Map Display Keys</source>
+        <source>Map Keys</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -24305,7 +24305,7 @@ Only shown if &quot;Use map areas&quot; on page &quot;Map Navigation&quot; is en
     <message>
         <location filename="src/options/optionsdialog.cpp" line="160"/>
         <source>Airport name and ident in brackets depending on zoom factor.
-Ident can be internal, ICAO, FAA, IATA or local depending on avilability.</source>
+Ident can be internal, ICAO, FAA, IATA or local depending on availability.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -24792,7 +24792,7 @@ The label is fixed. Not shown at procedure legs.</source>
     </message>
     <message>
         <location filename="src/options/optionsdialog.cpp" line="242"/>
-        <source>Select display options measurement lines.</source>
+        <source>Select display options for measurement lines.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -25014,7 +25014,7 @@ Resetting update period back to %1 seconds.</source>
     </message>
     <message>
         <location filename="src/options/optionsdialog.cpp" line="119"/>
-        <source>Fuel, distance, speed and coordindate units as well as
+        <source>Fuel, distance, speed and coordinate units as well as
 options for course and heading display.</source>
         <translation type="unfinished"></translation>
     </message>
@@ -26314,7 +26314,7 @@ Shown on descent only at user aircraft symbol suffixed with &quot;N&quot;.</sour
     </message>
     <message>
         <location filename="src/profile/profileoptions.cpp" line="67"/>
-        <source>Orange safe altitude lines for for each flight plan leg.</source>
+        <source>Orange safe altitude lines for each flight plan leg.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -29601,9 +29601,9 @@ hh:mm</translation>
         <translation> Este</translation>
     </message>
     <message>
-        <source>&lt;p style=&apos;white-space:pre&apos;&gt;is a free open source flight planner, navigation tool, moving map,&lt;br/&gt;airport search and airport information system&lt;br/&gt;for X-Plane 11, Flight Simulator X, Prepar3D and Microsoft Flight Simulator 2020.&lt;/p&gt;&lt;p&gt;&lt;b&gt;If you would like to show your appreciation you can donate&amp;nbsp;&lt;a href=&quot;%1&quot;&gt;here&lt;/a&gt;.&lt;/b&gt;&lt;/p&gt;&lt;p&gt;This software is licensed under &lt;a href=&quot;http://www.gnu.org/licenses/gpl-3.0&quot;&gt;GPL3&lt;/a&gt; or any later version.&lt;/p&gt;&lt;p&gt;The source code for this application is available at &lt;a href=&quot;https://github.com/albar965&quot;&gt;GitHub&lt;/a&gt;.&lt;/p&gt;&lt;p&gt;More about my projects at &lt;a href=&quot;https://www.littlenavmap.org&quot;&gt;www.littlenavmap.org&lt;/a&gt;.&lt;/p&gt;&lt;p&gt;&lt;b&gt;Copyright 2015-2023 Alexander Barthel&lt;/b&gt;&lt;/p&gt;</source>
-        <oldsource>&lt;p style=&apos;white-space:pre&apos;&gt;is a free open source flight planner, navigation tool, moving map,&lt;br/&gt;airport search and airport information system&lt;br/&gt;for X-Plane 11, Flight Simulator X, Prepar3D and Microsoft Flight Simulator 2020.&lt;/p&gt;&lt;p&gt;&lt;b&gt;If you would like to show your appreciation you can donate&amp;nbsp;&lt;a href=&quot;%1&quot;&gt;here&lt;/a&gt;.&lt;/b&gt;&lt;/p&gt;&lt;p&gt;This software is licensed under &lt;a href=&quot;http://www.gnu.org/licenses/gpl-3.0&quot;&gt;GPL3&lt;/a&gt; or any later version.&lt;/p&gt;&lt;p&gt;The source code for this application is available at &lt;a href=&quot;https://github.com/albar965&quot;&gt;GitHub&lt;/a&gt;.&lt;/p&gt;&lt;p&gt;More about my projects at &lt;a href=&quot;https://www.littlenavmap.org&quot;&gt;www.littlenavmap.org&lt;/a&gt;.&lt;/p&gt;&lt;p&gt;&lt;b&gt;Copyright 2015-2021 Alexander Barthel&lt;/b&gt;&lt;/p&gt;</oldsource>
-        <translation type="obsolete">&lt;p&gt;es un planificador de vuelo de código abierto, herramienta de navegación, mapa en movimiento, búsqueda de aeropuerto y sistema de información aeroportuaria para X-Plane, Flight Simulator X y Prepar3D.&lt;/p&gt;&lt;p&gt;&lt;b&gt;Si desea mostrar su agradecimiento, puede donar&amp;nbsp;&lt;a href=&quot;%1&quot;&gt;aquí&lt;/a&gt;.&lt;/b&gt;&lt;/p&gt;&lt;p&gt;Software licenciado bajo &lt;a href=&quot;http://www.gnu.org/licenses/gpl-3.0&quot;&gt;GPL3&lt;/a&gt; o cualquier versión posterior.&lt;/p&gt;&lt;p&gt;El código fuente de esta aplicación está disponible en &lt;a href=&quot;https://github.com/albar965&quot;&gt;GitHub&lt;/a&gt;.&lt;/p&gt;&lt;p&gt;Más de mis proyectos personales en &lt;a href=&quot;https://www.littlenavmap.org&quot;&gt;www.littlenavmap.org&lt;/a&gt;.&lt;/p&gt;&lt;p&gt;&lt;b&gt;Copyright 2015-2023 Alexander Barthel &lt;/b&gt;.&lt;/p&gt; - Traducción al Español: Daniel &quot;Wolf&quot; Machini - wolfinformatica@gmail.com - http://www.wolfinformatica.com - www.facebook.com/servicewolf&lt;/b&gt;&lt;/p&gt;</translation>
+        <source>&lt;p style=&apos;white-space:pre&apos;&gt;is a free open source flight planner, navigation tool, moving map,&lt;br/&gt;airport search and airport information system&lt;br/&gt;for X-Plane 11, Flight Simulator X, Prepar3D and Microsoft Flight Simulator 2020.&lt;/p&gt;&lt;p&gt;&lt;b&gt;If you would like to show your appreciation you can donate&amp;nbsp;&lt;a href=&quot;%1&quot;&gt;here&lt;/a&gt;.&lt;/b&gt;&lt;/p&gt;&lt;p&gt;This software is licensed under &lt;a href=&quot;http://www.gnu.org/licenses/gpl-3.0&quot;&gt;GPL3&lt;/a&gt; or any later version.&lt;/p&gt;&lt;p&gt;The source code for this application is available at &lt;a href=&quot;https://github.com/albar965&quot;&gt;GitHub&lt;/a&gt;.&lt;/p&gt;&lt;p&gt;More about my projects at &lt;a href=&quot;https://www.littlenavmap.org&quot;&gt;www.littlenavmap.org&lt;/a&gt;.&lt;/p&gt;&lt;p&gt;&lt;b&gt;Copyright 2015-2025 Alexander Barthel&lt;/b&gt;&lt;/p&gt;</source>
+        <oldsource>&lt;p style=&apos;white-space:pre&apos;&gt;is a free open source flight planner, navigation tool, moving map,&lt;br/&gt;airport search and airport information system&lt;br/&gt;for X-Plane 11, Flight Simulator X, Prepar3D and Microsoft Flight Simulator 2020.&lt;/p&gt;&lt;p&gt;&lt;b&gt;If you would like to show your appreciation you can donate&amp;nbsp;&lt;a href=&quot;%1&quot;&gt;here&lt;/a&gt;.&lt;/b&gt;&lt;/p&gt;&lt;p&gt;This software is licensed under &lt;a href=&quot;http://www.gnu.org/licenses/gpl-3.0&quot;&gt;GPL3&lt;/a&gt; or any later version.&lt;/p&gt;&lt;p&gt;The source code for this application is available at &lt;a href=&quot;https://github.com/albar965&quot;&gt;GitHub&lt;/a&gt;.&lt;/p&gt;&lt;p&gt;More about my projects at &lt;a href=&quot;https://www.littlenavmap.org&quot;&gt;www.littlenavmap.org&lt;/a&gt;.&lt;/p&gt;&lt;p&gt;&lt;b&gt;Copyright 2015-2025 Alexander Barthel&lt;/b&gt;&lt;/p&gt;</oldsource>
+        <translation type="obsolete">&lt;p&gt;es un planificador de vuelo de código abierto, herramienta de navegación, mapa en movimiento, búsqueda de aeropuerto y sistema de información aeroportuaria para X-Plane, Flight Simulator X y Prepar3D.&lt;/p&gt;&lt;p&gt;&lt;b&gt;Si desea mostrar su agradecimiento, puede donar&amp;nbsp;&lt;a href=&quot;%1&quot;&gt;aquí&lt;/a&gt;.&lt;/b&gt;&lt;/p&gt;&lt;p&gt;Software licenciado bajo &lt;a href=&quot;http://www.gnu.org/licenses/gpl-3.0&quot;&gt;GPL3&lt;/a&gt; o cualquier versión posterior.&lt;/p&gt;&lt;p&gt;El código fuente de esta aplicación está disponible en &lt;a href=&quot;https://github.com/albar965&quot;&gt;GitHub&lt;/a&gt;.&lt;/p&gt;&lt;p&gt;Más de mis proyectos personales en &lt;a href=&quot;https://www.littlenavmap.org&quot;&gt;www.littlenavmap.org&lt;/a&gt;.&lt;/p&gt;&lt;p&gt;&lt;b&gt;Copyright 2015-2025 Alexander Barthel &lt;/b&gt;.&lt;/p&gt; - Traducción al Español: Daniel &quot;Wolf&quot; Machini - wolfinformatica@gmail.com - http://www.wolfinformatica.com - www.facebook.com/servicewolf&lt;/b&gt;&lt;/p&gt;</translation>
     </message>
     <message>
         <location filename="src/common/dirtool.cpp" line="112"/>
@@ -30213,7 +30213,7 @@ Click or reload to continue.</source>
     </message>
     <message>
         <location filename="src/route/route.cpp" line="3416"/>
-        <source>Empty Flightplan</source>
+        <source>Empty Flight Plan</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -32036,8 +32036,8 @@ Remarks for the flight plan.</source>
         <translation type="vanished">Grabar Plan de Vuelo con formato IXEG FPL</translation>
     </message>
     <message>
-        <source>Save Flight Plan to corte.in for Flight Factor Airbus</source>
-        <translation type="vanished">Grabar Plan de Vuelo a &quot;corte.in&quot; para Flight Factor Airbus</translation>
+        <source>Save Flight Plan to corte.in for FlightFactor Airbus</source>
+        <translation type="vanished">Grabar Plan de Vuelo a &quot;corte.in&quot; para FlightFactor Airbus</translation>
     </message>
     <message>
         <source>corte.in Files %1;;All Files (*)</source>
@@ -32848,7 +32848,7 @@ Old and limited format.</source>
     </message>
     <message>
         <location filename="src/routeexport/routeexportformat.cpp" line="321"/>
-        <source>Flight Factor Airbus</source>
+        <source>FlightFactor Airbus</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -34800,7 +34800,7 @@ Travel Totals: %1.</source>
     </message>
     <message>
         <location filename="src/routeexport/simbriefhandler.cpp" line="65"/>
-        <source>&lt;p&gt;&lt;b&gt;Export this flight plan to SimBrief?&lt;/b&gt;&lt;/p&gt;&lt;p&gt;The information below will be sent:&lt;/p&gt;&lt;table&gt;&lt;tbody&gt;&lt;tr&gt;&lt;td&gt;Route description:&lt;/td&gt;&lt;td&gt;%1&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Cruise altitide:&lt;/td&gt;&lt;td&gt;%2&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Aircraft type:&lt;/td&gt;&lt;td&gt;%3&lt;/td&gt;&lt;/tr&gt;&lt;/tbody&gt;&lt;/table&gt;&lt;p&gt;Open your web browser and log into SimBrief before exporting the flight plan.&lt;/p&gt;</source>
+        <source>&lt;p&gt;&lt;b&gt;Export this flight plan to SimBrief?&lt;/b&gt;&lt;/p&gt;&lt;p&gt;The information below will be sent:&lt;/p&gt;&lt;table&gt;&lt;tbody&gt;&lt;tr&gt;&lt;td&gt;Route description:&lt;/td&gt;&lt;td&gt;%1&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Cruise altitude:&lt;/td&gt;&lt;td&gt;%2&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Aircraft type:&lt;/td&gt;&lt;td&gt;%3&lt;/td&gt;&lt;/tr&gt;&lt;/tbody&gt;&lt;/table&gt;&lt;p&gt;Open your web browser and log into SimBrief before exporting the flight plan.&lt;/p&gt;</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -36642,7 +36642,7 @@ Click &quot;Reset paths&quot; in the Little Navmap dialog &quot;Load scenery lib
 to fix the base path after moving a X-Plane installation.
 
 Also check the paths in the Little Navmap options on page &quot;Weather Files&quot;.
-These path should be empty to use the default.
+These paths should be empty to use the default.
 
 Restart Little Navmap after correcting the weather paths.</source>
         <translation type="unfinished"></translation>

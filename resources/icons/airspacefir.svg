@@ -2,19 +2,19 @@
 <!-- Created with Inkscape (http://www.inkscape.org/) -->
 
 <svg
-   xmlns:dc="http://purl.org/dc/elements/1.1/"
-   xmlns:cc="http://creativecommons.org/ns#"
-   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
-   xmlns:svg="http://www.w3.org/2000/svg"
-   xmlns="http://www.w3.org/2000/svg"
-   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
-   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
    version="1.0"
    width="300"
    height="300"
    id="svg2"
-   inkscape:version="0.92.2 (5c3e80d, 2017-08-06)"
-   sodipodi:docname="airspacefir.svg">
+   inkscape:version="1.2.2 (b0a8486541, 2022-12-01)"
+   sodipodi:docname="airspacefir.svg"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:dc="http://purl.org/dc/elements/1.1/">
   <metadata
      id="metadata17">
     <rdf:RDF>
@@ -52,7 +52,10 @@
      fit-margin-top="0"
      fit-margin-left="0"
      fit-margin-right="0"
-     fit-margin-bottom="0">
+     fit-margin-bottom="0"
+     inkscape:showpageshadow="2"
+     inkscape:pagecheckerboard="0"
+     inkscape:deskcolor="#d1d1d1">
     <inkscape:grid
        type="xygrid"
        id="grid8410"
@@ -279,16 +282,22 @@
        height="91.722313"
        x="14.091309"
        y="174.94678" />
-    <text
-       xml:space="preserve"
-       style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;line-height:0%;font-family:sans-serif;-inkscape-font-specification:'sans-serif Bold';letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
-       x="19.91011"
-       y="252.67235"
-       id="text4422"><tspan
-         sodipodi:role="line"
-         id="tspan4424"
-         x="19.91011"
-         y="252.67235"
-         style="font-size:90px;line-height:1.25">FIR</tspan></text>
+    <g
+       aria-label="FIR"
+       id="text4422"
+       style="font-weight:bold;line-height:0%;-inkscape-font-specification:'sans-serif Bold';letter-spacing:0px;word-spacing:0px;stroke-width:1px">
+      <path
+         d="m 41.42011,252.67235 h -13.41 v -64.26 h 36.81 v 11.16 h -23.4 v 16.56 h 21.78 v 11.16 h -21.78 z"
+         style="font-size:90px;line-height:1.25"
+         id="path381" />
+      <path
+         d="M 101.45009,252.67235 H 72.200091 v -7.74 l 7.83,-3.6 v -41.58 l -7.83,-3.6 v -7.74 h 29.249999 v 7.74 l -7.829999,3.6 v 41.58 l 7.829999,3.6 z"
+         style="font-size:90px;line-height:1.25"
+         id="path383" />
+      <path
+         d="m 131.15009,188.41235 q 13.14,0 19.35,4.77 6.3,4.77 6.3,14.49 0,4.41 -1.71,7.74 -1.62,3.24 -4.41,5.58 -2.7,2.25 -5.85,3.69 l 18.9,27.99 h -15.12 l -15.3,-24.66 h -7.29 v 24.66 h -13.59 v -64.26 z m -0.99,11.16 h -4.14 v 17.37 h 4.41 q 6.75,0 9.63,-2.25 2.97,-2.25 2.97,-6.66 0,-4.59 -3.15,-6.48 -3.06,-1.98 -9.72,-1.98 z"
+         style="font-size:90px;line-height:1.25"
+         id="path385" />
+    </g>
   </g>
 </svg>

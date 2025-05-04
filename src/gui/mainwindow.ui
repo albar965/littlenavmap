@@ -93,9 +93,10 @@
     <addaction name="separator"/>
     <addaction name="actionRouteResetAll"/>
     <addaction name="separator"/>
+    <addaction name="actionRouteSaveAsPlnMsfs24"/>
     <addaction name="actionRouteSaveAsPlnMsfs"/>
-    <addaction name="actionRouteSaveAsPln"/>
     <addaction name="actionRouteSaveAsFms11"/>
+    <addaction name="actionRouteSaveAsPln"/>
     <addaction name="actionRouteSaveAsFlightGear"/>
     <addaction name="separator"/>
     <addaction name="actionRouteFetchFromSimBrief"/>
@@ -150,6 +151,7 @@
      <addaction name="separator"/>
      <addaction name="actionShortcutAirportSearch"/>
      <addaction name="actionShortcutNavaidSearch"/>
+     <addaction name="actionShortcutProcedureSearch"/>
      <addaction name="actionShortcutUserpointSearch"/>
      <addaction name="actionShortcutLogbookSearch"/>
      <addaction name="separator"/>
@@ -168,6 +170,16 @@
       <string>&amp;Recent Window Layouts</string>
      </property>
      <addaction name="actionWindowLayoutClearRecent"/>
+    </widget>
+    <widget class="QMenu" name="menuWindowToolbars">
+     <property name="title">
+      <string>&amp;Toolbars</string>
+     </property>
+    </widget>
+    <widget class="QMenu" name="menuWindowDock">
+     <property name="title">
+      <string>&amp;Dock Windows</string>
+     </property>
     </widget>
     <addaction name="menuShortcuts"/>
     <addaction name="separator"/>
@@ -192,6 +204,8 @@
     <addaction name="separator"/>
     <addaction name="actionShowStatusbar"/>
     <addaction name="separator"/>
+    <addaction name="menuWindowToolbars"/>
+    <addaction name="menuWindowDock"/>
    </widget>
    <widget class="QMenu" name="menuHelp">
     <property name="title">
@@ -199,13 +213,14 @@
     </property>
     <widget class="QMenu" name="menuHelpUserManualImportantChapters">
      <property name="title">
-      <string>User Manual - Helpful Chapters (Online)</string>
+      <string>User Manual - Helpful &amp;Chapters (Online)</string>
      </property>
      <addaction name="actionHelpUserManualStart"/>
      <addaction name="actionHelpUserManualTutorials"/>
      <addaction name="separator"/>
      <addaction name="actionHelpUserManualUserInterface"/>
      <addaction name="actionHelpUserManualMainMenu"/>
+     <addaction name="actionHelpUserManualShortcuts"/>
      <addaction name="separator"/>
      <addaction name="actionHelpUserManualFlightPlanning"/>
      <addaction name="actionHelpUserManualAircraftPerf"/>
@@ -213,12 +228,12 @@
      <addaction name="actionHelpUserManualLegend"/>
     </widget>
     <addaction name="actionHelpUserManualContents"/>
-    <addaction name="menuHelpUserManualImportantChapters"/>
-    <addaction name="separator"/>
     <addaction name="actionHelpContentsOffline"/>
+    <addaction name="menuHelpUserManualImportantChapters"/>
     <addaction name="separator"/>
     <addaction name="actionHelpFaq"/>
     <addaction name="actionHelpDownloads"/>
+    <addaction name="actionHelpUserManualDownload"/>
     <addaction name="separator"/>
     <addaction name="actionHelpChangelog"/>
     <addaction name="separator"/>
@@ -240,12 +255,18 @@
      </property>
      <addaction name="actionHelpOpenLogFile"/>
      <addaction name="actionHelpOpenConfigFile"/>
-     <addaction name="actionDatabaseFiles"/>
+     <addaction name="separator"/>
      <addaction name="actionShowMapCache"/>
      <addaction name="actionShowMapInstallation"/>
+     <addaction name="separator"/>
+     <addaction name="actionDatabaseFiles"/>
+     <addaction name="actionShowGlobeInstallation"/>
     </widget>
     <addaction name="actionConnectSimulator"/>
     <addaction name="actionConnectSimulatorToggle"/>
+    <addaction name="separator"/>
+    <addaction name="actionCreateDirStructure"/>
+    <addaction name="actionInstallXpconnect"/>
     <addaction name="separator"/>
     <addaction name="actionRunWebserver"/>
     <addaction name="actionOpenWebserver"/>
@@ -254,9 +275,9 @@
     <addaction name="separator"/>
     <addaction name="actionResetAllSettings"/>
     <addaction name="actionSaveAllNow"/>
-    <addaction name="actionCreateACrashReport"/>
     <addaction name="separator"/>
-    <addaction name="actionCreateDirStructure"/>
+    <addaction name="actionCreateIssueReport"/>
+    <addaction name="separator"/>
     <addaction name="menuHelpFilesAndFolders"/>
     <addaction name="separator"/>
     <addaction name="actionRouteDisplayOptions"/>
@@ -273,7 +294,7 @@
     <addaction name="actionMapAircraftCenterNow"/>
     <addaction name="actionRouteCenter"/>
     <addaction name="actionMapShowMark"/>
-    <addaction name="actionMapJumpCoordinatesMain"/>
+    <addaction name="actionMapJumpCoordinates"/>
     <addaction name="separator"/>
     <addaction name="actionMapAircraftCenter"/>
     <addaction name="actionMapDeleteAircraftTrack"/>
@@ -289,9 +310,12 @@
     <addaction name="actionMapHideAllHoldings"/>
     <addaction name="actionMapHideAllMsa"/>
     <addaction name="separator"/>
-    <addaction name="actionMapDetailsMore"/>
     <addaction name="actionMapDetailsDefault"/>
+    <addaction name="actionMapDetailsMore"/>
     <addaction name="actionMapDetailsLess"/>
+    <addaction name="separator"/>
+    <addaction name="actionMapDetailsTextMore"/>
+    <addaction name="actionMapDetailsTextLess"/>
    </widget>
    <widget class="QMenu" name="menuRoute">
     <property name="title">
@@ -303,7 +327,6 @@
      </property>
      <addaction name="actionTrackSourcesNat"/>
      <addaction name="actionTrackSourcesPacots"/>
-     <addaction name="actionTrackSourcesAusots"/>
     </widget>
     <addaction name="actionShortcutFlightPlan"/>
     <addaction name="actionShortcutAircraftPerformance"/>
@@ -315,6 +338,8 @@
     <addaction name="actionRouteEditMode"/>
     <addaction name="separator"/>
     <addaction name="actionRouteCalc"/>
+    <addaction name="actionRouteRandom"/>
+    <addaction name="separator"/>
     <addaction name="actionRouteCalcDirect"/>
     <addaction name="actionRouteReverse"/>
     <addaction name="actionRouteAdjustAltitude"/>
@@ -421,6 +446,7 @@
      <addaction name="actionMapShowVor"/>
      <addaction name="actionMapShowNdb"/>
      <addaction name="actionMapShowWp"/>
+     <addaction name="separator"/>
      <addaction name="actionMapShowIls"/>
      <addaction name="actionMapShowGls"/>
      <addaction name="separator"/>
@@ -462,6 +488,7 @@
     <addaction name="actionMapShowAlternate"/>
     <addaction name="actionMapShowTocTod"/>
     <addaction name="actionInfoApproachShowMissedAppr"/>
+    <addaction name="actionShowDirectToRunway"/>
     <addaction name="separator"/>
     <addaction name="actionMapShowAircraft"/>
     <addaction name="actionMapShowAircraftTrack"/>
@@ -497,7 +524,7 @@
     </property>
     <widget class="QMenu" name="menuAircraftPerformanceRecent">
      <property name="title">
-      <string>&amp;Recent Performance Files</string>
+      <string>&amp;Recent Aircraft Performance Files</string>
      </property>
      <addaction name="actionAircraftPerformanceClearMenu"/>
     </widget>
@@ -569,6 +596,7 @@
     </property>
     <addaction name="actionShortcutAirportSearch"/>
     <addaction name="actionShortcutNavaidSearch"/>
+    <addaction name="actionShortcutProcedureSearch"/>
     <addaction name="actionShortcutUserpointSearch"/>
     <addaction name="actionShortcutLogbookSearch"/>
    </widget>
@@ -585,23 +613,6 @@
    <addaction name="menuTools"/>
    <addaction name="menuView"/>
    <addaction name="menuHelp"/>
-  </widget>
-  <widget class="QToolBar" name="toolBarMain">
-   <property name="windowTitle">
-    <string>File Toolbar</string>
-   </property>
-   <attribute name="toolBarArea">
-    <enum>TopToolBarArea</enum>
-   </attribute>
-   <attribute name="toolBarBreak">
-    <bool>false</bool>
-   </attribute>
-   <addaction name="actionRouteNew"/>
-   <addaction name="actionRouteOpen"/>
-   <addaction name="actionRouteSave"/>
-   <addaction name="actionRouteSaveAll"/>
-   <addaction name="separator"/>
-   <addaction name="actionRouteResetAll"/>
   </widget>
   <widget class="QStatusBar" name="statusBar">
    <property name="sizeGripEnabled">
@@ -746,24 +757,7 @@ Searches for partial text in all fields. Note that not all fields are available 
              <item>
               <widget class="QPushButton" name="pushButtonAirportHelpSearch">
                <property name="toolTip">
-                <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;
-&lt;p&gt;All set search conditions have to match.&lt;/p&gt;
-&lt;p&gt;Search tips for text fields: &lt;/p&gt;
-&lt;ul&gt;
-&lt;li&gt;Default is search for entries that start with text.&lt;/li&gt;
-&lt;li&gt;Use &amp;quot;*&amp;quot; as a placeholder for any text. &lt;/li&gt;
-&lt;li&gt;Prefix with &amp;quot;-&amp;quot; as first character to negate search.&lt;/li&gt;
-&lt;li&gt;Only ident field: Use double quotes like &amp;quot;FRA&amp;quot; to force exact search.&lt;/li&gt;
-&lt;li&gt;Only ident field: Enter a space separated list of idents to look for more than one airport.&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;p&gt;Check boxes: &lt;/p&gt;
-&lt;ul&gt;
-&lt;li&gt;Gray means: Condition is ignored.&lt;/li&gt;
-&lt;li&gt;Checked means: Condition must match.&lt;/li&gt;
-&lt;li&gt;Unchecked means: Condition must not match.&lt;/li&gt;
-&lt;/ul&gt;
-&lt;/body&gt;&lt;/html&gt;</string>
+                <string/>
                </property>
                <property name="statusTip">
                 <string>Show help for the airport search tab</string>
@@ -1710,6 +1704,10 @@ Not available for all simulators.</string>
                <property name="text">
                 <string>&amp;Random Flight</string>
                </property>
+               <property name="icon">
+                <iconset resource="../../littlenavmap.qrc">
+                 <normaloff>:/littlenavmap/resources/icons/random.svg</normaloff>:/littlenavmap/resources/icons/random.svg</iconset>
+               </property>
               </widget>
              </item>
              <item>
@@ -1764,13 +1762,13 @@ Not available for all simulators.</string>
                 <number>10</number>
                </property>
                <property name="maximum">
-                <number>20500</number>
+                <number>10800</number>
                </property>
                <property name="singleStep">
                 <number>10</number>
                </property>
                <property name="value">
-                <number>20500</number>
+                <number>10800</number>
                </property>
               </widget>
              </item>
@@ -1816,10 +1814,10 @@ Not available for all simulators.</string>
              <item>
               <widget class="QLineEdit" name="lineEditAirportFileSearch">
                <property name="toolTip">
-                <string>Name of the scenery file containg the airport</string>
+                <string>Name of the scenery file containing the airport</string>
                </property>
                <property name="statusTip">
-                <string>Name of the scenery file containg the airport</string>
+                <string>Name of the scenery file containing the airport</string>
                </property>
                <property name="placeholderText">
                 <string>Filename</string>
@@ -2515,10 +2513,10 @@ Not available for all simulators.</string>
              <item>
               <widget class="QLineEdit" name="lineEditNavFileSearch">
                <property name="toolTip">
-                <string>Name of the scenery file containg the navaid</string>
+                <string>Name of the scenery file containing the navaid</string>
                </property>
                <property name="statusTip">
-                <string>Name of the scenery file containg the navaid</string>
+                <string>Name of the scenery file containing the navaid</string>
                </property>
                <property name="placeholderText">
                 <string>Filename</string>
@@ -2695,31 +2693,19 @@ Not available for all simulators.</string>
            <item>
             <widget class="QLineEdit" name="lineEditProcedureSearchIdentFilter">
              <property name="toolTip">
-              <string>Filter procedures by idents beginning with given text</string>
+              <string>Filter procedures by idents, names and first/last waypoint names.
+Hides all items not beginning with the specified search term.</string>
              </property>
              <property name="statusTip">
-              <string>Filter procedures by idents beginning with text</string>
+              <string>Filter procedures by idents, names and first/last waypoint names.</string>
              </property>
              <property name="placeholderText">
-              <string>Ident</string>
+              <string>Search</string>
              </property>
              <property name="clearButtonEnabled">
               <bool>true</bool>
              </property>
             </widget>
-           </item>
-           <item>
-            <spacer name="horizontalSpacer">
-             <property name="orientation">
-              <enum>Qt::Horizontal</enum>
-             </property>
-             <property name="sizeHint" stdset="0">
-              <size>
-               <width>40</width>
-               <height>20</height>
-              </size>
-             </property>
-            </spacer>
            </item>
            <item>
             <widget class="QPushButton" name="pushButtonProcedureShowAll">
@@ -2802,6 +2788,19 @@ Not available for all simulators.</string>
          </item>
          <item>
           <widget class="QLabel" name="labelProcedureSearch">
+           <property name="text">
+            <string/>
+           </property>
+           <property name="wordWrap">
+            <bool>true</bool>
+           </property>
+           <property name="textInteractionFlags">
+            <set>Qt::LinksAccessibleByMouse|Qt::TextSelectableByMouse</set>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QLabel" name="labelProcedureSearchWarn">
            <property name="text">
             <string/>
            </property>
@@ -3047,15 +3046,7 @@ Not available for all simulators.</string>
            <item>
             <widget class="QPushButton" name="pushButtonUserdataHelp">
              <property name="toolTip">
-              <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;
-&lt;p&gt;All set search conditions have to match.&lt;/p&gt;
-&lt;p&gt;Search tips for text fields: &lt;/p&gt;
-&lt;ul&gt;
-&lt;li&gt;Default is search for entries that start with text.&lt;/li&gt;
-&lt;li&gt;Use &amp;quot;*&amp;quot; as a placeholder for any text. &lt;/li&gt;
-&lt;li&gt;Prefix with &amp;quot;-&amp;quot; as first character to negate search.&lt;/li&gt;
-&lt;/ul&gt;
-&lt;/body&gt;&lt;/html&gt;</string>
+              <string/>
              </property>
              <property name="statusTip">
               <string>Show help for the userpoints search tab</string>
@@ -3959,7 +3950,7 @@ Matches any visited airport.</string>
            <item>
             <widget class="QPushButton" name="pushButtonOnlineClientHelpSearch">
              <property name="toolTip">
-              <string/>
+              <string>Show help for the navaid search tab</string>
              </property>
              <property name="statusTip">
               <string>Show help for the navaid search tab</string>
@@ -4214,7 +4205,7 @@ Matches any visited airport.</string>
            <item>
             <widget class="QPushButton" name="pushButtonOnlineCenterHelpSearch">
              <property name="toolTip">
-              <string/>
+              <string>Show help for the navaid search tab</string>
              </property>
              <property name="statusTip">
               <string>Show help for the navaid search tab</string>
@@ -5344,7 +5335,7 @@ Wind speed will be interpolated between this altitude and ground level.</string>
              <string>Overview</string>
             </attribute>
             <attribute name="toolTip">
-             <string>Aiport overview</string>
+             <string>Airport overview</string>
             </attribute>
             <layout class="QVBoxLayout" name="verticalLayout_8">
              <property name="spacing">
@@ -5783,57 +5774,6 @@ relation to shown airport</string>
      </item>
     </layout>
    </widget>
-  </widget>
-  <widget class="QToolBar" name="toolBarMap">
-   <property name="windowTitle">
-    <string>Map Toolbar</string>
-   </property>
-   <attribute name="toolBarArea">
-    <enum>TopToolBarArea</enum>
-   </attribute>
-   <attribute name="toolBarBreak">
-    <bool>false</bool>
-   </attribute>
-   <addaction name="actionMapShowHome"/>
-   <addaction name="actionMapShowMark"/>
-   <addaction name="actionRouteCenter"/>
-   <addaction name="separator"/>
-   <addaction name="actionMapAircraftCenterNow"/>
-   <addaction name="actionMapAircraftCenter"/>
-   <addaction name="separator"/>
-   <addaction name="actionMapDeleteAircraftTrack"/>
-   <addaction name="actionMapClearAllHighlights"/>
-   <addaction name="separator"/>
-   <addaction name="actionMapBack"/>
-   <addaction name="actionMapNext"/>
-   <addaction name="separator"/>
-   <addaction name="actionDetailHandlerDummy"/>
-   <addaction name="separator"/>
-   <addaction name="actionThemeHandlerDummy"/>
-  </widget>
-  <widget class="QToolBar" name="toolBarRoute">
-   <property name="windowTitle">
-    <string>Flight Plan Toolbar</string>
-   </property>
-   <attribute name="toolBarArea">
-    <enum>TopToolBarArea</enum>
-   </attribute>
-   <attribute name="toolBarBreak">
-    <bool>true</bool>
-   </attribute>
-   <addaction name="actionRouteSelectParking"/>
-   <addaction name="actionShowDepartureCustom"/>
-   <addaction name="actionShowApproachCustom"/>
-   <addaction name="separator"/>
-   <addaction name="actionRouteEditMode"/>
-   <addaction name="separator"/>
-   <addaction name="actionRouteNewFromString"/>
-   <addaction name="separator"/>
-   <addaction name="actionRouteCalcDirect"/>
-   <addaction name="actionRouteReverse"/>
-   <addaction name="actionRouteCalc"/>
-   <addaction name="separator"/>
-   <addaction name="actionRouteAdjustAltitude"/>
   </widget>
   <widget class="QDockWidget" name="dockWidgetProfile">
    <property name="windowIcon">
@@ -6327,7 +6267,7 @@ relation to shown airport</string>
          <string>AI / Multiplayer</string>
         </attribute>
         <attribute name="toolTip">
-         <string>Information about AI or multplayer aircraft or ships</string>
+         <string>Information about AI or multiplayer aircraft or ships</string>
         </attribute>
         <layout class="QVBoxLayout" name="verticalLayout_18">
          <property name="spacing">
@@ -6398,9 +6338,140 @@ relation to shown airport</string>
     </layout>
    </widget>
   </widget>
+  <widget class="QToolBar" name="toolBarMain">
+   <property name="windowTitle">
+    <string>File</string>
+   </property>
+   <attribute name="toolBarArea">
+    <enum>TopToolBarArea</enum>
+   </attribute>
+   <attribute name="toolBarBreak">
+    <bool>false</bool>
+   </attribute>
+   <addaction name="actionRouteNew"/>
+   <addaction name="actionRouteOpen"/>
+   <addaction name="actionRouteSave"/>
+   <addaction name="actionRouteSaveAll"/>
+   <addaction name="separator"/>
+   <addaction name="actionRouteResetAll"/>
+  </widget>
+  <widget class="QToolBar" name="toolBarMap">
+   <property name="windowTitle">
+    <string>Map</string>
+   </property>
+   <attribute name="toolBarArea">
+    <enum>TopToolBarArea</enum>
+   </attribute>
+   <attribute name="toolBarBreak">
+    <bool>false</bool>
+   </attribute>
+   <addaction name="actionMapShowHome"/>
+   <addaction name="actionMapShowMark"/>
+   <addaction name="actionRouteCenter"/>
+   <addaction name="separator"/>
+   <addaction name="actionMapAircraftCenterNow"/>
+   <addaction name="actionMapAircraftCenter"/>
+   <addaction name="separator"/>
+   <addaction name="actionMapDeleteAircraftTrack"/>
+   <addaction name="actionMapClearAllHighlights"/>
+   <addaction name="separator"/>
+   <addaction name="actionMapBack"/>
+   <addaction name="actionMapNext"/>
+   <addaction name="separator"/>
+   <addaction name="actionDetailHandlerDummy"/>
+   <addaction name="separator"/>
+   <addaction name="actionThemeHandlerDummy"/>
+  </widget>
+  <widget class="QToolBar" name="toolBarMapOptions">
+   <property name="windowTitle">
+    <string>Map Options</string>
+   </property>
+   <attribute name="toolBarArea">
+    <enum>TopToolBarArea</enum>
+   </attribute>
+   <attribute name="toolBarBreak">
+    <bool>false</bool>
+   </attribute>
+   <addaction name="actionMapShowAirports"/>
+   <addaction name="actionMapShowAirportWeather"/>
+   <addaction name="separator"/>
+   <addaction name="actionMapShowVor"/>
+   <addaction name="actionMapShowNdb"/>
+   <addaction name="actionMapShowWp"/>
+   <addaction name="actionMapShowIls"/>
+   <addaction name="actionMapShowGls"/>
+   <addaction name="actionMapShowHolding"/>
+   <addaction name="actionMapShowAirportMsa"/>
+   <addaction name="actionMapShowMinimumAltitude"/>
+   <addaction name="separator"/>
+   <addaction name="actionMapShowVictorAirways"/>
+   <addaction name="actionMapShowJetAirways"/>
+   <addaction name="actionMapShowTracks"/>
+   <addaction name="separator"/>
+  </widget>
+  <widget class="QToolBar" name="toolBarMapOptionsOther">
+   <property name="windowTitle">
+    <string>Map Options Other</string>
+   </property>
+   <attribute name="toolBarArea">
+    <enum>TopToolBarArea</enum>
+   </attribute>
+   <attribute name="toolBarBreak">
+    <bool>false</bool>
+   </attribute>
+   <addaction name="actionMapShowGrid"/>
+   <addaction name="actionMapShowCities"/>
+   <addaction name="actionMapShowSunShading"/>
+  </widget>
+  <widget class="QToolBar" name="toolBarRoute">
+   <property name="windowTitle">
+    <string>Flight Plan</string>
+   </property>
+   <attribute name="toolBarArea">
+    <enum>TopToolBarArea</enum>
+   </attribute>
+   <attribute name="toolBarBreak">
+    <bool>true</bool>
+   </attribute>
+   <addaction name="actionRouteSelectParking"/>
+   <addaction name="actionShowDepartureCustom"/>
+   <addaction name="actionShowApproachCustom"/>
+   <addaction name="separator"/>
+   <addaction name="actionRouteEditMode"/>
+   <addaction name="separator"/>
+   <addaction name="actionRouteNewFromString"/>
+   <addaction name="separator"/>
+   <addaction name="actionRouteCalcDirect"/>
+   <addaction name="actionRouteReverse"/>
+   <addaction name="actionRouteCalc"/>
+   <addaction name="separator"/>
+   <addaction name="actionRouteAdjustAltitude"/>
+  </widget>
+  <widget class="QToolBar" name="toolBarMapOptionsRouteAircraft">
+   <property name="windowTitle">
+    <string>Map Options Flight Plan and Aircraft</string>
+   </property>
+   <attribute name="toolBarArea">
+    <enum>TopToolBarArea</enum>
+   </attribute>
+   <attribute name="toolBarBreak">
+    <bool>false</bool>
+   </attribute>
+   <addaction name="actionMapShowRoute"/>
+   <addaction name="actionInfoApproachShowMissedAppr"/>
+   <addaction name="actionMapShowAlternate"/>
+   <addaction name="separator"/>
+   <addaction name="actionMapShowAircraft"/>
+   <addaction name="actionMapShowAircraftTrack"/>
+   <addaction name="actionMapShowCompassRose"/>
+   <addaction name="separator"/>
+   <addaction name="actionMapShowAircraftAi"/>
+   <addaction name="actionMapShowAircraftOnline"/>
+   <addaction name="actionMapShowAircraftAiBoat"/>
+  </widget>
   <widget class="QToolBar" name="toolBarAirspaces">
    <property name="windowTitle">
-    <string>Map Airspaces Toolbar</string>
+    <string>Map Airspaces</string>
    </property>
    <attribute name="toolBarArea">
     <enum>TopToolBarArea</enum>
@@ -6410,9 +6481,22 @@ relation to shown airport</string>
    </attribute>
    <addaction name="actionShowAirspaces"/>
   </widget>
+  <widget class="QToolBar" name="toolBarView">
+   <property name="windowTitle">
+    <string>Dock Windows</string>
+   </property>
+   <attribute name="toolBarArea">
+    <enum>TopToolBarArea</enum>
+   </attribute>
+   <attribute name="toolBarBreak">
+    <bool>false</bool>
+   </attribute>
+   <addaction name="actionShowFullscreenMap"/>
+   <addaction name="separator"/>
+  </widget>
   <widget class="QToolBar" name="toolBarTools">
    <property name="windowTitle">
-    <string>Tools Toolbar</string>
+    <string>Tools and Options</string>
    </property>
    <attribute name="toolBarArea">
     <enum>TopToolBarArea</enum>
@@ -6425,58 +6509,6 @@ relation to shown airport</string>
    <addaction name="separator"/>
    <addaction name="actionConnectSimulator"/>
    <addaction name="actionOptions"/>
-  </widget>
-  <widget class="QToolBar" name="toolBarView">
-   <property name="windowTitle">
-    <string>Dock Window Toolbar</string>
-   </property>
-   <attribute name="toolBarArea">
-    <enum>TopToolBarArea</enum>
-   </attribute>
-   <attribute name="toolBarBreak">
-    <bool>false</bool>
-   </attribute>
-   <addaction name="actionShowFullscreenMap"/>
-  </widget>
-  <widget class="QToolBar" name="toolBarMapOptions">
-   <property name="windowTitle">
-    <string>Map Options Toolbar</string>
-   </property>
-   <attribute name="toolBarArea">
-    <enum>TopToolBarArea</enum>
-   </attribute>
-   <attribute name="toolBarBreak">
-    <bool>false</bool>
-   </attribute>
-   <addaction name="actionMapShowAirports"/>
-   <addaction name="actionMapShowVor"/>
-   <addaction name="actionMapShowNdb"/>
-   <addaction name="actionMapShowWp"/>
-   <addaction name="actionMapShowIls"/>
-   <addaction name="actionMapShowGls"/>
-   <addaction name="actionMapShowHolding"/>
-   <addaction name="actionMapShowAirportMsa"/>
-   <addaction name="actionMapShowVictorAirways"/>
-   <addaction name="actionMapShowJetAirways"/>
-   <addaction name="actionMapShowTracks"/>
-   <addaction name="separator"/>
-   <addaction name="actionMapShowRoute"/>
-   <addaction name="actionInfoApproachShowMissedAppr"/>
-   <addaction name="actionMapShowAlternate"/>
-   <addaction name="separator"/>
-   <addaction name="actionMapShowAircraft"/>
-   <addaction name="actionMapShowAircraftTrack"/>
-   <addaction name="actionMapShowCompassRose"/>
-   <addaction name="separator"/>
-   <addaction name="actionMapShowAircraftAi"/>
-   <addaction name="actionMapShowAircraftOnline"/>
-   <addaction name="actionMapShowAircraftAiBoat"/>
-   <addaction name="separator"/>
-   <addaction name="actionMapShowGrid"/>
-   <addaction name="actionMapShowCities"/>
-   <addaction name="actionMapShowMinimumAltitude"/>
-   <addaction name="actionMapShowAirportWeather"/>
-   <addaction name="actionMapShowSunShading"/>
   </widget>
   <action name="actionSearchFilterIncluding">
    <property name="icon">
@@ -7062,19 +7094,55 @@ relation to shown airport</string>
     <string>Ctrl+-</string>
    </property>
   </action>
+  <action name="actionMapDetailsTextMore">
+   <property name="icon">
+    <iconset resource="../../littlenavmap.qrc">
+     <normaloff>:/littlenavmap/resources/icons/detailmorelabel.svg</normaloff>:/littlenavmap/resources/icons/detailmorelabel.svg</iconset>
+   </property>
+   <property name="text">
+    <string>&amp;More Map Labels</string>
+   </property>
+   <property name="toolTip">
+    <string>Show more labels on the map</string>
+   </property>
+   <property name="statusTip">
+    <string>Show more labels on the map</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+Shift++</string>
+   </property>
+  </action>
+  <action name="actionMapDetailsTextLess">
+   <property name="icon">
+    <iconset resource="../../littlenavmap.qrc">
+     <normaloff>:/littlenavmap/resources/icons/detaillesslabel.svg</normaloff>:/littlenavmap/resources/icons/detaillesslabel.svg</iconset>
+   </property>
+   <property name="text">
+    <string>&amp;Less Map Labels</string>
+   </property>
+   <property name="toolTip">
+    <string>Show fewer labels on the map</string>
+   </property>
+   <property name="statusTip">
+    <string>Show fewer labels on the map</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+Shift+-</string>
+   </property>
+  </action>
   <action name="actionMapShowHome">
    <property name="icon">
     <iconset resource="../../littlenavmap.qrc">
      <normaloff>:/littlenavmap/resources/icons/home.svg</normaloff>:/littlenavmap/resources/icons/home.svg</iconset>
    </property>
    <property name="text">
-    <string>Goto &amp;Home</string>
+    <string>Go to &amp;Home</string>
    </property>
    <property name="toolTip">
-    <string>Goto home view</string>
+    <string>Go to home view</string>
    </property>
    <property name="statusTip">
-    <string>Goto home view</string>
+    <string>Go to home view</string>
    </property>
    <property name="shortcut">
     <string>Ctrl+Home</string>
@@ -7122,13 +7190,13 @@ relation to shown airport</string>
      <normaloff>:/littlenavmap/resources/icons/centermark.svg</normaloff>:/littlenavmap/resources/icons/centermark.svg</iconset>
    </property>
    <property name="text">
-    <string>Goto Center for &amp;Distance Search</string>
+    <string>Go to Center for &amp;Distance Search</string>
    </property>
    <property name="toolTip">
-    <string>Goto center mark for distance search</string>
+    <string>Go to center mark for distance search</string>
    </property>
    <property name="statusTip">
-    <string>Goto center mark for distance search</string>
+    <string>Go to center mark for distance search</string>
    </property>
    <property name="shortcut">
     <string>Ctrl+End</string>
@@ -7446,13 +7514,13 @@ relation to shown airport</string>
      <normaloff>:/littlenavmap/resources/icons/airwayvictor.svg</normaloff>:/littlenavmap/resources/icons/airwayvictor.svg</iconset>
    </property>
    <property name="text">
-    <string>Show &amp;Victor Airways</string>
+    <string>Show &amp;Low Airways</string>
    </property>
    <property name="toolTip">
-    <string>Show Victor airways on map</string>
+    <string>Show low (Victor) airways on map</string>
    </property>
    <property name="statusTip">
-    <string>Show Victor airways on map</string>
+    <string>Show low (Victor) airways on map</string>
    </property>
    <property name="shortcut">
     <string>Ctrl+V</string>
@@ -7467,13 +7535,13 @@ relation to shown airport</string>
      <normaloff>:/littlenavmap/resources/icons/airwayjet.svg</normaloff>:/littlenavmap/resources/icons/airwayjet.svg</iconset>
    </property>
    <property name="text">
-    <string>Show &amp;Jet Airways</string>
+    <string>Show &amp;High Airways</string>
    </property>
    <property name="toolTip">
-    <string>Show Jet airways on map</string>
+    <string>Show high (Jet) airways on map</string>
    </property>
    <property name="statusTip">
-    <string>Show Jet airways on map</string>
+    <string>Show high (Jet) airways on map</string>
    </property>
    <property name="shortcut">
     <string>Ctrl+J</string>
@@ -7761,13 +7829,13 @@ relation to shown airport</string>
      <normaloff>:/littlenavmap/resources/icons/centeraircraft.svg</normaloff>:/littlenavmap/resources/icons/centeraircraft.svg</iconset>
    </property>
    <property name="text">
-    <string>Keep &amp;User Aircraft centered</string>
+    <string>Map follows &amp;User Aircraft</string>
    </property>
    <property name="toolTip">
-    <string>Keep the user aircraft centered on the map</string>
+    <string>Keep the user aircraft visible on the map</string>
    </property>
    <property name="statusTip">
-    <string>Keep the user aircraft centered on the map</string>
+    <string>Keep the user aircraft visible on the map</string>
    </property>
    <property name="shortcut">
     <string>Ctrl+Alt+A</string>
@@ -7833,10 +7901,10 @@ relation to shown airport</string>
     <string>&amp;Edit Flight Plan on Map</string>
    </property>
    <property name="toolTip">
-    <string>Enable or disable flight plan edit mode on map</string>
+    <string>Toggle flight plan click and drag edit mode on the map</string>
    </property>
    <property name="statusTip">
-    <string>Enable or disable flight plan edit mode on map</string>
+    <string>Toggle flight plan click and drag edit mode on the map</string>
    </property>
    <property name="shortcut">
     <string>Ctrl+Shift+E</string>
@@ -7870,7 +7938,7 @@ relation to shown airport</string>
   </action>
   <action name="actionResetMessages">
    <property name="text">
-    <string>Reset all &amp;Messages</string>
+    <string>Reset all &amp;Messages ...</string>
    </property>
    <property name="toolTip">
     <string>Reset all messages that were disabled with the &quot;do not show again&quot; button</string>
@@ -7881,7 +7949,7 @@ relation to shown airport</string>
   </action>
   <action name="actionDatabaseFiles">
    <property name="text">
-    <string>&amp;Show Database Files</string>
+    <string>&amp;Show Databases</string>
    </property>
    <property name="toolTip">
     <string>Open the Little Navmap database directory in the default file manager</string>
@@ -8100,7 +8168,7 @@ relation to shown airport</string>
      <normaloff>:/littlenavmap/resources/icons/aircraftai.svg</normaloff>:/littlenavmap/resources/icons/aircraftai.svg</iconset>
    </property>
    <property name="text">
-    <string>Show &amp;AI and &amp;Multiplayer Aircraft</string>
+    <string>Show &amp;AI and Multiplayer Aircraft</string>
    </property>
    <property name="toolTip">
     <string>Show simulator AI and multiplayer aircraft on the map</string>
@@ -8541,10 +8609,10 @@ relation to shown airport</string>
     <string>Clear &amp;Selection</string>
    </property>
    <property name="toolTip">
-    <string>Unselect all entries in the table</string>
+    <string>Deselect all entries in the table</string>
    </property>
    <property name="statusTip">
-    <string>Unselect all entries in the table</string>
+    <string>Deselect all entries in the table</string>
    </property>
    <property name="shortcut">
     <string>Ctrl+Shift+A</string>
@@ -8559,10 +8627,10 @@ relation to shown airport</string>
     <string>Clear &amp;Selection</string>
    </property>
    <property name="toolTip">
-    <string>Unselect all entries in the table</string>
+    <string>Deselect all entries in the table</string>
    </property>
    <property name="statusTip">
-    <string>Unselect all entries in the table</string>
+    <string>Deselect all entries in the table</string>
    </property>
    <property name="shortcut">
     <string>Ctrl+Shift+A</string>
@@ -8577,10 +8645,10 @@ relation to shown airport</string>
     <string>Clear &amp;Selection</string>
    </property>
    <property name="toolTip">
-    <string>Unselect all entries in the table</string>
+    <string>Deselect all entries in the table</string>
    </property>
    <property name="statusTip">
-    <string>Unselect all entries in the table</string>
+    <string>Deselect all entries in the table</string>
    </property>
    <property name="shortcut">
     <string>Ctrl+Shift+A</string>
@@ -8670,6 +8738,9 @@ relation to shown airport</string>
    <property name="statusTip">
     <string>Reset the window layout and all dock windows back to default</string>
    </property>
+   <property name="shortcut">
+    <string>Ctrl+Alt+Shift+W</string>
+   </property>
   </action>
   <action name="actionHelpUserManualTutorials">
    <property name="icon">
@@ -8733,7 +8804,7 @@ relation to shown airport</string>
      <normaloff>:/littlenavmap/resources/icons/saveasfms.svg</normaloff>:/littlenavmap/resources/icons/saveasfms.svg</iconset>
    </property>
    <property name="text">
-    <string>Export Flight &amp;Plan as FMS for X-Plane 11 and 12 ...</string>
+    <string>Export Flight Plan as FMS for &amp;X-Plane 11 and 12 ...</string>
    </property>
    <property name="toolTip">
     <string>Export flight plan using FMS format usable by X-Plane 11 and 12</string>
@@ -9229,7 +9300,7 @@ relation to shown airport</string>
    </property>
    <property name="icon">
     <iconset resource="../../littlenavmap.qrc">
-     <normaloff>:/littlenavmap/resources/icons/weather.svg</normaloff>:/littlenavmap/resources/icons/weather.svg</iconset>
+     <normaloff>:/littlenavmap/resources/icons/airportweather.svg</normaloff>:/littlenavmap/resources/icons/airportweather.svg</iconset>
    </property>
    <property name="text">
     <string>Show Airport &amp;Weather</string>
@@ -9319,7 +9390,7 @@ relation to shown airport</string>
     <bool>true</bool>
    </property>
    <property name="checked">
-    <bool>false</bool>
+    <bool>true</bool>
    </property>
    <property name="icon">
     <iconset resource="../../littlenavmap.qrc">
@@ -9433,7 +9504,7 @@ relation to shown airport</string>
      <normaloff>:/littlenavmap/resources/icons/centeraircraft.svg</normaloff>:/littlenavmap/resources/icons/centeraircraft.svg</iconset>
    </property>
    <property name="text">
-    <string>&amp;Keep User Aircraft Centered</string>
+    <string>&amp;Elevation Profile follows User Aircraft</string>
    </property>
    <property name="toolTip">
     <string>Center the user aircraft on the elevation profile</string>
@@ -9501,7 +9572,7 @@ relation to shown airport</string>
      <normaloff>:/littlenavmap/resources/icons/clearselection.svg</normaloff>:/littlenavmap/resources/icons/clearselection.svg</iconset>
    </property>
    <property name="text">
-    <string>&amp;Remove all &amp;Highlights and Selections</string>
+    <string>&amp;Remove all Highlights and Selections</string>
    </property>
    <property name="toolTip">
     <string>Clear all highlights on the map</string>
@@ -9718,7 +9789,7 @@ relation to shown airport</string>
   </action>
   <action name="actionMapCopyClipboard">
    <property name="text">
-    <string>Copy Map &amp;Image to Clipboard ...</string>
+    <string>Copy Map Image to &amp;Clipboard ...</string>
    </property>
    <property name="toolTip">
     <string>Save current map view as an image to the clipboard</string>
@@ -9963,7 +10034,7 @@ relation to shown airport</string>
      <normaloff>:/littlenavmap/resources/icons/mapsaveasimage.svg</normaloff>:/littlenavmap/resources/icons/mapsaveasimage.svg</iconset>
    </property>
    <property name="text">
-    <string>Save Map as &amp;Image for AviTab ...</string>
+    <string>Save Map as Image for Avi&amp;Tab ...</string>
    </property>
    <property name="toolTip">
     <string>Save current map view as an image for AviTab</string>
@@ -9971,21 +10042,24 @@ relation to shown airport</string>
    <property name="statusTip">
     <string>Save current map view as an image for AviTab</string>
    </property>
+   <property name="shortcut">
+    <string>Ctrl+Alt+Shift+P</string>
+   </property>
   </action>
   <action name="actionRunWebserver">
    <property name="checkable">
     <bool>true</bool>
    </property>
    <property name="text">
-    <string>Run &amp;Webserver</string>
+    <string>Run &amp;Web Server</string>
    </property>
   </action>
   <action name="actionOpenWebserver">
    <property name="text">
-    <string>Open Webserver &amp;Page in Browser</string>
+    <string>Open Web Server &amp;Page in Browser</string>
    </property>
    <property name="toolTip">
-    <string>Open Webserver Page in Browser</string>
+    <string>Open Web Server Page in Browser</string>
    </property>
   </action>
   <action name="actionMapShowWindSimulator">
@@ -10502,7 +10576,7 @@ relation to shown airport</string>
   </action>
   <action name="actionResetAllSettings">
    <property name="text">
-    <string>&amp;Reset all Settings and Restart</string>
+    <string>&amp;Reset all Settings and Restart ...</string>
    </property>
    <property name="toolTip">
     <string>Reset all settings and window layout back to default and restart program.</string>
@@ -10520,7 +10594,7 @@ relation to shown airport</string>
      <normaloff>:/littlenavmap/resources/icons/routecalc.svg</normaloff>:/littlenavmap/resources/icons/routecalc.svg</iconset>
    </property>
    <property name="text">
-    <string>Flight Plan &amp;Calculation  ...</string>
+    <string>Flight Plan &amp;Calculation ...</string>
    </property>
    <property name="toolTip">
     <string>Shows the flight plan calculation window</string>
@@ -10573,7 +10647,7 @@ relation to shown airport</string>
      <normaloff>:/littlenavmap/resources/icons/airwaytrack.svg</normaloff>:/littlenavmap/resources/icons/airwaytrack.svg</iconset>
    </property>
    <property name="text">
-    <string>Show &amp;Tracks</string>
+    <string>Show Oceanic &amp;Tracks</string>
    </property>
    <property name="toolTip">
     <string>Show tracks on the map</string>
@@ -10593,10 +10667,10 @@ relation to shown airport</string>
     <string>Download Oceanic Tracks on &amp;Startup</string>
    </property>
    <property name="toolTip">
-    <string>Download NAT, PACOTS and AUSOTS tracks on startup</string>
+    <string>Download NAT and PACOTS tracks on startup</string>
    </property>
    <property name="statusTip">
-    <string>Download NAT, PACOTS and AUSOTS tracks on startup</string>
+    <string>Download NAT and PACOTS tracks on startup</string>
    </property>
   </action>
   <action name="actionRouteDeleteTracks">
@@ -10619,10 +10693,10 @@ relation to shown airport</string>
     <string>Download Oceanic &amp;Tracks</string>
    </property>
    <property name="toolTip">
-    <string>Download NAT, PACOTS and AUSOTS tracks now</string>
+    <string>Download NAT and PACOTS tracks now</string>
    </property>
    <property name="statusTip">
-    <string>Download NAT, PACOTS and AUSOTS tracks now</string>
+    <string>Download NAT and PACOTS tracks now</string>
    </property>
   </action>
   <action name="actionRouteSaveAsPln">
@@ -10631,7 +10705,7 @@ relation to shown airport</string>
      <normaloff>:/littlenavmap/resources/icons/filesaveas.svg</normaloff>:/littlenavmap/resources/icons/filesaveas.svg</iconset>
    </property>
    <property name="text">
-    <string>Export Flight Plan &amp;as P3D or FSX  PLN ...</string>
+    <string>Export Flight Plan as &amp;P3D or FSX  PLN ...</string>
    </property>
    <property name="toolTip">
     <string>Export Flight Plan as PLN for P3D or FSX</string>
@@ -10798,16 +10872,16 @@ relation to shown airport</string>
   </action>
   <action name="actionSearchLogdataSavePerfAs">
    <property name="text">
-    <string>Save attached Aircraft &amp;Perfomance as ...</string>
+    <string>Save attached Aircraft &amp;Performance as ...</string>
    </property>
    <property name="iconText">
-    <string>Save aircraft perfomance as a new file</string>
+    <string>Save aircraft performance as a new file</string>
    </property>
    <property name="toolTip">
-    <string>Save attached aircraft perfomance as a new file</string>
+    <string>Save attached aircraft performance as a new file</string>
    </property>
    <property name="statusTip">
-    <string>Save attached aircraft perfomance as a new file</string>
+    <string>Save attached aircraft performance as a new file</string>
    </property>
   </action>
   <action name="actionSearchLogdataOpenPerf">
@@ -10938,6 +11012,9 @@ relation to shown airport</string>
    <property name="statusTip">
     <string>Copies the coordinates into the clipboard</string>
    </property>
+   <property name="shortcut">
+    <string>Ctrl+C</string>
+   </property>
   </action>
   <action name="actionWindowLayoutOpen">
    <property name="text">
@@ -11017,13 +11094,31 @@ relation to shown airport</string>
      <normaloff>:/littlenavmap/resources/icons/filesaveas.svg</normaloff>:/littlenavmap/resources/icons/filesaveas.svg</iconset>
    </property>
    <property name="text">
-    <string>Export Flight Plan &amp;as MSFS 2020 PLN ...</string>
+    <string>Export Flight Plan as MSFS &amp;2020 PLN ...</string>
    </property>
    <property name="toolTip">
     <string>Export Flight Plan as PLN for Microsoft Flight Simulator 2020</string>
    </property>
    <property name="statusTip">
     <string>Export Flight Plan as PLN for Microsoft Flight Simulator 2020</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+Shift+B</string>
+   </property>
+  </action>
+  <action name="actionRouteSaveAsPlnMsfs24">
+   <property name="icon">
+    <iconset resource="../../littlenavmap.qrc">
+     <normaloff>:/littlenavmap/resources/icons/filesaveas.svg</normaloff>:/littlenavmap/resources/icons/filesaveas.svg</iconset>
+   </property>
+   <property name="text">
+    <string>Export Flight Plan as &amp;MSFS 2024 PLN ...</string>
+   </property>
+   <property name="toolTip">
+    <string>Export Flight Plan as PLN for the Microsoft Flight Simulator 2024 EFB</string>
+   </property>
+   <property name="statusTip">
+    <string>Export Flight Plan as PLN for the Microsoft Flight Simulator 2024 EFB</string>
    </property>
    <property name="shortcut">
     <string>Ctrl+Shift+F</string>
@@ -11105,20 +11200,6 @@ relation to shown airport</string>
    </property>
    <property name="statusTip">
     <string>Download tracks for Pacific Organized Track System</string>
-   </property>
-  </action>
-  <action name="actionTrackSourcesAusots">
-   <property name="checkable">
-    <bool>true</bool>
-   </property>
-   <property name="text">
-    <string>&amp;AUSOTS</string>
-   </property>
-   <property name="toolTip">
-    <string>Download tracks for Australian Organised Track Structure</string>
-   </property>
-   <property name="statusTip">
-    <string>Download tracks for Australian Organised Track Structure</string>
    </property>
   </action>
   <action name="actionConnectSimulatorToggle">
@@ -11330,7 +11411,7 @@ relation to shown airport</string>
      <normaloff>:/littlenavmap/resources/icons/aircraft.svg</normaloff>:/littlenavmap/resources/icons/aircraft.svg</iconset>
    </property>
    <property name="text">
-    <string>Goto &amp;User Aircraft</string>
+    <string>Go to &amp;User Aircraft</string>
    </property>
    <property name="toolTip">
     <string>Jump to the user aircraft</string>
@@ -11435,13 +11516,13 @@ relation to shown airport</string>
      <normaloff>:/littlenavmap/resources/icons/runwaydest.svg</normaloff>:/littlenavmap/resources/icons/runwaydest.svg</iconset>
    </property>
    <property name="text">
-    <string>Select Destination &amp;Runway ...</string>
+    <string>Select Destination &amp;Runway or Procedures ...</string>
    </property>
    <property name="toolTip">
-    <string>Select runway for destination airport in flight plan</string>
+    <string>Select runway or procedures for destination airport in flight plan</string>
    </property>
    <property name="statusTip">
-    <string>Select runway for destination airport in flight plan</string>
+    <string>Select runway or procedures for destination airport in flight plan</string>
    </property>
    <property name="shortcut">
     <string>Alt+Shift+U</string>
@@ -11453,34 +11534,16 @@ relation to shown airport</string>
      <normaloff>:/littlenavmap/resources/icons/runwaydepart.svg</normaloff>:/littlenavmap/resources/icons/runwaydepart.svg</iconset>
    </property>
    <property name="text">
-    <string>Select &amp;Departure Runway ...</string>
+    <string>Select &amp;Departure Runway or Procedure ...</string>
    </property>
    <property name="toolTip">
-    <string>Select runway for departure airport in flight plan</string>
+    <string>Select runway or a procedure for departure airport in flight plan</string>
    </property>
    <property name="statusTip">
-    <string>Select runway for departure airport in flight plan</string>
+    <string>Select runway or a procedure for departure airport in flight plan</string>
    </property>
    <property name="shortcut">
     <string>Alt+Shift+R</string>
-   </property>
-  </action>
-  <action name="actionMapJumpCoordinatesMain">
-   <property name="icon">
-    <iconset resource="../../littlenavmap.qrc">
-     <normaloff>:/littlenavmap/resources/icons/zoomin.svg</normaloff>:/littlenavmap/resources/icons/zoomin.svg</iconset>
-   </property>
-   <property name="text">
-    <string>&amp;Jump to Coordinates ...</string>
-   </property>
-   <property name="toolTip">
-    <string>Jump to coordinates and zoom distance on the map</string>
-   </property>
-   <property name="statusTip">
-    <string>Set center mark for distance search</string>
-   </property>
-   <property name="shortcut">
-    <string>Ctrl+Shift+Home</string>
    </property>
   </action>
   <action name="actionMapJumpCoordinates">
@@ -11495,7 +11558,10 @@ relation to shown airport</string>
     <string>Jump to coordinates and zoom distance on the map</string>
    </property>
    <property name="statusTip">
-    <string>Set center mark for distance search</string>
+    <string>Jump to coordinates and zoom distance on the map</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+Shift+Home</string>
    </property>
   </action>
   <action name="actionMapShowEndurance">
@@ -11554,6 +11620,9 @@ relation to shown airport</string>
    <property name="statusTip">
     <string>Preview all listed procedures on the map</string>
    </property>
+   <property name="shortcut">
+    <string>Ctrl+Shift+K</string>
+   </property>
   </action>
   <action name="actionMapShowSelectedAltRange">
    <property name="checkable">
@@ -11591,13 +11660,13 @@ relation to shown airport</string>
      <normaloff>:/littlenavmap/resources/icons/verticaltrack.svg</normaloff>:/littlenavmap/resources/icons/verticaltrack.svg</iconset>
    </property>
    <property name="text">
-    <string>Show &amp;Vertical Track</string>
+    <string>Show &amp;Vertical Aircraft Trail</string>
    </property>
    <property name="toolTip">
-    <string>Show vertical track line</string>
+    <string>Show vertical aircraft trail</string>
    </property>
    <property name="statusTip">
-    <string>Show vertical track line</string>
+    <string>Show vertical aircraft trail</string>
    </property>
   </action>
   <action name="actionSearchUserpointUndo">
@@ -11972,7 +12041,7 @@ relation to shown airport</string>
   </action>
   <action name="actionShowMapInstallation">
    <property name="text">
-    <string>Show Map Theme &amp;Installation Directory</string>
+    <string>Show Map Theme &amp;Installation</string>
    </property>
    <property name="toolTip">
     <string>Open the Little Navmap map installation directory for additional maps</string>
@@ -12097,9 +12166,9 @@ relation to shown airport</string>
     <string>Show legs to alternate airports and airports for flight plan on the map</string>
    </property>
   </action>
-  <action name="actionCreateACrashReport">
+  <action name="actionCreateIssueReport">
    <property name="text">
-    <string>&amp;Create an Issue Report</string>
+    <string>&amp;Create Issue Report ...</string>
    </property>
    <property name="toolTip">
     <string>Builds an issue report package containing all related files to report a problem</string>
@@ -12252,6 +12321,121 @@ relation to shown airport</string>
     <string>Convert the procedure to waypoints which allows editing</string>
    </property>
   </action>
+  <action name="actionInstallXpconnect">
+   <property name="text">
+    <string>Install Little &amp;Xpconnect in X-Plane Plugins ...</string>
+   </property>
+   <property name="toolTip">
+    <string>Install the Little Xpconnect X-Plane plugin in the currently selected X-Plane instance</string>
+   </property>
+   <property name="statusTip">
+    <string>Install the Little Xpconnect X-Plane plugin in the currently selected X-Plane instance</string>
+   </property>
+  </action>
+  <action name="actionShowGlobeInstallation">
+   <property name="text">
+    <string>Show &amp;GLOBE Offline Elevation Data Installation</string>
+   </property>
+   <property name="toolTip">
+    <string>Show the installation directory for GLOBE offline elevation data</string>
+   </property>
+   <property name="statusTip">
+    <string>Show the installation directory for GLOBE offline elevation data</string>
+   </property>
+  </action>
+  <action name="actionHelpUserManualDownload">
+   <property name="icon">
+    <iconset resource="../../littlenavmap.qrc">
+     <normaloff>:/littlenavmap/resources/icons/helpdownload.svg</normaloff>:/littlenavmap/resources/icons/helpdownload.svg</iconset>
+   </property>
+   <property name="text">
+    <string>&amp;Download User Manuals</string>
+   </property>
+   <property name="toolTip">
+    <string>Download the user manual in other formats like PDF</string>
+   </property>
+   <property name="statusTip">
+    <string>Show the start and first steps page</string>
+   </property>
+  </action>
+  <action name="actionShortcutProcedureSearch">
+   <property name="text">
+    <string>&amp;Procedure Search</string>
+   </property>
+   <property name="toolTip">
+    <string>Show and activate Procedure Search Window</string>
+   </property>
+   <property name="statusTip">
+    <string>Show and activate Procedure Search Window</string>
+   </property>
+   <property name="shortcut">
+    <string>Shift+F5</string>
+   </property>
+   <property name="shortcutContext">
+    <enum>Qt::ApplicationShortcut</enum>
+   </property>
+  </action>
+  <action name="actionRouteRandom">
+   <property name="icon">
+    <iconset resource="../../littlenavmap.qrc">
+     <normaloff>:/littlenavmap/resources/icons/routerandom.svg</normaloff>:/littlenavmap/resources/icons/routerandom.svg</iconset>
+   </property>
+   <property name="text">
+    <string>Generate &amp;Random Flight ...</string>
+   </property>
+   <property name="toolTip">
+    <string>Generate a flight using random airports</string>
+   </property>
+   <property name="statusTip">
+    <string>Generate a flight using random airports</string>
+   </property>
+  </action>
+  <action name="actionHelpUserManualShortcuts">
+   <property name="icon">
+    <iconset resource="../../littlenavmap.qrc">
+     <normaloff>:/littlenavmap/resources/icons/help.svg</normaloff>:/littlenavmap/resources/icons/help.svg</iconset>
+   </property>
+   <property name="text">
+    <string>&amp;Keyboard Shortcuts</string>
+   </property>
+   <property name="toolTip">
+    <string>Shows all keyboard shortcuts online in a browser</string>
+   </property>
+   <property name="statusTip">
+    <string>Show keyboard shortcuts in a browser</string>
+   </property>
+  </action>
+  <action name="actionDockWindowsNormalFrame">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>&amp;Floating Docks use normal Window Frame</string>
+   </property>
+   <property name="toolTip">
+    <string>Assign a normal window frame to dock windows and
+let them appear in the task list</string>
+   </property>
+  </action>
+  <action name="actionShowDirectToRunway">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="checked">
+    <bool>true</bool>
+   </property>
+   <property name="icon">
+    <iconset resource="../../littlenavmap.qrc">
+     <normaloff>:/littlenavmap/resources/icons/directrunway.svg</normaloff>:/littlenavmap/resources/icons/directrunway.svg</iconset>
+   </property>
+   <property name="text">
+    <string>Show &amp;Direction to Departure Runway</string>
+   </property>
+   <property name="toolTip">
+    <string>Shows a dashed line with arrows pointing directly to the departure runway position
+from either the departure parking or the user aircraft while taxiing.</string>
+   </property>
+  </action>
  </widget>
  <layoutdefault spacing="6" margin="11"/>
  <tabstops>
@@ -12298,11 +12482,22 @@ relation to shown airport</string>
   <tabstop>textBrowserAircraftProgressInfo</tabstop>
   <tabstop>textBrowserAircraftAiInfo</tabstop>
   <tabstop>tabWidgetSearch</tabstop>
+  <tabstop>lineEditAirportTextSearch</tabstop>
+  <tabstop>pushButtonAirportSearchReset</tabstop>
+  <tabstop>pushButtonAirportSearchClearSelection</tabstop>
+  <tabstop>pushButtonAirportHelpSearch</tabstop>
+  <tabstop>toolButtonAirportSearch</tabstop>
+  <tabstop>lineEditAirportIcaoSearch</tabstop>
+  <tabstop>lineEditAirportNameSearch</tabstop>
+  <tabstop>lineEditAirportCitySearch</tabstop>
+  <tabstop>lineEditAirportStateSearch</tabstop>
+  <tabstop>lineEditAirportCountrySearch</tabstop>
   <tabstop>checkBoxAirportAddonSearch</tabstop>
   <tabstop>checkBoxAirportLightSearch</tabstop>
   <tabstop>checkBoxAirportIlsSearch</tabstop>
   <tabstop>checkBoxAirportMilSearch</tabstop>
   <tabstop>checkBoxAirportAvgasSearch</tabstop>
+  <tabstop>comboBoxAirportRatingSearch</tabstop>
   <tabstop>checkBoxAirportTowerSearch</tabstop>
   <tabstop>checkBoxAirportApprSearch</tabstop>
   <tabstop>checkBoxAirportClosedSearch</tabstop>
@@ -12345,6 +12540,7 @@ relation to shown airport</string>
   <tabstop>tableViewNavSearch</tabstop>
   <tabstop>comboBoxProcedureSearchFilter</tabstop>
   <tabstop>comboBoxProcedureRunwayFilter</tabstop>
+  <tabstop>lineEditProcedureSearchIdentFilter</tabstop>
   <tabstop>pushButtonProcedureShowAll</tabstop>
   <tabstop>pushButtonProcedureSearchReset</tabstop>
   <tabstop>pushButtonProcedureSearchClearSelection</tabstop>

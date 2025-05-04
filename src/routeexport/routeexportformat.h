@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2023 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2024 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -194,7 +194,7 @@ public:
     return other;
   }
 
-  /* true if directoy or file exists */
+  /* true if directory or file exists */
   bool isPathValid(QString *errorMessage = nullptr) const;
 
   /* true if valid - means pattern is not empty and does not contain invalid characters */
@@ -252,7 +252,7 @@ private:
   QString defaultPath;
 };
 
-Q_DECLARE_METATYPE(RouteExportFormat);
+Q_DECLARE_METATYPE(RouteExportFormat)
 
 QDataStream& operator>>(QDataStream& dataStream, RouteExportFormat& obj);
 QDataStream& operator<<(QDataStream& dataStream, const RouteExportFormat& obj);
@@ -269,7 +269,7 @@ class RouteExportFormatMap
 
 public:
   /* Save and load to/from settings file */
-  void saveState();
+  void saveState() const;
   void restoreState();
 
   /* true if there are any selected export formats in the list.*/
@@ -341,7 +341,7 @@ private:
   static quint16 version;
 };
 
-Q_DECLARE_METATYPE(RouteExportFormatMap);
+Q_DECLARE_METATYPE(RouteExportFormatMap)
 
 QDataStream& operator>>(QDataStream& dataStream, RouteExportFormatMap& obj);
 QDataStream& operator<<(QDataStream& dataStream, const RouteExportFormatMap& obj);

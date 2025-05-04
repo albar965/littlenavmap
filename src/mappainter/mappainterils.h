@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2023 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2024 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -44,7 +44,7 @@ public:
 private:
   /* Fixed value that is used when writing the database. See atools::fs::db::IlsWriter */
   static Q_DECL_CONSTEXPR int FEATHER_LEN_NM = 9;
-  static Q_DECL_CONSTEXPR int MIN_LENGHT_FOR_TEXT = 40;
+  static Q_DECL_CONSTEXPR int MIN_LENGTH_FOR_TEXT = 40;
 
   void drawIlsSymbol(const map::MapIls& ils, bool fast);
 

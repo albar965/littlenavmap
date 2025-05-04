@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2023 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2024 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -23,6 +23,7 @@
 #include "query/mapquery.h"
 #include "geo/calculations.h"
 #include "common/mapcolors.h"
+#include "query/querymanager.h"
 #include "util/paintercontextsaver.h"
 #include "route/route.h"
 
@@ -62,13 +63,14 @@ void MapPainterIls::render()
 
     const GeoDataLatLonBox& curBox = context->viewport->viewLatLonAltBox();
     Marble::GeoPainter *painter = context->painter;
+    map::MapAirport airport;
 
     int x, y;
     if((context->objectTypes.testFlag(map::ILS) || context->objectDisplayTypes.testFlag(map::GLS)) &&
        context->objectTypes.testFlag(map::AIRPORT))
     {
       bool overflow = false;
-      const QList<MapIls> *ilsList = mapQuery->getIls(curBox, context->mapLayer, context->lazyUpdate, overflow);
+      const QList<MapIls> *ilsList = queries->getMapQuery()->getIls(curBox, context->mapLayer, context->lazyUpdate, overflow);
       context->setQueryOverflow(overflow);
 
       if(ilsList != nullptr)
@@ -99,10 +101,9 @@ void MapPainterIls::render()
             if(context->objCount())
               return;
 
-            // Check if airport is to be shown - hide ILS if not - show ILS if no airport ident in navaid
             if(!ils.airportIdent.isEmpty())
             {
-              map::MapAirport airport = airportQuery->getAirportByIdent(ils.airportIdent);
+              queries->getAirportQuerySim()->getAirportByIdent(airport, ils.airportIdent);
               if(airport.isValid() && !airport.isVisible(context->objectTypes, context->mimimumRunwayLengthFt, context->mapLayer))
                 continue;
             }
@@ -188,9 +189,9 @@ void MapPainterIls::drawIlsSymbol(const map::MapIls& ils, bool fast)
 
     // Draw ILS text -----------------------------------
     QString text;
-    if(context->mapLayer->isIlsInfo())
+    if(context->mapLayerText->isIlsInfo())
       text = map::ilsText(ils);
-    else if(context->mapLayer->isIlsIdent())
+    else if(context->mapLayerText->isIlsIdent())
       text = ils.ident;
 
     if(!text.isEmpty())
@@ -215,12 +216,19 @@ void MapPainterIls::drawIlsSymbol(const map::MapIls& ils, bool fast)
       // get an approximation of the ILS length
       int featherLen = static_cast<int>(std::roundf(scale->getPixelForMeter(nmToMeter(FEATHER_LEN_NM), rotate)));
 
-      if(featherLen > MIN_LENGHT_FOR_TEXT)
+      if(featherLen > MIN_LENGTH_FOR_TEXT)
       {
-        if(context->flags2 & opts2::MAP_NAVAID_TEXT_BACKGROUND)
+        if(context->flags2.testFlag(opts2::MAP_NAVAID_TEXT_BACKGROUND))
         {
-          painter->setBackground(Qt::white);
+          painter->setBackground(mapcolors::textBoxColor);
+          painter->setBrush(mapcolors::textBoxColor);
           painter->setBackgroundMode(Qt::OpaqueMode);
+        }
+        else
+        {
+          painter->setBackground(Qt::transparent);
+          painter->setBrush(Qt::transparent);
+          painter->setBackgroundMode(Qt::TransparentMode);
         }
 
         QFontMetricsF metrics(painter->font());

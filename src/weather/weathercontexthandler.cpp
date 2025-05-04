@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2023 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2024 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -23,6 +23,8 @@
 #include "connect/connectclient.h"
 #include "options/optiondata.h"
 #include "weather/weatherreporter.h"
+
+using atools::fs::weather::Metar;
 
 WeatherContextHandler::WeatherContextHandler(WeatherReporter *weatherReporterParam, ConnectClient *connectClientParam)
   : weatherReporter(weatherReporterParam), connectClient(connectClientParam)
@@ -66,14 +68,14 @@ void WeatherContextHandler::buildWeatherContext(map::WeatherContext& weatherCont
   if(simulator)
   {
     if(atools::fs::FsPaths::isAnyXplane(NavApp::getCurrentSimulatorDb()))
-      weatherContext.fsMetar = weatherReporter->getXplaneMetar(ident, airport.position);
+      weatherContext.simMetar = weatherReporter->getXplaneMetar(ident, airport.position);
     else
-      weatherContext.fsMetar = connectClient->requestWeather(ident, airport.position, false /* station only */);
+      weatherContext.simMetar = connectClient->requestWeatherFsxP3d(ident, airport.position, false /* station only */);
   }
 
   if(activeSky)
   {
-    weatherContext.asMetar = weatherReporter->getActiveSkyMetar(ident);
+    weatherContext.activeSkyMetar = weatherReporter->getActiveSkyMetar(ident, airport.position);
     fillActiveSkyType(weatherContext, ident);
   }
 
@@ -96,6 +98,7 @@ void WeatherContextHandler::fillActiveSkyType(map::WeatherContext& weatherContex
 
   if(weatherReporter->getActiveSkyDepartureIdent() == airportIdent)
     weatherContext.isAsDeparture = true;
+
   if(weatherReporter->getActiveSkyDestinationIdent() == airportIdent)
     weatherContext.isAsDestination = true;
 }
@@ -117,28 +120,27 @@ bool WeatherContextHandler::buildWeatherContextInfoFull(map::WeatherContext& wea
   {
     if(atools::fs::FsPaths::isAnyXplane(NavApp::getCurrentSimulatorDb()))
     {
-      currentWeatherContext->fsMetar = weatherReporter->getXplaneMetar(ident, airport.position);
+      currentWeatherContext->simMetar = weatherReporter->getXplaneMetar(ident, airport.position);
       changed = true;
     }
     else if(NavApp::isConnected())
     {
       // FSX/P3D - Flight simulator fetched weather
-      atools::fs::weather::MetarResult metar =
-        connectClient->requestWeather(ident, airport.position, false /* station only */);
+      Metar metar = connectClient->requestWeatherFsxP3d(ident, airport.position, false /* station only */);
 
-      if(newAirport || (!metar.isEmpty() && metar != currentWeatherContext->fsMetar))
+      if(newAirport || (metar.hasAnyMetar() && metar != currentWeatherContext->simMetar))
       {
         // Airport has changed or METAR has changed
-        currentWeatherContext->fsMetar = metar;
+        currentWeatherContext->simMetar = metar;
         changed = true;
       }
     }
     else
     {
-      if(!currentWeatherContext->fsMetar.isEmpty())
+      if(currentWeatherContext->simMetar.hasAnyMetar())
       {
         // If there was a previous metar and the new one is empty we were being disconnected
-        currentWeatherContext->fsMetar = atools::fs::weather::MetarResult();
+        currentWeatherContext->simMetar.clearAll();
         changed = true;
       }
     }
@@ -148,19 +150,19 @@ bool WeatherContextHandler::buildWeatherContextInfoFull(map::WeatherContext& wea
   {
     fillActiveSkyType(*currentWeatherContext, ident);
 
-    QString metarStr = weatherReporter->getActiveSkyMetar(ident);
-    if(newAirport || (!metarStr.isEmpty() && metarStr != currentWeatherContext->asMetar))
+    Metar asMetar = weatherReporter->getActiveSkyMetar(ident, airport.position);
+    if(newAirport || (asMetar.hasAnyMetar() && asMetar != currentWeatherContext->activeSkyMetar))
     {
       // Airport has changed or METAR has changed
-      currentWeatherContext->asMetar = metarStr;
+      currentWeatherContext->activeSkyMetar = asMetar;
       changed = true;
     }
   }
 
   if(flags & optsw::WEATHER_INFO_NOAA)
   {
-    atools::fs::weather::MetarResult noaaMetar = weatherReporter->getNoaaMetar(ident, airport.position);
-    if(newAirport || (!noaaMetar.isEmpty() && noaaMetar != currentWeatherContext->noaaMetar))
+    Metar noaaMetar = weatherReporter->getNoaaMetar(ident, airport.position);
+    if(newAirport || (noaaMetar.hasAnyMetar() && noaaMetar != currentWeatherContext->noaaMetar))
     {
       // Airport has changed or METAR has changed
       currentWeatherContext->noaaMetar = noaaMetar;
@@ -170,8 +172,8 @@ bool WeatherContextHandler::buildWeatherContextInfoFull(map::WeatherContext& wea
 
   if(flags & optsw::WEATHER_INFO_VATSIM)
   {
-    atools::fs::weather::MetarResult vatsimMetar = weatherReporter->getVatsimMetar(ident, airport.position);
-    if(newAirport || (!vatsimMetar.isEmpty() && vatsimMetar != currentWeatherContext->vatsimMetar))
+    Metar vatsimMetar = weatherReporter->getVatsimMetar(ident, airport.position);
+    if(newAirport || (vatsimMetar.hasAnyMetar() && vatsimMetar != currentWeatherContext->vatsimMetar))
     {
       // Airport has changed or METAR has changed
       currentWeatherContext->vatsimMetar = vatsimMetar;
@@ -181,8 +183,8 @@ bool WeatherContextHandler::buildWeatherContextInfoFull(map::WeatherContext& wea
 
   if(flags & optsw::WEATHER_INFO_IVAO)
   {
-    atools::fs::weather::MetarResult ivaoMetar = weatherReporter->getIvaoMetar(ident, airport.position);
-    if(newAirport || (!ivaoMetar.isEmpty() && ivaoMetar != currentWeatherContext->ivaoMetar))
+    Metar ivaoMetar = weatherReporter->getIvaoMetar(ident, airport.position);
+    if(newAirport || (ivaoMetar.hasAnyMetar() && ivaoMetar != currentWeatherContext->ivaoMetar))
     {
       // Airport has changed or METAR has changed
       currentWeatherContext->ivaoMetar = ivaoMetar;

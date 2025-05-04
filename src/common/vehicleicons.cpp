@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2020 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2025 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -28,6 +28,7 @@ namespace internal {
 
 enum AircraftType
 {
+  AC_UNKNOWN,
   AC_SMALL,
   AC_JET,
   AC_HELICOPTER,
@@ -59,15 +60,13 @@ uint qHash(const PixmapKey& key)
 
 VehicleIcons::VehicleIcons()
 {
-
 }
 
 VehicleIcons::~VehicleIcons()
 {
-
 }
 
-QIcon VehicleIcons::iconFromCache(const atools::fs::sc::SimConnectAircraft& ac, int size, int rotate)
+const QIcon VehicleIcons::iconFromCache(const atools::fs::sc::SimConnectAircraft& ac, int size, int rotate)
 {
   return QIcon(*pixmapFromCache(ac, size, rotate));
 }
@@ -102,19 +101,26 @@ const QPixmap *VehicleIcons::pixmapFromCache(const internal::PixmapKey& key, int
       case internal::AC_FRIGATE:
         name += "_frigate";
         break;
+
+      case internal::AC_UNKNOWN:
+        name += "_unknown";
+        break;
     }
 
-    if(key.ground)
-      name += "_ground";
+    if(key.type != internal::AC_UNKNOWN)
+    {
+      if(key.ground)
+        name += "_ground";
 
-    // User aircraft always yellow
-    if(!key.online && key.user)
-      // No user key for online
-      name += "_user";
+      // User aircraft always yellow
+      if(!key.online && key.user)
+        // No user key for online
+        name += "_user";
 
-    // Dark online icon not for user aircraft
-    if(key.online && !key.user)
-      name += "_online";
+      // Dark online icon not for user aircraft
+      if(key.online && !key.user)
+        name += "_online";
+    }
 
     name = atools::settings::Settings::getOverloadedPath(name + ".svg", true /* ignoreMissing */);
 
@@ -153,7 +159,7 @@ const QPixmap *VehicleIcons::pixmapFromCache(const atools::fs::sc::SimConnectAir
   internal::PixmapKey key;
 
   // Also use online icon for simulator shadows but not for the user aircraft
-  if(ac.getCategory() == atools::fs::sc::HELICOPTER)
+  if(ac.isHelicopter())
     key.type = internal::AC_HELICOPTER;
   else if(ac.isAnyBoat())
   {
@@ -164,10 +170,14 @@ const QPixmap *VehicleIcons::pixmapFromCache(const atools::fs::sc::SimConnectAir
     else
       key.type = internal::AC_SHIP;
   }
-  else if(ac.getEngineType() == atools::fs::sc::JET)
-    key.type = internal::AC_JET;
-  else
-    key.type = internal::AC_SMALL;
+  else // if(ac.getCategory() == atools::fs::sc::AIRPLANE)
+  {
+    // Also look at category UNKNOWN which can appear for X-Plane
+    if(ac.getEngineType() == atools::fs::sc::JET)
+      key.type = internal::AC_JET;
+    else
+      key.type = internal::AC_SMALL;
+  }
 
   // Dark icon for online aircraft or simulator shadow aircraft but not user
   key.online = (ac.isOnline() || ac.isOnlineShadow()) && !ac.isUser();

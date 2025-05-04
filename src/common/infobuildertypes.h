@@ -26,7 +26,7 @@
 
 class Route;
 
-namespace map { class WeatherContext; }
+namespace map { struct WeatherContext; }
 namespace atools {
     namespace sql {
         class SqlRecord;
@@ -86,6 +86,8 @@ namespace InfoBuilderTypes {
         const int zoomWeb;
         const qreal distanceUi;
         const qreal distanceWeb;
+        const float latLonRectUi[4];
+        const float latLonRectWeb[4];
     };
 
     /**

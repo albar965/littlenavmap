@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2020 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2024 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -49,6 +49,9 @@ public:
   explicit ConnectDialog(QWidget *parent, bool simConnectAvailable);
   virtual ~ConnectDialog() override;
 
+  ConnectDialog(const ConnectDialog& other) = delete;
+  ConnectDialog& operator=(const ConnectDialog& other) = delete;
+
   /* Get hostname as entered in the edit field */
   QString getRemoteHostname() const;
 
@@ -56,7 +59,7 @@ public:
   quint16 getRemotePort() const;
 
   /* Saves and restores all values */
-  void saveState();
+  void saveState() const;
   void restoreState();
 
   /* Set status to connected */

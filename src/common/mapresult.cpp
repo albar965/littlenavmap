@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2023 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2025 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -28,6 +28,9 @@ MapResult& MapResult::clear(const MapTypes& types)
     airports.clear();
     airportIds.clear();
   }
+
+  if(types.testFlag(map::PARKING))
+    parkings.clear();
 
   if(types.testFlag(map::AIRPORT_MSA))
   {
@@ -177,6 +180,9 @@ MapResult& MapResult::clearAllButFirst(const MapTypes& types)
     airportIds.clear();
   }
 
+  if(types.testFlag(map::PARKING))
+    clearAllButFirst(parkings);
+
   if(types.testFlag(map::AIRPORT_MSA))
   {
     clearAllButFirst(airportMsa);
@@ -325,9 +331,7 @@ bool MapResult::hasOnlineAirspaces() const
 
 const map::MapAirspace *MapResult::firstSimNavUserAirspace() const
 {
-  QList<map::MapAirspace>::const_iterator it =
-    std::find_if(airspaces.constBegin(), airspaces.constEnd(), [](const map::MapAirspace& a) -> bool
-    {
+  auto it = std::find_if(airspaces.constBegin(), airspaces.constEnd(), [](const map::MapAirspace& a) -> bool {
       return !a.isOnline();
     });
 
@@ -339,9 +343,7 @@ const map::MapAirspace *MapResult::firstSimNavUserAirspace() const
 
 const map::MapAirspace *MapResult::firstOnlineAirspace() const
 {
-  QList<map::MapAirspace>::const_iterator it =
-    std::find_if(airspaces.constBegin(), airspaces.constEnd(), [](const map::MapAirspace& a) -> bool
-    {
+  auto it = std::find_if(airspaces.constBegin(), airspaces.constEnd(), [](const map::MapAirspace& a) -> bool {
       return a.isOnline();
     });
 
@@ -412,15 +414,15 @@ QString MapResult::objectText(MapTypes type, int elideName) const
     str = onlineAircraft.constFirst().getIdent();
   else if(type == map::AIRSPACE && hasOnlineAirspaces())
     str = getOnlineAirspaces().constFirst().getIdent();
-  else if(type == MARK_RANGE)
+  else if(type == MARK_RANGE && hasRangeMarks())
     str = map::rangeMarkText(rangeMarks.constFirst());
-  else if(type == MARK_DISTANCE)
+  else if(type == MARK_DISTANCE && hasDistanceMarks())
     str = map::distanceMarkText(distanceMarks.constFirst());
-  else if(type == MARK_HOLDING)
+  else if(type == MARK_HOLDING && hasHoldingMarks())
     str = map::holdingMarkText(holdingMarks.constFirst());
-  else if(type == MARK_PATTERNS)
+  else if(type == MARK_PATTERNS && hasPatternMarks())
     str = map::patternMarkText(patternMarks.constFirst());
-  else if(type == MARK_MSA)
+  else if(type == MARK_MSA && hasMsaMarks())
     str = map::msaMarkText(msaMarks.constFirst());
   return str;
 }
@@ -432,6 +434,7 @@ void MapResult::removeInvalid()
   removeInvalid(runways);
   removeInvalid(towers);
   removeInvalid(parkings);
+  removeInvalid(starts);
   removeInvalid(helipads);
   removeInvalid(waypoints, &waypointIds);
   removeInvalid(vors, &vorIds);
@@ -467,16 +470,14 @@ void MapResult::removeNoRouteIndex()
 
 void MapResult::clearNavdataAirspaces()
 {
-  airspaces.erase(std::remove_if(airspaces.begin(), airspaces.end(), [](const map::MapAirspace& airspace) -> bool
-    {
+  airspaces.erase(std::remove_if(airspaces.begin(), airspaces.end(), [](const map::MapAirspace& airspace) -> bool {
       return !airspace.isOnline();
     }), airspaces.end());
 }
 
 void MapResult::clearOnlineAirspaces()
 {
-  airspaces.erase(std::remove_if(airspaces.begin(), airspaces.end(), [](const map::MapAirspace& airspace) -> bool
-    {
+  airspaces.erase(std::remove_if(airspaces.begin(), airspaces.end(), [](const map::MapAirspace& airspace) -> bool {
       return airspace.isOnline();
     }), airspaces.end());
 }
@@ -489,6 +490,8 @@ const atools::geo::Pos& MapResult::getPosition(const std::initializer_list<MapTy
     {
       if(type == map::AIRPORT)
         return airports.constFirst().getPosition();
+      else if(type == map::PARKING)
+        return parkings.constFirst().getPosition();
       else if(type == map::AIRPORT_MSA)
         return airportMsa.constFirst().getPosition();
       else if(type == map::WAYPOINT)
@@ -656,6 +659,8 @@ int MapResult::getId(const map::MapTypes& type) const
   {
     if(type == map::AIRPORT)
       return airports.constFirst().getId();
+    else if(type == map::PARKING)
+      return parkings.constFirst().getId();
     else if(type == map::AIRPORT_MSA)
       return airportMsa.constFirst().getId();
     else if(type == map::WAYPOINT)
@@ -730,6 +735,8 @@ MapResult& MapResult::addFromMapBase(const MapBase *base)
   {
     if(base->getType().testFlag(map::AIRPORT))
       airports.append(base->asObj<map::MapAirport>());
+    else if(base->getType().testFlag(map::PARKING))
+      parkings.append(base->asObj<map::MapParking>());
     else if(base->getType().testFlag(map::AIRPORT_MSA))
       airportMsa.append(base->asObj<map::MapAirportMsa>());
     else if(base->getType().testFlag(map::WAYPOINT))
@@ -787,6 +794,7 @@ int MapResult::size(const MapTypes& types) const
 {
   int totalSize = 0;
   totalSize += types.testFlag(map::AIRPORT) ? airports.size() : 0;
+  totalSize += types.testFlag(map::PARKING) ? parkings.size() : 0;
   totalSize += types.testFlag(map::AIRPORT_MSA) ? airportMsa.size() : 0;
   totalSize += types.testFlag(map::WAYPOINT) ? waypoints.size() : 0;
   totalSize += types.testFlag(map::VOR) ? vors.size() : 0;
@@ -811,6 +819,22 @@ int MapResult::size(const MapTypes& types) const
   totalSize += types.testFlag(map::MARK_MSA) ? msaMarks.size() : 0;
 
   return totalSize;
+}
+
+QDebug operator<<(QDebug out, const map::MapResultIndex& record)
+{
+  QDebugStateSaver saver(out);
+
+  out << "]";
+  out << "MapResultIndex[";
+  for(const map::MapBase *obj : record)
+    out << *obj << ",";
+  out << "]";
+
+  out << "MapResult[";
+  out << record.result;
+  out << "]]";
+  return out;
 }
 
 QDebug operator<<(QDebug out, const map::MapResult& record)
@@ -850,6 +874,13 @@ QDebug operator<<(QDebug out, const map::MapResult& record)
     out << "Parking[";
     for(const map::MapParking& obj :  record.parkings)
       out << obj.id << obj.name << obj.number << obj.type << ",";
+    out << "]";
+  }
+  if(!record.starts.isEmpty())
+  {
+    out << "Start[";
+    for(const map::MapStart& obj :  record.starts)
+      out << obj.id << obj.runwayName << obj.type << ",";
     out << "]";
   }
   if(!record.waypoints.isEmpty())
@@ -911,21 +942,57 @@ QDebug operator<<(QDebug out, const map::MapResult& record)
 
   if(record.userAircraft.isValid())
   {
-    out << "Useraircraft[";
-    out << record.userAircraft.id << record.userAircraft.getAircraft().getAirplaneRegistration()
-        << record.userAircraft.getAircraft().getAirplaneModel()
-        << "shadow" << record.userAircraft.getAircraft().isOnlineShadow() << ",";
+    out << "User aircraft[";
+    const atools::fs::sc::SimConnectAircraft& aircraft = record.userAircraft.getAircraft();
+    out << "id" << record.userAircraft.id
+        << "objectid" << aircraft.getObjectId()
+        << aircraft.getPosition()
+        << "alt" << aircraft.getActualAltitudeFt()
+        << "groundspeed" << aircraft.getGroundSpeedKts()
+        << "on ground" << aircraft.isOnGround()
+        << "category" << aircraftTypeString(aircraft)
+        << "model" << aircraft.getAirplaneModel()
+        << "type" << aircraft.getAirplaneType()
+        << "airline" << aircraft.getAirplaneAirline()
+        << "number" << aircraft.getAirplaneFlightnumber()
+        << "registration" << aircraft.getAirplaneRegistration()
+        << "title" << aircraft.getAirplaneTitle()
+        << "shadow" << aircraft.isOnlineShadow()
+        << "modelradius" << aircraft.getModelRadius()
+        << "wingspan" << aircraft.getWingSpan()
+        << "flags" << aircraft.getFlags()
+        << "enginetype" << aircraft.getEngineType()
+        << ",";
     out << "]";
   }
 
   if(!record.aiAircraft.isEmpty())
   {
-    out << "AI aircraft[";
     for(const map::MapAiAircraft& obj :  record.aiAircraft)
-      out << obj.id << obj.getAircraft().getAirplaneRegistration()
-          << obj.getAircraft().getAirplaneModel()
-          << "shadow" << obj.getAircraft().isOnlineShadow() << ",";
-    out << "]";
+    {
+      out << "AI aircraft[";
+      const atools::fs::sc::SimConnectAircraft& aircraft = obj.getAircraft();
+      out << "id" << obj.id
+          << "objectid" << aircraft.getObjectId()
+          << aircraft.getPosition()
+          << "alt" << aircraft.getActualAltitudeFt()
+          << "groundspeed" << aircraft.getGroundSpeedKts()
+          << "on ground" << aircraft.isOnGround()
+          << "category" << aircraftTypeString(aircraft)
+          << "model" << aircraft.getAirplaneModel()
+          << "type" << aircraft.getAirplaneType()
+          << "airline" << aircraft.getAirplaneAirline()
+          << "number" << aircraft.getAirplaneFlightnumber()
+          << "registration" << aircraft.getAirplaneRegistration()
+          << "title" << aircraft.getAirplaneTitle()
+          << "shadow" << aircraft.isOnlineShadow()
+          << "modelradius" << aircraft.getModelRadius()
+          << "wingspan" << aircraft.getWingSpan()
+          << "flags" << aircraft.getFlags()
+          << "enginetype" << aircraft.getEngineType()
+          << ",";
+      out << "]";
+    }
   }
 
   if(!record.onlineAircraft.isEmpty())
@@ -947,6 +1014,7 @@ MapResultIndex& MapResultIndex::add(const MapResult& resultParam, const MapTypes
   addToIndexRangeIf(resultParam.runwayEnds, result.runwayEnds, types);
   addToIndexRangeIf(resultParam.runways, result.runways, types);
   addToIndexRangeIf(resultParam.parkings, result.parkings, types);
+  addToIndexRangeIf(resultParam.starts, result.starts, types);
   addToIndexRangeIf(resultParam.helipads, result.helipads, types);
   addToIndexRangeIf(resultParam.waypoints, result.waypoints, types);
   addToIndexRangeIf(resultParam.vors, result.vors, types);
@@ -987,6 +1055,7 @@ MapResultIndex& MapResultIndex::addRef(const MapResult& resultParam, const MapTy
   addToIndexIf(resultParam.runwayEnds, types);
   addToIndexIf(resultParam.runways, types);
   addToIndexIf(resultParam.parkings, types);
+  addToIndexIf(resultParam.starts, types);
   addToIndexIf(resultParam.helipads, types);
   addToIndexIf(resultParam.waypoints, types);
   addToIndexIf(resultParam.vors, types);
@@ -1096,13 +1165,10 @@ MapResultIndex& MapResultIndex::remove(const atools::geo::Pos& pos, float maxDis
 
   float maxMeter = atools::geo::nmToMeter(maxDistanceNm);
 
-  auto it = std::remove_if(begin(), end(), [maxMeter, &pos](const MapBase *obj) -> bool
-    {
+  erase(std::remove_if(begin(), end(), [maxMeter, &pos](const MapBase *obj) -> bool {
       return obj->position.distanceMeterTo(pos) > maxMeter;
-    });
+    }), end());
 
-  if(it != end())
-    erase(it, end());
   return *this;
 }
 

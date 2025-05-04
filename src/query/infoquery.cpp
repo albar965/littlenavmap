@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2023 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2024 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -47,7 +47,7 @@ InfoQuery::InfoQuery(SqlDatabase *sqlDbSim, atools::sql::SqlDatabase *sqlDbNav, 
   runwayCache.setMaxCost(settings.getAndStoreValue(lnm::SETTINGS_INFOQUERY + "RunwayCache", 100).toInt());
   helipadCache.setMaxCost(settings.getAndStoreValue(lnm::SETTINGS_INFOQUERY + "HelipadCache", 100).toInt());
   startCache.setMaxCost(settings.getAndStoreValue(lnm::SETTINGS_INFOQUERY + "StartCache", 100).toInt());
-  approachCache.setMaxCost(settings.getAndStoreValue(lnm::SETTINGS_INFOQUERY + "ApproachCache", 100).toInt());
+  procedureCache.setMaxCost(settings.getAndStoreValue(lnm::SETTINGS_INFOQUERY + "ApproachCache", 100).toInt());
   transitionCache.setMaxCost(settings.getAndStoreValue(lnm::SETTINGS_INFOQUERY + "TransitionCache", 100).toInt());
   airportSceneryCache.setMaxCost(settings.getAndStoreValue(lnm::SETTINGS_INFOQUERY + "AirportSceneryCache", 100).toInt());
 }
@@ -109,22 +109,22 @@ const SqlRecordList *InfoQuery::getComInformation(int airportId)
   return query::cachedRecordList(comCache, comQuery, airportId);
 }
 
-const SqlRecordList *InfoQuery::getApproachInformation(int airportId)
+const SqlRecordList *InfoQuery::getProcedureInformation(int airportId)
 {
-  if(!query::valid(Q_FUNC_INFO, approachQuery))
+  if(!query::valid(Q_FUNC_INFO, procedureQuery))
     return nullptr;
 
-  approachQuery->bindValue(":id", airportId);
-  return query::cachedRecordList(approachCache, approachQuery, airportId);
+  procedureQuery->bindValue(":id", airportId);
+  return query::cachedRecordList(procedureCache, procedureQuery, airportId);
 }
 
-const SqlRecordList *InfoQuery::getTransitionInformation(int approachId)
+const SqlRecordList *InfoQuery::getTransitionInformation(int procedureId)
 {
   if(!query::valid(Q_FUNC_INFO, transitionQuery))
     return nullptr;
 
-  transitionQuery->bindValue(":id", approachId);
-  return query::cachedRecordList(transitionCache, transitionQuery, approachId);
+  transitionQuery->bindValue(":id", procedureId);
+  return query::cachedRecordList(transitionCache, transitionQuery, procedureId);
 }
 
 const SqlRecordList *InfoQuery::getRunwayInformation(int airportId)
@@ -334,11 +334,11 @@ void InfoQuery::initQueries()
   vorIdentRegionQuery = new SqlQuery(dbNav);
   vorIdentRegionQuery->prepare("select * from vor where ident = :ident and region = :region");
 
-  approachQuery = new SqlQuery(dbNav);
-  approachQuery->prepare("select a.runway_name, r.runway_end_id, a.* from approach a "
-                         "left outer join runway_end r on a.runway_end_id = r.runway_end_id "
-                         "where a.airport_id = :id "
-                         "order by a.runway_name, a.type, a.fix_ident");
+  procedureQuery = new SqlQuery(dbNav);
+  procedureQuery->prepare("select a.runway_name, r.runway_end_id, a.* from approach a "
+                          "left outer join runway_end r on a.runway_end_id = r.runway_end_id "
+                          "where a.airport_id = :id "
+                          "order by a.runway_name, a.type, a.fix_ident");
 
   transitionQuery = new SqlQuery(dbNav);
   transitionQuery->prepare("select * from transition where approach_id = :id order by fix_ident");
@@ -356,7 +356,7 @@ void InfoQuery::deInitQueries()
   runwayCache.clear();
   helipadCache.clear();
   startCache.clear();
-  approachCache.clear();
+  procedureCache.clear();
   transitionCache.clear();
   airportSceneryCache.clear();
 
@@ -372,6 +372,6 @@ void InfoQuery::deInitQueries()
   ATOOLS_DELETE(startQuery);
   ATOOLS_DELETE(runwayEndQuery);
   ATOOLS_DELETE(vorIdentRegionQuery);
-  ATOOLS_DELETE(approachQuery);
+  ATOOLS_DELETE(procedureQuery);
   ATOOLS_DELETE(transitionQuery);
 }

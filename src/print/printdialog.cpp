@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2020 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2024 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -82,16 +82,16 @@ void PrintDialog::updateButtonStates()
   ui->spinBoxPrintTextSizeFlightplan->setEnabled(ui->checkBoxPrintFlightplan->isChecked());
   ui->tableWidgetPrintFlightplanCols->setEnabled(ui->checkBoxPrintFlightplan->isChecked());
 
-  prt::PrintFlightPlanOpts opts = getPrintOptions();
+  prt::PrintFlightplanOpts opts = getPrintOptions();
   bool canPrint = opts & prt::DEPARTURE_ANY || opts & prt::DESTINATION_ANY || opts & prt::FLIGHTPLAN;
 
   ui->buttonBoxPrint->button(QDialogButtonBox::Ok)->setEnabled(canPrint);
   ui->buttonBoxPrint->button(QDialogButtonBox::Yes)->setEnabled(canPrint);
 }
 
-prt::PrintFlightPlanOpts PrintDialog::getPrintOptions() const
+prt::PrintFlightplanOpts PrintDialog::getPrintOptions() const
 {
-  prt::PrintFlightPlanOpts opts = prt::NONE;
+  prt::PrintFlightplanOpts opts = prt::NONE;
 
   opts |= ui->checkBoxPrintDepartureOverview->isChecked() ? prt::DEPARTURE_OVERVIEW : prt::NONE;
   opts |= ui->checkBoxPrintDepartureRunways->isChecked() ? prt::DEPARTURE_RUNWAYS : prt::NONE;
@@ -159,30 +159,13 @@ const QBitArray& PrintDialog::getSelectedRouteTableColumns() const
 
 void PrintDialog::saveState()
 {
-  atools::gui::WidgetState(lnm::ROUTE_PRINT_DIALOG).save(
-  {
-    this,
-    ui->checkBoxPrintDepartureOverview,
-    ui->checkBoxPrintDepartureRunways,
-    ui->checkBoxPrintDepartureDetailRunways,
-    ui->checkBoxPrintDepartureSoftRunways,
-    ui->checkBoxPrintDepartureCom,
-    ui->checkBoxPrintDepartureAppr,
-    ui->checkBoxPrintDepartureWeather,
-    ui->checkBoxPrintDestinationOverview,
-    ui->checkBoxPrintDestinationRunways,
-    ui->checkBoxPrintDestinationDetailRunways,
-    ui->checkBoxPrintDestinationSoftRunways,
-    ui->checkBoxPrintDestinationCom,
-    ui->checkBoxPrintDestinationAppr,
-    ui->checkBoxPrintDestinationWeather,
-    ui->checkBoxPrintFlightplan,
-    ui->checkBoxPrintHeader,
-    ui->checkBoxPrintFuel,
-    ui->checkBoxPrintNewPage,
-    ui->spinBoxPrintTextSize,
-    ui->spinBoxPrintTextSizeFlightplan
-  });
+  atools::gui::WidgetState(lnm::ROUTE_PRINT_DIALOG).save(QList<const QObject *>({
+    this, ui->checkBoxPrintDepartureOverview, ui->checkBoxPrintDepartureRunways, ui->checkBoxPrintDepartureDetailRunways,
+    ui->checkBoxPrintDepartureSoftRunways, ui->checkBoxPrintDepartureCom, ui->checkBoxPrintDepartureAppr, ui->checkBoxPrintDepartureWeather,
+    ui->checkBoxPrintDestinationOverview, ui->checkBoxPrintDestinationRunways, ui->checkBoxPrintDestinationDetailRunways,
+    ui->checkBoxPrintDestinationSoftRunways, ui->checkBoxPrintDestinationCom, ui->checkBoxPrintDestinationAppr,
+    ui->checkBoxPrintDestinationWeather, ui->checkBoxPrintFlightplan, ui->checkBoxPrintHeader, ui->checkBoxPrintFuel,
+    ui->checkBoxPrintNewPage, ui->spinBoxPrintTextSize, ui->spinBoxPrintTextSizeFlightplan}));
 
   // Save selection to bitarray
   selectedRows = QBitArray(ui->tableWidgetPrintFlightplanCols->rowCount());

@@ -13,6 +13,7 @@
             <target>earth</target>
             <theme>srtm</theme>
             <icon pixmap="srtm-preview.png"/>
+            <shortcut>Ctrl+Alt+5</shortcut>
 
             <!-- describes whether the map theme item will be hidden (e.g.
                 for a clouds layer): -->

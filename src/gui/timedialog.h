@@ -40,6 +40,9 @@ public:
   explicit TimeDialog(QWidget *parent, const QDateTime& datetime);
   virtual ~TimeDialog() override;
 
+  TimeDialog(const TimeDialog& other) = delete;
+  TimeDialog& operator=(const TimeDialog& other) = delete;
+
   QDateTime getDateTime() const;
 
 private:

@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2023 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2024 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -18,23 +18,22 @@
 #include "weather/windreporter.h"
 
 #include "app/navapp.h"
-#include "ui_mainwindow.h"
-#include "grib/windquery.h"
-#include "settings/settings.h"
 #include "common/constants.h"
-#include "options/optiondata.h"
 #include "common/unit.h"
-#include "perf/aircraftperfcontroller.h"
-#include "mapgui/maplayer.h"
+#include "geo/marbleconverter.h"
+#include "grib/windquery.h"
 #include "gui/dialog.h"
+#include "mapgui/maplayer.h"
+#include "options/optiondata.h"
+#include "perf/aircraftperfcontroller.h"
+#include "settings/settings.h"
+#include "ui_mainwindow.h"
 
 #include <QToolButton>
-#include <QMessageBox>
 #include <QDir>
 
 static const double queryRectInflationFactor = 0.2;
 static const double queryRectInflationIncrement = 0.1;
-static const int queryMaxRowsWind = 80000;
 
 namespace windinternal {
 
@@ -105,7 +104,7 @@ int WindSliderAction::maxValue() const
 void WindSliderAction::setSliderValue(int value)
 {
   sliderValue = value;
-  for(QSlider *slider : sliders)
+  for(QSlider *slider : qAsConst(sliders))
   {
     slider->blockSignals(true);
     slider->setValue(sliderValue);
@@ -142,7 +141,7 @@ void WindLabelAction::setText(const QString& textParam)
 {
   text = textParam;
   // Set text to all registered labels
-  for(QLabel *label : labels)
+  for(QLabel *label : qAsConst(labels))
     label->setText(text);
 }
 
@@ -192,18 +191,10 @@ WindReporter::WindReporter(QObject *parent, atools::fs::FsPaths::SimulatorType t
 
 WindReporter::~WindReporter()
 {
-  qDebug() << Q_FUNC_INFO << "delete windQueryOnline";
-  delete windQueryOnline;
-  windQueryOnline = nullptr;
-  qDebug() << Q_FUNC_INFO << "delete windQueryManual";
-  delete windQueryManual;
-  windQueryManual = nullptr;
-  qDebug() << Q_FUNC_INFO << "delete actionGroup";
-  delete actionGroup;
-  actionGroup = nullptr;
-  qDebug() << Q_FUNC_INFO << "delete windlevelToolButton";
-  delete windlevelToolButton;
-  windlevelToolButton = nullptr;
+  ATOOLS_DELETE_LOG(windQueryOnline);
+  ATOOLS_DELETE_LOG(windQueryManual);
+  ATOOLS_DELETE_LOG(actionGroup);
+  ATOOLS_DELETE_LOG(windlevelToolButton);
 }
 
 void WindReporter::preDatabaseLoad()
@@ -226,7 +217,7 @@ void WindReporter::optionsChanged()
   updateDataSource();
 }
 
-void WindReporter::saveState()
+void WindReporter::saveState() const
 {
   atools::settings::Settings::instance().setValue(lnm::MAP_WIND_LEVEL, sliderActionAltitude->getAltitudeFt());
   atools::settings::Settings::instance().setValue(lnm::MAP_WIND_SELECTION, currentWindSelection);
@@ -236,7 +227,7 @@ void WindReporter::saveState()
 
 void WindReporter::restoreState()
 {
-  if(OptionData::instance().getFlags() & opts::STARTUP_LOAD_MAP_SETTINGS)
+  if(OptionData::instance().getFlags().testFlag(opts::STARTUP_LOAD_MAP_SETTINGS))
   {
     atools::settings::Settings& settings = atools::settings::Settings::instance();
 
@@ -293,8 +284,11 @@ void WindReporter::updateDataSource()
     updateToolButtonState();
     updateSliderLabel();
 
-    emit windUpdated();
-    emit windDisplayUpdated();
+    if(!atools::gui::Application::isShuttingDown())
+    {
+      emit windUpdated();
+      emit windDisplayUpdated();
+    }
   }
   else // disabled
   {
@@ -302,14 +296,18 @@ void WindReporter::updateDataSource()
     updateToolButtonState();
     updateSliderLabel();
 
-    emit windUpdated();
-    emit windDisplayUpdated();
+    if(!atools::gui::Application::isShuttingDown())
+    {
+      emit windUpdated();
+      emit windDisplayUpdated();
+    }
   }
 }
 
 void WindReporter::windDownloadFinished()
 {
   qDebug() << Q_FUNC_INFO;
+
   updateToolButtonState();
   updateSliderLabel();
 
@@ -339,8 +337,12 @@ void WindReporter::windDownloadFinished()
     }
     NavApp::setStatusMessage(msg, true /* addToLog */);
   }
-  emit windUpdated();
-  emit windDisplayUpdated();
+
+  if(!atools::gui::Application::isShuttingDown())
+  {
+    emit windUpdated();
+    emit windDisplayUpdated();
+  }
 }
 
 void WindReporter::windDownloadProgress(qint64 bytesReceived, qint64 bytesTotal, QString downloadUrl)
@@ -355,7 +357,6 @@ void WindReporter::windDownloadProgress(qint64 bytesReceived, qint64 bytesTotal,
 void WindReporter::windDownloadSslErrors(const QStringList& errors, const QString& downloadUrl)
 {
   qWarning() << Q_FUNC_INFO;
-  NavApp::closeSplashScreen();
 
   int result = atools::gui::Dialog(NavApp::getQMainWindow()).
                showQuestionMsgBox(lnm::ACTIONS_SHOW_SSL_WARNING_WIND,
@@ -380,9 +381,7 @@ void WindReporter::windDownloadFailed(const QString& error, int errorCode)
   if(!downloadErrorReported)
   {
     // Get rid of splash in case this happens on startup
-    NavApp::closeSplashScreen();
-    QMessageBox::warning(NavApp::getQMainWidget(), QApplication::applicationName(),
-                         tr("Error downloading or reading wind data: %1 (%2)").arg(error).arg(errorCode));
+    atools::gui::Dialog::warning(NavApp::getQMainWidget(), tr("Error downloading or reading wind data: %1 (%2)").arg(error).arg(errorCode));
     downloadErrorReported = true;
   }
   updateToolButtonState();
@@ -407,7 +406,7 @@ void WindReporter::addToolbarButton()
   buttonMenu->setTearOffEnabled(true);
 
   // Insert before show route
-  ui->toolBarMapOptions->insertWidget(ui->actionMapShowSunShading, windlevelToolButton);
+  ui->toolBarMapOptions->addWidget(windlevelToolButton);
   ui->menuHighAltitudeWindLevels->clear();
 
   // Create and add flight plan action =====================================
@@ -486,7 +485,9 @@ void WindReporter::addToolbarButton()
 void WindReporter::altSliderChanged()
 {
   updateSliderLabel();
-  emit windDisplayUpdated();
+
+  if(!atools::gui::Application::isShuttingDown())
+    emit windDisplayUpdated();
 }
 
 void WindReporter::updateSliderLabel()
@@ -531,8 +532,11 @@ void WindReporter::sourceActionTriggered()
     updateToolButtonState();
     updateSliderLabel();
 
-    emit windUpdated();
-    emit windDisplayUpdated();
+    if(!atools::gui::Application::isShuttingDown())
+    {
+      emit windUpdated();
+      emit windDisplayUpdated();
+    }
   }
 }
 
@@ -544,7 +548,8 @@ void WindReporter::toolbarActionFlightplanTriggered()
     updateToolButtonState();
     updateSliderLabel();
 
-    emit windDisplayUpdated();
+    if(!atools::gui::Application::isShuttingDown())
+      emit windDisplayUpdated();
   }
 }
 
@@ -556,7 +561,8 @@ void WindReporter::toolbarActionTriggered()
     updateToolButtonState();
     updateSliderLabel();
 
-    emit windDisplayUpdated();
+    if(!atools::gui::Application::isShuttingDown())
+      emit windDisplayUpdated();
   }
 }
 
@@ -683,8 +689,11 @@ void WindReporter::resetSettingsToDefault()
   updateToolButtonState();
   updateSliderLabel();
 
-  emit windUpdated();
-  emit windDisplayUpdated();
+  if(!atools::gui::Application::isShuttingDown())
+  {
+    emit windUpdated();
+    emit windDisplayUpdated();
+  }
 }
 
 void WindReporter::debugDumpContainerSizes() const
@@ -775,8 +784,7 @@ const atools::grib::WindPosList *WindReporter::getWindForRect(const Marble::GeoD
       windPosCache.clear();
       for(const Marble::GeoDataLatLonBox& box : query::splitAtAntiMeridian(rect, queryRectInflationFactor, queryRectInflationIncrement))
       {
-        atools::geo::Rect geoRect(box.west(Marble::GeoDataCoordinates::Degree), box.north(Marble::GeoDataCoordinates::Degree),
-                                  box.east(Marble::GeoDataCoordinates::Degree), box.south(Marble::GeoDataCoordinates::Degree));
+        atools::geo::Rect geoRect = mconvert::fromGdc(box);
 
         atools::grib::WindPosList windPosList;
         windQuery->getWindForRect(windPosList, geoRect, getDisplayAltitudeFt(), gridSpacing);

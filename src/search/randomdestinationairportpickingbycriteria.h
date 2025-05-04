@@ -22,9 +22,9 @@
 #include <QThread>
 
 namespace atools {
-namespace geo {
-class Pos;
-}
+  namespace geo {
+    class Pos;
+  }
 }
 
 class RandomDestinationAirportPickingByCriteria :
@@ -33,26 +33,40 @@ class RandomDestinationAirportPickingByCriteria :
   Q_OBJECT
 
 public:
-  RandomDestinationAirportPickingByCriteria(int indexDeparture);
+  RandomDestinationAirportPickingByCriteria(int threadIndex,
+                                            int dataRangeIndexStart,
+                                            int dataRangeLength);
 
-  // required calling !!
-  static void initStatics(int countResult, int randomLimit, std::pair<int, atools::geo::Pos> *data, int distanceMinMeter,
+  // required calling !!! once, before first construction
+  static void initStatics(int distanceMinMeter,
                           int distanceMaxMeter);
+
+  // required calling !!! per construction before constructing
+  // data is whole set
+  static void initData(std::pair<int, atools::geo::Pos> *data,
+                       int indexDeparture,
+                       int *idsNonGrata,
+                       int lengthIdsNonGrata);
 
   void run() override;
 
 signals:
-  void resultReady(const bool isSuccess, const int indexDeparture, const int indexDestination);
+  void resultReady(const bool isSuccess, const int indexDestination, const int threadIndex);
 
 private:
-  friend class RandomDepartureAirportPickingByCriteria;
-  static bool stopExecution; // Qt has no way to finally stop a thread
-  int indexDeparture;
-  static int countResult;
-  static int randomLimit;
-  static std::pair<int, atools::geo::Pos> *data;
+  // do the thing no C++ brain (std specifier) wanted to do before
+  // returns index when found searchFor, else -1
+  int binary_search(int searchFor, int* inArray, int arrayLength);
+
+  int threadIndex;
+  int dataRangeIndexStart;
+  int dataRangeLength;
   static int distanceMin;
   static int distanceMax;
+  static std::pair<int, atools::geo::Pos> *data;
+  static int indexDeparture;
+  static int *idsNonGrata;
+  static int lengthIdsNonGrata;
 };
 
 #endif // RANDOMDESTINATIONAIRPORTPICKINGBYCRITERIA_H

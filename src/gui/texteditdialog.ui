@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>441</width>
-    <height>186</height>
+    <width>448</width>
+    <height>217</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -19,8 +19,8 @@
      <property name="text">
       <string/>
      </property>
-     <property name="openExternalLinks">
-      <bool>true</bool>
+     <property name="wordWrap">
+      <bool>false</bool>
      </property>
      <property name="textInteractionFlags">
       <set>Qt::LinksAccessibleByMouse|Qt::TextSelectableByMouse</set>
@@ -35,8 +35,8 @@
      <property name="text">
       <string/>
      </property>
-     <property name="openExternalLinks">
-      <bool>true</bool>
+     <property name="wordWrap">
+      <bool>false</bool>
      </property>
      <property name="textInteractionFlags">
       <set>Qt::LinksAccessibleByMouse|Qt::TextSelectableByMouse</set>
@@ -45,6 +45,16 @@
    </item>
    <item>
     <widget class="QLineEdit" name="lineEdit2"/>
+   </item>
+   <item>
+    <widget class="QLabel" name="label3">
+     <property name="text">
+      <string/>
+     </property>
+     <property name="textInteractionFlags">
+      <set>Qt::LinksAccessibleByMouse|Qt::TextSelectableByMouse</set>
+     </property>
+    </widget>
    </item>
    <item>
     <spacer name="verticalSpacer">

@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2023 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2024 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -104,7 +104,8 @@ void FetchRouteDialog::buttonBoxClicked(QAbstractButton *button)
     // Use always IFR for SimBrief plans
     flightplan->setFlightplanType(apln::IFR);
 
-    emit routeNewFromFlightplan(*flightplan, false /* adjustAltitude */, true /* changed */, false /* undo */);
+    // Do not adjust altitude and do not correct an invalid profile
+    emit routeNewFromFlightplan(*flightplan, false /* adjustAltitude */, true /* changed */, false /* undo */, false /* correctProfile */);
   }
   else if(button == ui->buttonBox->button(QDialogButtonBox::YesToAll))
   {
@@ -149,7 +150,7 @@ void FetchRouteDialog::restoreState()
   updateButtonStates();
 }
 
-void FetchRouteDialog::saveState()
+void FetchRouteDialog::saveState() const
 {
   atools::gui::WidgetState widgetState(lnm::FETCH_SIMBRIEF_DIALOG, false);
   widgetState.save({this, ui->comboBoxLoginType, ui->lineEditLogin});
@@ -293,7 +294,9 @@ void FetchRouteDialog::downloadFinished(const QByteArray& data, QString)
   if(alternate == departure || alternate == destination)
     alternate.clear();
 
-  routeString = departure % " " % route % " " % destination % " " % alternate;
+  routeString = departure % (departureRunway.isEmpty() ? QString() : '/' % departureRunway) % ' ' %
+                route % ' ' %
+                destination % (destinationRunway.isEmpty() ? QString() : '/' % destinationRunway) % ' ' % alternate;
 
   // Read string to flight plan
   RouteStringReader routeStringReader(NavApp::getRouteController()->getFlightplanEntryBuilder());
@@ -364,7 +367,6 @@ void FetchRouteDialog::downloadFailed(const QString& error, int errorCode, QStri
 void FetchRouteDialog::downloadSslErrors(const QStringList& errors, const QString& downloadUrl)
 {
   qDebug() << Q_FUNC_INFO;
-  NavApp::closeSplashScreen();
 
   int result = atools::gui::Dialog(this).
                showQuestionMsgBox(lnm::ACTIONS_SHOW_SSL_WARNING_SIMBRIEF,

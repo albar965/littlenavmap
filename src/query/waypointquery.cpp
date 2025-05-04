@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2023 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2024 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -25,6 +25,8 @@
 #include "settings/settings.h"
 #include "sql/sqlutil.h"
 
+#include <QStringBuilder>
+
 using namespace Marble;
 using namespace atools::sql;
 using namespace atools::geo;
@@ -40,10 +42,10 @@ WaypointQuery::WaypointQuery(SqlDatabase *sqlDbNav, bool trackDatabaseParam)
   mapTypesFactory = new MapTypesFactory();
   atools::settings::Settings& settings = atools::settings::Settings::instance();
 
-  queryRectInflationFactor = settings.getAndStoreValue(lnm::SETTINGS_MAPQUERY + "QueryRectInflationFactor", 0.3).toDouble();
-  queryRectInflationIncrement = settings.getAndStoreValue(lnm::SETTINGS_MAPQUERY + "QueryRectInflationIncrement", 0.1).toDouble();
-  queryMaxRowsWaypoints = settings.getAndStoreValue(lnm::SETTINGS_MAPQUERY + "WaypointQueryRowLimit1", map::MAX_MAP_OBJECTS * 2).toInt();
-  waypointInfoCache.setMaxCost(settings.getAndStoreValue(lnm::SETTINGS_INFOQUERY + "WaypointCache", 100).toInt());
+  queryRectInflationFactor = settings.getAndStoreValue(lnm::SETTINGS_MAPQUERY % "QueryRectInflationFactor", 0.3).toDouble();
+  queryRectInflationIncrement = settings.getAndStoreValue(lnm::SETTINGS_MAPQUERY % "QueryRectInflationIncrement", 0.1).toDouble();
+  queryMaxRowsWaypoints = settings.getAndStoreValue(lnm::SETTINGS_MAPQUERY % "WaypointQueryRowLimit1", map::MAX_MAP_OBJECTS * 2).toInt();
+  waypointInfoCache.setMaxCost(settings.getAndStoreValue(lnm::SETTINGS_INFOQUERY % "WaypointCache", 100).toInt());
 }
 
 WaypointQuery::~WaypointQuery()
@@ -89,19 +91,27 @@ MapWaypoint WaypointQuery::getWaypointByNavId(int navId, map::MapType type)
   return wp;
 }
 
-void WaypointQuery::getWaypointByByIdent(QList<map::MapWaypoint>& waypoints, const QString& ident,
-                                         const QString& region)
+void WaypointQuery::getWaypointByByIdent(QList<map::MapWaypoint>& waypoints, const QString& ident, const QString& region,
+                                         const QString& airport)
 {
-  if(!query::valid(Q_FUNC_INFO, waypointByIdentQuery))
+  // Ignore terminal airport in track queries
+  bool queryAirport = !trackDatabase && !airport.isEmpty();
+  SqlQuery *query = queryAirport ? waypointByIdentAndAirportQuery : waypointByIdentQuery;
+
+  if(!query::valid(Q_FUNC_INFO, query))
     return;
 
-  waypointByIdentQuery->bindValue(":ident", ident);
-  waypointByIdentQuery->bindValue(":region", region.isEmpty() ? "%" : region);
-  waypointByIdentQuery->exec();
-  while(waypointByIdentQuery->next())
+  query->bindValue(":ident", ident);
+  query->bindValue(":region", region.isEmpty() ? "%" : region);
+
+  if(queryAirport)
+    query->bindValue(":airport", airport);
+
+  query->exec();
+  while(query->next())
   {
     map::MapWaypoint wp;
-    mapTypesFactory->fillWaypoint(waypointByIdentQuery->record(), wp, trackDatabase);
+    mapTypesFactory->fillWaypoint(query->record(), wp, trackDatabase);
     waypoints.append(wp);
   }
 }
@@ -124,9 +134,9 @@ void WaypointQuery::getWaypointsRect(QVector<map::MapWaypoint>& waypoints, const
   if(!query::valid(Q_FUNC_INFO, waypointRectQuery))
     return;
 
-  for(const Rect& r : Rect(pos, nmToMeter(distanceNm), true /* fast */).splitAtAntiMeridian())
+  for(const Rect& splitRect : Rect(pos, nmToMeter(distanceNm), true /* fast */).splitAtAntiMeridian())
   {
-    query::bindRect(r, waypointRectQuery);
+    query::bindRect(splitRect, waypointRectQuery);
     waypointRectQuery->exec();
     while(waypointRectQuery->next())
     {
@@ -262,68 +272,87 @@ void WaypointQuery::initQueries()
   // Common where clauses
   static const QString whereRect("lonx between :leftx and :rightx and laty between :bottomy and :topy");
   static const QString whereIdentRegion("ident = :ident and region like :region");
-  static const QString whereLimit("limit " + QString::number(queryMaxRowsWaypoints));
+  static const QString whereIdentAndAirportRegion("w.ident = :ident and w.region like :region and a.ident like :airport");
+  static const QString whereLimit("limit " % QString::number(queryMaxRowsWaypoints));
 
   // Common select statements
-  QString waypointQueryBase(id + ", ident, region, type, num_victor_airway, num_jet_airway, mag_var, lonx, laty ");
+  QString waypointQueryBase(id % ", ident, region, type, num_victor_airway, num_jet_airway, mag_var, lonx, laty ");
 
-  if(atools::sql::SqlUtil(dbNav).hasTableAndColumn("waypoint", "artificial"))
+  if(atools::sql::SqlUtil(dbNav).hasTableAndColumn(table, "name"))
+    waypointQueryBase += ", name";
+
+  if(atools::sql::SqlUtil(dbNav).hasTableAndColumn(table, "artificial"))
     waypointQueryBase.append(", artificial");
 
-  if(atools::sql::SqlUtil(dbNav).hasTableAndColumn("waypoint", "arinc_type"))
+  if(atools::sql::SqlUtil(dbNav).hasTableAndColumn(table, "arinc_type"))
     waypointQueryBase.append(", arinc_type");
 
   deInitQueries();
 
   waypointByIdentQuery = new SqlQuery(dbNav);
-  waypointByIdentQuery->prepare("select " + waypointQueryBase + " from " + table + " where " + whereIdentRegion);
+  waypointByIdentQuery->prepare("select " % waypointQueryBase % " from " % table % " where " % whereIdentRegion);
+
+  // Terminal airports ignored in track databases
+  if(!trackDatabase)
+  {
+    // Prefix with table alias
+    QStringList waypointQueryBaseAirport = waypointQueryBase.split(',');
+    for(QString& str : waypointQueryBaseAirport)
+      str = "w." % str.simplified();
+
+    waypointByIdentAndAirportQuery = new SqlQuery(dbNav);
+    waypointByIdentAndAirportQuery->prepare("select " % waypointQueryBaseAirport.join(", ") %
+                                            " from waypoint w left outer join airport a on a.airport_id = w.airport_id "
+                                            "where " % whereIdentAndAirportRegion);
+  }
 
   // Get nearest Waypoint
   waypointNearestQuery = new SqlQuery(dbNav);
   waypointNearestQuery->prepare(
-    "select " + waypointQueryBase + " from " + table + " order by (abs(lonx - :lonx) + abs(laty - :laty)) limit 1");
+    "select " % waypointQueryBase % " from " % table % " order by (abs(lonx - :lonx) + abs(laty - :laty)) limit 1");
 
   waypointByIdQuery = new SqlQuery(dbNav);
-  waypointByIdQuery->prepare("select " + waypointQueryBase + " from " + table + " where " + id + " = :id");
+  waypointByIdQuery->prepare("select " % waypointQueryBase % " from " % table % " where " % id % " = :id");
 
   waypointByNavIdQuery = new SqlQuery(dbNav);
-  waypointByNavIdQuery->prepare("select " + waypointQueryBase + " from " + table + " where nav_id = :id and type like :type");
+  waypointByNavIdQuery->prepare("select " % waypointQueryBase % " from " % table % " where nav_id = :id and type like :type");
 
   // Get Waypoint in rect
   waypointRectQuery = new SqlQuery(dbNav);
-  waypointRectQuery->prepare("select " + waypointQueryBase + " from " + table + " where " + whereRect + " " + whereLimit);
+  waypointRectQuery->prepare("select " % waypointQueryBase % " from " % table % " where " % whereRect % " " % whereLimit);
 
   waypointsByRectQuery = new SqlQuery(dbNav);
-  waypointsByRectQuery->prepare("select " + waypointQueryBase + " from " + table + " where " + whereRect + " " + whereLimit);
+  waypointsByRectQuery->prepare("select " % waypointQueryBase % " from " % table % " where " % whereRect % " " % whereLimit);
 
   QString airwayCond = trackDatabase ? QString() : "num_victor_airway + num_jet_airway > 0 and";
   waypointsAirwayByRectQuery = new SqlQuery(dbNav);
-  waypointsAirwayByRectQuery->prepare("select " + waypointQueryBase + " from " + table +
-                                      " where " + airwayCond + " " + whereRect + " " + whereLimit);
+  waypointsAirwayByRectQuery->prepare("select " % waypointQueryBase % " from " % table %
+                                      " where " % airwayCond % " " % whereRect % " " % whereLimit);
 
   waypointInfoQuery = new SqlQuery(dbNav);
 
   if(trackDatabase)
-    waypointInfoQuery->prepare("select * from " + table + " where " + id + " = :id");
+    waypointInfoQuery->prepare("select " % waypointQueryBase % " from " % table % " where " % id % " = :id");
   else
-    waypointInfoQuery->prepare("select * from waypoint "
-                               "join bgl_file on waypoint.file_id = bgl_file.bgl_file_id "
-                               "join scenery_area on bgl_file.scenery_area_id = scenery_area.scenery_area_id "
-                               "where waypoint_id = :id");
+    waypointInfoQuery->prepare("select w.*, a.title, f.filepath from waypoint w "
+                               "join bgl_file f on w.file_id = f.bgl_file_id "
+                               "join scenery_area a on f.scenery_area_id = a.scenery_area_id "
+                               "where w.waypoint_id = :id");
 }
 
 void WaypointQuery::deInitQueries()
 {
   clearCache();
 
-ATOOLS_DELETE(waypointsByRectQuery);
-ATOOLS_DELETE(waypointsAirwayByRectQuery);
-ATOOLS_DELETE(waypointByIdentQuery);
-ATOOLS_DELETE(waypointNearestQuery);
-ATOOLS_DELETE(waypointRectQuery);
-ATOOLS_DELETE(waypointByIdQuery);
-ATOOLS_DELETE(waypointByNavIdQuery);
-ATOOLS_DELETE(waypointInfoQuery);
+  ATOOLS_DELETE(waypointsByRectQuery);
+  ATOOLS_DELETE(waypointsAirwayByRectQuery);
+  ATOOLS_DELETE(waypointByIdentQuery);
+  ATOOLS_DELETE(waypointByIdentAndAirportQuery);
+  ATOOLS_DELETE(waypointNearestQuery);
+  ATOOLS_DELETE(waypointRectQuery);
+  ATOOLS_DELETE(waypointByIdQuery);
+  ATOOLS_DELETE(waypointByNavIdQuery);
+  ATOOLS_DELETE(waypointInfoQuery);
 }
 
 void WaypointQuery::clearCache()

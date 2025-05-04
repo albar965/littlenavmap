@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2023 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2025 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -169,7 +169,7 @@ void PrintSupport::createFlightplanDocuments()
   QTextBlockFormat pageBreakBlock;
   pageBreakBlock.setPageBreakPolicy(QTextFormat::PageBreak_AlwaysBefore);
 
-  prt::PrintFlightPlanOpts opts = printDialog->getPrintOptions();
+  prt::PrintFlightplanOpts opts = printDialog->getPrintOptions();
   const Route& route = NavApp::getRouteConst();
   bool newPage = opts & prt::NEW_PAGE;
 
@@ -178,10 +178,7 @@ void PrintSupport::createFlightplanDocuments()
   NavApp::getRouteController()->flightplanHeaderPrint(html, !(opts & prt::HEADER));
 
   if(opts & prt::HEADER)
-  {
-    html.p().b(tr("Flight Plan File:")).nbsp().nbsp().
-    small(NavApp::getRouteController()->getRouteFilepath()).pEnd();
-  }
+    html.p().b(tr("Flight Plan File:")).nbsp().nbsp().small(NavApp::getRouteController()->getRouteFilePath()).pEnd();
 
   cursor.insertHtml(html.getHtml());
   if(newPage)
@@ -231,7 +228,7 @@ void PrintSupport::createFlightplanDocuments()
   // Footer with program version at end of all pages ===============================================
   setPrintTextSize(printDialog->getPrintTextSize());
   cursor.insertText(tr("\n\n%1 Version %2 (revision %3) on %4 ").
-                    arg(QApplication::applicationName()).
+                    arg(QCoreApplication::applicationName()).
                     arg(QApplication::applicationVersion()).
                     arg(GIT_REVISION_LITTLENAVMAP).
                     arg(QLocale().toString(QDateTime::currentDateTime())));
@@ -239,17 +236,16 @@ void PrintSupport::createFlightplanDocuments()
   printDocument->adjustSize();
 }
 
-void PrintSupport::addAirport(QTextCursor& cursor, const map::MapAirport& airport, const QString& prefix,
-                              bool departure)
+void PrintSupport::addAirport(QTextCursor& cursor, const map::MapAirport& airport, const QString& prefix, bool departure)
 {
   // Create a block format inserting page breaks
   QTextBlockFormat pageBreakBlock;
   pageBreakBlock.setPageBreakPolicy(QTextFormat::PageBreak_AlwaysBefore);
 
-  HtmlInfoBuilder builder(mainWindow, mainWindow->getMapWidget(), true /*info*/, true /*print*/);
+  HtmlInfoBuilder builder(QueryManager::instance()->getQueriesGui(), true /* info */, true /* print */, true /* verbose */);
   map::WeatherContext weatherContext;
 
-  prt::PrintFlightPlanOpts opts = printDialog->getPrintOptions();
+  prt::PrintFlightplanOpts opts = printDialog->getPrintOptions();
   bool newPage = opts & prt::NEW_PAGE;
 
   HtmlBuilder html(mapcolors::mapPrintRowColor, mapcolors::mapPrintRowColorAlt);
@@ -403,7 +399,7 @@ void PrintSupport::paintRequestedMap(QPrinter *)
   QGuiApplication::restoreOverrideCursor();
 }
 
-void PrintSupport::saveState()
+void PrintSupport::saveState() const
 {
   printDialog->saveState();
 }
@@ -445,7 +441,7 @@ void PrintSupport::drawWatermarkInternal(const QPoint& pos, QPainter *painter)
   painter->drawText(pos.x(),
                     pos.y() - painter->fontMetrics().descent(),
                     tr("%1 Version %2 (revision %3) on %4 ").
-                    arg(QApplication::applicationName()).
+                    arg(QCoreApplication::applicationName()).
                     arg(QApplication::applicationVersion()).
                     arg(GIT_REVISION_LITTLENAVMAP).
                     arg(QLocale().toString(QDateTime::currentDateTime())));

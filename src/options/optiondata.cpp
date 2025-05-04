@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2020 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2024 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -19,7 +19,9 @@
 
 #include "common/constants.h"
 #include "exception.h"
+#include "settings/settings.h"
 
+#include <QCoreApplication>
 #include <QDebug>
 #include <QFont>
 #include <QFontDatabase>
@@ -40,14 +42,14 @@ OptionData::OptionData()
 
 }
 
-QString OptionData::getLanguage()
+QString OptionData::getLanguageFromConfigFile()
 {
-  return QSettings(QSettings::IniFormat, QSettings::UserScope, "ABarthel", "little_navmap").value(lnm::OPTIONS_DIALOG_LANGUAGE).toString();
+  return atools::settings::Settings::instance().valueStr(lnm::OPTIONS_DIALOG_LANGUAGE);
 }
 
-OptionData::~OptionData()
+void OptionData::saveLanguageToConfigFile(const QString& language)
 {
-
+  atools::settings::Settings::instance().setValue(lnm::OPTIONS_DIALOG_LANGUAGE, language);
 }
 
 opts::OnlineFormat OptionData::getOnlineFormat() const

@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2023 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2025 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -18,15 +18,19 @@
 #ifndef LITTLENAVMAP_MAPPAINTER_H
 #define LITTLENAVMAP_MAPPAINTER_H
 
-#include "common/coordinateconverter.h"
 #include "common/mapflags.h"
-#include "options/optiondata.h"
+#include "geo/coordinateconverter.h"
 #include "geo/rect.h"
+#include "options/optiondata.h"
+
+#include <marble/MarbleGlobal.h>
 
 #include <QPen>
 #include <QFont>
 #include <QDateTime>
+#include <QCoreApplication>
 
+class Queries;
 namespace atools {
 namespace geo {
 class LineString;
@@ -38,15 +42,11 @@ class GeoDataLineString;
 class GeoPainter;
 }
 
-class AirportQuery;
-class AirwayTrackQuery;
 class MapLayer;
 class MapPaintWidget;
-class MapQuery;
 class MapScale;
 class MapWidget;
 class SymbolPainter;
-class WaypointTrackQuery;
 class Route;
 
 namespace map {
@@ -57,30 +57,34 @@ struct MapAirportMsa;
 
 }
 
-/* Struct that is passed to all painters */
+/* Struct that is passed to all painters. It is created from scratch for each paint event. */
 struct PaintContext
 {
-  const MapLayer *mapLayer; /* layer for the current zoom distance also affected by detail level
-                             *  should be used to visibility of map objects */
-  const MapLayer *mapLayerEffective; /* layer for the current zoom distance not affected by detail level.
-                                      *  Should be used to determine text visibility and object sizes. */
-  const MapLayer *mapLayerRoute; /* layer for the current zoom distance and more details for route. */
+  const MapLayer *mapLayer, /* Layer for the current zoom distance also affected by detail level
+                             * Used for visibility of map objects */
+                 *mapLayerText, /* layer for the current zoom distance also affected by text and label detail level
+                                 * Used for visibility of labels */
+                 *mapLayerEffective, /* Layer for the current zoom distance not affected by detail level.
+                                      *  Used to determine text visibility and object sizes. */
+                 *mapLayerRoute, /* Layer for the current zoom distance and more details for route. */
+                 *mapLayerRouteText; /* Layer for the current zoom distance and more details for route labels. */
+
   Marble::GeoPainter *painter;
   Marble::ViewportParams *viewport;
   Marble::ViewContext viewContext;
   float zoomDistanceMeter;
+
   bool drawFast; /* true if reduced details should be used */
   bool lazyUpdate; /* postpone reloading until map is still */
   bool darkMap; /* CartoDark or similar. Not Night mode */
+
   map::MapTypes objectTypes; /* Object types that should be drawn */
   map::MapDisplayTypes objectDisplayTypes; /* Object types that should be drawn */
   map::MapAirspaceFilter airspaceFilterByLayer; /* Airspaces */
-  map::MapAirspaceTypes airspaceTextsByLayer;
+  map::MapAirspaceType airspaceTextsByLayer;
+
   atools::geo::Rect viewportRect; /* Rectangle of current viewport */
   QRect screenRect; /* Screen coordinate rect */
-
-  /* Airports drawn having parking spots which require tooltips and more */
-  QSet<int> *shownDetailAirportIds;
 
   opts::MapScrollDetail mapScrollDetail; /* Option that indicates the detail level when drawFast is true */
   QFont defaultFont /* Default widget font */;
@@ -92,27 +96,40 @@ struct PaintContext
 
   const Route *route;
 
-  // All waypoints from the route and add them to the map to avoid duplicate drawing
-  // Same for procedure preview
-  QSet<map::MapRef> routeProcIdMap, /* Navaids on plan */
-                    routeProcIdMapRec /* Recommended navaids */;
-
   optsac::DisplayOptionsUserAircraft dispOptsUser;
   optsac::DisplayOptionsAiAircraft dispOptsAi;
   optsd::DisplayOptionsAirport dispOptsAirport;
   optsd::DisplayOptionsRose dispOptsRose;
   optsd::DisplayOptionsMeasurement dispOptsMeasurement;
   optsd::DisplayOptionsRoute dispOptsRoute;
+
+  /* ===============================================================================
+   * Flags from options dialog */
   opts::Flags flags;
   opts2::Flags2 flags2;
+
   map::MapWeatherSource weatherSource;
   bool visibleWidget;
-  bool paintCopyright = true;
+  bool paintCopyright = true, paintWindHeader = true, webMap = false;
   int mimimumRunwayLengthFt = -1; /* Value from toolbar */
-  QVector<map::MapRef> *routeDrawnNavaids; /* All navaids drawn for route and procedures. Points to vector in MapScreenIndex */
   int currentDistanceMarkerId = -1;
 
-  /* Text sizes and line thickness in percent / 100 as set in options dialog */
+  /* ===============================================================================
+   * Ids which are filled during painting and are passes between painters */
+
+  // All waypoints from the route and add them to the map to avoid duplicate drawing
+  // Same for procedure preview
+  QSet<map::MapRef> routeProcIdMap, /* Navaids on plan */
+                    routeProcIdMapRec /* Recommended navaids */;
+
+  /* Airports drawn having parking spots which require tooltips and more */
+  QSet<int> *shownDetailAirportIds;
+
+  /* All navaids drawn for route and procedures. Points to vector in MapScreenIndex */
+  QVector<map::MapRef> *routeDrawnNavaids;
+
+  /* ===============================================================================
+   * Text sizes and line thickness in percent / 100 as set in options dialog */
   float textSizeAircraftAi = 1.f;
   float symbolSizeNavaid = 1.f;
   float symbolSizeUserpoint = 1.f;
@@ -130,10 +147,13 @@ struct PaintContext
   float symbolSizeAirportWeather = 1.f;
   float symbolSizeWindBarbs = 1.f;
   float symbolSizeAircraftAi = 1.f;
+  float symbolSizeWeb = 1.f;
   float textSizeFlightplan = 1.f;
   float textSizeAircraftUser = 1.f;
   float symbolSizeAircraftUser = 1.f;
   float textSizeAirport = 1.f;
+  float textSizeAirportRunway = 1.f;
+  float textSizeAirportTaxiway = 1.f;
   float thicknessTrail = 1.f;
   float thicknessUserFeature = 1.f;
   float thicknessMeasurement = 1.f;
@@ -267,23 +287,28 @@ struct PaintContext
 };
 
 /* Used to collect airports for drawing. Needs to copy airport since it might be removed from the cache. */
-struct PaintAirportType
+class AirportPaintData
 {
-  PaintAirportType(const map::MapAirport& ap, float x, float y);
-  PaintAirportType()
+public:
+  AirportPaintData();
+  AirportPaintData(const map::MapAirport& ap, float x, float y);
+  AirportPaintData(const AirportPaintData& other);
+
+  ~AirportPaintData();
+
+  AirportPaintData& operator=(const AirportPaintData& other);
+
+  const map::MapAirport& getAirport() const
   {
+    return *airport;
   }
 
-  ~PaintAirportType();
-
-  PaintAirportType(const PaintAirportType& other)
+  const QPointF& getPoint() const
   {
-    this->operator=(other);
-
+    return point;
   }
 
-  PaintAirportType& operator=(const PaintAirportType& other);
-
+private:
   map::MapAirport *airport = nullptr;
   QPointF point;
 };
@@ -307,7 +332,7 @@ public:
 
   virtual void render() = 0;
 
-  bool sortAirportFunction(const PaintAirportType& pap1, const PaintAirportType& pap2);
+  bool sortAirportFunction(const AirportPaintData& airportPaintData1, const AirportPaintData& airportPaintData2);
 
   void initQueries();
 
@@ -332,102 +357,95 @@ protected:
 
   /* Draw a circle and return text placement hints (xtext and ytext). Number of points used
    * for the circle depends on the zoom distance. Optimized for large circles. */
-  void paintCircle(Marble::GeoPainter *painter, const atools::geo::Pos& centerPos, float radiusNm, bool fast, QPoint *textPos);
+  void paintCircle(Marble::GeoPainter *painter, const atools::geo::Pos& centerPos, float radiusNm, bool fast, QPoint *textPos) const;
 
   void paintArc(Marble::GeoPainter *painter, const atools::geo::Pos& centerPos, float radiusNm, float angleDegStart, float angleDegEnd,
-                bool fast);
+                bool fast) const;
 
-  void drawLineString(Marble::GeoPainter *painter, const atools::geo::LineString& linestring);
-  void drawLine(Marble::GeoPainter *painter, const atools::geo::Line& line, bool forceDraw = false);
+  void drawLine(Marble::GeoPainter *painter, const atools::geo::Line& line, bool forceDraw = false) const;
 
-  void drawPolygon(Marble::GeoPainter *painter, const atools::geo::LineString& linestring);
-  void drawPolygons(Marble::GeoPainter *painter, const QVector<QPolygonF *>& polygons);
-  void drawPolygon(Marble::GeoPainter *painter, const QPolygonF& polygon);
+  void drawPolygon(Marble::GeoPainter *painter, const atools::geo::LineString& linestring) const;
+  void drawPolygons(Marble::GeoPainter *painter, const QVector<QPolygonF *>& polygons) const;
+  void drawPolygon(Marble::GeoPainter *painter, const QPolygonF& polygon) const;
 
-  void drawPolyline(Marble::GeoPainter *painter, const atools::geo::LineString& linestring);
-  void drawPolylines(Marble::GeoPainter *painter, const QVector<QPolygonF *>& polygons);
-  void drawPolyline(Marble::GeoPainter *painter, const QPolygonF& polygon);
+  void drawPolyline(Marble::GeoPainter *painter, const atools::geo::LineString& linestring) const;
+  void drawPolylines(Marble::GeoPainter *painter, const QVector<QPolygonF *>& polygons) const;
+  void drawPolyline(Marble::GeoPainter *painter, const QPolygonF& polygon) const;
 
   /* Draw simple text with current settings. Corners are the text corners pointing to the position */
-  void drawText(Marble::GeoPainter *painter, const atools::geo::Pos& pos, const QString& text, bool topCorner, bool leftCorner);
+  void drawText(Marble::GeoPainter *painter, const atools::geo::Pos& pos, const QString& text, bool topCorner, bool leftCorner) const;
 
   /* Drawing functions for simple geometry */
-  void drawCircle(Marble::GeoPainter *painter, const atools::geo::Pos& center, float radius);
-  void drawCross(Marble::GeoPainter *painter, int x, int y, int size);
+  void drawCircle(Marble::GeoPainter *painter, const atools::geo::Pos& center, float radius) const;
+  void drawCross(Marble::GeoPainter *painter, int x, int y, int size) const;
 
   /* No GC and no rhumb */
-  void drawLineStraight(Marble::GeoPainter *painter, const atools::geo::Line& line);
+  void drawLineStraight(Marble::GeoPainter *painter, const atools::geo::Line& line) const;
 
   /* Save versions of drawLine which check for valid coordinates and bounds */
-  void drawLine(QPainter *painter, const QLineF& line);
+  void drawLine(QPainter *painter, const QLineF& line) const;
 
-  void drawLine(QPainter *painter, const QLine& line)
+  void drawLine(QPainter *painter, const QLine& line) const
   {
     drawLine(painter, QLineF(line));
   }
 
-  void drawLine(QPainter *painter, const QPoint& p1, const QPoint& p2)
+  void drawLine(QPainter *painter, const QPoint& p1, const QPoint& p2) const
   {
     drawLine(painter, QLineF(p1, p2));
   }
 
-  void drawLine(QPainter *painter, const QPointF& p1, const QPointF& p2)
+  void drawLine(QPainter *painter, const QPointF& p1, const QPointF& p2) const
   {
     drawLine(painter, QLineF(p1, p2));
   }
 
-  void paintArc(QPainter *painter, const QPointF& p1, const QPointF& p2, const QPointF& center, bool left);
+  void paintArc(QPainter *painter, const QPointF& p1, const QPointF& p2, const QPointF& center, bool left) const;
 
   void paintHoldWithText(QPainter *painter, float x, float y, float direction, float lengthNm, float minutes, bool left,
-                         const QString& text, const QString& text2,
-                         const QColor& textColor, const QColor& textColorBackground,
-                         QVector<float> inboundArrows = QVector<float>(),
-                         QVector<float> outboundArrows = QVector<float>());
+                         const QString& text, const QString& text2, const QColor& textColor, const QColor& textColorBackground,
+                         const QVector<float>& inboundArrows = QVector<float>(),
+                         const QVector<float>& outboundArrows = QVector<float>()) const;
 
+  /* Draw PI turn */
   void paintProcedureTurnWithText(QPainter *painter, float x, float y, float turnHeading, float distanceNm, bool left,
                                   QLineF *extensionLine, const QString& text, const QColor& textColor,
-                                  const QColor& textColorBackground);
+                                  const QColor& textColorBackground) const;
 
-  void paintAircraftTrail(const QVector<atools::geo::LineString>& lineStrings, float minAlt, float maxAlt);
+  void paintAircraftTrail(const QVector<atools::geo::LineString>& lineStrings, float minAlt, float maxAlt,
+                          const atools::geo::Pos& aircraftPos) const;
 
   /* Arrow pointing upwards or downwards */
-  QPolygonF buildArrow(float size, bool downwards = false);
+  QPolygonF buildArrow(float size, bool downwards = false) const;
 
   /* Draw arrow at line position. pos = 0 is beginning and pos = 1 is end of line */
-  void paintArrowAlongLine(QPainter *painter, const QLineF& line, const QPolygonF& arrow, float pos = 0.5f);
+  void paintArrowAlongLine(QPainter *painter, const QLineF& line, const QPolygonF& arrow, float pos = 0.5f) const;
   void paintArrowAlongLine(QPainter *painter, const atools::geo::Line& line, const QPolygonF& arrow, float pos = 0.5f,
-                           float minLengthPx = 0.f);
+                           float minLengthPx = 0.f) const;
 
   /* Interface method to QPixmapCache*/
-  void getPixmap(QPixmap& pixmap, const QString& resource, int size);
+  void getPixmap(QPixmap& pixmap, const QString& resource, int size) const;
 
   /* Draw enroute as well as user defined holdings */
-  void paintHoldingMarks(const QList<map::MapHolding>& holdings, bool user, bool drawFast);
+  void paintHoldingMarks(const QList<map::MapHolding>& holdings, const MapLayer *layer, const MapLayer *layerText,
+                         bool user, bool drawFast, bool darkMap) const;
 
   /* Draw large semi-transparent MSA enabled by user */
-  void paintMsaMarks(const QList<map::MapAirportMsa>& airportMsa, bool user, bool drawFast);
+  void paintMsaMarks(const QList<map::MapAirportMsa>& airportMsa, bool user, bool drawFast) const;
 
   /* Draw small flat circle for small radii or close zoom distances */
-  void paintCircleSmallInternal(Marble::GeoPainter *painter, const atools::geo::Pos& centerPos, float radiusNm, bool fast, QPoint *textPos);
+  void paintCircleSmallInternal(Marble::GeoPainter *painter, const atools::geo::Pos& centerPos, float radiusNm, bool fast,
+                                QPoint *textPos) const;
 
   /* Draw a large spherical correct projected circle */
-  void paintCircleLargeInternal(Marble::GeoPainter *painter, const atools::geo::Pos& centerPos, float radiusNm, bool fast, QPoint *textPos);
-
-  /* Minimum points to use for a circle */
-  const int CIRCLE_MIN_POINTS = 16;
-  /* Maximum points to use for a circle */
-  const int CIRCLE_MAX_POINTS = 72;
+  void paintCircleLargeInternal(Marble::GeoPainter *painter, const atools::geo::Pos& centerPos, float radiusNm, bool fast,
+                                QPoint *textPos) const;
 
   PaintContext *context = nullptr;
   SymbolPainter *symbolPainter = nullptr;
   MapPaintWidget *mapPaintWidget = nullptr;
-  MapQuery *mapQuery = nullptr;
-  AirwayTrackQuery *airwayQuery = nullptr;
-  WaypointTrackQuery *waypointQuery = nullptr;
-  AirportQuery *airportQuery = nullptr;
   MapScale *scale = nullptr;
-
-private:
+  const Queries *queries = nullptr; // Derived from MapPaintWidget which can be GUI or web queries
 };
 
 #endif // LITTLENAVMAP_MAPPAINTER_H

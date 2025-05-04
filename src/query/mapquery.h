@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2023 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2025 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -40,6 +40,7 @@ class SqlQuery;
 class CoordinateConverter;
 class MapTypesFactory;
 class MapLayer;
+class Queries;
 
 /*
  * Provides map related database queries.
@@ -49,11 +50,6 @@ class MapLayer;
 class MapQuery
 {
 public:
-  /*
-   * @param sqlDb database for simulator scenery data
-   * @param sqlDbNav for updated navaids
-   */
-  MapQuery(atools::sql::SqlDatabase *sqlDbSim, atools::sql::SqlDatabase *sqlDbNav, atools::sql::SqlDatabase *sqlDbUser);
   ~MapQuery();
 
   MapQuery(const MapQuery& other) = delete;
@@ -230,20 +226,14 @@ public:
   const QList<map::MapRunway> *getRunwaysForOverview(int airportId);
 
   /* Similar to getAirports but no caching since user points can change */
-  const QList<map::MapUserpoint> getUserdataPoints(const Marble::GeoDataLatLonBox& rect, const QStringList& types,
-                                                   const QStringList& typesAll, bool unknownType, float distanceNm);
+  const QList<map::MapUserpoint>& getUserdataPoints(const Marble::GeoDataLatLonBox& rect, const QStringList& types,
+                                                    const QStringList& typesAll, bool unknownType, float distanceNm);
 
   /* Get related airport for navaids from current nav database.
    * found is true if navaid search was successful and max distance to pos is not exceeded. */
   QString getAirportIdentFromWaypoint(const QString& ident, const QString& region, const atools::geo::Pos& pos, bool found) const;
   QString getAirportIdentFromVor(const QString& ident, const QString& region, const atools::geo::Pos& pos, bool found) const;
   QString getAirportIdentFromNdb(const QString& ident, const QString& region, const atools::geo::Pos& pos, bool found) const;
-
-  /* Close all query objects thus disconnecting from the database */
-  void initQueries();
-
-  /* Create and prepare all queries */
-  void deInitQueries();
 
   /* Check in navdatabase (Navigraph or other) if airport has procedures.
    * Slow but does a fuzzy search to find airport in navdata */
@@ -252,6 +242,21 @@ public:
   bool hasDepartureProcedures(const map::MapAirport& airport) const;
 
 private:
+  friend class Queries;
+
+  /*
+   * @param sqlDb database for simulator scenery data
+   * @param sqlDbNav for updated navaids
+   */
+  explicit MapQuery(atools::sql::SqlDatabase *sqlDbSim, atools::sql::SqlDatabase *sqlDbNav, atools::sql::SqlDatabase *sqlDbUser,
+                    const Queries *parentQueriesParam);
+
+  /* Close all query objects thus disconnecting from the database */
+  void initQueries();
+
+  /* Create and prepare all queries */
+  void deInitQueries();
+
   map::MapResultIndex *nearestNavaidsInternal(const atools::geo::Pos& pos, float distanceNm,
                                               map::MapTypes type, int maxIls, float maxIlsDist);
 
@@ -261,7 +266,7 @@ private:
                                 float maxDistanceMeter, bool airportFromNavDatabase, map::AirportQueryFlags flags) const;
 
   const QList<map::MapAirport> *fetchAirports(const Marble::GeoDataLatLonBox& rect, atools::sql::SqlQuery *query,
-                                              bool lazy, bool overview, bool addon, bool normal, bool& overflow);
+                                              bool lazy, bool addon, bool normal, bool& overflow);
 
   QVector<map::MapIls> ilsByAirportAndRunway(const QString& airportIdent, const QString& runway) const;
 
@@ -274,8 +279,10 @@ private:
   atools::sql::SqlDatabase *dbSim, *dbNav, *dbUser;
 
   /* Simple bounding rectangle caches */
-  bool airportCacheAddonFlag = false; // Keep addon status flag for comparing
+  bool airportCacheAddonZoomFlag = false; // Keep addon status flag for comparing
+  bool airportCacheAddonZoomFilterFlag = false; // Keep addon status flag for comparing
   bool airportCacheNormalFlag = false; // Keep normal (non add-on) status flag for comparing
+
   query::SimpleRectCache<map::MapAirport> airportCache;
   query::SimpleRectCache<map::MapUserpoint> userpointCache;
   query::SimpleRectCache<map::MapVor> vorCache;
@@ -299,14 +306,18 @@ private:
                         *airportMsaByRectQuery = nullptr, *airportMsaByIdentQuery = nullptr, *airportMsaByIdQuery = nullptr;
 
   atools::sql::SqlQuery *vorsByRectQuery = nullptr, *ndbsByRectQuery = nullptr, *markersByRectQuery = nullptr,
-                        *ilsByRectQuery = nullptr, *holdingByRectQuery = nullptr, *userdataPointByRectQuery = nullptr;
+                        *ilsByRectQuery = nullptr, *holdingByRectQuery = nullptr,
+                        *userdataPointByRectQuery = nullptr, *userdataPointByRectQueryNullType = nullptr;
 
-  atools::sql::SqlQuery *vorByIdentQuery = nullptr, *ndbByIdentQuery = nullptr, *ilsByIdentQuery = nullptr;
+  atools::sql::SqlQuery *vorByIdentQuery = nullptr, *ndbByIdentQuery = nullptr, *ilsByIdentAndAirportQuery = nullptr,
+                        *ilsByIdentQuery = nullptr;
 
   atools::sql::SqlQuery *vorByIdQuery = nullptr, *ndbByIdQuery = nullptr, *vorByWaypointIdQuery = nullptr,
                         *ndbByWaypointIdQuery = nullptr, *ilsByIdQuery = nullptr, *holdingByIdQuery = nullptr,
                         *ilsQuerySimByAirportAndRw = nullptr, *ilsQuerySimByAirportAndIdent = nullptr,
                         *vorNearestQuery = nullptr, *ndbNearestQuery = nullptr;
+
+  const Queries *queries;
 };
 
 #endif // LITTLENAVMAP_MAPQUERY_H

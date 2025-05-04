@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2023 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2024 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -27,7 +27,7 @@ typedef QVector<map::MapRefExt> MapObjectRefExtVector;
 }
 
 /*
- * Takes care of integrating tracks (NAT, PACOTS and AUSOTS) into the database.
+ * Takes care of integrating tracks (NAT and PACOTS) into the database.
  *
  * Track segments are added like airway segments. Waypoints are either copied if they exist in the nav database
  * or created using an offset id if waypoints are coordinates only.

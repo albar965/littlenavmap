@@ -1,0 +1,32 @@
+{
+  "title": "Dynamic Touch and Drag Map",
+  "type": "exclusive",
+  "requestMapAccess": "",
+  "toolbars": [
+    {
+      "title": "Dynamic Map",
+      "items": [
+        {
+          "id": "icaot",
+          "type": "text",
+          "text": "ICAO",
+          "handle": {
+            "keydown": [
+              "key"
+            ],
+            "input": []
+          },
+          "style": "width:46px;text-transform:uppercase"
+        },
+        {
+          "id": "icaob",
+          "type": "button",
+          "text": "Find",
+          "handle": {
+            "click": []
+          }
+        }
+      ]
+    }
+  ]
+}

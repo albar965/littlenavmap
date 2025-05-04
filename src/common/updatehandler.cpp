@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2023 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2024 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -57,7 +57,8 @@ UpdateHandler::~UpdateHandler()
 
 void UpdateHandler::updateCheckTimeout()
 {
-  checkForUpdates(UPDATE_REASON_TIMER);
+  if(!atools::gui::Application::isShuttingDown())
+    checkForUpdates(UPDATE_REASON_TIMER);
 }
 
 void UpdateHandler::checkForUpdates(UpdateReason reason)
@@ -150,9 +151,7 @@ void UpdateHandler::updateFound(atools::util::UpdateList updates)
   qDebug() << Q_FUNC_INFO;
 
   for(const atools::util::Update& update:updates)
-    qDebug() << Q_FUNC_INFO << update.version;
-
-  NavApp::closeSplashScreen();
+    qDebug() << Q_FUNC_INFO << update.getVersion();
 
   if(!updates.isEmpty())
   {
@@ -162,10 +161,10 @@ void UpdateHandler::updateFound(atools::util::UpdateList updates)
     // Show only the newest one
     const atools::util::Update& update = updates.constFirst();
 
-    if(!update.changelog.isEmpty())
-      html.text(update.changelog, atools::util::html::NO_ENTITIES);
+    if(!update.getChangelog().isEmpty())
+      html.text(update.getChangelog(), atools::util::html::NO_ENTITIES);
 
-    NavApp::closeSplashScreen();
+    atools::gui::Application::closeSplashScreen();
 
     // Show dialog
     UpdateDialog updateDialog(mainWindow, updateReason == UPDATE_REASON_MANUAL);
@@ -179,7 +178,7 @@ void UpdateHandler::updateFound(atools::util::UpdateList updates)
       if(updateDialog.isIgnoreThisUpdate())
       {
         // Add latest update - do not report anything earlier or equal again
-        QString ignore = updates.constFirst().version;
+        QString ignore = updates.constFirst().getVersion();
         qDebug() << Q_FUNC_INFO << "Ignoring updates now" << ignore;
         Settings::instance().setValue(lnm::OPTIONS_UPDATE_ALREADY_CHECKED, ignore);
       }
@@ -187,7 +186,7 @@ void UpdateHandler::updateFound(atools::util::UpdateList updates)
   }
   else
     // Nothing found but notification requested for manual trigger
-    QMessageBox::information(mainWindow, QApplication::applicationName(), QObject::tr("No Updates available."));
+    atools::gui::Dialog::information(mainWindow, QObject::tr("No Updates available."));
 }
 
 /* Called by update checker */
@@ -195,13 +194,11 @@ void UpdateHandler::updateFailed(QString errorString)
 {
   qDebug() << Q_FUNC_INFO;
 
-  NavApp::closeSplashScreen();
-
   QString message = tr("Error while checking for updates at\n\"%1\":\n%2").
                     arg(updateCheck->getUrl().toDisplayString()).arg(errorString);
 
   if(updateReason == UPDATE_REASON_MANUAL)
-    QMessageBox::warning(mainWindow, QApplication::applicationName(), message);
+    atools::gui::Dialog::warning(mainWindow, message);
   else
     atools::gui::Dialog(mainWindow).showWarnMsgBox(lnm::ACTIONS_SHOW_UPDATE_FAILED, message, tr("Do not &show this dialog again."));
 }

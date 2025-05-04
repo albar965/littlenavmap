@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2023 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2024 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -68,15 +68,18 @@ public:
 
   void fontChanged(const QFont& font);
 
+  /* Save and restore dialog size and tab selection */
+  void saveState() const;
+  void restoreState();
+
+  /* Reset saved settings and position of dialog */
+  void resetWindowLayout();
+
 private:
   /* Use events to update data and disconnect from database if not visible. */
   /* Also enable or disable toolbar/menu action. */
   virtual void showEvent(QShowEvent *) override;
   virtual void hideEvent(QHideEvent *) override;
-
-  /* Save and restore dialog size and tab selection */
-  void saveState();
-  void restoreState();
 
   /* Update tables and text browser */
   void updateWidgets();
@@ -110,9 +113,8 @@ private:
   /* Item delegate needed to change alignment */
   LogStatsDelegate *delegate = nullptr;
 
-  /* Remember dilalog position when reopening */
-  QPoint position;
-
+  /* Size as given in UI */
+  QSize defaultSize;
 };
 
 #endif // LNM_LOGSTATISTICSDIALOG_H

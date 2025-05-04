@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2023 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2024 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -17,9 +17,7 @@
 
 #include "connect/connectdialog.h"
 
-#include "atools.h"
 #include "common/constants.h"
-#include "fs/sc/datareaderthread.h"
 #include "gui/helphandler.h"
 #include "gui/widgetstate.h"
 #include "app/navapp.h"
@@ -53,10 +51,8 @@ ConnectDialog::ConnectDialog(QWidget *parent, bool simConnectAvailable)
     ui->tabConnectFsx->setDisabled(true);
     ui->labelConnectFsx->setText(atools::util::HtmlBuilder::warningMessage(
                                    tr("SimConnect not found. Your Little Navmap "
-                                      "installation is missing the file \"SimConnect.dll\".<br/>"
-                                      "Reinstall Little Navmap or "
-                                      "install a FSX SP2 compatible version of SimConnect on your computer.<br/>")) +
-                                 ui->labelConnectFsx->text());
+                                      "installation is missing the file \"%1\".<br/>").
+                                   arg(lnm::SIMCONNECT_DLL_NAME)) + ui->labelConnectFsx->text());
   }
   else
   {
@@ -333,18 +329,21 @@ quint16 ConnectDialog::getRemotePort() const
   return static_cast<quint16>(ui->spinBoxConnectPort->value());
 }
 
-void ConnectDialog::saveState()
+void ConnectDialog::saveState() const
 {
   atools::gui::WidgetState widgetState(lnm::NAVCONNECT_REMOTE);
-  widgetState.save({this, ui->comboBoxConnectHostname, ui->spinBoxConnectPort, ui->spinBoxConnectUpdateRateFsx,
-                    ui->spinBoxConnectAiFetchRadius, ui->spinBoxConnectUpdateRateXp, ui->checkBoxConnectOnStartup,
-                    ui->tabWidgetConnect, ui->checkBoxConnectFetchAiAircraftXp, ui->checkBoxConnectFetchAiAircraftFsx,
-                    ui->checkBoxConnectFetchAiShipFsx, ui->checkBoxConnectFetchAiShipXp});
+  widgetState.save(QList<const QObject *>({ui->comboBoxConnectHostname, ui->spinBoxConnectPort, ui->spinBoxConnectUpdateRateFsx,
+                                           ui->spinBoxConnectAiFetchRadius, ui->spinBoxConnectUpdateRateXp, ui->checkBoxConnectOnStartup,
+                                           ui->tabWidgetConnect, ui->checkBoxConnectFetchAiAircraftXp,
+                                           ui->checkBoxConnectFetchAiAircraftFsx, ui->checkBoxConnectFetchAiShipFsx,
+                                           ui->checkBoxConnectFetchAiShipXp}));
 
   // Save combo entries separately
   QStringList entries;
   for(int i = 0; i < ui->comboBoxConnectHostname->count(); i++)
     entries.append(ui->comboBoxConnectHostname->itemText(i));
+
+  atools::gui::WidgetState(lnm::NAVCONNECT_DIALOG).save(this);
 
   Settings::instance().setValue(lnm::NAVCONNECT_REMOTEHOSTS, entries);
 }
@@ -382,7 +381,17 @@ void ConnectDialog::restoreState()
       activateTab(ui->tabConnectRemote);
   }
 
-  widgetState.restore({this, ui->comboBoxConnectHostname, ui->spinBoxConnectPort, ui->spinBoxConnectUpdateRateFsx,
+  atools::gui::WidgetState dialogState(lnm::NAVCONNECT_DIALOG);
+
+  if(!dialogState.contains(this))
+  {
+    QCoreApplication::processEvents(QEventLoop::ExcludeUserInputEvents);
+    adjustSize();
+  }
+  else
+    dialogState.restore(this);
+
+  widgetState.restore({ui->comboBoxConnectHostname, ui->spinBoxConnectPort, ui->spinBoxConnectUpdateRateFsx,
                        ui->spinBoxConnectAiFetchRadius, ui->spinBoxConnectUpdateRateXp, ui->checkBoxConnectOnStartup,
                        ui->tabWidgetConnect, ui->checkBoxConnectFetchAiAircraftXp, ui->checkBoxConnectFetchAiAircraftFsx,
                        ui->checkBoxConnectFetchAiShipFsx, ui->checkBoxConnectFetchAiShipXp});

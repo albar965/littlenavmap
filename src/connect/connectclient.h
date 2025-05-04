@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2023 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2024 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -18,9 +18,9 @@
 #ifndef LITTLENAVMAP_CONNECTCLIENT_H
 #define LITTLENAVMAP_CONNECTCLIENT_H
 
-#include "fs/sc/simconnectdata.h"
-#include "util/timedcache.h"
 #include "connectdialog.h"
+#include "fs/sc/simconnecttypes.h"
+#include "util/timedcache.h"
 #include "util/version.h"
 
 #include <QAbstractSocket>
@@ -33,14 +33,29 @@ class MainWindow;
 class QMessageBox;
 
 namespace atools {
+
+namespace geo {
+class Pos;
+}
+
+namespace win {
+class ActivationContext;
+}
 namespace fs {
+
+namespace weather {
+class Metar;
+}
 namespace sc {
+
+class SimConnectUserAircraft;
+
+class SimConnectData;
 class DataReaderThread;
 class SimConnectHandler;
 class XpConnectHandler;
 class ConnectHandler;
 class WeatherRequest;
-struct MetarResult;
 
 class SimConnectReply;
 }
@@ -75,8 +90,9 @@ public:
   /* true if connected to Xpconnect, SimConnect or socket is really connected */
   bool isConnectedActive() const;
 
-  /* true if connection is using SimConnect for FSX/P3D */
+  /* true if connection is using SimConnect for FSX/P3D/MSFS */
   bool isSimConnect() const;
+  int getSimConnectMajorVersion() const;
 
   /* true if connection is using Xpconnect to X-Plane */
   bool isXpConnect() const;
@@ -85,13 +101,13 @@ public:
   bool isNetworkConnect() const;
 
   /* Just saves and restores the state of the dialog */
-  void saveState();
+  void saveState() const;
   void restoreState();
 
   /* Request weather. Return value will be empty and the request will be started in background.
    * Signal weatherUpdated is sent if request was finished. Than call this method again.
    * onlyStation: Do not return weather for interpolated or nearest only. Keeps an internal blacklist. */
-  atools::fs::weather::MetarResult requestWeather(const QString& station, const atools::geo::Pos& pos, bool onlyStation);
+  const atools::fs::weather::Metar& requestWeatherFsxP3d(const QString& station, const atools::geo::Pos& pos, bool onlyStation);
 
   bool isFetchAiShip() const;
   bool isFetchAiAircraft() const;
@@ -102,10 +118,26 @@ public:
   /* Print the size of all container classes to detect overflow or memory leak conditions */
   void debugDumpContainerSizes() const;
 
+  /* Get global activation context to load and unload DLLs */
+  atools::win::ActivationContext *getActivationContext() const
+  {
+    return activationContext;
+  }
+
+  /* Test SimConnect connection by simply trying to open it */
+  bool checkSimConnect() const;
+
+  /* Closes SimConnect connection to avoid conflicts with other DLL */
+  void pauseSimConnect();
+  void resumeSimConnect();
+
 signals:
   /* Emitted when new data was received from the server (Little Navconnect), SimConnect or X-Plane.
    * can be aircraft position or weather update */
   void dataPacketReceived(const atools::fs::sc::SimConnectData& simConnectData);
+
+  /* First valid aircraft occurrence after connecting */
+  void validAircraftReceived(const atools::fs::sc::SimConnectUserAircraft& userAircraft);
 
   /* Emitted when a new SimConnect data was received that contains weather data */
   void weatherUpdated();
@@ -149,7 +181,7 @@ private:
   void showTerminalError();
   void showXpconnectVersionWarning(const QString& xpconnectVersion);
 
-  bool silent = false, manualDisconnect = false;
+  bool silent = false, manualDisconnect = false, simconnectPaused = false;
   ConnectDialog *connectDialog = nullptr;
 
   /* Does automatic reconnect. Reads SimConnect or Xpconnect. */
@@ -157,15 +189,16 @@ private:
   atools::fs::sc::SimConnectHandler *simConnectHandler = nullptr;
   atools::fs::sc::XpConnectHandler *xpConnectHandler = nullptr;
 
-  /* Have to keep it since it is read multiple times */
-  atools::fs::sc::SimConnectData *simConnectData = nullptr;
+  atools::fs::sc::SimConnectData *simConnectDataNet = nullptr; /* Have to keep it since it is read multiple times from socket */
+
+  atools::win::ActivationContext *activationContext = nullptr;
 
   QTcpSocket *socket = nullptr;
   /* Used to trigger reconnects on socket base connections */
   QTimer reconnectNetworkTimer, flushQueuedRequestsTimer;
   MainWindow *mainWindow;
   bool verbose = false;
-  atools::util::TimedCache<QString, atools::fs::weather::MetarResult> metarIdentCache;
+  atools::util::TimedCache<QString, atools::fs::weather::Metar> metarIdentCache;
 
   /* Waiting for these replies for airport idents */
   QSet<QString> outstandingReplies;
@@ -182,7 +215,7 @@ private:
   // have to remember state separately to avoid sending signals when autoconnect fails
   bool socketConnected = false;
 
-  bool errorState = false, terminalErrorShown = false, xpconnectVersionWarningShown = false;
+  bool errorState = false, terminalErrorShown = false, xpconnectVersionChecked = false, foundValidAircraft = false;
 
   /* Try to reconnect every 10 seconds when network connection is lost */
   int socketReconnectSec = 10;

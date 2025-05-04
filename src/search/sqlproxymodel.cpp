@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2023 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2024 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -36,8 +36,7 @@ SqlProxyModel::~SqlProxyModel()
 
 }
 
-void SqlProxyModel::setDistanceFilter(const Pos& center, sqlmodeltypes::SearchDirection dir,
-                                      float minDistance, float maxDistance)
+void SqlProxyModel::setDistanceFilter(const Pos& center, sqlmodeltypes::SearchDirection dir, float minDistance, float maxDistance)
 {
   minDistMeter = nmToMeter(minDistance);
   maxDistMeter = nmToMeter(maxDistance);
@@ -50,14 +49,13 @@ void SqlProxyModel::clearDistanceFilter()
   centerPos = Pos();
 }
 
-/* Does the filtering by minimum and maximum distance and direction */
 bool SqlProxyModel::filterAcceptsRow(int sourceRow, const QModelIndex&) const
 {
   if(sourceSqlModel->isOverrideModeActive())
     return true;
 
   Pos pos = buildPos(sourceRow);
-  float heading = normalizeCourse(centerPos.angleDegTo(pos));
+  float heading = centerPos.angleDegTo(pos);
 
   switch(direction)
   {
@@ -96,9 +94,8 @@ bool SqlProxyModel::matchDistance(const Pos& pos) const
 {
   if(sourceSqlModel->isOverrideModeActive())
     return true;
-
-  float distMeter = pos.distanceMeterTo(centerPos);
-  return distMeter >= minDistMeter && distMeter <= maxDistMeter;
+  else
+    return atools::inRange(minDistMeter, maxDistMeter, pos.distanceMeterTo(centerPos));
 }
 
 void SqlProxyModel::sort(int column, Qt::SortOrder order)
@@ -120,7 +117,6 @@ QVariant SqlProxyModel::headerData(int section, Qt::Orientation orientation, int
   return sourceModel()->headerData(section, orientation, role);
 }
 
-/* Defines greater and lower than for sorting of the two columns distance and heading */
 bool SqlProxyModel::lessThan(const QModelIndex& sourceLeft, const QModelIndex& sourceRight) const
 {
   // These types can be converted to long long and compared
@@ -162,7 +158,6 @@ bool SqlProxyModel::lessThan(const QModelIndex& sourceLeft, const QModelIndex& s
   }
 }
 
-/* Returns the formatted data for the "distance" and "heading" column */
 QVariant SqlProxyModel::data(const QModelIndex& index, int role) const
 {
   if(sourceSqlModel->getColumnName(index.column()) == "distance")

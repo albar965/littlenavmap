@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2023 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2024 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -62,8 +62,8 @@ signals:
 private:
   /* Create one toolbar button with all menus */
   void createAirspaceToolButton(atools::gui::ActionButtonHandler *buttonHandler, const QString& icon, const QString& buttonHelp,
-                                const std::initializer_list<map::MapAirspaceTypes>& types,
-                                const std::initializer_list<map::MapAirspaceFlags>& flags,
+                                const std::initializer_list<map::MapAirspaceType>& types,
+                                const std::initializer_list<map::MapAirspaceFlag>& flags,
                                 bool groupActions = false, bool minMaxAltitude = false);
 
   /* Extract filter types from action check states */

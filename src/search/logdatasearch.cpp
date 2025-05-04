@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2023 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2024 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -103,6 +103,7 @@ LogdataSearch::LogdataSearch(QMainWindow *parent, QTableView *tableView, si::Tab
   append(Column("flightplan_file").hidden()).
   append(Column("distance", tr("Distance\nPlan %dist%"))).
   append(Column("distance_flown", tr("Distance\nFlown %dist%"))).
+  append(Column("flightplan_cruise_altitude", tr("Cruise\nAltitude %alt%"))).
   append(Column("route_string").hidden()).
   append(Column("description", ui->lineEditLogdataDescription, tr("Remarks")).filter(true, ui->actionLogdataSearchShowMoreOptions)).
   append(Column("departure_lonx").hidden()).
@@ -204,7 +205,7 @@ void LogdataSearch::saveState()
 void LogdataSearch::restoreState()
 {
   atools::gui::WidgetState widgetState(lnm::SEARCHTAB_LOGDATA_VIEW_WIDGET);
-  if(OptionData::instance().getFlags() & opts::STARTUP_LOAD_SEARCH && !NavApp::isSafeMode())
+  if(OptionData::instance().getFlags().testFlag(opts::STARTUP_LOAD_SEARCH) && !atools::gui::Application::isSafeMode())
     widgetState.restore(logdataSearchWidgets);
   else
   {
@@ -293,6 +294,13 @@ QString LogdataSearch::formatModelData(const Column *col, const QVariant& displa
   }
   else if(col->getColumnName() == "distance" || col->getColumnName() == "distance_flown")
     return Unit::distNm(displayRoleValue.toFloat(), false, 0);
+  else if(col->getColumnName() == "flightplan_cruise_altitude")
+  {
+    if(displayRoleValue.isNull())
+      return QString();
+    else
+      return Unit::altFeet(displayRoleValue.toFloat(), false, 0);
+  }
   else if(col->getColumnName() == "description")
     return atools::elideTextShort(displayRoleValue.toString().simplified(), 80);
   else if(displayRoleValue.type() == QVariant::Int || displayRoleValue.type() == QVariant::UInt)

@@ -2,19 +2,19 @@
 <!-- Created with Inkscape (http://www.inkscape.org/) -->
 
 <svg
-   xmlns:dc="http://purl.org/dc/elements/1.1/"
-   xmlns:cc="http://creativecommons.org/ns#"
-   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
-   xmlns:svg="http://www.w3.org/2000/svg"
-   xmlns="http://www.w3.org/2000/svg"
-   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
-   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
    version="1.0"
    width="149.92134"
    height="140.26547"
    id="svg2"
-   inkscape:version="0.91 r13725"
-   sodipodi:docname="routelow.svg">
+   inkscape:version="1.2.2 (b0a8486541, 2022-12-01)"
+   sodipodi:docname="routelow.svg"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:dc="http://purl.org/dc/elements/1.1/">
   <metadata
      id="metadata17">
     <rdf:RDF>
@@ -23,7 +23,7 @@
         <dc:format>image/svg+xml</dc:format>
         <dc:type
            rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
-        <dc:title></dc:title>
+        <dc:title />
       </cc:Work>
     </rdf:RDF>
   </metadata>
@@ -46,13 +46,16 @@
      inkscape:window-x="44"
      inkscape:window-y="24"
      inkscape:window-maximized="1"
-     inkscape:current-layer="g3338"
+     inkscape:current-layer="text17209"
      showguides="false"
      inkscape:snap-grids="true"
      fit-margin-top="0"
      fit-margin-left="0"
      fit-margin-right="0"
-     fit-margin-bottom="0">
+     fit-margin-bottom="0"
+     inkscape:showpageshadow="2"
+     inkscape:pagecheckerboard="0"
+     inkscape:deskcolor="#d1d1d1">
     <inkscape:grid
        type="xygrid"
        id="grid8410"
@@ -99,16 +102,14 @@
        height="73.094017"
        x="71.130043"
        y="200.63803" />
-    <text
-       xml:space="preserve"
-       style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:85.51270294px;line-height:125%;font-family:'Courier New';-inkscape-font-specification:'Courier New Bold';letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
-       x="80.458832"
-       y="262.83646"
+    <g
+       aria-label="L"
        id="text17209"
-       sodipodi:linespacing="125%"><tspan
-         sodipodi:role="line"
-         id="tspan17211"
-         x="80.458832"
-         y="262.83646">V</tspan></text>
+       style="font-weight:bold;line-height:0%;font-family:'Courier New';-inkscape-font-specification:'Courier New Bold';letter-spacing:0px;word-spacing:0px;stroke-width:1px">
+      <path
+         d="m 102.54683,220.78993 v 33.48691 h 18.45538 v -8.10033 q 0,-3.08981 1.16912,-4.3842 1.21087,-1.33613 3.13157,-1.33613 1.87894,0 3.04806,1.33613 1.21087,1.29439 1.21087,4.3842 v 16.65995 H 89.018453 q -3.089815,0 -4.425951,-1.16912 -1.294381,-1.21088 -1.294381,-3.13157 0,-1.87894 1.294381,-3.04806 1.336136,-1.21087 4.425951,-1.21087 h 4.968756 v -33.48691 h -4.968756 q -3.089815,0 -4.425951,-1.16912 -1.294381,-1.21088 -1.294381,-3.13157 0,-1.9207 1.294381,-3.08982 1.336136,-1.21087 4.425951,-1.21087 l 18.538887,0.0418 q 3.08981,0 4.3842,1.16911 1.33613,1.16912 1.33613,3.08982 0,1.92069 -1.33613,3.13157 -1.29439,1.16912 -4.3842,1.16912 z"
+         style="font-size:85.5127px;line-height:1.25"
+         id="path1402" />
+    </g>
   </g>
 </svg>

@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2023 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2025 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -46,8 +46,10 @@
 using atools::gui::HelpHandler;
 
 SearchController::SearchController(QMainWindow *parent, QTabWidget *tabWidgetSearchParam)
-  : mapQuery(NavApp::getMapQueryGui()), mainWindow(parent), tabWidgetSearch(tabWidgetSearchParam)
+  : mainWindow(parent), tabWidgetSearch(tabWidgetSearchParam)
 {
+  mapQuery = QueryManager::instance()->getQueriesGui()->getMapQuery();
+
   Ui::MainWindow *ui = NavApp::getMainUi();
   connect(ui->pushButtonAirportHelpSearch, &QPushButton::clicked, this, &SearchController::helpPressed);
   connect(ui->pushButtonNavHelpSearch, &QPushButton::clicked, this, &SearchController::helpPressed);
@@ -104,11 +106,15 @@ void SearchController::styleChanged()
 
 void SearchController::dockVisibilityChanged(bool visible)
 {
-  // Have to remember dock widget visibility since it cannot be determined from QWidget::isVisisble()
-  dockVisible = visible;
+  // Avoid spurious events that appear on shutdown and cause crashes
+  if(!atools::gui::Application::isShuttingDown())
+  {
+    // Have to remember dock widget visibility since it cannot be determined from QWidget::isVisisble()
+    dockVisible = visible;
 
-  // Show or remove marks
-  tabChanged(getCurrentSearchTabId());
+    // Show or remove marks
+    tabChanged(getCurrentSearchTabId());
+  }
 }
 
 void SearchController::helpPressed()
@@ -157,7 +163,7 @@ void SearchController::tabChanged(int index)
   allSearchTabs.at(index)->updateTableSelection(true /* noFollow */);
 }
 
-void SearchController::saveState()
+void SearchController::saveState() const
 {
   for(AbstractSearch *searchTab : qAsConst(allSearchTabs))
     searchTab->saveState();
@@ -273,6 +279,11 @@ void SearchController::clearSelection()
     search->clearSelection();
 }
 
+void SearchController::clearProcedureSelectionAndPreviews()
+{
+  procedureSearch->clearSelectionAndPreviews();
+}
+
 bool SearchController::hasSelection()
 {
   bool selection = false;
@@ -376,6 +387,12 @@ void SearchController::setCurrentSearchTabId(si::TabSearchId tabId)
   tabHandlerSearch->setCurrentTab(tabId);
 }
 
+void SearchController::showRandomRouteCalc()
+{
+  setCurrentSearchTabId(si::SEARCH_AIRPORT);
+  airportSearch->showRandomRouteCalc();
+}
+
 si::TabSearchId SearchController::getCurrentSearchTabId()
 {
   return static_cast<si::TabSearchId>(tabHandlerSearch->getCurrentTabId());
@@ -421,25 +438,31 @@ void SearchController::searchSelectionChanged(const SearchBaseTable *source, int
     map::MapResult result;
     source->getSelectedMapObjects(result);
 
-    float travelTimeRealHours = 0.f, travelTimeSimHours = 0.f, distanceNm = 0.f;
+    float travelTimeRealHours = 0.f, travelTimeSimHours = 0.f, distanceNm = 0.f, distanceFlownNm = 0.f;
     for(const map::MapLogbookEntry& entry : qAsConst(result.logbookEntries))
     {
       travelTimeRealHours += entry.travelTimeRealHours;
       travelTimeSimHours += entry.travelTimeSimHours;
       distanceNm += entry.distanceNm;
+      distanceFlownNm += entry.distanceFlownNm;
     }
 
     QStringList logInformation;
     if(travelTimeRealHours > 1.f / 60.f)
-      logInformation.append(tr("Real time %1").arg(formatter::formatMinutesHoursLong(travelTimeRealHours)));
+      logInformation.append(tr("real %1").arg(formatter::formatMinutesHoursLong(travelTimeRealHours)));
+
     if(travelTimeSimHours > 1.f / 60.f)
-      logInformation.append(tr("Sim. time %1").arg(formatter::formatMinutesHoursLong(travelTimeSimHours)));
+      logInformation.append(tr("sim. %1").arg(formatter::formatMinutesHoursLong(travelTimeSimHours)));
+
     if(distanceNm > 0.f)
-      logInformation.append(tr("Dist. %1").arg(Unit::distNm(distanceNm)));
+      logInformation.append(tr("%1 plan").arg(Unit::distNm(distanceNm)));
+
+    if(distanceFlownNm > 0.f)
+      logInformation.append(tr("%1 flown").arg(Unit::distNm(distanceFlownNm)));
 
     QString logText;
     if(!logInformation.isEmpty())
-      logText = tr("\nTravel Totals: %1.").arg(logInformation.join(tr(". ")));
+      logText = tr("\nTotals: %1.").arg(atools::strJoin(logInformation, tr(", ")));
 
     ui->labelLogdata->setText(selectionLabelText.arg(selected).arg(total).arg(type).arg(visible).arg(logText));
   }

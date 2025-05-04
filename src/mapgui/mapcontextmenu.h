@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2023 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2024 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -70,10 +70,10 @@ class Route;
 
 namespace mc {
 
-/*
- * Describes the selected action for generated actions and the respective sub-menus.
+/* Describes the selected action for generated actions and the respective sub-menus.
  * Each value corresponds to an action or menu containing actions for disambiguation.
- * A "More" sub-menu is added if needed. */
+ * A "More" sub-menu is added if needed.
+ * Does not cover actions which are present in the main menu. */
 enum MenuActionType
 {
   NONE, /* Nothing selected - default value */
@@ -134,7 +134,7 @@ public:
 
   /* Get the action which was selected by the user.
    * Only used for pre-defined actions instead of the dynamically generated ones.*/
-  QAction *getSelectedAction() const
+  const QAction *getSelectedAction() const
   {
     return selectedAction;
   }

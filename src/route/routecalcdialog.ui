@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>453</width>
-    <height>497</height>
+    <width>386</width>
+    <height>562</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -311,13 +311,13 @@ Fastest calculation</string>
       <item row="2" column="1" colspan="2">
        <widget class="QRadioButton" name="radioButtonRouteCalcAirwayVictor">
         <property name="toolTip">
-         <string>Limit route to Victor airways</string>
+         <string>Limit route to low airways (Victor)</string>
         </property>
         <property name="statusTip">
-         <string>Limit route to Victor airways</string>
+         <string>Limit route to low airways (Victor)</string>
         </property>
         <property name="text">
-         <string>&amp;Victor airways (low altitude)</string>
+         <string>&amp;Low airways</string>
         </property>
         <attribute name="buttonGroup">
          <string notr="true">buttonGroup_2</string>
@@ -335,10 +335,10 @@ Fastest calculation</string>
            </sizepolicy>
           </property>
           <property name="toolTip">
-           <string>Download NAT, PACOTS and AUSOTS tracks now</string>
+           <string>Download NAT and PACOTS tracks now</string>
           </property>
           <property name="statusTip">
-           <string>Download NAT, PACOTS and AUSOTS tracks now</string>
+           <string>Download NAT and PACOTS tracks now</string>
           </property>
           <property name="text">
            <string/>
@@ -354,14 +354,14 @@ Fastest calculation</string>
       <item row="4" column="1">
        <widget class="QCheckBox" name="checkBoxRouteCalcAirwayTrack">
         <property name="toolTip">
-         <string>Use downloaded NAT, PACOTS or AUSOTS tracks.
+         <string>Use downloaded NAT or PACOTS tracks.
 Best track will be selected automatically.</string>
         </property>
         <property name="statusTip">
-         <string>Use downloaded NAT, PACOTS or AUSOTS tracks.</string>
+         <string>Use downloaded NAT or PACOTS tracks.</string>
         </property>
         <property name="text">
-         <string>&amp;Use NAT, PACOTS or AUSOTS tracks</string>
+         <string>&amp;Use NAT or PACOTS tracks</string>
         </property>
        </widget>
       </item>
@@ -448,13 +448,13 @@ Disabled if a navdatabase does not allow it.</string>
       <item row="1" column="1" colspan="2">
        <widget class="QRadioButton" name="radioButtonRouteCalcAirwayJet">
         <property name="toolTip">
-         <string>Limit route to Jet airways</string>
+         <string>Limit route to high airways (Jet)</string>
         </property>
         <property name="statusTip">
-         <string>Limit route to Jet airways</string>
+         <string>Limit route to high airways (Jet)</string>
         </property>
         <property name="text">
-         <string>&amp;Jet airways (high altitude)</string>
+         <string>&amp;High airways</string>
         </property>
         <attribute name="buttonGroup">
          <string notr="true">buttonGroup_2</string>
@@ -464,10 +464,10 @@ Disabled if a navdatabase does not allow it.</string>
       <item row="0" column="1" colspan="2">
        <widget class="QRadioButton" name="radioButtonRouteCalcAirwayAll">
         <property name="toolTip">
-         <string>Use both Victor and Jet airways for route</string>
+         <string>Use both low and high airways for route</string>
         </property>
         <property name="statusTip">
-         <string>Use both Victor and Jet airways for route</string>
+         <string>Use both low and high airways for route</string>
         </property>
         <property name="text">
          <string>&amp;All airways</string>
@@ -488,6 +488,22 @@ Disabled if a navdatabase does not allow it.</string>
        </widget>
       </item>
      </layout>
+    </widget>
+   </item>
+   <item>
+    <widget class="QLabel" name="labelOptionsProceduresHint">
+     <property name="text">
+      <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;img src=&quot;:/littlenavmap/resources/icons/bulb.svg&quot;/&gt;&lt;span style=&quot; font-style:italic;&quot;&gt;For best results, add SID, STAR or approaches before calculating an IFR flight plan.&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+     </property>
+     <property name="wordWrap">
+      <bool>true</bool>
+     </property>
+     <property name="margin">
+      <number>10</number>
+     </property>
+     <property name="textInteractionFlags">
+      <set>Qt::LinksAccessibleByMouse|Qt::TextSelectableByMouse</set>
+     </property>
     </widget>
    </item>
    <item>
@@ -612,7 +628,7 @@ Erases procedures.</string>
  </resources>
  <connections/>
  <buttongroups>
-  <buttongroup name="buttonGroup"/>
   <buttongroup name="buttonGroup_2"/>
+  <buttongroup name="buttonGroup"/>
  </buttongroups>
 </ui>

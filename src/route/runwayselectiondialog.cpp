@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2020 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2024 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -26,8 +26,8 @@
 #include <QPushButton>
 #include <QStringBuilder>
 
-RunwaySelectionDialog::RunwaySelectionDialog(QWidget *parent, const map::MapAirport& mapAirport,
-                                             const QStringList& runwayNameFilter, const QString& header)
+RunwaySelectionDialog::RunwaySelectionDialog(QWidget *parent, const map::MapAirport& mapAirport, const QStringList& runwayNameFilter,
+                                             const QString& header, bool navdata, int preselectRunwayEndNav)
   : QDialog(parent), ui(new Ui::RunwaySelectionDialog)
 {
   setWindowFlags(windowFlags() & ~Qt::WindowContextHelpButtonHint);
@@ -39,9 +39,10 @@ RunwaySelectionDialog::RunwaySelectionDialog(QWidget *parent, const map::MapAirp
   ui->labelRunwaySelectionHeader->setText(header);
 
   // Create runway table handler
-  runwaySelection = new RunwaySelection(parent, mapAirport, ui->tableWidgetRunwaySelection);
+  runwaySelection = new RunwaySelection(parent, mapAirport, ui->tableWidgetRunwaySelection, navdata);
   runwaySelection->setAirportLabel(ui->labelRunwaySelectionAirport);
   runwaySelection->setRunwayNameFilter(runwayNameFilter);
+  runwaySelection->setPreSelectedRunwayEnd(preselectRunwayEndNav);
 
   connect(runwaySelection, &RunwaySelection::doubleClicked, this, &RunwaySelectionDialog::doubleClicked);
   connect(runwaySelection, &RunwaySelection::itemSelectionChanged, this, &RunwaySelectionDialog::updateWidgets);
@@ -49,7 +50,7 @@ RunwaySelectionDialog::RunwaySelectionDialog(QWidget *parent, const map::MapAirp
 
   restoreState();
 
-  setWindowTitle(QApplication::applicationName() % tr(" - Select Runway"));
+  setWindowTitle(QCoreApplication::applicationName() % tr(" - Select Runway"));
 }
 
 RunwaySelectionDialog::~RunwaySelectionDialog()
@@ -78,7 +79,7 @@ void RunwaySelectionDialog::restoreState()
   ui->tableWidgetRunwaySelection->setFocus();
 }
 
-void RunwaySelectionDialog::saveState()
+void RunwaySelectionDialog::saveState() const
 {
   atools::gui::WidgetState widgetState(lnm::RUNWAY_SELECTION_DIALOG, false);
   widgetState.save(this);

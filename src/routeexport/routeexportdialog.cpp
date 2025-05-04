@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2020 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2024 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -16,6 +16,7 @@
 *****************************************************************************/
 
 #include "routeexport/routeexportdialog.h"
+#include "atools.h"
 #include "routeexport/routeexportdata.h"
 #include "ui_routeexportdialog.h"
 #include "common/constants.h"
@@ -172,7 +173,7 @@ RouteExportDialog::RouteExportDialog(QWidget *parent, re::RouteExportType routeT
       break;
   }
 
-  setWindowTitle(tr("%1 - Export for %2").arg(QApplication::applicationName()).arg(getRouteTypeAsDisplayString(type)));
+  setWindowTitle(tr("%1 - Export for %2").arg(QCoreApplication::applicationName()).arg(getRouteTypeAsDisplayString(type)));
 
   connect(ui->buttonBox, &QDialogButtonBox::clicked, this, &RouteExportDialog::buttonBoxClicked);
 
@@ -372,7 +373,7 @@ void RouteExportDialog::restoreState()
     ui->lineEditVoiceType->setText("Full");
 }
 
-void RouteExportDialog::saveState()
+void RouteExportDialog::saveState() const
 {
   atools::gui::WidgetState ws(lnm::FLIGHTPLAN_ONLINE_EXPORT + getRouteTypeAsString(type));
   ws.save(this);

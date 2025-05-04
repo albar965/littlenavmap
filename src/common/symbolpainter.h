@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2023 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2024 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -30,6 +30,7 @@
 namespace atools {
 namespace fs {
 namespace weather {
+
 class Metar;
 class MetarParser;
 }
@@ -68,10 +69,10 @@ class SymbolPainter
 public:
   /* Create icons for tooltips, table views and more. Size is pixel. */
   static QIcon createAirportIcon(const map::MapAirport& airport, int size);
-  static QIcon createAirportWeatherIcon(const atools::fs::weather::Metar& metar, int size);
-  static QIcon createVorIcon(const map::MapVor& vor, int size);
-  static QIcon createNdbIcon(int size);
-  static QIcon createAirwayIcon(const map::MapAirway& airway, int size);
+  static QIcon createAirportWeatherIcon(const atools::fs::weather::MetarParser& metar, int size);
+  static QIcon createVorIcon(const map::MapVor& vor, int size, bool darkMap);
+  static QIcon createNdbIcon(int size, bool darkMap);
+  static QIcon createAirwayIcon(const map::MapAirway& airway, int size, bool darkMap);
   static QIcon createWaypointIcon(int size, const QColor& color = QColor());
   static QIcon createUserpointIcon(int size);
   static QIcon createProcedurePointIcon(int size);
@@ -94,7 +95,7 @@ public:
   void drawWaypointSymbol(QPainter *painter, const QColor& col, float x, float y, float size, bool fill);
 
   /* Waypoint symbol. Can use a different color for invalid waypoints that were not found in the database */
-  void drawAirportWeather(QPainter *painter, const atools::fs::weather::Metar& metar,
+  void drawAirportWeather(QPainter *painter, const atools::fs::weather::MetarParser& metar,
                           float x, float y, float size, bool windPointer, bool windBarbs, bool fast);
 
   /* Wind arrow */
@@ -114,18 +115,20 @@ public:
 
   /* VOR with large size has a ring with compass ticks. For VORs part of the route the interior is filled.  */
   void drawVorSymbol(QPainter *painter, const map::MapVor& vor, float x, float y, float size, float sizeLarge, bool routeFill,
-                     bool fast);
+                     bool fast, bool darkMap);
 
   /* VOR texts have no background excepts for flight plan */
   void drawVorText(QPainter *painter, const map::MapVor& vor, float x, float y, textflags::TextFlags flags,
-                   float size, bool fill, textatt::TextAttributes atts = textatt::NONE, const QStringList *addtionalText = nullptr);
+                   float size, bool fill, bool darkMap, textatt::TextAttributes atts = textatt::NONE,
+                   const QStringList *addtionalText = nullptr);
 
   /* NDB with dotted rings or solid rings depending on size. For NDBs part of the route the interior is filled.  */
-  void drawNdbSymbol(QPainter *painter, float x, float y, float size, bool routeFill, bool fast);
+  void drawNdbSymbol(QPainter *painter, float x, float y, float size, bool routeFill, bool fast, bool darkMap);
 
   /* NDB texts have no background excepts for flight plan */
   void drawNdbText(QPainter *painter, const map::MapNdb& ndb, float x, float y, textflags::TextFlags flags,
-                   float size, bool fill, textatt::TextAttributes atts = textatt::NONE, const QStringList *addtionalText = nullptr);
+                   float size, bool fill, bool darkMap, textatt::TextAttributes atts = textatt::NONE,
+                   const QStringList *addtionalText = nullptr);
 
   void drawMarkerSymbol(QPainter *painter, const map::MapMarker& marker, float x, float y, float size, bool fast);
 

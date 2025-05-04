@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2023 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2024 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -45,7 +45,6 @@ TrackController::TrackController(TrackManager *trackManagerParam, MainWindow *ma
 #ifdef DEBUG_TRACK_TEST
   downloader->setUrl(atools::track::NAT, "/tmp/NAT.txt");
   downloader->setUrl(atools::track::PACOTS, "/tmp/PACOTS.txt");
-  downloader->setUrl(atools::track::AUSOTS, "/tmp/AUSOTS.txt");
 #else
   namespace t = atools::track;
   atools::settings::Settings& settings = Settings::instance();
@@ -56,10 +55,6 @@ TrackController::TrackController(TrackManager *trackManagerParam, MainWindow *ma
   downloader->setUrl(t::PACOTS,
                      settings.getAndStoreValue(lnm::OPTIONS_TRACK_PACOTS_URL, TrackDownloader::URL.value(t::PACOTS)).toString(),
                      settings.getAndStoreValue(lnm::OPTIONS_TRACK_PACOTS_PARAM, TrackDownloader::PARAM.value(t::PACOTS)).toStringList());
-
-  downloader->setUrl(t::AUSOTS,
-                     settings.getAndStoreValue(lnm::OPTIONS_TRACK_AUSOTS_URL, TrackDownloader::URL.value(t::AUSOTS)).toString(),
-                     settings.getAndStoreValue(lnm::OPTIONS_TRACK_AUSOTS_PARAM, TrackDownloader::PARAM.value(t::AUSOTS)).toStringList());
 #endif
 
   connect(downloader, &TrackDownloader::trackDownloadFinished, this, &TrackController::trackDownloadFinished);
@@ -69,7 +64,6 @@ TrackController::TrackController(TrackManager *trackManagerParam, MainWindow *ma
   Ui::MainWindow *ui = NavApp::getMainUi();
   connect(ui->actionTrackSourcesNat, &QAction::toggled, this, &TrackController::trackSelectionChanged);
   connect(ui->actionTrackSourcesPacots, &QAction::toggled, this, &TrackController::trackSelectionChanged);
-  connect(ui->actionTrackSourcesAusots, &QAction::toggled, this, &TrackController::trackSelectionChanged);
 }
 
 TrackController::~TrackController()
@@ -81,16 +75,16 @@ void TrackController::restoreState()
   atools::gui::WidgetState state(lnm::AIRSPACE_CONTROLLER_WIDGETS, false /* visibility */, true /* block signals */);
 
   Ui::MainWindow *ui = NavApp::getMainUi();
-  state.restore({ui->actionTrackSourcesNat, ui->actionTrackSourcesPacots, ui->actionTrackSourcesAusots, ui->actionRouteDownloadTracks});
+  state.restore({ui->actionTrackSourcesNat, ui->actionTrackSourcesPacots, ui->actionRouteDownloadTracks});
 }
 
-void TrackController::saveState()
+void TrackController::saveState() const
 {
   Ui::MainWindow *ui = NavApp::getMainUi();
 
   atools::gui::WidgetState state(lnm::AIRSPACE_CONTROLLER_WIDGETS);
 
-  state.save({ui->actionTrackSourcesNat, ui->actionTrackSourcesPacots, ui->actionTrackSourcesAusots, ui->actionRouteDownloadTracks});
+  state.save(QList<const QObject *>({ui->actionTrackSourcesNat, ui->actionTrackSourcesPacots, ui->actionRouteDownloadTracks}));
 }
 
 void TrackController::optionsChanged()
@@ -134,7 +128,7 @@ void TrackController::startDownloadInternal()
   QVector<atools::track::TrackType> trackTypes = enabledTracks();
   downloadQueue.append(trackTypes);
 
-  for(atools::track::TrackType trackType: trackTypes)
+  for(atools::track::TrackType trackType : qAsConst(trackTypes))
     downloader->startDownload(trackType);
 
   NavApp::setStatusMessage(tr("Track download started."));
@@ -175,6 +169,16 @@ bool TrackController::hasTracks() const
   return trackManager->hasData();
 }
 
+bool TrackController::hasNatTracks()
+{
+  return hasTracks() && enabledTracks().contains(atools::track::NAT);
+}
+
+bool TrackController::hasPacotsTracks()
+{
+  return hasTracks() && enabledTracks().contains(atools::track::PACOTS);
+}
+
 void TrackController::trackDownloadFinished(const atools::track::TrackVectorType& tracks, atools::track::TrackType type)
 {
   qDebug() << Q_FUNC_INFO << static_cast<int>(type) << "size" << tracks.size();
@@ -201,7 +205,6 @@ void TrackController::trackDownloadFinished(const atools::track::TrackVectorType
 void TrackController::trackDownloadSslErrors(const QStringList& errors, const QString& downloadUrl)
 {
   qWarning() << Q_FUNC_INFO;
-  NavApp::closeSplashScreen();
 
   int result = atools::gui::Dialog(mainWindow).
                showQuestionMsgBox(lnm::ACTIONS_SHOW_SSL_WARNING_TRACK,
@@ -281,8 +284,7 @@ void TrackController::tracksLoaded()
     err += tr("</li></ul>");
     QString boxMessage = tr("<p>Tracks downloaded.</p><ul>%1</ul>%2").arg(str.join("")).arg(err);
 
-    NavApp::closeSplashScreen();
-    QMessageBox::warning(mainWindow, QApplication::applicationName(), boxMessage);
+    atools::gui::Dialog::warning(mainWindow, boxMessage);
     NavApp::setStatusMessage(tr("Track download finished with errors."), true /* addToLog */);
   }
   else
@@ -303,12 +305,13 @@ QVector<atools::track::TrackType> TrackController::enabledTracks() const
 {
   QVector<atools::track::TrackType> retval;
   Ui::MainWindow *ui = NavApp::getMainUi();
+
   if(ui->actionTrackSourcesNat->isChecked())
     retval.append(atools::track::NAT);
+
   if(ui->actionTrackSourcesPacots->isChecked())
     retval.append(atools::track::PACOTS);
-  if(ui->actionTrackSourcesAusots->isChecked())
-    retval.append(atools::track::AUSOTS);
+
   return retval;
 }
 

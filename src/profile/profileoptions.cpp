@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2023 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2024 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -17,8 +17,9 @@
 
 #include "profile/profileoptions.h"
 
-#include "gui/treedialog.h"
 #include "common/constants.h"
+#include "common/textpointer.h"
+#include "gui/treedialog.h"
 #include "settings/settings.h"
 
 #include <QDebug>
@@ -52,13 +53,15 @@ bool ProfileOptions::showOptions()
   treeDialog.addItem2(headerItem, optsp::PROFILE_HEADER_DIST_TIME_TO_TOD, tr("Top of Descent"), tr("Distance and time to top of descent.\n"
                                                                                                    "Not shown if passed."));
   treeDialog.addItem2(headerItem, optsp::PROFILE_HEADER_DESCENT_PATH_DEVIATION, tr("Deviation"), tr("Vertical altitude deviation from descent path.\n"
-                                                                                                    "▼ means above (increase sink rate) and ▲ means below (decrease sink rate)."));
+                                                                                                    "%1 means above (increase sink rate) and %2 means below (decrease sink rate).").
+                                                                                                    arg(TextPointer::getPointerDown()).arg(TextPointer::getPointerUp()));
   treeDialog.addItem2(headerItem, optsp::PROFILE_HEADER_DESCENT_PATH_ANGLE, tr("Angle and Speed"), tr("Vertical flight path angle needed to keep the vertical path angle.\n"
                                                                                                       "Changes to \"Required angle\" if mandatory in approach procedures."));
 
 
   QTreeWidgetItem *aircraftItem = treeDialog.addTopItem1(tr("User Aircraft Labels"));
-  treeDialog.addItem2(aircraftItem, optsp::PROFILE_AIRCRAFT_ALTITUDE, tr("Altitude"), tr("Show actual user aircraft altitude at symbol."));
+  treeDialog.addItem2(aircraftItem, optsp::PROFILE_AIRCRAFT_ACTUAL_ALTITUDE, tr("Actual Altitude"), tr("Actual user aircraft altitude at symbol prefixed with \"ALT\"."));
+  treeDialog.addItem2(aircraftItem, optsp::PROFILE_AIRCRAFT_INDICATED_ALTITUDE, tr("Indicated Altitude"), tr("Indicated user aircraft altitude at symbol prefixed with \"IND\"."));
   treeDialog.addItem2(aircraftItem, optsp::PROFILE_AIRCRAFT_VERT_SPEED, tr("Vertical Speed"), tr("Show vertical speed of at user aircraft symbol."));
   treeDialog.addItem2(aircraftItem, optsp::PROFILE_AIRCRAFT_VERT_ANGLE_NEXT, tr("Vertical Speed to Next"),
                       tr("Vertical speed needed to arrive at the calculated altitude at the next waypoint.\n"
@@ -74,7 +77,7 @@ bool ProfileOptions::showOptions()
   QTreeWidgetItem *profileItem = treeDialog.addTopItem1(tr("Elevation Profile"));
   treeDialog.addItem2(profileItem, optsp::PROFILE_GROUND, tr("Ground"), tr("Green ground display."));
   treeDialog.addItem2(profileItem, optsp::PROFILE_SAFE_ALTITUDE, tr("Safe Altitude Line"), tr("Red safe altitude line for whole flight plan."));
-  treeDialog.addItem2(profileItem, optsp::PROFILE_LEG_SAFE_ALTITUDE, tr("Leg Safe Altitude Lines"), tr("Orange safe altitude lines for for each flight plan leg."));
+  treeDialog.addItem2(profileItem, optsp::PROFILE_LEG_SAFE_ALTITUDE, tr("Leg Safe Altitude Lines"), tr("Orange safe altitude lines for each flight plan leg."));
 
   QTreeWidgetItem *lineItem = treeDialog.addTopItem1(tr("Flight Plan Line"));
   treeDialog.addItem2(lineItem, optsp::PROFILE_FP_DIST, tr("Distance"), tr("Distance of flight plan leg."));
@@ -105,7 +108,7 @@ bool ProfileOptions::showOptions()
   return false;
 }
 
-void ProfileOptions::saveState()
+void ProfileOptions::saveState() const
 {
   atools::settings::Settings::instance().setValue(lnm::PROFILE_DISPLAY_OPTIONS, static_cast<int>(displayOptions));
 }

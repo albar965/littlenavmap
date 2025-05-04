@@ -1,8 +1,8 @@
 <!doctype html>
-<html>
+<html lang="en">
   <head>
     <meta charset="UTF-8">
-    <title>unused plugin title (your plugin folders name is the title visible to the user)</title>
+    <title>unused</title>
     <style>
       html, body, #display {
         height: 100%;
@@ -17,14 +17,6 @@
         font-size: 100px;
         color: grey;
       }
-      .toolbar {
-        position: fixed;
-        top: 4%;
-        left: 4%;
-        width: 50px;
-        height: 50px;
-        background: pink;
-      }
     </style>
   </head>
   <body>
@@ -32,21 +24,35 @@
       yeah
     </div>
     <script>
+      onmessage = event => {
+        let message = event.data.pluginParent;
+        if(message) {
+          switch(message.cause) {
+            case "callback":
+              return handleEvents(message.cargo);
+            case "cleanup":
+              return stop();
+            default:
+          }
+        }
+      };
+      
       function stop() {
         alert("stopped");
       }
-
-      function init (message) {
-        var returned_Value = message.pluginParent.callback(message.pluginParent.callback.TYPE_EXCLUSIVE, stop);
-        returned_Value.run();
-        var toolbar = returned_Value.toolbarAPI.createToolbar(document.body);
-        returned_Value.toolbarAPI.createCheckbox({
-          text: "yeha",
-          handlerNames: "click",
-          click: function() {
-            alert(this.value);
-          }
-        }, toolbar);
+      
+      function handleEvents(cargo) {
+        switch (cargo.id) {
+          case "myha":
+            switch (cargo.event) {
+              case "click":
+                alert("Yeha! My germane value is \"" + cargo.value + "\".");
+                break;
+              default:
+            }
+            break;
+          default:
+        }
       }
     </script>
   </body>

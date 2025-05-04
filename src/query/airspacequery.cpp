@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2023 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2024 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -19,6 +19,7 @@
 
 #include "atools.h"
 #include "common/constants.h"
+#include "common/maptools.h"
 #include "common/maptypesfactory.h"
 #include "fs/common/binarygeometry.h"
 #include "mapgui/maplayer.h"
@@ -27,6 +28,7 @@
 #include "sql/sqlutil.h"
 
 #include <QFileInfo>
+#include <QRegularExpression>
 #include <QStringBuilder>
 
 using namespace Marble;
@@ -37,7 +39,7 @@ static double queryRectInflationFactor = 0.2;
 static double queryRectInflationIncrement = 0.1;
 int AirspaceQuery::queryMaxRows = map::MAX_MAP_OBJECTS;
 
-AirspaceQuery::AirspaceQuery(SqlDatabase *sqlDb, map::MapAirspaceSources src)
+AirspaceQuery::AirspaceQuery(SqlDatabase *sqlDb, map::MapAirspaceSource src)
   : db(sqlDb), source(src)
 {
   mapTypesFactory = new MapTypesFactory();
@@ -107,21 +109,23 @@ void AirspaceQuery::getAirspaceById(map::MapAirspace& airspace, int airspaceId)
 }
 
 const QList<map::MapAirspace> *AirspaceQuery::getAirspaces(const GeoDataLatLonBox& rect, const MapLayer *mapLayer,
-                                                           const map::MapAirspaceFilter& filter, float flightPlanAltitude,
+                                                           const map::MapAirspaceFilter& filter, float flightplanAltitude,
                                                            bool lazy, bool& overflow)
 {
+  const static QRegularExpression REGEXP_FBZ_NAME("(\\bFBZ\\b|\\bFLIGHT PLAN BUFFER\\b)");
+  const static QRegularExpression REGEXP_FBZ_RESTR_DESIG("[0-9A-Y]+Z[0-9]?$");
+
   airspaceCache.updateCache(rect, mapLayer, queryRectInflationFactor, queryRectInflationIncrement, lazy,
-                            [](const MapLayer *curLayer, const MapLayer *newLayer) -> bool
-  {
+                            [](const MapLayer *curLayer, const MapLayer *newLayer) -> bool {
     return curLayer->hasSameQueryParametersAirspace(newLayer);
   });
 
-  if(filter != lastAirspaceFilter || atools::almostNotEqual(lastFlightplanAltitude, flightPlanAltitude))
+  if(filter != lastAirspaceFilter || atools::almostNotEqual(lastFlightplanAltitude, flightplanAltitude))
   {
     // Need a few more parameters to clear the cache which is different to other map features
     airspaceCache.list.clear();
     lastAirspaceFilter = filter;
-    lastFlightplanAltitude = flightPlanAltitude;
+    lastFlightplanAltitude = flightplanAltitude;
   }
 
   if(airspaceCache.list.isEmpty() && !lazy)
@@ -137,9 +141,9 @@ const QList<map::MapAirspace> *AirspaceQuery::getAirspaces(const GeoDataLatLonBo
       {
         for(int i = 0; i <= map::MAP_AIRSPACE_TYPE_BITS; i++)
         {
-          map::MapAirspaceTypes t(1 << i);
-          if(filter.types & t)
-            typeStrings.append(map::airspaceTypeToDatabase(t));
+          map::MapAirspaceTypes type(1 << i);
+          if(filter.types & type)
+            typeStrings.append(map::airspaceTypeToDatabase(type.asEnum()));
         }
       }
 
@@ -152,7 +156,7 @@ const QList<map::MapAirspace> *AirspaceQuery::getAirspaces(const GeoDataLatLonBo
       else if(filter.flags.testFlag(map::AIRSPACE_ALTITUDE_FLIGHTPLAN))
       {
         // One altitude query =========
-        minAlt = maxAlt = atools::roundToInt(flightPlanAltitude);
+        minAlt = maxAlt = atools::roundToInt(flightplanAltitude);
         query = airspaceByRectAltQuery;
       }
       else if(filter.flags.testFlag(map::AIRSPACE_ALTITUDE_SET))
@@ -199,8 +203,16 @@ const QList<map::MapAirspace> *AirspaceQuery::getAirspaces(const GeoDataLatLonBo
               if(ids.contains(query->valueInt("boundary_id")))
                 continue;
 
-              if(hasMultipleCode && filter.flags.testFlag(map::AIRSPACE_NO_MULTIPLE_Z) && query->valueStr("multiple_code") == "Z")
-                continue;
+              if(filter.flags.testFlag(map::AIRSPACE_NO_MULTIPLE_Z))
+              {
+                if(hasMultipleCode && query->valueStr("multiple_code") == "Z")
+                  continue;
+
+                if(atools::contains(query->valueStr("restrictive_type", QString()), {"T", "D", "R"}) &&
+                   (REGEXP_FBZ_RESTR_DESIG.match(query->valueStr("restrictive_designation", QString())).hasMatch() ||
+                    REGEXP_FBZ_NAME.match(query->valueStr("name", QString())).hasMatch()))
+                  continue;
+              }
 
               if(hasFirUir)
               {
@@ -213,7 +225,6 @@ const QList<map::MapAirspace> *AirspaceQuery::getAirspaces(const GeoDataLatLonBo
               map::MapAirspace airspace;
               mapTypesFactory->fillAirspace(query->record(), airspace, source);
               airspaceCache.list.append(airspace);
-
               ids.insert(airspace.id);
             }
           }
@@ -232,10 +243,13 @@ const QList<map::MapAirspace> *AirspaceQuery::getAirspaces(const GeoDataLatLonBo
   return &airspaceCache.list;
 }
 
-void AirspaceQuery::airspaceGeometry(LineString *lines, const QByteArray& bytes)
+void AirspaceQuery::airspaceGeometry(LineString *linestring, const QByteArray& bytes)
 {
   atools::fs::common::BinaryGeometry geometry(bytes);
-  geometry.swapGeometry(*lines);
+  geometry.swapGeometry(*linestring);
+
+  // Move latitude values slightly up and down to workaround Marble drawing straight lines
+  maptools::correctLatY(*linestring, true /* polygon */);
 }
 
 const LineString *AirspaceQuery::getAirspaceGeometryById(int airspaceId)
@@ -268,7 +282,7 @@ const LineString *AirspaceQuery::getAirspaceGeometryByFile(QString callsign)
     {
       // Return nullptr if empty - empty objects in cache indicate object not present
       const LineString *lineString = onlineCenterGeoFileCache.object(callsign);
-      if(lineString != nullptr && !lineString->isEmpty())
+      if(lineString != nullptr && lineString->isValidPolygon())
         return lineString;
     }
     else
@@ -294,7 +308,7 @@ const LineString *AirspaceQuery::getAirspaceGeometryByFile(QString callsign)
       }
       airspaceGeoByFileQuery->finish();
       onlineCenterGeoFileCache.insert(callsign, lineString);
-      if(!lineString->isEmpty())
+      if(lineString != nullptr && lineString->isValidPolygon())
         return lineString;
     }
   }
@@ -310,22 +324,29 @@ const LineString *AirspaceQuery::getAirspaceGeometryByName(QString callsign, con
   {
     QStringList callsignSplit = callsign.split('_');
 
-    // Work on middle section
+    // Work on middle section if there is one like "DKB" in "EDGG_DKB_CTR"
     if(callsignSplit.size() > 2)
     {
       if(callsign.section('_', 1, 1).size() > 1)
       {
         // Shorten middle initial: "EDGG_DKB_CTR" to "EDGG_D_CTR"
         callsignSplit[1] = callsignSplit[1].mid(1);
-        geometry = airspaceGeometryByNameInternal(callsignSplit.join('_'), facilityType);
+
+        // Escape "_" to avoid using it as a placeholder
+        geometry = airspaceGeometryByNameInternal(callsignSplit.join("\\_"), facilityType);
       }
 
       if(geometry == nullptr)
       {
-        // Remove middle initial "EDGG_D_CTR" to "EDGG_CTR"
+        // Remove middle initial "EDGG_D_CTR" to "EDGG_CTR" and query exact
         callsignSplit.removeAt(1);
-        geometry = airspaceGeometryByNameInternal(callsignSplit.join('_'), facilityType);
+        geometry = airspaceGeometryByNameInternal(callsignSplit.join("\\_"), facilityType);
       }
+
+      if(geometry == nullptr)
+        // Look for "EDGG_%_CTR" - escape "_"
+        geometry = airspaceGeometryByNameInternal(callsignSplit.join("\\_%\\_"), facilityType);
+
     }
   }
   return geometry;
@@ -360,7 +381,7 @@ const LineString *AirspaceQuery::airspaceGeometryByNameInternal(const QString& c
 
       airspaceGeoByNameQuery->finish();
       onlineCenterGeoCache.insert(callsign, lineString);
-      if(!lineString->isEmpty())
+      if(lineString->isValidPolygon())
         return lineString;
     }
   }
@@ -478,7 +499,7 @@ void AirspaceQuery::initQueries()
   if(!(source & map::AIRSPACE_SRC_ONLINE))
   {
     airspaceGeoByNameQuery = new SqlQuery(db);
-    airspaceGeoByNameQuery->prepare("select geometry from " % table % " where name like :name and type like :type");
+    airspaceGeoByNameQuery->prepare("select geometry from " % table % " where name like :name escape '\\' and type like :type");
 
     airspaceGeoByFileQuery = new SqlQuery(db);
     airspaceGeoByFileQuery->prepare("select b.geometry, f.filepath from " % table %
@@ -490,29 +511,14 @@ void AirspaceQuery::deInitQueries()
 {
   clearCache();
 
-  delete airspaceByRectQuery;
-  airspaceByRectQuery = nullptr;
-
-  delete airspaceByRectAltRangeQuery;
-  airspaceByRectAltRangeQuery = nullptr;
-
-  delete airspaceByRectAltQuery;
-  airspaceByRectAltQuery = nullptr;
-
-  delete airspaceLinesByIdQuery;
-  airspaceLinesByIdQuery = nullptr;
-
-  delete airspaceGeoByNameQuery;
-  airspaceGeoByNameQuery = nullptr;
-
-  delete airspaceGeoByFileQuery;
-  airspaceGeoByFileQuery = nullptr;
-
-  delete airspaceByIdQuery;
-  airspaceByIdQuery = nullptr;
-
-  delete airspaceInfoQuery;
-  airspaceInfoQuery = nullptr;
+  ATOOLS_DELETE_LOG(airspaceByRectQuery);
+  ATOOLS_DELETE_LOG(airspaceByRectAltRangeQuery);
+  ATOOLS_DELETE_LOG(airspaceByRectAltQuery);
+  ATOOLS_DELETE_LOG(airspaceLinesByIdQuery);
+  ATOOLS_DELETE_LOG(airspaceGeoByNameQuery);
+  ATOOLS_DELETE_LOG(airspaceGeoByFileQuery);
+  ATOOLS_DELETE_LOG(airspaceByIdQuery);
+  ATOOLS_DELETE_LOG(airspaceInfoQuery);
 }
 
 void AirspaceQuery::clearCache()

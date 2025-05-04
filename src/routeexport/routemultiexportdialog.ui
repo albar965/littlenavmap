@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>900</width>
-    <height>430</height>
+    <height>489</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -242,7 +242,7 @@
     <string>&amp;Enable %1 for Export</string>
    </property>
    <property name="toolTip">
-    <string>Select for multi export</string>
+    <string>Select for multiexport</string>
    </property>
    <property name="shortcut">
     <string>Space</string>

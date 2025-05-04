@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2023 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2025 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -17,6 +17,7 @@
 
 #include "db/databaseloader.h"
 
+#include "app/navapp.h"
 #include "atools.h"
 #include "common/constants.h"
 #include "common/formatter.h"
@@ -28,10 +29,11 @@
 #include "fs/navdatabaseprogress.h"
 #include "gui/errorhandler.h"
 #include "gui/textdialog.h"
-#include "app/navapp.h"
 #include "options/optionsdialog.h"
 #include "settings/settings.h"
 #include "sql/sqldatabase.h"
+#include "ui_mainwindow.h"
+#include "win/activationcontext.h"
 
 #include <QDir>
 #include <QElapsedTimer>
@@ -160,6 +162,15 @@ DatabaseLoader::~DatabaseLoader()
 
 void DatabaseLoader::loadScenery()
 {
+  if(selectedFsType == atools::fs::FsPaths::MSFS_2024)
+  {
+    // Disable loading and pause SimConnect to avoid conflicts
+    // Keep menu items disabled to not let user select a MSFS connection
+    NavApp::getMainUi()->actionConnectSimulator->setDisabled(true);
+    NavApp::getMainUi()->actionConnectSimulatorToggle->setDisabled(true);
+    NavApp::pauseSimConnect();
+  }
+
   // Get configuration file path from resources or overloaded path
   QString config = Settings::getOverloadedPath(lnm::DATABASE_NAVDATAREADER_CONFIG);
   qInfo() << Q_FUNC_INFO << "Config file" << config << "Database" << compileDb->databaseName();
@@ -176,7 +187,7 @@ void DatabaseLoader::loadScenery()
 
   navDatabaseOpts->setReadInactive(readInactive);
   navDatabaseOpts->setReadAddOnXml(readAddOnXml);
-  navDatabaseOpts->setLanguage(OptionsDialog::getLocale());
+  navDatabaseOpts->setLanguage(OptionData::getLanguageFromConfigFile());
 
   // Add exclude paths from option dialog ===================
   const OptionData& optionData = OptionData::instance();
@@ -199,7 +210,7 @@ void DatabaseLoader::loadScenery()
   // New progress dialog
   deleteProgressDialog();
   // No parent to allow non-modal dialog
-  progressDialog = new DatabaseProgressDialog(nullptr, atools::fs::FsPaths::typeToShortName(selectedFsType));
+  progressDialog = new DatabaseProgressDialog(nullptr, atools::fs::FsPaths::typeToShortDisplayName(selectedFsType));
 
   // Add to dock handler to enable auto raise and closing on exit as well as applying stay-on-top status from main
   NavApp::addDialogToDockHandler(progressDialog);
@@ -208,16 +219,15 @@ void DatabaseLoader::loadScenery()
   navDatabaseOpts->setSceneryFile(simulators.value(selectedFsType).sceneryCfg);
   navDatabaseOpts->setBasepath(basePath);
 
+  // Clear defaults
+  navDatabaseOpts->setMsfsCommunityPath(QString());
+  navDatabaseOpts->setMsfsOfficialPath(QString());
+
   // Set MSFS pecularities
   if(selectedFsType == atools::fs::FsPaths::MSFS)
   {
     navDatabaseOpts->setMsfsCommunityPath(FsPaths::getMsfsCommunityPath(basePath));
     navDatabaseOpts->setMsfsOfficialPath(FsPaths::getMsfsOfficialPath(basePath));
-  }
-  else
-  {
-    navDatabaseOpts->setMsfsCommunityPath(QString());
-    navDatabaseOpts->setMsfsOfficialPath(QString());
   }
 
   // Reset timers used in progress callback in thread context
@@ -234,12 +244,15 @@ void DatabaseLoader::loadScenery()
   navDatabaseOpts->setProgressCallback(std::bind(&DatabaseLoader::progressCallbackThread, this, std::placeholders::_1));
   navDatabaseOpts->setCallDefaultCallback(true);
 
-  // Print all options to log file =================================
-  qInfo() << Q_FUNC_INFO << *navDatabaseOpts;
-
   // ==================================================================================
   // Compile navdata in background ==================================================================
   atools::fs::NavDatabase navDatabase(navDatabaseOpts, compileDb, navDatabaseErrors, GIT_REVISION_LITTLENAVMAP);
+
+  // Load MSFS 2024 SimConnect DLL since only this can be used to fetch facilities
+  // The library will be freed after loading in compileDatabasePost()
+  atools::win::ActivationContext *activationContext = NavApp::getActivationContext();
+  activationContext->loadLibrary(lnm::SIMCONNECT_LOADER_DLL_NAME);
+  navDatabase.setActivationContext(activationContext, lnm::SIMCONNECT_LOADER_DLL_NAME);
 
   // resultFlags = navDatabase.compileDatabase();
   future = QtConcurrent::run(navDatabase, &atools::fs::NavDatabase::compileDatabase);
@@ -252,6 +265,14 @@ void DatabaseLoader::compileDatabasePost()
 {
   qDebug() << Q_FUNC_INFO;
 
+  if(selectedFsType == atools::fs::FsPaths::MSFS_2024)
+  {
+    // Start MSFS 2020 SimConnect again and enable menu items
+    NavApp::resumeSimConnect();
+    NavApp::getMainUi()->actionConnectSimulator->setEnabled(true);
+    NavApp::getMainUi()->actionConnectSimulatorToggle->setEnabled(true);
+  }
+
   // Exceptions are passed from thread and are thrown again when calling future.result()
   try
   {
@@ -260,11 +281,13 @@ void DatabaseLoader::compileDatabasePost()
   catch(std::exception& e)
   {
     // Show dialog if something went wrong but do not exit program
-    NavApp::closeSplashScreen();
     ErrorHandler(progressDialog).handleException(e, currentBglFilePath.isEmpty() ?
                                                  QString() : tr("Processed files:\n%1\n").arg(currentBglFilePath));
     resultFlagsShared |= atools::fs::COMPILE_FAILED;
   }
+
+  // Unload MSFS 2024 DLL again
+  NavApp::getActivationContext()->freeLibrary(lnm::SIMCONNECT_LOADER_DLL_NAME);
 
   // Show errors that occured during loading, if any
   if(!resultFlagsShared.testFlag(atools::fs::COMPILE_CANCELED))
@@ -455,7 +478,7 @@ void DatabaseLoader::showErrors()
 
     QString texts;
     texts.append(tr("<h3>Found %1 in %2 scenery entries when loading the scenery database</h3>").
-                 arg(atools::strJoin(headerText, tr(", "), tr(" and "))).arg(navDatabaseErrors->sceneryErrors.size()));
+                 arg(atools::strJoin(headerText, tr(", "), tr(" and "))).arg(navDatabaseErrors->getSceneryErrors().size()));
 
     if(totalErrors > 0)
     {
@@ -478,7 +501,7 @@ void DatabaseLoader::showErrors()
                         "due to encrypted airport data.<hr/>"));
 
     int numScenery = 0;
-    for(const atools::fs::NavDatabaseErrors::SceneryErrors& scErr : qAsConst(navDatabaseErrors->sceneryErrors))
+    for(const atools::fs::SceneryErrors& sceneryError : navDatabaseErrors->getSceneryErrors())
     {
       if(numScenery >= MAX_ERROR_SCENERY_MESSAGES)
       {
@@ -487,12 +510,12 @@ void DatabaseLoader::showErrors()
       }
 
       int numBgl = 0;
-      texts.append(tr("<b>Scenery Title: %1</b><br/>").arg(scErr.scenery.getTitle()));
+      texts.append(tr("<b>Scenery Title: %1</b><br/>").arg(sceneryError.getScenery().getTitle()));
 
-      for(const QString& err : scErr.sceneryErrorsMessages)
+      for(const QString& err : sceneryError.getSceneryErrorsMessages())
         texts.append(err + "<br/>");
 
-      for(const atools::fs::NavDatabaseErrors::SceneryFileError& bglErr : scErr.fileErrors)
+      for(const atools::fs::SceneryFileError& fileErr : sceneryError.getFileErrors())
       {
         if(numBgl >= MAX_ERROR_BGL_MESSAGES)
         {
@@ -502,7 +525,7 @@ void DatabaseLoader::showErrors()
         numBgl++;
 
         texts.append(tr("<b>File:</b> \"%1\"<br/><b>Message:</b> %2<br/>").
-                     arg(bglErr.filepath).arg(bglErr.errorMessage));
+                     arg(fileErr.getFilepath()).arg(fileErr.getErrorMessage()));
       }
       texts.append("<br/>");
       numScenery++;
@@ -511,7 +534,7 @@ void DatabaseLoader::showErrors()
     if(totalErrors > 0 || Settings::instance().valueBool(lnm::ACTIONS_SHOW_DATABASE_HINTS, true))
     {
       // Let the error dialog be a child of main to block main window
-      TextDialog errorDialog(NavApp::getQMainWidget(), tr("%1 - Load Scenery Library Results").arg(QApplication::applicationName()),
+      TextDialog errorDialog(NavApp::getQMainWidget(), tr("%1 - Load Scenery Library Results").arg(QCoreApplication::applicationName()),
                              "SCENERY.html#errors"); // anchor for future use
 
       // Show check box in case of notes

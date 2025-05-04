@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2023 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2025 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -17,13 +17,14 @@
 
 #include "routeexport/simbriefhandler.h"
 
+#include "app/navapp.h"
 #include "common/constants.h"
 #include "common/unit.h"
 #include "fs/perf/aircraftperf.h"
+#include "gui/desktopservices.h"
 #include "gui/dialog.h"
 #include "gui/helphandler.h"
 #include "gui/mainwindow.h"
-#include "app/navapp.h"
 #include "route/route.h"
 #include "routeexport/fetchroutedialog.h"
 #include "routestring/routestringwriter.h"
@@ -51,7 +52,8 @@ void SimBriefHandler::sendRouteToSimBrief()
   const Route& route = NavApp::getRouteConst();
 
   // Create route description string ================================
-  QString routeString = RouteStringWriter().createStringForRoute(route, 0.f, rs::SIMBRIEF_WRITE_DEFAULTS);
+  QString routeString = RouteStringWriter().
+                        createStringForRoute(route.adjustedToOptions(rf::ADD_PROC_ENTRY_EXIT), 0.f, rs::SIMBRIEF_WRITE_DEFAULTS);
   QString aircraftType = NavApp::getAircraftPerformance().getAircraftType();
 
   // Ask user ================================
@@ -65,7 +67,7 @@ void SimBriefHandler::sendRouteToSimBrief()
   QString message = tr("<p><b>Export this flight plan to SimBrief?</b></p>"
                          "<p>The information below will be sent:</p>"
                            "<table><tbody><tr><td>Route description:</td><td>%1</td></tr>"
-                             "<tr><td>Cruise altitide:</td><td>%2</td></tr>"
+                             "<tr><td>Cruise altitude:</td><td>%2</td></tr>"
                                "<tr><td>Aircraft type:</td><td>%3</td></tr></tbody></table>"
                                  "<p>Open your web browser and log into SimBrief before exporting the flight plan.</p>").
                     arg(routeString).arg(Unit::altFeet(route.getCruiseAltitudeFt())).arg(aircraftType);
@@ -84,7 +86,7 @@ void SimBriefHandler::sendRouteToSimBrief()
 
   if(result == QMessageBox::Yes)
   {
-    atools::gui::HelpHandler::openUrl(mainWindow, url);
+    atools::gui::DesktopServices::openUrl(mainWindow, url);
     NavApp::setStatusMessage(QString(tr("SimBrief flight plan sent to web browser.")));
   }
   else if(result == QMessageBox::YesToAll)

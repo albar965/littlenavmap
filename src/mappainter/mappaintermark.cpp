@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2023 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2025 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -17,26 +17,27 @@
 
 #include "mappainter/mappaintermark.h"
 
-#include "mapgui/mapwidget.h"
 #include "app/navapp.h"
-#include "mapgui/mapscale.h"
-#include "mapgui/maplayer.h"
-#include "perf/aircraftperfcontroller.h"
-#include "common/mapcolors.h"
-#include "common/formatter.h"
-#include "geo/calculations.h"
-#include "util/roundedpolygon.h"
-#include "common/symbolpainter.h"
-#include "geo/rect.h"
 #include "atools.h"
+#include "common/formatter.h"
+#include "common/mapcolors.h"
+#include "common/maptools.h"
 #include "common/symbolpainter.h"
-#include "airspace/airspacecontroller.h"
-#include "common/unit.h"
-#include "route/routeleg.h"
-#include "route/route.h"
-#include "util/paintercontextsaver.h"
+#include "common/symbolpainter.h"
 #include "common/textplacement.h"
+#include "common/unit.h"
 #include "fs/userdata/logdatamanager.h"
+#include "geo/calculations.h"
+#include "geo/rect.h"
+#include "mapgui/maplayer.h"
+#include "mapgui/mapscale.h"
+#include "mapgui/mapwidget.h"
+#include "perf/aircraftperfcontroller.h"
+#include "query/airspacequeries.h"
+#include "route/route.h"
+#include "route/routeleg.h"
+#include "util/paintercontextsaver.h"
+#include "util/roundedpolygon.h"
 
 #include <marble/GeoDataLineString.h>
 #include <marble/GeoDataLinearRing.h>
@@ -84,7 +85,8 @@ void MapPainterMark::render()
     paintPatternMarks();
 
   if(context->objectTypes.testFlag(map::MARK_HOLDING))
-    paintHoldingMarks(mapPaintWidget->getHoldingMarksFiltered(), true /* user */, context->drawFast);
+    paintHoldingMarks(mapPaintWidget->getHoldingMarksFiltered(), context->mapLayer, context->mapLayerText, true /* user */,
+                      context->drawFast, false /* darkMap */);
 
   // Airport MSA set by user
   if(context->objectTypes.testFlag(map::MARK_MSA))
@@ -231,6 +233,9 @@ void MapPainterMark::paintHighlights()
   painter->setBrush(transparent ? QBrush(mapcolors::adjustAlphaF(highlightColor, alpha)) : QBrush(Qt::NoBrush));
   for(const std::pair<ageo::Pos, float>& posSize : positionSizeList)
   {
+    if(context->objCount())
+      return;
+
     float x, y;
     if(wToS(posSize.first, x, y))
     {
@@ -347,13 +352,10 @@ void MapPainterMark::paintHighlights()
   if(transparent)
     radius *= 0.75f;
 
-  const QList<int>& routeHighlightResults = mapPaintWidget->getRouteHighlights();
-  QVector<atools::geo::Pos> positions;
-  for(int idx : routeHighlightResults)
-  {
-    const RouteLeg& routeLeg = NavApp::getRouteConst().value(idx);
-    positions.append(routeLeg.getPosition());
-  }
+  atools::geo::LineString positions;
+  const Route& route = NavApp::getRouteConst();
+  for(int idx : mapPaintWidget->getRouteHighlights())
+    positions.append(route.value(idx).getPosition());
 
   QColor routeHighlightColor = OptionData::instance().getHighlightFlightplanColor();
   const QPen outerPenRoute(mapcolors::routeHighlightBackColor, radius / 3. + 2., Qt::SolidLine, Qt::FlatCap);
@@ -438,9 +440,10 @@ void MapPainterMark::paintLogEntries(const QList<map::MapLogbookEntry>& entries)
       if(gpxData != nullptr)
       {
         // Flight plan =========================================================
-        if(!gpxData->flightplan.isEmpty() && context->objectDisplayTypes.testFlag(map::LOGBOOK_ROUTE) && resolves(gpxData->flightplanRect))
+        if(!gpxData->getFlightplan().isEmpty() && context->objectDisplayTypes.testFlag(map::LOGBOOK_ROUTE) &&
+           resolves(gpxData->getFlightplanRect()))
         {
-          for(const atools::fs::pln::FlightplanEntry& entry : gpxData->flightplan)
+          for(const atools::fs::pln::FlightplanEntry& entry : gpxData->getFlightplan())
           {
             visibleRouteGeometries.append(entry.getPosition());
             visibleRouteTexts.append(entry.getIdent());
@@ -449,12 +452,12 @@ void MapPainterMark::paintLogEntries(const QList<map::MapLogbookEntry>& entries)
 
         // Trail =========================================================
         // Limit number of visible tracks
-        if(!gpxData->trails.isEmpty() && context->objectDisplayTypes.testFlag(map::LOGBOOK_TRACK) && resolves(gpxData->trailRect))
+        if(gpxData->hasTrails() && context->objectDisplayTypes.testFlag(map::LOGBOOK_TRACK) && resolves(gpxData->getTrailRect()))
         {
-          maxAltitude = std::max(maxAltitude, gpxData->maxTrailAltitude);
-          minAltitude = std::min(minAltitude, gpxData->minTrailAltitude);
+          maxAltitude = std::max(maxAltitude, gpxData->getMaxTrailAltitude());
+          minAltitude = std::min(minAltitude, gpxData->getMinTrailAltitude());
 
-          for(const atools::fs::gpx::TrailPoints& points : gpxData->trails)
+          for(const atools::fs::gpx::TrailPoints& points : gpxData->getTrails())
           {
             if(!points.isEmpty())
             {
@@ -473,7 +476,7 @@ void MapPainterMark::paintLogEntries(const QList<map::MapLogbookEntry>& entries)
   }
 
   // Draw route ==========================================================================
-  if(context->objectDisplayTypes & map::LOGBOOK_ROUTE && !visibleRouteGeometries.isEmpty())
+  if(context->objectDisplayTypes.testFlag(map::LOGBOOK_ROUTE) && !visibleRouteGeometries.isEmpty())
   {
     float outerlinewidth = context->szF(context->thicknessFlightplan, 7);
     float innerlinewidth = context->szF(context->thicknessFlightplan, 4);
@@ -508,7 +511,7 @@ void MapPainterMark::paintLogEntries(const QList<map::MapLogbookEntry>& entries)
         {
           symbolPainter->drawLogbookPreviewSymbol(context->painter, x, y, symbolSize);
 
-          if(context->mapLayer->isWaypointRouteName())
+          if(context->mapLayerText->isWaypointRouteName())
             symbolPainter->textBoxF(context->painter, {name}, routeLogEntryOutlineColor, x + symbolSize / 2 + 2, y, textatt::LOG_BG_COLOR);
         }
       }
@@ -536,12 +539,12 @@ void MapPainterMark::paintLogEntries(const QList<map::MapLogbookEntry>& entries)
       trackPen.setColor(mapcolors::routeLogEntryColor.darker(200));
       painter->setPen(trackPen);
 
-      paintAircraftTrail(visibleTrailGeometries, minAltitude, maxAltitude);
+      paintAircraftTrail(visibleTrailGeometries, minAltitude, maxAltitude, atools::geo::EMPTY_POS);
     }
   }
 
   // Draw direct connection ==========================================================================
-  if(context->objectDisplayTypes & map::LOGBOOK_DIRECT)
+  if(context->objectDisplayTypes.testFlag(map::LOGBOOK_DIRECT))
   {
     // Use smaller measurement line thickness for this direct connection
     float outerlinewidth = context->szF(context->thicknessUserFeature, 7) * 0.6f;
@@ -629,8 +632,7 @@ void MapPainterMark::paintLogEntries(const QList<map::MapLogbookEntry>& entries)
           symbolPainter->drawAirportSymbol(context->painter, entry->departure, x, y, size, false, context->drawFast,
                                            context->flags2.testFlag(opts2::MAP_AIRPORT_HIGHLIGHT_ADDON));
           symbolPainter->drawAirportText(context->painter, entry->departure, x, y, context->dispOptsAirport, flags, size,
-                                         context->mapLayer->isAirportDiagram(),
-                                         context->mapLayer->getMaxTextLengthAirport());
+                                         context->mapLayer->isAirportDiagram(), context->mapLayerText->getMaxTextLengthAirport());
         }
         airportIds.insert(entry->departure.id);
       }
@@ -644,8 +646,7 @@ void MapPainterMark::paintLogEntries(const QList<map::MapLogbookEntry>& entries)
           symbolPainter->drawAirportSymbol(context->painter, entry->destination, x, y, size, false, context->drawFast,
                                            context->flags2.testFlag(opts2::MAP_AIRPORT_HIGHLIGHT_ADDON));
           symbolPainter->drawAirportText(context->painter, entry->destination, x, y, context->dispOptsAirport, flags, size,
-                                         context->mapLayer->isAirportDiagram(),
-                                         context->mapLayer->getMaxTextLengthAirport());
+                                         context->mapLayer->isAirportDiagram(), context->mapLayerText->getMaxTextLengthAirport());
         }
         airportIds.insert(entry->destination.id);
       }
@@ -666,6 +667,9 @@ void MapPainterMark::paintAirwayList(const QList<map::MapAirway>& airwayList)
     if(airway.isValid())
       linestring.append(airway.to);
   }
+
+  // Move latitude values slightly up and down to workaround Marble drawing straight lines
+  maptools::correctLatY(linestring, false /* polygon */);
 
   // Outline =================
   float lineWidth = context->szF(context->thicknessUserFeature, 5.f);
@@ -718,7 +722,7 @@ void MapPainterMark::paintAirwayTextList(const QList<map::MapAirway>& airwayList
   {
     if(airway.isValid())
     {
-      QPen innerPen = mapcolors::colorForAirwayOrTrack(airway);
+      QPen innerPen = mapcolors::colorForAirwayOrTrack(airway, context->darkMap);
 
       // Draw text  at center position of a line
       int x, y;
@@ -764,27 +768,43 @@ void MapPainterMark::paintAirspace(const map::MapAirspace& airspace)
     if(context->objCount())
       return;
 
-    const atools::geo::LineString *lineString = NavApp::getAirspaceController()->getAirspaceGeometry(airspace.combinedId());
+    const atools::geo::LineString *lineString = queries->getAirspaceQueries()->getAirspaceGeometry(airspace.combinedId());
 
     if(lineString != nullptr)
     {
       const QVector<QPolygonF *> polygons = createPolygons(*lineString, context->screenRect);
 
-      if(!context->drawFast)
+      // Can be empty for online centers
+      if(!polygons.isEmpty())
       {
-        // Draw black background for outline
-        painter->setPen(outerPen);
+        if(!context->drawFast)
+        {
+          // Draw black background for outline
+          painter->setPen(outerPen);
+          for(const QPolygonF *polygon : polygons)
+            painter->drawPolygon(*polygon);
+          painter->setPen(innerPen);
+        }
+
         for(const QPolygonF *polygon : polygons)
           painter->drawPolygon(*polygon);
-        painter->setPen(innerPen);
+
+        QPointF center = polygons.constFirst()->boundingRect().center();
+        symbolPainter->textBoxF(painter, {map::airspaceNameMap(airspace, 20)}, innerPen,
+                                static_cast<float>(center.x()), static_cast<float>(center.y()), textatt::CENTER);
       }
 
-      for(const QPolygonF *polygon : polygons)
-        painter->drawPolygon(*polygon);
-
-      QPointF center = polygons.constFirst()->boundingRect().center();
-      symbolPainter->textBoxF(painter, {map::airspaceNameMap(airspace, 20, true, true, true, true, true)}, innerPen,
-                              static_cast<float>(center.x()), static_cast<float>(center.y()), textatt::CENTER);
+#ifdef DEBUG_COLOR_AIRSPACE_POLY_POINTS_MARK
+      context->szFont(context->textSizeRangeUserFeature * 1.5f);
+      painter->setPen(QPen(QColor(0, 0, 0, 255), 2.));
+      for(int i = 0; i < lineString->size(); i++)
+      {
+        const atools::geo::Pos& pos = lineString->at(i);
+        drawCircle(painter, pos, 4.f);
+        drawText(painter, pos, QString::number(i), true /* topCorner */, true /* leftCorner */);
+      }
+      context->szFont(context->textSizeRangeUserFeature);
+#endif
 
       releasePolygons(polygons);
     }
@@ -864,7 +884,7 @@ void MapPainterMark::paintRangeMarks()
 void MapPainterMark::paintSelectedAltitudeRange()
 {
   const atools::fs::sc::SimConnectUserAircraft& userAircraft = mapPaintWidget->getUserAircraft();
-  if(context->objectDisplayTypes & map::AIRCRAFT_SELECTED_ALT_RANGE && userAircraft.isFlying())
+  if(context->objectDisplayTypes.testFlag(map::AIRCRAFT_SELECTED_ALT_RANGE) && userAircraft.isFlying())
   {
     ageo::Pos pos = mapPaintWidget->getUserAircraft().getPosition();
     if(pos.isValid())
@@ -902,93 +922,99 @@ void MapPainterMark::paintSelectedAltitudeRange()
   }
 }
 
+void MapPainterMark::paintEnduranceRing(float enduranceHours, float enduranceNm, bool critical)
+{
+  if(enduranceNm < map::INVALID_DISTANCE_VALUE)
+  {
+    Marble::GeoPainter *painter = context->painter;
+    const atools::fs::sc::SimConnectUserAircraft& userAircraft = mapPaintWidget->getUserAircraft();
+    ageo::Pos pos = userAircraft.getPosition();
+    bool labelAtCenter = false, visibleCenter = false;
+    QPoint textPos;
+    QPen pen = critical ? mapcolors::markEnduranceCritPen : mapcolors::markEndurancePen;
+
+    if(enduranceNm > 1.f)
+    {
+      float lineWidth = context->szF(context->thicknessUserFeature, pen.width());
+      painter->setPen(mapcolors::adjustWidth(pen, lineWidth));
+      painter->setBrush(Qt::NoBrush);
+      context->szFont(context->textSizeRangeUserFeature);
+
+      // Draw circle and get a text placement position
+      paintCircle(painter, pos, enduranceNm, context->drawFast, &textPos);
+      visibleCenter = true;
+    }
+    else
+    {
+      visibleCenter = wToS(pos, textPos.rx(), textPos.ry());
+      labelAtCenter = true;
+    }
+
+    if(visibleCenter && !textPos.isNull())
+    {
+      // paintCircle found a text position - draw text
+
+      if(critical)
+        painter->setPen(mapcolors::markEnduranceCritPen);
+      else
+        painter->setPen(mapcolors::rangeRingTextColor);
+
+      textatt::TextAttributes atts = textatt::CENTER;
+
+      const Route& route = NavApp::getRouteConst();
+      if(route.getSizeWithoutAlternates() <= 1 || route.getActiveLegIndexCorrected() == map::INVALID_INDEX_VALUE)
+      {
+        // Show error colors only for free flight
+        if(enduranceHours < 0.5f)
+          atts |= textatt::ERROR_COLOR;
+        else if(enduranceHours < 0.75f)
+          atts |= textatt::WARNING_COLOR;
+      }
+      else if(enduranceHours < 0.1f)
+        // Show error color even with flight plan if fuel gets really low
+        atts |= textatt::ERROR_COLOR;
+
+      QStringList texts;
+
+      texts.append(Unit::distNm(enduranceNm, true, 5, true) + (critical ? QString() : tr(" (RSV)", "Acronym for reserve on the map")));
+
+      if(enduranceHours < map::INVALID_TIME_VALUE)
+        texts.append(formatter::formatMinutesHoursLong(enduranceHours));
+
+      if(labelAtCenter)
+      {
+        int size = std::max(context->sz(context->symbolSizeAircraftUser, 32), scale->getPixelIntForFeet(userAircraft.getModelSize()));
+        textPos.ry() -= size * 2;
+      }
+      else
+        textPos.ry() += painter->fontMetrics().height() / 2 - painter->fontMetrics().descent();
+
+      symbolPainter->textBox(painter, texts, painter->pen(), textPos.x(), textPos.y(), atts);
+    }
+  }
+}
+
 void MapPainterMark::paintEndurance()
 {
-  const atools::fs::sc::SimConnectUserAircraft& userAircraft = mapPaintWidget->getUserAircraft();
-  if(context->objectDisplayTypes & map::AIRCRAFT_ENDURANCE && userAircraft.isFlying())
+  if(context->objectDisplayTypes.testFlag(map::AIRCRAFT_ENDURANCE))
   {
-    ageo::Pos pos = mapPaintWidget->getUserAircraft().getPosition();
-    if(pos.isValid())
+    if(mapPaintWidget->getUserAircraft().isFullyValid() && mapPaintWidget->getUserAircraft().isFlying())
     {
       // Get endurance
       float enduranceHours = 0.f, enduranceNm = 0.f;
-      NavApp::getAircraftPerfController()->getEnduranceAverage(enduranceHours, enduranceNm);
-      if(enduranceNm < map::INVALID_DISTANCE_VALUE)
-      {
-        Marble::GeoPainter *painter = context->painter;
-        atools::util::PainterContextSaver saver(painter);
-        bool labelAtCenter;
-        QPoint textPos;
-        bool visibleCenter = false;
-        if(enduranceNm > 1.f)
-        {
-          float lineWidth = context->szF(context->thicknessUserFeature, mapcolors::markEndurancePen.width());
-          painter->setPen(mapcolors::adjustWidth(mapcolors::markEndurancePen, lineWidth));
-          painter->setBrush(Qt::NoBrush);
-          context->szFont(context->textSizeRangeUserFeature);
+      NavApp::getAircraftPerfController()->getEnduranceAverage(enduranceHours, enduranceNm, false /* critical */);
+      paintEnduranceRing(enduranceHours, enduranceNm, false /* critical */);
 
-          // Draw circle and get a text placement position
-          paintCircle(painter, pos, enduranceNm, context->drawFast, &textPos);
-          visibleCenter = true;
-          labelAtCenter = false;
-        }
-        else
-        {
-          visibleCenter = wToS(pos, textPos.rx(), textPos.ry());
-          labelAtCenter = true;
-        }
-
-        if(visibleCenter && !textPos.isNull())
-        {
-          // paintCircle found a text position - draw text
-          painter->setPen(mapcolors::rangeRingTextColor);
-
-          textatt::TextAttributes atts = textatt::CENTER;
-
-          const Route& route = NavApp::getRouteConst();
-          if(route.getSizeWithoutAlternates() <= 1 || route.getActiveLegIndexCorrected() == map::INVALID_INDEX_VALUE)
-          {
-            // Show error colors only for free flight
-            if(enduranceHours < 0.5f)
-              atts |= textatt::ERROR_COLOR;
-            else if(enduranceHours < 0.75f)
-              atts |= textatt::WARNING_COLOR;
-          }
-          else if(enduranceHours < 0.1f)
-            // Show error color even with flight plan if fuel gets really low
-            atts |= textatt::ERROR_COLOR;
-
-          QStringList texts;
-          // if(!userAircraft.getAirplaneRegistration().isEmpty())
-          // texts.append(atools::elideTextShort(userAircraft.getAirplaneRegistration(), 15));
-          // else if(!userAircraft.getAirplaneTitle().isEmpty())
-          // texts.append(atools::elideTextShort(userAircraft.getAirplaneTitle(), 15));
-          // if(!userAircraft.getAirplaneModel().isEmpty())
-          // texts.append(userAircraft.getAirplaneModel());
-
-          texts.append(Unit::distNm(enduranceNm, true, 5, true));
-
-          if(enduranceHours < map::INVALID_TIME_VALUE)
-            texts.append(formatter::formatMinutesHoursLong(enduranceHours));
-
-          if(labelAtCenter)
-          {
-            int size = std::max(context->sz(context->symbolSizeAircraftUser, 32), scale->getPixelIntForFeet(userAircraft.getModelSize()));
-            textPos.ry() -= size * 2;
-          }
-          else
-            textPos.ry() += painter->fontMetrics().height() / 2 - painter->fontMetrics().descent();
-
-          symbolPainter->textBox(painter, texts, painter->pen(), textPos.x(), textPos.y(), atts);
-        }
-      }
+      float enduranceCriticalHours = 0.f, enduranceCriticalNm = 0.f;
+      NavApp::getAircraftPerfController()->getEnduranceAverage(enduranceCriticalHours, enduranceCriticalNm, true /* critical */);
+      paintEnduranceRing(enduranceCriticalHours, enduranceCriticalNm, true /* critical */);
     }
   }
 }
 
 void MapPainterMark::paintCompassRose()
 {
-  if(context->objectDisplayTypes & map::COMPASS_ROSE && mapPaintWidget->distance() < MIN_VIEW_DISTANCE_COMPASS_ROSE_KM)
+  if(context->objectDisplayTypes.testFlag(map::COMPASS_ROSE) && mapPaintWidget->distance() < MIN_VIEW_DISTANCE_COMPASS_ROSE_KM)
   {
     atools::util::PainterContextSaver saver(context->painter);
     const OptionData& od = OptionData::instance();
@@ -999,7 +1025,7 @@ void MapPainterMark::paintCompassRose()
 
     // Use either aircraft position or viewport center
     QRect viewport = painter->viewport();
-    bool hasAircraft = pos.isValid() && context->objectDisplayTypes & map::COMPASS_ROSE_ATTACH;
+    bool hasAircraft = pos.isValid() && context->objectDisplayTypes.testFlag(map::COMPASS_ROSE_ATTACH);
     if(!hasAircraft)
       pos = sToW(viewport.center());
 
@@ -1464,10 +1490,8 @@ void MapPainterMark::paintPatternMarks()
       ageo::Pos crosswindToDownwind = departureToCrosswind.endpoint(parallelDist, pattern.courseTrue + (pattern.turnRight ? 90.f : -90.f));
 
       // Calculate bounding rectangle and check if it is at least partially visible
-      ageo::Rect rect(baseToFinal);
-      rect.extend(downwindToBase);
-      rect.extend(departureToCrosswind);
-      rect.extend(crosswindToDownwind);
+      ageo::Rect rect =
+        atools::geo::bounding(atools::geo::LineString({baseToFinal, downwindToBase, departureToCrosswind, crosswindToDownwind}));
 
       // Expand rect by approximately 2 NM
       rect.inflateMeter(ageo::nmToMeter(2.f), ageo::nmToMeter(2.f));
@@ -1506,7 +1530,7 @@ void MapPainterMark::paintPatternMarks()
         float angle = static_cast<float>(ageo::angleFromQt(downwind.angle()));
         float oppositeAngle = static_cast<float>(ageo::opposedCourseDeg(ageo::angleFromQt(downwind.angle())));
 
-        if(pattern.showEntryExit && context->mapLayer->isApproachText())
+        if(pattern.showEntryExit && context->mapLayerText->isApproachText())
         {
           // Draw a line below to fill the gap because of round edges
           painter->setBrush(Qt::white);
@@ -1542,10 +1566,10 @@ void MapPainterMark::paintPatternMarks()
         painter->setBrush(Qt::NoBrush);
         painter->drawPath(polygon.getPainterPath());
 
-        if(drawDetails && context->mapLayer->isApproachText())
+        if(drawDetails && context->mapLayerText->isApproachText())
         {
           // Text for downwind leg =======================================
-          QLineF final (baseFinalPoint, originPoint);
+          QLineF finalLine(baseFinalPoint, originPoint);
           QPointF center = downwind.center();
           QString text = tr("%1/%2").
                          arg(Unit::altFeet(pattern.position.getAltitude(), true /* addUnit */, true /* narrow */, 10.f /* round */)).
@@ -1561,7 +1585,7 @@ void MapPainterMark::paintPatternMarks()
                  arg(pattern.runwayName).
                  arg(formatter::courseTextFromTrue(pattern.courseTrue, pattern.magvar, false /* magBold */, false /* magBig */,
                                                    false /* trueSmall */, true /* narrow */));
-          textPlacement.drawTextAlongOneLine(text, oppositeAngle, final.pointAt(0.60), atools::roundToInt(final.length()));
+          textPlacement.drawTextAlongOneLine(text, oppositeAngle, finalLine.pointAt(0.60), atools::roundToInt(finalLine.length()));
 
           // Draw arrows on legs =======================================
           // Set a lighter fill color for arrows
@@ -1577,7 +1601,7 @@ void MapPainterMark::paintPatternMarks()
           paintArrowAlongLine(painter, QLineF(downwindBasePoint, baseFinalPoint), arrow);
 
           // Final leg
-          paintArrowAlongLine(painter, final, arrow, 0.30f);
+          paintArrowAlongLine(painter, finalLine, arrow, 0.30f);
 
           // Upwind leg
           paintArrowAlongLine(painter, upwind, arrow);

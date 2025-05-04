@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2023 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2024 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -28,6 +28,7 @@
 #include "query/airportquery.h"
 #include "query/mapquery.h"
 #include "weather/weatherreporter.h"
+#include "query/querymanager.h"
 
 #include <QLabel>
 #include <QTableWidget>
@@ -57,11 +58,19 @@ struct RunwayIdxEntry
   map::MapRunwayEnd end;
 };
 
-RunwaySelection::RunwaySelection(QObject *parent, const map::MapAirport& mapAirport, QTableWidget *runwayTableWidgetParam)
-  : QObject(parent), runwayTableWidget(runwayTableWidgetParam)
+RunwaySelection::RunwaySelection(QObject *parent, const map::MapAirport& mapAirport, QTableWidget *runwayTableWidgetParam,
+                                 bool navdataParam)
+  : QObject(parent), runwayTableWidget(runwayTableWidgetParam), navdata(navdataParam)
 {
   airport = new map::MapAirport;
   *airport = mapAirport;
+
+  mapQuery = QueryManager::instance()->getQueriesGui()->getMapQuery();
+
+  if(navdata)
+    mapQuery->getAirportNavReplace(*airport);
+  else
+    mapQuery->getAirportSimReplace(*airport);
 
   connect(runwayTableWidget, &QTableWidget::itemSelectionChanged, this, &RunwaySelection::itemSelectionChanged);
   connect(runwayTableWidget, &QTableWidget::doubleClicked, this, &RunwaySelection::doubleClicked);
@@ -69,7 +78,6 @@ RunwaySelection::RunwaySelection(QObject *parent, const map::MapAirport& mapAirp
   // Resize widget to get rid of the too large default margins
   zoomHandler = new atools::gui::ItemViewZoomHandler(runwayTableWidget);
   atools::gui::adjustSelectionColors(runwayTableWidget);
-
 }
 
 RunwaySelection::~RunwaySelection()
@@ -85,13 +93,37 @@ void RunwaySelection::restoreState()
 
   QItemSelectionModel *selection = runwayTableWidget->selectionModel();
 
-  if(selection != nullptr)
+  if(selection != nullptr && !runways.isEmpty())
   {
     selection->clearSelection();
 
-    if(!runways.isEmpty())
+    // Try to find runway end and select row =======================================
+    bool selected = false;
+    if(preselectRunwayEndId != -1)
+    {
+      for(int i = 0; i < runwayTableWidget->rowCount(); i++)
+      {
+        int row = runwayTableWidget->item(i, 0)->data(Qt::UserRole).toInt();
+        if(runways.at(row).end.id == preselectRunwayEndId)
+        {
+          selection->select(runwayTableWidget->model()->index(row, 0), QItemSelectionModel::Select | QItemSelectionModel::Rows);
+          runwayTableWidget->setCurrentIndex(runwayTableWidget->model()->index(row, 0));
+          selected = true;
+          break;
+        }
+      }
+
+      if(!selected)
+        qDebug() << Q_FUNC_INFO << "Runway id" << preselectRunwayEndId << "not found" << "navdata" << navdata;
+    }
+
+    // Select first if nothing found =======================================
+    if(!selected)
+    {
       // Select first row
       selection->select(runwayTableWidget->model()->index(0, 0), QItemSelectionModel::Select | QItemSelectionModel::Rows);
+      runwayTableWidget->setCurrentIndex(runwayTableWidget->model()->index(0, 0));
+    }
   }
 }
 
@@ -138,13 +170,11 @@ void RunwaySelection::fillAirportLabel()
   QString label;
   if(airportLabel != nullptr)
   {
-    label = tr("<p><b>%1, elevation %2</b></p>").
-            arg(map::airportTextShort(*airport)).
-            arg(Unit::altFeet(airport->position.getAltitude()));
+    label = tr("<p><b>%1, elevation %2</b></p>").arg(map::airportTextShort(*airport)).arg(Unit::altFeet(airport->position.getAltitude()));
 
     QString title, runwayText, sourceText;
     NavApp::getWeatherReporter()->getBestRunwaysTextShort(title, runwayText, sourceText, *airport);
-    if(!title.isEmpty())
+    if(!sourceText.isEmpty())
       label.append(tr("<p>%1</p>").arg(atools::strJoin({title, runwayText, sourceText}, tr(" "))));
   }
 
@@ -153,28 +183,32 @@ void RunwaySelection::fillAirportLabel()
 
 void RunwaySelection::fillRunwayList()
 {
-  AirportQuery *airportQuerySim = NavApp::getAirportQuerySim();
+  const Queries *queries = QueryManager::instance()->getQueriesGui();
+  AirportQuery *airportQuery = queries->getAirportQuery(navdata);
 
   // Get all runways from airport ==================================
-  const QList<map::MapRunway> *rw = airportQuerySim->getRunways(airport->id);
+  const QList<map::MapRunway> *rw = airportQuery->getRunways(airport->id);
   if(rw != nullptr)
   {
     // Append each runway twice with primary and secondary ends and apply filter ==========
     for(const map::MapRunway& r : *rw)
     {
-      map::MapRunwayEnd prim = airportQuerySim->getRunwayEndById(r.primaryEndId);
+      map::MapRunwayEnd prim = airportQuery->getRunwayEndById(r.primaryEndId);
       if(includeRunway(prim.name))
         runways.append(RunwayIdxEntry(r, prim));
 
-      map::MapRunwayEnd sec = airportQuerySim->getRunwayEndById(r.secondaryEndId);
+      map::MapRunwayEnd sec = airportQuery->getRunwayEndById(r.secondaryEndId);
       if(includeRunway(sec.name))
         runways.append(RunwayIdxEntry(r, sec));
     }
 
-    // Sort by length and heading ===================
+    // Sort by length and normalized name ===================
     std::sort(runways.begin(), runways.end(), [](const RunwayIdxEntry& rw1, const RunwayIdxEntry& rw2) -> bool {
-      return atools::almostEqual(rw1.runway.length, rw2.runway.length) ?
-      rw1.end.heading<rw2.end.heading : rw1.runway.length> rw2.runway.length;
+      if(atools::almostEqual(rw1.runway.length, rw2.runway.length))
+        return atools::fs::util::runwayNamePrefixZero(rw1.end.name) < atools::fs::util::runwayNamePrefixZero(rw2.end.name);
+      else
+        // Longest on top
+        return rw1.runway.length > rw2.runway.length;
     });
   }
 
@@ -221,9 +255,8 @@ void RunwaySelection::fillRunwayList()
       runwayTableWidget->horizontalHeaderItem(i)->setToolTip(headerTooltips.at(i));
 
     // Fetch airport wind ===================================================
-    int windDirectionDeg;
-    float windSpeedKts;
-    NavApp::getAirportWind(windDirectionDeg, windSpeedKts, *airport, false /* stationOnly */);
+    float windSpeedKts, windDirectionDeg;
+    NavApp::getAirportMetarWind(windDirectionDeg, windSpeedKts, *airport, false /* stationOnly */);
 
     // Fill items ===================================================
     int index = 0; // Index in runway table
@@ -249,7 +282,7 @@ void RunwaySelection::addItem(const RunwayIdxEntry& entry, const QString& windTe
     atts.append(tr("Closed"));
 
   // Add ILS and similar approach aids
-  for(const map::MapIls& ils : NavApp::getMapQueryGui()->getIlsByAirportAndRunway(airport->ident, entry.end.name))
+  for(const map::MapIls& ils : mapQuery->getIlsByAirportAndRunway(airport->ident, entry.end.name))
     atts.append(map::ilsTypeShort(ils));
   atts.removeAll(QString());
   atts.removeDuplicates();
@@ -304,7 +337,7 @@ bool RunwaySelection::includeRunway(const QString& runwayName)
   {
     for(const QString& filter : qAsConst(runwayNameFilter))
     {
-      if(atools::fs::util::runwayEqual(runwayName, filter))
+      if(atools::fs::util::runwayEqual(runwayName, filter, false /* fuzzy */))
         return true;
     }
   }

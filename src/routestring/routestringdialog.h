@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2023 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2024 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -44,6 +44,7 @@ class RouteController;
 class RouteStringWriter;
 class RouteStringReader;
 class SyntaxHighlighter;
+class TextEditEventFilter;
 
 class RouteStringDialog :
   public QDialog
@@ -63,13 +64,17 @@ public:
   }
 
   /* Saves dialog and menu action states */
-  void saveStateWidget();
+  void saveStateWidget() const;
 
   /* Saves route string */
-  void saveState();
+  void saveState() const;
 
   /* Restores last route string too */
   void restoreState();
+  void restoreStateWidget();
+
+  /* Reset saved settings and position of RouteStringDialog. Also recenters if routeStringDialog is not null. */
+  static void resetWindowLayout(RouteStringDialog *routeStringDialog, const QString& settingsSuffix);
 
   /* Update splitter and syntax highlighter */
   void styleChanged();
@@ -97,9 +102,20 @@ public:
 
   void fontChanged(const QFont& font);
 
+  /* Create flight plan but keep dialog open */
+  void createPlanAndKeepOpen();
+
+  /* No-op for now */
+  void preDatabaseLoad();
+
+  /* Re-read string. */
+  void postDatabaseLoad();
+  void tracksChanged();
+
 signals:
   /* Emitted when user clicks "Create flight plan" */
-  void routeFromFlightplan(const atools::fs::pln::Flightplan& flightplan, bool adjustAltitude, bool changed, bool undo);
+  void routeFromFlightplan(const atools::fs::pln::Flightplan& flightplan, bool adjustAltitude, bool changed, bool undo,
+                           bool correctProfile);
 
 private:
   void textChanged();
@@ -108,7 +124,7 @@ private:
   void fromClipboardClicked();
   void toClipboardClicked();
   void buttonBoxClicked(QAbstractButton *button);
-  void toolButtonOptionTriggered(QAction *);
+  void toolButtonOptionTriggered(QAction *act);
   void loadFromFlightplanButtonClicked();
   void showHelpButtonToggled(bool checked);
   void splitterMoved();
@@ -124,7 +140,8 @@ private:
   virtual void showEvent(QShowEvent *) override;
   virtual void hideEvent(QHideEvent *) override;
 
-  QMenu *advancedMenu = nullptr;
+  QMenu *advancedMenu = nullptr, *buttonMenu = nullptr;
+  QList<QAction *> actions;
 
   Ui::RouteStringDialog *ui;
   atools::fs::pln::Flightplan *flightplan = nullptr;
@@ -142,20 +159,22 @@ private:
   // Save different settings depending on suffix
   QString settingsSuffix;
 
-  // blocking if parent is not null
+  // blocking if parent is not null, i.e. from SimBrief
   bool blocking = false;
 
   // Notify RouteStringDialog::textChanged() to a direct update instead of a delayed one
   bool immediateUpdate = false;
-
-  /* Remember dialog position when reopening */
-  QPoint position;
 
   /* Remember to avoid unneeded parsing if user edits areas outside the active string. */
   QString lastCleanRouteString;
 
   /* Makes first section bold and other (scratchpad) gray */
   SyntaxHighlighter *sytaxHighlighter;
+
+  TextEditEventFilter *eventFilter = nullptr;
+
+  /* Size as given in UI */
+  QSize defaultSize;
 };
 
 #endif // LITTLENAVMAP_ROUTESTRINGDIALOG_H

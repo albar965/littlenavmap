@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2023 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2024 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -55,106 +55,112 @@ void MapPainterTop::render()
   int size = context->sz(context->symbolSizeAirport, 10);
   int size2 = context->sz(context->symbolSizeAirport, 9);
 
-  // Draw center cross =====================================
-  // Usable in all modes
-  Marble::GeoPainter *painter = context->painter;
-  if(opts & optsd::NAVAIDS_CENTER_CROSS)
+  if(!context->webMap)
   {
-    QRect vp = painter->viewport();
-    int x = vp.center().x();
-    int y = vp.center().y();
-
-    painter->setPen(mapcolors::touchMarkBackPen);
-    drawCross(painter, x, y, size);
-
-    painter->setPen(mapcolors::touchMarkFillPen);
-    drawCross(painter, x, y, size2);
-  }
-
-  // Screen navigation areas =====================================
-  // Show only if touch areas are enabled
-  if(nav == opts::MAP_NAV_TOUCHSCREEN)
-  {
-    int areaSize = OptionData::instance().getMapNavTouchArea();
-    if(opts & optsd::NAVAIDS_TOUCHSCREEN_REGIONS)
-      drawTouchRegions(areaSize);
-
-    if(opts & optsd::NAVAIDS_TOUCHSCREEN_AREAS)
+    // Draw center cross =====================================
+    // Usable in all modes
+    Marble::GeoPainter *painter = context->painter;
+    if(opts & optsd::NAVAIDS_CENTER_CROSS)
     {
+      QRect vp = painter->viewport();
+      int x = vp.center().x();
+      int y = vp.center().y();
+
       painter->setPen(mapcolors::touchMarkBackPen);
-      drawTouchMarks(size, areaSize);
+      drawCross(painter, x, y, size);
 
       painter->setPen(mapcolors::touchMarkFillPen);
-      drawTouchMarks(size2, areaSize);
+      drawCross(painter, x, y, size2);
     }
 
-    // Navigation icons in the corners
-    if(opts & optsd::NAVAIDS_TOUCHSCREEN_ICONS)
+    // Screen navigation areas =====================================
+    // Show only if touch areas are enabled
+    if(nav == opts::MAP_NAV_TOUCHSCREEN)
     {
-      // Make icon size dependent on screen size but limit min and max
-      int iconSize = std::max(painter->viewport().height(), painter->viewport().width()) / 20;
-      drawTouchIcons(std::max(std::min(iconSize, 30), 10));
+      int areaSize = OptionData::instance().getMapNavTouchArea();
+      if(opts & optsd::NAVAIDS_TOUCHSCREEN_REGIONS)
+        drawTouchRegions(areaSize);
+
+      if(opts & optsd::NAVAIDS_TOUCHSCREEN_AREAS)
+      {
+        painter->setPen(mapcolors::touchMarkBackPen);
+        drawTouchMarks(size, areaSize);
+
+        painter->setPen(mapcolors::touchMarkFillPen);
+        drawTouchMarks(size2, areaSize);
+      }
+
+      // Navigation icons in the corners
+      if(opts & optsd::NAVAIDS_TOUCHSCREEN_ICONS)
+      {
+        // Make icon size dependent on screen size but limit min and max
+        int iconSize = std::max(painter->viewport().height(), painter->viewport().width()) / 20;
+        drawTouchIcons(std::max(std::min(iconSize, 30), 10));
+      }
     }
   }
 
 #ifdef DEBUG_APPROACH_PAINT
   {
-    const proc::MapProcedureLeg& leg = mapPaintWidget->getProcedureLegHighlights();
+    const proc::MapProcedureLeg& leg = mapPaintWidget->getProcedureLegHighlight();
     atools::util::PainterContextSaver saver(context->painter);
-    painter->setBrush(Qt::black);
-    painter->setBackgroundMode(Qt::OpaqueMode);
-    painter->setBackground(Qt::black);
+    context->painter->setBrush(Qt::black);
+    context->painter->setBackgroundMode(Qt::OpaqueMode);
+    context->painter->setBackground(Qt::black);
 
     if(leg.geometry.isValid())
     {
-      painter->setPen(QPen(Qt::red, 6));
-      drawLineString(painter, leg.geometry);
+      context->painter->setPen(QPen(Qt::red, 6));
+      drawPolyline(context->painter, leg.geometry);
     }
     if(leg.line.isValid())
     {
-      painter->setPen(QPen(Qt::yellow, 3));
-      drawLine(painter, leg.line);
-      drawText(painter, leg.line.getPos1(), "P1", false, false);
-      drawText(painter, leg.line.getPos2(), QString("P2,%1°,%2nm").
+      context->painter->setPen(QPen(Qt::yellow, 3));
+      drawLine(context->painter, leg.line);
+      drawText(context->painter, leg.line.getPos1(), "P1", false, false);
+      drawText(context->painter, leg.line.getPos2(), QString("P2,%1°,%2nm").
                arg(leg.course, 0, 'f', 1).arg(leg.distance, 0, 'f', 1), false, false);
 
     }
     if(leg.holdLine.isValid())
     {
-      painter->setPen(QPen(Qt::blue, 3));
-      drawLine(painter, leg.line);
+      context->painter->setPen(QPen(Qt::blue, 3));
+      drawLine(context->painter, leg.line);
     }
     if(leg.procedureTurnPos.isValid())
     {
-      painter->setPen(QPen(Qt::blue, 2));
-      drawText(painter, leg.procedureTurnPos, "PTFIX", false, false);
+      context->painter->setPen(QPen(Qt::blue, 2));
+      drawText(context->painter, leg.procedureTurnPos, "PTFIX", false, false);
     }
     if(leg.interceptPos.isValid())
     {
-      painter->setPen(QPen(Qt::yellow, 2));
-      drawText(painter, leg.interceptPos, "ICPT", true, false);
+      context->painter->setPen(QPen(Qt::yellow, 2));
+      drawText(context->painter, leg.interceptPos, "ICPT", true, false);
     }
     if(leg.recFixPos.isValid())
     {
-      painter->setPen(QPen(Qt::lightGray, 2));
-      drawText(painter, leg.recFixPos, leg.recFixIdent.isEmpty() ? "RECFIX" : leg.recFixIdent, false, true);
+      context->painter->setPen(QPen(Qt::lightGray, 2));
+      drawText(context->painter, leg.recFixPos, leg.recFixIdent.isEmpty() ? "RECFIX" : leg.recFixIdent, false, true);
     }
     if(leg.fixPos.isValid())
     {
-      painter->setPen(QPen(Qt::white, 2));
-      drawText(painter, leg.fixPos, leg.fixIdent.isEmpty() ? "FIX" : leg.fixIdent, true, true);
+      context->painter->setPen(QPen(Qt::white, 2));
+      drawText(context->painter, leg.fixPos, leg.fixIdent.isEmpty() ? "FIX" : leg.fixIdent, true, true);
     }
   }
 #endif
 
-  if(context->verboseDraw)
+  if(context->verboseDraw && !context->webMap)
   {
     atools::util::PainterContextSaver dbgsaver(context->painter);
     context->szFont(0.8f);
 
     QStringList labels;
     labels.append(QString("Layer %1").arg(context->mapLayer->getMaxRange()));
+    labels.append(QString("Layer text %1").arg(context->mapLayerText->getMaxRange()));
+    labels.append(QString("Layer effective %1").arg(context->mapLayerEffective->getMaxRange()));
     labels.append(QString("Layer route %1").arg(context->mapLayerRoute->getMaxRange()));
+    labels.append(QString("Layer route text %1").arg(context->mapLayerRouteText->getMaxRange()));
     labels.append(QString("Airport sym %1").arg(context->mapLayer->getAirportSymbolSize()));
     labels.append(QString("Min RW %1").arg(context->mapLayer->getMinRunwayLength()));
     labels.append("-");
@@ -168,26 +174,29 @@ void MapPainterTop::render()
 
 void MapPainterTop::paintCopyright()
 {
-  QString mapCopyright = NavApp::getMapThemeHandler()->getTheme(mapPaintWidget->getCurrentThemeId()).getCopyright();
-  if(!mapCopyright.isEmpty() && context->paintCopyright)
+  if(context->paintCopyright)
   {
-    Marble::GeoPainter *painter = context->painter;
-    atools::util::PainterContextSaver saver(painter);
+    QString mapCopyright = NavApp::getMapThemeHandler()->getTheme(mapPaintWidget->getCurrentThemeId()).getCopyright();
+    if(!mapCopyright.isEmpty())
+    {
+      Marble::GeoPainter *painter = context->painter;
+      atools::util::PainterContextSaver saver(painter);
 
-    painter->setFont(QApplication::font());
-    mapcolors::scaleFont(painter, 0.9f);
+      painter->setFont(QApplication::font());
+      mapcolors::scaleFont(painter, 0.9f);
 
-    // Move text more into the center for web apps
-    int rightOffset = context->visibleWidget ? 0 : 20;
-    int bottomOffset = context->visibleWidget ? 0 : 4;
+      // Move text more into the center for web apps
+      int rightOffset = context->visibleWidget ? 0 : 20;
+      int bottomOffset = context->visibleWidget ? 0 : 4;
 
-    // Draw text
-    painter->setPen(Qt::black);
-    painter->setBackground(QColor("#b0ffffff"));
-    painter->setBrush(Qt::NoBrush);
-    painter->setBackgroundMode(Qt::OpaqueMode);
-    painter->drawText(painter->viewport().width() - painter->fontMetrics().horizontalAdvance(mapCopyright) - rightOffset,
-                      painter->viewport().height() - painter->fontMetrics().descent() - bottomOffset, mapCopyright);
+      // Draw text
+      painter->setPen(Qt::black);
+      painter->setBackground(QColor("#b0ffffff"));
+      painter->setBrush(Qt::NoBrush);
+      painter->setBackgroundMode(Qt::OpaqueMode);
+      painter->drawText(painter->viewport().width() - painter->fontMetrics().horizontalAdvance(mapCopyright) - rightOffset,
+                        painter->viewport().height() - painter->fontMetrics().descent() - bottomOffset, mapCopyright);
+    }
   }
 }
 

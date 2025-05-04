@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2023 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2024 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -35,6 +35,9 @@ public:
   CommandLine();
   ~CommandLine();
 
+  /* Simple parser which bypasses the Qt option mechanism to get an option value without the need of an application object */
+  static QString getOption(int argc, char *argv[], const QString& name, const QString& longname);
+
   /* Read options and store values in settings or startup options or member variables */
   void process();
 
@@ -60,9 +63,9 @@ private:
   QCommandLineParser *parser = nullptr;
   QString logPath, cachePath, language;
 
-  QCommandLineOption *settingsDirOpt = nullptr, *settingsPathOpt = nullptr, *logPathOpt = nullptr, *cachePathOpt = nullptr,
+  QCommandLineOption *settingsPathOpt = nullptr, *logPathOpt = nullptr, *cachePathOpt = nullptr,
                      *flightplanOpt = nullptr, *flightplanDescrOpt = nullptr, *performanceOpt,
-                     *layoutOpt = nullptr, *languageOpt = nullptr;
+                     *layoutOpt = nullptr, *quitOpt = nullptr, *languageOpt = nullptr;
 };
 
 #endif // LNM_COMMANDLINE_H

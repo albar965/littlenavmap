@@ -35,8 +35,8 @@ void UserdataIcons::initTranslateableTexts()
 {
   typeToTranslatedMap = QHash<QString, QString>(
   {
+    {QLatin1String("Addon"), tr("Addon", "UserpointType")},
     {QLatin1String("Airport"), tr("Airport", "UserpointType")},
-    {QLatin1String("Addon"), tr("Addon", "UserpointType")}, // Keep in syc with map::MapUserPoint.isAddon()
     {QLatin1String("Airstrip"), tr("Airstrip", "UserpointType")},
     {QLatin1String("Bookmark"), tr("Bookmark", "UserpointType")},
     {QLatin1String("Building"), tr("Building", "UserpointType")},
@@ -73,45 +73,8 @@ void UserdataIcons::initTranslateableTexts()
     {QLatin1String("Waypoint"), tr("Waypoint", "UserpointType")}
   });
 
-  translationToTypeMap = QHash<QString, QString>(
-  {
-    {tr("Airport", "UserpointType"), QLatin1String("Airport")},
-    {tr("Addon", "UserpointType"), QLatin1String("Addon")},
-    {tr("Airstrip", "UserpointType"), QLatin1String("Airstrip")},
-    {tr("Bookmark", "UserpointType"), QLatin1String("Bookmark")},
-    {tr("Building", "UserpointType"), QLatin1String("Building")},
-    {tr("Cabin", "UserpointType"), QLatin1String("Cabin")},
-    {tr("Closed", "UserpointType"), QLatin1String("Closed")},
-    {tr("DME", "UserpointType"), QLatin1String("DME")},
-    {tr("Error", "UserpointType"), QLatin1String("Error")},
-    {tr("Flag", "UserpointType"), QLatin1String("Flag")},
-    {tr("Helipad", "UserpointType"), QLatin1String("Helipad")},
-    {tr("History", "UserpointType"), QLatin1String("History")},
-    {tr("Landform", "UserpointType"), QLatin1String("Landform")},
-    {tr("Lighthouse", "UserpointType"), QLatin1String("Lighthouse")},
-    {tr("Location", "UserpointType"), QLatin1String("Location")},
-    {tr("Logbook", "UserpointType"), QLatin1String("Logbook")},
-    {tr("Marker", "UserpointType"), QLatin1String("Marker")},
-    {tr("Mountain", "UserpointType"), QLatin1String("Mountain")},
-    {tr("NDB", "UserpointType"), QLatin1String("NDB")},
-    {tr("Obstacle", "UserpointType"), QLatin1String("Obstacle")},
-    {tr("Oil Platform", "UserpointType"), QLatin1String("Oil Platform")},
-    {tr("Other", "UserpointType"), QLatin1String("Other")},
-    {tr("Park", "UserpointType"), QLatin1String("Park")},
-    {tr("Pin", "UserpointType"), QLatin1String("Pin")},
-    {tr("POI", "UserpointType"), QLatin1String("POI")},
-    {tr("Radio Range", "UserpointType"), QLatin1String("Radio Range")},
-    {tr("Seaport", "UserpointType"), QLatin1String("Seaport")},
-    {tr("Settlement", "UserpointType"), QLatin1String("Settlement")},
-    {tr("TACAN", "UserpointType"), QLatin1String("TACAN")},
-    {tr("Unknown", "UserpointType"), QLatin1String("Unknown")},
-    {tr("VOR", "UserpointType"), QLatin1String("VOR")},
-    {tr("VORDME", "UserpointType"), QLatin1String("VORDME")},
-    {tr("VORTAC", "UserpointType"), QLatin1String("VORTAC")},
-    {tr("VRP", "UserpointType"), QLatin1String("VRP")},
-    {tr("Water", "UserpointType"), QLatin1String("Water")},
-    {tr("Waypoint", "UserpointType"), QLatin1String("Waypoint")}
-  });
+  for(auto it = typeToTranslatedMap.begin(); it != typeToTranslatedMap.end(); ++it)
+    translationToTypeMap.insert(it.value(), it.key());
 }
 
 QString UserdataIcons::typeToTranslated(const QString& type)
@@ -122,11 +85,6 @@ QString UserdataIcons::typeToTranslated(const QString& type)
 QString UserdataIcons::translatedToType(const QString& type)
 {
   return translationToTypeMap.value(type, type);
-}
-
-UserdataIcons::UserdataIcons()
-{
-
 }
 
 UserdataIcons::~UserdataIcons()
@@ -175,8 +133,7 @@ void UserdataIcons::loadIcons()
 {
   // First get new and overloaded icons from the configuration directory
   QDir configDir(atools::settings::Settings::getPath());
-  for(const QFileInfo& entry : configDir.entryInfoList({"userpoint_*.svg", "userpoint_*.png",
-                                                        "userpoint_*.jpg", "userpoint_*.gif"}))
+  for(const QFileInfo& entry : configDir.entryInfoList({"userpoint_*.svg", "userpoint_*.png", "userpoint_*.jpg", "userpoint_*.gif"}))
     loadIcon(entry);
 
   // Get default icons from resources if not already loaded before

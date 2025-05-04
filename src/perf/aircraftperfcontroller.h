@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2022 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2024 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -89,14 +89,14 @@ public:
   }
 
   /* Currently loaded performance filepath */
-  const QString& getCurrentFilepath() const
+  const QString& getCurrentFilename() const
   {
-    return currentFilepath;
+    return currentFilename;
   }
 
   void connectAllSlots();
 
-  void saveState();
+  void saveState() const;
   void restoreState();
 
   /* Update background colors in report */
@@ -167,8 +167,9 @@ public:
   /* Current aircraft endurance with full fuel load */
   void getEnduranceFull(float& enduranceHours, float& enduranceNm);
 
-  /* Current aircraft endurance based on current fuel flow. This is the rolling average over ten seconds or current value. */
-  void getEnduranceAverage(float& enduranceHours, float& enduranceNm);
+  /* Current aircraft endurance based on current fuel flow. This is the rolling average over ten seconds or current value.
+   * Critical = true gives zero fuel range. */
+  void getEnduranceAverage(float& enduranceHours, float& enduranceNm, bool critical = false);
 
   /* Get collected major errors */
   bool hasErrors() const;
@@ -254,7 +255,7 @@ private:
   bool changed = false;
 
   /* Filename or empty if not saved yet */
-  QString currentFilepath;
+  QString currentFilename;
   atools::fs::perf::AircraftPerf *perf = nullptr;
 
   /* Collects aircraft data */

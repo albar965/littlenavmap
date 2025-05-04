@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2023 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2024 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -17,13 +17,11 @@
 
 #include "mapgui/mapdetailhandler.h"
 
-#include "atools.h"
 #include "common/constants.h"
 #include "app/navapp.h"
 #include "options/optiondata.h"
 #include "settings/settings.h"
 #include "mapgui/maplayersettings.h"
-#include "mapgui/mappaintwidget.h"
 #include "ui_mainwindow.h"
 #include "gui/signalblocker.h"
 
@@ -31,9 +29,10 @@
 
 namespace mdinternal {
 
-DetailSliderAction::DetailSliderAction(QObject *parent) : QWidgetAction(parent)
+DetailSliderAction::DetailSliderAction(QObject *parent, const QString& settingsKeyParam, int minimumValue, int maximumValue)
+  : QWidgetAction(parent), minValue(minimumValue), maxValue(maximumValue), settingsKey(settingsKeyParam)
 {
-  sliderValue = minValue();
+  sliderValue = minValue;
   setSliderValue(sliderValue);
 }
 
@@ -42,25 +41,26 @@ int DetailSliderAction::getSliderValue() const
   return sliderValue;
 }
 
-void DetailSliderAction::saveState()
+void DetailSliderAction::saveState() const
 {
-  atools::settings::Settings::instance().setValue(lnm::MAP_DETAIL_LEVEL, sliderValue);
+  atools::settings::Settings::instance().setValue(settingsKey, sliderValue);
 }
 
 void DetailSliderAction::restoreState()
 {
-  if(OptionData::instance().getFlags() & opts::STARTUP_LOAD_MAP_SETTINGS)
-  {
-    sliderValue = atools::settings::Settings::instance().valueInt(lnm::MAP_DETAIL_LEVEL, MapLayerSettings::MAP_DEFAULT_DETAIL_LEVEL);
-    setSliderValue(sliderValue);
-  }
+  if(OptionData::instance().getFlags().testFlag(opts::STARTUP_LOAD_MAP_SETTINGS))
+    sliderValue = atools::settings::Settings::instance().valueInt(settingsKey, MapLayerSettings::MAP_DEFAULT_DETAIL_LEVEL);
+  else
+    sliderValue = MapLayerSettings::MAP_DEFAULT_DETAIL_LEVEL;
+
+  setSliderValue(sliderValue);
 }
 
 QWidget *DetailSliderAction::createWidget(QWidget *parent)
 {
   QSlider *slider = new QSlider(Qt::Horizontal, parent);
-  slider->setMinimum(minValue());
-  slider->setMaximum(maxValue());
+  slider->setMinimum(minValue);
+  slider->setMaximum(maxValue);
   slider->setTickPosition(QSlider::TicksBothSides);
   slider->setTickInterval(1);
   slider->setPageStep(1);
@@ -91,21 +91,11 @@ void DetailSliderAction::deleteWidget(QWidget *widget)
   }
 }
 
-int DetailSliderAction::minValue() const
-{
-  return MapLayerSettings::MAP_MIN_DETAIL_LEVEL;
-}
-
-int DetailSliderAction::maxValue() const
-{
-  return MapLayerSettings::MAP_MAX_DETAIL_LEVEL;
-}
-
 void DetailSliderAction::setSliderValue(int value)
 {
   sliderValue = value;
   atools::gui::SignalBlocker blocker(sliders);
-  for(QSlider *slider : sliders)
+  for(QSlider *slider : qAsConst(sliders))
     slider->setValue(value);
 }
 
@@ -144,7 +134,7 @@ void DetailLabelAction::setText(const QString& textParam)
 {
   text = textParam;
   // Set text to all registered labels
-  for(QLabel *label : labels)
+  for(QLabel *label : qAsConst(labels))
     label->setText(text);
 }
 
@@ -178,15 +168,16 @@ MapDetailHandler::~MapDetailHandler()
   delete toolButton;
 }
 
-void MapDetailHandler::saveState()
+void MapDetailHandler::saveState() const
 {
   sliderActionDetailLevel->saveState();
+  sliderActionDetailLevelText->saveState();
 }
 
 void MapDetailHandler::restoreState()
 {
-  if(OptionData::instance().getFlags() & opts::STARTUP_LOAD_MAP_SETTINGS)
-    sliderActionDetailLevel->restoreState();
+  sliderActionDetailLevel->restoreState();
+  sliderActionDetailLevelText->restoreState();
 
   detailSliderChanged();
   updateActions();
@@ -197,13 +188,24 @@ int MapDetailHandler::getDetailLevel() const
   return sliderActionDetailLevel->getSliderValue();
 }
 
+int MapDetailHandler::getDetailLevelText() const
+{
+  return sliderActionDetailLevelText->getSliderValue();
+}
+
 void MapDetailHandler::setDetailLevel(int level)
 {
   sliderActionDetailLevel->setSliderValue(level);
   detailSliderChanged();
 }
 
-void MapDetailHandler::addToolbarButton()
+void MapDetailHandler::setDetailLevelText(int level)
+{
+  sliderActionDetailLevelText->setSliderValue(level);
+  detailSliderChanged();
+}
+
+void MapDetailHandler::insertToolbarButton()
 {
   Ui::MainWindow *ui = NavApp::getMainUi();
 
@@ -234,56 +236,110 @@ void MapDetailHandler::addToolbarButton()
   // Create and add the wrapped actions ================
   labelActionDetailLevel = new mdinternal::DetailLabelAction(toolButton->menu());
   toolButton->menu()->addAction(labelActionDetailLevel);
-  sliderActionDetailLevel = new mdinternal::DetailSliderAction(toolButton->menu());
+  sliderActionDetailLevel = new mdinternal::DetailSliderAction(toolButton->menu(), lnm::MAP_DETAIL_LEVEL,
+                                                               MapLayerSettings::MAP_MIN_DETAIL_LEVEL,
+                                                               MapLayerSettings::MAP_MAX_DETAIL_LEVEL);
   toolButton->menu()->addAction(sliderActionDetailLevel);
 
   connect(sliderActionDetailLevel, &mdinternal::DetailSliderAction::valueChanged, this, &MapDetailHandler::detailSliderChanged);
   connect(sliderActionDetailLevel, &mdinternal::DetailSliderAction::sliderReleased, this, &MapDetailHandler::detailSliderChanged);
+
+  labelActionDetailLevelText = new mdinternal::DetailLabelAction(toolButton->menu());
+  toolButton->menu()->addAction(labelActionDetailLevelText);
+  sliderActionDetailLevelText = new mdinternal::DetailSliderAction(toolButton->menu(), lnm::MAP_DETAIL_LEVEL_TEXT,
+                                                                   MapLayerSettings::MAP_MIN_DETAIL_LEVEL_TEXT,
+                                                                   MapLayerSettings::MAP_MAX_DETAIL_LEVEL_TEXT);
+
+  toolButton->menu()->addAction(sliderActionDetailLevelText);
+
+  connect(sliderActionDetailLevelText, &mdinternal::DetailSliderAction::valueChanged, this, &MapDetailHandler::detailSliderChanged);
+  connect(sliderActionDetailLevelText, &mdinternal::DetailSliderAction::sliderReleased, this, &MapDetailHandler::detailSliderChanged);
 }
 
 void MapDetailHandler::detailSliderChanged()
 {
   updateActions();
-  emit updateDetailLevel(getDetailLevel());
+  emit updateDetailLevel(getDetailLevel(), getDetailLevelText());
 }
 
 void MapDetailHandler::updateActions()
 {
-  toolButton->setChecked(getDetailLevel() != MapLayerSettings::MAP_DEFAULT_DETAIL_LEVEL);
-
   Ui::MainWindow *ui = NavApp::getMainUi();
-  int level = getDetailLevel(); // 8 -> 10 -> 15
+  int level = getDetailLevel();
+  int levelText = getDetailLevelText();
+  bool anyChanged = level != MapLayerSettings::MAP_DEFAULT_DETAIL_LEVEL || levelText != MapLayerSettings::MAP_DEFAULT_DETAIL_LEVEL;
+
+  toolButton->setChecked(anyChanged);
 
   // Update menu actions
+  ui->actionMapDetailsDefault->setEnabled(anyChanged);
   ui->actionMapDetailsMore->setEnabled(level < MapLayerSettings::MAP_MAX_DETAIL_LEVEL);
   ui->actionMapDetailsLess->setEnabled(level > MapLayerSettings::MAP_MIN_DETAIL_LEVEL);
-  ui->actionMapDetailsDefault->setEnabled(level != MapLayerSettings::MAP_DEFAULT_DETAIL_LEVEL);
+  ui->actionMapDetailsTextMore->setEnabled(levelText < MapLayerSettings::MAP_MAX_DETAIL_LEVEL_TEXT);
+  ui->actionMapDetailsTextLess->setEnabled(levelText > MapLayerSettings::MAP_MIN_DETAIL_LEVEL_TEXT);
 
   // Update label text
-  int levelUi = level - MapLayerSettings::MAP_DEFAULT_DETAIL_LEVEL; // -2 -> 0 -> 5
   QString text;
   if(level == MapLayerSettings::MAP_DEFAULT_DETAIL_LEVEL)
     text = tr("Normal map detail level");
   else if(level == MapLayerSettings::MAP_MIN_DETAIL_LEVEL)
-    text = tr("Minimum map detail level %1").arg(levelUi);
+    text = tr("Minimum map detail level %1").arg(level);
   else if(level == MapLayerSettings::MAP_MAX_DETAIL_LEVEL)
-    text = tr("Maximum map detail level %1").arg(levelUi);
+    text = tr("Maximum map detail level %1").arg(level);
   else if(level < MapLayerSettings::MAP_DEFAULT_DETAIL_LEVEL)
-    text = tr("Lower map detail level %1").arg(levelUi);
+    text = tr("Lower map detail level %1").arg(level);
   else if(level > MapLayerSettings::MAP_DEFAULT_DETAIL_LEVEL)
-    text = tr("Higher map detail level %1").arg(levelUi);
-
+    text = tr("Higher map detail level %1").arg(level);
+  text += tr(" (Ctrl+Mouse Wheel)");
   labelActionDetailLevel->setText(text);
+
+  if(levelText == MapLayerSettings::MAP_DEFAULT_DETAIL_LEVEL)
+    text = tr("Normal map labels");
+  else if(levelText == MapLayerSettings::MAP_MIN_DETAIL_LEVEL_TEXT)
+    text = tr("Minimum map labels %1").arg(levelText);
+  else if(levelText == MapLayerSettings::MAP_MAX_DETAIL_LEVEL_TEXT)
+    text = tr("Maximum map labels %1").arg(levelText);
+  else if(levelText < MapLayerSettings::MAP_DEFAULT_DETAIL_LEVEL)
+    text = tr("Less map labels %1").arg(levelText);
+  else if(levelText > MapLayerSettings::MAP_DEFAULT_DETAIL_LEVEL)
+    text = tr("More map labels %1").arg(levelText);
+
+  text += tr(" (Ctrl+Shift+Mouse Wheel)");
+  labelActionDetailLevelText->setText(text);
 }
 
 void MapDetailHandler::defaultMapDetail()
 {
   int curLevel = getDetailLevel();
-  if(curLevel != MapLayerSettings::MAP_DEFAULT_DETAIL_LEVEL)
+  int curLevelText = getDetailLevelText();
+  if(curLevel != MapLayerSettings::MAP_DEFAULT_DETAIL_LEVEL || curLevelText != MapLayerSettings::MAP_DEFAULT_DETAIL_LEVEL)
   {
     sliderActionDetailLevel->reset();
+    sliderActionDetailLevelText->reset();
     updateActions();
-    emit updateDetailLevel(getDetailLevel());
+    emit updateDetailLevel(getDetailLevel(), getDetailLevelText());
+  }
+}
+
+void MapDetailHandler::increaseMapDetailText()
+{
+  int curLevel = getDetailLevelText();
+  if(curLevel < MapLayerSettings::MAP_MAX_DETAIL_LEVEL_TEXT)
+  {
+    sliderActionDetailLevelText->setSliderValue(curLevel + 1);
+    updateActions();
+    emit updateDetailLevel(getDetailLevel(), getDetailLevelText());
+  }
+}
+
+void MapDetailHandler::decreaseMapDetailText()
+{
+  int curLevel = getDetailLevelText();
+  if(curLevel > MapLayerSettings::MAP_MIN_DETAIL_LEVEL_TEXT)
+  {
+    sliderActionDetailLevelText->setSliderValue(curLevel - 1);
+    updateActions();
+    emit updateDetailLevel(getDetailLevel(), getDetailLevelText());
   }
 }
 
@@ -294,7 +350,7 @@ void MapDetailHandler::increaseMapDetail()
   {
     sliderActionDetailLevel->setSliderValue(curLevel + 1);
     updateActions();
-    emit updateDetailLevel(getDetailLevel());
+    emit updateDetailLevel(getDetailLevel(), getDetailLevelText());
   }
 }
 
@@ -305,6 +361,6 @@ void MapDetailHandler::decreaseMapDetail()
   {
     sliderActionDetailLevel->setSliderValue(curLevel - 1);
     updateActions();
-    emit updateDetailLevel(getDetailLevel());
+    emit updateDetailLevel(getDetailLevel(), getDetailLevelText());
   }
 }

@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2023 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2024 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -17,6 +17,7 @@
 
 #include "route/customproceduredialog.h"
 
+#include "app/navapp.h"
 #include "common/constants.h"
 #include "common/maptypes.h"
 #include "common/unit.h"
@@ -26,14 +27,14 @@
 #include "gui/runwayselection.h"
 #include "gui/widgetstate.h"
 #include "query/mapquery.h"
+#include "query/querymanager.h"
 #include "ui_customproceduredialog.h"
-#include "app/navapp.h"
 
 #include <QPushButton>
 #include <QStringBuilder>
 
 CustomProcedureDialog::CustomProcedureDialog(QWidget *parent, const map::MapAirport& mapAirport, bool departureParam,
-                                             const QString& dialogHeader)
+                                             const QString& dialogHeader, int preselectRunwayEndSim)
   : QDialog(parent), ui(new Ui::CustomProcedureDialog), departure(departureParam)
 {
   setWindowFlags(windowFlags() & ~Qt::WindowContextHelpButtonHint);
@@ -41,16 +42,17 @@ CustomProcedureDialog::CustomProcedureDialog(QWidget *parent, const map::MapAirp
 
   ui->setupUi(this);
 
-  runwaySelection = new RunwaySelection(parent, mapAirport, ui->tableWidgetCustomProcRunway);
+  runwaySelection = new RunwaySelection(parent, mapAirport, ui->tableWidgetCustomProcRunway, false /* navdata */);
   runwaySelection->setAirportLabel(ui->labelCustomProcAirport);
+  runwaySelection->setPreSelectedRunwayEnd(preselectRunwayEndSim);
 
   // YES is show procedures button
   ui->buttonBoxCustomProc->button(QDialogButtonBox::Yes)->setText(departureParam ? tr("Show Departure &Procedures") :
-                                                                  tr("Show Arrival &Procedures"));
+                                                                  tr("Show Arrival/Approach &Procedures"));
 
-  if(!NavApp::getMapQueryGui()->hasDepartureProcedures(mapAirport) && departureParam)
+  if(!QueryManager::instance()->getQueriesGui()->getMapQuery()->hasDepartureProcedures(mapAirport) && departureParam)
     ui->buttonBoxCustomProc->button(QDialogButtonBox::Yes)->setDisabled(true);
-  else if(!NavApp::getMapQueryGui()->hasArrivalProcedures(mapAirport) && !departureParam)
+  else if(!QueryManager::instance()->getQueriesGui()->getMapQuery()->hasArrivalProcedures(mapAirport) && !departureParam)
     ui->buttonBoxCustomProc->button(QDialogButtonBox::Yes)->setDisabled(true);
 
   connect(runwaySelection, &RunwaySelection::doubleClicked, this, &CustomProcedureDialog::doubleClicked);
@@ -64,7 +66,8 @@ CustomProcedureDialog::CustomProcedureDialog(QWidget *parent, const map::MapAirp
 
   restoreState();
 
-  setWindowTitle(QApplication::applicationName() % tr(" - Select Runway"));
+  setWindowTitle(QCoreApplication::applicationName() %
+                 (departureParam ? tr(" - Select Departure Runway") : tr(" - Select Destination Runway")));
   ui->labelCustomProcRunway->setText(dialogHeader);
 
   // Show or hide widgets not relevant for departure
@@ -81,13 +84,13 @@ CustomProcedureDialog::CustomProcedureDialog(QWidget *parent, const map::MapAirp
 
   if(departure)
   {
-    ui->labelCustomProcRunwayDist->setText(("&Length of the exended runway center line:"));
-    ui->doubleSpinBoxCustomProcDist->setToolTip(("Distance from the takeoff position at the runway end to the end of the departure."));
+    ui->labelCustomProcRunwayDist->setText(tr("&Length of the extended runway center line:"));
+    ui->doubleSpinBoxCustomProcDist->setToolTip(tr("Distance from the takeoff position at the runway end to the end of the departure."));
   }
   else
   {
-    ui->labelCustomProcRunwayDist->setText(("&Start of final to runway threshold:"));
-    ui->doubleSpinBoxCustomProcDist->setToolTip(("Distance from the start of the final leg to the runway threshold."));
+    ui->labelCustomProcRunwayDist->setText(tr("&Start of final to runway threshold:"));
+    ui->doubleSpinBoxCustomProcDist->setToolTip(tr("Distance from the start of the final leg to the runway threshold."));
   }
 
   // Saves original texts and restores them on deletion
@@ -122,7 +125,7 @@ void CustomProcedureDialog::restoreState()
   ui->tableWidgetCustomProcRunway->setFocus();
 }
 
-void CustomProcedureDialog::saveState()
+void CustomProcedureDialog::saveState() const
 {
   atools::gui::WidgetState widgetState(departure ? lnm::CUSTOM_DEPARTURE_DIALOG : lnm::CUSTOM_APPROACH_DIALOG, false);
   widgetState.save({this, ui->doubleSpinBoxCustomProcDist, ui->spinBoxCustomProcAlt});

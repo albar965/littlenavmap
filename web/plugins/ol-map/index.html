@@ -1,91 +1,101 @@
 <!doctype html>
-<html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <title>unused</title>
+    <style>
+      html, body, iframe {
+        height: 100%;
+      }
+      body {
+        margin: 0;
+      }
+      iframe {
+        width: 100%;
+        border: 0;
+        display: block;
+      }
+    </style>
+  </head>
+  <body>
+    <iframe id="OLM" title="OpenLayers Map"></iframe>
+    <script>
+      /**
+       * Plugin embedding the littlenavmap-openlayers implementation
+       * 
+       * See: 
+       * - https://github.com/KOKAProduktion/littlenavmap-openlayers
+       */
 
-<head>
-  <meta charset="UTF-8">
-  <title>OpenLayers Map</title>
-  <style>
-    html, body, iframe {
-      height: 100%;
-    }
-    body {
-      margin: 0;
-    }
-    iframe {
-      width: 100%;
-      border: 0;
-      display: block;
-    }
-    .toolbar {
-      position: fixed;
-      top: 1cm;
-      left: 1cm;
-    }
-    input {
-      text-transform: uppercase;
-    }
-  </style>
-</head>
-
-<body>
-  <iframe onload="lnm(this)" src="/ol/index.html" title="OpenLayers map"></iframe>
-  <script>
-    /**
-     * Plugin embedding
-     * the littlenavmap-openlayers implementation
-     * 
-     * See: 
-     * - https://github.com/KOKAProduktion/littlenavmap-openlayers
-     * - /web/ol (dist of littlenavmap-openlayers)
-     */
-
-    var littlenavmap;
-
-    function init(message) {
-      var ppi = message.pluginParent.callback(message.pluginParent.callback.TYPE_EXCLUSIVE, stop);
-      
-      var toolbar = ppi.toolbarAPI.createToolbar(document.body);
-      var b;
-      var ti = ppi.toolbarAPI.createTextInput({
-        text: "ICAO",
-        handlerNames: "keydown",
-        "keydown": e => {
-          if(e.key === "Enter") {
-            b.click();
-            e.stopPropagation();
-            e.preventDefault();
+      onmessage = event => {
+        let message = event.data.pluginParent;
+        if(message) {
+          switch(message.cause) {
+            case "callback":
+              return handleEvents(message.cargo);
+            case "cleanup":
+              return stop();
+            case "commence":
+              var OLM = document.getElementById("OLM");
+              OLM.onload = lnm;
+              return OLM.src = "ol/index.html";
+            default:
           }
         }
-      }, toolbar);
-      b = ppi.toolbarAPI.createButton({
-        text: "Find",
-        handlerNames: "click",
-        click: () => {
-          var ident = ti.value;
-          fetch("/api/airport/info?ident=" + ident).then((response) => {
-            return response.json();
-          }).then((json) => {
-            // turn off aircraft follow
-            if (littlenavmap.following) {
-              littlenavmap.map.getControls().getArray()[0].handleFollow();
-            }
-            // move to airport position
-            littlenavmap.moveTo([json.position.lon, json.position.lat]);
-          }).catch((error) => {
-            console.log(error);
-          })
-        }
-      }, toolbar);
+      };
+
+      function stop() {}
       
-      ppi.run()
-    }
+      function nop() {}
+      
+      var doICAOSearch = nop;
+      
+      var latestInput = "";
+      
+      function handleEvents(cargo) {
+        switch (cargo.id) {
+          case "icaot":
+            switch (cargo.event) {
+              case "input":
+                latestInput = cargo.value;
+                break;
+              case "keydown":
+                evalICAOSearch (cargo.data[0]);
+                break;
+              default:
+            }
+            break;
+          case "icaob":
+            switch (cargo.event) {
+              case "click":
+                doICAOSearch ();
+                break;
+            }
+          default:
+        }
+      }
+      
+      function evalICAOSearch(key) {
+        key === "Enter" ? doICAOSearch () : !1;
+      }
+        
+      var littlenavmap;
+      
+      function reallyDoICAOSearch () {
+        fetch("/api/airport/info?ident=" + latestInput).then(response => response.json(), error => console?.log(error)).then(json => {
+          // turn off aircraft follow
+          if (littlenavmap.following) {
+            littlenavmap.map.getControls().getArray()[0].handleFollow();
+          }
+          // move to airport position
+          littlenavmap.moveTo([json.position.lon, json.position.lat]);
+        }, error => console?.log(error)).catch(error => console?.log(error));
+      }
 
-    function stop() {}
-
-    function lnm(iframe) {
-      littlenavmap = iframe.contentWindow.littlenavmap;
-    }
-  </script>
-</body>
-
+      function lnm() {
+        littlenavmap = this.contentWindow.littlenavmap;
+        doICAOSearch = reallyDoICAOSearch;
+      }
+    </script>
+  </body>
 </html>

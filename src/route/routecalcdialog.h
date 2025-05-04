@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2023 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2024 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -83,7 +83,10 @@ public:
 
   /* Load and save widget status */
   void restoreState();
-  void saveState();
+  void saveState() const;
+
+  /* Reset saved settings and position of dialog */
+  void resetWindowLayout();
 
   /* Clear routing network cache and disconnect all queries */
   void preDatabaseLoad();
@@ -106,7 +109,7 @@ public:
   /* true if NDB should be included in radionav calculation */
   bool isRadionavNdb() const;
 
-  /* Use tracks (NAT, PACOTS and AUSOTS) in airway calculation */
+  /* Use tracks (NAT and PACOTS) in airway calculation */
   bool isUseTracks() const;
 
   /* Full route or selection. Status of combo box in window. */
@@ -163,11 +166,11 @@ private:
 
   Ui::RouteCalcDialog *ui;
 
-  /* Remember dialog position when reopening */
-  QPoint position;
-
   /* Set to true before emitting calculateClicked() to avoid user clicking button twice. */
   bool calculating = false;
+
+  /* Size as given in UI */
+  QSize defaultSize;
 };
 
 #endif // LNM_ROUTECALCWIN_H

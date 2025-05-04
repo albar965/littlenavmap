@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2023 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2025 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -18,8 +18,8 @@
 #include "app/navapp.h"
 
 #include "airspace/airspacecontroller.h"
+
 #include "atools.h"
-#include "common/aircrafttrail.h"
 #include "common/constants.h"
 #include "common/elevationprovider.h"
 #include "common/updatehandler.h"
@@ -27,52 +27,43 @@
 #include "connect/connectclient.h"
 #include "db/databasemanager.h"
 #include "exception.h"
-#include "fs/perf/aircraftperf.h"
 #include "fs/common/magdecreader.h"
 #include "fs/common/morareader.h"
 #include "fs/db/databasemeta.h"
+#include "fs/perf/aircraftperf.h"
+#include "geo/aircrafttrail.h"
+#include "gui/dataexchange.h"
 #include "gui/errorhandler.h"
 #include "gui/mainwindow.h"
 #include "gui/stylehandler.h"
-#include "mapgui/mapthemehandler.h"
-#include "route/routealtitude.h"
-#include "util/properties.h"
 #include "logbook/logdatacontroller.h"
 #include "logging/logginghandler.h"
-#include "mapgui/mapmarkhandler.h"
 #include "mapgui/mapairporthandler.h"
 #include "mapgui/mapdetailhandler.h"
+#include "mapgui/mapmarkhandler.h"
+#include "mapgui/mapthemehandler.h"
 #include "mapgui/mapwidget.h"
 #include "online/onlinedatacontroller.h"
 #include "perf/aircraftperfcontroller.h"
 #include "profile/profilewidget.h"
-#include "query/airportquery.h"
-#include "query/infoquery.h"
-#include "query/mapquery.h"
 #include "query/procedurequery.h"
-#include "query/waypointtrackquery.h"
+#include "query/querymanager.h"
+#include "route/routealtitude.h"
 #include "route/routecontroller.h"
 #include "routestring/routestringwriter.h"
 #include "search/searchcontroller.h"
+#include "settings/settings.h"
 #include "track/trackcontroller.h"
 #include "userdata/userdatacontroller.h"
 #include "weather/weatherreporter.h"
 #include "web/webcontroller.h"
 #include "web/webmapcontroller.h"
-#include "app/dataexchange.h"
-#include "settings/settings.h"
 
 #include "ui_mainwindow.h"
 
 #include <marble/MarbleModel.h>
 
 #include <QIcon>
-#include <QSplashScreen>
-
-AirportQuery *NavApp::airportQuerySim = nullptr;
-AirportQuery *NavApp::airportQueryNav = nullptr;
-InfoQuery *NavApp::infoQuery = nullptr;
-ProcedureQuery *NavApp::procedureQuery = nullptr;
 
 ConnectClient *NavApp::connectClient = nullptr;
 DatabaseManager *NavApp::databaseManager = nullptr;
@@ -80,7 +71,6 @@ MainWindow *NavApp::mainWindow = nullptr;
 ElevationProvider *NavApp::elevationProvider = nullptr;
 atools::fs::db::DatabaseMeta *NavApp::databaseMetaSim = nullptr;
 atools::fs::db::DatabaseMeta *NavApp::databaseMetaNav = nullptr;
-QSplashScreen *NavApp::splashScreen = nullptr;
 
 atools::fs::common::MagDecReader *NavApp::magDecReader = nullptr;
 atools::fs::common::MoraReader *NavApp::moraReader = nullptr;
@@ -99,11 +89,9 @@ StyleHandler *NavApp::styleHandler = nullptr;
 
 WebController *NavApp::webController = nullptr;
 
-atools::util::Properties *NavApp::startupOptions = nullptr;
-DataExchange *NavApp::dataExchange = nullptr;
+atools::gui::DataExchange *NavApp::dataExchange = nullptr;
 
 bool NavApp::closeCalled = false;
-bool NavApp::shuttingDown = false;
 bool NavApp::loadingDatabase = false;
 bool NavApp::mainWindowVisible = false;
 
@@ -112,22 +100,20 @@ using atools::settings::Settings;
 NavApp::NavApp(int& argc, char **argv, int flags)
   : atools::gui::Application(argc, argv, flags)
 {
-  startupOptions = new atools::util::Properties;
   initApplication();
 }
 
 NavApp::~NavApp()
 {
   ATOOLS_DELETE(dataExchange);
-  ATOOLS_DELETE(startupOptions);
 }
 
 void NavApp::initApplication()
 {
   setWindowIcon(QIcon(":/littlenavmap/resources/icons/littlenavmap.svg"));
-  setApplicationName("Little Navmap");
-  setOrganizationName("ABarthel");
-  setOrganizationDomain("littlenavmap.org");
+  setApplicationName(lnm::OPTIONS_APPLICATION);
+  setOrganizationName(lnm::OPTIONS_APPLICATION_ORGANIZATION);
+  setOrganizationDomain(lnm::OPTIONS_APPLICATION_DOMAIN);
   setApplicationVersion(VERSION_NUMBER_LITTLENAVMAP);
 }
 
@@ -165,6 +151,7 @@ void NavApp::init(MainWindow *mainWindowParam)
   moraReader = new atools::fs::common::MoraReader(getDatabaseNav(), getDatabaseSim());
   moraReader->readFromTable();
 
+  // Cache for aircraft and other icons
   vehicleIcons = new VehicleIcons();
 
   // Need to set this later to avoid circular database dependency
@@ -181,28 +168,11 @@ void NavApp::init(MainWindow *mainWindowParam)
 
   aircraftPerfController = new AircraftPerfController(mainWindow);
 
-  airspaceController = new AirspaceController(mainWindow,
-                                              databaseManager->getDatabaseSimAirspace(),
-                                              databaseManager->getDatabaseNavAirspace(),
-                                              databaseManager->getDatabaseUserAirspace(),
-                                              databaseManager->getDatabaseOnline());
-
-  airportQuerySim = new AirportQuery(databaseManager->getDatabaseSim(), false /* nav */);
-
-  airportQueryNav = new AirportQuery(databaseManager->getDatabaseNav(), true /* nav */);
-
-  infoQuery = new InfoQuery(databaseManager->getDatabaseSim(),
-                            databaseManager->getDatabaseNav(),
-                            databaseManager->getDatabaseTrack());
-
-  procedureQuery = new ProcedureQuery(databaseManager->getDatabaseNav());
+  airspaceController = new AirspaceController(mainWindow);
 
   connectClient = new ConnectClient(mainWindow);
-
   updateHandler = new UpdateHandler(mainWindow);
-
   styleHandler = new StyleHandler(mainWindow);
-
   webController = new WebController(mainWindow);
 }
 
@@ -210,10 +180,6 @@ void NavApp::initQueries()
 {
   qDebug() << Q_FUNC_INFO;
   onlinedataController->initQueries();
-  airportQuerySim->initQueries();
-  airportQueryNav->initQueries();
-  infoQuery->initQueries();
-  procedureQuery->initQueries();
 }
 
 void NavApp::showElevationProviderErrors()
@@ -230,10 +196,13 @@ void NavApp::initElevationProvider()
     elevationProvider->init(mainWindow->getElevationModel());
 }
 
+void NavApp::deInitWebController()
+{
+  ATOOLS_DELETE_LOG(webController);
+}
+
 void NavApp::deInit()
 {
-  ATOOLS_DELETE_LOG(dataExchange);
-  ATOOLS_DELETE_LOG(webController);
   ATOOLS_DELETE_LOG(styleHandler);
   ATOOLS_DELETE_LOG(userdataController);
   ATOOLS_DELETE_LOG(mapMarkHandler);
@@ -247,25 +216,20 @@ void NavApp::deInit()
   ATOOLS_DELETE_LOG(updateHandler);
   ATOOLS_DELETE_LOG(connectClient);
   ATOOLS_DELETE_LOG(elevationProvider);
-  ATOOLS_DELETE_LOG(airportQuerySim);
-  ATOOLS_DELETE_LOG(airportQueryNav);
-  ATOOLS_DELETE_LOG(infoQuery);
-  ATOOLS_DELETE_LOG(procedureQuery);
   ATOOLS_DELETE_LOG(databaseManager);
   ATOOLS_DELETE_LOG(databaseMetaSim);
   ATOOLS_DELETE_LOG(databaseMetaNav);
   ATOOLS_DELETE_LOG(magDecReader);
   ATOOLS_DELETE_LOG(moraReader);
   ATOOLS_DELETE_LOG(vehicleIcons);
-  ATOOLS_DELETE_LOG(splashScreen);
 }
 
-const DataExchange *NavApp::getDataExchangeConst()
+const atools::gui::DataExchange *NavApp::getDataExchangeConst()
 {
   return dataExchange;
 }
 
-DataExchange *NavApp::getDataExchange()
+atools::gui::DataExchange *NavApp::getDataExchange()
 {
   return dataExchange;
 }
@@ -273,7 +237,13 @@ DataExchange *NavApp::getDataExchange()
 bool NavApp::initDataExchange()
 {
   if(dataExchange == nullptr)
-    dataExchange = new DataExchange;
+    dataExchange = new atools::gui::DataExchange(
+      Settings::instance().getAndStoreValue(lnm::OPTIONS_DATAEXCHANGE_DEBUG, false).toBool(), lnm::PROGRAM_GUID);
+
+  // Check for commands from other instances in shared memory segment
+  // Not connected to main window yet - so messages will be ignored
+  // Start timer early to update timestamp and avoid double instances
+  dataExchange->startTimer();
 
   return dataExchange->isExit();
 }
@@ -317,13 +287,11 @@ void NavApp::readMagDecFromDatabase()
     }
     catch(atools::Exception& e)
     {
-      closeSplashScreen();
       // Show dialog if something went wrong but do not exit
       atools::gui::ErrorHandler(mainWindow).handleException(e, tr("While reading magnetic declination from database:"));
     }
     catch(...)
     {
-      closeSplashScreen();
       atools::gui::ErrorHandler(mainWindow).
       handleUnknownException(tr("While reading magnetic declination from database:"));
     }
@@ -356,20 +324,16 @@ void NavApp::preDatabaseLoad()
   qDebug() << Q_FUNC_INFO;
 
   loadingDatabase = true;
-  infoQuery->deInitQueries();
-  airportQuerySim->deInitQueries();
-  airportQueryNav->deInitQueries();
-  procedureQuery->deInitQueries();
+  if(webController != nullptr)
+    webController->preDatabaseLoad();
   moraReader->preDatabaseLoad();
   airspaceController->preDatabaseLoad();
   trackController->preDatabaseLoad();
   logdataController->preDatabaseLoad();
+  QueryManager::instance()->deInitQueries();
 
-  delete databaseMetaSim;
-  databaseMetaSim = nullptr;
-
-  delete databaseMetaNav;
-  databaseMetaNav = nullptr;
+  ATOOLS_DELETE_LOG(databaseMetaSim);
+  ATOOLS_DELETE_LOG(databaseMetaNav);
 }
 
 void NavApp::postDatabaseLoad()
@@ -381,25 +345,19 @@ void NavApp::postDatabaseLoad()
 
   readMagDecFromDatabase();
 
-  airportQuerySim->initQueries();
-  airportQueryNav->initQueries();
-  infoQuery->initQueries();
-  procedureQuery->initQueries();
+  QueryManager::instance()->initQueries();
   moraReader->readFromTable(getDatabaseNav(), getDatabaseSim());
   airspaceController->postDatabaseLoad();
   logdataController->postDatabaseLoad();
   trackController->postDatabaseLoad();
+  if(webController != nullptr)
+    webController->postDatabaseLoad();
   loadingDatabase = false;
 }
 
 Ui::MainWindow *NavApp::getMainUi()
 {
-  return mainWindow->getUi();
-}
-
-bool NavApp::isMainWindowVisible()
-{
-  return mainWindowVisible;
+  return mainWindow != nullptr ? mainWindow->getUi() : nullptr;
 }
 
 bool NavApp::isFetchAiAircraft()
@@ -439,12 +397,12 @@ bool NavApp::isSimConnect()
 
 bool NavApp::isConnectedAndAircraftFlying()
 {
-  return (isConnected() && isUserAircraftValid() && getUserAircraft().isFlying()) || getUserAircraft().isDebug();
+  return (isConnected() || getUserAircraft().isDebug()) && isUserAircraftValid() && getUserAircraft().isFlying();
 }
 
 bool NavApp::isConnectedAndAircraft()
 {
-  return (isConnected() && isUserAircraftValid()) || getUserAircraft().isDebug();
+  return (isConnected() || getUserAircraft().isDebug()) && isUserAircraftValid();
 }
 
 bool NavApp::isUserAircraftValid()
@@ -452,24 +410,34 @@ bool NavApp::isUserAircraftValid()
   return mainWindow->getMapWidget()->getUserAircraft().isFullyValid();
 }
 
+bool NavApp::hasAircraftPassedTakeoffPoint()
+{
+  return logdataController->hasAircraftPassedTakeoffPoint();
+}
+
+bool NavApp::checkSimConnect()
+{
+  if(connectClient != nullptr)
+    return connectClient->checkSimConnect();
+  else
+    return false;
+}
+
+void NavApp::pauseSimConnect()
+{
+  if(connectClient != nullptr)
+    return connectClient->pauseSimConnect();
+}
+
+void NavApp::resumeSimConnect()
+{
+  if(connectClient != nullptr)
+    return connectClient->resumeSimConnect();
+}
+
 bool NavApp::isMoraAvailable()
 {
   return moraReader->isDataAvailable();
-}
-
-bool NavApp::isHoldingsAvailable()
-{
-  return getMapQueryGui()->hasHoldings();
-}
-
-bool NavApp::isAirportMsaAvailable()
-{
-  return getMapQueryGui()->hasAirportMsa();
-}
-
-bool NavApp::isGlsAvailable()
-{
-  return getMapQueryGui()->hasGls();
 }
 
 float NavApp::getTakeoffFlownDistanceNm()
@@ -509,46 +477,6 @@ void NavApp::updateAllMaps()
 const QVector<atools::fs::sc::SimConnectAircraft>& NavApp::getAiAircraft()
 {
   return mainWindow->getMapWidget()->getAiAircraft();
-}
-
-AirportQuery *NavApp::getAirportQuerySim()
-{
-  return airportQuerySim;
-}
-
-AirportQuery *NavApp::getAirportQueryNav()
-{
-  return airportQueryNav;
-}
-
-MapQuery *NavApp::getMapQueryGui()
-{
-  return getMapPaintWidgetGui()->getMapQuery();
-}
-
-AirwayTrackQuery *NavApp::getAirwayTrackQueryGui()
-{
-  return getMapPaintWidgetGui()->getAirwayTrackQuery();
-}
-
-WaypointTrackQuery *NavApp::getWaypointTrackQueryGui()
-{
-  return getMapPaintWidgetGui()->getWaypointTrackQuery();
-}
-
-atools::geo::Pos NavApp::getAirportPos(const QString& ident)
-{
-  return airportQuerySim->getAirportPosByIdent(ident);
-}
-
-InfoQuery *NavApp::getInfoQuery()
-{
-  return infoQuery;
-}
-
-ProcedureQuery *NavApp::getProcedureQuery()
-{
-  return procedureQuery;
 }
 
 const Route& NavApp::getRouteConst()
@@ -622,6 +550,11 @@ atools::fs::FsPaths::SimulatorType NavApp::getCurrentSimulatorDb()
 bool NavApp::isAirportDatabaseXPlane(bool navdata)
 {
   return getDatabaseManager()->isAirportDatabaseXPlane(navdata);
+}
+
+bool NavApp::isDatabaseXPlane()
+{
+  return getDatabaseManager()->isDatabaseXPlane();
 }
 
 QString NavApp::getCurrentSimulatorFilesPath()
@@ -705,6 +638,11 @@ QString NavApp::getCurrentSimulatorShortName()
   return atools::fs::FsPaths::typeToShortName(getCurrentSimulatorDb());
 }
 
+QString NavApp::getCurrentSimulatorShortDisplayName()
+{
+  return atools::fs::FsPaths::typeToShortDisplayName(getCurrentSimulatorDb());
+}
+
 QString NavApp::getCurrentSimulatorName()
 {
   return atools::fs::FsPaths::typeToDisplayName(getCurrentSimulatorDb());
@@ -734,13 +672,13 @@ void NavApp::logDatabaseMeta()
 {
   qDebug() << Q_FUNC_INFO << "databaseMetaNav";
   if(databaseMetaNav != nullptr)
-    databaseMetaNav->logInfo();
+    qInfo() << Q_FUNC_INFO << *databaseMetaNav;
   else
     qDebug() << Q_FUNC_INFO << "databaseMetaNav == nullptr";
 
   qDebug() << Q_FUNC_INFO << "databaseMetaSim";
   if(databaseMetaSim != nullptr)
-    databaseMetaSim->logInfo();
+    qInfo() << Q_FUNC_INFO << *databaseMetaSim;
   else
     qDebug() << Q_FUNC_INFO << "databaseMetaSim == nullptr";
 }
@@ -810,9 +748,9 @@ MapDetailHandler *NavApp::getMapDetailHandler()
   return mapDetailHandler;
 }
 
-void NavApp::showFlightPlan()
+void NavApp::showFlightplan()
 {
-  mainWindow->showFlightPlan();
+  mainWindow->showFlightplan();
 }
 
 void NavApp::showAircraftPerformance()
@@ -830,45 +768,29 @@ void NavApp::showUserpointSearch()
   mainWindow->showUserpointSearch();
 }
 
-QString NavApp::getStartupOptionStr(const QString& key)
+void NavApp::getReportFiles(QStringList& crashReportFiles, QString& reportFilename, bool issueReport)
 {
-  return startupOptions->getPropertyStr(key);
-}
-
-QStringList NavApp::getStartupOptionStrList(const QString& key)
-{
-  return startupOptions->getPropertyStrList(key);
-}
-
-void NavApp::addStartupOptionStr(const QString& key, const QString& value)
-{
-  startupOptions->setPropertyStr(key, value);
-}
-
-void NavApp::addStartupOptionStrList(const QString& key, const QStringList& value)
-{
-  startupOptions->setPropertyStrList(key, value);
-}
-
-void NavApp::clearStartupOptions()
-{
-  startupOptions->clear();
-}
-
-void getCrashReportFiles(QStringList& crashReportFiles, QString& reportFilename, bool manual)
-{
-  // Collect all files which should be skipped on startup
+  // Settings and files have to be saved before
   Settings& settings = Settings::instance();
   crashReportFiles.append(settings.valueStr(lnm::ROUTE_FILENAME));
   crashReportFiles.append(settings.valueStr(lnm::AIRCRAFT_PERF_FILENAME));
-  crashReportFiles.append(Settings::getConfigFilename(lnm::AIRCRAFT_TRACK_SUFFIX));
-  crashReportFiles.append(Settings::getFilename());
   crashReportFiles.append(Settings::getConfigFilename(".lnmpln"));
+  crashReportFiles.append(Settings::getConfigFilename(lnm::AIRCRAFT_TRACK_SUFFIX));
+  crashReportFiles.append(Settings::getConfigFilename(lnm::STACKTRACE_SUFFIX, lnm::CRASHREPORTS_DIR));
+  crashReportFiles.append(Settings::getFilename());
 
-  // Add log files last to catch any error which appear while compressing
-  crashReportFiles.append(atools::logging::LoggingHandler::getLogFiles());
+  // Add all log files last to catch any error which appear while compressing
+  crashReportFiles.append(atools::logging::LoggingHandler::getLogFiles(true /* includeBackups */));
 
-  reportFilename = Settings::getConfigFilename(manual ? "_issuereport.zip" : "_crashreport.zip", "crashreports");
+  reportFilename = Settings::getConfigFilename(issueReport ? lnm::ISSUEREPORT_SUFFIX : lnm::CRASHREPORT_SUFFIX, lnm::CRASHREPORTS_DIR);
+
+  // Remove not existing files =================================
+  for(QString& filename : crashReportFiles)
+  {
+    if(!filename.isEmpty() && !QFile::exists(filename))
+      filename.clear();
+  }
+  crashReportFiles.removeAll(QString());
 }
 
 void NavApp::recordStartNavApp()
@@ -877,22 +799,25 @@ void NavApp::recordStartNavApp()
 
   QStringList crashReportFiles;
   QString reportFilename;
-  getCrashReportFiles(crashReportFiles, reportFilename, false /* manual */);
+  getReportFiles(crashReportFiles, reportFilename, false /* issueReport */);
 
-  Application::recordStart(nullptr, Settings::getConfigFilename(".running"), reportFilename, crashReportFiles,
-                           lnm::helpOnlineUrl, lnm::helpLanguageOnline());
+  Application::recordStartAndDetectCrash(nullptr, Settings::getConfigFilename(".running"), reportFilename, crashReportFiles,
+                                         lnm::helpOnlineUrl, "CRASHREPORT.html", lnm::helpLanguageOnline());
 #endif
   // Keep command line options to avoid using the wrong configuration folder
 }
 
-QString NavApp::buildCrashReportNavAppManual()
+void NavApp::createIssueReport(const QStringList& additionalFiles)
 {
+  qDebug() << Q_FUNC_INFO;
+
   QString reportFilename;
   QStringList crashReportFiles;
-  getCrashReportFiles(crashReportFiles, reportFilename, true /* manual */);
+  getReportFiles(crashReportFiles, reportFilename, true /* issueReport */);
+  crashReportFiles.append(additionalFiles);
 
-  Application::buildCrashReport(reportFilename, crashReportFiles);
-  return reportFilename;
+  Application::createReport(mainWindow, reportFilename, crashReportFiles, lnm::helpOnlineUrl, "ISSUEREPORT.html",
+                            lnm::helpLanguageOnline());
 }
 
 void NavApp::setToolTipsEnabledMainMenu(bool enabled)
@@ -921,11 +846,6 @@ void NavApp::setToolTipsEnabledMainMenu(bool enabled)
     mainWindow->setToolTipsEnabledMainMenu(enabled);
 }
 
-atools::util::Properties& NavApp::getStartupOptionsConst()
-{
-  return *startupOptions;
-}
-
 LogdataController *NavApp::getLogdataController()
 {
   return logdataController;
@@ -944,6 +864,16 @@ TrackController *NavApp::getTrackController()
 bool NavApp::hasTracks()
 {
   return trackController->hasTracks();
+}
+
+bool NavApp::hasNatTracks()
+{
+  return trackController->hasNatTracks();
+}
+
+bool NavApp::hasPacotsTracks()
+{
+  return trackController->hasPacotsTracks();
 }
 
 bool NavApp::hasTracksEnabled()
@@ -971,11 +901,6 @@ AirspaceController *NavApp::getAirspaceController()
   return airspaceController;
 }
 
-bool NavApp::hasAnyAirspaces()
-{
-  return getAirspaceController()->hasAnyAirspaces();
-}
-
 atools::fs::common::MagDecReader *NavApp::getMagDecReader()
 {
   return magDecReader;
@@ -996,9 +921,9 @@ QString NavApp::getCurrentGuiStyleDisplayName()
   return styleHandler->getCurrentGuiStyleDisplayName();
 }
 
-bool NavApp::isCurrentGuiStyleNight()
+bool NavApp::isGuiStyleDark()
 {
-  return styleHandler->isCurrentGuiStyleNight();
+  return styleHandler->isGuiStyleDark();
 }
 
 StyleHandler *NavApp::getStyleHandler()
@@ -1061,14 +986,9 @@ WindReporter *NavApp::getWindReporter()
   return mainWindow->getWindReporter();
 }
 
-void NavApp::getAirportWind(int& windDirectionDeg, float& windSpeedKts, const map::MapAirport& airport, bool stationOnly)
+void NavApp::getAirportMetarWind(float& windDirectionDeg, float& windSpeedKts, const map::MapAirport& airport, bool stationOnly)
 {
-  mainWindow->getWeatherReporter()->getAirportWind(windDirectionDeg, windSpeedKts, airport, stationOnly);
-}
-
-map::MapWeatherSource NavApp::getAirportWeatherSource()
-{
-  return mainWindow->getMapWidget()->getMapWeatherSource();
+  mainWindow->getWeatherReporter()->getAirportMetarWind(windDirectionDeg, windSpeedKts, airport, stationOnly);
 }
 
 void NavApp::updateWindowTitle()
@@ -1081,9 +1001,9 @@ void NavApp::updateErrorLabel()
   getRouteController()->updateFooterErrorLabel();
 }
 
-void NavApp::setStatusMessage(const QString& message, bool addToLog)
+void NavApp::setStatusMessage(const QString& message, bool addToLog, bool popup)
 {
-  mainWindow->setStatusMessage(message, addToLog);
+  mainWindow->setStatusMessage(message, addToLog, popup);
 }
 
 QWidget *NavApp::getQMainWidget()
@@ -1121,6 +1041,11 @@ bool NavApp::isMenuToolTipsVisible()
   return getMainUi()->menuFile->toolTipsVisible();
 }
 
+bool NavApp::isDebugMovingAircraft()
+{
+  return mainWindow->isDebugMovingAircraft();
+}
+
 MapWidget *NavApp::getMapWidgetGui()
 {
   return mainWindow->getMapWidget();
@@ -1143,7 +1068,7 @@ bool NavApp::isMapWeatherShown()
 
 RouteController *NavApp::getRouteController()
 {
-  return mainWindow->getRouteController();
+  return mainWindow != nullptr ? mainWindow->getRouteController() : nullptr;
 }
 
 atools::gui::TabWidgetHandler *NavApp::getRouteTabHandler()
@@ -1153,7 +1078,7 @@ atools::gui::TabWidgetHandler *NavApp::getRouteTabHandler()
 
 const InfoController *NavApp::getInfoController()
 {
-  return mainWindow->getInfoController();
+  return mainWindow != nullptr ? mainWindow->getInfoController() : nullptr;
 }
 
 QFont NavApp::getTextBrowserInfoFont()
@@ -1171,14 +1096,14 @@ bool NavApp::isDarkMapTheme()
   return getMapThemeHandler()->isDarkTheme(getMapPaintWidgetGui()->getCurrentThemeId());
 }
 
-const QString& NavApp::getCurrentRouteFilepath()
+const QString& NavApp::getCurrentRouteFilePath()
 {
-  return mainWindow->getRouteController()->getRouteFilepath();
+  return mainWindow->getRouteController()->getRouteFilePath();
 }
 
-const QString& NavApp::getCurrentAircraftPerfFilepath()
+const QString& NavApp::getCurrentAircraftPerfFilePath()
 {
-  return aircraftPerfController->getCurrentFilepath();
+  return aircraftPerfController->getCurrentFilename();
 }
 
 const QString& NavApp::getCurrentAircraftPerfName()
@@ -1194,6 +1119,11 @@ const QString& NavApp::getCurrentAircraftPerfAircraftType()
 WebController *NavApp::getWebController()
 {
   return webController;
+}
+
+bool NavApp::isWebControllerRunning()
+{
+  return webController != nullptr ? webController->isListenerRunning() : false;
 }
 
 MapPaintWidget *NavApp::getMapPaintWidgetWeb()
@@ -1279,12 +1209,12 @@ bool NavApp::isAircraftTrailEmpty()
   return getAircraftTrail().isEmpty();
 }
 
-map::MapTypes NavApp::getShownMapTypes()
+const map::MapTypes NavApp::getShownMapTypes()
 {
   return mainWindow->getMapWidget()->getShownMapTypes();
 }
 
-map::MapDisplayTypes NavApp::getShownMapDisplayTypes()
+const map::MapDisplayTypes NavApp::getShownMapDisplayTypes()
 {
   return mainWindow->getMapWidget()->getShownMapDisplayTypes();
 }
@@ -1292,18 +1222,6 @@ map::MapDisplayTypes NavApp::getShownMapDisplayTypes()
 const map::MapAirspaceFilter& NavApp::getShownMapAirspaces()
 {
   return mainWindow->getMapWidget()->getShownAirspaces();
-}
-
-bool NavApp::isShuttingDown()
-{
-  return shuttingDown;
-}
-
-void NavApp::setShuttingDown(bool value)
-{
-  qDebug() << Q_FUNC_INFO << value;
-
-  shuttingDown = value;
 }
 
 bool NavApp::isCloseCalled()
@@ -1334,45 +1252,7 @@ UpdateHandler *NavApp::getUpdateHandler()
   return updateHandler;
 }
 
-void NavApp::initSplashScreen()
+atools::win::ActivationContext *NavApp::getActivationContext()
 {
-  qDebug() << Q_FUNC_INFO;
-
-  QPixmap pixmap(":/littlenavmap/resources/icons/splash.png");
-  splashScreen = new QSplashScreen(pixmap);
-  splashScreen->show();
-
-  processEvents();
-
-#if defined(WINARCH64)
-  QString applicationVersion = QApplication::applicationVersion() + tr(" 64-bit");
-#elif defined(WINARCH32)
-  QString applicationVersion = QApplication::applicationVersion() + tr(" 32-bit");
-#else
-  QString applicationVersion = QApplication::applicationVersion();
-#endif
-
-  splashScreen->showMessage(QObject::tr("Version %5 (revision %6)").
-                            arg(applicationVersion).arg(GIT_REVISION_LITTLENAVMAP),
-                            Qt::AlignRight | Qt::AlignBottom, Qt::black);
-
-  processEvents(QEventLoop::ExcludeUserInputEvents);
-}
-
-void NavApp::finishSplashScreen()
-{
-  qDebug() << Q_FUNC_INFO;
-
-  if(splashScreen != nullptr)
-    splashScreen->finish(mainWindow);
-}
-
-void NavApp::closeSplashScreen()
-{
-#ifdef DEBUG_INFORMATION
-  qDebug() << Q_FUNC_INFO;
-#endif
-
-  if(splashScreen != nullptr)
-    splashScreen->close();
+  return getConnectClient()->getActivationContext();
 }

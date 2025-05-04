@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2023 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2025 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -17,24 +17,24 @@
 
 #include "routeexport/routeexport.h"
 
-#include "fs/gpx/gpxio.h"
-#include "fs/gpx/gpxtypes.h"
-#include "routeexport/routeexportformat.h"
-#include "routeexport/routeexportdialog.h"
+#include "app/navapp.h"
 #include "atools.h"
-#include "common/aircrafttrail.h"
 #include "common/constants.h"
 #include "exception.h"
+#include "fs/gpx/gpxio.h"
+#include "fs/gpx/gpxtypes.h"
 #include "fs/perf/aircraftperf.h"
 #include "fs/pln/flightplanio.h"
+#include "geo/aircrafttrail.h"
 #include "gui/dialog.h"
 #include "gui/errorhandler.h"
 #include "gui/mainwindow.h"
 #include "io/fileroller.h"
-#include "app/navapp.h"
 #include "route/routealtitude.h"
 #include "route/routecontroller.h"
 #include "routeexport/routeexportdata.h"
+#include "routeexport/routeexportdialog.h"
+#include "routeexport/routeexportformat.h"
 #include "routeexport/routemultiexportdialog.h"
 #include "routestring/routestringwriter.h"
 #include "ui_mainwindow.h"
@@ -83,7 +83,7 @@ RouteExport::~RouteExport()
   exportFormatMap = nullptr;
 }
 
-void RouteExport::saveState()
+void RouteExport::saveState() const
 {
   exportFormatMap->saveState();
 }
@@ -131,13 +131,13 @@ void RouteExport::routeMultiExport()
   if(!errorFormats.isEmpty())
   {
     // One or more paths are not valid - do not export
-    QMessageBox::warning(mainWindow, QApplication::applicationName(),
-                         tr("<p>The following export formats have an invalid path or filename pattern:</p>"
-                              "<ul><li>%1</li></ul>"
-                                "<p>Export stopped.</p>"
-                                  "<p>Go to: Main menu -&gt; &quot;File&quot; -&gt; &quot;Multiexport Flight Plan Options&quot; or "
-                                    "press Ctrl+Alt+Shift+M and correct the fields highlighted in red.</p>").
-                         arg(errorFormats.join("</li><li>")));
+    atools::gui::Dialog::warning(mainWindow,
+                                 tr("<p>The following export formats have an invalid path or filename pattern:</p>"
+                                      "<ul><li>%1</li></ul>"
+                                        "<p>Export stopped.</p>"
+                                          "<p>Go to: Main menu -&gt; &quot;File&quot; -&gt; &quot;Multiexport Flight Plan Options&quot; or "
+                                            "press Ctrl+Alt+Shift+M and correct the fields highlighted in red.</p>").
+                                 arg(errorFormats.join("</li><li>")));
   }
   else
   {
@@ -258,14 +258,48 @@ void RouteExport::rotateFile(const QString& filename)
   }
 }
 
-bool RouteExport::routeExportPlnMan()
+bool RouteExport::routeExportCheckDatabase(const QString& exportSimulatorName,
+                                           const QVector<atools::fs::FsPaths::SimulatorType> requiredDbTypes)
 {
-  return routeExportPln(exportFormatMap->getForManualSave(rexp::PLN));
+  if(!requiredDbTypes.contains(NavApp::getCurrentSimulatorDb()))
+  {
+    QString currentSimulatorDbName(NavApp::getCurrentSimulatorShortDisplayName());
+
+    int result = dialog->showQuestionMsgBox(lnm::ACTIONS_SHOW_EXPORT_WRONG_DATABASE,
+                                            tr("You are using the scenery library database of %1 and "
+                                               "trying to export a flight plan for %2.\n\n"
+                                               "Really continue?").
+                                            arg(currentSimulatorDbName).arg(exportSimulatorName),
+                                            tr("Do not &show this dialog again and continue saving."),
+                                            QMessageBox::Yes | QMessageBox::No, QMessageBox::Yes, QMessageBox::Yes);
+
+    return result == QMessageBox::Yes;
+  }
+
+  return true;
 }
 
-bool RouteExport::routeExportPlnMsfsMan()
+void RouteExport::routeExportPlnMan()
 {
-  return routeExportPln(exportFormatMap->getForManualSave(rexp::PLNMSFS));
+  routeExportPln(exportFormatMap->getForManualSave(rexp::PLN));
+}
+
+void RouteExport::routeExportPlnMsfsMan()
+{
+  if(routeExportCheckDatabase(tr("MSFS 2020"), {atools::fs::FsPaths::MSFS}))
+    routeExportPln(exportFormatMap->getForManualSave(rexp::PLNMSFS));
+}
+
+void RouteExport::routeExportPlnMsfs24Man()
+{
+  if(routeExportCheckDatabase(tr("MSFS 2024"), {atools::fs::FsPaths::MSFS_2024}))
+    routeExportPln(exportFormatMap->getForManualSave(rexp::PLNMSFS24));
+}
+
+void RouteExport::routeExportFms11Man()
+{
+  if(routeExportCheckDatabase(tr("X-Plane"), {atools::fs::FsPaths::XPLANE_11, atools::fs::FsPaths::XPLANE_12}))
+    routeExportFms11(exportFormatMap->getForManualSave(rexp::FMS11));
 }
 
 bool RouteExport::routeExportLnm(const RouteExportFormat& format)
@@ -312,12 +346,18 @@ bool RouteExport::routeExportInternalPln(const RouteExportFormat& format)
   {
     // Use always same settings prefix for MSFS independent of scenery library selection
     // Other simulators share same PLN settings prefix also independent of scenery library
-    QString shortName = format.getType() == rexp::PLNMSFS ? atools::fs::FsPaths::typeToShortName(atools::fs::FsPaths::MSFS) : "Pln";
+    QString shortName;
+    if(format.getType() == rexp::PLNMSFS)
+      shortName = atools::fs::FsPaths::typeToShortName(atools::fs::FsPaths::MSFS);
+    if(format.getType() == rexp::PLNMSFS24)
+      shortName = atools::fs::FsPaths::typeToShortName(atools::fs::FsPaths::MSFS_2024);
+    else
+      shortName = "Pln";
 
+    bool normalize = format.getType() == rexp::PLNMSFS || format.getType() == rexp::PLNMSFS24 || format.getType() == rexp::PLNMSFSCOMPAT;
     QString routeFile = exportFile(format, "Route/Pln" % shortName,
                                    NavApp::getCurrentSimulatorFilesPath(),
-                                   buildDefaultFilename(format, format.getType() == rexp::PLNMSFS),
-                                   false /* dontComfirmOverwrite */);
+                                   buildDefaultFilename(format, normalize), false /* dontComfirmOverwrite */);
 
     if(!routeFile.isEmpty())
     {
@@ -325,20 +365,24 @@ bool RouteExport::routeExportInternalPln(const RouteExportFormat& format)
       bool result = false;
       switch(format.getType())
       {
-        case rexp::PLNANNOTATED:
-          result = exportFlighplan(routeFile, rf::DEFAULT_OPTS_NO_PROC, std::bind(&FlightplanIO::savePlnAnnotated, flightplanIO, _1, _2));
-          break;
-
         case rexp::PLN:
-          result = exportFlighplan(routeFile, rf::DEFAULT_OPTS_NO_PROC, std::bind(&FlightplanIO::savePln, flightplanIO, _1, _2));
+          result = exportFlighplan(routeFile, rf::DEFAULT_OPTS_FSX_P3D, std::bind(&FlightplanIO::savePln, flightplanIO, _1, _2));
           break;
 
         case rexp::PLNMSFS:
           result = exportFlighplan(routeFile, rf::DEFAULT_OPTS_MSFS, std::bind(&FlightplanIO::savePlnMsfs, flightplanIO, _1, _2));
           break;
 
+        case rexp::PLNMSFS24:
+          result = exportFlighplan(routeFile, rf::DEFAULT_OPTS_MSFS_2024, std::bind(&FlightplanIO::savePlnMsfs24, flightplanIO, _1, _2));
+          break;
+
+        case rexp::PLNMSFSCOMPAT:
+          result = exportFlighplan(routeFile, rf::DEFAULT_OPTS_MSFS, std::bind(&FlightplanIO::savePlnMsfsCompat, flightplanIO, _1, _2));
+          break;
+
         case rexp::PLNISG:
-          result = exportFlighplan(routeFile, rf::DEFAULT_OPTS_NO_PROC | rf::ISG_USER_WP_NAMES | rf::REMOVE_RUNWAY_PROC,
+          result = exportFlighplan(routeFile, rf::DEFAULT_OPTS_FSX_P3D | rf::ISG_USER_WP_NAMES | rf::REMOVE_RUNWAY_PROC,
                                    std::bind(&FlightplanIO::savePlnIsg, flightplanIO, _1, _2));
           break;
 
@@ -348,8 +392,7 @@ bool RouteExport::routeExportInternalPln(const RouteExportFormat& format)
 
       if(result)
       {
-        mainWindow->setStatusMessage(tr("Flight plan saved as %1PLN.").
-                                     arg(format.getType() == rexp::PLNANNOTATED ? tr("annotated ") : QString()));
+        mainWindow->setStatusMessage(tr("Flight plan saved as %1PLN.").arg(QString())); // Was annotated
         formatExportedCallback(format, routeFile);
         return true;
       }
@@ -422,11 +465,6 @@ bool RouteExport::routeExportCivaFmsMulti(const RouteExportFormat& format)
   return false;
 }
 
-bool RouteExport::routeExportFms11Man()
-{
-  return routeExportFms11(exportFormatMap->getForManualSave(rexp::FMS11));
-}
-
 bool RouteExport::routeExportFms11(const RouteExportFormat& format)
 {
   qDebug() << Q_FUNC_INFO;
@@ -449,6 +487,27 @@ bool RouteExport::routeExportFms11(const RouteExportFormat& format)
       if(exportFlighplan(routeFile, rf::DEFAULT_OPTS_FMS11, std::bind(&FlightplanIO::saveFms11, flightplanIO, _1, _2)))
       {
         mainWindow->setStatusMessage(tr("Flight plan saved as FMS 11."));
+        formatExportedCallback(format, routeFile);
+        return true;
+      }
+    }
+  }
+  return false;
+}
+
+bool RouteExport::routeExportFmsT7Multi(const RouteExportFormat& format)
+{
+  qDebug() << Q_FUNC_INFO;
+
+  if(routeValidateMulti(format))
+  {
+    QString routeFile = exportFileMulti(format);
+    if(!routeFile.isEmpty())
+    {
+      using namespace std::placeholders;
+      if(exportFlighplan(routeFile, rf::DEFAULT_OPTS_FMS_T7, std::bind(&FlightplanIO::saveFms11, flightplanIO, _1, _2)))
+      {
+        mainWindow->setStatusMessage(tr("Flight plan saved as FMS 11 for FlightFactor B777."));
         formatExportedCallback(format, routeFile);
         return true;
       }
@@ -501,9 +560,9 @@ bool RouteExport::routeExportInternalFlp(const RouteExportFormat& format, bool c
   return false;
 }
 
-bool RouteExport::routeExportFlightgearMan()
+void RouteExport::routeExportFlightgearMan()
 {
-  return routeExportFlightgear(exportFormatMap->getForManualSave(rexp::FLIGHTGEAR));
+  routeExportFlightgear(exportFormatMap->getForManualSave(rexp::FLIGHTGEAR));
 }
 
 bool RouteExport::routeExportFlightgear(const RouteExportFormat& format)
@@ -977,13 +1036,11 @@ bool RouteExport::routeExportTfdiMulti(const RouteExportFormat& format)
       }
       catch(atools::Exception& e)
       {
-        NavApp::closeSplashScreen();
         atools::gui::ErrorHandler(mainWindow).handleException(e);
         return false;
       }
       catch(...)
       {
-        NavApp::closeSplashScreen();
         atools::gui::ErrorHandler(mainWindow).handleUnknownException();
         return false;
       }
@@ -1011,13 +1068,11 @@ bool RouteExport::routeExportIflyMulti(const RouteExportFormat& format)
       }
       catch(atools::Exception& e)
       {
-        NavApp::closeSplashScreen();
         atools::gui::ErrorHandler(mainWindow).handleException(e);
         return false;
       }
       catch(...)
       {
-        NavApp::closeSplashScreen();
         atools::gui::ErrorHandler(mainWindow).handleUnknownException();
         return false;
       }
@@ -1039,17 +1094,15 @@ bool RouteExport::routeExportPms50Multi(const RouteExportFormat& format)
     {
       try
       {
-        flightplanIO->savePlnMsfs(buildAdjustedRoute(rf::DEFAULT_OPTS_MSFS | rf::REMOVE_RUNWAY_PROC).getFlightplanConst(), routeFile);
+        flightplanIO->savePlnPms50(buildAdjustedRoute(rf::DEFAULT_OPTS_MSFS | rf::REMOVE_RUNWAY_PROC).getFlightplanConst(), routeFile);
       }
       catch(atools::Exception& e)
       {
-        NavApp::closeSplashScreen();
         atools::gui::ErrorHandler(mainWindow).handleException(e);
         return false;
       }
       catch(...)
       {
-        NavApp::closeSplashScreen();
         atools::gui::ErrorHandler(mainWindow).handleUnknownException();
         return false;
       }
@@ -1076,13 +1129,11 @@ bool RouteExport::routeExportIsgMulti(const RouteExportFormat& format)
       }
       catch(atools::Exception& e)
       {
-        NavApp::closeSplashScreen();
         atools::gui::ErrorHandler(mainWindow).handleException(e);
         return false;
       }
       catch(...)
       {
-        NavApp::closeSplashScreen();
         atools::gui::ErrorHandler(mainWindow).handleUnknownException();
         return false;
       }
@@ -1094,9 +1145,9 @@ bool RouteExport::routeExportIsgMulti(const RouteExportFormat& format)
   return false;
 }
 
-bool RouteExport::routeExportVfpMan()
+void RouteExport::routeExportVfpMan()
 {
-  return routeExportVfpInternal(exportFormatMap->getForManualSave(rexp::VFP), "Route/Vfp");
+  routeExportVfpInternal(exportFormatMap->getForManualSave(rexp::VFP), "Route/Vfp");
 }
 
 bool RouteExport::routeExportVfp(const RouteExportFormat& format)
@@ -1132,9 +1183,9 @@ bool RouteExport::routeExportVfpInternal(const RouteExportFormat& format, const 
   return false;
 }
 
-bool RouteExport::routeExportXIvapMan()
+void RouteExport::routeExportXIvapMan()
 {
-  return routeExportIvapInternal(re::XIVAP, exportFormatMap->getForManualSave(rexp::XIVAP), "Route/Xivap");
+  routeExportIvapInternal(re::XIVAP, exportFormatMap->getForManualSave(rexp::XIVAP), "Route/Xivap");
 }
 
 bool RouteExport::routeExportXIvap(const RouteExportFormat& format)
@@ -1142,9 +1193,9 @@ bool RouteExport::routeExportXIvap(const RouteExportFormat& format)
   return routeExportIvapInternal(re::XIVAP, format, QString());
 }
 
-bool RouteExport::routeExportIvapMan()
+void RouteExport::routeExportIvapMan()
 {
-  return routeExportIvapInternal(re::IVAP, exportFormatMap->getForManualSave(rexp::IVAP), "Route/Ivap");
+  routeExportIvapInternal(re::IVAP, exportFormatMap->getForManualSave(rexp::IVAP), "Route/Ivap");
 }
 
 bool RouteExport::routeExportIvap(const RouteExportFormat& format)
@@ -1243,9 +1294,9 @@ bool RouteExport::routeExportDialog(RouteExportData& exportData, re::RouteExport
   return false;
 }
 
-bool RouteExport::routeExportGpxMan()
+void RouteExport::routeExportGpxMan()
 {
-  return routeExportGpx(exportFormatMap->getForManualSave(rexp::GPX));
+  routeExportGpx(exportFormatMap->getForManualSave(rexp::GPX));
 }
 
 bool RouteExport::routeExportGpx(const RouteExportFormat& format)
@@ -1269,9 +1320,9 @@ bool RouteExport::routeExportGpx(const RouteExportFormat& format)
   return false;
 }
 
-bool RouteExport::routeExportHtmlMan()
+void RouteExport::routeExportHtmlMan()
 {
-  return routeExportHtml(exportFormatMap->getForManualSave(rexp::HTML));
+  routeExportHtml(exportFormatMap->getForManualSave(rexp::HTML));
 }
 
 bool RouteExport::routeExportHtml(const RouteExportFormat& format)
@@ -1328,8 +1379,6 @@ bool RouteExport::routeValidate(const QVector<RouteExportFormat>& formats, bool 
     validateVfr |= fmt.getFlags().testFlag(rexp::VFR);
   }
 
-  NavApp::closeSplashScreen();
-
   // Default is to contue and save all formats
   bool save = true;
   const Route& route = NavApp::getRouteConst();
@@ -1338,7 +1387,7 @@ bool RouteExport::routeValidate(const QVector<RouteExportFormat>& formats, bool 
   if(multi)
     doNotShowAgainText = tr("Do not &show this dialog again and export all files.");
   else
-    doNotShowAgainText = tr("Do not &show this dialog again and save flight plan.");
+    doNotShowAgainText = tr("Do not &show this dialog again and save the flight plan.");
   QString reallyContinue = tr("\n\nReally continue?");
 
   // Check for valid airports for departure and destination ================================
@@ -1408,7 +1457,7 @@ bool RouteExport::routeValidate(const QVector<RouteExportFormat>& formats, bool 
   }
 
   // Check for VFR export to MSFS with procedures or airways  ================================
-  if(validateVfr && route.isTypeVfr() && (route.hasAirways() || route.hasAnyProcedure()))
+  if(validateVfr && route.isTypeVfr() && (route.hasAirways() || route.hasAnyRealProcedure()))
   {
     QString message;
     if(multi)
@@ -1450,7 +1499,7 @@ bool RouteExport::routeValidate(const QVector<RouteExportFormat>& formats, bool 
 
     message += tr("The departure airport has parking spots but no parking was selected for this Flight plan.");
     int result = dialog->showQuestionMsgBox(lnm::ACTIONS_SHOW_ROUTE_PARKING_WARNING, message,
-                                            tr("Do not &show this dialog again and save flight plan."), BUTTONS, QMessageBox::Yes,
+                                            tr("Do not &show this dialog again and save the flight plan."), BUTTONS, QMessageBox::Yes,
                                             QMessageBox::Save);
 
     if(result == QMessageBox::Yes)
@@ -1531,28 +1580,29 @@ bool RouteExport::exportFlighplanAsUFmc(const QString& filename)
   // Q818
   // WOZEE
   // 99
-  QFile file(filename);
-  if(file.open(QFile::WriteOnly | QIODevice::Text))
+  if(!list.isEmpty())
   {
-    QTextStream stream(&file);
-    // Save start and destination
-    stream << list.constFirst() << endl << list.constLast() << endl;
+    QFile file(filename);
+    if(file.open(QFile::WriteOnly | QIODevice::Text))
+    {
+      QTextStream stream(&file);
+      // Save start and destination
+      stream << list.constFirst() << endl << list.constLast() << endl;
 
-    // Waypoints and airways
-    for(int i = 1; i < list.size() - 1; i++)
-      stream << list.at(i) << endl;
+      // Waypoints and airways
+      for(int i = 1; i < list.size() - 1; i++)
+        stream << list.at(i) << endl;
 
-    // File end
-    stream << "99" << endl;
+      // File end
+      stream << "99" << endl;
 
-    file.close();
-    return true;
+      file.close();
+      return true;
+    }
+    else
+      atools::gui::ErrorHandler(mainWindow).handleIOError(file, tr("While saving UFMC file:"));
   }
-  else
-  {
-    atools::gui::ErrorHandler(mainWindow).handleIOError(file, tr("While saving UFMC file:"));
-    return false;
-  }
+  return false;
 }
 
 bool RouteExport::exportFlighplanAsRxpGns(const QString& filename, bool saveAsUserWaypoints)
@@ -1563,18 +1613,15 @@ bool RouteExport::exportFlighplanAsRxpGns(const QString& filename, bool saveAsUs
   {
     // Regions are required for the export
     NavApp::getRoute().updateAirportRegions();
-    FlightplanIO().saveGarminFpl(buildAdjustedRoute(rf::DEFAULT_OPTS_NO_PROC).getFlightplanConst(), filename,
-                                 saveAsUserWaypoints);
+    FlightplanIO().saveGarminFpl(buildAdjustedRoute(rf::DEFAULT_OPTS_NO_PROC).getFlightplanConst(), filename, saveAsUserWaypoints);
   }
   catch(atools::Exception& e)
   {
-    NavApp::closeSplashScreen();
     atools::gui::ErrorHandler(mainWindow).handleException(e);
     return false;
   }
   catch(...)
   {
-    NavApp::closeSplashScreen();
     atools::gui::ErrorHandler(mainWindow).handleUnknownException();
     return false;
   }
@@ -1815,8 +1862,7 @@ bool RouteExport::exportFlighplanAsIvap(const RouteExportData& exportData, const
 }
 
 bool RouteExport::exportFlighplan(const QString& filename, rf::RouteAdjustOptions options,
-                                  std::function<void(const atools::fs::pln::Flightplan& plan,
-                                                     const QString& file)> exportFunc)
+                                  std::function<void(const atools::fs::pln::Flightplan& plan, const QString& file)> exportFunc)
 {
   try
   {
@@ -1824,13 +1870,11 @@ bool RouteExport::exportFlighplan(const QString& filename, rf::RouteAdjustOption
   }
   catch(atools::Exception& e)
   {
-    NavApp::closeSplashScreen();
     atools::gui::ErrorHandler(mainWindow).handleException(e);
     return false;
   }
   catch(...)
   {
-    NavApp::closeSplashScreen();
     atools::gui::ErrorHandler(mainWindow).handleUnknownException();
     return false;
   }
@@ -2015,13 +2059,11 @@ bool RouteExport::exportFlightplanAsGpx(const QString& filename)
   }
   catch(atools::Exception& e)
   {
-    NavApp::closeSplashScreen();
     atools::gui::ErrorHandler(mainWindow).handleException(e);
     return false;
   }
   catch(...)
   {
-    NavApp::closeSplashScreen();
     atools::gui::ErrorHandler(mainWindow).handleUnknownException();
     return false;
   }

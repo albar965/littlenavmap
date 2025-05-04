@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2023 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2024 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -19,10 +19,15 @@
 #define LNM_WEBTOOLS_H
 
 #include <QMultiMap>
+#include <QSettings>
 
+class QVariant;
 namespace stefanfrings {
 class HttpRequest;
 }
+
+/* Copy all key from the INI file with the given group to the hash. Comments are ignored. */
+void copyKeyValuesFromGroup(QSettings& settings, const QString& group, QHash<QString, QVariant>& toSettings);
 
 /*
  * Wraps parameters of a HTTP request and provides typed accessors for reading.

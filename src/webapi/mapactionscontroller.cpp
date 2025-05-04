@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2023 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2025 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -17,6 +17,7 @@
 
 #include "mapactionscontroller.h"
 #include "abstractlnmactionscontroller.h"
+#include "atools.h"
 #include "common/infobuildertypes.h"
 #include "common/abstractinfobuilder.h"
 
@@ -36,150 +37,183 @@
 
 using InfoBuilderTypes::MapFeaturesData;
 
-MapActionsController::MapActionsController(QObject *parent, bool verboseParam, AbstractInfoBuilder* infoBuilder) :
-    AbstractLnmActionsController(parent, verboseParam, infoBuilder), parentWidget((QWidget *)parent) // WARNING: Uncertain cast (QWidget *) QObject
+MapActionsController::MapActionsController(QObject *parent, bool verboseParam, AbstractInfoBuilder *infoBuilderParam)
+  : AbstractLnmActionsController(parent, verboseParam, infoBuilderParam)
 {
-    qDebug() << Q_FUNC_INFO;
-    init();
+  qDebug() << Q_FUNC_INFO;
+  init();
 }
 
-WebApiResponse MapActionsController::imageAction(WebApiRequest request){
+WebApiResponse MapActionsController::imageAction(WebApiRequest request)
+{
+  WebApiResponse response = getResponse();
 
-    WebApiResponse response = getResponse();
-
-    atools::geo::Rect rect(
-        request.parameters.value("leftlon").toFloat(),
-        request.parameters.value("toplat").toFloat(),
-        request.parameters.value("rightlon").toFloat(),
-        request.parameters.value("bottomlat").toFloat()
+  atools::geo::Rect rect(
+    request.parameters.value("leftlon").toFloat(),
+    request.parameters.value("toplat").toFloat(),
+    request.parameters.value("rightlon").toFloat(),
+    request.parameters.value("bottomlat").toFloat()
     );
 
-    int detailFactor = request.parameters.value("detailfactor").toInt();
+  int detailFactor = request.parameters.value("detailfactor").toInt();
+  MapPixmap map = getPixmapRect(request.parameters.value("width").toInt(),
+                                // The dynamic map did not work when returning exact 256 height as requested
+                                // Pixmap had a minimum height of 300 before due to widget limits
+                                // getPixmapRect() now returns the exact size as requested
+                                // Now using exact width and height of 256x256
+                                request.parameters.value("height").toInt(),
+                                rect, detailFactor,
+                                QString(), false /* ignoreUiScale */);
 
-    MapPixmap map = getPixmapRect(
-        request.parameters.value("width").toInt(),
-        request.parameters.value("height").toInt(),
-        rect,
-        detailFactor
-    );
+  QString format = QString(request.parameters.value("format"));
+  int quality = request.parameters.value("quality").toInt();
 
-    QString format = QString(request.parameters.value("format"));
-    int quality = request.parameters.value("quality").toInt();
+  if(map.isValid())
+  {
+    // ===========================================================================
+    // Write pixmap as image
+    QByteArray bytes;
+    QBuffer buffer(&bytes);
+    buffer.open(QIODevice::WriteOnly);
 
-    if(map.isValid())
+    if(format == QLatin1String("jpg"))
     {
-      // ===========================================================================
-      // Write pixmap as image
-      QByteArray bytes;
-      QBuffer buffer(&bytes);
-      buffer.open(QIODevice::WriteOnly);
-
-      if(format == QLatin1String("jpg"))
-      {
-          response.headers.replace("Content-Type", "image/jpg");
-          map.pixmap.save(&buffer, "PNG", quality);
-      }
-      else if(format == QLatin1String("png"))
-      {
-          response.headers.replace("Content-Type", "image/png");
-          map.pixmap.save(&buffer, "PNG", quality);
-      }
-      else
-        // Should never happen
-        qWarning() << Q_FUNC_INFO << "invalid format";
-
-      // Add copyright/attributions to header
-      response.headers.insert("Image-Attributions",
-                              NavApp::getMapThemeHandler()->getTheme(mapPaintWidget->getCurrentThemeId()).getCopyright().toUtf8());
-
-      response.status = 200;
-      response.body = bytes;
+      response.headers.replace("Content-Type", "image/jpg");
+      map.pixmap.save(&buffer, "PNG", quality);
     }
-    return response;
+    else if(format == QLatin1String("png"))
+    {
+      response.headers.replace("Content-Type", "image/png");
+      map.pixmap.save(&buffer, "PNG", quality);
+    }
+    else
+      // Should never happen
+      qWarning() << Q_FUNC_INFO << "invalid format";
+
+    // Add copyright/attributions to header
+    response.headers.insert("Image-Attributions",
+                            NavApp::getMapThemeHandler()->getTheme(mapPaintWidget->getCurrentThemeId()).getCopyright().toUtf8());
+
+    response.status = 200;
+    response.body = bytes;
+  }
+  return response;
 
 }
 
-WebApiResponse MapActionsController::featuresAction(WebApiRequest request){
+WebApiResponse MapActionsController::featuresAction(WebApiRequest request)
+{
+  WebApiResponse response = getResponse();
 
-    WebApiResponse response = getResponse();
-
-    atools::geo::Rect rect(
-        request.parameters.value("leftlon").toFloat(),
-        request.parameters.value("toplat").toFloat(),
-        request.parameters.value("rightlon").toFloat(),
-        request.parameters.value("bottomlat").toFloat()
+  atools::geo::Rect rect(
+    request.parameters.value("leftlon").toFloat(),
+    request.parameters.value("toplat").toFloat(),
+    request.parameters.value("rightlon").toFloat(),
+    request.parameters.value("bottomlat").toFloat()
     );
 
-    bool overflow = false;
+  bool overflow = false;
 
-    // Init dummy image request
-    WebApiRequest *imageRequest = new WebApiRequest();
-    imageRequest->parameters = QMap<QByteArray,QByteArray>();
-    imageRequest->parameters.insert("leftlon",request.parameters.value("leftlon")),
-    imageRequest->parameters.insert("toplat",request.parameters.value("toplat")),
-    imageRequest->parameters.insert("rightlon",request.parameters.value("rightlon")),
-    imageRequest->parameters.insert("bottomlat",request.parameters.value("bottomlat")),
-    imageRequest->parameters.insert("detailfactor",request.parameters.value("detailfactor"));
-    imageRequest->parameters.insert("width","300");
-    imageRequest->parameters.insert("height","300");
-    imageRequest->parameters.insert("format","jpg");
-    imageRequest->parameters.insert("quality","1");
+  // Init dummy image request
+  WebApiRequest *imageRequest = new WebApiRequest();
+  imageRequest->parameters = QMap<QByteArray, QByteArray>();
+  imageRequest->parameters.insert("leftlon", request.parameters.value("leftlon"));
+  imageRequest->parameters.insert("toplat", request.parameters.value("toplat"));
+  imageRequest->parameters.insert("rightlon", request.parameters.value("rightlon"));
+  imageRequest->parameters.insert("bottomlat", request.parameters.value("bottomlat"));
+  imageRequest->parameters.insert("detailfactor", request.parameters.value("detailfactor"));
+  imageRequest->parameters.insert("width", "300");
+  imageRequest->parameters.insert("height", "300");
+  imageRequest->parameters.insert("format", "jpg");
+  imageRequest->parameters.insert("quality", "1");
 
-    // Perform dummy image request
-    imageAction(*imageRequest);
+  // Perform dummy image request
+  imageAction(*imageRequest);
 
-    // Extract results created during dummy image request
-    const QList<map::MapAirport> airports = *mapPaintWidget->getMapQuery()->getAirportsByRect(rect,mapPaintWidget->getMapPaintLayer()->getMapLayer(), false,map::NONE,overflow);
+  // Extract results created during dummy image request
+  QList<map::MapAirport> airports;
+  QList<map::MapNdb> ndbs;
+  QList<map::MapVor> vors;
+  QList<map::MapMarker> markers;
+  QList<map::MapWaypoint> waypoints;
 
-    const QList<map::MapNdb> ndbs = *mapPaintWidget->getMapQuery()->getNdbsByRect(rect,mapPaintWidget->getMapPaintLayer()->getMapLayer(), false,overflow);
-    const QList<map::MapVor> vors = *mapPaintWidget->getMapQuery()->getVorsByRect(rect,mapPaintWidget->getMapPaintLayer()->getMapLayer(), false,overflow);
-    const QList<map::MapMarker> markers = *mapPaintWidget->getMapQuery()->getMarkersByRect(rect,mapPaintWidget->getMapPaintLayer()->getMapLayer(), false,overflow);
-    const QList<map::MapWaypoint> waypoints = mapPaintWidget->getWaypointTrackQuery()->getWaypointsByRect(rect,mapPaintWidget->getMapPaintLayer()->getMapLayer(), false,overflow);
+  Queries *queries = mapPaintWidget->getQueries();
+  {
+    QueryLocker locker(queries);
+    airports = *queries->getMapQuery()->getAirportsByRect(rect, mapPaintWidget->getMapPaintLayer()->getMapLayer(),
+                                                          false, map::NONE, overflow);
+  }
 
-    MapFeaturesData data = {
-        airports,
-        ndbs,
-        vors,
-        markers,
-        waypoints
-    };
+  {
+    QueryLocker locker(queries);
+    ndbs = *queries->getMapQuery()->getNdbsByRect(rect, mapPaintWidget->getMapPaintLayer()->getMapLayer(), false, overflow);
+  }
 
-    response.body = infoBuilder->features(data);
+  {
+    QueryLocker locker(queries);
+    vors = *queries->getMapQuery()->getVorsByRect(rect, mapPaintWidget->getMapPaintLayer()->getMapLayer(), false, overflow);
+  }
 
-    return response;
+  {
+    QueryLocker locker(queries);
+    markers = *queries->getMapQuery()->getMarkersByRect(rect, mapPaintWidget->getMapPaintLayer()->getMapLayer(), false, overflow);
+  }
+
+  {
+    QueryLocker locker(queries);
+    waypoints = queries->getWaypointTrackQuery()->getWaypointsByRect(rect, mapPaintWidget->getMapPaintLayer()->getMapLayer(),
+                                                                     false, overflow);
+  }
+
+  MapFeaturesData data = {
+    airports,
+    ndbs,
+    vors,
+    markers,
+    waypoints
+  };
+
+  response.body = infoBuilder->features(data);
+
+  return response;
 
 }
 
-WebApiResponse MapActionsController::featureAction(WebApiRequest request){
+WebApiResponse MapActionsController::featureAction(WebApiRequest request)
+{
+  WebApiResponse response = getResponse();
 
-    WebApiResponse response = getResponse();
+  int object_id = request.parameters.value("object_id").toInt();
+  int type_id = request.parameters.value("type_id").toInt();
 
-    int object_id = request.parameters.value("object_id").toInt();
-    int type_id = request.parameters.value("type_id").toInt();
+  map::MapResult result;
 
-    map::MapResult result;
+  {
+    Queries *queries = mapPaintWidget->getQueries();
+    QueryLocker locker(queries);
+    switch(type_id)
+    {
+      case map::WAYPOINT:
+        result.waypoints.append(queries->getWaypointTrackQuery()->getWaypointById(object_id));
+        break;
 
-    switch (type_id) {
-        case map::WAYPOINT:
-            result.waypoints.append(mapPaintWidget->getWaypointTrackQuery()->getWaypointById(object_id));
-            break;
-        default:
-            mapPaintWidget->getMapQuery()->getMapObjectById(result,type_id,map::AIRSPACE_SRC_NONE,object_id,false);
-            break;
+      default:
+        queries->getMapQuery()->getMapObjectById(result, type_id, map::AIRSPACE_SRC_NONE, object_id, false);
+        break;
     }
+  }
 
-    MapFeaturesData data = {
-        result.airports,
-        result.ndbs,
-        result.vors,
-        result.markers,
-        result.waypoints
-    };
+  MapFeaturesData data = {
+    result.airports,
+    result.ndbs,
+    result.vors,
+    result.markers,
+    result.waypoints
+  };
 
-    response.body = infoBuilder->feature(data);
+  response.body = infoBuilder->feature(data);
 
-    return response;
-
+  return response;
 }
 
 MapActionsController::~MapActionsController()
@@ -192,10 +226,14 @@ void MapActionsController::init()
 {
   qDebug() << Q_FUNC_INFO;
 
-  deInit();
-
   // Create a map widget clone with the desired resolution
-  mapPaintWidget = new MapPaintWidget(parentWidget, false /* no real widget - hidden */);
+  if(mapPaintWidget == nullptr)
+    mapPaintWidget = new MapPaintWidget(dynamic_cast<QWidget *>(parent()), QueryManager::instance()->getQueriesWeb(),
+                                        false /* no real widget - hidden */, true /* web */);
+
+  // Copy all map settings except trail
+  mapPaintWidget->copySettings(*NavApp::getMapWidgetGui(), false /* deep */);
+
   // Ensure MapPaintLayer::mapLayer initialisation
   mapPaintWidget->getMapPaintLayer()->updateLayers();
 
@@ -205,10 +243,11 @@ void MapActionsController::init()
 
 void MapActionsController::deInit()
 {
-  qDebug() << Q_FUNC_INFO;
+  // Close queries to allow closing the databases
+  if(mapPaintWidget != nullptr)
+    mapPaintWidget->preDatabaseLoad();
 
-  delete mapPaintWidget;
-  mapPaintWidget = nullptr;
+  ATOOLS_DELETE_LOG(mapPaintWidget);
 }
 
 MapPixmap MapActionsController::getPixmap(int width, int height)
@@ -221,7 +260,7 @@ MapPixmap MapActionsController::getPixmap(int width, int height)
 }
 
 MapPixmap MapActionsController::getPixmapPosDistance(int width, int height, atools::geo::Pos pos, float distanceKm,
-                                                 const QString& mapCommand, const QString& errorCase)
+                                                     const QString& mapCommand, const QString& errorCase)
 {
   if(verbose)
     qDebug() << Q_FUNC_INFO << width << "x" << height << pos << "distanceKm" << distanceKm << "cmd" << mapCommand;
@@ -229,14 +268,12 @@ MapPixmap MapActionsController::getPixmapPosDistance(int width, int height, atoo
   if(!pos.isValid())
   {
     if(errorCase == QLatin1String(""))
-    {
       // Use current map position
-      pos.setLonX(static_cast<float>(mapPaintWidget->centerLongitude()));
-      pos.setLatY(static_cast<float>(mapPaintWidget->centerLatitude()));
-    }
+      pos = NavApp::getMapWidgetGui()->getCenterPos();
     else
     {
-      qWarning() << Q_FUNC_INFO << errorCase;
+      if(verbose)
+        qWarning() << Q_FUNC_INFO << errorCase;
       MapPixmap mappixmap;
       mappixmap.error = errorCase;
       return mappixmap;
@@ -245,13 +282,12 @@ MapPixmap MapActionsController::getPixmapPosDistance(int width, int height, atoo
 
   if(mapPaintWidget != nullptr)
   {
-    QMutexLocker locker(&mapPaintWidgetMutex);
+    // Lock whole widget
+    MapPaintWidgetLocker locker(mapPaintWidget);
+    QueryLocker queryLocker(mapPaintWidget->getQueries());
 
-    // Copy all map settings
-    mapPaintWidget->copySettings(*NavApp::getMapWidgetGui());
-
-    // Do not center world rectangle when resizing map widget
-    mapPaintWidget->setKeepWorldRect(false);
+    // Copy all map settings except trail
+    mapPaintWidget->copySettings(*NavApp::getMapWidgetGui(), false /* deep */);
 
     // Jump to position without zooming for sharp map
     mapPaintWidget->showPosNotAdjusted(pos, distanceKm);
@@ -273,7 +309,8 @@ MapPixmap MapActionsController::getPixmapPosDistance(int width, int height, atoo
         mapPaintWidget->zoomOut(Marble::Instant);
       else
       {
-        qWarning() << Q_FUNC_INFO << "Invalid map command" << mapCommand;
+        if(verbose)
+          qWarning() << Q_FUNC_INFO << "Invalid map command" << mapCommand;
         return MapPixmap();
       }
     }
@@ -296,18 +333,20 @@ MapPixmap MapActionsController::getPixmapPosDistance(int width, int height, atoo
 
     // Fill result object
     mappixmap.pixmap = mapPaintWidget->getPixmap(width, height);
-    mappixmap.pos = mapPaintWidget->getCurrentViewCenterPos();
+    mappixmap.pos = mapPaintWidget->getCenterPos();
 
     return mappixmap;
   }
   else
   {
-    qWarning() << Q_FUNC_INFO << "mapPaintWidget is null";
+    if(verbose)
+      qWarning() << Q_FUNC_INFO << "mapPaintWidget is null";
     return MapPixmap();
   }
 }
 
-MapPixmap MapActionsController::getPixmapRect(int width, int height, atools::geo::Rect rect, int detailFactor, const QString& errorCase)
+MapPixmap MapActionsController::getPixmapRect(int width, int height, atools::geo::Rect rect, int detailFactor, const QString& errorCase,
+                                              bool ignoreUiScale)
 {
   if(verbose)
     qDebug() << Q_FUNC_INFO << width << "x" << height << rect;
@@ -316,44 +355,50 @@ MapPixmap MapActionsController::getPixmapRect(int width, int height, atools::geo
   {
     if(mapPaintWidget != nullptr)
     {
-      QMutexLocker locker(&mapPaintWidgetMutex);
+      MapPaintWidgetLocker locker(mapPaintWidget);
+      QueryLocker queryLocker(mapPaintWidget->getQueries());
 
-      // Copy all map settings
-      mapPaintWidget->copySettings(*NavApp::getMapWidgetGui());
-
-      // Do not center world rectangle when resizing
-      mapPaintWidget->setKeepWorldRect(false);
-
-      mapPaintWidget->showRectStreamlined(rect, false);
+      // Copy all map settings except trail
+      mapPaintWidget->copySettings(*NavApp::getMapWidgetGui(), false /* deep */);
 
       // Disable dynamic/live features
       mapPaintWidget->setShowMapObject(map::AIRCRAFT_ALL, false);
       mapPaintWidget->setShowMapObject(map::AIRCRAFT_TRAIL, false);
 
-      // Set detail factor
-      mapPaintWidget->getMapPaintLayer()->setDetailLevel(detailFactor);
+      mapPaintWidget->setShowMapObjectDisplay(map::COMPASS_ROSE, false);
+      mapPaintWidget->setShowMapObjectDisplay(map::AIRCRAFT_ENDURANCE, false);
+      mapPaintWidget->setShowMapObjectDisplay(map::AIRCRAFT_SELECTED_ALT_RANGE, false);
+      mapPaintWidget->setShowMapObjectDisplay(map::AIRCRAFT_TURN_PATH, false);
 
-      // Disable copyright note
+      // Set detail factor
+      mapPaintWidget->getMapPaintLayer()->setDetailLevel(detailFactor, detailFactor);
+
+      mapPaintWidget->showRectStreamlined(rect, false);
+
+      // Disable copyright note and wind
       mapPaintWidget->setPaintCopyright(false);
+      mapPaintWidget->setPaintWindHeader(false);
 
       MapPixmap mapPixmap;
 
       // No distance requested. Therefore requested is equal to actual
       mapPixmap.correctedDistanceKm = mapPixmap.requestedDistanceKm = static_cast<float>(mapPaintWidget->distance());
-      mapPixmap.pixmap = mapPaintWidget->getPixmap(width, height);
-      mapPixmap.pos = mapPaintWidget->getCurrentViewCenterPos();
+      mapPixmap.pixmap = mapPaintWidget->getPixmap(width, height, ignoreUiScale);
+      mapPixmap.pos = mapPaintWidget->getCenterPos();
 
       return mapPixmap;
     }
     else
     {
-      qWarning() << Q_FUNC_INFO << "mapPaintWidget is null";
+      if(verbose)
+        qWarning() << Q_FUNC_INFO << "mapPaintWidget is null";
       return MapPixmap();
     }
   }
   else
   {
-    qWarning() << Q_FUNC_INFO << errorCase;
+    if(verbose)
+      qWarning() << Q_FUNC_INFO << errorCase;
     MapPixmap mapPixmap;
     mapPixmap.error = errorCase;
     return mapPixmap;

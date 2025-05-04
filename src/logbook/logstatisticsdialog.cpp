@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2023 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2024 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -19,6 +19,7 @@
 #include "gui/tools.h"
 #include "ui_logstatisticsdialog.h"
 
+#include "app/navapp.h"
 #include "common/constants.h"
 #include "common/formatter.h"
 #include "common/unit.h"
@@ -27,8 +28,8 @@
 #include "gui/helphandler.h"
 #include "gui/itemviewzoomhandler.h"
 #include "gui/widgetstate.h"
+#include "gui/widgetutil.h"
 #include "logdatacontroller.h"
-#include "app/navapp.h"
 #include "sql/sqldatabase.h"
 #include "util/htmlbuilder.h"
 
@@ -196,6 +197,8 @@ LogStatisticsDialog::LogStatisticsDialog(QWidget *parent, LogdataController *log
   initQueries();
 
   ui->setupUi(this);
+  defaultSize = size();
+
   atools::gui::adjustSelectionColors(ui->tableViewLogStatsGrouped);
 
   // Copy main menu actions to allow using shortcuts in the non-modal dialog too
@@ -331,15 +334,27 @@ void LogStatisticsDialog::setModel()
   groupChanged(ui->comboBoxLogStatsGrouped->currentIndex());
 }
 
-void LogStatisticsDialog::saveState()
+void LogStatisticsDialog::saveState() const
 {
-  atools::gui::WidgetState(lnm::LOGDATA_STATS_DIALOG).save({this, ui->tabWidget, ui->comboBoxLogStatsGrouped});
+  atools::gui::WidgetState state(lnm::LOGDATA_STATS_DIALOG);
+  state.setDialogOptions(true /* position */, true /* size */);
+  state.save({this, ui->tabWidget, ui->comboBoxLogStatsGrouped});
 }
 
 void LogStatisticsDialog::restoreState()
 {
-  atools::gui::WidgetState(lnm::LOGDATA_STATS_DIALOG, true, true).
-  restore({this, ui->tabWidget, ui->comboBoxLogStatsGrouped});
+  atools::gui::WidgetState state(lnm::LOGDATA_STATS_DIALOG, true, true);
+  state.setDialogOptions(true /* position */, true /* size */);
+  state.restore({this, ui->tabWidget, ui->comboBoxLogStatsGrouped});
+}
+
+void LogStatisticsDialog::resetWindowLayout()
+{
+  atools::gui::WidgetState state(lnm::LOGDATA_STATS_DIALOG);
+  state.clear(this);
+  state.syncSettings();
+
+  atools::gui::util::centerWidgetOnScreen(this, defaultSize);
 }
 
 void LogStatisticsDialog::groupChanged(int index)
@@ -519,7 +534,7 @@ void LogStatisticsDialog::initQueries()
 
     Query(tr("Aircraft usage"),
           {tr("Number of\nflights"), tr("Simulator"), tr("Total flight\nplan distance %dist%"),
-           tr("Total simulator time\nhours"), tr("Total realtime\nhours"), tr("Model"), tr("Type"), tr(
+           tr("Total simulator time\nhours"), tr("Total real time\nhours"), tr("Model"), tr("Type"), tr(
              "Registration")},
           {RIGHT, LEFT, RIGHT, RIGHT, RIGHT, LEFT, LEFT, LEFT},
           {"cnt", "simulator", "dist", "time", "simtime", "aircraft_name", "aircraft_type", "aircraft_registration"}, 0, Qt::DescendingOrder,
@@ -530,7 +545,7 @@ void LogStatisticsDialog::initQueries()
           "from logbook group by simulator, aircraft_name, aircraft_type, aircraft_registration"),
 
     Query(tr("Aircraft usage by type"),
-          {tr("Number of\nflights"), tr("Simulator"), tr("Total flight\nplan distance %dist%"), tr("Total realtime\nhours"),
+          {tr("Number of\nflights"), tr("Simulator"), tr("Total flight\nplan distance %dist%"), tr("Total real time\nhours"),
            tr("Total simulator time\nhours"), tr("Type")},
           {RIGHT, LEFT, RIGHT, RIGHT, RIGHT, LEFT},
           {"cnt", "simulator", "dist", "time", "simtime", "aircraft_type"}, 0, Qt::DescendingOrder,
@@ -540,7 +555,7 @@ void LogStatisticsDialog::initQueries()
           "aircraft_type from logbook group by simulator, aircraft_type"),
 
     Query(tr("Aircraft usage by registration"),
-          {tr("Number of\nflights"), tr("Simulator"), tr("Total flight\nplan distance %dist%"), tr("Total realtime\nhours"),
+          {tr("Number of\nflights"), tr("Simulator"), tr("Total flight\nplan distance %dist%"), tr("Total real time\nhours"),
            tr("Total simulator time\nhours"), tr("Type")},
           {RIGHT, LEFT, RIGHT, RIGHT, RIGHT, LEFT},
           {"cnt", "simulator", "dist", "time", "simtime", "aircraft_registration"}, 0, Qt::DescendingOrder,
@@ -568,16 +583,14 @@ void LogStatisticsDialog::initQueries()
 
 void LogStatisticsDialog::showEvent(QShowEvent *)
 {
-  if(!position.isNull())
-    move(position);
-
   setModel();
   updateWidgets();
+  restoreState();
 }
 
 void LogStatisticsDialog::hideEvent(QHideEvent *)
 {
-  position = geometry().topLeft();
+  saveState();
 
   // Disconnect from database if not shown
   clearModel();

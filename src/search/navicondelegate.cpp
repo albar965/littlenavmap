@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2023 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2024 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -22,6 +22,7 @@
 #include "common/symbolpainter.h"
 #include "sql/sqlrecord.h"
 #include "common/maptypes.h"
+#include "app/navapp.h"
 
 #include <QPainter>
 
@@ -66,7 +67,7 @@ void NavIconDelegate::paint(QPainter *painter, const QStyleOptionViewItem& optio
   QString navtype = sqlModel->getSqlRecord(idx.row()).valueStr("nav_type");
   map::MapTypes type = map::navTypeToMapType(navtype);
 
-  float symbolSize = option.rect.height() - 4.f;
+  float symbolSize = option.rect.height() - 6.f;
   float x = option.rect.x() + symbolSize;
   float y = option.rect.y() + symbolSize / 2.f + 2.f;
 
@@ -74,7 +75,7 @@ void NavIconDelegate::paint(QPainter *painter, const QStyleOptionViewItem& optio
     // An empty waypoint is enough to draw the symbol
     symbolPainter->drawWaypointSymbol(painter, QColor(), x, y, symbolSize * 0.7f, false);
   else if(type == map::NDB)
-    symbolPainter->drawNdbSymbol(painter, x, y, symbolSize, false, false);
+    symbolPainter->drawNdbSymbol(painter, x, y, symbolSize, false, false, NavApp::isGuiStyleDark());
   else if(type == map::VOR)
   {
     map::MapVor vor;
@@ -82,6 +83,7 @@ void NavIconDelegate::paint(QPainter *painter, const QStyleOptionViewItem& optio
     vor.hasDme = navtype == "VD" || navtype == "D";
     vor.tacan = map::navTypeTacan(navtype);
     vor.vortac = map::navTypeVortac(navtype);
-    symbolPainter->drawVorSymbol(painter, vor, x, y, symbolSize * 0.9f, 0.f, false /* routeFill */, false /* fast */);
+    symbolPainter->drawVorSymbol(painter, vor, x, y, symbolSize * 0.9f, 0.f,
+                                 false /* routeFill */, false /* fast */, NavApp::isGuiStyleDark());
   }
 }

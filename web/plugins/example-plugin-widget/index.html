@@ -1,0 +1,53 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <title>unused</title>
+    <style>
+      html, body, #display {
+        height: 100%;
+      }
+      body {
+        margin: 0;
+        font: sans-serif;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="display">
+      :) :)
+    </div>
+    <script>
+      onmessage = event => {
+        let message = event.data.pluginParent;
+        if(message) {
+          switch(message.cause) {
+            case "callback":
+              return handleEvents(message.cargo);
+            case "cleanup":
+              return stop();
+            default:
+          }
+        }
+      };
+      
+      function stop() {
+        alert("stopped");
+      }
+      
+      function handleEvents(cargo) {
+        switch (cargo.id) {
+          case "check1":
+            switch (cargo.event) {
+              case "click":
+                alert("\"" + cargo.value + "\"");
+                break;
+              default:
+            }
+            break;
+          default:
+        }
+      }
+    </script>
+  </body>
+</html>

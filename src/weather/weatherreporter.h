@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2023 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2024 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -19,10 +19,14 @@
 #define LITTLENAVMAP_WEATHERREPORTER_H
 
 #include "fs/fspaths.h"
+#include "fs/weather/metar.h"
 
 #include <QHash>
 #include <QObject>
 
+class AirportQuery;
+
+class Queries;
 namespace map {
 struct MapAirport;
 }
@@ -38,10 +42,7 @@ class Pos;
 }
 namespace fs {
 namespace weather {
-struct MetarResult;
-
 class Metar;
-
 class WeatherNetSingle;
 class WeatherNetDownload;
 class XpWeatherReader;
@@ -79,36 +80,36 @@ public:
   /*
    * @return Active Sky metar or empty if Active Sky was not found or the airport has no weather report
    */
-  QString getActiveSkyMetar(const QString& airportIcao);
+  const atools::fs::weather::Metar& getActiveSkyMetar(const QString& station, const atools::geo::Pos&);
 
   /*
    * @return X-Plane metar or empty if file not found or X-Plane base directory not found. Gives the nearest
    * weather if station has no weather report.
    */
-  atools::fs::weather::MetarResult getXplaneMetar(const QString& station, const atools::geo::Pos& pos);
+  const atools::fs::weather::Metar& getXplaneMetar(const QString& station, const atools::geo::Pos& pos);
 
   /*
    * @return NOAA metar from cache or empty if not entry was found in the cache. Once the request was
    * completed the signal weatherUpdated is emitted and calling this method again will return the metar.
    */
-  atools::fs::weather::MetarResult getNoaaMetar(const QString& airportIcao, const atools::geo::Pos& pos);
+  const atools::fs::weather::Metar& getNoaaMetar(const QString& airportIcao, const atools::geo::Pos& pos);
 
   /*
    * @return VATSIM metar from cache or empty if not entry was found in the cache. Once the request was
    * completed the signal weatherUpdated is emitted and calling this method again will return the metar.
    */
-  atools::fs::weather::MetarResult getVatsimMetar(const QString& airportIcao, const atools::geo::Pos& pos);
+  const atools::fs::weather::Metar& getVatsimMetar(const QString& airportIcao, const atools::geo::Pos& pos);
 
   /*
    * @return IVAO metar from downloaded file or empty if airport has not report.
    */
-  atools::fs::weather::MetarResult getIvaoMetar(const QString& airportIcao, const atools::geo::Pos& pos);
+  const atools::fs::weather::Metar& getIvaoMetar(const QString& airportIcao, const atools::geo::Pos& pos);
 
   /* For display. Source depends on settings and parsed objects are cached. */
-  atools::fs::weather::Metar getAirportWeather(const map::MapAirport& airport, bool stationOnly);
+  const atools::fs::weather::Metar& getAirportWeather(const map::MapAirport& airport, bool stationOnly);
 
-  /* Get wind at airport. No nearest values for stationOnly=true. */
-  void getAirportWind(int& windDirectionDeg, float& windSpeedKts, const map::MapAirport& airport, bool stationOnly);
+  /* Get wind at airport using METAR from current map weather symbol selection. No nearest values for stationOnly=true. */
+  void getAirportMetarWind(float& windDirectionDeg, float& windSpeedKts, const map::MapAirport& airport, bool stationOnly);
 
   /* Gives preferred runways with title text like "Prefers runway:". Runways might be grouped. */
   void getBestRunwaysTextShort(QString& title, QString& runwayNumbers, QString& sourceText, const map::MapAirport& airport);
@@ -144,7 +145,8 @@ public:
     ASP4, /* Active Sky for Prepar3D v4 */
     ASP5, /* Active Sky for Prepar3D v5 */
     ASXPL11, /* Active Sky for X-Plane 11 */
-    ASXPL12 /* Active Sky for X-Plane 12 */
+    ASXPL12, /* Active Sky for X-Plane 12 */
+    ASFS /* Active Sky for MSFS */
   };
 
   /* Get type of active sky weather snapshot that was found */
@@ -224,7 +226,7 @@ private:
   /* Show warning dialog in main loop to avoid issues when being called from draw handler */
   void showXplaneWarningDialog(const QString& message);
 
-  atools::geo::Pos fetchAirportCoordinates(const QString& metarAirportIdent);
+  atools::geo::Pos fetchAirportCoordinates(const QString& airportIdent, AirportQuery *airportQuery, bool xplane);
 
   /* Update IVAO and NOAA timeout periods - timeout is disable if weather services are not used */
   void updateTimeouts();
@@ -233,9 +235,9 @@ private:
   atools::fs::weather::WeatherNetDownload *vatsimWeather = nullptr;
   atools::fs::weather::WeatherNetDownload *ivaoWeather = nullptr;
 
-  QHash<QString, QString> activeSkyMetars;
-  QString activeSkyDepartureMetar, activeSkyDestinationMetar,
-          activeSkyDepartureIdent, activeSkyDestinationIdent;
+  QHash<QString, atools::fs::weather::Metar> activeSkyMetars;
+  atools::fs::weather::Metar activeSkyDepartureMetar, activeSkyDestinationMetar;
+  QString activeSkyDepartureIdent, activeSkyDestinationIdent;
 
   QString activeSkySnapshotPath;
   atools::util::FileSystemWatcher *fsWatcherAsPath = nullptr;
@@ -261,6 +263,8 @@ private:
   int onlineWeatherTimeoutSecs = 600;
 
   bool errorReported = false;
+
+  const Queries *queries;
 
   bool verbose = false;
 };

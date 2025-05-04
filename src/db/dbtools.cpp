@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2022 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2024 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -38,67 +38,59 @@ void openDatabaseFileExt(atools::sql::SqlDatabase *db, const QString& file, bool
   bool foreignKeys = settings.getAndStoreValue(lnm::SETTINGS_DATABASE + "ForeignKeys", false).toBool();
 
   // cache_size * 1024 bytes if value is negative
-  QStringList databasePragmas({QString("PRAGMA cache_size=-%1").arg(databaseCacheKb), "PRAGMA page_size=8196"});
+  QStringList pragmas({QString("PRAGMA cache_size=-%1").arg(databaseCacheKb), "PRAGMA page_size=8196"});
 
   if(exclusive)
   {
-    // Best settings for loading databases accessed write only - unsafe
-    databasePragmas.append("PRAGMA locking_mode=EXCLUSIVE");
-    databasePragmas.append("PRAGMA journal_mode=TRUNCATE");
-    databasePragmas.append("PRAGMA synchronous=OFF");
+    // Best settings for loading databases accessed write only - unsafe - for compilation databases
+    pragmas.append("PRAGMA locking_mode=EXCLUSIVE");
+    pragmas.append("PRAGMA journal_mode=TRUNCATE");
+    pragmas.append("PRAGMA synchronous=OFF");
   }
   else
   {
     // Best settings for online and user databases which are updated often - read/write
-    databasePragmas.append("PRAGMA locking_mode=NORMAL");
-    databasePragmas.append("PRAGMA journal_mode=DELETE");
-    databasePragmas.append("PRAGMA synchronous=NORMAL");
+    pragmas.append("PRAGMA locking_mode=NORMAL");
+    pragmas.append("PRAGMA journal_mode=DELETE");
+    pragmas.append("PRAGMA synchronous=NORMAL");
   }
 
   if(!readonly)
-    databasePragmas.append("PRAGMA busy_timeout=2000");
+    pragmas.append("PRAGMA busy_timeout=2000");
 
-  qDebug() << Q_FUNC_INFO << "Opening database" << file;
+  qDebug() << Q_FUNC_INFO << "Opening database file" << file
+           << "readonly" << readonly << "createSchema" << createSchema << "exclusive" << exclusive
+           << "autoTransactions" << autoTransactions;
+  qDebug() << Q_FUNC_INFO << "Pragmas" << pragmas;
+
   db->setDatabaseName(file);
 
   // Set foreign keys only on demand because they can decrease loading performance
   if(foreignKeys)
-    databasePragmas.append("PRAGMA foreign_keys = ON");
+    pragmas.append("PRAGMA foreign_keys = ON");
   else
-    databasePragmas.append("PRAGMA foreign_keys = OFF");
+    pragmas.append("PRAGMA foreign_keys = OFF");
 
+  // Open initially read/write
   bool autocommit = db->isAutocommit();
   db->setAutocommit(false);
   db->setAutomaticTransactions(autoTransactions);
-  db->open(databasePragmas);
+  db->open(pragmas, false /* readonly */);
 
   db->setAutocommit(autocommit);
 
-  if(createSchema)
-  {
-    if(!hasSchema(db))
-    {
-      if(db->isReadonly())
-      {
-        // Reopen database read/write
-        db->close();
-        db->setReadonly(false);
-        db->open(databasePragmas);
-      }
-
-      createEmptySchema(db);
-    }
-  }
+  if(createSchema && !hasSchema(db))
+    // Create database schema if requested
+    createEmptySchema(db);
 
   if(readonly && !db->isReadonly())
   {
-    // Readonly requested - reopen database
+    // Readonly requested - reopen database ro
     db->close();
-    db->setReadonly();
-    db->open(databasePragmas);
+    db->open(pragmas, true /* readonly */);
   }
 
-  atools::fs::db::DatabaseMeta(db).logInfo();
+  qInfo() << Q_FUNC_INFO << atools::fs::db::DatabaseMeta(db);
 }
 
 void openDatabaseFile(atools::sql::SqlDatabase *db, const QString& file, bool readonly, bool createSchema)

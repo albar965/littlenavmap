@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2023 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2024 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -62,87 +62,99 @@ Q_DECL_CONSTEXPR static int MAX_MAP_OBJECTS = 12000;
  * Partially used to determine what should be drawn.
  * These types are used in map::MapBase::objType.
  * Can be serialized to QVariant.
- * This state is not saved but filled by the saved state of the various actions. */
+ * This state is not saved but filled by the saved state of the various actions at runtime. */
 /* *INDENT-OFF* */
-enum MapType : unsigned long long
+enum MapType : quint64
 {
   NONE =             0,
-  AIRPORT =          1 << 0, /* Master switch for airport display */
-  RUNWAY =           1 << 1, /* Stores runways for queries */
+  AIRPORT =          1ULL << 0, /* Master switch for airport display */
+  RUNWAY =           1ULL << 1, /* Stores runways for queries */
   // 1 << 2, UNUSED
   // 1 << 3,
   // 1 << 4,
-  VOR =              1 << 5, /* Also: DME, VORDME, VORTAC and TACAN */
-  NDB =              1 << 6,
-  ILS =              1 << 7, /* Type also covers GLS approaches */
-  MARKER =           1 << 8,
-  WAYPOINT =         1 << 9,
-  AIRWAY =           1 << 10,
-  AIRWAYV =          1 << 11,
-  AIRWAYJ =          1 << 12,
-  USER_FEATURE =     1 << 13,
-  AIRCRAFT =         1 << 14, /* Simulator user aircraft */
-  AIRCRAFT_AI =      1 << 15, /* AI or multiplayer simulator aircraft */
-  AIRCRAFT_AI_SHIP = 1 << 16, /* AI or multiplayer simulator ship */
-  AIRPORT_MSA =      1 << 17, /* Minimum safe altitude for airports and navaids - small icon */
-  USERPOINTROUTE =   1 << 18, /* Flight plan user waypoint */
-  PARKING =          1 << 19,
-  RUNWAYEND =        1 << 20,
-  INVALID =          1 << 21, /* Flight plan waypoint not found in database */
-  MISSED_APPROACH =  1 << 22, /* Only procedure type that can be hidden */
-  PROCEDURE =        1 << 23, /* General procedure leg */
-  AIRSPACE =         1 << 24, /* General airspace boundary, online or offline */
-  HELIPAD =          1 << 25, /* Helipads on airports */
-  HOLDING =          1 << 26, /* Enroute holds and user holds. User holds are enabled by MapMarkType below */
-  USERPOINT =        1 << 27, /* A user defined waypoint - not used to define if should be drawn or not */
-  TRACK =            1 << 28, /* NAT, PACOTS or AUSOTS track */
-  AIRCRAFT_ONLINE =  1 << 29, /* Online network client/aircraft */
-  LOGBOOK =          1 << 30, /* Logbook entry */
+  VOR =              1ULL << 5, /* Also: DME, VORDME, VORTAC and TACAN */
+  NDB =              1ULL << 6,
+  ILS =              1ULL << 7, /* Type also covers GLS approaches */
+  MARKER =           1ULL << 8,
+  WAYPOINT =         1ULL << 9,
+  AIRWAY =           1ULL << 10,
+  AIRWAYV =          1ULL << 11,
+  AIRWAYJ =          1ULL << 12,
+  USER_FEATURE =     1ULL << 13,
+  AIRCRAFT =         1ULL << 14, /* Simulator user aircraft */
+  AIRCRAFT_AI =      1ULL << 15, /* AI or multiplayer simulator aircraft */
+  AIRCRAFT_AI_SHIP = 1ULL << 16, /* AI or multiplayer simulator ship */
+  AIRPORT_MSA =      1ULL << 17, /* Minimum safe altitude for airports and navaids - small icon */
+  USERPOINTROUTE =   1ULL << 18, /* Flight plan user waypoint */
+  PARKING =          1ULL << 19,
+  START =            1ULL << 50,
+  RUNWAYEND =        1ULL << 20,
+  INVALID =          1ULL << 21, /* Flight plan waypoint not found in database */
+  MISSED_APPROACH =  1ULL << 22, /* Only procedure type that can be hidden */
+  PROCEDURE =        1ULL << 23, /* General procedure leg */
+  AIRSPACE =         1ULL << 24, /* General airspace boundary, online or offline */
+  HELIPAD =          1ULL << 25, /* Helipads on airports */
+  HOLDING =          1ULL << 26, /* Enroute holds and user holds. User holds are enabled by MapMarkType below */
+  USERPOINT =        1ULL << 27, /* A user defined waypoint - not used to define if should be drawn or not */
+  TRACK =            1ULL << 28, /* NAT or PACOTS track */
+  AIRCRAFT_ONLINE =  1ULL << 29, /* Online network client/aircraft */
+  LOGBOOK =          1ULL << 30, /* Logbook entry */
 
   /* Need to use constant expressions for long values above 32 bit */
 
   /* Mark state is saved in the MapMarkHandler ================================ */
-  MARK_RANGE =           0x0000'0000'8000'0000, /* 1 << 31 All range rings */
-  MARK_DISTANCE =        0x0000'0001'0000'0000, /* All measurement lines */
-  MARK_HOLDING =         0x0000'0002'0000'0000, /* Holdings */
-  MARK_PATTERNS =        0x0000'0004'0000'0000, /* Traffic patterns */
-  MARK_MSA =             0x0000'0008'0000'0000, /* Airport MSA placed/highlighted by user */
+  MARK_RANGE =           1ULL << 31, /* 1 << 31 All range rings */
+  MARK_DISTANCE =        1ULL << 32, /* All measurement lines */
+  MARK_HOLDING =         1ULL << 33, /* Holdings */
+  MARK_PATTERNS =        1ULL << 34, /* Traffic patterns */
+  MARK_MSA =             1ULL << 35, /* Airport MSA placed/highlighted by user */
 
   /* All marks */
   MARK_ALL = MARK_RANGE | MARK_DISTANCE | MARK_HOLDING | MARK_PATTERNS | MARK_MSA,
 
   /* Airport display flags ================================  */
-  AIRPORT_HARD =         0x0000'0010'0000'0000, /* Display flag for airports having at least one hard runway */
-  AIRPORT_SOFT =         0x0000'0020'0000'0000, /* Display flag for airports having only soft runways */
-  AIRPORT_WATER =        0x0000'0040'0000'0000, /* Display flag for water only airports */
-  AIRPORT_HELIPAD =      0x0000'0080'0000'0000, /* Display flag for helipad only airports */
-  AIRPORT_EMPTY =        0x0000'0100'0000'0000, /* Filter flag for empty airports */
-  AIRPORT_ADDON =        0x0000'0200'0000'0000, /* Force addon airport display at all times */
-  AIRPORT_UNLIGHTED =    0x0000'0400'0000'0000, /* Filter flag. Show airports having no lighting */
-  AIRPORT_NO_PROCS =     0x0000'0800'0000'0000, /* Filter flag. Show airports without approach procedure */
-  AIRPORT_CLOSED =       0x0000'1000'0000'0000, /* Filter flag. Show closed airports */
-  AIRPORT_MILITARY =     0x0000'4000'0000'0000, /* Filter flag. Show military airports */
+  AIRPORT_HARD =         1ULL << 36, /* Display flag for airports having at least one hard runway */
+  AIRPORT_SOFT =         1ULL << 37, /* Display flag for airports having only soft runways */
+  AIRPORT_WATER =        1ULL << 38, /* Display flag for water only airports */
+  AIRPORT_HELIPAD =      1ULL << 39, /* Display flag for helipad only airports */
+  AIRPORT_EMPTY =        1ULL << 40, /* Filter flag for empty airports */
+  // 1ULL << 41 / 0x0000'0200'0000'0000 FREE
+  AIRPORT_UNLIGHTED =    1ULL << 42, /* Filter flag. Show airports having no lighting */
+  AIRPORT_NO_PROCS =     1ULL << 43, /* Filter flag. Show airports without approach procedure */
+  AIRPORT_CLOSED =       1ULL << 44, /* Filter flag. Show closed airports */
+  AIRPORT_MILITARY =     1ULL << 46, /* Filter flag. Show military airports */
 
   /* Procedure flags ================================  */
-  PROCEDURE_POINT =      0x0000'2000'0000'0000, /* Type flag for map base and context menu */
+  PROCEDURE_POINT =      1ULL << 45, /* Type flag for map base and context menu */
 
-  AIRCRAFT_TRAIL = 0x0000'8000'0000'0000, /* Simulator aircraft track.  */
+  AIRCRAFT_TRAIL =       1ULL << 47, /* Simulator aircraft track.  */
 
-  // NEXT = 0x0001'0000'0000'0000
+  /* Add-on airport flags ================================  */
+  AIRPORT_ADDON_ZOOM =        1ULL << 48, /* Add-on airports override zoom distance but but not filter */
+  AIRPORT_ADDON_ZOOM_FILTER = 1ULL << 49, /* Add-on airports override zoom distance and filters */
+
+
+  // NEXT = 0x0001'0000'0000'0000 / 1ULL << 51 after START
 
   /* =============================================================================================== */
   /* Pure visibiliy flags. Nothing is shown if not at least one of these is set */
   AIRPORT_ALL_VISIBLE = AIRPORT_HARD | AIRPORT_SOFT | AIRPORT_WATER | AIRPORT_HELIPAD,
 
+  /* Any add-on override */
+  AIRPORT_ADDON_ANY = AIRPORT_ADDON_ZOOM | AIRPORT_ADDON_ZOOM_FILTER,
+
   /* All available filters in drop down button */
   AIRPORT_FILTER_ALL = AIRPORT_ALL_VISIBLE | AIRPORT_EMPTY | AIRPORT_UNLIGHTED | AIRPORT_NO_PROCS |
-                       AIRPORT_CLOSED | AIRPORT_MILITARY | AIRPORT_ADDON,
+                       AIRPORT_CLOSED | AIRPORT_MILITARY | AIRPORT_ADDON_ANY,
 
   /* Visible and filter flags */
   AIRPORT_ALL = AIRPORT_ALL_VISIBLE | AIRPORT | AIRPORT_EMPTY | AIRPORT_UNLIGHTED | AIRPORT_NO_PROCS | AIRPORT_CLOSED | AIRPORT_MILITARY,
 
-  /* Also default value on first start */
-  AIRPORT_ALL_AND_ADDON = AIRPORT_ALL | AIRPORT_ADDON,
+/* Used to mask airport values */
+  AIRPORT_ALL_MASK = AIRPORT_ALL | AIRPORT_ADDON_ANY,
+
+  /* Default value on first start */
+  AIRPORT_DEFAULT = AIRPORT_ALL | AIRPORT_ADDON_ZOOM_FILTER,
 
   /* All online, AI and multiplayer aircraft ========================================= */
   AIRCRAFT_ALL = AIRCRAFT | AIRCRAFT_AI | AIRCRAFT_AI_SHIP | AIRCRAFT_ONLINE,
@@ -159,18 +171,19 @@ enum MapType : unsigned long long
   /* All objects that have a magvar assigned */
   NAV_MAGVAR = AIRPORT | VOR | NDB | WAYPOINT,
 
-  ALL = 0xffff'ffff'ffff'ffff
+  ALL = 0xffffffffffffffff
 };
 /* *INDENT-ON* */
 
-ATOOLS_DECLARE_FLAGS(MapTypes, MapType);
-ATOOLS_DECLARE_OPERATORS_FOR_FLAGS(map::MapTypes);
+ATOOLS_DECLARE_FLAGS_64(MapTypes, MapType)
+ATOOLS_DECLARE_OPERATORS_FOR_FLAGS(map::MapTypes)
 
+QDebug operator<<(QDebug out, const map::MapType& type);
 QDebug operator<<(QDebug out, const map::MapTypes& type);
 
 /* Type that is used only for flags to determine what should be drawn.
  * Rarely used in other contexts and not as types in map::MapBase. */
-enum MapDisplayType
+enum MapDisplayType : quint32
 {
   DISPLAY_TYPE_NONE = 0,
   AIRPORT_WEATHER = 1 << 0, /* Airport weather icons */
@@ -196,17 +209,18 @@ enum MapDisplayType
 
   AIRCRAFT_SELECTED_ALT_RANGE = 1 << 19, /* Altitude range for selected autopilot altitude ("green banana"). */
   AIRCRAFT_TURN_PATH = 1 << 20, /* Turn path at aircraft */
+  DIRECT_TO_DEPARTURE = 1 << 22, /* Course line direct to departure runway */
 
   LOGBOOK_ALL = LOGBOOK_DIRECT | LOGBOOK_ROUTE | LOGBOOK_TRACK
 };
 
-Q_DECLARE_FLAGS(MapDisplayTypes, MapDisplayType);
-Q_DECLARE_OPERATORS_FOR_FLAGS(map::MapDisplayTypes);
+ATOOLS_DECLARE_FLAGS_32(MapDisplayTypes, map::MapDisplayType)
+ATOOLS_DECLARE_OPERATORS_FOR_FLAGS(map::MapDisplayTypes)
 
 QDebug operator<<(QDebug out, const map::MapDisplayTypes& type);
 
 /* Query type for all getNearest and other functions. Covers all what is not included in MapObjectTypes */
-enum MapObjectQueryType
+enum MapObjectQueryType : quint32
 {
   QUERY_NONE = 0,
   QUERY_PROC_POINTS = 1 << 0, /* Procedure points */
@@ -228,24 +242,24 @@ enum MapObjectQueryType
   QUERY_MARK = QUERY_MARK_DISTANCE | QUERY_MARK_HOLDINGS | QUERY_MARK_PATTERNS | QUERY_MARK_RANGE | QUERY_MARK_MSA,
 };
 
-Q_DECLARE_FLAGS(MapObjectQueryTypes, MapObjectQueryType);
-Q_DECLARE_OPERATORS_FOR_FLAGS(map::MapObjectQueryTypes);
+ATOOLS_DECLARE_FLAGS_32(MapObjectQueryTypes, map::MapObjectQueryType)
+ATOOLS_DECLARE_OPERATORS_FOR_FLAGS(map::MapObjectQueryTypes)
 
 /* ================================================================================== */
 /* Ident queries for airport defines which ident columns should be used in the lookup */
-enum DistanceMarkerFlag
+enum DistanceMarkerFlag : quint32
 {
   DIST_MARK_NONE = 0,
   DIST_MARK_RADIAL = 1 << 0, /* Draw radial */
   DIST_MARK_MAGVAR = 1 << 1 /* Has calibrated declination */
 };
 
-Q_DECLARE_FLAGS(DistanceMarkerFlags, DistanceMarkerFlag);
-Q_DECLARE_OPERATORS_FOR_FLAGS(map::DistanceMarkerFlags);
+ATOOLS_DECLARE_FLAGS_32(DistanceMarkerFlags, map::DistanceMarkerFlag)
+ATOOLS_DECLARE_OPERATORS_FOR_FLAGS(map::DistanceMarkerFlags)
 
 /* ================================================================================== */
 /* Ident queries for airport defines which ident columns should be used in the lookup */
-enum AirportQueryFlag
+enum AirportQueryFlag : quint32
 {
   AP_QUERY_NONE = 0,
   AP_QUERY_IDENT = 1 << 0,
@@ -260,49 +274,51 @@ enum AirportQueryFlag
   AP_QUERY_OFFICIAL = AP_QUERY_ICAO | AP_QUERY_IATA | AP_QUERY_FAA | AP_QUERY_LOCAL
 };
 
-Q_DECLARE_FLAGS(AirportQueryFlags, AirportQueryFlag);
-Q_DECLARE_OPERATORS_FOR_FLAGS(map::AirportQueryFlags);
+ATOOLS_DECLARE_FLAGS_32(AirportQueryFlags, map::AirportQueryFlag)
+ATOOLS_DECLARE_OPERATORS_FOR_FLAGS(map::AirportQueryFlags)
 
 /* ================================================================================== */
-/* Covers all airspace types */
-enum MapAirspaceType : quint32
+/* Covers all airspace types. Value save to config. */
+enum MapAirspaceType : quint64
 {
   AIRSPACE_NONE = 0,
-  CENTER = 1 << 0,
-  CLASS_A = 1 << 1, // ICAO airspace - controlled - no VFR
-  CLASS_B = 1 << 2, // ICAO airspace - controlled
-  CLASS_C = 1 << 3, // ICAO airspace - controlled
-  CLASS_D = 1 << 4, // ICAO airspace - controlled
-  CLASS_E = 1 << 5, // ICAO airspace - controlled
-  CLASS_F = 1 << 6, // Open FIR - uncontrolled
-  CLASS_G = 1 << 7, // Open FIR - uncontrolled
-  TOWER = 1 << 8,
-  CLEARANCE = 1 << 9,
-  GROUND = 1 << 10,
-  DEPARTURE = 1 << 11,
-  APPROACH = 1 << 12,
-  MOA = 1 << 13,
-  RESTRICTED = 1 << 14,
-  PROHIBITED = 1 << 15,
-  WARNING = 1 << 16,
-  ALERT = 1 << 17,
-  DANGER = 1 << 18,
-  NATIONAL_PARK = 1 << 19,
-  MODEC = 1 << 20,
-  RADAR = 1 << 21,
-  TRAINING = 1 << 22,
-  GLIDERPROHIBITED = 1 << 23, // Not FSX/P3D
-  WAVEWINDOW = 1 << 24, // Not FSX/P3D
-  CAUTION = 1 << 25, // DFD
+  CENTER = 1ULL << 0,
+  CLASS_A = 1ULL << 1, // ICAO airspace - controlled - no VFR
+  CLASS_B = 1ULL << 2, // ICAO airspace - controlled
+  CLASS_C = 1ULL << 3, // ICAO airspace - controlled
+  CLASS_D = 1ULL << 4, // ICAO airspace - controlled
+  CLASS_E = 1ULL << 5, // ICAO airspace - controlled
+  CLASS_F = 1ULL << 6, // Open FIR - uncontrolled
+  CLASS_G = 1ULL << 7, // Open FIR - uncontrolled
+  TOWER = 1ULL << 8,
+  CLEARANCE = 1ULL << 9,
+  GROUND = 1ULL << 10,
+  DEPARTURE = 1ULL << 11,
+  APPROACH = 1ULL << 12,
+  MOA = 1ULL << 13,
+  RESTRICTED = 1ULL << 14,
+  PROHIBITED = 1ULL << 15,
+  WARNING = 1ULL << 16,
+  ALERT = 1ULL << 17,
+  DANGER = 1ULL << 18,
+  NATIONAL_PARK = 1ULL << 19,
+  MODEC = 1ULL << 20,
+  RADAR = 1ULL << 21,
+  TRAINING = 1ULL << 22,
+  GLIDERPROHIBITED = 1ULL << 23, // Not FSX/P3D
+  WAVEWINDOW = 1ULL << 24, // Not FSX/P3D
+  CAUTION = 1ULL << 25, // DFD
 
-  ONLINE_OBSERVER = 1 << 26, // VATSIM or IVAO observer
+  ONLINE_OBSERVER = 1ULL << 26, // VATSIM or IVAO observer
 
-  FIR = 1 << 27, // New FIR region instead of center
-  UIR = 1 << 28, // New UIR region instead of center
+  FIR = 1ULL << 27, // New FIR region instead of center
+  UIR = 1ULL << 28, // New UIR region instead of center
 
-  GCA = 1 << 29, // New general control area combining several unknown types
-  MCTR = 1 << 30, // Military Control Zone (MCTR)
-  TRSA = 0x8000'0000, // Terminal Radar Service Area (TRSA)
+  GCA = 1ULL << 29, // New general control area combining several unknown types
+  MCTR = 1ULL << 30, // Military Control Zone (MCTR)
+  TRSA = 1ULL << 31, // Terminal Radar Service Area (TRSA)
+
+  // >>> Update MAP_AIRSPACE_TYPE_BITS below too <<<
 
   AIRSPACE_CLASS_ICAO = CLASS_A | CLASS_B | CLASS_C | CLASS_D | CLASS_E,
   AIRSPACE_CLASS_FG = CLASS_F | CLASS_G,
@@ -320,13 +336,15 @@ enum MapAirspaceType : quint32
   AIRSPACE_DEFAULT = AIRSPACE_CLASS_ICAO | AIRSPACE_RESTRICTED
 };
 
-Q_DECLARE_FLAGS(MapAirspaceTypes, MapAirspaceType);
-Q_DECLARE_OPERATORS_FOR_FLAGS(map::MapAirspaceTypes);
+ATOOLS_DECLARE_FLAGS_64(MapAirspaceTypes, MapAirspaceType)
+ATOOLS_DECLARE_OPERATORS_FOR_FLAGS(map::MapAirspaceTypes)
 
-Q_DECL_CONSTEXPR int MAP_AIRSPACE_TYPE_BITS = 29;
+/* for(int i = 0; i <= map::MAP_AIRSPACE_TYPE_BITS; i++)
+ *   map::MapAirspaceTypes type(1 << i); */
+Q_DECL_CONSTEXPR int MAP_AIRSPACE_TYPE_BITS = 31;
 
 /* Source database for airspace */
-enum MapAirspaceSource
+enum MapAirspaceSource : quint32
 {
   AIRSPACE_SRC_NONE = 0,
   AIRSPACE_SRC_SIM = 1 << 0,
@@ -339,14 +357,17 @@ enum MapAirspaceSource
   AIRSPACE_SRC_NOT_ONLINE = AIRSPACE_SRC_SIM | AIRSPACE_SRC_NAV | AIRSPACE_SRC_USER
 };
 
-Q_DECLARE_FLAGS(MapAirspaceSources, MapAirspaceSource);
-Q_DECLARE_OPERATORS_FOR_FLAGS(map::MapAirspaceSources);
+ATOOLS_DECLARE_FLAGS_32(MapAirspaceSources, map::MapAirspaceSource)
+ATOOLS_DECLARE_OPERATORS_FOR_FLAGS(map::MapAirspaceSources)
 
-extern const QVector<map::MapAirspaceSources> MAP_AIRSPACE_SRC_VALUES;
-extern const QVector<map::MapAirspaceSources> MAP_AIRSPACE_SRC_NO_ONLINE_VALUES;
+QDebug operator<<(QDebug out, const map::MapAirspaceSource& type);
+QDebug operator<<(QDebug out, const map::MapAirspaceSources& type);
+
+extern const QVector<map::MapAirspaceSource> MAP_AIRSPACE_SRC_VALUES;
+extern const QVector<map::MapAirspaceSource> MAP_AIRSPACE_SRC_NO_ONLINE_VALUES;
 
 /* Airspace filter flags */
-enum MapAirspaceFlag
+enum MapAirspaceFlag : quint32
 {
   AIRSPACE_ALTITUDE_FLAG_NONE = 0, /* Indicates that filter is used only for type */
 
@@ -364,8 +385,8 @@ enum MapAirspaceFlag
   AIRSPACE_FLAG_DEFAULT = AIRSPACE_ALTITUDE_ALL
 };
 
-Q_DECLARE_FLAGS(MapAirspaceFlags, MapAirspaceFlag);
-Q_DECLARE_OPERATORS_FOR_FLAGS(map::MapAirspaceFlags);
+ATOOLS_DECLARE_FLAGS_32(MapAirspaceFlags, map::MapAirspaceFlag)
+ATOOLS_DECLARE_OPERATORS_FOR_FLAGS(map::MapAirspaceFlags)
 
 /* Combines all airspace types and flags for display into a serializable object
  * Serialized in MapWidget::saveState() and aggregated by MapPaintLayer::airspaceTypes */
@@ -380,8 +401,8 @@ struct MapAirspaceFilter
   {
   }
 
-  MapAirspaceFilter(const MapAirspaceTypes& typesParam, const MapAirspaceFlags& flagsParam, int minAltitudeFtParam, int maxAltitudeFtParam)
-    :  types(typesParam), flags(flagsParam), minAltitudeFt(minAltitudeFtParam), maxAltitudeFt(maxAltitudeFtParam)
+  MapAirspaceFilter(const MapAirspaceType& typesParam, const MapAirspaceFlag& flagsParam, int minAltitudeFtParam, int maxAltitudeFtParam)
+    : types(typesParam), flags(flagsParam), minAltitudeFt(minAltitudeFtParam), maxAltitudeFt(maxAltitudeFtParam)
   {
   }
 
@@ -400,6 +421,10 @@ struct MapAirspaceFilter
   int minAltitudeFt, maxAltitudeFt;
 };
 
+QDebug operator<<(QDebug out, const map::MapAirspaceFilter& type);
+QDebug operator<<(QDebug out, const map::MapAirspaceFlags& type);
+QDebug operator<<(QDebug out, const map::MapAirspaceTypes& type);
+
 QDataStream& operator>>(QDataStream& dataStream, map::MapAirspaceFilter& obj);
 QDataStream& operator<<(QDataStream& dataStream, const map::MapAirspaceFilter& obj);
 
@@ -407,7 +432,7 @@ QDataStream& operator<<(QDataStream& dataStream, const map::MapAirspaceFilter& o
 struct MapAirspaceId
 {
   int id;
-  MapAirspaceSources src;
+  MapAirspaceSource src;
 };
 
 inline uint qHash(const map::MapAirspaceId& id)
@@ -422,7 +447,7 @@ inline bool operator==(const map::MapAirspaceId& id1, const map::MapAirspaceId& 
 
 /* ================================================================================== */
 /* Airport flags coverting most airport attributes and facilities. */
-enum MapAirportFlag
+enum MapAirportFlag : quint32
 {
   AP_NONE = 0,
   AP_ADDON = 1 << 0,
@@ -450,8 +475,8 @@ enum MapAirportFlag
   AP_ALL = 0xffffffff
 };
 
-Q_DECLARE_FLAGS(MapAirportFlags, MapAirportFlag);
-Q_DECLARE_OPERATORS_FOR_FLAGS(map::MapAirportFlags);
+ATOOLS_DECLARE_FLAGS_32(MapAirportFlags, map::MapAirportFlag)
+ATOOLS_DECLARE_OPERATORS_FOR_FLAGS(map::MapAirportFlags)
 
 /* X-Plane airport type. Matches values in apt.dat */
 enum MapAirportType
@@ -492,12 +517,15 @@ enum MapWeatherSource
 };
 
 QString mapWeatherSourceString(map::MapWeatherSource source);
+QString mapWeatherSourceStringShort(map::MapWeatherSource source);
+
+QDebug operator<<(QDebug out, const map::MapWeatherSource& type);
 
 } // namespace map
 
 namespace textflags {
 /* Flags that determine what information is added to an icon */
-enum TextFlag
+enum TextFlag : quint32
 {
   NONE = 0x0000,
   IDENT = 0x0001, /* Draw airport or navaid ICAO ident */
@@ -513,14 +541,14 @@ enum TextFlag
   ELLIPSE_IDENT = 0x0400 /* Add allipse to first text (ident) and ignore additional texts if additonal are not empty */
 };
 
-Q_DECLARE_FLAGS(TextFlags, TextFlag);
-Q_DECLARE_OPERATORS_FOR_FLAGS(textflags::TextFlags);
+ATOOLS_DECLARE_FLAGS_32(TextFlags, textflags::TextFlag)
+ATOOLS_DECLARE_OPERATORS_FOR_FLAGS(textflags::TextFlags)
 }
 
 namespace textatt {
 
 /* Low level text attributes for custom text boxes */
-enum TextAttribute
+enum TextAttribute : quint32
 {
   NONE = 0x0000,
 
@@ -567,17 +595,17 @@ enum TextAttribute
   PLACE_ALL = LEFT | RIGHT | CENTER | BELOW | ABOVE,
 };
 
-Q_DECLARE_FLAGS(TextAttributes, TextAttribute);
-Q_DECLARE_OPERATORS_FOR_FLAGS(TextAttributes);
+ATOOLS_DECLARE_FLAGS_32(TextAttributes, textatt::TextAttribute)
+ATOOLS_DECLARE_OPERATORS_FOR_FLAGS(textatt::TextAttributes)
 }
 
 Q_DECLARE_TYPEINFO(map::MapAirspaceFilter, Q_PRIMITIVE_TYPE);
-Q_DECLARE_METATYPE(map::MapAirspaceFilter);
+Q_DECLARE_METATYPE(map::MapAirspaceFilter)
 
 Q_DECLARE_TYPEINFO(map::MapAirspaceId, Q_PRIMITIVE_TYPE);
-Q_DECLARE_METATYPE(map::MapAirspaceId);
+Q_DECLARE_METATYPE(map::MapAirspaceId)
 
 Q_DECLARE_TYPEINFO(map::MapTypes, Q_PRIMITIVE_TYPE);
-Q_DECLARE_METATYPE(map::MapTypes);
+Q_DECLARE_METATYPE(map::MapTypes)
 
 #endif // LITTLENAVMAP_MAPFLAGS_H

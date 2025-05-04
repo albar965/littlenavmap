@@ -16,43 +16,64 @@
 *****************************************************************************/
 
 #include "search/randomdestinationairportpickingbycriteria.h"
+#include "search/randomdepartureairportpickingbycriteria.h"
 
 #include "geo/rect.h"
 
 #include <QRandomGenerator>
 
-int RandomDestinationAirportPickingByCriteria::countResult = 0; // required to get memory allocated in C++ (the initStatics function is not guaranteed to get called from a compiler/linker perspective)
-int RandomDestinationAirportPickingByCriteria::randomLimit = 0;
-std::pair<int, atools::geo::Pos> *RandomDestinationAirportPickingByCriteria::data = nullptr;
+
 int RandomDestinationAirportPickingByCriteria::distanceMin = 0;
 int RandomDestinationAirportPickingByCriteria::distanceMax = 0;
-bool RandomDestinationAirportPickingByCriteria::stopExecution = false;
+std::pair<int, atools::geo::Pos> *RandomDestinationAirportPickingByCriteria::data = nullptr;
+int RandomDestinationAirportPickingByCriteria::indexDeparture = -1;
+int *RandomDestinationAirportPickingByCriteria::idsNonGrata = nullptr;
+int RandomDestinationAirportPickingByCriteria::lengthIdsNonGrata = 0;
 
-RandomDestinationAirportPickingByCriteria::RandomDestinationAirportPickingByCriteria(int indexDeparture)
+RandomDestinationAirportPickingByCriteria::RandomDestinationAirportPickingByCriteria(int threadIndex,
+                                                                                     int dataRangeIndexStart,
+                                                                                     int dataRangeLength)
 {
-  this->indexDeparture = indexDeparture;
+  this->threadIndex = threadIndex;
+  this->dataRangeIndexStart = dataRangeIndexStart;
+  this->dataRangeLength = dataRangeLength;
 }
 
-void RandomDestinationAirportPickingByCriteria::initStatics(int countResult, int randomLimit, std::pair<int, atools::geo::Pos> *data,
-                                                            int distanceMinMeter, int distanceMaxMeter)
+void RandomDestinationAirportPickingByCriteria::initStatics(int distanceMinMeter,
+                                                            int distanceMaxMeter)
 {
-  RandomDestinationAirportPickingByCriteria::countResult = countResult;
-  RandomDestinationAirportPickingByCriteria::randomLimit = randomLimit;
-  RandomDestinationAirportPickingByCriteria::data = data;
   RandomDestinationAirportPickingByCriteria::distanceMin = distanceMinMeter;
   RandomDestinationAirportPickingByCriteria::distanceMax = distanceMaxMeter;
-  stopExecution = false;
+}
+
+void RandomDestinationAirportPickingByCriteria::initData(std::pair<int, atools::geo::Pos> *data,
+                                                         int indexDeparture,
+                                                         int *idsNonGrata,
+                                                         int lengthIdsNonGrata)
+{
+  RandomDestinationAirportPickingByCriteria::data = data;
+  RandomDestinationAirportPickingByCriteria::indexDeparture = indexDeparture;
+  RandomDestinationAirportPickingByCriteria::idsNonGrata = idsNonGrata;
+  RandomDestinationAirportPickingByCriteria::lengthIdsNonGrata = lengthIdsNonGrata;
 }
 
 void RandomDestinationAirportPickingByCriteria::run()
 {
-  int indexDestination;
+  QHash<int, bool> triedIndexDestination;                    // acts as a lookup which indices have been tried already
+  if(indexDeparture >= dataRangeIndexStart && indexDeparture < dataRangeIndexStart + dataRangeLength)
+  {
+    triedIndexDestination.insert(indexDeparture - dataRangeIndexStart, true);     // destination shall != departure
+  }
 
-  QMap<int, bool> triedIndexDestination; // acts as a lookup which indices have been tried already; QMap keys are sorted, lookup is very fast
-  triedIndexDestination.insert(indexDeparture, true); // destination shall != departure
+  int indexDestination = -1;
+  // randomLimit :  above this limit values are not tried to be found randomly
+  // because there will only be few "space" to "pick" from making random picks
+  // take long, instead values are taken linearly from the remaining values
+  int randomLimit = (dataRangeLength * 7) / 10;
+  std::pair<int, atools::geo::Pos> *offsettedData = data + dataRangeIndexStart;
+  atools::geo::Pos *posDeparture = &(data[indexDeparture].second);
 
-  float distMeter = atools::geo::Pos::INVALID_VALUE;
-
+  float distMeter;
   bool destinationSuccess;
 
   do
@@ -60,35 +81,55 @@ void RandomDestinationAirportPickingByCriteria::run()
     destinationSuccess = false;
     do
     {
-      if(triedIndexDestination.count() == countResult || stopExecution)
-        goto destinationsEnd; // all destinations have been depleted, try a different departure
-      if(triedIndexDestination.count() < randomLimit) // the "if" is inside the "while" for the destination because the indices get used up during "picking"
+      if(triedIndexDestination.count() == dataRangeLength || RandomDepartureAirportPickingByCriteria::stopExecution)
+        goto destinationsEnd;
+      if(triedIndexDestination.count() < randomLimit)
       {
         do
         {
-          indexDestination = QRandomGenerator::global()->bounded(countResult);
-        }while(triedIndexDestination.contains(indexDestination));
+          indexDestination = QRandomGenerator::global()->bounded(dataRangeLength);
+        }
+        while(triedIndexDestination.contains(indexDestination));
       }
       else
       {
-        indexDestination = QRandomGenerator::global()->bounded(countResult);
+        indexDestination = QRandomGenerator::global()->bounded(dataRangeLength);
         while(triedIndexDestination.contains(indexDestination))
         {
-          indexDestination = (indexDestination + 1) % countResult;
+            ++indexDestination %= dataRangeLength;
         }
       }
       triedIndexDestination.insert(indexDestination, true);
-      distMeter = data[indexDeparture].second.distanceMeterTo(data[indexDestination].second); // distanceMeterTo checks for isValid
-    }while(distMeter == atools::geo::Pos::INVALID_VALUE);
+      distMeter = posDeparture->distanceMeterTo(offsettedData[indexDestination].second);    // distanceMeterTo checks for isValid
+    }
+    while(distMeter == atools::geo::Pos::INVALID_VALUE);
     destinationSuccess = true;
-  }while(distMeter < distanceMin || distMeter > distanceMax);
+  }
+  while(distMeter < distanceMin || distMeter > distanceMax || binary_search(offsettedData[indexDestination].first, idsNonGrata, lengthIdsNonGrata) > -1);
+
 destinationsEnd:
-  if(destinationSuccess) // the last triedIndexDestination might be taken but it might have passed the last condition (thus checking a bool and not the map count being countResult)
+  emit resultReady(destinationSuccess, dataRangeIndexStart + indexDestination, threadIndex);
+}
+
+int RandomDestinationAirportPickingByCriteria::binary_search(int searchFor, int* inArray, int arrayLength)
+{
+  int toIndex = arrayLength - 1;
+  arrayLength >>= 1;          // arrayLength becomes the half way length from fromIndex to toIndex
+  int fromIndex = 0;
+
+  while (fromIndex <= toIndex)
   {
-    emit resultReady(true, indexDeparture, indexDestination);
+    int middleIndex = fromIndex + arrayLength;
+    int inMiddle = inArray[middleIndex];
+
+    arrayLength >>= 1;
+    if (inMiddle < searchFor)
+      fromIndex = middleIndex + 1;
+    else if (inMiddle > searchFor)
+      toIndex = middleIndex - 1;
+    else
+      return middleIndex;
   }
-  else
-  {
-    emit resultReady(false, -1, -1);
-  }
+
+  return -1;
 }

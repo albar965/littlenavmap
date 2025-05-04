@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2023 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2024 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -18,21 +18,21 @@
 #ifndef LNM_WEBCONTROLLER_H
 #define LNM_WEBCONTROLLER_H
 
-#include "io/inireader.h"
-
+#include <QHash>
 #include <QObject>
-#include <QUrl>
 #include <QVector>
 
 namespace stefanfrings {
 class HttpListener;
 }
 
+class QHostAddress;
 class RequestHandler;
 class WebMapController;
 class WebApiController;
 class HtmlInfoBuilder;
 class QSettings;
+struct Host;
 
 /*
  * Facade that hides the internal HTTP web server and keeps track of all global caches and the listener.
@@ -63,22 +63,21 @@ public:
   void openPage();
 
   /* True if server is listening */
-  bool isRunning() const;
+  bool isListenerRunning() const;
 
-  /* Get the default url. Usually hostname and port or IP and port as fallback. */
-  QUrl getUrl(bool useIpAddress) const;
+  /* Get the default url. Usually hostname and port or IP and port as fallback.
+   * Hostname lookup is slow. */
+  QUrl getUrl(bool useIpAddress);
 
-  /* Get list of bound URLs (IPs) for display */
-  QStringList getUrlStr() const;
+  /* Get list of bound URLs (IPs) for display.
+   * Hostname lookup is slow.  */
+  QStringList getUrlStr();
 
   /* Update settings and probably restart server. */
   void optionsChanged();
 
   /* Update settings from option data but do not restart. Returns true if any changes. */
   bool updateSettings();
-
-  /* Get canonical path of document root with system separators for display */
-  QString getAbsoluteWebrootFilePath() const;
 
   void setDocumentRoot(const QString& value)
   {
@@ -125,6 +124,9 @@ signals:
   void webserverStatusChanged(bool running);
 
 private:
+  /* Host name lookup using cache */
+  QString hostName(const QHostAddress& hostAddr);
+
   stefanfrings::HttpListener *listener = nullptr;
 
   /* Map painter */
@@ -140,7 +142,7 @@ private:
   HtmlInfoBuilder *htmlInfoBuilder = nullptr;
 
   /* Configuration file and file name. Default is :/littlenavmap/resources/config/webserver.cfg */
-  atools::io::IniKeyValues listenerSettings;
+  QHash<QString, QVariant> listenerSettings;
   QString configFileName;
 
   /* Full canonical path containing only "/" as separator */
@@ -153,18 +155,7 @@ private:
   QWidget *parentWidget;
   bool verbose = false;
 
-  struct Host
-  {
-    Host(const QUrl& urlParam, const QUrl& ipParam, bool isIpv6Param)
-      : urlName(urlParam), urlIp(ipParam), ipv6(isIpv6Param)
-    {
-    }
-
-    QUrl urlName, urlIp;
-    bool ipv6;
-  };
-
-  // hostname/ip/v6
+  /* Caches host names sorted by IPv4 and IPv6 */
   QVector<Host> hosts;
 
   /* Remember custom certifiates. */

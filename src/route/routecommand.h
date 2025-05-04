@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2023 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2024 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -19,7 +19,6 @@
 #define LITTLENAVMAP_ROUTECOMMAND_H
 
 #include "fs/pln/flightplan.h"
-#include "route/routecommandflags.h"
 
 #include <QUndoCommand>
 
@@ -34,7 +33,7 @@ class RouteCommand :
 {
 public:
   RouteCommand(RouteController *routeController, const atools::fs::pln::Flightplan& flightplanBefore,
-               const QString& text = QString(), rctype::RouteCmdType rcType = rctype::EDIT);
+               const QString& text = QString());
   virtual ~RouteCommand() override;
 
   virtual void undo() override;
@@ -47,7 +46,6 @@ private:
   /* Avoid the first redo action when inserting the command. This not usable for complex interactions. */
   bool firstRedoExecuted = false;
   RouteController *controller;
-  rctype::RouteCmdType type;
   atools::fs::pln::Flightplan planBeforeChange, planAfterChange;
 };
 

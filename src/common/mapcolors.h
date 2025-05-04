@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2023 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2025 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -99,6 +99,7 @@ extern QColor weatherLifrColor;
 extern QColor weatherIfrColor;
 extern QColor weatherMvfrColor;
 extern QColor weatherVfrColor;
+extern QColor weatherErrorColor;
 
 /* Minimum off route altitude (MORA) */
 extern QPen minimumAltitudeGridPen;
@@ -139,6 +140,7 @@ extern QColor profileHighlightBackColor;
 
 /* Endurance and "green banana" */
 extern QPen markEndurancePen;
+extern QPen markEnduranceCritPen;
 extern QPen markSelectedAltitudeRangePen;
 extern QPen markTurnPathPen;
 
@@ -240,6 +242,9 @@ extern QColor routeProcedurePointFlyoverColor;
 extern QColor routeUserPointColor;
 extern QColor routeInvalidPointColor;
 
+extern QColor routeDirectToDepartureBackgroundColor;
+extern QPen routeDirectToDeparturePen;
+
 /* Procedure colors */
 extern QColor routeProcedureMissedTableColor;
 extern QColor routeProcedureMissedTableColorDark;
@@ -289,7 +294,7 @@ QPen penForAirspace(const map::MapAirspace& airspace, int lineThickness);
 QColor colorForAirspaceFill(const map::MapAirspace& airspace, int transparency);
 
 /* Color for airway or track */
-const QColor& colorForAirwayOrTrack(const map::MapAirway& airway);
+const QColor colorForAirwayOrTrack(const map::MapAirway& airway, bool darkMap);
 
 /* Convert current pen into dotted pen leaving style and color as is */
 void adjustPenForCircleToLand(QPainter *painter);
@@ -300,6 +305,10 @@ void adjustPenForManual(QPainter *painter);
 /* Value 0.0 (transparent) to 1.0 (opaque) */
 QColor adjustAlphaF(QColor color, float alpha);
 QPen adjustAlphaF(QPen pen, float alpha);
+
+/* Value 0 (transparent) to 255 (opaque) */
+QColor adjustAlpha(QColor color, int alpha);
+QPen adjustAlpha(QPen pen, int alpha);
 
 QPen adjustWidth(QPen pen, float width);
 

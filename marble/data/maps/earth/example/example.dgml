@@ -41,6 +41,10 @@
       <!-- Preview pixmap. Not used in LNM. -->
       <icon pixmap="example-preview.png"/>
 
+      <!-- Optional keyboard shortcut. Allowed are Ctrl+Alt+0 to Ctrl+Alt+9 to avoid overlap with default shortcuts.
+           Omit this element for no shortcut. -->
+      <shortcut>Ctrl+Alt+9</shortcut>
+
       <!-- Set this to "true" for real maps. Otherwise they will not be shown in the LNM menu and toolbar.
            This is set to "false" here to hide the example from the menu. -->
       <visible>false</visible>
@@ -95,7 +99,7 @@
           <!-- Example to build an url with access token, username and style.
                A single access token or API key is often sufficient to access a map which requires an user account.
                All keys enclosed in braces (except common ones like "x", "y", "z", "zoomLevel" and "language") are extracted from
-               the URL by LNM and are shown in the options dialog on page "Map Display Keys".
+               the URL by LNM and are shown in the options dialog on page "Map Keys".
                Allowed characters for keys are A-Z, a-z, 0-9, _, - and space.
                The keys have to be unique for all available maps/map providers and should be user readable.
                Best prefix them with your map name.

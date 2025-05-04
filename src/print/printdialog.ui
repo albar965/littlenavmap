@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>536</width>
-    <height>512</height>
+    <width>590</width>
+    <height>582</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -549,8 +549,8 @@ Note that the order of columns is as selected in the flight plan table.</string>
   <tabstop>checkBoxPrintDestinationRunways</tabstop>
   <tabstop>checkBoxPrintDestinationSoftRunways</tabstop>
   <tabstop>checkBoxPrintDestinationDetailRunways</tabstop>
-  <tabstop>checkBoxPrintDestinationAppr</tabstop>
   <tabstop>checkBoxPrintDestinationCom</tabstop>
+  <tabstop>checkBoxPrintDestinationAppr</tabstop>
   <tabstop>checkBoxPrintDestinationWeather</tabstop>
  </tabstops>
  <resources/>

@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2023 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2025 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -29,6 +29,12 @@ class Route;
 /*
  * Procedure types for approach, transition, SID and STAR.
  */
+
+namespace atools {
+namespace sql {
+class SqlRecord;
+}
+}
 namespace proc {
 
 /* Initialize all text that are translateable after loading the translation files */
@@ -98,8 +104,8 @@ struct MapProcedureRef
 {
   MapProcedureRef(int airportIdParam, int runwayEndIdParam, int procIdParam, int transIdParam, int legIdParam,
                   proc::MapProcedureTypes type)
-    : airportId(airportIdParam), runwayEndId(runwayEndIdParam), procedureId(procIdParam), transitionId(transIdParam),
-    legId(legIdParam), mapType(type)
+    : airportId(airportIdParam), runwayEndId(runwayEndIdParam), procedureId(procIdParam), transitionId(transIdParam), legId(legIdParam),
+      mapType(type)
   {
   }
 
@@ -181,15 +187,22 @@ struct MapProcedureLeg
 
   QStringList displayText /* Fix label for map - filled in approach query */,
               remarks /* Additional remarks for tree - filled in approach query */;
-  atools::geo::Pos fixPos, recFixPos,
+
+  atools::geo::Pos fixPos, recFixPos, /* Calculated from ARINC fix */
                    interceptPos, /* Position of an intercept leg for grey circle */
-                   procedureTurnPos /* Extended position of a procedure turn */;
+                   procedureTurnPos; /* Extended position of a procedure turn */
+
+  /* Leg has sim runway information in parent MapProcedureLegs which can be used for precise drawing information.
+   * For custom and real procedures.  */
+  bool runwaySim = false;
+
   atools::geo::Line line, /* Line with flying direction from pos1 to pos2 */
                     holdLine; /* Helping line to find out if aircraft leaves the hold */
 
   atools::geo::LineString geometry; /* Same as line or geometry approximation for intercept or arcs for distance to leg calculation */
 
-  /* Navaids resolved by approach query class */
+  /* Navaids resolved by approach query class. Runways are valid with empty name for circle-to-land or straight-in.
+   * Always from navdata source. */
   map::MapResult navaids, recNavaids;
 
   MapAltRestriction altRestriction;
@@ -398,25 +411,38 @@ QDebug operator<<(QDebug out, const proc::MapProcedureLeg& leg);
  * Flying order in transitionLegs and then procedureLegs.
  * SID contains all legs in approach and transition fields. Flying order in procedureLegs and then transitionLegs.
  * STAR contains all legs in approach and transition fields. Flying order in transitionLegs and then procedureLegs */
+
+typedef QVector<MapProcedureLeg> MapProcedureLegVector;
+
 struct MapProcedureLegs
 {
-  QVector<MapProcedureLeg> transitionLegs, procedureLegs;
+  MapProcedureLegVector transitionLegs, procedureLegs;
 
-  /* Reference with all database ids */
+  /* Reference with all database ids. For all navdata except custom procedures. */
   MapProcedureRef ref;
-  atools::geo::Rect bounding;
+
+  atools::geo::Rect bounding, /* Only the procedure points for centering without related and without missed */
+                    boundingWithMissed, /* Includes related navaids and missed which might be far away (KASE SID33 LINDZ1 -> GCC) */
+                    boundingWithRecommended; /* Only the procedure points for centering without related */
 
   QString type, /* GNSS (display GLS) GPS IGS ILS LDA LOC LOCB NDB NDBDME RNAV (RNV) SDF TCN VOR VORDME */
           suffix, procedureFixIdent /* Approach fix or SID/STAR name */,
           arincName, /* ARINC for procedures or runways ("ALL", "16B", etc.) for SID and STAR */
+          airportIdent, /* Same as CIFP file name in X-Plane. Original name referenced in procedures
+                           independent of the various airport codes. Needed for FMS export. */
           transitionType, transitionFixIdent,
           runway, /* Runway from the procedure does not have to match the airport runway but is saved. Used by approaches and SID. */
           aircraftCategory; /* 5.221 */
 
   /* Only for approaches - the found runway end at the airport - can be different due to fuzzy search.
-   * Coordinates might be set even for CTL approaches where name is empty in this case. */
+   * Coordinates might be set even for CTL approaches where name is empty in this case. For all navdata except custom procedures. */
   map::MapRunwayEnd runwayEnd;
+
   proc::MapProcedureTypes mapType = PROCEDURE_NONE;
+
+  /* Copies from the respective legs. Positions from simulator runway if runway name matches. Otherwise navdata. */
+  map::MapRunway runwaySim;
+  map::MapRunwayEnd runwayEndSim;
 
   /* Accumulated distances */
   float procedureDistance = 0.f, transitionDistance = 0.f, missedDistance = 0.f;
@@ -434,6 +460,24 @@ struct MapProcedureLegs
        circleToLand, /* Runway is not part of procedure and was added internally */
        rnp, /* One or more legs have a required navigation performance */
        verticalAngle; /* One or more legs have a vertical angle */
+
+  /* Get touchdown position considering offset threshold from simulator data if runway matches. Otherwise navdata. */
+  atools::geo::Pos getApproachPosition() const
+  {
+    return mapType & proc::PROCEDURE_APPROACH ? runwaySim.getApproachPosition(runwayEndSim.secondary) : atools::geo::EMPTY_POS;
+  }
+
+  /* Get takeoff start position from simulator data if runway matches. Otherwise navdata. */
+  const atools::geo::Pos& getDeparturePosition() const
+  {
+    return mapType & proc::PROCEDURE_SID ? runwaySim.getDeparturePosition(runwayEndSim.secondary) : atools::geo::EMPTY_POS;
+  }
+
+  /* Get position of other end of start runway (bend to takeoff direction) from simulator data if runway matches. Otherwise navdata. */
+  const atools::geo::Pos& getDeparturePositionOther() const
+  {
+    return mapType & proc::PROCEDURE_SID ? runwaySim.getDeparturePositionOther(runwayEndSim.secondary) : atools::geo::EMPTY_POS;
+  }
 
   /* Short display type name "VOR" or "ILS" */
   QString displayType() const
@@ -652,18 +696,18 @@ QString procedureTypeText(const proc::MapProcedureLeg& leg);
 QStringList procedureTextFirstAndLastFix(const proc::MapProcedureLegs& legs, proc::MapProcedureTypes mapType);
 
 /* VOR, NDB, etc. */
-QString procedureFixType(const QString& type);
+const QString& procedureFixType(const QString& type);
 
 /* Ident name and FAF, MAP, IAF */
 QString procedureLegFixStr(const proc::MapProcedureLeg& leg);
 
 /* "LOC" -> "Localizer", "TCN" -> "TACAN" */
-QString procedureType(const QString& type);
+const QString& procedureType(const QString& type);
 proc::ProcedureLegType procedureLegEnum(const QString& type);
 QString procedureLegTypeStr(ProcedureLegType type);
-QString procedureLegTypeShortStr(ProcedureLegType type);
+const QString& procedureLegTypeShortStr(ProcedureLegType type);
 QString procedureLegTypeFullStr(ProcedureLegType type);
-QString procedureLegRemarks(proc::ProcedureLegType);
+const QString& procedureLegRemarks(proc::ProcedureLegType);
 QString altRestrictionText(const MapAltRestriction& restriction);
 QString vertRestrictionText(const MapProcedureLeg& procedureLeg);
 
@@ -683,8 +727,8 @@ bool procedureLegDrawIdent(ProcedureLegType type);
 bool procedureLegFrom(proc::ProcedureLegType type);
 
 /* IAF, FAF, MAP */
-QString proceduresLegSecialTypeShortStr(proc::LegSpecialType type);
-QString proceduresLegSecialTypeLongStr(proc::LegSpecialType type);
+const QString& proceduresLegSecialTypeShortStr(proc::LegSpecialType type);
+const QString& proceduresLegSecialTypeLongStr(proc::LegSpecialType type);
 
 /* Get special leg type from ARINC description code */
 proc::LegSpecialType specialType(const QString& arincDescrCode);
@@ -699,6 +743,8 @@ QString procedureLegRemDistance(const MapProcedureLeg& leg, float& remainingDist
 QString procedureLegDistance(const MapProcedureLeg& leg);
 QString procedureLegCourse(const MapProcedureLeg& leg);
 
+/* determine type from database fields, Either PROCEDURE_STAR, PROCEDURE_SID or PROCEDURE_APPROACH */
+proc::MapProcedureTypes procedureType(bool hasSidStar, const atools::sql::SqlRecord& recApp);
 proc::MapProcedureTypes procedureType(bool hasSidStar, const QString& type, const QString& suffix, bool gpsOverlay);
 
 /* Put altitude restriction texts into list */

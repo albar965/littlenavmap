@@ -72,7 +72,7 @@ public:
   void resetSearch();
 
   /* Filter by using query builder callback */
-  void filterByBuilder(const QWidget* widget);
+  void filterByBuilder();
 
   /* Filter by text at the given index */
   void filterIncluding(const QModelIndex& index, bool forceQueryBuilder, bool exact);
@@ -111,7 +111,7 @@ public:
   /* Total number of rows returned by the last query */
   int getTotalRowCount() const;
 
-  /* Current active row. Not neccessarily selected */
+  /* Current active row. Not necessarily selected */
   QModelIndex getCurrentIndex() const;
 
   /* Get the SQL query that was used to populate the table */

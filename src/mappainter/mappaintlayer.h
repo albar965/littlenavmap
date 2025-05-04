@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2023 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2024 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -43,7 +43,8 @@ class MapPainterIls;
 class MapPainterMark;
 class MapPainterTop;
 class MapPainterRoute;
-class MapPainterAircraft;
+class MapPainterAiAircraft;
+class MapPainterUserAircraft;
 class MapPainterTrail;
 class MapPainterShip;
 class MapPainterUser;
@@ -91,30 +92,35 @@ public:
   void setShowMapObjects(map::MapTypes type, map::MapTypes mask);
 
   /* Changes the detail factor (range 5-15 default is 10 */
-  void setDetailLevel(int level);
+  void setDetailLevel(int level, int levelText);
 
   int getDetailLevel() const
   {
     return detailLevel;
   }
 
+  int getDetailLevelText() const
+  {
+    return detailLevelText;
+  }
+
   /* Get all shown map objects like airports, VOR, NDB, etc. */
-  map::MapTypes getShownMapTypes() const
+  const map::MapTypes getShownMapTypes() const
   {
     return objectTypes;
   }
 
   /* Additional types like wind barbs or minimum altitude grid */
-  map::MapDisplayTypes getShownMapDisplayTypes() const
+  const map::MapDisplayTypes getShownMapDisplayTypes() const
   {
     return objectDisplayTypes;
   }
 
   /* Adjusted by layer visibility */
-  map::MapAirspaceFilter getShownAirspacesTypesByLayer() const;
+  const map::MapAirspaceFilter getShownAirspacesTypesForLayer() const;
 
   /* Flags for airspace having labels */
-  map::MapAirspaceTypes getShownAirspaceTextsByLayer() const;
+  map::MapAirspaceType getShownAirspaceTextsByLayer() const;
 
   const map::MapAirspaceFilter& getShownAirspaces() const
   {
@@ -127,7 +133,7 @@ public:
     return mapScale;
   }
 
-  map::MapWeatherSource getWeatherSource() const
+  map::MapWeatherSource getMapWeatherSource() const
   {
     return weatherSource;
   }
@@ -167,12 +173,12 @@ public:
 
   int getShownMinimumRunwayFt() const
   {
-    return minimumRunwayLenghtFt;
+    return minimumRunwayLengthFt;
   }
 
   void setShowMinimumRunwayFt(int value)
   {
-    minimumRunwayLenghtFt = value;
+    minimumRunwayLengthFt = value;
   }
 
   /* No drawing at all and not map interactions except moving and zooming if true.
@@ -197,14 +203,13 @@ private:
   }
 
   // Implemented from LayerInterface
-  virtual bool render(Marble::GeoPainter *painter, Marble::ViewportParams *viewport,
-                      const QString& renderPos = "NONE", Marble::GeoSceneLayer *layer = nullptr) override;
+  virtual bool render(Marble::GeoPainter *painter, Marble::ViewportParams *viewport, const QString&, Marble::GeoSceneLayer *) override;
 
   /* Disable font anti-aliasing for default and painter font */
-  void setNoAntiAliasFont(PaintContext *context);
+  void setNoAntiAliasFont();
 
   /* Restore normal font anti-aliasing for default and painter font */
-  void resetNoAntiAliasFont(PaintContext *context);
+  void resetNoAntiAliasFont();
 
   /* Map objects currently shown */
   map::MapTypes objectTypes = map::NONE;
@@ -217,10 +222,11 @@ private:
   QSet<int> shownDetailAirportIds;
 
   /* Value from toolbar */
-  int minimumRunwayLenghtFt = 0;
+  int minimumRunwayLengthFt = 0;
 
   /* Default detail factor. Range is from 5 to 15 */
   int detailLevel = 10;
+  int detailLevelText = 10;
 
   bool databaseLoadStatus = false;
 
@@ -234,8 +240,9 @@ private:
   MapPainterIls *mapPainterIls;
   MapPainterMark *mapPainterMark;
   MapPainterRoute *mapPainterRoute;
-  MapPainterAircraft *mapPainterAircraft;
-  MapPainterTrail *mapPainterTrack;
+  MapPainterAiAircraft *mapPainterAiAircraft;
+  MapPainterUserAircraft *mapPainterUserAircraft;
+  MapPainterTrail *mapPainterTrail;
   MapPainterTop *mapPainterTop;
   MapPainterShip *mapPainterShip;
   MapPainterUser *mapPainterUser;
@@ -246,8 +253,9 @@ private:
   MapScale *mapScale = nullptr;
   MapLayerSettings *layers = nullptr;
   MapPaintWidget *mapPaintWidget = nullptr;
-  const MapLayer *mapLayer = nullptr, *mapLayerRoute = nullptr, *mapLayerEffective = nullptr;
-  bool verbose = false, verboseDraw = false;
+  const MapLayer *mapLayer = nullptr, *mapLayerText = nullptr, *mapLayerRoute = nullptr, *mapLayerRouteText = nullptr,
+                 *mapLayerEffective = nullptr;
+  bool verbose = false, verboseDraw = false, debugTileSize = false;
   QFont::StyleStrategy savedFontStrategy, savedDefaultFontStrategy;
 
 };

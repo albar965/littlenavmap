@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2023 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2025 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -15,23 +15,24 @@
 * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 *****************************************************************************/
 
+#include "app/commandline.h"
 #include "app/navapp.h"
 #include "atools.h"
-#include "common/aircrafttrail.h"
 #include "common/constants.h"
 #include "common/formatter.h"
 #include "common/maptypes.h"
 #include "common/maptypes.h"
 #include "common/proctypes.h"
 #include "common/settingsmigrate.h"
+#include "common/textpointer.h"
 #include "common/unit.h"
 #include "db/databasemanager.h"
 #include "exception.h"
 #include "fs/sc/simconnectdata.h"
 #include "fs/sc/simconnectreply.h"
 #include "fs/weather/metarparser.h"
+#include "geo/aircrafttrail.h"
 #include "geo/calculations.h"
-#include "gui/application.h"
 #include "gui/dockwidgethandler.h"
 #include "gui/mainwindow.h"
 #include "gui/mapposhistory.h"
@@ -42,21 +43,20 @@
 #include "routeexport/routeexportformat.h"
 #include "settings/settings.h"
 #include "userdata/userdataicons.h"
+#include "util/crashhandler.h"
+#include "util/properties.h"
 
 #include <QDebug>
 #include <QSplashScreen>
 #include <QSslSocket>
 #include <QStyleFactory>
 #include <QPixmapCache>
-#include <QSettings>
 #include <QScreen>
 #include <QProcessEnvironment>
 
 #include <marble/MarbleGlobal.h>
 #include <marble/MarbleDirs.h>
 #include <marble/MarbleDebug.h>
-
-#include <app/commandline.h>
 
 using namespace Marble;
 using atools::gui::Application;
@@ -67,12 +67,20 @@ using atools::gui::Translator;
 
 int main(int argc, char *argv[])
 {
+  // Start timer to measure startup time
+  Application::startup();
+
   // Initialize the resources from atools static library
   Q_INIT_RESOURCE(atools);
+
+#ifdef SIMCONNECT_BUILD_WIN64
+  Q_INIT_RESOURCE(navdata);
+#endif
 
   // Register all types to allow conversion from/to QVariant and thus reading/writing into settings
   atools::geo::registerMetaTypes();
   atools::fs::sc::registerMetaTypes();
+  atools::util::Properties::registerMetaTypes();
   atools::gui::MapPosHistory::registerMetaTypes();
   atools::gui::DockWidgetHandler::registerMetaTypes();
 
@@ -107,14 +115,24 @@ int main(int argc, char *argv[])
   atools::fs::FsPaths::intitialize();
 
   // Tasks that have to be done before creating the application object and logging system =================
-  QStringList renderOptMessages;
-  QSettings earlySettings(QSettings::IniFormat, QSettings::UserScope, "ABarthel", "little_navmap");
+  // Application name is not available yet
 
+  // Create settings instance - no QCoreApplication needed so far =========================================
+  QString settingsPath = CommandLine::getOption(argc, argv, "p", "settings-path");
+  Settings::setOverridePath(settingsPath);
+  Settings::setOrganizationName(lnm::OPTIONS_APPLICATION_ORGANIZATION);
+  Settings::setApplicationName(lnm::OPTIONS_APPLICATION);
+
+  Settings& settings = Settings::instance();
+
+  QStringList logMessages;
+
+  // Render options =================================================
   // The loading mechanism can be configured through the QT_OPENGL environment variable and the following application attributes:
   // Qt::AA_UseDesktopOpenGL Equivalent to setting QT_OPENGL to desktop.
   // Qt::AA_UseOpenGLES Equivalent to setting QT_OPENGL to angle.
   // Qt::AA_UseSoftwareOpenGL Equivalent to setting QT_OPENGL to software.
-  QString renderOpt = earlySettings.value("Options/RenderOpt", "none").toString();
+  QString renderOpt = settings.valueStr("Options/RenderOpt", "none");
   if(!renderOpt.isEmpty())
   {
     // QT_OPENGL does not work - so do this ourselves
@@ -137,32 +155,76 @@ int main(int argc, char *argv[])
       QApplication::setAttribute(Qt::AA_UseSoftwareOpenGL, true);
     }
     else if(renderOpt != "none")
-      renderOptMessages.append("Wrong renderer " + renderOpt);
+      logMessages.append("Wrong renderer " + renderOpt);
   }
-  renderOptMessages.append("RenderOpt " + renderOpt);
+  logMessages.append("RenderOpt " + renderOpt);
 
-  int checkState = earlySettings.value("OptionsDialog/Widget_checkBoxOptionsGuiHighDpi", 2).toInt();
-  if(checkState == 2)
+  // High DPI option =================================================
+  if(settings.valueInt("OptionsDialog/Widget_checkBoxOptionsGuiHighDpi", 2) == 2)
   {
-    renderOptMessages.append("High DPI scaling enabled");
+    logMessages.append("High DPI scaling enabled");
+
+    // Enables high-DPI scaling in Qt on supported platforms (see also High DPI Displays). Supported
+    // platforms are X11, Windows and Android. Enabling makes Qt scale the main (device independent)
+    // coordinate system according to display scale factors provided by the operating system.
     QGuiApplication::setAttribute(Qt::AA_EnableHighDpiScaling, true);
+
+    // Make QIcon::pixmap() generate high-dpi pixmaps that can be larger than the requested size. Such
+    // pixmaps will have devicePixelRatio() set to a value higher than 1. After setting this attribute,
+    // application code that uses pixmap sizes in layout geometry calculations should typically divide by
+    // devicePixelRatio() to get device-independent layout geometry.
     QGuiApplication::setAttribute(Qt::AA_UseHighDpiPixmaps, true);
   }
   else
   {
-    renderOptMessages.append("High DPI scaling disabled");
+    logMessages.append("High DPI scaling disabled");
+
+    // Disables high-DPI scaling in Qt, exposing window system coordinates. Note that the window
+    // system may do its own scaling, so this does not guarantee that QPaintDevice::devicePixelRatio()
+    // will be equal to 1. In addition, scale factors set by QT_SCALE_FACTOR will not be affected.
     QGuiApplication::setAttribute(Qt::AA_EnableHighDpiScaling, false);
     // QGuiApplication::setAttribute(Qt::AA_DisableHighDpiScaling, true); // Freezes with QT_SCALE_FACTOR=2 on Linux
+
     QGuiApplication::setAttribute(Qt::AA_UseHighDpiPixmaps, false);
+#if !defined(Q_OS_WIN32)
+    // Assume the screen has a resolution of 96 DPI rather than using the OS-provided resolution. This
+    // will cause font rendering to be consistent in pixels-per-point across devices rather than defining
+    // 1 point as 1/72 inch
+    // Causes weird font effects on Windows
     QGuiApplication::setAttribute(Qt::AA_Use96Dpi, true);
+#endif
   }
 
   // Show dialog on exception in main event queue - can be disabled for debugging purposes
-  NavApp::setShowExceptionDialog(earlySettings.value("Options/ExceptionDialog", true).toBool());
+  NavApp::setShowExceptionDialog(settings.valueBool("Options/ExceptionDialog", true));
+
+  // Add freetype font engine arguments for Windows ===========================================================
+#if defined(Q_OS_WIN32)
+  // Get checkbox value
+  bool freetype = settings.valueInt("OptionsDialog/Widget_checkBoxOptionsFreetype", 2) == 2;
+#else
+  bool freetype = false;
+#endif
+
+  // Byte arrays have to remain for the whole runtime
+  QByteArray argument = QString("-platform").toLatin1(), value = QString("windows:fontengine=freetype").toLatin1();
+
+  // Copy pointers to regular arguments - add two for freetype options if needed
+  int appArgc = freetype ? argc + 2 : argc;
+  QVarLengthArray<char *> appArgv(appArgc);
+
+  for(int i = 0; i < argc; i++)
+    appArgv[i] = argv[i];
+
+  if(freetype)
+  {
+    appArgv[appArgc - 2] = argument.data();
+    appArgv[appArgc - 1] = value.data();
+  }
 
   // Create application object ===========================================================
   int retval = 0;
-  NavApp app(argc, argv);
+  NavApp app(appArgc, appArgv.data());
 
   DatabaseManager *dbManager = nullptr;
 
@@ -200,21 +262,28 @@ int main(int argc, char *argv[])
 
       // ==============================================
       // Print some information which can be useful for debugging
+      Settings::logMessages();
       LoggingUtil::logSystemInformation();
-      for(const QString& message : renderOptMessages)
+
+      for(const QString& message : logMessages)
         qInfo() << message;
 
-      // Create settings instance =========================================
-      Settings& settings = Settings::instance();
+      // Initialize crashhandler - disable on Linux to get core files
+      if(settings.valueBool("Options/PrintStackTrace", true))
+      {
+        atools::util::crashhandler::init();
+        atools::util::crashhandler::setStackTraceLog(Settings::getConfigFilename(lnm::STACKTRACE_SUFFIX, lnm::CRASHREPORTS_DIR));
+      }
 
       // ==============================================
       // Set language from command line into options - will be saved
       if(!commandLine.getLanguage().isEmpty())
-        settings.setValue(lnm::OPTIONS_DIALOG_LANGUAGE, commandLine.getLanguage());
+        OptionData::saveLanguageToConfigFile(commandLine.getLanguage());
 
       // Load available translations early ============================================
-      QString language = earlySettings.value(lnm::OPTIONS_DIALOG_LANGUAGE).toString();
+      QString language = OptionData::getLanguageFromConfigFile();
       if(language.isEmpty())
+        // Use system default for now if not given in settings yet
         language = QLocale().name();
 
       qInfo() << "Loading translations for" << language;
@@ -229,14 +298,13 @@ int main(int argc, char *argv[])
       // ==============================================
       // Start splash screen
       if(settings.valueBool(lnm::OPTIONS_DIALOG_SHOW_SPLASH, true))
-        NavApp::initSplashScreen();
+        Application::initSplashScreen(":/littlenavmap/resources/icons/splash.png", GIT_REVISION_LITTLENAVMAP);
 
       // Log system information ========================================
       qInfo().noquote().nospace() << "atools revision " << atools::gitRevision() << " "
                                   << Application::applicationName() << " revision " << GIT_REVISION_LITTLENAVMAP;
 
       LoggingUtil::logStandardPaths();
-      Settings::logSettingsInformation();
 
       qInfo() << "SSL supported" << QSslSocket::supportsSsl()
               << "build library" << QSslSocket::sslLibraryBuildVersionString()
@@ -284,6 +352,8 @@ int main(int argc, char *argv[])
         font.fromString(fontStr);
         QApplication::setFont(font);
       }
+
+      TextPointer::initPointerCharacters(QApplication::font());
       qInfo() << "Loaded font" << font.toString() << "from options. Stored font info" << fontStr;
 
       // Load region override ============================================
@@ -294,13 +364,12 @@ int main(int argc, char *argv[])
         QLocale::setDefault(QLocale("en"));
       }
 
-      qDebug() << "Locale after setting to" << OptionsDialog::getLocale() << QLocale()
+      qDebug() << "Locale after setting to" << OptionData::getLanguageFromConfigFile() << QLocale()
                << "decimal point" << QString(QLocale().decimalPoint())
                << "group separator" << QString(QLocale().groupSeparator());
 
       // Add paths here to allow translation =================================
-      Application::addReportPath(QObject::tr("Log files:"), LoggingHandler::getLogFiles());
-
+      Application::addReportPath(QObject::tr("Log files:"), LoggingHandler::getLogFiles(false /* includeBackups */));
       Application::addReportPath(QObject::tr("Database directory:"), {Settings::getPath() + atools::SEP + lnm::DATABASE_DIR});
       Application::addReportPath(QObject::tr("Configuration:"), {Settings::getFilename()});
 
@@ -335,7 +404,7 @@ int main(int argc, char *argv[])
         // "/home/USER/.local/share" ("/home/USER/.local/share/marble/maps/earth/openstreetmap")
         // "C:/Users/USER/AppData/Local" ("C:\Users\USER\AppData\Local\.marble\data\maps\earth\openstreetmap")
 
-        ///home/USER/.local/share/marble
+        /// home/USER/.local/share/marble
         QFileInfo cacheFileinfo(commandLine.getCachePath());
 
         QString marbleCache;
@@ -392,10 +461,13 @@ int main(int argc, char *argv[])
 
       if(dbManager->checkIncompatibleDatabases(&databasesErased))
       {
-        delete dbManager;
-        dbManager = nullptr;
+        ATOOLS_DELETE_LOG(dbManager);
+
+        QApplication::setQuitOnLastWindowClosed(true);
 
         MainWindow mainWindow;
+
+        qDebug() << Q_FUNC_INFO << "mainWindow.devicePixelRatioF()" << mainWindow.devicePixelRatioF();
 
         // Show database dialog if something was removed
         mainWindow.setDatabaseErased(databasesErased);
@@ -403,44 +475,47 @@ int main(int argc, char *argv[])
         mainWindow.show();
 
         // Hide splash once main window is shown
-        NavApp::finishSplashScreen();
+        NavApp::finishSplashScreen(&mainWindow);
 
         // =============================================================================================
         // Run application
-        qDebug() << "Before app.exec()";
+        qDebug() << Q_FUNC_INFO << "Before QApplication::exec()";
         retval = QApplication::exec();
+        qDebug() << Q_FUNC_INFO << "After QApplication::exec()";
+      }
+      else
+      {
+        ATOOLS_DELETE_LOG(dbManager);
+        atools::gui::Application::recordExit();
       }
     } // if(!NavApp::initSharedMemory())
     else
       retval = 0;
 
-    qInfo() << "app.exec() done, retval is" << retval << (retval == 0 ? "(ok)" : "(error)");
+    qInfo() << "QApplication::exec() done, retval is" << retval << (retval == 0 ? "(ok)" : "(error)");
   }
   catch(atools::Exception& e)
   {
     NavApp::deInitDataExchange();
+    ATOOLS_PRINT_STACK_CRITICAL("Caught exception in main");
     ATOOLS_HANDLE_EXCEPTION(e);
     // Does not return in case of fatal error
   }
   catch(...)
   {
     NavApp::deInitDataExchange();
+    ATOOLS_PRINT_STACK_CRITICAL("Caught exception in main");
     ATOOLS_HANDLE_UNKNOWN_EXCEPTION;
     // Does not return in case of fatal error
   }
 
+  atools::util::crashhandler::clearStackTrace(Settings::getConfigFilename(lnm::STACKTRACE_SUFFIX, lnm::CRASHREPORTS_DIR));
   NavApp::deInitDataExchange();
 
-  delete dbManager;
-  dbManager = nullptr;
+  ATOOLS_DELETE_LOG(dbManager);
 
   qInfo() << "About to shut down logging";
   atools::logging::LoggingHandler::shutdown();
-
-#ifndef DEBUG_DISABLE_CRASH_REPORT
-  // Remove lock file which is used to detect a previously crash
-  NavApp::recordExit();
-#endif
 
   return retval;
 }

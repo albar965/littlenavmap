@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2023 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2024 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -86,7 +86,7 @@ void AirportIconDelegate::paint(QPainter *painter, const QStyleOptionViewItem& o
   QStyledItemDelegate::paint(painter, opt, index);
 
   // Draw the symbol
-  int symbolSize = option.rect.height() - 4;
+  int symbolSize = option.rect.height() - 6;
   symbolPainter->drawAirportSymbol(painter, ap, option.rect.x() + symbolSize,
                                    option.rect.y() + symbolSize / 2.f + 2.f, symbolSize, false, false, false);
 }

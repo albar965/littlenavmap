@@ -18,49 +18,70 @@
 #ifndef RANDOMDEPARTUREAIRPORTPICKINGBYCRITERIA_H
 #define RANDOMDEPARTUREAIRPORTPICKINGBYCRITERIA_H
 
+#include "search/randomdestinationairportpickingbycriteria.h"
+
 #include <QObject>
 #include <QThread>
+#include <QMap>
 
 namespace atools {
-namespace geo {
-class Pos;
-}
+  namespace geo {
+    class Pos;
+  }
 }
 
-// should only be instantiated 1 at a time
+// 1 departure thread creates many destination threads.
+// destination threads each search on a different part of the data.
+// when a match is found, all other threads are timed out.
+// when no destination is found for a departure, that departure
+// is removed from the set of destinations for the next departure.
+// the departure thread should only be instantiated 1 at a time.
 class RandomDepartureAirportPickingByCriteria :
   public QThread
 {
   Q_OBJECT
 
 public:
-  explicit RandomDepartureAirportPickingByCriteria(QObject *parent);
+  explicit RandomDepartureAirportPickingByCriteria();
 
-  // required calling !!
-  static void initStatics(int countResult, int randomLimit, QVector<std::pair<int, atools::geo::Pos> > *data, int distanceMinMeter,
-                          int distanceMaxMeter);
+  // required calling !!!
+  // the number of items in data can have been reduced when search
+  // is done or cancelled
+  static void initStatics(QVector<std::pair<int, atools::geo::Pos> > *data,
+                          QVector<std::pair<int, int> > *antiData,
+                          int distanceMinMeter,
+                          int distanceMaxMeter,
+                          int predefinedAirportIndex);
 
   void run() override;
 
 public slots:
-  void dataReceived(const bool isSuccess, const int indexDeparture, const int indexDestination);
+  void dataReceived(const bool isSuccess,
+                    const int indexDestination,
+                    const int threadIndex);
   void cancellationReceived();
 
 signals:
-  void resultReady(const bool isSuccess, const int indexDeparture, const int indexDestination, QVector<std::pair<int,
-                                                                                                                 atools::geo::Pos> > *data);
+  void resultReady(const bool isSuccess,
+                   const int indexDeparture,
+                   const int indexDestination,
+                   QVector<std::pair<int, atools::geo::Pos> > *data);
   void progressing();
 
 private:
-  bool noSuccess;
-  int indexDestination;
-  int associatedIndexDeparture;
-  static int countResult;
-  static int randomLimit;
+  friend class RandomDestinationAirportPickingByCriteria;
+
+  QVector<int> map_sort(int* array, int arrayLength);
+
+  QVector<bool> destinationPickerState;   // false = running, true = done
+  bool* dataDestinationPickerState;
+  int foundIndexDestination = -1;
+  bool success = false;
   static QVector<std::pair<int, atools::geo::Pos> > *data;
-  static int distanceMin;
-  static int distanceMax;
-  int runningDestinationThreads;
+  static QVector<std::pair<int, int> > *antiData;
+  static int predefinedAirportIndex;
+  static int numberDestinationsSetParts;
+  static bool stopExecution;
 };
 
 #endif // RANDOMDEPARTUREAIRPORTPICKINGBYCRITERIA_H

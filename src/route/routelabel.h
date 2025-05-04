@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2023 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2024 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -18,11 +18,18 @@
 #ifndef LNM_ROUTELABEL_H
 #define LNM_ROUTELABEL_H
 
+#include "route/routelabelflags.h"
+
 #include <QObject>
 
 class QString;
 class Route;
+class RouteLeg;
 
+namespace map {
+struct MapRunwayEnd;
+struct MapRunway;
+}
 namespace atools {
 namespace util {
 class HtmlBuilder;
@@ -39,7 +46,6 @@ class RouteLabel
 
 public:
   explicit RouteLabel(QWidget *parent, const Route& routeParam);
-  virtual ~RouteLabel() override;
 
   /* Update the header label according to current configuration options */
   void updateHeaderLabel();
@@ -57,89 +63,22 @@ public:
   void buildHtmlText(atools::util::HtmlBuilder& html);
 
   /* Save and load configuration */
-  void saveState();
+  void saveState() const;
   void restoreState();
 
   void styleChanged();
 
-  bool isHeaderAirports() const
+  void optionsChanged();
+
+  /* Set and read display configuration */
+  void setFlag(routelabel::LabelFlag flag, bool on = true)
   {
-    return headerAirports;
+    flags.setFlag(flag, on);
   }
 
-  void setHeaderAirports(bool value)
+  bool isFlag(routelabel::LabelFlag flag) const
   {
-    headerAirports = value;
-  }
-
-  bool isHeaderDeparture() const
-  {
-    return headerDeparture;
-  }
-
-  void setHeaderDeparture(bool value)
-  {
-    headerDeparture = value;
-  }
-
-  bool isHeaderArrival() const
-  {
-    return headerArrival;
-  }
-
-  void setHeaderArrival(bool value)
-  {
-    headerArrival = value;
-  }
-
-  bool isHeaderRunwayTakeoff() const
-  {
-    return headerRunwayTakeoff;
-  }
-
-  void setHeaderRunwayTakeoff(bool value)
-  {
-    headerRunwayTakeoff = value;
-  }
-
-  bool isHeaderRunwayLand() const
-  {
-    return headerRunwayLand;
-  }
-
-  void setHeaderRunwayLand(bool value)
-  {
-    headerRunwayLand = value;
-  }
-
-  bool isHeaderDistTime() const
-  {
-    return headerDistTime;
-  }
-
-  void setHeaderDistTime(bool value)
-  {
-    headerDistTime = value;
-  }
-
-  bool isFooterSelection() const
-  {
-    return footerSelection;
-  }
-
-  void setFooterSelection(bool value)
-  {
-    footerSelection = value;
-  }
-
-  bool isFooterError() const
-  {
-    return footerError;
-  }
-
-  void setFooterError(bool value)
-  {
-    footerError = value;
+    return flags.testFlag(flag);
   }
 
 signals:
@@ -147,20 +86,31 @@ signals:
   void flightplanLabelLinkActivated(const QString& link);
 
 private:
-  void buildErrorLabel(QString& toolTipText, QStringList errors, const QString& header);
   void buildHeaderAirports(atools::util::HtmlBuilder& html, bool widget);
-  void buildHeaderDepart(atools::util::HtmlBuilder& html, bool widget);
-  void buildHeaderArrival(atools::util::HtmlBuilder& html, bool widget);
-  void buildHeaderRunwayTakeoff(atools::util::HtmlBuilder& html);
-  void buildHeaderRunwayLand(atools::util::HtmlBuilder& html);
-  void buildHeaderTocTod(atools::util::HtmlBuilder& html); /* Only for print and HTML export */
   void buildHeaderDistTime(atools::util::HtmlBuilder& html, bool widget);
-  void updateAll();
 
-  bool headerAirports = true, headerDeparture = true, headerArrival = true, headerRunwayTakeoff = true, headerRunwayLand = true,
-       headerDistTime = true, footerSelection = true, footerError = true;
+  void buildHeaderRunwayTakeoff(atools::util::HtmlBuilder& html, const map::MapRunway& runway, const map::MapRunwayEnd& runwayEnd);
+  void buildHeaderRunwayTakeoffWind(atools::util::HtmlBuilder& html, const map::MapRunwayEnd& runwayEnd);
+  void buildHeaderDepart(atools::util::HtmlBuilder& html, bool widget);
+
+  void buildHeaderArrival(atools::util::HtmlBuilder& html, bool widget);
+
+  void buildHeaderRunwayLand(atools::util::HtmlBuilder& html, const map::MapRunway& runway, const map::MapRunwayEnd& runwayEnd);
+  void buildHeaderRunwayLandWind(atools::util::HtmlBuilder& html, const map::MapRunwayEnd& runwayEnd);
+
+  void buildHeaderRunwayWind(atools::util::HtmlBuilder& html, const map::MapRunwayEnd& runwayEnd, const RouteLeg& leg);
+
+  void buildHeaderTocTod(atools::util::HtmlBuilder& html); /* Only for print and HTML export */
+  void buildErrorLabel(QString& toolTipText, QStringList errors, const QString& header);
+
+  void updateAll();
+  void updateFont();
+
+  void fetchTakeoffRunway(map::MapRunway& runway, map::MapRunwayEnd& runwayEnd);
+  void fetchLandingRunway(map::MapRunway& runway, map::MapRunwayEnd& runwayEnd);
 
   const Route& route;
+  routelabel::LabelFlags flags = routelabel::LABEL_ALL;
 };
 
 #endif // LNM_ROUTELABEL_H

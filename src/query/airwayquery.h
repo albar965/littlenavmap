@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2020 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2024 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -52,10 +52,6 @@ class MapLayer;
 class AirwayQuery
 {
 public:
-  /*
-   * @param sqlDbNav for updated navaids
-   */
-  AirwayQuery(atools::sql::SqlDatabase *sqlDbNav, bool trackDatabaseParam);
   ~AirwayQuery();
 
   AirwayQuery(const AirwayQuery& other) = delete;
@@ -94,6 +90,15 @@ public:
    * if they have to be kept between event loop calls. */
   const QList<map::MapAirway> *getAirways(const Marble::GeoDataLatLonBox& rect, const MapLayer *mapLayer, bool lazy);
 
+private:
+  friend class Queries;
+  friend class AirwayTrackQuery;
+
+  /*
+   * @param sqlDbNav for updated navaids
+   */
+  explicit AirwayQuery(atools::sql::SqlDatabase *sqlDbNav, bool trackParam);
+
   /* Close all query objects thus disconnecting from the database */
   void initQueries();
 
@@ -102,7 +107,6 @@ public:
 
   void clearCache();
 
-private:
   map::MapWaypoint waypointById(int id);
 
   MapTypesFactory *mapTypesFactory;
@@ -118,7 +122,7 @@ private:
   QCache<QStringList, QList<map::MapAirway> > airwayByNameCache;
 
   /* true if this uses the track database (PACOTS, NAT, etc.) */
-  bool trackDatabase;
+  bool track;
 
   static int queryMaxRowsAirways;
 

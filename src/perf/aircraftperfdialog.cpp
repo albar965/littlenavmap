@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2020 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2024 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -18,14 +18,16 @@
 #include "perf/aircraftperfdialog.h"
 #include "ui_aircraftperfdialog.h"
 
-#include "common/unit.h"
 #include "atools.h"
 #include "common/constants.h"
-#include "gui/helphandler.h"
-#include "fs/perf/aircraftperf.h"
-#include "gui/widgetstate.h"
-#include "common/unitstringtool.h"
 #include "common/formatter.h"
+#include "common/textpointer.h"
+#include "common/unit.h"
+#include "common/unitstringtool.h"
+#include "fs/perf/aircraftperf.h"
+#include "fs/util/fsutil.h"
+#include "gui/helphandler.h"
+#include "gui/widgetstate.h"
 #include "util/htmlbuilder.h"
 
 #include <QPushButton>
@@ -49,6 +51,9 @@ AircraftPerfDialog::AircraftPerfDialog(QWidget *parent, const atools::fs::perf::
   // Copy performance object
   perf = new AircraftPerf;
   *perf = aircraftPerformance;
+
+  ui->doubleSpinBoxClimbVertSpeed->setSuffix(tr(" %vspeed% %1").arg(TextPointer::getPointerUp()));
+  ui->doubleSpinBoxDescentVertSpeed->setSuffix(tr(" %vspeed% %1").arg(TextPointer::getPointerDown()));
 
   // All widgets that need their unit placeholders replaced on unit changes
   unitWidgets.append({
@@ -167,7 +172,7 @@ void AircraftPerfDialog::restoreState()
   }
 }
 
-void AircraftPerfDialog::saveState()
+void AircraftPerfDialog::saveState() const
 {
   atools::gui::WidgetState ws(lnm::AIRCRAFT_PERF_EDIT_DIALOG);
   ws.save({this, ui->tabWidget});
@@ -214,7 +219,7 @@ void AircraftPerfDialog::aircraftTypeEdited()
                                                                             "It is recommended to use official ICAO codes like "
                                                                             "\"B738\", \"BE9L\" or \"C172\".")));
   }
-  else if(!atools::fs::perf::AircraftPerf::isAircraftTypeValid(ui->lineEditType->text()))
+  else if(!atools::fs::util::isAircraftTypeDesignatorValid(ui->lineEditType->text()))
   {
     ui->labelTypeStatus->show();
     ui->labelTypeStatus->setText(atools::util::HtmlBuilder::warningMessage(tr("Aircraft type is probably not valid. "

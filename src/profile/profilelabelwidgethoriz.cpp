@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2023 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2024 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -129,7 +129,7 @@ void ProfileLabelWidgetHoriz::paintEvent(QPaintEvent *)
 
         if(!((p < 0 && p0 < 0) || (p > vpWidth && p0 > vpWidth))) // Check if leg is visible on profile
         {
-          if(NavApp::isCurrentGuiStyleNight())
+          if(NavApp::isGuiStyleDark())
             // Use normal text for better visibility
             painter.setPen(QApplication::palette().color(QPalette::Text));
           else

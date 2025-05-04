@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2023 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2024 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -36,14 +36,14 @@ OnlineClientSearch::OnlineClientSearch(QMainWindow *parent, QTableView *tableVie
 {
   /* *INDENT-OFF* */
   ui->pushButtonOnlineClientHelpSearch->setToolTip(
-    "<p>All set search conditions have to match.</p>"
+    tr("<p>All set search conditions have to match.</p>"
     "<p>Search tips for text fields: </p>"
     "<ul>"
       "<li>Default is search for online clients that contain the entered text.</li>"
       "<li>Use &quot;*&quot; as a placeholder for any text. </li>"
       "<li>Prefix with &quot;-&quot; as first character to negate search.</li>"
       "<li>Only callsign field: Use double quotes like &quot;TAU&quot; to force exact search.</li>"
-    "</ul>");
+    "</ul>"));
   /* *INDENT-ON* */
 
   // All widgets that will have their state and visibility saved and restored
@@ -129,7 +129,7 @@ void OnlineClientSearch::saveState()
 
 void OnlineClientSearch::restoreState()
 {
-  if(OptionData::instance().getFlags() & opts::STARTUP_LOAD_SEARCH && !NavApp::isSafeMode())
+  if(OptionData::instance().getFlags().testFlag(opts::STARTUP_LOAD_SEARCH) && !atools::gui::Application::isSafeMode())
   {
     atools::gui::WidgetState widgetState(lnm::SEARCHTAB_ONLINE_CLIENT_VIEW_WIDGET);
     widgetState.restore(onlineClientSearchWidgets);

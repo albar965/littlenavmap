@@ -19,6 +19,7 @@
 #include "common/maptypes.h"
 #include "common/infobuildertypes.h"
 #include "common/abstractinfobuilder.h"
+#include "sql/sqlrecord.h"
 #include "weather/weathercontext.h"
 #include "webapi/webapirequest.h"
 
@@ -46,12 +47,12 @@ WebApiResponse AirportActionsController::infoAction(WebApiRequest request){
     if(airport.isValid()){
 
         // Fetch related data
-        const SqlRecord* airportInformation = getAirportInformation(airport.id);
+        const SqlRecord airportInformation = getAirportInformation(airport.id);
         const AirportAdminNames airportAdminNames = getAirportAdminNames(airport);
         const int transitionAltitude = getTransitionAltitude(airport);
 
-        const QTime sunrise = getSunrise(*airportInformation);
-        const QTime sunset =  getSunset(*airportInformation);
+        const QTime sunrise = getSunrise(airportInformation);
+        const QTime sunset =  getSunset(airportInformation);
         const QDateTime activeDateTime = getActiveDateTime();
         const QString activeDateTimeSource = getActiveDateTimeSource();
 
@@ -60,7 +61,7 @@ WebApiResponse AirportActionsController::infoAction(WebApiRequest request){
             airport,
             getWeatherContext(airport),
             nullptr,
-            airportInformation,
+            &airportInformation,
             &airportAdminNames,
             &transitionAltitude,
             &sunrise,

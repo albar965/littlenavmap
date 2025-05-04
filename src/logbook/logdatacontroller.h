@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2023 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2024 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -20,9 +20,11 @@
 
 #include "common/maptypes.h"
 
+#include <QCache>
 #include <QObject>
 #include <QVector>
 
+class AircraftTrail;
 namespace atools {
 namespace sql {
 class SqlRecord;
@@ -40,7 +42,7 @@ class HelpHandler;
 namespace fs {
 
 namespace gpx {
-struct GpxData;
+class GpxData;
 }
 namespace pln {
 class Flightplan;
@@ -100,12 +102,18 @@ public:
   /* Show search tab and raise window */
   void  showSearch();
 
-  void saveState();
+  void saveState() const;
   void restoreState();
+
+  /* Reset saved settings and position of LogStatisticsDialog */
+  void resetWindowLayout();
 
   /* Edit and delete log entries from map context menu */
   void editLogEntryFromMap(int id);
   void deleteLogEntryFromMap(int id);
+
+  /* Signaled if aircraft was or is close to the departure point on the runway */
+  void aircraftHasPassedTakeoffPoint(const atools::fs::sc::SimConnectUserAircraft&);
 
   /* Takeoff and landing events from map widget which will create a log entry if enabled */
   void aircraftTakeoff(const atools::fs::sc::SimConnectUserAircraft& aircraft);
@@ -151,6 +159,7 @@ public:
   void resetTakeoffLandingDetection();
 
   const atools::fs::gpx::GpxData *getGpxData(int id);
+  const AircraftTrail *getAircraftTrail(int id);
 
   /* Clear caches */
   void preDatabaseLoad();
@@ -179,6 +188,12 @@ public:
   void perfAdd(atools::sql::SqlRecord *record, QWidget *parent); /* Attach new performance to logbook entry */
   void perfSaveAs(atools::sql::SqlRecord *record, QWidget *parent); /* Save attached performance to file */
 
+  /* Aircraft was close to departure point on runway. Value is remembered. */
+  bool hasAircraftPassedTakeoffPoint() const
+  {
+    return aircraftPassedTakeoffPoint;
+  }
+
 signals:
   /* Sent after database modification to update the search result table */
   void refreshLogSearch(bool loadAll, bool keepSelection, bool force);
@@ -193,6 +208,18 @@ private:
   /* Create a logbook entry on takeoff and update it on landing */
   void createTakeoffLanding(const atools::fs::sc::SimConnectUserAircraft& aircraft, bool takeoff,
                             float flownDistanceNm);
+  void recordTakeoff(const atools::fs::sc::SimConnectUserAircraft& aircraft, const map::MapAirport& airport,
+                     const map::MapRunwayEnd& runwayEnd);
+  void recordLanding(atools::sql::SqlRecord& record, const atools::fs::sc::SimConnectUserAircraft& aircraft, const map::MapAirport& airport,
+                     const map::MapRunwayEnd& runwayEnd, float flownDistanceNm);
+  QString recordAirportOrCoordinates(atools::sql::SqlRecord& record, const atools::fs::sc::SimConnectUserAircraft& aircraft,
+                                     const map::MapAirport& airport, const map::MapRunwayEnd& runwayEnd, const QString& prefix);
+
+  /* Needs departure set but no destination */
+  bool recordIsTakeoff(const atools::sql::SqlRecord& record);
+
+  /* Matches if same aircraft and same simulator */
+  bool doesFlightMatchRecord(const atools::sql::SqlRecord& record, const atools::fs::sc::SimConnectUserAircraft& aircraft);
 
   /* Prefill record for add dialog with values from current program state */
   void prefillLogEntry(atools::sql::SqlRecord& rec);
@@ -218,15 +245,24 @@ private:
   void undoTriggered();
   void redoTriggered();
 
+  /* Load and save logEntryId to configuration file */
+  void saveLogEntryId() const;
+  void restoreLogEntryId();
+
+  int logEntryId = -1;
+
   /* Remember last aircraft for fuel calculations */
   const atools::fs::sc::SimConnectUserAircraft *aircraftAtTakeoff = nullptr;
-  int logEntryId = -1;
+
+  bool aircraftPassedTakeoffPoint = false;
 
   LogStatisticsDialog *statsDialog = nullptr;
 
   atools::fs::userdata::LogdataManager *manager;
   atools::gui::Dialog *dialog;
   MainWindow *mainWindow;
+
+  QCache<int, AircraftTrail> aircraftTrailCache;
 };
 
 #endif // LNM_LOGDATACONTROLLER_H

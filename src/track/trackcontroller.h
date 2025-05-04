@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2023 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2024 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -34,7 +34,7 @@ class AirwayTrackQuery;
 class WaypointTrackQuery;
 
 /*
- * Downloads track systems (NAT, PACOTS and AUSOTS) from public websites, parses the pages and loads the tracks into
+ * Downloads track systems (NAT and PACOTS) from public websites, parses the pages and loads the tracks into
  * the track database.
  *
  * Also initializes and updates waypoint and airway queries classes which share track and navaid databases.
@@ -52,8 +52,8 @@ public:
   TrackController& operator=(const TrackController& other) = delete;
 
   /* Read and write widget states, source and airspace selection */
+  void saveState() const;
   void restoreState();
-  void saveState();
 
   /* Update on option change */
   void optionsChanged();
@@ -81,6 +81,10 @@ public:
   {
     return !enabledTracks().isEmpty();
   }
+
+  /* True if specific type is enabled in the menu and tracks are downloaded */
+  bool hasNatTracks();
+  bool hasPacotsTracks();
 
   /* If true: Do not load tracks that are currently not valid. */
   void setDownloadOnlyValid(bool value)

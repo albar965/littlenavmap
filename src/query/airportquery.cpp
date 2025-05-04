@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2023 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2025 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -19,6 +19,7 @@
 
 #include "common/constants.h"
 #include "common/maptypesfactory.h"
+#include "query/querymanager.h"
 #include "query/querytypes.h"
 #include "common/mapresult.h"
 #include "fs/common/binarygeometry.h"
@@ -39,47 +40,22 @@ using map::MapHelipad;
 
 namespace ageo = atools::geo;
 
-/* Key for nearestCache combining all query parameters */
-class NearestCacheKeyAirport
-{
-public:
-  NearestCacheKeyAirport(const atools::geo::Pos& posParam, float distanceNmParam)
-    : pos(posParam), distanceNm(distanceNmParam)
-  {
-  }
-
-  atools::geo::Pos pos;
-  float distanceNm;
-
-  bool operator==(const NearestCacheKeyAirport& other) const
-  {
-    return pos.almostEqual(other.pos) && atools::almostEqual(distanceNm, other.distanceNm, 0.01f);
-  }
-
-  bool operator!=(const NearestCacheKeyAirport& other) const
-  {
-    return !operator==(other);
-  }
-
-};
-
-inline uint qHash(const NearestCacheKeyAirport& key)
-{
-  return qHash(key.pos) ^ qHash(key.distanceNm);
-}
-
 /* maximum difference in angle for aircraft to recognize the right runway */
 const static float MAX_HEADING_RUNWAY_DEVIATION_DEG = 20.f;
 const static float MAX_HEADING_RUNWAY_DEVIATION_DEG_2 = 45.f;
-const static float MAX_HEADING_RUNWAY_DEVIATION_DEG_3 = map::INVALID_HEADING_VALUE; // Ignore heading and get nearest runway end
 const static float MAX_RUNWAY_DISTANCE_METER = 150.f; // First iteration
 const static float MAX_RUNWAY_DISTANCE_METER_2 = 2000.f; // Second iteration if first failed
-const static float MAX_RUNWAY_DISTANCE_METER_3 = 10000.f; // Third iteration if second failed
 
-const static float MAX_FUZZY_AIRPORT_DISTANCE_METER = 500.f;
+const static float MAX_FUZZY_AIRPORT_DISTANCE_METER = 2000.f;
+const static float MAX_FUZZY_AIRPORT_DISTANCE_METER_UNIQUE = 10000.f;
 
-AirportQuery::AirportQuery(atools::sql::SqlDatabase *sqlDb, bool nav)
-  : navdata(nav), db(sqlDb)
+inline uint qHash(const NearestCacheKeyPosIdentDist& key)
+{
+  return qHash(std::get<0>(key)) ^ qHash(std::get<1>(key)) ^ qHash(std::get<2>(key));
+}
+
+AirportQuery::AirportQuery(atools::sql::SqlDatabase *sqlDb, const Queries *queriesParam, bool nav)
+  : navdata(nav), db(sqlDb), queries(queriesParam)
 {
   mapTypesFactory = new MapTypesFactory();
   atools::settings::Settings& settings = atools::settings::Settings::instance();
@@ -109,8 +85,14 @@ void AirportQuery::loadAirportProcedureCache()
 
   if(navdata && NavApp::isNavdataMixed())
   {
+    QString queryStr;
+    if(iataCol)
+      queryStr = "select ident, iata from airport where num_approach > 0";
+    else
+      queryStr = "select ident, null as iata from airport where num_approach > 0";
+
     SqlQuery query(db);
-    query.exec("select ident, iata from airport where num_approach > 0");
+    query.exec(queryStr);
     while(query.next())
     {
       airportsWithProceduresIdent.insert(query.valueStr(0));
@@ -180,7 +162,7 @@ void AirportQuery::getAirportById(map::MapAirport& airport, int airportId)
     airportByIdQuery->finish();
 
     if(!navdata)
-      NavApp::getAirportQueryNav()->correctAirportProcedureFlag(ap);
+      queries->getAirportQueryNav()->correctAirportProcedureFlag(ap);
 
     airport = *ap;
     airportIdCache.insert(airportId, ap);
@@ -216,7 +198,7 @@ void AirportQuery::getAirportByIdent(map::MapAirport& airport, const QString& id
                                    NavApp::isAirportDatabaseXPlane(navdata));
     airportByIdentQuery->finish();
     if(!navdata)
-      NavApp::getAirportQueryNav()->correctAirportProcedureFlag(ap);
+      queries->getAirportQueryNav()->correctAirportProcedureFlag(ap);
 
     airport = *ap;
     airportIdentCache.insert(ident, ap);
@@ -246,7 +228,7 @@ void AirportQuery::getAirportsByTruncatedIdent(QList<map::MapAirport>& airports,
     mapTypesFactory->fillAirport(airportsByTruncatedIdentQuery->record(), airport, true /* complete */, navdata,
                                  NavApp::isAirportDatabaseXPlane(navdata));
     if(!navdata)
-      NavApp::getAirportQueryNav()->correctAirportProcedureFlag(airport);
+      queries->getAirportQueryNav()->correctAirportProcedureFlag(airport);
     airports.append(airport);
   }
 }
@@ -307,7 +289,7 @@ void AirportQuery::getAirportsByOfficialIdent(QList<map::MapAirport>& airports, 
       mapTypesFactory->fillAirport(airportByOfficialQuery->record(), airport, true /* complete */, navdata,
                                    NavApp::isAirportDatabaseXPlane(navdata));
       if(!navdata)
-        NavApp::getAirportQueryNav()->correctAirportProcedureFlag(airport);
+        queries->getAirportQueryNav()->correctAirportProcedureFlag(airport);
       airports.append(airport);
     }
   }
@@ -327,63 +309,78 @@ QString AirportQuery::getDisplayIdent(const QString& ident)
   return dispIdent.isEmpty() ? ident : dispIdent;
 }
 
-void AirportQuery::getAirportFuzzy(map::MapAirport& airport, const map::MapAirport airportCopy)
+const MapAirport AirportQuery::getAirportFuzzy(const map::MapAirport& airport)
 {
-  if(!airportCopy.isValid())
+  map::MapAirport ap;
+  getAirportFuzzy(ap, airport);
+  return ap;
+}
+
+void AirportQuery::getAirportFuzzy(map::MapAirport& airport, const map::MapAirport airportParam)
+{
+  if(!airportParam.isValid())
     return;
 
-  map::MapAirport *apCached = airportFuzzyIdCache.object(airportCopy.id);
+  map::MapAirport *airportCached = airportFuzzyIdCache.object(airportParam.id);
 
-  if(apCached != nullptr)
+  if(airportCached != nullptr)
     // Found in cache - copy from pointer
-    airport = *apCached;
+    airport = *airportCached;
   else
   {
     QList<map::MapAirport> airports;
 
     // Create new airport for caching
-    apCached = new map::MapAirport;
+    airportCached = new map::MapAirport;
 
     // airportFrom has to be copied to avoid overwriting
     // Try exact ident match first
     map::MapAirport airportByIdent;
-    getAirportByIdent(airportByIdent, airportCopy.ident);
+    getAirportByIdent(airportByIdent, airportParam.ident);
 
     // Try other codes if given as second attempt
+    bool foundByIdent = false;
     if(airportByIdent.isValid())
+    {
       airports.append(airportByIdent);
+      foundByIdent = true;
+    }
 
     // Sort by distance and remove too far away in case an ident was assigned to a new airport
-    maptools::sortByDistance(airports, airportCopy.position);
-    maptools::removeByDistance(airports, airportCopy.position, MAX_FUZZY_AIRPORT_DISTANCE_METER);
+    // Allow more distance if result is unique
+    maptools::sortByDistance(airports, airportParam.position);
+    maptools::removeByDistance(airports, airportParam.position,
+                               foundByIdent ? MAX_FUZZY_AIRPORT_DISTANCE_METER_UNIQUE : MAX_FUZZY_AIRPORT_DISTANCE_METER);
 
     if(airports.isEmpty())
     {
-      // Try ICAO first on all fields (ICAO, not IATA, FAA and local)
-      if(airportCopy.icao != airportCopy.ident)
-        getAirportsByOfficialIdent(airports, airportCopy.icao, nullptr, map::INVALID_DISTANCE_VALUE,
-                                   map::AP_QUERY_ICAO | map::AP_QUERY_FAA | map::AP_QUERY_LOCAL);
+      map::AirportQueryFlag flags = map::AP_QUERY_IDENT | map::AP_QUERY_ICAO | map::AP_QUERY_FAA | map::AP_QUERY_LOCAL;
 
-      // Try IATA next on all fields
-      getAirportsByOfficialIdent(airports, airportCopy.iata, nullptr, map::INVALID_DISTANCE_VALUE,
-                                 map::AP_QUERY_ICAO | map::AP_QUERY_IATA | map::AP_QUERY_FAA | map::AP_QUERY_LOCAL);
+      // Try ICAO first on all fields (ICAO, not IATA, FAA and local)
+      if(airportParam.icao != airportParam.ident)
+        getAirportsByOfficialIdent(airports, airportParam.icao, nullptr, map::INVALID_DISTANCE_VALUE, flags);
+
+      // Try IATA next on all fields including IATA
+      getAirportsByOfficialIdent(airports, airportParam.iata, nullptr, map::INVALID_DISTANCE_VALUE, flags | map::AP_QUERY_IATA);
 
       // Try FAA next on all fields except IATA
-      getAirportsByOfficialIdent(airports, airportCopy.faa, nullptr, map::INVALID_DISTANCE_VALUE,
-                                 map::AP_QUERY_ICAO | map::AP_QUERY_FAA | map::AP_QUERY_LOCAL);
+      getAirportsByOfficialIdent(airports, airportParam.faa, nullptr, map::INVALID_DISTANCE_VALUE, flags);
+
+      // Try local next on all fields except IATA
+      getAirportsByOfficialIdent(airports, airportParam.local, nullptr, map::INVALID_DISTANCE_VALUE, flags);
     }
 
     // Fall back to coordinate based search and look for centers within certain distance
-    if(airports.isEmpty() && airportCopy.position.isValid())
+    if(airports.isEmpty() && airportParam.position.isValid())
     {
-      ageo::Rect rect(airportCopy.position, ageo::nmToMeter(10.f), true /* fast */);
+      ageo::Rect rect(airportParam.position, ageo::nmToMeter(10.f), true /* fast */);
 
       query::fetchObjectsForRect(rect, airportByPosQuery, [ =, &airports](atools::sql::SqlQuery *query) -> void {
         map::MapAirport airportByCoord;
         mapTypesFactory->fillAirport(query->record(), airportByCoord, true /* complete */,
                                      navdata, NavApp::isAirportDatabaseXPlane(navdata));
         if(!navdata)
-          NavApp::getAirportQueryNav()->correctAirportProcedureFlag(airportByCoord);
+          queries->getAirportQueryNav()->correctAirportProcedureFlag(airportByCoord);
         airports.append(airportByCoord);
       });
     }
@@ -391,22 +388,23 @@ void AirportQuery::getAirportFuzzy(map::MapAirport& airport, const map::MapAirpo
     if(!airports.isEmpty())
     {
       // Sort by distance and remove too far away
-      maptools::sortByDistance(airports, airportCopy.position);
-      maptools::removeByDistance(airports, airportCopy.position, MAX_FUZZY_AIRPORT_DISTANCE_METER);
+      maptools::sortByDistance(airports, airportParam.position);
+      maptools::removeByDistance(airports, airportParam.position, foundByIdent ?
+                                 MAX_FUZZY_AIRPORT_DISTANCE_METER_UNIQUE : MAX_FUZZY_AIRPORT_DISTANCE_METER);
 
       if(!airports.isEmpty())
         // Assign to cache object
-        *apCached = airports.constFirst();
+        *airportCached = airports.constFirst();
     } // else assign empty airport to indicate that is it not available
 
     // Can be valid or empty
-    airport = *apCached;
+    airport = *airportCached;
 
     // Also insert negative entries for not found
-    airportFuzzyIdCache.insert(airportCopy.id, apCached);
+    airportFuzzyIdCache.insert(airportParam.id, airportCached);
 
 #ifdef DEBUG_INFORMATION
-    qDebug() << Q_FUNC_INFO << "Found" << *apCached << "as replacement for" << airportCopy;
+    qDebug() << Q_FUNC_INFO << "Found" << *airportCached << "as replacement for" << airportParam;
 #endif
   }
 }
@@ -581,7 +579,6 @@ const QList<map::MapApron> *AirportQuery::getAprons(int airportId)
 
       ap.id = apronQuery->valueInt("apron_id");
       ap.surface = apronQuery->value("surface").toString();
-      ap.drawSurface = apronQuery->value("is_draw_surface").toInt() > 0;
 
       if(!apronQuery->isNull("geometry"))
       {
@@ -836,6 +833,53 @@ const QList<map::MapHelipad> *AirportQuery::getHelipads(int airportId)
   }
 }
 
+const map::MapResultIndex *AirportQuery::getNearestAirportObjects(const atools::geo::Pos& pos, float distanceNm)
+{
+  const NearestCacheKeyPosIdentDist key(pos, QString(), distanceNm);
+
+  map::MapResultIndex *resultIndex = nearestAirportObjectCache.object(key);
+
+  if(resultIndex == nullptr)
+  {
+    map::MapResult result;
+    // Create a rectangle that roughly covers the requested region
+    ageo::Rect rect(pos, ageo::nmToMeter(distanceNm), true /* fast */);
+
+    // Fetch nearest airports ============================================
+    query::fetchObjectsForRect(rect, airportByPosQuery, [ =, &result](atools::sql::SqlQuery *query) -> void {
+      map::MapAirport airport;
+      mapTypesFactory->fillAirport(query->record(), airport, true /* complete */, navdata, NavApp::isAirportDatabaseXPlane(navdata));
+      result.airports.append(airport);
+    });
+
+    // Fetch nearest parking ============================================
+    query::fetchObjectsForRect(rect, airportParkingQuery, [ =, &result](atools::sql::SqlQuery *query) -> void {
+      map::MapParking parking;
+      mapTypesFactory->fillParking(query->record(), parking);
+      result.parkings.append(parking);
+    });
+
+    // Fetch nearest start positions ============================================
+    query::fetchObjectsForRect(rect, airportStartQuery, [ =, &result](atools::sql::SqlQuery *query) -> void {
+      map::MapStart start;
+      mapTypesFactory->fillStart(query->record(), start);
+      result.starts.append(start);
+    });
+
+    resultIndex = new map::MapResultIndex;
+    resultIndex->add(result);
+
+    // Remove all that are too far away
+    resultIndex->remove(pos, distanceNm);
+
+    // Sort the rest by distance
+    resultIndex->sort(pos);
+
+    nearestAirportObjectCache.insert(key, resultIndex);
+  }
+  return resultIndex;
+}
+
 const map::MapResultIndex *AirportQuery::getNearestProcAirports(const atools::geo::Pos& pos, const QString& ident, float distanceNm)
 {
   const map::MapResultIndex *nearest = nearestProcAirportsInternal(pos, ident, distanceNm);
@@ -846,35 +890,40 @@ const map::MapResultIndex *AirportQuery::getNearestProcAirports(const atools::ge
 
 const map::MapResultIndex *AirportQuery::nearestProcAirportsInternal(const atools::geo::Pos& pos, const QString& ident, float distanceNm)
 {
-  const NearestCacheKeyAirport key(pos, distanceNm);
+  const NearestCacheKeyPosIdentDist key(pos, ident, distanceNm);
 
-  map::MapResultIndex *result = nearestAirportCache.object(key);
+  map::MapResultIndex *resultIndex = nearestAirportProcCache.object(key);
 
-  if(result == nullptr)
+  if(resultIndex == nullptr)
   {
-    map::MapResult res;
+    map::MapResult result;
     // Create a rectangle that roughly covers the requested region
     ageo::Rect rect(pos, ageo::nmToMeter(distanceNm), true /* fast */);
 
-    query::fetchObjectsForRect(rect, airportByRectAndProcQuery, [ =, &res](atools::sql::SqlQuery *query) -> void {
-      map::MapAirport obj;
-      mapTypesFactory->fillAirport(query->record(), obj, true /* complete */, navdata, NavApp::isAirportDatabaseXPlane(navdata));
-      if(obj.ident != ident)
-        res.airports.append(obj);
+    query::fetchObjectsForRect(rect, airportByRectAndProcQuery, [ =, &result](atools::sql::SqlQuery *query) -> void {
+      map::MapAirport airport;
+      mapTypesFactory->fillAirport(query->record(), airport, true /* complete */, navdata, NavApp::isAirportDatabaseXPlane(navdata));
+      if(airport.ident != ident)
+      {
+        if(!navdata)
+          queries->getAirportQueryNav()->correctAirportProcedureFlag(airport);
+        if(airport.procedure())
+          result.airports.append(airport);
+      }
     });
 
-    result = new map::MapResultIndex;
-    result->add(res);
+    resultIndex = new map::MapResultIndex;
+    resultIndex->add(result);
 
     // Remove all that are too far away
-    result->remove(pos, distanceNm);
+    resultIndex->remove(pos, distanceNm);
 
     // Sort the rest by distance
-    result->sort(pos);
+    resultIndex->sort(pos);
 
-    nearestAirportCache.insert(key, result);
+    nearestAirportProcCache.insert(key, resultIndex);
   }
-  return result;
+  return resultIndex;
 }
 
 void AirportQuery::bestRunwayEndAndAirport(map::MapRunwayEnd& runwayEnd, map::MapAirport& airport,
@@ -972,9 +1021,9 @@ void AirportQuery::getRunwaysAndAirports(map::MapResultIndex& runwayAirports, co
   SqlQuery query(db);
   query.prepare("select * from runway where lonx between :leftx and :rightx and laty between :bottomy and :topy");
 
-  for(const ageo::Rect& r : rect.splitAtAntiMeridian())
+  for(const ageo::Rect& splitRect : rect.splitAtAntiMeridian())
   {
-    query::bindRect(r, &query);
+    query::bindRect(splitRect, &query);
     query.exec();
 
     while(query.next())
@@ -992,9 +1041,9 @@ void AirportQuery::getRunwaysAndAirports(map::MapResultIndex& runwayAirports, co
                   "where lonx between :leftx and :rightx and laty between :bottomy and :topy and longest_runway_length = 0");
 
     bool xp = NavApp::isAirportDatabaseXPlane(navdata /* navdata */);
-    for(const ageo::Rect& r : rect.splitAtAntiMeridian())
+    for(const ageo::Rect& splitRect : rect.splitAtAntiMeridian())
     {
-      query::bindRect(r, &query);
+      query::bindRect(splitRect, &query);
       query.exec();
 
       while(query.next())
@@ -1002,7 +1051,7 @@ void AirportQuery::getRunwaysAndAirports(map::MapResultIndex& runwayAirports, co
         map::MapAirport airport;
         mapTypesFactory->fillAirport(query.record(), airport, false /* complete */, navdata, xp);
         if(!navdata)
-          NavApp::getAirportQueryNav()->correctAirportProcedureFlag(airport);
+          queries->getAirportQueryNav()->correctAirportProcedureFlag(airport);
         runwayAirports.add(map::MapResult::createFromMapBase(&airport));
       }
     }
@@ -1030,7 +1079,6 @@ const QList<map::MapTaxiPath> *AirportQuery::getTaxiPaths(int airportId)
       // TODO should be moved to MapTypesFactory
       map::MapTaxiPath tp;
       tp.closed = taxiparthQuery->value("type").toString() == "CLOSED";
-      tp.drawSurface = taxiparthQuery->value("is_draw_surface").toInt() > 0;
       tp.start = ageo::Pos(taxiparthQuery->value("start_lonx").toFloat(), taxiparthQuery->value("start_laty").toFloat());
       tp.end = ageo::Pos(taxiparthQuery->value("end_lonx").toFloat(), taxiparthQuery->value("end_laty").toFloat());
       tp.surface = taxiparthQuery->value("surface").toString();
@@ -1105,10 +1153,10 @@ map::MapRunwayEnd AirportQuery::runwayEndByName(int airportId, const QString& ru
   {
     for(const map::MapRunway& mr : *aprunways)
     {
-      if(atools::fs::util::runwayEqual(mr.primaryName, runway))
+      if(atools::fs::util::runwayEqual(mr.primaryName, runway, false /* fuzzy */))
         return getRunwayEndById(mr.primaryEndId);
 
-      if(atools::fs::util::runwayEqual(mr.secondaryName, runway))
+      if(atools::fs::util::runwayEqual(mr.secondaryName, runway, false /* fuzzy */))
         return getRunwayEndById(mr.secondaryEndId);
     }
   }
@@ -1126,7 +1174,7 @@ bool AirportQuery::getBestRunwayEndForPosAndCourse(map::MapRunwayEnd& runwayEnd,
   // Get all airports without runways and runways nearby ordered by distance between pos and runway line
   // Use inflated rectangle for query
   map::MapResultIndex runwayAirports;
-  getRunwaysAndAirports(runwayAirports, ageo::Rect(pos, MAX_RUNWAY_DISTANCE_METER_3, true /* fast */), pos, true /* noRunway */);
+  getRunwaysAndAirports(runwayAirports, ageo::Rect(pos, MAX_RUNWAY_DISTANCE_METER_2, true /* fast */), pos, true /* noRunway */);
   qDebug() << Q_FUNC_INFO << "Found" << runwayAirports.size() << "runways and/or airports";
 
   if(!runwayAirports.isEmpty())
@@ -1145,17 +1193,6 @@ bool AirportQuery::getBestRunwayEndForPosAndCourse(map::MapRunwayEnd& runwayEnd,
       airport.reset();
       bestRunwayEndAndAirport(runwayEnd, airport, runwayAirports, pos, trackTrue,
                               MAX_RUNWAY_DISTANCE_METER_2, helicopter ? map::INVALID_HEADING_VALUE : MAX_HEADING_RUNWAY_DEVIATION_DEG_2);
-    }
-
-    if(!airport.isValid())
-    {
-      // Get closest airport and runway that matches heading with largest distance - third iteration
-      // Ignore heading value and get closest runway end
-      qDebug() << Q_FUNC_INFO << "No airport found. Third iteration.";
-      runwayEnd.reset();
-      airport.reset();
-      bestRunwayEndAndAirport(runwayEnd, airport, runwayAirports, pos, trackTrue,
-                              MAX_RUNWAY_DISTANCE_METER_3, helicopter ? map::INVALID_HEADING_VALUE : MAX_HEADING_RUNWAY_DEVIATION_DEG_3);
     }
 
     if(airport.isValid())
@@ -1244,19 +1281,19 @@ QStringList AirportQuery::airportOverviewColumns(const atools::sql::SqlDatabase 
     "lonx", "laty", "left_lonx", "top_laty", "right_lonx", "bottom_laty "
   });
 
-  SqlRecord aprec = db->record("airport");
-  if(aprec.contains("region"))
+  SqlRecord airportRec = db->record("airport");
+  if(airportRec.contains("region"))
     airportQueryBase.append("region");
-  if(aprec.contains("is_3d"))
+  if(airportRec.contains("is_3d"))
     airportQueryBase.append("is_3d");
 
-  if(aprec.contains("icao"))
+  if(airportRec.contains("icao"))
     airportQueryBase.append("icao");
-  if(aprec.contains("iata"))
+  if(airportRec.contains("iata"))
     airportQueryBase.append("iata");
-  if(aprec.contains("faa"))
+  if(airportRec.contains("faa"))
     airportQueryBase.append("faa");
-  if(aprec.contains("local"))
+  if(airportRec.contains("local"))
     airportQueryBase.append("local");
 
   return airportQueryBase;
@@ -1287,12 +1324,15 @@ void AirportQuery::initQueries()
   airportProcByIdQuery = new SqlQuery(db);
   airportProcByIdQuery->prepare("select 1 from approach where airport_id = :id limit 1");
 
+  // STAR and approach - "not SID"
   procArrivalByAirportIdQuery = new SqlQuery(db);
   procArrivalByAirportIdQuery->prepare("select 1 from approach where airport_id = :id and  "
-                                       "((type = 'GPS' and suffix = 'A') or (suffix <> 'D' or suffix is null)) limit 1");
+                                       "not (type = 'GPS' and suffix = 'D' and has_gps_overlay == 1) limit 1");
 
+  // SID only
   procDepartureByAirportIdQuery = new SqlQuery(db);
-  procDepartureByAirportIdQuery->prepare("select 1 from approach where airport_id = :id and type = 'GPS' and suffix = 'D' limit 1");
+  procDepartureByAirportIdQuery->prepare("select 1 from approach "
+                                         "where airport_id = :id and type = 'GPS' and suffix = 'D' and has_gps_overlay == 1 limit 1");
 
   airportByIdentQuery = new SqlQuery(db);
   airportByIdentQuery->prepare("select " % airportQueryBase.join(", ") % " from airport where ident = :ident ");
@@ -1330,7 +1370,10 @@ void AirportQuery::initQueries()
   airportCoordsByIdentQuery->prepare("select lonx, laty from airport where ident = :ident ");
 
   airportCoordsByIdentOrIcaoQuery = new SqlQuery(db);
-  airportCoordsByIdentOrIcaoQuery->prepare("select lonx, laty from airport where ident = :identicao or icao = :identicao ");
+  if(icaoCol)
+    airportCoordsByIdentOrIcaoQuery->prepare("select lonx, laty from airport where ident = :identicao or icao = :identicao ");
+  else
+    airportCoordsByIdentOrIcaoQuery->prepare("select lonx, laty from airport where ident = :identicao ");
 
   airportByRectAndProcQuery = new SqlQuery(db);
   airportByRectAndProcQuery->prepare("select " % airportQueryBase.join(", ") % " from airport where " % whereRect %
@@ -1419,6 +1462,12 @@ void AirportQuery::initQueries()
     "join runway_end s on r.secondary_end_id = s.runway_end_id "
     "where r.airport_id = :airportId");
 
+  airportParkingQuery = new SqlQuery(db);
+  airportParkingQuery->prepare("select * from parking where " % whereRect % whereLimit);
+
+  airportStartQuery = new SqlQuery(db);
+  airportStartQuery->prepare("select * from start where " % whereRect % whereLimit);
+
   loadAirportProcedureCache();
 }
 
@@ -1435,7 +1484,7 @@ void AirportQuery::deInitQueries()
   airportFuzzyIdCache.clear();
   airportsWithProceduresIdent.clear();
   airportsWithProceduresIata.clear();
-  nearestAirportCache.clear();
+  nearestAirportProcCache.clear();
 
   ATOOLS_DELETE(runwayOverviewQuery);
   ATOOLS_DELETE(apronQuery);
@@ -1457,6 +1506,8 @@ void AirportQuery::deInitQueries()
   ATOOLS_DELETE(airportsByTruncatedIdentQuery);
   ATOOLS_DELETE(airportByOfficialQuery);
   ATOOLS_DELETE(airportByPosQuery);
+  ATOOLS_DELETE(airportParkingQuery);
+  ATOOLS_DELETE(airportStartQuery);
   ATOOLS_DELETE(airportCoordsByIdentQuery);
   ATOOLS_DELETE(airportCoordsByIdentOrIcaoQuery);
   ATOOLS_DELETE(airportByRectAndProcQuery);

@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2023 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2025 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -17,54 +17,95 @@
 
 #include "mapgui/mapthemehandler.h"
 
+#include "app/navapp.h"
 #include "atools.h"
 #include "common/constants.h"
 #include "exception.h"
+#include "gui/dialog.h"
+#include "gui/messagebox.h"
+#include "gui/widgetstate.h"
+#include "mapgui/mapwidget.h"
+#include "options/optiondata.h"
 #include "settings/settings.h"
+#include "ui_mainwindow.h"
+#include "util/htmlbuilder.h"
 #include "util/simplecrypt.h"
 #include "util/xmlstream.h"
-#include "mapgui/mapwidget.h"
-#include "app/navapp.h"
-#include "ui_mainwindow.h"
-#include "gui/dialog.h"
-#include "gui/widgetstate.h"
-#include "options/optiondata.h"
 
+#include <QActionGroup>
 #include <QCoreApplication>
+#include <QDataStream>
 #include <QDebug>
 #include <QFileInfo>
-#include <QXmlStreamReader>
 #include <QRegularExpression>
-#include <QDataStream>
-#include <QActionGroup>
+#include <QSettings>
 #include <QStringBuilder>
+#include <QXmlStreamReader>
 
 const static quint64 KEY = 0x19CB0467EBD391CC;
 const static QLatin1String FILENAME("mapthemekeys.bin");
+const static int MAX_ERRORS = 5;
 
+QString MapTheme::dgmlDisplayPath() const
+{
+  return atools::nativeCleanPath(dgmlFilepath);
+}
+
+QString MapTheme::displayPath() const
+{
+  return atools::nativeCleanPath(QFileInfo(dgmlFilepath).path());
+}
+
+// ==================================================================================
 MapThemeHandler::MapThemeHandler(QWidget *mainWindowParam)
   : QObject(mainWindowParam), mainWindow(mainWindowParam)
 {
+  // Load list of themes to reject from configuration file
+  QSettings settings(atools::settings::Settings::getOverloadedPath(":/littlenavmap/resources/config/mapthemes.cfg"), QSettings::IniFormat);
+  settings.beginGroup("RejectDownloadUrl");
+  const QStringList keys = settings.childKeys();
+  for(const QString& key : keys)
+  {
+    QString regexpStr = settings.value(key).toString();
+    if(!regexpStr.isEmpty())
+    {
+#ifdef DEBUG_INFORMATION
+      qDebug().noquote().nospace() << Q_FUNC_INFO << " key " << key << " regexpStr " << regexpStr;
+#endif
+
+      QRegularExpression regexp(regexpStr);
+
+      if(regexp.isValid())
+        rejectDownloadUrlList.insert(regexp);
+      else
+        qWarning() << Q_FUNC_INFO << "Invalid regular expression" << regexpStr << "for key" << key;
+    }
+    else
+      qWarning() << Q_FUNC_INFO << "Empty value for key" << key;
+  }
+  settings.endGroup();
 }
 
 MapThemeHandler::~MapThemeHandler()
 {
-  qDebug() << Q_FUNC_INFO << "delete actionGroupMapTheme";
-  delete actionGroupMapTheme;
-
-  qDebug() << Q_FUNC_INFO << "delete comboBoxMapTheme";
-  delete toolButtonMapTheme;
+  ATOOLS_DELETE_LOG(actionGroupMapTheme);
+  ATOOLS_DELETE_LOG(toolButtonMapTheme);
 }
 
 void MapThemeHandler::loadThemes()
 {
+  using atools::util::HtmlBuilder;
+  const atools::util::html::Flags FLAGS = atools::util::html::NOBR_WHITESPACE;
+  const static QRegularExpression SHORTCUT_REGEXP("^Ctrl\\+Alt\\+[0-9]?$");
+
   // Load all these from folder
   themes.clear();
   themeIdToIndexMap.clear();
+  errors.clear();
 
   QHash<QString, MapTheme> ids, sourceDirs;
-  QStringList errors;
-  for(const QFileInfo& dgml : findMapThemes({getMapThemeDefaultDir(), getMapThemeUserDir()}))
+  QSet<QString> shortcuts;
+  for(const QFileInfo& dgml : findMapThemes({mapThemeDefaultDir(), mapThemeUserDir()}))
   {
     MapTheme theme = loadTheme(dgml);
 
@@ -73,12 +114,15 @@ void MapThemeHandler::loadThemes()
       if(ids.contains(theme.theme))
       {
         MapTheme otherTheme = ids.value(theme.theme);
-        errors.append(tr("Duplicate theme id \"%1\" in element \"&lt;theme&gt;\".<br/><br/>"
-                         "File with first occurence<br/>\"%2\".<br/><br/>"
-                         "File with second occurence being ignored<br/>\"%3\".<br/><br/>"
-                         "Theme ids have to be unique across all map themes.<br/><br/>"
+        errors.append(tr("Duplicate map theme id \"%1\" in element \"&lt;theme&gt;\". Theme with first occurrence"
+                         "%2&nbsp;(click to show).<br/>"
+                         "Theme with second occurrence being ignored"
+                         "%3&nbsp;(click to show).<br/>"
+                         "Theme ids have to be unique across all map themes.<br/>"
                          "<b>Remove one of these two map themes to avoid this message.</b><br/>").
-                      arg(theme.theme).arg(otherTheme.dgmlFilepath).arg(theme.dgmlFilepath));
+                      arg(theme.theme).
+                      arg(HtmlBuilder::aFilePath(otherTheme.displayPath(), FLAGS)).
+                      arg(HtmlBuilder::aFilePath(theme.displayPath(), FLAGS)));
         continue;
       }
 
@@ -98,42 +142,102 @@ void MapThemeHandler::loadThemes()
         // Get file paths for DGML
         QStringList otherDgmlFilepaths;
         for(const MapTheme& t : otherThemes)
-          otherDgmlFilepaths.append(t.dgmlFilepath);
+          otherDgmlFilepaths.append(t.displayPath());
         otherDgmlFilepaths.removeAll(QString());
         otherDgmlFilepaths.removeDuplicates();
 
-        errors.append(tr("Duplicate source directory or directories \"%1\" in element \"&lt;sourcedir&gt;\".<br/><br/>"
-                         "File with first occurence<br/>\"%2\".<br/><br/>"
-                         "File(s) with second occurence being ignored<br/>\"%3\".<br/><br/>"
-                         "Source directories are used to cache map tiles and have to be unique across all map themes.<br/><br/>"
-                         "<b>Remove one of these two map themes to avoid this message.</b><br/>").
-                      arg(theme.sourceDirs.join(tr("\", \""))).arg(otherDgmlFilepaths.join(tr("\", \""))).arg(theme.dgmlFilepath));
+        QStringList otherDgmlFilepathsText;
+        for(const QString& otherDgmlFilepath : otherDgmlFilepaths)
+          otherDgmlFilepathsText.append(HtmlBuilder::aFilePath(otherDgmlFilepath, FLAGS));
+
+        errors.append(tr("Duplicate source directory or directories \"%1\" in element \"&lt;sourcedir&gt;\".<br/>"
+                         "Map theme with first occurrence"
+                         "%2&nbsp;(click to show).<br/>"
+                         "Theme(s) with second occurrence being ignored"
+                         "%3&nbsp;(click to show).<br/>"
+                         "Source directories are used to cache map tiles and have to be unique across all map themes.<br/>"
+                         "<b>Remove one or more of these map themes to avoid this message.</b><br/>").
+                      arg(theme.sourceDirs.join(tr("\", \""))).
+                      arg(HtmlBuilder::aFilePath(theme.displayPath(), FLAGS)).
+                      arg(otherDgmlFilepathsText.join(tr("<br/>"))));
         continue;
       }
 
       if(theme.theme.isEmpty())
       {
-        errors.append(tr("Empty theme id in in element \"&lt;theme&gt;\".<br/>"
-                         "File \"%1\".<br/><br/>"
-                         "<b>Remove or repair this map theme to avoid this message.</b><br/>").arg(theme.dgmlFilepath));
+        errors.append(tr("Empty id in in element \"&lt;theme&gt;\" in map theme"
+                         "%1&nbsp;(click to show).<br/>"
+                         "<b>Remove or repair this map theme to avoid this message.</b><br/>").
+                      arg(HtmlBuilder::aFilePath(theme.displayPath(), FLAGS)));
         continue;
       }
 
       if(theme.online && theme.sourceDirs.isEmpty())
       {
-        errors.append(tr("Empty source directory in in element \"&lt;sourcedir&gt;\".<br/>"
-                         "File \"%1\".<br/><br/>"
-                         "<b>Remove or repair this map theme to avoid this message.</b><br/>").arg(theme.dgmlFilepath));
+        errors.append(tr("Empty source directory in in element \"&lt;sourcedir&gt;\" in map theme"
+                         "%1&nbsp;(click to show).<br/>"
+                         "<b>Remove or repair this map theme to avoid this message.</b><br/>").
+                      arg(HtmlBuilder::aFilePath(theme.displayPath(), FLAGS)));
         continue;
       }
 
       if(theme.target != "earth")
       {
-        errors.append(tr("Invalid target \"%1\" in element \"&lt;target&gt;\".<br/>"
-                         "File \"%2\".<br/>"
-                         "Element must contain text \"earth\".<br/><br/>"
-                         "<b>Remove or repair this map theme to avoid this message.</b><br/>").arg(theme.target).arg(theme.dgmlFilepath));
+        errors.append(tr("Invalid target \"%1\" in element \"&lt;target&gt;\" in map theme "
+                         "%2&nbsp;(click to show).<br/>"
+                         "Element must contain text \"earth\".<br/>"
+                         "<b>Remove or repair this map theme to avoid this message.</b><br/>").
+                      arg(theme.target).
+                      arg(HtmlBuilder::aFilePath(theme.displayPath(), FLAGS)));
         continue;
+      }
+
+      bool rejected = false;
+      for(const QString& host : qAsConst(theme.downloadHosts))
+      {
+        for(const QRegularExpression& rejectExpr : qAsConst(rejectDownloadUrlList))
+        {
+          if(rejectExpr.match(host).hasMatch())
+          {
+            rejected = true;
+            break;
+          }
+        }
+      }
+
+      if(rejected)
+      {
+        errors.append(tr("Map theme"
+                         "%1&nbsp;(click to show)<br/>"
+                         "was rejected since the service is discontinued.<br/>"
+                         "<b>Remove this map theme to avoid this message.</b><br/>").
+                      arg(HtmlBuilder::aFilePath(theme.displayPath(), FLAGS)));
+        continue;
+      }
+
+      // Check shortcut ============================
+      if(!theme.getShortcut().isEmpty())
+      {
+        if(!SHORTCUT_REGEXP.match(theme.getShortcut()).hasMatch())
+        {
+          errors.append(tr("Map theme"
+                           "%1&nbsp;(click to show)<br/>"
+                           "has an invalid shortcut \"%2\". Only \"Ctrl+Alt+NUMBER\" allowed.<br/>"
+                           "<b>Remove this map theme or adjust element \"&lt;shortcut&gt;\" avoid this message.</b><br/>").
+                        arg(HtmlBuilder::aFilePath(theme.displayPath(), FLAGS)).arg(theme.getShortcut()));
+          continue;
+        }
+        else if(!shortcuts.contains(theme.getShortcut().toLower()))
+          shortcuts.insert(theme.getShortcut().toLower());
+        else
+        {
+          errors.append(tr("Map theme"
+                           "%1&nbsp;(click to show)<br/>"
+                           "has a duplicate shortcut \"%2\".<br/>"
+                           "<b>Remove this map theme or adjust element \"&lt;shortcut&gt;\" avoid this message.</b><br/>").
+                        arg(HtmlBuilder::aFilePath(theme.displayPath(), FLAGS)).arg(theme.getShortcut()));
+          continue;
+        }
       }
 
       ids.insert(theme.theme, theme);
@@ -151,19 +255,6 @@ void MapThemeHandler::loadThemes()
     }
     else
       qInfo() << Q_FUNC_INFO << "Theme" << theme.theme << "not visible";
-  }
-
-  if(!errors.isEmpty())
-  {
-    qWarning() << Q_FUNC_INFO << errors;
-
-    NavApp::closeSplashScreen();
-    QMessageBox::warning(mainWindow, QApplication::applicationName(),
-                         tr("<p>Found errors in map %2:</p>"
-                              "<ul><li>%1</li></ul>"
-                                "<p>Ignoring duplicate or incorrect %2.</p>"
-                                  "<p>Note that all other valid map themes are loaded and can be used despite this message.</p>").
-                         arg(errors.join("</li><li>")).arg(errors.size() == 1 ? tr("map theme") : tr("map themes")));
   }
 
   // Sort themes first by online/offline status and then case insensitive by name
@@ -191,6 +282,31 @@ void MapThemeHandler::loadThemes()
     defaultTheme = themes.constFirst();
 }
 
+void MapThemeHandler::showThemeLoadingErrors()
+{
+  if(!errors.isEmpty())
+  {
+    if(errors.size() > MAX_ERRORS)
+    {
+      int numMore = errors.size() - MAX_ERRORS;
+      errors = errors.mid(0, MAX_ERRORS);
+      errors.append(tr("<b>%1 more %2 found ...</b>").arg(numMore).arg(numMore == 1 ? tr("error") : tr("errors")));
+    }
+
+    atools::gui::MessageBox box(mainWindow);
+    box.setIcon(QMessageBox::Warning);
+    box.setMessage(tr("<p>Found errors in map %2:</p>"
+                        "<ul><li>%1</li></ul>"
+                          "<p>Ignoring duplicate, incorrect or rejected %2.</p>"
+                            "<p>Note that all other valid map themes are loaded and can be used despite this message.</p>"
+                              "<p>Restart Little Navmap after fixing the issues.</p>").
+                   arg(errors.join("</li><li>")).arg(errors.size() == 1 ? tr("map theme") : tr("map themes")));
+    box.setHelpUrl(lnm::helpOnlineUrl + "MAPTHEMES.html", lnm::helpLanguageOnline());
+    box.setShowInFileManager();
+    box.exec();
+  }
+}
+
 const MapTheme& MapThemeHandler::themeByIndex(int themeIndex) const
 {
   const static MapTheme INVALID;
@@ -210,7 +326,7 @@ const MapTheme& MapThemeHandler::getTheme(const QString& themeId) const
   return themeByIndex(themeIdToIndexMap.value(themeId, -1));
 }
 
-QString MapThemeHandler::getCurrentThemeId() const
+QString MapThemeHandler::currentThemeId() const
 {
   if(actionGroupMapTheme->checkedAction() == nullptr)
   {
@@ -235,7 +351,7 @@ void MapThemeHandler::setMapThemeKeys(const QMap<QString, QString>& keys)
   mapThemeKeys = keys;
 }
 
-void MapThemeHandler::saveKeyfile()
+void MapThemeHandler::saveKeyfile() const
 {
   // Save keys ===================================================
   QFile keyFile(atools::settings::Settings::getPath() % atools::SEP % FILENAME);
@@ -281,7 +397,7 @@ void MapThemeHandler::saveKeyfile()
   }
 }
 
-void MapThemeHandler::saveState()
+void MapThemeHandler::saveState() const
 {
   qDebug() << Q_FUNC_INFO;
 
@@ -289,7 +405,7 @@ void MapThemeHandler::saveState()
 
   // Save current theme ===================================================
   atools::settings::Settings& settings = atools::settings::Settings::instance();
-  settings.setValue(lnm::MAP_THEME, getCurrentThemeId());
+  settings.setValue(lnm::MAP_THEME, currentThemeId());
 
   atools::gui::WidgetState widgetState(lnm::MAINWINDOW_WIDGET_MAPTHEME);
   widgetState.save(mapProjectionActionGroup);
@@ -396,6 +512,8 @@ MapTheme MapThemeHandler::loadTheme(const QFileInfo& dgml)
             theme.theme = reader.readElementText().simplified();
           else if(reader.name() == "visible")
             theme.visible = reader.readElementText().simplified().toLower() == "true";
+          else if(reader.name() == "shortcut")
+            theme.shortcut = reader.readElementText().simplified();
           else if(reader.name() == "url")
           {
             theme.urlRef = reader.attributes().value("href").toString();
@@ -416,9 +534,6 @@ MapTheme MapThemeHandler::loadTheme(const QFileInfo& dgml)
             xmlStream.skipCurrentElement();
         }
 
-        theme.dgmlFilepath = dgml.filePath();
-
-        // Create a new entry with path relative to "earth"
         theme.dgmlFilepath = dgml.canonicalFilePath();
       }
       // map ====================================================================
@@ -439,9 +554,10 @@ MapTheme MapThemeHandler::loadTheme(const QFileInfo& dgml)
                 {
                   if(reader.name() == "downloadUrl")
                   {
+                    QString host = reader.attributes().value("host").toString();
+
                     // Put all attributes of the download URL into one string
-                    QString atts = reader.attributes().value("protocol").toString() % reader.attributes().value("host").toString() %
-                                   reader.attributes().value("path").toString();
+                    QString atts = reader.attributes().value("protocol").toString() % host % reader.attributes().value("path").toString();
 
                     // Extract keywords from download URL
                     QRegularExpressionMatchIterator regexpIter = KEYSREGEXP.globalMatch(atts);
@@ -454,6 +570,8 @@ MapTheme MapThemeHandler::loadTheme(const QFileInfo& dgml)
                          key != "west" && key != "south" && key != "east" && key != "north")
                         theme.keys.append(key);
                     }
+
+                    theme.downloadHosts.append(host);
 
                     // Online theme of download URL is given
                     theme.online = true;
@@ -510,7 +628,8 @@ const QList<QFileInfo> MapThemeHandler::findMapThemes(const QStringList& paths)
     if(dir.exists())
     {
       // Get all folders from "earth"
-      for(const QFileInfo& themeDirInfo : dir.entryInfoList(QDir::Dirs | QDir::NoDotAndDotDot))
+      const QFileInfoList themeDirs = dir.entryInfoList(QDir::Dirs | QDir::NoDotAndDotDot);
+      for(const QFileInfo& themeDirInfo : themeDirs)
       {
         // Check if folder is accessible
         if(atools::checkDir(Q_FUNC_INFO, themeDirInfo, true /* warn */))
@@ -520,7 +639,8 @@ const QList<QFileInfo> MapThemeHandler::findMapThemes(const QStringList& paths)
 
           // Get all DGML files in folder - should be only one
           int found = 0;
-          for(const QFileInfo& themeFile : themeDir.entryInfoList({"*.dgml"}, QDir::Files | QDir::NoDotAndDotDot))
+          const QFileInfoList themeFiles = themeDir.entryInfoList({"*.dgml"}, QDir::Files | QDir::NoDotAndDotDot);
+          for(const QFileInfo& themeFile : themeFiles)
           {
             if(atools::checkFile(Q_FUNC_INFO, themeFile, true /* warn */))
             {
@@ -558,15 +678,15 @@ QDebug operator<<(QDebug out, const MapTheme& theme)
       << "textureLayer" << theme.textureLayer
       << "geodataLayer" << theme.geodataLayer
       << "discrete" << theme.discrete
+      << "shortcut" << theme.shortcut
       << ")";
   return out;
 }
 
 void MapThemeHandler::setupMapThemesUi()
 {
-  Ui::MainWindow *ui = NavApp::getMainUi();
-
   // Map projection =========================================
+  Ui::MainWindow *ui = NavApp::getMainUi();
   delete mapProjectionActionGroup;
   mapProjectionActionGroup = new QActionGroup(this);
   mapProjectionActionGroup->setObjectName("mapProjectionActionGroup");
@@ -599,7 +719,8 @@ void MapThemeHandler::setupMapThemesUi()
   if(actionGroupMapTheme != nullptr)
   {
     // Delete all actions from the menu
-    for(QAction *action : actionGroupMapTheme->actions())
+    const QList<QAction *> actions = actionGroupMapTheme->actions();
+    for(QAction *action : actions)
     {
       actionGroupMapTheme->removeAction(action);
       delete action;
@@ -620,7 +741,7 @@ void MapThemeHandler::setupMapThemesUi()
   bool online = true;
   int index = 0;
   // Sort order is always online/offline and then alphabetical
-  for(const MapTheme& theme : getThemes())
+  for(const MapTheme& theme : qAsConst(themes))
   {
     // Check if offline map come after online and add separators
     if(!theme.isOnline() && online)
@@ -652,10 +773,7 @@ void MapThemeHandler::setupMapThemesUi()
 
     // Attach theme name for theme in MapThemeHandler
     action->setData(theme.getThemeId());
-
-    // Add keyboard shortcut for top 10 themes
-    if(index < 10)
-      action->setShortcut(tr("Ctrl+Alt+%1").arg(index));
+    action->setShortcut(theme.getShortcut());
 
     buttonMenu->addAction(action);
 
@@ -675,7 +793,8 @@ void MapThemeHandler::changeMapThemeActions(const QString& themeId)
   if(!themeId.isEmpty())
   {
     // Search for actions entry with index for MapThemeHandler
-    for(QAction *action : toolButtonMapTheme->menu()->actions())
+    const QList<QAction *> actions = toolButtonMapTheme->menu()->actions();
+    for(QAction *action : actions)
     {
       QVariant data = action->data();
       if(data.isValid() && data.toString() == themeId)
@@ -702,7 +821,7 @@ void MapThemeHandler::changeMapTheme()
   {
     qDebug() << Q_FUNC_INFO << "Falling back to default theme due to invalid index" << themeId;
     // No theme for index found - use default OSM
-    theme = getDefaultTheme();
+    theme = defaultTheme;
     themeId = theme.getThemeId();
   }
 
@@ -723,8 +842,6 @@ void MapThemeHandler::changeMapTheme()
     if(!allValid)
     {
       // One or more keys are not present or empty - show info dialog =================================
-      NavApp::closeSplashScreen();
-
       // Fetch all keys for map theme
       QString url;
       if(!theme.getUrlRef().isEmpty())
@@ -736,7 +853,7 @@ void MapThemeHandler::changeMapTheme()
                      tr("<p>The map theme \"%1\" requires additional information.</p>"
                           "<p>You have to create an user account at the related website and then create an username, an access key or a token.<br/>"
                           "Most of these services offer a free plan for hobbyists.</p>"
-                          "<p>Then go to menu \"Tools\" -> \"Options\" and to page \"Map Display Keys\" in Little Navmap and "
+                          "<p>Then go to menu \"Tools\" -> \"Options\" and to page \"Map Keys\" in Little Navmap and "
                             "enter the information for the key(s) below:</p>"
                             "<ul><li>%2</li></ul>"
                               "<p>The map will not show correctly until this is done.</p>%3").
@@ -747,14 +864,13 @@ void MapThemeHandler::changeMapTheme()
 
   qDebug() << Q_FUNC_INFO << themeId << theme;
 
-  mapWidget->setTheme(theme.getDgmlFilepath(), themeId);
+  mapWidget->setTheme(theme);
   if(NavApp::getMapPaintWidgetWeb() != nullptr)
-    NavApp::getMapPaintWidgetWeb()->setTheme(theme.getDgmlFilepath(), themeId);
+    NavApp::getMapPaintWidgetWeb()->setTheme(theme);
 
   NavApp::setStatusMessage(tr("Map theme changed to %1.").arg(actionGroupMapTheme->checkedAction()->text()));
 }
 
-/* Called by actions */
 void MapThemeHandler::changeMapProjection()
 {
   Ui::MainWindow *ui = NavApp::getMainUi();
@@ -785,7 +901,7 @@ void MapThemeHandler::optionsChanged()
   qDebug() << Q_FUNC_INFO;
 
   // Remember current theme id like "openstreetmap"
-  QString currentThemeId = getCurrentThemeId();
+  QString curThemeId = currentThemeId();
 
   // Save key to avoid deletion
   saveKeyfile();
@@ -799,71 +915,104 @@ void MapThemeHandler::optionsChanged()
   // Rebuild menu
   setupMapThemesUi();
 
-  if(!getTheme(currentThemeId).isValid())
+  if(!getTheme(curThemeId).isValid())
   {
     // Assign the default theme if the current one was removed
-    currentThemeId = defaultTheme.getThemeId();
-    NavApp::getMapWidgetGui()->setTheme(defaultTheme.getDgmlFilepath(), currentThemeId);
+    curThemeId = defaultTheme.getThemeId();
+    NavApp::getMapWidgetGui()->setTheme(defaultTheme);
 
     if(NavApp::getMapPaintWidgetWeb() != nullptr)
-      NavApp::getMapPaintWidgetWeb()->setTheme(defaultTheme.getDgmlFilepath(), currentThemeId);
+      NavApp::getMapPaintWidgetWeb()->setTheme(defaultTheme);
   }
 
   // Check the theme action
-  changeMapThemeActions(currentThemeId);
+  changeMapThemeActions(curThemeId);
 }
 
-QString MapThemeHandler::getStatusTextForDir(const QString& path)
+QString MapThemeHandler::getStatusTextForDir(const QString& path, bool& error)
 {
   QString message = atools::checkDirMsg(path);
 
   if(message.isEmpty())
   {
-    int numThemes = 0;
-    QDir dir(path);
-    for(const QFileInfo& themeDir : dir.entryInfoList(QDir::Dirs | QDir::NoDotAndDotDot))
+    QString stockPath = atools::canonicalFilePath(atools::buildPathNoCase({QApplication::applicationDirPath(), "data", "maps", "earth"}));
+    if(atools::canonicalFilePath(path).compare(stockPath, Qt::CaseInsensitive) == 0)
     {
-      if(atools::checkFile(Q_FUNC_INFO, themeDir.absoluteFilePath() % atools::SEP % themeDir.fileName() % ".dgml"))
-        numThemes++;
+      message = tr("Directory is set to the included stock themes. You have to set a directory outside of the installation.");
+      error = true;
     }
-
-    if(numThemes == 0)
-      message = tr("Directory is valid. No map themes found inside.");
     else
-      message = tr("Directory is valid. %1 %2 found.").arg(numThemes).arg(numThemes > 1 ? tr("map themes") : tr("map theme"));
-  }
-  return message;
+    {
+      int numThemes = 0;
+      QDir dir(path);
+      const QFileInfoList themeDirs = dir.entryInfoList(QDir::Dirs | QDir::NoDotAndDotDot);
+      for(const QFileInfo& themeDir : themeDirs)
+      {
+        if(atools::checkFile(Q_FUNC_INFO, themeDir.absoluteFilePath() % atools::SEP % themeDir.fileName() % ".dgml"))
+          numThemes++;
+      }
 
+      if(numThemes == 0)
+        message = tr("Directory is valid. No map themes found inside.");
+      else
+        message = tr("Directory is valid. %1 %2 found.").arg(numThemes).arg(numThemes > 1 ? tr("map themes") : tr("map theme"));
+      error = false;
+    }
+  }
+  else
+    error = true;
+  return message;
 }
 
-void MapThemeHandler::validateMapThemeDirectories()
+void MapThemeHandler::validateMapThemeDirectories(QWidget *parent)
 {
   QStringList msg;
 
   // Default application dir is required
-  msg.append(atools::checkDirMsg(getMapThemeDefaultDir()));
+  msg.append(atools::checkDirMsg(mapThemeDefaultDir()));
 
-  if(!getMapThemeUserDir().isEmpty())
+  if(!mapThemeUserDir().isEmpty())
     // User defined dir is optional
-    msg.append(atools::checkDirMsg(getMapThemeUserDir()));
+    msg.append(atools::checkDirMsg(mapThemeUserDir()));
 
   // Remove empty error messages
   msg.removeAll(QString());
 
   if(!msg.isEmpty())
-  {
-    NavApp::closeSplashScreen();
-    QMessageBox::warning(NavApp::getQMainWidget(),
-                         QCoreApplication::applicationName(), tr("Base path(s) for map themes not found.\n%1").arg(msg.join(tr(",\n"))));
-  }
+    atools::gui::Dialog::warning(parent, tr("Base path(s) for map themes not found.\n%1\n\n"
+                                            "Go to menu \"Tools\" -> \"Options\" and then to page \"Cache and Files\". "
+                                            "Clear the input field \"Directory for additional map themes\" "
+                                            "with the wrong path to disable themes or "
+                                            "click \"Select Themes Directory\" and select the correct folder.",
+                                            "Syncronize with texts in menu and options dialog").arg(msg.join(tr(",\n"))));
 }
 
-QString MapThemeHandler::getMapThemeDefaultDir()
+void MapThemeHandler::resetToDefault()
+{
+  Ui::MainWindow *ui = NavApp::getMainUi();
+
+  ui->actionMapProjectionMercator->setChecked(true);
+
+  const QList<QAction *> actions = toolButtonMapTheme->menu()->actions();
+  for(QAction *action : actions)
+  {
+    if(action->data().toString() == defaultTheme.getThemeId())
+    {
+      action->setChecked(true);
+      break;
+    }
+  }
+
+  changeMapTheme();
+  changeMapProjection();
+}
+
+QString MapThemeHandler::mapThemeDefaultDir()
 {
   return QCoreApplication::applicationDirPath() % atools::SEP % "data" % atools::SEP % "maps" % atools::SEP % "earth";
 }
 
-QString MapThemeHandler::getMapThemeUserDir()
+QString MapThemeHandler::mapThemeUserDir()
 {
   return OptionData::instance().getCacheMapThemeDir();
 }

@@ -217,7 +217,7 @@
       <!-- =================================================================================== -->
       <Layer MaximumRangeKm="10">
         <AiAircraftTextDetail3>false</AiAircraftTextDetail3>
-        <AirportMinorSymbolSize>18</AirportMinorSymbolSize>
+        <AirportMinorSymbolSize>14</AirportMinorSymbolSize>
         <AirportMsaSymbolScale>4</AirportMsaSymbolScale>
         <AirportSymbolSize>18</AirportSymbolSize>
         <MarkerInfo>false</MarkerInfo>
@@ -244,7 +244,7 @@
         <AirportDiagramRunway>false</AirportDiagramRunway>
         <AirportMinorFontScale>0.9</AirportMinorFontScale>
         <AirportMinorInfo>false</AirportMinorInfo>
-        <AirportMinorSymbolSize>16</AirportMinorSymbolSize>
+        <AirportMinorSymbolSize>12</AirportMinorSymbolSize>
         <AirportSymbolSize>16</AirportSymbolSize>
         <AirwayInfo>false</AirwayInfo>
         <ApproachTextDetail>false</ApproachTextDetail>
@@ -265,7 +265,7 @@
         <AirportInfo>false</AirportInfo>
         <AirportMinorFontScale>0.8</AirportMinorFontScale>
         <AirportMinorName>false</AirportMinorName>
-        <AirportMinorSymbolSize>12</AirportMinorSymbolSize>
+        <AirportMinorSymbolSize>10</AirportMinorSymbolSize>
         <AirportSymbolSize>14</AirportSymbolSize>
         <HoldingInfo>false</HoldingInfo>
         <NdbInfo>false</NdbInfo>

@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2023 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2025 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -17,18 +17,19 @@
 
 #include "common/formatter.h"
 
-#include "fs/util/fsutil.h"
-
 #include "atools.h"
 #include "common/mapflags.h"
 #include "fs/util/coordinates.h"
+#include "fs/util/fsutil.h"
 #include "geo/calculations.h"
 #include "geo/pos.h"
+#include "textpointer.h"
 #include "unit.h"
 #include "util/htmlbuilder.h"
 
 #include <QDateTime>
 #include <QElapsedTimer>
+#include <QFontMetrics>
 #include <QLocale>
 #include <QRegularExpression>
 #include <QStringBuilder>
@@ -109,11 +110,6 @@ QString formatElapsed(const QElapsedTimer& timer)
            arg(mins).arg(mins == 1 ? QObject::tr("minute") : QObject::tr("minutes")).
            arg(secs).arg(secs == 1 ? QObject::tr("second") : QObject::tr("seconds"));
   }
-}
-
-QString capNavString(const QString& str)
-{
-  return atools::fs::util::capNavString(str);
 }
 
 bool checkCoordinates(QString& message, const QString& text, atools::geo::Pos *pos)
@@ -227,17 +223,18 @@ QDateTime readDateTime(QString str)
 
 QString windInformationTailHead(float headWindKts, bool addUnit)
 {
-  QString windPtr;
   if(std::abs(headWindKts) >= 1.0f)
   {
+    QString windPtr;
     windPtr += Unit::speedKts(std::abs(headWindKts), addUnit);
 
     if(headWindKts <= -1.f)
-      windPtr += QObject::tr(" ▲"); // Tailwind
+      windPtr += TextPointer::getWindPointerNorth(); // Tailwind
     else
-      windPtr += QObject::tr(" ▼"); // Headwind
+      windPtr += TextPointer::getWindPointerSouth(); // Headwind
+    return QObject::tr(" %1").arg(windPtr);
   }
-  return windPtr;
+  return QString();
 }
 
 QString windInformationCross(float crossWindKts, bool addUnit)
@@ -248,33 +245,30 @@ QString windInformationCross(float crossWindKts, bool addUnit)
     windPtr += Unit::speedKts(std::abs(crossWindKts), addUnit);
 
     if(crossWindKts > 0.f)
-      windPtr += QObject::tr(" ◄");
+      windPtr += TextPointer::getWindPointerWest();
     else if(crossWindKts < 0.f)
-      windPtr += QObject::tr(" ►");
+      windPtr += TextPointer::getWindPointerEast();
   }
-  return windPtr;
+  return QObject::tr(" %1").arg(windPtr);
 }
 
 QString windInformation(float headWindKts, float crossWindKts, const QString& separator, bool addUnit)
 {
-  QStringList windTxt;
-  windTxt.append(windInformationTailHead(headWindKts, addUnit));
-  windTxt.append(windInformationCross(crossWindKts, addUnit));
-  windTxt.removeAll(QString());
-  return windTxt.join(separator);
+  return atools::strJoin(QStringList({windInformationTailHead(headWindKts, addUnit),
+                                      windInformationCross(crossWindKts, addUnit)}), separator);
 }
 
-QString windInformationShort(int windDirectionDeg, float windSpeedKts, float runwayEndHeading)
+QString windInformationShort(float windDirectionDeg, float windSpeedKts, float runwayEndHeading, float minHeadWind, bool addUnit)
 {
   QString windStr;
-  if(windDirectionDeg != -1 && windSpeedKts >= 1.f && windSpeedKts < map::INVALID_METAR_VALUE)
+  if(windDirectionDeg < map::INVALID_METAR_VALUE && windSpeedKts >= 1.f && windSpeedKts < map::INVALID_METAR_VALUE)
   {
     float headWindKts, crossWindKts;
     atools::geo::windForCourse(headWindKts, crossWindKts, windSpeedKts, windDirectionDeg, runwayEndHeading);
 
     // Only show for head wind > 1
-    if(headWindKts >= 1.f)
-      windStr = formatter::windInformation(headWindKts, crossWindKts, QObject::tr(" "), false /* addUnit */);
+    if(headWindKts >= minHeadWind)
+      windStr = formatter::windInformation(headWindKts, crossWindKts, QObject::tr(" "), addUnit);
   }
   return windStr;
 }
@@ -300,12 +294,12 @@ QString courseText(float magCourse, float trueCourse, bool magBold, bool magBig,
 {
   QString magStr, trueStr;
   if(magCourse < map::INVALID_COURSE_VALUE / 2.f)
-    magStr = QLocale().toString(magCourse, 'f', 0);
+    magStr = directionStr(magCourse);
 
   if(forceBoth || OptionData::instance().getFlags2().testFlag(opts2::UNIT_TRUE_COURSE) || magStr.isEmpty())
   {
     if(trueCourse < map::INVALID_COURSE_VALUE / 2.f)
-      trueStr = QLocale().toString(trueCourse, 'f', 0);
+      trueStr = directionStr(trueCourse);
   }
 
   // Formatting for magnetic course
@@ -387,6 +381,24 @@ QString formatDateTimeSeconds(const QDateTime& datetime, bool overrideLocale)
                                                          "https://doc.qt.io/qt-5/qdate.html#toString-2 "
                                                          "Look at your operating system settings to find suitable format");
   return QLocale().toString(datetime, dateTimeStr);
+}
+
+QString directionStr(float directionDeg)
+{
+  const static QString str360 = QLocale().toString(360);
+  const static QString str0 = QLocale().toString(0);
+
+  QString windDirStr;
+  if(directionDeg < map::INVALID_METAR_VALUE / 2.f)
+  {
+    windDirStr = QLocale().toString(atools::geo::normalizeCourse(directionDeg), 'f', 0);
+
+    // 7110.65P, the FAA ATC manual.
+    // "Use heading 360 degrees to indicate a north heading". Spoken words are "Heading three six zero."
+    if(windDirStr == str0)
+      windDirStr = str360;
+  }
+  return windDirStr;
 }
 
 } // namespace formatter

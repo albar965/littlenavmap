@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2023 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2024 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -17,14 +17,15 @@
 
 #include "mappainter/mappainterairspace.h"
 
+#include "app/navapp.h"
+#include "atools.h"
 #include "common/mapcolors.h"
 #include "common/textplacement.h"
-#include "util/paintercontextsaver.h"
-#include "route/route.h"
 #include "mapgui/maplayer.h"
-#include "airspace/airspacecontroller.h"
-#include "app/navapp.h"
 #include "mapgui/mapscale.h"
+#include "query/airspacequeries.h"
+#include "query/querymanager.h"
+#include "route/route.h"
 #include "util/polygontools.h"
 
 #include <marble/GeoDataLineString.h>
@@ -53,8 +54,6 @@ void MapPainterAirspace::render()
   // Tolerances to detect straight line - trying all values on array until a sufficiently long line was found
   const static float MAX_ANGLES[] = {5.f, 30.f};
 
-  AirspaceController *controller = NavApp::getAirspaceController();
-
   if(!context->mapLayer->isAnyAirspace() || !(context->objectTypes.testFlag(map::AIRSPACE)))
     return;
 
@@ -65,8 +64,9 @@ void MapPainterAirspace::render()
   AirspaceVector airspaces;
 
   bool overflow = false;
-  controller->getAirspaces(airspaces, curBox, context->mapLayer, context->airspaceFilterByLayer, context->route->getCruiseAltitudeFt(),
-                           context->viewContext == Marble::Animation, map::AIRSPACE_SRC_ALL, overflow);
+  queries->getAirspaceQueries()->getAirspaces(airspaces, curBox, context->mapLayer, context->airspaceFilterByLayer,
+                                              context->route->getCruiseAltitudeFt(),
+                                              context->viewContext == Marble::Animation, map::AIRSPACE_SRC_ALL, overflow);
   context->setQueryOverflow(overflow);
 
   const OptionData& optionData = OptionData::instance();
@@ -76,8 +76,8 @@ void MapPainterAirspace::render()
   // Collect visible airspaces ==================================================================================
   struct DrawAirspace
   {
-    DrawAirspace(const MapAirspace *airspaceParam, const QVector<QPolygonF *> polygonsParam)
-      : airspace(airspaceParam), polygons(std::move(polygonsParam))
+    explicit DrawAirspace(const MapAirspace *airspaceParam, const QVector<QPolygonF *> polygonsParam)
+      : airspace(airspaceParam), polygons(polygonsParam)
     {
     }
 
@@ -111,7 +111,7 @@ void MapPainterAirspace::render()
           return;
 
         // Get cached geometry =====================
-        const LineString *lineString = controller->getAirspaceGeometry(airspace->combinedId());
+        const LineString *lineString = queries->getAirspaceQueries()->getAirspaceGeometry(airspace->combinedId());
         if(lineString != nullptr)
         {
           if(airspace->isOnline())
@@ -143,7 +143,7 @@ void MapPainterAirspace::render()
             {
               debug.append("\nQPolygonF polygon({\n");
               for(const QPointF& pt : *poly)
-                ///* 13 */ {0, 3}, /* -> 3 */
+                /// * 13 */ {0, 3}, /* -> 3 */
                 debug.append(QString("/* %1 */ {%2, %3}, /* ->  */\n").arg(i++).arg(pt.x(), 0, 'f', 1).arg(pt.y(), 0, 'f', 1));
               debug.append("});\n");
             }
@@ -164,6 +164,19 @@ void MapPainterAirspace::render()
 #endif
             drawPolygon(painter, *polygons.at(i));
           }
+
+#ifdef DEBUG_COLOR_AIRSPACE_POLY_POINTS
+
+          context->szFont(1.5f);
+          painter->setPen(QPen(QColor(0, 0, 255, 64), 2.));
+
+          for(int i = 0; i < lineString->size(); i++)
+          {
+            const atools::geo::Pos& pos = lineString->at(i);
+            drawCircle(painter, pos, 2.f);
+            drawText(painter, pos, QString::number(i), true, true);
+          }
+#endif
         } // if(lineString != nullptr)
       } // if(context->viewportRect.overlaps(airspace->bounding))
 
@@ -173,7 +186,7 @@ void MapPainterAirspace::render()
         // Draw center circle for online airspace with less transparency and darker
         QBrush brush = painter->brush();
         QColor color = brush.color();
-        color.setAlphaF(color.alphaF() * 2.f);
+        color.setAlphaF(atools::minmax(0., 1., color.alphaF() * 2.));
         brush.setColor(color.darker(200));
         painter->setBrush(brush);
 
@@ -187,17 +200,18 @@ void MapPainterAirspace::render()
 
     // Draw airspace labels ==================================================================================
     // Collection from options dialog
-    bool name = optionData.getDisplayOptionsAirspace().testFlag(optsd::AIRSPACE_NAME),
-         restrictiveName = optionData.getDisplayOptionsAirspace().testFlag(optsd::AIRSPACE_RESTRICTIVE_NAME),
-         type = optionData.getDisplayOptionsAirspace().testFlag(optsd::AIRSPACE_TYPE),
-         altitude = optionData.getDisplayOptionsAirspace().testFlag(optsd::AIRSPACE_ALTITUDE),
-         com = optionData.getDisplayOptionsAirspace().testFlag(optsd::AIRSPACE_COM);
+    const optsd::DisplayOptionsAirspace displayOptionsAirspace = optionData.getDisplayOptionsAirspace();
+    bool name = displayOptionsAirspace.testFlag(optsd::AIRSPACE_NAME),
+         restrictiveName = displayOptionsAirspace.testFlag(optsd::AIRSPACE_RESTRICTIVE_NAME),
+         type = displayOptionsAirspace.testFlag(optsd::AIRSPACE_TYPE),
+         altitude = displayOptionsAirspace.testFlag(optsd::AIRSPACE_ALTITUDE),
+         com = displayOptionsAirspace.testFlag(optsd::AIRSPACE_COM);
 
     // Do not draw while moving . Also all text options have to be enabled
     if(context->viewContext == Marble::Still && (name || restrictiveName || type || altitude || com) && !context->drawFast)
     {
       QFontMetrics metrics(painter->fontMetrics());
-      context->szFont(context->textSizeAirspace * context->mapLayer->getAirspaceFontScale());
+      context->szFont(context->textSizeAirspace * context->mapLayerText->getAirspaceFontScale() * 0.85f);
 
       // Prepare text placement without arrows
       TextPlacement textPlacement(painter, this, context->screenRect);
@@ -216,7 +230,7 @@ void MapPainterAirspace::render()
         const map::MapAirspace *airspace = visibleAirspace.airspace;
 
         // Check if layer option enables text display for this airspace type
-        if(airspace->type & context->airspaceTextsByLayer)
+        if(airspace->type & context->airspaceTextsByLayer && !visibleAirspace.polygons.isEmpty())
         {
           // Build text depending on options
           QString airspaceText =

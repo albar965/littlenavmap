@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2023 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2025 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -24,6 +24,7 @@
 #include "app/navapp.h"
 #include "query/mapquery.h"
 #include "route/route.h"
+#include "query/querymanager.h"
 
 #include <QDataStream>
 #include <QStringBuilder>
@@ -263,9 +264,9 @@ const static QHash<ProcedureLegType, QString> approachLegTypeToShortStr(
     {CUSTOM_DEP_RUNWAY, "CDR"}
   });
 
-QString procedureFixType(const QString& type)
+const QString& procedureFixType(const QString& type)
 {
-  return approachFixTypeToStr.value(type, type);
+  return atools::hashValue(approachFixTypeToStr, type, type);
 }
 
 QString procedureLegFixStr(const MapProcedureLeg& leg)
@@ -289,31 +290,9 @@ QString procedureLegFixStr(const MapProcedureLeg& leg)
     return fix;
 }
 
-QString procedureType(const QString& type)
+const QString& procedureType(const QString& type)
 {
-  return approachTypeToStr.value(type, type);
-}
-
-QString edgeLights(const QString& type)
-{
-  if(type == "L")
-    return QObject::tr("Low");
-  else if(type == "M")
-    return QObject::tr("Medium");
-  else if(type == "H")
-    return QObject::tr("High");
-  else
-    return QString();
-}
-
-QString patternDirection(const QString& type)
-{
-  if(type == "L")
-    return QObject::tr("Left");
-  else if(type == "R")
-    return QObject::tr("Right");
-  else
-    return QString();
+  return atools::hashValue(approachTypeToStr, type, type);
 }
 
 proc::ProcedureLegType procedureLegEnum(const QString& type)
@@ -321,24 +300,28 @@ proc::ProcedureLegType procedureLegEnum(const QString& type)
   return approachLegTypeToEnum.value(type);
 }
 
-QString proceduresLegSecialTypeShortStr(proc::LegSpecialType type)
+const QString& proceduresLegSecialTypeShortStr(proc::LegSpecialType type)
 {
-  return specialTypeShortStr.value(type);
+  return atools::hashValue(specialTypeShortStr, type);
 }
 
-QString proceduresLegSecialTypeLongStr(proc::LegSpecialType type)
+const QString& proceduresLegSecialTypeLongStr(proc::LegSpecialType type)
 {
-  return specialTypeLongStr.value(type);
+  return atools::hashValue(specialTypeLongStr, type);
 }
 
 QString procedureLegTypeStr(proc::ProcedureLegType type)
 {
+#ifdef DEBUG_INFORMATION
+  return QString("%1 [%2]").arg(approachLegTypeToStr.value(type)).arg(approachLegTypeToShortStr.value(type));
+#else
   return approachLegTypeToStr.value(type);
+#endif
 }
 
-QString procedureLegTypeShortStr(ProcedureLegType type)
+const QString& procedureLegTypeShortStr(ProcedureLegType type)
 {
-  return approachLegTypeToShortStr.value(type);
+  return atools::hashValue(approachLegTypeToShortStr, type);
 }
 
 QString procedureLegTypeFullStr(ProcedureLegType type)
@@ -346,9 +329,9 @@ QString procedureLegTypeFullStr(ProcedureLegType type)
   return QObject::tr("%1 (%2)").arg(approachLegTypeToStr.value(type)).arg(approachLegTypeToShortStr.value(type));
 }
 
-QString procedureLegRemarks(proc::ProcedureLegType type)
+const QString& procedureLegRemarks(proc::ProcedureLegType type)
 {
-  return approachLegRemarkStr.value(type);
+  return atools::hashValue(approachLegRemarkStr, type);
 }
 
 QStringList restrictionText(const MapProcedureLeg& procedureLeg)
@@ -414,7 +397,7 @@ QString altRestrictionTextNarrow(const proc::MapAltRestriction& altRestriction)
   {
     case proc::MapAltRestriction::ILS_AT:
     case proc::MapAltRestriction::ILS_AT_OR_ABOVE:
-      retval = QObject::tr("GS") + Unit::altFeet(altRestriction.alt1, true, true);
+      retval = QObject::tr("GS", "Procedure altitude restriction - avoid translation") + Unit::altFeet(altRestriction.alt1, true, true);
       break;
 
     case proc::MapAltRestriction::NO_ALT_RESTR:
@@ -425,16 +408,16 @@ QString altRestrictionTextNarrow(const proc::MapAltRestriction& altRestriction)
       break;
 
     case proc::MapAltRestriction::AT_OR_ABOVE:
-      retval = QObject::tr("A") + Unit::altFeet(altRestriction.alt1, true, true);
+      retval = QObject::tr("A", "Procedure altitude restriction - avoid translation") + Unit::altFeet(altRestriction.alt1, true, true);
       break;
 
     case proc::MapAltRestriction::AT_OR_BELOW:
-      retval = QObject::tr("B") + Unit::altFeet(altRestriction.alt1, true, true);
+      retval = QObject::tr("B", "Procedure altitude restriction - avoid translation") + Unit::altFeet(altRestriction.alt1, true, true);
       break;
 
     case proc::MapAltRestriction::BETWEEN:
-      retval = QObject::tr("A") + Unit::altFeet(altRestriction.alt2, false, true) +
-               QObject::tr("B") + Unit::altFeet(altRestriction.alt1, true, true);
+      retval = QObject::tr("A", "Procedure altitude restriction - avoid translation") + Unit::altFeet(altRestriction.alt2, false, true) +
+               QObject::tr("B", "Procedure altitude restriction - avoid translation") + Unit::altFeet(altRestriction.alt1, true, true);
       break;
   }
   return retval;
@@ -517,10 +500,12 @@ QString speedRestrictionTextNarrow(const proc::MapSpeedRestriction& speedRestric
       return Unit::speedKts(speedRestriction.speed, false) + Unit::getUnitSpeedStr();
 
     case proc::MapSpeedRestriction::MIN:
-      return QObject::tr("A") + Unit::speedKts(speedRestriction.speed, false) + Unit::getUnitSpeedStr();
+      return QObject::tr("A", "Procedure speed restriction - avoid translation") +
+             Unit::speedKts(speedRestriction.speed, false) + Unit::getUnitSpeedStr();
 
     case proc::MapSpeedRestriction::MAX:
-      return QObject::tr("B") + Unit::speedKts(speedRestriction.speed, false) + Unit::getUnitSpeedStr();
+      return QObject::tr("B", "Procedure speed restriction - avoid translation") +
+             Unit::speedKts(speedRestriction.speed, false) + Unit::getUnitSpeedStr();
   }
   return QString();
 }
@@ -548,21 +533,27 @@ QDebug operator<<(QDebug out, const ProcedureLegType& type)
 QDebug operator<<(QDebug out, const MapProcedureLegs& legs)
 {
   QDebugStateSaver saver(out);
-  out << "ProcedureLeg =====" << endl;
+  out << "MapProcedureLegs =====" << endl;
   out << "maptype" << legs.mapType << endl;
 
-  out << "approachDistance" << legs.procedureDistance
+  out << "procedureDistance" << legs.procedureDistance
       << "transitionDistance" << legs.transitionDistance
       << "missedDistance" << legs.missedDistance << endl;
 
-  out << "approachType" << legs.type
-      << "approachSuffix" << legs.suffix
-      << "approachFixIdent" << legs.procedureFixIdent
-      << "approachArincName" << legs.arincName
+  out << "type" << legs.type
+      << "suffix" << legs.suffix
+      << "procedureFixIdent" << legs.procedureFixIdent
+      << "arincName" << legs.arincName
+      << "airportIdent" << legs.airportIdent
       << "transitionType" << legs.transitionType
       << "transitionFixIdent" << legs.transitionFixIdent
-      << "procedureRunway" << legs.runway
-      << "runwayEnd.name" << legs.runwayEnd.name << endl;
+      << "runway" << legs.runway
+      << "runwaySim" << legs.runwaySim
+      << "runwayEndSim" << legs.runwayEndSim
+      << "runwayEnd.name" << legs.runwayEnd.name
+      << "bounding" << legs.bounding
+      << "boundingWithRecommended" << legs.boundingWithRecommended
+      << "boundingWithMissed" << legs.boundingWithMissed << endl;
 
   out << "===== Legs =====" << endl;
   for(int i = 0; i < legs.size(); i++)
@@ -574,14 +565,15 @@ QDebug operator<<(QDebug out, const MapProcedureLegs& legs)
 QDebug operator<<(QDebug out, const MapProcedureLeg& leg)
 {
   QDebugStateSaver saver(out);
-  out << "ProcedureLeg =============" << endl;
+  out << "MapProcedureLeg =============" << endl;
   out << "approachId" << leg.procedureId
       << "transitionId" << leg.transitionId
       << "legId" << leg.legId << endl
       << "type" << leg.type
       << "maptype" << leg.mapType
       << "missed" << leg.missed
-      << "line" << leg.line << endl;
+      << "line" << leg.line << endl
+      << "geometry" << leg.geometry << endl;
 
   out << "displayText" << leg.displayText
       << "remarks" << leg.remarks;
@@ -590,8 +582,8 @@ QDebug operator<<(QDebug out, const MapProcedureLeg& leg)
 
   out << leg.recFixType << leg.recFixIdent << leg.recFixRegion << leg.recFixPos << endl;
   out << "intercept" << leg.interceptPos << leg.intercept << endl;
-  out << "pc pos" << leg.procedureTurnPos << endl;
-  out << "geometry" << leg.geometry << endl;
+  out << "procturn pos" << leg.procedureTurnPos << endl;
+  out << "rw sim" << leg.runwaySim << endl;
 
   out << "turnDirection" << leg.turnDirection
       << "flyover" << leg.flyover
@@ -765,9 +757,15 @@ void MapProcedureLegs::clearProcedure()
   procedureDistance = missedDistance = 0.f;
   type.clear();
   suffix.clear();
-  arincName.clear();
   procedureFixIdent.clear();
-  runwayEnd = map::MapRunwayEnd();
+  arincName.clear();
+  airportIdent.clear();
+  aircraftCategory.clear();
+  runway.clear();
+  runwayEnd = runwayEndSim = map::MapRunwayEnd();
+  runwaySim = map::MapRunway();
+  ref.runwayEndId = ref.airportId = ref.legId = ref.procedureId = -1;
+  ref.mapType &= ~proc::PROCEDURE_APPROACH;
 }
 
 void MapProcedureLegs::clearTransition()
@@ -777,6 +775,8 @@ void MapProcedureLegs::clearTransition()
   transitionDistance = 0.f;
   transitionType.clear();
   transitionFixIdent.clear();
+  ref.transitionId = -1;
+  ref.mapType &= ~proc::PROCEDURE_TRANSITION;
 }
 
 int MapProcedureLegs::indexForLeg(const proc::MapProcedureLeg& leg) const
@@ -927,11 +927,15 @@ QStringList procedureLegRemark(const MapProcedureLeg& leg)
   return remarks;
 }
 
-proc::MapProcedureTypes procedureType(bool hasSidStar, const QString& type,
-                                      const QString& suffix, bool gpsOverlay)
+proc::MapProcedureTypes procedureType(bool hasSidStar, const atools::sql::SqlRecord& recApp)
+{
+  return proc::procedureType(hasSidStar, recApp.valueStr("type"), recApp.valueStr("suffix"), recApp.valueBool("has_gps_overlay"));
+}
+
+proc::MapProcedureTypes procedureType(bool hasSidStar, const QString& type, const QString& suffix, bool gpsOverlay)
 {
   // STARS use the suffix="A" while SIDS use the suffix="D".
-  if(hasSidStar && type == "GPS" && (suffix == "A" || suffix == "D") && gpsOverlay)
+  if(hasSidStar && type == "GPS" && gpsOverlay)
   {
     if(suffix == "A")
       return proc::PROCEDURE_STAR;
@@ -1340,20 +1344,25 @@ void procedureFlags(const Route& route, const map::MapBase *base, bool *departur
   if(base != nullptr && base->getType() == map::AIRPORT)
   {
     const map::MapAirport *airport = base->asPtr<map::MapAirport>();
+    MapQuery *mapQueryGui = QueryManager::instance()->getQueriesGui()->getMapQuery();
 
     if(departure != nullptr)
       *departure = route.isAirportDeparture(airport->ident);
+
     if(destination != nullptr)
       *destination = route.isAirportDestination(airport->ident);
+
     if(alternate != nullptr)
       *alternate = route.isAirportAlternate(airport->ident) || route.isAirportDestination(airport->ident);
+
     if(roundtrip != nullptr)
       *roundtrip = route.isAirportRoundTrip(airport->ident);
 
     if(arrivalProc != nullptr)
-      *arrivalProc = NavApp::getMapQueryGui()->hasArrivalProcedures(*airport);
+      *arrivalProc = mapQueryGui->hasArrivalProcedures(*airport);
+
     if(departureProc != nullptr)
-      *departureProc = NavApp::getMapQueryGui()->hasDepartureProcedures(*airport);
+      *departureProc = mapQueryGui->hasDepartureProcedures(*airport);
   }
 }
 

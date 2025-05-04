@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2023 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2024 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -32,39 +32,40 @@ struct MapResult
   MapResult& addFromMapBase(const map::MapBase *base);
   static MapResult createFromMapBase(const map::MapBase *base);
 
-  QList<MapAirport> airports;
+  QList<map::MapAirport> airports;
   QSet<int> airportIds; /* Ids used to deduplicate when merging highlights and nearest */
 
-  QList<MapRunway> runways;
-  QList<MapRunwayEnd> runwayEnds;
-  QList<MapAirport> towers;
-  QList<MapParking> parkings;
-  QList<MapHelipad> helipads;
+  QList<map::MapRunway> runways;
+  QList<map::MapRunwayEnd> runwayEnds;
+  QList<map::MapAirport> towers;
+  QList<map::MapParking> parkings;
+  QList<map::MapStart> starts;
+  QList<map::MapHelipad> helipads;
 
-  QList<MapWaypoint> waypoints;
+  QList<map::MapWaypoint> waypoints;
   QSet<int> waypointIds; /* Ids used to deduplicate */
 
-  QList<MapVor> vors;
+  QList<map::MapVor> vors;
   QSet<int> vorIds; /* Ids used to deduplicate */
 
-  QList<MapNdb> ndbs;
+  QList<map::MapNdb> ndbs;
   QSet<int> ndbIds; /* Ids used to deduplicate */
 
-  QList<MapMarker> markers;
-  QList<MapIls> ils;
+  QList<map::MapMarker> markers;
+  QList<map::MapIls> ils;
 
-  QList<MapAirway> airways;
-  QList<MapAirspace> airspaces;
+  QList<map::MapAirway> airways;
+  QList<map::MapAirspace> airspaces;
 
   /* User defined route points */
-  QList<MapUserpointRoute> userpointsRoute;
+  QList<map::MapUserpointRoute> userpointsRoute;
 
   /* User defined waypoints */
-  QList<MapUserpoint> userpoints;
+  QList<map::MapUserpoint> userpoints;
   QSet<int> userpointIds; /* Ids used to deduplicate */
 
   /* Logbook entries */
-  QList<MapLogbookEntry> logbookEntries;
+  QList<map::MapLogbookEntry> logbookEntries;
 
   map::MapUserAircraft userAircraft;
 
@@ -107,33 +108,33 @@ struct MapResult
 
   /* Get id and type from the result. Vector of types defines priority. true if something was found.
    * id is set to -1 if nothing was found. */
-  bool getIdAndType(int& id, MapTypes& type, const std::initializer_list<MapTypes>& types) const;
-  map::MapRef getRef(const std::initializer_list<MapTypes>& types) const;
+  bool getIdAndType(int& id, map::MapTypes& type, const std::initializer_list<map::MapTypes>& types) const;
+  map::MapRef getRef(const std::initializer_list<map::MapTypes>& types) const;
 
   /* Get id. This assumes there is only one object for the given type. Returns -1 if not found. */
-  int getId(const MapTypes& type) const;
+  int getId(const map::MapTypes& type) const;
 
   /* Get routeIndex. This assumes there is only one object for the given type. Returns -1 if not found.
    * Only for flight plan related types. */
-  int getRouteIndex(const MapTypes& type) const;
+  int getRouteIndex(const map::MapTypes& type) const;
 
   /* Get position and returns first for the list of types defining priority by order */
-  const atools::geo::Pos& getPosition(const std::initializer_list<MapTypes>& types) const;
+  const atools::geo::Pos& getPosition(const std::initializer_list<map::MapTypes>& types) const;
 
   /* As above for ident */
-  QString getIdent(const std::initializer_list<MapTypes>& types) const;
+  QString getIdent(const std::initializer_list<map::MapTypes>& types) const;
 
   /* As above for region */
-  QString getRegion(const std::initializer_list<MapTypes>& types) const;
+  QString getRegion(const std::initializer_list<map::MapTypes>& types) const;
 
   /* Remove the given types only */
-  MapResult& clear(const MapTypes& types = map::ALL);
+  MapResult& clear(const map::MapTypes& types = map::ALL);
 
   /* Remove all except first for the given types only */
-  MapResult& clearAllButFirst(const MapTypes& types = map::ALL);
+  MapResult& clearAllButFirst(const map::MapTypes& types = map::ALL);
 
   /* Sets routeIndex for all flight plan related types to -1 */
-  MapResult& clearRouteIndex(const MapTypes& types = map::ALL);
+  MapResult& clearRouteIndex(const map::MapTypes& types = map::ALL);
 
   /* Give online airspaces/centers priority */
   void moveOnlineAirspacesToFront();
@@ -187,6 +188,11 @@ struct MapResult
   bool hasParkings() const
   {
     return !parkings.isEmpty();
+  }
+
+  bool hasStarts() const
+  {
+    return !starts.isEmpty();
   }
 
   bool hasUserpointsRoute() const
@@ -245,20 +251,45 @@ struct MapResult
     return !aiAircraft.isEmpty();
   }
 
+  bool hasRangeMarks() const
+  {
+    return !rangeMarks.isEmpty();
+  }
+
+  bool hasDistanceMarks() const
+  {
+    return !distanceMarks.isEmpty();
+  }
+
+  bool hasHoldingMarks() const
+  {
+    return !holdingMarks.isEmpty();
+  }
+
+  bool hasPatternMarks() const
+  {
+    return !patternMarks.isEmpty();
+  }
+
+  bool hasMsaMarks() const
+  {
+    return !msaMarks.isEmpty();
+  }
+
   /* Special methods for the online and navdata airspaces which are stored mixed */
   bool hasSimNavUserAirspaces() const;
   bool hasOnlineAirspaces() const;
   void clearNavdataAirspaces();
   void clearOnlineAirspaces();
-  const MapAirspace *firstSimNavUserAirspace() const;
-  const MapAirspace *firstOnlineAirspace() const;
+  const map::MapAirspace *firstSimNavUserAirspace() const;
+  const map::MapAirspace *firstOnlineAirspace() const;
   int numSimNavUserAirspaces() const;
   int numOnlineAirspaces() const;
 
-  const QList<MapAirspace> getSimNavUserAirspaces() const;
-  const QList<MapAirspace> getOnlineAirspaces() const;
+  const QList<map::MapAirspace> getSimNavUserAirspaces() const;
+  const QList<map::MapAirspace> getOnlineAirspaces() const;
 
-  QString objectText(MapTypes type, int elideName = 1000) const;
+  QString objectText(map::MapTypes type, int elideName = 1000) const;
 
   /* Remove all invalid objects */
   void removeInvalid();
@@ -281,7 +312,7 @@ private:
   void removeInvalid(QList<TYPE>& list, QSet<int> *ids = nullptr);
 
   template<class TYPE>
-  void setRouteIndex(QList<TYPE>& list, const MapTypes& types, const MapTypes& type, int routeIndex = -1);
+  void setRouteIndex(QList<TYPE>& list, const map::MapTypes& types, const map::MapTypes& type, int routeIndex = -1);
 
 };
 
@@ -335,6 +366,8 @@ struct MapResultIndex
   void eraseDuplicateProcedures(bool base = false);
 
 private:
+  friend QDebug operator<<(QDebug out, const map::MapResultIndex& record);
+
   /* Last index is including */
   template<typename TYPE>
   void addToIndex(const QList<TYPE>& list, int firstIndex = 0, int lastIndex = -1)
@@ -348,7 +381,7 @@ private:
   }
 
   template<typename TYPE>
-  void addToIndexIf(const QList<TYPE>& list, const MapTypes& types)
+  void addToIndexIf(const QList<TYPE>& list, const map::MapTypes& types)
   {
     if(types.testFlag(TYPE::staticType()))
     {
@@ -358,7 +391,7 @@ private:
   }
 
   template<typename TYPE>
-  void addToIndexRangeIf(const QList<TYPE>& from, QList<TYPE>& to, const MapTypes& types)
+  void addToIndexRangeIf(const QList<TYPE>& from, QList<TYPE>& to, const map::MapTypes& types)
   {
     if(types.testFlag(TYPE::staticType()))
     {
@@ -374,6 +407,8 @@ private:
 
   map::MapResult result;
 };
+
+QDebug operator<<(QDebug out, const map::MapResultIndex& record);
 
 } // namespace map
 

@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2023 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2025 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -135,7 +135,7 @@ public:
   void postDatabaseLoad();
 
   /* Save table view and search parameters to settings file */
-  void saveState();
+  void saveState() const;
   void restoreState();
 
   /* Reset search and show the given type in the search result. Search widgets are populated with the
@@ -159,10 +159,15 @@ public:
   /* Clear selection in all search windows  */
   void clearSelection();
 
+  /* Clear all highlights and previews from procedure search */
+  void clearProcedureSelectionAndPreviews();
+
   /* True if any of the search windows has a selection */
   bool hasSelection();
 
   void setCurrentSearchTabId(si::TabSearchId tabId);
+
+  void showRandomRouteCalc();
 
   si::TabSearchId getCurrentSearchTabId();
 

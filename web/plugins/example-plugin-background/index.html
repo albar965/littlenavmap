@@ -1,31 +1,43 @@
 <!doctype html>
-<html>
+<html lang="en">
   <head>
     <meta charset="UTF-8">
-    <title>unused plugin title (your plugin folders name is the title visible to the user)</title>
+    <title>unused</title>
   </head>
   <body>
     <script>
-      var originalTitle;
-
+      var pluginHost;
+      var mapDocument = null;
+      
+      
+      onmessage = event => {
+        let message = event.data.pluginParent;
+        if(message) {
+          switch(message.cause) {
+            case "cleanup":
+              return stop();
+            case "commence":
+              pluginHost = event.source;
+              return start();
+            default:
+          }
+        }
+      };
+      
       function stop() {
         alert("stopped");
       }
-
-      function init (message) {
-        var returned_Value = message.pluginParent.callback(message.pluginParent.callback.TYPE_BACKGROUND, stop);
-        try {
-          parent.alert("you shouldn't get me");
-        } catch(e) {}
-        try {
-          top.alert("you shouldn't get me either");
-        } catch(e) {}
-        var mapDoc = returned_Value.request_MapAccess("demo");
-        if(mapDoc) {
-          try {
-            mapDoc.defaultView.alert("you should get me");
-          } catch(e) {}
+      
+      function start() {
+        if(mapDocument !== null) {
+          mapDocument.defaultView.alert("you should get me");
+        } else {
+          pluginHost.postMessage({"throw": "unexpected denial of map access"}, "*");
         }
+      }
+      
+      function setMapDocument(iframeDocument, mapVersion) {
+        mapDocument = iframeDocument;
       }
     </script>
   </body>

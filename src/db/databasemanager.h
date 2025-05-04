@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2023 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2025 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -93,7 +93,7 @@ public:
   bool isLoadingProgress();
 
   /* Save and restore all paths and current simulator settings */
-  void saveState();
+  void saveState() const;
 
   /* Returns true if there are any flight simulator installations found in the registry */
   bool hasInstalledSimulators() const
@@ -105,6 +105,12 @@ public:
   bool hasInstalledSimulator(atools::fs::FsPaths::SimulatorType type) const
   {
     return simulators.value(type).isInstalled;
+  }
+
+  /* Returns true if there is a database for the given sim found */
+  bool hasSimulatorDatabase(atools::fs::FsPaths::SimulatorType type) const
+  {
+    return simulators.value(type).hasDatabase;
   }
 
   /* Returns true if there are any flight simulator databases found (probably copied by the user) */
@@ -126,7 +132,7 @@ public:
   void loadAircraftIndex();
 
   /* Open a writeable database for userpoints or online network data. Automatic transactions are off.  */
-  void openWriteableDatabase(atools::sql::SqlDatabase *database, const QString& name, const QString& displayName, bool backup);
+  void openWriteableDatabase(atools::sql::SqlDatabase *database, const QString& name, bool backup);
   void closeLogDatabase();
   void closeUserDatabase();
   void closeTrackDatabase();
@@ -189,6 +195,8 @@ public:
 
   /* Only true if airports come from X-Plane database as default */
   bool isAirportDatabaseXPlane(bool navdata) const;
+
+  bool isDatabaseXPlane() const;
 
   /* Base paths which might also be changed by the user */
   QString getCurrentSimulatorBasePath() const;
@@ -276,6 +284,9 @@ public:
   /* Checks the simulator database independent of scenery library settings. Expensive since it opens the file */
   bool hasDataInSimDatabase();
 
+  /* Switch to simulator database */
+  void setCurrentDatabase(atools::fs::FsPaths::SimulatorType type);
+
 signals:
   /* Emitted before opening the scenery database dialog, loading a database or switching to a new simulator database.
    * Recipients have to close all database connections and clear all caches. The database instance itself is not changed
@@ -290,13 +301,15 @@ signals:
 private:
   void restoreState();
 
-  bool isDatabaseCompatible(atools::sql::SqlDatabase *db) const;
+  /* Checks if the current database is compatible with this program. Exits program if this fails */
   bool hasData(atools::sql::SqlDatabase *db) const;
 
   /* Correct navdata selection according to simulator, AIRAC cycle and other. Updates simulators and navDatabaseStatus */
   void assignSceneryCorrection();
 
   void simulatorChangedFromComboBox(atools::fs::FsPaths::SimulatorType value);
+
+  /* Shows scenery database loading dialog. */
   void loadSceneryInternal();
 
   /* Called by signal DatabaseLoader::loadingFinished() */
@@ -366,7 +379,7 @@ private:
   *databaseSim = nullptr /* Database for simulator content. Connection inside is exchanged depending on settings. */,
   *databaseNav = nullptr /* Database for third party navigation data. Connection inside is exchanged depending on settings. */,
   *databaseUser = nullptr /* Database for user data */,
-  *databaseTrack = nullptr /* Database for tracks like NAT, PACOTS and AUSOTS */,
+  *databaseTrack = nullptr /* Database for tracks like NAT or PACOTS */,
   *databaseLogbook = nullptr /* Database for logbook */,
   *databaseUserAirspace = nullptr /* Database for user airspaces */,
   *databaseSimAirspace = nullptr /* Airspace database from simulator independent from nav switch */,

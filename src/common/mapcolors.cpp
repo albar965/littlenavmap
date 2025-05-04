@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2023 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2025 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -97,6 +97,7 @@ QColor weatherLifrColor(QColor("#d000d0"));
 QColor weatherIfrColor(QColor("#d00000"));
 QColor weatherMvfrColor(QColor("#0000d0"));
 QColor weatherVfrColor(QColor("#00b000"));
+QColor weatherErrorColor(QColor("#808080"));
 
 QPen minimumAltitudeGridPen(QColor("#a0a0a0"), 1.);
 QColor minimumAltitudeNumberColor(QColor("#70000000"));
@@ -138,6 +139,7 @@ QColor distanceMarkerTextBackgroundColor(255, 255, 255, 220);
 QColor distanceMarkerTextColor(Qt::black);
 
 QPen markEndurancePen(Qt::black, 2., Qt::DotLine, Qt::FlatCap, Qt::MiterJoin);
+QPen markEnduranceCritPen(Qt::red, 2., Qt::DotLine, Qt::FlatCap, Qt::MiterJoin);
 QPen markSelectedAltitudeRangePen(Qt::darkGreen, 1.5, Qt::SolidLine, Qt::FlatCap);
 QPen markTurnPathPen(Qt::darkGreen, 1.5, Qt::SolidLine, Qt::FlatCap);
 
@@ -168,6 +170,9 @@ QColor routeProcedurePointFlyoverColor(Qt::black);
 QColor routeUserPointColor(Qt::darkYellow);
 QColor routeInvalidPointColor(Qt::red);
 
+QColor routeDirectToDepartureBackgroundColor(255, 255, 255);
+QPen routeDirectToDeparturePen(QColor(0, 0, 0), 3., Qt::DotLine, Qt::FlatCap, Qt::MiterJoin);
+
 /* Procedure colors */
 QColor routeProcedureMissedTableColorDark(240, 170, 120);
 QColor routeProcedureMissedTableColor(Qt::darkRed);
@@ -184,7 +189,8 @@ QColor routeInvalidTableColorDark(Qt::red);
 QColor nextWaypointColor(255, 100, 255);
 QColor nextWaypointColorDark(150, 20, 150);
 
-// Surface colors for runways, aprons and taxiways
+/* Surface colors for runways, aprons and taxiways */
+/* These are defaults and are overridden by little_navmap_mapstyle.ini */
 static QColor surfaceConcrete("#888888");
 static QColor surfaceGrass("#00a000");
 static QColor surfaceWater("#808585ff");
@@ -205,8 +211,8 @@ static QColor surfacePlanks("#8B4513");
 static QColor surfaceSand("#F4A460");
 static QColor surfaceShale("#F5DEB3");
 static QColor surfaceTarmac("#909090");
-static QColor surfaceUnknown("#ffffff");
-static QColor surfaceTransparent("#e0e0e0");
+static QColor surfaceUnknown("#d0d0d0"); // Ensure visibility for dark and bright maps
+static QColor surfaceTransparent("#d0d0d0");
 
 /* Alternating colors */
 static QColor rowBgColor;
@@ -475,7 +481,7 @@ const QPen aircraftTrailPen(float size, float minAlt, float maxAlt, float alt)
 }
 
 /* Default colors. Saved to little_navmap_mapstyle.ini and can be overridden there */
-static QHash<map::MapAirspaceTypes, QColor> airspaceFillColors(
+static QHash<map::MapAirspaceType, QColor> airspaceFillColors(
   {
     {map::AIRSPACE_NONE, QColor("#00000000")},
     {map::CENTER, QColor("#30808080")},
@@ -514,7 +520,7 @@ static QHash<map::MapAirspaceTypes, QColor> airspaceFillColors(
   );
 
 /* Default colors. Saved to little_navmap_mapstyle.ini and can be overridden there */
-static QHash<map::MapAirspaceTypes, QPen> airspacePens(
+static QHash<map::MapAirspaceType, QPen> airspacePens(
   {
     {map::AIRSPACE_NONE, QPen(QColor("#00000000"))},
     {map::CENTER, QPen(QColor("#808080"), 1.5)},
@@ -553,7 +559,7 @@ static QHash<map::MapAirspaceTypes, QPen> airspacePens(
   );
 
 /* Maps airspace types to color configuration options */
-static QHash<QString, map::MapAirspaceTypes> airspaceConfigNames(
+static QHash<QString, map::MapAirspaceType> airspaceConfigNames(
   {
     {"Center", map::CENTER},
     {"ClassA", map::CLASS_A},
@@ -608,7 +614,7 @@ QPen penForAirspace(const map::MapAirspace& airspace, int lineThickness)
   return pen;
 }
 
-const QColor& colorForAirwayOrTrack(const map::MapAirway& airway)
+const QColor colorForAirwayOrTrack(const map::MapAirway& airway, bool darkMap)
 {
   static QColor EMPTY_COLOR;
 
@@ -620,23 +626,20 @@ const QColor& colorForAirwayOrTrack(const map::MapAirway& airway)
     case map::TRACK_NAT:
     case map::TRACK_PACOTS:
       if(airway.westCourse)
-        return airwayTrackColorWest;
+        return airwayTrackColorWest.lighter(darkMap ? 200 : 100);
       else if(airway.eastCourse)
-        return airwayTrackColorEast;
+        return airwayTrackColorEast.lighter(darkMap ? 200 : 100);
       else
-        return airwayTrackColor;
-
-    case map::TRACK_AUSOTS:
-      return airwayTrackColor;
+        return airwayTrackColor.lighter(darkMap ? 200 : 100);
 
     case map::AIRWAY_VICTOR:
-      return airwayVictorColor;
+      return airwayVictorColor.darker(darkMap ? 180 : 100);
 
     case map::AIRWAY_JET:
-      return airwayJetColor;
+      return airwayJetColor.lighter(darkMap ? 180 : 100);
 
     case map::AIRWAY_BOTH:
-      return airwayBothColor;
+      return airwayBothColor.lighter(darkMap ? 150 : 100);
   }
   return EMPTY_COLOR;
 }
@@ -760,6 +763,7 @@ void loadColors()
   loadPen(colorSettings, "Marker/TouchMarkBackPen", touchMarkBackPen);
   loadPen(colorSettings, "Marker/TouchMarkFillPen", touchMarkFillPen);
   loadPen(colorSettings, "Marker/EndurancePen", markEndurancePen);
+  loadPen(colorSettings, "Marker/EnduranceCritPen", markEnduranceCritPen);
   loadPen(colorSettings, "Marker/SelectedAltitudeRangePen", markSelectedAltitudeRangePen);
   loadPen(colorSettings, "Marker/TurnPathPen", markTurnPathPen);
   loadColorArgb(colorSettings, "Marker/TouchRegionFillColor", touchRegionFillColor);
@@ -811,6 +815,9 @@ void loadColors()
   loadColor(colorSettings, "Route/UserPointColor", routeUserPointColor);
   loadColor(colorSettings, "Route/InvalidPointColor", routeInvalidPointColor);
 
+  loadPen(colorSettings, "Route/RouteDirectToDeparturePen", routeDirectToDeparturePen);
+  loadColor(colorSettings, "Route/RouteDirectToDepartureBackgroundColor", routeDirectToDepartureBackgroundColor);
+
   loadColorArgb(colorSettings, "Surface/Concrete", surfaceConcrete);
   loadColorArgb(colorSettings, "Surface/Grass", surfaceGrass);
   loadColorArgb(colorSettings, "Surface/Water", surfaceWater);
@@ -840,7 +847,7 @@ void loadColors()
   for(auto it = airspaceConfigNames.constBegin(); it != airspaceConfigNames.constEnd(); ++it)
   {
     const QString& name = it.key();
-    map::MapAirspaceTypes type = it.value();
+    map::MapAirspaceType type = it.value();
     loadPen(colorSettings, "Airspace/" % name % "Pen", airspacePens[type]);
     loadColorArgb(colorSettings, "Airspace/" % name % "FillColor", airspaceFillColors[type]);
   }
@@ -915,7 +922,7 @@ void scaleFont(QPainter *painter, float scale, const QFont *defaultFont)
 void darkenPainterRect(QPainter& painter)
 {
   // Dim the map by drawing a semi-transparent black rectangle
-  if(NavApp::isCurrentGuiStyleNight())
+  if(NavApp::isGuiStyleDark())
   {
     int dim = OptionData::instance().getGuiStyleMapDimming();
     QColor col = QColor::fromRgb(0, 0, 0, 255 - (255 * dim / 100));
@@ -926,14 +933,28 @@ void darkenPainterRect(QPainter& painter)
 QPen adjustAlphaF(QPen pen, float alpha)
 {
   QColor color = pen.color();
-  color.setAlphaF(alpha);
+  color.setAlphaF(atools::minmax(0.f, 1.f, alpha));
   pen.setColor(color);
   return pen;
 }
 
 QColor adjustAlphaF(QColor color, float alpha)
 {
-  color.setAlphaF(alpha);
+  color.setAlphaF(atools::minmax(0.f, 1.f, alpha));
+  return color;
+}
+
+QPen adjustAlpha(QPen pen, int alpha)
+{
+  QColor color = pen.color();
+  color.setAlpha(atools::minmax(0, 255, alpha));
+  pen.setColor(color);
+  return pen;
+}
+
+QColor adjustAlpha(QColor color, int alpha)
+{
+  color.setAlpha(atools::minmax(0, 255, alpha));
   return color;
 }
 

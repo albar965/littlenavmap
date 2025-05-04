@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2023 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2024 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -63,9 +63,6 @@ public:
   void fillAirport(const atools::sql::SqlRecord& record, map::MapAirport& airport, bool complete, bool nav,
                    bool xplane);
 
-  /* Populate airport from queries based on the overview tables airport_medium and airport_large. */
-  void fillAirportForOverview(const atools::sql::SqlRecord& record, map::MapAirport& airport, bool nav, bool xplane);
-
   /*
    * @param overview if true fill only fields needed for airport overview symbol (white filled runways)
    */
@@ -89,7 +86,7 @@ public:
   void fillParking(const atools::sql::SqlRecord& record, map::MapParking& parking);
   void fillStart(const atools::sql::SqlRecord& record, map::MapStart& start);
 
-  void fillAirspace(const atools::sql::SqlRecord& record, map::MapAirspace& airspace, map::MapAirspaceSources src);
+  void fillAirspace(const atools::sql::SqlRecord& record, map::MapAirspace& airspace, map::MapAirspaceSource src);
 
   void fillHelipad(const atools::sql::SqlRecord& record, map::MapHelipad& helipad);
 

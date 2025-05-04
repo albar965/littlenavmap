@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2023 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2024 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -15,18 +15,19 @@
 * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 *****************************************************************************/
 
-#include "route/routeleg.h"
-#include "query/mapquery.h"
-#include "query/airwaytrackquery.h"
-#include "query/airportquery.h"
-#include "geo/calculations.h"
-#include "fs/pln/flightplan.h"
-#include "common/maptools.h"
-#include "atools.h"
-#include "fs/util/fsutil.h"
-#include "common/elevationprovider.h"
 #include "app/navapp.h"
+#include "atools.h"
+#include "common/elevationprovider.h"
+#include "common/maptools.h"
 #include "common/unit.h"
+#include "fs/pln/flightplan.h"
+#include "fs/util/fsutil.h"
+#include "geo/calculations.h"
+#include "query/airportquery.h"
+#include "query/airwaytrackquery.h"
+#include "query/mapquery.h"
+#include "query/querymanager.h"
+#include "route/routeleg.h"
 
 #include <QRegularExpression>
 #include <QStringBuilder>
@@ -52,7 +53,7 @@ const static atools::fs::pln::FlightplanEntry EMPTY_FLIGHTPLAN_ENTRY;
 const static QLatin1String PARKING_NO_NUMBER(" NULL");
 
 /* Maximum distance for parking spot to saved coordinate */
-const float MAX_PARKING_DIST_METER = 50.f;
+const float MAX_PARKING_DIST_METER = atools::geo::nmToMeter(1.f);
 
 RouteLeg::RouteLeg(atools::fs::pln::Flightplan *parentFlightplan)
   : flightplan(parentFlightplan)
@@ -127,9 +128,10 @@ void RouteLeg::createFromProcedureLegs(int entryIndex, const proc::MapProcedureL
 void RouteLeg::assignAnyNavaid(atools::fs::pln::FlightplanEntry *flightplanEntry, const Pos& last, float maxDistance)
 {
   map::MapResult mapobjectResult;
-  NavApp::getMapQueryGui()->getMapObjectByIdent(mapobjectResult, map::WAYPOINT | map::VOR | map::NDB | map::AIRPORT,
-                                                flightplanEntry->getIdent(), flightplanEntry->getRegion(),
-                                                QString(), last, maxDistance);
+  QueryManager::instance()->getQueriesGui()->getMapQuery()->getMapObjectByIdent(mapobjectResult,
+                                                                                map::WAYPOINT | map::VOR | map::NDB | map::AIRPORT,
+                                                                                flightplanEntry->getIdent(), flightplanEntry->getRegion(),
+                                                                                QString(), last, maxDistance);
 
   if(mapobjectResult.hasVor())
   {
@@ -153,9 +155,10 @@ void RouteLeg::createFromDatabaseByEntry(int entryIndex, const RouteLeg *prevLeg
   index = entryIndex;
 
   atools::fs::pln::FlightplanEntry *flightplanEntry = &(*flightplan)[index];
-  MapQuery *mapQuery = NavApp::getMapQueryGui();
-  AirwayTrackQuery *airwayQuery = NavApp::getAirwayTrackQueryGui();
-  AirportQuery *airportQuery = NavApp::getAirportQuerySim();
+  const Queries *queries = QueryManager::instance()->getQueriesGui();
+  MapQuery *mapQuery = queries->getMapQuery();
+  AirwayTrackQuery *airwayQuery = queries->getAirwayTrackQuery();
+  AirportQuery *airportQuery = queries->getAirportQuerySim();
 
   QString region = flightplanEntry->getRegion();
 
@@ -195,8 +198,8 @@ void RouteLeg::createFromDatabaseByEntry(int entryIndex, const RouteLeg *prevLeg
           {
             // Not found at airway search for any navaid with the given name nearby
             assignAnyNavaid(flightplanEntry, last, maxDistance);
-            qWarning() << Q_FUNC_INFO << "No waypoints for" << flightplanEntry->getIdent() <<
-              flightplanEntry->getAirway();
+            qWarning() << Q_FUNC_INFO << "No waypoints for" << flightplanEntry->getIdent()
+                       << flightplanEntry->getAirway();
           }
         }
         else
@@ -227,7 +230,7 @@ void RouteLeg::createFromDatabaseByEntry(int entryIndex, const RouteLeg *prevLeg
           // There is a parking name and this is the departure airport
           bool translateName = false;
           QList<map::MapParking> parkings;
-          if(NavApp::isAirportDatabaseXPlane(false /* navdata */) || name.endsWith(PARKING_NO_NUMBER))
+          if(NavApp::isAirportDatabaseXPlane(false /* navdata */) || NavApp::isNavdataAll() || name.endsWith(PARKING_NO_NUMBER))
           {
             // X-Plane style parking - name only ======
             if(name.endsWith(PARKING_NO_NUMBER))
@@ -275,7 +278,8 @@ void RouteLeg::createFromDatabaseByEntry(int entryIndex, const RouteLeg *prevLeg
               qWarning() << Q_FUNC_INFO << "Found multiple parking spots for" << name;
 
             // Found one and position is close enough
-            parking = parkings.constFirst();
+            if(!parkings.isEmpty())
+              parking = parkings.constFirst();
 
             // Update flightplan with found name
             if(translateName)
@@ -407,17 +411,20 @@ void RouteLeg::updateMagvar(const RouteLeg *prevLeg)
 
 void RouteLeg::updateDepartAndDestAltitude(atools::fs::pln::FlightplanEntry *flightplanEntry)
 {
-  // Update altitude for all waypoint types having no altitude information
-  // Set to ground if not available
-  atools::fs::pln::entry::WaypointType wptype = flightplanEntry->getWaypointType();
-  if(wptype == atools::fs::pln::entry::USER || wptype == atools::fs::pln::entry::WAYPOINT || // These never have altitude
-     // VOR and NDB in MSFS have no altitude assigned
-     ((wptype == atools::fs::pln::entry::VOR || wptype == atools::fs::pln::entry::NDB) && atools::almostEqual(getAltitude(), 0.f)) ||
-     // Fix altitude for invalid airports
-     type == map::INVALID)
-    flightplanEntry->setAltitude(NavApp::getElevationProvider()->getElevationFt(getFlightplanEntry()->getPosition()));
-  else
-    flightplanEntry->setAltitude(getAltitude());
+  if(flightplanEntry != nullptr)
+  {
+    // Update altitude for all waypoint types having no altitude information
+    // Set to ground if not available
+    atools::fs::pln::entry::WaypointType wptype = flightplanEntry->getWaypointType();
+    if(wptype == atools::fs::pln::entry::USER || wptype == atools::fs::pln::entry::WAYPOINT || // These never have altitude
+       // VOR and NDB in MSFS have no altitude assigned
+       ((wptype == atools::fs::pln::entry::VOR || wptype == atools::fs::pln::entry::NDB) && atools::almostEqual(getAltitude(), 0.f)) ||
+       // Fix altitude for invalid airports
+       type == map::INVALID)
+      flightplanEntry->setAltitude(NavApp::getElevationProvider()->getElevationFt(getFlightplanEntry()->getPosition()));
+    else
+      flightplanEntry->setAltitude(getAltitude());
+  }
 }
 
 void RouteLeg::updateDistanceAndCourse(int entryIndex, const RouteLeg *prevLeg)
@@ -916,7 +923,7 @@ const QString& RouteLeg::getRegion() const
   return EMPTY_STRING;
 }
 
-const QString& RouteLeg::getName() const
+QString RouteLeg::getName() const
 {
   if(type == map::INVALID)
     return EMPTY_STRING;
@@ -927,6 +934,8 @@ const QString& RouteLeg::getName() const
     return vor.name;
   else if(ndb.isValid())
     return ndb.name;
+  else if(waypoint.isValid())
+    return atools::fs::util::capWaypointNameString(waypoint.ident, waypoint.name, true /* emptyIfEqual */);
   else if(ils.isValid())
     return ils.name;
   else if(type == map::INVALID)
@@ -979,10 +988,7 @@ int RouteLeg::getFrequency() const
 const atools::fs::pln::FlightplanEntry& RouteLeg::getFlightplanEntry() const
 {
   if(index >= 0)
-  {
-    // if(isRoute())
     return flightplan->at(index);
-  }
   else
     qWarning() << Q_FUNC_INFO << "invalid index" << index;
 
@@ -992,10 +998,7 @@ const atools::fs::pln::FlightplanEntry& RouteLeg::getFlightplanEntry() const
 atools::fs::pln::FlightplanEntry *RouteLeg::getFlightplanEntry()
 {
   if(index >= 0)
-  {
-    // if(isRoute())
     return &(*flightplan)[index];
-  }
   else
     qWarning() << Q_FUNC_INFO << "invalid index" << index;
 
@@ -1057,10 +1060,7 @@ bool RouteLeg::isAirwaySetAndInvalid(float minAltLegFt, float maxAltLegFt, QStri
       name.toInt(&ok);
 
       // Assume that all short names might be tracks
-      bool track = isTrack() || name.length() == 1 || ok ||
-                   // AUSOTS like "MY16"
-                   (atools::charAt(name, 0).isLetter() && atools::charAt(name, 1).isLetter() &&
-                    atools::charAt(name, 2).isDigit() && atools::charAt(name, 3).isDigit());
+      bool track = isTrack() || name.length() == 1 || ok;
 
       invalid = true;
       if(errors != nullptr)
@@ -1149,7 +1149,8 @@ void RouteLeg::assignNdb(const map::MapResult& mapobjectResult, atools::fs::pln:
 
 void RouteLeg::assignRunwayOrHelipad(const QString& name)
 {
-  NavApp::getAirportQuerySim()->getStartByNameAndPos(start, airport.id, name, flightplan->getDepartureParkingPosition());
+  QueryManager::instance()->getQueriesGui()->getAirportQuerySim()->getStartByNameAndPos(start, airport.id, name,
+                                                                                        flightplan->getDepartureParkingPosition());
 
   if(!start.isValid() || start.position.distanceMeterTo(flightplan->getDepartureParkingPosition()) > MAX_PARKING_DIST_METER)
     // Do not clear departure position in flight plan to allow the parking name to survive database switches

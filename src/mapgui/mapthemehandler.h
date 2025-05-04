@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2023 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2024 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -22,6 +22,7 @@
 #include <QMap>
 #include <QCoreApplication>
 #include <QDir>
+#include <QSet>
 
 class QFileInfo;
 class QToolButton;
@@ -42,7 +43,7 @@ public:
   /* Use bright colors for MORA and other texts on map */
   bool isDarkTheme() const
   {
-    return theme == "cartodark";
+    return theme == "cartodark" || theme == "mapboxdark";
   }
 
   /* Enable show city and other POIs button if true */
@@ -99,6 +100,12 @@ public:
     return target;
   }
 
+  /* Keyboard shortcut */
+  const QString& getShortcut() const
+  {
+    return shortcut;
+  }
+
   /* Name as found in the DGML file for tag "url" in "header". */
   const QString& getUrlName() const
   {
@@ -152,14 +159,20 @@ public:
     return online;
   }
 
+  /* Native separators for display filepath of DGML file. */
+  QString dgmlDisplayPath() const;
+
+  /* Native separators for display path of the theme folder. */
+  QString displayPath() const;
+
 private:
   friend class MapThemeHandler;
   friend QDebug operator<<(QDebug out, const MapTheme& theme);
 
   int index = -1;
-  QString dgmlFilepath, name, copyright, theme, target, urlName, urlRef;
-  QStringList sourceDirs;
-  QStringList keys;
+  QString dgmlFilepath, /* Canonical path of DGML file */
+          name, copyright, theme, target, urlName, urlRef, shortcut;
+  QStringList sourceDirs, keys, downloadHosts;
   bool textureLayer = false, geodataLayer = false, discrete = false, visible = false, online = false;
 };
 
@@ -183,22 +196,15 @@ public:
   /* Load all theme files into Theme objects. Not visible themes will be excluded */
   void loadThemes();
 
+  /* Show errors in dialog stored by loadThemes() */
+  void showThemeLoadingErrors();
+
   /* Get theme by theme id (element <theme> in DGML. */
   const MapTheme& getTheme(const QString& themeId) const;
 
-  /* Get default theme which is the one with short name "openstreetmap" */
-  const MapTheme& getDefaultTheme() const
+  const MapTheme& getCurrentTheme() const
   {
-    return defaultTheme;
-  }
-
-  /* Currently selected theme id from actions */
-  QString getCurrentThemeId() const;
-
-  /* Sort order is always online/offline and then alphabetical */
-  const QVector<MapTheme>& getThemes() const
-  {
-    return themes;
+    return getTheme(currentThemeId());
   }
 
   /* See related methods in MapTheme */
@@ -237,27 +243,35 @@ public:
    * sharing their keys with the .ini configuration file.
    * Adds only keys which are available from map configuration when loading. Others are ignored */
   void restoreState();
-  void saveState();
+  void saveState() const;
 
   /* Sets up the toolbutton, menu and actions for the toolbar and the main menu */
   void setupMapThemesUi();
 
   /* Called by the actions after key updates */
   void changeMapTheme();
+
+  /* Called by actions */
   void changeMapProjection();
 
   /* Reload themes and rebuild menu */
   void optionsChanged();
 
   /* Check path if it is a directory and counts map themes in it */
-  static QString getStatusTextForDir(const QString& path);
+  static QString getStatusTextForDir(const QString& path, bool& error);
 
   /* Checks default and user folder and shows an error dialog if any is invalid */
-  static void validateMapThemeDirectories();
+  static void validateMapThemeDirectories(QWidget *parent);
+
+  /* Reset back to OpenStreetMap and Mecator */
+  void resetToDefault();
 
 private:
-  static QString getMapThemeDefaultDir();
-  static QString getMapThemeUserDir();
+  static QString mapThemeDefaultDir();
+  static QString mapThemeUserDir();
+
+  /* Currently selected theme id from actions */
+  QString currentThemeId() const;
 
   /* Get theme by internal index */
   const MapTheme& themeByIndex(int themeIndex) const;
@@ -271,7 +285,7 @@ private:
   void changeMapThemeActions(const QString& themeId);
 
   void restoreKeyfile();
-  void saveKeyfile();
+  void saveKeyfile() const;
 
   /* Sorted list of all loaded themes */
   QVector<MapTheme> themes;
@@ -288,6 +302,10 @@ private:
   QWidget *mainWindow;
 
   QActionGroup *mapProjectionActionGroup = nullptr;
+
+  QSet<QRegularExpression> rejectDownloadUrlList;
+
+  QStringList errors;
 };
 
 QDebug operator<<(QDebug out, const MapTheme& theme);

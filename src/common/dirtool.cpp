@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2023 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2024 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -21,14 +21,15 @@
 #include "atools.h"
 #include "common/constants.h"
 #include "gui/dialog.h"
-#include "gui/helphandler.h"
 #include "gui/mainwindow.h"
+#include "gui/messagebox.h"
 #include "options/optionsdialog.h"
 #include "settings/settings.h"
 
 #include <QDir>
 #include <QDebug>
 #include <QUrl>
+#include <QStringBuilder>
 
 DirTool::DirTool(QWidget *parent, const QString& base, const QString& appName, const QString& settingsKeyPrefix)
   : parentWidget(parent), documentsDir(base), settingsPrefix(settingsKeyPrefix)
@@ -44,7 +45,7 @@ DirTool::DirTool(QWidget *parent, const QString& base, const QString& appName, c
 
   /*: Default folder name which might be created initially by program.
    * Change only once. Otherwise program might suggest the user to create the new folders again */
-  flightPlanDir = tr("Flight Plans");
+  flightplanDir = tr("Flight Plans");
 
   /*: Default folder name which might be created initially by program.
    * Change only once. Otherwise program might suggest the user to create the new folders again */
@@ -82,43 +83,42 @@ void DirTool::run(bool manual, bool& created)
                           "<p><b>%1</b><br/>"
                           "Top level directory for all files of Little Navmap "
                           "containing the following sub-directories:</p>").
-                 arg(QDir::toNativeSeparators(documentsDir + atools::SEP + applicationDir)));
+                 arg(atools::nativeCleanPath(documentsDir % atools::SEP % applicationDir)));
 
   if(manual)
     message.append(tr("<p>One or more of these directories are missing.</p>"));
 
   // Show list of folders and comment =========
   message.append(tr("<ul>"));
-  message.append(tr("<li><b>%1</b><br/>For flight plans in Little Navmap's own format <code>.lnmpln</code></li>").arg(flightPlanDir));
+  message.append(tr("<li><b>%1</b><br/>For flight plans in Little Navmap's own format <code>.lnmpln</code></li>").arg(flightplanDir));
   message.append(tr("<li><b>%1</b><br/>Directory for aircraft performance files (<code>.lnmperf</code>)</li>").arg(perfDir));
   message.append(tr("<li><b>%1</b><br/>For saved window layouts (<code>.lnmlayout</code>)</li>").arg(layoutDir));
-  message.append(tr("<li><b>%1</b><br/>A place to store PDF, text, image or other files that are linked in the aiport information").
+  message.append(tr("<li><b>%1</b><br/>A place to store PDF, text, image or other files that are linked in the Airport information").
                  arg(airportsDir));
   message.append(tr("<li><b>%1</b><br/>User defined airspaces in OpenAir format</li>").arg(airspaceDir));
   message.append(tr("<li><b>%1</b><br/>A place for the GLOBE data used by the flight plan elevation profile</li>").arg(globeDir));
   message.append(tr("<li><b>%1</b><br/>Folder to store additional map themes</li>").arg(mapThemesDir));
   message.append(tr("</li></ul>"));
   message.append(tr("<p>This step is optional.</p>"));
-
-  QUrl url = atools::gui::HelpHandler::getHelpUrlWeb(lnm::helpOnlineInstallDirUrl, lnm::helpLanguageOnline());
-  message.append(tr("<p><a href=\"%1\">Click here for more information in the Little Navmap online manual</a></p>").arg(url.toString()));
   message.append(tr("<p>Should Little Navmap create these directories now?</p>"));
 
   created = false;
-  // Save "do not again" checkbox state only if called automatically
-  int result = atools::gui::Dialog(parentWidget).showQuestionMsgBox(manual ? QString() : settingsPrefix, message,
-                                                                    manual ? QString() : QObject::tr("Do not &show this dialog again."),
-                                                                    QMessageBox::Yes | QMessageBox::No,
-                                                                    QMessageBox::No, QMessageBox::No);
 
-  if(result == QMessageBox::Yes)
+  // Save "do not again" checkbox state only if called automatically
+  atools::gui::MessageBox box(parentWidget, QCoreApplication::applicationName(),
+                              manual ? QString() : settingsPrefix,
+                              manual ? QString() : QObject::tr("Do not &show this dialog again."));
+  box.setMessage(message);
+  box.setIcon(QMessageBox::Question);
+  box.setHelpUrl(lnm::helpOnlineInstallDirUrl, lnm::helpLanguageOnline());
+
+  if(box.exec() == QDialogButtonBox::Yes)
   {
     qDebug() << Q_FUNC_INFO;
     createAllDirs();
 
     if(!errors.isEmpty())
-      QMessageBox::warning(parentWidget, QCoreApplication::applicationName(),
-                           tr("Errors creating directory structure:\n%1").arg(errors.join("\n")));
+      atools::gui::Dialog::warning(parentWidget, tr("Errors creating directory structure:\n%1").arg(errors.join("\n")));
     else
     {
       updateOptions();
@@ -140,7 +140,7 @@ void DirTool::runIfMissing(bool manual, bool& complete, bool& created)
 
 QString DirTool::getApplicationDir() const
 {
-  return QDir::toNativeSeparators(QFileInfo(documentsDir + atools::SEP + applicationDir).absoluteFilePath());
+  return atools::nativeCleanPath(QFileInfo(documentsDir % atools::SEP % applicationDir).absoluteFilePath());
 }
 
 bool DirTool::createAllDirs()
@@ -148,12 +148,13 @@ bool DirTool::createAllDirs()
   errors.clear();
 
   mkdirBase();
-  mkdir(flightPlanDir);
+  mkdir(flightplanDir);
   mkdir(perfDir);
   mkdir(layoutDir);
   mkdir(airspaceDir);
   mkdir(airportsDir);
   mkdir(globeDir);
+  mkdir(globeDir % atools::SEP % "all10");
   mkdir(mapThemesDir);
 
   return errors.isEmpty();
@@ -161,27 +162,27 @@ bool DirTool::createAllDirs()
 
 void DirTool::mkdir(const QString& dir)
 {
-  QFileInfo fi(documentsDir + atools::SEP + applicationDir + atools::SEP + dir);
+  QFileInfo fi(documentsDir % atools::SEP % applicationDir % atools::SEP % dir);
   if(!fi.exists())
   {
-    if(!QDir(documentsDir + atools::SEP + applicationDir).mkdir(dir))
+    if(!QDir(documentsDir % atools::SEP % applicationDir).mkdir(dir))
       errors.append(tr("Cannot create directory \"%1\"").arg(fi.filePath()));
   }
   else
   {
     if(fi.isFile())
       errors.append(tr("Cannot create directory \"%1\". File with same name already exists.").
-                    arg(QDir::toNativeSeparators(fi.filePath())));
+                    arg(atools::nativeCleanPath(fi.filePath())));
   }
 }
 
 void DirTool::mkdirBase()
 {
-  QFileInfo fi(documentsDir + atools::SEP + applicationDir);
+  QFileInfo fi(documentsDir % atools::SEP % applicationDir);
   if(!fi.exists())
   {
     if(!QDir(documentsDir).mkdir(applicationDir))
-      errors.append(tr("Cannot create directory \"%1\"").arg(QDir::toNativeSeparators(fi.filePath())));
+      errors.append(tr("Cannot create directory \"%1\"").arg(atools::nativeCleanPath(fi.filePath())));
   }
   else
   {
@@ -197,12 +198,12 @@ bool DirTool::hasDir(const QString& dir)
 
 QString DirTool::d(const QString& dir)
 {
-  return QDir::toNativeSeparators(documentsDir + atools::SEP + applicationDir + atools::SEP + dir);
+  return atools::nativeCleanPath(documentsDir % atools::SEP % applicationDir % atools::SEP % dir);
 }
 
 bool DirTool::hasAllDirs()
 {
-  return hasDir(flightPlanDir) && hasDir(perfDir) && hasDir(layoutDir) && hasDir(airspaceDir) && hasDir(globeDir) && hasDir(airportsDir) &&
+  return hasDir(flightplanDir) && hasDir(perfDir) && hasDir(layoutDir) && hasDir(airspaceDir) && hasDir(globeDir) && hasDir(airportsDir) &&
          hasDir(mapThemesDir);
 }
 
@@ -212,7 +213,7 @@ void DirTool::updateOptions()
   atools::settings::Settings& settings = atools::settings::Settings::instance();
 
   // File dialog default locations
-  settings.setValue(lnm::ROUTE_LNMPLN_EXPORTDIR, d(flightPlanDir)); // Generated key used by file dialog and multiexport
+  settings.setValue(lnm::ROUTE_LNMPLN_EXPORTDIR, d(flightplanDir)); // Generated key used by file dialog and multiexport
   settings.setValue("AircraftPerformance/FileDialogDir", d(perfDir)); // Generated key used by file dialog
   settings.setValue("WindowLayout/FileDialogDir", d(layoutDir)); // Generated key used by file dialog
 
@@ -222,7 +223,7 @@ void DirTool::updateOptions()
   atools::settings::Settings::syncSettings();
 
   // Set default and actual path for LNMPLN multiexport option - also uses nm::ROUTE_LNMPLN_EXPORTDIR above as default
-  NavApp::getMainWindow()->setLnmplnExportDir(d(flightPlanDir));
+  NavApp::getMainWindow()->setLnmplnExportDir(d(flightplanDir));
 
   // GLOBE data - file dialog uses path from line edit
   OptionsDialog *optionsDialog = NavApp::getOptionsDialog();

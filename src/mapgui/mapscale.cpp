@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2020 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2024 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -17,10 +17,11 @@
 
 #include "mapscale.h"
 
-#include "common/coordinateconverter.h"
 #include "common/mapflags.h"
-#include "geo/pos.h"
 #include "geo/calculations.h"
+#include "geo/coordinateconverter.h"
+#include "geo/marbleconverter.h"
+#include "geo/pos.h"
 #include "geo/rect.h"
 
 #include <QLineF>
@@ -87,10 +88,9 @@ float MapScale::getScreenRotation(float angle, const atools::geo::Pos& position,
   if(viewport != nullptr && viewport->projection() == Marble::Spherical && zoomDistanceMeter > 50)
   {
     // Get screen coordinates or origin
-    Marble::GeoDataCoordinates coords(position.getLonX(), position.getLatY(), 0., GeoDataCoordinates::Degree);
     bool globeHidesPoint = false, globeHidesPointEnd = false;
     double x = 0., y = 0., xEnd = 0., yEnd = 0.;
-    bool visible = viewport->screenCoordinates(coords, x, y, globeHidesPoint);
+    bool visible = viewport->screenCoordinates(mconvert::toGdc(position), x, y, globeHidesPoint);
 
     if(globeHidesPoint || !visible)
       // Not visible
@@ -101,8 +101,7 @@ float MapScale::getScreenRotation(float angle, const atools::geo::Pos& position,
     Pos end = position.endpoint(zoomDistanceMeter / 10.f, angle);
 
     // Calculate screen coordinates of endpoint
-    Marble::GeoDataCoordinates endcoords(end.getLonX(), end.getLatY(), 0., GeoDataCoordinates::Degree);
-    viewport->screenCoordinates(endcoords, xEnd, yEnd, globeHidesPointEnd);
+    viewport->screenCoordinates(mconvert::toGdc(end), xEnd, yEnd, globeHidesPointEnd);
 
     if(!globeHidesPointEnd)
     {

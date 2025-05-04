@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2023 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2024 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -46,7 +46,7 @@ TrafficPatternDialog::TrafficPatternDialog(QWidget *parent, const map::MapAirpor
   ui->buttonBoxTrafficPattern->button(QDialogButtonBox::Ok)->setDefault(true);
   ui->tableWidgetTrafficPatternRunway->setFocus();
 
-  runwaySelection = new RunwaySelection(parent, mapAirport, ui->tableWidgetTrafficPatternRunway);
+  runwaySelection = new RunwaySelection(parent, mapAirport, ui->tableWidgetTrafficPatternRunway, false /* navdata */);
   runwaySelection->setAirportLabel(ui->labelTrafficPatternAirport);
   runwaySelection->setShowPattern(true);
 
@@ -114,7 +114,7 @@ void TrafficPatternDialog::restoreState()
   runwaySelection->restoreState();
 }
 
-void TrafficPatternDialog::saveState()
+void TrafficPatternDialog::saveState() const
 {
   atools::gui::WidgetState widgetState(lnm::TRAFFIC_PATTERN_DIALOG, false);
   widgetState.save({

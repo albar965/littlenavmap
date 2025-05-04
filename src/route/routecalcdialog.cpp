@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2023 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2025 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -17,6 +17,7 @@
 
 #include "route/routecalcdialog.h"
 
+#include "app/navapp.h"
 #include "atools.h"
 #include "common/constants.h"
 #include "common/unit.h"
@@ -24,7 +25,7 @@
 #include "gui/clicktooltiphandler.h"
 #include "gui/helphandler.h"
 #include "gui/widgetstate.h"
-#include "app/navapp.h"
+#include "gui/widgetutil.h"
 #include "route/route.h"
 #include "route/routecontroller.h"
 #include "ui_routecalcdialog.h"
@@ -45,6 +46,7 @@ RouteCalcDialog::RouteCalcDialog(QWidget *parent)
   setWindowModality(Qt::NonModal);
 
   ui->setupUi(this);
+  defaultSize = size();
 
   // Copy main menu actions to allow using shortcuts in the non-modal dialog too
   addActions(NavApp::getMainWindowActions());
@@ -163,6 +165,7 @@ void RouteCalcDialog::setCruisingAltitudeFt(float altitude)
 
 void RouteCalcDialog::updateWidgets()
 {
+  const Route& route = NavApp::getRouteConst();
   bool airway = ui->radioButtonRouteCalcAirway->isChecked();
   if(calculating)
   {
@@ -184,15 +187,15 @@ void RouteCalcDialog::updateWidgets()
     ui->labelRouteCalcAirwayPreferAirway->setEnabled(airway);
     ui->labelRouteCalcAirwayPreferWaypoint->setEnabled(airway);
 
-    bool canCalcRoute = NavApp::getRouteConst().canCalcRoute();
+    bool canCalcRoute = route.canCalcRoute();
     ui->pushButtonRouteCalcAdjustAltitude->setEnabled(canCalcRoute);
     ui->buttonBox->button(QDialogButtonBox::Apply)->setEnabled(isCalculateSelection() ? canCalculateSelection : canCalcRoute);
     ui->buttonBox->button(QDialogButtonBox::Close)->setEnabled(true);
 
-    ui->pushButtonRouteCalcDirect->setEnabled(canCalcRoute && NavApp::getRouteConst().hasEntries());
+    ui->pushButtonRouteCalcDirect->setEnabled(canCalcRoute && route.hasEntries());
     ui->pushButtonRouteCalcReverse->setEnabled(canCalcRoute);
 
-    QString msg = tr("Use downloaded NAT, PACOTS or AUSOTS tracks.\n"
+    QString msg = tr("Use downloaded NAT or PACOTS tracks.\n"
                      "Best track will be selected automatically.\n"
                      "Ensure to use the correct flight level.\n"
                      "Otherwise, tracks will not be used.");
@@ -205,6 +208,9 @@ void RouteCalcDialog::updateWidgets()
     else
       ui->checkBoxRouteCalcAirwayTrack->setToolTip(msg + err);
   }
+
+  // Show hint to add procededures before calculating IFR
+  ui->labelOptionsProceduresHint->setVisible(route.isTypeIfr() && !route.hasAnyProcedure());
 
   updateHeader();
   updatePreferenceLabel();
@@ -283,6 +289,7 @@ void RouteCalcDialog::updateHeader()
 void RouteCalcDialog::restoreState()
 {
   atools::gui::WidgetState state(lnm::ROUTE_CALC_DIALOG);
+  state.setDialogOptions(true /* position */, true /* size */);
   state.restore(this);
   state.restore(widgets);
 
@@ -295,11 +302,21 @@ void RouteCalcDialog::restoreState()
   ui->horizontalSliderRouteCalcAirwayPref->setMaximum(AIRWAY_WAYPOINT_PREF_MAX);
 }
 
-void RouteCalcDialog::saveState()
+void RouteCalcDialog::saveState() const
 {
   atools::gui::WidgetState state(lnm::ROUTE_CALC_DIALOG);
+  state.setDialogOptions(true /* position */, true /* size */);
   state.save(widgets);
   state.save(this);
+}
+
+void RouteCalcDialog::resetWindowLayout()
+{
+  atools::gui::WidgetState state(lnm::ROUTE_CALC_DIALOG);
+  state.clear(this);
+  state.syncSettings();
+
+  atools::gui::util::centerWidgetOnScreen(this, defaultSize);
 }
 
 void RouteCalcDialog::preDatabaseLoad()
@@ -375,11 +392,10 @@ void RouteCalcDialog::adjustAltitudePressed()
 
 void RouteCalcDialog::showEvent(QShowEvent *)
 {
-  if(!position.isNull())
-    move(position);
+  restoreState();
 }
 
 void RouteCalcDialog::hideEvent(QHideEvent *)
 {
-  position = geometry().topLeft();
+  saveState();
 }

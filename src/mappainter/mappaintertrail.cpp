@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2023 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2024 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -17,13 +17,11 @@
 
 #include "mappainter/mappaintertrail.h"
 
-#include "app/navapp.h"
-#include "common/aircrafttrail.h"
 #include "fs/sc/simconnectuseraircraft.h"
+#include "geo/aircrafttrail.h"
 #include "mapgui/mappaintwidget.h"
 #include "route/route.h"
 #include "util/paintercontextsaver.h"
-#include "geo/linestring.h"
 
 #include <marble/GeoPainter.h>
 
@@ -44,19 +42,32 @@ void MapPainterTrail::render()
 {
   if(context->objectTypes.testFlag(map::AIRCRAFT_TRAIL))
   {
-    const AircraftTrail& aircraftTrail = NavApp::getAircraftTrail();
-    const atools::geo::Rect& bounding = aircraftTrail.getBounding();
+    const atools::geo::Pos& aircraftPos = mapPaintWidget->getUserAircraft().getPosition();
+    const AircraftTrail& aircraftTrail = mapPaintWidget->getAircraftTrail();
+    atools::geo::Rect bounding = aircraftTrail.getBounding();
+    bounding.extend(aircraftPos); // Add aircraft since this is not neccesarily a part of the trail
 
     // Have to do separate check for single point rect which appears right after deleting the trail
     if(!aircraftTrail.isEmpty() && (resolves(bounding) || (bounding.isPoint() && context->viewportRect.overlaps(bounding))))
     {
-#ifdef DEBUG_DRAW_TRACK
+#ifdef DEBUG_DRAW_TRAIL
       {
         atools::util::PainterContextSaver saver(context->painter);
         context->painter->setPen(QPen(Qt::blue, 2));
-        int i = 0;
-        for(const AircraftTrailPos& pos : aircraftTrail)
-          drawText(context->painter, pos.getPosition(), QString::number(i++), 0.f, 0.f);
+
+        for(int i = 0; i < aircraftTrail.size(); i++)
+          drawText(context->painter, aircraftTrail.at(i).getPosition(), QString::number(i), true /* topCorner */, true /* leftCorner */);
+
+        context->painter->setPen(QPen(Qt::red, 2));
+        int lineStringIndex = 0;
+        for( const atools::geo::LineString& linestring : aircraftTrail.getLineStrings())
+        {
+          int posIndex = 0;
+          for(const atools::geo::Pos& pos : linestring)
+            drawText(context->painter, pos, QString::number(lineStringIndex) + "/" + QString::number(posIndex++),
+                     false /* topCorner */, false /* leftCorner */);
+          lineStringIndex++;
+        }
       }
 
 #endif
@@ -66,9 +77,10 @@ void MapPainterTrail::render()
       if(context->route->getSizeWithoutAlternates() > 2)
         maxAltitude = std::max(context->route->getCruiseAltitudeFt(), maxAltitude);
 
+      context->startTimer("Aircraft Trail");
       atools::util::PainterContextSaver saver(context->painter);
-      const QVector<atools::geo::LineString> lineStrings = aircraftTrail.getLineStrings(mapPaintWidget->getUserAircraft().getPosition());
-      paintAircraftTrail(lineStrings, aircraftTrail.getMinAltitude(), maxAltitude);
+      paintAircraftTrail(aircraftTrail.getLineStrings(), aircraftTrail.getMinAltitude(), maxAltitude, aircraftPos);
+      context->endTimer("Aircraft Trail");
     }
   }
 }

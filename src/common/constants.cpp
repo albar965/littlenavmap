@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2023 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2024 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -39,35 +39,34 @@ QString helpOnlineMainUrl;
 QString helpOnlineTutorialsUrl;
 QString helpOnlineDownloadsUrl;
 QString helpOnlineMainMenuUrl;
+QString helpOnlineShortcutsUrl;
 QString helpOnlineMapDisplayUrl;
 QString helpOnlineLegendUrl;
 QString helpOnlineFlightPlanningUrl;
 QString helpOnlineAircraftPerfUrl;
 QString helpOnlineUserInterfaceUrl;
 
-QString helpOnlineInstallRedistUrl;
 QString helpOnlineInstallGlobeUrl;
 QString helpOnlineInstallDirUrl;
 QString helpOnlineNavdatabasesUrl;
 QString helpOnlineStartUrl;
-QString helpLegendLocalFile;
 QString helpOfflineFile;
 QString helpDonateUrl;
+QString helpManualDownloadUrl;
 QString helpFaqUrl;
 QString updateDefaultUrl;
 
-const QSize DEFAULT_MAINWINDOW_SIZE(1280, 800);
+const QSize DEFAULT_MAINWINDOW_SIZE(1360, 800);
 
 const QString helpLanguageOnline()
 {
-  const static QRegularExpression INDICATOR_FILE("little-navmap-user-manual-(.+)\\.online",
-                                                 QRegularExpression::CaseInsensitiveOption);
+  const static QRegularExpression INDICATOR_FILE("little-navmap-user-manual-(.+)\\.online", QRegularExpression::CaseInsensitiveOption);
 
   if(supportedLanguageOnline.isEmpty())
   {
     // Get the online indicator file
     QString onlineFlagFile = atools::gui::HelpHandler::getHelpFile(
-      QLatin1String("help") % atools::SEP % "little-navmap-user-manual-${LANG}.online", OptionData::getLanguage());
+      QLatin1String("help") % atools::SEP % "little-navmap-user-manual-${LANG}.online", OptionData::getLanguageFromConfigFile());
 
     // Extract language from the file
     QRegularExpressionMatch match = INDICATOR_FILE.match(onlineFlagFile);
@@ -89,19 +88,19 @@ void loadHelpUrls()
 
   QSettings settings(urlsPath, QSettings::IniFormat);
 
-  QSettings optionsettings(atools::settings::Settings::getFilename(), QSettings::IniFormat);
+  QString lang = QLocale().name();
 
-  QString guiLanguage = optionsettings.value(lnm::OPTIONS_DIALOG_LANGUAGE, QLocale().name()).toString();
-  guiLanguage = guiLanguage.section('_', 0, 0);
+  qDebug() << Q_FUNC_INFO << lang;
+
+  if(!OptionData::getLanguageFromConfigFile().isEmpty())
+    lang = OptionData::getLanguageFromConfigFile().section('_', 0, 0);
 
   // .../help/en/index.html
-  QFileInfo localFile(QCoreApplication::applicationDirPath() % atools::SEP % "help" % atools::SEP %
-                      guiLanguage % atools::SEP % "index.html");
+  QFileInfo localFile(QCoreApplication::applicationDirPath() % atools::SEP % "help" % atools::SEP % lang % atools::SEP % "index.html");
 
   if(!localFile.exists())
     // Try English manual
-    localFile.setFile(QCoreApplication::applicationDirPath() % atools::SEP % "help" % atools::SEP %
-                      "en" % atools::SEP % "index.html");
+    localFile.setFile(QCoreApplication::applicationDirPath() % atools::SEP % "help" % atools::SEP % "en" % atools::SEP % "index.html");
 
   // Check if local index.html exists
   if(localFile.exists())
@@ -111,14 +110,14 @@ void loadHelpUrls()
     helpOnlineUrl = base;
     helpOnlineMainUrl = base % "index.html";
     helpOnlineMainMenuUrl = base % "MENUS.html";
+    helpOnlineShortcutsUrl = base % "SHORTCUTS.html";
     helpOnlineMapDisplayUrl = base % "MAPDISPLAY.html";
     helpOnlineTutorialsUrl = base % "TUTORIALS.html";
     helpOnlineLegendUrl = base % "LEGEND.html";
     helpOnlineFlightPlanningUrl = base % "FLIGHTPLAN.html";
     helpOnlineAircraftPerfUrl = base % "AIRCRAFTPERF.html";
     helpOnlineUserInterfaceUrl = base % "INTRO.html";
-    helpOnlineInstallRedistUrl = base % "INSTALLATION.html#windows";
-    helpOnlineInstallGlobeUrl = base % "OPTIONS.html#cache-elevation";
+    helpOnlineInstallGlobeUrl = base % "GLOBE.html";
     helpOnlineInstallDirUrl = base % "FOLDERS.html";
     helpOnlineNavdatabasesUrl = base % "NAVDATA.html";
     helpOnlineStartUrl = base % "START.html";
@@ -132,13 +131,13 @@ void loadHelpUrls()
     helpOnlineMainUrl = helpOnlineUrl;
     helpOnlineTutorialsUrl = settings.value("help/tutorials", base + "TUTORIALS.html").toString();
     helpOnlineMainMenuUrl = settings.value("help/mainmenu", base + "MENUS.html").toString();
+    helpOnlineShortcutsUrl = settings.value("help/shortcuts", base + "SHORTCUTS.html").toString();
     helpOnlineMapDisplayUrl = settings.value("help/mapdisplay", base + "MAPDISPLAY.html").toString();
     helpOnlineLegendUrl = settings.value("help/legend", base + "LEGEND.html").toString();
     helpOnlineFlightPlanningUrl = settings.value("help/flightplanning", base + "FLIGHTPLAN.html").toString();
     helpOnlineAircraftPerfUrl = settings.value("help/aircraftperf", base + "AIRCRAFTPERF.html").toString();
     helpOnlineUserInterfaceUrl = settings.value("help/userinterface", base + "INTRO.html").toString();
-    helpOnlineInstallRedistUrl = settings.value("help/installredist", base + "INSTALLATION.html#windows").toString();
-    helpOnlineInstallGlobeUrl = settings.value("help/installglobe", base + "OPTIONS.html#cache-elevation").toString();
+    helpOnlineInstallGlobeUrl = settings.value("help/installglobe", base + "GLOBE.html").toString();
     helpOnlineInstallDirUrl = settings.value("help/installdir", base + "FOLDERS.html").toString();
     helpOnlineNavdatabasesUrl = settings.value("help/navdata", base + "NAVDATA.html").toString();
     helpOnlineStartUrl = settings.value("help/start", base + "START.html").toString();
@@ -150,10 +149,10 @@ void loadHelpUrls()
 
   // [help] - Other URLs
   helpDonateUrl = settings.value("help/donate", "https://www.littlenavmap.org/donate.html").toString();
+  helpManualDownloadUrl = settings.value("help/downloadmanual", "https://albar965.github.io/manuals.html").toString();
   helpFaqUrl = settings.value("help/faq", "https://www.littlenavmap.org/littlenavmap-faq.html").toString();
 
   // [local] - local files
-  helpLegendLocalFile = settings.value("local/legend", "help/legend-${LANG}.html").toString();
   helpOfflineFile = settings.value("local/help", "help/little-navmap-user-manual-${LANG}.pdf").toString();
 
   // [update] - Update control file

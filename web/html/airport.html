@@ -1,0 +1,89 @@
+<?xml version="1.0"?>
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+    <meta name='viewport' content="width=device-width, initial-scale=1" />
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <link rel="stylesheet" href="/javascript_and_css/legacy/styles.css" />
+    <title>
+      {applicationName} {applicationVersion} - Web Server
+    </title>
+    <script type="text/javascript" src="/javascript_and_css/legacy/scripts.js" xml:space="preserve">
+    </script>
+  </head>
+  <body id="airportPage" onload="focusAirportText()">
+    <div id="header">
+      <form id="airportform" name="airportform">
+        <p>
+          - <a href="legacy/index.html">Map</a> - <a href="flightplan.html">Flight Plan</a> - <a href=
+          "aircraft.html">Aircraft</a> - <a href="progress.html">Aircraft Progress</a> - Airport - <a href=
+          "{helpUrl}">Help</a> -  <span id="icaoSelector">ICAO: <input id="airporttext" type="text" name="airportident" value="" />
+          <input type="submit" value="Submit" /> <input type="hidden" name="session" value="" /></span> <button type="button"
+          onclick="location.reload(false)">Reload</button>
+        </p>
+      </form>
+    </div>
+    <p>
+      {if hasError}
+    </p>
+    <p id="errortext">
+      {errorText}
+    </p>
+    <p>
+      {end hasError} {if hasAirport}
+    </p>
+    <h1 id="top">
+    Airport
+    </h1>
+    <p>
+    <a href="#runways">Runways</a> - <a href="#com">Com Frequencies</a> - <a href="#procedures">Procedures</a> -
+    <a href="#weather">Weather</a>
+    </p>
+    <p>
+    {airportText}
+    </p>
+    <p>
+    <a href="#top">▲ Top</a>
+    </p>
+    <h1 id="runways">
+    Runways
+    </h1>
+    <p>
+    {airportRunwayText}
+    </p>
+    <p>
+    <a href="#top">▲ Top</a>
+    </p>
+    <h1 id="com">
+    Com Frequencies
+    </h1>
+    <p>
+    {airportComText}
+    </p>
+    <p>
+    <a href="#top">▲ Top</a>
+    </p>
+    <h1 id="procedures">
+    Procedures
+    </h1>
+    <p>
+    {airportProcedureText}
+    </p>
+    <p>
+    <a href="#top">▲ Top</a>
+    </p>
+    <h1 id="weather">
+    Weather
+    </h1>
+    <p>
+    {airportWeatherText}
+    </p>
+    <p>
+    <a href="#top">▲ Top</a>
+    </p>
+    <p>
+      {end hasAirport}
+    </p>
+  </body>
+</html>

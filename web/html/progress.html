@@ -1,0 +1,40 @@
+<?xml version="1.0"?>
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+    <meta name='viewport' content="width=device-width, initial-scale=1" />
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <link rel="stylesheet" href="/javascript_and_css/legacy/styles.css" />
+    <title>
+      {applicationName} {applicationVersion} - Web Server
+    </title>
+    <script type="text/javascript" src="/javascript_and_css/legacy/scripts.js" xml:space="preserve">
+    </script>
+    <script type="text/javascript" xml:space="preserve">
+    //<![CDATA[
+
+      // Fill values for reload and refresh functions
+      var timeoutHandle = 0;
+      var currentInterval = -1;
+      var refreshkey = "progressrefresh";
+      var pageToReload = "/html/progress_doc.html";
+
+    //]]>
+    </script>
+  </head>
+  <body id="progressPage" onload="refreshPage()">
+    <div id="header">
+      <form id="refreshform" name="refreshform">
+        <p>
+          <span id="defaultCommands">- <a href="legacy/index.html">Map</a> - <a href="flightplan.html">Flight Plan</a> - <a href=
+          "aircraft.html">Aircraft</a> - Aircraft Progress - <a href="airport.html">Airport</a> - <a href=
+          "{helpUrl}">Help</a> - </span> {progressrefreshsel} <button type="button" onclick="reloadPage()">Reload</button>
+        </p>
+      </form>
+    </div>
+    <div id="doc">
+      Loading ...
+    </div>
+  </body>
+</html>

@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2023 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2024 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -21,10 +21,10 @@
 #include "common/maptypes.h"
 #include "common/unit.h"
 #include "fs/util/fsutil.h"
-#include "fs/weather/metar.h"
 #include "fs/weather/metarparser.h"
 #include "geo/calculations.h"
 #include "options/optiondata.h"
+#include "textpointer.h"
 #include "util/paintercontextsaver.h"
 
 #include <QPainter>
@@ -46,7 +46,7 @@ QIcon SymbolPainter::createAirportIcon(const map::MapAirport& airport, int size)
   return QIcon(pixmap);
 }
 
-QIcon SymbolPainter::createAirportWeatherIcon(const atools::fs::weather::Metar& metar, int size)
+QIcon SymbolPainter::createAirportWeatherIcon(const atools::fs::weather::MetarParser& metar, int size)
 {
   QPixmap pixmap(size, size);
   pixmap.fill(QColor(Qt::transparent));
@@ -84,36 +84,37 @@ QIcon SymbolPainter::createAirportMsaIcon(const map::MapAirportMsa& airportMsa, 
   return QIcon(pixmap);
 }
 
-QIcon SymbolPainter::createVorIcon(const map::MapVor& vor, int size)
+QIcon SymbolPainter::createVorIcon(const map::MapVor& vor, int size, bool darkMap)
 {
   QPixmap pixmap(size, size);
   pixmap.fill(QColor(Qt::transparent));
   QPainter painter(&pixmap);
   prepareForIcon(painter);
 
-  SymbolPainter().drawVorSymbol(&painter, vor, size / 2.f, size / 2.f, size * 7.f / 10.f, 0.f, false /* routeFill */, false /* fast */);
+  SymbolPainter().drawVorSymbol(&painter, vor, size / 2.f, size / 2.f, size * 7.f / 10.f, 0.f,
+                                false /* routeFill */, false /* fast */, darkMap);
   return QIcon(pixmap);
 }
 
-QIcon SymbolPainter::createNdbIcon(int size)
+QIcon SymbolPainter::createNdbIcon(int size, bool darkMap)
 {
   QPixmap pixmap(size, size);
   pixmap.fill(QColor(Qt::transparent));
   QPainter painter(&pixmap);
   prepareForIcon(painter);
 
-  SymbolPainter().drawNdbSymbol(&painter, size / 2.f, size / 2.f, size * 8.f / 10.f, false, false);
+  SymbolPainter().drawNdbSymbol(&painter, size / 2.f, size / 2.f, size * 8.f / 10.f, false /* routeFill */, false /* fast */, darkMap);
   return QIcon(pixmap);
 }
 
-QIcon SymbolPainter::createAirwayIcon(const map::MapAirway& airway, int size)
+QIcon SymbolPainter::createAirwayIcon(const map::MapAirway& airway, int size, bool darkMap)
 {
   QPixmap pixmap(size, size);
   pixmap.fill(QColor(Qt::transparent));
   QPainter painter(&pixmap);
   prepareForIcon(painter);
 
-  painter.setPen(QPen(mapcolors::colorForAirwayOrTrack(airway), 1.5));
+  painter.setPen(QPen(mapcolors::colorForAirwayOrTrack(airway, darkMap), 1.5));
 
   painter.drawLine(0, 0, size, size);
 
@@ -375,15 +376,13 @@ void SymbolPainter::drawWaypointSymbol(QPainter *painter, const QColor& col, flo
   painter->drawConvexPolygon(polygon);
 }
 
-void SymbolPainter::drawAirportWeather(QPainter *painter, const atools::fs::weather::Metar& metar, float x, float y,
+void SymbolPainter::drawAirportWeather(QPainter *painter, const atools::fs::weather::MetarParser& metar, float x, float y,
                                        float size, bool windPointer, bool windBarbs, bool fast)
 {
-  if(metar.isValid())
+  if(metar.isParsed() || metar.hasErrors())
   {
-    const atools::fs::weather::MetarParser& parsedMetar = metar.getParsedMetar();
-
     // Determine correct color for flight rules (IFR, etc.) =============================================
-    atools::fs::weather::MetarParser::FlightRules flightRules = parsedMetar.getFlightRules();
+    atools::fs::weather::MetarParser::FlightRules flightRules = metar.getFlightRules();
     atools::util::PainterContextSaver saver(painter);
 
     painter->setBackgroundMode(Qt::OpaqueMode);
@@ -399,99 +398,116 @@ void SymbolPainter::drawAirportWeather(QPainter *painter, const atools::fs::weat
     painter->drawEllipse(rect.marginsAdded(QMarginsF(margin, margin, margin, margin)));
 
     // Wind pointer and/or barbs =====================================================
-    if(windBarbs || windPointer)
-      drawWindBarbs(painter, parsedMetar, x, y, size, windBarbs, false /* altWind */, false /* route */, fast);
+    if((windBarbs || windPointer) && !metar.hasErrors())
+      drawWindBarbs(painter, metar, x, y, size, windBarbs, false /* altWind */, false /* route */, fast);
 
     // Draw coverage indicating pies or circles =====================================================
 
     // Color depending on flight rule
     QColor color;
-    switch(flightRules)
+    if(metar.hasErrors())
+      color = mapcolors::weatherErrorColor;
+    else
     {
-      case atools::fs::weather::MetarParser::UNKNOWN:
-        break;
-      case atools::fs::weather::MetarParser::LIFR:
-        color = mapcolors::weatherLifrColor;
-        break;
-      case atools::fs::weather::MetarParser::IFR:
-        color = mapcolors::weatherIfrColor;
-        break;
-      case atools::fs::weather::MetarParser::MVFR:
-        color = mapcolors::weatherMvfrColor;
-        break;
-      case atools::fs::weather::MetarParser::VFR:
-        color = mapcolors::weatherVfrColor;
-        break;
+      switch(flightRules)
+      {
+        case atools::fs::weather::MetarParser::UNKNOWN:
+          break;
+        case atools::fs::weather::MetarParser::LIFR:
+          color = mapcolors::weatherLifrColor;
+          break;
+        case atools::fs::weather::MetarParser::IFR:
+          color = mapcolors::weatherIfrColor;
+          break;
+        case atools::fs::weather::MetarParser::MVFR:
+          color = mapcolors::weatherMvfrColor;
+          break;
+        case atools::fs::weather::MetarParser::VFR:
+          color = mapcolors::weatherVfrColor;
+          break;
+      }
     }
 
     float lineWidth = size * 0.2f;
     painter->setPen(QPen(color, lineWidth, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin));
-    atools::fs::weather::MetarCloud::Coverage maxCoverage = parsedMetar.getMaxCoverage();
-    switch(maxCoverage)
+
+    if(metar.hasErrors())
     {
-      case atools::fs::weather::MetarCloud::COVERAGE_NIL:
-        painter->drawEllipse(rect);
-        if(!fast)
-        {
-          // Cross out for no information
-          painter->drawLine(QLineF(x - size / 2.f, y - size / 2.f, x + size / 2.f, y + size / 2.f));
-          painter->drawLine(QLineF(x + size / 2.f, y - size / 2.f, x - size / 2.f, y + size / 2.f));
-        }
-        break;
+      painter->drawEllipse(rect);
+      if(!fast)
+      {
+        // Cross out for no information
+        painter->drawLine(QLineF(x - size / 2.f, y - size / 2.f, x + size / 2.f, y + size / 2.f));
+        painter->drawLine(QLineF(x + size / 2.f, y - size / 2.f, x - size / 2.f, y + size / 2.f));
+      }
+    }
+    else
+    {
+      atools::fs::weather::MetarCloud::Coverage maxCoverage = metar.getMaxCoverage();
+      switch(maxCoverage)
+      {
+        case atools::fs::weather::MetarCloud::COVERAGE_NIL:
+          painter->drawEllipse(rect);
+          if(!fast)
+          {
+            // Cross out for no information
+            painter->drawLine(QLineF(x - size / 2.f, y - size / 2.f, x + size / 2.f, y + size / 2.f));
+            painter->drawLine(QLineF(x + size / 2.f, y - size / 2.f, x - size / 2.f, y + size / 2.f));
+          }
+          break;
 
-      case atools::fs::weather::MetarCloud::COVERAGE_CLEAR:
-        painter->drawEllipse(rect);
-        break;
+        case atools::fs::weather::MetarCloud::COVERAGE_CLEAR:
+          painter->drawEllipse(rect);
+          break;
 
-      case atools::fs::weather::MetarCloud::COVERAGE_FEW:
-        painter->drawEllipse(rect);
-        if(!fast)
-        {
+        case atools::fs::weather::MetarCloud::COVERAGE_FEW:
+          painter->drawEllipse(rect);
+          if(!fast)
+          {
+            painter->setBrush(color);
+            painter->setPen(Qt::NoPen);
+            painter->drawPie(rect, -270 * 16, -90 * 16);
+          }
+          break;
+
+        case atools::fs::weather::MetarCloud::COVERAGE_SCATTERED:
+          painter->drawEllipse(rect);
+          if(!fast)
+          {
+            painter->setBrush(color);
+            painter->setPen(Qt::NoPen);
+            painter->drawPie(rect, -270 * 16, -180 * 16);
+          }
+          break;
+
+        case atools::fs::weather::MetarCloud::COVERAGE_BROKEN:
+          painter->drawEllipse(rect);
+          if(!fast)
+          {
+            painter->setBrush(color);
+            painter->setPen(Qt::NoPen);
+            painter->drawPie(rect, -270 * 16, -270 * 16);
+          }
+          break;
+
+        case atools::fs::weather::MetarCloud::COVERAGE_OVERCAST:
           painter->setBrush(color);
-          painter->setPen(Qt::NoPen);
-          painter->drawPie(rect, -270 * 16, -90 * 16);
-        }
-        break;
-
-      case atools::fs::weather::MetarCloud::COVERAGE_SCATTERED:
-        painter->drawEllipse(rect);
-        if(!fast)
-        {
-          painter->setBrush(color);
-          painter->setPen(Qt::NoPen);
-          painter->drawPie(rect, -270 * 16, -180 * 16);
-        }
-        break;
-
-      case atools::fs::weather::MetarCloud::COVERAGE_BROKEN:
-        painter->drawEllipse(rect);
-        if(!fast)
-        {
-          painter->setBrush(color);
-          painter->setPen(Qt::NoPen);
-          painter->drawPie(rect, -270 * 16, -270 * 16);
-        }
-        break;
-
-      case atools::fs::weather::MetarCloud::COVERAGE_OVERCAST:
-        painter->setBrush(color);
-        painter->drawEllipse(QPointF(x, y), size / 2.f, size / 2.f);
-        break;
+          painter->drawEllipse(QPointF(x, y), size / 2.f, size / 2.f);
+          break;
+      }
     }
   }
 }
 
 void SymbolPainter::drawWindBarbs(QPainter *painter, const atools::fs::weather::MetarParser& parsedMetar,
-                                  float x, float y, float size, bool windBarbs, bool altWind, bool route,
-                                  bool fast) const
+                                  float x, float y, float size, bool windBarbs, bool altWind, bool route, bool fast) const
 {
   drawWindBarbs(painter, parsedMetar.getPrevailingWindSpeedKnots(), parsedMetar.getGustSpeedKts(),
                 parsedMetar.getPrevailingWindDir(), x, y, size, windBarbs, altWind, route, fast);
 }
 
 void SymbolPainter::drawWindBarbs(QPainter *painter, float wind, float gust, float dir,
-                                  float x, float y, float size, bool windBarbs, bool altWind, bool route,
-                                  bool fast) const
+                                  float x, float y, float size, bool windBarbs, bool altWind, bool route, bool fast) const
 {
   // Make lines thinner for high altitude wind barbs
   float lineWidth = size * (altWind ? 0.2f : 0.3f);
@@ -508,8 +524,8 @@ void SymbolPainter::drawWindBarbs(QPainter *painter, float wind, float gust, flo
     painter->drawEllipse(QPointF(x, y), bgLineWidth / 2.f, bgLineWidth / 2.f);
   }
 
-  if(wind >= 2.f && wind < atools::fs::weather::INVALID_METAR_VALUE / 2.f &&
-     dir >= 0.f && dir < atools::fs::weather::INVALID_METAR_VALUE / 2.f)
+  if(wind >= 2.f && wind < map::INVALID_METAR_VALUE / 2.f &&
+     dir >= 0.f && dir < map::INVALID_METAR_VALUE / 2.f)
   {
     // Calculate dimensions ============================
 
@@ -530,7 +546,7 @@ void SymbolPainter::drawWindBarbs(QPainter *painter, float wind, float gust, flo
       barbs = calculateWindBarbs(lineLength, lineWidth, wind, true /* use 50 knot barbs */);
 
       float windGust = gust;
-      if(windGust >= 2.f && windGust < atools::fs::weather::INVALID_METAR_VALUE / 2.f)
+      if(windGust >= 2.f && windGust < map::INVALID_METAR_VALUE / 2.f)
       {
         // Gust wind barbs
         lineLength = size;
@@ -601,20 +617,23 @@ void SymbolPainter::drawWindBarbs(QPainter *painter, float wind, float gust, flo
 void SymbolPainter::drawBarbFeathers(QPainter *painter, const QVector<int>& barbs, float lineLength, float barbLength5,
                                      float barbLength10, float barbLength50, float barbStep) const
 {
-  // Lenghten the line for the rectangle
-  float barbPos = barbs.constFirst() == 50 ? -lineLength + barbLength50 / 2.f : -lineLength;
-  for(int barb : barbs)
+  if(!barbs.isEmpty())
   {
-    if(barb == 50)
-      painter->drawPolygon(QPolygonF({QPointF(0.f, barbPos),
-                                      QPointF(-barbLength50, barbPos - barbLength50 / 2.f),
-                                      QPointF(0.f, barbPos - barbLength50 / 2.f)}));
-    else if(barb == 10)
-      painter->drawLine(QLineF(0.f, barbPos, -barbLength10, barbPos - barbLength10 / 2.f));
-    else if(barb == 5)
-      painter->drawLine(QLineF(0.f, barbPos, -barbLength5, barbPos - barbLength5 / 2.f));
+    // Lenghten the line for the rectangle
+    float barbPos = barbs.constFirst() == 50 ? -lineLength + barbLength50 / 2.f : -lineLength;
+    for(int barb : barbs)
+    {
+      if(barb == 50)
+        painter->drawPolygon(QPolygonF({QPointF(0.f, barbPos),
+                                        QPointF(-barbLength50, barbPos - barbLength50 / 2.f),
+                                        QPointF(0.f, barbPos - barbLength50 / 2.f)}));
+      else if(barb == 10)
+        painter->drawLine(QLineF(0.f, barbPos, -barbLength10, barbPos - barbLength10 / 2.f));
+      else if(barb == 5)
+        painter->drawLine(QLineF(0.f, barbPos, -barbLength5, barbPos - barbLength5 / 2.f));
 
-    barbPos += barbStep;
+      barbPos += barbStep;
+    }
   }
 }
 
@@ -728,9 +747,9 @@ void SymbolPainter::drawAirportMsa(QPainter *painter, const map::MapAirportMsa& 
         bearing = atools::geo::normalizeCourse(bearing + 180.f + magvar);
 
         if(bearing < 180.f)
-          text.prepend(tr("◄"));
+          text.prepend(TextPointer::getPointerLeft());
         else
-          text.append(tr("►"));
+          text.append(TextPointer::getPointerRight());
 
         // Line from center to top
         QLineF line(x, y, x, y - radius + 2.f);
@@ -757,7 +776,7 @@ void SymbolPainter::drawAirportMsa(QPainter *painter, const map::MapAirportMsa& 
       for(int i = 0; i < airportMsa.bearings.size(); i++)
       {
         float bearing = atools::geo::normalizeCourse(airportMsa.bearings.at(i) + 180.f + magvar);
-        float bearingTo = atools::geo::normalizeCourse(atools::atRoll(airportMsa.bearings, i + 1) + 180.f + magvar);
+        float bearingTo = atools::geo::normalizeCourse(atools::atRollConst(airportMsa.bearings, i + 1) + 180.f + magvar);
 
         // Line from origin to top defining label position - circles with one sector use a label closer to the center
         QLineF line(x, y, x, y - radius * (airportMsa.altitudes.size() > 1 ? 0.70 : 0.4));
@@ -897,7 +916,7 @@ void SymbolPainter::drawProcedureFaf(QPainter *painter, float x, float y, float 
 }
 
 void SymbolPainter::drawVorSymbol(QPainter *painter, const map::MapVor& vor, float x, float y, float size, float sizeLarge, bool routeFill,
-                                  bool fast)
+                                  bool fast, bool darkMap)
 {
   atools::util::PainterContextSaver saver(painter);
 
@@ -910,13 +929,14 @@ void SymbolPainter::drawVorSymbol(QPainter *painter, const map::MapVor& vor, flo
   // Use double to avoid type conversions
   double sizeD = static_cast<double>(size);
   double sizeLargeD = static_cast<double>(sizeLarge);
+  QColor symbolColor = mapcolors::vorSymbolColor.lighter(darkMap ? 250 : 100);
 
   if(size > 4)
   {
     float lineWidth = std::max(size / 16.f, 1.5f);
     float roseLineWidth = std::max(size / 20.f, 0.8f);
 
-    painter->setPen(QPen(mapcolors::vorSymbolColor, lineWidth, Qt::SolidLine, Qt::SquareCap));
+    painter->setPen(QPen(symbolColor, lineWidth, Qt::SolidLine, Qt::SquareCap));
 
     painter->translate(x, y);
 
@@ -956,8 +976,8 @@ void SymbolPainter::drawVorSymbol(QPainter *painter, const map::MapVor& vor, flo
       if(vor.vortac)
       {
         // Draw the filled VORTAC blocks
-        painter->setBrush(mapcolors::vorSymbolColor);
-        painter->setPen(QPen(mapcolors::vorSymbolColor, lineWidth, Qt::SolidLine, Qt::SquareCap));
+        painter->setBrush(symbolColor);
+        painter->setPen(QPen(symbolColor, lineWidth, Qt::SolidLine, Qt::SquareCap));
 
         polygon.clear();
         polygon
@@ -1014,7 +1034,7 @@ void SymbolPainter::drawVorSymbol(QPainter *painter, const map::MapVor& vor, flo
     {
       // Draw compass circle and ticks
       painter->setBrush(Qt::NoBrush);
-      painter->setPen(QPen(mapcolors::vorSymbolColor, roseLineWidth, Qt::SolidLine, Qt::SquareCap));
+      painter->setPen(QPen(symbolColor, roseLineWidth, Qt::SolidLine, Qt::SquareCap));
       painter->drawEllipse(QPointF(0., 0.), radiusLargeD, radiusLargeD);
 
       if(!fast)
@@ -1035,17 +1055,17 @@ void SymbolPainter::drawVorSymbol(QPainter *painter, const map::MapVor& vor, flo
 
     // Draw dot in center
     if(size > 14)
-      painter->setPen(QPen(mapcolors::vorSymbolColor, sizeD / 4., Qt::SolidLine, Qt::RoundCap));
+      painter->setPen(QPen(symbolColor, sizeD / 4., Qt::SolidLine, Qt::RoundCap));
     else
-      painter->setPen(QPen(mapcolors::vorSymbolColor, sizeD / 3., Qt::SolidLine, Qt::RoundCap));
+      painter->setPen(QPen(symbolColor, sizeD / 3., Qt::SolidLine, Qt::RoundCap));
   }
   else
-    painter->setPen(QPen(mapcolors::vorSymbolColor, sizeD, Qt::SolidLine, Qt::SquareCap));
+    painter->setPen(QPen(symbolColor, sizeD, Qt::SolidLine, Qt::SquareCap));
 
   painter->drawPoint(QPointF(x, y));
 }
 
-void SymbolPainter::drawNdbSymbol(QPainter *painter, float x, float y, float size, bool routeFill, bool fast)
+void SymbolPainter::drawNdbSymbol(QPainter *painter, float x, float y, float size, bool routeFill, bool fast, bool darkMap)
 {
   atools::util::PainterContextSaver saver(painter);
 
@@ -1055,12 +1075,14 @@ void SymbolPainter::drawNdbSymbol(QPainter *painter, float x, float y, float siz
   else
     painter->setBrush(Qt::NoBrush);
 
+  QColor symbolColor = mapcolors::ndbSymbolColor.lighter(darkMap ? 250 : 100);
+
   if(size > 4.f)
   {
     float lineWidth = std::max(size / 16.f, 1.5f);
 
     // Use dotted or solid line depending on size
-    painter->setPen(QPen(mapcolors::ndbSymbolColor, lineWidth,
+    painter->setPen(QPen(symbolColor, lineWidth,
                          (size > 12.f && !fast) ? Qt::DotLine : Qt::SolidLine, Qt::SquareCap));
 
     double radius = size / 2.;
@@ -1073,10 +1095,10 @@ void SymbolPainter::drawNdbSymbol(QPainter *painter, float x, float y, float siz
       painter->drawEllipse(QPointF(x, y), radius * 2. / 3., radius * 2. / 3.);
 
     double pointSize = size > 12 ? size / 4. : size / 3.;
-    painter->setPen(QPen(mapcolors::ndbSymbolColor, pointSize, Qt::SolidLine, Qt::RoundCap));
+    painter->setPen(QPen(symbolColor, pointSize, Qt::SolidLine, Qt::RoundCap));
   }
   else
-    painter->setPen(QPen(mapcolors::ndbSymbolColor, size, Qt::SolidLine, Qt::RoundCap));
+    painter->setPen(QPen(symbolColor, size, Qt::SolidLine, Qt::RoundCap));
 
   painter->drawPoint(QPointF(x, y));
 }
@@ -1105,7 +1127,7 @@ void SymbolPainter::drawMarkerSymbol(QPainter *painter, const map::MapMarker& ma
 }
 
 void SymbolPainter::drawNdbText(QPainter *painter, const map::MapNdb& ndb, float x, float y, textflags::TextFlags flags, float size,
-                                bool fill, textatt::TextAttributes atts, const QStringList *addtionalText)
+                                bool fill, bool darkMap, textatt::TextAttributes atts, const QStringList *addtionalText)
 {
   QStringList texts;
 
@@ -1144,11 +1166,11 @@ void SymbolPainter::drawNdbText(QPainter *painter, const map::MapNdb& ndb, float
       texts.append(*addtionalText);
   }
 
-  textBoxF(painter, texts, mapcolors::ndbSymbolColor, x, y, atts, fill ? 255 : 0);
+  textBoxF(painter, texts, mapcolors::ndbSymbolColor.lighter(darkMap ? 250 : 100), x, y, atts, fill ? 255 : 0);
 }
 
 void SymbolPainter::drawVorText(QPainter *painter, const map::MapVor& vor, float x, float y, textflags::TextFlags flags, float size,
-                                bool fill, textatt::TextAttributes atts, const QStringList *addtionalText)
+                                bool fill, bool darkMap, textatt::TextAttributes atts, const QStringList *addtionalText)
 {
   QStringList texts;
 
@@ -1192,7 +1214,7 @@ void SymbolPainter::drawVorText(QPainter *painter, const map::MapVor& vor, float
       texts.append(*addtionalText);
   }
 
-  textBoxF(painter, texts, mapcolors::vorSymbolColor, x, y, atts, fill ? 255 : 0);
+  textBoxF(painter, texts, mapcolors::vorSymbolColor.lighter(darkMap ? 250 : 100), x, y, atts, fill ? 255 : 0);
 }
 
 void SymbolPainter::adjustPos(float& x, float& y, float size, textatt::TextAttributes atts)
@@ -1403,7 +1425,7 @@ void SymbolPainter::textBoxF(QPainter *painter, QStringList texts, QPen textPen,
     {
       // Use an alpha channel for semi transparency
       painter->setBackgroundMode(Qt::OpaqueMode);
-      backColor.setAlpha(transparency);
+      backColor.setAlpha(atools::minmax(0, 255, transparency));
       painter->setBrush(backColor);
       painter->setBackground(backColor);
       fill = true;

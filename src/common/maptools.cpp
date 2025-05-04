@@ -68,10 +68,7 @@ void RwVector::appendRwEnd(const QString& name, const QString& surface, int leng
     atools::geo::windForCourse(headWind, crossWind, speed, direction, heading);
 
     if(headWind >= minSpeed)
-    {
-      RwEnd end(name, surface, length, headWind, crossWind);
-      append(end);
-    }
+      append(RwEnd(name, surface, length, headWind, crossWind));
   }
 }
 
@@ -83,7 +80,7 @@ void RwVector::sortRunwayEnds()
   {
     QMap<RwKey, RwEnd> endMap;
 
-    for(const RwEnd& end : *this)
+    for(const RwEnd& end : qAsConst(*this))
     {
       RwKey key(end);
       if(endMap.contains(key))
@@ -111,10 +108,10 @@ void RwVector::sortRunwayEnds()
     totalNumber = constFirst().names.size();
 }
 
-QStringList RwVector::getSortedRunways(int minHeadWind)
+QStringList RwVector::getSortedRunways(int minHeadWind) const
 {
   QStringList runways;
-  for(const maptools::RwEnd& end : *this)
+  for(const maptools::RwEnd& end : qAsConst(*this))
   {
     if(end.headWind <= minHeadWind)
       break;
@@ -124,6 +121,27 @@ QStringList RwVector::getSortedRunways(int minHeadWind)
   // Sort by number and designator
   std::sort(runways.begin(), runways.end(), atools::fs::util::compareRunwayNumber);
   return runways;
+}
+
+void correctLatY(atools::geo::LineString& linestring, bool polygon)
+{
+  // Move latitude slight up or down
+  float latYChange = 0.0001f;
+  int fromIndex = polygon ? 0 : 1;
+
+  for(int i = fromIndex; i < linestring.size(); i++)
+  {
+    atools::geo::Pos& pos = atools::atRoll(linestring, i);
+    atools::geo::Pos& prev = atools::atRoll(linestring, i - 1);
+
+    if(atools::almostEqual(prev.getLatY(), pos.getLatY()) && std::abs(pos.getLonX() - prev.getLonX()) > 0.5f)
+    {
+      pos.setLatY(pos.getLatY() + latYChange);
+
+      // Toggle up and down movement
+      latYChange *= -1.f;
+    }
+  }
 }
 
 } // namespace maptools

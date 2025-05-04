@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2020 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2025 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -40,7 +40,6 @@ struct PixmapKey;
  */
 class VehicleIcons
 {
-
 public:
   VehicleIcons();
   ~VehicleIcons();
@@ -48,7 +47,7 @@ public:
   VehicleIcons(const VehicleIcons& other) = delete;
   VehicleIcons& operator=(const VehicleIcons& other) = delete;
 
-  QIcon iconFromCache(const atools::fs::sc::SimConnectAircraft& ac, int size, int rotate);
+  const QIcon iconFromCache(const atools::fs::sc::SimConnectAircraft& ac, int size, int rotate);
   const QPixmap *pixmapFromCache(const atools::fs::sc::SimConnectAircraft& ac, int size, int rotate);
 
 private:

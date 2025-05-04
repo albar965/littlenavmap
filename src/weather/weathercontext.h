@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2023 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2024 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -18,7 +18,7 @@
 #ifndef LNM_WEATHERCONTEXT_H
 #define LNM_WEATHERCONTEXT_H
 
-#include "fs/weather/weathertypes.h"
+#include "fs/weather/metar.h"
 
 namespace map {
 
@@ -29,15 +29,16 @@ namespace map {
 struct WeatherContext
 {
   /* Simulator and online sources. */
-  atools::fs::weather::MetarResult fsMetar, ivaoMetar, noaaMetar, vatsimMetar;
+  atools::fs::weather::Metar simMetar, ivaoMetar, noaaMetar, vatsimMetar, activeSkyMetar;
 
   /* Active sky values */
   bool isAsDeparture = false, isAsDestination = false;
-  QString asMetar, asType, ident;
+  QString asType, ident;
 
-  bool isEmpty() const
+  bool hasAnyMetar() const
   {
-    return fsMetar.isEmpty() && asMetar.isEmpty() && noaaMetar.isEmpty() && vatsimMetar.isEmpty() && ivaoMetar.isEmpty();
+    return simMetar.hasAnyMetar() || activeSkyMetar.hasAnyMetar() || noaaMetar.hasAnyMetar() || vatsimMetar.hasAnyMetar() ||
+           ivaoMetar.hasAnyMetar();
   }
 
 };

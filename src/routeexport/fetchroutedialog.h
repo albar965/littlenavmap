@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2022 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2024 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -53,16 +53,20 @@ public:
   explicit FetchRouteDialog(QWidget *parent);
   virtual ~FetchRouteDialog() override;
 
+  FetchRouteDialog(const FetchRouteDialog& other) = delete;
+  FetchRouteDialog& operator=(const FetchRouteDialog& other) = delete;
+
 signals:
   /* User clicked "Create Flight Plan" */
-  void routeNewFromFlightplan(const atools::fs::pln::Flightplan& flightplan, bool adjustAltitude, bool changed, bool undo);
+  void routeNewFromFlightplan(const atools::fs::pln::Flightplan& flightplan, bool adjustAltitude, bool changed, bool undo,
+                              bool correctProfile);
 
   /* User clicked on "Open in Route Description" */
   void routeNewFromString(const QString& routeString);
 
 private:
   void restoreState();
-  void saveState();
+  void saveState() const;
 
   void buttonBoxClicked(QAbstractButton *button);
 
@@ -76,10 +80,10 @@ private:
 
   atools::util::HttpDownloader *downloader;
 
-  /* Plan is empty if parsing failed */
+  /* Plan is empty if parsing failed. Used to create new route. */
   atools::fs::pln::Flightplan *flightplan;
 
-  QString routeString, /* Route string is empty if download failed */
+  QString routeString, /* Route string is empty if download failed. Sent to RouteStringDialog if requested. */
           fetcherUrl; /* URL can be overridden in settings */
 
   Ui::FetchRouteDialog *ui;

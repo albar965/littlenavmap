@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2023 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2025 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -23,10 +23,11 @@
 
 #include <QCache>
 #include <QCoreApplication>
-#include <functional>
 
 namespace atools {
 namespace geo {
+
+class Rect;
 class Pos;
 }
 namespace sql {
@@ -41,12 +42,14 @@ struct MapProcedureLegs;
 }
 
 namespace map {
+
+struct MapRunway;
 struct MapAirport;
 struct MapRunwayEnd;
 struct MapResult;
 }
-class MapQuery;
-class AirportQuery;
+
+class Queries;
 
 /* Loads and caches procedures and transitions. Procedures include
  * final approaches, SID and STAR but excludes transitions.
@@ -64,11 +67,6 @@ class ProcedureQuery
   Q_DECLARE_TR_FUNCTIONS(ProcedureQuery)
 
 public:
-  /*
-   * @param sqlDb database for simulator scenery data
-   * @param sqlDbNav for updated navaids
-   */
-  ProcedureQuery(atools::sql::SqlDatabase *sqlDbNav);
   ~ProcedureQuery();
 
   /* Do not allow copying */
@@ -89,7 +87,7 @@ public:
   const proc::MapProcedureLegs *getTransitionLegs(map::MapAirport airport, int transitionId);
 
   /* Get all available transitions for the given procedure ID (approach.approach_id in database */
-  QVector<int> getTransitionIdsForProcedure(int procedureId);
+  const QVector<int> getTransitionIdsForProcedure(int procedureId);
 
   /* Resolves all procedures based on given properties and loads them from the database.
    * Procedures are partially resolved in a fuzzy way. */
@@ -148,25 +146,22 @@ public:
   /* Get a transition only for an approach */
   int getTransitionId(map::MapAirport destination, const QString& fixIdent, const QString& type, int approachId);
 
+  /* Get first and last waypoint name for procedure */
+  void getProcedureFirstLastWp(QString& firstFix, QString& lastFix, int procedureId);
+
+  /* Get first and last waypoint name for transition. Does not include procedure waypoints. */
+  void getTransitionFirstLastWp(QString& firstFix, QString& lastFix, int transitionId);
+
   /* Creates a user defined approach procedure. Handled like an approach procedure. */
   void createCustomApproach(proc::MapProcedureLegs& procedure, const map::MapAirport& airport, const QString& runwayEnd,
                             float finalLegDistance, float entryAltitude, float offsetAngle);
-  void createCustomApproach(proc::MapProcedureLegs& procedure, const map::MapAirport& airportSim,
+  void createCustomApproach(proc::MapProcedureLegs& legs, const map::MapAirport& airportSim,
                             const map::MapRunwayEnd& runwayEndSim, float finalLegDistance, float entryAltitude, float offsetAngle);
 
   /* Creates a user defined departure procedure. Handled like a SID. */
-  void createCustomDeparture(proc::MapProcedureLegs& procedure, const map::MapAirport& airport, const QString& runwayEnd, float distance);
-  void createCustomDeparture(proc::MapProcedureLegs& procedure, const map::MapAirport& airportSim,
-                             const map::MapRunwayEnd& runwayEndSim, float distance);
-
-  /* Flush the cache to update units */
-  void clearCache();
-
-  /* Create all queries */
-  void initQueries();
-
-  /* Delete all queries */
-  void deInitQueries();
+  void createCustomDeparture(proc::MapProcedureLegs& legs, const map::MapAirport& airport, const QString& runwayEnd, float distance);
+  void createCustomDeparture(proc::MapProcedureLegs& legs, const map::MapAirport& airportSim, const map::MapRunwayEnd& runwayEndSim,
+                             float distance);
 
   /* Change procedure to insert runway from flight plan as departure or start for arinc names "ALL" or "RW10B".
    * Only for SID or STAR.
@@ -180,17 +175,51 @@ public:
 
   static bool doesRunwayMatchSidOrStar(const proc::MapProcedureLegs& procedure, const QString& runway);
 
-private:
-  proc::MapProcedureLeg buildTransitionLegEntry(const map::MapAirport& airport);
-  proc::MapProcedureLeg buildProcedureLegEntry(const map::MapAirport& airport);
-  void buildLegEntry(atools::sql::SqlQuery *query, proc::MapProcedureLeg& leg, const map::MapAirport& airport);
+  /* Flush the cache to update units */
+  void clearCache();
 
-  /* See comments in postProcessLegs about the steps below */
+private:
+  friend class Queries;
+
+  /*
+   * @param sqlDb database for simulator scenery data
+   * @param sqlDbNav for updated navaids
+   */
+  explicit ProcedureQuery(atools::sql::SqlDatabase *sqlDbNav, const Queries *queriesParam);
+
+  /* Create all queries */
+  void initQueries();
+
+  /* Delete all queries */
+  void deInitQueries();
+
+  proc::MapProcedureLeg buildTransitionLegEntry(const proc::MapProcedureLegs& legs, const map::MapAirport& airport);
+  proc::MapProcedureLeg buildProcedureLegEntry(const proc::MapProcedureLegs& legs, const map::MapAirport& airport);
+  void buildLegEntry(atools::sql::SqlQuery *query, proc::MapProcedureLeg& leg, const proc::MapProcedureLegs& legs,
+                     const map::MapAirport& airport);
+
+  /* See comments in postProcessLegs about the steps below.
+   * Custom approaches are built in createCustomApproach() and are not processed here. */
   void postProcessLegs(const map::MapAirport& airport, proc::MapProcedureLegs& legs, bool addArtificialLegs) const;
-  void processLegs(proc::MapProcedureLegs& legs) const;
+
+  /* Prepare all leg coordinates and fill line */
+  void processLegs(proc::MapProcedureLegs& legs, const map::MapAirport& airport) const;
+
+  /* Collect leg errors to procedure error */
   void processLegErrors(proc::MapProcedureLegs& legs) const;
+
+  /* Set the force altitude flag for FAF and FACF */
   void processAltRestrictions(proc::MapProcedureLegs& procedure) const;
+
+  /* Check which leg is used to draw the Maltesian cross */
   void processLegsFafAndFacf(proc::MapProcedureLegs& legs) const;
+
+  /* Align approach runway according to displaced threshold. Also corrects line of following missed legs.
+   * Either sim or nav coordinates depending on exact runway name match. */
+  void processApproachRunway(proc::MapProcedureLegs& legs, const map::MapAirport& airport) const;
+
+  /* Add additional geometry to have departure partially aligned with runway */
+  void processDepartureRunway(proc::MapProcedureLegs& legs, const map::MapAirport& airport) const;
 
   /* Fill the courese and heading to intercept legs after all other lines are calculated */
   void processCourseInterceptLegs(proc::MapProcedureLegs& legs) const;
@@ -198,18 +227,22 @@ private:
   /* Fill calculatedDistance, geometry from line and calculated course fields */
   void processLegsDistanceAndCourse(proc::MapProcedureLegs& legs) const;
 
-  /* Add an artificial (not in the database) runway leg if no connection to the end is given */
-  void processArtificialLegs(const map::MapAirport& airport, proc::MapProcedureLegs& legs,
-                             bool addArtificialLegs) const;
+  /* Add an artificial (not in the database) runway leg if no connection to the end is given.
+   * Adds DIRECT_TO_RUNWAY, VECTORS and DIRECT_TO_FIX. */
+  void processArtificialLegs(proc::MapProcedureLegs& legs, const map::MapAirport& airport, bool addArtificialLegs) const;
 
   /* Adjust conflicting altitude restrictions where a transition ends with "A2000" and is the same as the following
    * initial fix having "2000". Also corrects final altitude restriction if below airport. */
-  void processLegsFixRestrictions(const map::MapAirport& airport, proc::MapProcedureLegs& legs) const;
+  void processLegsFixRestrictions(proc::MapProcedureLegs& legs, const map::MapAirport& airport) const;
 
   /* Assign magnetic variation from the navaids */
-  void updateMagvar(const map::MapAirport& airport, proc::MapProcedureLegs& legs) const;
-  void updateBounding(proc::MapProcedureLegs& legs) const;
+  void processMagvar(proc::MapProcedureLegs& legs, const map::MapAirport& airport) const;
 
+  /* Update bounding rectangle */
+  void updateBounding(proc::MapProcedureLegs& legs) const;
+  void updateBounding(proc::MapProcedureLegs& legs, atools::geo::Rect& bounding, bool includeRecommended, bool includeMissed) const;
+
+  /* Update the mapTypes */
   void assignType(proc::MapProcedureLegs& procedure) const;
 
   /* Check if procedure has hard errors. Fills error list if any and resets id to -1*/
@@ -233,6 +266,9 @@ private:
   int findProcedureLegId(const map::MapAirport& airport, atools::sql::SqlQuery *query, const QString& suffix, const QString& runway,
                          bool transition, bool strict);
 
+  /* calculates distance based on field geometry and course based on the last segment in geometry */
+  void calcLegDistanceAndCourse(proc::MapProcedureLeg& leg) const;
+
   /* Get runway end and try lower and higher numbers if nothing was found - adds a dummy entry with airport
    * position if no runway ends were found */
   void runwayEndByName(map::MapResult& result, const QString& name, const map::MapAirport& airport);
@@ -250,13 +286,21 @@ private:
 
   QString runwayErrorString(const QString& runway);
 
+  /* Fetch simulator runway and runway end if runway name matches exactly. Otherwise navdata runway */
+  void fetchRunwaysSim(map::MapRunway& runwaySim, map::MapRunwayEnd& runwayEndSim, const map::MapAirport& airport,
+                       const map::MapRunwayEnd& runwayEnd) const;
+
+  QString bestAirportIdent(const map::MapAirport& airport);
+
   atools::sql::SqlDatabase *dbNav;
   atools::sql::SqlQuery *procedureLegQuery = nullptr, *transitionLegQuery = nullptr,
                         *transitionIdForLegQuery = nullptr, *procedureIdForTransQuery = nullptr,
                         *runwayEndIdQuery = nullptr, *transitionQuery = nullptr, *procedureQuery = nullptr,
                         *transitionIdByNameQuery = nullptr, *sidTransIdByWpQuery = nullptr, *starTransIdByWpQuery = nullptr,
                         *procedureIdByNameQuery = nullptr, *procedureIdByArincNameQuery = nullptr,
-                        *transitionIdsForProcedureQuery = nullptr;
+                        *transitionIdsForProcedureQuery = nullptr,
+                        *firstFixForProcedureQuery = nullptr, *lastFixForProcedureQuery = nullptr,
+                        *firstFixForTransitionQuery = nullptr, *lastFixForTransitionQuery = nullptr;
 
   /* approach ID and transition ID to full lists
    * The procedure also has to be stored for transitions since the handover can modify procedure legs (CI legs, etc.) */
@@ -265,24 +309,25 @@ private:
   /* maps leg ID to procedure/transition ID and index in list */
   QHash<int, std::pair<int, int> > procedureLegIndex, transitionLegIndex;
 
-  AirportQuery *airportQueryNav = nullptr;
+  const Queries *queries;
+  bool verbose = false;
 
   /* Dummy used for custom approaches. */
-  Q_DECL_CONSTEXPR static int CUSTOM_APPROACH_ID = 1000000000;
-  Q_DECL_CONSTEXPR static int CUSTOM_DEPARTURE_ID = 1000000001;
+  const static int CUSTOM_APPROACH_ID = 1000000000;
+  const static int CUSTOM_DEPARTURE_ID = 1000000001;
 
   /* Use this value as an id base for the artifical vector legs. */
-  Q_DECL_CONSTEXPR static int VECTOR_LEG_ID_BASE = 1250000000;
+  const static int VECTOR_LEG_ID_BASE = 1250000000;
 
   /* Base id for artificial transition/procedure connections */
-  Q_DECL_CONSTEXPR static int TRANS_CONNECT_LEG_ID_BASE = 1000000000;
+  const static int TRANS_CONNECT_LEG_ID_BASE = 1000000000;
 
   /* Use this value as an id base for the artifical runway legs. Add id of the predecessor to it to be able to find the
    * leg again */
-  Q_DECL_CONSTEXPR static int RUNWAY_LEG_ID_BASE = 750000000;
+  const static int RUNWAY_LEG_ID_BASE = 750000000;
 
   /* Base id for artificial start legs */
-  Q_DECL_CONSTEXPR static int START_LEG_ID_BASE = 500000000;
+  const static int START_LEG_ID_BASE = 500000000;
 };
 
 #endif // LITTLENAVMAP_PROCEDUREQUERY_H

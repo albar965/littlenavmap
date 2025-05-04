@@ -1,0 +1,330 @@
+#alternative body {
+  font-family: sans-serif;
+  letter-spacing: 1px;
+}
+
+#menubarContainer {
+  background: #555;
+}
+
+#menubarOuter {
+  box-shadow: 0 1px 7px 0 #000;
+}
+
+[data-menubarsplacement="top"] .menubar {
+  border-bottom: 1px solid black;
+}
+
+[data-menubarsplacement="right"] .menubar {
+  border-left: 1px solid black;
+}
+
+[data-menubarsplacement="bottom"] .menubar {
+  /*border-top: 1px solid black;*/      /* white line between border and box-shadow visible in Chrome used as of typing due to 1px border rendered as .6px */
+}
+
+[data-menubarsplacement="left"] .menubar {
+  border-right: 1px solid black;
+}
+
+[data-menubarsplacement="top"] .menubar, [data-menubarsplacement="bottom"] .menubar {
+  padding: 0 2.5px;   /* works in conjunction with .menubar button margin */
+}
+
+[data-menubarsplacement="right"] .menubar, [data-menubarsplacement="left"] .menubar {
+  padding: 2.5px 0;   /* works in conjunction with .menubar button margin */
+}
+
+.menubar button {
+  font-family: sans-serif;
+  letter-spacing: 1px;
+  padding: 0;
+  border: 0;
+  text-align: center;
+  font-size: 20px;
+  line-height: 26px;
+  border-radius: 13px;
+  color: #fff;
+  background: #888;
+  width: 150px;
+  box-sizing: border-box;
+}
+
+.menubar button:hover {
+  outline: 1px solid #ff0;
+}
+
+@media (max-width: 1280px) {
+  [data-menubarsplacement="top"] .menubar button, [data-menubarsplacement="bottom"] .menubar button {
+     width: auto;
+  }
+}
+
+[data-menubarsplacement="top"] .menubar button, [data-menubarsplacement="bottom"] .menubar button {
+  margin: 5px 2.5px;
+}
+
+[data-menubarsplacement="right"] .menubar button, [data-menubarsplacement="left"] .menubar button {
+  margin: 2.5px 5px;
+}
+
+@media (max-width: 420px) {
+  [data-menubarsplacement="top"] .menubar, [data-menubarsplacement="bottom"] .menubar {
+    padding-top: 2.5px;
+    padding-bottom: 2.5px;
+  }
+
+  [data-menubarsplacement="top"] .menubar button, [data-menubarsplacement="bottom"] .menubar button {
+     width: calc(50% - 5px);
+     margin: 2.5px;
+  }
+
+  [data-menubarsplacement="right"] .menubar button, [data-menubarsplacement="left"] .menubar button {
+     width: 125px;
+  }
+}
+
+.menubar button a {
+  text-decoration: none;
+  color: inherit;
+}
+
+@media (min-width: 841px) {
+  .menubar button a {
+    padding: 0 15px
+  }
+}
+
+@media (max-width: 840px) {
+  .menubar button a {
+    padding: 0 5px;
+  }
+}
+
+.active {
+  background: #aaa !important;
+  color: #ff0 !important;
+  box-shadow: 0 0 2.5px 0 rgba(192, 192, 0, .5) !important;
+  text-shadow: 0 0 5px rgba(192, 192, 0, .5) !important;
+}
+
+[data-menubarsplacement="top"] #toggleOptionsToggle, [data-menubarsplacement="bottom"] #toggleOptionsToggle {
+  width: 52px;
+}
+
+[data-menubarsplacement="right"] #toggleOptionsToggle, [data-menubarsplacement="left"] #toggleOptionsToggle {
+  height: 52px;
+}
+
+#toggleOptionsToggle:hover {
+  outline: 1px solid #acf;
+}
+
+#toggleOptionsToggle::before {
+  border-width: 13px;
+}
+
+[data-menubarsplacement="top"] #toggleOptionsToggle::before {
+  border-top-color: #d5e6ff;
+  top: calc(50% - 13px/2);      /* works in conjunction with #toggleOptionsToggle::before border-width */
+  left: calc(50% - 13px);       /* works in conjunction with #toggleOptionsToggle::before border-width */
+}
+
+[data-menubarsplacement="right"] #toggleOptionsToggle::before {
+  border-right-color: #d5e6ff;
+  right: calc(50% - 13px/2);    /* works in conjunction with #toggleOptionsToggle::before border-width */
+  top: calc(50% - 13px);        /* works in conjunction with #toggleOptionsToggle::before border-width */
+}
+
+[data-menubarsplacement="bottom"] #toggleOptionsToggle::before {
+  border-bottom-color: #d5e6ff;
+  bottom: calc(50% - 13px/2);   /* works in conjunction with #toggleOptionsToggle::before border-width */
+  left: calc(50% - 13px);       /* works in conjunction with #toggleOptionsToggle::before border-width */
+}
+
+[data-menubarsplacement="left"] #toggleOptionsToggle::before {
+  border-left-color: #d5e6ff;
+  top: calc(50% - 13px);      /* works in conjunction with #toggleOptionsToggle::before border-width */
+  left: calc(50% - 13px/2);       /* works in conjunction with #toggleOptionsToggle::before border-width */
+}
+
+[data-menubarsplacement="top"] #toggleOptionsToggle.shown::before {
+  border-top-color: #acf;
+}
+
+[data-menubarsplacement="right"] #toggleOptionsToggle.shown::before {
+  border-right-color: #acf;
+}
+
+[data-menubarsplacement="bottom"] #toggleOptionsToggle.shown::before {
+  border-bottom-color: #acf;
+}
+
+[data-menubarsplacement="left"] #toggleOptionsToggle.shown::before {
+  border-left-color: #acf;
+}
+
+#menubarsOptions {
+  background: #707070;
+  width: 170px;
+}
+
+#menubarsOptions fieldset {
+  margin: 0 .5px;
+}
+
+#menubarsOptions fieldset + fieldset {
+  margin-top: 5px;
+}
+
+#menubarsOptions fieldset + fieldset.has-legend {
+  margin-top: 2px;
+}
+
+#menubarsOptions fieldset.has-legend:last-child {
+  margin-bottom: 1px;
+}
+
+#menubarsOptions fieldset:not(.has-legend):last-child {
+  margin-bottom: -2.5px;
+}
+
+#menubarsOptions legend {
+  font-size: 10px;
+  font-family: sans-serif;
+}
+
+#menubarsOptions .input-block {
+  align-items: center;
+  font-size: 12px;
+  font-weight: bold;
+  margin: 2.5px;
+}
+
+#menubarsOptions .input-block:hover, #menubarsOptions select:hover {
+  outline: 1px solid #ff0;
+}
+
+#menubarsOptions input[type="radio"] {
+  margin: 1px 0 0 10px;
+}
+
+#menubarsOptions input[type="checkbox"] {
+  margin-left: 10px;
+}
+
+#menubarsOptions input[type="radio"] + label, #menubarsOptions input[type="checkbox"] + label {
+  padding: 3px 0 3px 32px;
+}
+
+#menubarsOptions input[type="radio"]:checked + label {
+  color: #ff0;
+  text-shadow: 0 0 3px rgba(192, 192, 0, .5);
+}
+
+#menubarsOptions .input-block label {
+  color: #fff;
+  font-family: sans-serif;
+}
+
+
+#menubarsOptions select {
+  padding: 5px;
+}
+
+#menubarsOptions select, #menubarsOptions option {
+  font-family: sans-serif;
+  font-size: 12px;
+}
+
+#selectablePlugins {
+  text-align: left;
+  font-size: 15px;
+  width: 180px;
+}
+
+.selectable-plugin {
+  background: grey;
+  cursor: pointer;
+  border-radius: 14px;
+  border: 1px solid #000;
+  padding-right: 20px;
+}
+
+.selectable-plugin label {
+  padding-left: 40px;
+  flex: 1 0;
+  margin: 0;
+}
+
+.selectable-plugin:hover label {
+  text-shadow: 0 0 4px yellowgreen;
+}
+
+.selectable-plugin * {
+  cursor: inherit;
+}
+
+#exclusivePlugins option {
+  padding: 5px;
+  box-sizing: border-box;
+}
+
+#toolbarsLayer {
+  font-family: sans-serif;
+}
+
+#toolbarsLayer .toolbar {
+  background: rgba(255,255,255,0.4);
+}
+
+.resizable-content {
+  border-right: 5px solid rgba(0,0,0,.004);
+  border-bottom: 5px solid rgba(0,0,0,.004);
+  background-clip: padding-box !important;
+  margin-top: -5px;
+  box-sizing: border-box;
+}
+
+.resizable-content.hover-resize {
+  border-color: mistyrose;
+  opacity: .75;
+  cursor: pointer;
+}
+
+.movable-content {
+  border-top: 20px solid rgba(0,0,0,.004);
+  background-clip: padding-box !important;
+  margin-top: -20px;
+  box-sizing: border-box;
+}
+
+.movable-content.hover-move {
+  border-top-color: pink;
+  opacity: .75;
+  cursor: pointer;
+}
+
+#contentContainer:has(.moving-cursor) {
+  cursor: move;
+}
+
+#contentContainer:has(.resizing-cursor-vert) {
+  cursor: ns-resize;
+}
+
+#contentContainer:has(.resizing-cursor-hori) {
+  cursor: ew-resize;
+}
+
+#contentContainer:has(.moving-cursor) iframe {
+  pointer-events: none !important;
+}
+
+#contentContainer:has(.resizing-cursor-vert) iframe {
+  pointer-events: none !important;
+}
+
+#contentContainer:has(.resizing-cursor-hori) iframe {
+  pointer-events: none !important;
+}

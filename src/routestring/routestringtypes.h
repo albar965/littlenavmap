@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2023 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2024 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -18,13 +18,14 @@
 #ifndef LNM_ROUTESTRINGTYPES_H
 #define LNM_ROUTESTRINGTYPES_H
 
-#include <QFlags>
+#include "util/flags.h"
+
 #include <QStringList>
 
 namespace rs {
 
 /* Do not change order since it is used to save to options */
-enum RouteStringOption
+enum RouteStringOption : quint32
 {
   NONE = 0,
 
@@ -45,7 +46,7 @@ enum RouteStringOption
   GFP_COORDS = 1 << 11, /* Suffix all navaids with coordinates for new GFP format */
   USR_WPT = 1 << 12, /* User waypoints for all navaids to avoid locked waypoints from Garmin */
   SKYVECTOR_COORDS = 1 << 13, /* Skyvector coordinate format */
-  NO_FINAL_DCT = 1 << 14, /* omit last DCT for Flight Factor export */
+  NO_FINAL_DCT = 1 << 14, /* omit last DCT for FlightFactor export */
 
   ALTERNATES = 1 << 15, /* Write alternate at end of list */
 
@@ -55,7 +56,7 @@ enum RouteStringOption
   READ_MATCH_WAYPOINTS = 1 << 18, /* Match coordinate formats to nearby waypoints. */
 
   /* Writing options when converting flight plan to string ====================== */
-  NO_TRACKS = 1 << 19, /* Do not use NAT, PACOTS or AUSOTS. */
+  NO_TRACKS = 1 << 19, /* Do not use NAT or PACOTS. */
 
   SID_STAR_NONE = 1 << 20, /* Needed in dialog action only */
 
@@ -65,12 +66,13 @@ enum RouteStringOption
 
   ALT_AND_SPEED_METRIC = 1 << 23, /* Allow altitude and speed restriction in metric if set in user interface. Only in GUI. */
 
-  WRITE_APPROACH_RUNWAYS = 1 << 24, /* Add departure runway and approach ARINC name. Example "GCLA/36 TFS3T TFS GCTS/TES2.I07-Y" */
+  WRITE_RUNWAYS = 1 << 24, /* Add departure runway and approach ARINC name or approach runway.
+                            * Example "GCLA/36 TFS3T TFS GCTS/TES2.I07-Y" or "GCLA/36 TFS3T TFS GCTS/07" */
 
   // Next is 25
 
   /* Default on startup */
-  DEFAULT_OPTIONS = START_AND_DEST | ALT_AND_SPEED | SID_STAR | ALTERNATES | READ_ALTERNATES | REPORT | WRITE_APPROACH_RUNWAYS,
+  DEFAULT_OPTIONS = START_AND_DEST | ALT_AND_SPEED | SID_STAR | ALTERNATES | READ_ALTERNATES | REPORT | WRITE_RUNWAYS,
 
   /* Default for logbook entries */
   DEFAULT_OPTIONS_LOGBOOK = DEFAULT_OPTIONS | ALT_AND_SPEED_METRIC,
@@ -83,8 +85,8 @@ enum RouteStringOption
   SIMBRIEF_READ_DEFAULTS = rs::READ_ALTERNATES | rs::REPORT
 };
 
-Q_DECLARE_FLAGS(RouteStringOptions, RouteStringOption);
-Q_DECLARE_OPERATORS_FOR_FLAGS(rs::RouteStringOptions);
+ATOOLS_DECLARE_FLAGS_32(RouteStringOptions, rs::RouteStringOption)
+ATOOLS_DECLARE_OPERATORS_FOR_FLAGS(rs::RouteStringOptions)
 
 /* Remove all invalid characters and simplify string. Extracts all characters until the next empty line. */
 QStringList cleanRouteStringList(const QString& string);

@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2020 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2024 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -64,7 +64,7 @@ public:
 
 private:
   void restoreState();
-  void saveState();
+  void saveState() const;
   void buttonBoxClicked(QAbstractButton *button);
   void colorButtonClicked();
   void updateButtonColor();
@@ -72,7 +72,7 @@ private:
 
   /* Convert string to ranges. Falls back to defaults if invalid */
   QString rangeFloatToString(const QVector<float>& ranges) const;
-  QVector<float> rangeStringToFloat(const QString& rangeStr) const;
+  const QVector<float> rangeStringToFloat(const QString& rangeStr) const;
 
   Ui::RangeMarkerDialog *ui;
 

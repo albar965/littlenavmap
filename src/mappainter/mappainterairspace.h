@@ -32,6 +32,8 @@ class MapWidget;
 class MapPainterAirspace :
   public MapPainter
 {
+  Q_DECLARE_TR_FUNCTIONS(MapPainterAirspace)
+
 public:
   MapPainterAirspace(MapPaintWidget *mapPaintWidget, MapScale *mapScale, PaintContext *paintContext);
   virtual ~MapPainterAirspace() override;

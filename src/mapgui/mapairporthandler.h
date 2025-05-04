@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2021 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2024 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -50,7 +50,7 @@ public:
   MapAirportHandler& operator=(const MapAirportHandler& other) = delete;
 
   /* Initialize, create actions and add button to toolbar. */
-  void addToolbarButton();
+  void insertToolbarButton();
 
   /* Save and load flags if requested in options */
   void saveState();
@@ -79,6 +79,7 @@ private:
   /* Action from toolbar toggled */
   void toolbarActionTriggered();
   void actionResetTriggered();
+  void actionOnlyAddonTriggered();
 
   /* Set actions (blocking signals) */
   void flagsToActions();
@@ -90,12 +91,16 @@ private:
   void runwaySliderValueChanged();
   void runwaySliderReleased();
   void updateRunwayLabel();
-  void updateToolbutton();
+  void updateButtons();
 
   /* Actions for toolbar button and menu */
-  QAction *actionReset = nullptr, *actionHard = nullptr, *actionSoft = nullptr, *actionEmpty = nullptr, *actionAddon = nullptr,
+  QAction *actionReset = nullptr, *actionAddonOnly = nullptr, *actionHard = nullptr, *actionSoft = nullptr, *actionEmpty = nullptr,
+          *actionAddonNone = nullptr, *actionAddonZoom = nullptr, *actionAddonZoomFilter = nullptr,
           *actionUnlighted = nullptr, *actionNoProcedures = nullptr, *actionClosed = nullptr, *actionMil = nullptr, *actionWater = nullptr,
           *actionHelipad = nullptr;
+  QVector<QAction *> allActions;
+
+  QActionGroup * actionGroupAddon = nullptr;
 
   /* Widget wrapper allowing to put an arbitrary widget into a menu */
   apinternal::AirportSliderAction *sliderActionRunwayLength = nullptr;
@@ -105,7 +110,7 @@ private:
   QToolButton *toolButton = nullptr;
 
   /* Selection */
-  map::MapTypes airportTypes = map::AIRPORT_ALL_AND_ADDON;
+  map::MapTypes airportTypes = map::AIRPORT_DEFAULT;
 };
 
 namespace apinternal {
@@ -123,7 +128,7 @@ public:
   /* value or -1 for leftmost in local units */
   int getSliderValue() const;
 
-  void saveState();
+  void saveState() const;
   void restoreState();
 
   void optionsChanged();

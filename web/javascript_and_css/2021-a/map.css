@@ -1,0 +1,198 @@
+html, body {
+  touch-action: none;
+}
+
+body {
+  font-family: Verdana, Arial, Helvetica, sans-serif;
+  background: #fff;
+}
+
+
+#header {
+  background: lightgray;
+  height: 50px;
+}
+
+#header > .scrollIndicatorHelperContainer {
+  display: flex;
+  width: 100%;
+  overflow: auto;
+}
+
+#refreshWithAircraft {
+  transition: all 1.5s;
+}
+
+.enlarge {
+  transform: scale(2) !important;
+  outline: 1px solid #f50;
+}
+
+
+/*[data-shift="up"] {
+  cursor: url(/images/point-up.cur), auto;
+}
+
+[data-shift="left"] {
+  cursor: url(/images/point-left.cur), auto;
+}
+
+[data-shift="right"] {
+  cursor: url(/images/point-right.cur), auto;
+}
+
+[data-shift="down"] {
+  cursor: url(/images/point-down.cur), auto;
+}*/
+
+
+#refreshDelay[disabled]:hover {
+  cursor: url(/images/there.cur), auto;
+}
+
+
+#preventstandbyVideoContainer {
+  width: 48px;
+  height: 36px;
+  display: inline-block;
+  vertical-align: middle;
+  border: 0;
+  pointer-events: none;
+  opacity: 0;
+}
+
+
+#interactionParent {
+  display: flex;
+  perspective: 1000px;
+  box-shadow: 0px -1px 14px 0px #000;
+  min-height: 0;
+}
+
+#interactionParent[disabled] {
+  cursor: not-allowed;
+  position: relative;
+}
+
+#interactionParent[disabled]:hover::before {
+  content: "Automap (refresh with Aircraft in center) enabled";
+  display: table;
+  position: absolute;
+  left: 1.2vw;
+  top: 1.2vw;
+  z-index: 3;
+  background: lightyellow;
+  padding: .8vw;
+  border: 1px solid #000;
+  box-shadow: 0 0 0 .4vw rgba(255,0,0,.5);
+  color: #000;
+}
+
+@media (min-width: 1281px) {
+  #interactionParent[disabled]:hover::before {
+    font-size: .8vw;
+  }
+}
+
+@media (min-width: 768px) and (max-width: 1280px) {
+  #interactionParent[disabled]:hover::before {
+    font-size: 1.8vw;
+  }
+}
+
+@media (max-width: 767px) {
+  #interactionParent[disabled]:hover::before {
+    font-size: 3.3vw;
+  }
+}
+
+#interactionParent[disabled] #mapcontainer {
+  pointer-events: none;
+}
+
+
+#mapcontainer {
+  flex: 1 0;
+  transform-style: preserve-3d;
+  position: relative;
+  opacity: 1;
+  transform: scale(1);
+  overflow: hidden;
+  height: 100%;
+}
+
+#mapcontainer.initially {
+  opacity: 0;
+}
+
+#map {
+  cursor: crosshair;
+}
+
+#interactionParent:has(.transition) {
+  overflow: hidden;
+}
+
+.transition {
+  transition: transform 5s linear;
+  overflow: visible !important;
+}
+
+.transition img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+}
+
+@property --colorstop {
+  syntax: '<percentage>';
+  inherits: false;
+  initial-value: 0%;
+}
+
+@keyframes reflect {
+  0% {
+    --colorstop: 0%;
+  }
+  100% {
+    --colorstop: 100%;
+  }
+}
+
+@keyframes clearview {
+  0% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+  }
+}
+
+.transition::after {
+  animation: reflect 5s 1s both, clearview 2s 5s both;
+  content: "";
+  display: block;
+  height: min(100vh, 100vw);
+  width: min(100vh, 100vw);
+  position: absolute;
+  z-index: 2;
+  top: 50vh;
+  left: 50vw;
+  transform: translate3d(-50%, -50%, 250px);
+  border-radius: 50%;
+  opacity: 1;
+  pointer-events: none;
+  --colorstop: 0%;
+  background: linear-gradient(135deg, rgba(255,100,255,.5) 0%, rgba(255,255,255,1) var(--colorstop), rgba(255,100,255,.5) 100%);
+}
+
+#mapcontainer.toshow {
+  transform: scale3d(.25,.25,.25) rotate3d(0, 1, 0, -80deg) rotate3d(1, 0, 0, 86deg) rotate3d(0, 0, 1, 30deg);
+}
+
+
+@media (max-resolution: 96dpi) {
+  #retinaOption {
+    display: none;
+  }
+}

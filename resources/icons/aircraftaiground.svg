@@ -2,19 +2,19 @@
 <!-- Created with Inkscape (http://www.inkscape.org/) -->
 
 <svg
-   xmlns:dc="http://purl.org/dc/elements/1.1/"
-   xmlns:cc="http://creativecommons.org/ns#"
-   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
-   xmlns:svg="http://www.w3.org/2000/svg"
-   xmlns="http://www.w3.org/2000/svg"
-   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
-   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
    version="1.0"
    width="128"
    height="128"
    id="svg1655"
-   inkscape:version="0.92.3 (2405546, 2018-03-11)"
-   sodipodi:docname="aircraftaiground.svg">
+   inkscape:version="1.2.2 (b0a8486541, 2022-12-01)"
+   sodipodi:docname="aircraftaiground.svg"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:dc="http://purl.org/dc/elements/1.1/">
   <metadata
      id="metadata10">
     <rdf:RDF>
@@ -46,7 +46,10 @@
      inkscape:window-x="38"
      inkscape:window-y="24"
      inkscape:window-maximized="1"
-     inkscape:current-layer="svg1655" />
+     inkscape:current-layer="svg1655"
+     inkscape:showpageshadow="2"
+     inkscape:pagecheckerboard="0"
+     inkscape:deskcolor="#d1d1d1" />
   <defs
      id="defs1658" />
   <g
@@ -121,15 +124,13 @@
      height="61.546532"
      x="63.441055"
      y="61.074009" />
-  <text
-     xml:space="preserve"
-     style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;line-height:0%;font-family:'Courier New';-inkscape-font-specification:'Courier New Bold';letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
-     x="71.294769"
-     y="113.44746"
-     id="text17209"><tspan
-       sodipodi:role="line"
-       id="tspan17211"
-       x="71.294769"
-       y="113.44746"
-       style="font-size:72.00735474px;line-height:1.25">A</tspan></text>
+  <g
+     aria-label="A"
+     id="text17209"
+     style="font-weight:bold;line-height:0%;font-family:'Courier New';-inkscape-font-specification:'Courier New Bold';letter-spacing:0px;word-spacing:0px;stroke-width:1px">
+    <path
+       d="M 101.70805,101.8447 H 84.198439 l -1.757993,4.39498 h 1.757993 q 2.60183,0 3.691786,1.01964 1.125116,0.98448 1.125116,2.60183 0,1.58219 -1.125116,2.60183 -1.089956,0.98448 -3.691786,0.98448 h -9.704122 q -2.60183,0 -3.691786,-0.98448 -1.125115,-1.01964 -1.125115,-2.63699 0,-1.61735 1.160275,-2.63699 1.160276,-1.01964 3.832425,-0.94932 L 85.991592,78.041474 h -4.711421 q -2.60183,0 -3.726946,-0.984476 -1.089956,-1.019636 -1.089956,-2.63699 0,-1.617354 1.089956,-2.60183 1.125116,-1.019636 3.726946,-1.019636 l 15.575819,0.03516 14.34522,35.405978 q 2.53151,0 3.34019,0.56256 1.61736,1.16028 1.61736,3.05891 0,1.58219 -1.08996,2.60183 -1.08996,0.98448 -3.69179,0.98448 h -9.70412 q -2.601829,0 -3.726944,-0.98448 -1.089956,-1.01964 -1.089956,-2.63699 0,-1.58219 1.089956,-2.56667 1.125115,-1.01964 3.726944,-1.01964 h 1.75799 z M 98.719463,94.636929 92.918085,80.362025 87.081548,94.636929 Z"
+       style="font-size:72.0074px;line-height:1.25"
+       id="path304" />
+  </g>
 </svg>

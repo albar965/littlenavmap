@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2020 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2024 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -38,11 +38,6 @@ class CoordinateConverter;
 class WaypointQuery
 {
 public:
-  /*
-   * @param sqlDb database for simulator scenery data
-   * @param sqlDbNav for updated navaids
-   */
-  WaypointQuery(atools::sql::SqlDatabase *sqlDbNav, bool trackDatabaseParam);
   ~WaypointQuery();
 
   WaypointQuery(const WaypointQuery& other) = delete;
@@ -55,8 +50,7 @@ public:
   map::MapWaypoint getWaypointByNavId(int navId, map::MapType type);
 
   /* Get a list of matching points for ident and optionally region. */
-  void getWaypointByByIdent(QList<map::MapWaypoint>& waypoints, const QString& ident,
-                            const QString& region = QString());
+  void getWaypointByByIdent(QList<map::MapWaypoint>& waypoints, const QString& ident, const QString& region, const QString& airport);
 
   /* Get nearest waypoint by screen coordinates for types and given map layer. */
   void getNearestScreenObjects(const CoordinateConverter& conv, const MapLayer *mapLayer, map::MapTypes types,
@@ -80,20 +74,29 @@ public:
   /* Get record for joined tables waypoint, bgl_file and scenery_area */
   const atools::sql::SqlRecord *getWaypointInformation(int waypointId);
 
+  atools::sql::SqlQuery *getWaypointsByRectQuery() const
+  {
+    return waypointsByRectQuery;
+  }
+
+private:
+  friend class Queries;
+  friend class WaypointTrackQuery;
+
+  /*
+   * @param sqlDb database for simulator scenery data
+   * @param sqlDbNav for updated navaids
+   */
+  explicit WaypointQuery(atools::sql::SqlDatabase *sqlDbNav, bool trackDatabaseParam);
+
   /* Close all query objects thus disconnecting from the database */
   void initQueries();
 
   /* Create and prepare all queries */
   void deInitQueries();
 
-  atools::sql::SqlQuery *getWaypointsByRectQuery() const
-  {
-    return waypointsByRectQuery;
-  }
-
   void clearCache();
 
-private:
   MapTypesFactory *mapTypesFactory;
   atools::sql::SqlDatabase *dbNav;
 
@@ -107,8 +110,8 @@ private:
 
   /* Database queries */
   atools::sql::SqlQuery *waypointByIdQuery = nullptr, *waypointByNavIdQuery = nullptr, *waypointNearestQuery = nullptr,
-                        *waypointRectQuery = nullptr, *waypointByIdentQuery = nullptr, *waypointsByRectQuery = nullptr,
-                        *waypointsAirwayByRectQuery = nullptr, *waypointInfoQuery = nullptr;
+                        *waypointRectQuery = nullptr, *waypointByIdentQuery = nullptr, *waypointByIdentAndAirportQuery = nullptr,
+                        *waypointsByRectQuery = nullptr, *waypointsAirwayByRectQuery = nullptr, *waypointInfoQuery = nullptr;
 };
 
 #endif // LITTLENAVMAP_WAYPOINTQUERY_H

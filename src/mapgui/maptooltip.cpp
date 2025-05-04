@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2023 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2024 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -17,13 +17,13 @@
 
 #include "mapgui/maptooltip.h"
 
-#include "airspace/airspacecontroller.h"
 #include "app/navapp.h"
 #include "common/htmlinfobuilder.h"
 #include "common/maptypes.h"
 #include "gui/mainwindow.h"
 #include "mapgui/mappaintwidget.h"
 #include "options/optiondata.h"
+#include "query/airspacequeries.h"
 #include "route/route.h"
 #include "sql/sqlrecord.h"
 #include "util/htmlbuilder.h"
@@ -116,8 +116,8 @@ QString MapTooltip::buildTooltip(const map::MapResult& mapSearchResult, const at
 #endif
 
   HtmlBuilder html(false);
-  MapPaintWidget *mapPaintWidget = NavApp::getMapPaintWidgetGui();
-  HtmlInfoBuilder info(mainWindow, mapPaintWidget, false /* infoParam */, false /* infoParam */, opts.testFlag(optsd::TOOLTIP_VERBOSE));
+  HtmlInfoBuilder info(QueryManager::instance()->getQueriesGui(), false /* info */, false /* print */,
+                       opts.testFlag(optsd::TOOLTIP_VERBOSE));
   int numEntries = 0;
   bool bearing = true, // Suppress bearing for user aircraft
        distance = true, // No distance to last flight plan leg for route legs
@@ -275,7 +275,7 @@ QString MapTooltip::buildTooltip(const map::MapResult& mapSearchResult, const at
   }
 
   // Departure parking ===========================================================================
-  if(!overflow && opts.testFlag(optsd::TOOLTIP_AIRPORT) && mapSearchResult.parkings.size() == 1)
+  if(!overflow && opts.testFlag(optsd::TOOLTIP_AIRPORT) && mapSearchResult.parkings.size() == 1 && !route.isEmpty())
   {
     // Do not show distance if departure parking is the only one in the list
     if(mapSearchResult.parkings.constFirst().id == route.getDepartureParking().id)
@@ -400,7 +400,7 @@ QString MapTooltip::buildTooltip(const map::MapResult& mapSearchResult, const at
 
         atools::sql::SqlRecord onlineRec;
         if(airspace.isOnline())
-          onlineRec = NavApp::getAirspaceController()->getOnlineAirspaceRecordById(airspace.id);
+          onlineRec = QueryManager::instance()->getQueriesGui()->getAirspaceQueries()->getOnlineAirspaceRecordById(airspace.id);
 
         info.airspaceText(airspace, onlineRec, html);
 

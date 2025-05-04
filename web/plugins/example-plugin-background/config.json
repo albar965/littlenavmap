@@ -1,0 +1,7 @@
+{
+  "title": "Example plugin \"background\"",
+  "type": "background",
+  "requestMapAccess": "demo",
+  "toolbars": [
+  ]
+}

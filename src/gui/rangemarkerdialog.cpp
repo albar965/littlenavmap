@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2020 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2024 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -61,7 +61,7 @@ QValidator::State RangeRingValidator::validate(QString& input, int&) const
     return Intermediate;
 
   QValidator::State state = Acceptable;
-  for(const QString& str : split)
+  for(const QString& str : qAsConst(split))
   {
     QString val = str.trimmed();
     if(!val.isEmpty())
@@ -152,7 +152,7 @@ RangeMarkerDialog::RangeMarkerDialog(QWidget *parent, const atools::geo::Pos& po
 
 RangeMarkerDialog::~RangeMarkerDialog()
 {
-  atools::gui::WidgetState(lnm::RANGE_MARKER_DIALOG).save({this, ui->checkBoxRangeMarkerDoNotShow});
+  atools::gui::WidgetState(lnm::RANGE_MARKER_DIALOG).save(QList<const QObject *>({this, ui->checkBoxRangeMarkerDoNotShow}));
 
   delete rangeRingValidator;
   delete units;
@@ -200,7 +200,7 @@ void RangeMarkerDialog::restoreState()
   updateButtonColor();
 }
 
-void RangeMarkerDialog::saveState()
+void RangeMarkerDialog::saveState() const
 {
   atools::gui::WidgetState widgetState(lnm::RANGE_MARKER_DIALOG, false);
   widgetState.save({this, ui->buttonGroupRangeMarker, ui->lineEditRangeMarkerRadii, ui->lineEditRangeMarkerLabel,
@@ -291,7 +291,7 @@ QString RangeMarkerDialog::rangeFloatToString(const QVector<float>& ranges) cons
     return txt.join(tr(" ", "Range ring number separator"));
 }
 
-QVector<float> RangeMarkerDialog::rangeStringToFloat(const QString& rangeStr) const
+const QVector<float> RangeMarkerDialog::rangeStringToFloat(const QString& rangeStr) const
 {
   QVector<float> retval;
   for(const QString& str : rangeStr.simplified().split(tr(" ", "Range ring separator")))

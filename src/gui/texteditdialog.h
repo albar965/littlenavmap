@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2020 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2024 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -39,7 +39,7 @@ public:
   /* settingsPrefixParam is used to save the dialog and checkbox state.
    * helpBaseUrlParam is the base URL of the help system. Help button will be hidden if empty.*/
   explicit TextEditDialog(QWidget *parent, const QString& title, const QString& labelText, const QString& labelText2,
-                          const QString& helpBaseUrlParam = QString());
+                          const QString& labelText3, const QString& helpBaseUrlParam = QString());
   virtual ~TextEditDialog() override;
 
   TextEditDialog(const TextEditDialog& other) = delete;
@@ -53,6 +53,7 @@ public:
 
 private:
   void buttonBoxClicked(QAbstractButton *button);
+  void linkActivated(const QString& link);
 
   Ui::TextEditDialog *ui;
   QString helpBaseUrl;

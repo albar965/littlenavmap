@@ -34,7 +34,7 @@
           <storageLayout levelZeroColumns="1" levelZeroRows="1" maximumTileLevel="19" mode="Custom"/>
           <projection name="Mercator"/>
 
-          <downloadUrl protocol="https" host="api.mapbox.com" path="/styles/v1/mapbox/outdoors-v11/tiles/512/{z}/{x}/{y}?access_token={Mapbox Token}" />
+          <downloadUrl protocol="https" host="api.mapbox.com" path="/styles/v1/mapbox/outdoors-v12/tiles/512/{z}/{x}/{y}?access_token={Mapbox Token}" />
 
           <!-- Use 2 to adapt to OSM requirements http://wiki.openstreetmap.org/wiki/Tile_usage_policy -->
           <downloadPolicy usage="Browse" maximumConnections="4"/>

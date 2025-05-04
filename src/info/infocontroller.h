@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2023 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2024 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -18,11 +18,10 @@
 #ifndef LITTLENAVMAP_INFOCONTROLLER_H
 #define LITTLENAVMAP_INFOCONTROLLER_H
 
-#include "fs/sc/simconnectdata.h"
-#include "common/mapresult.h"
 #include "common/tabindexes.h"
 
 #include <QObject>
+#include <QSet>
 
 class MainWindow;
 class MapQuery;
@@ -30,10 +29,28 @@ class AirportQuery;
 class InfoQuery;
 class HtmlInfoBuilder;
 class QTextEdit;
-class AirspaceController;
 class AircraftProgressConfig;
 
+class QTextBrowser;
+
+class Queries;
+namespace map {
+struct MapAirport;
+struct MapResult;
+}
 namespace atools {
+
+namespace geo {
+
+class Rect;
+class Pos;
+}
+
+namespace fs {
+namespace sc {
+class SimConnectData;
+}
+}
 namespace gui {
 class TabWidgetHandler;
 }
@@ -83,7 +100,7 @@ public:
   void routeChanged(bool, bool = false);
 
   /* Save ids of the objects shown in the tabs to content can be restored on startup */
-  void saveState();
+  void saveState() const;
   void restoreState();
 
   /* Reload panel information which might also trigger weather reading or downloads */
@@ -140,6 +157,8 @@ private:
   bool updateUserpointInternal(const map::MapResult& result, bool bearingChanged, bool scrollToTop);
 
   void updateTextEditFontSizes();
+
+  /* User clicked on "Map" link in text browsers */
   void anchorClicked(const QUrl& url);
   void clearInfoTextBrowsers();
   void showInformationInternal(map::MapResult result, bool showWindows, bool scrollToTop, bool forceUpdate);
@@ -167,28 +186,35 @@ private:
                       void (HtmlInfoBuilder::*func)(const TYPE&, atools::util::HtmlBuilder&) const) const;
 
   void showProgressContextMenu(const QPoint& point);
+
+  /* MSFS, X-Plane, etc. */
   QString getConnectionTypeText();
 
+  /* Blue help button in information dock clicked */
   void helpInfoClicked();
+
+  /* Blue help button in progress dock clicked */
   void helpAircraftClicked();
+
+  /* Update a text edit and clears selection after clicking a link */
+  void updateTextEdit(QTextEdit *textEdit, const QString& text, bool scrollToTop, bool keepSelection);
+
+  /* Text edits are stored here after anchors were clicked. Needed to clear unwanted selections after clicking a link. */
+  QSet<QTextEdit *> anchorsClicked;
 
   QString waitingForUpdateText, notConnectedText;
 
   bool databaseLoadStatus = false;
-  atools::fs::sc::SimConnectData lastSimData;
+  atools::fs::sc::SimConnectData *lastSimData;
   qint64 lastSimUpdate = 0;
   qint64 lastSimBearingUpdate = 0;
 
   /* Airport and navaids that are currently shown in the tabs */
-  map::MapResult currentSearchResult;
+  map::MapResult *currentSearchResult, *savedSearchResult;
 
   MainWindow *mainWindow = nullptr;
-  MapQuery *mapQuery = nullptr;
-  AirportQuery *airportQuery = nullptr;
-  AirspaceController *airspaceController = nullptr;
   HtmlInfoBuilder *infoBuilder = nullptr;
-
-  bool lessAircraftProgress = false;
+  Queries *queries;
 
   AircraftProgressConfig *aircraftProgressConfig;
 

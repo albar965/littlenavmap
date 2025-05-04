@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2023 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2025 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -17,18 +17,19 @@
 
 #include "mappainter/mappainter.h"
 
+#include "app/navapp.h"
+#include "common/formatter.h"
+#include "common/mapcolors.h"
+#include "common/maptools.h"
+#include "common/maptypes.h"
+#include "common/symbolpainter.h"
+#include "common/textplacement.h"
+#include "common/unit.h"
+#include "geo/calculations.h"
+#include "mapgui/maplayer.h"
 #include "mapgui/mappaintwidget.h"
 #include "mapgui/mapscale.h"
-#include "app/navapp.h"
-#include "common/symbolpainter.h"
-#include "geo/calculations.h"
-#include "common/mapcolors.h"
-#include "common/maptypes.h"
-#include "mapgui/maplayer.h"
-#include "common/formatter.h"
 #include "util/paintercontextsaver.h"
-#include "common/unit.h"
-#include "common/textplacement.h"
 
 #include <marble/GeoDataLineString.h>
 #include <marble/GeoDataLinearRing.h>
@@ -42,30 +43,36 @@ using namespace Marble;
 using namespace atools::geo;
 using atools::roundToInt;
 
-PaintAirportType::PaintAirportType(const map::MapAirport& ap, float x, float y)
+/* Minimum points to use for a circle */
+const float CIRCLE_MIN_POINTS = 32.f;
+/* Maximum points to use for a circle */
+const float CIRCLE_MAX_POINTS = 92.f;
+
+AirportPaintData::AirportPaintData(const map::MapAirport& ap, float x, float y)
   : airport(new map::MapAirport(ap)), point(x, y)
 {
 
 }
 
-PaintAirportType::~PaintAirportType()
+AirportPaintData::AirportPaintData(const AirportPaintData& other)
+  : airport(new map::MapAirport)
+{
+  this->operator=(other);
+}
+
+AirportPaintData::AirportPaintData()
+  : airport(new map::MapAirport)
+{
+}
+
+AirportPaintData::~AirportPaintData()
 {
   delete airport;
 }
 
-PaintAirportType& PaintAirportType::operator=(const PaintAirportType& other)
+AirportPaintData& AirportPaintData::operator=(const AirportPaintData& other)
 {
-  if(airport != nullptr && other.airport != nullptr)
-    *airport = *other.airport;
-  else if(airport == nullptr && other.airport != nullptr)
-    airport = new map::MapAirport(*other.airport);
-  else if(airport != nullptr && other.airport == nullptr)
-  {
-    delete airport;
-    airport = nullptr;
-  }
-  // else both nullptr
-
+  *airport = *other.airport;
   point = other.point;
   return *this;
 }
@@ -80,13 +87,13 @@ textflags::TextFlags PaintContext::airportTextFlags() const
   // Build and draw airport text
   textflags::TextFlags textflags = textflags::NONE;
 
-  if(mapLayer->isAirportInfo())
+  if(mapLayerText->isAirportInfo())
     textflags = textflags::INFO;
 
-  if(mapLayer->isAirportIdent())
+  if(mapLayerText->isAirportIdent())
     textflags |= textflags::IDENT;
 
-  if(mapLayer->isAirportName())
+  if(mapLayerText->isAirportName())
     textflags |= textflags::NAME;
 
   if(!flags2.testFlag(opts2::MAP_AIRPORT_TEXT_BACKGROUND))
@@ -100,13 +107,13 @@ textflags::TextFlags PaintContext::airportTextFlagsMinor() const
   // Build and draw airport text
   textflags::TextFlags textflags = textflags::NONE;
 
-  if(mapLayer->isAirportMinorInfo())
+  if(mapLayerText->isAirportMinorInfo())
     textflags = textflags::INFO;
 
-  if(mapLayer->isAirportMinorIdent())
+  if(mapLayerText->isAirportMinorIdent())
     textflags |= textflags::IDENT;
 
-  if(mapLayer->isAirportMinorName())
+  if(mapLayerText->isAirportMinorName())
     textflags |= textflags::NAME;
 
   if(!flags2.testFlag(opts2::MAP_AIRPORT_TEXT_BACKGROUND))
@@ -127,7 +134,7 @@ textflags::TextFlags PaintContext::airportTextFlagsRoute(bool drawAsRoute, bool 
     textflags |= textflags::LOG_TEXT;
 
   // Use more more detailed text for flight plan
-  if(mapLayer->isAirportRouteInfo())
+  if(mapLayerRouteText->isAirportRouteInfo())
     textflags |= textflags::NAME | textflags::INFO;
 
   if(!(flags2 & opts2::MAP_ROUTE_TEXT_BACKGROUND))
@@ -140,7 +147,6 @@ textflags::TextFlags PaintContext::airportTextFlagsRoute(bool drawAsRoute, bool 
 MapPainter::MapPainter(MapPaintWidget *parentMapWidget, MapScale *mapScale, PaintContext *paintContext)
   : CoordinateConverter(parentMapWidget->viewport()), context(paintContext), mapPaintWidget(parentMapWidget), scale(mapScale)
 {
-  airportQuery = NavApp::getAirportQuerySim();
   symbolPainter = new SymbolPainter();
 }
 
@@ -183,14 +189,15 @@ bool MapPainter::wToSBuf(const atools::geo::Pos& coords, QPointF& point, const Q
   return retval;
 }
 
-void MapPainter::paintArc(GeoPainter *painter, const Pos& centerPos, float radiusNm, float angleDegStart, float angleDegEnd, bool fast)
+void MapPainter::paintArc(GeoPainter *painter, const Pos& centerPos, float radiusNm, float angleDegStart, float angleDegEnd,
+                          bool fast) const
 {
   if(radiusNm > atools::geo::EARTH_CIRCUMFERENCE_METER / 4.f)
     return;
 
   // Calculate the number of points to use depending on screen resolution
-  int pixel = scale->getPixelIntForMeter(nmToMeter(radiusNm));
-  int numPoints = std::min(std::max(pixel / (fast ? 20 : 2), CIRCLE_MIN_POINTS), CIRCLE_MAX_POINTS);
+  float pixel = scale->getPixelForMeter(nmToMeter(radiusNm));
+  int numPoints = atools::minmax(CIRCLE_MIN_POINTS, CIRCLE_MAX_POINTS, pixel / (fast ? 20.f : 1.f));
 
   float radiusMeter = nmToMeter(radiusNm);
 
@@ -252,12 +259,12 @@ void MapPainter::paintArc(GeoPainter *painter, const Pos& centerPos, float radiu
   }
 }
 
-void MapPainter::paintCircle(GeoPainter *painter, const Pos& centerPos, float radiusNm, bool fast, QPoint *textPos)
+void MapPainter::paintCircle(GeoPainter *painter, const Pos& centerPos, float radiusNm, bool fast, QPoint *textPos) const
 {
   if(radiusNm > atools::geo::EARTH_CIRCUMFERENCE_METER / 4.f)
     return;
 
-  if(radiusNm < 1.f || atools::geo::meterToNm(context->zoomDistanceMeter) < 5.f)
+  if(radiusNm < 1.f && atools::geo::meterToNm(context->zoomDistanceMeter) < 5.f)
     // Use different method to draw circles with small radius to avoid distortion because of rounding errors
     // This one ignores spherical shape and projection at low zoom distances
     paintCircleSmallInternal(painter, centerPos, radiusNm, fast, textPos);
@@ -266,7 +273,7 @@ void MapPainter::paintCircle(GeoPainter *painter, const Pos& centerPos, float ra
     paintCircleLargeInternal(painter, centerPos, radiusNm, fast, textPos);
 }
 
-void MapPainter::paintCircleSmallInternal(GeoPainter *painter, const Pos& centerPos, float radiusNm, bool fast, QPoint *textPos)
+void MapPainter::paintCircleSmallInternal(GeoPainter *painter, const Pos& centerPos, float radiusNm, bool fast, QPoint *textPos) const
 {
   Q_UNUSED(fast)
 
@@ -302,11 +309,20 @@ void MapPainter::paintCircleSmallInternal(GeoPainter *painter, const Pos& center
   }
 }
 
-void MapPainter::paintCircleLargeInternal(GeoPainter *painter, const Pos& centerPos, float radiusNm, bool fast, QPoint *textPos)
+void MapPainter::paintCircleLargeInternal(GeoPainter *painter, const Pos& centerPos, float radiusNm, bool fast, QPoint *textPos) const
 {
+  // float PIXEL_PER_SEGMENT = 10;
+  // float circumferenceNm = 2.f * radiusNm * 3.1415926f;
+  // float circumferencePixel = scale->getPixelForMeter(nmToMeter(circumferenceNm));
+  // float numSegments = circumferencePixel / PIXEL_PER_SEGMENT;
+
   // Calculate the number of points to use depending on screen resolution
-  int pixel = scale->getPixelIntForMeter(nmToMeter(radiusNm));
-  int numPoints = std::min(std::max(pixel / (fast ? 20 : 2), CIRCLE_MIN_POINTS), CIRCLE_MAX_POINTS);
+  float pixel = scale->getPixelForMeter(nmToMeter(radiusNm));
+  int numPoints = atools::minmax(CIRCLE_MIN_POINTS, CIRCLE_MAX_POINTS, pixel / (fast ? 20.f : 1.5f));
+
+#ifdef DEBUG_INFORMATION_PAINT_CIRCLE
+  qDebug() << Q_FUNC_INFO << "pixel" << pixel << "numPoints" << numPoints;
+#endif
 
   float radiusMeter = nmToMeter(radiusNm);
 
@@ -399,7 +415,7 @@ void MapPainter::paintCircleLargeInternal(GeoPainter *painter, const Pos& center
   }
 }
 
-void MapPainter::drawLineStraight(Marble::GeoPainter *painter, const atools::geo::Line& line)
+void MapPainter::drawLineStraight(Marble::GeoPainter *painter, const atools::geo::Line& line) const
 {
   double x1, y1, x2, y2;
   bool visible1 = wToS(line.getPos1(), x1, y1);
@@ -409,32 +425,20 @@ void MapPainter::drawLineStraight(Marble::GeoPainter *painter, const atools::geo
     drawLine(painter, QPointF(x1, y1), QPointF(x2, y2));
 }
 
-void MapPainter::drawLine(QPainter *painter, const QLineF& line)
+void MapPainter::drawLine(QPainter *painter, const QLineF& line) const
 {
-  static const QMarginsF MARGINS(1., 1., 1., 1.);
-  QRectF rect(line.p1(), line.p2());
-  // Add margins to avoid null width and height which will not intersect with viewport
-  rect = rect.normalized().marginsAdded(MARGINS);
-
-  if(atools::geo::lineValid(line) && QRectF(painter->viewport()).intersects(rect))
-  {
-    // if(line.intersect(QLineF(rect.topLeft(), rect.topRight()), nullptr) == QLineF::BoundedIntersection ||
-    // line.intersect(QLineF(rect.topRight(), rect.bottomRight()), nullptr) == QLineF::BoundedIntersection ||
-    // line.intersect(QLineF(rect.bottomRight(), rect.bottomLeft()), nullptr) == QLineF::BoundedIntersection ||
-    // line.intersect(QLineF(rect.bottomLeft(), rect.topLeft()), nullptr) == QLineF::BoundedIntersection)
+  if(atools::geo::lineValid(line) && QRectF(painter->viewport()).intersects(correctBounding(QRectF(line.p1(), line.p2()))))
     painter->drawLine(line);
-  }
 }
 
-void MapPainter::drawCircle(Marble::GeoPainter *painter, const atools::geo::Pos& center, float radius)
+void MapPainter::drawCircle(Marble::GeoPainter *painter, const atools::geo::Pos& center, float radius) const
 {
   QPointF pt = wToSF(center);
   if(!pt.isNull())
     painter->drawEllipse(pt, radius, radius);
 }
 
-void MapPainter::drawText(Marble::GeoPainter *painter, const Pos& pos, const QString& text, bool topCorner,
-                          bool leftCorner)
+void MapPainter::drawText(Marble::GeoPainter *painter, const Pos& pos, const QString& text, bool topCorner, bool leftCorner) const
 {
   QPoint pt = wToS(pos);
   if(!pt.isNull())
@@ -446,26 +450,26 @@ void MapPainter::drawText(Marble::GeoPainter *painter, const Pos& pos, const QSt
   }
 }
 
-void MapPainter::drawCross(Marble::GeoPainter *painter, int x, int y, int size)
+void MapPainter::drawCross(Marble::GeoPainter *painter, int x, int y, int size) const
 {
   painter->drawLine(x, y - size, x, y + size);
   painter->drawLine(x - size, y, x + size, y);
 }
 
-void MapPainter::drawPolyline(Marble::GeoPainter *painter, const atools::geo::LineString& linestring)
+void MapPainter::drawPolyline(Marble::GeoPainter *painter, const atools::geo::LineString& linestring) const
 {
-  QVector<QPolygonF *> polygons = createPolylines(linestring, context->screenRect);
+  QVector<QPolygonF *> polygons = createPolylines(linestring, context->screenRect, true /* splitLongLines */);
   drawPolylines(painter, polygons);
   releasePolylines(polygons);
 }
 
-void MapPainter::drawPolylines(Marble::GeoPainter *painter, const QVector<QPolygonF *>& polygons)
+void MapPainter::drawPolylines(Marble::GeoPainter *painter, const QVector<QPolygonF *>& polygons) const
 {
   for(const QPolygonF *polygon : polygons)
     drawPolyline(painter, *polygon);
 }
 
-void MapPainter::drawPolyline(Marble::GeoPainter *painter, const QPolygonF& polygon)
+void MapPainter::drawPolyline(Marble::GeoPainter *painter, const QPolygonF& polygon) const
 {
   painter->drawPolyline(polygon);
 
@@ -492,22 +496,23 @@ void MapPainter::drawPolyline(Marble::GeoPainter *painter, const QPolygonF& poly
 #endif
 }
 
-void MapPainter::drawPolygon(Marble::GeoPainter *painter, const atools::geo::LineString& linestring)
+void MapPainter::drawPolygon(Marble::GeoPainter *painter, const atools::geo::LineString& linestring) const
 {
   QVector<QPolygonF *> polygons = createPolygons(linestring, context->screenRect);
   drawPolygons(painter, polygons);
   releasePolygons(polygons);
 }
 
-void MapPainter::drawPolygons(Marble::GeoPainter *painter, const QVector<QPolygonF *>& polygons)
+void MapPainter::drawPolygons(Marble::GeoPainter *painter, const QVector<QPolygonF *>& polygons) const
 {
   for(const QPolygonF *polygon : polygons)
     drawPolygon(painter, *polygon);
 }
 
-void MapPainter::drawPolygon(Marble::GeoPainter *painter, const QPolygonF& polygon)
+void MapPainter::drawPolygon(Marble::GeoPainter *painter, const QPolygonF& polygon) const
 {
-  painter->drawPolygon(polygon, Qt::OddEvenFill);
+  if(!polygon.isEmpty())
+    painter->drawPolygon(polygon, Qt::OddEvenFill);
 
 #ifdef DEBUG_INFORMATION_PAINT_POLYGON
   {
@@ -532,9 +537,14 @@ void MapPainter::drawPolygon(Marble::GeoPainter *painter, const QPolygonF& polyg
 #endif
 }
 
-void MapPainter::drawLine(Marble::GeoPainter *painter, const atools::geo::Line& line, bool forceDraw)
+void MapPainter::drawLine(Marble::GeoPainter *painter, const atools::geo::Line& line, bool forceDraw) const
 {
-  QVector<QPolygonF *> polygons = createPolylines(LineString(line.getPos1(), line.getPos2()), context->screenRect);
+  LineString linestring(line.getPos1(), line.getPos2());
+
+  // Move latitude values slightly up and down to workaround Marble drawing straight lines
+  maptools::correctLatY(linestring, false /* polygon */);
+
+  QVector<QPolygonF *> polygons = createPolylines(linestring, context->screenRect, true /* splitLongLines */);
   if(!polygons.isEmpty())
   {
     drawPolylines(painter, polygons);
@@ -543,14 +553,18 @@ void MapPainter::drawLine(Marble::GeoPainter *painter, const atools::geo::Line& 
   else if(forceDraw)
   {
     // Avoid disappearing line segments due to Marble
-    QPointF pt1 = wToSF(line.getPos1());
-    QPointF pt2 = wToSF(line.getPos2());
-    if(!pt1.isNull() && !pt2.isNull())
-      drawLine(context->painter, pt1, pt2);
+    for(const Line& splitLine : line.splitAtAntiMeridian())
+    {
+      bool visible1, visible2, hidden1, hidden2;
+      QPointF pt1 = wToSF(splitLine.getPos1(), DEFAULT_WTOS_SIZE, &visible1, &hidden1);
+      QPointF pt2 = wToSF(splitLine.getPos2(), DEFAULT_WTOS_SIZE, &visible2, &hidden2);
+      if(!hidden1 && !hidden2)
+        drawLine(context->painter, pt1, pt2);
+    }
   }
 }
 
-void MapPainter::paintArc(QPainter *painter, const QPointF& p1, const QPointF& p2, const QPointF& center, bool left)
+void MapPainter::paintArc(QPainter *painter, const QPointF& p1, const QPointF& p2, const QPointF& center, bool left) const
 {
   QRectF arcRect;
   float startAngle, spanAngle;
@@ -560,10 +574,9 @@ void MapPainter::paintArc(QPainter *painter, const QPointF& p1, const QPointF& p
 }
 
 void MapPainter::paintHoldWithText(QPainter *painter, float x, float y, float direction,
-                                   float lengthNm, float minutes, bool left,
-                                   const QString& text, const QString& text2,
+                                   float lengthNm, float minutes, bool left, const QString& text, const QString& text2,
                                    const QColor& textColor, const QColor& textColorBackground,
-                                   QVector<float> inboundArrows, QVector<float> outboundArrows)
+                                   const QVector<float>& inboundArrows, const QVector<float>& outboundArrows) const
 {
   // Scale to total length given in the leg
   // length = 2 * p + 2 * PI * p / 2
@@ -694,12 +707,11 @@ void MapPainter::paintHoldWithText(QPainter *painter, float x, float y, float di
     painter->restore();
   }
   painter->resetTransform();
-
 }
 
 void MapPainter::paintProcedureTurnWithText(QPainter *painter, float x, float y, float turnHeading, float distanceNm,
                                             bool left, QLineF *extensionLine, const QString& text,
-                                            const QColor& textColor, const QColor& textColorBackground)
+                                            const QColor& textColor, const QColor& textColorBackground) const
 {
   // One minute = 3.5 nm
   float pixel = scale->getPixelForFeet(atools::roundToInt(atools::geo::nmToFeet(3.f)));
@@ -761,7 +773,7 @@ void MapPainter::paintProcedureTurnWithText(QPainter *painter, float x, float y,
 
   // Calculate intersection with extension to get the end point
   QPointF intersect;
-  bool intersects = extension.intersect(returnSegment, &intersect) != QLineF::NoIntersection;
+  bool intersects = extension.intersects(returnSegment, &intersect) != QLineF::NoIntersection;
   if(intersects)
     returnSegment.setP2(intersect);
   // Make return segment a bit shorter than turn segment
@@ -792,16 +804,25 @@ void MapPainter::paintProcedureTurnWithText(QPainter *painter, float x, float y,
   painter->restore();
 }
 
-void MapPainter::paintAircraftTrail(const QVector<LineString>& lineStrings, float minAlt, float maxAlt)
+void MapPainter::paintAircraftTrail(const QVector<LineString>& lineStrings, float minAlt, float maxAlt,
+                                    const atools::geo::Pos& aircraftPos) const
 {
   if(!lineStrings.isEmpty())
   {
+    // Add aircraft position to avoid gap to current position
+    Line lastToAircraft;
+    if(aircraftPos.isValid() && !lineStrings.constLast().isEmpty())
+      lastToAircraft = Line(lineStrings.constLast().constLast(), aircraftPos);
+
     if(OptionData::instance().getFlags().testFlag(opts::MAP_TRAIL_GRADIENT))
     {
       // Draw black or white background as one single line ==========================
       context->painter->setPen(mapcolors::aircraftTrailPenOuter(context->szF(context->thicknessTrail, 2.f)));
       for(const LineString& lineString : lineStrings)
         drawPolyline(context->painter, lineString);
+
+      if(lastToAircraft.isValid())
+        drawLine(context->painter, lastToAircraft);
 
       // Split linestring and draw single line segments using different colors for gradient ==========================
       for(const LineString& lineString : lineStrings)
@@ -819,6 +840,9 @@ void MapPainter::paintAircraftTrail(const QVector<LineString>& lineStrings, floa
           drawLine(context->painter, line, true /* forceDraw */);
         }
       }
+
+      if(lastToAircraft.isValid())
+        drawLine(context->painter, lastToAircraft);
     }
     else
     {
@@ -826,11 +850,14 @@ void MapPainter::paintAircraftTrail(const QVector<LineString>& lineStrings, floa
       context->painter->setPen(mapcolors::aircraftTrailPen(context->szF(context->thicknessTrail, 2.f)));
       for(const LineString& lineString : lineStrings)
         drawPolyline(context->painter, lineString);
+
+      if(lastToAircraft.isValid())
+        drawLine(context->painter, lastToAircraft);
     }
   }
 }
 
-QPolygonF MapPainter::buildArrow(float size, bool downwards)
+QPolygonF MapPainter::buildArrow(float size, bool downwards) const
 {
   if(downwards)
     // Pointing downwards
@@ -840,7 +867,8 @@ QPolygonF MapPainter::buildArrow(float size, bool downwards)
     return QPolygonF({QPointF(0., -size), QPointF(size, size), QPointF(0., size / 2.), QPointF(-size, size)});
 }
 
-void MapPainter::paintArrowAlongLine(QPainter *painter, const atools::geo::Line& line, const QPolygonF& arrow, float pos, float minLengthPx)
+void MapPainter::paintArrowAlongLine(QPainter *painter, const atools::geo::Line& line, const QPolygonF& arrow, float pos,
+                                     float minLengthPx) const
 {
   bool visible, hidden;
   QPointF pt = wToSF(line.interpolate(pos), DEFAULT_WTOS_SIZE, &visible, &hidden);
@@ -866,7 +894,7 @@ void MapPainter::paintArrowAlongLine(QPainter *painter, const atools::geo::Line&
   }
 }
 
-void MapPainter::paintArrowAlongLine(QPainter *painter, const QLineF& line, const QPolygonF& arrow, float pos)
+void MapPainter::paintArrowAlongLine(QPainter *painter, const QLineF& line, const QPolygonF& arrow, float pos) const
 {
   painter->translate(line.pointAt(pos));
   painter->rotate(atools::geo::angleFromQt(line.angle()));
@@ -874,19 +902,24 @@ void MapPainter::paintArrowAlongLine(QPainter *painter, const QLineF& line, cons
   painter->resetTransform();
 }
 
-bool MapPainter::sortAirportFunction(const PaintAirportType& pap1, const PaintAirportType& pap2)
+bool MapPainter::sortAirportFunction(const AirportPaintData& airportPaintData1, const AirportPaintData& airportPaintData2)
 {
   // returns ​true if the first argument is less than (i.e. is ordered before) the second.
   // ">" puts true behind
   const OptionData& od = OptionData::instance();
-  bool addonFlag = context->objectTypes.testFlag(map::AIRPORT_ADDON);
-  bool empty3dFlag = od.getFlags2().testFlag(opts2::MAP_EMPTY_AIRPORTS_3D);
+
+  // Put add-on on top if any add-on filter is set
+  bool addonFlag = context->objectTypes.testFlag(map::AIRPORT_ADDON_ZOOM) ||
+                   context->objectTypes.testFlag(map::AIRPORT_ADDON_ZOOM_FILTER);
+
+  bool empty3dFlag = od.getFlags2().testFlag(opts2::MAP_EMPTY_AIRPORTS_3D) &&
+                     NavApp::getCurrentSimulatorDb() != atools::fs::FsPaths::XPLANE_12;
   bool emptyFlag = od.getFlags().testFlag(opts::MAP_EMPTY_AIRPORTS);
-  int priority1 = pap1.airport->paintPriority(addonFlag, emptyFlag, empty3dFlag);
-  int priority2 = pap2.airport->paintPriority(addonFlag, emptyFlag, empty3dFlag);
+  int priority1 = airportPaintData1.getAirport().paintPriority(addonFlag, emptyFlag, empty3dFlag);
+  int priority2 = airportPaintData2.getAirport().paintPriority(addonFlag, emptyFlag, empty3dFlag);
 
   if(priority1 == priority2)
-    return pap1.airport->id < pap2.airport->id;
+    return airportPaintData1.getAirport().id < airportPaintData2.getAirport().id;
   else
     // Smaller priority: Draw first below all other. Higher priority: Draw last on top of other
     return priority1 < priority2;
@@ -894,24 +927,20 @@ bool MapPainter::sortAirportFunction(const PaintAirportType& pap1, const PaintAi
 
 void MapPainter::initQueries()
 {
-  mapQuery = mapPaintWidget->getMapQuery();
-  airwayQuery = mapPaintWidget->getAirwayTrackQuery();
-  waypointQuery = mapPaintWidget->getWaypointTrackQuery();
+  queries = mapPaintWidget->getQueries();
 }
 
-void MapPainter::getPixmap(QPixmap& pixmap, const QString& resource, int size)
+void MapPainter::getPixmap(QPixmap& pixmap, const QString& resource, int size) const
 {
-  QPixmap *pixmapPtr = QPixmapCache::find(resource % "_" % QString::number(size));
-  if(pixmapPtr == nullptr)
+  if(!QPixmapCache::find(resource % "_" % QString::number(size), &pixmap))
   {
+    // Not found - create new one from resource
     pixmap = QIcon(resource).pixmap(QSize(size, size));
     QPixmapCache::insert(pixmap);
   }
-  else
-    pixmap = *pixmapPtr;
 }
 
-void MapPainter::paintMsaMarks(const QList<map::MapAirportMsa>& airportMsa, bool user, bool drawFast)
+void MapPainter::paintMsaMarks(const QList<map::MapAirportMsa>& airportMsa, bool user, bool drawFast) const
 {
   Q_UNUSED(user)
 
@@ -937,7 +966,7 @@ void MapPainter::paintMsaMarks(const QList<map::MapAirportMsa>& airportMsa, bool
 
       // Use width and style from pen but override transparency
       QColor gridCol = context->darkMap ? mapcolors::msaDiagramLinePenDark.color() : mapcolors::msaDiagramLinePen.color();
-      gridCol.setAlphaF(1. - context->transparencyAirportMsa);
+      gridCol.setAlphaF(atools::minmax(0., 1., 1. - context->transparencyAirportMsa));
       QPen pen = context->darkMap ? mapcolors::msaDiagramLinePenDark : mapcolors::msaDiagramLinePen;
       pen.setColor(gridCol);
       context->painter->setPen(pen);
@@ -977,7 +1006,7 @@ void MapPainter::paintMsaMarks(const QList<map::MapAirportMsa>& airportMsa, bool
         {
           // Do not use transparency but override from options
           QColor textCol = context->darkMap ? mapcolors::msaDiagramNumberColorDark : mapcolors::msaDiagramNumberColor;
-          textCol.setAlphaF(1. - context->transparencyAirportMsa);
+          textCol.setAlphaF(atools::minmax(0., 1., 1. - context->transparencyAirportMsa));
           context->painter->setPen(textCol);
 
           QFont font = context->painter->font();
@@ -1024,7 +1053,8 @@ void MapPainter::paintMsaMarks(const QList<map::MapAirportMsa>& airportMsa, bool
   }
 }
 
-void MapPainter::paintHoldingMarks(const QList<map::MapHolding>& holdings, bool user, bool drawFast)
+void MapPainter::paintHoldingMarks(const QList<map::MapHolding>& holdings, const MapLayer *layer, const MapLayer *layerText, bool user,
+                                   bool drawFast, bool darkMap) const
 {
   if(holdings.isEmpty())
     return;
@@ -1032,8 +1062,8 @@ void MapPainter::paintHoldingMarks(const QList<map::MapHolding>& holdings, bool 
   atools::util::PainterContextSaver saver(context->painter);
   GeoPainter *painter = context->painter;
 
-  bool detail = context->mapLayer->isHoldingInfo();
-  bool detail2 = context->mapLayer->isHoldingInfo2();
+  bool detail = layerText->isHoldingInfo();
+  bool detail2 = layerText->isHoldingInfo2();
 
   QColor backColor = user || context->flags2 & opts2::MAP_NAVAID_TEXT_BACKGROUND ? QColor(Qt::white) : QColor(Qt::transparent);
 
@@ -1042,6 +1072,8 @@ void MapPainter::paintHoldingMarks(const QList<map::MapHolding>& holdings, bool 
   else
     context->szFont(context->textSizeNavaid);
 
+  QColor holdingColor = mapcolors::holdingColor.lighter(darkMap ? 250 : 100);
+
   for(const map::MapHolding& holding : holdings)
   {
     bool visible, hidden;
@@ -1049,13 +1081,13 @@ void MapPainter::paintHoldingMarks(const QList<map::MapHolding>& holdings, bool 
     if(hidden)
       continue;
 
-    QColor color = user ? holding.color : mapcolors::holdingColor;
+    QColor color = user ? holding.color : holdingColor;
 
     float dist = holding.distance();
     float distPixel = scale->getPixelForNm(dist);
     float lineWidth = user ? context->szF(context->thicknessUserFeature, 3) : (detail2 ? 2.5f : 1.5f);
 
-    if(context->mapLayer->isApproach() && distPixel > 10.f)
+    if(layer->isApproach() && distPixel > 10.f)
     {
       // Calculcate approximate rectangle
       Rect rect(holding.position, atools::geo::nmToMeter(dist) * 2.f, true /* fast */);

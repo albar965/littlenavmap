@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2023 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2024 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -16,10 +16,12 @@
 *****************************************************************************/
 
 #include "info/aircraftprogressconfig.h"
-#include "gui/treedialog.h"
-#include "common/constants.h"
-#include "settings/settings.h"
+
 #include "atools.h"
+#include "common/constants.h"
+#include "common/textpointer.h"
+#include "gui/treedialog.h"
+#include "settings/settings.h"
 
 #include <QDebug>
 
@@ -98,7 +100,7 @@ void AircraftProgressConfig::progressConfiguration()
 
   /* *INDENT-OFF* */
   // =====================================================================================================================
-  /*: This and all following texts have to match the ones in HtmlInfoBuilder::aircraftProgressText() */
+  /* This and all following texts have to match the ones in HtmlInfoBuilder::aircraftProgressText() */
   QTreeWidgetItem *rootItem = treeDialog.getRootItem();
   treeDialog.addItem2(rootItem, pid::DATE_TIME_REAL,  tr("Real Date and Time"), tr("Real date and UTC time."));
   treeDialog.addItem2(rootItem, pid::LOCAL_TIME_REAL, tr("Real local Date and Time"), tr("Real local date and time."));
@@ -144,7 +146,7 @@ void AircraftProgressConfig::progressConfiguration()
   treeDialog.addItem2(nextItem, pid::NEXT_LEG_COURSE,       tr("Leg Course"), tr("Course of the current active flight plan leg."));
   treeDialog.addItem2(nextItem, pid::NEXT_HEADING,          tr("Heading"), tr("Heading to fly to the next waypoint considering wind."));
   treeDialog.addItem2(nextItem, pid::NEXT_CROSS_TRACK_DIST, tr("Cross Track Distance"), tr("Distance to flight plan leg.\n"
-                                                                                           "► means aircraft is left of flight plan leg (fly right) and ◄ means right of leg."));
+                                                                                           "%1 means aircraft is left of flight plan leg (fly right) and %2 means right of leg.").arg(TextPointer::getPointerRight()).arg(TextPointer::getPointerLeft()));
   treeDialog.addItem2(nextItem, pid::NEXT_REMARKS,              tr("Remarks"), tr("User entered remarks for an user flight plan position."));
 
   // Aircraft ==========================================================================================================
@@ -157,7 +159,7 @@ void AircraftProgressConfig::progressConfiguration()
   treeDialog.addItem2(aircraftItem, pid::AIRCRAFT_ENDURANCE,    tr("Endurance"), tr("Estimated endurance based on current fuel flow and groundspeed\n"
                                                                                     "considering reserves and contingency. Only shown if airborne.\n"
                                                                                     "Shows orange warning if below reserve and red error text if insufficient\n"
-                                                                                    "when no flightplan is used."));
+                                                                                    "when no flight plan is used."));
   treeDialog.addItem2(aircraftItem, pid::AIRCRAFT_ICE,          tr("Ice"), tr("Aircraft icing, if any."));
 
   // Altitude ==========================================================================================================
@@ -190,7 +192,8 @@ void AircraftProgressConfig::progressConfiguration()
   // Descent ==========================================================================================================
   QTreeWidgetItem *descentItem = treeDialog.addTopItem1(tr("Descent Path"));
   treeDialog.addItem2(descentItem, pid::DESCENT_DEVIATION,   tr("Deviation"), tr("Vertical altitude deviation from descent path.\n"
-                                                                                 "▼ means above (increase sink rate) and ▲ means below (decrease sink rate)."));
+                                                                                 "%1 means above (increase sink rate) and %2 means below (decrease sink rate).").
+                                                                            arg(TextPointer::getPointerDown()).arg(TextPointer::getPointerUp()));
   treeDialog.addItem2(descentItem, pid::DESCENT_ANGLE_SPEED, tr("Angle and Speed"), tr("Vertical flight path angle needed to keep the vertical path angle.\n"
                                                                                        "Changes to \"Required angle\" if mandatory in approach procedures."));
   treeDialog.addItem2(descentItem, pid::DESCENT_VERT_ANGLE_NEXT, tr("Angle and Speed to Next"), tr("Vertical descent angle and speed needed to arrive at\n"
@@ -199,8 +202,12 @@ void AircraftProgressConfig::progressConfiguration()
   // Environment ==========================================================================================================
   QTreeWidgetItem *envItem = treeDialog.addTopItem1(tr("Environment"));
   treeDialog.addItem2(envItem, pid::ENV_WIND_DIR_SPEED,   tr("Wind Direction and Speed"), tr("Wind direction and speed at aircraft.\n"
-                                                                                            "Second line shows headwind indicated by ▼ and tailwind by ▲\n"
-                                                                                            "as well as crosswind (► or ◄)."));
+                                                                                            "Second line shows headwind indicated by %1 and tailwind by %2\n"
+                                                                                            "as well as crosswind (%3 or %4).").
+                                                                                        arg(TextPointer::getWindPointerSouth()).
+                                                                                        arg(TextPointer::getWindPointerNorth()).
+                                                                                        arg(TextPointer::getWindPointerEast()).
+                                                                                        arg(TextPointer::getWindPointerWest()));
   treeDialog.addItem2(envItem, pid::ENV_TAT,              tr("Total Air Temperature"), tr("Total air temperature (TAT).\n"
                                                                                          "Also indicated air temperature (IAT) or ram air temperature."));
   treeDialog.addItem2(envItem, pid::ENV_SAT,              tr("Static Air Temperature"), tr("Static air temperature (SAT).\n"
@@ -220,7 +227,7 @@ void AircraftProgressConfig::progressConfiguration()
 
   // Check all items from enabled
   treeDialog.setAllChecked(false);
-  for(pid::ProgressConfId id : enabledIds)
+  for(pid::ProgressConfId id : qAsConst(enabledIds))
     treeDialog.setItemChecked(id);
 
   if(treeDialog.exec() == QDialog::Accepted)
@@ -237,7 +244,7 @@ void AircraftProgressConfig::progressConfiguration()
   }
 }
 
-void AircraftProgressConfig::saveState()
+void AircraftProgressConfig::saveState() const
 {
   atools::settings::Settings::instance().setValue(lnm::INFOWINDOW_PROGRESS_FIELDS, atools::numVectorToStrList(enabledIds).join(";"));
 }
@@ -263,7 +270,7 @@ void AircraftProgressConfig::updateBits()
 {
   // Update bitfield for HtmlBuilder
   enabledBits.fill(false, pid::LAST + 1);
-  for(pid::ProgressConfId id : enabledIds)
+  for(pid::ProgressConfId id : qAsConst(enabledIds))
     enabledBits.setBit(id, true);
 
   // Update separate bitfield with required additional fields

@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2023 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2025 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -17,9 +17,13 @@
 
 #include "web/webmapcontroller.h"
 
+#include "atools.h"
+#include "fs/sc/simconnectuseraircraft.h"
 #include "mapgui/mappaintwidget.h"
 #include "mapgui/mapwidget.h"
 #include "app/navapp.h"
+#include "mappainter/mappaintlayer.h"
+#include "query/airportquery.h"
 
 #include <QDebug>
 #include <QPixmap>
@@ -33,28 +37,35 @@ WebMapController::WebMapController(QWidget *parent, bool verboseParam)
 WebMapController::~WebMapController()
 {
   qDebug() << Q_FUNC_INFO;
-  deInit();
+  deInitMapPaintWidget();
 }
 
-void WebMapController::init()
+void WebMapController::initMapPaintWidget()
 {
   qDebug() << Q_FUNC_INFO;
 
-  deInit();
+  // Create a map widget if not already done and clone with the desired resolution
+  if(mapPaintWidget == nullptr)
+    mapPaintWidget = new MapPaintWidget(parentWidget, QueryManager::instance()->getQueriesWeb(), false /* no real widget - hidden */,
+                                        true /* web */);
 
-  // Create a map widget clone with the desired resolution
-  mapPaintWidget = new MapPaintWidget(parentWidget, false /* no real widget - hidden */);
+  // Copy all map settings including trail if changed
+  mapPaintWidget->copySettings(*NavApp::getMapWidgetGui(), true /* deep */);
+
+  // Ensure MapPaintLayer::mapLayer initialisation
+  mapPaintWidget->getMapPaintLayer()->updateLayers();
 
   // Activate painting
   mapPaintWidget->setActive();
 }
 
-void WebMapController::deInit()
+void WebMapController::deInitMapPaintWidget()
 {
-  qDebug() << Q_FUNC_INFO;
+  // Close queries to allow closing the databases
+  if(mapPaintWidget != nullptr)
+    mapPaintWidget->preDatabaseLoad();
 
-  delete mapPaintWidget;
-  mapPaintWidget = nullptr;
+  ATOOLS_DELETE_LOG(mapPaintWidget);
 }
 
 MapPixmap WebMapController::getPixmap(int width, int height)
@@ -70,26 +81,26 @@ MapPixmap WebMapController::getPixmapObject(int width, int height, web::ObjectTy
                                             float distanceKm)
 {
   if(verbose)
-    qDebug() << Q_FUNC_INFO << width << "x" << height << "type" << type << "ident" << ident << "distanceKm" <<
-      distanceKm;
+    qDebug() << Q_FUNC_INFO << width << "x" << height << "type" << type << "ident" << ident << "distanceKm" << distanceKm;
 
   MapPixmap mapPixmap;
   switch(type)
   {
-    case web::USER_AIRCRAFT: {
-      mapPixmap = getPixmapPosDistance(width, height, NavApp::getUserAircraftPos(), distanceKm, QLatin1String(""), tr("No user aircraft"));
+    case web::USER_AIRCRAFT:
+      mapPixmap = getPixmapPosDistance(width, height, mapPaintWidget->getUserAircraft().getPosition(), distanceKm, QLatin1String(""),
+                                       tr("No user aircraft"));
       break;
-    }
 
-    case web::ROUTE: {
+    case web::ROUTE:
       mapPixmap = getPixmapRect(width, height, NavApp::getRouteRect(), tr("No flight plan"));
       break;
-    }
 
-    case web::AIRPORT: {
-      mapPixmap = getPixmapPosDistance(width, height, NavApp::getAirportPos(ident), distanceKm, QLatin1String(""), tr("Airport %1 not found").arg(ident));
+    case web::AIRPORT:
+      atools::geo::Pos pos = mapPaintWidget->getQueries()->getAirportQuerySim()->getAirportPosByIdent(ident);
+
+      if(pos.isValid())
+        mapPixmap = getPixmapPosDistance(width, height, pos, distanceKm, QLatin1String(""), tr("Airport %1 not found").arg(ident));
       break;
-    }
   }
   return mapPixmap;
 }
@@ -103,14 +114,12 @@ MapPixmap WebMapController::getPixmapPosDistance(int width, int height, atools::
   if(!pos.isValid())
   {
     if(errorCase == QLatin1String(""))
-    {
       // Use current map position
-      pos.setLonX(static_cast<float>(NavApp::getMapWidgetGui()->centerLongitude()));
-      pos.setLatY(static_cast<float>(NavApp::getMapWidgetGui()->centerLatitude()));
-    }
+      pos= NavApp::getMapWidgetGui()->getCenterPos();
     else
     {
-      qWarning() << Q_FUNC_INFO << errorCase;
+      if(verbose)
+        qWarning() << Q_FUNC_INFO << errorCase;
       MapPixmap mappixmap;
       mappixmap.error = errorCase;
       return mappixmap;
@@ -119,13 +128,8 @@ MapPixmap WebMapController::getPixmapPosDistance(int width, int height, atools::
 
   if(mapPaintWidget != nullptr)
   {
-    QMutexLocker locker(&mapPaintWidgetMutex);
-
-    // Copy all map settings
-    mapPaintWidget->copySettings(*NavApp::getMapWidgetGui());
-
-    // Do not center world rectangle when resizing map widget
-    mapPaintWidget->setKeepWorldRect(false);
+    // Copy all map settings including trail if changed
+    mapPaintWidget->copySettings(*NavApp::getMapWidgetGui(), true /* deep */);
 
     // Jump to position without zooming for sharp map
     mapPaintWidget->showPosNotAdjusted(pos, distanceKm);
@@ -147,7 +151,8 @@ MapPixmap WebMapController::getPixmapPosDistance(int width, int height, atools::
         mapPaintWidget->zoomOut(Marble::Instant);
       else
       {
-        qWarning() << Q_FUNC_INFO << "Invalid map command" << mapCommand;
+        if(verbose)
+          qWarning() << Q_FUNC_INFO << "Invalid map command" << mapCommand;
         return MapPixmap();
       }
     }
@@ -170,13 +175,14 @@ MapPixmap WebMapController::getPixmapPosDistance(int width, int height, atools::
 
     // Fill result object
     mappixmap.pixmap = mapPaintWidget->getPixmap(width, height);
-    mappixmap.pos = mapPaintWidget->getCurrentViewCenterPos();
+    mappixmap.pos = mapPaintWidget->getCenterPos();
 
     return mappixmap;
   }
   else
   {
-    qWarning() << Q_FUNC_INFO << "mapPaintWidget is null";
+    if(verbose)
+      qWarning() << Q_FUNC_INFO << "mapPaintWidget is null";
     return MapPixmap();
   }
 }
@@ -190,13 +196,8 @@ MapPixmap WebMapController::getPixmapRect(int width, int height, atools::geo::Re
   {
     if(mapPaintWidget != nullptr)
     {
-      QMutexLocker locker(&mapPaintWidgetMutex);
-
-      // Copy all map settings
-      mapPaintWidget->copySettings(*NavApp::getMapWidgetGui());
-
-      // Do not center world rectangle when resizing
-      mapPaintWidget->setKeepWorldRect(false);
+      // Copy all map settings including trail if changed
+      mapPaintWidget->copySettings(*NavApp::getMapWidgetGui(), true /* deep */);
 
       mapPaintWidget->showRectStreamlined(rect);
 
@@ -205,19 +206,21 @@ MapPixmap WebMapController::getPixmapRect(int width, int height, atools::geo::Re
       // No distance requested. Therefore requested is equal to actual
       mapPixmap.correctedDistanceKm = mapPixmap.requestedDistanceKm = static_cast<float>(mapPaintWidget->distance());
       mapPixmap.pixmap = mapPaintWidget->getPixmap(width, height);
-      mapPixmap.pos = mapPaintWidget->getCurrentViewCenterPos();
+      mapPixmap.pos = mapPaintWidget->getCenterPos();
 
       return mapPixmap;
     }
     else
     {
-      qWarning() << Q_FUNC_INFO << "mapPaintWidget is null";
+      if(verbose)
+        qWarning() << Q_FUNC_INFO << "mapPaintWidget is null";
       return MapPixmap();
     }
   }
   else
   {
-    qWarning() << Q_FUNC_INFO << errorCase;
+    if(verbose)
+      qWarning() << Q_FUNC_INFO << errorCase;
     MapPixmap mapPixmap;
     mapPixmap.error = errorCase;
     return mapPixmap;

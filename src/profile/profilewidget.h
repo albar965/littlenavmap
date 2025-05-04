@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2023 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2024 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -70,14 +70,11 @@ public:
 
   /* If geometry has changed the elevation calculation is started after a short delay */
   void windUpdated();
-  void routeChanged(bool geometryChanged, bool newFlightPlan);
+  void routeChanged(bool geometryChanged, bool newFlightplan);
   void routeAltitudeChanged(int altitudeFeet);
 
   /* Update user aircraft on profile display */
   void simDataChanged(const atools::fs::sc::SimConnectData& simulatorData);
-
-  /* Track was shortened and needs a full update */
-  void aircraftTrailPruned();
 
   void simulatorStatusChanged();
 
@@ -89,8 +86,9 @@ public:
   /* Disables or enables aircraft and/or track display */
   void updateProfileShowFeatures();
 
-  /* Notification after track deletion */
-  void deleteAircraftTrail();
+  /* Deleting aircraft track needs an update of the screen coordinates.
+   * Called on manual delete and on takeoff detection. */
+  void deleteAircraftTrailPoints();
 
   /* Stops thread and disables all udpates */
   void preDatabaseLoad();
@@ -109,7 +107,7 @@ public:
   void styleChanged();
   void fontChanged(const QFont& font);
 
-  void saveState();
+  void saveState() const;
   void restoreState();
 
   /* Bring splitter to a resonable size after first start */
@@ -182,6 +180,9 @@ public:
 
   void showIlsChanged();
 
+  /* Stop jump back timer on shutdown */
+  void cancelJumpBack();
+
 signals:
   /* Emitted when the mouse cursor hovers over the map profile.
    * @param pos Position on the map display.
@@ -201,7 +202,11 @@ private:
   virtual void paintEvent(QPaintEvent *) override;
   virtual void showEvent(QShowEvent *) override;
   virtual void hideEvent(QHideEvent *) override;
+
+  /* Resizing needs an update of the screen coordinates */
   virtual void resizeEvent(QResizeEvent *) override;
+
+  /* Cursor leaves widget. Stop displaying the rubberband */
   virtual void leaveEvent(QEvent *) override;
 
   /* Mouse events*/
@@ -261,7 +266,7 @@ private:
   void updateErrorLabel();
 
   /* Load and save track separately */
-  void saveAircraftTrail();
+  void saveAircraftTrail() const;
   void loadAircraftTrail();
 
   void updateTooltip();

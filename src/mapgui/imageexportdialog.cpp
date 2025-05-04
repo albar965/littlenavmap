@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2020 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2025 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -47,23 +47,21 @@ const static QMap<ResolutionIndex, std::pair<int, int> > resolutions({
   {RES_4320P_7680_4320, std::make_pair(7680, 4320)}
 });
 
-ImageExportDialog::ImageExportDialog(QWidget *parent, const QString& titleParam, const QString& optionPrefixParam,
-                                     int currentWidth, int currentHeight)
-  : QDialog(parent), ui(new Ui::ImageExportDialog), optionPrefix(optionPrefixParam),
-  curWidth(currentWidth), curHeight(currentHeight)
+ImageExportDialog::ImageExportDialog(QWidget *parent, const QString& titleParam, const QString& optionPrefixParam, const QSize& size)
+  : QDialog(parent), ui(new Ui::ImageExportDialog), optionPrefix(optionPrefixParam), currentSize(size)
 {
   setWindowFlags(windowFlags() & ~Qt::WindowContextHelpButtonHint);
   setWindowModality(Qt::ApplicationModal);
 
   ui->setupUi(this);
-  setWindowTitle(QApplication::applicationName() + titleParam);
+  setWindowTitle(QCoreApplication::applicationName() + titleParam);
 
   ui->buttonBox->button(QDialogButtonBox::Ok)->setDefault(true);
   ui->comboBoxResolution->setFocus();
 
   // Put current map size into current map view option
   ui->comboBoxResolution->setItemText(CURRENT_MAP_VIEW, ui->comboBoxResolution->itemText(CURRENT_MAP_VIEW).
-                                      arg(curWidth).arg(curHeight));
+                                      arg(currentSize.width()).arg(currentSize.height()));
 
   connect(ui->comboBoxResolution, static_cast<void (QComboBox::*)(int)>(&QComboBox::currentIndexChanged),
           this, &ImageExportDialog::currentResolutionIndexChanged);
@@ -84,7 +82,7 @@ QSize ImageExportDialog::getSize() const
 {
   ResolutionIndex index = static_cast<ResolutionIndex>(ui->comboBoxResolution->currentIndex());
   if(index == CURRENT_MAP_VIEW)
-    return QSize(curWidth, curHeight);
+    return currentSize;
   else if(index == CUSTOM_RESOLUTION)
     return QSize(ui->spinBoxWidth->value(), ui->spinBoxHeight->value());
   else
@@ -94,14 +92,14 @@ QSize ImageExportDialog::getSize() const
   }
 }
 
-bool ImageExportDialog::isCurrentView() const
-{
-  return ui->comboBoxResolution->currentIndex() == CURRENT_MAP_VIEW;
-}
-
 bool ImageExportDialog::isAvoidBlurredMap() const
 {
   return ui->checkBoxAvoidBlurred->isChecked();
+}
+
+bool ImageExportDialog::isCurrentView() const
+{
+  return ui->comboBoxResolution->currentIndex() == CURRENT_MAP_VIEW;
 }
 
 void ImageExportDialog::buttonBoxClicked(QAbstractButton *button)
@@ -118,7 +116,7 @@ void ImageExportDialog::buttonBoxClicked(QAbstractButton *button)
     QDialog::reject();
 }
 
-void ImageExportDialog::saveState()
+void ImageExportDialog::saveState() const
 {
   atools::gui::WidgetState widgetState(optionPrefix, false);
   widgetState.save({
@@ -150,4 +148,5 @@ void ImageExportDialog::currentResolutionIndexChanged()
   ui->labelWidth->setEnabled(index == CUSTOM_RESOLUTION);
   ui->spinBoxHeight->setEnabled(index == CUSTOM_RESOLUTION);
   ui->labelHeight->setEnabled(index == CUSTOM_RESOLUTION);
+  ui->checkBoxAvoidBlurred->setDisabled(index == CURRENT_MAP_VIEW);
 }

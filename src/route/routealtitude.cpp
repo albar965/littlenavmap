@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2023 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2024 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -27,7 +27,7 @@
 
 #include <QLineF>
 
-// Altitude resuling from vertical angle is adjusted to restriction if close with this limit
+// Altitude resulting from vertical angle is adjusted to restriction if close with this limit
 const float VERT_ANGLE_ALT_ADJUST_LIMIT_FT = 100.f;
 
 // Tolerance when checking vertical angle with restrictions
@@ -40,7 +40,6 @@ const float AT_RESTRICTION_TOLERANCE_FT = 10.f;
 const float MIN_CRUISE_ALTITUDE_FT = 100.f;
 const float MIN_FLIGHTPLAN_DIST_NM = 0.5f;
 
-using atools::interpolate;
 namespace ageo = atools::geo;
 
 RouteAltitude::RouteAltitude(const Route *routeParam)
@@ -437,7 +436,7 @@ void RouteAltitude::calculateFuelAndTimeTo(FuelTimeResult& result, float distanc
     } // if(!alternate)
 
     // Calculate time and fuel to Next waypoint ============================================
-    if(distanceToNext >= 0.f && distanceToNext < map::INVALID_DISTANCE_VALUE)
+    if(!missed && distanceToNext >= 0.f && distanceToNext < map::INVALID_DISTANCE_VALUE)
     {
       float distFromStart = activeLeg.getDistanceFromStart() - distanceToNext;
 
@@ -530,6 +529,10 @@ void RouteAltitude::calculateFuelAndTimeTo(FuelTimeResult& result, float distanc
     result.fuelGalToDest = distanceToDest / aircraftGroundSpeed * aircraftFuelFlowGal;
     result.timeToDest = distanceToDest / aircraftGroundSpeed;
   }
+
+#ifdef DEBUG_INFORMATION
+  qDebug() << Q_FUNC_INFO << result;
+#endif
 }
 
 float RouteAltitude::adjustAltitudeForRestriction(float altitude, const proc::MapAltRestriction& restriction) const
@@ -1111,7 +1114,7 @@ void RouteAltitude::calculateAll(const atools::fs::perf::AircraftPerf& perf, flo
   qDebug() << "legIndexTopOfClimb" << legIndexTopOfClimb << "legIndexTopOfDescent" << legIndexTopOfDescent;
   qDebug() << "validProfile" << validProfile << "unflyableLegs" << unflyableLegs;
   qDebug() << "climbRateWindFtPerNm" << climbRateWindFtPerNm << "descentRateWindFtPerNm" << descentRateWindFtPerNm
-           << "cruiseAltitide" << cruiseAltitude;
+           << "cruiseAltitude" << cruiseAltitude;
 
   qDebug() << Q_FUNC_INFO << "exit";
 #endif
@@ -1417,9 +1420,9 @@ void RouteAltitude::calculateArrival()
   // Need to step from procedure over missed so that airport is caught too
   for(int i = destinationAirportLegIndex; i >= 0; i--)
   {
-    RouteAltitudeLeg& alt = (*this)[i];
+    RouteAltitudeLeg& altLeg = (*this)[i];
 
-    if(alt.isMissed())
+    if(altLeg.isMissed())
       continue;
 
     RouteAltitudeLeg *lastAltLeg = i < destinationLegIdx ? &(*this)[i + 1] : nullptr;
@@ -1457,17 +1460,17 @@ void RouteAltitude::calculateArrival()
       {
         // Calculate next altitude from vertical angle and use this as new altitude
         // tan(alpha)=a/b - looking for b
-        alt.restriction.verticalAngleAlt = lastAlt + ageo::nmToFeet(ageo::tanDeg(-lastAltLeg->verticalAngle) * distFromRight);
+        altLeg.restriction.verticalAngleAlt = lastAlt + ageo::nmToFeet(ageo::tanDeg(-lastAltLeg->verticalAngle) * distFromRight);
 
         // Correct calculated verticalAngleAlt since there might be small differences causing validation errors
-        adjustVertAngleAltForRestriction(alt.restriction);
-        newAltitude = alt.restriction.verticalAngleAlt;
+        adjustVertAngleAltForRestriction(altLeg.restriction);
+        newAltitude = altLeg.restriction.verticalAngleAlt;
       }
       else
       {
         // Use a default value of 3 nm per 1000 ft if performance is not available
         newAltitude = lastAlt + distFromRight * descentRateWindFtPerNm;
-        alt.restriction.verticalAngleAlt = map::INVALID_ALTITUDE_VALUE;
+        altLeg.restriction.verticalAngleAlt = map::INVALID_ALTITUDE_VALUE;
       }
     }
 
@@ -1475,21 +1478,21 @@ void RouteAltitude::calculateArrival()
     qDebug() << Q_FUNC_INFO << "newAltitude" << newAltitude;
 #endif
 
-    if(!alt.isEmpty())
+    if(!altLeg.isEmpty())
     {
       // Remember geometry which is not changed by altitude restrictions for calculation of cruise intersection
       float uncorrectedAltitude = newAltitude;
 
       // Get new altitude corrected by restrictions
-      newAltitude = adjustAltitudeForRestriction(newAltitude, alt.restriction);
+      newAltitude = adjustAltitudeForRestriction(newAltitude, altLeg.restriction);
 
 #ifdef DEBUG_INFORMATION_ROUTE_ALT
       qDebug() << Q_FUNC_INFO << "newAltitude adjusted" << newAltitude;
 #endif
 
       // Correct calculated altitude restriction if the result from the path angle is not accurate
-      if(alt.restriction.verticalAngleAlt < map::INVALID_ALTITUDE_VALUE)
-        alt.restriction.verticalAngleAlt = newAltitude;
+      if(altLeg.restriction.verticalAngleAlt < map::INVALID_ALTITUDE_VALUE)
+        altLeg.restriction.verticalAngleAlt = newAltitude;
 
       // Avoid climbing (up the descent slope) above any below/at/between restrictions
       float maxAlt = findApproachMaxAltitude(i + 1);
@@ -1498,6 +1501,14 @@ void RouteAltitude::calculateArrival()
         // Adjust only if there is no vertical angle restriction on the next/right leg
         if(lastAltLeg == nullptr || !lastAltLeg->isVerticalProcAngleValid())
           newAltitude = std::min(newAltitude, maxAlt);
+
+        // Have a vertical angle but the resulting altitude is above the maximum found ahead
+        // Example: MMBT MMGL/PLADE.I29-Z
+        if(altLeg.restriction.verticalAngleAlt < map::INVALID_ALTITUDE_VALUE && maxAlt < altLeg.restriction.verticalAngleAlt)
+        {
+          altLeg.restriction.verticalAngleAlt = maxAlt;
+          newAltitude = maxAlt;
+        }
       }
 
 #ifdef DEBUG_INFORMATION_ROUTE_ALT
@@ -1529,7 +1540,7 @@ void RouteAltitude::calculateArrival()
 
         // Reached TOD - calculate distance
         distanceTopOfDescent = distanceForAltitude(value(i + 1).getGeometry().constLast(),
-                                                   QPointF(alt.getDistanceFromStart(), uncorrectedAltitude), cruiseAltitude);
+                                                   QPointF(altLeg.getDistanceFromStart(), uncorrectedAltitude), cruiseAltitude);
         legIndexTopOfDescent = i + 1;
 
 #ifdef DEBUG_INFORMATION_ROUTE_ALT
@@ -1540,10 +1551,10 @@ void RouteAltitude::calculateArrival()
         {
           if(!lastAltLeg->topOfClimb)
             // Adjust only if not modified by TOC calculation
-            alt.setY2(std::min(newAltitude, cruiseAltitude));
+            altLeg.setY2(std::min(newAltitude, cruiseAltitude));
 
           // Adjust neighbor too
-          lastAltLeg->setY1(alt.y2());
+          lastAltLeg->setY1(altLeg.y2());
 
           // Append point to allow drawing the bend at TOD - TOC position might be already included in leg
           lastAltLeg->geometry.insert(lastAltLeg->geometry.size() - 1, QPointF(distanceTopOfDescent, cruiseAltitude));
@@ -1560,18 +1571,18 @@ void RouteAltitude::calculateArrival()
       }
 
       // Adjust altitude to be above last and below cruise
-      alt.setY2(newAltitude);
-      alt.setY2(std::min(alt.y2(), cruiseAltitude));
+      altLeg.setY2(newAltitude);
+      altLeg.setY2(std::min(altLeg.y2(), cruiseAltitude));
 
       if(lastAltLeg != nullptr)
-        alt.setY2(std::max(alt.y2(), lastLegAlt));
-      if(i == destinationLegIdx && i != departureLegIndex && !alt.topOfClimb)
-        alt.setY1(alt.y2());
+        altLeg.setY2(std::max(altLeg.y2(), lastLegAlt));
+      if(i == destinationLegIdx && i != departureLegIndex && !altLeg.topOfClimb)
+        altLeg.setY1(altLeg.y2());
 
       if(lastAltLeg != nullptr)
-        lastAltLeg->setY1(alt.y2());
+        lastAltLeg->setY1(altLeg.y2());
 
-      lastAlt = alt.y2();
+      lastAlt = altLeg.y2();
     }
   }
 }
@@ -2078,17 +2089,17 @@ QDebug operator<<(QDebug out, const FuelTimeResult& obj)
   QDebugStateSaver saver(out);
   out.noquote().nospace()
     << "FuelTimeResult["
-    << "fuelLbsToDest" << (obj.isFuelToDestValid() ? obj.fuelLbsToDest : -1.f)
-    << "fuelGalToDest" << (obj.isFuelToDestValid() ? obj.fuelGalToDest : -1.f)
-    << "timeToDest" << (obj.isTimeToDestValid() ? obj.timeToDest : -1.f)
-    << "fuelLbsToTod" << (obj.isFuelToTodValid() ? obj.fuelLbsToTod : -1.f)
-    << "fuelGalToTod" << (obj.isFuelToTodValid() ? obj.fuelGalToTod : -1.f)
-    << "timeToTod" << (obj.isTimeToTodValid() ? obj.timeToTod : -1.f)
-    << "fuelLbsToNext" << (obj.isFuelToNextValid() ? obj.fuelLbsToNext : -1.f)
-    << "fuelGalToNext" << (obj.isFuelToNextValid() ? obj.fuelGalToNext : -1.f)
-    << "timeToNext" << (obj.isTimeToNextValid() ? obj.timeToNext : -1.f)
-    << "estimatedFuel" << obj.estimatedFuel
-    << "estimatedTime" << obj.estimatedTime
+    << "fuelLbsToDest " << (obj.isFuelToDestValid() ? obj.fuelLbsToDest : -1.f)
+    << ", fuelGalToDest " << (obj.isFuelToDestValid() ? obj.fuelGalToDest : -1.f)
+    << ", timeToDest " << (obj.isTimeToDestValid() ? obj.timeToDest : -1.f)
+    << ", fuelLbsToTod " << (obj.isFuelToTodValid() ? obj.fuelLbsToTod : -1.f)
+    << ", fuelGalToTod " << (obj.isFuelToTodValid() ? obj.fuelGalToTod : -1.f)
+    << ", timeToTod " << (obj.isTimeToTodValid() ? obj.timeToTod : -1.f)
+    << ", fuelLbsToNext " << (obj.isFuelToNextValid() ? obj.fuelLbsToNext : -1.f)
+    << ", fuelGalToNext " << (obj.isFuelToNextValid() ? obj.fuelGalToNext : -1.f)
+    << ", timeToNext " << (obj.isTimeToNextValid() ? obj.timeToNext : -1.f)
+    << ", estimatedFuel " << obj.estimatedFuel
+    << ", estimatedTime " << obj.estimatedTime
     << "]";
   return out;
 }
@@ -2096,18 +2107,18 @@ QDebug operator<<(QDebug out, const FuelTimeResult& obj)
 QDebug operator<<(QDebug out, const RouteAltitude& obj)
 {
   QDebugStateSaver saver(out);
-  out << "TOC dist" << obj.getTopOfClimbDistance()
-      << "index" << obj.getTopOfClimbLegIndex()
-      << "TOD dist" << obj.getTopOfDescentDistance()
-      << "index" << obj.getTopOfDescentLegIndex()
-      << "travelTime " << obj.getTravelTimeHours()
-      << "averageSpeed" << obj.getAverageGroundSpeed()
-      << "tripFuel" << obj.getTripFuel()
-      << "alternateFuel" << obj.getAlternateFuel()
-      << "totalDistance" << obj.route->getTotalDistance()
-      << endl;
+  out.noquote().nospace() << "TOC dist " << obj.getTopOfClimbDistance()
+                          << ", index " << obj.getTopOfClimbLegIndex()
+                          << ", TOD dist " << obj.getTopOfDescentDistance()
+                          << ", index " << obj.getTopOfDescentLegIndex()
+                          << ", travelTime  " << obj.getTravelTimeHours()
+                          << ", averageSpeed " << obj.getAverageGroundSpeed()
+                          << ", tripFuel " << obj.getTripFuel()
+                          << ", alternateFuel " << obj.getAlternateFuel()
+                          << ", totalDistance " << obj.route->getTotalDistance()
+                          << endl;
 
   for(int i = 0; i < obj.size(); i++)
-    out << "++++++++++++++++++++++" << endl << i << obj.value(i) << endl;
+    out << "++++++++++++++++++++++" << endl << i << " " << obj.value(i) << endl;
   return out;
 }

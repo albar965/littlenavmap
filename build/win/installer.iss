@@ -1,4 +1,5 @@
 ﻿// =====================================================================================================
+// Inno Setup installer script https://jrsoftware.org/isinfo.php
 // Script to create the Little Navmap installer for the 32-bit and 64-bit versions.
 //
 // This file has to be encoded using UTF-8 with BOM.
@@ -11,7 +12,7 @@
 // Command line parameters with defaults ==========================================================================
 // Set defaults for debugging if not given on the command line
 #ifndef LnmAppVersion
-  #define LnmAppVersion "2.8.12.rc2"
+  #define LnmAppVersion "3.0.9"
 #endif
 
 #ifndef LnmAppArch
@@ -82,18 +83,28 @@ PrivilegesRequired=admin
 // PrivilegesRequiredOverridesAllowed=dialog
 OutputDir={#LnmAppProjects}\deploy
 OutputBaseFilename={#LnmInstaller}
-SetupIconFile={#LnmAppProjects}\littlenavmap\resources\icons\littlenavmap.ico
+; convert -density 300 -define icon:auto-resize=256,64,48,32,16 -background none littlenavmapinstall.svg littlenavmapinstall.ico
+SetupIconFile={#LnmAppProjects}\littlenavmap\resources\icons\littlenavmapinstall.ico
 Compression={#LnmAppCompress}
 SolidCompression=yes
 WizardStyle=modern
+CloseApplications=yes
+CloseApplicationsFilter=*.exe
 #if LnmAppArch == "win64"
-  // "ArchitecturesAllowed=x64" specifies that Setup cannot run on
-  // anything but x64.
-  ArchitecturesAllowed=x64
-  // "ArchitecturesInstallIn64BitMode=x64" requests that the install be
-  // done in "64-bit mode" on x64, meaning it should use the native
-  // 64-bit Program Files directory and the 64-bit view of the registry.
-  ArchitecturesInstallIn64BitMode=x64
+  ; x64compatible
+  ; Matches systems capable of running x64 binaries.
+  ; This includes systems running x64 Windows, and also Arm64-based Windows 11 systems,
+  ; which have the ability to run x64 binaries via emulation.
+
+  ; Specifies which architectures Setup is allowed to run on.
+  ; If none of the specified architecture identifiers match the current system,
+  ; Setup will display an error message (WindowsVersionNotSupported) and exit.
+  ArchitecturesAllowed=x64compatible
+
+  ; Only allow the installer to run on x64-compatible systems,
+  ; and enable 64-bit install mode.
+  ; 64-bit Program Files directory and the 64-bit view of the registry.
+  ArchitecturesInstallIn64BitMode=x64compatible
 #endif
 
 ; ==========================================================================
@@ -140,6 +151,9 @@ de.DeleteSettingsMessage=Alle Einstellungen, Datenbanken und Dateien im Zwischen
 DeleteSettingsMessage2=This will delete all userpoints as well%nas the logbook and cannot be undone.%n%nAre your sure?
 en.DeleteSettingsMessage2=This will delete all userpoints as well%nas the logbook and cannot be undone.%n%nAre your sure?
 de.DeleteSettingsMessage2=Dies löscht alle Nutzerpunkte und das Logbuch und kann nicht rückgängig gemacht werden.%n%nWirklich löschen?
+QuitProgramMessage=Please quit Little Navmap and/or Little Navconnect if they are still running.%nOtherwise the uninstallation may be incomplete.%n%nTrying to quit the programs automatically now.
+en.QuitProgramMessage=Please quit Little Navmap and/or Little Navconnect if they are still running.%nOtherwise the uninstallation may be incomplete.%n%nTrying to quit the programs automatically now.
+de.QuitProgramMessage=Bitte beenden Sie Little Navmap bzw. Little Navconnect, falls sie noch laufen.%nAnsonsten kann die Deinstallation unvollständig sein.%n%nVersuche jetzt, die Programme automatisch zu beenden.
 
 // ==========================================================================
 [Tasks]
@@ -161,16 +175,31 @@ Name: lnmfmsassociation; Description: "{cm:AssocFileExtension,{#LnmAppName},X-Pl
 // LNM exe and whole folder
 [Files]
 Source: "{#LnmAppSourceBase}\{#LnmAppExeName}"; DestDir: "{app}"; Flags: ignoreversion
-Source: "{#LnmAppSourceDir}"; DestDir: "{app}"; Flags: ignoreversion recursesubdirs createallsubdirs
+Source: "{#LnmAppSourceDir}"; DestDir: "{app}"; Excludes: "\Little Navmap Portable.cmd, \littlenavmap.debug, \Little Navconnect\littlenavconnect.debug"; Flags: ignoreversion recursesubdirs createallsubdirs
 // VC++ redistributable runtime. Extracted by VC2017RedistNeedsInstall(), if needed.
 #if LnmAppArch == "win64"
   Source: "{#LnmAppProjects}\Redist\vcredist_2015-2022.x64.exe"; DestDir: {tmp}; Flags: deleteafterinstall
 #elif LnmAppArch == "win32"
   Source: "{#LnmAppProjects}\Redist\vcredist_2005_x86.exe"; DestDir: {tmp}; Flags: deleteafterinstall
 #endif
-
 Source: "{#LnmAppProjects}\littlenavmap\build\win\Little Navmap User Manual Online.url"; DestDir: "{app}\help";
 Source: "{#LnmAppProjects}\littlenavmap\build\win\Little Navmap User Manual Online Start.url"; DestDir: "{app}\help";
+
+// Delete obsolete files before installation ==========================================================================
+[InstallDelete]
+Type: files; Name: "{app}\translations\atools_*.qm"
+Type: files; Name: "{app}\translations\littlenavmap_*.qm"
+Type: files; Name: "{app}\Little Navconnect\translations\atools_*.qm"
+Type: files; Name: "{app}\Little Navconnect\translations\littlenavconnect_*.qm"
+Type: files; Name: "{app}\Little Navmap Portable.cmd"
+Type: files; Name: "{app}\Little Navmap\help\little-navmap-user-manual-en.pdf"
+Type: files; Name: "{autoprograms}\{#LnmAppName} {#AppSuffix}\Little Navmap*PDF*.lnk"
+Type: files; Name: "{app}\data\maps\earth\stamenterrain\stamenterrain.dgml"
+Type: files; Name: "{app}\data\maps\earth\stamenterrain\stamenterrain-preview.png"
+Type: files; Name: "{app}\data\maps\earth\stamenterrain\0\0\0.png"
+Type: dirifempty; Name: "{app}\data\maps\earth\stamenterrain\0\0"
+Type: dirifempty; Name: "{app}\data\maps\earth\stamenterrain\0"
+Type: dirifempty; Name: "{app}\data\maps\earth\stamenterrain"
 
 // File associations ==========================================================================
 [Registry]
@@ -193,7 +222,6 @@ Root: HKCR; Subkey: "{#LnmAppNameReg}\shell\open\command"; ValueType: string; Va
 [Icons]
 Name: "{autoprograms}\{#LnmAppName} {#AppSuffix}\{#LnmAppName}"; Filename: "{app}\{#LnmAppExeName}"
 Name: "{autoprograms}\{#LnmAppName} {#AppSuffix}\{#LnmAppConnectName}"; Filename: "{app}\{#LnmAppConnectName}\{#LnmAppConnectExeName}"
-Name: "{autoprograms}\{#LnmAppName} {#AppSuffix}\Little Navmap {cm:UserManualMessage} PDF (Offline)"; Filename: "{app}\help\little-navmap-user-manual-en.pdf"
 Name: "{autoprograms}\{#LnmAppName} {#AppSuffix}\Little Navmap {cm:UserManualMessage} (Online)"; Filename: "{app}\help\Little Navmap User Manual Online.url"
 Name: "{autoprograms}\{#LnmAppName} {#AppSuffix}\{cm:ChangelogMessage}"; Filename: "{app}\CHANGELOG.TXT"
 Name: "{autoprograms}\{#LnmAppName} {#AppSuffix}\{cm:ReadmeMessage}"; Filename: "{app}\README.TXT"
@@ -211,6 +239,15 @@ Filename: "{app}\CHANGELOG.txt"; Description: "{cm:ChangelogMessage}"; Flags: no
   Filename: "{tmp}\vcredist_2005_x86.exe"; StatusMsg: "{cm:InstallingRedistMessage}"; Parameters: "/Q"; Flags: runascurrentuser waituntilterminated
 #endif
 
+[Code]
+function InitializeUninstall(): Boolean;
+  var ErrorCode: Integer;
+begin
+  MsgBox(CustomMessage('QuitProgramMessage'), mbInformation, MB_OK)
+  ShellExec('open','taskkill.exe',' /im {#LnmAppExeName}', '', SW_HIDE, ewNoWait, ErrorCode);
+  ShellExec('open','taskkill.exe',' /im {#LnmAppConnectExeName}', '', SW_HIDE, ewNoWait, ErrorCode);
+  result := True;
+end;
 
 // ==========================================================================
 // Ask to delete 'ABarthel' settings and the Marble cache files on uninstall

@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2023 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2024 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -38,6 +38,63 @@ using atools::sql::SqlDatabase;
 using atools::gui::ErrorHandler;
 using atools::sql::SqlRecord;
 
+/* Default - all conditions are combined using "and" */
+const static QLatin1String WHERE_OPERATOR(" and ");
+const static QLatin1String ESCAPE(" escape '\\'");
+
+class WhereCondition
+{
+public:
+  WhereCondition(const QString& operParam, const QString& escapeParam, const QVariant& valueSqlParam, const QVariant& valueDisplayParam,
+                 const Column *colParam)
+    : sqlOperator(operParam), escape(escapeParam), valueSql(valueSqlParam), valueDisplay(valueDisplayParam), col(colParam)
+  {
+  }
+
+  const QString& getOperator() const
+  {
+    return sqlOperator;
+  }
+
+  const QString& getEscape() const
+  {
+    return escape;
+  }
+
+  const QVariant& getValueSql() const
+  {
+    return valueSql;
+  }
+
+  const QVariant& getValueDisplay() const
+  {
+    return valueDisplay;
+  }
+
+  const QString& getColumnName() const
+  {
+    return col->getColumnName();
+  }
+
+  bool isWidgetEnabled() const
+  {
+    return col->isWidgetEnabled();
+  }
+
+  bool isIncludesName() const
+  {
+    return col->isIncludesName();
+  }
+
+private:
+  QString sqlOperator, /* operator (like, not like) */
+          escape; /* Escape string */
+  QVariant valueSql; /* Condition value including % or other SQL characters */
+  QVariant valueDisplay; /* Raw value as entered in the search form */
+  const Column *col; /* Column descriptor */
+};
+
+// ================================================================================================================
 SqlModel::SqlModel(QWidget *parent, SqlDatabase *sqlDb, const ColumnList *columnList)
   : QSqlQueryModel(parent), db(sqlDb), columns(columnList), parentWidget(parent)
 {
@@ -51,10 +108,10 @@ SqlModel::~SqlModel()
 {
 }
 
-void SqlModel::filterByBuilder(const QWidget *widget)
+void SqlModel::filterByBuilder()
 {
   qDebug() << Q_FUNC_INFO;
-  buildQuery(widget);
+  buildQuery();
 }
 
 void SqlModel::filterIncluding(QModelIndex index, bool forceQueryBuilder, bool exact)
@@ -97,7 +154,7 @@ void SqlModel::filterBy(bool exclude, QString whereCol, QVariant whereValueDisp,
   if(whereConditionMap.contains(whereCol))
     whereConditionMap.remove(whereCol);
 
-  QString whereOp;
+  QString whereOp, escape;
   QVariant whereValueSql = whereValueDisp;
 
   // Replace '*' with '%' for SQL
@@ -106,7 +163,10 @@ void SqlModel::filterBy(bool exclude, QString whereCol, QVariant whereValueDisp,
   if(whereValueDisp.isNull())
     whereOp = exclude ? "is not null" : "is null";
   else
+  {
     whereOp = exclude ? " not like " : " like ";
+    escape = ESCAPE;
+  }
 
   if(exact)
   {
@@ -194,7 +254,7 @@ void SqlModel::filterBy(bool exclude, QString whereCol, QVariant whereValueDisp,
   }
 
   if(!forceQueryBuilder)
-    whereConditionMap.insert(whereCol, {whereOp, whereValueSql, whereValueDisp, col});
+    whereConditionMap.insert(whereCol, WhereCondition(whereOp, escape, whereValueSql, whereValueDisp, col));
 
   // Done updating - allow updates to the query again
   updatingWidgets = false;
@@ -207,8 +267,7 @@ void SqlModel::filter(const Column *col, const QVariant& variantDisp, const QVar
   QString colName = col->getColumnName();
   bool colAlreadyFiltered = whereConditionMap.contains(colName);
 
-  if((variantDisp.isNull() && !maxValue.isValid()) ||
-     (variantDisp.isNull() && maxValue.isNull()) ||
+  if((variantDisp.isNull() && !maxValue.isValid()) || (variantDisp.isNull() && maxValue.isNull()) ||
      (variantDisp.type() == QVariant::String && variantDisp.toString().isEmpty()))
   {
     // If we get a null value or an empty string and the
@@ -219,7 +278,7 @@ void SqlModel::filter(const Column *col, const QVariant& variantDisp, const QVar
   else
   {
     QVariant variantSql;
-    QString oper;
+    QString oper, escape;
 
     if(col->hasMinMaxSpinbox())
     {
@@ -275,11 +334,15 @@ void SqlModel::filter(const Column *col, const QVariant& variantDisp, const QVar
           else
           {
             oper = "not like";
+            escape = ESCAPE;
             newVal.remove(0, 1);
           }
         }
         else
+        {
           oper = "like";
+          escape = ESCAPE;
+        }
 
         // Replace '*' with '%' for SQL
         buildSqlWhereValue(newVal, exact);
@@ -296,19 +359,10 @@ void SqlModel::filter(const Column *col, const QVariant& variantDisp, const QVar
       }
     }
 
-    if(colAlreadyFiltered)
-    {
-      // Replace values in existing condition
-      whereConditionMap[colName].oper = oper;
-      whereConditionMap[colName].valueSql = variantSql;
-      whereConditionMap[colName].valueDisplay = variantDisp;
-      whereConditionMap[colName].col = col;
-    }
-    else
-      // Insert new condition
-      whereConditionMap.insert(colName, {oper, variantSql, variantDisp, col});
+    // Insert new condition or replace values in existing condition
+    whereConditionMap.insert(colName, WhereCondition(oper, escape, variantSql, variantDisp, col));
   }
-  buildQuery(col->getLineEditWidget());
+  buildQuery();
 }
 
 void SqlModel::buildSqlWhereValue(QVariant& whereValue, bool exact) const
@@ -320,13 +374,10 @@ void SqlModel::buildSqlWhereValue(QVariant& whereValue, bool exact) const
 
 void SqlModel::buildSqlWhereValue(QString& whereValue, bool exact) const
 {
-  // Replace '*' with '%' for SQL
-
   if(!whereValue.isEmpty())
   {
-    // Replace user placeholders
-    if(whereValue.contains('*'))
-      whereValue = whereValue.replace('*', '%');
+    // Escape characters and replace '*' with '%' for SQL
+    whereValue = whereValue.replace("%", "\\%").replace("_", "\\_").replace('*', '%');
 
     if(whereValue.startsWith('"') && whereValue.endsWith('"'))
       // Remove quotes from exact searches
@@ -476,10 +527,8 @@ QString SqlModel::buildColumnList(const atools::sql::SqlRecord& tableCols)
 }
 
 /* Create SQL query and set it into the model */
-void SqlModel::buildQuery(const QWidget *widgetFromBuilder)
+void SqlModel::buildQuery()
 {
-  Q_UNUSED(widgetFromBuilder)
-
   // Ignore signals/messages from values set in widgets
   if(updatingWidgets)
     return;
@@ -545,7 +594,7 @@ void SqlModel::buildQuery(const QWidget *widgetFromBuilder)
     currentSqlFetchQuery.clear();
 
 #ifdef DEBUG_INFORMATION
-  qDebug() << Q_FUNC_INFO << currentSqlQuery;
+  qDebug().noquote().nospace() << Q_FUNC_INFO << " " << currentSqlQuery;
 #endif
 
   // Emit the columns which probably override other search options
@@ -636,35 +685,35 @@ QString SqlModel::buildWhere(const atools::sql::SqlRecord& tableCols, QVector<co
   for(const WhereCondition& cond : tempWhereConditionMap)
   {
     // Check if widget is enable and/or visible - do not consider query values from hidden search options
-    if(!cond.col->isWidgetEnabled())
+    if(!cond.isWidgetEnabled())
       continue;
 
     // Extract the required column from the comment in the operator and  check if it exists in the table
     // Currently used in airport search rating/3d query
-    QString checkCol = cond.col->getColumnName();
+    QString checkCol = cond.getColumnName();
 
-    QRegularExpressionMatch match = REQUIRED_COL_MATCH.match(cond.oper);
+    QRegularExpressionMatch match = REQUIRED_COL_MATCH.match(cond.getOperator());
     if(match.hasMatch())
       checkCol = match.captured(1);
 
     if(!tableCols.contains(checkCol))
     {
       // Skip not existing columns for backwards compatibility
-      qWarning() << Q_FUNC_INFO << columns->getTablename() % '.' % cond.col->getColumnName() << "does not exist";
+      qWarning() << Q_FUNC_INFO << columns->getTablename() % '.' % cond.getColumnName() << "does not exist";
       continue;
     }
 
     if(!queryWhere.isEmpty())
       queryWhere += WHERE_OPERATOR;
 
-    if(cond.col->isIncludesName())
+    if(cond.isIncludesName())
       // Condition includes column name
-      queryWhere += ' ' % cond.oper % ' ';
+      queryWhere += ' ' % cond.getOperator() % ' ';
     else
-      queryWhere += cond.col->getColumnName() % ' ' % cond.oper % ' ';
+      queryWhere += cond.getColumnName() % ' ' % cond.getOperator() % ' ';
 
-    if(!cond.valueSql.isNull())
-      queryWhere += buildWhereValue(cond);
+    if(!cond.getValueSql().isNull())
+      queryWhere += buildWhereValue(cond) % cond.getEscape();
   }
 
   if(isDistanceSearchActive() && !overrideModeActive)
@@ -709,14 +758,14 @@ bool SqlModel::isDistanceSearchActive() const
 /* Convert a value to string for the where clause */
 QString SqlModel::buildWhereValue(const WhereCondition& cond)
 {
-  QVariant::Type type = cond.valueSql.type();
+  QVariant::Type type = cond.getValueSql().type();
   QString val;
   if(type == QVariant::String || type == QVariant::Char)
     // Use semicolons for string and escape single quotes
-    val = " '" % cond.valueSql.toString().replace("'", "''") % "'";
+    val = " '" % cond.getValueSql().toString().replace("'", "''") % "'";
   else if(type == QVariant::Bool || type == QVariant::Int || type == QVariant::UInt || type == QVariant::LongLong ||
           type == QVariant::ULongLong || type == QVariant::Double)
-    val = ' ' % cond.valueSql.toString();
+    val = ' ' % cond.getValueSql().toString();
   return val;
 }
 

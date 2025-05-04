@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2023 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2025 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -49,16 +49,6 @@ void MapTypesFactory::fillAirport(const SqlRecord& record, map::MapAirport& airp
   }
   else
     airport.position = Pos(record.valueFloat("lonx"), record.valueFloat("laty"), 0.f);
-}
-
-void MapTypesFactory::fillAirportForOverview(const SqlRecord& record, map::MapAirport& airport, bool nav, bool xplane)
-{
-  fillAirportBase(record, airport, true);
-  airport.navdata = nav;
-  airport.xplane = xplane;
-
-  airport.flags = fillAirportFlags(record, true);
-  airport.position = Pos(record.valueFloat("lonx"), record.valueFloat("laty"), 0.f);
 }
 
 void MapTypesFactory::fillRunway(const atools::sql::SqlRecord& record, map::MapRunway& runway, bool overview)
@@ -143,7 +133,7 @@ void MapTypesFactory::fillAirportBase(const SqlRecord& record, map::MapAirport& 
     ap.name = record.valueStr("name");
     ap.type = static_cast<map::MapAirportType>(record.valueInt("type", map::AP_TYPE_NONE));
     ap.longestRunwayLength = record.valueInt("longest_runway_length");
-    ap.longestRunwayHeading = static_cast<int>(std::round(record.valueFloat("longest_runway_heading")));
+    ap.longestRunwayHeading = atools::roundToInt(record.valueFloat("longest_runway_heading"));
     ap.magvar = record.valueFloat("mag_var");
     ap.transitionAltitude = record.valueFloat("transition_altitude", 0.f);
     ap.transitionLevel = record.valueFloat("transition_level", 0.f);
@@ -362,6 +352,7 @@ void MapTypesFactory::fillLogbookEntry(const atools::sql::SqlRecord& rec, MapLog
   obj.aircraftRegistration = rec.valueStr("aircraft_registration");
   obj.simulator = rec.valueStr("simulator");
   obj.distanceNm = rec.valueFloat("distance");
+  obj.distanceFlownNm = rec.valueFloat("distance_flown", 0.f);
   obj.distanceGcNm = atools::geo::meterToNm(obj.lineString().lengthMeter());
 
   if(!rec.isNull("departure_time") && !rec.isNull("destination_time"))
@@ -435,6 +426,7 @@ void MapTypesFactory::fillWaypoint(const SqlRecord& record, map::MapWaypoint& wa
   waypoint.id = record.valueInt(track ? "trackpoint_id" : "waypoint_id");
   waypoint.ident = record.valueStr("ident");
   waypoint.region = record.valueStr("region");
+  waypoint.name = record.valueStr("name", QString());
   waypoint.type = record.valueStr("type");
   waypoint.arincType = record.valueStr("arinc_type", QString());
   waypoint.magvar = record.valueFloat("mag_var");
@@ -450,6 +442,7 @@ void MapTypesFactory::fillWaypointFromNav(const SqlRecord& record, map::MapWaypo
   waypoint.id = record.valueInt("waypoint_id");
   waypoint.ident = record.valueStr("ident");
   waypoint.region = record.valueStr("region");
+  waypoint.name = record.valueStr("name", QString());
   waypoint.type = record.valueStr("type");
   waypoint.arincType = record.valueStr("arinc_type", QString());
   waypoint.magvar = record.valueFloat("mag_var");
@@ -502,8 +495,6 @@ void MapTypesFactory::fillAirwayOrTrack(const SqlRecord& record, map::MapAirway&
       airway.type = map::TRACK_NAT;
     else if(type == 'P')
       airway.type = map::TRACK_PACOTS;
-    else if(type == 'A')
-      airway.type = map::TRACK_AUSOTS;
     else
       qWarning() << Q_FUNC_INFO << "Invalid track type" << record.valueStr("track_type");
 
@@ -644,6 +635,8 @@ map::MapType MapTypesFactory::strToType(const QString& navType)
     return map::VOR; // VOR/TACAN/DME
   else if(navType == "A")
     return map::AIRPORT;
+  else if(navType == "I")
+    return map::ILS;
   else if(navType == "R")
     return map::RUNWAYEND;
 
@@ -788,7 +781,7 @@ void MapTypesFactory::fillStart(const SqlRecord& record, map::MapStart& start)
   start.heading = record.valueFloat("heading");
 }
 
-void MapTypesFactory::fillAirspace(const SqlRecord& record, map::MapAirspace& airspace, map::MapAirspaceSources src)
+void MapTypesFactory::fillAirspace(const SqlRecord& record, map::MapAirspace& airspace, map::MapAirspaceSource src)
 {
   if(record.contains("boundary_id"))
     airspace.id = record.valueInt("boundary_id");
@@ -798,7 +791,7 @@ void MapTypesFactory::fillAirspace(const SqlRecord& record, map::MapAirspace& ai
   airspace.src = src;
 
   airspace.type = map::airspaceTypeFromDatabase(record.valueStr("type"));
-  airspace.name = record.valueStr(airspace.isOnline() ? "callsign" : "name");
+  airspace.name = airspace.isOnline() ? record.valueStr("callsign").trimmed() : atools::fs::util::capNavString(record.valueStr("name"));
   airspace.comType = record.valueStr("com_type");
 
   QString comCol;
@@ -818,9 +811,9 @@ void MapTypesFactory::fillAirspace(const SqlRecord& record, map::MapAirspace& ai
   }
 
   // Use default values for online network ATC centers
-  airspace.comName = record.valueStr("com_name", QString());
+  airspace.comName = atools::fs::util::capNavString(record.valueStr("com_name", QString()).trimmed());
   airspace.multipleCode = record.valueStr("multiple_code", QString()).trimmed();
-  airspace.restrictiveDesignation = record.valueStr("restrictive_designation", QString());
+  airspace.restrictiveDesignation = atools::fs::util::capNavString(record.valueStr("restrictive_designation", QString()));
   airspace.restrictiveType = record.valueStr("restrictive_type", QString());
   airspace.timeCode = record.valueStr("time_code", QString());
   airspace.minAltitudeType = record.valueStr("min_altitude_type", QString());

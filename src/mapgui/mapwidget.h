@@ -1,16 +1,14 @@
 /*****************************************************************************
-* Copyright 2015-2023 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2024 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
 * the Free Software Foundation, either version 3 of the License, or
 * (at your option) any later version.
-*
 * This program is distributed in the hope that it will be useful,
 * but WITHOUT ANY WARRANTY; without even the implied warranty of
 * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 * GNU General Public License for more details.
-*
 * You should have received a copy of the GNU General Public License
 * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 *****************************************************************************/
@@ -19,7 +17,7 @@
 #define LITTLENAVMAP_NAVMAPWIDGET_H
 
 #include "mapgui/mappaintwidget.h"
-
+#include "mapgui/mapwidgetflags.h"
 #include "gui/mapposhistory.h"
 #include "geo/linestring.h"
 
@@ -32,6 +30,7 @@ class MapTooltip;
 class MapVisible;
 class QContextMenuEvent;
 class QPushButton;
+class QInputEvent;
 
 namespace atools {
 namespace sql {
@@ -48,36 +47,6 @@ struct MapWaypoint;
 struct MapVor;
 struct MapNdb;
 struct MapBase;
-}
-
-namespace mw {
-/* State of click, drag and drop actions on the map */
-enum MouseState
-{
-  NONE = 0, /* Nothing */
-
-  DRAG_DIST_NEW_END = 1 << 0, /* A new distance measurement line is dragged moving the endpoint */
-  DRAG_DIST_CHANGE_START = 1 << 1, /* A present distance measurement line is changed dragging the origin */
-  DRAG_DIST_CHANGE_END = 1 << 2, /* A present distance measurement line is changed dragging the endpoint */
-
-  DRAG_ROUTE_LEG = 1 << 3, /* Changing a flight plan leg by adding a new point */
-  DRAG_ROUTE_POINT = 1 << 4, /* Changing the flight plan by replacing a present waypoint */
-
-  DRAG_USER_POINT = 1 << 5, /* Moving a userpoint around */
-
-  DRAG_POST = 1 << 6, /* Mouse released - all done */
-  DRAG_POST_MENU = 1 << 7, /* A menu is opened after selecting multiple objects.
-                            * Avoid cancelling all drag when loosing focus */
-  DRAG_POST_CANCEL = 1 << 8, /* Right mousebutton clicked - cancel all actions */
-
-  /* Used to check if any interaction is going on */
-  DRAG_ALL = mw::DRAG_DIST_NEW_END | mw::DRAG_DIST_CHANGE_START | mw::DRAG_DIST_CHANGE_END |
-             mw::DRAG_ROUTE_LEG | mw::DRAG_ROUTE_POINT |
-             mw::DRAG_USER_POINT
-};
-
-Q_DECLARE_FLAGS(MouseStates, MouseState);
-Q_DECLARE_OPERATORS_FOR_FLAGS(mw::MouseStates);
 }
 
 /*
@@ -102,7 +71,7 @@ public:
   void historyBack();
 
   /* Save and restore markers, Marble plug-in settings, loaded KML files and more */
-  void saveState();
+  void saveState() const;
   void restoreState();
 
   /* Get zoom and scroll position history */
@@ -126,7 +95,7 @@ public:
   /* The main window show event was triggered after program startup. */
   void mainWindowShown();
 
-  /* Show home position or last postion on map after program startup */
+  /* Show home position or last postion on map after program startup. Also set status of widget to active */
   void showSavedPosOnStartup();
 
   /* Show or hide all map overlays (optionally excluding scalebar) */
@@ -177,11 +146,14 @@ public:
   /* Change the search center mark to given position */
   void changeSearchMark(const atools::geo::Pos& pos);
 
-  /* Show jump to coordinates dialog called from main menu */
-  void jumpCoordinates();
+  /* Show jump to coordinates dialog called from main menu or context menu */
+  void jumpToCoordinatesCenter();
 
-  /* Show jump to coordinates dialog called from context menu */
-  void jumpCoordinatesPos(const atools::geo::Pos& pos);
+  /* Copy coordinates to clipboard from context menu or shortcut Ctrl+C on the map. */
+  void copyCoordinatesCursor();
+
+  /* Stop jump back timer on shutdown */
+  void cancelJumpBack();
 
   /* Save current position and zoom distance as home */
   void changeHome();
@@ -199,7 +171,7 @@ public:
   void removeDistanceMark(int id);
 
   /* Set map details in widget and update statusbar */
-  void setMapDetail(int level);
+  void setMapDetail(int level, int levelText);
 
   /* Reset details and feature visibility on the map back to default */
   void resetSettingsToDefault();
@@ -207,8 +179,9 @@ public:
   /* Removes all range rings and distance measurement lines */
   void clearAllMarkers(map::MapTypes types);
 
-  void loadAircraftTrail(const QString& filename);
-  void appendAircraftTrail(const QString& filename);
+  /* Return number of truncated points */
+  void loadAircraftTrail(const QString& filename, int& numLoaded, int& numTruncated);
+  void appendAircraftTrail(const QString& filename, int& numLoaded, int& numTruncated);
 
   /* Delete the current aircraft track. Will not stop collecting new track points */
   void deleteAircraftTrail();
@@ -244,7 +217,11 @@ public:
     return currentDistanceMarkerId;
   }
 
+  /* Shows the configuration dialog for the degree grid */
   void showGridConfiguration();
+
+  /* Logs map display settings */
+  void printMapTypesToLog();
 
 signals:
   /* Emitted when connection is established and user aircraft turned from invalid to valid */
@@ -253,6 +230,9 @@ signals:
   /* Fuel flow started or stopped */
   void aircraftEngineStarted(const atools::fs::sc::SimConnectUserAircraft& aircraft);
   void aircraftEngineStopped(const atools::fs::sc::SimConnectUserAircraft& aircraft);
+
+  /* Aircraft was close to departure point on runway */
+  void aircraftHasPassedTakeoffPoint(const atools::fs::sc::SimConnectUserAircraft& aircraft);
 
   /* State isFlying between last and current aircraft has changed */
   void aircraftTakeoff(const atools::fs::sc::SimConnectUserAircraft& aircraft);
@@ -326,7 +306,7 @@ private:
   };
 
   /* Change map detail level in paint layer and update map visible tooltip in statusbar */
-  void setDetailLevel(int level);
+  void setDetailLevel(int level, int levelText);
 
   /* Update tooltip in case of weather changes */
   void showTooltip(bool update);
@@ -395,7 +375,7 @@ private:
   void jumpBackToAircraftTimeout(const atools::geo::Pos& pos);
 
   /* Needed filter to avoid and/or disable some Marble pecularities */
-  bool eventFilter(QObject *obj, QEvent *evt) override;
+  bool eventFilter(QObject *obj, QEvent *eventParam) override;
 
   /* Check for modifiers on mouse click and start actions like range rings on Ctrl+Click */
   bool mousePressCheckModifierActions(QMouseEvent *event);
@@ -407,10 +387,13 @@ private:
   /* Show menu to allow selection of a map feature below the cursor */
   bool showFeatureSelectionMenu(int& id, map::MapTypes& type, const map::MapResult& result, const QString& menuText);
 
+  void jumpToCoordinatesPos(const atools::geo::Pos& pos);
+  void copyCoordinatesPos(const atools::geo::Pos& pos);
+
   /* MapPaintWidget overrides for UI updates mostly ============================================================ */
   virtual void optionsChanged() override;
   virtual void overlayStateFromMenu() override;
-  virtual void overlayStateToMenu() override;
+  virtual void overlayStateToMenu() const override;
 
   virtual void updateThemeUi(const QString& themeId) override;
   virtual void updateMapVisibleUi() const override;
@@ -424,6 +407,8 @@ private:
 
   /* Hide and prevent re-show */
   virtual void hideTooltip() override;
+
+  /* Update result set for tooltip */
   void updateTooltipResult();
 
   virtual void handleHistory() override;
@@ -438,7 +423,7 @@ private:
 
   virtual void contextMenuEvent(QContextMenuEvent *event) override;
   virtual void focusOutEvent(QFocusEvent *) override;
-  virtual void keyPressEvent(QKeyEvent *event) override;
+  virtual void keyPressEvent(QKeyEvent *keyEvent) override;
   virtual void leaveEvent(QEvent *) override;
 
   /* Catch tooltip event */
@@ -450,7 +435,16 @@ private:
   void zoomInOut(bool directionIn, bool smooth);
 
   /* true if point is not hidden by globe */
-  bool pointVisible(const QPoint& point);
+  bool isPointVisible(const QPoint& point)
+  {
+    return getGeoPos(point).isValid();
+  }
+
+  void debugMovingAircraft(QInputEvent *event, int upDown);
+
+  /* Some global actions which require handling in the context menu have to be disconnected to avoid double call */
+  void disconnectGlobalActions();
+  void connectGlobalActions();
 
   int screenSearchDistance /* Radius for click sensitivity */,
       screenSearchDistanceTooltip /* Radius for tooltip sensitivity */;
@@ -458,7 +452,7 @@ private:
   /* Used to check if mouse moved between button down and up */
   QPoint mouseMoved;
 
-  mw::MouseStates mouseState = mw::NONE;
+  mapwin::MouseStates mouseState = mapwin::NONE;
   bool contextMenuActive = false;
 
   /* Current moving position when dragging a flight plan point or leg */
@@ -480,7 +474,7 @@ private:
 
   /* Save last tooltip position. If invalid/null no tooltip will be shown */
   QPoint tooltipGlobalPos;
-  map::MapResult *mapSearchResultTooltip, *mapSearchResultTooltipLast, *mapSearchResultInfoClick;
+  map::MapResult *mapResultTooltip, *mapResultTooltipLast, *mapResultInfoClick;
 
   MapTooltip *mapTooltip;
 
@@ -512,7 +506,7 @@ private:
   JumpBack *jumpBack;
 
   /* Sum up mouse wheel or trackpad movement before zooming */
-  int lastWheelAngle = 0;
+  int lastWheelAngleX = 0, lastWheelAngleY = 0;
 
   MainWindow *mainWindow;
 
@@ -534,10 +528,6 @@ private:
 
   QPushButton *pushButtonExitFullscreen = nullptr;
 
-#ifdef DEBUG_MOVING_AIRPLANE
-  void debugMovingPlane(QMouseEvent *event);
-
-#endif
 };
 
 #endif // LITTLENAVMAP_NAVMAPWIDGET_H

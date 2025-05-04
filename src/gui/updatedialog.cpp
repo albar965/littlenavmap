@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2022 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2024 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -18,7 +18,7 @@
 #include "gui/updatedialog.h"
 #include "ui_updatedialog.h"
 
-#include "gui/helphandler.h"
+#include "gui/desktopservices.h"
 
 #include <QAbstractButton>
 #include <QDialogButtonBox>
@@ -37,7 +37,7 @@ UpdateDialog::UpdateDialog(QWidget *parent, bool manualCheck)
   setWindowFlags(windowFlags() & ~Qt::WindowContextHelpButtonHint);
   setWindowModality(Qt::ApplicationModal);
   ui->setupUi(this);
-  setWindowTitle(tr("%1 - Updates Available").arg(QApplication::applicationName()));
+  setWindowTitle(tr("%1 - Updates Available").arg(QCoreApplication::applicationName()));
 
   if(!manual)
   {
@@ -97,5 +97,5 @@ bool UpdateDialog::isIgnoreThisUpdate() const
 
 void UpdateDialog::anchorClicked(const QUrl& url)
 {
-  atools::gui::HelpHandler::openUrl(this, url);
+  atools::gui::DesktopServices::openUrl(this, url);
 }

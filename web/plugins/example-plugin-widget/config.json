@@ -1,0 +1,27 @@
+{
+  "title": "Example plugin \"widget\"",
+  "type": "widget",
+  "requestMapAccess": "",
+  "toolbars": [
+    {
+      "title": ":) toolbar",
+      "items": [
+        {
+          "id": "check1",
+          "type": "checkbox",
+          "text": "oh yeah",
+          "handle": {
+            "click": []
+          }
+        },
+        {
+          "id": "",
+          "type": "gap",
+          "text": "",
+          "handle": {
+          }
+        }
+      ]
+    }
+  ]
+}

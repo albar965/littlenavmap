@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2023 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2025 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -18,6 +18,7 @@
 #ifndef LNM_ROUTEEXPORT_H
 #define LNM_ROUTEEXPORT_H
 
+#include "fs/fspaths.h"
 #include "route/routeflags.h"
 #include "routeexport/routeexportflags.h"
 
@@ -67,7 +68,7 @@ public:
   RouteExport& operator=(const RouteExport& other) = delete;
 
   /* Save and restore state of multiexport dialog and format map (custom paths and selection state) */
-  void saveState();
+  void saveState() const;
   void restoreState();
 
   /* Update simulator dependent default paths. */
@@ -86,40 +87,42 @@ public:
 
   /* FSX/P3D XML PLN format */
   /* Also used for manual export */
-  bool routeExportPlnMan(); /* Called by action */
-  bool routeExportPlnMsfsMan(); /* Called by action */
+  void routeExportPlnMan(); /* Called by action */
+  void routeExportPlnMsfsMan(); /* Called by action */
+  void routeExportPlnMsfs24Man(); /* Called by action */
+
   bool routeExportPln(const RouteExportFormat& format);
   bool routeExportPlnMsfs(const RouteExportFormat& format);
 
   /* New X-Plane FMS 11 */
   /* Also used for manual export */
-  bool routeExportFms11Man(); /* Called by action */
+  void routeExportFms11Man(); /* Called by action */
   bool routeExportFms11(const RouteExportFormat& format);
 
   /* FlightGear XML */
   /* Also used for manual export */
-  bool routeExportFlightgearMan(); /* Called by action */
+  void routeExportFlightgearMan(); /* Called by action */
   bool routeExportFlightgear(const RouteExportFormat& format);
 
   /* vPilot/xPilot VATSIM */
-  bool routeExportVfpMan(); /* Called by action */
+  void routeExportVfpMan(); /* Called by action */
   bool routeExportVfp(const RouteExportFormat& format);
 
   /* IVAP or X-IVAP for IVAO */
   /* Also used for manual export */
-  bool routeExportIvapMan(); /* Called by action */
+  void routeExportIvapMan(); /* Called by action */
   bool routeExportIvap(const RouteExportFormat& format);
-  bool routeExportXIvapMan(); /* Called by action */
+  void routeExportXIvapMan(); /* Called by action */
   bool routeExportXIvap(const RouteExportFormat& format);
 
   /* Garmin exchange format. Not a flight plan format.  */
   /* Also used for manual export */
-  bool routeExportGpxMan(); /* Called by action */
+  void routeExportGpxMan(); /* Called by action */
   bool routeExportGpx(const RouteExportFormat& format);
 
   /* Export as HTML page */
   /* Also used for manual export */
-  bool routeExportHtmlMan(); /* Called by action */
+  void routeExportHtmlMan(); /* Called by action */
   bool routeExportHtml(const RouteExportFormat& format);
 
   /* Methods for multiexport ========================================================= */
@@ -160,7 +163,7 @@ public:
   /* IXEG 737 */
   bool routeExportFplMulti(const RouteExportFormat& format);
 
-  /* Flight factor airbus */
+  /* FlightFactor airbus */
   bool routeExportCorteInMulti(const RouteExportFormat& format);
 
   /* Reality XP GNS */
@@ -210,6 +213,9 @@ public:
 
   /* PMS50 GTN750 fpl.pln - MSFS PLN format */
   bool routeExportPms50Multi(const RouteExportFormat& format);
+
+  /* X-Plane 12 FlightFactor Boeing 777 */
+  bool routeExportFmsT7Multi(const RouteExportFormat& format);
 
   /* End of methods for multiexport ========================================================= */
 
@@ -316,6 +322,8 @@ private:
 
   /* Create a list of backups */
   void rotateFile(const QString& filename);
+
+  bool routeExportCheckDatabase(const QString& exportSimulatorName, const QVector<atools::fs::FsPaths::SimulatorType> requiredDbTypes);
 
   MainWindow *mainWindow;
   atools::gui::Dialog *dialog;

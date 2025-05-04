@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2023 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2025 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -27,9 +27,9 @@
 #include <QObject>
 #include <QVector>
 
+class SearchWidgetEventFilter;
 namespace atools {
 namespace gui {
-class ItemViewZoomHandler;
 class GridDelegate;
 }
 
@@ -52,15 +52,12 @@ struct MapProcedureLeg;
 struct MapProcedureLegs;
 }
 
+class ProcIndexEntry;
 class InfoQuery;
 class QTreeWidget;
 class QTreeWidgetItem;
-class QMainWindow;
-class QMenu;
-class QAction;
 class ProcedureQuery;
 class AirportQuery;
-class HtmlInfoBuilder;
 class TreeEventFilter;
 
 /* Takes care of the tree widget in approach tab on the informtaion window. */
@@ -78,6 +75,9 @@ public:
 
   /* Fill tree widget and index with all approaches and transitions of an airport */
   void showProcedures(const map::MapAirport& airport, bool departureFilter, bool arrivalFilter);
+
+  /* Clear preview and selection */
+  void clearSelectionAndPreviews();
 
   /* Save tree view state */
   virtual void saveState() override;
@@ -129,7 +129,7 @@ private:
     FILTER_SID_PROCEDURES,
     FILTER_STAR_PROCEDURES,
     FILTER_ARRIVAL_PROCEDURES,
-    FILTER_SEPARATOR_1,
+    FILTER_SEPARATOR,
     FILTER_APPROACH_ALL
     /* Approach types follow */
   };
@@ -137,9 +137,12 @@ private:
   enum RunwayFilterIndex
   {
     FILTER_ALL_RUNWAYS,
-    FILTER_NO_RUNWAYS /* Only if empty runways exist */
+    FILTER_NO_RUNWAYS, /* Only if empty runways exist */
+    FILTER_RUNWAYS_SEPARATOR,
     /* Runways follow */
   };
+
+  void showProceduresInternal(const map::MapAirport& airportSim, bool departureFilter, bool arrivalFilter, bool silent);
 
   /* No op overrides */
   virtual void getSelectedMapObjects(map::MapResult&) const override;
@@ -148,28 +151,35 @@ private:
 
   virtual void tabDeactivated() override;
 
+  virtual void showSelectedEntry() override;
+  virtual void activateView() override;
+  virtual void showFirstEntry() override;
+
   void itemSelectionChanged();
   void itemSelectionChangedInternal(bool noFollow);
   void itemDoubleClicked(QTreeWidgetItem *item, int);
 
   /* Load legs dynamically as approaches or transitions are expanded */
+  /* Load all approach or transition legs on demand - approaches and transitions are loaded after selecting the airport */
   void itemExpanded(QTreeWidgetItem *item);
 
   void contextMenu(const QPoint& pos);
 
   /* Called from menu actions */
   void showInformationSelected();
-  void showOnMapSelected();
+  void showAirportOnMapSelected();
+  void showProcedureSelected();
   void procedureAttachSelected();
+
   void attachProcedure();
-  void showProcedureTriggered();
 
   // Save and restore expanded and selected item state
-  QBitArray saveTreeViewState();
-  void restoreTreeViewState(const QBitArray& state, bool blockSignals);
+  QSet<int> treeViewStateSave() const;
+  void treeViewStateRestore(const QSet<int>& state);
 
   /* Build full approach or transition items for the tree view */
-  QTreeWidgetItem *buildProcedureItem(QTreeWidgetItem *runwayItem, const QString& ident, const QString& procTypeText,
+  QTreeWidgetItem *buildProcedureItem(QTreeWidgetItem *rootItem, const QString& ident, const atools::sql::SqlRecord& recProcedure,
+                                      const QString& procTypeText,
                                       const QString& headerText, const QString& menuText, const QStringList& attStr);
   QTreeWidgetItem *buildTransitionItem(QTreeWidgetItem *procItem, const atools::sql::SqlRecord& recTrans, bool sidOrStar);
 
@@ -183,7 +193,8 @@ private:
   void showEntry(QTreeWidgetItem *item, bool doubleClick, bool zoom);
 
   /* Update course and distances in the approach legs when a preceding transition is selected */
-  void updateProcedureItem(QTreeWidgetItem *apprItem, int transitionId);
+  /* Update course and distance for the parent approach of this leg item */
+  void updateProcedureItemCourseDist(QTreeWidgetItem *procedureItem, int transitionId);
 
   QList<QTreeWidgetItem *> buildProcedureLegItems(const proc::MapProcedureLegs *legs, int transitionId);
 
@@ -210,7 +221,12 @@ private:
   void fontChanged(const QFont&);
 
   static proc::MapProcedureTypes buildTypeFromProcedureRec(const atools::sql::SqlRecord& recApp);
+
+  /* Order by type, priority and name */
   static bool procedureSortFunc(const atools::sql::SqlRecord& rec1, const atools::sql::SqlRecord& rec2);
+
+  /* Order by name */
+  static bool transitionSortFunc(const atools::sql::SqlRecord& rec1, const atools::sql::SqlRecord& rec2);
 
   void fetchSingleTransitionId(proc::MapProcedureRef& ref) const;
 
@@ -219,6 +235,7 @@ private:
 
   void clearSelectionClicked();
   void showAllToggled(bool checked);
+  void showAllToggledAction(bool checked);
 
   /* Get procedure reference with ids only */
   const proc::MapProcedureRef& fetchProcRef(const QTreeWidgetItem *item) const;
@@ -231,39 +248,59 @@ private:
 
   /* Create display text for procedure column */
   void procedureDisplayText(QString& procTypeText, QString& headerText, QString& menuText, QStringList& attText,
-                            const atools::sql::SqlRecord& recApp, proc::MapProcedureTypes maptype, int numTransitions);
+                            const atools::sql::SqlRecord& recProcedure, proc::MapProcedureTypes maptype, int numTransitions);
 
   /* Update wind columns for procedures after weather change */
   void updateProcedureWind();
 
+  /* Intial selection and expand items for current selection in route */
+  void treeViewStateFromRoute();
+
+  /* Get first and last waypoint from record */
+  QStringList firstLastWaypoint(const atools::sql::SqlRecord& record) const;
+
+  inline const proc::MapProcedureRef& refFromItem(const QTreeWidgetItem *item) const;
+
   QString transitionIndicator, transitionIndicatorOne;
 
-  // item's types are the indexes into this array with approach, transition and leg ids
-  QVector<proc::MapProcedureRef> itemIndex;
+  /* Item type() is the keys into this hash */
+  QHash<int, ProcIndexEntry> itemIndex;
+  int nextIndexId = 1;
 
-  // Item type is the index into this array
-  // Approach or transition legs are already loaded in tree if bit is set
-  // Fist bit in pair: expanded or not, Second bit: selection state
-  QBitArray itemLoadedIndex;
+  /* Numbers of items expanded by user having legs loaded */
+  QSet<int> itemExpandedIndex;
 
   InfoQuery *infoQuery = nullptr;
   ProcedureQuery *procedureQuery = nullptr;
-  AirportQuery *airportQueryNav = nullptr;
+  AirportQuery *airportQueryNav = nullptr, *airportQuerySim = nullptr;
+
+  /* Contains initially all procedures and transitions loaded from fillProcedureTreeWidget().
+   * Legs are added when expaning the tree from itemExpanded() */
   QTreeWidget *treeWidget = nullptr;
+
+  /* Navdata runways having no equivalent to simulator */
+  QStringList runwayMismatches;
 
   /* Fonts for tree elements */
   QFont procedureBoldFont, procedureNormalFont, legFont, missedLegFont, invalidLegFont, identFont;
 
-  map::MapAirport *currentAirportNav, *currentAirportSim;
+  map::MapAirport *currentAirportNav, *currentAirportSim, *savedAirportSim;
 
   // Maps airport ID to expanded state of the tree widget items - bit array is same content as itemLoadedIndex
-  QHash<int, QBitArray> recentTreeState;
+  QHash<int, QSet<int> > recentTreeState;
 
   atools::gui::GridDelegate *gridDelegate = nullptr;
 
   FilterIndex filterIndex = FILTER_ALL_PROCEDURES;
+
+  /* Event filter for tree object */
   TreeEventFilter *treeEventFilter = nullptr;
+
+  /* Event filter for line input */
+  SearchWidgetEventFilter *lineInputEventFilter = nullptr;
   bool errors = false;
+
+  bool savedDepartureFilter = false, savedArrivalFilter = false;
 };
 
 #endif // LITTLENAVMAP_PROCTREECONTROLLER_H

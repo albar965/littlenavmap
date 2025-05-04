@@ -1,0 +1,318 @@
+#ui-2021-a {
+  height: 100%;
+  touch-action: none;
+}
+
+#ui-2021-a body {
+  margin: 0;
+  width: 100%;
+  height: 100%;
+  touch-action: none;
+  overflow: hidden;                           /* prevent vertical scrollbar on Firefox */
+}
+
+#mainContainer {
+  width: 100%;
+  height: 100%;
+}
+
+[data-menubarsplacement] {
+  display: flex;
+  flex-wrap: wrap;
+}
+
+[data-menubarsplacement="top"] {
+  flex-direction: column-reverse;
+}
+
+[data-menubarsplacement="right"] {
+  flex-direction: row;
+}
+
+[data-menubarsplacement="bottom"] {
+  flex-direction: column;
+}
+
+[data-menubarsplacement="left"] {
+  flex-direction: row-reverse;
+}
+
+#contentContainer  {
+  flex: 1 0;
+  position: relative;
+}
+
+#menubarContainer {
+  flex: 0 1;
+  display: flex;
+  flex-wrap: wrap;
+  z-index: 300000000;
+  position: relative;
+}
+
+iframe, #toolbarsLayer {
+  border: 0;
+  width: 100%;
+  height: 100%;
+  position: absolute;
+  top: 0;
+  left: 0;
+}
+
+iframe {
+  display: block;
+}
+
+iframe[name="contentiframe"], iframe[name="addoniframe"], #toolbarsLayer {
+  z-index: 200000000;
+}
+
+iframe[name="contentiframe"].shown {
+  z-index: 200000001;
+}
+
+iframe[data-type="unobtrusive"] {
+  z-index: 200000002;
+}
+
+iframe[data-type="widget"] {
+  z-index: 200000003;
+}
+
+iframe[data-type="exclusive"] {
+  z-index: 200000004;
+}
+
+iframe[name="contentiframe"].shown ~ #toolbarsLayer {
+  z-index: 200000005;
+}
+
+iframe[name="addoniframe"].shown {
+  z-index: 200000006;
+}
+
+#toolbarsLayer {
+  pointer-events: none;
+  height: 50px;
+  margin-top: 50px;
+}
+
+#toolbarsLayer.exclusive-active {
+  margin-top: 0;
+}
+
+#toolbarsLayer input[type=checkbox] {
+  margin-top: -2px;
+}
+
+#toolbarsLayer > .scrollIndicatorHelperContainer {
+  display: flex;
+  width: 100%;
+  overflow: auto;
+}
+
+#toolbarsLayer .toolbar {
+  pointer-events: all;
+}
+
+.toolbar {
+  flex: 0 0 auto;
+}
+
+[data-menubarsplacement="right"] #menubarContainer, [data-menubarsplacement="left"] #menubarContainer {
+  flex-direction: column;
+}
+
+.menubar {
+  display: flex;
+  flex-wrap: wrap;
+}
+
+[data-menubarsplacement="top"] .menubar , [data-menubarsplacement="bottom"] .menubar  {
+  flex: 1 1;
+}
+
+[data-menubarsplacement="right"] .menubar , [data-menubarsplacement="left"] .menubar  {
+  flex: 0 1;
+}
+
+#toggleOptionsContainer {
+  flex: 0 1;
+  display: flex;
+  align-items: stretch;
+}
+
+.menubar button {
+  display: block;
+  cursor: pointer;
+}
+
+.menubar button a {
+  display: flex;
+  height: 100%;
+  width: 100%;
+  box-sizing: border-box;
+  align-items: center;
+  justify-content: center;
+}
+
+#toggleOptionsToggle {
+  position: relative;
+  cursor: pointer;
+}
+
+[data-menubarsplacement="top"] #toggleOptionsToggle, [data-menubarsplacement="bottom"] #toggleOptionsToggle {
+  height: 100%;
+}
+
+[data-menubarsplacement="right"] #toggleOptionsToggle, [data-menubarsplacement="left"] #toggleOptionsToggle {
+  width: 100%;
+}
+
+#toggleOptionsToggle::before {
+  content: "";
+  border-color: transparent;
+  border: solid transparent;
+  height: 0;
+  width: 0;
+  position: absolute;
+  pointer-events: none;
+}
+
+#menubarsOptions {
+  position: absolute;
+  display: none;
+}
+
+[data-menubarsplacement="top"] #menubarsOptions {
+  top: 100%;
+  right: 0;
+}
+
+[data-menubarsplacement="right"] #menubarsOptions {
+  right: 100%;
+  bottom: 0;
+}
+
+[data-menubarsplacement="bottom"] #menubarsOptions {
+  bottom: 100%;
+  right: 0;
+}
+
+[data-menubarsplacement="left"] #menubarsOptions {
+  left: 100%;
+  bottom: 0;
+}
+
+.shown #menubarsOptions {
+  display: block !important;
+}
+
+#menubarsOptions .input-block {
+  display: flex;
+  position: relative;
+}
+
+#menubarsOptions input[type="checkbox"] {
+  cursor: pointer;
+  position: absolute;
+  margin: 0;          /* is a default browser style "undo" */
+}
+
+#menubarsOptions input[type="radio"] {
+  cursor: pointer;
+  position: absolute;
+  margin: 0;          /* is a default browser style "undo" */
+}
+
+#menubarsOptions .input-block label {
+  cursor: pointer;
+  width: 100%;
+}
+
+#menubarsOptions select {
+  margin: auto;
+  position: relative;
+  display: table;
+  cursor: pointer;
+}
+
+.keep-1-lined {
+  white-space: nowrap !important;
+}
+
+#buttonPlugins {
+  position: relative;
+  z-index: 2;
+}
+
+#selectablePlugins {
+  position: absolute;
+  left: -1px;
+  width: 100%;
+  display: none;
+}
+
+#buttonPlugins:hover #selectablePlugins {
+  display: table;
+}
+
+[data-menubarsplacement="top"] #selectablePlugins {
+  top: 100%;
+  padding-top: 5px;
+}
+
+[data-menubarsplacement="right"] #selectablePlugins {
+  right: calc(100% - 97px);
+  left: auto;
+  top: -3px;
+  padding-right: 107px;
+}
+
+[data-menubarsplacement="bottom"] #selectablePlugins {
+  bottom: 100%;
+  padding-bottom: 5px;
+}
+
+[data-menubarsplacement="left"] #selectablePlugins {
+  left: calc(100% - 97px);
+  top: -3px;
+  padding-left: 107px;
+}
+
+.selectable-plugin {
+  display: inline-flex;
+  margin-top: 2px;
+}
+
+[data-menubarsplacement="bottom"] .selectable-plugin {
+  margin-top: 0;
+  margin-bottom: 2px;
+}
+
+.selectable-plugin input {
+  margin: 6px 0 0 20px;
+  position: absolute;
+}
+
+[data-menubarsplacement="top"] #exclusivePlugins {
+  height: 26px;
+  margin: 5px 2.5px;
+  align-self: center;
+}
+
+[data-menubarsplacement="right"] #exclusivePlugins {
+  width: 100%;
+  margin: 2.5px 5px;
+}
+
+[data-menubarsplacement="bottom"] #exclusivePlugins {
+  height: 26px;
+  margin: 5px 2.5px;
+  align-self: center;
+}
+
+[data-menubarsplacement="left"] #exclusivePlugins {
+  width: 100%;
+  margin: 2.5px 5px;
+}

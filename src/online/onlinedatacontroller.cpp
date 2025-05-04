@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2023 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2024 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -17,27 +17,28 @@
 
 #include "online/onlinedatacontroller.h"
 
-#include "fs/online/onlinedatamanager.h"
-#include "airspace/airspacecontroller.h"
-#include "util/httpdownloader.h"
-#include "gui/mainwindow.h"
-#include "common/maptools.h"
+#include "app/navapp.h"
 #include "common/constants.h"
-#include "options/optiondata.h"
-#include "zip/gzip.h"
-#include "gui/dialog.h"
+#include "common/maptools.h"
+#include "fs/online/onlinedatamanager.h"
+#include "fs/sc/simconnectdata.h"
 #include "geo/calculations.h"
+#include "gui/dialog.h"
+#include "gui/mainwindow.h"
+#include "mapgui/maplayer.h"
+#include "options/optiondata.h"
+#include "query/airspacequeries.h"
+#include "query/querymanager.h"
+#include "settings/settings.h"
 #include "sql/sqlquery.h"
 #include "sql/sqlrecord.h"
-#include "mapgui/maplayer.h"
-#include "app/navapp.h"
-#include "settings/settings.h"
-#include "fs/sc/simconnectdata.h"
+#include "util/httpdownloader.h"
+#include "zip/gzip.h"
 
 #include <QDebug>
-#include <QMessageBox>
 #include <QTextCodec>
 #include <QCoreApplication>
+#include <QDir>
 
 static const int MIN_SERVER_DOWNLOAD_INTERVAL_MIN = 15;
 static const int MIN_TRANSCEIVER_DOWNLOAD_INTERVAL_MIN = 5;
@@ -128,42 +129,61 @@ void OnlinedataController::updateAtcSizes()
 {
   // Override default circle radius for certain ATC center types
   const OptionData& opts = OptionData::instance();
+  opts::DisplayOnlineFlags flags = opts.getDisplayOnlineFlags();
 
-  QHash<atools::fs::online::fac::FacilityType, int> sizeMap;
+  atools::fs::online::AtcSizeMap sizeMap;
   for(atools::fs::online::fac::FacilityType type : atools::fs::online::allFacilityTypes())
   {
     int diameter = -1;
+    bool useDefault = false; // Online provided values are used if available and flag is set, i.e. checkbox is clicked.
+
     switch(type)
     {
       case atools::fs::online::fac::UNKNOWN:
         break;
+
       case atools::fs::online::fac::OBSERVER:
         diameter = opts.getDisplayOnlineObserver();
+        useDefault = flags.testFlag(opts::DISPLAY_ONLINE_OBSERVER);
         break;
+
       case atools::fs::online::fac::FLIGHT_INFORMATION:
         diameter = opts.getDisplayOnlineFir();
+        useDefault = flags.testFlag(opts::DISPLAY_ONLINE_FIR);
         break;
+
       case atools::fs::online::fac::DELIVERY:
         diameter = opts.getDisplayOnlineClearance();
+        useDefault = flags.testFlag(opts::DISPLAY_ONLINE_CLEARANCE);
         break;
+
       case atools::fs::online::fac::GROUND:
         diameter = opts.getDisplayOnlineGround();
+        useDefault = flags.testFlag(opts::DISPLAY_ONLINE_GROUND);
         break;
+
       case atools::fs::online::fac::TOWER:
         diameter = opts.getDisplayOnlineTower();
+        useDefault = flags.testFlag(opts::DISPLAY_ONLINE_TOWER);
         break;
+
       case atools::fs::online::fac::APPROACH:
         diameter = opts.getDisplayOnlineApproach();
+        useDefault = flags.testFlag(opts::DISPLAY_ONLINE_APPROACH);
         break;
+
       case atools::fs::online::fac::ACC:
         diameter = opts.getDisplayOnlineArea();
+        useDefault = flags.testFlag(opts::DISPLAY_ONLINE_AREA);
         break;
+
       case atools::fs::online::fac::DEPARTURE:
         diameter = opts.getDisplayOnlineDeparture();
+        useDefault = flags.testFlag(opts::DISPLAY_ONLINE_DEPARTURE);
         break;
     }
 
-    sizeMap.insert(type, diameter != -1 ? std::max(1, diameter / 2) : -1);
+    sizeMap.insert(type, atools::fs::online::AtcSizeMapValue(useDefault, std::max(1, diameter / 2)));
   }
   manager->setAtcSize(sizeMap);
 }
@@ -175,6 +195,9 @@ void OnlinedataController::startProcessing()
 
 void OnlinedataController::startDownloadInternal()
 {
+  if(atools::gui::Application::isShuttingDown())
+    return;
+
   if(verbose)
     qDebug() << Q_FUNC_INFO;
 
@@ -456,7 +479,6 @@ void OnlinedataController::downloadFailed(const QString& error, int errorCode, Q
 void OnlinedataController::downloadSslErrors(const QStringList& errors, const QString& downloadUrl)
 {
   qWarning() << Q_FUNC_INFO;
-  NavApp::closeSplashScreen();
 
   int result = atools::gui::Dialog(mainWindow).
                showQuestionMsgBox(lnm::ACTIONS_SHOW_SSL_WARNING_ONLINE,
@@ -492,28 +514,24 @@ void OnlinedataController::stopAllProcesses()
 
 void OnlinedataController::showMessageDialog()
 {
-  QMessageBox::information(mainWindow, QApplication::applicationName(),
-                           tr("Message from downloaded status file:\n\n%2\n").arg(manager->getMessageFromStatus()));
+  atools::gui::Dialog::information(mainWindow, tr("Message from downloaded status file:\n\n%2\n").arg(manager->getMessageFromStatus()));
 }
 
 const LineString *OnlinedataController::airspaceGeometryCallback(const QString& callsign, atools::fs::online::fac::FacilityType type)
 {
-  opts2::Flags2 flags2 = OptionData::instance().getFlags2();
-
+  opts2::Flags2 flags = OptionData::instance().getFlags2();
+  AirspaceQueries *airspaceQueries = QueryManager::instance()->getQueriesGui()->getAirspaceQueries();
   const LineString *lineString = nullptr;
 
   // Try to get airspace boundary by name vs. callsign if set in options
-  if(flags2 & opts2::ONLINE_AIRSPACE_BY_NAME)
-    lineString = NavApp::getAirspaceController()->getOnlineAirspaceGeoByName(callsign, atools::fs::online::facilityTypeToDb(type));
+  if(flags.testFlag(opts2::ONLINE_AIRSPACE_BY_NAME))
+    lineString = airspaceQueries->getOnlineAirspaceGeoByName(callsign, atools::fs::online::facilityTypeToDb(type));
 
   // Try to get airspace boundary by file name vs. callsign if set in options
-  if(flags2 & opts2::ONLINE_AIRSPACE_BY_FILE)
-  {
-    if(lineString == nullptr)
-      lineString = NavApp::getAirspaceController()->getOnlineAirspaceGeoByFile(callsign);
-  }
+  if(flags.testFlag(opts2::ONLINE_AIRSPACE_BY_FILE) && (lineString == nullptr || lineString->isEmpty()))
+    lineString = airspaceQueries->getOnlineAirspaceGeoByFile(callsign);
 
-  return lineString;
+  return lineString != nullptr && lineString->isValidPolygon() ? lineString : nullptr;
 }
 
 void OnlinedataController::optionsChanged()
@@ -527,7 +545,7 @@ void OnlinedataController::optionsChanged()
   // Remove all from the database
   manager->clearData();
   aircraftCache.clear();
-  onlineAircraftSpatialIndex.clear();
+  onlineAircraftSpatialIndex.clearIndex();
   aircraftIdSimToOnline.clear();
   aircraftIdOnlineToSim.clear();
   currentDataPacketMap.clear();
@@ -792,7 +810,7 @@ OnlineAircraft OnlinedataController::shadowAircraftInternal(const atools::fs::sc
 
 void OnlinedataController::clearShadowIndexes()
 {
-  onlineAircraftSpatialIndex.clear();
+  onlineAircraftSpatialIndex.clearIndex();
   aircraftIdSimToOnline.clear();
   aircraftIdOnlineToSim.clear();
 }

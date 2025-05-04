@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2020 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2025 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -36,28 +36,31 @@ class ImageExportDialog :
 
 public:
   /* Pass current map size for original view option */
-  explicit ImageExportDialog(QWidget *parent, const QString& titleParam, const QString& optionPrefixParam,
-                             int currentWidth, int currentHeight);
+  explicit ImageExportDialog(QWidget *parent, const QString& titleParam, const QString& optionPrefixParam, const QSize& size);
   virtual ~ImageExportDialog() override;
+
+  ImageExportDialog(const ImageExportDialog& other) = delete;
+  ImageExportDialog& operator=(const ImageExportDialog& other) = delete;
 
   /* Get selected size */
   QSize getSize() const;
 
+  /* Checkbox: Zoom out once to avoid blurry map */
+  bool isAvoidBlurredMap() const;
+
   /* true if image should be saved as is in map view */
   bool isCurrentView() const;
-
-  bool isAvoidBlurredMap() const;
 
 private:
   void currentResolutionIndexChanged();
   void buttonBoxClicked(QAbstractButton *button);
-  void saveState();
+  void saveState() const;
   void restoreState();
 
   /* Prefix for save widget states */
   Ui::ImageExportDialog *ui;
   QString optionPrefix;
-  int curWidth, curHeight;
+  QSize currentSize;
 };
 
 #endif // LNM_IMAGEEXPORTDIALOG_H

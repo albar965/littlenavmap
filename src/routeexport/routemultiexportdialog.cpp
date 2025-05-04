@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2023 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2024 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -329,7 +329,7 @@ void RouteMultiExportDialog::saveDialogState()
   widgetState.save(this);
 }
 
-void RouteMultiExportDialog::saveState()
+void RouteMultiExportDialog::saveState() const
 {
   atools::gui::WidgetState widgetState(lnm::ROUTE_EXPORT_DIALOG, false);
   widgetState.save({this, ui->comboBoxRouteExportOptions});
@@ -782,9 +782,12 @@ void RouteMultiExportDialog::resetPathsAndSelection()
 {
   // Ask before resetting user data ==============
   QMessageBox msgBox(this);
-  msgBox.setWindowTitle(QApplication::applicationName());
+  msgBox.setWindowTitle(QCoreApplication::applicationName());
   msgBox.setText(tr("Reset selection, paths and filename patterns back to default?"));
   msgBox.setStandardButtons(QMessageBox::Yes | QMessageBox::Cancel);
+  msgBox.setWindowFlag(Qt::WindowContextHelpButtonHint, false);
+  msgBox.setWindowModality(Qt::ApplicationModal);
+  msgBox.setTextInteractionFlags(Qt::TextSelectableByMouse);
 
   if(msgBox.exec() == QMessageBox::Yes)
   {

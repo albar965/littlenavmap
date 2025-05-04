@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2023 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2024 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -82,7 +82,8 @@ public:
    * Fills either flightplan and/or mapObjectRefs if not null.
    * Get error, warning and information messages with getMessages() */
   bool createRouteFromString(const QString& routeString, rs::RouteStringOptions options, atools::fs::pln::Flightplan *flightplan,
-                             map::MapRefExtVector *mapObjectRefs = nullptr, float *speedKtsParam = nullptr, bool *altIncludedParam = nullptr);
+                             map::MapRefExtVector *mapObjectRefs = nullptr, float *speedKtsParam = nullptr,
+                             bool *altIncludedParam = nullptr);
 
   /* Set to true to generate non HTML messages */
   void setPlaintextMessages(bool value)
@@ -97,7 +98,7 @@ public:
 
   bool hasErrorMessages() const
   {
-    return errorMessages.isEmpty();
+    return !errorMessages.isEmpty();
   }
 
   /* Get messages in order of error, warning and info messages separated by an empty line */
@@ -146,14 +147,13 @@ private:
   void removeEmptyResults(QList<ParseEntry>& resultList);
 
   /* Fetch departure airport as well as SID */
-  bool addDeparture(atools::fs::pln::Flightplan *flightplan, map::MapRefExtVector *mapObjectRefs, QStringList& items,
-                    QString& sidTransWp);
+  bool addDeparture(atools::fs::pln::Flightplan *flightplan, map::MapRefExtVector *mapObjectRefs, QStringList& items, QString& sidExitWp);
 
   /* Fetch destination airport as well as STAR */
   bool addDestination(atools::fs::pln::Flightplan *flightplan, QList<atools::fs::pln::FlightplanEntry> *alternates,
-                      map::MapRefExtVector *mapObjectRefs, QStringList& items, QString& starTransWp, rs::RouteStringOptions options);
-  void destinationInternal(map::MapAirport& destination, proc::MapProcedureLegs& starLegs, proc::MapProcedureLegs& approachLegs,
-                           QStringList& items, QString& starTransWp, map::MapRunwayEnd& runwayEnd, int& consume, int index);
+                      map::MapRefExtVector *mapObjectRefs, QStringList& items, QString& starEntryWp, rs::RouteStringOptions options);
+  void destinationInternal(map::MapAirport& destAirport, proc::MapProcedureLegs& starLegs, proc::MapProcedureLegs& approachLegs,
+                           QStringList& items, QString& starEntryWp, map::MapRunwayEnd& runwayEnd, int& consume, int index);
 
   /* Remove time from ident and return airport ident and runway. Also add warnings and messages */
   void extractAirportIdentDeparture(QString item, QString& airport, QString& runway);
@@ -171,23 +171,22 @@ private:
   map::MapAirway extractAirway(const QList<map::MapAirway>& airways, int waypointId1, int waypointId2, const QString& airwayName);
 
   /* Read and consume SID and maybe transition from list. Can be "SID", "SID.TRANS" or "SID TRANS" */
-  void readSidAndTrans(QStringList& items, QString& sidTransWp, int& sidId, int& sidTransId, const map::MapAirport& departure,
-                       const QString& runway);
+  void readSidAndTrans(QStringList& items, int& sidId, int& sidTransId, const map::MapAirport& departureAirport, const QString& runway);
 
   /* Try to read all STAR and transition variants. Number of items to delete is given in "consume" */
-  void readStarAndTrans(QStringList& items, QString& startTransWp, const QString& runway, int& starId, int& starTransId, int& consume,
-                        const map::MapAirport& destination, int index);
+  void readStarAndTrans(QStringList& items, const QString& runway, int& starId, int& starTransId, int& consume,
+                        const map::MapAirport& destAirport, int index);
 
   /* Read a space spearated STAR with transition. Can be "STAR TRANS" or "TRANS STAR". Items are not consumed. */
   void readStarAndTransSpace(const QString& star, QString trans, const QString& runway, int& starId, int& starTransId,
-                             const map::MapAirport& destination);
+                             const map::MapAirport& destAirport);
 
   /* Read a dot spearated STAR with transition. Can be "STAR.TRANS" or "TRANS.STAR". Items are not consumed. */
   void readStarAndTransDot(const QString& starTrans, const QString& runway, int& starId, int& starTransId,
-                           const map::MapAirport& destination);
+                           const map::MapAirport& destAirport);
 
   void readApproachAndTrans(const QString& approachArinc, const QString& approachTrans, int& starId, int& starTransId,
-                            const map::MapAirport& destination);
+                            const map::MapAirport& destAirport);
 
   /* Convert to abbreviated SID: ENVA UTUNA1A -> ENVA UTUN1A */
   QString sidStarAbbrev(QString sid);

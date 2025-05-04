@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2023 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2024 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -18,7 +18,7 @@
 #ifndef LNM_ROUTEEXPORTFLAGS_H
 #define LNM_ROUTEEXPORTFLAGS_H
 
-#include <QFlags>
+#include "util/flags.h"
 
 namespace re {
 enum RouteExportType
@@ -42,8 +42,10 @@ enum RouteExportFormatType : quint16
   LNMPLN = 35, /* LNM own plan format */
 
   PLN = 0, /* FSX/P3D XML PLN format */
-  PLNANNOTATED = 1, /* Save as above but with annotations for procedures as used by LNM before 2.4.5 */
-  PLNMSFS = 31, /* Microsoft Flight Simulator 2020 */
+  // PLNANNOTATED = 1, Removed
+  PLNMSFS = 31, /* Microsoft Flight Simulator 2020 with ° as degree sign. */
+  PLNMSFS24 = 51, /* Microsoft Flight Simulator 2024. */
+  PLNMSFSCOMPAT = 47, /* Microsoft Flight Simulator 2020 with * as degree sign for add-ons */
   FMS3 = 2, /* Old X-Plane FMS 3 */
   FMS11 = 3, /* New X-Plane FMS 11 */
   FMS12 = 42, /* FMS 11 format in X-Plane 12 path */
@@ -57,7 +59,7 @@ enum RouteExportFormatType : quint16
   RXPGTNUWP = 33, /* Reality XP GTN with user defined waypoints */
   GFP = 8, /* Garmin GFP Format */
   GFPUWP = 34, /* Garmin GFP Format with user defined waypoints */
-  PMS50 = 39, /* Garmin PMS50 GTN750  */
+  PMS50 = 39, /* Garmin PMS50 GTN750. Modified MSFS PLN.  */
   TDSGTNXI = 43, /* TDS GTNXi - GFP format */
   TDSGTNXIWP = 46, /* TDS GTNXi - GFP format */
 
@@ -82,7 +84,7 @@ enum RouteExportFormatType : quint16
   RTEMSFS = 41, /* PMDG RTE format */
   FPR = 17, /* Majestic Dash binary format */
   FPL = 18, /* IXEG 737 */
-  CORTEIN = 19, /* Flight factor airbus */
+  CORTEIN = 19, /* FlightFactor airbus */
   FLTPLAN = 20, /* iFly */
   BBS = 21, /* BlackBox Simulations Airbus */
   FEELTHEREFPL = 22, /* FeelThere or Wilco aircraft */
@@ -92,13 +94,16 @@ enum RouteExportFormatType : quint16
   TFDI = 26, /* TFDi Design 717 */
   IFLY = 40, /* iFly Jets Advanced Series */
   INIBUILDS = 44, /* MSFS IniBuilds Airbus - fpl */
+  JFBAE = 48, /* MSFS JustFlight BAE-146 (QualityWings) */
+  KLN90B = 49, /* KLN 90B (https://github.com/falcon71/kln90b) */
+  XPFFT7 = 50, /* X-Plane 12 FlightFactor Boeing 777 */
 
   /* Other ================ */
   EFBR = 27, /* AivlaSoft EFB */
   GPX = 28, /* Garmin exchange format. Not a flight plan format.  */
   HTML = 29, /* Export as HTML page */
 
-  // Next = 47
+  // Next = 52
 };
 
 /* Flags for export format. Some flags are saved to the configuration,
@@ -126,8 +131,8 @@ enum RouteExportFormatFlag : quint16
   SAVED_FLAGS = SELECTED /* Saved to configuration. */
 };
 
-Q_DECLARE_FLAGS(RouteExportFormatFlags, RouteExportFormatFlag);
-Q_DECLARE_OPERATORS_FOR_FLAGS(rexp::RouteExportFormatFlags);
+ATOOLS_DECLARE_FLAGS_16(RouteExportFormatFlags, RouteExportFormatFlag)
+ATOOLS_DECLARE_OPERATORS_FOR_FLAGS(rexp::RouteExportFormatFlags)
 
 } // namespace rexp
 

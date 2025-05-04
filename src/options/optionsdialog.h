@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2023 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2024 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -68,6 +68,9 @@ public:
   OptionsDialog(const OptionsDialog& other) = delete;
   OptionsDialog& operator=(const OptionsDialog& other) = delete;
 
+  /* Load and select best language option and fill combo box. */
+  void initLanguage();
+
   /* Saves the state of all widgets */
   void saveState();
 
@@ -79,9 +82,6 @@ public:
 
   /* Get override region settings options directly from settings file*/
   static bool isOverrideRegion();
-
-  /* Get locale name like "en_US" or "de" directly from settings file */
-  static QString getLocale();
 
   /* Test if a public network is used with a too low update rate */
   void checkOfficialOnlineUrls();
@@ -111,24 +111,15 @@ private:
   void updateTrailStates();
 
   void buttonBoxClicked(QAbstractButton *button);
+
+  /* Copy widget states to OptionData object */
   void widgetsToOptionData();
+
+  /* Copy OptionData object to widget */
   void optionDataToWidgets(const OptionData& data);
 
   void widgetToMapThemeKeys(OptionData& data);
   void mapThemeKeysToWidget(const OptionData& data);
-
-  void toFlags(QCheckBox *checkBox, opts::Flags flag);
-  void toFlags(QRadioButton *radioButton, opts::Flags flag);
-  void fromFlags(const OptionData& data, QCheckBox *checkBox, opts::Flags flag);
-  void fromFlags(const OptionData& data, QRadioButton *radioButton, opts::Flags flag);
-
-  void toFlags2(QCheckBox *checkBox, opts2::Flags2 flag);
-  void toFlags2(QRadioButton *radioButton, opts2::Flags2 flag);
-  void fromFlags2(const OptionData& data, QCheckBox *checkBox, opts2::Flags2 flag);
-  void fromFlags2(const OptionData& data, QRadioButton *radioButton, opts2::Flags2 flag);
-
-  void toFlagsWeather(QCheckBox *checkBox, optsw::FlagsWeather flag);
-  void fromFlagsWeather(const OptionData& data, QCheckBox *checkBox, optsw::FlagsWeather flag);
 
   void selectActiveSkyPathClicked();
   void selectXplane11PathClicked();
@@ -140,7 +131,7 @@ private:
   void updateXplane11PathStatus();
   void updateXplane12PathStatus();
   void updateXplaneWindStatus();
-  void updateFlightPlanColorWidgets();
+  void updateFlightplanColorWidgets();
   void updateHighlightWidgets();
 
   void addDatabaseIncludeDirClicked();
@@ -186,7 +177,6 @@ private:
 
   void trailColorClicked();
   void mapMeasurementColorClicked();
-  void onlineDisplayRangeClicked();
   void eastWestRuleClicked();
 
   // Add items to the tree widget and to the  displayOptItemIndex
@@ -219,8 +209,6 @@ private:
   void mapThemeDirSelectClicked();
   void checkUpdateClicked();
   void mapEmptyAirportsClicked(bool state);
-  int displayOnlineRangeToData(const QSpinBox *spinBox, const QCheckBox *checkButton);
-  void displayOnlineRangeFromData(QSpinBox *spinBox, QCheckBox *checkButton, int value);
   void updateNavOptions();
 
   /* Online networks */
@@ -248,12 +236,10 @@ private:
   /* Update web server with saved parameters */
   void updateWebOptionsFromData();
 
-  void mapClickAirportProcsToggled();
-
   void mapboxUserMapClicked();
 
   /* Fill combo box with available languages and select best match. English, otherwise.*/
-  void udpdateLanguageComboBox(const QString& guiLanguage);
+  void udpdateLanguageComboBox(const QString& lang);
   void languageChanged(int);
 
   /* Font selection for map and GUI */

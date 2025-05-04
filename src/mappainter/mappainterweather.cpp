@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2023 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2024 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -18,13 +18,15 @@
 #include "mappainter/mappainterweather.h"
 
 #include "common/symbolpainter.h"
+#include "fs/weather/metarparser.h"
+#include "fs/weather/metar.h"
 #include "mapgui/mapscale.h"
 #include "mapgui/maplayer.h"
 #include "query/mapquery.h"
+#include "query/querymanager.h"
 #include "util/paintercontextsaver.h"
 #include "app/navapp.h"
 #include "route/route.h"
-#include "fs/weather/metar.h"
 #include "weather/weatherreporter.h"
 
 #include <marble/GeoPainter.h>
@@ -58,11 +60,11 @@ void MapPainterWeather::render()
 
   const GeoDataLatLonAltBox& curBox = context->viewport->viewLatLonAltBox();
   const QList<MapAirport> *airportCache =
-    mapQuery->getAirports(curBox, context->mapLayer, context->lazyUpdate, context->objectTypes, overflow);
+    queries->getMapQuery()->getAirports(curBox, context->mapLayer, context->lazyUpdate, context->objectTypes, overflow);
   context->setQueryOverflow(overflow);
 
   // Collect all airports that are visible from cache ======================================
-  QList<PaintAirportType> visibleAirportWeather;
+  QList<AirportPaintData> visibleAirportWeather;
   float x, y;
   bool hidden, visibleOnMap;
   if(airportCache != nullptr)
@@ -72,7 +74,7 @@ void MapPainterWeather::render()
       visibleOnMap = wToS(airport.position, x, y, scale->getScreeenSizeForRect(airport.bounding), &hidden);
 
       if(!hidden && visibleOnMap)
-        visibleAirportWeather.append(PaintAirportType(airport, x, y));
+        visibleAirportWeather.append(AirportPaintData(airport, x, y));
     }
   }
 
@@ -84,7 +86,7 @@ void MapPainterWeather::render()
       const MapAirport& airport = context->route->getDepartureAirportLeg().getAirport();
       visibleOnMap = wToS(airport.position, x, y, scale->getScreeenSizeForRect(airport.bounding), &hidden);
       if(!hidden && visibleOnMap)
-        visibleAirportWeather.append(PaintAirportType(airport, x, y));
+        visibleAirportWeather.append(AirportPaintData(airport, x, y));
     }
 
     if(context->route->getDestinationAirportLeg().isAirport())
@@ -92,7 +94,7 @@ void MapPainterWeather::render()
       const MapAirport& airport = context->route->getDestinationAirportLeg().getAirport();
       visibleOnMap = wToS(airport.position, x, y, scale->getScreeenSizeForRect(airport.bounding), &hidden);
       if(!hidden && visibleOnMap)
-        visibleAirportWeather.append(PaintAirportType(airport, x, y));
+        visibleAirportWeather.append(AirportPaintData(airport, x, y));
     }
 
     QVector<MapAirport> alternates = context->route->getAlternateAirports();
@@ -100,7 +102,7 @@ void MapPainterWeather::render()
     {
       visibleOnMap = wToS(airport.position, x, y, scale->getScreeenSizeForRect(airport.bounding), &hidden);
       if(!hidden && visibleOnMap)
-        visibleAirportWeather.append(PaintAirportType(airport, x, y));
+        visibleAirportWeather.append(AirportPaintData(airport, x, y));
     }
   }
 
@@ -110,14 +112,14 @@ void MapPainterWeather::render()
      context->weatherSource == map::WEATHER_SOURCE_SIMULATOR)
   {
     visibleAirportWeather.erase(std::remove_if(visibleAirportWeather.begin(), visibleAirportWeather.end(),
-                                               [](const PaintAirportType& ap) -> bool
+                                               [](const AirportPaintData& airportPaintData) -> bool
     {
-      return ap.airport->emptyDraw() || !ap.airport->hard() || ap.airport->closed();
+      return airportPaintData.getAirport().emptyDraw() || !airportPaintData.getAirport().hard() || airportPaintData.getAirport().closed();
     }), visibleAirportWeather.end());
 
     std::sort(visibleAirportWeather.begin(), visibleAirportWeather.end(),
-              [](const PaintAirportType& ap1, const PaintAirportType& ap2) {
-      return ap1.airport->longestRunwayLength > ap2.airport->longestRunwayLength;
+              [](const AirportPaintData& airportPaintData1, const AirportPaintData& airportPaintData2) {
+      return airportPaintData1.getAirport().longestRunwayLength > airportPaintData2.getAirport().longestRunwayLength;
     });
     visibleAirportWeather = visibleAirportWeather.mid(0, 10);
   }
@@ -127,21 +129,22 @@ void MapPainterWeather::render()
   std::sort(visibleAirportWeather.begin(), visibleAirportWeather.end(), std::bind(&MapPainter::sortAirportFunction, this, _1, _2));
 
   WeatherReporter *reporter = NavApp::getWeatherReporter();
-  for(const PaintAirportType& airportWeather: qAsConst(visibleAirportWeather))
+  for(const AirportPaintData& airportPaintData : qAsConst(visibleAirportWeather))
   {
-    atools::fs::weather::Metar metar =
-      reporter->getAirportWeather(*airportWeather.airport, true /* stationOnly */);
+    const atools::fs::weather::Metar& metar = reporter->getAirportWeather(airportPaintData.getAirport(), true /* stationOnly */);
 
-    if(metar.isValid())
-      drawAirportWeather(metar, static_cast<float>(airportWeather.point.x()), static_cast<float>(airportWeather.point.y()));
+    if(metar.hasStationMetar())
+      drawAirportWeather(metar.getStation(), airportPaintData.getPoint());
   }
 }
 
-void MapPainterWeather::drawAirportWeather(const atools::fs::weather::Metar& metar, float x, float y)
+void MapPainterWeather::drawAirportWeather(const atools::fs::weather::MetarParser& metar, const QPointF& point)
 {
   float size = context->szF(context->symbolSizeAirportWeather, context->mapLayer->getAirportSymbolSize());
   bool windBarbs = context->mapLayer->isAirportWeatherDetails();
 
-  symbolPainter->drawAirportWeather(context->painter, metar, x - size * 4.f / 5.f, y - size * 4.f / 5.f, size,
+  symbolPainter->drawAirportWeather(context->painter, metar,
+                                    static_cast<float>(point.x() - size * 4. / 5.),
+                                    static_cast<float>(point.y() - size * 4. / 5.), size,
                                     true /* Wind pointer*/, windBarbs, context->drawFast);
 }

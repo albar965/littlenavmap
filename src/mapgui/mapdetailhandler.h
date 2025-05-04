@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2022 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2024 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -47,30 +47,38 @@ public:
   MapDetailHandler& operator=(const MapDetailHandler& other) = delete;
 
   /* Initialize, create actions and add button to toolbar. */
-  void addToolbarButton();
+  void insertToolbarButton();
 
   /* Save and load flags if requested in options */
-  void saveState();
+  void saveState() const;
   void restoreState();
 
-  /* Detail level in range MAP_MIN_DETAIL_LEVEL = 8 -> MAP_DEFAULT_DETAIL_LEVEL = 10 -> MAP_MAX_DETAIL_LEVEL = 15 */
-  int getDetailLevel() const;
-
-  /* Set detail level in range 8 -> 10 -> 15.
-   * All below emit updateDetailLevel() */
-  void setDetailLevel(int level);
+  /* Increase or decrease map detail resulting in more and bigger symbols
+   * emits updateDetailLevel() */
   void increaseMapDetail();
   void decreaseMapDetail();
 
-  /* Reset detail level to MAP_DEFAULT_DETAIL_LEVEL 10.
+  /* Increase or decrease number of labels
+   * emits updateDetailLevel() */
+  void increaseMapDetailText();
+  void decreaseMapDetailText();
+
+  /* Reset detail level and label density to MAP_DEFAULT_DETAIL_LEVEL 0.
    * emits updateDetailLevel() */
   void defaultMapDetail();
 
+  /* Detail level in range MAP_MIN_DETAIL_LEVEL(_TEXT) -> MAP_DEFAULT_DETAIL_LEVEL -> MAP_MAX_DETAIL_LEVEL(_TEXT) */
+  int getDetailLevel() const;
+  int getDetailLevelText() const;
+
 signals:
   /* Redraw map on slider change or reset. */
-  void updateDetailLevel(int level);
+  void updateDetailLevel(int level, int levelText);
 
 private:
+  void setDetailLevel(int level);
+  void setDetailLevelText(int level);
+
   void detailSliderChanged();
   void updateActions();
 
@@ -80,6 +88,9 @@ private:
   /* Widget wrapper allowing to put an arbitrary widget into a menu */
   mdinternal::DetailSliderAction *sliderActionDetailLevel = nullptr;
   mdinternal::DetailLabelAction *labelActionDetailLevel = nullptr;
+
+  mdinternal::DetailSliderAction *sliderActionDetailLevelText = nullptr;
+  mdinternal::DetailLabelAction *labelActionDetailLevelText = nullptr;
 
   /* Toolbutton getting all actions for dropdown menu */
   QToolButton *toolButton = nullptr;
@@ -95,12 +106,12 @@ class DetailSliderAction
   Q_OBJECT
 
 public:
-  explicit DetailSliderAction(QObject *parent);
+  explicit DetailSliderAction(QObject *parent, const QString& settingsKeyParam, int minimumValue, int maximumValue);
 
   /* MAP_MIN_DETAIL_LEVEL = 8 -> MAP_DEFAULT_DETAIL_LEVEL = 10 -> MAP_MAX_DETAIL_LEVEL = 15 */
   int getSliderValue() const;
 
-  void saveState();
+  void saveState() const;
   void restoreState();
 
   void setSliderValue(int value);
@@ -115,13 +126,10 @@ protected:
   virtual QWidget *createWidget(QWidget *parent) override;
   virtual void deleteWidget(QWidget *widget) override;
 
-  /* minmum and maximum values */
-  int minValue() const;
-  int maxValue() const;
-
   /* List of created/registered slider widgets */
   QVector<QSlider *> sliders;
-  int sliderValue = 0;
+  int sliderValue = 0, minValue, maxValue;
+  QString settingsKey;
 };
 }
 

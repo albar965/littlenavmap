@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2023 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2025 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -25,27 +25,21 @@
 
 class AircraftPerfController;
 class AircraftTrail;
-class AirportQuery;
-class AirwayTrackQuery;
-class WaypointTrackQuery;
 class TrackController;
 class AirspaceController;
 class ConnectClient;
 class DatabaseManager;
 class ElevationProvider;
 class InfoController;
-class InfoQuery;
 class LogdataController;
 class LogdataSearch;
 class MainWindow;
 class MapPaintWidget;
-class MapQuery;
 class MapWidget;
 class OnlinedataController;
 class OptionsDialog;
 class ProcedureQuery;
 class QMainWindow;
-class QSplashScreen;
 class Route;
 class RouteAltitude;
 class RouteController;
@@ -65,17 +59,19 @@ class MapDetailHandler;
 class TrackManager;
 class MapThemeHandler;
 class QAction;
-class DataExchange;
 class WeatherContextHandler;
 
 namespace map {
 struct MapAirport;
 }
 namespace atools {
-namespace util {
-class Properties;
+
+namespace win {
+class ActivationContext;
 }
 namespace gui {
+
+class DataExchange;
 class TabWidgetHandler;
 }
 
@@ -93,9 +89,6 @@ class AircraftIndex;
 
 namespace perf {
 class AircraftPerf;
-}
-namespace weather {
-class Metar;
 }
 namespace sc {
 class SimConnectUserAircraft;
@@ -160,6 +153,9 @@ public:
   /* Deletes all aggregated objects */
   static void deInit();
 
+  /* Have to delete early before deleting map widget */
+  static void deInitWebController();
+
   static void checkForUpdates(int channelOpts, bool manual, bool startup, bool forceDebug);
   static void updateChannels(int channelOpts);
 
@@ -170,7 +166,11 @@ public:
   static Ui::MainWindow *getMainUi();
 
   /* true if startup is completed and main window is visible */
-  static bool isMainWindowVisible();
+  static bool isMainWindowVisible()
+  {
+    return mainWindowVisible;
+  }
+
   static void setMainWindowVisible();
 
   static void setStayOnTop(QWidget *widget);
@@ -185,12 +185,14 @@ public:
   static bool isConnectedAndAircraft();
   static bool isConnectedAndAircraftFlying();
   static bool isUserAircraftValid();
+  static bool hasAircraftPassedTakeoffPoint();
+
+  static bool checkSimConnect();
+  static void pauseSimConnect();
+  static void resumeSimConnect();
 
   /* Check for availability in database */
   static bool isMoraAvailable();
-  static bool isHoldingsAvailable();
-  static bool isAirportMsaAvailable();
-  static bool isGlsAvailable();
 
   static float getTakeoffFlownDistanceNm();
   static QDateTime getTakeoffDateTime();
@@ -199,31 +201,16 @@ public:
   static const atools::fs::sc::SimConnectData& getSimConnectData();
   static const atools::geo::Pos& getUserAircraftPos();
 
+  static atools::win::ActivationContext* getActivationContext();
+
   static void updateAllMaps();
 
   static const QVector<atools::fs::sc::SimConnectAircraft>& getAiAircraft();
 
-  static map::MapTypes getShownMapTypes();
-  static map::MapDisplayTypes getShownMapDisplayTypes();
+  static const map::MapTypes getShownMapTypes();
+  static const map::MapDisplayTypes getShownMapDisplayTypes();
   static const map::MapAirspaceFilter& getShownMapAirspaces();
 
-  static AirportQuery *getAirportQuerySim();
-  static AirportQuery *getAirportQueryNav();
-
-  /* Get the map query for the current GUI MapWidget. This means that its cache contents are related to the GUI map.
-   * For other instances of MapPaintWidget use the MapPaintWidget::getMapQuery() */
-  static MapQuery *getMapQueryGui();
-
-  /* Get the track query for the current GUI MapWidget. This means that its cache contents are related to the GUI map. */
-  static AirwayTrackQuery *getAirwayTrackQueryGui();
-
-  /* Get the track query for the current GUI MapWidget. This means that its cache contents are related to the GUI map. */
-  static WaypointTrackQuery *getWaypointTrackQueryGui();
-
-  static atools::geo::Pos getAirportPos(const QString& ident);
-
-  static InfoQuery *getInfoQuery();
-  static ProcedureQuery *getProcedureQuery();
   static const Route& getRouteConst();
   static Route& getRoute();
   static void updateRouteCycleMetadata();
@@ -245,6 +232,7 @@ public:
   /* Currently selected simulator database */
   static atools::fs::FsPaths::SimulatorType getCurrentSimulatorDb();
   static bool isAirportDatabaseXPlane(bool navdata);
+  static bool isDatabaseXPlane();
   static QString getCurrentSimulatorBasePath();
   static QString getSimulatorBasePath(atools::fs::FsPaths::SimulatorType type);
   static QString getSimulatorBasePathBest(const QVector<atools::fs::FsPaths::SimulatorType>& types);
@@ -270,6 +258,7 @@ public:
 
   /* Get the short name (FSX, FSXSE, P3DV3, P3DV2) of the currently selected simulator. */
   static QString getCurrentSimulatorShortName();
+  static QString getCurrentSimulatorShortDisplayName();
   static QString getCurrentSimulatorName();
   static bool hasSidStarInDatabase();
   static bool hasRouteTypeInDatabase();
@@ -304,14 +293,13 @@ public:
 
   static WeatherReporter *getWeatherReporter();
   static WeatherContextHandler *getWeatherContextHandler();
-  static void getAirportWind(int& windDirectionDeg, float& windSpeedKts, const map::MapAirport& airport, bool stationOnly);
+  static void getAirportMetarWind(float& windDirectionDeg, float& windSpeedKts, const map::MapAirport& airport, bool stationOnly);
 
-  static map::MapWeatherSource getAirportWeatherSource();
   static WindReporter *getWindReporter();
 
   static void updateWindowTitle();
   static void updateErrorLabel();
-  static void setStatusMessage(const QString& message, bool addToLog = false);
+  static void setStatusMessage(const QString& message, bool addToLog = false, bool popup = false);
 
   /* Get main window in different variations to avoid including it */
   static QWidget *getQMainWidget();
@@ -358,21 +346,9 @@ public:
   static const AircraftTrail& getAircraftTrailLogbook();
   static void deleteAircraftTrailLogbook();
 
-  static void initSplashScreen();
-
-  /* Called by main application once startup is done */
-  static void finishSplashScreen();
-
-  /* Remove splash when showing error messages, etc. to avoid overlay */
-  static void closeSplashScreen();
-
   /* Main window close event about to exit */
   static bool isCloseCalled();
   static void setCloseCalled(bool value = true);
-
-  /* Main window destructor called - appears later than isCloseCalled() */
-  static bool isShuttingDown();
-  static void setShuttingDown(bool value = true);
 
   /* true if map window is maximized */
   static bool isFullScreen();
@@ -390,11 +366,12 @@ public:
 
   static TrackController *getTrackController();
   static bool hasTracks();
+  static bool hasNatTracks();
+  static bool hasPacotsTracks();
   static bool hasTracksEnabled();
   static TrackManager *getTrackManager();
 
   static AirspaceController *getAirspaceController();
-  static bool hasAnyAirspaces();
 
   static atools::fs::common::MagDecReader *getMagDecReader();
 
@@ -406,20 +383,22 @@ public:
   static bool isLoadingDatabase();
 
   static QString getCurrentGuiStyleDisplayName();
-  static bool isCurrentGuiStyleNight();
+  static bool isGuiStyleDark();
 
   static bool isDarkMapTheme();
 
   static StyleHandler *getStyleHandler();
 
+  static map::MapWeatherSource getMapWeatherSourceText();
   static map::MapWeatherSource getMapWeatherSource();
   static bool isMapWeatherShown();
 
-  static const QString& getCurrentRouteFilepath();
-  static const QString& getCurrentAircraftPerfFilepath();
+  static const QString& getCurrentRouteFilePath();
+  static const QString& getCurrentAircraftPerfFilePath();
   static const QString& getCurrentAircraftPerfName();
   static const QString& getCurrentAircraftPerfAircraftType();
 
+  static bool isWebControllerRunning();
   static WebController *getWebController();
   static MapPaintWidget *getMapPaintWidgetWeb();
 
@@ -427,45 +406,38 @@ public:
   static MapAirportHandler *getMapAirportHandler();
   static MapDetailHandler *getMapDetailHandler();
 
-  static void showFlightPlan();
+  static void showFlightplan();
   static void showAircraftPerformance();
   static void showLogbookSearch();
   static void showUserpointSearch();
-
-  /* Command line options */
-  static atools::util::Properties& getStartupOptionsConst();
-  static QString getStartupOptionStr(const QString& key);
-  static QStringList getStartupOptionStrList(const QString& key);
-  static void addStartupOptionStr(const QString& key, const QString& value);
-  static void addStartupOptionStrList(const QString& key, const QStringList& value);
-  static void clearStartupOptions(); /* Clear for safe mode */
 
   /* Creates a lock file and shows a warning dialog if this is already present from a former crash.
    * Sets safe mode if user chooses to skip file loading.
    * Always creates a crash report in case of previous unsafe exit. */
   static void recordStartNavApp();
 
-  /* Record files and pack them into a zip for a crash report */
-  static QString buildCrashReportNavAppManual();
+  /* Create manual issue report */
+  static void createIssueReport(const QStringList& additionalFiles);
 
   /* true if tooltips in menus are visible */
   static bool isMenuToolTipsVisible();
 
+  /* Fake aircraft movement enabled in debug menu */
+  static bool isDebugMovingAircraft();
+
   static void setToolTipsEnabledMainMenu(bool enabled);
 
-  static const DataExchange *getDataExchangeConst();
-  static DataExchange *getDataExchange();
+  static const atools::gui::DataExchange *getDataExchangeConst();
+  static atools::gui::DataExchange *getDataExchange();
   static bool initDataExchange();
   static void deInitDataExchange();
 
 private:
   static void initApplication();
   static void readMagDecFromDatabase();
+  static void getReportFiles(QStringList& crashReportFiles, QString& reportFilename, bool issueReport);
 
   /* Database query helpers and caches */
-  static AirportQuery *airportQuerySim, *airportQueryNav;
-  static InfoQuery *infoQuery;
-  static ProcedureQuery *procedureQuery;
   static ElevationProvider *elevationProvider;
 
   /* Most important handlers */
@@ -490,19 +462,16 @@ private:
 
   static atools::fs::db::DatabaseMeta *databaseMetaSim;
   static atools::fs::db::DatabaseMeta *databaseMetaNav;
-  static QSplashScreen *splashScreen;
 
   static UpdateHandler *updateHandler;
   static VehicleIcons *vehicleIcons;
   static StyleHandler *styleHandler;
 
   static WebController *webController;
-  static atools::util::Properties *startupOptions;
 
-  static DataExchange *dataExchange;
+  static atools::gui::DataExchange *dataExchange;
 
   static bool loadingDatabase;
-  static bool shuttingDown;
   static bool closeCalled;
   static bool mainWindowVisible;
 };

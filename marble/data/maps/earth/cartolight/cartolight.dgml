@@ -14,6 +14,7 @@
       <target>earth</target>
       <theme>cartolight</theme>
       <icon pixmap="cartolight-preview.png"/>
+      <shortcut>Ctrl+Alt+1</shortcut>
       <visible>true</visible>
       <description><![CDATA[<p>A <i>global roadmap</i> created by the OpenStreetMap (OSM) project.</p><p>OSM is an open community which creates free editable maps. The OSM data was rendered using Mapnik.</p>]]></description>
       <zoom>

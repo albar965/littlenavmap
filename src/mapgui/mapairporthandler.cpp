@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2023 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2024 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -50,7 +50,7 @@ int AirportSliderAction::getSliderValue() const
   return sliderValue == minValue() ? -1 : sliderValue;
 }
 
-void AirportSliderAction::saveState()
+void AirportSliderAction::saveState() const
 {
   atools::settings::Settings::instance().setValue(lnm::MAP_AIRPORT_RUNWAY_LENGTH, sliderValue);
 }
@@ -86,7 +86,7 @@ void AirportSliderAction::optionsChanged()
   }
 
   atools::gui::SignalBlocker blocker(sliders);
-  for(QSlider *slider : sliders)
+  for(QSlider *slider : qAsConst(sliders))
   {
     slider->setValue(sliderValue);
     slider->setMinimum(minValue());
@@ -164,7 +164,7 @@ int AirportSliderAction::maxValue() const
 
 void AirportSliderAction::setValue(int value)
 {
-  for(QSlider *slider : sliders)
+  for(QSlider *slider : qAsConst(sliders))
   {
     slider->blockSignals(true);
     slider->setValue(value);
@@ -207,7 +207,7 @@ void AirportLabelAction::setText(const QString& textParam)
 {
   text = textParam;
   // Set text to all registered labels
-  for(QLabel *label : labels)
+  for(QLabel *label : qAsConst(labels))
     label->setText(text);
 }
 
@@ -233,12 +233,12 @@ void AirportLabelAction::deleteWidget(QWidget *widget)
 MapAirportHandler::MapAirportHandler(QWidget *parent)
   : QObject(parent)
 {
-
 }
 
 MapAirportHandler::~MapAirportHandler()
 {
-  delete toolButton;
+  ATOOLS_DELETE_LOG(actionGroupAddon);
+  ATOOLS_DELETE_LOG(toolButton);
 }
 
 void MapAirportHandler::saveState()
@@ -250,17 +250,16 @@ void MapAirportHandler::saveState()
 
 void MapAirportHandler::restoreState()
 {
-  if(OptionData::instance().getFlags() & opts::STARTUP_LOAD_MAP_SETTINGS)
+  if(OptionData::instance().getFlags().testFlag(opts::STARTUP_LOAD_MAP_SETTINGS))
   {
-    QVariant defaultValue = static_cast<atools::util::FlagType>(map::AIRPORT_ALL_AND_ADDON);
-    airportTypes = atools::settings::Settings::instance().valueVar(lnm::MAP_AIRPORT, defaultValue).value<atools::util::FlagType>();
+    airportTypes = atools::settings::Settings::instance().valueVar(lnm::MAP_AIRPORT, map::AIRPORT_DEFAULT).value<map::MapTypes::FlagType>();
     sliderActionRunwayLength->restoreState();
   }
   actionEmpty->setEnabled(OptionData::instance().getFlags() & opts::MAP_EMPTY_AIRPORTS);
 
   runwaySliderValueChanged();
   flagsToActions();
-  updateToolbutton();
+  updateButtons();
 }
 
 int MapAirportHandler::getMinimumRunwayFt() const
@@ -273,7 +272,7 @@ int MapAirportHandler::getMinimumRunwayFt() const
 
 void MapAirportHandler::resetSettingsToDefault()
 {
-  airportTypes = map::AIRPORT_ALL_AND_ADDON;
+  airportTypes = map::AIRPORT_DEFAULT;
   sliderActionRunwayLength->reset();
   flagsToActions();
   runwaySliderValueChanged();
@@ -286,7 +285,7 @@ void MapAirportHandler::optionsChanged()
   runwaySliderValueChanged();
 }
 
-void MapAirportHandler::addToolbarButton()
+void MapAirportHandler::insertToolbarButton()
 {
   Ui::MainWindow *ui = NavApp::getMainUi();
 
@@ -309,8 +308,7 @@ void MapAirportHandler::addToolbarButton()
   buttonMenu->setToolTipsVisible(true);
   buttonMenu->setTearOffEnabled(true);
 
-  ui->toolBarMapOptions->insertWidget(ui->actionMapShowVor, toolButton);
-  ui->toolBarMapOptions->insertSeparator(ui->actionMapShowVor);
+  ui->toolBarMapOptions->insertWidget(ui->actionMapShowAirportWeather, toolButton);
 
   // Create and add actions to toolbar and menu =================================
   actionReset = new QAction(tr("&Reset airport display options"), buttonMenu);
@@ -320,6 +318,14 @@ void MapAirportHandler::addToolbarButton()
   buttonMenu->addAction(actionReset);
   ui->menuViewAirport->addAction(actionReset);
   connect(actionReset, &QAction::triggered, this, &MapAirportHandler::actionResetTriggered);
+
+  actionAddonOnly = new QAction(tr("&Show only add-on airports"), buttonMenu);
+  actionAddonOnly->setIcon(QIcon(":/littlenavmap/resources/icons/airportaddon.svg"));
+  actionAddonOnly->setToolTip(tr("Change all settings to show only add-on airports at all zoom distances"));
+  actionAddonOnly->setStatusTip(actionAddonOnly->toolTip());
+  buttonMenu->addAction(actionAddonOnly);
+  ui->menuViewAirport->addAction(actionAddonOnly);
+  connect(actionAddonOnly, &QAction::triggered, this, &MapAirportHandler::actionOnlyAddonTriggered);
 
   ui->menuViewAirport->addSeparator();
   buttonMenu->addSeparator();
@@ -349,8 +355,18 @@ void MapAirportHandler::addToolbarButton()
   ui->menuViewAirport->addSeparator();
   toolButton->menu()->addSeparator();
 
-  actionAddon = addAction(":/littlenavmap/resources/icons/airportaddon.svg", tr("&Add-on"),
-                          tr("Force visibility of add-on airports for all zoom distances"), QKeySequence(tr("Ctrl+Alt+O")));
+  actionGroupAddon = new QActionGroup(buttonMenu);
+  actionAddonNone = addAction(":/littlenavmap/resources/icons/airportaddonnone.svg", tr("&Add-on no override"),
+                              tr("Add-on airports are shown like normal airports"), QKeySequence(tr("Ctrl+Alt+O")));
+  actionAddonNone->setActionGroup(actionGroupAddon);
+
+  actionAddonZoom = addAction(":/littlenavmap/resources/icons/airportaddonzoom.svg", tr("Add-on override &zoom"),
+                              tr("Add-on airports override zoom distance only"), QKeySequence(tr("Ctrl+Alt+Z")));
+  actionAddonZoom->setActionGroup(actionGroupAddon);
+
+  actionAddonZoomFilter = addAction(":/littlenavmap/resources/icons/airportaddon.svg", tr("Add-on &override zoom and filter"),
+                                    tr("Add-on airports override zoom distance and filters"), QKeySequence(tr("Ctrl+Alt+Y")));
+  actionAddonZoomFilter->setActionGroup(actionGroupAddon);
 
   // Create and add the wrapped actions ================
   buttonMenu->addSeparator();
@@ -358,6 +374,11 @@ void MapAirportHandler::addToolbarButton()
   toolButton->menu()->addAction(labelActionRunwayLength);
   sliderActionRunwayLength = new apinternal::AirportSliderAction(toolButton->menu());
   toolButton->menu()->addAction(sliderActionRunwayLength);
+
+  // All that are to be disabled if airport master button is off
+  allActions.append({
+    actionHard, actionSoft, actionEmpty, actionAddonNone, actionAddonZoom, actionAddonZoomFilter,
+    actionUnlighted, actionNoProcedures, actionClosed, actionMil, actionWater, actionHelipad, sliderActionRunwayLength});
 
   connect(sliderActionRunwayLength, &apinternal::AirportSliderAction::valueChanged, this, &MapAirportHandler::runwaySliderValueChanged);
   connect(sliderActionRunwayLength, &apinternal::AirportSliderAction::sliderReleased, this, &MapAirportHandler::runwaySliderReleased);
@@ -382,101 +403,113 @@ QAction *MapAirportHandler::addAction(const QString& icon, const QString& text, 
   return action;
 }
 
+void MapAirportHandler::actionOnlyAddonTriggered()
+{
+  // Save and restore master airport flag
+  bool airportFlag = airportTypes.testFlag(map::AIRPORT);
+  airportTypes = map::AIRPORT_ADDON_ZOOM_FILTER;
+  airportTypes.setFlag(map::AIRPORT, airportFlag);
+
+  flagsToActions();
+  updateButtons();
+  emit updateAirportTypes();
+}
+
 void MapAirportHandler::actionResetTriggered()
 {
   // Save and restore master airport flag
   bool airportFlag = airportTypes.testFlag(map::AIRPORT);
-  airportTypes = map::AIRPORT_ALL_AND_ADDON;
+  airportTypes = map::AIRPORT_DEFAULT;
   airportTypes.setFlag(map::AIRPORT, airportFlag);
 
   flagsToActions();
   sliderActionRunwayLength->reset();
   runwaySliderValueChanged();
-  updateToolbutton();
+  updateButtons();
   emit updateAirportTypes();
 }
 
 void MapAirportHandler::toolbarActionTriggered()
 {
   actionsToFlags();
-  updateToolbutton();
+  updateButtons();
   emit updateAirportTypes();
 }
 
 void MapAirportHandler::flagsToActions()
 {
+  // Do not block members of group to allow status change
   atools::gui::SignalBlocker blocker({NavApp::getMainUi()->actionMapShowAirports, actionHard, actionSoft, actionWater, actionHelipad,
-                                      actionAddon, actionUnlighted, actionNoProcedures, actionClosed, actionMil, actionEmpty});
+                                      actionUnlighted, actionNoProcedures, actionClosed, actionMil, actionEmpty});
 
   NavApp::getMainUi()->actionMapShowAirports->setChecked(airportTypes.testFlag(map::AIRPORT));
   actionHard->setChecked(airportTypes.testFlag(map::AIRPORT_HARD));
   actionSoft->setChecked(airportTypes.testFlag(map::AIRPORT_SOFT));
   actionWater->setChecked(airportTypes.testFlag(map::AIRPORT_WATER));
   actionHelipad->setChecked(airportTypes.testFlag(map::AIRPORT_HELIPAD));
-  actionAddon->setChecked(airportTypes.testFlag(map::AIRPORT_ADDON));
   actionUnlighted->setChecked(airportTypes.testFlag(map::AIRPORT_UNLIGHTED));
   actionNoProcedures->setChecked(airportTypes.testFlag(map::AIRPORT_NO_PROCS));
   actionClosed->setChecked(airportTypes.testFlag(map::AIRPORT_CLOSED));
   actionMil->setChecked(airportTypes.testFlag(map::AIRPORT_MILITARY));
   actionEmpty->setChecked(airportTypes.testFlag(map::AIRPORT_EMPTY));
+
+  // Signals not blocked to allow mutual exclusive group
+  if(airportTypes.testFlag(map::AIRPORT_ADDON_ZOOM))
+    actionAddonZoom->setChecked(true);
+  else if(airportTypes.testFlag(map::AIRPORT_ADDON_ZOOM_FILTER))
+    actionAddonZoomFilter->setChecked(true);
+  else
+    actionAddonNone->setChecked(true);
 }
 
 void MapAirportHandler::actionsToFlags()
 {
   airportTypes = map::NONE;
 
-  if(NavApp::getMainUi()->actionMapShowAirports->isChecked())
-    airportTypes |= map::AIRPORT;
+  airportTypes.setFlag(map::AIRPORT, NavApp::getMainUi()->actionMapShowAirports->isChecked());
+  airportTypes.setFlag(map::AIRPORT_HARD, actionHard->isChecked());
+  airportTypes.setFlag(map::AIRPORT_SOFT, actionSoft->isChecked());
+  airportTypes.setFlag(map::AIRPORT_WATER, actionWater->isChecked());
+  airportTypes.setFlag(map::AIRPORT_HELIPAD, actionHelipad->isChecked());
+  airportTypes.setFlag(map::AIRPORT_UNLIGHTED, actionUnlighted->isChecked());
+  airportTypes.setFlag(map::AIRPORT_NO_PROCS, actionNoProcedures->isChecked());
+  airportTypes.setFlag(map::AIRPORT_CLOSED, actionClosed->isChecked());
+  airportTypes.setFlag(map::AIRPORT_MILITARY, actionMil->isChecked());
+  airportTypes.setFlag(map::AIRPORT_EMPTY, actionEmpty->isChecked());
 
-  if(actionHard->isChecked())
-    airportTypes |= map::AIRPORT_HARD;
-
-  if(actionSoft->isChecked())
-    airportTypes |= map::AIRPORT_SOFT;
-
-  if(actionWater->isChecked())
-    airportTypes |= map::AIRPORT_WATER;
-
-  if(actionHelipad->isChecked())
-    airportTypes |= map::AIRPORT_HELIPAD;
-
-  if(actionAddon->isChecked())
-    airportTypes |= map::AIRPORT_ADDON;
-
-  if(actionUnlighted->isChecked())
-    airportTypes |= map::AIRPORT_UNLIGHTED;
-
-  if(actionNoProcedures->isChecked())
-    airportTypes |= map::AIRPORT_NO_PROCS;
-
-  if(actionClosed->isChecked())
-    airportTypes |= map::AIRPORT_CLOSED;
-
-  if(actionMil->isChecked())
-    airportTypes |= map::AIRPORT_MILITARY;
-
-  if(actionEmpty->isChecked())
-    airportTypes |= map::AIRPORT_EMPTY;
+  airportTypes.setFlag(map::AIRPORT_ADDON_ZOOM, actionAddonZoom->isChecked());
+  airportTypes.setFlag(map::AIRPORT_ADDON_ZOOM_FILTER, actionAddonZoomFilter->isChecked());
 }
 
 void MapAirportHandler::runwaySliderValueChanged()
 {
-  updateToolbutton();
+  updateButtons();
   updateRunwayLabel();
   emit updateAirportTypes();
 }
 
 void MapAirportHandler::runwaySliderReleased()
 {
-  updateToolbutton();
+  updateButtons();
   emit updateAirportTypes();
 }
 
-void MapAirportHandler::updateToolbutton()
+void MapAirportHandler::updateButtons()
 {
-  bool noDefault = getMinimumRunwayFt() > 0 || !(airportTypes.testFlag(map::MapTypes(map::AIRPORT_FILTER_ALL)));
+  bool mainChecked = NavApp::getMainUi()->actionMapShowAirports->isChecked();
+  toolButton->setEnabled(mainChecked);
+
+  // Depress tool button if different from default
+  bool noDefault = getMinimumRunwayFt() > 0 || !airportTypes.testFlag(map::MapTypes(map::AIRPORT_DEFAULT));
   toolButton->setChecked(noDefault);
-  actionReset->setEnabled(noDefault);
+
+  // Reset and addon action
+  actionReset->setEnabled(noDefault && mainChecked);
+  actionAddonOnly->setEnabled(airportTypes != (map::AIRPORT | map::AIRPORT_ADDON_ZOOM_FILTER) && mainChecked);
+
+  // Disable all other depending on main state
+  for(QAction *action : qAsConst(allActions))
+    action->setEnabled(mainChecked);
 }
 
 void MapAirportHandler::updateRunwayLabel()

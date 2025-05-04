@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2022 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2024 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -39,6 +39,9 @@ public:
   explicit AirspaceDialog(QWidget *parent);
   virtual ~AirspaceDialog() override;
 
+  AirspaceDialog(const AirspaceDialog& other) = delete;
+  AirspaceDialog& operator=(const AirspaceDialog& other) = delete;
+
   /* Base path for airspace files */
   QString getAirspacePath() const;
 
@@ -46,7 +49,7 @@ public:
   QString getAirspaceFilePatterns() const;
 
 private:
-  void saveState();
+  void saveState() const;
   void restoreState();
   void buttonBoxClicked(QAbstractButton *button);
 

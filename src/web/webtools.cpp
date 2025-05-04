@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2023 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2024 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -18,6 +18,7 @@
 #include "web/webtools.h"
 
 #include <QDebug>
+#include <QSettings>
 
 #include "httpserver/httprequest.h"
 
@@ -108,4 +109,17 @@ QString Parameter::asStr(const QString& key, const QString& defaultValue) const
 bool Parameter::has(const QString& key) const
 {
   return params.contains(key.toUtf8());
+}
+
+void copyKeyValuesFromGroup(QSettings& settings, const QString& group, QHash<QString, QVariant>& toSettings)
+{
+  settings.beginGroup(group);
+  const QStringList childKeys = settings.childKeys();
+  for(const QString& childKey : childKeys)
+  {
+    QString key = childKey.trimmed();
+    if(!key.startsWith('#') && !key.startsWith(';') && !key.startsWith("//"))
+      toSettings.insert(key, settings.value(childKey));
+  }
+  settings.endGroup();
 }

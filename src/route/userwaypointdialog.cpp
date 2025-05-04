@@ -62,7 +62,7 @@ UserWaypointDialog::UserWaypointDialog(QWidget *parent, const atools::fs::pln::F
 
   if(waypointEdit)
   {
-    setWindowTitle(QApplication::applicationName() + tr(" - Edit Flight Plan Position Remarks"));
+    setWindowTitle(QCoreApplication::applicationName() + tr(" - Edit Flight Plan Position Remarks"));
     ui->labelRouteUserWaypointHeader->setText(tr("<b>%1 %2 region %3</b>").
                                               arg(entry->getWaypointTypeAsDisplayString()).
                                               arg(entry->getIdent()).
@@ -73,7 +73,7 @@ UserWaypointDialog::UserWaypointDialog(QWidget *parent, const atools::fs::pln::F
     // "flight plans or deleting waypoints."));
   }
   else
-    setWindowTitle(QApplication::applicationName() + tr(" - Edit Flight Plan Position"));
+    setWindowTitle(QCoreApplication::applicationName() + tr(" - Edit Flight Plan Position"));
 
   ui->plainTextEditRouteUserWaypointComment->setPlainText(entry->getComment());
   if(!waypointEdit)

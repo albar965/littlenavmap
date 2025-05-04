@@ -2,19 +2,19 @@
 <!-- Created with Inkscape (http://www.inkscape.org/) -->
 
 <svg
-   xmlns:dc="http://purl.org/dc/elements/1.1/"
-   xmlns:cc="http://creativecommons.org/ns#"
-   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
-   xmlns:svg="http://www.w3.org/2000/svg"
-   xmlns="http://www.w3.org/2000/svg"
-   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
-   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
    version="1.0"
    width="149.92134"
    height="140.26547"
    id="svg2"
-   inkscape:version="0.91 r13725"
-   sodipodi:docname="routehigh.svg">
+   inkscape:version="1.2.2 (b0a8486541, 2022-12-01)"
+   sodipodi:docname="routehigh.svg"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:dc="http://purl.org/dc/elements/1.1/">
   <metadata
      id="metadata17">
     <rdf:RDF>
@@ -23,7 +23,7 @@
         <dc:format>image/svg+xml</dc:format>
         <dc:type
            rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
-        <dc:title></dc:title>
+        <dc:title />
       </cc:Work>
     </rdf:RDF>
   </metadata>
@@ -46,13 +46,16 @@
      inkscape:window-x="44"
      inkscape:window-y="24"
      inkscape:window-maximized="1"
-     inkscape:current-layer="g3338"
+     inkscape:current-layer="text17213"
      showguides="false"
      inkscape:snap-grids="true"
      fit-margin-top="0"
      fit-margin-left="0"
      fit-margin-right="0"
-     fit-margin-bottom="0">
+     fit-margin-bottom="0"
+     inkscape:showpageshadow="2"
+     inkscape:pagecheckerboard="0"
+     inkscape:deskcolor="#d1d1d1">
     <inkscape:grid
        type="xygrid"
        id="grid8410"
@@ -99,16 +102,14 @@
        height="73.095222"
        x="71.12944"
        y="200.63742" />
-    <text
-       xml:space="preserve"
-       style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:93.33885956px;line-height:125%;font-family:'Courier New';-inkscape-font-specification:'Courier New Bold';letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
-       x="74.579124"
-       y="265.89548"
+    <g
+       aria-label="H"
        id="text17213"
-       sodipodi:linespacing="125%"><tspan
-         sodipodi:role="line"
-         id="tspan17215"
-         x="74.579124"
-         y="265.89548">J</tspan></text>
+       style="font-weight:bold;line-height:0%;font-family:'Courier New';-inkscape-font-specification:'Courier New Bold';letter-spacing:0px;word-spacing:0px;stroke-width:1px">
+      <path
+         d="M 112.81708,243.01651 H 92.854954 v 13.53596 h 1.45842 q 3.372597,0 4.785441,1.3217 1.458425,1.27611 1.458425,3.37259 0,2.05091 -1.458425,3.3726 -1.412844,1.27612 -4.785441,1.27612 H 82.87389 q -3.372597,0 -4.831017,-1.27612 -1.412845,-1.32169 -1.412845,-3.41817 0,-2.55224 2.233206,-3.96508 1.093815,-0.72921 4.648715,-0.68364 v -36.55166 q -2.461085,-0.22787 -3.737202,-1.50399 -1.230542,-1.27612 -1.230542,-3.1903 0,-2.09648 1.412844,-3.37259 1.45842,-1.3217 4.831017,-1.3217 l 9.525308,0.0456 q 3.372597,0 4.785441,1.27612 1.458425,1.27611 1.458425,3.37259 0,2.09648 -1.458425,3.41818 -1.412844,1.27611 -4.785441,1.27611 h -1.45842 v 13.67269 h 19.962126 v -13.67269 h -1.45842 q -3.3726,0 -4.83102,-1.27611 -1.41284,-1.3217 -1.41284,-3.41818 0,-2.09648 1.41284,-3.37259 1.45842,-1.3217 4.83102,-1.3217 l 9.52531,0.0456 q 3.3726,0 4.78544,1.27612 1.45842,1.27611 1.45842,3.37259 0,1.91418 -1.27612,3.1903 -1.23054,1.27612 -3.69162,1.50399 v 36.55166 q 3.60047,0 4.64871,0.68364 2.23321,1.41284 2.23321,4.01065 0,2.05091 -1.45842,3.3726 -1.41285,1.27612 -4.78545,1.27612 h -11.43948 q -3.3726,0 -4.83102,-1.27612 -1.41284,-1.32169 -1.41284,-3.41817 0,-2.05091 1.45842,-3.32702 1.45842,-1.3217 4.78544,-1.3217 h 1.45842 z"
+         style="font-size:93.3389px;line-height:1.25"
+         id="path1419" />
+    </g>
   </g>
 </svg>

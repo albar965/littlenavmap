@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2020 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2024 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -30,7 +30,7 @@ DatabaseProgressDialog::DatabaseProgressDialog(QWidget *parent, const QString& s
 
   ui->setupUi(this);
 
-  setWindowTitle(tr("%1 - Loading %2").arg(QApplication::applicationName()).arg(simulatorName));
+  setWindowTitle(tr("%1 - Loading %2").arg(QCoreApplication::applicationName()).arg(simulatorName));
 
   connect(ui->buttonBoxDatabaseProgress, &QDialogButtonBox::clicked, this, &DatabaseProgressDialog::buttonBoxClicked);
   restoreState();
@@ -77,7 +77,7 @@ void DatabaseProgressDialog::restoreState()
   widgetState.restore(this);
 }
 
-void DatabaseProgressDialog::saveState()
+void DatabaseProgressDialog::saveState() const
 {
   atools::gui::WidgetState widgetState(lnm::OPTIONS_DIALOG_DB_PROGRESS_DLG, false);
   widgetState.save(this);

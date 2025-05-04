@@ -156,13 +156,13 @@ void SqlController::setBuilder(const QueryBuilder& builder)
   model->setQueryBuilder(builder);
 }
 
-void SqlController::filterByBuilder(const QWidget *widget)
+void SqlController::filterByBuilder()
 {
 #ifdef DEBUG_INFORMATION
   qDebug() << Q_FUNC_INFO;
 #endif
   view->clearSelection();
-  model->filterByBuilder(widget);
+  model->filterByBuilder();
   searchParamsChanged = true;
 }
 

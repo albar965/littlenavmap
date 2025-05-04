@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2023 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2024 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -22,7 +22,6 @@
 
 #include "geo/rect.h"
 
-#include <QMutex>
 #include <QPixmap>
 
 class QPixmap;
@@ -88,24 +87,27 @@ public:
   WebMapController& operator=(const WebMapController& other) = delete;
 
   /* Create or delete the map paint widget */
-  void init();
-  void deInit();
+  void initMapPaintWidget();
+  void deInitMapPaintWidget();
 
-  /* Get pixmap with given width and height from current position. */
+  /* Get pixmap with given width and height from current position. Qt::BlockingQueuedConnection */
   MapPixmap getPixmap(int width, int height);
 
-  /* Get pixmap with given width and height for a map object like an airport, the user aircraft or a route. */
+  /* Get pixmap with given width and height for a map object like an airport, the user aircraft or a route.
+   * Qt::BlockingQueuedConnection */
   MapPixmap getPixmapObject(int width, int height, web::ObjectType type, const QString& ident, float distanceKm);
 
   /* Get map at given position and distance. Command can be used to zoom in/out or scroll from the given position:
-   * "in", "out", "left", "right", "up" and "down".  */
-  MapPixmap getPixmapPosDistance(int width, int height, atools::geo::Pos pos, float distanceKm, const QString& mapCommand, const QString& errorCase = QLatin1String(""));
+   * "in", "out", "left", "right", "up" and "down".
+   * Qt::BlockingQueuedConnection */
+  MapPixmap getPixmapPosDistance(int width, int height, atools::geo::Pos pos, float distanceKm, const QString& mapCommand,
+                                 const QString& errorCase = QLatin1String(""));
 
-  /* Zoom to rectangel on map. */
+  /* Zoom to rectangle on map. Qt::BlockingQueuedConnection */
   MapPixmap getPixmapRect(int width, int height, atools::geo::Rect rect, const QString& errorCase = tr("Invalid rectangle"));
 
   /* Get the map paint widget */
-  MapPaintWidget* getMapPaintWidget() const;
+  MapPaintWidget *getMapPaintWidget() const;
 
   /* Need to clear caches and tear down queries before switching database */
   void preDatabaseLoad();
@@ -115,8 +117,6 @@ public:
 
 private:
   MapPaintWidget *mapPaintWidget = nullptr;
-  QMutex mapPaintWidgetMutex;
-
   QWidget *parentWidget;
   bool verbose = false;
 };

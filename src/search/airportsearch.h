@@ -19,6 +19,7 @@
 #define LITTLENAVMAP_AIRPORTSEARCH_H
 
 #include "search/searchbasetable.h"
+#include "search/randomdepartureairportpickingbycriteria.h"
 
 class Column;
 class AirportIconDelegate;
@@ -58,8 +59,10 @@ public:
   virtual void postDatabaseLoad() override;
   virtual void resetSearch() override;
 
+  void showRandomRouteCalc();
+
 public slots:
-  void progressing();
+  void randomFlightSearchProgressing();
   void dataRandomAirportsReceived(bool isSuccess, int indexDeparture, int indexDestination,
                                   QVector<std::pair<int, atools::geo::Pos> > *data);
 
@@ -79,11 +82,43 @@ private:
   QString formatModelData(const Column *col, const QVariant& displayRoleValue) const;
   void overrideMode(const QStringList& overrideColumnTitles);
 
-  /* UI push button clicked */
-  void randomFlightplanClicked();
+  /*
+   * Random Flight Generator (RFG)
+   * (a generator for a flight plan of a single non-stop flight from
+   *  a random* departure to a random* destination airport)
+   * *either the departure or the destination airport can be non-random
+   *  optionally
+   * A range for the distance between departure and destination airport
+   * can be given.
+   */
 
-  /* Update min/max values in random flight plan spin boxes */
-  void updateRandomFlightplanDistance();
+  /* RFG push button clicked. showDialog is false if user clicked "Search again" */
+  void randomFlightClicked(bool showDialog = true);
+
+  /* Update min/max values in RFG spin boxes */
+  void keepRandomFlightRangeSane();
+
+  /* RFG departure search thread */
+  RandomDepartureAirportPickingByCriteria *departurePicker;
+
+  /* RFG search progress feedback */
+  QProgressDialog *randomFlightSearchProgress = nullptr;
+
+  // following indices as in controller->getSqlModel()->getFullResultSet()
+  /* RFG predefined departure airport index */
+  int predefinedDeparture = -1;
+
+  /* RFG predefined destination airport index */
+  int predefinedDestination = -1;
+
+  /* Remember RFG user selection in case user clicks "Search again" */
+  bool randomFixedDeparture = false, randomFixedDestination = false;
+
+  /* Airports have to persist during search. List is cleared in AirportSearch::dataRandomAirportsReceived() */
+  QVector<std::pair<int, atools::geo::Pos> > randomSearchAirports;
+
+  /* for "Search again" */
+  QVector<std::pair<int, int> > randomUnwantedAirports;
 
   /* All layouts, lines and drop down menu items */
   QList<QObject *> airportSearchWidgets;
@@ -94,8 +129,6 @@ private:
   /* Draw airport icon into ident table column */
   AirportIconDelegate *iconDelegate = nullptr;
   UnitStringTool *unitStringTool;
-
-  QProgressDialog *progress = nullptr;
 };
 
 #endif // LITTLENAVMAP_AIRPORTSEARCH_H

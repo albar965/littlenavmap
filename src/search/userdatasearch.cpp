@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2023 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2024 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -40,16 +40,16 @@ UserdataSearch::UserdataSearch(QMainWindow *parent, QTableView *tableView, si::T
   : SearchBaseTable(parent, tableView, new ColumnList("userdata", "userdata_id"), tabWidgetIndex)
 {
   /* *INDENT-OFF* */
-  ui->pushButtonNavHelpSearch->setToolTip(
-    "<p>All set search conditions have to match.</p>"
+  ui->pushButtonUserdataHelp->setToolTip(
+    tr("<p>All set search conditions have to match.</p>"
     "<p>Search tips for text fields: </p>"
     "<ul>"
       "<li>Default is search for userpoints that contain the entered text.</li>"
       "<li>Use &quot;*&quot; as a placeholder for any text. </li>"
       "<li>Prefix with &quot;-&quot; as first character to negate search.</li>"
       "<li>Use double quotes like &quot;TAU&quot; or &quot;Sindal&quot; to force exact search.</li>"
-      "<li>Only ident field: Enter a space separated list of idents to look for more than one navaid.</li>"
-    "</ul>");
+      "<li>Only ident field: Enter a space separated list of idents to look for more than one userpoint.</li>"
+    "</ul>"));
   /* *INDENT-ON* */
 
   // All widgets that will have their state and visibility saved and restored
@@ -181,7 +181,7 @@ void UserdataSearch::saveState()
 void UserdataSearch::restoreState()
 {
   atools::gui::WidgetState widgetState(lnm::SEARCHTAB_USERDATA_VIEW_WIDGET);
-  if(OptionData::instance().getFlags() & opts::STARTUP_LOAD_SEARCH && !NavApp::isSafeMode())
+  if(OptionData::instance().getFlags() & opts::STARTUP_LOAD_SEARCH && !atools::gui::Application::isSafeMode())
   {
     widgetState.restore(userdataSearchWidgets);
 

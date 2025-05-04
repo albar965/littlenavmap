@@ -66,6 +66,8 @@ set ATOOLS_NO_USERDATA=true
 set ATOOLS_NO_WEATHER=true
 set ATOOLS_NO_WEB=true
 set ATOOLS_NO_WMM=true
+set ATOOLS_NO_NAVSERVER=true
+set ATOOLS_NO_CRASHHANDLER=true
 
 qmake.exe "%APROJECTS%\atools\atools.pro" -spec win32-g++ CONFIG+=%CONF_TYPE%
 if errorlevel 1 goto :err

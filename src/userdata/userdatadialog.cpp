@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2020 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2024 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -60,16 +60,16 @@ UserdataDialog::UserdataDialog(QWidget *parent, ud::UserdataDialogMode mode, Use
     showLatLon = true;
 
     if(mode == ud::EDIT_ONE)
-      setWindowTitle(QApplication::applicationName() + tr(" - Edit Userpoint"));
+      setWindowTitle(QCoreApplication::applicationName() + tr(" - Edit Userpoint"));
     else if(mode == ud::ADD)
     {
-      setWindowTitle(QApplication::applicationName() + tr(" - Add Userpoint"));
+      setWindowTitle(QCoreApplication::applicationName() + tr(" - Add Userpoint"));
       ui->comboBoxUserdataType->setCurrentText(DEFAULT_TYPE);
     }
   }
   else if(mode == ud::EDIT_MULTIPLE)
   {
-    setWindowTitle(QApplication::applicationName() + tr(" - Edit Userpoints"));
+    setWindowTitle(QCoreApplication::applicationName() + tr(" - Edit Userpoints"));
     showCheckbox = true;
     showLatLon = false;
   }
@@ -217,7 +217,7 @@ void UserdataDialog::setRecord(const atools::sql::SqlRecord& sqlRecord)
   recordToDialog();
 }
 
-void UserdataDialog::saveState()
+void UserdataDialog::saveState() const
 {
   atools::gui::WidgetState(lnm::USERDATA_EDIT_ADD_DIALOG).save(this);
 }

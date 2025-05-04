@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2023 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2024 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -59,10 +59,10 @@ void removeAndLog(const QString& key)
   removeAndLog(Settings::getQSettings(), key);
 }
 
-void backupFileAndLog(const QString& filename)
+void backupFileAndLog(const QString& filename, bool keepOriginalFile)
 {
   qDebug() << Q_FUNC_INFO << "Backing up" << filename;
-  atools::io::FileRoller(3, "${base}.${ext}_update-backup.${num}", true /* keepOriginalFile */).rollFile(filename);
+  atools::io::FileRoller(3, "${base}.${ext}_update-backup.${num}", keepOriginalFile).rollFile(filename);
 }
 
 void checkAndMigrateSettings()
@@ -84,17 +84,17 @@ void checkAndMigrateSettings()
 
       // Get file names =====================================================================
       QString trackFile = atools::settings::Settings::getConfigFilename(lnm::AIRCRAFT_TRACK_SUFFIX);
-      QString mapstyleFile = atools::settings::Settings::getConfigFilename(lnm::MAPSTYLE_INI_SUFFIX);
-      QString nightstyleFile = atools::settings::Settings::getConfigFilename(lnm::NIGHTSTYLE_INI_SUFFIX);
+      QString mapStyleFile = atools::settings::Settings::getConfigFilename(lnm::MAPSTYLE_INI_SUFFIX);
+      QString darkStyleFile = atools::settings::Settings::getConfigFilename(lnm::DARKSTYLE_INI_SUFFIX);
 
       // Backup most important files with from/to version suffix ============================================
-      backupFileAndLog(trackFile);
-      backupFileAndLog(mapstyleFile);
-      backupFileAndLog(nightstyleFile);
-      backupFileAndLog(Settings::getFilename());
+      backupFileAndLog(trackFile, true /* keepOriginalFile */);
+      backupFileAndLog(mapStyleFile, true /* keepOriginalFile */);
+      backupFileAndLog(darkStyleFile, true /* keepOriginalFile */);
+      backupFileAndLog(Settings::getFilename(), true /* keepOriginalFile */);
 
-      QSettings mapstyleSettings(mapstyleFile, QSettings::IniFormat);
-      QSettings nightstyleSettings(nightstyleFile, QSettings::IniFormat);
+      QSettings mapStyleSettings(mapStyleFile, QSettings::IniFormat);
+      QSettings darkStyleSettings(darkStyleFile, QSettings::IniFormat);
 
       // ===============================================================
       if(optionsVersion < Version("2.4.0"))
@@ -265,14 +265,14 @@ void checkAndMigrateSettings()
 
       if(optionsVersion <= Version("2.8.1.beta"))
       {
-        removeAndLog(&mapstyleSettings, "Marker/TurnPathPen");
-        removeAndLog(&mapstyleSettings, "Marker/SelectedAltitudeRangePen");
+        removeAndLog(&mapStyleSettings, "Marker/TurnPathPen");
+        removeAndLog(&mapStyleSettings, "Marker/SelectedAltitudeRangePen");
         removeAndLog("Map/WindSource");
         removeAndLog("Actions/DeleteTrail");
       }
 
       if(optionsVersion <= Version("2.8.4.beta"))
-        removeAndLog(&mapstyleSettings, "MainWindow/Widget_actionAircraftPerformanceWarnMismatch");
+        removeAndLog(&mapStyleSettings, "MainWindow/Widget_actionAircraftPerformanceWarnMismatch");
 
       if(optionsVersion <= Version("2.8.7"))
       {
@@ -280,12 +280,71 @@ void checkAndMigrateSettings()
         removeAndLog(lnm::OPTIONS_TRACK_NAT_PARAM);
         removeAndLog(lnm::OPTIONS_TRACK_PACOTS_URL);
         removeAndLog(lnm::OPTIONS_TRACK_PACOTS_PARAM);
-        removeAndLog(lnm::OPTIONS_TRACK_AUSOTS_URL);
-        removeAndLog(lnm::OPTIONS_TRACK_AUSOTS_PARAM);
         removeAndLog(lnm::OPTIONS_ONLINE_NETWORK_MAX_SHADOW_DIST_NM);
         removeAndLog(lnm::OPTIONS_ONLINE_NETWORK_MAX_SHADOW_ALT_DIFF_FT);
         removeAndLog(lnm::OPTIONS_ONLINE_NETWORK_MAX_SHADOW_GS_DIFF_KTS);
         removeAndLog(lnm::OPTIONS_ONLINE_NETWORK_MAX_SHADOW_HDG_DIFF_DEG);
+      }
+
+      if(optionsVersion <= Version("2.8.12"))
+      {
+        QFile::remove(mapStyleFile);
+        removeAndLog(lnm::OPTIONS_ONLINE_NETWORK_MAX_SHADOW_DIST_NM);
+        removeAndLog(lnm::OPTIONS_ONLINE_NETWORK_MAX_SHADOW_ALT_DIFF_FT);
+        removeAndLog(lnm::OPTIONS_ONLINE_NETWORK_MAX_SHADOW_GS_DIFF_KTS);
+        removeAndLog(lnm::OPTIONS_ONLINE_NETWORK_MAX_SHADOW_HDG_DIFF_DEG);
+      }
+
+      if(optionsVersion <= Version("3.0.1.beta"))
+      {
+        removeAndLog(lnm::SETTINGS_AIRCRAFT_TRAIL + "MinGroundDistanceMeter");
+        removeAndLog(lnm::SETTINGS_AIRCRAFT_TRAIL + "MaxGroundTimeMs");
+        removeAndLog(lnm::SETTINGS_AIRCRAFT_TRAIL + "MinFlyingDistanceMeter");
+        removeAndLog(lnm::SETTINGS_AIRCRAFT_TRAIL + "MaxFlyingTimeMs");
+        removeAndLog(lnm::SETTINGS_AIRCRAFT_TRAIL + "MaxHeadingDiffDeg");
+        removeAndLog(lnm::SETTINGS_AIRCRAFT_TRAIL + "MaxGsDiffKts");
+        removeAndLog(lnm::SETTINGS_AIRCRAFT_TRAIL + "MaxAltDiffFtUpper");
+        removeAndLog(lnm::SETTINGS_AIRCRAFT_TRAIL + "MaxAltDiffFtLower");
+        removeAndLog(lnm::SETTINGS_AIRCRAFT_TRAIL + "AglThresholdFt");
+      }
+
+      if(optionsVersion <= Version("3.0.3.rc1"))
+      {
+#if defined(Q_OS_WIN32)
+        QSettings registrySettings("HKEY_CURRENT_USER\\SOFTWARE\\ABarthel", QSettings::NativeFormat);
+        if(registrySettings.contains("Little Navmap/cleanupInterval"))
+        {
+          registrySettings.remove(QString());
+          registrySettings.clear();
+          registrySettings.sync();
+        }
+#endif
+      }
+
+      if(optionsVersion <= Version("3.0.10.rc1"))
+      {
+        qInfo() << Q_FUNC_INFO << "Adjusting settings for versions before or equal to 3.0.10.rc1";
+        settings.setValue("MainWindow/Widget_statusBar", true);
+      }
+
+      if(optionsVersion <= Version("3.0.11"))
+      {
+        removeAndLog("Widget_checkBoxDisplayOnlineApproachRange");
+        removeAndLog("Widget_checkBoxDisplayOnlineAreaRange");
+        removeAndLog("Widget_checkBoxDisplayOnlineClearanceRange");
+        removeAndLog("Widget_checkBoxDisplayOnlineDepartureRange");
+        removeAndLog("Widget_checkBoxDisplayOnlineFirRange");
+        removeAndLog("Widget_checkBoxDisplayOnlineGroundRange");
+        removeAndLog("Widget_checkBoxDisplayOnlineObserverRange");
+        removeAndLog("Widget_checkBoxDisplayOnlineTowerRange");
+        removeAndLog("Widget_spinBoxDisplayOnlineApproach");
+        removeAndLog("Widget_spinBoxDisplayOnlineArea");
+        removeAndLog("Widget_spinBoxDisplayOnlineClearance");
+        removeAndLog("Widget_spinBoxDisplayOnlineDeparture");
+        removeAndLog("Widget_spinBoxDisplayOnlineFir");
+        removeAndLog("Widget_spinBoxDisplayOnlineGround");
+        removeAndLog("Widget_spinBoxDisplayOnlineObserver");
+        removeAndLog("Widget_spinBoxDisplayOnlineTower");
       }
 
       qInfo() << Q_FUNC_INFO << "Clearing all essential messages since version differs";
@@ -295,13 +354,13 @@ void checkAndMigrateSettings()
       settings.setValue(lnm::OPTIONS_VERSION, programVersion.getVersionString());
       Settings::syncSettings();
 
-      mapstyleSettings.sync();
-      nightstyleSettings.sync();
+      mapStyleSettings.sync();
+      darkStyleSettings.sync();
     } // if(optionsVersion != programVersion)
   } // if(optionsVersion.isValid())
   else
   {
-    qWarning() << Q_FUNC_INFO << "No version information found in settings file. Updating to" << programVersion;
+    qWarning() << Q_FUNC_INFO << "No version information found in settings file. Setting to" << programVersion;
     settings.setValue(lnm::OPTIONS_VERSION, programVersion.getVersionString());
     Settings::syncSettings();
   }

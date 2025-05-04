@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2023 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2025 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -158,19 +158,12 @@ public:
   /* Set departure parking information. Parking clears start and vice versa. */
   void setDepartureParking(const map::MapParking& departureParking);
   void setDepartureStart(const map::MapStart& departureStart);
+
+  /* Remove start and parking from route and flight plan */
+  void clearDepartureStartAndParking();
+
   map::MapParking getDepartureParking() const;
   map::MapStart getDepartureStart() const;
-
-  /* Create copies of first and last to ease tracking */
-  const RouteLeg& getLastLeg() const
-  {
-    return constLast();
-  }
-
-  const RouteLeg& getFirstLeg() const
-  {
-    return constFirst();
-  }
 
   /* First leg of departure procedure. 1 if SID used otherwise 0. */
   int getSidLegIndex() const;
@@ -276,8 +269,9 @@ public:
     return flightplan.getFlightplanType() == atools::fs::pln::IFR;
   }
 
-  /* Value in flight plan is stored in local unit */
+  /* Value in flight plan is stored in ft */
   float getCruiseAltitudeFt() const;
+  void setCruiseAltitudeFt(float cruiseAlt);
 
   void setFlightplan(const atools::fs::pln::Flightplan& value)
   {
@@ -356,9 +350,18 @@ public:
   /* Index from 0 (departure) to size() -1. true if a comment can be attached to the waypoint of the leg */
   bool canEditComment(int index) const;
 
+  /* Any procedure including custom */
   bool hasAnyProcedure() const
   {
     return hasAnyApproachProcedure() || hasAnySidProcedure() || hasAnyStarProcedure();
+  }
+
+  /* Real procedures ignoring custom approach and departure */
+  bool hasAnyRealProcedure() const
+  {
+    return (hasAnyApproachProcedure() && !hasCustomApproach()) ||
+           (hasAnySidProcedure() && !hasCustomDeparture()) ||
+           hasAnyStarProcedure();
   }
 
   bool hasCustomApproach() const
@@ -402,8 +405,11 @@ public:
   /* Get the various procedure names */
   void getSidStarNames(QString& sid, QString& sidTrans, QString& star, QString& starTrans) const;
 
-  /* Arrival rw is either STAR or approach */
-  void getRunwayNames(QString& departure, QString& arrival) const;
+  /* SID or custom departure runway */
+  QString getDepartureRunwayName() const;
+
+  /* Arrival rw is either STAR or approach (also custom) */
+  QString getArrivalRunwayName() const;
 
   /* Get approach ARINC name including suffix and suffix separately */
   void getApproachNames(QString& approachArincName, QString& approachTransition, QString& approachSuffix) const;
@@ -447,6 +453,7 @@ public:
 
   /* Does not delete flight plan properties. Clears the MapProcedure structures. */
   void clearProcedures(proc::MapProcedureTypes type);
+  void clearAllProcedures();
 
   /* Removes legs that match the given procedures from the route and/or flightplan */
   void clearProcedureLegs(proc::MapProcedureTypes type, bool clearRoute = true, bool clearFlightplan = true);
@@ -547,6 +554,7 @@ public:
   using QList::move;
   using QList::clear;
   using QList::size;
+  using QList::constFirst;
 
   int getSizeWithoutAlternates() const;
 
@@ -612,9 +620,9 @@ public:
   }
 
   /* Get ILS which are referenced from the recommended fix of the approach procedure for display in the flight plan table. */
-  const QVector<map::MapIls>& getDestRunwayIlsFlightPlanTable() const
+  const QVector<map::MapIls>& getDestRunwayIlsFlightplanTable() const
   {
-    return destRunwayIlsFlightPlanTable;
+    return destRunwayIlsFlightplanTable;
   }
 
   /* Get a list of matching ILS/LOC which are not too far away from runway (in case of CTL) */
@@ -643,11 +651,11 @@ public:
   bool isValidProfile() const;
 
   /* Calculate route leg altitudes that are needed for the elevation profile */
-  void updateLegAltitudes();
+  void calculateLegAltitudes();
 
   /* general distance in NM which is either cross track, previous or next waypoint */
-  float getDistanceToFlightPlan() const;
-  bool isTooFarToFlightPlan() const;
+  float getDistanceToFlightplan() const;
+  bool isTooFarToFlightplan() const;
 
   /* SID RAMY6, Approach ILS 12, etc.
    * @param includeRunway Include runway information.
@@ -746,12 +754,13 @@ private:
    * Used after route calculation. */
   void removeDuplicateRouteLegs();
 
-  /* Corrects the airways at the procedure entry and exit points as well as first leg */
+  /* Corrects the airways at the procedure entry and exit points as well as first leg.
+   * Needs updateIndex called before */
   void validateAirways();
 
   /* Remove any waypoints which positions overlap with procedures. Requires a flight plan that is cleaned up and contains
    * no procedure legs. CPU intense do not use often. */
-  void cleanupFlightPlanForProcedures(map::MapAirway& starAirway);
+  void cleanupFlightplanForProcedures(map::MapAirway& starAirway);
 
   /* Removes related properies in the flight plan only */
   void clearFlightplanProcedureProperties(proc::MapProcedureTypes type);
@@ -817,7 +826,7 @@ private:
    * These ones can be used for elevation profile display. */
     destRunwayIlsProfile,
   /* Get ILS which are referenced from the recommended fix of the approach procedure */
-    destRunwayIlsFlightPlanTable;
+    destRunwayIlsFlightplanTable;
 
   /* Get runway end at destination if any. Used to get the VASI information */
   map::MapRunwayEnd destRunwayEnd;
