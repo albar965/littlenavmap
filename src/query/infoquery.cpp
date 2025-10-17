@@ -147,12 +147,22 @@ void InfoQuery::getRunwayEnds(maptools::RwVector& ends, int airportId)
       int length = rec.valueInt("length");
       QString surface = rec.valueStr("surface");
       const SqlRecord *recPrim = getRunwayEndInformation(rec.valueInt("primary_end_id"));
-      if(!recPrim->valueBool("has_closed_markings"))
-        ends.appendRwEnd(recPrim->valueStr("name"), surface, length, recPrim->valueFloat("heading"));
+      if(recPrim != nullptr)
+      {
+        if(!recPrim->valueBool("has_closed_markings"))
+          ends.appendRwEnd(recPrim->valueStr("name"), surface, length, recPrim->valueFloat("heading"));
+      }
+      else
+        qWarning() << Q_FUNC_INFO << "Primary record null for end" << rec.valueInt("primary_end_id");
 
       const SqlRecord *recSec = getRunwayEndInformation(rec.valueInt("secondary_end_id"));
-      if(!recSec->valueBool("has_closed_markings"))
-        ends.appendRwEnd(recSec->valueStr("name"), surface, length, recSec->valueFloat("heading"));
+      if(recPrim != nullptr)
+      {
+        if(!recSec->valueBool("has_closed_markings"))
+          ends.appendRwEnd(recSec->valueStr("name"), surface, length, recSec->valueFloat("heading"));
+      }
+      else
+        qWarning() << Q_FUNC_INFO << "Secondary record null for end" << rec.valueInt("primary_end_id");
     }
   }
 
@@ -267,8 +277,8 @@ void InfoQuery::initQueries()
                         "join scenery_area on bgl_file.scenery_area_id = scenery_area.scenery_area_id "
                         "where airport_id = :id");
 
-  // airport_file_id	file_id	ident	bgl_file_id	scenery_area_id	bgl_create_time	file_modification_time
-  // filepath	filename	size	comment	scenery_area_id:1	number	layer	title	remote_path	local_path	active	required	exclude
+  // airport_file_id  file_id ident bgl_file_id scenery_area_id bgl_create_time file_modification_time
+  // filepath filename  size  comment scenery_area_id:1 number  layer title remote_path local_path  active  required  exclude
   airportSceneryQuery = new SqlQuery(dbSim);
   airportSceneryQuery->prepare("select * from airport_file f "
                                "join bgl_file b on f.file_id = b.bgl_file_id  "
