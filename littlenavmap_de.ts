@@ -9548,18 +9548,18 @@ Erhält Prozeduren.</translation>
         <translation>Alle Einträge auswählen</translation>
     </message>
     <message>
-        <source>Use downloaded NAT, PACOTS or AUSOTS tracks.
+        <source>Use downloaded NAT tracks.
 Best track will be selected automatically.</source>
-        <translation type="vanished">Benutze heruntergeladene NAT, PACOTS oder AUSOTS Tracks.
+        <translation type="vanished">Benutze heruntergeladene NAT Tracks.
 Der beste Track wird automatisch ausgewählt.</translation>
     </message>
     <message>
-        <source>Use downloaded NAT, PACOTS or AUSOTS tracks.</source>
-        <translation type="vanished">Benutze heruntergeladene NAT, PACOTS oder AUSOTS Tracks.</translation>
+        <source>Use downloaded NAT tracks.</source>
+        <translation type="vanished">Benutze heruntergeladene NAT Tracks.</translation>
     </message>
     <message>
-        <source>&amp;Use NAT, PACOTS or AUSOTS tracks</source>
-        <translation type="vanished">&amp;Nutze NAT, PACOTS oder AUSOTS Tracks</translation>
+        <source>&amp;Use NAT tracks</source>
+        <translation type="vanished">&amp;Nutze NAT Tracks</translation>
     </message>
     <message>
         <source>Tools Toolbar</source>
@@ -12567,9 +12567,9 @@ from either the departure parking or the user aircraft while taxiing.</source>
     <message>
         <location filename="src/gui/mainwindow.ui" line="10670"/>
         <location filename="src/gui/mainwindow.ui" line="10673"/>
-        <source>Download NAT and PACOTS tracks on startup</source>
-        <oldsource>Download NAT, PACOTS and AUSOTS tracks on startup</oldsource>
-        <translation>Lädt NAT und PACOTS Tracks beim Programmstart</translation>
+        <source>Download NAT tracks on startup</source>
+        <oldsource>Download NAT tracks on startup</oldsource>
+        <translation>Lädt NAT Tracks beim Programmstart</translation>
     </message>
     <message>
         <source>&amp;Delete Tracks</source>
@@ -12588,9 +12588,9 @@ from either the departure parking or the user aircraft while taxiing.</source>
     <message>
         <location filename="src/gui/mainwindow.ui" line="10696"/>
         <location filename="src/gui/mainwindow.ui" line="10699"/>
-        <source>Download NAT and PACOTS tracks now</source>
-        <oldsource>Download NAT, PACOTS and AUSOTS tracks now</oldsource>
-        <translation>Lädt NAT und PACOTS Tracks jetzt herunter</translation>
+        <source>Download NAT tracks now</source>
+        <oldsource>Download NAT tracks now</oldsource>
+        <translation>Lädt NAT Tracks jetzt herunter</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="3343"/>
@@ -38482,30 +38482,30 @@ Schnellste Berechnungsmethode</translation>
     <message>
         <location filename="src/route/routecalcdialog.ui" line="338"/>
         <location filename="src/route/routecalcdialog.ui" line="341"/>
-        <source>Download NAT and PACOTS tracks now</source>
-        <oldsource>Download NAT, PACOTS and AUSOTS tracks now</oldsource>
-        <translation>NAT und PACOTS Tracks herunterladen</translation>
+        <source>Download NAT tracks now</source>
+        <oldsource>Download NAT tracks now</oldsource>
+        <translation>NAT Tracks herunterladen</translation>
     </message>
     <message>
         <location filename="src/route/routecalcdialog.ui" line="357"/>
-        <source>Use downloaded NAT or PACOTS tracks.
+        <source>Use downloaded NAT tracks.
 Best track will be selected automatically.</source>
-        <oldsource>Use downloaded NAT, PACOTS or AUSOTS tracks.
+        <oldsource>Use downloaded NAT tracks.
 Best track will be selected automatically.</oldsource>
-        <translation>Benutze heruntergeladene NAT oder PACOTS Tracks.
+        <translation>Benutze heruntergeladene NAT Tracks.
 Der beste Track wird automatisch ausgewählt.</translation>
     </message>
     <message>
         <location filename="src/route/routecalcdialog.ui" line="361"/>
-        <source>Use downloaded NAT or PACOTS tracks.</source>
-        <oldsource>Use downloaded NAT, PACOTS or AUSOTS tracks.</oldsource>
-        <translation>Benutze heruntergeladene NAT oder, PACOTS Tracks.</translation>
+        <source>Use downloaded NAT tracks.</source>
+        <oldsource>Use downloaded NAT tracks.</oldsource>
+        <translation>Benutze heruntergeladene NAT Tracks.</translation>
     </message>
     <message>
         <location filename="src/route/routecalcdialog.ui" line="364"/>
-        <source>&amp;Use NAT or PACOTS tracks</source>
-        <oldsource>&amp;Use NAT, PACOTS or AUSOTS tracks</oldsource>
-        <translation>&amp;Nutze NAT oder PACOTS Tracks</translation>
+        <source>&amp;Use NAT tracks</source>
+        <oldsource>&amp;Use NAT tracks</oldsource>
+        <translation>&amp;Nutze NAT Tracks</translation>
     </message>
     <message>
         <location filename="src/route/routecalcdialog.ui" line="371"/>
@@ -38681,15 +38681,15 @@ Schnellste Berechnungsmethode.</translation>
     </message>
     <message>
         <location filename="src/route/routecalcdialog.cpp" line="198"/>
-        <source>Use downloaded NAT or PACOTS tracks.
+        <source>Use downloaded NAT tracks.
 Best track will be selected automatically.
 Ensure to use the correct flight level.
 Otherwise, tracks will not be used.</source>
-        <oldsource>Use downloaded NAT, PACOTS or AUSOTS tracks.
+        <oldsource>Use downloaded NAT tracks.
 Best track will be selected automatically.
 Ensure to use the correct flight level.
 Otherwise, tracks will not be used.</oldsource>
-        <translation>Benutze heruntergeladene NAT oder PACOTS Tracks.
+        <translation>Benutze heruntergeladene NAT Tracks.
 Der beste Track wird automatisch ausgewählt.
 Stellen Sie sicher, dass die korrekte Flugebene gewählt ist,
 sonst werden die Tracks nicht benutzt.</translation>
@@ -38828,11 +38828,11 @@ Slower calculation.</source>
 Langsamere Berechnung.</translation>
     </message>
     <message>
-        <source>Use downloaded NAT, PACOTS or AUSOTS tracks.
+        <source>Use downloaded NAT tracks.
 Best track will be selected automatically.
 Ensure to use the correct flight level.
 Otherwise, tracks will not be used.</source>
-        <translation type="vanished">Benutze heruntergeladene NAT, PACOTS oder AUSOTS Tracks.
+        <translation type="vanished">Benutze heruntergeladene NAT Tracks.
 Der beste Track wird automatisch ausgewählt.
 Stellen Sie sicher, dass die korrekte Flugebene gewählt ist,
 sonst werden die Tracks nicht benutzt.</translation>

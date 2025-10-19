@@ -409,7 +409,7 @@ const QLatin1String OPTIONS_NO_USER_AGENT("Options/NoUserAgent");
 const QLatin1String OPTIONS_WEATHER_UPDATE("Options/WeatherUpdate");
 const QLatin1String OPTIONS_WEATHER_UPDATE_RATE_SIM("Options/WeatherUpdateRateSim");
 
-/* Track download URLs */
+/* Track download URLs from track.cfg */
 const QLatin1String OPTIONS_TRACK_NAT_URL("Track/NatUrl");
 const QLatin1String OPTIONS_TRACK_NAT_PARAM("Track/NatUrlParam");
 const QLatin1String OPTIONS_TRACK_PACOTS_URL("Track/PacotsUrl");
@@ -472,6 +472,8 @@ const QLatin1String NETWORKS_CONFIG(":/littlenavmap/resources/config/networks.cf
 
 /* Configuration for online networks */
 const QLatin1String URLS_CONFIG(":/littlenavmap/resources/config/urls.cfg");
+
+const QLatin1String TRACK_CONFIG(":/littlenavmap/resources/config/track.cfg");
 
 /* Map display configuration */
 const QLatin1String MAP_LAYER_CONFIG(":/littlenavmap/resources/config/maplayers.xml");

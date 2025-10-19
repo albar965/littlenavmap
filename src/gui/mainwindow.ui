@@ -321,13 +321,6 @@
     <property name="title">
      <string>Flight &amp;Plan</string>
     </property>
-    <widget class="QMenu" name="menuTrackSources">
-     <property name="title">
-      <string>Oceanic Track &amp;Sources</string>
-     </property>
-     <addaction name="actionTrackSourcesNat"/>
-     <addaction name="actionTrackSourcesPacots"/>
-    </widget>
     <addaction name="actionShortcutFlightPlan"/>
     <addaction name="actionShortcutAircraftPerformance"/>
     <addaction name="separator"/>
@@ -350,7 +343,6 @@
     <addaction name="actionRouteDownloadTracks"/>
     <addaction name="actionRouteDownloadTracksNow"/>
     <addaction name="actionRouteDeleteTracks"/>
-    <addaction name="menuTrackSources"/>
    </widget>
    <widget class="QMenu" name="menuDatabase">
     <property name="title">
