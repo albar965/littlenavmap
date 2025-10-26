@@ -1,6 +1,10 @@
 **Thank your to contributing to _Little Navmap_.**
 
-**Please take a minute and read the instructions below to help me to avoid unnecessary work and additional communication overhead when reporting a bug or requesting new features.**
+**►► Please take a minute and read the instructions below to help me to avoid unnecessary work and additional communication overhead when reporting a bug or requesting new features. ◄◄**
+
+**►► Do not submit AI generated issue slop which contains a lot of meaningless blah-blah, unneeded information and is a waste of my time in general. These are easy to recognize and will be closed or deleted right away. ◄◄**
+
+**►► Delete this text _after reading_ before posting the issue. ◄◄**
 
 All issues for _atools_, _Little Navconnect_, _Little Xpconnect_ are collected in this repository since ownership is often not clear.
 
@@ -12,6 +16,7 @@ Please note that this project is released with a [Contributor Code of Conduct][c
 
 ## If you'd like to report an error:
 
+* Have a look at [Little Navmap - Frequently asked Questions](https://albar965.github.io/littlenavmap-faq.html) and see if your problem is covered there.
 * Try the steps in the [User Manual - Troubleshoot](https://www.littlenavmap.org/manuals/littlenavmap/release/latest/en/APPENDIX.html#troubleshoot) section of the manual if these solve the problem.
 * Check the [list of open issues](https://github.com/albar965/littlenavmap/issues) if you one was already reported. Use the search function.
 * Include your OS and version in detail like: `Windows 10 64 bit`, `macOS 10.11` or `Ubuntu Linux 17.10 64 bit`.
@@ -23,10 +28,10 @@ Please note that this project is released with a [Contributor Code of Conduct][c
 
 ## If you'd like propose a new feature:
 
-* Check the list of issues [here](https://github.com/albar965/littlenavmap/issues) and use the search function to check if 
+* Check the list of issues [here](https://github.com/albar965/littlenavmap/issues) and use the search function to check if
   your proposal is already covered.
 * Provide a clear description and attach screenshots, file examples or documentation links that help me to understand and implement the feature.
 
-**Delete this text _after reading_ before posting the issue.**
+**►► Delete this text _after reading_ before posting the issue. ◄◄**
 
 [code-of-conduct]: https://github.com/albar965/littlenavmap/blob/master/.github/CODE_OF_CONDUCT.md
