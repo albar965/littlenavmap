@@ -3659,6 +3659,23 @@ void MainWindow::mainWindowShownDelayed()
     dialog->showInfoMsgBox(lnm::ACTIONS_SHOW_MISSING_SIMULATORS, message, tr("Do not &show this dialog again."));
   } // else have databases do nothing
 
+#ifdef Q_OS_MACOS
+  // Check for Apple translocation sandbox ===========================================================
+  // "/private/var/folders/d9/sgXXXX0000gn/T/AppTranslocation/DDBXXXEA/d/Little Navmap.app/Contents/MacOS/littlenavmap"
+  if(QCoreApplication::applicationFilePath().contains("AppTranslocation"))
+  {
+    QString message = tr("<p><b>Little Navmap seems to be running in the Apple translocation sandbox.<br/>"
+                         "This severely limits the program's functionality.</b></p>"
+                         "<p>Download Little Navmap again, extract it <i>outside</i> the folder \"Downloads\" and run it again.</p>"
+                           "<p>Also have a look at the link below for more information how to remove the Apple quarantine flag.</p>");
+
+    // https://www.littlenavmap.org/manuals/littlenavmap/release/latest/en/INSTALLATION.html#macos
+    QUrl url = atools::gui::HelpHandler::getHelpUrlWeb(lnm::helpOnlineUrl % "INSTALLATION.html#macos", lnm::helpLanguageOnline());
+    message.append(tr("<p><a href=\"%1\">Click here for more information in the Little Navmap online manual</a></p>").arg(url.toString()));
+
+    dialog->showWarnMsgBox(lnm::ACTIONS_SHOW_APPLE_TRANSLOCATION, message, tr("Do not &show this dialog again."));
+  }
+#endif
   // First installation actions ====================================================
 
   Settings& settings = Settings::instance();

@@ -162,4 +162,5 @@ void messages::resetEssentialMessages()
   settings.setValue(lnm::ACTIONS_SHOW_CONNECTION_SCENERYLIBRARY_FSXP3D, true);
   settings.setValue(lnm::ACTIONS_SHOW_CONNECTION_SCENERYLIBRARY_HINT, true);
   settings.setValue(lnm::ACTIONS_SHOW_CONNECTION_SCENERYLIBRARY_HINT_NO_DB, true);
+  settings.setValue(lnm::ACTIONS_SHOW_APPLE_TRANSLOCATION, true);
 }
