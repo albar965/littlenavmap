@@ -4755,9 +4755,15 @@ void HtmlInfoBuilder::aircraftProgressText(const atools::fs::sc::SimConnectAircr
                                         Unit::speedKts(aircraft.getGroundSpeedKts()) % otherGnd);
       }
 
-      if(longDisplay && !aircraft.isAnyBoat())
-        if(aircraft.getTrueAirspeedKts() < atools::fs::sc::SC_INVALID_FLOAT)
-          html.id(pid::SPEED_TRUE).row2(tr("True Airspeed:"), Unit::speedKts(aircraft.getTrueAirspeedKts()));
+      if(longDisplay && !aircraft.isAnyBoat() && aircraft.getTrueAirspeedKts() < atools::fs::sc::SC_INVALID_FLOAT)
+      {
+        QString otherTrue;
+        if(html.isIdSet(pid::SPEED_TRUE_OTHER))
+          otherTrue = tr(", %1").arg(Unit::speedKtsOther(aircraft.getTrueAirspeedKts()).join(tr(", ")));
+
+        html.id(pid::SPEED_TRUE).row2(longDisplay ? tr("True:") : tr("True Airspeed:"),
+                                        Unit::speedKts(aircraft.getTrueAirspeedKts()) % otherTrue);
+      }
 
       if(!aircraft.isAnyBoat())
       {
