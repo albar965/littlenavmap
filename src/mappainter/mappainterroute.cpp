@@ -63,7 +63,8 @@ MapPainterRoute::~MapPainterRoute()
 void MapPainterRoute::render()
 {
   // Draw line to departure runway position
-  paintDirectToDeparture();
+  if(context->objectDisplayTypes.testFlag(map::FLIGHTPLAN))
+    paintDirectToDeparture();
 
   // Clear before collecting duplicates
   routeProcIdMap.clear();
