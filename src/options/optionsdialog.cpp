@@ -146,7 +146,9 @@ OptionsDialog::OptionsDialog(QMainWindow *parentWindow)
     ui->labelOptionsLabelHint,
     ui->labelOptionsProfileHint,
     ui->labelOptionsFlightPlanLabelHint,
-    ui->labelOptionsTrailHint,
+    ui->labelOptionsTrailHintOpen,
+    ui->labelOptionsTrailHintStored,
+    ui->labelOptionsTrailWarn,
     ui->labelOptionsCompassRoseHint,
     ui->labelOptionsMeasurmentHint,
     ui->labelOptionsMsaHint,
@@ -914,6 +916,8 @@ void OptionsDialog::open()
   updateHighlightWidgets();
   toolbarSizeClicked();
   styleChanged();
+
+  ui->labelOptionsTrailHintStored->setText(ui->labelOptionsTrailHintStored->text().arg(NavApp::getMaxStoredTrailEntries()));
 
   QDialog::open();
 }

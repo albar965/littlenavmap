@@ -201,7 +201,7 @@ public:
   static const atools::fs::sc::SimConnectData& getSimConnectData();
   static const atools::geo::Pos& getUserAircraftPos();
 
-  static atools::win::ActivationContext* getActivationContext();
+  static atools::win::ActivationContext *getActivationContext();
 
   static void updateAllMaps();
 
@@ -342,6 +342,8 @@ public:
 
   static bool isAircraftTrailEmpty();
   static const AircraftTrail& getAircraftTrail();
+
+  static int getMaxStoredTrailEntries();
 
   static const AircraftTrail& getAircraftTrailLogbook();
   static void deleteAircraftTrailLogbook();

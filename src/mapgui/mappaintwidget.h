@@ -196,7 +196,11 @@ public:
     return *aircraftTrailLogbook;
   }
 
+  /* Current size */
   int getAircraftTrailSize() const;
+
+  /* Maximum entries stored in trail */
+  int getMaxStoredTrailEntries() const;
 
   /* Disconnect painter to avoid updates while no data is available */
   void preDatabaseLoad();

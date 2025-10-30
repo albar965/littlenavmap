@@ -15,8 +15,8 @@
 * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 *****************************************************************************/
 
-#ifndef LITTLENAVMAP_AIRCRAFTTRACK_H
-#define LITTLENAVMAP_AIRCRAFTTRACK_H
+#ifndef LITTLENAVMAP_AIRCRAFTTRAIL_H
+#define LITTLENAVMAP_AIRCRAFTTRAIL_H
 
 #include "geo/pos.h"
 #include "geo/rect.h"
@@ -49,7 +49,7 @@ class LineString;
 
 /* User aircraft trail position. Can be converted to QVariant and thus be saved to settings.
  *
- * An invalid position indicates a break of the tracks.
+ * An invalid position indicates a break of the trails.
  * Aircraft warp to destination above ground is not broken but a movement on ground or airport change is.
  * Done to avoid format changes. */
 struct AircraftTrailPos
@@ -103,9 +103,9 @@ struct AircraftTrailPos
   }
 
 private:
-  friend QDataStream& operator<<(QDataStream& dataStream, const AircraftTrailPos& trackPos);
+  friend QDataStream& operator<<(QDataStream& dataStream, const AircraftTrailPos& trailPos);
 
-  friend QDataStream& operator>>(QDataStream& dataStream, AircraftTrailPos& trackPos);
+  friend QDataStream& operator>>(QDataStream& dataStream, AircraftTrailPos& trailPos);
 
   atools::geo::PosD pos;
   qint64 timestampMs;
@@ -121,8 +121,10 @@ Q_DECLARE_METATYPE(AircraftTrailPos)
 /*
  * Stores the trail points of the flight simulator user aircraft.
  *
- * Points where the track is interrupted (new flight) are indicated by invalid coordinates.
- * Warping at altitude does not interrupt a track.
+ * Points where the trail is interrupted (new flight) are indicated by invalid coordinates.
+ * Warping at altitude does not interrupt a trail.
+ *
+ * Latest position is appended at end of list.
  */
 class AircraftTrail :
   private QList<AircraftTrailPos>
@@ -137,7 +139,7 @@ public:
   /* Callback to convert lat/lon to x/y screen coordinates in findNearest() */
   typedef std::function<void (float lon, float lat, double& x, double& y)> ScreenCoordinatesFunc;
 
-  /* Find one nearest track segment. Screen point is equal to global position and used to check maxScreenDistance. */
+  /* Find one nearest trail segment. Screen point is equal to global position and used to check maxScreenDistance. */
   map::AircraftTrailSegment findNearest(const QPoint& point, const atools::geo::Pos& position, int maxScreenDistance,
                                         const Marble::GeoDataLatLonAltBox& viewportBox, ScreenCoordinatesFunc screenCoordinates) const;
 
@@ -145,27 +147,27 @@ public:
   atools::fs::gpx::GpxData toGpxData(const atools::fs::pln::Flightplan& flightplan) const;
 
   /* Erases trail and populates this with the given gpxData.
-   * @return number of removed points if the track was truncated */
+   * @return number of removed points if the trail was truncated */
   int fillTrailFromGpxData(const atools::fs::gpx::GpxData& gpxData);
 
-  /* Appends the given gpxData as new track segment without deleting the current one.
-   * @return number of removed points if the track was truncated */
+  /* Appends the given gpxData as new trail segment without deleting the current one.
+   * @return number of removed points if the trail was truncated */
   int appendTrailFromGpxData(const atools::fs::gpx::GpxData& gpxData);
 
-  /* Saves and restores track into a separate file (little_navmap.track). Creates two additional backup files. */
+  /* Saves and restores trail into a separate file (little_navmap.trail). Creates two additional backup files. */
   void saveState(const QString& suffix, int numBackupFiles);
   void restoreState(const QString& suffix);
 
   void clearTrail();
 
   /*
-   * Add a track position. Accurracy depends on the ground flag which will cause more
+   * Add a trail position. Accurracy depends on the ground flag which will cause more
    * or less points skipped.
-   * @return number of removed points if the track was truncated
+   * @return number of removed points if the trail was truncated
    */
   int appendTrailPos(const atools::fs::sc::SimConnectUserAircraft& userAircraft, bool allowSplit);
 
-  /* Get maximum altitude in all track points */
+  /* Get maximum altitude in all trail points */
   float getMaxAltitude() const
   {
     return maxAltitude;
@@ -188,16 +190,10 @@ public:
     return lineStrings;
   }
 
-  /* Track will be truncated if it contains more track entries than this value. Default is 20000. */
-  void setMaxTrackEntries(int value)
-  {
-    maxTrackEntries = value;
-  }
+  /* Shown trail will be truncated if it contains more entries than this value. Does not affect stored trail points. */
+  void setMaxNumShownEntries(int value);
 
-  /* Absolute maximum, never exceeded */
-  const static int MAX_TRACK_ENTRIES = 1000000;
-
-  /* Write and read the whole track to and from a binary stream */
+  /* Write and read the whole trail to and from a binary stream */
   void saveToStream(QDataStream& out);
 
   bool readFromStream(QDataStream& in);
@@ -214,8 +210,13 @@ public:
   /* Shallow compare. Compares min, max, size and bounding rect */
   bool almostEqual(const AircraftTrail& other) const;
 
+  static int getMaxStoredTrailEntries()
+  {
+    return MAX_STORED_TRAIL_ENTRIES;
+  }
+
 private:
-  friend QDataStream& operator>>(QDataStream& dataStream, AircraftTrailPos& trackPos);
+  friend QDataStream& operator>>(QDataStream& dataStream, AircraftTrailPos& trailPos);
 
   void clearBoundaries();
   void updateBoundary();
@@ -236,17 +237,33 @@ private:
   /* Same size as getLineStrings() but returns the timestamps in milliseconds since Epoch UTC for each position */
   const QVector<QVector<qint64> > timestampsMs() const;
 
-  /* truncate and return removed number */
+  /* truncate to maxNumStoredEntries and return removed number */
   int truncateTrail();
 
-  /* Maximum number of track points. If exceeded entries will be removed from beginning of the list. */
-  int maxTrackEntries = MAX_TRACK_ENTRIES;
+  /* truncate lineStrings to maxNumShownEntries */
+  void removeLineStringFirst();
+
+  /* Absolute maximum, never exceeded for display and storage */
+  const static int MAX_STORED_TRAIL_ENTRIES = 5000000;
+
+  /* Split lines up into partitions for display */
+  const static int PARTITION_POINT_SIZE = 500;
+
+  /* Maximum number of trail points. If exceeded entries will be removed from beginning of the list. */
+  int maxNumShownEntries = MAX_STORED_TRAIL_ENTRIES;
 
   float maxAltitude, minAltitude;
   atools::geo::Rect boundingRect;
 
   /* Trail density settings which depends on ground speed */
   float maxHeadingDiffDeg, maxSpeedDiffKts, maxAltDiffFtUpper, maxAltDiffFtLower, aglThresholdFt;
+
+  /* Limit number of stored points. Default is same as in user interface in spinBoxSimMaxTrailPoints. */
+  int maxNumStoredEntries = MAX_STORED_TRAIL_ENTRIES;
+
+  int partitionPointSize = PARTITION_POINT_SIZE;
+
+  /* Force point after time passed for ground and flying */
   qint64 maxFlyingTimeMs, maxGroundTimeMs;
 
   atools::fs::sc::SimConnectUserAircraft *lastUserAircraft;
@@ -256,6 +273,7 @@ private:
 
   // Cached for display
   QVector<atools::geo::LineString> lineStrings;
+  int lineStringsSize = 0;
 
   // Points to the first AircraftTrailPos in this - in sync with lineStrings
   QVector<int> lineStringsIndex;
@@ -264,4 +282,4 @@ private:
   static quint16 version;
 };
 
-#endif // LITTLENAVMAP_AIRCRAFTTRACK_H
+#endif // LITTLENAVMAP_AIRCRAFTTRAIL_H

@@ -3172,7 +3172,7 @@ void MapWidget::optionsChanged()
   screenSearchDistance = optiondata.getMapClickSensitivity();
   screenSearchDistanceTooltip = optiondata.getMapTooltipSensitivity();
 
-  aircraftTrail->setMaxTrackEntries(optiondata.getAircraftTrailMaxPoints());
+  aircraftTrail->setMaxNumShownEntries(optiondata.getAircraftTrailMaxPoints());
 
   // aircraftTrailLogbook uses AircraftTrail::MAX_TRACK_ENTRIES which is the maximum
 
@@ -3281,7 +3281,7 @@ void MapWidget::restoreState()
   // Restore range rings, patterns, holds and more
   getScreenIndex()->restoreState();
 
-  aircraftTrail->setMaxTrackEntries(OptionData::instance().getAircraftTrailMaxPoints());
+  aircraftTrail->setMaxNumShownEntries(OptionData::instance().getAircraftTrailMaxPoints());
   if(OptionData::instance().getFlags().testFlag(opts::STARTUP_LOAD_TRAIL) && !atools::gui::Application::isSafeMode())
     aircraftTrail->restoreState(lnm::AIRCRAFT_TRACK_SUFFIX);
 

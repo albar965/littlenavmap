@@ -434,8 +434,8 @@ This is the file on top of the list &quot;Recent Window Layouts&quot;.</string>
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>514</width>
-             <height>371</height>
+             <width>630</width>
+             <height>530</height>
             </rect>
            </property>
            <layout class="QVBoxLayout" name="verticalLayout_22">
@@ -627,8 +627,8 @@ opening files, modifying the flight plan and other operations.</string>
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>419</width>
-             <height>1030</height>
+             <width>616</width>
+             <height>970</height>
             </rect>
            </property>
            <layout class="QVBoxLayout" name="verticalLayout_23">
@@ -1293,8 +1293,8 @@ This does not affect the map window which can be changed separately on the optio
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>568</width>
-             <height>386</height>
+             <width>630</width>
+             <height>530</height>
             </rect>
            </property>
            <layout class="QGridLayout" name="gridLayout_36">
@@ -1614,8 +1614,8 @@ Also affects labels at holds and traffic patterns.</string>
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>512</width>
-             <height>400</height>
+             <width>630</width>
+             <height>530</height>
             </rect>
            </property>
            <layout class="QVBoxLayout" name="verticalLayout_59">
@@ -1843,8 +1843,8 @@ The &quot;Save as&quot; dialog will show up instead of overwriting the current f
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>317</width>
-             <height>487</height>
+             <width>630</width>
+             <height>530</height>
             </rect>
            </property>
            <layout class="QGridLayout" name="gridLayout">
@@ -2080,7 +2080,7 @@ Note that this function is disabled for X-Plane 12 since the 3D flag is unreliab
                <item>
                 <widget class="QLabel" name="labelOptionsResetEmptyHint">
                  <property name="text">
-                  <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;img src=&quot;:/littlenavmap/resources/icons/bulb.svg&quot;/&gt;You can hide empty airports in the map display by deselecting the menu item &amp;quot;Empty&amp;quot; in menu &amp;quot;View&amp;quot; -&amp;gt; &amp;quot;Airports&amp;quot; or using the related toolbar button.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+                  <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;img src=&quot;:/littlenavmap/resources/icons/bulb.svg&quot;/&gt;&lt;span style=&quot; font-style:italic;&quot;&gt;You can hide empty airports in the map display by deselecting the menu item &amp;quot;Empty&amp;quot; in menu &amp;quot;View&amp;quot; -&amp;gt; &amp;quot;Airports&amp;quot; or using the related toolbar button.&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
                  </property>
                  <property name="wordWrap">
                   <bool>true</bool>
@@ -2114,8 +2114,8 @@ Note that this function is disabled for X-Plane 12 since the 3D flag is unreliab
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>599</width>
-             <height>399</height>
+             <width>630</width>
+             <height>530</height>
             </rect>
            </property>
            <layout class="QGridLayout" name="gridLayout_2">
@@ -2592,8 +2592,8 @@ Smaller values will allow a finer selection.</string>
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>501</width>
-             <height>526</height>
+             <width>630</width>
+             <height>530</height>
             </rect>
            </property>
            <layout class="QVBoxLayout" name="verticalLayout_12">
@@ -2921,8 +2921,8 @@ Map views might be shown with a larger zoom distance than expected if this optio
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>499</width>
-             <height>1065</height>
+             <width>616</width>
+             <height>1053</height>
             </rect>
            </property>
            <layout class="QVBoxLayout" name="verticalLayout_20">
@@ -3819,8 +3819,8 @@ Lower values make the airspace more opaque and higher values more transparent.</
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>428</width>
-             <height>493</height>
+             <width>630</width>
+             <height>530</height>
             </rect>
            </property>
            <layout class="QVBoxLayout" name="verticalLayout_35">
@@ -4253,8 +4253,8 @@ Also used in the elevation profile.</string>
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>554</width>
-             <height>264</height>
+             <width>630</width>
+             <height>530</height>
             </rect>
            </property>
            <layout class="QVBoxLayout" name="verticalLayout_57">
@@ -4414,10 +4414,7 @@ Also used in the elevation profile.</string>
               <property name="title">
                <string>Aircraft Trail Points</string>
               </property>
-              <layout class="QHBoxLayout" name="horizontalLayout_2">
-               <property name="spacing">
-                <number>2</number>
-               </property>
+              <layout class="QGridLayout" name="gridLayout_11">
                <property name="leftMargin">
                 <number>2</number>
                </property>
@@ -4430,21 +4427,12 @@ Also used in the elevation profile.</string>
                <property name="bottomMargin">
                 <number>2</number>
                </property>
-               <item>
-                <widget class="QLabel" name="labelSimMaxTrackPoints">
-                 <property name="text">
-                  <string>Maximum number of aircraft &amp;trail points:</string>
-                 </property>
-                 <property name="buddy">
-                  <cstring>spinBoxSimMaxTrailPoints</cstring>
-                 </property>
-                </widget>
-               </item>
-               <item>
+               <item row="0" column="1">
                 <widget class="QSpinBox" name="spinBoxSimMaxTrailPoints">
                  <property name="toolTip">
-                  <string>The user aircraft trail will be pruned if it contains more than this number of points. 
-Lower this value to avoid too long tracks and avoid stutters in map display.</string>
+                  <string>The shown user aircraft trail will be pruned if it contains more than this number of points. 
+Lower this value to avoid too long tracks and avoid stutters in map display.
+Note that this does not affect the stored trail points.</string>
                  </property>
                  <property name="showGroupSeparator" stdset="0">
                   <bool>true</bool>
@@ -4466,11 +4454,53 @@ Lower this value to avoid too long tracks and avoid stutters in map display.</st
                  </property>
                 </widget>
                </item>
+               <item row="0" column="0">
+                <widget class="QLabel" name="labelSimMaxTrackPoints">
+                 <property name="text">
+                  <string>Maximum number of aircraft &amp;trail points shown:</string>
+                 </property>
+                 <property name="buddy">
+                  <cstring>spinBoxSimMaxTrailPoints</cstring>
+                 </property>
+                </widget>
+               </item>
+               <item row="1" column="0" colspan="3">
+                <widget class="QLabel" name="labelOptionsTrailWarn">
+                 <property name="text">
+                  <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Note that high values can degrade map performance.&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+                 </property>
+                 <property name="wordWrap">
+                  <bool>true</bool>
+                 </property>
+                 <property name="margin">
+                  <number>10</number>
+                 </property>
+                 <property name="textInteractionFlags">
+                  <set>Qt::LinksAccessibleByMouse|Qt::TextSelectableByMouse</set>
+                 </property>
+                </widget>
+               </item>
+               <item row="2" column="0" colspan="3">
+                <widget class="QLabel" name="labelOptionsTrailHintStored">
+                 <property name="text">
+                  <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;img src=&quot;:/littlenavmap/resources/icons/bulb.svg&quot;/&gt;&lt;span style=&quot; font-style:italic;&quot;&gt;Changing this value does not affect the stored trail. You can raise and lower this value without losing your current trail. Note that the internal limit is %L1 points.&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+                 </property>
+                 <property name="wordWrap">
+                  <bool>true</bool>
+                 </property>
+                 <property name="margin">
+                  <number>10</number>
+                 </property>
+                 <property name="textInteractionFlags">
+                  <set>Qt::LinksAccessibleByMouse|Qt::TextSelectableByMouse</set>
+                 </property>
+                </widget>
+               </item>
               </layout>
              </widget>
             </item>
             <item>
-             <widget class="QLabel" name="labelOptionsTrailHint">
+             <widget class="QLabel" name="labelOptionsTrailHintOpen">
               <property name="text">
                <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;img src=&quot;:/littlenavmap/resources/icons/bulb.svg&quot;/&gt;&lt;span style=&quot; font-style:italic;&quot;&gt;Aircraft trails can be loaded and saved in the menu &amp;quot;File&amp;quot; -&amp;gt; &amp;quot;GPS Exchange Format (GPX)&amp;quot;.&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
               </property>
@@ -4516,8 +4546,8 @@ Lower this value to avoid too long tracks and avoid stutters in map display.</st
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>452</width>
-             <height>748</height>
+             <width>616</width>
+             <height>651</height>
             </rect>
            </property>
            <layout class="QGridLayout" name="gridLayout_35">
@@ -5406,8 +5436,8 @@ Value 0 is opaque and 90 is most transparent.</string>
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>328</width>
-             <height>535</height>
+             <width>630</width>
+             <height>530</height>
             </rect>
            </property>
            <layout class="QGridLayout" name="gridLayout_39">
@@ -5876,8 +5906,8 @@ airspace filename has to match the callsign of the online center.</string>
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>572</width>
-             <height>633</height>
+             <width>616</width>
+             <height>617</height>
             </rect>
            </property>
            <layout class="QVBoxLayout" name="verticalLayout_25">
@@ -6323,8 +6353,8 @@ put the active leg back on top after the given timeout while flying.</string>
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>318</width>
-             <height>241</height>
+             <width>630</width>
+             <height>530</height>
             </rect>
            </property>
            <layout class="QVBoxLayout" name="verticalLayout_26">
@@ -6483,8 +6513,8 @@ Note that this value does not affect flight plan calculation or saving of flight
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>272</width>
-             <height>754</height>
+             <width>616</width>
+             <height>610</height>
             </rect>
            </property>
            <layout class="QVBoxLayout" name="verticalLayout_27">
@@ -6724,8 +6754,8 @@ Note that this value does not affect flight plan calculation or saving of flight
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>360</width>
-             <height>939</height>
+             <width>616</width>
+             <height>875</height>
             </rect>
            </property>
            <layout class="QVBoxLayout" name="verticalLayout_28">

@@ -2601,14 +2601,9 @@ void MainWindow::warnTrailPoints(int numTruncated, bool doNotShowAgain)
   QString text;
   if(numTruncated > 0)
     text = tr("Truncated aircraft trail by %L1 points due to the\n"
-              "maximum number of %L2 points set in\n"
-              "options on page \"Map Aircraft Trail\".\n\n"
+              "maximum number of %L2 stored points.\n\n"
               "Note that too many trail points can cause performance issues in map display.").
-           arg(numTruncated).arg(OptionData::instance().getAircraftTrailMaxPoints());
-  else if(numPoints > AIRCRAFT_TRAIL_MAXPOINTS_WARNING)
-    text = tr("Aircraft trail has %L1 points which can cause performance issues in map display.\n\n"
-              "Consider lowering the maximum number of points in the options on page \"Map Aircraft Trail\"\n"
-              "or delete the trail.").arg(numPoints);
+           arg(numTruncated).arg(mapWidget->getMaxStoredTrailEntries());
 
   if(!text.isEmpty())
   {
