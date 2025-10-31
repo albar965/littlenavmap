@@ -1409,7 +1409,7 @@ void MainWindow::connectAllSlots()
   connect(ui->actionRouteCenter, &QAction::triggered, this, &MainWindow::routeCenter);
   connect(ui->actionRouteNew, &QAction::triggered, this, &MainWindow::routeNew);
   connect(ui->actionRouteNewFromString, &QAction::triggered, this, &MainWindow::routeFromStringCurrent);
-  connect(ui->actionRouteOpen, &QAction::triggered, this, &MainWindow::routeOpen);
+  connect(ui->actionRouteOpen, &QAction::triggered, this, &MainWindow::openAnyFile);
   connect(ui->actionRouteAppend, &QAction::triggered, this, &MainWindow::routeAppend);
   connect(ui->actionRouteTableAppend, &QAction::triggered, this, &MainWindow::routeAppend);
   connect(ui->actionRouteSaveSelection, &QAction::triggered, this, &MainWindow::routeSaveSelection);
@@ -2444,14 +2444,23 @@ void MainWindow::routeNewFromAirports(const map::MapAirport& departure, const ma
   routeFromFlightplan(flightplan, true /* adjustAltitude */, false /* changed */, true /* undo */, true /* correctProfile */);
 }
 
-void MainWindow::routeOpen()
+void MainWindow::openAnyFile()
 {
-  routeOpenFile(QString() /* filepath */);
+  // called from actionRouteOpen
+  fileOpenAny(openAnyFileDialog());
 }
 
-QString MainWindow::routeOpenFileDialog()
+QString MainWindow::openAnyFileDialog()
 {
-  return dialog->openFileDialog(tr("Open Flight Plan"), tr("Flight Plan Files %1;;All Files (*)").arg(lnm::FILE_PATTERN_FLIGHTPLAN_LOAD),
+  return dialog->openFileDialog(tr("Open Flight Plan or File"),
+                                tr("Little Navmap Files %1;;All Files (*)").arg(lnm::FILE_PATTERN_LOAD_ANY),
+                                "Route/LnmPln", atools::documentsDir());
+}
+
+QString MainWindow::openFlightplanFileDialog()
+{
+  return dialog->openFileDialog(tr("Open Flight Plan"),
+                                tr("Flight Plan Files %1;;All Files (*)").arg(lnm::FILE_PATTERN_LOAD_FLIGHTPLAN),
                                 "Route/LnmPln", atools::documentsDir());
 }
 
@@ -2492,7 +2501,7 @@ void MainWindow::routeOpenFile(QString filepath)
   if(routeCheckForChanges())
   {
     if(filepath.isEmpty())
-      filepath = routeOpenFileDialog();
+      filepath = openAnyFileDialog();
 
     if(!filepath.isEmpty())
     {
@@ -2638,7 +2647,7 @@ bool MainWindow::routeSaveSelection()
 void MainWindow::routeAppend()
 {
   QString routeFile = dialog->openFileDialog(tr("Append Flight Plan"),
-                                             tr("Flight Plan Files %1;;All Files (*)").arg(lnm::FILE_PATTERN_FLIGHTPLAN_LOAD),
+                                             tr("Flight Plan Files %1;;All Files (*)").arg(lnm::FILE_PATTERN_LOAD_FLIGHTPLAN),
                                              "Route/LnmPln", atools::documentsDir());
 
   if(!routeFile.isEmpty())
@@ -2658,10 +2667,9 @@ void MainWindow::routeAppend()
 
 void MainWindow::routeInsert(int insertBefore)
 {
-  QString routeFile = dialog->openFileDialog(
-    tr("Insert info Flight Plan"),
-    tr("Flight Plan Files %1;;All Files (*)").arg(lnm::FILE_PATTERN_FLIGHTPLAN_LOAD),
-    "Route/LnmPln", atools::documentsDir());
+  QString routeFile = dialog->openFileDialog(tr("Insert Flight Plan"),
+                                             tr("Flight Plan Files %1;;All Files (*)").arg(lnm::FILE_PATTERN_LOAD_FLIGHTPLAN),
+                                             "Route/LnmPln", atools::documentsDir());
 
   if(!routeFile.isEmpty())
   {
@@ -5094,7 +5102,16 @@ void MainWindow::dropEvent(QDropEvent *event)
     // Check only first URL
     QString filepath = urls.constFirst().toLocalFile();
     qDebug() << Q_FUNC_INFO << "Dropped file:" << filepath;
+    fileOpenAny(filepath);
+  }
+}
 
+void MainWindow::fileOpenAny(const QString& filepath)
+{
+  qDebug() << Q_FUNC_INFO << "filepath" << filepath;
+
+  if(!filepath.isEmpty())
+  {
     if(atools::gui::DockWidgetHandler::isWindowLayoutFile(filepath))
       // Open window layout file
       layoutOpenDrag(filepath);

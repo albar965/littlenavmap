@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2024 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2025 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -362,11 +362,11 @@ void LogdataDialog::flightplanFileClicked()
 {
   qDebug() << Q_FUNC_INFO;
 
-  QString filepath = atools::gui::Dialog(this).openFileDialog(
-    tr("Open Flight Plan"),
-    tr("Flight Plan Files %1;;All Files (*)").arg(lnm::FILE_PATTERN_FLIGHTPLAN_LOAD),
-    "Route/" + NavApp::getCurrentSimulatorShortName(),
-    NavApp::getCurrentSimulatorFilesPath());
+  QString filepath =
+    atools::gui::Dialog(this).openFileDialog(tr("Open Flight Plan"),
+                                             tr("Flight Plan Files %1;;All Files (*)").arg(lnm::FILE_PATTERN_LOAD_FLIGHTPLAN),
+                                             "Route/" + NavApp::getCurrentSimulatorShortName(),
+                                             NavApp::getCurrentSimulatorFilesPath());
 
   if(!filepath.isEmpty())
   {

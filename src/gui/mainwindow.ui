@@ -6686,13 +6686,13 @@ relation to shown airport</string>
      <normaloff>:/littlenavmap/resources/icons/fileopen.svg</normaloff>:/littlenavmap/resources/icons/fileopen.svg</iconset>
    </property>
    <property name="text">
-    <string>&amp;Open Flight Plan ...</string>
+    <string>&amp;Open Flight Plan or File ...</string>
    </property>
    <property name="toolTip">
-    <string>Open flight plan</string>
+    <string>Open a flight plan or other file</string>
    </property>
    <property name="statusTip">
-    <string>Open flight plan</string>
+    <string>Open a flight plan or other file</string>
    </property>
    <property name="shortcut">
     <string>Ctrl+O</string>
