@@ -1441,9 +1441,9 @@ bool RouteExport::routeValidate(const QVector<RouteExportFormat>& formats, bool 
 
     if(multi)
       message = tr("One or more of the selected export formats are for X-Plane and\n"
-                   "\"Use Navigraph for Navaids and Procedures\" is selected in the menu \"Scenery Library\" -> \"Navigraph\".\n");
+                   "\"Use Navigraph for all Features\" is selected in the menu \"Scenery Library\" -> \"Navigraph\".\n");
     else
-      message = tr("\"Use Navigraph for Navaids and Procedures\" is selected in the menu \"Scenery Library\" -> \"Navigraph\".\n");
+      message = tr("\"Use Navigraph for all Features\" is selected in the menu \"Scenery Library\" -> \"Navigraph\".\n");
 
     message += tr("This can result in issues loading the flight plan into the GPS or FMS since airports might not match.");
     message += reallyContinue;
