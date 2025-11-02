@@ -52,15 +52,21 @@ DatabaseDialog::DatabaseDialog(QWidget *parent, const SimulatorTypeMap& pathMap)
   });
 
   // Add an item to the combo box for each installed simulator
-  bool simFound = false;
+  bool simFound = false, anyXplaneFound = false;
   for(atools::fs::FsPaths::SimulatorType type : qAsConst(keys))
   {
     if(simulators.value(type).isInstalled)
     {
       ui->comboBoxSimulator->addItem(FsPaths::typeToDisplayName(type), QVariant::fromValue<atools::fs::FsPaths::SimulatorType>(type));
       simFound = true;
+
+      if(FsPaths::isAnyXplane(type))
+        anyXplaneFound = true;
     }
   }
+
+  // Set hint about X-Plane path only if XP found
+  ui->labelXplaneHint->setVisible(anyXplaneFound);
 
   if(!simFound)
     ui->labelDatabaseInformation->setText(tr("<b>No Simulator and no database found.</b>"));
