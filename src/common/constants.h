@@ -80,6 +80,7 @@ const QLatin1String ACTIONS_SHOW_QUIT_LOADING("Actions/ShowQuitLoading");
 const QLatin1String ACTIONS_SHOW_INVALID_PROC_WARNING("Actions/ShowInvalidProcedure");
 const QLatin1String ACTIONS_SHOW_ROUTE_PARKING_WARNING("Actions/ShowRouteParkingWarning");
 const QLatin1String ACTIONS_SHOW_ROUTE_AIRPORT_WARNING("Actions/ShowRouteAirportWarning");
+const QLatin1String ACTIONS_SHOW_ROUTE_ZERO_CRUISE_WARNING("Actions/ShowRouteZeroCruiseWarning");
 const QLatin1String ACTIONS_SHOW_ROUTE_VFR_WARNING("Actions/ShowRouteVfrWarning");
 const QLatin1String ACTIONS_SHOW_ROUTE_NO_CYCLE_WARNING("Actions/ShowRouteNoCycleWarning");
 const QLatin1String ACTIONS_SHOW_ROUTE_NAVDATA_ALL_WARNING("Actions/ShowRouteNavdataAllWarning");

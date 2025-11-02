@@ -1390,6 +1390,28 @@ bool RouteExport::routeValidate(const QVector<RouteExportFormat>& formats, bool 
     doNotShowAgainText = tr("Do not &show this dialog again and save the flight plan.");
   QString reallyContinue = tr("\n\nReally continue?");
 
+  // Check for cruise altitude ================================
+  if(route.getCruiseAltitudeFt() < 10.f)
+  {
+    QString message;
+
+    if(multi)
+      message = tr("Flight plan has a zero cruise altitude which can cause issues "
+                   "with the selected export formats.");
+    else
+      message = tr("Flight plan has a zero cruise altitude which can cause issues "
+                   "with the simulator.");
+
+    message += reallyContinue;
+
+    int result = dialog->showQuestionMsgBox(lnm::ACTIONS_SHOW_ROUTE_ZERO_CRUISE_WARNING,
+                                            message, doNotShowAgainText, QMessageBox::Yes | QMessageBox::No, QMessageBox::No,
+                                            QMessageBox::Yes);
+
+    if(result == QMessageBox::No)
+      save = false;
+  }
+
   // Check for valid airports for departure and destination ================================
   if(validateDepartAndDest && (!route.hasValidDeparture() || !route.hasValidDestination()))
   {
