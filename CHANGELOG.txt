@@ -4,6 +4,55 @@ This text is partially Markdown, so the formatting is sometimes strange.
 
 ==>>=============================================================================
 
+# Version 3.0.18
+
+## Notes
+
+**This is a stable release of Little Navmap that fixes small issues.**
+
+**macOS users:** Keep in mind that you have to clear the quarantine flag when updating Little Xpconnect.
+See [Clearing the Quarantine Flag on macOS](https://www.littlenavmap.org/manuals/littlenavmap/release/latest/en/XPCONNECT.html#clearing-the-quarantine-flag-on-macos).
+
+Thanks to everyone who reported issues!
+
+## Changes from 3.0.17 to 3.0.18
+
+* Adapted NAT download location to changed FAA page. Moved track URLs to track.cfg which can be
+  overridden by placing the file in the settings folder. #1298
+* Added option for displaying true airspeed in other units. You can enable this in menu `Tools` ->
+  `Aircraft Progress Display Options` in branch `True Alternate`.
+* Changed `File` -> `Open Flight Plan or File`. This function can now open all formats supported by
+  Little Navmap similar to drag-and-drop of files into the program window. These formats are flight
+  plans, aircraft performance (.lnmperf), GPX aircraft trails (.gpx) and window layouts (.lnmlayout).
+* Cleaned up layout of logbook entry edit dialog window.
+* Fixed centering of in procedure search tab. Now including airport when centering procedures with
+  `Follow selection enabled`.
+* Linux: Dropped Ubuntu 20.04 build and added build for 24.04.
+* MSFS 2024: Removed wrong check for recently removed path `StreamedPackages` when reading
+  MSFS 2024 data.
+* Now centering all shown procedures when clicking `Preview all procedures` in search tab.
+* Now showing a warning for an invalid cruise altitude when exporting a flight plan.
+* Removed PACOTS tracks since the FAA DINS Query page is no longer publicly available. Removed
+  selection option for track types since only NAT is available for now.
+* Reworked aircraft trail. The setting in options on page `Map Aircraft Trail` does now affect only
+  the visible trail points. The number of stored trail points is not affected by changing the field
+  `Maximum number of trail points shown`. Maximum number of stored points is five million which is
+  enough for several around the world trips. Keep in mind that the stored points are exported when
+  saving as GPX and not the visible part.
+* X-Plane: Adapted Little Xpconnect to X-Plane 12 datarefs to fix wind display on the map.
+* X-Plane: Added hint regarding the X-Plane base path in `Load Scenery Library` dialog window:
+  `Note that the flight simulator base path is also used to detect weather files and the
+  Little Xpconnect installation path for X-Plane.`
+* X-Plane: Minimum required version for Little Xpconnect is now 1.2.2. Reinstall this from
+  menu `Tools`.
+* macOS: Now detecting if Little Navmap runs in the Apple translocation sandbox. The program will
+  show a warning if this is detected. Extract the downloaded archive in another folder than
+  `Downloads` and continue to follow the installation instructions from the user manual if you see
+  this.
+* Other small fixes and user interface improvements.
+
+==<<=============================================================================
+
 # Version 3.0.17
 
 ## Notes
@@ -65,7 +114,7 @@ Thanks to everyone who reported issues!
 
 **🐇🐇🪺🪺 Happy Easter! 🪺🪺🐇🐇**
 
-==<<=============================================================================
+=================================================================================
 
 # Version 3.0.16
 
