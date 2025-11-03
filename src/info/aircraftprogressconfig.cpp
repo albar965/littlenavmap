@@ -87,7 +87,7 @@ void AircraftProgressConfig::treeDialogItemToggled(atools::gui::TreeDialog *tree
 
 void AircraftProgressConfig::progressConfiguration()
 {
-  atools::gui::TreeDialog treeDialog(parent, QCoreApplication::applicationName() + tr(" - Aircraft Progress Configuration"),
+  atools::gui::TreeDialog treeDialog(parent, QCoreApplication::applicationName() + tr(" - Aircraft Progress Display Options"),
                                      tr("Select the fields to show in the aircraft progress tab.\n"
                                         "Note that some fields are only shown if certain conditions apply."),
                                      lnm::INFOWINDOW_PROGRESS_FIELD_DIALOG, "INFO.html#progress-field-configuration",
