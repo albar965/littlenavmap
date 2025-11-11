@@ -535,11 +535,11 @@ components  :
           type                : number
           example             : 6.814605113425086
         latLonRect_ui        :
-          description         : the north latitude, the east longitude, the south latitude, the west longitude of the current view
+          description         : the north latitude, the east longitude, the south latitude, the west longitude of the current LNM UI
           type                : array(float[4])
           example             : [90.0, 180.0, -90.0, -180.0]
         latLonRect_web        :
-          description         : the north latitude, the east longitude, the south latitude, the west longitude of the current view
+          description         : the north latitude, the east longitude, the south latitude, the west longitude of the current LNM Web UI
           type                : array(float[4])
           example             : [90.0, 180.0, -90.0, -180.0]
     MapFeaturesResponse :
