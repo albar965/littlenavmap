@@ -282,7 +282,6 @@
   border-right: 5px solid rgba(0,0,0,.004);
   border-bottom: 5px solid rgba(0,0,0,.004);
   background-clip: padding-box !important;
-  margin-top: -5px;
   box-sizing: border-box;
 }
 
@@ -297,6 +296,12 @@
   background-clip: padding-box !important;
   margin-top: -20px;
   box-sizing: border-box;
+  left: var(--offsetX);
+  right: var(--offsetX);
+  top: var(--offsetY);
+  bottom: var(--offsetY);
+  max-width: calc(100% - var(--offsetX));
+  max-height: calc(100% - var(--offsetY) + 45px);
 }
 
 .movable-content.hover-move {

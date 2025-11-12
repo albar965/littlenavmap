@@ -90,8 +90,8 @@ function injectUpdates(origin) {
     var valueMapUpdateCounterMustBeAbove = mapUpdateCounter;            // be able to not run code which should only run once per returned image and which was run for the "forced" update on timeout wait duration end if the image does still return after the timeout wait duration, see mapUpdateTimeoutWaitDuration
 
     var mapSize = mapElement.parentElement.getBoundingClientRect();
-    var mapWidth = ~~mapSize.width;
-    var mapHeight = ~~mapSize.height;
+    var mapWidth = ~~(mapSize.width * devicePixelRatio);
+    var mapHeight = ~~(mapSize.height * devicePixelRatio);
         
     mapElement.onload = function() {
       clearTimeout(mapUpdateTimeout);
@@ -120,7 +120,7 @@ function injectUpdates(origin) {
       if(mapImageLoaded || force && !forceLock) {
         mapImageLoaded = false;
         forceLock = force && !nolock;
-        mapElement.src = "/mapimage?format=jpg&quality=" + quality + "&width=" + ~~(mapWidth * devicePixelRatio) + "&height=" + ~~(mapHeight * devicePixelRatio) + "&session&" + command + "=" + Math.random();
+        mapElement.src = "/mapimage?format=jpg&quality=" + quality + "&width=" + mapWidth + "&height=" + mapHeight + "&session&" + command + "=" + Math.random();
         clearTimeout(mapUpdateTimeout);
         mapUpdateTimeout = setTimeout((function(mapUpdateCounter) {
           return function() {
@@ -160,8 +160,8 @@ function injectUpdates(origin) {
     ocw.sizeMapToContainer = function() {
       ocw.clearTimeout(imageRequestTimeout);
       mapSize = mapElement.parentElement.getBoundingClientRect();
-      mapWidth = ~~mapSize.width;
-      mapHeight = ~~mapSize.height;
+      mapWidth = ~~(mapSize.width * devicePixelRatio);
+      mapHeight = ~~(mapSize.height * devicePixelRatio);
       updateMapImage(mapCommand(), resizingMapQuality);
       imageRequestTimeout = ocw.setTimeout(function() {       // update after the resizing stopped to have an image for the final quality "for certain"
         updateMapImage(mapCommand(), defaultMapQuality, true, 0, true);     // do not lock for event handling like a new zoom request to be able to take priority over waiting for the potentially longer loading higher-quality final quality
@@ -193,6 +193,16 @@ function injectUpdates(origin) {
     /*
      * Event handling: click map
      */
+    // returns latitude from y on web mercator projection
+    // y from -1 at lat = -85.05113° to 1 at lat = 85.05113°
+    function gudermann(y) {
+      return (2 * Math.atan(Math.exp(y * Math.PI)) - Math.PI / 2) * 180 / Math.PI;
+    }
+    // returns y on web mercator projection from latitude
+    // y = -1 at lat = -85.05113° and 1 at lat = 85.05113°
+    function invGudermann(phi) {
+      return Math.log(Math.tan((phi * Math.PI / 180 + Math.PI / 2) / 2)) / Math.PI;
+    }
     var notGettingMapViewRect = true;
     ocw.handleInteraction = function(e) {
       var currentTarget = e.currentTarget;
@@ -208,7 +218,9 @@ function injectUpdates(origin) {
             json.latLonRect_web[1] += json.latLonRect_web[1] < json.latLonRect_web[3] ? 360 : 0;
             var newLon = json.latLonRect_web[3] + (json.latLonRect_web[1] - json.latLonRect_web[3]) * (x / mapElement.clientWidth);
             newLon -= newLon > 180 ? 360 : 0;
-            updateMapImage("mapcmd=center&lon=" + newLon + "&lat=" + (json.latLonRect_web[0] + (json.latLonRect_web[2] - json.latLonRect_web[0]) * (y / mapElement.clientHeight)) + "&cmd", defaultMapQuality, true);
+            var yN = invGudermann(json.latLonRect_web[0]);
+            var newLat = gudermann(yN - (y / mapElement.clientHeight) * (yN - invGudermann(json.latLonRect_web[2])));
+            updateMapImage("mapcmd=center&lon=" + newLon + "&lat=" + newLat + "&cmd", defaultMapQuality, true);
           } else {
             var shift = currentTarget.getAttribute("data-shift");
             shift !== null ? updateMapImage("mapcmd=" + shift + "&cmd", defaultMapQuality, true) : !1;
@@ -543,8 +555,12 @@ function injectUpdates(origin) {
 
 (() => {
   var contentContainer = document.getElementById("contentContainer");
-  var oldScreenY;
-  var oldScreenX;
+  var oldClientY;
+  var oldClientX;
+  var initialClientY;
+  var initialClientX;
+  var initialOffsetTop;
+  var initialOffsetLeft;
   var movedElement = null;
   var respectOver = true;
   var resizedElement = null;
@@ -566,8 +582,10 @@ function injectUpdates(origin) {
   function flagMovableResizable (event) {
     if(event.target?.classList.contains("hover-move")) {
       event.target.classList.add("moving-cursor");
-      oldScreenY = event.screenY;
-      oldScreenX = event.screenX;
+      initialClientY = event.clientY;
+      initialClientX = event.clientX;
+      initialOffsetTop = event.target.offsetTop;
+      initialOffsetLeft = event.target.offsetLeft;
       movedElement = event.target;
     } else if(event.target?.classList.contains("hover-resize")) {
       if(event.offsetY > event.target.clientHeight) {
@@ -575,67 +593,73 @@ function injectUpdates(origin) {
       } else if(event.offsetX < 0 || event.offsetX > event.target.clientWidth) {
         event.target.classList.add("resizing-cursor-hori");
       }
-      oldScreenY = event.screenY;
-      oldScreenX = event.screenX;
+      oldClientY = event.clientY;
+      oldClientX = event.clientX;
       resizedElement = event.target;
     }
   }
-  
+
   function moveResize (event) {
     if(movedElement) {
       var settings = retrieveState("plugin_" + movedElement.dataset.id, {});
-      // 20 = iframe border-top
-      var newY = movedElement.offsetTop + event.screenY - oldScreenY + 20;
+      var computedStyle = getComputedStyle(movedElement);
+      var newY = initialOffsetTop + event.clientY - initialClientY + parseFloat(computedStyle.borderTopWidth);
       // 50 = map toolbar height (without toolbar scrollbar)
-      if(newY >= 50 && newY < contentContainer.clientHeight - movedElement.clientHeight) {
+      if(newY >= 50 && newY + movedElement.clientHeight < contentContainer.clientHeight) {
         if(newY - 50 + movedElement.clientHeight / 2 < (contentContainer.clientHeight - 50) / 2) {
-          movedElement.style.top = newY + "px";
+          movedElement.style.top = "";
           movedElement.style.bottom = "auto";
+          var offsetY = newY + "px";
         } else {
           movedElement.style.top = "auto";
-          // 5 = resizable iframe border-bottom
-          movedElement.style.bottom = (contentContainer.clientHeight - (newY + movedElement.clientHeight) - 5) + "px";
+          movedElement.style.bottom = "";
+          var offsetY = (contentContainer.clientHeight - (newY + movedElement.clientHeight) - parseFloat(computedStyle.borderBottomWidth)) + "px";
         }
+        movedElement.style.setProperty("--offsetY", offsetY);
+        settings.offsetY = offsetY;
         settings.top = movedElement.style.top;
         settings.bottom = movedElement.style.bottom;
       }
-      var newX = movedElement.offsetLeft + event.screenX - oldScreenX;
-      if(newX >= 0 && newX < contentContainer.clientWidth - movedElement.clientWidth) {
+      var newX = initialOffsetLeft + event.clientX - initialClientX;
+      if(newX >= 0 && newX + movedElement.clientWidth < contentContainer.clientWidth) {
         if(newX + movedElement.clientWidth / 2 < contentContainer.clientWidth / 2) {
-          movedElement.style.left = newX + "px";
+          movedElement.style.left = "";
           movedElement.style.right = "auto";
+          var offsetX = newX + "px";
         } else {
           movedElement.style.left = "auto";
-          // 5 = resizable iframe border-right
-          movedElement.style.right = (contentContainer.clientWidth - (newX + movedElement.clientWidth) - 5) + "px";
+          movedElement.style.right = "";
+          var offsetX = (contentContainer.clientWidth - (newX + movedElement.clientWidth) - parseFloat(computedStyle.borderRightWidth)) + "px";
         }
+        movedElement.style.setProperty("--offsetX", offsetX);
+        settings.offsetX = offsetX;
         settings.left = movedElement.style.left;
         settings.right = movedElement.style.right;
       }
       storeState("plugin_" + movedElement.dataset.id, settings);
-      oldScreenY = event.screenY;
-      oldScreenX = event.screenX;
     } else if(resizedElement) {
       var settings = retrieveState("plugin_" + resizedElement.dataset.id, {});
+      var computedStyle = getComputedStyle(resizedElement);
       if(resizedElement.classList.contains("resizing-cursor-vert")) {
-        // 25 = iframe vert borders
-        var newH = resizedElement.clientHeight + event.screenY - oldScreenY + 25;
-        // 20 = iframe border-top
-        if(resizedElement.offsetTop + 20 < contentContainer.clientHeight - newH) {
+        var newH = resizedElement.clientHeight + event.clientY - oldClientY + parseFloat(computedStyle.borderTopWidth) + parseFloat(computedStyle.borderBottomWidth);
+        // 50 = map toolbar height (without toolbar scrollbar)
+        if((resizedElement.style.top === "auto" || computedStyle.getPropertyValue('top') === "auto") && contentContainer.clientHeight - (parseFloat(computedStyle.bottom) + newH - parseFloat(computedStyle.borderTopWidth)) >= 50 || (resizedElement.style.bottom === "auto" || computedStyle.getPropertyValue('bottom') === "auto") && resizedElement.offsetTop + newH < contentContainer.clientHeight) {
           resizedElement.style.height = newH + "px";
           settings.height = resizedElement.style.height;
+          storeState("plugin_" + resizedElement.dataset.id, settings);
+          oldClientY = event.clientY;
+          oldClientX = event.clientX;
         }
       } else {
-        // 5 = iframe hori borders
-        var newW = resizedElement.clientWidth + event.screenX - oldScreenX + 5;
-        if(resizedElement.offsetLeft < contentContainer.clientWidth - newW) {
+        var newW = resizedElement.clientWidth + event.clientX - oldClientX + parseFloat(computedStyle.borderRightWidth);
+        if((resizedElement.style.left === "auto" || computedStyle.getPropertyValue('left') === "auto") && contentContainer.clientWidth - (parseFloat(computedStyle.right) + newW) >= 0 || (resizedElement.style.right === "auto" || computedStyle.getPropertyValue('right') === "auto") && resizedElement.offsetLeft + newW < contentContainer.clientWidth) {
           resizedElement.style.width = newW + "px";
           settings.width = resizedElement.style.width;
+          storeState("plugin_" + resizedElement.dataset.id, settings);
+          oldClientY = event.clientY;
+          oldClientX = event.clientX;
         }
       }
-      storeState("plugin_" + resizedElement.dataset.id, settings);
-      oldScreenY = event.screenY;
-      oldScreenX = event.screenX;
     } else {
       if (respectOver && event.target?.classList.contains("movable-content")) {
         if(event.offsetY < -5) {    // -5 = allow for removing of class when moving towards iframe content
