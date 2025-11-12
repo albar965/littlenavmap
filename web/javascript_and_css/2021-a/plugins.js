@@ -62,7 +62,41 @@ function findPlugins() {
         if(plugin.checked) {
           if(!pluginsConfig[plugin.value].deloading) {
             var iframe = document.createElement("iframe");
+            contentContainer.insertBefore(iframe, toolbarsLayer.parentElement);   // make iframe available for dimension queries before all else
             iframe.style = "position:absolute;visibility:hidden;pointer-events:none;top:0;left:0;z-index:-1;width:1px;height:1px";
+            iframe.setAttribute("data-type", pluginsConfig[plugin.value].type);
+            iframe.setAttribute("data-id", plugin.value);
+            iframe.setAttribute("allow", "accelerometer *; autoplay *; bluetooth *; camera *; compute-pressure *; display-capture *; encrypted-media *; fullscreen *; gamepad *; geolocation *; gyroscope *; hid *; identity-credentials-get *; idle-detection *; local-fonts *; magnetometer *; microphone *; midi *; payment *; picture-in-picture *; publickey-credentials-create *; publickey-credentials-get *; screen-wake-lock *; serial *; storage-access *; usb *; web-share *; window-management *; xr-spatial-tracking *");
+            pluginsConfig[plugin.value].aborted = false;
+            var allowMapAccess = " allow-same-origin";      // this should be empty string. parent access is wished to be prevented. without "allow-same-origin" that is achieved. it also blocks iframes within iframes to communicate with each other directly which is not wished. also localStorage is not accessible then.
+            if(pluginsConfig[plugin.value].requestMapAccess.length) {
+              if(true || retrieveState("mapAccessGranted_plugin_" + plugin.value, 0, true) === "true" || confirm("The plugin\n\n\"" + pluginsConfig[plugin.value].title + "\"\n\nis requesting access to the map.\n\nReason given:\n\n\"" + pluginsConfig[plugin.value].requestMapAccess + "\"\n\nGrant it?\n\n\nNote:\n\nThe plugin then will be able to access anything else inside the Little Navmap web frontend.\n\nWhen you deny access, a plugin still can find access due to web\nbrowsers ungranular security model which needed to be configured\nfor plugins to be able to do non-trivial tasks.")) {    // no nagging for now
+                storeState("mapAccessGranted_plugin_" + plugin.value, "true", true);
+                allowMapAccess = " allow-same-origin";
+                iframe.addEventListener("load", function() {
+                  this.contentWindow.setMapDocument(contentIframe.contentDocument, MAP_VERSION);
+                });
+              }
+            }
+            iframe.setAttribute("sandbox", "allow-forms allow-modals allow-orientation-lock allow-presentation allow-scripts" + allowMapAccess);
+            iframe.addEventListener("load", function() {
+              if(!pluginsConfig[plugin.value].aborted) {
+                activePlugins.push(plugin.value);
+                storeState("activePlugins", activePlugins);
+                pluginsConfig[plugin.value].toolbars.forEach(toolbarConfig => {
+                  var toolbar = tAPI.createToolbar(toolbarConfig.title.length ? toolbarsLayer : mapToolbar, toolbarConfig.title, pluginsConfig[plugin.value].type, plugin.value);
+                  if(activeExclusivePlugin !== "/" && activeExclusivePlugin !== plugin.value && toolbarConfig.title.length) {
+                    toolbar.style.display = "none";
+                  }
+                  toolbarConfig.items.forEach(item => {
+                    tAPI[item.type]?.(item, plugin.value, toolbar);
+                  });
+                });
+                this.contentWindow.postMessage({pluginParent: {cause: "commence"}}, "*");
+              }
+              loadingOnInit ? continueLoadingPlugins() : !1;
+            });
+            pluginsConfig[plugin.value].iframe = iframe;
             switch(pluginsConfig[plugin.value].type) {
               case "background":
                 break;
@@ -126,30 +160,57 @@ function findPlugins() {
                 iframe.setAttribute("allowtransparency", "false");    // appears to be unnecessary
                 iframe.style.background = "#fff";
                 iframe.style.pointerEvents = "all";
-                var settings = retrieveState("plugin_" + plugin.value);
+                var settings = retrieveState("plugin_" + plugin.value, {});
+                var doUpdate = !settings?.width || !settings?.height || !settings?.top || !settings?.left || !settings?.bottom || !settings?.right || !settings?.offsetX || !settings?.offsetY;
                 iframe.style.width = settings?.width ?? "205px";
                 iframe.style.height = settings?.height ?? "225px";
-                iframe.style.top = settings?.top ?? "100px";          // 50px is height of map HTML #header
-                iframe.style.left = settings?.left ?? "50px";
+                iframe.style.top = settings?.top ?? "";
+                iframe.style.left = settings?.left ?? "";
                 iframe.style.bottom = settings?.bottom ?? "auto";
                 iframe.style.right = settings?.right ?? "auto";
-                // 20 = iframe border-top
-                if(iframe.offsetTop + 20 >= contentContainer.clientHeight - iframe.clientHeight) {
-                  iframe.style.top = "auto";
-                  iframe.style.bottom = "0";
-                  storeState("plugin_" + plugin.value, settings);
-                }
-                if(iframe.offsetLeft >= contentContainer.clientWidth - iframe.clientWidth) {
-                  iframe.style.left = "auto";
-                  iframe.style.right = "0";
-                  storeState("plugin_" + plugin.value, settings);
-                }
-                if(iframe.clientHeight > contentContainer.clientHeight - 50) {    // 50 = map menubar height (without toolbar scrollbar)
+                iframe.style.setProperty("--offsetX", settings?.offsetX ?? "50px");
+                iframe.style.setProperty("--offsetY", settings?.offsetY ?? "100px");          // extra 50px is height of map HTML #header toolbar
+                if(iframe.clientHeight + parseFloat(getComputedStyle(iframe).borderBottomWidth) > contentContainer.clientHeight - 50) {    // 50 = map menubar height (without toolbar scrollbar)
                   iframe.style.height = (contentContainer.clientHeight - 50) / 2 + "px";
-                  storeState("plugin_" + plugin.value, settings);
+                  doUpdate = true;
                 }
-                if(iframe.clientWidth > contentContainer.clientWidth) {
+                if(iframe.clientWidth + parseFloat(getComputedStyle(iframe).borderRightWidth) > contentContainer.clientWidth) {
                   iframe.style.width = contentContainer.clientWidth / 2 + "px";
+                  doUpdate = true;
+                }
+                if(iframe.offsetTop + parseFloat(getComputedStyle(iframe).borderTopWidth) < 50) {
+                  iframe.style.setProperty("--offsetY", 50 - parseFloat(getComputedStyle(iframe).borderTopWidth) + "px");
+                  iframe.style.top = "";
+                  iframe.style.bottom = "auto";
+                  doUpdate = true;
+                }
+                if(iframe.offsetTop + parseFloat(getComputedStyle(iframe).borderTopWidth) + iframe.clientHeight > contentContainer.clientHeight) {
+                  iframe.style.setProperty("--offsetY", "0");
+                  iframe.style.top = "auto";
+                  iframe.style.bottom = "";
+                  doUpdate = true;
+                }
+                if(iframe.offsetLeft < 0) {
+                  iframe.style.setProperty("--offsetX", "0");
+                  iframe.style.left = "";
+                  iframe.style.right = "auto";
+                  doUpdate = true;
+                }
+                if(iframe.offsetLeft + iframe.clientWidth >= contentContainer.clientWidth) {
+                  iframe.style.setProperty("--offsetX", "0");
+                  iframe.style.left = "auto";
+                  iframe.style.right = "";
+                  doUpdate = true;
+                }
+                if(doUpdate) {
+                  settings.height = iframe.style.height;
+                  settings.width = iframe.style.width;
+                  settings.top = iframe.style.top;
+                  settings.bottom = iframe.style.bottom;
+                  settings.left = iframe.style.left;
+                  settings.right = iframe.style.right;
+                  settings.offsetX = settings?.offsetX ?? "50px";
+                  settings.offsetY = settings?.offsetY ?? "100px";
                   storeState("plugin_" + plugin.value, settings);
                 }
                 iframe.style.visibility = "visible";
@@ -160,41 +221,7 @@ function findPlugins() {
                 plugin.checked = false;
                 return;
             }
-            iframe.setAttribute("data-type", pluginsConfig[plugin.value].type);
-            iframe.setAttribute("data-id", plugin.value);
-            iframe.setAttribute("allow", "accelerometer *; ambient-light-sensor *; attribution-reporting *; autoplay *; battery *; bluetooth *; browsing-topics *; camera *; compute-pressure *; display-capture *; document-domain *; encrypted-media *; execution-while-not-rendered *; execution-while-out-of-viewport *; fullscreen *; gamepad *; geolocation *; gyroscope *; hid *; identity-credentials-get *; idle-detection *; local-fonts *; magnetometer *; microphone *; midi *; otp-credentials *; payment *; picture-in-picture *; publickey-credentials-create *; publickey-credentials-get *; screen-wake-lock *; serial *; speaker-selection *; storage-access *; usb *; web-share *; window-management *; xr-spatial-tracking *");
-            pluginsConfig[plugin.value].aborted = false;
-            var allowMapAccess = " allow-same-origin";      // this should be empty string. parent access is wished to be prevented. without "allow-same-origin" that is achieved. it also blocks iframes within iframes to communicate with each other directly which is not wished. also localStorage is not accessible then.
-            if(pluginsConfig[plugin.value].requestMapAccess.length) {
-              if(true || retrieveState("mapAccessGranted_plugin_" + plugin.value, 0, true) === "true" || confirm("The plugin\n\n\"" + pluginsConfig[plugin.value].title + "\"\n\nis requesting access to the map.\n\nReason given:\n\n\"" + pluginsConfig[plugin.value].requestMapAccess + "\"\n\nGrant it?\n\n\nNote:\n\nThe plugin then will be able to access anything else inside the Little Navmap web frontend.\n\nWhen you deny access, a plugin still can find access due to web\nbrowsers ungranular security model which needed to be configured\nfor plugins to be able to do non-trivial tasks.")) {    // no nagging for now
-                storeState("mapAccessGranted_plugin_" + plugin.value, "true", true);
-                allowMapAccess = " allow-same-origin";
-                iframe.addEventListener("load", function() {
-                  this.contentWindow.setMapDocument(contentIframe.contentDocument, MAP_VERSION);
-                });
-              }
-            }
-            iframe.setAttribute("sandbox", "allow-forms allow-modals allow-orientation-lock allow-presentation allow-scripts" + allowMapAccess);  
-            iframe.addEventListener("load", function() {
-              if(!pluginsConfig[plugin.value].aborted) {
-                activePlugins.push(plugin.value);
-                storeState("activePlugins", activePlugins);
-                pluginsConfig[plugin.value].toolbars.forEach(toolbarConfig => {
-                  var toolbar = tAPI.createToolbar(toolbarConfig.title.length ? toolbarsLayer : mapToolbar, toolbarConfig.title, pluginsConfig[plugin.value].type, plugin.value);
-                  if(activeExclusivePlugin !== "/" && activeExclusivePlugin !== plugin.value && toolbarConfig.title.length) {
-                    toolbar.style.display = "none";
-                  }
-                  toolbarConfig.items.forEach(item => {
-                    tAPI[item.type]?.(item, plugin.value, toolbar);
-                  });
-                });
-                this.contentWindow.postMessage({pluginParent: {cause: "commence"}}, "*");
-              }
-              loadingOnInit ? continueLoadingPlugins() : !1;
-            });
-            pluginsConfig[plugin.value].iframe = iframe;
             iframe.src = "/plugins/" + plugin.value + "/index.html";
-            contentContainer.insertBefore(iframe, toolbarsLayer.parentElement);
           } else {
             pluginsConfig[plugin.value].reload = true;
           }
