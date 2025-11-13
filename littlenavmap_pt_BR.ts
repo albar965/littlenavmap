@@ -1320,7 +1320,7 @@ Observe que alguns campos só são mostrados se certas condições se aplicarem.
     <message>
         <location filename="src/info/aircraftprogressconfig.cpp" line="90"/>
         <source> - Aircraft Progress Display Options</source>
-        <translation type="unfinished"></translation>
+        <translation> - Opções de Exibição do Progresso da Aeronave</translation>
     </message>
     <message>
         <location filename="src/info/aircraftprogressconfig.cpp" line="110"/>
@@ -1754,13 +1754,14 @@ do que as unidades padrão selecionadas (kts, km/h ou mph).</translation>
     <message>
         <location filename="src/info/aircraftprogressconfig.cpp" line="189"/>
         <source>True Alternate</source>
-        <translation type="unfinished"></translation>
+        <translation>Alternativa Real</translation>
     </message>
     <message>
         <location filename="src/info/aircraftprogressconfig.cpp" line="189"/>
         <source>Aircraft true speed additional display in other
 than selected default units (kts, km/h or mph).</source>
-        <translation type="unfinished"></translation>
+        <translation>Exibição adicional da velocidade verdadeira da aeronave em unidades
+diferentes das padrão selecionadas (kt, km/h ou mph).</translation>
     </message>
     <message>
         <location filename="src/info/aircraftprogressconfig.cpp" line="198"/>
@@ -2074,7 +2075,7 @@ Código da Área</translation>
     <message>
         <location filename="src/search/airportsearch.cpp" line="70"/>
         <source>&lt;p&gt;All set search conditions have to match.&lt;/p&gt;&lt;p&gt;Search tips for text fields:&lt;/p&gt;&lt;ul&gt;&lt;li&gt;Default is to search for airports that contain entered text or words in all data fields like ident or city name, for example.&lt;/li&gt;&lt;li&gt;Use &amp;quot;*&amp;quot; as a placeholder for any text.&lt;/li&gt;&lt;li&gt;Use double quotes like &amp;quot;FRA&amp;quot; or &amp;quot;EDDF&amp;quot; to force exact search.&lt;/li&gt;&lt;li&gt;Only fields that search for idents: Enter a space separated list of words or idents to look for more than one airport.&lt;/li&gt;&lt;/ul&gt;&lt;p&gt;Check boxes: &lt;/p&gt;&lt;ul&gt;&lt;li&gt;Gray means: Condition is ignored.&lt;/li&gt;&lt;li&gt;Checked means: Condition must match.&lt;/li&gt;&lt;li&gt;Unchecked means: Condition must not match.&lt;/li&gt;&lt;/ul&gt;</source>
-        <translation type="unfinished"></translation>
+        <translation>&lt;p&gt;Todas as condições de pesquisa definidas devem corresponder.&lt;/p&gt;&lt;p&gt;Dicas de pesquisa para campos de texto:&lt;/p&gt;&lt;ul&gt;&lt;li&gt;O padrão é pesquisar aeroportos que contenham o texto ou palavras digitadas em todos os campos de dados, como o código de identificação ou o nome da cidade, por exemplo.&lt;/li&gt;&lt;li&gt;Use &amp;quot;*&amp;quot; como marcador de posição para qualquer texto.&lt;/li&gt;&lt;li&gt;Use aspas duplas, como &amp;quot;FRA&amp;quot; ou &amp;quot;EDDF&amp;quot;, para forçar uma pesquisa exata.&lt;/li&gt;&lt;li&gt;Apenas campos que pesquisam códigos de identificação: Insira uma lista de palavras ou códigos de identificação separados por espaço para pesquisar mais de um aeroporto.&lt;/li&gt;&lt;/ul&gt;&lt;p&gt;Caixas de seleção:&lt;/p&gt;&lt;ul&gt;&lt;li&gt;Cinza significa: A condição é ignorada.&lt;/li&gt;&lt;li&gt;Marcada significa: A condição deve corresponder.&lt;/li&gt;&lt;li&gt;Desmarcada significa: A condição não deve corresponder.&lt;/li&gt;&lt;/ul&gt;</translation>
     </message>
     <message>
         <location filename="src/search/airportsearch.cpp" line="197"/>
@@ -3554,7 +3555,7 @@ Para MSFS, isso deve apontar para o diretório que contém &amp;quot;Comunidade 
     <message>
         <location filename="src/db/databasedialog.ui" line="68"/>
         <source>Paths and Options</source>
-        <translation type="unfinished"></translation>
+        <translation>Caminhos e opções</translation>
     </message>
     <message>
         <location filename="src/db/databasedialog.ui" line="102"/>
@@ -3572,7 +3573,9 @@ Para MSFS, isso deve apontar para o diretório que contém &amp;quot;Comunidade 
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;img src=&quot;:/littlenavmap/resources/icons/bulb.svg&quot;/&gt;&lt;span style=&quot; font-style:italic;&quot;&gt;Note that the flight simulator base path is also used to detect weather files and the Little Xpconnect installation path for X-Plane.&lt;br/&gt;
 To avoid outdated weather reports, always change the base path to point to the X-Plane installation being used.
 &lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation type="unfinished"></translation>
+        <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;img src=&quot;:/littlenavmap/resources/icons/bulb.svg&quot;/&gt;&lt;span style=&quot; font-style:italic;&quot;&gt;Observe que o caminho base do simulador de voo também é usado para detectar arquivos meteorológicos e o caminho de instalação do Little Xpconnect para o X-Plane.&lt;br/&gt;
+Para evitar relatórios meteorológicos desatualizados, sempre altere o caminho base para apontar para a instalação do X-Plane que está sendo usada.
+&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
         <location filename="src/db/databasedialog.cpp" line="146"/>
@@ -4316,13 +4319,13 @@ Observe que o processo de carregamento pode demorar um pouco. Espere de %1 a %2 
     <message>
         <location filename="src/db/databasemanager.cpp" line="1721"/>
         <source>&lt;b&gt;Caught exception while compiling scenery library.&lt;/b&gt;%3</source>
-        <translation type="unfinished"></translation>
+        <translation>&lt;b&gt;Exceção detectada durante a compilação da biblioteca de cenários.&lt;/b&gt;%3</translation>
     </message>
     <message>
         <location filename="src/db/databasemanager.cpp" line="1727"/>
         <source>&lt;b&gt;Caught unknown exception while compiling scenery library.&lt;/b&gt;</source>
         <oldsource>&lt;b&gt;Caught unknown exception while compiling scenery library.&lt;/b&gt;%3</oldsource>
-        <translation type="unfinished"></translation>
+        <translation>&lt;b&gt;Exceção desconhecida detectada durante a compilação da biblioteca de cenários.&lt;/b&gt;</translation>
     </message>
     <message>
         <location filename="src/db/databasemanager.cpp" line="1901"/>
@@ -6910,24 +6913,26 @@ Os arquivos GPX contêm pontos do plano de voo e a trilha do voo.</translation>
     <message>
         <location filename="src/logbook/logdatadialog.ui" line="911"/>
         <source>Aircraft Trail</source>
-        <translation type="unfinished">Trilha das aeronaves</translation>
+        <translation>Trilha da Aeronave</translation>
     </message>
     <message>
         <location filename="src/logbook/logdatadialog.ui" line="937"/>
         <source>Attached GPX file:</source>
-        <translation type="unfinished"></translation>
+        <translation>Arquivo GPX em anexo:</translation>
     </message>
     <message>
         <location filename="src/logbook/logdatadialog.ui" line="944"/>
         <source>Attach a GPX aircraft trail file to the logbook entry.
 GPX files contain flight plan points and the flown trail.</source>
-        <translation type="unfinished"></translation>
+        <translation>Anexe um arquivo GPX de rota de aeronave à entrada do logbook.
+Os arquivos GPX contêm os pontos do plano de voo e a rota percorrida.</translation>
     </message>
     <message>
         <location filename="src/logbook/logdatadialog.ui" line="955"/>
         <source>Save the attached GPX aircraft trail to a new file.
 GPX files contain flight plan points and the flown trail.</source>
-        <translation type="unfinished"></translation>
+        <translation>Salve o trajeto da aeronave em formato GPX em um novo arquivo.
+Os arquivos GPX contêm os pontos do plano de voo e o trajeto percorrido.</translation>
     </message>
     <message>
         <location filename="src/logbook/logdatadialog.ui" line="994"/>
@@ -7596,12 +7601,12 @@ Defina o caminho para os dados de elevação offline nas opções na página “
     <message>
         <location filename="src/gui/mainwindow.cpp" line="2455"/>
         <source>Open Flight Plan or File</source>
-        <translation type="unfinished"></translation>
+        <translation>Abra o Plano de Voo ou o Arquivo</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.cpp" line="2456"/>
         <source>Little Navmap Files %1;;All Files (*)</source>
-        <translation type="unfinished"></translation>
+        <translation>Arquivos Little Navmap %1;;Todos os Arquivos (*)</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.cpp" line="2476"/>
@@ -7674,12 +7679,15 @@ ou excluir a trilha.</translation>
 maximum number of %L2 stored points.
 
 Note that too many trail points can cause performance issues in map display.</source>
-        <translation type="unfinished"></translation>
+        <translation>Trajeto da aeronave truncado em %L1 pontos devido ao
+número máximo de %L2 pontos armazenados.
+
+Observe que muitos pontos de trajetória podem causar problemas de desempenho na exibição do mapa.</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.cpp" line="2670"/>
         <source>Insert Flight Plan</source>
-        <translation type="unfinished"></translation>
+        <translation>Inserir Plano de Voo</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.cpp" line="2745"/>
@@ -7787,7 +7795,7 @@ Redefinir todas as mensagens para serem exibidas novamente agora?</translation>
     <message>
         <location filename="src/gui/mainwindow.cpp" line="3670"/>
         <source>&lt;p&gt;&lt;b&gt;Little Navmap seems to be running in the Apple translocation sandbox.&lt;br/&gt;This severely limits the program&apos;s functionality.&lt;/b&gt;&lt;/p&gt;&lt;p&gt;Download Little Navmap again, extract it &lt;i&gt;outside&lt;/i&gt; the folder &quot;Downloads&quot; and run it again.&lt;/p&gt;&lt;p&gt;Also have a look at the link below for more information how to remove the Apple quarantine flag.&lt;/p&gt;</source>
-        <translation type="unfinished"></translation>
+        <translation>&lt;p&gt;&lt;b&gt;O Little Navmap parece estar sendo executado no ambiente de quarentena da Apple.&lt;br/&gt;Isso limita severamente a funcionalidade do programa.&lt;/b&gt;&lt;/p&gt;&lt;p&gt;Baixe o Little Navmap novamente, extraia-o &lt;i&gt;fora&lt;/i&gt; da pasta &quot;Downloads&quot; e execute-o novamente.&lt;/p&gt;&lt;p&gt;Veja também o link abaixo para obter mais informações sobre como remover o sinalizador de quarentena da Apple.&lt;/p&gt;</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.cpp" line="3689"/>
@@ -10106,13 +10114,13 @@ A velocidade do vento será interpolada entre esta altitude e a nível do solo.<
     <message>
         <location filename="src/gui/mainwindow.ui" line="6689"/>
         <source>&amp;Open Flight Plan or File ...</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Abra o Plano de Voo ou o Arquivo ...</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="6692"/>
         <location filename="src/gui/mainwindow.ui" line="6695"/>
         <source>Open a flight plan or other file</source>
-        <translation type="unfinished"></translation>
+        <translation>Abra um plano de voo ou outro arquivo</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="6886"/>
@@ -17703,7 +17711,7 @@ O botão é realçado se o nível de detalhe não for padrão.</translation>
     <message>
         <location filename="src/common/htmlinfobuilder.cpp" line="4764"/>
         <source>True:</source>
-        <translation type="unfinished"></translation>
+        <translation>Verdadeiro:</translation>
     </message>
     <message>
         <location filename="src/common/htmlinfobuilder.cpp" line="4808"/>
@@ -22279,7 +22287,7 @@ kHz/MHz</translation>
         <location filename="src/mappainter/mappaintermark.cpp" line="979"/>
         <source> (RSV)</source>
         <comment>Acronym for reserve on the map</comment>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <location filename="src/mappainter/mappaintermark.cpp" line="1574"/>
@@ -22537,7 +22545,7 @@ Vá ao menu &quot;Configurações&quot; -&gt; &quot;Opções&quot; e depois à p
     <message>
         <location filename="src/mapgui/mapthemehandler.cpp" line="186"/>
         <source>Invalid target &quot;%1&quot; in element &quot;&amp;lt;target&amp;gt;&quot; in map theme %2&amp;nbsp;(click to show).&lt;br/&gt;Element must contain text &quot;earth&quot;.&lt;br/&gt;&lt;b&gt;Remove or repair this map theme to avoid this message.&lt;/b&gt;&lt;br/&gt;</source>
-        <translation>Destino inválido &quot;%1&quot; no elemento &quot;&amp;lt;target&amp;gt;&quot; no tema do mapa %2%2&amp;nbsp;(clique para mostrar).&lt;br/&gt;O elemento deve conter o texto &quot;earth&quot;.&lt;br/&gt;&lt;b&gt;Remova ou repare este tema de mapa para evitar esta mensagem.&lt;/b&gt;&lt;br/&gt;</translation>
+        <translation>Destino inválido &quot;%1&quot; no elemento &quot;&amp;lt;target&amp;gt;&quot; no tema do mapa %2&amp;nbsp;(clique para mostrar).&lt;br/&gt;O elemento deve conter o texto &quot;earth&quot;.&lt;br/&gt;&lt;b&gt;Remova ou repare este tema de mapa para evitar esta mensagem.&lt;/b&gt;&lt;br/&gt;</translation>
     </message>
     <message>
         <location filename="src/mapgui/mapthemehandler.cpp" line="210"/>
@@ -23677,7 +23685,7 @@ kHz/MHz</translation>
     <message>
         <location filename="src/search/navsearch.cpp" line="47"/>
         <source>&lt;p&gt;All set search conditions have to match.&lt;/p&gt;&lt;p&gt;Search tips for text fields: &lt;/p&gt;&lt;ul&gt;&lt;li&gt;Default is search for navaids that contain the entered text.&lt;/li&gt;&lt;li&gt;Use &amp;quot;*&amp;quot; as a placeholder for any text. &lt;/li&gt;&lt;li&gt;Prefix with &amp;quot;-&amp;quot; as first character to negate search.&lt;/li&gt;&lt;li&gt;Only ident field: Use double quotes like &amp;quot;TAU&amp;quot; or &amp;quot;BOMBI&amp;quot; to force exact search.&lt;/li&gt;&lt;li&gt;Only ident field: Enter a space separated list of idents to look for more than one navaid.&lt;/li&gt;&lt;/ul&gt;</source>
-        <translation type="unfinished"></translation>
+        <translation>&lt;p&gt;Todas as condições de pesquisa definidas devem corresponder.&lt;/p&gt;&lt;p&gt;Dicas de pesquisa para campos de texto:&lt;/p&gt;&lt;ul&gt;&lt;li&gt;O padrão é pesquisar navaid que contenham o texto inserido.&lt;/li&gt;&lt;li&gt;Use &amp;quot;*&amp;quot; como marcador para qualquer texto.&lt;/li&gt;&lt;li&gt;Prefixe com &amp;quot;-&amp;quot; como primeiro caractere para negar a pesquisa.&lt;/li&gt;&lt;li&gt;Campo somente de identificação: Use aspas duplas como &amp;quot;TAU&amp;quot; ou &amp;quot;BOMBI&amp;quot; para forçar a pesquisa exata.&lt;/li&gt;&lt;li&gt;Campo somente de identificação: Insira uma lista de identificadores separados por espaço para pesquisar mais de um navaid.&lt;/li&gt;&lt;/ul&gt;</translation>
     </message>
     <message>
         <location filename="src/search/navsearch.cpp" line="157"/>
@@ -23792,7 +23800,7 @@ de Facilidades</translation>
     <message>
         <location filename="src/search/onlinecentersearch.cpp" line="42"/>
         <source>&lt;p&gt;All set search conditions have to match.&lt;/p&gt;&lt;p&gt;Search tips for text fields: &lt;/p&gt;&lt;ul&gt;&lt;li&gt;Default is search for online centers that contain the entered text.&lt;/li&gt;&lt;li&gt;Use &amp;quot;*&amp;quot; as a placeholder for any text. &lt;/li&gt;&lt;li&gt;Prefix with &amp;quot;-&amp;quot; as first character to negate search.&lt;/li&gt;&lt;li&gt;Only callsign field: Use double quotes like &amp;quot;EGGB_TWR&amp;quot; to force exact search.&lt;/li&gt;&lt;/ul&gt;</source>
-        <translation type="unfinished"></translation>
+        <translation>&lt;p&gt;Todas as condições de pesquisa definidas devem corresponder.&lt;/p&gt;&lt;p&gt;Dicas de pesquisa para campos de texto:&lt;/p&gt;&lt;ul&gt;&lt;li&gt;O padrão é pesquisar centros online que contenham o texto inserido.&lt;/li&gt;&lt;li&gt;Use &amp;quot;*&amp;quot; como marcador para qualquer texto.&lt;/li&gt;&lt;li&gt;Preceda com &amp;quot;-&amp;quot; como primeiro caractere para negar a pesquisa.&lt;/li&gt;&lt;li&gt;Apenas o campo de indicativo de chamada: Use aspas duplas, como &amp;quot;EGGB_TWR&amp;quot;, para forçar a pesquisa exata.&lt;/li&gt;&lt;/ul&gt;</translation>
     </message>
     <message>
         <location filename="src/search/onlinecentersearch.cpp" line="75"/>
@@ -23888,7 +23896,7 @@ hh:mm</translation>
     <message>
         <location filename="src/search/onlineclientsearch.cpp" line="39"/>
         <source>&lt;p&gt;All set search conditions have to match.&lt;/p&gt;&lt;p&gt;Search tips for text fields: &lt;/p&gt;&lt;ul&gt;&lt;li&gt;Default is search for online clients that contain the entered text.&lt;/li&gt;&lt;li&gt;Use &amp;quot;*&amp;quot; as a placeholder for any text. &lt;/li&gt;&lt;li&gt;Prefix with &amp;quot;-&amp;quot; as first character to negate search.&lt;/li&gt;&lt;li&gt;Only callsign field: Use double quotes like &amp;quot;TAU&amp;quot; to force exact search.&lt;/li&gt;&lt;/ul&gt;</source>
-        <translation type="unfinished"></translation>
+        <translation>&lt;p&gt;Todas as condições de pesquisa definidas devem corresponder.&lt;/p&gt;&lt;p&gt;Dicas de pesquisa para campos de texto:&lt;/p&gt;&lt;ul&gt;&lt;li&gt;O padrão é pesquisar clientes online que contenham o texto inserido.&lt;/li&gt;&lt;li&gt;Use &amp;quot;*&amp;quot; como marcador para qualquer texto.&lt;/li&gt;&lt;li&gt;Preceda com &amp;quot;-&amp;quot; como primeiro caractere para negar a pesquisa.&lt;/li&gt;&lt;li&gt;Apenas o campo de indicativo de chamada: Use aspas duplas, como &amp;quot;TAU&amp;quot;, para forçar a pesquisa exata.&lt;/li&gt;&lt;/ul&gt;</translation>
     </message>
     <message>
         <location filename="src/search/onlineclientsearch.cpp" line="68"/>
@@ -26050,27 +26058,27 @@ Note que esta função está desabilitada para o X-Plane 12, já que a flag 3D n
     <message>
         <location filename="src/options/options.ui" line="2083"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;img src=&quot;:/littlenavmap/resources/icons/bulb.svg&quot;/&gt;&lt;span style=&quot; font-style:italic;&quot;&gt;You can hide empty airports in the map display by deselecting the menu item &amp;quot;Empty&amp;quot; in menu &amp;quot;View&amp;quot; -&amp;gt; &amp;quot;Airports&amp;quot; or using the related toolbar button.&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation type="unfinished"></translation>
+        <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;img src=&quot;:/littlenavmap/resources/icons/bulb.svg&quot;/&gt;&lt;span style=&quot; font-style:italic;&quot;&gt;Você pode ocultar aeroportos vazios na exibição do mapa desmarcando o item de menu &amp;quot;Vazio&amp;quot; no menu &amp;quot;Exibir&amp;quot; -&amp;gt; &amp;quot;Aeroportos&amp;quot; ou usando o botão correspondente na barra de ferramentas.&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
         <location filename="src/options/options.ui" line="2326"/>
         <source>Show distance and bearing to last flight plan leg on top of tooltip</source>
-        <translation type="unfinished"></translation>
+        <translation>Mostrar distância e rumo até a última perna do plano de voo na parte superior da dica de ferramenta</translation>
     </message>
     <message>
         <location filename="src/options/options.ui" line="2329"/>
         <source>Distance and bearing to &amp;last flight plan leg</source>
-        <translation type="unfinished"></translation>
+        <translation>Distância e rumo até a &amp;última perna do plano de voo</translation>
     </message>
     <message>
         <location filename="src/options/options.ui" line="2339"/>
         <source>Show distance and bearing to user aircraft on top of tooltip</source>
-        <translation type="unfinished"></translation>
+        <translation>Exibir a distância e a direção da aeronave do usuário na parte superior da dica de ferramenta</translation>
     </message>
     <message>
         <location filename="src/options/options.ui" line="2342"/>
         <source>Distance and bearing to &amp;user aircraft</source>
-        <translation type="unfinished"></translation>
+        <translation>Distância e rumo para a aeronave do &amp;usuário</translation>
     </message>
     <message>
         <location filename="src/options/options.ui" line="3224"/>
@@ -26197,22 +26205,25 @@ Note que esta função está desabilitada para o X-Plane 12, já que a flag 3D n
         <source>The shown user aircraft trail will be pruned if it contains more than this number of points. 
 Lower this value to avoid too long tracks and avoid stutters in map display.
 Note that this does not affect the stored trail points.</source>
-        <translation type="unfinished"></translation>
+        <translation>O rastro da aeronave do usuário exibido será truncado se contiver mais pontos do que este número.
+
+Diminua este valor para evitar trajetos muito longos e travamentos na exibição do mapa.
+Observe que isso não afeta os pontos de rastro armazenados.</translation>
     </message>
     <message>
         <location filename="src/options/options.ui" line="4460"/>
         <source>Maximum number of aircraft &amp;trail points shown:</source>
-        <translation type="unfinished"></translation>
+        <translation>Número máximo de pontos de &amp;rastro de aeronaves exibidos:</translation>
     </message>
     <message>
         <location filename="src/options/options.ui" line="4470"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Note that high values can degrade map performance.&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation type="unfinished"></translation>
+        <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Observe que valores altos podem degradar o desempenho do mapa.&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
         <location filename="src/options/options.ui" line="4486"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;img src=&quot;:/littlenavmap/resources/icons/bulb.svg&quot;/&gt;&lt;span style=&quot; font-style:italic;&quot;&gt;Changing this value does not affect the stored trail. You can raise and lower this value without losing your current trail. Note that the internal limit is %L1 points.&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation type="unfinished"></translation>
+        <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;img src=&quot;:/littlenavmap/resources/icons/bulb.svg&quot;/&gt;&lt;span style=&quot; font-style:italic;&quot;&gt;Alterar este valor não afeta o percurso armazenado. Você pode aumentar e diminuir este valor sem perder o seu percurso atual. Observe que o limite interno é de %L1 pontos.&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
         <location filename="src/options/options.ui" line="4505"/>
@@ -27843,12 +27854,17 @@ Increase this value if you are using a high resolution display on the client and
 
 Note that this does not apply to the Dynamic Touch and Drag map and 
 does not affect the map display in the main program.</source>
-        <translation type="unfinished"></translation>
+        <translation>Altere o tamanho dos ícones das aeronaves do usuário e do AI/multijogador no mapa.
+
+Aumente este valor se estiver usando um monitor de alta resolução no cliente e os ícones das aeronaves estiverem muito pequenos.
+
+Observe que isso não se aplica ao mapa dinâmico de toque e arrasto e
+não afeta a exibição do mapa no programa principal.</translation>
     </message>
     <message>
         <location filename="src/options/options.ui" line="7898"/>
         <source>Icon size for user and AI/multiplayer aircraft:</source>
-        <translation type="unfinished"></translation>
+        <translation>Tamanho dos ícones para aeronaves do usuário e do AI/multijogador:</translation>
     </message>
     <message>
         <location filename="src/options/options.ui" line="7905"/>
@@ -31752,7 +31768,7 @@ Alterações para &quot;Ângulo necessário&quot; se obrigatório nos procedimen
     <message>
         <location filename="src/profile/profileoptions.cpp" line="37"/>
         <source> - Elevation Profile Display Options</source>
-        <translation type="unfinished"></translation>
+        <translation> - Opções de Exibição do Perfil de Elevação</translation>
     </message>
     <message>
         <location filename="src/profile/profileoptions.cpp" line="63"/>
@@ -37115,23 +37131,24 @@ A melhor rota será selecionada automaticamente.</translation>
         <location filename="src/route/routecalcdialog.ui" line="338"/>
         <location filename="src/route/routecalcdialog.ui" line="341"/>
         <source>Download NAT tracks now</source>
-        <translation type="unfinished"></translation>
+        <translation>Baixe as rotas NAT agora</translation>
     </message>
     <message>
         <location filename="src/route/routecalcdialog.ui" line="357"/>
         <source>Use downloaded NAT tracks.
 Best track will be selected automatically.</source>
-        <translation type="unfinished"></translation>
+        <translation>Use as rotas NAT baixadas.
+A melhor rota será selecionada automaticamente.</translation>
     </message>
     <message>
         <location filename="src/route/routecalcdialog.ui" line="361"/>
         <source>Use downloaded NAT tracks.</source>
-        <translation type="unfinished"></translation>
+        <translation>Use as rotas NAT baixadas.</translation>
     </message>
     <message>
         <location filename="src/route/routecalcdialog.ui" line="364"/>
         <source>&amp;Use NAT tracks</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Usar rotas NAT</translation>
     </message>
     <message>
         <location filename="src/route/routecalcdialog.ui" line="371"/>
@@ -37325,7 +37342,10 @@ Caso contrário, as rotas não serão utilizadas.</translation>
 Best track will be selected automatically.
 Ensure to use the correct flight level.
 Otherwise, tracks will not be used.</source>
-        <translation type="unfinished"></translation>
+        <translation>Use as rotas NAT baixadas.
+A melhor rota será selecionada automaticamente.
+Certifique-se de usar o nível de voo correto.
+Caso contrário, as rotas não serão usadas.</translation>
     </message>
     <message>
         <location filename="src/route/routecalcdialog.cpp" line="202"/>
@@ -38240,7 +38260,7 @@ ou comentários inseridos pelo usuário.</translation>
     <message>
         <location filename="src/route/routecontroller.cpp" line="2647"/>
         <source> - Flight Plan Table Display Options</source>
-        <translation type="unfinished"></translation>
+        <translation> - Opções de Exibição da Tabela do Plano de Voo</translation>
     </message>
     <message>
         <location filename="src/route/routecontroller.cpp" line="2648"/>
@@ -39349,12 +39369,12 @@ A posição inicial está agora configurada para a pista principal mais longa do
     <message>
         <location filename="src/routeexport/routeexport.cpp" line="1399"/>
         <source>Flight plan has a zero cruise altitude which can cause issues with the selected export formats.</source>
-        <translation type="unfinished"></translation>
+        <translation>O plano de voo possui altitude de cruzeiro zero, o que pode causar problemas com os formatos de exportação selecionados.</translation>
     </message>
     <message>
         <location filename="src/routeexport/routeexport.cpp" line="1402"/>
         <source>Flight plan has a zero cruise altitude which can cause issues with the simulator.</source>
-        <translation type="unfinished"></translation>
+        <translation>O plano de voo tem uma altitude de cruzeiro zero, o que pode causar problemas com o simulador.</translation>
     </message>
     <message>
         <location filename="src/routeexport/routeexport.cpp" line="1421"/>
@@ -39371,13 +39391,16 @@ A posição inicial está agora configurada para a pista principal mais longa do
         <source>One or more of the selected export formats are for X-Plane and
 &quot;Use Navigraph for all Features&quot; is selected in the menu &quot;Scenery Library&quot; -&gt; &quot;Navigraph&quot;.
 </source>
-        <translation type="unfinished"></translation>
+        <translation>Um ou mais dos formatos de exportação selecionados são para X-Plane e a opção
+&quot;Usar Navigraph para todos os recursos&quot; está selecionada no menu &quot;Biblioteca de cenários&quot; -&gt; &quot;Navigraph&quot;.
+</translation>
     </message>
     <message>
         <location filename="src/routeexport/routeexport.cpp" line="1446"/>
         <source>&quot;Use Navigraph for all Features&quot; is selected in the menu &quot;Scenery Library&quot; -&gt; &quot;Navigraph&quot;.
 </source>
-        <translation type="unfinished"></translation>
+        <translation>A opção &quot;Usar Navigraph para todos os recursos&quot; está selecionada no menu &quot;Biblioteca de Cenários&quot; -&gt; &quot;Navigraph&quot;.
+</translation>
     </message>
     <message>
         <location filename="src/routeexport/routeexport.cpp" line="1513"/>
@@ -42744,33 +42767,33 @@ Clique com o botão direito do mouse no mapa e selecione
     <message>
         <location filename="src/search/searchcontroller.cpp" line="452"/>
         <source>real %1</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <location filename="src/search/searchcontroller.cpp" line="455"/>
         <source>sim. %1</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <location filename="src/search/searchcontroller.cpp" line="458"/>
         <source>%1 plan</source>
-        <translation type="unfinished"></translation>
+        <translation>%1 plano</translation>
     </message>
     <message>
         <location filename="src/search/searchcontroller.cpp" line="461"/>
         <source>%1 flown</source>
-        <translation type="unfinished"></translation>
+        <translation>%1 voado</translation>
     </message>
     <message>
         <location filename="src/search/searchcontroller.cpp" line="465"/>
         <source>
 Totals: %1.</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <location filename="src/search/searchcontroller.cpp" line="465"/>
         <source>, </source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <source>Real time %1</source>
@@ -44739,7 +44762,7 @@ Necessário para exportar para o X-Plane &quot;user_fix.dat&quot;.</translation>
         <location filename="src/search/userdatasearch.cpp" line="44"/>
         <source>&lt;p&gt;All set search conditions have to match.&lt;/p&gt;&lt;p&gt;Search tips for text fields: &lt;/p&gt;&lt;ul&gt;&lt;li&gt;Default is search for userpoints that contain the entered text.&lt;/li&gt;&lt;li&gt;Use &amp;quot;*&amp;quot; as a placeholder for any text. &lt;/li&gt;&lt;li&gt;Prefix with &amp;quot;-&amp;quot; as first character to negate search.&lt;/li&gt;&lt;li&gt;Use double quotes like &amp;quot;TAU&amp;quot; or &amp;quot;Sindal&amp;quot; to force exact search.&lt;/li&gt;&lt;li&gt;Only ident field: Enter a space separated list of idents to look for more than one userpoint.&lt;/li&gt;&lt;/ul&gt;</source>
         <oldsource>&lt;p&gt;All set search conditions have to match.&lt;/p&gt;&lt;p&gt;Search tips for text fields: &lt;/p&gt;&lt;ul&gt;&lt;li&gt;Default is search for userpoints that contain the entered text.&lt;/li&gt;&lt;li&gt;Use &amp;quot;*&amp;quot; as a placeholder for any text. &lt;/li&gt;&lt;li&gt;Prefix with &amp;quot;-&amp;quot; as first character to negate search.&lt;/li&gt;&lt;li&gt;Use double quotes like &amp;quot;TAU&amp;quot; or &amp;quot;Sindal&amp;quot; to force exact search.&lt;/li&gt;&lt;li&gt;Only ident field: Enter a space separated list of idents to look for more than one navaid.&lt;/li&gt;&lt;/ul&gt;</oldsource>
-        <translation type="unfinished"></translation>
+        <translation>&lt;p&gt;Todas as condições de pesquisa definidas devem corresponder.&lt;/p&gt;&lt;p&gt;Dicas de pesquisa para campos de texto:&lt;/p&gt;&lt;ul&gt;&lt;li&gt;O padrão é pesquisar por pontos de usuário que contenham o texto inserido.&lt;/li&gt;&lt;li&gt;Use &amp;quot;*&amp;quot; como marcador para qualquer texto.&lt;/li&gt;&lt;li&gt;Prefixe com &amp;quot;-&amp;quot; como primeiro caractere para negar a pesquisa.&lt;/li&gt;&lt;li&gt;Use aspas duplas como &amp;quot;TAU&amp;quot; ou &amp;quot;Sindal&amp;quot; para forçar a pesquisa exata.&lt;/li&gt;&lt;li&gt;Campo somente de identificação: Insira uma lista de identificações separadas por espaço para pesquisar mais de um ponto de usuário.&lt;/li&gt;&lt;/ul&gt;</translation>
     </message>
     <message>
         <location filename="src/search/userdatasearch.cpp" line="76"/>
