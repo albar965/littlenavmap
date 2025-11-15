@@ -236,9 +236,9 @@ Filename: "{app}\{#LnmAppExeName}"; Description: "{cm:LaunchProgram,{#StringChan
 Filename: "https://www.littlenavmap.org/manuals/littlenavmap/release/latest/en/START.html"; Description: "{cm:OpenStartMessage}"; Flags: nowait shellexec postinstall skipifsilent
 Filename: "{app}\CHANGELOG.txt"; Description: "{cm:ChangelogMessage}"; Flags: nowait postinstall shellexec skipifsilent
 #if LnmAppArch == "win64"
-  Filename: "{tmp}\vcredist_2015-2022.x64.exe"; StatusMsg: "{cm:InstallingRedistMessage}"; Parameters: "/quiet /norestart"; Flags: runascurrentuser waituntilterminated
+  Filename: "{tmp}\VC_redist.x64.exe"; StatusMsg: "{cm:InstallingRedistMessage}"; Parameters: "/quiet /norestart"; Flags: runascurrentuser waituntilterminated
 #elif LnmAppArch == "win32"
-  Filename: "{tmp}\vcredist_2005_x86.exe"; StatusMsg: "{cm:InstallingRedistMessage}"; Parameters: "/Q"; Flags: runascurrentuser waituntilterminated
+  Filename: "{tmp}\vcredist_x86.exe"; StatusMsg: "{cm:InstallingRedistMessage}"; Parameters: "/Q"; Flags: runascurrentuser waituntilterminated
 #endif
 
 [Code]
