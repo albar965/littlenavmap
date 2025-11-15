@@ -177,10 +177,12 @@ Name: lnmfmsassociation; Description: "{cm:AssocFileExtension,{#LnmAppName},X-Pl
 Source: "{#LnmAppSourceBase}\{#LnmAppExeName}"; DestDir: "{app}"; Flags: ignoreversion
 Source: "{#LnmAppSourceDir}"; DestDir: "{app}"; Excludes: "\Little Navmap Portable.cmd, \littlenavmap.debug, \Little Navconnect\littlenavconnect.debug"; Flags: ignoreversion recursesubdirs createallsubdirs
 // VC++ redistributable runtime. Extracted by VC2017RedistNeedsInstall(), if needed.
+// %APROJECTS%\Latest\VC_redist.x64.exe for MSFS SimConnect
+// %APROJECTS%\2005\vcredist_x86.exe for FSX and P3D SimConnect
 #if LnmAppArch == "win64"
-  Source: "{#LnmAppProjects}\Redist\vcredist_2015-2022.x64.exe"; DestDir: {tmp}; Flags: deleteafterinstall
+  Source: "{#LnmAppProjects}\Redist\Latest\VC_redist.x64.exe"; DestDir: {tmp}; Flags: deleteafterinstall
 #elif LnmAppArch == "win32"
-  Source: "{#LnmAppProjects}\Redist\vcredist_2005_x86.exe"; DestDir: {tmp}; Flags: deleteafterinstall
+  Source: "{#LnmAppProjects}\Redist\2005\vcredist_x86.exe"; DestDir: {tmp}; Flags: deleteafterinstall
 #endif
 Source: "{#LnmAppProjects}\littlenavmap\build\win\Little Navmap User Manual Online.url"; DestDir: "{app}\help";
 Source: "{#LnmAppProjects}\littlenavmap\build\win\Little Navmap User Manual Online Start.url"; DestDir: "{app}\help";
