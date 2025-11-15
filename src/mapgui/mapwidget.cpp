@@ -803,8 +803,8 @@ bool MapWidget::mousePressCheckModifierActions(QMouseEvent *event)
           addNavRangeMark(ndb.position, map::NDB, ndb.ident, QString::number(ndb.frequency), ndb.range);
         }
         else
-          // Add range rings per configuration
-          addRangeMark(pos, false /* showDialog */);
+          // Add range rings per configuration - attach to waypoint/airport if present
+          addRangeMark(pos, result, false /* showDialog */);
       }
       return true;
     }
@@ -3932,6 +3932,62 @@ void MapWidget::addNavRangeMark(const atools::geo::Pos& pos, map::MapTypes type,
     addRangeMark(pos, false /* showDialog */);
 }
 
+void MapWidget::fillRangeMarker(map::RangeMarker& rangeMarker, const atools::geo::Pos& pos, const map::MapResult& result)
+{
+  fillRangeMarker(rangeMarker, pos,
+                  atools::constFirstPtrOrNull(result.airports),
+                  atools::constFirstPtrOrNull(result.vors),
+                  atools::constFirstPtrOrNull(result.ndbs),
+                  atools::constFirstPtrOrNull(result.waypoints),
+                  atools::constFirstPtrOrNull(result.userpoints));
+}
+
+void MapWidget::fillRangeMarker(map::RangeMarker& rangeMarker, const atools::geo::Pos& pos, const map::MapAirport *airport,
+                                const map::MapVor *vor, const map::MapNdb *ndb, const map::MapWaypoint *waypoint,
+                                const map::MapUserpoint *userpoint)
+{
+  rangeMarker.navType = map::NONE;
+  rangeMarker.text.clear();
+
+  // Build range ring center and text depending on selected airport or navaid
+  if(userpoint != nullptr && userpoint->isValid())
+  {
+    rangeMarker.text = map::userpointShortText(*userpoint, 20);
+    rangeMarker.position = userpoint->position;
+  }
+  else if(airport != nullptr && airport->isValid())
+  {
+    rangeMarker.text = airport->displayIdent();
+    rangeMarker.position = airport->position;
+    rangeMarker.navType = map::AIRPORT;
+  }
+  else if(vor != nullptr && vor->isValid())
+  {
+    if(vor->tacan)
+      rangeMarker.text = tr("%1 %2").arg(vor->ident).arg(vor->channel);
+    else
+      rangeMarker.text = tr("%1 %2").arg(vor->ident).arg(QLocale().toString(vor->frequency / 1000., 'f', 2));
+    rangeMarker.position = vor->position;
+    rangeMarker.navType = map::VOR;
+  }
+  else if(ndb != nullptr && ndb->isValid())
+  {
+    rangeMarker.text = tr("%1 %2").arg(ndb->ident).arg(QLocale().toString(ndb->frequency / 100., 'f', 2));
+    rangeMarker.position = ndb->position;
+    rangeMarker.navType = map::NDB;
+  }
+  else if(waypoint != nullptr && waypoint->isValid())
+  {
+    rangeMarker.text = waypoint->ident;
+    rangeMarker.position = waypoint->position;
+    rangeMarker.navType = map::WAYPOINT;
+  }
+  else
+  {
+    rangeMarker.position = pos;
+  }
+}
+
 void MapWidget::addRangeMark(const atools::geo::Pos& pos, bool showDialog)
 {
   // Create dialog which also loads the defaults from settings
@@ -3962,6 +4018,61 @@ void MapWidget::addRangeMark(const atools::geo::Pos& pos, bool showDialog)
     update();
     mainWindow->updateMarkActionStates();
     mainWindow->setStatusMessage(tr("Added range rings for position."));
+  }
+}
+
+void MapWidget::addRangeMark(const atools::geo::Pos& pos, const map::MapResult& result, bool showDialog)
+{
+  addRangeMark(pos,
+               atools::constFirstPtrOrNull(result.airports),
+               atools::constFirstPtrOrNull(result.vors),
+               atools::constFirstPtrOrNull(result.ndbs),
+               atools::constFirstPtrOrNull(result.waypoints),
+               atools::constFirstPtrOrNull(result.userpoints),
+               showDialog);
+}
+
+void MapWidget::addRangeMark(const atools::geo::Pos& pos, const map::MapAirport *airport,
+                             const map::MapVor *vor, const map::MapNdb *ndb, const map::MapWaypoint *waypoint,
+                             const map::MapUserpoint *userpoint, bool showDialog)
+{
+  // Pre-fill the marker object with waypoint information before opening dialog
+  map::RangeMarker marker;
+  fillRangeMarker(marker, pos, airport, vor, ndb, waypoint, userpoint);
+
+  // Create dialog which also loads the defaults from settings
+  // Use the determined position (may have been snapped to waypoint/navaid)
+  RangeMarkerDialog dialog(mainWindow, marker.position);
+  bool dialogOpened = false;
+
+  // Open dialog only if requested or if set in dialog
+  if(showDialog || !dialog.isNoShowShiftClickEnabled())
+  {
+    if(dialog.exec() != QDialog::Accepted)
+      return;
+
+    dialogOpened = true;
+  }
+
+  // Enable display of user feature
+  NavApp::getMapMarkHandler()->showMarkTypes(map::MARK_RANGE);
+
+  // Fill the marker object with dialog settings (radii, colors, etc.)
+  dialog.fillRangeMarker(marker, dialogOpened);
+
+  if(marker.isValid() && !marker.ranges.isEmpty())
+  {
+    getScreenIndex()->addRangeMark(marker);
+
+    qDebug() << "range rings" << marker.position;
+    update();
+    mainWindow->updateMarkActionStates();
+
+    // Create appropriate status message based on whether we attached to a waypoint/navaid
+    if(!marker.text.isEmpty())
+      mainWindow->setStatusMessage(tr("Added range rings for %1.").arg(marker.text));
+    else
+      mainWindow->setStatusMessage(tr("Added range rings for position."));
   }
 }
 
