@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2024 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2025 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -329,22 +329,35 @@ void checkAndMigrateSettings()
 
       if(optionsVersion <= Version("3.0.11"))
       {
-        removeAndLog("Widget_checkBoxDisplayOnlineApproachRange");
-        removeAndLog("Widget_checkBoxDisplayOnlineAreaRange");
-        removeAndLog("Widget_checkBoxDisplayOnlineClearanceRange");
-        removeAndLog("Widget_checkBoxDisplayOnlineDepartureRange");
-        removeAndLog("Widget_checkBoxDisplayOnlineFirRange");
-        removeAndLog("Widget_checkBoxDisplayOnlineGroundRange");
-        removeAndLog("Widget_checkBoxDisplayOnlineObserverRange");
-        removeAndLog("Widget_checkBoxDisplayOnlineTowerRange");
-        removeAndLog("Widget_spinBoxDisplayOnlineApproach");
-        removeAndLog("Widget_spinBoxDisplayOnlineArea");
-        removeAndLog("Widget_spinBoxDisplayOnlineClearance");
-        removeAndLog("Widget_spinBoxDisplayOnlineDeparture");
-        removeAndLog("Widget_spinBoxDisplayOnlineFir");
-        removeAndLog("Widget_spinBoxDisplayOnlineGround");
-        removeAndLog("Widget_spinBoxDisplayOnlineObserver");
-        removeAndLog("Widget_spinBoxDisplayOnlineTower");
+        removeAndLog("OptionsDialog/Widget_checkBoxDisplayOnlineApproachRange");
+        removeAndLog("OptionsDialog/Widget_checkBoxDisplayOnlineAreaRange");
+        removeAndLog("OptionsDialog/Widget_checkBoxDisplayOnlineClearanceRange");
+        removeAndLog("OptionsDialog/Widget_checkBoxDisplayOnlineDepartureRange");
+        removeAndLog("OptionsDialog/Widget_checkBoxDisplayOnlineFirRange");
+        removeAndLog("OptionsDialog/Widget_checkBoxDisplayOnlineGroundRange");
+        removeAndLog("OptionsDialog/Widget_checkBoxDisplayOnlineObserverRange");
+        removeAndLog("OptionsDialog/Widget_checkBoxDisplayOnlineTowerRange");
+        removeAndLog("OptionsDialog/Widget_spinBoxDisplayOnlineApproach");
+        removeAndLog("OptionsDialog/Widget_spinBoxDisplayOnlineArea");
+        removeAndLog("OptionsDialog/Widget_spinBoxDisplayOnlineClearance");
+        removeAndLog("OptionsDialog/Widget_spinBoxDisplayOnlineDeparture");
+        removeAndLog("OptionsDialog/Widget_spinBoxDisplayOnlineFir");
+        removeAndLog("OptionsDialog/Widget_spinBoxDisplayOnlineGround");
+        removeAndLog("OptionsDialog/Widget_spinBoxDisplayOnlineObserver");
+        removeAndLog("OptionsDialog/Widget_spinBoxDisplayOnlineTower");
+      }
+
+      if(optionsVersion <= Version("3.0.17"))
+      {
+        removeAndLog("AirspaceController/Widget_actionTrackSourcesNat");
+        removeAndLog("AirspaceController/Widget_actionTrackSourcesPacots");
+        removeAndLog("AirspaceController/Widget_actionTrackSourcesAusots");
+        removeAndLog("Track/AusotsUrl");
+        removeAndLog("Track/AusotsUrlParam");
+        removeAndLog("Track/NatUrl");
+        removeAndLog("Track/NatUrlParam");
+        removeAndLog("Track/PacotsUrl");
+        removeAndLog("Track/PacotsUrlParam");
       }
 
       qInfo() << Q_FUNC_INFO << "Clearing all essential messages since version differs";
