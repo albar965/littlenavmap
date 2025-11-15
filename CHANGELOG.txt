@@ -49,19 +49,23 @@ Thanks to everyone who reported issues!
   show a warning if this is detected. Extract the downloaded archive in another folder than
   `Downloads` and continue to follow the installation instructions from the user manual if you see
   this.
+* Updated user manual.
+* Updated Windows Redistributables to latest.
 * Other small fixes and user interface improvements.
 
-### Web UI:
+### Web UI
 
 * Fixed map vertical centering on click
 * Fixed widget plugins moving, resizing and bounds under certain conditions
 * Updated web UI iframe feature support
 * Clarified Web API documentation for LatLon data
 
+Changes by [u-an-i](https://github.com/u-an-i).
 
 ## Translations
 
 * Updated German translation.
+* Updated Brazilian Portuguese translation by Ricardo.
 
 ==<<=============================================================================
 
