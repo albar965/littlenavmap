@@ -39,6 +39,10 @@ Thanks to everyone who reported issues!
   `Maximum number of trail points shown`. Maximum number of stored points is five million which is
   enough for several around the world trips. Keep in mind that the stored points are exported when
   saving as GPX and not the visible part.
+* When adding range rings, the system now: Automatically detects and attaches to map objects:
+  When Shift+clicking on or near a waypoint, airport, or other map feature, range rings now snap to
+  that feature's position and display its identifier. Status messages now show what the range rings
+  are attached. Thanks to [Justin](https://github.com/6639835) for the contribution.
 * X-Plane: Adapted Little Xpconnect to X-Plane 12 datarefs to fix wind display on the map.
 * X-Plane: Added hint regarding the X-Plane base path in `Load Scenery Library` dialog window:
   `Note that the flight simulator base path is also used to detect weather files and the
