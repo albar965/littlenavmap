@@ -11160,40 +11160,6 @@ relation to shown airport</string>
     <string>Manual wind for fuel report and map display</string>
    </property>
   </action>
-  <action name="actionTrackSourcesNat">
-   <property name="checkable">
-    <bool>true</bool>
-   </property>
-   <property name="checked">
-    <bool>true</bool>
-   </property>
-   <property name="text">
-    <string>&amp;NAT</string>
-   </property>
-   <property name="toolTip">
-    <string>Download North Atlantic Tracks</string>
-   </property>
-   <property name="statusTip">
-    <string>Download North Atlantic Tracks</string>
-   </property>
-  </action>
-  <action name="actionTrackSourcesPacots">
-   <property name="checkable">
-    <bool>true</bool>
-   </property>
-   <property name="checked">
-    <bool>true</bool>
-   </property>
-   <property name="text">
-    <string>&amp;PACOTS</string>
-   </property>
-   <property name="toolTip">
-    <string>Download tracks for Pacific Organized Track System</string>
-   </property>
-   <property name="statusTip">
-    <string>Download tracks for Pacific Organized Track System</string>
-   </property>
-  </action>
   <action name="actionConnectSimulatorToggle">
    <property name="checkable">
     <bool>true</bool>
