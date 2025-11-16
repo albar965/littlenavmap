@@ -139,9 +139,26 @@ void MapPaintWidget::copySettings(const MapPaintWidget& other, bool deep)
   paintLayer->copySettings(*other.paintLayer);
   screenIndex->copy(*other.screenIndex);
 
-  // Copy all MarbleWidget settings - some on demand to avoid overhead
+  // Copy all MarbleWidget settings - some on demand to avoid overhead =========================
   if(projection() != Marble::Mercator)
     setProjection(Marble::Mercator);
+
+  // Copy coordinate grid plugin settings ===========================
+  for(const Marble::RenderPlugin *otherPlugin : other.renderPlugins())
+  {
+    if(otherPlugin->nameId() == "coordinate-grid")
+    {
+      for(Marble::RenderPlugin *plugin : renderPlugins())
+      {
+        if(plugin->nameId() == "coordinate-grid")
+        {
+          plugin->setSettings(otherPlugin->settings());
+          break;
+        }
+      }
+      break;
+    }
+  }
 
   setShowSunShading(other.showSunShading());
   setShowGrid(other.showGrid());

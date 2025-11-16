@@ -43,7 +43,11 @@ Thanks to everyone who reported issues!
   When Shift+clicking on or near a waypoint, airport, or other map feature, range rings now snap to
   that feature's position and display its identifier. Status messages now show what the range rings
   are attached. Thanks to [Justin](https://github.com/6639835) for the contribution.
+* Fixed airport runway length filter which was not considered in the web interface.
+* Map grid color settings are now considered in web interface.
 * X-Plane: Adapted Little Xpconnect to X-Plane 12 datarefs to fix wind display on the map.
+  Little Navmap will show a warning message if you use the outdated Little Xpconnect plugin.
+  Update the plugin from Little Navmap menu `Tools`.
 * X-Plane: Added hint regarding the X-Plane base path in `Load Scenery Library` dialog window:
   `Note that the flight simulator base path is also used to detect weather files and the
   Little Xpconnect installation path for X-Plane.`
