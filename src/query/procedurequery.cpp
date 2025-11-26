@@ -384,12 +384,23 @@ void ProcedureQuery::buildLegEntry(atools::sql::SqlQuery *query, proc::MapProced
     }
     else if(leg.navaids.hasIls())
     {
-      leg.fixPos = leg.navaids.ils.constFirst().position;
-      leg.magvar = leg.navaids.ils.constFirst().magvar;
+      const map::MapIls& ils = leg.navaids.ils.constFirst();
+
+      // For DME-distance legs (CD, VD, FD), use DME antenna position if available
+      // For other leg types, use LOC antenna position
+      if(atools::contains(leg.type, {proc::COURSE_TO_DME_DISTANCE,
+                                      proc::HEADING_TO_DME_DISTANCE_TERMINATION,
+                                      proc::TRACK_FROM_FIX_TO_DME_DISTANCE}) &&
+         ils.dmePos.isValid())
+        leg.fixPos = ils.dmePos;
+      else
+        leg.fixPos = ils.position;
+
+      leg.magvar = ils.magvar;
 
       // Also update region and type if missing
       if(leg.fixRegion.isEmpty())
-        leg.fixRegion = leg.navaids.ils.constFirst().region;
+        leg.fixRegion = ils.region;
       if(leg.fixType.isEmpty())
         leg.fixType = "L";
     }
@@ -430,11 +441,22 @@ void ProcedureQuery::buildLegEntry(atools::sql::SqlQuery *query, proc::MapProced
     mapObjectByIdent(leg.navaids, map::ILS, leg.fixIdent, QString(), airport.ident, fixPos);
     if(!leg.navaids.ils.isEmpty())
     {
-      leg.fixPos = leg.navaids.ils.constFirst().position;
-      leg.magvar = leg.navaids.ils.constFirst().magvar;
+      const map::MapIls& ils = leg.navaids.ils.constFirst();
+
+      // For DME-distance legs (CD, VD, FD), use DME antenna position if available
+      // For other leg types, use LOC antenna position
+      if(atools::contains(leg.type, {proc::COURSE_TO_DME_DISTANCE,
+                                      proc::HEADING_TO_DME_DISTANCE_TERMINATION,
+                                      proc::TRACK_FROM_FIX_TO_DME_DISTANCE}) &&
+         ils.dmePos.isValid())
+        leg.fixPos = ils.dmePos;
+      else
+        leg.fixPos = ils.position;
+
+      leg.magvar = ils.magvar;
 
       if(leg.fixRegion.isEmpty())
-        leg.fixRegion = leg.navaids.ils.constFirst().region;
+        leg.fixRegion = ils.region;
       if(leg.fixType.isEmpty())
         leg.fixType = "L";
     }
@@ -518,10 +540,20 @@ void ProcedureQuery::buildLegEntry(atools::sql::SqlQuery *query, proc::MapProced
     }
     else if(leg.recNavaids.hasIls())
     {
-      leg.recFixPos = leg.recNavaids.ils.constFirst().position;
+      const map::MapIls& ils = leg.recNavaids.ils.constFirst();
+
+      // For DME-distance legs (CD, VD, FD), use DME antenna position if available
+      // For other leg types, use LOC antenna position
+      if(atools::contains(leg.type, {proc::COURSE_TO_DME_DISTANCE,
+                                      proc::HEADING_TO_DME_DISTANCE_TERMINATION,
+                                      proc::TRACK_FROM_FIX_TO_DME_DISTANCE}) &&
+         ils.dmePos.isValid())
+        leg.recFixPos = ils.dmePos;
+      else
+        leg.recFixPos = ils.position;
 
       if(!(leg.magvar < map::INVALID_MAGVAR))
-        leg.magvar = leg.recNavaids.ils.constFirst().magvar;
+        leg.magvar = ils.magvar;
 
       // Also update region and type if missing
       if(leg.recFixRegion.isEmpty())
@@ -543,11 +575,22 @@ void ProcedureQuery::buildLegEntry(atools::sql::SqlQuery *query, proc::MapProced
       if(!leg.recNavaids.ils.isEmpty() &&
          airport.position.distanceMeterTo(leg.recNavaids.ils.constFirst().position) < atools::geo::nmToMeter(20))
       {
-        leg.recFixPos = leg.recNavaids.ils.constFirst().position;
-        leg.recFixType = leg.recNavaids.ils.constFirst().isLoc() ? "L" : "I";
+        const map::MapIls& ils = leg.recNavaids.ils.constFirst();
+
+        // For DME-distance legs (CD, VD, FD), use DME antenna position if available
+        // For other leg types, use LOC antenna position
+        if(atools::contains(leg.type, {proc::COURSE_TO_DME_DISTANCE,
+                                        proc::HEADING_TO_DME_DISTANCE_TERMINATION,
+                                        proc::TRACK_FROM_FIX_TO_DME_DISTANCE}) &&
+           ils.dmePos.isValid())
+          leg.recFixPos = ils.dmePos;
+        else
+          leg.recFixPos = ils.position;
+
+        leg.recFixType = ils.isLoc() ? "L" : "I";
 
         if(!(leg.magvar < map::INVALID_MAGVAR))
-          leg.magvar = leg.recNavaids.ils.constFirst().magvar;
+          leg.magvar = ils.magvar;
 
         foundIls = true;
       }
@@ -576,13 +619,23 @@ void ProcedureQuery::buildLegEntry(atools::sql::SqlQuery *query, proc::MapProced
     mapObjectByIdent(leg.recNavaids, map::ILS, leg.recFixIdent, QString(), airport.ident, recFixPos);
     if(!leg.recNavaids.ils.isEmpty())
     {
-      leg.recFixPos = leg.recNavaids.ils.constFirst().position;
+      const map::MapIls& ils = leg.recNavaids.ils.constFirst();
+
+      // For DME-distance legs (CD, VD, FD), use DME antenna position if available
+      // For other leg types, use LOC antenna position
+      if(atools::contains(leg.type, {proc::COURSE_TO_DME_DISTANCE,
+                                      proc::HEADING_TO_DME_DISTANCE_TERMINATION,
+                                      proc::TRACK_FROM_FIX_TO_DME_DISTANCE}) &&
+         ils.dmePos.isValid())
+        leg.recFixPos = ils.dmePos;
+      else
+        leg.recFixPos = ils.position;
 
       if(!(leg.magvar < map::INVALID_MAGVAR))
-        leg.magvar = leg.recNavaids.ils.constFirst().magvar;
+        leg.magvar = ils.magvar;
 
       if(leg.recFixRegion.isEmpty())
-        leg.recFixRegion = leg.recNavaids.ils.constFirst().region;
+        leg.recFixRegion = ils.region;
 
       if(leg.recFixType.isEmpty())
         leg.recFixType = "L";

@@ -584,6 +584,13 @@ void MapTypesFactory::fillIls(const SqlRecord& record, map::MapIls& ils, float r
     ils.corrected = false;
     ils.position = Pos(record.valueFloat("lonx"), record.valueFloat("laty"), record.valueFloat("altitude"));
 
+    // Read DME antenna position if available (separate from LOC antenna)
+    if(!record.isNull("dme_lonx") && !record.isNull("dme_laty"))
+      ils.dmePos = Pos(record.valueFloat("dme_lonx"), record.valueFloat("dme_laty"));
+    else if(ils.hasDme)
+      // Fallback: if DME exists but no separate position, use LOC position
+      ils.dmePos = ils.position;
+
     // Align with runway heading if given and angles are close
     if(runwayHeadingTrue < map::INVALID_HEADING_VALUE)
     {

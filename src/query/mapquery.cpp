@@ -1393,7 +1393,7 @@ void MapQuery::initQueries()
 
   QString ilsQueryBase("ils_id, ident, name, region, mag_var, loc_heading, has_backcourse, loc_runway_end_id, loc_airport_ident, "
                        "loc_runway_name, gs_pitch, frequency, range, dme_range, loc_width, "
-                       "end1_lonx, end1_laty, end_mid_lonx, end_mid_laty, end2_lonx, end2_laty, altitude, lonx, laty");
+                       "end1_lonx, end1_laty, end_mid_lonx, end_mid_laty, end2_lonx, end2_laty, altitude, lonx, laty, dme_lonx, dme_laty");
 
   static const QLatin1String holdingQueryBase("holding_id, airport_ident, nav_ident, nav_type, vor_type, vor_dme_only, vor_has_dme, "
                                               "name, mag_var, course, turn_direction, leg_length, leg_time, "

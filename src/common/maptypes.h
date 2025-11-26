@@ -1292,7 +1292,8 @@ struct MapIls
   /* MapBase pos is the origin (pointy end) */
   atools::geo::Pos pos1, /* Position 1 of the feather end */
                    pos2, /* Position 2 of the feather end */
-                   posmid; /* Middle position of the feather end - depends on type ILS or LOC */
+                   posmid, /* Middle position of the feather end - depends on type ILS or LOC */
+                   dmePos; /* DME antenna position - used for DME distance calculations in procedures */
   atools::geo::Rect bounding;
   bool hasDme, hasBackcourse,
        hasGeometry, /* Geometry is valid */
