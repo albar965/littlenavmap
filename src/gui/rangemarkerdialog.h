@@ -18,6 +18,8 @@
 #ifndef LNM_RANGEMARKER_DIALOG_H
 #define LNM_RANGEMARKER_DIALOG_H
 
+#include "common/mapflags.h"
+
 #include <QDialog>
 #include <QValidator>
 
@@ -59,6 +61,12 @@ public:
   /* Fill marker object. Label and aircraft endurance will be ignored if dialogOpened is true */
   void fillRangeMarker(map::RangeMarker& marker, bool dialogOpened);
 
+  /* Set the label text in the dialog - use before opening dialog to show attached object name */
+  void setLabelText(const QString& text);
+
+  /* Set the navType in the marker - use before opening dialog to preserve attached object type */
+  void setNavType(map::MapTypes navType);
+
   /* true if checkbox is clicked to avoid dialog on Shift-Click into the map  */
   bool isNoShowShiftClickEnabled();
 
@@ -79,6 +87,9 @@ private:
   /* Color is set when clicking on button */
   QColor color;
   atools::geo::Pos *position;
+
+  /* Nav type to preserve when attaching to objects */
+  map::MapTypes navType = map::NONE;
 
   UnitStringTool *units = nullptr;
 

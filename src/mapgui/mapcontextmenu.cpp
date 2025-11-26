@@ -178,8 +178,7 @@ void MapContextMenu::buildMainMenu()
   mapMenu.addSeparator();
 
   insertMeasureMenu(mapMenu);
-  ui->actionMapRangeRings->setText(ui->actionMapRangeRings->text() + tr("\tShift+Click"));
-  mapMenu.addAction(ui->actionMapRangeRings);
+  insertRangeRingsMenu(mapMenu);
   insertNavaidRangeMenu(mapMenu);
   insertPatternMenu(mapMenu);
   insertHoldMenu(mapMenu);
@@ -681,6 +680,23 @@ void MapContextMenu::insertMeasureMenu(QMenu& menu)
                      sort(DEFAULT_TYPE_SORT, alphaSort),
                      tr("&Measure Distance from %1"), tr("Measure great circle distance on the map"),
                      tr("Ctrl+Click"), QIcon(":/littlenavmap/resources/icons/distancemeasure.svg"), true /* allowNoMapObject */, callback);
+}
+
+void MapContextMenu::insertRangeRingsMenu(QMenu& menu)
+{
+  ActionCallback callback =
+    [this](const map::MapBase *base, QString& text, QIcon&, bool& disable, bool) -> void {
+      disable = !visibleOnMap;
+      if(base == nullptr)
+        // Any position
+        text = text.arg(tr("here"));
+    };
+
+  insertMenuOrAction(menu, mc::RANGERINGS, MapResultIndex().
+                     addRef(*result, map::AIRPORT | map::VOR | map::NDB | map::WAYPOINT | map::USERPOINT).
+                     sort(DEFAULT_TYPE_SORT, alphaSort),
+                     tr("Add Range &Rings from %1"), tr("Add range rings at this position to map"),
+                     tr("Shift+Click"), QIcon(":/littlenavmap/resources/icons/rangerings.svg"), true /* allowNoMapObject */, callback);
 }
 
 void MapContextMenu::insertNavaidRangeMenu(QMenu& menu)
