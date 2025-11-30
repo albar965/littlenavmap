@@ -84,6 +84,7 @@ enum MenuActionType
   CUSTOMDEPARTURE, /* Create custom procedure */
   DIRECT, /* Direct to waypoint or position */
   MEASURE, /* GC measmurement line */
+  RANGERINGS, /* User defined range rings */
   NAVAIDRANGE, /* Show range ring for radio navaid */
   PATTERN, /* Airport traffic pattern */
   HOLDING, /* Holding */
@@ -190,7 +191,7 @@ private:
   // ui->actionMapHideDistanceMarker
 
   // ----
-  // ui->actionMapRangeRings
+  void insertRangeRingsMenu(QMenu& menu);
   void insertNavaidRangeMenu(QMenu& menu);
 
   // ui->actionMapHideOneRangeRing

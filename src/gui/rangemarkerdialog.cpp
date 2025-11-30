@@ -228,15 +228,21 @@ void RangeMarkerDialog::updateButtonColor()
 
 void RangeMarkerDialog::fillRangeMarker(map::RangeMarker& marker, bool dialogOpened)
 {
-  bool hemisphere = false;
-  *position = atools::fs::util::fromAnyFormat(ui->lineEditRangeMarkerLatLon->text(), &hemisphere);
+  // Only read position from text field if not attached to an object
+  // When navType is set (AIRPORT, VOR, NDB, WAYPOINT), the position should come from the object itself
+  // to avoid coordinate transformation and rounding errors from the text field
+  if(navType == map::NONE)
+  {
+    bool hemisphere = false;
+    *position = atools::fs::util::fromAnyFormat(ui->lineEditRangeMarkerLatLon->text(), &hemisphere);
 
-  if(Unit::getUnitCoords() == opts::COORDS_LONX_LATY && !hemisphere)
-    // Swap coordinates for lat lon formats if no hemisphere (N, S, E, W) is given
-    atools::fs::util::maybeSwapOrdinates(*position, ui->lineEditRangeMarkerLatLon->text());
+    if(Unit::getUnitCoords() == opts::COORDS_LONX_LATY && !hemisphere)
+      // Swap coordinates for lat lon formats if no hemisphere (N, S, E, W) is given
+      atools::fs::util::maybeSwapOrdinates(*position, ui->lineEditRangeMarkerLatLon->text());
+  }
 
   marker.id = map::getNextUserFeatureId();
-  marker.navType = map::NONE;
+  marker.navType = navType;  // Use the stored navType instead of map::NONE
   marker.position = *position;
   marker.color = color;
 
@@ -321,4 +327,14 @@ void RangeMarkerDialog::coordinatesEdited(const QString&)
   bool valid = formatter::checkCoordinates(message, ui->lineEditRangeMarkerLatLon->text(), &pos);
   ui->buttonBoxRangeMarker->button(QDialogButtonBox::Ok)->setEnabled(valid);
   ui->labelRangeMarkerCoordStatus->setText(message);
+}
+
+void RangeMarkerDialog::setLabelText(const QString& text)
+{
+  ui->lineEditRangeMarkerLabel->setText(text);
+}
+
+void RangeMarkerDialog::setNavType(map::MapTypes type)
+{
+  navType = type;
 }

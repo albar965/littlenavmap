@@ -2146,6 +2146,10 @@ void MapWidget::contextMenuEvent(QContextMenuEvent *event)
           addDistanceMarker(pos, &airport, &vor, &ndb, &waypoint, &userpoint);
           break;
 
+        case mc::RANGERINGS:
+          addRangeMark(pos, &airport, &vor, &ndb, &waypoint, &userpoint, true /* showDialog */);
+          break;
+
         case mc::NAVAIDRANGE:
           // Navaid range rings
           if(vor.isValid())
@@ -4043,6 +4047,13 @@ void MapWidget::addRangeMark(const atools::geo::Pos& pos, const map::MapAirport 
   // Create dialog which also loads the defaults from settings
   // Use the determined position (may have been snapped to waypoint/navaid)
   RangeMarkerDialog dialog(mainWindow, marker.position);
+
+  // Set the label text and navType in the dialog BEFORE opening it
+  // This ensures the object name appears in the dialog and is preserved when user clicks OK
+  if(!marker.text.isEmpty())
+    dialog.setLabelText(marker.text);
+  dialog.setNavType(marker.navType);
+
   bool dialogOpened = false;
 
   // Open dialog only if requested or if set in dialog
@@ -4057,8 +4068,14 @@ void MapWidget::addRangeMark(const atools::geo::Pos& pos, const map::MapAirport 
   // Enable display of user feature
   NavApp::getMapMarkHandler()->showMarkTypes(map::MARK_RANGE);
 
+  // Store the correct position (snapped to object center if applicable)
+  Pos correctPosition = marker.position;
+
   // Fill the marker object with dialog settings (radii, colors, etc.)
   dialog.fillRangeMarker(marker, dialogOpened);
+
+  // Restore the correct position (don't let dialog override the snapped position)
+  marker.position = correctPosition;
 
   if(marker.isValid() && !marker.ranges.isEmpty())
   {
