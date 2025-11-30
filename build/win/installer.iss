@@ -177,10 +177,12 @@ Name: lnmfmsassociation; Description: "{cm:AssocFileExtension,{#LnmAppName},X-Pl
 Source: "{#LnmAppSourceBase}\{#LnmAppExeName}"; DestDir: "{app}"; Flags: ignoreversion
 Source: "{#LnmAppSourceDir}"; DestDir: "{app}"; Excludes: "\Little Navmap Portable.cmd, \littlenavmap.debug, \Little Navconnect\littlenavconnect.debug"; Flags: ignoreversion recursesubdirs createallsubdirs
 // VC++ redistributable runtime. Extracted by VC2017RedistNeedsInstall(), if needed.
+// %APROJECTS%\Latest\VC_redist.x64.exe for MSFS SimConnect
+// %APROJECTS%\2005\vcredist_x86.exe for FSX and P3D SimConnect
 #if LnmAppArch == "win64"
-  Source: "{#LnmAppProjects}\Redist\vcredist_2015-2022.x64.exe"; DestDir: {tmp}; Flags: deleteafterinstall
+  Source: "{#LnmAppProjects}\Redist\Latest\VC_redist.x64.exe"; DestDir: {tmp}; Flags: deleteafterinstall
 #elif LnmAppArch == "win32"
-  Source: "{#LnmAppProjects}\Redist\vcredist_2005_x86.exe"; DestDir: {tmp}; Flags: deleteafterinstall
+  Source: "{#LnmAppProjects}\Redist\2005\vcredist_x86.exe"; DestDir: {tmp}; Flags: deleteafterinstall
 #endif
 Source: "{#LnmAppProjects}\littlenavmap\build\win\Little Navmap User Manual Online.url"; DestDir: "{app}\help";
 Source: "{#LnmAppProjects}\littlenavmap\build\win\Little Navmap User Manual Online Start.url"; DestDir: "{app}\help";
@@ -234,9 +236,9 @@ Filename: "{app}\{#LnmAppExeName}"; Description: "{cm:LaunchProgram,{#StringChan
 Filename: "https://www.littlenavmap.org/manuals/littlenavmap/release/latest/en/START.html"; Description: "{cm:OpenStartMessage}"; Flags: nowait shellexec postinstall skipifsilent
 Filename: "{app}\CHANGELOG.txt"; Description: "{cm:ChangelogMessage}"; Flags: nowait postinstall shellexec skipifsilent
 #if LnmAppArch == "win64"
-  Filename: "{tmp}\vcredist_2015-2022.x64.exe"; StatusMsg: "{cm:InstallingRedistMessage}"; Parameters: "/quiet /norestart"; Flags: runascurrentuser waituntilterminated
+  Filename: "{tmp}\VC_redist.x64.exe"; StatusMsg: "{cm:InstallingRedistMessage}"; Parameters: "/quiet /norestart"; Flags: runascurrentuser waituntilterminated
 #elif LnmAppArch == "win32"
-  Filename: "{tmp}\vcredist_2005_x86.exe"; StatusMsg: "{cm:InstallingRedistMessage}"; Parameters: "/Q"; Flags: runascurrentuser waituntilterminated
+  Filename: "{tmp}\vcredist_x86.exe"; StatusMsg: "{cm:InstallingRedistMessage}"; Parameters: "/Q"; Flags: runascurrentuser waituntilterminated
 #endif
 
 [Code]

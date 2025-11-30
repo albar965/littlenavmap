@@ -2644,7 +2644,7 @@ void RouteController::routeTableOptions()
 {
   qDebug() << Q_FUNC_INFO;
 
-  atools::gui::TreeDialog treeDialog(mainWindow, QCoreApplication::applicationName() % tr(" - Flight Plan Table"),
+  atools::gui::TreeDialog treeDialog(mainWindow, QCoreApplication::applicationName() % tr(" - Flight Plan Table Display Options"),
                                      tr("Select header lines and flight plan table columns to show.\n"
                                         "You can move and resize columns by clicking into the flight plan column headers."),
                                      lnm::ROUTE_FLIGHTPLAN_COLUMS_DIALOG, "FLIGHTPLAN.html#flight-plan-table-columns",

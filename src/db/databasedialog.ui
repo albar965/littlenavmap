@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>800</width>
-    <height>419</height>
+    <width>748</width>
+    <height>410</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -15,7 +15,10 @@
   </property>
   <layout class="QVBoxLayout" name="verticalLayout_2">
    <item>
-    <layout class="QGridLayout" name="gridLayout">
+    <layout class="QVBoxLayout" name="verticalLayout">
+     <property name="spacing">
+      <number>2</number>
+     </property>
      <property name="leftMargin">
       <number>2</number>
      </property>
@@ -28,10 +31,7 @@
      <property name="bottomMargin">
       <number>2</number>
      </property>
-     <property name="spacing">
-      <number>2</number>
-     </property>
-     <item row="0" column="0" colspan="5">
+     <item>
       <widget class="QLabel" name="labelDatabaseInformation">
        <property name="sizePolicy">
         <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
@@ -62,125 +62,170 @@
        </property>
       </widget>
      </item>
-     <item row="3" column="1">
-      <widget class="QLineEdit" name="lineEditDatabaseSceneryFile">
-       <property name="toolTip">
-        <string>Enter the filename of the scenery.cfg file. This is &lt;b&gt;not&lt;/b&gt; the one in the base directory.</string>
+     <item>
+      <widget class="QGroupBox" name="groupBox">
+       <property name="title">
+        <string>Paths and Options</string>
        </property>
-       <property name="clearButtonEnabled">
-        <bool>true</bool>
-       </property>
-      </widget>
-     </item>
-     <item row="2" column="0" alignment="Qt::AlignRight">
-      <widget class="QLabel" name="labelDatabaseBasePath">
-       <property name="text">
-        <string>&amp;Flight Simulator Base Path:</string>
-       </property>
-       <property name="buddy">
-        <cstring>lineEditDatabaseBasePath</cstring>
-       </property>
-      </widget>
-     </item>
-     <item row="3" column="0" alignment="Qt::AlignRight">
-      <widget class="QLabel" name="labelDatabaseSceneryFile">
-       <property name="text">
-        <string>Scenery &amp;Configuration File:</string>
-       </property>
-       <property name="buddy">
-        <cstring>lineEditDatabaseSceneryFile</cstring>
-       </property>
-      </widget>
-     </item>
-     <item row="2" column="1">
-      <widget class="QLineEdit" name="lineEditDatabaseBasePath">
-       <property name="toolTip">
-        <string>&lt;p style=&quot;white-space:pre&quot;&gt;Enter the path to the flight simulator base directory.
+       <layout class="QGridLayout" name="gridLayout_3">
+        <property name="leftMargin">
+         <number>2</number>
+        </property>
+        <property name="topMargin">
+         <number>2</number>
+        </property>
+        <property name="rightMargin">
+         <number>2</number>
+        </property>
+        <property name="bottomMargin">
+         <number>2</number>
+        </property>
+        <property name="spacing">
+         <number>2</number>
+        </property>
+        <item row="1" column="1">
+         <widget class="QLabel" name="labelDatabaseBasePath">
+          <property name="text">
+           <string>&amp;Flight Simulator Base Path:</string>
+          </property>
+          <property name="buddy">
+           <cstring>lineEditDatabaseBasePath</cstring>
+          </property>
+         </widget>
+        </item>
+        <item row="2" column="3">
+         <widget class="QPushButton" name="pushButtonDatabaseSceneryFile">
+          <property name="toolTip">
+           <string>Select the scenery.cfg file for the given simulator.</string>
+          </property>
+          <property name="text">
+           <string>S&amp;elect ...</string>
+          </property>
+         </widget>
+        </item>
+        <item row="1" column="2">
+         <widget class="QLineEdit" name="lineEditDatabaseBasePath">
+          <property name="toolTip">
+           <string>&lt;p style=&quot;white-space:pre&quot;&gt;Enter the path to the flight simulator base directory.
 This is the one containing the &quot;scenery&quot; directory and the fsx.exe or the p3d.exe.
 For X-Plane this is the path containing the X-Plane executable.
 For MSFS this has to point to the directory containing &amp;quot;Community&amp;quot; and &amp;quot;Official&amp;quot;.&lt;/p&gt;</string>
-       </property>
-       <property name="clearButtonEnabled">
-        <bool>true</bool>
-       </property>
-      </widget>
-     </item>
-     <item row="3" column="2" colspan="3">
-      <widget class="QPushButton" name="pushButtonDatabaseSceneryFile">
-       <property name="toolTip">
-        <string>Select the scenery.cfg file for the given simulator.</string>
-       </property>
-       <property name="text">
-        <string>S&amp;elect ...</string>
-       </property>
-      </widget>
-     </item>
-     <item row="2" column="2" colspan="3">
-      <widget class="QPushButton" name="pushButtonDatabaseBasePath">
-       <property name="toolTip">
-        <string>Select the base path for the given simulator.</string>
-       </property>
-       <property name="text">
-        <string>S&amp;elect ...</string>
-       </property>
-      </widget>
-     </item>
-     <item row="1" column="1">
-      <widget class="QComboBox" name="comboBoxSimulator">
-       <property name="toolTip">
-        <string>Select the simulator which scenery library you want to load.</string>
-       </property>
-      </widget>
-     </item>
-     <item row="1" column="2" colspan="3">
-      <widget class="QPushButton" name="pushButtonDatabaseResetPaths">
-       <property name="toolTip">
-        <string>Reset paths to the default values for the given flight simulator.</string>
-       </property>
-       <property name="text">
-        <string>&amp;Reset Paths</string>
-       </property>
-      </widget>
-     </item>
-     <item row="1" column="0" alignment="Qt::AlignRight">
-      <widget class="QLabel" name="labelDatabaseSimulator">
-       <property name="text">
-        <string>&amp;Simulator:</string>
-       </property>
-       <property name="buddy">
-        <cstring>comboBoxSimulator</cstring>
-       </property>
+          </property>
+          <property name="clearButtonEnabled">
+           <bool>true</bool>
+          </property>
+         </widget>
+        </item>
+        <item row="0" column="1">
+         <widget class="QLabel" name="labelDatabaseSimulator">
+          <property name="text">
+           <string>&amp;Simulator:</string>
+          </property>
+          <property name="buddy">
+           <cstring>comboBoxSimulator</cstring>
+          </property>
+         </widget>
+        </item>
+        <item row="0" column="2">
+         <widget class="QComboBox" name="comboBoxSimulator">
+          <property name="toolTip">
+           <string>Select the simulator which scenery library you want to load.</string>
+          </property>
+         </widget>
+        </item>
+        <item row="0" column="3">
+         <widget class="QPushButton" name="pushButtonDatabaseResetPaths">
+          <property name="toolTip">
+           <string>Reset paths to the default values for the given flight simulator.</string>
+          </property>
+          <property name="text">
+           <string>&amp;Reset Paths</string>
+          </property>
+         </widget>
+        </item>
+        <item row="2" column="1">
+         <widget class="QLabel" name="labelDatabaseSceneryFile">
+          <property name="text">
+           <string>Scenery &amp;Configuration File:</string>
+          </property>
+          <property name="buddy">
+           <cstring>lineEditDatabaseSceneryFile</cstring>
+          </property>
+         </widget>
+        </item>
+        <item row="2" column="2">
+         <widget class="QLineEdit" name="lineEditDatabaseSceneryFile">
+          <property name="toolTip">
+           <string>Enter the filename of the scenery.cfg file. This is &lt;b&gt;not&lt;/b&gt; the one in the base directory.</string>
+          </property>
+          <property name="clearButtonEnabled">
+           <bool>true</bool>
+          </property>
+         </widget>
+        </item>
+        <item row="1" column="3">
+         <widget class="QPushButton" name="pushButtonDatabaseBasePath">
+          <property name="toolTip">
+           <string>Select the base path for the given simulator.</string>
+          </property>
+          <property name="text">
+           <string>S&amp;elect ...</string>
+          </property>
+         </widget>
+        </item>
+        <item row="3" column="0" colspan="4">
+         <layout class="QHBoxLayout" name="horizontalLayout">
+          <property name="spacing">
+           <number>0</number>
+          </property>
+          <property name="leftMargin">
+           <number>0</number>
+          </property>
+          <item>
+           <widget class="QCheckBox" name="checkBoxReadAddOnXml">
+            <property name="toolTip">
+             <string>Read add-on.xml scenery packages of Prepar3D v3 and v4.</string>
+            </property>
+            <property name="text">
+             <string>Read Prepar3D add-on.xml packages</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QCheckBox" name="checkBoxReadInactive">
+            <property name="toolTip">
+             <string>Will read also the inactive or disabled scenery entries when checked.
+Useful if you use tools to disable and enable certain scenery for each flight.</string>
+            </property>
+            <property name="text">
+             <string>Read &amp;inactive or disabled Scenery Entries</string>
+            </property>
+           </widget>
+          </item>
+         </layout>
+        </item>
+       </layout>
       </widget>
      </item>
     </layout>
    </item>
    <item>
-    <layout class="QHBoxLayout" name="horizontalLayout">
-     <property name="spacing">
-      <number>2</number>
+    <widget class="QLabel" name="labelXplaneHint">
+     <property name="text">
+      <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;img src=&quot;:/littlenavmap/resources/icons/bulb.svg&quot;/&gt;&lt;span style=&quot; font-style:italic;&quot;&gt;Note that the flight simulator base path is also used to detect weather files and the Little Xpconnect installation path for X-Plane.&lt;br/&gt;
+To avoid outdated weather reports, always change the base path to point to the X-Plane installation being used.
+&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
      </property>
-     <item>
-      <widget class="QCheckBox" name="checkBoxReadInactive">
-       <property name="toolTip">
-        <string>Will read also the inactive or disabled scenery entries when checked.
-Useful if you use tools to disable and enable certain scenery for each flight.</string>
-       </property>
-       <property name="text">
-        <string>Read &amp;inactive or disabled Scenery Entries</string>
-       </property>
-      </widget>
-     </item>
-     <item>
-      <widget class="QCheckBox" name="checkBoxReadAddOnXml">
-       <property name="toolTip">
-        <string>Read add-on.xml scenery packages of Prepar3D v3 and v4.</string>
-       </property>
-       <property name="text">
-        <string>Read Prepar3D add-on.xml packages</string>
-       </property>
-      </widget>
-     </item>
-    </layout>
+     <property name="wordWrap">
+      <bool>true</bool>
+     </property>
+     <property name="margin">
+      <number>10</number>
+     </property>
+     <property name="textInteractionFlags">
+      <set>Qt::LinksAccessibleByMouse|Qt::TextSelectableByMouse</set>
+     </property>
+    </widget>
    </item>
    <item>
     <widget class="QDialogButtonBox" name="buttonBoxDatabase">
@@ -191,14 +236,6 @@ Useful if you use tools to disable and enable certain scenery for each flight.</
    </item>
   </layout>
  </widget>
- <tabstops>
-  <tabstop>comboBoxSimulator</tabstop>
-  <tabstop>pushButtonDatabaseResetPaths</tabstop>
-  <tabstop>lineEditDatabaseBasePath</tabstop>
-  <tabstop>pushButtonDatabaseBasePath</tabstop>
-  <tabstop>lineEditDatabaseSceneryFile</tabstop>
-  <tabstop>pushButtonDatabaseSceneryFile</tabstop>
- </tabstops>
  <resources/>
  <connections/>
 </ui>

@@ -80,6 +80,7 @@ const QLatin1String ACTIONS_SHOW_QUIT_LOADING("Actions/ShowQuitLoading");
 const QLatin1String ACTIONS_SHOW_INVALID_PROC_WARNING("Actions/ShowInvalidProcedure");
 const QLatin1String ACTIONS_SHOW_ROUTE_PARKING_WARNING("Actions/ShowRouteParkingWarning");
 const QLatin1String ACTIONS_SHOW_ROUTE_AIRPORT_WARNING("Actions/ShowRouteAirportWarning");
+const QLatin1String ACTIONS_SHOW_ROUTE_ZERO_CRUISE_WARNING("Actions/ShowRouteZeroCruiseWarning");
 const QLatin1String ACTIONS_SHOW_ROUTE_VFR_WARNING("Actions/ShowRouteVfrWarning");
 const QLatin1String ACTIONS_SHOW_ROUTE_NO_CYCLE_WARNING("Actions/ShowRouteNoCycleWarning");
 const QLatin1String ACTIONS_SHOW_ROUTE_NAVDATA_ALL_WARNING("Actions/ShowRouteNavdataAllWarning");
@@ -90,6 +91,7 @@ const QLatin1String ACTIONS_SHOW_UPDATE_FAILED("Actions/ShowUpdateFailed");
 const QLatin1String ACTIONS_SHOW_SSL_FAILED("Actions/ShowSslFailed");
 const QLatin1String ACTIONS_SHOW_INSTALL_GLOBE("Actions/ShowInstallGlobe");
 const QLatin1String ACTIONS_SHOW_MISSING_SIMULATORS("Actions/ShowMissingSimulators");
+const QLatin1String ACTIONS_SHOW_APPLE_TRANSLOCATION("Actions/ShowAppleTranslocation");
 const QLatin1String ACTIONS_SHOW_INSTALL_DIRS("Actions/ShowInstallDirs");
 const QLatin1String ACTIONS_SHOW_OVERWRITE_DATABASE("Actions/ShowOverwriteDatabase");
 const QLatin1String ACTIONS_SHOW_DELETE_TRAIL("Actions/DeleteTrail");
@@ -409,7 +411,7 @@ const QLatin1String OPTIONS_NO_USER_AGENT("Options/NoUserAgent");
 const QLatin1String OPTIONS_WEATHER_UPDATE("Options/WeatherUpdate");
 const QLatin1String OPTIONS_WEATHER_UPDATE_RATE_SIM("Options/WeatherUpdateRateSim");
 
-/* Track download URLs */
+/* Track download URLs from track.cfg */
 const QLatin1String OPTIONS_TRACK_NAT_URL("Track/NatUrl");
 const QLatin1String OPTIONS_TRACK_NAT_PARAM("Track/NatUrlParam");
 const QLatin1String OPTIONS_TRACK_PACOTS_URL("Track/PacotsUrl");
@@ -430,7 +432,8 @@ const QLatin1String OPTIONS_GUI_OVERRIDE_LOCALE("OptionsDialog/Widget_checkBoxOp
 
 /* File dialog patterns */
 const QLatin1String FILE_PATTERN_SCENERYCONFIG("(*.cfg)");
-const QLatin1String FILE_PATTERN_FLIGHTPLAN_LOAD("(*.lnmpln *.pln *.flp *.fms *.fgfp *.fpl *.fpl.bin *.gfp)");
+const QLatin1String FILE_PATTERN_LOAD_ANY("(*.lnmpln *.pln *.flp *.fms *.fgfp *.fpl *.fpl.bin *.gfp *.gpx *.lnmperf *.lnmlayout)");
+const QLatin1String FILE_PATTERN_LOAD_FLIGHTPLAN("(*.lnmpln *.pln *.flp *.fms *.fgfp *.fpl *.fpl.bin *.gfp)");
 const QLatin1String FILE_PATTERN_LNMPLN("(*.lnmpln)");
 const QLatin1String FILE_PATTERN_KML("(*.kml *.kmz)");
 const QLatin1String FILE_PATTERN_GPX("(*.gpx)");
@@ -472,6 +475,8 @@ const QLatin1String NETWORKS_CONFIG(":/littlenavmap/resources/config/networks.cf
 
 /* Configuration for online networks */
 const QLatin1String URLS_CONFIG(":/littlenavmap/resources/config/urls.cfg");
+
+const QLatin1String TRACK_CONFIG(":/littlenavmap/resources/config/track.cfg");
 
 /* Map display configuration */
 const QLatin1String MAP_LAYER_CONFIG(":/littlenavmap/resources/config/maplayers.xml");

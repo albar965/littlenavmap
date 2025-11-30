@@ -235,8 +235,11 @@ public:
   /* Open file dialog for saving a LNMPLN flight plan. Filename will be built if empty. */
   QString routeSaveFileDialogLnm(const QString& filename = QString());
 
+  /* Show file dialog for opening all supported formats */
+  QString openAnyFileDialog();
+
   /* Show file dialog for opening a flight plan with all supported formats */
-  QString routeOpenFileDialog();
+  QString openFlightplanFileDialog();
 
   /* Called from the export if LNMPLN was bulk exported */
   void routeSaveLnmExported(const QString& filename);
@@ -417,7 +420,7 @@ private:
   void routeFromStringCurrent();
 
   /* Called from menu or toolbar by action */
-  void routeOpen();
+  void openAnyFile(); /* actionRouteOpen */
   void routeOpenFile(QString filepath);
 
   /* Called from menu or toolbar by action - append flight plan to current one */
@@ -433,6 +436,9 @@ private:
   /* From other instance by shared memory */
   void routeOpenDescrFromDataExchange(const QString& routeString);
   void routeOpenFileFromDataExchange(const QString& filepath);
+
+  /* Checks for filetype */
+  void fileOpenAny(const QString& filepath);
 
   /* Flight plan save functions */
   /* Called from menu or toolbar by action */

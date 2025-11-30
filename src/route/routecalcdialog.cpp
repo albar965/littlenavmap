@@ -195,7 +195,7 @@ void RouteCalcDialog::updateWidgets()
     ui->pushButtonRouteCalcDirect->setEnabled(canCalcRoute && route.hasEntries());
     ui->pushButtonRouteCalcReverse->setEnabled(canCalcRoute);
 
-    QString msg = tr("Use downloaded NAT or PACOTS tracks.\n"
+    QString msg = tr("Use downloaded NAT tracks.\n"
                      "Best track will be selected automatically.\n"
                      "Ensure to use the correct flight level.\n"
                      "Otherwise, tracks will not be used.");

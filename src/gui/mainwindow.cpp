@@ -1409,7 +1409,7 @@ void MainWindow::connectAllSlots()
   connect(ui->actionRouteCenter, &QAction::triggered, this, &MainWindow::routeCenter);
   connect(ui->actionRouteNew, &QAction::triggered, this, &MainWindow::routeNew);
   connect(ui->actionRouteNewFromString, &QAction::triggered, this, &MainWindow::routeFromStringCurrent);
-  connect(ui->actionRouteOpen, &QAction::triggered, this, &MainWindow::routeOpen);
+  connect(ui->actionRouteOpen, &QAction::triggered, this, &MainWindow::openAnyFile);
   connect(ui->actionRouteAppend, &QAction::triggered, this, &MainWindow::routeAppend);
   connect(ui->actionRouteTableAppend, &QAction::triggered, this, &MainWindow::routeAppend);
   connect(ui->actionRouteSaveSelection, &QAction::triggered, this, &MainWindow::routeSaveSelection);
@@ -2444,14 +2444,23 @@ void MainWindow::routeNewFromAirports(const map::MapAirport& departure, const ma
   routeFromFlightplan(flightplan, true /* adjustAltitude */, false /* changed */, true /* undo */, true /* correctProfile */);
 }
 
-void MainWindow::routeOpen()
+void MainWindow::openAnyFile()
 {
-  routeOpenFile(QString() /* filepath */);
+  // called from actionRouteOpen
+  fileOpenAny(openAnyFileDialog());
 }
 
-QString MainWindow::routeOpenFileDialog()
+QString MainWindow::openAnyFileDialog()
 {
-  return dialog->openFileDialog(tr("Open Flight Plan"), tr("Flight Plan Files %1;;All Files (*)").arg(lnm::FILE_PATTERN_FLIGHTPLAN_LOAD),
+  return dialog->openFileDialog(tr("Open Flight Plan or File"),
+                                tr("Little Navmap Files %1;;All Files (*)").arg(lnm::FILE_PATTERN_LOAD_ANY),
+                                "Route/LnmPln", atools::documentsDir());
+}
+
+QString MainWindow::openFlightplanFileDialog()
+{
+  return dialog->openFileDialog(tr("Open Flight Plan"),
+                                tr("Flight Plan Files %1;;All Files (*)").arg(lnm::FILE_PATTERN_LOAD_FLIGHTPLAN),
                                 "Route/LnmPln", atools::documentsDir());
 }
 
@@ -2492,7 +2501,7 @@ void MainWindow::routeOpenFile(QString filepath)
   if(routeCheckForChanges())
   {
     if(filepath.isEmpty())
-      filepath = routeOpenFileDialog();
+      filepath = openAnyFileDialog();
 
     if(!filepath.isEmpty())
     {
@@ -2601,14 +2610,9 @@ void MainWindow::warnTrailPoints(int numTruncated, bool doNotShowAgain)
   QString text;
   if(numTruncated > 0)
     text = tr("Truncated aircraft trail by %L1 points due to the\n"
-              "maximum number of %L2 points set in\n"
-              "options on page \"Map Aircraft Trail\".\n\n"
+              "maximum number of %L2 stored points.\n\n"
               "Note that too many trail points can cause performance issues in map display.").
-           arg(numTruncated).arg(OptionData::instance().getAircraftTrailMaxPoints());
-  else if(numPoints > AIRCRAFT_TRAIL_MAXPOINTS_WARNING)
-    text = tr("Aircraft trail has %L1 points which can cause performance issues in map display.\n\n"
-              "Consider lowering the maximum number of points in the options on page \"Map Aircraft Trail\"\n"
-              "or delete the trail.").arg(numPoints);
+           arg(numTruncated).arg(mapWidget->getMaxStoredTrailEntries());
 
   if(!text.isEmpty())
   {
@@ -2643,7 +2647,7 @@ bool MainWindow::routeSaveSelection()
 void MainWindow::routeAppend()
 {
   QString routeFile = dialog->openFileDialog(tr("Append Flight Plan"),
-                                             tr("Flight Plan Files %1;;All Files (*)").arg(lnm::FILE_PATTERN_FLIGHTPLAN_LOAD),
+                                             tr("Flight Plan Files %1;;All Files (*)").arg(lnm::FILE_PATTERN_LOAD_FLIGHTPLAN),
                                              "Route/LnmPln", atools::documentsDir());
 
   if(!routeFile.isEmpty())
@@ -2663,10 +2667,9 @@ void MainWindow::routeAppend()
 
 void MainWindow::routeInsert(int insertBefore)
 {
-  QString routeFile = dialog->openFileDialog(
-    tr("Insert info Flight Plan"),
-    tr("Flight Plan Files %1;;All Files (*)").arg(lnm::FILE_PATTERN_FLIGHTPLAN_LOAD),
-    "Route/LnmPln", atools::documentsDir());
+  QString routeFile = dialog->openFileDialog(tr("Insert Flight Plan"),
+                                             tr("Flight Plan Files %1;;All Files (*)").arg(lnm::FILE_PATTERN_LOAD_FLIGHTPLAN),
+                                             "Route/LnmPln", atools::documentsDir());
 
   if(!routeFile.isEmpty())
   {
@@ -3659,6 +3662,23 @@ void MainWindow::mainWindowShownDelayed()
     dialog->showInfoMsgBox(lnm::ACTIONS_SHOW_MISSING_SIMULATORS, message, tr("Do not &show this dialog again."));
   } // else have databases do nothing
 
+#ifdef Q_OS_MACOS
+  // Check for Apple translocation sandbox ===========================================================
+  // "/private/var/folders/d9/sgXXXX0000gn/T/AppTranslocation/DDBXXXEA/d/Little Navmap.app/Contents/MacOS/littlenavmap"
+  if(QCoreApplication::applicationFilePath().contains("AppTranslocation"))
+  {
+    QString message = tr("<p><b>Little Navmap seems to be running in the Apple translocation sandbox.<br/>"
+                         "This severely limits the program's functionality.</b></p>"
+                         "<p>Download Little Navmap again, extract it <i>outside</i> the folder \"Downloads\" and run it again.</p>"
+                           "<p>Also have a look at the link below for more information how to remove the Apple quarantine flag.</p>");
+
+    // https://www.littlenavmap.org/manuals/littlenavmap/release/latest/en/INSTALLATION.html#macos
+    QUrl url = atools::gui::HelpHandler::getHelpUrlWeb(lnm::helpOnlineUrl % "INSTALLATION.html#macos", lnm::helpLanguageOnline());
+    message.append(tr("<p><a href=\"%1\">Click here for more information in the Little Navmap online manual</a></p>").arg(url.toString()));
+
+    dialog->showWarnMsgBox(lnm::ACTIONS_SHOW_APPLE_TRANSLOCATION, message, tr("Do not &show this dialog again."));
+  }
+#endif
   // First installation actions ====================================================
 
   Settings& settings = Settings::instance();
@@ -5082,7 +5102,16 @@ void MainWindow::dropEvent(QDropEvent *event)
     // Check only first URL
     QString filepath = urls.constFirst().toLocalFile();
     qDebug() << Q_FUNC_INFO << "Dropped file:" << filepath;
+    fileOpenAny(filepath);
+  }
+}
 
+void MainWindow::fileOpenAny(const QString& filepath)
+{
+  qDebug() << Q_FUNC_INFO << "filepath" << filepath;
+
+  if(!filepath.isEmpty())
+  {
     if(atools::gui::DockWidgetHandler::isWindowLayoutFile(filepath))
       // Open window layout file
       layoutOpenDrag(filepath);

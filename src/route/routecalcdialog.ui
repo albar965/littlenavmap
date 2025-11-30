@@ -335,10 +335,10 @@ Fastest calculation</string>
            </sizepolicy>
           </property>
           <property name="toolTip">
-           <string>Download NAT and PACOTS tracks now</string>
+           <string>Download NAT tracks now</string>
           </property>
           <property name="statusTip">
-           <string>Download NAT and PACOTS tracks now</string>
+           <string>Download NAT tracks now</string>
           </property>
           <property name="text">
            <string/>
@@ -354,14 +354,14 @@ Fastest calculation</string>
       <item row="4" column="1">
        <widget class="QCheckBox" name="checkBoxRouteCalcAirwayTrack">
         <property name="toolTip">
-         <string>Use downloaded NAT or PACOTS tracks.
+         <string>Use downloaded NAT tracks.
 Best track will be selected automatically.</string>
         </property>
         <property name="statusTip">
-         <string>Use downloaded NAT or PACOTS tracks.</string>
+         <string>Use downloaded NAT tracks.</string>
         </property>
         <property name="text">
-         <string>&amp;Use NAT or PACOTS tracks</string>
+         <string>&amp;Use NAT tracks</string>
         </property>
        </widget>
       </item>

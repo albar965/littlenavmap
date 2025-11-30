@@ -112,6 +112,7 @@ void messages::resetAllMessages()
   settings.setValue(lnm::ACTIONS_SHOW_ROUTE_PARKING_WARNING, true);
   settings.setValue(lnm::ACTIONS_SHOW_ROUTE_START_CHANGED, true);
   settings.setValue(lnm::ACTIONS_SHOW_ROUTE_AIRPORT_WARNING, true);
+  settings.setValue(lnm::ACTIONS_SHOW_ROUTE_ZERO_CRUISE_WARNING, true);
   settings.setValue(lnm::ACTIONS_SHOW_ROUTE_VFR_WARNING, true);
 
   settings.setValue(lnm::ACTIONS_SHOW_SSL_FAILED, true);
@@ -162,4 +163,5 @@ void messages::resetEssentialMessages()
   settings.setValue(lnm::ACTIONS_SHOW_CONNECTION_SCENERYLIBRARY_FSXP3D, true);
   settings.setValue(lnm::ACTIONS_SHOW_CONNECTION_SCENERYLIBRARY_HINT, true);
   settings.setValue(lnm::ACTIONS_SHOW_CONNECTION_SCENERYLIBRARY_HINT_NO_DB, true);
+  settings.setValue(lnm::ACTIONS_SHOW_APPLE_TRANSLOCATION, true);
 }

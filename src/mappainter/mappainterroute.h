@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2024 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2025 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -145,6 +145,7 @@ private:
   /* Waypoint Underlays */
   void paintProcedureUnderlay(const proc::MapProcedureLeg& leg, float x, float y, float size);
 
+  /* Draw start position or parking circle into the airport diagram */
   void paintStartParking();
 
   /* Draw line to departure runway position */

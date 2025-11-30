@@ -94,7 +94,7 @@ public:
   bool routeExportPln(const RouteExportFormat& format);
   bool routeExportPlnMsfs(const RouteExportFormat& format);
 
-  /* New X-Plane FMS 11 */
+  /* FMS 11 for X-Plane 11 and X-Plane 12 */
   /* Also used for manual export */
   void routeExportFms11Man(); /* Called by action */
   bool routeExportFms11(const RouteExportFormat& format);

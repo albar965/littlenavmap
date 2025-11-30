@@ -56,7 +56,7 @@ ConnectClient::ConnectClient(MainWindow *parent)
   : QObject(parent), mainWindow(parent), metarIdentCache(WEATHER_TIMEOUT_FS_SECS), notAvailableStations(NOT_AVAILABLE_TIMEOUT_FS_SECS),
 
   // VERSION_NUMBER_TODO update minimum Xpconnect version
-  minimumXpconnectVersion("1.2.0.beta")
+  minimumXpconnectVersion("1.2.2")
 {
   // Create global context to load and unload DLLs
   activationContext = new atools::win::ActivationContext;

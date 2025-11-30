@@ -119,6 +119,7 @@ void MapPaintLayer::copySettings(const MapPaintLayer& other)
   airspaceTypes = other.airspaceTypes;
   weatherSource = other.weatherSource;
   sunShading = other.sunShading;
+  minimumRunwayLengthFt = other.minimumRunwayLengthFt;
 
   // Updates layers too
   setDetailLevel(other.detailLevel, other.detailLevelText);

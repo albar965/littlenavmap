@@ -214,7 +214,7 @@ ProcedureSearch::ProcedureSearch(QMainWindow *main, QTreeWidget *treeWidgetParam
                                       ui->actionSearchProcedureShowInSearch});
 
   connect(ui->pushButtonProcedureSearchClearSelection, &QPushButton::clicked, this, &ProcedureSearch::clearSelectionClicked);
-  connect(ui->pushButtonProcedureShowAll, &QPushButton::toggled, this, &ProcedureSearch::showAllToggled);
+  connect(ui->pushButtonProcedureShowAll, &QPushButton::toggled, this, &ProcedureSearch::showAllToggledButton);
 
   connect(ui->pushButtonProcedureSearchReset, &QPushButton::clicked, this, &ProcedureSearch::resetSearch);
   connect(ui->actionSearchResetSearch, &QAction::triggered, this, &ProcedureSearch::resetSearch);
@@ -309,7 +309,7 @@ void ProcedureSearch::updateFilter()
   fillProcedureTreeWidget();
 
   if(NavApp::getMainUi()->pushButtonProcedureShowAll->isChecked())
-    showAllToggled(true);
+    showAllToggled(true /* checked */, false /* zoom */); // Changing filter does not zoom in again
 
   updateWidgets();
 }
@@ -1171,7 +1171,6 @@ void ProcedureSearch::updateTreeHeader()
   treeWidget->setHeaderItem(header);
 }
 
-/* If approach has no legs and a single transition: SID special case. get transition id from cache */
 void ProcedureSearch::fetchSingleTransitionId(MapProcedureRef& ref) const
 {
   if(ref.hasProcedureOnlyIds())
@@ -1363,11 +1362,17 @@ QList<QTreeWidgetItem *> ProcedureSearch::buildTransitionLegItems(const MapProce
 
 void ProcedureSearch::showAllToggledAction(bool checked)
 {
-  // Let push button pass the signal on
+  // Let push button pass the signal on to showAllToggledButton()
   ui->pushButtonProcedureShowAll->setChecked(checked);
 }
 
-void ProcedureSearch::showAllToggled(bool checked)
+void ProcedureSearch::showAllToggledButton(bool checked)
+{
+  // Show all zooms in to the boundary of all procedures
+  showAllToggled(checked, true /* zoom */);
+}
+
+void ProcedureSearch::showAllToggled(bool checked, bool zoom)
 {
   qDebug() << Q_FUNC_INFO;
   if(!checked)
@@ -1375,10 +1380,34 @@ void ProcedureSearch::showAllToggled(bool checked)
   else
   {
     QVector<proc::MapProcedureRef> refs;
+    atools::geo::Rect bounding(currentAirportNav->position);
     for(auto it = itemIndex.begin(); it != itemIndex.end(); ++it)
-      refs.append(it->getRef());
+    {
+      const MapProcedureRef& ref = it->getRef();
+      refs.append(ref);
+
+      if(zoom)
+      {
+        // Collect bounding rectangle of all procedures =================================
+        const proc::MapProcedureLegs *legs = nullptr;
+
+        if(ref.transitionId != -1)
+          // Show procedure and transition
+          legs = procedureQuery->getTransitionLegs(*currentAirportNav, ref.transitionId);
+        else if(ref.procedureId != -1)
+          // Show procedure
+          legs = procedureQuery->getProcedureLegs(*currentAirportNav, ref.procedureId);
+
+        if(legs != nullptr)
+          bounding.extend(NavApp::getShownMapTypes().testFlag(map::MISSED_APPROACH) ? legs->boundingWithMissed : legs->bounding);
+      }
+    }
 
     emit proceduresSelected(refs);
+
+    if(zoom)
+      // Change zoom to show all procedures
+      emit showRect(bounding, false /* doubleClick */);
   }
 
   updateWidgets();
@@ -1677,6 +1706,20 @@ void ProcedureSearch::procedureAttachSelected()
   clearSelection();
 }
 
+void ProcedureSearch::showLegs(const proc::MapProcedureLegs *legs, bool doubleClick)
+{
+  if(legs != nullptr)
+  {
+    // Center with missed approach if enabled in view
+    atools::geo::Rect bounding = NavApp::getShownMapTypes().testFlag(map::MISSED_APPROACH) ? legs->boundingWithMissed : legs->bounding;
+
+    // Include airport in bounding
+    bounding.extend(currentAirportNav->position);
+
+    emit showRect(bounding, doubleClick);
+  }
+}
+
 void ProcedureSearch::showEntry(QTreeWidgetItem *item, bool doubleClick, bool zoom)
 {
   qDebug() << Q_FUNC_INFO;
@@ -1689,6 +1732,7 @@ void ProcedureSearch::showEntry(QTreeWidgetItem *item, bool doubleClick, bool zo
 
   if(ref.legId != -1)
   {
+    // Show leg only =============================================================
     const proc::MapProcedureLeg *leg = nullptr;
 
     if(ref.transitionId != -1)
@@ -1705,17 +1749,11 @@ void ProcedureSearch::showEntry(QTreeWidgetItem *item, bool doubleClick, bool zo
     }
   }
   else if(ref.transitionId != -1 && !doubleClick)
-  {
-    const proc::MapProcedureLegs *legs = procedureQuery->getTransitionLegs(*currentAirportNav, ref.transitionId);
-    if(legs != nullptr)
-      emit showRect(NavApp::getShownMapTypes().testFlag(map::MISSED_APPROACH) ? legs->boundingWithMissed : legs->bounding, doubleClick);
-  }
+    // Show procedure and transition =============================================================
+    showLegs(procedureQuery->getTransitionLegs(*currentAirportNav, ref.transitionId), doubleClick);
   else if(ref.procedureId != -1 && !doubleClick)
-  {
-    const proc::MapProcedureLegs *legs = procedureQuery->getProcedureLegs(*currentAirportNav, ref.procedureId);
-    if(legs != nullptr)
-      emit showRect(NavApp::getShownMapTypes().testFlag(map::MISSED_APPROACH) ? legs->boundingWithMissed : legs->bounding, doubleClick);
-  }
+    // Show procedure =============================================================
+    showLegs(procedureQuery->getProcedureLegs(*currentAirportNav, ref.procedureId), doubleClick);
 }
 
 void ProcedureSearch::procedureDisplayText(QString& procTypeText, QString& headerText, QString& menuText, QStringList& attText,

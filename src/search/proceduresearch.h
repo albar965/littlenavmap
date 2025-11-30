@@ -228,14 +228,16 @@ private:
   /* Order by name */
   static bool transitionSortFunc(const atools::sql::SqlRecord& rec1, const atools::sql::SqlRecord& rec2);
 
+  /* If approach has no legs and a single transition: SID special case. get transition id from cache */
   void fetchSingleTransitionId(proc::MapProcedureRef& ref) const;
 
   /* For header and menu item */
   QString procedureAndTransitionText(const QTreeWidgetItem *item, bool header) const;
 
   void clearSelectionClicked();
-  void showAllToggled(bool checked);
+  void showAllToggled(bool checked, bool zoom);
   void showAllToggledAction(bool checked);
+  void showAllToggledButton(bool checked);
 
   /* Get procedure reference with ids only */
   const proc::MapProcedureRef& fetchProcRef(const QTreeWidgetItem *item) const;
@@ -260,6 +262,9 @@ private:
   QStringList firstLastWaypoint(const atools::sql::SqlRecord& record) const;
 
   inline const proc::MapProcedureRef& refFromItem(const QTreeWidgetItem *item) const;
+
+  /* Emit showRect with leg bounding plus airport */
+  void showLegs(const proc::MapProcedureLegs *legs, bool doubleClick);
 
   QString transitionIndicator, transitionIndicatorOne;
 

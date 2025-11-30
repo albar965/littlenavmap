@@ -321,13 +321,6 @@
     <property name="title">
      <string>Flight &amp;Plan</string>
     </property>
-    <widget class="QMenu" name="menuTrackSources">
-     <property name="title">
-      <string>Oceanic Track &amp;Sources</string>
-     </property>
-     <addaction name="actionTrackSourcesNat"/>
-     <addaction name="actionTrackSourcesPacots"/>
-    </widget>
     <addaction name="actionShortcutFlightPlan"/>
     <addaction name="actionShortcutAircraftPerformance"/>
     <addaction name="separator"/>
@@ -350,7 +343,6 @@
     <addaction name="actionRouteDownloadTracks"/>
     <addaction name="actionRouteDownloadTracksNow"/>
     <addaction name="actionRouteDeleteTracks"/>
-    <addaction name="menuTrackSources"/>
    </widget>
    <widget class="QMenu" name="menuDatabase">
     <property name="title">
@@ -6694,13 +6686,13 @@ relation to shown airport</string>
      <normaloff>:/littlenavmap/resources/icons/fileopen.svg</normaloff>:/littlenavmap/resources/icons/fileopen.svg</iconset>
    </property>
    <property name="text">
-    <string>&amp;Open Flight Plan ...</string>
+    <string>&amp;Open Flight Plan or File ...</string>
    </property>
    <property name="toolTip">
-    <string>Open flight plan</string>
+    <string>Open a flight plan or other file</string>
    </property>
    <property name="statusTip">
-    <string>Open flight plan</string>
+    <string>Open a flight plan or other file</string>
    </property>
    <property name="shortcut">
     <string>Ctrl+O</string>
@@ -11166,40 +11158,6 @@ relation to shown airport</string>
    </property>
    <property name="statusTip">
     <string>Manual wind for fuel report and map display</string>
-   </property>
-  </action>
-  <action name="actionTrackSourcesNat">
-   <property name="checkable">
-    <bool>true</bool>
-   </property>
-   <property name="checked">
-    <bool>true</bool>
-   </property>
-   <property name="text">
-    <string>&amp;NAT</string>
-   </property>
-   <property name="toolTip">
-    <string>Download North Atlantic Tracks</string>
-   </property>
-   <property name="statusTip">
-    <string>Download North Atlantic Tracks</string>
-   </property>
-  </action>
-  <action name="actionTrackSourcesPacots">
-   <property name="checkable">
-    <bool>true</bool>
-   </property>
-   <property name="checked">
-    <bool>true</bool>
-   </property>
-   <property name="text">
-    <string>&amp;PACOTS</string>
-   </property>
-   <property name="toolTip">
-    <string>Download tracks for Pacific Organized Track System</string>
-   </property>
-   <property name="statusTip">
-    <string>Download tracks for Pacific Organized Track System</string>
    </property>
   </action>
   <action name="actionConnectSimulatorToggle">

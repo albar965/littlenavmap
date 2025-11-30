@@ -1212,7 +1212,7 @@ void LogdataController::planOpen(atools::sql::SqlRecord *record, QWidget *parent
 void LogdataController::planAdd(atools::sql::SqlRecord *record, QWidget *parent)
 {
   qDebug() << Q_FUNC_INFO;
-  planAttachLnmpln(record, mainWindow->routeOpenFileDialog(), parent);
+  planAttachLnmpln(record, mainWindow->openFlightplanFileDialog(), parent);
 }
 
 void LogdataController::planAttachLnmpln(atools::sql::SqlRecord *record, const QString& filename, QWidget *parent)

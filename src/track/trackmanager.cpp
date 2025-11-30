@@ -447,8 +447,8 @@ QMap<atools::track::TrackType, int> TrackManager::getNumTracks()
     retval.insert(static_cast<atools::track::TrackType>(atools::strToChar(query.valueStr(0))), query.valueInt(1));
 
   // Insert missing values
-  if(!retval.contains(atools::track::PACOTS))
-    retval.insert(atools::track::PACOTS, 0);
+  // if(!retval.contains(atools::track::PACOTS))
+  //   retval.insert(atools::track::PACOTS, 0);
 
   if(!retval.contains(atools::track::NAT))
     retval.insert(atools::track::NAT, 0);

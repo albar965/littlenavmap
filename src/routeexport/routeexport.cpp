@@ -1390,6 +1390,28 @@ bool RouteExport::routeValidate(const QVector<RouteExportFormat>& formats, bool 
     doNotShowAgainText = tr("Do not &show this dialog again and save the flight plan.");
   QString reallyContinue = tr("\n\nReally continue?");
 
+  // Check for cruise altitude ================================
+  if(route.getCruiseAltitudeFt() < 10.f)
+  {
+    QString message;
+
+    if(multi)
+      message = tr("Flight plan has a zero cruise altitude which can cause issues "
+                   "with the selected export formats.");
+    else
+      message = tr("Flight plan has a zero cruise altitude which can cause issues "
+                   "with the simulator.");
+
+    message += reallyContinue;
+
+    int result = dialog->showQuestionMsgBox(lnm::ACTIONS_SHOW_ROUTE_ZERO_CRUISE_WARNING,
+                                            message, doNotShowAgainText, QMessageBox::Yes | QMessageBox::No, QMessageBox::No,
+                                            QMessageBox::Yes);
+
+    if(result == QMessageBox::No)
+      save = false;
+  }
+
   // Check for valid airports for departure and destination ================================
   if(validateDepartAndDest && (!route.hasValidDeparture() || !route.hasValidDestination()))
   {
@@ -1419,9 +1441,9 @@ bool RouteExport::routeValidate(const QVector<RouteExportFormat>& formats, bool 
 
     if(multi)
       message = tr("One or more of the selected export formats are for X-Plane and\n"
-                   "\"Use Navigraph for Navaids and Procedures\" is selected in the menu \"Scenery Library\" -> \"Navigraph\".\n");
+                   "\"Use Navigraph for all Features\" is selected in the menu \"Scenery Library\" -> \"Navigraph\".\n");
     else
-      message = tr("\"Use Navigraph for Navaids and Procedures\" is selected in the menu \"Scenery Library\" -> \"Navigraph\".\n");
+      message = tr("\"Use Navigraph for all Features\" is selected in the menu \"Scenery Library\" -> \"Navigraph\".\n");
 
     message += tr("This can result in issues loading the flight plan into the GPS or FMS since airports might not match.");
     message += reallyContinue;

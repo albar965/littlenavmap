@@ -41,9 +41,6 @@ quint16 AircraftTrail::version = 0;
 /* Insert an invalid position as an break indicator if aircraft jumps too far on ground. */
 static const float MAX_POINT_DISTANCE_NM = 5.f;
 
-/* Split lines up for display */
-static const int PARTITION_POINT_SIZE = 200;
-
 static const quint32 FILE_MAGIC_NUMBER = 0x5B6C1A2B;
 
 /* Version 2 to adds timstamp and single floating point precision. Uses 32-bit second timestamps */
@@ -55,48 +52,48 @@ static const quint16 FILE_VERSION_64BIT_TS = 3;
 /* Version 4 adds double floating point precision for coordinates */
 static const quint16 FILE_VERSION_64BIT_COORDS = 4;
 
-QDataStream& operator>>(QDataStream& dataStream, AircraftTrailPos& trackPos)
+QDataStream& operator>>(QDataStream& dataStream, AircraftTrailPos& trailPos)
 {
   if(AircraftTrail::version == FILE_VERSION_64BIT_COORDS)
   {
     // Newest format with 64 bit coordinates and 64 bit timestamp
-    dataStream >> trackPos.pos >> trackPos.timestampMs >> trackPos.onGround;
+    dataStream >> trailPos.pos >> trailPos.timestampMs >> trailPos.onGround;
 
     // Fix invalid positions from wrong decoding of earlier versions
-    if(!trackPos.pos.isValidRange() || trackPos.pos.isNull())
+    if(!trailPos.pos.isValidRange() || trailPos.pos.isNull())
       // Add separator
-      trackPos.pos = atools::geo::PosD();
+      trailPos.pos = atools::geo::PosD();
   }
   else if(AircraftTrail::version == FILE_VERSION_64BIT_TS)
   {
     // Convert 32 bit coordinates
     atools::geo::Pos pos;
-    dataStream >> pos >> trackPos.timestampMs >> trackPos.onGround;
+    dataStream >> pos >> trailPos.timestampMs >> trailPos.onGround;
 
     // Convert invalid float positions to invalid double positions to indicate split track
-    trackPos.pos = atools::geo::PosD(pos);
+    trailPos.pos = atools::geo::PosD(pos);
   }
   else if(AircraftTrail::version == FILE_VERSION_OLD)
   {
     // Convert 32 bit timestamp and coordinates
     atools::geo::Pos pos;
     quint32 oldTimestampSeconds;
-    dataStream >> pos >> oldTimestampSeconds >> trackPos.onGround;
-    trackPos.timestampMs = oldTimestampSeconds * 1000L;
+    dataStream >> pos >> oldTimestampSeconds >> trailPos.onGround;
+    trailPos.timestampMs = oldTimestampSeconds * 1000L;
 
     // Convert invalid float positions to invalid double positions to indicate split track
-    trackPos.pos = atools::geo::PosD(pos);
+    trailPos.pos = atools::geo::PosD(pos);
   }
 
   return dataStream;
 }
 
-QDataStream& operator<<(QDataStream& dataStream, const AircraftTrailPos& trackPos)
+QDataStream& operator<<(QDataStream& dataStream, const AircraftTrailPos& trailPos)
 {
 #ifdef DEBUG_SAVE_TRACK_OLD
   dataStream << trackPos.pos.asPos() << trackPos.timestampMs << trackPos.onGround;
 #else
-  dataStream << trackPos.pos << trackPos.timestampMs << trackPos.onGround;
+  dataStream << trailPos.pos << trailPos.timestampMs << trailPos.onGround;
 #endif
   return dataStream;
 }
@@ -126,6 +123,12 @@ AircraftTrail::AircraftTrail()
 
   // Use maxAltDiffFtLower if below or maxAltDiffFtUpper if above - interpolated
   aglThresholdFt = settings.getAndStoreValue(lnm::SETTINGS_AIRCRAFT_TRAIL + "AglThresholdFt", 10000.).toFloat();
+
+  // Store limit for number of points
+  maxNumStoredEntries = settings.getAndStoreValue(lnm::SETTINGS_AIRCRAFT_TRAIL + "MaxNumStoredEntries", MAX_STORED_TRAIL_ENTRIES).toInt();
+
+  // Partition into line strings of given size
+  partitionPointSize = settings.getAndStoreValue(lnm::SETTINGS_AIRCRAFT_TRAIL + "PartitionPointSize", PARTITION_POINT_SIZE).toInt();
 }
 
 AircraftTrail::~AircraftTrail()
@@ -144,7 +147,6 @@ AircraftTrail& AircraftTrail::operator=(const AircraftTrail& other)
 {
   clear();
   append(other);
-  maxTrackEntries = other.maxTrackEntries;
   *lastUserAircraft = *other.lastUserAircraft;
 
   boundingRect = other.boundingRect;
@@ -155,6 +157,7 @@ AircraftTrail& AircraftTrail::operator=(const AircraftTrail& other)
   aglThresholdFt = other.aglThresholdFt;
   maxFlyingTimeMs = other.maxFlyingTimeMs;
   maxGroundTimeMs = other.maxGroundTimeMs;
+  maxNumStoredEntries = other.maxNumStoredEntries;
 
   lastGroundSpeedKts = other.lastGroundSpeedKts;
   lastActualAltitudeFt = other.lastActualAltitudeFt;
@@ -162,6 +165,10 @@ AircraftTrail& AircraftTrail::operator=(const AircraftTrail& other)
 
   lineStrings = other.lineStrings;
   lineStringsIndex = other.lineStringsIndex;
+  lineStringsSize = other.lineStringsSize;
+
+  maxNumShownEntries = other.maxNumShownEntries;
+  partitionPointSize = other.partitionPointSize;
 
   return *this;
 }
@@ -554,23 +561,31 @@ int AircraftTrail::appendTrailPos(const atools::fs::sc::SimConnectUserAircraft& 
     clearBoundaries();
     lineStrings.clear();
     lineStringsIndex.clear();
+    lineStringsSize = 0;
   }
 
 #ifdef DEBUG_INFORMATION_TRAIL
-  qDebug() << Q_FUNC_INFO << size();
-  qDebug() << Q_FUNC_INFO << constLast().getPosition();
-  qDebug() << Q_FUNC_INFO << lineStrings;
+  qDebug() << Q_FUNC_INFO << "size()" << size();
+  qDebug() << Q_FUNC_INFO << "lineStringsSize" << lineStringsSize;
+  qDebug() << Q_FUNC_INFO << "constLast().getPosition()" << constLast().getPosition();
+  qDebug() << Q_FUNC_INFO << "lineStrings" << lineStrings;
 #endif
 
   return numTruncated;
 }
 
+void AircraftTrail::setMaxNumShownEntries(int value)
+{
+  maxNumShownEntries = value;
+  updateBoundary();
+  updateLineStrings();
+}
+
 int AircraftTrail::truncateTrail()
 {
   int numTruncated = 0, truncateBatch = std::max(size() / 50, 5); // Calculate batch based on current size
-  int maxEntries = maxTrackEntries <= 0 || maxTrackEntries > MAX_TRACK_ENTRIES ? MAX_TRACK_ENTRIES : maxTrackEntries;
 
-  while(size() > maxEntries && !isEmpty())
+  while(size() > maxNumStoredEntries && !isEmpty())
   {
     for(int i = 0; i < truncateBatch; i++)
     {
@@ -598,6 +613,7 @@ void AircraftTrail::clearTrail()
   clearBoundaries();
   lineStrings.clear();
   lineStringsIndex.clear();
+  lineStringsSize = 0;
 }
 
 void AircraftTrail::clearBoundaries()
@@ -651,6 +667,22 @@ void AircraftTrail::cleanDuplicates()
   }), end());
 }
 
+void AircraftTrail::removeLineStringFirst()
+{
+  while(lineStringsSize > maxNumShownEntries)
+  {
+    atools::geo::LineString& firstLineString = lineStrings.first();
+    if(!firstLineString.isEmpty())
+    {
+      firstLineString.removeFirst();
+      lineStringsSize--;
+    }
+
+    if(firstLineString.isEmpty())
+      lineStrings.removeFirst();
+  }
+}
+
 void AircraftTrail::updateLineStringsLast()
 {
   if(!isEmpty())
@@ -662,6 +694,7 @@ void AircraftTrail::updateLineStringsLast()
       {
         // Initial append add new line string =======================================
         lineStrings.append(atools::geo::LineString(lastTrailPos.getPosition()));
+        lineStringsSize++;
         lineStringsIndex.append(0);
       }
       else
@@ -669,17 +702,25 @@ void AircraftTrail::updateLineStringsLast()
         // Append to filled list =======================================
         atools::geo::LineString& lastLineString = lineStrings.last();
 
-        if(lastLineString.size() > PARTITION_POINT_SIZE)
+        if(lastLineString.size() > partitionPointSize)
         {
           // Add new partition since last is too large - add position to both lines for closing polyline
           lastLineString.append(lastTrailPos.getPosition());
+          lineStringsSize++;
 
           lineStrings.append(atools::geo::LineString(lastTrailPos.getPosition()));
+          lineStringsSize++;
           lineStringsIndex.append(size() - 1);
         }
         else
+        {
           lastLineString.append(lastTrailPos.getPosition());
+          lineStringsSize++;
+        }
       }
+
+      // Chop from start if too long
+      removeLineStringFirst();
     }
   }
 }
@@ -688,12 +729,17 @@ void AircraftTrail::updateLineStrings()
 {
   lineStrings.clear();
   lineStringsIndex.clear();
+  lineStringsSize = 0;
 
   if(!isEmpty())
   {
+    // Do not build more than should be shown
+    int startIndex = std::max(0, size() - maxNumShownEntries);
+
     atools::geo::LineString linestring;
-    int startIndex = 0;
-    for(int i = 0; i < size(); i++)
+    int lineStringIndex = startIndex;
+
+    for(int i = startIndex; i < size(); i++)
     {
       const AircraftTrailPos& trailPos = at(i);
 
@@ -701,37 +747,48 @@ void AircraftTrail::updateLineStrings()
       {
         // An invalid position shows a break in the lines - add line and start a new one without connection =================
         lineStrings.append(linestring);
-        lineStringsIndex.append(startIndex);
-        startIndex += linestring.size() + 1; // Index for next one - this point is skipped - consecutive invalid are already filtered
+        lineStringsIndex.append(lineStringIndex);
+
+        // Index for next one - this point is skipped - consecutive invalid are already filtered
+        lineStringIndex += linestring.size() + 1;
         linestring.clear();
       }
-      else if(linestring.size() > PARTITION_POINT_SIZE)
+      else if(linestring.size() > partitionPointSize)
       {
         // Line string too long - add a new one as partition being connected =============================
         linestring.append(trailPos.getPosition());
+        lineStringsSize++;
 
         // Add next position to keep lines attached
         if(i < size() - 1)
         {
           const AircraftTrailPos& nextTrailPos = at(i + 1);
           if(nextTrailPos.isValid())
+          {
             linestring.append(nextTrailPos.getPosition());
+            lineStringsSize++;
+          }
         }
 
         lineStrings.append(linestring);
-        lineStringsIndex.append(startIndex);
-        startIndex += linestring.size() - 1; // Next one starts overlapping at nextTrailPos
+        lineStringsIndex.append(lineStringIndex);
+
+        // Next one starts overlapping at nextTrailPos
+        lineStringIndex += linestring.size() - 1;
         linestring.clear();
       }
       else
+      {
         linestring.append(trailPos.getPosition());
+        lineStringsSize++;
+      }
     }
 
     // Add rest
     if(!linestring.isEmpty())
     {
       lineStrings.append(linestring);
-      lineStringsIndex.append(startIndex);
+      lineStringsIndex.append(lineStringIndex);
     }
   }
 
@@ -758,7 +815,7 @@ void AircraftTrail::updateLineStrings()
   }
 
   // qDebug() << Q_FUNC_INFO << lineStrings;
-  qDebug() << Q_FUNC_INFO << lineStringsIndex;
+  qDebug() << Q_FUNC_INFO << "lineStringsIndex" << lineStringsIndex;
 #endif
 }
 

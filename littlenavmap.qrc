@@ -10,6 +10,7 @@
         <file>resources/config/networks.cfg</file>
         <file>resources/config/ssl/lnm.cert</file>
         <file>resources/config/ssl/lnm.key</file>
+        <file>resources/config/track.cfg</file>
         <file>resources/config/urls.cfg</file>
         <file>resources/config/webserver.cfg</file>
         <file>resources/css/export.css</file>
@@ -140,8 +141,11 @@
         <file>resources/icons/databasecheck.svg</file>
         <file>resources/icons/detaildefault.svg</file>
         <file>resources/icons/detailless.svg</file>
+        <file>resources/icons/detaillesslabel.svg</file>
         <file>resources/icons/detailmap.svg</file>
         <file>resources/icons/detailmore.svg</file>
+        <file>resources/icons/detailmorelabel.svg</file>
+        <file>resources/icons/directrunway.svg</file>
         <file>resources/icons/directto.svg</file>
         <file>resources/icons/distancemeasure.svg</file>
         <file>resources/icons/distancemeasureoff.svg</file>
@@ -355,8 +359,5 @@
         <file>resources/icons/windpointer.svg</file>
         <file>resources/icons/zoomin.svg</file>
         <file>resources/icons/zoomout.svg</file>
-        <file>resources/icons/detailmorelabel.svg</file>
-        <file>resources/icons/detaillesslabel.svg</file>
-        <file>resources/icons/directrunway.svg</file>
     </qresource>
 </RCC>
