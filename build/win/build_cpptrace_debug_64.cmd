@@ -6,7 +6,8 @@ if defined APROJECTS ( echo %APROJECTS% ) else ( echo APROJECTS not set && exit 
 
 set BUILDDIR=%APROJECTS%\build-cpptrace-debug
 set DEPLOYDIR=%APROJECTS%\cpptrace-debug-win64
-set PATH=%PATH%;C:\Qt\5.15.2\mingw81_64\bin\;C:\Qt\Tools\mingw810_64\bin
+set QTDIR=C:\Qt\6.5.3\mingw_64
+set PATH=%PATH%;C:\Qt\Tools\CMake_64\bin;C:\Qt\Tools\mingw1120_64\bin\;C:\Qt\6.5.3\mingw_64\bin\
 set BUILDTYPE=Debug
 
 call build_cpptrace_base.cmd nopause
