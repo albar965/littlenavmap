@@ -1,5 +1,5 @@
 #*****************************************************************************
-# Copyright 2015-2024 Alexander Barthel alex@littlenavmap.org
+# Copyright 2015-2025 Alexander Barthel alex@littlenavmap.org
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -78,7 +78,7 @@
 # Define program version here VERSION_NUMBER_TODO
 VERSION_NUMBER=3.1.0.develop
 
-QT += core gui sql xml network svg printsupport
+QT += core gui sql xml network svg printsupport widgets
 
 CONFIG += build_all c++17
 CONFIG -= debug_and_release debug_and_release_target
@@ -95,6 +95,7 @@ TARGET_NAME=Little Navmap
 ATOOLS_INC_PATH=$$(ATOOLS_INC_PATH)
 ATOOLS_LIB_PATH=$$(ATOOLS_LIB_PATH)
 ATOOLS_NO_CRASHHANDLER=$$(ATOOLS_NO_CRASHHANDLER)
+ATOOLS_NO_QT5COMPAT=$$(ATOOLS_NO_QT5COMPAT)
 
 MARBLE_INC_PATH=$$(MARBLE_INC_PATH)
 MARBLE_LIB_PATH=$$(MARBLE_LIB_PATH)
@@ -132,7 +133,7 @@ isEmpty(MARBLE_INC_PATH) : MARBLE_INC_PATH=$$PWD/../Marble-$$CONF_TYPE/include
 isEmpty(MARBLE_LIB_PATH) : MARBLE_LIB_PATH=$$PWD/../Marble-$$CONF_TYPE/lib
 }
 
-# QT_INSTALL_PREFIX: C:/Qt/5.15.2/mingw81_32
+# QT_INSTALL_PREFIX: C:/Qt/6.5.3/mingw81_32
 # C:\Qt\Tools\OpenSSL\Win_x86\bin\
 # win32: isEmpty(OPENSSL_PATH) : OPENSSL_PATH=$$[QT_INSTALL_PREFIX])\..\..\Tools\OpenSSL\Win_x86\bin\
 
@@ -153,7 +154,7 @@ unix:!macx {
   # Search path for the Marble widget so while linking
   QMAKE_RPATHLINKDIR=$$MARBLE_LIB_PATH
 
-  LIBS += -L$$MARBLE_LIB_PATH -lmarblewidget-qt5 -L$$ATOOLS_LIB_PATH -latools  -lz
+  LIBS += -L$$MARBLE_LIB_PATH -lmarblewidget-lnm-qt6 -L$$ATOOLS_LIB_PATH -latools  -lz -lssl -lcrypto
 }
 
 win32 {
@@ -184,8 +185,8 @@ win32 {
 
   DEFINES += _USE_MATH_DEFINES
 
-  CONFIG(debug, debug|release) : LIBS += -L$$MARBLE_LIB_PATH -llibmarblewidget-qt5d
-  CONFIG(release, debug|release) : LIBS += -L$$MARBLE_LIB_PATH -llibmarblewidget-qt5
+  CONFIG(debug, debug|release) : LIBS += -L$$MARBLE_LIB_PATH -llibmarblewidget-lnm-qt6
+  CONFIG(release, debug|release) : LIBS += -L$$MARBLE_LIB_PATH -llibmarblewidget-lnm-qt6
   LIBS += -L$$ATOOLS_LIB_PATH -latools -lz
 }
 
@@ -195,7 +196,7 @@ macx {
   MACDEPLOY_FLAGS = -always-overwrite
   CONFIG(debug, debug|release) : MACDEPLOY_FLAGS += -no-strip
 
-  LIBS += -L$$MARBLE_LIB_PATH -lmarblewidget-qt5 -L$$ATOOLS_LIB_PATH -latools  -lz
+  LIBS += -L$$MARBLE_LIB_PATH -lmarblewidget-lnm-qt6 -L$$ATOOLS_LIB_PATH -latools  -lz
 }
 
 # Cpptrace ==========================
@@ -207,6 +208,11 @@ macx {
 } else {
   DEFINES += DISABLE_CRASHHANDLER
 }
+
+# https://doc.qt.io/qt-6.5/qtcore5-index.html - needed for QTextCodec
+!isEqual(ATOOLS_NO_QT5COMPAT, "true"): QT += core5compat
+
+DEFINES += QT_DISABLE_DEPRECATED_BEFORE=0x050F00
 
 isEmpty(GIT_PATH) {
   GIT_REVISION=UNKNOWN
@@ -257,6 +263,7 @@ message(SIMCONNECT_PATH_WIN32: $$SIMCONNECT_PATH_WIN32)
 message(SIMCONNECT_PATH_WIN64_MSFS_2020: $$SIMCONNECT_PATH_WIN64_MSFS_2020)
 message(SIMCONNECT_PATH_WIN64_MSFS_2024: $$SIMCONNECT_PATH_WIN64_MSFS_2024)
 message(ATOOLS_NO_CRASHHANDLER: $$ATOOLS_NO_CRASHHANDLER)
+message(ATOOLS_NO_QT5COMPAT: $$ATOOLS_NO_QT5COMPAT)
 message(DEPLOY_BASE: $$DEPLOY_BASE)
 message(DEFINES: $$DEFINES)
 message(INCLUDEPATH: $$INCLUDEPATH)
@@ -820,6 +827,7 @@ unix:!macx {
   deploy.commands += rm -Rfv $$DEPLOY_DIR &&
   deploy.commands += mkdir -pv $$DEPLOY_DIR/translations &&
   deploy.commands += mkdir -pv $$DEPLOY_DIR_LIB &&
+  deploy.commands += mkdir -pv $$DEPLOY_DIR_LIB/tls &&
   deploy.commands += mkdir -pv $$DEPLOY_DIR_LIB/iconengines &&
   deploy.commands += mkdir -pv $$DEPLOY_DIR_LIB/imageformats &&
   deploy.commands += mkdir -pv $$DEPLOY_DIR_LIB/platforms &&
@@ -829,8 +837,7 @@ unix:!macx {
   deploy.commands += echo $$VERSION_NUMBER > $$DEPLOY_DIR/version.txt &&
   deploy.commands += echo $$GIT_REVISION_FULL > $$DEPLOY_DIR/revision.txt &&
   deploy.commands += cp -Rvf $$MARBLE_LIB_PATH/*.so* $$DEPLOY_DIR_LIB &&
-  deploy.commands += patchelf --set-rpath \'\$\$ORIGIN/.\' $$DEPLOY_DIR_LIB/libmarblewidget-qt5.so* &&
-  deploy.commands += patchelf --set-rpath \'\$\$ORIGIN/.\' $$DEPLOY_DIR_LIB/libastro.so* &&
+  deploy.commands += patchelf --set-rpath \'\$\$ORIGIN/.\' $$DEPLOY_DIR_LIB/libmarblewidget-lnm-qt6.so* &&
   deploy.commands += cp -Rvf $$OUT_PWD/plugins $$DEPLOY_DIR &&
   deploy.commands += cp -Rvf $$OUT_PWD/data $$DEPLOY_DIR &&
   deploy.commands += cp -Rvf $$OUT_PWD/help $$DEPLOY_DIR &&
@@ -850,14 +857,11 @@ unix:!macx {
   deploy.commands += cp -vf $$PWD/LICENSE.txt $$DEPLOY_DIR &&
   deploy.commands += cp -vf $$PWD/resources/icons/littlenavmap.svg $$DEPLOY_DIR &&
   deploy.commands += cp -vf \"$$PWD/desktop/Little Navmap.desktop\" $$DEPLOY_DIR &&
-  exists(/usr/lib/x86_64-linux-gnu/libssl.so.1.1) : deploy.commands += cp -vfaL /usr/lib/x86_64-linux-gnu/libssl.so.1.1 $$DEPLOY_DIR_LIB &&
-  exists(/usr/lib/x86_64-linux-gnu/libcrypto.so.1.1) : deploy.commands += cp -vfaL /usr/lib/x86_64-linux-gnu/libcrypto.so.1.1 $$DEPLOY_DIR_LIB &&
+  deploy.commands += cp -vfa $$[QT_INSTALL_PLUGINS]/tls/lib*.so*  $$DEPLOY_DIR_LIB/tls &&
   deploy.commands += cp -vfa $$[QT_INSTALL_PLUGINS]/iconengines/libqsvgicon.so*  $$DEPLOY_DIR_LIB/iconengines &&
   deploy.commands += cp -vfa $$[QT_INSTALL_PLUGINS]/imageformats/libqgif.so*  $$DEPLOY_DIR_LIB/imageformats &&
   deploy.commands += cp -vfa $$[QT_INSTALL_PLUGINS]/imageformats/libqjpeg.so*  $$DEPLOY_DIR_LIB/imageformats &&
   deploy.commands += cp -vfa $$[QT_INSTALL_PLUGINS]/imageformats/libqsvg.so*  $$DEPLOY_DIR_LIB/imageformats &&
-  deploy.commands += cp -vfa $$[QT_INSTALL_PLUGINS]/imageformats/libqwbmp.so*  $$DEPLOY_DIR_LIB/imageformats &&
-  deploy.commands += cp -vfa $$[QT_INSTALL_PLUGINS]/imageformats/libqwebp.so*  $$DEPLOY_DIR_LIB/imageformats &&
   deploy.commands += cp -vfa $$[QT_INSTALL_PLUGINS]/platforms/libqeglfs.so*  $$DEPLOY_DIR_LIB/platforms &&
   deploy.commands += cp -vfa $$[QT_INSTALL_PLUGINS]/platforms/libqlinuxfb.so*  $$DEPLOY_DIR_LIB/platforms &&
   deploy.commands += cp -vfa $$[QT_INSTALL_PLUGINS]/platforms/libqminimal.so*  $$DEPLOY_DIR_LIB/platforms &&
@@ -868,22 +872,24 @@ unix:!macx {
   deploy.commands += cp -vfa $$[QT_INSTALL_PLUGINS]/platformthemes/libqgtk*.so*  $$DEPLOY_DIR_LIB/platformthemes &&
   deploy.commands += cp -vfa $$[QT_INSTALL_PLUGINS]/printsupport/libcupsprintersupport.so*  $$DEPLOY_DIR_LIB/printsupport &&
   deploy.commands += cp -vfa $$[QT_INSTALL_PLUGINS]/sqldrivers/libqsqlite.so*  $$DEPLOY_DIR_LIB/sqldrivers &&
+  exists(/usr/lib/x86_64-linux-gnu/libssl.so) : deploy.commands += cp -vfaL /usr/lib/x86_64-linux-gnu/libssl.so $$DEPLOY_DIR_LIB &&
+  exists(/usr/lib/x86_64-linux-gnu/libcrypto.so) : deploy.commands += cp -vfaL /usr/lib/x86_64-linux-gnu/libcrypto.so $$DEPLOY_DIR_LIB &&
   deploy.commands += cp -vfa $$[QT_INSTALL_LIBS]/libicudata.so*  $$DEPLOY_DIR_LIB &&
   deploy.commands += cp -vfa $$[QT_INSTALL_LIBS]/libicui18n.so*  $$DEPLOY_DIR_LIB &&
   deploy.commands += cp -vfa $$[QT_INSTALL_LIBS]/libicuuc.so*  $$DEPLOY_DIR_LIB &&
-  deploy.commands += cp -vfa $$[QT_INSTALL_LIBS]/libQt5Concurrent.so*  $$DEPLOY_DIR_LIB &&
-  deploy.commands += cp -vfa $$[QT_INSTALL_LIBS]/libQt5Core.so*  $$DEPLOY_DIR_LIB &&
-  deploy.commands += cp -vfa $$[QT_INSTALL_LIBS]/libQt5DBus.so*  $$DEPLOY_DIR_LIB &&
-  deploy.commands += cp -vfa $$[QT_INSTALL_LIBS]/libQt5Gui.so*  $$DEPLOY_DIR_LIB &&
-  deploy.commands += cp -vfa $$[QT_INSTALL_LIBS]/libQt5Network.so*  $$DEPLOY_DIR_LIB &&
-  deploy.commands += cp -vfa $$[QT_INSTALL_LIBS]/libQt5PrintSupport.so*  $$DEPLOY_DIR_LIB &&
-  deploy.commands += cp -vfa $$[QT_INSTALL_LIBS]/libQt5Sql.so*  $$DEPLOY_DIR_LIB &&
-  deploy.commands += cp -vfa $$[QT_INSTALL_LIBS]/libQt5Svg.so*  $$DEPLOY_DIR_LIB &&
-  deploy.commands += cp -vfa $$[QT_INSTALL_LIBS]/libQt5Widgets.so*  $$DEPLOY_DIR_LIB &&
-  deploy.commands += cp -vfa $$[QT_INSTALL_LIBS]/libQt5X11Extras.so*  $$DEPLOY_DIR_LIB &&
-  deploy.commands += cp -vfa $$[QT_INSTALL_LIBS]/libQt5XcbQpa.so*  $$DEPLOY_DIR_LIB &&
-  deploy.commands += cp -vfa $$[QT_INSTALL_LIBS]/libQt5Xml.so* $$DEPLOY_DIR_LIB &&
-  deploy.commands += cp -vfa $$[QT_INSTALL_LIBS]/libQt5WaylandClient.so* $$DEPLOY_DIR_LIB &&
+  deploy.commands += cp -vfa $$[QT_INSTALL_LIBS]/libQt6Core5Compat.so*  $$DEPLOY_DIR_LIB &&
+  deploy.commands += cp -vfa $$[QT_INSTALL_LIBS]/libQt6Concurrent.so*  $$DEPLOY_DIR_LIB &&
+  deploy.commands += cp -vfa $$[QT_INSTALL_LIBS]/libQt6Core.so*  $$DEPLOY_DIR_LIB &&
+  deploy.commands += cp -vfa $$[QT_INSTALL_LIBS]/libQt6DBus.so*  $$DEPLOY_DIR_LIB &&
+  deploy.commands += cp -vfa $$[QT_INSTALL_LIBS]/libQt6Gui.so*  $$DEPLOY_DIR_LIB &&
+  deploy.commands += cp -vfa $$[QT_INSTALL_LIBS]/libQt6Network.so*  $$DEPLOY_DIR_LIB &&
+  deploy.commands += cp -vfa $$[QT_INSTALL_LIBS]/libQt6PrintSupport.so*  $$DEPLOY_DIR_LIB &&
+  deploy.commands += cp -vfa $$[QT_INSTALL_LIBS]/libQt6Sql.so*  $$DEPLOY_DIR_LIB &&
+  deploy.commands += cp -vfa $$[QT_INSTALL_LIBS]/libQt6Svg.so*  $$DEPLOY_DIR_LIB &&
+  deploy.commands += cp -vfa $$[QT_INSTALL_LIBS]/libQt6Widgets.so*  $$DEPLOY_DIR_LIB &&
+  deploy.commands += cp -vfa $$[QT_INSTALL_LIBS]/libQt6XcbQpa.so*  $$DEPLOY_DIR_LIB &&
+  deploy.commands += cp -vfa $$[QT_INSTALL_LIBS]/libQt6Xml.so* $$DEPLOY_DIR_LIB &&
+  deploy.commands += cp -vfa $$[QT_INSTALL_LIBS]/libQt6WaylandClient.so* $$DEPLOY_DIR_LIB &&
   deploy.commands += rm -fv $$DEPLOY_DIR_LIB/lib*.so.*.debug $$DEPLOY_DIR_LIB/*/lib*.so.*.debug
 }
 
@@ -892,7 +898,7 @@ macx {
 
   INSTALL_MARBLE_DYLIB_CMD=install_name_tool \
          -change  $$INSTALL_MARBLE_DYLIB \
-         @executable_path/../Frameworks/libmarblewidget-qt5.25.dylib $$OUT_PWD/littlenavmap.app/Contents/PlugIns
+         @executable_path/../Frameworks/libmarblewidget-lnm-qt6.dylib $$OUT_PWD/littlenavmap.app/Contents/PlugIns
 
   # Needs "-rpath" in GUI
 #  INSTALL_MARBLE_DYLIB_CMD=install_name_tool \
@@ -1006,18 +1012,17 @@ win32 {
     deploy.commands += copy /Y $$p($$SIMCONNECT_PATH_WIN64_MSFS_2024/lib/SimConnect.dll) $$p($$DEPLOY_BASE/$$WIN_TARGET_NAME/SimConnect_msfs_2024.dll) &&
     deploy.commands += copy /Y $$p($$SIMCONNECT_PATH_WIN64_MSFS_2020/lib/SimConnect.dll) $$p($$DEPLOY_BASE/$$WIN_TARGET_NAME/SimConnect_msfs_2020.dll) &&
   }
-  deploy.commands += xcopy /F $$p($$MARBLE_LIB_PATH/../libmarblewidget-qt5$${DLL_SUFFIX}.dll) $$p($$DEPLOY_BASE/$$WIN_TARGET_NAME) &&
-  deploy.commands += xcopy /F $$p($$MARBLE_LIB_PATH/../libastro$${DLL_SUFFIX}.dll) $$p($$DEPLOY_BASE/$$WIN_TARGET_NAME) &&
+  deploy.commands += xcopy /F $$p($$MARBLE_LIB_PATH/../libmarblewidget-lnm-qt6$${DLL_SUFFIX}.dll) $$p($$DEPLOY_BASE/$$WIN_TARGET_NAME) &&
   deploy.commands += xcopy /F $$p($$[QT_INSTALL_BINS]/libgcc*.dll) $$p($$DEPLOY_BASE/$$WIN_TARGET_NAME) &&
   deploy.commands += xcopy /F $$p($$[QT_INSTALL_BINS]/libstdc*.dll) $$p($$DEPLOY_BASE/$$WIN_TARGET_NAME) &&
   deploy.commands += xcopy /F $$p($$[QT_INSTALL_BINS]/libwinpthread*.dll) $$p($$DEPLOY_BASE/$$WIN_TARGET_NAME) &&
   deploy.commands += xcopy /F $$p($$OPENSSL_PATH_WIN\libcrypto*.dll) $$p($$DEPLOY_BASE/$$WIN_TARGET_NAME) &&
   deploy.commands += xcopy /F $$p($$OPENSSL_PATH_WIN\libssl*.dll) $$p($$DEPLOY_BASE/$$WIN_TARGET_NAME) &&
-  deploy.commands += xcopy /F $$p($$[QT_INSTALL_BINS]/Qt5Network.dll) $$p($$DEPLOY_BASE/$$WIN_TARGET_NAME) &&
-  deploy.commands += xcopy /F $$p($$[QT_INSTALL_BINS]/Qt5PrintSupport.dll) $$p($$DEPLOY_BASE/$$WIN_TARGET_NAME) &&
-  deploy.commands += xcopy /F $$p($$[QT_INSTALL_BINS]/Qt5Sql.dll) $$p($$DEPLOY_BASE/$$WIN_TARGET_NAME) &&
-  deploy.commands += xcopy /F $$p($$[QT_INSTALL_BINS]/Qt5OpenGL.dll) $$p($$DEPLOY_BASE/$$WIN_TARGET_NAME) &&
-  deploy.commands += xcopy /F $$p($$[QT_INSTALL_BINS]/Qt5Xml.dll) $$p($$DEPLOY_BASE/$$WIN_TARGET_NAME) &&
+  deploy.commands += xcopy /F $$p($$[QT_INSTALL_BINS]/Qt6Network.dll) $$p($$DEPLOY_BASE/$$WIN_TARGET_NAME) &&
+  deploy.commands += xcopy /F $$p($$[QT_INSTALL_BINS]/Qt6PrintSupport.dll) $$p($$DEPLOY_BASE/$$WIN_TARGET_NAME) &&
+  deploy.commands += xcopy /F $$p($$[QT_INSTALL_BINS]/Qt6Sql.dll) $$p($$DEPLOY_BASE/$$WIN_TARGET_NAME) &&
+  deploy.commands += xcopy /F $$p($$[QT_INSTALL_BINS]/Qt6OpenGL.dll) $$p($$DEPLOY_BASE/$$WIN_TARGET_NAME) &&
+  deploy.commands += xcopy /F $$p($$[QT_INSTALL_BINS]/Qt6Xml.dll) $$p($$DEPLOY_BASE/$$WIN_TARGET_NAME) &&
   deploy.commands += $$p($$[QT_INSTALL_BINS]/windeployqt) $$WINDEPLOY_FLAGS $$p($$DEPLOY_BASE/$$WIN_TARGET_NAME) &&
   deploy.commands += del /f /q $$p($$DEPLOY_BASE/$$WIN_TARGET_NAME/sqldrivers/qsqlpsql.dll) &&
   deploy.commands += del /f /q $$p($$DEPLOY_BASE/$$WIN_TARGET_NAME/sqldrivers/qsqlodbc.dll)

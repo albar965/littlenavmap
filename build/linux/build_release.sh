@@ -19,7 +19,7 @@ if [ ! -d "$APROJECTS" ]; then echo "$APROJECTS" does not exist ; exit 1 ; fi
 # See the *.pro project files for more information.
 #
 # Example:
-# export QMAKE_STATIC=~/Projekte/build-qt-5.15.2-release/bin/qmake
+# export QMAKE_STATIC=~/Projekte/qt-6.5.3-release/bin/qmake
 # export MARBLE_LIB_PATH=~/Programme/Marble-debug/lib
 # export MARBLE_INC_PATH=~/Programme/Marble-debug/include
 
@@ -34,17 +34,17 @@ export HELP_BASE=${HELP_BASE:-"${APROJECTS}/little_navmap_help"}
 export ATOOLS_NO_CRASHHANDLER=${ATOOLS_NO_CRASHHANDLER:-"true"}
 
 # Defines the used Qt for all builds
-export QMAKE_SHARED=${QMAKE_SHARED:-"${HOME}/Qt/5.15.2/gcc_64/bin/qmake"}
+export QMAKE_SHARED=${QMAKE_SHARED:-"${HOME}/Qt/6.5.3/gcc_64/bin/qmake"}
 
-# Defines the used Qt for Xpconnect (/mnt/disk/build-qt-5.15.2-release/bin/qmake)
-export QMAKE_STATIC=${QMAKE_STATIC:-"${APROJECTS}/build-qt-5.15.2-release/bin/qmake"}
+# Defines the used Qt for Xpconnect (/mnt/disk/qt-6.5.3-release/bin/qmake)
+export QMAKE_STATIC=${QMAKE_STATIC:-"${APROJECTS}/qt-6.5.3-release/bin/qmake"}
 
 # Do not change the DEPLOY_BASE since some scripts depend on it
 export DEPLOY_BASE="${APROJECTS}/deploy"
 
 # basic environment checks
-if [[ ! -d "${MARBLE_INC_PATH}" ]]; then echo "Marble include path not found. Did you provide albar965/marble branch lnm/1.1?" >&2; exit 1; fi
-if [[ ! -d "${MARBLE_LIB_PATH}" ]]; then echo "Marble library path not found. Did you provide albar965/marble branch lnm/1.1?" >&2; exit 1; fi
+if [[ ! -d "${MARBLE_INC_PATH}" ]]; then echo "Marble include path not found. Did you provide albar965/marble branch lnm/1.2?" >&2; exit 1; fi
+if [[ ! -d "${MARBLE_LIB_PATH}" ]]; then echo "Marble library path not found. Did you provide albar965/marble branch lnm/1.2?" >&2; exit 1; fi
 
 if ! which patchelf; then echo "Command 'patchelf' not found" >&2; exit 1; fi
 if ! which cmake; then echo "Command 'cmake' not found" >&2; exit 1; fi
@@ -112,6 +112,7 @@ export ATOOLS_NO_WEB=true
 export ATOOLS_NO_WMM=true
 export ATOOLS_NO_NAVSERVER=true
 export ATOOLS_NO_CRASHHANDLER=true
+export ATOOLS_NO_QT5COMPAT=true
 
 ${QMAKE_STATIC} ${APROJECTS}/atools/atools.pro -spec linux-g++ CONFIG+=${CONF_TYPE}
 make -j4

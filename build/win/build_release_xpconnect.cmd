@@ -33,7 +33,7 @@ rem Windows/qmake cannot deal with paths containing spaces/quotes - defines thes
 rem if defined XPSDK_BASE ( echo %XPSDK_BASE% ) else ( set XPSDK_BASE="%APROJECTS%\X-Plane SDK")
 
 rem Defines the used Qt for Xpconnect
-if defined PATH_STATIC ( echo PATH_STATIC=%PATH_STATIC% ) else ( set PATH_STATIC=C:\msys64\mingw64\qt5-static\bin;C:\msys64\mingw64\bin)
+if defined PATH_STATIC ( echo PATH_STATIC=%PATH_STATIC% ) else ( set PATH_STATIC=C:\msys64\mingw64\qt6-static\bin;C:\msys64\mingw64\bin)
 
 rem === Build littlexpconnect =============================
 
@@ -68,6 +68,7 @@ set ATOOLS_NO_WEB=true
 set ATOOLS_NO_WMM=true
 set ATOOLS_NO_NAVSERVER=true
 set ATOOLS_NO_CRASHHANDLER=true
+set ATOOLS_NO_QT5COMPAT=true
 
 qmake.exe "%APROJECTS%\atools\atools.pro" -spec win32-g++ CONFIG+=%CONF_TYPE%
 if errorlevel 1 goto :err
