@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2024 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2025 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -20,7 +20,6 @@
 
 #include "fs/sc/simconnectdata.h"
 
-#include <QFutureWatcher>
 #include <QWidget>
 
 namespace atools {
@@ -48,6 +47,7 @@ class Route;
 class RouteLeg;
 class ProfileOptions;
 struct ElevationLegList;
+struct ElevationLegListFuturePrivate;
 
 /*
  * Loads and displays the flight plan elevation profile. The elevation data is
@@ -118,7 +118,7 @@ public:
   void mainWindowShown();
 
   /* Pair of screen y and altitude in feet to display and label the scale */
-  const QVector<std::pair<int, int> > calcScaleValues();
+  const QList<std::pair<int, int> > calcScaleValues();
 
   float getMinSafeAltitudeFt() const
   {
@@ -152,7 +152,7 @@ public:
 
   void aircraftPerformanceChanged(const atools::fs::perf::AircraftPerf *);
 
-  const QVector<int>& getWaypointX() const
+  const QList<int>& getWaypointX() const
   {
     return waypointX;
   }
@@ -225,7 +225,6 @@ private:
   /* Calculate the left and right margin based on font size and airport elevation text */
   void calcLeftMargin();
 
-  void terminateThread();
   float calcGroundBufferFt(float maxElevationFt);
 
   void updateHeaderLabel();
@@ -277,7 +276,7 @@ private:
   float aircraftAlt(const atools::fs::sc::SimConnectUserAircraft& aircraft);
 
   /* Screen pixel width of this leg. Considers zero-length IAF legs */
-  int calcLegScreenWidth(const QVector<QPolygon>& altLegs, int waypointIndex);
+  int calcLegScreenWidth(const QList<QPolygon>& altLegs, int waypointIndex);
 
   /* Get text and text color for a leg. procSymbol is true if only the generic procedure waypoint should be drawn */
   QStringList textsAndColorForLeg(QColor& color, bool& procSymbol, const RouteLeg& leg, bool procedureDisplayText, int legWidth);
@@ -306,11 +305,7 @@ private:
   /* Calls updateTimeout which will start the update thread in background */
   QTimer *updateTimer = nullptr;
 
-  /* Used to fetch result from thread */
-  QFuture<ElevationLegList> future;
-  /* Sends signal once thread is finished */
-  QFutureWatcher<ElevationLegList> watcher;
-  bool terminateThreadSignal = false;
+  ElevationLegListFuturePrivate *futurePrivate;
 
   bool databaseLoadStatus = false;
   bool active = false;
@@ -324,7 +319,7 @@ private:
   QPoint lastTooltipScreenPos;
 
   bool widgetVisible = false, showAircraft = false, showAircraftTrail = false;
-  QVector<int> waypointX; /* Flight plan waypoint screen coordinates - does contain the dummy
+  QList<int> waypointX; /* Flight plan waypoint screen coordinates - does contain the dummy
                            * from airport to runway but not missed legs */
   QPolygon landPolygon; /* Green landmass polygon */
   float minSafeAltitudeFt = 0.f, /* Red line */

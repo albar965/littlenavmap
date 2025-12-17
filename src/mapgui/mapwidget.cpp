@@ -134,7 +134,7 @@ static float MIN_AUTO_ZOOM_NM = 0.2f;
 
 // Maps minimum zoom in NM by altitude above ground in ft
 // Use odd numbers to avoid jumping at typical flown altitude levels
-static const QVector<std::pair<float, float> > ALT_TO_MIN_ZOOM_FT_NM =
+static const QList<std::pair<float, float> > ALT_TO_MIN_ZOOM_FT_NM =
 {
   {100.f, MIN_AUTO_ZOOM_NM}, // 0.2 NM for flying below 55 ft AGL
   {200.f, 0.2f},
@@ -3002,7 +3002,7 @@ void MapWidget::mainWindowShown()
 
   // Create a copy of KML files where all missing files will be removed from the recent list
   QStringList cleanKmlFilePaths(kmlFilePaths);
-  for(const QString& kml : qAsConst(kmlFilePaths))
+  for(const QString& kml : std::as_const(kmlFilePaths))
   {
     if(!loadKml(kml, false /* center */))
       // Not found
@@ -3149,7 +3149,7 @@ void MapWidget::overlayStateFromMenu()
 
 void MapWidget::connectOverlayMenus()
 {
-  for(QAction *action : qAsConst(mapOverlays))
+  for(QAction *action : std::as_const(mapOverlays))
     connect(action, &QAction::toggled, this, &MapWidget::overlayStateFromMenu);
 
   for(auto it = mapOverlays.constBegin(); it != mapOverlays.constEnd(); ++it)
@@ -3229,7 +3229,7 @@ void MapWidget::saveState() const
 
   overlayStateToMenu();
   atools::gui::WidgetState state(lnm::MAP_OVERLAY_VISIBLE, false /*save visibility*/, true /*block signals*/);
-  for(QAction *action : qAsConst(mapOverlays))
+  for(QAction *action : std::as_const(mapOverlays))
     state.save(action);
 
   settings.setValue(lnm::LOGDATA_TAKEOFF_LANDING_DISTANCE, takeoffLandingDistanceNm);
@@ -3293,7 +3293,7 @@ void MapWidget::restoreState()
   aircraftTrailLogbook->restoreState(lnm::LOGBOOK_TRACK_SUFFIX);
 
   atools::gui::WidgetState state(lnm::MAP_OVERLAY_VISIBLE, false /*save visibility*/, true /*block signals*/);
-  for(QAction *action : qAsConst(mapOverlays))
+  for(QAction *action : std::as_const(mapOverlays))
     state.restore(action);
 
   if(OptionData::instance().getFlags().testFlag(opts::STARTUP_LOAD_MAP_SETTINGS))
@@ -4290,9 +4290,9 @@ void MapWidget::debugMovingAircraft(QInputEvent *event, int upDown)
   const QWheelEvent *wheelEvent = dynamic_cast<const QWheelEvent *>(event);
   QPoint eventPos;
   if(mouseEvent != nullptr)
-    eventPos = mouseEvent->pos();
+    eventPos = mouseEvent->position().toPoint();
   else if(wheelEvent != nullptr)
-    eventPos = wheelEvent->pos();
+    eventPos = wheelEvent->position().toPoint();
 
   if(!(altInit < map::INVALID_ALTITUDE_VALUE))
   {

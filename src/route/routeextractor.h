@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2023 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2025 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -41,7 +41,7 @@ public:
 
   /* Extract route points and total distance if calculateRoute was successful.
    * From and to are not included in the list */
-  void extractRoute(QVector<RouteEntry>& route, float& distanceMeter) const;
+  void extractRoute(QList<RouteEntry>& route, float& distanceMeter) const;
 
 private:
   map::MapType toMapType(atools::routing::NodeType type) const;

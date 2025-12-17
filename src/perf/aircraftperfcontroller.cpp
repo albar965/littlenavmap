@@ -445,7 +445,6 @@ bool AircraftPerfController::saveAsStr(const QString& string) const
       if(file.open(QIODevice::WriteOnly | QIODevice::Text))
       {
         QTextStream stream(&file);
-        stream.setCodec("UTF-8");
         stream << string.toUtf8();
         file.close();
       }
@@ -1083,7 +1082,7 @@ void AircraftPerfController::fuelReport(atools::util::HtmlBuilder& html, bool pr
       {
         html.p();
         html.warning(tr("Possible problems found:")).br();
-        for(const QString& err : qAsConst(extraErrors))
+        for(const QString& err : std::as_const(extraErrors))
           html.warning(err).br();
         html.pEnd();
       }

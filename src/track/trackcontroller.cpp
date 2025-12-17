@@ -131,10 +131,10 @@ void TrackController::startDownloadInternal()
   deleteTracks();
 
   // Append all to queue and start
-  QVector<atools::track::TrackType> trackTypes = enabledTracks();
+  QList<atools::track::TrackType> trackTypes = enabledTracks();
   downloadQueue.append(trackTypes);
 
-  for(atools::track::TrackType trackType : qAsConst(trackTypes))
+  for(atools::track::TrackType trackType : std::as_const(trackTypes))
     downloader->startDownload(trackType);
 
   NavApp::setStatusMessage(tr("Track download started."));
@@ -185,7 +185,7 @@ bool TrackController::hasPacotsTracks()
   return hasTracks() && enabledTracks().contains(atools::track::PACOTS);
 }
 
-void TrackController::trackDownloadFinished(const atools::track::TrackVectorType& tracks, atools::track::TrackType type)
+void TrackController::trackDownloadFinished(const atools::track::TrackListType& tracks, atools::track::TrackType type)
 {
   qDebug() << Q_FUNC_INFO << static_cast<int>(type) << "size" << tracks.size();
 
@@ -307,9 +307,9 @@ void TrackController::tracksLoaded()
   }
 }
 
-QVector<atools::track::TrackType> TrackController::enabledTracks() const
+QList<atools::track::TrackType> TrackController::enabledTracks() const
 {
-  QVector<atools::track::TrackType> retval;
+  QList<atools::track::TrackType> retval;
   // Ui::MainWindow *ui = NavApp::getMainUi();
 
   // if(ui->actionTrackSourcesNat->isChecked())

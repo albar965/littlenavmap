@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2023 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2025 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -68,7 +68,7 @@ void ColumnList::updateDistanceSearchWidgets()
 void ColumnList::updateUnits()
 {
   // Replace widget suffices and table headers
-  for(Column *col : qAsConst(columns))
+  for(Column *col : std::as_const(columns))
   {
     col->colDisplayName = Unit::replacePlaceholders(col->colOrigDisplayName);
 
@@ -165,7 +165,7 @@ void ColumnList::assignMinMaxWidget(const QString& field, QWidget *minWidget, QW
 
 void ColumnList::resetWidgets(const QStringList& exceptColNames)
 {
-  for(Column *cd : qAsConst(columns))
+  for(Column *cd : std::as_const(columns))
   {
     // Reset widgets assigned to columns
     if(!exceptColNames.contains(cd->getColumnName()))

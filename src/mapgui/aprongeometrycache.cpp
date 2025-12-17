@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2024 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2025 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -102,7 +102,7 @@ QPainterPath ApronGeometryCache::getApronGeometry(const map::MapApron& apron, fl
     QPainterPath boundaryPath = pathForBoundary(apron.geometry.boundary, fast);
 
     // subtract holes
-    for(const atools::fs::common::Boundary& hole : qAsConst(apron.geometry.holes))
+    for(const atools::fs::common::Boundary& hole : std::as_const(apron.geometry.holes))
       boundaryPath = boundaryPath.subtracted(pathForBoundary(hole, fast));
 
 #if !defined(DEBUG_NO_XP_APRON_CACHE)

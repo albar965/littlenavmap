@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2024 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2025 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -46,6 +46,7 @@ class RouteLabel
 
 public:
   explicit RouteLabel(QWidget *parent, const Route& routeParam);
+  virtual ~RouteLabel() override;
 
   /* Update the header label according to current configuration options */
   void updateHeaderLabel();

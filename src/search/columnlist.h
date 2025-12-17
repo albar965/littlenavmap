@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2023 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2025 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -29,7 +29,6 @@ class QSpinBox;
 class QComboBox;
 class QCheckBox;
 class QPushButton;
-class QStringList;
 
 /*
  * A list of column descriptors that define behavior and display in the table
@@ -54,7 +53,7 @@ public:
   const Column *getDefaultSortColumn() const;
 
   /* Get all column descriptors */
-  const QVector<Column *>& getColumns() const
+  const QList<Column *>& getColumns() const
   {
     return columns;
   }
@@ -134,7 +133,7 @@ private:
   QCheckBox *distanceCheckBox = nullptr;
   QComboBox *distanceDirectionWidget = nullptr;
   QString table, idColumn;
-  QVector<Column *> columns;
+  QList<Column *> columns;
   QHash<QString, Column *> nameColumnMap;
 };
 

@@ -259,7 +259,7 @@ void RouteExport::rotateFile(const QString& filename)
 }
 
 bool RouteExport::routeExportCheckDatabase(const QString& exportSimulatorName,
-                                           const QVector<atools::fs::FsPaths::SimulatorType> requiredDbTypes)
+                                           const QList<atools::fs::FsPaths::SimulatorType> requiredDbTypes)
 {
   if(!requiredDbTypes.contains(NavApp::getCurrentSimulatorDb()))
   {
@@ -1338,7 +1338,6 @@ bool RouteExport::routeExportHtml(const RouteExportFormat& format)
     if(file.open(QIODevice::WriteOnly | QIODevice::Text))
     {
       QTextStream stream(&file);
-      stream.setCodec("UTF-8");
       stream << NavApp::getRouteController()->getFlightplanTableAsHtmlDoc(24 /* iconSizePixel */);
       mainWindow->setStatusMessage(tr("Flight plan saved as HTML."));
       return true;
@@ -1364,7 +1363,7 @@ bool RouteExport::routeValidateMulti(const RouteExportFormat& format)
 
 /* Check if route has valid departure  and destination and departure parking.
  *  @return true if route can be saved anyway */
-bool RouteExport::routeValidate(const QVector<RouteExportFormat>& formats, bool multi)
+bool RouteExport::routeValidate(const QList<RouteExportFormat>& formats, bool multi)
 {
   // NavApp::updateRouteCycleMetadata();
 
@@ -1609,14 +1608,14 @@ bool RouteExport::exportFlighplanAsUFmc(const QString& filename)
     {
       QTextStream stream(&file);
       // Save start and destination
-      stream << list.constFirst() << endl << list.constLast() << endl;
+      stream << list.constFirst() << Qt::endl << list.constLast() << Qt::endl;
 
       // Waypoints and airways
       for(int i = 1; i < list.size() - 1; i++)
-        stream << list.at(i) << endl;
+        stream << list.at(i) << Qt::endl;
 
       // File end
-      stream << "99" << endl;
+      stream << "99" << Qt::endl;
 
       file.close();
       return true;
@@ -1696,7 +1695,6 @@ bool RouteExport::exportFlighplanAsVfp(const RouteExportData& exportData, const 
   // VoiceType="Full" />
   QString xmlString;
   QXmlStreamWriter writer(&xmlString);
-  writer.setCodec("UTF-8");
 
   writer.writeStartDocument("1.0");
   writer.writeStartElement("FlightPlan");
@@ -1741,7 +1739,6 @@ bool RouteExport::exportFlighplanAsVfp(const RouteExportData& exportData, const 
   if(xmlFile.open(QIODevice::WriteOnly | QIODevice::Text))
   {
     QTextStream stream(&xmlFile);
-    stream.setCodec("UTF-8");
     stream.setGenerateByteOrderMark(false);
     stream << xmlString.toUtf8();
     xmlFile.close();
@@ -1955,7 +1952,7 @@ bool RouteExport::exportFlighplanAsCorteIn(const QString& filename)
     QTextStream stream(&file);
 
     if(!endsWithEol)
-      stream << endl;
+      stream << Qt::endl;
     stream << txt;
     file.close();
     return true;
@@ -1979,7 +1976,7 @@ bool RouteExport::exportFlighplanAsProSim(const QString& filename)
   // </companyroutes>
 
   // Read the XML file and keep all routes ===========================================
-  QVector<std::pair<QString, QString> > routes;
+  QList<std::pair<QString, QString> > routes;
   QSet<QString> routeNames;
 
   QFile file(filename);
@@ -1996,7 +1993,7 @@ bool RouteExport::exportFlighplanAsProSim(const QString& filename)
 
         QXmlStreamReader::TokenType token = reader.readNext();
 
-        if(token == QXmlStreamReader::StartElement && reader.name() == "route")
+        if(token == QXmlStreamReader::StartElement && reader.name() == QStringLiteral("route"))
         {
           QString name = reader.attributes().value("name").toString();
           QString route = reader.readElementText();

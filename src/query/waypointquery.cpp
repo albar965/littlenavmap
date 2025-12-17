@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2024 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2025 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -129,7 +129,7 @@ void WaypointQuery::getWaypointNearest(map::MapWaypoint& waypoint, const Pos& po
   waypointNearestQuery->finish();
 }
 
-void WaypointQuery::getWaypointsRect(QVector<map::MapWaypoint>& waypoints, const Pos& pos, float distanceNm)
+void WaypointQuery::getWaypointsRect(QList<map::MapWaypoint>& waypoints, const Pos& pos, float distanceNm)
 {
   if(!query::valid(Q_FUNC_INFO, waypointRectQuery))
     return;
@@ -151,7 +151,7 @@ void WaypointQuery::getWaypointsRect(QVector<map::MapWaypoint>& waypoints, const
 
 void WaypointQuery::getWaypointRectNearest(map::MapWaypoint& waypoint, const Pos& pos, float distanceNm)
 {
-  QVector<map::MapWaypoint> waypoints;
+  QList<map::MapWaypoint> waypoints;
   getWaypointsRect(waypoints, pos, distanceNm);
   if(!waypoints.isEmpty())
     waypoint = waypoints.constFirst();

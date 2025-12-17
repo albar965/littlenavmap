@@ -142,7 +142,7 @@ void MapScreenIndex::updateAirspaceScreenGeometryInternal(QSet<map::MapAirspaceI
   {
     map::MapAirspaceFilter filter = mapWidget->getShownAirspaceTypesForLayer();
 
-    AirspaceVector airspaces;
+    AirspaceList airspaces;
 
     // Get displayed airspaces ================================
     bool overflow = false;
@@ -151,21 +151,21 @@ void MapScreenIndex::updateAirspaceScreenGeometryInternal(QSet<map::MapAirspaceI
                                                   NavApp::getRouteConst().getCruiseAltitudeFt(), false /* lazy */, source, overflow);
 
     // Get highlighted airspaces from info window ================================
-    for(const map::MapAirspace& airspace : qAsConst(airspaceHighlights))
+    for(const map::MapAirspace& airspace : std::as_const(airspaceHighlights))
     {
       if(airspace.hasValidGeometry())
         airspaces.append(&airspace);
     }
 
     // Get highlighted airspaces from online center search ================================
-    for(const map::MapAirspace& airspace : qAsConst(searchHighlights->airspaces))
+    for(const map::MapAirspace& airspace : std::as_const(searchHighlights->airspaces))
     {
       if(airspace.hasValidGeometry())
         airspaces.append(&airspace);
     }
 
     CoordinateConverter conv(mapWidget->viewport());
-    for(const map::MapAirspace *airspace : qAsConst(airspaces))
+    for(const map::MapAirspace *airspace : std::as_const(airspaces))
     {
       if(!(airspace->type & filter.types) && !highlights)
         continue;
@@ -178,7 +178,7 @@ void MapScreenIndex::updateAirspaceScreenGeometryInternal(QSet<map::MapAirspaceI
         const atools::geo::LineString *lines = queries->getAirspaceQueries()->getAirspaceGeometry(airspace->combinedId());
         if(lines != nullptr)
         {
-          const QVector<QPolygonF *> polys = conv.createPolygons(*lines, mapWidget->rect());
+          const QList<QPolygonF *> polys = conv.createPolygons(*lines, mapWidget->rect());
           for(const QPolygonF *poly : polys)
           {
             if(!poly->isEmpty())
@@ -252,13 +252,13 @@ void MapScreenIndex::updateIlsScreenGeometry(const Marble::GeoDataLatLonBox& cur
   if(!scale->isValid())
     return;
 
-  QVector<map::MapIls> ilsVector;
+  QList<map::MapIls> ilsVector;
   QSet<int> routeIlsIds;
   if(paintLayer->getShownMapDisplayTypes().testFlag(map::FLIGHTPLAN))
   {
     // Get ILS from flight plan which are also painted in the profile - only if plan is shown
     ilsVector = NavApp::getRouteConst().getDestRunwayIlsMap();
-    for(const map::MapIls& ils : qAsConst(ilsVector))
+    for(const map::MapIls& ils : std::as_const(ilsVector))
       routeIlsIds.insert(ils.id);
   }
 
@@ -296,7 +296,7 @@ void MapScreenIndex::updateIlsScreenGeometry(const Marble::GeoDataLatLonBox& cur
   }
 
   CoordinateConverter conv(mapWidget->viewport());
-  for(const map::MapIls& ils : qAsConst(ilsVector))
+  for(const map::MapIls& ils : std::as_const(ilsVector))
   {
     if(!ils.hasGeometry)
       continue;
@@ -436,7 +436,7 @@ void MapScreenIndex::updateAirwayScreenGeometryInternal(QSet<int>& ids, const Ma
     else
     {
       // Get geometry from highlights
-      for(const QList<map::MapAirway>& airwayList : qAsConst(airwayHighlights))
+      for(const QList<map::MapAirway>& airwayList : std::as_const(airwayHighlights))
       {
         for(const map::MapAirway& airway : airwayList)
         {
@@ -457,7 +457,7 @@ void MapScreenIndex::updateLineScreenGeometry(QList<std::pair<int, QLine> >& ind
   QRect mapGeo = mapWidget->rect();
 
   const QList<Marble::GeoDataLatLonBox> curBoxCorrectedList = query::splitAtAntiMeridian(curBox);
-  const QVector<Marble::GeoDataLineString *> geoLineStringVector = geoLineStr.toDateLineCorrected();
+  const QList<Marble::GeoDataLineString *> geoLineStringVector = geoLineStr.toDateLineCorrected();
 
   for(const Marble::GeoDataLatLonBox& curBoxCorrected : curBoxCorrectedList)
   {
@@ -465,8 +465,8 @@ void MapScreenIndex::updateLineScreenGeometry(QList<std::pair<int, QLine> >& ind
     {
       if(lineCorrected->latLonAltBox().intersects(curBoxCorrected))
       {
-        QVector<QPolygonF> polys = conv.wToS(*lineCorrected);
-        for(const QPolygonF& p : qAsConst(polys))
+        QList<QPolygonF> polys = conv.wToS(*lineCorrected);
+        for(const QPolygonF& p : std::as_const(polys))
         {
           for(int k = 0; k < p.size() - 1; k++)
           {
@@ -510,7 +510,7 @@ void MapScreenIndex::setSearchHighlights(const map::MapResult& newHighlights)
   *searchHighlights = newHighlights;
 }
 
-void MapScreenIndex::setProcedureHighlights(const QVector<proc::MapProcedureLegs>& value)
+void MapScreenIndex::setProcedureHighlights(const QList<proc::MapProcedureLegs>& value)
 {
   procedureHighlights = value;
 }
@@ -649,7 +649,7 @@ const atools::fs::sc::SimConnectUserAircraft& MapScreenIndex::getLastUserAircraf
   return lastSimData->getUserAircraftConst();
 }
 
-const QVector<atools::fs::sc::SimConnectAircraft>& MapScreenIndex::getAiAircraft() const
+const QList<atools::fs::sc::SimConnectAircraft>& MapScreenIndex::getAiAircraft() const
 {
   return simData->getAiAircraftConst();
 }
@@ -1083,7 +1083,7 @@ void MapScreenIndex::getNearestProcedureHighlights(int xs, int ys, int maxDistan
 
 void MapScreenIndex::nearestProcedureHighlightsInternal(int xs, int ys, int maxDistance, map::MapResult& result,
                                                         map::MapObjectQueryTypes types,
-                                                        const QVector<proc::MapProcedureLegs>& procedureLegs, bool previewAll) const
+                                                        const QList<proc::MapProcedureLegs>& procedureLegs, bool previewAll) const
 {
   CoordinateConverter conv(mapWidget->viewport());
   int x, y;
@@ -1318,7 +1318,7 @@ void MapScreenIndex::getNearestIls(int xs, int ys, int maxDistance, map::MapResu
 
   // Get ILS map objects for ids
   MapQuery *mapQuery = queries->getMapQuery();
-  for(int id : qAsConst(ilsIds))
+  for(int id : std::as_const(ilsIds))
     result.ils.append(mapQuery->getIlsById(id));
 }
 

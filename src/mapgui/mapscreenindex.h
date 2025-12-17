@@ -156,12 +156,12 @@ public:
   }
 
   /* Multiple procedures and legs preview from search */
-  const QVector<proc::MapProcedureLegs>& getProcedureHighlights() const
+  const QList<proc::MapProcedureLegs>& getProcedureHighlights() const
   {
     return procedureHighlights;
   }
 
-  void setProcedureHighlights(const QVector<proc::MapProcedureLegs>& value);
+  void setProcedureHighlights(const QList<proc::MapProcedureLegs>& value);
 
   /* Single procedure from search selection */
   const proc::MapProcedureLegs& getProcedureHighlight() const
@@ -248,7 +248,7 @@ public:
 
   const atools::fs::sc::SimConnectUserAircraft& getLastUserAircraft() const;
 
-  const QVector<atools::fs::sc::SimConnectAircraft>& getAiAircraft() const;
+  const QList<atools::fs::sc::SimConnectAircraft>& getAiAircraft() const;
 
   void clearSimData();
 
@@ -286,12 +286,12 @@ public:
     return airwayLines;
   }
 
-  const QVector<map::MapRef>& getRouteDrawnNavaidsConst() const
+  const QList<map::MapRef>& getRouteDrawnNavaidsConst() const
   {
     return routeDrawnNavaids;
   }
 
-  QVector<map::MapRef> *getRouteDrawnNavaids()
+  QList<map::MapRef> *getRouteDrawnNavaids()
   {
     return &routeDrawnNavaids;
   }
@@ -308,7 +308,7 @@ private:
   void getNearestHighlights(int xs, int ys, int maxDistance, map::MapResult& result, map::MapObjectQueryTypes types) const;
   void getNearestProcedureHighlights(int xs, int ys, int maxDistance, map::MapResult& result, map::MapObjectQueryTypes types) const;
   void nearestProcedureHighlightsInternal(int xs, int ys, int maxDistance, map::MapResult& result, map::MapObjectQueryTypes types,
-                                          const QVector<proc::MapProcedureLegs>& procedureLegs, bool previewAll) const;
+                                          const QList<proc::MapProcedureLegs>& procedureLegs, bool previewAll) const;
   void updateAirspaceScreenGeometryInternal(QSet<map::MapAirspaceId>& ids, map::MapAirspaceSources source,
                                             const Marble::GeoDataLatLonBox& curBox, bool highlights);
   void updateAirwayScreenGeometryInternal(QSet<int>& ids, const Marble::GeoDataLatLonBox& curBox, bool highlight);
@@ -342,7 +342,7 @@ private:
 
   /* Cleared before and filled while painting with all navaids that were actually painted from route and procedures including recommended.
    * This includes route userpoints */
-  QVector<map::MapRef> routeDrawnNavaids;
+  QList<map::MapRef> routeDrawnNavaids;
 
   /* One procedure highlight from selection */
   proc::MapProcedureLeg *procedureLegHighlight = nullptr;
@@ -350,7 +350,7 @@ private:
   proc::MapProcedureLegs *procedureHighlight = nullptr;
 
   /* Highlights or leg fix and related fix */
-  QVector<proc::MapProcedureLegs> procedureHighlights;
+  QList<proc::MapProcedureLegs> procedureHighlights;
 
   /* All airspace highlights from information window */
   QList<map::MapAirspace> airspaceHighlights;

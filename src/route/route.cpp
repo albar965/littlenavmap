@@ -902,7 +902,7 @@ void Route::updateApproachIls()
 #endif
 }
 
-void Route::updateApproachRunwayEndAndIls(QVector<map::MapIls>& ilsVector, map::MapRunwayEnd *runwayEnd, bool recommended, bool map,
+void Route::updateApproachRunwayEndAndIls(QList<map::MapIls>& ilsVector, map::MapRunwayEnd *runwayEnd, bool recommended, bool map,
                                           bool profile) const
 {
   QString destAirportIdent = getDestinationAirportLeg().getIdent();
@@ -930,7 +930,7 @@ void Route::updateApproachRunwayEndAndIls(QVector<map::MapIls>& ilsVector, map::
       {
         // ILS does not even match runway - try fuzzy to consider renamed runways
         QStringList variants = atools::fs::util::runwayNameVariants(approachLegs.runwayEnd.name);
-        for(const QString& runwayVariant : qAsConst(variants))
+        for(const QString& runwayVariant : std::as_const(variants))
           maptools::insert(ilsMapAll, mapQuery->getIlsByAirportAndRunway(destAirportIdent, runwayVariant));
       }
 
@@ -947,7 +947,7 @@ void Route::updateApproachRunwayEndAndIls(QVector<map::MapIls>& ilsVector, map::
            leg.recFixType != "TN" && leg.recFixType != "W")
         {
           map::MapIls foundIls;
-          for(const map::MapIls& ils : qAsConst(ilsMapAll))
+          for(const map::MapIls& ils : std::as_const(ilsMapAll))
           {
             if(leg.recFixIdent == ils.ident)
             {
@@ -1033,7 +1033,7 @@ void Route::updateApproachRunwayEndAndIls(QVector<map::MapIls>& ilsVector, map::
         }
       }
 
-      ilsVector = QVector<map::MapIls>::fromList(ilsMapAll.values());
+      ilsVector = QList<map::MapIls>::fromList(ilsMapAll.values());
 
     } // if(approachLegs.runwayEnd.isFullyValid())
   } // if(approachLegs.runwayEnd.isFullyValid())
@@ -1166,7 +1166,7 @@ const RouteLeg& Route::getDepartureAirportLeg() const
 }
 
 void Route::getNearestRecommended(const CoordinateConverter& conv, int xs, int ys, int screenDistance, map::MapResult& mapobjects,
-                                  map::MapObjectQueryTypes types, const QVector<map::MapRef>& routeDrawnNavaids) const
+                                  map::MapObjectQueryTypes types, const QList<map::MapRef>& routeDrawnNavaids) const
 {
   using maptools::insertSortedByDistance;
 
@@ -1233,7 +1233,7 @@ void Route::getNearestRecommended(const CoordinateConverter& conv, int xs, int y
 }
 
 void Route::getNearest(const CoordinateConverter& conv, int xs, int ys, int screenDistance, map::MapResult& mapobjects,
-                       map::MapObjectQueryTypes types, const QVector<map::MapRef>& routeDrawnNavaids) const
+                       map::MapObjectQueryTypes types, const QList<map::MapRef>& routeDrawnNavaids) const
 {
   using maptools::insertSortedByDistance;
 
@@ -1491,7 +1491,7 @@ bool Route::canCalcRoute() const
 
 void Route::removeAlternateLegs()
 {
-  QVector<int> indexes;
+  QList<int> indexes;
 
   // Collect indexes to delete in reverse order
   for(int i = size() - 1; i >= 0; i--)
@@ -1513,7 +1513,7 @@ void Route::removeAlternateLegs()
 
 void Route::removeMissedLegs()
 {
-  QVector<int> indexes;
+  QList<int> indexes;
 
   // Collect indexes to delete in reverse order
   for(int i = size() - 1; i >= 0; i--)
@@ -1615,9 +1615,9 @@ QStringList Route::getAlternateDisplayIdents() const
   return alternateIdents;
 }
 
-const QVector<map::MapAirport> Route::getAlternateAirports() const
+const QList<map::MapAirport> Route::getAlternateAirports() const
 {
-  QVector<map::MapAirport> alternates;
+  QList<map::MapAirport> alternates;
   int offset = getAlternateLegsOffset();
   if(offset != map::INVALID_INDEX_VALUE)
   {
@@ -1867,7 +1867,7 @@ void Route::removeLegs(int from, int to)
 
 void Route::removeRouteLegs()
 {
-  QVector<int> indexes;
+  QList<int> indexes;
 
   // Collect indexes to delete in reverse order
   for(int i = getSizeWithoutAlternates() - 2; i > 0; i--)
@@ -1887,7 +1887,7 @@ void Route::removeRouteLegs()
 
 void Route::clearProcedureLegs(proc::MapProcedureTypes type, bool clearRoute, bool clearFlightplan)
 {
-  QVector<int> indexes;
+  QList<int> indexes;
 
   // Collect indexes to delete in reverse order
   for(int i = size() - 1; i >= 0; i--)
@@ -2007,7 +2007,7 @@ int Route::adjustedActiveLeg() const
   if(retval < map::INVALID_INDEX_VALUE)
   {
     // Put the active back into bounds
-    retval = std::min(retval, size() - 1);
+    retval = std::min(static_cast<qsizetype>(retval), size() - 1);
     retval = std::max(retval, 0);
   }
   return retval;
@@ -2244,7 +2244,7 @@ void Route::updateBoundingRect()
   {map::AIRPORT, map::VOR, map::NDB, map::WAYPOINT, map::PROCEDURE_POINT, map::USERPOINTROUTE};
 
   atools::geo::LineString positions;
-  for(const RouteLeg& leg : qAsConst(*this))
+  for(const RouteLeg& leg : std::as_const(*this))
   {
     positions.append(leg.getPosition());
 
@@ -2787,7 +2787,7 @@ void Route::createRouteLegsFromFlightplan()
 
 void Route::assignAltitudes()
 {
-  QVector<float> altVector = altitude->getAltitudes();
+  QList<float> altVector = altitude->getAltitudes();
   for(int i = 0; i < size(); i++)
     flightplan[i].setAltitude(altVector.at(i));
 }
@@ -2858,7 +2858,7 @@ Route Route::adjustedToOptions(const Route& origRoute, rf::RouteAdjustOptions op
   // Restore duplicate waypoints at route/procedure entry/exits which were removed after route calculation
   if(options.testFlag(rf::ADD_PROC_ENTRY_EXIT_AIRWAY) || options.testFlag(rf::ADD_PROC_ENTRY_EXIT))
   {
-    QVector<float> altVector = route.getAltitudeLegs().getAltitudes();
+    QList<float> altVector = route.getAltitudeLegs().getAltitudes();
 
     // Check arrival airway ===========================================================================
     int arrivaLegsOffset = map::INVALID_INDEX_VALUE;
@@ -3938,45 +3938,45 @@ QString Route::buildDefaultFilenameShort(const QString& separator, const QString
 QDebug operator<<(QDebug out, const Route& route)
 {
   QDebugStateSaver saver(out);
-  out << route.getFlightplanConst().getProperties() << endl << endl;
+  out << route.getFlightplanConst().getProperties()  << Qt::endl  << Qt::endl;
 
-  out << endl << "Route ==================================================================" << endl;
+  out  << Qt::endl << "Route =================================================================="  << Qt::endl;
   for(int i = 0; i < route.size(); ++i)
-    out << "===" << i << route.value(i) << endl;
+    out << "===" << i << route.value(i)  << Qt::endl;
 
-  out << endl << "Departure Parking ===========" << endl;
-  out << "parking" << route.getDepartureParking() << endl;
+  out  << Qt::endl << "Departure Parking ==========="  << Qt::endl;
+  out << "parking" << route.getDepartureParking()  << Qt::endl;
 
-  out << endl << "Departure Start ===========" << endl;
-  out << "start" << route.getDepartureStart() << endl;
+  out  << Qt::endl << "Departure Start ==========="  << Qt::endl;
+  out << "start" << route.getDepartureStart()  << Qt::endl;
 
-  out << endl << "Departure ===========" << endl;
+  out  << Qt::endl << "Departure ==========="  << Qt::endl;
   out << "offset" << route.getDepartureAirportLegIndex();
-  out << route.getDepartureAirportLeg() << endl;
+  out << route.getDepartureAirportLeg()  << Qt::endl;
 
-  out << endl << "Destination ===========" << endl;
+  out  << Qt::endl << "Destination ==========="  << Qt::endl;
   out << "offset" << route.getDestinationAirportLegIndex();
-  out << route.getDestinationAirportLeg() << endl;
+  out << route.getDestinationAirportLeg()  << Qt::endl;
 
-  out << endl << "Departure Procedure ===========" << endl;
+  out  << Qt::endl << "Departure Procedure ==========="  << Qt::endl;
   out << "offset" << route.getSidLegsOffset();
-  out << route.getSidLegs() << endl;
+  out << route.getSidLegs()  << Qt::endl;
 
-  out << "STAR Procedure ===========" << endl;
-  out << "offset" << route.getStarLegsOffset() << endl;
-  out << route.getStarLegs() << endl;
+  out << "STAR Procedure ==========="  << Qt::endl;
+  out << "offset" << route.getStarLegsOffset()  << Qt::endl;
+  out << route.getStarLegs()  << Qt::endl;
 
-  out << "Arrival Procedure ========" << endl;
-  out << "offset" << route.getApproachLegsOffset() << endl;
-  out << route.getApproachLegs() << endl;
+  out << "Arrival Procedure ========"  << Qt::endl;
+  out << "offset" << route.getApproachLegsOffset()  << Qt::endl;
+  out << route.getApproachLegs()  << Qt::endl;
 
-  out << "Alternates ========" << endl;
-  out << "offset" << route.getAlternateLegsOffset() << "num" << route.getNumAlternateLegs() << endl;
-  out << "==================================================================" << endl;
+  out << "Alternates ========"  << Qt::endl;
+  out << "offset" << route.getAlternateLegsOffset() << "num" << route.getNumAlternateLegs()  << Qt::endl;
+  out << "=================================================================="  << Qt::endl;
 
-  out << endl << "RouteAltitudeLegs ==================================================================" << endl;
+  out  << Qt::endl << "RouteAltitudeLegs =================================================================="  << Qt::endl;
   out << route.getAltitudeLegs();
-  out << "==================================================================" << endl;
+  out << "=================================================================="  << Qt::endl;
 
   return out;
 }

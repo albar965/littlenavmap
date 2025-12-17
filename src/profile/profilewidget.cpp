@@ -50,6 +50,8 @@
 #include <QPainter>
 #include <QTimer>
 #include <QtConcurrent/QtConcurrentRun>
+#include <QFile>
+#include <QFutureWatcher>
 #include <QStringBuilder>
 
 #include <marble/ElevationModel.h>
@@ -153,7 +155,7 @@ struct ElevationLeg
   atools::geo::LineString elevation, /* Ground elevation (Pos.altitude) and position */
                           geometry; /* Route geometry. Normally only start and endpoint.
                                      * More complex for procedures. */
-  QVector<double> distances; /* Distances along the route for each elevation point.
+  QList<double> distances; /* Distances along the route for each elevation point.
                               *  Measured from departure point. Nautical miles. */
   float maxElevation = 0.f; /* Max ground altitude for this leg */
 };
@@ -168,11 +170,31 @@ struct ElevationLegList
   int totalNumPoints = 0; /* Number of elevation points in whole flight plan */
 };
 
+struct ElevationLegListFuturePrivate
+{
+  /* Used to fetch result from thread */
+  QFuture<ElevationLegList> future;
+  /* Sends signal once thread is finished */
+  QFutureWatcher<ElevationLegList> watcher;
+  bool terminateThreadSignal = false;
+
+  void terminateThread()
+  {
+    if(future.isRunning() || future.isStarted())
+    {
+      terminateThreadSignal = true;
+      future.waitForFinished();
+    }
+  }
+
+};
+
 // =======================================================================================
 
 ProfileWidget::ProfileWidget(QWidget *parent)
   : QWidget(parent)
 {
+  futurePrivate = new ElevationLegListFuturePrivate;
   Ui::MainWindow *ui = NavApp::getMainUi();
   setSizePolicy(QSizePolicy::Ignored, QSizePolicy::Ignored);
 
@@ -210,7 +232,7 @@ ProfileWidget::ProfileWidget(QWidget *parent)
           this, &ProfileWidget::elevationUpdateAvailable);
 
   // Notification from thread that it has finished and we can get the result from the future
-  connect(&watcher, &QFutureWatcher<ElevationLegList>::finished, this, &ProfileWidget::updateThreadFinished);
+  connect(&futurePrivate->watcher, &QFutureWatcher<ElevationLegList>::finished, this, &ProfileWidget::updateThreadFinished);
 
   // Want mouse events even when no button is pressed
   setMouseTracking(true);
@@ -222,11 +244,12 @@ ProfileWidget::~ProfileWidget()
 
   updateTimer->stop();
   updateTimer->deleteLater();
-  terminateThread();
+  futurePrivate->terminateThread();
 
   ATOOLS_DELETE_LOG(scrollArea);
   ATOOLS_DELETE_LOG(legList);
   ATOOLS_DELETE_LOG(profileOptions);
+  ATOOLS_DELETE_LOG(futurePrivate);
 }
 
 float ProfileWidget::aircraftAlt(const atools::fs::sc::SimConnectUserAircraft& aircraft)
@@ -460,7 +483,7 @@ void ProfileWidget::updateScreenCoords()
 #ifdef DEBUG_INFORMATION_PROFILE
     int num = 0;
 #endif
-    for(const ElevationLeg& leg : qAsConst(legList->elevationLegs))
+    for(const ElevationLeg& leg : std::as_const(legList->elevationLegs))
     {
       if(leg.distances.isEmpty() || leg.elevation.isEmpty())
         continue;
@@ -505,7 +528,7 @@ void ProfileWidget::updateScreenCoords()
   }
 }
 
-const QVector<std::pair<int, int> > ProfileWidget::calcScaleValues()
+const QList<std::pair<int, int> > ProfileWidget::calcScaleValues()
 {
   int h = rect().height() - TOP;
   // Create a temporary scale based on current units
@@ -524,7 +547,7 @@ const QVector<std::pair<int, int> > ProfileWidget::calcScaleValues()
   }
 
   // Now collect all scale positions by iterating step-wise from bottom to top
-  QVector<std::pair<int, int> > steps;
+  QList<std::pair<int, int> > steps;
   for(float y = TOP + h, alt = 0; y > TOP; y -= step * tempScale, alt += step)
     steps.append(std::make_pair(y, alt));
 
@@ -644,7 +667,7 @@ void ProfileWidget::paintIls(QPainter& painter, const Route& route)
   if(!NavApp::getMainUi()->actionProfileShowIls->isChecked())
     return;
 
-  const QVector<map::MapIls>& ilsVector = route.getDestRunwayIlsProfile();
+  const QList<map::MapIls>& ilsVector = route.getDestRunwayIlsProfile();
   if(!ilsVector.isEmpty())
   {
     const RouteAltitude& altitudeLegs = route.getAltitudeLegs();
@@ -757,7 +780,7 @@ void ProfileWidget::paintVasi(QPainter& painter, const Route& route)
       int y = altitudeY(altitudeLegs.getDestinationAltitude());
 
       // Collect left and right VASI
-      QVector<std::pair<float, QString> > vasiList;
+      QList<std::pair<float, QString> > vasiList;
 
       if(runwayEnd.hasRightVasi())
         vasiList.append(std::make_pair(runwayEnd.rightVasiPitch, runwayEnd.rightVasiTypeStr()));
@@ -783,7 +806,7 @@ void ProfileWidget::paintVasi(QPainter& painter, const Route& route)
       }
 
       // Draw all VASI =================================================
-      for(const std::pair<float, QString>& vasi : qAsConst(vasiList))
+      for(const std::pair<float, QString>& vasi : std::as_const(vasiList))
       {
         // VASI has shorted visibility than ILS range
         float featherLen = atools::geo::nmToFeet(6.f);
@@ -844,7 +867,7 @@ void ProfileWidget::paintVasi(QPainter& painter, const Route& route)
           painter.drawText(10, -painter.fontMetrics().descent(), txt);
           painter.resetTransform();
         }
-      } // for(const std::pair<float, QString>& vasi : qAsConst(vasiList))
+      } // for(const std::pair<float, QString>& vasi : std::as_const(vasiList))
     } // if(leg != nullptr && leg->isValid())
   } // if(runwayEnd.isValid())
 }
@@ -952,7 +975,7 @@ void ProfileWidget::paintEvent(QPaintEvent *)
 
   int flightplanTextY = flightplanY + 14;
   painter.setPen(mapcolors::profileWaypointLinePen);
-  for(int wpx : qAsConst(waypointX))
+  for(int wpx : std::as_const(waypointX))
     painter.drawLine(wpx, 0, wpx, TOP + h);
 
   // Draw elevation scale lines ======================================================
@@ -992,7 +1015,7 @@ void ProfileWidget::paintEvent(QPaintEvent *)
 
   // Calculate line y positions ======================================================
   // Flight plan waypoint screen coordinates. x = distance and y = altitude  =======================
-  QVector<QPolygon> altLegs;
+  QList<QPolygon> altLegs;
   bool showTodToc = mapFeaturesDisplay.testFlag(map::FLIGHTPLAN_TOC_TOD);
 
   for(int i = 0; i < altitudeLegs.size(); i++)
@@ -1012,7 +1035,7 @@ void ProfileWidget::paintEvent(QPaintEvent *)
   }
 
   // Collect indexes in reverse (painting) order without missed ================
-  QVector<int> indexes;
+  QList<int> indexes;
   for(int i = 0; i <= route.getDestinationLegIndex(); i++)
   {
     if(route.value(i).getProcedureLeg().isMissed() || route.value(i).isAlternate())
@@ -1112,14 +1135,16 @@ void ProfileWidget::paintEvent(QPaintEvent *)
   bool activeValid = curRoute.isActiveValid();
 
   // Active normally start at 1 - this will consider all legs as not passed
-  int activeRouteLeg = activeValid ? atools::minmax(0, waypointX.size() - 1, curRoute.getActiveLegIndex()) : 0;
+  int activeRouteLeg = activeValid ? atools::minmax(static_cast<qsizetype>(0), waypointX.size() - 1,
+                                                    static_cast<qsizetype>(curRoute.getActiveLegIndex())) : 0;
   int passedRouteLeg = optionData.getFlags2().testFlag(opts2::MAP_ROUTE_DIM_PASSED) ? activeRouteLeg : 0;
 
   if(curRoute.isActiveAlternate())
   {
     // Disable active leg and show all legs as passed if an alternate is enabled
     activeRouteLeg = 0;
-    passedRouteLeg = optionData.getFlags2().testFlag(opts2::MAP_ROUTE_DIM_PASSED) ? std::min(passedRouteLeg + 1, waypointX.size()) : 0;
+    passedRouteLeg = optionData.getFlags2().testFlag(opts2::MAP_ROUTE_DIM_PASSED) ?
+                     std::min(static_cast<qsizetype>(passedRouteLeg + 1), waypointX.size()) : 0;
   }
 
   // Draw flight plan =============================================================================
@@ -1232,7 +1257,7 @@ void ProfileWidget::paintEvent(QPaintEvent *)
 
         // Draw vertical angle =============================================================================
         // Flight path angle label only for descent ==========================
-        QVector<float> angles;
+        QList<float> angles;
         bool requiredByProcedure = false;
 
         // Avoid display for wrongly required vertical angle if line is horizontal due to procedure inconsitencies
@@ -1471,7 +1496,7 @@ void ProfileWidget::paintEvent(QPaintEvent *)
 
     // ===============================================================================================
     // Waypoint, procedure, VOR and NDB labels - collect and merge texts
-    QVector<Label> labels;
+    QList<Label> labels;
     waypointIndex = waypointX.size();
     for(int routeIndex : indexes)
     {
@@ -1760,7 +1785,7 @@ void ProfileWidget::paintEvent(QPaintEvent *)
   scrollArea->updateLabelWidgets();
 }
 
-int ProfileWidget::calcLegScreenWidth(const QVector<QPolygon>& altLegs, int waypointIndex)
+int ProfileWidget::calcLegScreenWidth(const QList<QPolygon>& altLegs, int waypointIndex)
 {
   QPolygon legWidth = altLegs.value(waypointIndex + 1);
   int legScreenWidth = legWidth.isEmpty() ? 0 : legWidth.constLast().x() - legWidth.constFirst().x();
@@ -1920,8 +1945,8 @@ void ProfileWidget::updateTimeout()
     return;
 
   // Terminate and wait for thread
-  terminateThread();
-  terminateThreadSignal = false;
+  futurePrivate->terminateThread();
+  futurePrivate->terminateThreadSignal = false;
 
   // Need a copy of the leg list before starting thread to avoid synchronization problems
   // Start the computation in background
@@ -1930,10 +1955,10 @@ void ProfileWidget::updateTimeout()
   legs.route.updateApproachIls();
 
   // Start thread
-  future = QtConcurrent::run(this, &ProfileWidget::fetchRouteElevationsThread, legs);
+  futurePrivate->future = QtConcurrent::run(&ProfileWidget::fetchRouteElevationsThread, this, legs);
 
   // Watcher will call ProfileWidget::updateThreadFinished() when finished
-  watcher.setFuture(future);
+  futurePrivate->watcher.setFuture(futurePrivate->future);
 }
 
 /* Called by watcher when the thread is finished */
@@ -1942,10 +1967,10 @@ void ProfileWidget::updateThreadFinished()
   if(databaseLoadStatus)
     return;
 
-  if(!terminateThreadSignal)
+  if(!futurePrivate->terminateThreadSignal)
   {
     // Was not terminated in the middle of calculations - get result from the future
-    *legList = future.result();
+    *legList = futurePrivate->future.result();
     updateScreenCoords();
     updateErrorLabel();
     updateHeaderLabel();
@@ -1976,12 +2001,12 @@ bool ProfileWidget::fetchRouteElevations(atools::geo::LineString& elevations, co
       coords << mconvert::toGdc(geometry.at(i).getLonX(), geometry.at(i).getLatY())
              << mconvert::toGdc(geometry.at(i + 1).getLonX(), geometry.at(i + 1).getLatY());
 
-      const QVector<Marble::GeoDataLineString *> coordsCorrected = coords.toDateLineCorrected();
+      const QList<Marble::GeoDataLineString *> coordsCorrected = coords.toDateLineCorrected();
       for(const Marble::GeoDataLineString *ls : coordsCorrected)
       {
         for(int j = 1; j < ls->size(); j++)
         {
-          if(terminateThreadSignal)
+          if(futurePrivate->terminateThreadSignal)
             return false;
 
           const Marble::GeoDataCoordinates& c1 = ls->at(j - 1);
@@ -2047,7 +2072,7 @@ ElevationLegList ProfileWidget::fetchRouteElevationsThread(ElevationLegList legs
   // Loop over all route legs - first is departure airport point
   for(int i = 1; i <= legs.route.getDestinationLegIndex(); i++)
   {
-    if(terminateThreadSignal)
+    if(futurePrivate->terminateThreadSignal)
       // Return empty result
       return ElevationLegList();
 
@@ -2090,7 +2115,7 @@ ElevationLegList ProfileWidget::fetchRouteElevationsThread(ElevationLegList legs
       Pos lastPos;
       for(int j = 0; j < elevations.size(); j++)
       {
-        if(terminateThreadSignal)
+        if(futurePrivate->terminateThreadSignal)
           return ElevationLegList();
 
         Pos& coord = elevations[j];
@@ -2214,7 +2239,7 @@ void ProfileWidget::calculateDistancesAndPos(int x, atools::geo::Pos& pos, int& 
 
   // Get distance value index for lower and upper bound at cursor position
   int indexLowDist = 0;
-  QVector<double>::const_iterator lowDistIt = std::lower_bound(leg.distances.begin(), leg.distances.end(), distance);
+  QList<double>::const_iterator lowDistIt = std::lower_bound(leg.distances.begin(), leg.distances.end(), distance);
   if(lowDistIt != leg.distances.end())
   {
     indexLowDist = static_cast<int>(std::distance(leg.distances.begin(), lowDistIt));
@@ -2222,7 +2247,7 @@ void ProfileWidget::calculateDistancesAndPos(int x, atools::geo::Pos& pos, int& 
       indexLowDist = 0;
   }
   int indexUpperDist = 0;
-  QVector<double>::const_iterator upperDistIt = std::upper_bound(leg.distances.begin(), leg.distances.end(), distance);
+  QList<double>::const_iterator upperDistIt = std::upper_bound(leg.distances.begin(), leg.distances.end(), distance);
   if(upperDistIt != leg.distances.end())
   {
     indexUpperDist = static_cast<int>(std::distance(leg.distances.begin(), upperDistIt));
@@ -2706,7 +2731,7 @@ void ProfileWidget::preDatabaseLoad()
   jumpBack->cancel();
   updateTimer->stop();
   scrollArea->hideTooltip();
-  terminateThread();
+  futurePrivate->terminateThread();
   databaseLoadStatus = true;
 }
 
@@ -2764,7 +2789,7 @@ void ProfileWidget::restoreSplitter()
 void ProfileWidget::preRouteCalc()
 {
   updateTimer->stop();
-  terminateThread();
+  futurePrivate->terminateThread();
 }
 
 void ProfileWidget::mainWindowShown()
@@ -2791,15 +2816,6 @@ void ProfileWidget::updateProfileShowFeatures()
   {
     updateScreenCoords();
     update();
-  }
-}
-
-void ProfileWidget::terminateThread()
-{
-  if(future.isRunning() || future.isStarted())
-  {
-    terminateThreadSignal = true;
-    future.waitForFinished();
   }
 }
 

@@ -39,49 +39,53 @@ class Rect;
  * @brief Map actions controller implementation.
  */
 class MapActionsController :
-        public AbstractLnmActionsController
+  public AbstractLnmActionsController
 {
-    Q_OBJECT
+  Q_OBJECT
+
 public:
-    /* Parent has to be an instance of QWidget to be used by the MapPaintWidget */
-    Q_INVOKABLE MapActionsController(QObject* parent, bool verboseParam, AbstractInfoBuilder* infoBuilder);
-    /**
-     * @brief get map image by rect
-     */
-    Q_INVOKABLE WebApiResponse imageAction(WebApiRequest request);
-    /**
-     * @brief get map features by rect
-     */
-    Q_INVOKABLE WebApiResponse featuresAction(WebApiRequest request);
-    /**
-     * @brief get map feature by id
-     */
-    Q_INVOKABLE WebApiResponse featureAction(WebApiRequest request);
+  /* Parent has to be an instance of QWidget to be used by the MapPaintWidget */
+  Q_INVOKABLE MapActionsController(QObject *parent, bool verboseParam, AbstractInfoBuilder *infoBuilder);
 
-    explicit MapActionsController(QWidget *parent, bool verboseParam);
-    virtual ~MapActionsController() override;
+  /**
+   * @brief get map image by rect
+   */
+  Q_INVOKABLE WebApiResponse imageAction(WebApiRequest request);
 
-    MapActionsController(const MapActionsController& other) = delete;
-    MapActionsController& operator=(const MapActionsController& other) = delete;
+  /**
+   * @brief get map features by rect
+   */
+  Q_INVOKABLE WebApiResponse featuresAction(WebApiRequest request);
+
+  /**
+   * @brief get map feature by id
+   */
+  Q_INVOKABLE WebApiResponse featureAction(WebApiRequest request);
+
+  explicit MapActionsController(QWidget *parent, bool verboseParam);
+  virtual ~MapActionsController() override;
+
+  MapActionsController(const MapActionsController& other) = delete;
+  MapActionsController& operator=(const MapActionsController& other) = delete;
 
 protected:
+  /* Create or delete the map paint widget */
+  void init();
+  void deInit();
 
-    /* Create or delete the map paint widget */
-    void init();
-    void deInit();
+  /* Get pixmap with given width and height from current position. */
+  MapPixmap getPixmap(int width, int height);
 
-    /* Get pixmap with given width and height from current position. */
-    MapPixmap getPixmap(int width, int height);
+  /* Get map at given position and distance. Command can be used to zoom in/out or scroll from the given position:
+   * "in", "out", "left", "right", "up" and "down".  */
+  MapPixmap getPixmapPosDistance(int width, int height, atools::geo::Pos pos, float distanceKm, const QString& mapCommand,
+                                 const QString& errorCase = QString());
 
-    /* Get map at given position and distance. Command can be used to zoom in/out or scroll from the given position:
-     * "in", "out", "left", "right", "up" and "down".  */
-    MapPixmap getPixmapPosDistance(int width, int height, atools::geo::Pos pos, float distanceKm, const QString& mapCommand, const QString& errorCase = QLatin1String(""));
+  /* Zoom to rectangel on map. Neither draws wind pointer at top nor copyright. */
+  MapPixmap getPixmapRect(int width, int height, atools::geo::Rect rect, int detailFactor = MapLayerSettings::MAP_DEFAULT_DETAIL_LEVEL,
+                          const QString& errorCase = tr("Invalid rectangle"), bool ignoreUiScale = true);
 
-    /* Zoom to rectangel on map. Neither draws wind pointer at top nor copyright. */
-    MapPixmap getPixmapRect(int width, int height, atools::geo::Rect rect, int detailFactor = MapLayerSettings::MAP_DEFAULT_DETAIL_LEVEL,
-                            const QString& errorCase = tr("Invalid rectangle"), bool ignoreUiScale = true);
-
-    MapPaintWidget *mapPaintWidget = nullptr;
+  MapPaintWidget *mapPaintWidget = nullptr;
 };
 
 #endif // MAPACTIONSCONTROLLER_H

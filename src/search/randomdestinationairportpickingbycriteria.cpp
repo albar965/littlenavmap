@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2020 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2025 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -22,7 +22,6 @@
 
 #include <QRandomGenerator>
 
-
 int RandomDestinationAirportPickingByCriteria::distanceMin = 0;
 int RandomDestinationAirportPickingByCriteria::distanceMax = 0;
 std::pair<int, atools::geo::Pos> *RandomDestinationAirportPickingByCriteria::data = nullptr;
@@ -37,6 +36,11 @@ RandomDestinationAirportPickingByCriteria::RandomDestinationAirportPickingByCrit
   this->threadIndex = threadIndex;
   this->dataRangeIndexStart = dataRangeIndexStart;
   this->dataRangeLength = dataRangeLength;
+}
+
+RandomDestinationAirportPickingByCriteria::~RandomDestinationAirportPickingByCriteria()
+{
+
 }
 
 void RandomDestinationAirportPickingByCriteria::initStatics(int distanceMinMeter,
@@ -59,10 +63,10 @@ void RandomDestinationAirportPickingByCriteria::initData(std::pair<int, atools::
 
 void RandomDestinationAirportPickingByCriteria::run()
 {
-  QHash<int, bool> triedIndexDestination;                    // acts as a lookup which indices have been tried already
+  QHash<int, bool> triedIndexDestination; // acts as a lookup which indices have been tried already
   if(indexDeparture >= dataRangeIndexStart && indexDeparture < dataRangeIndexStart + dataRangeLength)
   {
-    triedIndexDestination.insert(indexDeparture - dataRangeIndexStart, true);     // destination shall != departure
+    triedIndexDestination.insert(indexDeparture - dataRangeIndexStart, true); // destination shall != departure
   }
 
   int indexDestination = -1;
@@ -88,44 +92,42 @@ void RandomDestinationAirportPickingByCriteria::run()
         do
         {
           indexDestination = QRandomGenerator::global()->bounded(dataRangeLength);
-        }
-        while(triedIndexDestination.contains(indexDestination));
+        }while(triedIndexDestination.contains(indexDestination));
       }
       else
       {
         indexDestination = QRandomGenerator::global()->bounded(dataRangeLength);
         while(triedIndexDestination.contains(indexDestination))
         {
-            ++indexDestination %= dataRangeLength;
+          ++indexDestination %= dataRangeLength;
         }
       }
       triedIndexDestination.insert(indexDestination, true);
-      distMeter = posDeparture->distanceMeterTo(offsettedData[indexDestination].second);    // distanceMeterTo checks for isValid
-    }
-    while(distMeter == atools::geo::Pos::INVALID_VALUE);
+      distMeter = posDeparture->distanceMeterTo(offsettedData[indexDestination].second); // distanceMeterTo checks for isValid
+    }while(distMeter == atools::geo::Pos::INVALID_VALUE);
     destinationSuccess = true;
-  }
-  while(distMeter < distanceMin || distMeter > distanceMax || binary_search(offsettedData[indexDestination].first, idsNonGrata, lengthIdsNonGrata) > -1);
+  }while(distMeter < distanceMin || distMeter > distanceMax || binary_search(offsettedData[indexDestination].first, idsNonGrata,
+                                                                             lengthIdsNonGrata) > -1);
 
 destinationsEnd:
   emit resultReady(destinationSuccess, dataRangeIndexStart + indexDestination, threadIndex);
 }
 
-int RandomDestinationAirportPickingByCriteria::binary_search(int searchFor, int* inArray, int arrayLength)
+int RandomDestinationAirportPickingByCriteria::binary_search(int searchFor, int *inArray, int arrayLength)
 {
   int toIndex = arrayLength - 1;
-  arrayLength >>= 1;          // arrayLength becomes the half way length from fromIndex to toIndex
+  arrayLength >>= 1; // arrayLength becomes the half way length from fromIndex to toIndex
   int fromIndex = 0;
 
-  while (fromIndex <= toIndex)
+  while(fromIndex <= toIndex)
   {
     int middleIndex = fromIndex + arrayLength;
     int inMiddle = inArray[middleIndex];
 
     arrayLength >>= 1;
-    if (inMiddle < searchFor)
+    if(inMiddle < searchFor)
       fromIndex = middleIndex + 1;
-    else if (inMiddle > searchFor)
+    else if(inMiddle > searchFor)
       toIndex = middleIndex - 1;
     else
       return middleIndex;

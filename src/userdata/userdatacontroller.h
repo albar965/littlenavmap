@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2024 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2025 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -19,7 +19,7 @@
 #define USERDATACONTROLLER_H
 
 #include <QObject>
-#include <QVector>
+#include <QList>
 
 namespace atools {
 namespace sql {
@@ -80,10 +80,10 @@ public:
   void addUserpoint(int id, const atools::geo::Pos& pos);
 
   /* Show edit dialog and save changes to the database if accepted for the given ids*/
-  void editUserpoints(const QVector<int>& ids);
+  void editUserpoints(const QList<int>& ids);
 
   /* Show message box and delete entries with the given ids */
-  void deleteUserpoints(const QVector<int>& ids);
+  void deleteUserpoints(const QList<int>& ids);
 
   /* Import and export from a predefined CSV format */
   void importCsv();
@@ -197,7 +197,7 @@ private:
   // Buttons and actions for toolbar and menu
   QToolButton *userdataToolButton = nullptr;
   QAction *actionAll = nullptr, *actionNone = nullptr, *actionUnknown = nullptr;
-  QVector<QAction *> actions;
+  QList<QAction *> actions;
   atools::sql::SqlRecord *lastAddedRecord = nullptr;
 
   /* Takes care about all action logic like toggling of all/selected and none/selected */

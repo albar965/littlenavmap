@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2024 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2025 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -22,7 +22,7 @@
 
 #include <QCache>
 #include <QObject>
-#include <QVector>
+#include <QList>
 
 class AircraftTrail;
 namespace atools {
@@ -85,7 +85,7 @@ public:
   LogdataController& operator=(const LogdataController& other) = delete;
 
   /* Show edit dialog and save changes to the database if accepted for the given ids */
-  void editLogEntries(const QVector<int>& ids);
+  void editLogEntries(const QList<int>& ids);
   void addLogEntry();
   void cleanupLogEntries();
 
@@ -138,7 +138,7 @@ public:
   void getFlightStatsAircraft(int& numTypes, int& numRegistrations, int& numNames, int& numSimulators);
 
   /* Simulator to number of logbook entries */
-  void getFlightStatsSimulator(QVector<std::pair<int, QString> >& numSimulators);
+  void getFlightStatsSimulator(QList<std::pair<int, QString> >& numSimulators);
 
   /* Make the non-modal statistics dialog visible */
   void statisticsLogbookShow();

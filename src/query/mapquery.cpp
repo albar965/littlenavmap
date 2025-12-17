@@ -630,9 +630,9 @@ map::MapHolding MapQuery::getHoldingById(int id) const
   return holding;
 }
 
-const QVector<map::MapIls> MapQuery::getIlsByAirportAndRunway(const QString& airportIdent, const QString& runway) const
+const QList<map::MapIls> MapQuery::getIlsByAirportAndRunway(const QString& airportIdent, const QString& runway) const
 {
-  QVector<MapIls> ils;
+  QList<MapIls> ils;
   for(const QString& rname : atools::fs::util::runwayNameZeroPrefixVariants(runway))
   {
     ils = ilsByAirportAndRunway(airportIdent, rname);
@@ -642,9 +642,9 @@ const QVector<map::MapIls> MapQuery::getIlsByAirportAndRunway(const QString& air
   return ils;
 }
 
-QVector<MapIls> MapQuery::getIlsByAirportAndIdent(const QString& airportIdent, const QString& ilsIdent) const
+QList<MapIls> MapQuery::getIlsByAirportAndIdent(const QString& airportIdent, const QString& ilsIdent) const
 {
-  QVector<MapIls> ilsList;
+  QList<MapIls> ilsList;
 
   if(!query::valid(Q_FUNC_INFO, ilsQuerySimByAirportAndIdent))
     return ilsList;
@@ -661,9 +661,9 @@ QVector<MapIls> MapQuery::getIlsByAirportAndIdent(const QString& airportIdent, c
   return ilsList;
 }
 
-QVector<map::MapIls> MapQuery::ilsByAirportAndRunway(const QString& airportIdent, const QString& runway) const
+QList<map::MapIls> MapQuery::ilsByAirportAndRunway(const QString& airportIdent, const QString& runway) const
 {
-  QVector<MapIls> ilsList;
+  QList<MapIls> ilsList;
   if(!query::valid(Q_FUNC_INFO, ilsQuerySimByAirportAndRw))
     return ilsList;
 
@@ -788,18 +788,18 @@ void MapQuery::getNearestScreenObjects(const CoordinateConverter& conv, const Ma
     // Add filtered waypoints back to list
     result.waypoints.clear();
     result.waypointIds.clear();
-    for(const map::MapWaypoint& wp : qAsConst(waypoints))
+    for(const map::MapWaypoint& wp : std::as_const(waypoints))
     {
       if(wp.artificial == map::WAYPOINT_ARTIFICIAL_NONE)
         insertSortedByDistance(conv, result.waypoints, &result.waypointIds, xs, ys, wp);
     }
 
     // Add VOR fetched for artificial waypoints
-    for(const map::MapVor& vor : qAsConst(vors))
+    for(const map::MapVor& vor : std::as_const(vors))
       insertSortedByDistance(conv, result.vors, &result.vorIds, xs, ys, vor);
 
     // Add NDB fetched for artificial waypoints
-    for(const map::MapNdb& ndb : qAsConst(ndbs))
+    for(const map::MapNdb& ndb : std::as_const(ndbs))
       insertSortedByDistance(conv, result.ndbs, &result.ndbIds, xs, ys, ndb);
   }
 
@@ -992,7 +992,7 @@ const QList<map::MapUserpoint>& MapQuery::getUserdataPoints(const GeoDataLatLonB
 
     for(const GeoDataLatLonBox& box : query::splitAtAntiMeridian(rect, queryRectInflationFactor, queryRectInflationIncrement))
     {
-      QVector<SqlQuery *> sqlQueries;
+      QList<SqlQuery *> sqlQueries;
       QStringList queryTypes;
       if(unknownType || (allTypesSelected && unknownType))
       {
@@ -1011,7 +1011,7 @@ const QList<map::MapUserpoint>& MapQuery::getUserdataPoints(const GeoDataLatLonB
         query::bindRect(box, query);
         query->bindValue(":dist", distanceNm);
 
-        for(const QString& queryType : qAsConst(queryTypes))
+        for(const QString& queryType : std::as_const(queryTypes))
         {
           if(query->hasPlaceholder(":type"))
             query->bindValue(":type", queryType);

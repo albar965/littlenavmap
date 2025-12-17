@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2020 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2025 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -25,6 +25,10 @@
 #include <QDateTime>
 #include <QObject>
 #include <QTimer>
+
+#ifdef QT_CORE5COMPAT_LIB
+class QTextCodec;
+#endif
 
 class MapLayer;
 
@@ -61,7 +65,6 @@ struct MapResult;
 }
 
 class MainWindow;
-class QTextCodec;
 
 /*
  * Manages recurring download of online network data from the status.txt and whazzup.txt files.
@@ -223,7 +226,9 @@ private:
 
   QString whazzupUrlFromStatus;
 
+#ifdef QT_CORE5COMPAT_LIB
   QTextCodec *codec = nullptr;
+#endif
 
   bool verbose = false;
 

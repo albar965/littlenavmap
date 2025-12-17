@@ -358,7 +358,7 @@ void ProcedureSearch::preDatabaseLoad()
 {
   // Clear display on map
   emit procedureSelected(proc::MapProcedureRef());
-  emit proceduresSelected(QVector<proc::MapProcedureRef>());
+  emit proceduresSelected(QList<proc::MapProcedureRef>());
   emit procedureLegSelected(proc::MapProcedureRef());
 
   treeWidget->clear();
@@ -440,7 +440,7 @@ void ProcedureSearch::showProceduresInternal(const map::MapAirport& airportSim, 
   // Remove all previews ===============
   treeWidget->clearSelection();
   emit procedureSelected(proc::MapProcedureRef());
-  emit proceduresSelected(QVector<proc::MapProcedureRef>());
+  emit proceduresSelected(QList<proc::MapProcedureRef>());
   emit procedureLegSelected(proc::MapProcedureRef());
 
   // Update fields with new data ===================
@@ -479,7 +479,7 @@ void ProcedureSearch::treeViewStateFromRoute()
   const Route& route = NavApp::getRouteConst();
   const map::MapAirport& departureAirport = route.getDepartureAirportLeg().getAirport();
   const map::MapAirport& destAirport = route.getDestinationAirportLeg().getAirport();
-  QVector<proc::MapProcedureRef> procRefs;
+  QList<proc::MapProcedureRef> procRefs;
 
   // Get real SID procedure reference ===================================================
   if(departureAirport.id == currentAirportSim->id && route.hasAnySidProcedure() && !route.hasCustomDeparture())
@@ -778,7 +778,7 @@ void ProcedureSearch::updateFilterBoxes()
           runwayMismatches.append(runway);
       }
 
-      for(const QString& rw : qAsConst(runways))
+      for(const QString& rw : std::as_const(runways))
       {
         if(rw.isEmpty())
           // Insert item before separator
@@ -837,7 +837,7 @@ void ProcedureSearch::fillProcedureTreeWidget()
       QStringList runwayNames = airportQueryNav->getRunwayNames(currentAirportNav->id);
       Ui::MainWindow *ui = NavApp::getMainUi();
       QTreeWidgetItem *root = treeWidget->invisibleRootItem();
-      QVector<SqlRecord> filteredProcedures;
+      QList<SqlRecord> filteredProcedures;
 
       // Collect all procedures from the database to filteredProcedures ===============================================
       for(SqlRecord procedureRec : *procedureRecords)
@@ -971,7 +971,7 @@ void ProcedureSearch::fillProcedureTreeWidget()
 
         // Load transitions for this procedure ==============================================================
         const SqlRecordList *transitionRecords = infoQuery->getTransitionInformation(procedureId);
-        QVector<SqlRecord> filteredTransitions;
+        QList<SqlRecord> filteredTransitions;
         bool foundProceduresToExpand = false;
         int numTransitions = 0;
         if(transitionRecords != nullptr)
@@ -1180,7 +1180,7 @@ void ProcedureSearch::fetchSingleTransitionId(MapProcedureRef& ref) const
     if(legs != nullptr && legs->procedureLegs.isEmpty())
     {
       // Special case for SID which consists only of transition legs
-      const QVector<int> transitionIds = procedureQuery->getTransitionIdsForProcedure(ref.procedureId);
+      const QList<int> transitionIds = procedureQuery->getTransitionIdsForProcedure(ref.procedureId);
       if(!transitionIds.isEmpty())
         ref.transitionId = transitionIds.constFirst();
     }
@@ -1233,13 +1233,13 @@ void ProcedureSearch::itemSelectionChangedInternal(bool noFollow)
 
   if(NavApp::getSearchController()->getCurrentSearchTabId() == tabIndex && ui->pushButtonProcedureShowAll->isChecked())
   {
-    QVector<proc::MapProcedureRef> refs;
+    QList<proc::MapProcedureRef> refs;
     for(auto it = itemIndex.begin(); it != itemIndex.end(); ++it)
       refs.append(it->getRef());
     emit proceduresSelected(refs);
   }
   else
-    emit proceduresSelected(QVector<proc::MapProcedureRef>());
+    emit proceduresSelected(QList<proc::MapProcedureRef>());
 
   updateHeaderLabel();
   updateWidgets();
@@ -1376,10 +1376,10 @@ void ProcedureSearch::showAllToggled(bool checked, bool zoom)
 {
   qDebug() << Q_FUNC_INFO;
   if(!checked)
-    emit proceduresSelected(QVector<proc::MapProcedureRef>());
+    emit proceduresSelected(QList<proc::MapProcedureRef>());
   else
   {
-    QVector<proc::MapProcedureRef> refs;
+    QList<proc::MapProcedureRef> refs;
     atools::geo::Rect bounding(currentAirportNav->position);
     for(auto it = itemIndex.begin(); it != itemIndex.end(); ++it)
     {
@@ -2039,7 +2039,7 @@ void ProcedureSearch::treeViewStateRestore(const QSet<int>& state)
   // Find selected and expanded items first without tree modification to keep order
   for(int i = 0; i < root->childCount(); ++i)
     itemStack.append(root->child(i));
-  QVector<QTreeWidgetItem *> itemsToExpand;
+  QList<QTreeWidgetItem *> itemsToExpand;
   while(!itemStack.isEmpty())
   {
     QTreeWidgetItem *item = itemStack.takeFirst();
@@ -2133,7 +2133,7 @@ void ProcedureSearch::dockVisibilityChanged(bool visible)
     {
       // Hide preview if dock is closed
       emit procedureSelected(proc::MapProcedureRef());
-      emit proceduresSelected(QVector<proc::MapProcedureRef>());
+      emit proceduresSelected(QList<proc::MapProcedureRef>());
       emit procedureLegSelected(proc::MapProcedureRef());
     }
     else
@@ -2144,7 +2144,7 @@ void ProcedureSearch::dockVisibilityChanged(bool visible)
 void ProcedureSearch::tabDeactivated()
 {
   emit procedureSelected(proc::MapProcedureRef());
-  emit proceduresSelected(QVector<proc::MapProcedureRef>());
+  emit proceduresSelected(QList<proc::MapProcedureRef>());
   emit procedureLegSelected(proc::MapProcedureRef());
 }
 

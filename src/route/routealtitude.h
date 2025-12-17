@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2023 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2025 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -128,7 +128,7 @@ QDebug operator<<(QDebug out, const FuelTimeResult& obj);
  * Order is same as in class Route.
  */
 class RouteAltitude
-  : private QVector<RouteAltitudeLeg>
+  : private QList<RouteAltitudeLeg>
 {
   Q_DECLARE_TR_FUNCTIONS(RouteAltitude)
 
@@ -221,12 +221,12 @@ public:
 
   int size() const
   {
-    return QVector::size();
+    return QList<RouteAltitudeLeg>::size();
   }
 
   bool isEmpty() const // OK
   {
-    return QVector::isEmpty();
+    return QList<RouteAltitudeLeg>::isEmpty();
   }
 
   /* Leg index containing the TOC */
@@ -288,7 +288,7 @@ public:
   QStringList getErrorStrings() const;
 
   /* Get an array for all altitudes in feet. Includes procedure points. */
-  QVector<float> getAltitudes() const;
+  QList<float> getAltitudes() const;
 
   /* Average wind direction for route degrees true */
   float getWindDirectionAverage() const

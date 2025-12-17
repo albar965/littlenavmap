@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2024 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2025 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -523,7 +523,7 @@ bool ProfileScrollArea::wheelEvent(QWheelEvent *event)
 {
   static const int ANGLE_THRESHOLD = 120;
 
-  if(!viewport->geometry().contains(event->pos()))
+  if(!viewport->geometry().contains(event->position().toPoint()))
     // Ignore wheel events that appear outside of the view and on the scrollbars
     return false;
 
@@ -553,8 +553,8 @@ bool ProfileScrollArea::wheelEvent(QWheelEvent *event)
       // Reset summed up values if accepted
       lastWheelAngle = 0;
 
-      QPoint mouse = (event->pos() + getOffset());
-      QPoint mouseToCenter = event->pos() - viewport->geometry().center(); // left neg, right pos
+      QPoint mouse = (event->position().toPoint() + getOffset());
+      QPoint mouseToCenter = event->position().toPoint() - viewport->geometry().center(); // left neg, right pos
 
       if(event->modifiers() == Qt::NoModifier)
       {

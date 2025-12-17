@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2024 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2025 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -165,6 +165,11 @@ const map::MapAirport& RunwaySelection::getAirport() const
   return *airport;
 }
 
+bool RunwaySelection::hasRunways() const
+{
+  return !runways.isEmpty();
+}
+
 void RunwaySelection::fillAirportLabel()
 {
   QString label;
@@ -260,7 +265,7 @@ void RunwaySelection::fillRunwayList()
 
     // Fill items ===================================================
     int index = 0; // Index in runway table
-    for(const RunwayIdxEntry& runway : qAsConst(runways))
+    for(const RunwayIdxEntry& runway : std::as_const(runways))
       addItem(runway, formatter::windInformationShort(windDirectionDeg, windSpeedKts, runway.end.heading), index++);
 
     runwayTableWidget->resizeColumnsToContents();
@@ -335,7 +340,7 @@ bool RunwaySelection::includeRunway(const QString& runwayName)
     return true;
   else
   {
-    for(const QString& filter : qAsConst(runwayNameFilter))
+    for(const QString& filter : std::as_const(runwayNameFilter))
     {
       if(atools::fs::util::runwayEqual(runwayName, filter, false /* fuzzy */))
         return true;

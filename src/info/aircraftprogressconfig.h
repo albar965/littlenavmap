@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2024 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2025 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -66,7 +66,7 @@ private:
   static void treeDialogItemToggled(atools::gui::TreeDialog *treeDialog, int id, bool checked);
 
   /* List of enums which are enabled */
-  QVector<pid::ProgressConfId> enabledIds;
+  QList<pid::ProgressConfId> enabledIds;
 
   /* Bit field with check state according to enum */
   QBitArray enabledBits, enabledBitsWeb;

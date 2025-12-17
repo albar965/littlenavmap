@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2024 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2025 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -204,7 +204,7 @@ private:
   QSet<QString> outstandingReplies;
 
   /* Requests in queue */
-  QVector<atools::fs::sc::WeatherRequest> queuedRequests;
+  QList<atools::fs::sc::WeatherRequest> queuedRequests;
   QSet<QString> queuedRequestIdents;
 
   /* Cache holding all weather stations that do not allow a direct report but rather interpolated or nearest */

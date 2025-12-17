@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2024 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2025 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -323,7 +323,7 @@ QDebug operator<<(QDebug out, const map::MapResult& record);
 /* Maintains only pointers to the original objects and creates a copy the MapSearchResult. */
 /* Alternatively uses pointers to refer to another result which must not be changed in this case. */
 struct MapResultIndex
-  : public QVector<const map::MapBase *>
+  : public QList<const map::MapBase *>
 {
   /* Sorting callback */
   typedef std::function<bool (const MapBase *, const MapBase *)> SortFunction;
@@ -335,7 +335,7 @@ struct MapResultIndex
   MapResultIndex& addRef(const map::MapResult& resultParm, const map::MapTypes& types = map::ALL);
 
   /* Sort objects by given type list. First in type list is put to start of list. */
-  MapResultIndex& sort(const QVector<map::MapTypes>& types)
+  MapResultIndex& sort(const QList<map::MapTypes>& types)
   {
     return sort(types, nullptr);
   }
@@ -347,7 +347,7 @@ struct MapResultIndex
   }
 
   /* Sort by type list and then by callback */
-  MapResultIndex& sort(const QVector<map::MapTypes>& types, const map::MapResultIndex::SortFunction& sortFunc);
+  MapResultIndex& sort(const QList<map::MapTypes>& types, const map::MapResultIndex::SortFunction& sortFunc);
 
   /* Sort objects by distance to pos in the list */
   MapResultIndex& sort(const atools::geo::Pos& pos, bool sortNearToFar = true);

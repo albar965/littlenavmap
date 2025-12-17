@@ -7,15 +7,18 @@
  * @brief Simulation actions controller implementation.
  */
 class SimActionsController :
-        public AbstractLnmActionsController
+  public AbstractLnmActionsController
 {
-    Q_OBJECT
+  Q_OBJECT
+
 public:
-    Q_INVOKABLE SimActionsController(QObject *parent, bool verboseParam, AbstractInfoBuilder* infoBuilder);
-    /**
-     * @brief get simulation info
-     */
-    Q_INVOKABLE WebApiResponse infoAction(WebApiRequest request);
+  Q_INVOKABLE SimActionsController(QObject *parent, bool verboseParam, AbstractInfoBuilder *infoBuilder);
+  virtual ~SimActionsController() override;
+  /**
+   * @brief get simulation info
+   */
+  Q_INVOKABLE WebApiResponse infoAction(WebApiRequest request);
+
 };
 
 #endif // SIMACTIONSCONTROLLER_H

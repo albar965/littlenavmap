@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2024 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2025 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -158,7 +158,7 @@ void UserdataSearch::connectSearchSlots()
 
 void UserdataSearch::addUserpointTriggered()
 {
-  QVector<int> ids = getSelectedIds();
+  QList<int> ids = getSelectedIds();
   emit addUserpoint(ids.isEmpty() ? -1 : ids.constFirst(), atools::geo::EMPTY_POS);
 }
 

@@ -50,7 +50,7 @@ static QHash<QString, QString> parkingMapRamp;
 static QHash<QString, QString> parkingTypeMap;
 static QHash<QString, QString> parkingNameMap;
 static QHash<QString, QString> parkingDatabaseNameMap;
-static QVector<std::pair<QRegularExpression, QString> > parkingDatabaseKeywords;
+static QList<std::pair<QRegularExpression, QString> > parkingDatabaseKeywords;
 static QHash<QString, QString> navTypeNamesVor;
 static QHash<QString, QString> navTypeNamesVorLong;
 static QHash<QString, QString> navTypeNamesNdb;
@@ -259,7 +259,7 @@ void initTranslateableTexts()
 
   /* *INDENT-OFF* */
   // Order is important
-  parkingDatabaseKeywords = QVector<std::pair<QRegularExpression, QString> >({
+  parkingDatabaseKeywords = QList<std::pair<QRegularExpression, QString> >({
       {QRegularExpression("\\b" % QObject::tr("Apron", "Has to match other parking keyword translations") % "\\b", QRegularExpression::CaseInsensitiveOption), "A"},
       {QRegularExpression("\\b" % QObject::tr("Cargo", "Has to match other parking keyword translations") % "\\b", QRegularExpression::CaseInsensitiveOption), "C"},
       {QRegularExpression("\\b" % QObject::tr("Combat", "Has to match other parking keyword translations") % "\\b", QRegularExpression::CaseInsensitiveOption), "C"},
@@ -923,7 +923,7 @@ int surfaceQuality(const QString& surface)
   return surfaceQualityMap.value(surface, 0);
 }
 
-const QVector<std::pair<QRegularExpression, QString> >& parkingKeywords()
+const QList<std::pair<QRegularExpression, QString> >& parkingKeywords()
 {
   return parkingDatabaseKeywords;
 }

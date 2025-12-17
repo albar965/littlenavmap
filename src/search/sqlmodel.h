@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2023 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2025 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -89,7 +89,7 @@ public:
 
   /* Query the full result set into a vector of pairs with id and optional coordinates.
    * This does not work when using distance search. */
-  void getFullResultSet(QVector<std::pair<int, atools::geo::Pos> >& result);
+  void getFullResultSet(QList<std::pair<int, atools::geo::Pos> >& result);
 
   Qt::SortOrder getSortOrder() const;
 
@@ -203,7 +203,7 @@ private:
 
   void filterBy(bool exclude, QString whereCol, QVariant whereValue, bool forceQueryBuilder, bool ignoreQueryBuilder, bool exact);
   QString buildColumnList(const atools::sql::SqlRecord& tableCols);
-  QString buildWhere(const atools::sql::SqlRecord& tableCols, QVector<const Column *>& overridingColumns);
+  QString buildWhere(const atools::sql::SqlRecord& tableCols, QList<const Column *>& overridingColumns);
   QString buildWhereValue(const WhereCondition& cond);
   void buildQuery();
   void clearWhereConditions();

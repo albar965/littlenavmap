@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2020 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2025 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -55,7 +55,7 @@ public:
   /* Degree, negative is descent, positive climb and zero horizontal flight.
    * Returns a list of angles for each segment. Use for display purposes.
    * Calculated optional paths. */
-  const QVector<float>& getVerticalGeoAngles() const
+  const QList<float>& getVerticalGeoAngles() const
   {
     return angles;
   }
@@ -264,7 +264,7 @@ private:
   QString ident, procedureType;
 
   QPolygonF geometry;
-  QVector<float> angles;
+  QList<float> angles;
 
   proc::MapAltRestriction restriction;
   float verticalAngle = map::INVALID_ANGLE_VALUE;

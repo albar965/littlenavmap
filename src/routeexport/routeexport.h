@@ -222,7 +222,7 @@ public:
   /* Check if route has valid departure  and destination and departure parking.
    * Also updates the navdata cycle properties in the global route before checking.
    *  @return true if route can be saved anyway */
-  bool routeValidate(const QVector<RouteExportFormat>& formats, bool multi = false);
+  bool routeValidate(const QList<RouteExportFormat>& formats, bool multi = false);
 
   /* Validates only if this is a manual save */
   bool routeValidateMulti(const RouteExportFormat& format);
@@ -323,7 +323,7 @@ private:
   /* Create a list of backups */
   void rotateFile(const QString& filename);
 
-  bool routeExportCheckDatabase(const QString& exportSimulatorName, const QVector<atools::fs::FsPaths::SimulatorType> requiredDbTypes);
+  bool routeExportCheckDatabase(const QString& exportSimulatorName, const QList<atools::fs::FsPaths::SimulatorType> requiredDbTypes);
 
   MainWindow *mainWindow;
   atools::gui::Dialog *dialog;

@@ -329,7 +329,9 @@ void PrintSupport::buildPrinter()
   if(printer == nullptr)
   {
     printer = new QPrinter(QPrinter::HighResolution);
-    printer->setOrientation(QPrinter::Landscape);
+    QPageLayout layout = printer->pageLayout();
+    layout.setOrientation(QPageLayout::Landscape);
+    printer->setPageLayout(layout);
 
     qDebug() << Q_FUNC_INFO << "printer resolution" << printer->resolution();
   }
@@ -369,16 +371,16 @@ void PrintSupport::paintRequestedMap(QPrinter *)
   QPainter painter;
 
   // Calculate best ratio
-  double xscale = printer->pageRect().width() / static_cast<double>(mapWidget->width());
-  double yscale = printer->pageRect().height() / static_cast<double>(mapWidget->height());
+  double xscale = printer->pageRect(QPrinter::DevicePixel).width() / static_cast<double>(mapWidget->width());
+  double yscale = printer->pageRect(QPrinter::DevicePixel).height() / static_cast<double>(mapWidget->height());
   double scale = std::min(xscale, yscale);
 
   painter.begin(printer);
   painter.setRenderHint(QPainter::Antialiasing, true);
   painter.setRenderHint(QPainter::TextAntialiasing, true);
   painter.setRenderHint(QPainter::SmoothPixmapTransform, true);
-  painter.translate(printer->paperRect().x() + printer->pageRect().width() / 2,
-                    printer->paperRect().y() + printer->pageRect().height() / 2);
+  painter.translate(printer->paperRect(QPrinter::DevicePixel).x() + printer->pageRect(QPrinter::DevicePixel).width() / 2,
+                    printer->paperRect(QPrinter::DevicePixel).y() + printer->pageRect(QPrinter::DevicePixel).height() / 2);
 
   // Scale to printer resolution for better images
   painter.scale(scale, scale);

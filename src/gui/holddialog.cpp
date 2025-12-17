@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2024 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2025 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -38,7 +38,8 @@
 HoldDialog::HoldDialog(QWidget *parent, const map::MapResult& resultParam, const atools::geo::Pos& positionParam)
   : QDialog(parent), ui(new Ui::HoldDialog), color(Qt::darkBlue)
 {
-  setWindowFlags(windowFlags() & ~Qt::WindowContextHelpButtonHint);
+  setWindowFlag(Qt::WindowContextHelpButtonHint, false);
+
   setWindowModality(Qt::ApplicationModal);
 
   ui->setupUi(this);

@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2023 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2025 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -22,9 +22,9 @@
 #include <QLineEdit>
 #include <QSpinBox>
 
-QueryBuilderResultVector QueryBuilder::build() const
+QueryBuilderResultList QueryBuilder::build() const
 {
-  QueryBuilderResultVector result;
+  QueryBuilderResultList result;
   if(func)
   {
     for(const QueryWidget& queryWidget : queryWidgets)
@@ -36,9 +36,9 @@ QueryBuilderResultVector QueryBuilder::build() const
   return result;
 }
 
-const QVector<QWidget *> QueryBuilder::getWidgets() const
+const QList<QWidget *> QueryBuilder::getWidgets() const
 {
-  QVector<QWidget *> widgets;
+  QList<QWidget *> widgets;
   for(const QueryWidget& queryWidget : queryWidgets)
     widgets.append(queryWidget.getWidget());
   return widgets;

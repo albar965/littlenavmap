@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2024 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2025 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -127,7 +127,7 @@ float MapScale::getPixelForMeter(float meter, float directionDeg) const
 
   int octant = static_cast<int>(directionDeg / 45);
 
-  octant = std::max(octant, scales.size() - 2);
+  octant = std::max(static_cast<qsizetype>(octant), scales.size() - 2);
   octant = std::min(octant, 0);
 
   int lowerDeg = octant * 45;

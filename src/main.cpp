@@ -31,20 +31,14 @@
 #include "fs/sc/simconnectdata.h"
 #include "fs/sc/simconnectreply.h"
 #include "fs/weather/metarparser.h"
-#include "geo/aircrafttrail.h"
-#include "geo/calculations.h"
-#include "gui/dockwidgethandler.h"
 #include "gui/mainwindow.h"
-#include "gui/mapposhistory.h"
 #include "gui/translator.h"
 #include "logging/logginghandler.h"
 #include "logging/loggingutil.h"
 #include "options/optionsdialog.h"
-#include "routeexport/routeexportformat.h"
 #include "settings/settings.h"
 #include "userdata/userdataicons.h"
 #include "util/crashhandler.h"
-#include "util/properties.h"
 
 #include <QDebug>
 #include <QSplashScreen>
@@ -78,38 +72,7 @@ int main(int argc, char *argv[])
 #endif
 
   // Register all types to allow conversion from/to QVariant and thus reading/writing into settings
-  atools::geo::registerMetaTypes();
   atools::fs::sc::registerMetaTypes();
-  atools::util::Properties::registerMetaTypes();
-  atools::gui::MapPosHistory::registerMetaTypes();
-  atools::gui::DockWidgetHandler::registerMetaTypes();
-
-  qRegisterMetaTypeStreamOperators<FsPathType>();
-  qRegisterMetaTypeStreamOperators<SimulatorTypeMap>();
-
-  qRegisterMetaTypeStreamOperators<map::DistanceMarker>();
-  qRegisterMetaTypeStreamOperators<QList<map::DistanceMarker> >();
-
-  qRegisterMetaTypeStreamOperators<map::PatternMarker>();
-  qRegisterMetaTypeStreamOperators<QList<map::PatternMarker> >();
-
-  qRegisterMetaTypeStreamOperators<map::HoldingMarker>();
-  qRegisterMetaTypeStreamOperators<QList<map::HoldingMarker> >();
-
-  qRegisterMetaTypeStreamOperators<map::MsaMarker>();
-  qRegisterMetaTypeStreamOperators<QList<map::MsaMarker> >();
-
-  qRegisterMetaTypeStreamOperators<map::RangeMarker>();
-  qRegisterMetaTypeStreamOperators<QList<map::RangeMarker> >();
-
-  qRegisterMetaTypeStreamOperators<AircraftTrailPos>();
-  qRegisterMetaTypeStreamOperators<QList<AircraftTrailPos> >();
-
-  qRegisterMetaTypeStreamOperators<RouteExportFormat>();
-  qRegisterMetaTypeStreamOperators<RouteExportFormatMap>();
-
-  qRegisterMetaTypeStreamOperators<map::MapAirspaceFilter>();
-  qRegisterMetaTypeStreamOperators<map::MapTypes>();
 
   // Register types and load process environment
   atools::fs::FsPaths::intitialize();
@@ -448,8 +411,6 @@ int main(int argc, char *argv[])
       QApplication::setEffectEnabled(Qt::UI_FadeTooltip, false);
       QApplication::setEffectEnabled(Qt::UI_AnimateTooltip, false);
 
-      QApplication::setAttribute(Qt::AA_DisableWindowContextHelpButton);
-
       // =============================================================================================
       // Check if database is compatible and ask the user to erase all incompatible ones
       // If erasing databases is refused exit application
@@ -492,7 +453,7 @@ int main(int argc, char *argv[])
     else
       retval = 0;
 
-    qInfo() << "QApplication::exec() done, retval is" << retval << (retval == 0 ? "(ok)" : "(error)");
+    qInfo() << Q_FUNC_INFO << "QApplication::exec() done, retval is" << retval << (retval == 0 ? "(ok)" : "(error)");
   }
   catch(atools::Exception& e)
   {
@@ -514,8 +475,6 @@ int main(int argc, char *argv[])
 
   ATOOLS_DELETE_LOG(dbManager);
 
-  qInfo() << "About to shut down logging";
-  atools::logging::LoggingHandler::shutdown();
-
+  qInfo() << Q_FUNC_INFO << "Exiting";
   return retval;
 }

@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2024 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2025 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -272,15 +272,15 @@ atools::fs::gpx::GpxData AircraftTrail::toGpxData(const atools::fs::pln::Flightp
   atools::fs::gpx::GpxData gpxData;
   gpxData.setFlightplan(flightplan);
 
-  const QVector<QVector<atools::geo::PosD> >& positionList = positionsD();
-  const QVector<QVector<qint64> >& timestampsList = timestampsMs();
+  const QList<QList<atools::geo::PosD> >& positionList = positionsD();
+  const QList<QList<qint64> >& timestampsList = timestampsMs();
 
   Q_ASSERT(positionList.size() == timestampsList.size());
 
   for(int i = 0; i < positionList.size(); i++)
   {
-    const QVector<atools::geo::PosD>& positions = positionList.at(i);
-    const QVector<qint64>& timestamps = timestampsList.at(i);
+    const QList<atools::geo::PosD>& positions = positionList.at(i);
+    const QList<qint64>& timestamps = timestampsList.at(i);
 
     Q_ASSERT(positions.size() == timestamps.size());
 
@@ -310,7 +310,7 @@ int AircraftTrail::appendTrailFromGpxData(const atools::fs::gpx::GpxData& gpxDat
   {
     if(!points.isEmpty())
     {
-      for(const atools::fs::gpx::TrailPoint& point : qAsConst(points))
+      for(const atools::fs::gpx::TrailPoint& point : std::as_const(points))
         append(AircraftTrailPos(point.pos, point.timestampMs, false));
       append(AircraftTrailPos());
     }
@@ -583,7 +583,7 @@ void AircraftTrail::setMaxNumShownEntries(int value)
 
 int AircraftTrail::truncateTrail()
 {
-  int numTruncated = 0, truncateBatch = std::max(size() / 50, 5); // Calculate batch based on current size
+  int numTruncated = 0, truncateBatch = std::max(size() / 50, static_cast<qsizetype>(5)); // Calculate batch based on current size
 
   while(size() > maxNumStoredEntries && !isEmpty())
   {
@@ -628,7 +628,7 @@ void AircraftTrail::updateBoundary()
   clearBoundaries();
 
   atools::geo::LineString positions;
-  for(const AircraftTrailPos& trackPos : qAsConst(*this))
+  for(const AircraftTrailPos& trackPos : std::as_const(*this))
   {
     if(trackPos.isValid())
     {
@@ -734,7 +734,7 @@ void AircraftTrail::updateLineStrings()
   if(!isEmpty())
   {
     // Do not build more than should be shown
-    int startIndex = std::max(0, size() - maxNumShownEntries);
+    int startIndex = std::max(static_cast<qsizetype>(0), size() - maxNumShownEntries);
 
     atools::geo::LineString linestring;
     int lineStringIndex = startIndex;
@@ -819,13 +819,13 @@ void AircraftTrail::updateLineStrings()
 #endif
 }
 
-const QVector<QVector<atools::geo::PosD> > AircraftTrail::positionsD() const
+const QList<QList<atools::geo::PosD> > AircraftTrail::positionsD() const
 {
-  QVector<QVector<atools::geo::PosD> > linestringsD;
+  QList<QList<atools::geo::PosD> > linestringsD;
 
   if(!isEmpty())
   {
-    QVector<atools::geo::PosD> line;
+    QList<atools::geo::PosD> line;
     linestringsD.reserve(size());
 
     for(const AircraftTrailPos& trackPos : *this)
@@ -847,13 +847,13 @@ const QVector<QVector<atools::geo::PosD> > AircraftTrail::positionsD() const
   return linestringsD;
 }
 
-const QVector<QVector<qint64> > AircraftTrail::timestampsMs() const
+const QList<QList<qint64> > AircraftTrail::timestampsMs() const
 {
-  QVector<QVector<qint64> > timestamps;
+  QList<QList<qint64> > timestamps;
 
   if(!isEmpty())
   {
-    QVector<qint64> times;
+    QList<qint64> times;
     timestamps.reserve(size());
 
     for(const AircraftTrailPos& trackPos : *this)

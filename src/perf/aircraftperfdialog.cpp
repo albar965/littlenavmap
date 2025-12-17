@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2024 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2025 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -39,7 +39,8 @@ AircraftPerfDialog::AircraftPerfDialog(QWidget *parent, const atools::fs::perf::
                                        const QString& modeText, bool newPerfParam)
   : QDialog(parent), ui(new Ui::AircraftPerfDialog), newPerf(newPerfParam)
 {
-  setWindowFlags(windowFlags() & ~Qt::WindowContextHelpButtonHint);
+  setWindowFlag(Qt::WindowContextHelpButtonHint, false);
+
   setWindowModality(Qt::ApplicationModal);
 
   ui->setupUi(this);

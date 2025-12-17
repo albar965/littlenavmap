@@ -44,7 +44,8 @@
 LogdataDialog::LogdataDialog(QWidget *parent, ld::LogdataDialogMode mode)
   : QDialog(parent), ui(new Ui::LogdataDialog), editMode(mode)
 {
-  setWindowFlags(windowFlags() & ~Qt::WindowContextHelpButtonHint);
+  setWindowFlag(Qt::WindowContextHelpButtonHint, false);
+
   setWindowModality(Qt::ApplicationModal);
 
   ui->setupUi(this);
@@ -149,7 +150,7 @@ LogdataDialog::LogdataDialog(QWidget *parent, ld::LogdataDialogMode mode)
   });
 
   // Show checkboxes when editing more than one entry
-  for(QCheckBox *checkBox : qAsConst(editCheckBoxList))
+  for(QCheckBox *checkBox : std::as_const(editCheckBoxList))
   {
     checkBox->setVisible(showCheckbox);
     connect(checkBox, &QCheckBox::toggled, this, &LogdataDialog::updateWidgets);
@@ -242,7 +243,7 @@ void LogdataDialog::resetClicked()
   if(editMode == ld::EDIT_MULTIPLE)
   {
     // Reset checkboxes to unchecked
-    for(QCheckBox *checkBox : qAsConst(editCheckBoxList))
+    for(QCheckBox *checkBox : std::as_const(editCheckBoxList))
       checkBox->setChecked(false);
   }
 
@@ -677,7 +678,7 @@ void LogdataDialog::updateWidgets()
     ui->comboBoxFuelType->setEnabled(ui->checkBoxFuelType->isChecked());
 
     bool enable = false;
-    for(const QCheckBox *checkBox : qAsConst(editCheckBoxList))
+    for(const QCheckBox *checkBox : std::as_const(editCheckBoxList))
       enable |= checkBox->isChecked();
 
     // Disable dialog OK button if nothing is checked

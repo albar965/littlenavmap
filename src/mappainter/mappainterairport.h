@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2024 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2025 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -52,7 +52,7 @@ public:
 private:
   /* Pre-calculates visible airports for render() and fills visibleAirports.
    * visibleAirportIds gets all idents of shown airports */
-  void collectVisibleAirports(QVector<AirportPaintData>& visibleAirports);
+  void collectVisibleAirports(QList<AirportPaintData>& visibleAirports);
 
   void drawAirportSymbol(const map::MapAirport& airport, float x, float y, float size);
 
@@ -66,7 +66,7 @@ private:
   void drawAirportSymbolOverview(const map::MapAirport& airport, float x, float y, float symsize);
 
   /* Get all runways for this airport and calculate all runway screen coordinates */
-  void runwayCoords(QVector<RunwayPaintData>& runwayPaintData, const QList<map::MapRunway> *runways, bool overview);
+  void runwayCoords(QList<RunwayPaintData>& runwayPaintData, const QList<map::MapRunway> *runways, bool overview);
 
   /* Draw simple FSX/P3D aprons */
   void drawFsApron(const map::MapApron& apron);

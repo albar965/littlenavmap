@@ -808,8 +808,7 @@ void ConnectClient::connectInternal()
 
     connect(socket, &QTcpSocket::readyRead, this, &ConnectClient::readFromSocket);
     connect(socket, &QTcpSocket::connected, this, &ConnectClient::connectedToServerSocket);
-    connect(socket, static_cast<void (QAbstractSocket::*)(QAbstractSocket::SocketError)>(&QAbstractSocket::error),
-            this, &ConnectClient::readFromSocketError);
+    connect(socket, &QAbstractSocket::errorOccurred, this, &ConnectClient::readFromSocketError);
 
     qDebug() << Q_FUNC_INFO << "Connecting to" << connectDialog->getRemoteHostname() << ":" << connectDialog->getRemotePort();
     socket->connectToHost(connectDialog->getRemoteHostname(), connectDialog->getRemotePort(),

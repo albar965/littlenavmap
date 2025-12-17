@@ -289,12 +289,12 @@ MapResult& MapResult::clearRouteIndex(const MapTypes& types)
 void MapResult::moveOnlineAirspacesToFront()
 {
   QList<MapAirspace> list;
-  for(const MapAirspace& a: qAsConst(airspaces))
+  for(const MapAirspace& a: std::as_const(airspaces))
   {
     if(a.isOnline())
       list.append(a);
   }
-  for(const MapAirspace& a: qAsConst(airspaces))
+  for(const MapAirspace& a: std::as_const(airspaces))
   {
     if(!a.isOnline())
       list.append(a);
@@ -311,7 +311,7 @@ MapResult MapResult::moveOnlineAirspacesToFront() const
 
 bool MapResult::hasSimNavUserAirspaces() const
 {
-  for(const map::MapAirspace& airspace : qAsConst(airspaces))
+  for(const map::MapAirspace& airspace : std::as_const(airspaces))
   {
     if(!airspace.isOnline())
       return true;
@@ -1086,7 +1086,7 @@ MapResultIndex& MapResultIndex::addRef(const MapResult& resultParam, const MapTy
   return *this;
 }
 
-MapResultIndex& MapResultIndex::sort(const QVector<MapTypes>& types, const MapResultIndex::SortFunction& sortFunc)
+MapResultIndex& MapResultIndex::sort(const QList<MapTypes>& types, const MapResultIndex::SortFunction& sortFunc)
 {
   if(size() <= 1)
     // Nothing to sort

@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2024 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2025 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -261,8 +261,8 @@ private:
 
   /* Converts range ring string to vector of floats. Falls back to 100 units single ring if nothing is valid.
    * Uses current locale to convert numbers and check min and max. */
-  QVector<float> rangeStringToFloat(const QString& rangeStr) const;
-  QString rangeFloatToString(const QVector<float>& ranges) const;
+  QList<float> rangeStringToFloat(const QString& rangeStr) const;
+  QString rangeFloatToString(const QList<float>& ranges) const;
   void mapThemeKeyEdited(QTableWidgetItem *item);
 
   void searchTextEdited(const QString& text);

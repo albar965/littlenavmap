@@ -35,7 +35,6 @@
 #include "db/databasemanager.h"
 #include "exception.h"
 #include "fs/gpx/gpxio.h"
-#include "fs/perf/aircraftperf.h"
 #include "gui/dataexchange.h"
 #include "gui/desktopservices.h"
 #include "gui/dialog.h"
@@ -112,6 +111,7 @@
 #include <QThread>
 #include <QStringBuilder>
 #include <QToolTip>
+#include <QActionGroup>
 
 #include "ui_mainwindow.h"
 
@@ -134,10 +134,12 @@ MainWindow::MainWindow()
 {
   qDebug() << Q_FUNC_INFO << "Entry";
 
+  setWindowFlag(Qt::WindowContextHelpButtonHint, false);
+
   aboutMessage =
     tr("<p style='white-space:pre'>is a free open source flight planner, navigation tool, moving map,<br/>"
        "airport search and airport information system<br/>"
-       "for X-Plane 11, X-Plane 12, Flight Simulator X, Prepar3D and Microsoft Flight Simulator 2020.</p>"
+       "for X-Plane 11, X-Plane 12, Flight Simulator X, Prepar3D, Microsoft Flight Simulator 2020 and Microsoft Flight Simulator 2024.</p>"
        "<p>"
          "<b>"
            "<a href=\"%1\">Donate here to support the development of %2</a>."
@@ -729,7 +731,7 @@ void MainWindow::debugActionTriggeredDumpLayers()
 
 void MainWindow::debugActionTriggeredResetUpdate()
 {
-  Settings::instance().setValueVar(lnm::OPTIONS_UPDATE_LAST_CHECKED, QDateTime::currentDateTime().toSecsSinceEpoch() - 3600L * 48L);
+  Settings::instance().setValueVar(lnm::OPTIONS_UPDATE_LAST_CHECKED, QDateTime::currentSecsSinceEpoch() - 3600L * 48L);
 }
 
 void MainWindow::debugActionTriggeredThrowException()
@@ -745,7 +747,7 @@ void MainWindow::debugActionTriggeredSegfault()
 
 void MainWindow::debugActionTriggeredAssert()
 {
-  QVector<int> vector;
+  QList<int> vector;
   vector.constFirst();
 }
 
@@ -3220,14 +3222,14 @@ void MainWindow::procedureSelected(const proc::MapProcedureRef& ref)
   proceduresSelectedInternal({ref}, false /* previewAll */);
 }
 
-void MainWindow::proceduresSelected(const QVector<proc::MapProcedureRef>& refs)
+void MainWindow::proceduresSelected(const QList<proc::MapProcedureRef>& refs)
 {
   proceduresSelectedInternal(refs, true /* previewAll */);
 }
 
-void MainWindow::proceduresSelectedInternal(const QVector<proc::MapProcedureRef>& refs, bool previewAll)
+void MainWindow::proceduresSelectedInternal(const QList<proc::MapProcedureRef>& refs, bool previewAll)
 {
-  QVector<proc::MapProcedureLegs> procedures;
+  QList<proc::MapProcedureLegs> procedures;
   ProcedureQuery *procedureQuery = QueryManager::instance()->getQueriesGui()->getProcedureQuery();
 
   if(previewAll)
@@ -3246,7 +3248,7 @@ void MainWindow::proceduresSelectedInternal(const QVector<proc::MapProcedureRef>
     {
       if(previewAll)
         // Mulit preview for all procedures of an airport
-        mapWidget->changeProcedureHighlights(QVector<proc::MapProcedureLegs>());
+        mapWidget->changeProcedureHighlights(QList<proc::MapProcedureLegs>());
       else
         // Single procedure selection by user
         mapWidget->changeProcedureHighlight(proc::MapProcedureLegs());
@@ -4197,7 +4199,7 @@ void MainWindow::createIssueReport()
   NavApp::createIssueReport(additionalReportFiles);
 
   // Remove temp files which are now packed into Zip
-  for(const QString& file : qAsConst(additionalReportFiles))
+  for(const QString& file : std::as_const(additionalReportFiles))
     QFile::remove(file);
 }
 
@@ -5088,7 +5090,7 @@ void MainWindow::dropEvent(QDropEvent *event)
   {
     // Load all plans and export them using multiexport for testing
     std::sort(urls.begin(), urls.end());
-    for(const QUrl& url : qAsConst(urls))
+    for(const QUrl& url : std::as_const(urls))
     {
       QString filepath = url.toLocalFile();
       qDebug() << Q_FUNC_INFO << "Dropped file:" << filepath;

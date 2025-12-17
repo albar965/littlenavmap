@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2024 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2025 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -83,10 +83,7 @@ public:
     showPattern = value;
   }
 
-  bool hasRunways() const
-  {
-    return !runways.isEmpty();
-  }
+  bool hasRunways() const;
 
   /* Set a list of runways to use as filter. Can uase RW prefix or not. All are shown if empty. No wildcards. */
   void setRunwayNameFilter(const QStringList& value)

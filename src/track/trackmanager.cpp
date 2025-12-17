@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2024 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2025 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -38,7 +38,7 @@ using atools::sql::SqlTransaction;
 using atools::sql::SqlQuery;
 using atools::sql::SqlUtil;
 using atools::sql::SqlRecord;
-using atools::track::TrackVectorType;
+using atools::track::TrackListType;
 using atools::track::TrackType;
 using atools::track::Track;
 
@@ -95,7 +95,7 @@ void TrackManager::deInitQueries()
   airwayQuery = nullptr;
 }
 
-void TrackManager::loadTracks(const TrackVectorType& tracks, bool onlyValid)
+void TrackManager::loadTracks(const TrackListType& tracks, bool onlyValid)
 {
   errorMessages.clear();
   SqlTransaction transaction(db);
@@ -139,7 +139,7 @@ void TrackManager::loadTracks(const TrackVectorType& tracks, bool onlyValid)
       nameFragmentHash.insert(track.name, 1);
 
     // Read string into a list of references ====================================
-    map::MapObjectRefExtVector refs;
+    map::MapObjectRefExtList refs;
     QString routeStr = track.route.join(" ");
     if(reader.createRouteFromString(routeStr, rs::TRACK_DEFAULTS, nullptr, &refs))
     {

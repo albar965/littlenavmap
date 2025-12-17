@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2024 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2025 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -185,7 +185,7 @@ public:
 
   /* More than one linestring might be returned if the trail is interrupted.
    * Lines are also partitioned to avoid too large strings. */
-  const QVector<atools::geo::LineString>& getLineStrings() const
+  const QList<atools::geo::LineString>& getLineStrings() const
   {
     return lineStrings;
   }
@@ -232,10 +232,10 @@ private:
   void updateLineStringsLast();
 
   /* Accurate positions for GPX export */
-  const QVector<QVector<atools::geo::PosD> > positionsD() const;
+  const QList<QList<atools::geo::PosD> > positionsD() const;
 
   /* Same size as getLineStrings() but returns the timestamps in milliseconds since Epoch UTC for each position */
-  const QVector<QVector<qint64> > timestampsMs() const;
+  const QList<QList<qint64> > timestampsMs() const;
 
   /* truncate to maxNumStoredEntries and return removed number */
   int truncateTrail();
@@ -272,11 +272,11 @@ private:
   float lastGroundSpeedKts = 0.f, lastActualAltitudeFt = 0.f, lastHeadingDegTrue = 0.f;
 
   // Cached for display
-  QVector<atools::geo::LineString> lineStrings;
+  QList<atools::geo::LineString> lineStrings;
   int lineStringsSize = 0;
 
   // Points to the first AircraftTrailPos in this - in sync with lineStrings
-  QVector<int> lineStringsIndex;
+  QList<int> lineStringsIndex;
 
   /* Needed in RouteExportFormat stream operators to read different formats */
   static quint16 version;

@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2020 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2025 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -29,12 +29,15 @@ using JSON = nlohmann::json;
  * usable methods must be declared at AbstractInfoBuilder
  * in order to be callable through its interface.
  */
-class JsonInfoBuilder : public AbstractInfoBuilder
+class JsonInfoBuilder :
+  public AbstractInfoBuilder
 {
   Q_OBJECT
+
 public:
   explicit JsonInfoBuilder(QObject *parent);
   virtual ~JsonInfoBuilder() override;
+
   JsonInfoBuilder(const JsonInfoBuilder& other) = delete;
   JsonInfoBuilder& operator=(const JsonInfoBuilder& other) = delete;
 
@@ -45,7 +48,8 @@ public:
   QByteArray feature(MapFeaturesData mapFeaturesData) const override;
 
 private:
-  JSON coordinatesToJSON(QMap<QString,float> map) const;
+  JSON coordinatesToJSON(QMap<QString, float> map) const;
+
 };
 
 #endif // JSONINFOBUILDER_H

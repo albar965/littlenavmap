@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2024 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2025 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -47,7 +47,8 @@ FetchRouteDialog::FetchRouteDialog(QWidget *parent) :
   QDialog(parent),
   ui(new Ui::FetchRouteDialog)
 {
-  setWindowFlags(windowFlags() & ~Qt::WindowContextHelpButtonHint);
+  setWindowFlag(Qt::WindowContextHelpButtonHint, false);
+
   setWindowModality(Qt::ApplicationModal);
   ui->setupUi(this);
 
@@ -240,45 +241,45 @@ void FetchRouteDialog::downloadFinished(const QByteArray& data, QString)
   while(xmlStream.readNextStartElement())
   {
     // Read route elements if needed ======================================================
-    if(reader.name() == "origin")
+    if(reader.name() == QStringLiteral("origin"))
     {
       while(xmlStream.readNextStartElement())
       {
-        if(reader.name() == "icao_code")
+        if(reader.name() == QStringLiteral("icao_code"))
           departure = reader.readElementText();
-        else if(reader.name() == "plan_rwy")
+        else if(reader.name() == QStringLiteral("plan_rwy"))
           departureRunway = reader.readElementText();
         else
           xmlStream.skipCurrentElement(false /* warn */);
       }
     }
-    else if(reader.name() == "destination")
+    else if(reader.name() == QStringLiteral("destination"))
     {
       while(xmlStream.readNextStartElement())
       {
-        if(reader.name() == "icao_code")
+        if(reader.name() == QStringLiteral("icao_code"))
           destination = reader.readElementText();
-        else if(reader.name() == "plan_rwy")
+        else if(reader.name() == QStringLiteral("plan_rwy"))
           destinationRunway = reader.readElementText();
         else
           xmlStream.skipCurrentElement(false /* warn */);
       }
     }
-    else if(reader.name() == "alternate")
+    else if(reader.name() == QStringLiteral("alternate"))
     {
       while(xmlStream.readNextStartElement())
       {
-        if(reader.name() == "icao_code")
+        if(reader.name() == QStringLiteral("icao_code"))
           alternate = reader.readElementText();
         else
           xmlStream.skipCurrentElement(false /* warn */);
       }
     }
-    else if(reader.name() == "atc")
+    else if(reader.name() == QStringLiteral("atc"))
     {
       while(xmlStream.readNextStartElement())
       {
-        if(reader.name() == "route")
+        if(reader.name() == QStringLiteral("route"))
           route = reader.readElementText();
         else
           xmlStream.skipCurrentElement(false /* warn */);

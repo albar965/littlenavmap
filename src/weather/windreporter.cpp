@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2024 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2025 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -31,6 +31,7 @@
 
 #include <QToolButton>
 #include <QDir>
+#include <QActionGroup>
 
 static const double queryRectInflationFactor = 0.2;
 static const double queryRectInflationIncrement = 0.1;
@@ -42,6 +43,11 @@ WindSliderAction::WindSliderAction(QObject *parent)
 {
   sliderValue = minValue();
   setSliderValue(sliderValue);
+}
+
+WindSliderAction::~WindSliderAction()
+{
+
 }
 
 int WindSliderAction::getAltitudeFt() const
@@ -104,7 +110,7 @@ int WindSliderAction::maxValue() const
 void WindSliderAction::setSliderValue(int value)
 {
   sliderValue = value;
-  for(QSlider *slider : qAsConst(sliders))
+  for(QSlider *slider : std::as_const(sliders))
   {
     slider->blockSignals(true);
     slider->setValue(sliderValue);
@@ -113,35 +119,16 @@ void WindSliderAction::setSliderValue(int value)
 }
 
 // =======================================================================================
-
-/*
- * Wrapper for label action.
- */
-class WindLabelAction
-  : public QWidgetAction
+WindLabelAction::~WindLabelAction()
 {
-public:
-  WindLabelAction(QObject *parent) : QWidgetAction(parent)
-  {
-  }
 
-  void setText(const QString& textParam);
-
-protected:
-  /* Create a delete widget for more than one menu (tearout and normal) */
-  virtual QWidget *createWidget(QWidget *parent) override;
-  virtual void deleteWidget(QWidget *widget) override;
-
-  /* List of created/registered labels */
-  QVector<QLabel *> labels;
-  QString text;
-};
+}
 
 void WindLabelAction::setText(const QString& textParam)
 {
   text = textParam;
   // Set text to all registered labels
-  for(QLabel *label : qAsConst(labels))
+  for(QLabel *label : std::as_const(labels))
     label->setText(text);
 }
 
@@ -834,7 +821,7 @@ atools::grib::Wind WindReporter::getWindForLineStringRoute(const atools::geo::Li
   return currentWindQuery()->getWindAverageForLineString(line);
 }
 
-atools::grib::WindPosList WindReporter::windStackForPosInternal(const atools::geo::Pos& pos, QVector<int> altitudesFt) const
+atools::grib::WindPosList WindReporter::windStackForPosInternal(const atools::geo::Pos& pos, QList<int> altitudesFt) const
 {
   atools::grib::WindPosList winds;
   atools::grib::WindQuery *windQuery = currentWindQuery();
@@ -866,7 +853,7 @@ atools::grib::WindPosList WindReporter::windStackForPosInternal(const atools::ge
 
 atools::grib::WindPosList WindReporter::getWindStackForPos(const atools::geo::Pos& pos, const atools::grib::WindPos *additionalWind) const
 {
-  QVector<int> altitudesFt = levelsTooltipFt;
+  QList<int> altitudesFt = levelsTooltipFt;
 
   // Add manual layer to result =========
   if(isWindManual() && getManualAltitudeFt() < map::INVALID_ALTITUDE_VALUE)

@@ -93,14 +93,14 @@ void SearchController::getSelectedMapObjects(map::MapResult& result) const
 
 void SearchController::optionsChanged()
 {
-  for(AbstractSearch *search : qAsConst(allSearchTabs))
+  for(AbstractSearch *search : std::as_const(allSearchTabs))
     search->optionsChanged();
 }
 
 void SearchController::styleChanged()
 {
   tabHandlerSearch->styleChanged();
-  for(AbstractSearch *search : qAsConst(allSearchTabs))
+  for(AbstractSearch *search : std::as_const(allSearchTabs))
     search->styleChanged();
 }
 
@@ -165,7 +165,7 @@ void SearchController::tabChanged(int index)
 
 void SearchController::saveState() const
 {
-  for(AbstractSearch *searchTab : qAsConst(allSearchTabs))
+  for(AbstractSearch *searchTab : std::as_const(allSearchTabs))
     searchTab->saveState();
 
   tabHandlerSearch->saveState();
@@ -175,7 +175,7 @@ void SearchController::restoreState()
 {
   tabHandlerSearch->restoreState();
 
-  for(AbstractSearch *searchTab : qAsConst(allSearchTabs))
+  for(AbstractSearch *searchTab : std::as_const(allSearchTabs))
     searchTab->restoreState();
 }
 
@@ -253,13 +253,13 @@ void SearchController::postCreateSearch(AbstractSearch *search)
 
 void SearchController::preDatabaseLoad()
 {
-  for(AbstractSearch *search : qAsConst(allSearchTabs))
+  for(AbstractSearch *search : std::as_const(allSearchTabs))
     search->preDatabaseLoad();
 }
 
 void SearchController::postDatabaseLoad()
 {
-  for(AbstractSearch *search : qAsConst(allSearchTabs))
+  for(AbstractSearch *search : std::as_const(allSearchTabs))
     search->postDatabaseLoad();
 }
 
@@ -275,7 +275,7 @@ void SearchController::refreshLogdata()
 
 void SearchController::clearSelection()
 {
-  for(AbstractSearch *search : qAsConst(allSearchTabs))
+  for(AbstractSearch *search : std::as_const(allSearchTabs))
     search->clearSelection();
 }
 
@@ -287,7 +287,7 @@ void SearchController::clearProcedureSelectionAndPreviews()
 bool SearchController::hasSelection()
 {
   bool selection = false;
-  for(AbstractSearch *search : qAsConst(allSearchTabs))
+  for(AbstractSearch *search : std::as_const(allSearchTabs))
     selection |= search->hasSelection();
   return selection;
 }
@@ -412,7 +412,7 @@ void SearchController::searchSelectionChanged(const SearchBaseTable *source, int
   if(source->getTabIndex() == si::SEARCH_ONLINE_CLIENT || source->getTabIndex() == si::SEARCH_ONLINE_CENTER)
   {
     QDateTime lastUpdateTime = NavApp::getOnlinedataController()->getLastUpdateTime();
-    lastUpdate = lastUpdateTime.isValid() ? tr(" Last Update: %1").arg(lastUpdateTime.toString(Qt::DefaultLocaleShortDate)) : QString();
+    lastUpdate = lastUpdateTime.isValid() ? tr(" Last Update: %1").arg(QLocale().toString(QLocale::ShortFormat)) : QString();
   }
 
   if(source->getTabIndex() == si::SEARCH_AIRPORT)
@@ -439,7 +439,7 @@ void SearchController::searchSelectionChanged(const SearchBaseTable *source, int
     source->getSelectedMapObjects(result);
 
     float travelTimeRealHours = 0.f, travelTimeSimHours = 0.f, distanceNm = 0.f, distanceFlownNm = 0.f;
-    for(const map::MapLogbookEntry& entry : qAsConst(result.logbookEntries))
+    for(const map::MapLogbookEntry& entry : std::as_const(result.logbookEntries))
     {
       travelTimeRealHours += entry.travelTimeRealHours;
       travelTimeSimHours += entry.travelTimeSimHours;

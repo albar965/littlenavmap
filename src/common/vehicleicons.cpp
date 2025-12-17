@@ -24,8 +24,6 @@
 #include <QIcon>
 #include <QPainter>
 
-namespace internal {
-
 enum AircraftType
 {
   AC_UNKNOWN,
@@ -51,19 +49,25 @@ struct PixmapKey
   int size, rotate;
 };
 
-uint qHash(const PixmapKey& key)
+size_t qHash(const PixmapKey& key)
 {
-  return static_cast<uint>(key.size ^ (key.type << 8) ^ (key.ground << 12) ^ (key.user << 13) ^ (key.rotate << 14) ^ (key.online << 15));
+  return static_cast<size_t>(key.size ^ (key.type << 8) ^ (key.ground << 12) ^
+                             (key.user << 13) ^ (key.rotate << 14) ^ (key.online << 15));
 }
 
-}
+struct VehicleIconsPrivate
+{
+  QCache<PixmapKey, QPixmap> aircraftPixmaps;
+};
 
 VehicleIcons::VehicleIcons()
 {
+  p = new VehicleIconsPrivate;
 }
 
 VehicleIcons::~VehicleIcons()
 {
+  delete p;
 }
 
 const QIcon VehicleIcons::iconFromCache(const atools::fs::sc::SimConnectAircraft& ac, int size, int rotate)
@@ -71,43 +75,43 @@ const QIcon VehicleIcons::iconFromCache(const atools::fs::sc::SimConnectAircraft
   return QIcon(*pixmapFromCache(ac, size, rotate));
 }
 
-const QPixmap *VehicleIcons::pixmapFromCache(const internal::PixmapKey& key, int rotate)
+const QPixmap *VehicleIcons::pixmapFromCache(const PixmapKey& key, int rotate)
 {
-  if(aircraftPixmaps.contains(key))
-    return aircraftPixmaps.object(key);
+  if(p->aircraftPixmaps.contains(key))
+    return p->aircraftPixmaps.object(key);
   else
   {
     int size = key.size;
     QString name = ":/littlenavmap/resources/icons/aircraft";
     switch(key.type)
     {
-      case internal::AC_SMALL:
+      case AC_SMALL:
         name += "_small";
         break;
-      case internal::AC_JET:
+      case AC_JET:
         name += "_jet";
         break;
-      case internal::AC_HELICOPTER:
+      case AC_HELICOPTER:
         name += "_helicopter";
         // Make helicopter a bit bigger due to image
         size = atools::roundToInt(size * 1.2f);
         break;
-      case internal::AC_SHIP:
+      case AC_SHIP:
         name += "_boat";
         break;
-      case internal::AC_CARRIER:
+      case AC_CARRIER:
         name += "_carrier";
         break;
-      case internal::AC_FRIGATE:
+      case AC_FRIGATE:
         name += "_frigate";
         break;
 
-      case internal::AC_UNKNOWN:
+      case AC_UNKNOWN:
         name += "_unknown";
         break;
     }
 
-    if(key.type != internal::AC_UNKNOWN)
+    if(key.type != AC_UNKNOWN)
     {
       if(key.ground)
         name += "_ground";
@@ -149,34 +153,34 @@ const QPixmap *VehicleIcons::pixmapFromCache(const internal::PixmapKey& key, int
       painter.resetTransform();
       newPx = new QPixmap(painterPixmap);
     }
-    aircraftPixmaps.insert(key, newPx);
+    p->aircraftPixmaps.insert(key, newPx);
     return newPx;
   }
 }
 
 const QPixmap *VehicleIcons::pixmapFromCache(const atools::fs::sc::SimConnectAircraft& ac, int size, int rotate)
 {
-  internal::PixmapKey key;
+  PixmapKey key;
 
   // Also use online icon for simulator shadows but not for the user aircraft
   if(ac.isHelicopter())
-    key.type = internal::AC_HELICOPTER;
+    key.type = AC_HELICOPTER;
   else if(ac.isAnyBoat())
   {
     if(ac.getCategory() == atools::fs::sc::CARRIER)
-      key.type = internal::AC_CARRIER;
+      key.type = AC_CARRIER;
     else if(ac.getCategory() == atools::fs::sc::FRIGATE)
-      key.type = internal::AC_FRIGATE;
+      key.type = AC_FRIGATE;
     else
-      key.type = internal::AC_SHIP;
+      key.type = AC_SHIP;
   }
   else // if(ac.getCategory() == atools::fs::sc::AIRPLANE)
   {
     // Also look at category UNKNOWN which can appear for X-Plane
     if(ac.getEngineType() == atools::fs::sc::JET)
-      key.type = internal::AC_JET;
+      key.type = AC_JET;
     else
-      key.type = internal::AC_SMALL;
+      key.type = AC_SMALL;
   }
 
   // Dark icon for online aircraft or simulator shadow aircraft but not user

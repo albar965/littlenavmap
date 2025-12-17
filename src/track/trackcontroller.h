@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2024 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2025 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -99,11 +99,11 @@ signals:
 
 private:
   /* Slots called by the TrackDownloader after finishing each source */
-  void trackDownloadFinished(const atools::track::TrackVectorType& tracks, atools::track::TrackType type);
+  void trackDownloadFinished(const atools::track::TrackListType& tracks, atools::track::TrackType type);
   void trackDownloadFailed(const QString& error, int errorCode, QString downloadUrl, atools::track::TrackType type);
   void trackDownloadSslErrors(const QStringList& errors, const QString& downloadUrl);
   void tracksLoaded();
-  QVector<atools::track::TrackType> enabledTracks() const;
+  QList<atools::track::TrackType> enabledTracks() const;
   void startDownloadInternal();
   void trackSelectionChanged(bool);
 
@@ -118,10 +118,10 @@ private:
   TrackManager *trackManager = nullptr;
 
   /* Filled with all types when starting download. Empty when all types finished downloading */
-  QVector<atools::track::TrackType> downloadQueue;
+  QList<atools::track::TrackType> downloadQueue;
 
   /* Saved raw track data */
-  atools::track::TrackVectorType trackVector;
+  atools::track::TrackListType trackVector;
 
   /* Do not load tracks that are currently not valid. */
   bool downloadOnlyValid = false;

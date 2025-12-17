@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2020 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2025 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -43,12 +43,13 @@ class RandomDepartureAirportPickingByCriteria :
 
 public:
   explicit RandomDepartureAirportPickingByCriteria();
+  virtual ~RandomDepartureAirportPickingByCriteria() override;
 
   // required calling !!!
   // the number of items in data can have been reduced when search
   // is done or cancelled
-  static void initStatics(QVector<std::pair<int, atools::geo::Pos> > *data,
-                          QVector<std::pair<int, int> > *antiData,
+  static void initStatics(QList<std::pair<int, atools::geo::Pos> > *data,
+                          QList<std::pair<int, int> > *antiData,
                           int distanceMinMeter,
                           int distanceMaxMeter,
                           int predefinedAirportIndex);
@@ -65,20 +66,20 @@ signals:
   void resultReady(const bool isSuccess,
                    const int indexDeparture,
                    const int indexDestination,
-                   QVector<std::pair<int, atools::geo::Pos> > *data);
+                   QList<std::pair<int, atools::geo::Pos> > *data);
   void progressing();
 
 private:
   friend class RandomDestinationAirportPickingByCriteria;
 
-  QVector<int> map_sort(int* array, int arrayLength);
+  QList<int> map_sort(int* array, int arrayLength);
 
-  QVector<bool> destinationPickerState;   // false = running, true = done
+  QList<bool> destinationPickerState;   // false = running, true = done
   bool* dataDestinationPickerState;
   int foundIndexDestination = -1;
   bool success = false;
-  static QVector<std::pair<int, atools::geo::Pos> > *data;
-  static QVector<std::pair<int, int> > *antiData;
+  static QList<std::pair<int, atools::geo::Pos> > *data;
+  static QList<std::pair<int, int> > *antiData;
   static int predefinedAirportIndex;
   static int numberDestinationsSetParts;
   static bool stopExecution;

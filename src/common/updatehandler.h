@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2022 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2025 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -27,7 +27,7 @@ namespace atools {
 namespace util {
 class UpdateCheck;
 class Update;
-typedef QVector<atools::util::Update> UpdateList;
+typedef QList<atools::util::Update> UpdateList;
 }
 }
 

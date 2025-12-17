@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2024 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2025 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -38,7 +38,8 @@ using atools::geo::Pos;
 TrafficPatternDialog::TrafficPatternDialog(QWidget *parent, const map::MapAirport& mapAirport) :
   QDialog(parent), ui(new Ui::TrafficPatternDialog), color(Qt::darkRed)
 {
-  setWindowFlags(windowFlags() & ~Qt::WindowContextHelpButtonHint);
+  setWindowFlag(Qt::WindowContextHelpButtonHint, false);
+
   setWindowModality(Qt::ApplicationModal);
 
   ui->setupUi(this);

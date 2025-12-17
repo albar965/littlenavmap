@@ -410,8 +410,8 @@ private:
 
   /* Selection in approach view has changed */
   void procedureSelected(const proc::MapProcedureRef& ref); /* Single selection */
-  void proceduresSelected(const QVector<proc::MapProcedureRef>& refs); /* Multi preview for all procedures */
-  void proceduresSelectedInternal(const QVector<proc::MapProcedureRef>& refs, bool previewAll);
+  void proceduresSelected(const QList<proc::MapProcedureRef>& refs); /* Multi preview for all procedures */
+  void proceduresSelectedInternal(const QList<proc::MapProcedureRef>& refs, bool previewAll);
 
   /* Selection in flight plan table has changed */
   void routeSelectionChanged(int, int);
@@ -624,7 +624,7 @@ private:
     QString message;
   };
 
-  QVector<StatusMessage> statusMessages;
+  QList<StatusMessage> statusMessages;
 
   /* true if database is currently switched off (i.e. the scenery library loading is open) */
   bool hasDatabaseLoadStatus = false;

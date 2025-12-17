@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2024 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2025 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -144,7 +144,7 @@ AirportSearch::AirportSearch(QMainWindow *parent, QTableView *tableView, si::Tab
 
   // Show/hide all search options menu action
   connect(ui->actionAirportSearchShowAllOptions, &QAction::toggled, this, [this](bool state) {
-    for(QAction *a: qAsConst(airportSearchMenuActions))
+    for(QAction *a: std::as_const(airportSearchMenuActions))
       a->setChecked(state);
   });
 
@@ -878,7 +878,7 @@ void AirportSearch::randomFlightSearchProgressing()
 }
 
 void AirportSearch::dataRandomAirportsReceived(bool isSuccess, int indexDeparture, int indexDestination,
-                                               QVector<std::pair<int, atools::geo::Pos> > *data)
+                                               QList<std::pair<int, atools::geo::Pos> > *data)
 {
   randomFlightSearchProgress->hide();
 

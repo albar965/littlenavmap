@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2024 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2025 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -138,7 +138,7 @@ void UpdateHandler::checkForUpdates(UpdateReason reason)
     updateCheck->checkForUpdates(checked, updateReason == UPDATE_REASON_MANUAL /* notifyForEmptyUpdates */, channels);
 
     // Set timestamp for last check
-    Settings::instance().setValueVar(lnm::OPTIONS_UPDATE_LAST_CHECKED, QDateTime::currentDateTime().toSecsSinceEpoch());
+    Settings::instance().setValueVar(lnm::OPTIONS_UPDATE_LAST_CHECKED, QDateTime::currentSecsSinceEpoch());
   }
 
   if(reason == UPDATE_REASON_TIMER || reason == UPDATE_REASON_STARTUP)

@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2024 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2025 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -34,6 +34,11 @@ DetailSliderAction::DetailSliderAction(QObject *parent, const QString& settingsK
 {
   sliderValue = minValue;
   setSliderValue(sliderValue);
+}
+
+DetailSliderAction::~DetailSliderAction()
+{
+
 }
 
 int DetailSliderAction::getSliderValue() const
@@ -95,7 +100,7 @@ void DetailSliderAction::setSliderValue(int value)
 {
   sliderValue = value;
   atools::gui::SignalBlocker blocker(sliders);
-  for(QSlider *slider : qAsConst(sliders))
+  for(QSlider *slider : std::as_const(sliders))
     slider->setValue(value);
 }
 
@@ -126,7 +131,7 @@ protected:
   virtual void deleteWidget(QWidget *widget) override;
 
   /* List of created/registered labels */
-  QVector<QLabel *> labels;
+  QList<QLabel *> labels;
   QString text;
 };
 
@@ -134,7 +139,7 @@ void DetailLabelAction::setText(const QString& textParam)
 {
   text = textParam;
   // Set text to all registered labels
-  for(QLabel *label : qAsConst(labels))
+  for(QLabel *label : std::as_const(labels))
     label->setText(text);
 }
 

@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2024 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2025 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -73,7 +73,7 @@ void MapPainterAltitude::render()
       int south = static_cast<int>(curBox.south(mconvert::DEG));
 
       // Split at anit-meridian if needed
-      QVector<std::pair<int, int> > ranges;
+      QList<std::pair<int, int> > ranges;
       if(west <= east)
         ranges.append(std::make_pair(west - 1, east));
       else
@@ -83,11 +83,11 @@ void MapPainterAltitude::render()
       }
 
       // Altitude values
-      QVector<int> altitudes;
+      QList<int> altitudes;
       // Minimum rectangle width on screen in pixel
       float minWidth = std::numeric_limits<float>::max();
       // Center points for rectangles for text placement
-      QVector<GeoDataCoordinates> centers;
+      QList<GeoDataCoordinates> centers;
 
       // Draw rectangles and collect other values for text placement ================================
       for(int laty = south; laty <= north + 1; laty++)
@@ -150,7 +150,7 @@ void MapPainterAltitude::render()
         {
           // Draw big thousands numbers ===============================
           bool visible, hidden;
-          QVector<QPointF> baseline;
+          QList<QPointF> baseline;
           for(int i = 0; i < centers.size(); i++)
           {
             QPointF pt = wToSF(centers.at(i), DEFAULT_WTOS_SIZE, &visible, &hidden);
@@ -158,7 +158,7 @@ void MapPainterAltitude::render()
             if(!hidden)
             {
               QString numTxt = QString::number(altitudes.at(i) / 10);
-              qreal w = fontmetrics.width(numTxt);
+              qreal w = fontmetrics.horizontalAdvance(numTxt);
               pt += QPointF(-w * 0.7, fontmetrics.height() / 2. - fontmetrics.descent());
 
               context->painter->drawText(pt, numTxt);

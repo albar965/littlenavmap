@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2024 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2025 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -279,7 +279,7 @@ void UserdataController::actionsToTypes()
 {
   // Copy state for known types
   selectedTypes.clear();
-  for(QAction *action : qAsConst(actions))
+  for(QAction *action : std::as_const(actions))
   {
     if(action->isChecked())
       selectedTypes.append(action->data().toString());
@@ -293,7 +293,7 @@ void UserdataController::actionsToTypes()
 void UserdataController::typesToActions()
 {
   // Copy state for known types
-  for(QAction *action : qAsConst(actions))
+  for(QAction *action : std::as_const(actions))
     action->setChecked(selectedTypes.contains(action->data().toString()));
   actionUnknown->setChecked(selectedUnknownType);
   userdataToolButton->setChecked(!selectedTypes.isEmpty() || selectedUnknownType);
@@ -619,7 +619,7 @@ void UserdataController::addUserpointInternal(int id, const atools::geo::Pos& po
   dlg.saveState();
 }
 
-void UserdataController::editUserpoints(const QVector<int>& ids)
+void UserdataController::editUserpoints(const QList<int>& ids)
 {
   qDebug() << Q_FUNC_INFO;
 
@@ -658,7 +658,7 @@ void UserdataController::editUserpoints(const QVector<int>& ids)
     qWarning() << Q_FUNC_INFO << "Empty record" << rec;
 }
 
-void UserdataController::deleteUserpoints(const QVector<int>& ids)
+void UserdataController::deleteUserpoints(const QList<int>& ids)
 {
   qDebug() << Q_FUNC_INFO;
 
@@ -800,7 +800,7 @@ void UserdataController::exportCsv()
         flags.setFlag(atools::fs::userdata::APPEND, append);
         flags.setFlag(atools::fs::userdata::CSV_HEADER, header);
 
-        QVector<int> ids;
+        QList<int> ids;
         if(selected)
           ids = NavApp::getUserdataSearch()->getSelectedIds();
         int numExported = manager->exportCsv(file, ids, flags);
@@ -833,7 +833,7 @@ void UserdataController::exportXplaneUserFixDat()
 
       if(!file.isEmpty())
       {
-        QVector<int> ids;
+        QList<int> ids;
         if(selected)
           ids = NavApp::getUserdataSearch()->getSelectedIds();
         int numExported = manager->exportXplane(file, ids, append ? atools::fs::userdata::APPEND : atools::fs::userdata::NONE,
@@ -869,7 +869,7 @@ void UserdataController::exportGarmin()
 
       if(!file.isEmpty())
       {
-        QVector<int> ids;
+        QList<int> ids;
         if(selected)
           ids = NavApp::getUserdataSearch()->getSelectedIds();
         int numExported =
@@ -903,7 +903,7 @@ void UserdataController::exportBglXml()
 
       if(!file.isEmpty())
       {
-        QVector<int> ids;
+        QList<int> ids;
         if(selected)
           ids = NavApp::getUserdataSearch()->getSelectedIds();
         int numExported =
@@ -1088,7 +1088,7 @@ void UserdataController::cleanupUserdata()
     if(choiceDialog.isButtonChecked(SHOW_PREVIEW))
     {
       // Columns to be shown in the preview
-      QVector<atools::sql::SqlColumn> previewCols({
+      QList<atools::sql::SqlColumn> previewCols({
         SqlColumn("type", tr("Type")),
         SqlColumn("last_edit_timestamp", tr("Last Change")),
         SqlColumn("ident", tr("Ident")),

@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2024 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2025 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -19,7 +19,8 @@
 #define LNM_STYLEHANDLER_H
 
 #include <QPalette>
-#include <QVector>
+#include <QList>
+#include <QObject>
 
 class QMenu;
 class QPalette;
@@ -71,8 +72,8 @@ private:
   struct Style
   {
     Style(const QString& displayNameParam, const QString& styleNameParam, const QString& stylesheetParam,
-          const QPalette& paletteParam, bool darkParam) : displayName(displayNameParam),
-      styleName(styleNameParam), stylesheet(stylesheetParam), palette(paletteParam), dark(darkParam)
+          const QPalette& paletteParam, bool darkParam) :
+      displayName(displayNameParam), styleName(styleNameParam), stylesheet(stylesheetParam), palette(paletteParam), dark(darkParam)
     {
     }
 
@@ -87,13 +88,13 @@ private:
   void menuItemTriggered();
 
   /* All system and custom styles */
-  QVector<Style> styles;
+  QList<Style> styles;
   /* Currently selected as in menu order */
   int currentStyleIndex = 0;
 
   /* Menus*/
   QActionGroup *styleActionGroup = nullptr;
-  QVector<QAction *> menuItems;
+  QList<QAction *> menuItems;
   QMainWindow *mainWindow;
 };
 

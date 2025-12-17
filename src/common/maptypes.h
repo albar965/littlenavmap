@@ -119,12 +119,12 @@ struct MapRef
 
 QDebug operator<<(QDebug out, const map::MapRef& ref);
 
-inline uint qHash(const map::MapRef& type)
+inline size_t qHash(const map::MapRef& type)
 {
   return static_cast<uint>(type.id) ^ static_cast<uint>(type.objType);
 }
 
-typedef QVector<MapRef> MapRefVector;
+typedef QList<MapRef> MapRefList;
 
 // =====================================================================
 /* Extended reference type that also covers coordinates and name.
@@ -177,12 +177,12 @@ struct MapRefExt
 
 QDebug operator<<(QDebug out, const map::MapRefExt& ref);
 
-inline uint qHash(const map::MapRefExt& type)
+inline size_t qHash(const map::MapRefExt& type)
 {
   return qHash(static_cast<map::MapRef>(type)) ^ qHash(type.position);
 }
 
-typedef QVector<MapRefExt> MapRefExtVector;
+typedef QList<MapRefExt> MapRefExtList;
 
 // =====================================================================
 /* Convert type from nav_search table to enum */
@@ -1188,7 +1188,7 @@ struct MapAirway
   int minAltitude, maxAltitude /* feet */,
       sequence /* segment sequence in airway */,
       fragment /* fragment number of disconnected airways with the same name */;
-  QVector<quint16> altitudeLevelsEast, altitudeLevelsWest;
+  QList<quint16> altitudeLevelsEast, altitudeLevelsWest;
   atools::geo::Pos from, to;
   atools::geo::Rect bounding; /* pre calculated using from and to */
   bool eastCourse, westCourse;
@@ -1395,7 +1395,7 @@ struct MapAirspace
    *  N active not continuously - time not known - NULL active times announced by Notams
    *  U Unknown - do not display value */
 
-  QVector<int> comFrequencies;
+  QList<int> comFrequencies;
   map::MapAirspaceType type = map::AIRSPACE_NONE;
   map::MapAirspaceSource src;
 
@@ -1466,8 +1466,8 @@ struct MapAirportMsa :
   float radius, /* Radius in NM */
         magvar; /* Taken from environment or navaid */
 
-  QVector<float> bearings, /* Bearings in true or mag degree - same size as altitudes */
-                 altitudes; /* Altitudes in feet - same size as bearings */
+  QList<float> bearings, /* Bearings in true or mag degree - same size as altitudes */
+               altitudes;   /* Altitudes in feet - same size as bearings */
 
   bool trueBearing; /* true if all bearing values are true - otherwise magnetic */
   atools::geo::LineString geometry, /* Outer circle/arcs geometry. 180 points for full circle. */
@@ -1676,7 +1676,7 @@ struct RangeMarker
   }
 
   QString text; /* Text to display like VOR name and frequency */
-  QVector<float> ranges; /* Range ring list (NM) */
+  QList<float> ranges; /* Range ring list (NM) */
   MapType navType; /* VOR, NDB, AIRPORT, etc. */
   QColor color;
 };
@@ -1794,7 +1794,7 @@ QString parkingNameOrNumber(const map::MapParking& parking);
 QString startType(const map::MapStart& start);
 
 // Keywords to be replaced to shorten name in map display
-const QVector<std::pair<QRegularExpression, QString> >& parkingKeywords();
+const QList<std::pair<QRegularExpression, QString> >& parkingKeywords();
 
 QString helipadText(const map::MapHelipad& helipad);
 

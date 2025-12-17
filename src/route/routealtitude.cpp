@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2024 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2025 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -226,7 +226,7 @@ const RouteAltitudeLeg& RouteAltitude::value(int i) const
     return EMPTY_ROUTE_ALT_LEG;
   }
   else
-    return QVector::at(i);
+    return QList::at(i);
 }
 
 float RouteAltitude::getTotalDistance() const
@@ -271,9 +271,9 @@ QStringList RouteAltitude::getErrorStrings() const
   return errors;
 }
 
-QVector<float> RouteAltitude::getAltitudes() const
+QList<float> RouteAltitude::getAltitudes() const
 {
-  QVector<float> retval;
+  QList<float> retval;
 
   if(!isEmpty())
   {
@@ -2028,7 +2028,7 @@ void RouteAltitude::calculateTrip(const atools::fs::perf::AircraftPerf& perf)
   // Calculate average values for all =====================================
   float uAverageAll = 0.f, vAverageAll = 0.f;
   float uAverageCruise = 0.f, vAverageCruise = 0.f;
-  for(const RouteAltitudeLeg& leg : qAsConst(*this))
+  for(const RouteAltitudeLeg& leg : std::as_const(*this))
   {
     if(leg.isMissed() || leg.isAlternate())
       break;
@@ -2116,9 +2116,9 @@ QDebug operator<<(QDebug out, const RouteAltitude& obj)
                           << ", tripFuel " << obj.getTripFuel()
                           << ", alternateFuel " << obj.getAlternateFuel()
                           << ", totalDistance " << obj.route->getTotalDistance()
-                          << endl;
+                           << Qt::endl;
 
   for(int i = 0; i < obj.size(); i++)
-    out << "++++++++++++++++++++++" << endl << i << " " << obj.value(i) << endl;
+    out << "++++++++++++++++++++++"  << Qt::endl << i << " " << obj.value(i)  << Qt::endl;
   return out;
 }

@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2023 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2025 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -664,9 +664,9 @@ void SqlController::loadAllRows()
   QGuiApplication::restoreOverrideCursor();
 }
 
-QVector<const Column *> SqlController::getCurrentColumns() const
+QList<const Column *> SqlController::getCurrentColumns() const
 {
-  QVector<const Column *> cols;
+  QList<const Column *> cols;
   atools::sql::SqlRecord rec = model->getSqlRecord();
   for(int i = 0; i < rec.count(); i++)
     cols.append(columns->getColumn(rec.fieldName(i)));

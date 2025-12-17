@@ -16,6 +16,11 @@ UiActionsController::UiActionsController(QObject *parent, bool verboseParam, Abs
     qDebug() << Q_FUNC_INFO;
 }
 
+UiActionsController::~UiActionsController()
+{
+
+}
+
 WebApiResponse UiActionsController::infoAction(WebApiRequest request)
 {
   Q_UNUSED(request)

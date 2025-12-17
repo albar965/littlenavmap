@@ -205,7 +205,7 @@ public:
 
   static void updateAllMaps();
 
-  static const QVector<atools::fs::sc::SimConnectAircraft>& getAiAircraft();
+  static const QList<atools::fs::sc::SimConnectAircraft>& getAiAircraft();
 
   static const map::MapTypes getShownMapTypes();
   static const map::MapDisplayTypes getShownMapDisplayTypes();
@@ -235,8 +235,8 @@ public:
   static bool isDatabaseXPlane();
   static QString getCurrentSimulatorBasePath();
   static QString getSimulatorBasePath(atools::fs::FsPaths::SimulatorType type);
-  static QString getSimulatorBasePathBest(const QVector<atools::fs::FsPaths::SimulatorType>& types);
-  static QString getSimulatorFilesPathBest(const QVector<atools::fs::FsPaths::SimulatorType>& types, const QString& defaultPath);
+  static QString getSimulatorBasePathBest(const QList<atools::fs::FsPaths::SimulatorType>& types);
+  static QString getSimulatorFilesPathBest(const QList<atools::fs::FsPaths::SimulatorType>& types, const QString& defaultPath);
   static bool hasSimulator(atools::fs::FsPaths::SimulatorType type);
   static bool hasAnyMsSimulator();
   static bool hasInstalledSimulator(atools::fs::FsPaths::SimulatorType type);

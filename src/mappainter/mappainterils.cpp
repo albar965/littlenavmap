@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2024 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2025 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -52,12 +52,12 @@ void MapPainterIls::render()
     context->startTimer("ILS");
 
     // Get ILS from flight plan which are also painted in the profile
-    QVector<map::MapIls> routeIls;
+    QList<map::MapIls> routeIls;
     QSet<int> routeIlsIds;
     if(context->objectDisplayTypes.testFlag(map::FLIGHTPLAN))
     {
       routeIls = context->route->getDestRunwayIlsMap();
-      for(const map::MapIls& ils : qAsConst(routeIls))
+      for(const map::MapIls& ils : std::as_const(routeIls))
         routeIlsIds.insert(ils.id);
     }
 
@@ -77,7 +77,7 @@ void MapPainterIls::render()
       {
         atools::util::PainterContextSaver saver(painter);
 
-        for(const MapIls& ils : qAsConst(*ilsList))
+        for(const MapIls& ils : std::as_const(*ilsList))
         {
           if(routeIlsIds.contains(ils.id))
             // Part of flight plan - paint later
@@ -115,7 +115,7 @@ void MapPainterIls::render()
     }
 
     // Paint ILS from approach
-    for(const MapIls& ils : qAsConst(routeIls))
+    for(const MapIls& ils : std::as_const(routeIls))
     {
       bool visible = wToS(ils.position, x, y, scale->getScreeenSizeForRect(ils.bounding));
 

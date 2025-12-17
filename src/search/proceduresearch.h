@@ -18,14 +18,15 @@
 #ifndef LITTLENAVMAP_PROCTREECONTROLLER_H
 #define LITTLENAVMAP_PROCTREECONTROLLER_H
 
-#include "common/procflags.h"
 #include "common/mapflags.h"
+#include "common/proctypes.h"
 #include "search/abstractsearch.h"
 
 #include <QBitArray>
 #include <QFont>
 #include <QObject>
-#include <QVector>
+#include <QList>
+
 
 class SearchWidgetEventFilter;
 namespace atools {
@@ -44,12 +45,6 @@ class Rect;
 
 namespace map {
 struct MapAirport;
-}
-
-namespace proc {
-struct MapProcedureRef;
-struct MapProcedureLeg;
-struct MapProcedureLegs;
 }
 
 class ProcIndexEntry;
@@ -103,7 +98,7 @@ public:
 signals:
   /* Show approaches and highlight circles on the map */
   void procedureSelected(const proc::MapProcedureRef& refs);
-  void proceduresSelected(const QVector<proc::MapProcedureRef>& refs);
+  void proceduresSelected(const QList<proc::MapProcedureRef>& refs);
   void procedureLegSelected(const proc::MapProcedureRef& refs);
 
   /* Zoom to approaches/transitions or waypoints */

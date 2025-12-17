@@ -194,15 +194,15 @@ void DatabaseLoader::loadScenery()
 
   // Add include directories ================================================
   for(const QString& path : optionData.getDatabaseInclude())
-    navDatabaseOpts->addIncludeGui(path);
+    navDatabaseOpts->addIncludeGui(QFileInfo(path));
 
   // Add excludes for files and directories ================================================
   for(const QString& path : optionData.getDatabaseExclude())
-    navDatabaseOpts->addExcludeGui(path);
+    navDatabaseOpts->addExcludeGui(QFileInfo(path));
 
   // Add add-on excludes for files and directories ================================================
   for(const QString& path : optionData.getDatabaseAddonExclude())
-    navDatabaseOpts->addAddonExcludeGui(path);
+    navDatabaseOpts->addAddonExcludeGui(QFileInfo(path));
 
   // Select simulator db to load
   navDatabaseOpts->setSimulatorType(selectedFsType);
@@ -255,7 +255,7 @@ void DatabaseLoader::loadScenery()
   navDatabase.setActivationContext(activationContext, lnm::SIMCONNECT_LOADER_DLL_NAME);
 
   // resultFlags = navDatabase.compileDatabase();
-  future = QtConcurrent::run(navDatabase, &atools::fs::NavDatabase::compileDatabase);
+  future = QtConcurrent::run(&atools::fs::NavDatabase::compileDatabase, navDatabase);
 
   // Calls DatabaseLoader::compileDatabasePost()
   watcher.setFuture(future);

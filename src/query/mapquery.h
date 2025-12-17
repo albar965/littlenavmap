@@ -114,10 +114,10 @@ public:
 
   /* Get ILS from sim database based on airport ident and runway name.
    * Runway name can be zero prefixed or prefixed with "RW". */
-  const QVector<map::MapIls> getIlsByAirportAndRunway(const QString& airportIdent, const QString& runway) const;
+  const QList<map::MapIls> getIlsByAirportAndRunway(const QString& airportIdent, const QString& runway) const;
 
   /* Get ILS from sim database based on airport ident and ILS ident. Uses exact match. */
-  QVector<map::MapIls> getIlsByAirportAndIdent(const QString& airportIdent, const QString& ilsIdent) const;
+  QList<map::MapIls> getIlsByAirportAndIdent(const QString& airportIdent, const QString& ilsIdent) const;
 
   /* Get runway end and try lower and higher numbers if nothing was found - adds a dummy entry with airport
    * position if no runway ends were found */
@@ -268,7 +268,7 @@ private:
   const QList<map::MapAirport> *fetchAirports(const Marble::GeoDataLatLonBox& rect, atools::sql::SqlQuery *query,
                                               bool lazy, bool addon, bool normal, bool& overflow);
 
-  QVector<map::MapIls> ilsByAirportAndRunway(const QString& airportIdent, const QString& runway) const;
+  QList<map::MapIls> ilsByAirportAndRunway(const QString& airportIdent, const QString& runway) const;
 
   void runwayEndByNameFuzzy(QList<map::MapRunwayEnd>& runwayEnds, const QString& name, const map::MapAirport& airport,
                             bool navData) const;

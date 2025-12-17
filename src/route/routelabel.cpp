@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2024 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2025 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -58,6 +58,11 @@ RouteLabel::RouteLabel(QWidget *parent, const Route& routeParam)
   ui->labelRouteSelection->setVisible(false);
   ui->labelRouteInfo->setVisible(false); // Will be shown if route is created
   updateFont();
+}
+
+RouteLabel::~RouteLabel()
+{
+
 }
 
 void RouteLabel::saveState() const
@@ -667,7 +672,7 @@ void RouteLabel::buildErrorLabel(QString& toolTipText, QStringList errors, const
 
     toolTipText.append(header);
     toolTipText.append("<ul>");
-    for(const QString& str : qAsConst(errors))
+    for(const QString& str : std::as_const(errors))
       toolTipText.append("<li>" % str % "</li>");
     toolTipText.append("</ul>");
   }

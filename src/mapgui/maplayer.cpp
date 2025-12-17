@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2020 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2025 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -115,219 +115,219 @@ void MapLayer::loadFromXml(atools::util::XmlStream& xmlStream)
 
   while(xmlStream.readNextStartElement())
   {
-    if(reader.name() == "MinRunwayLength")
+    if(reader.name() == QStringLiteral("MinRunwayLength"))
       minRunwayLength = xmlStream.readElementTextInt();
-    else if(reader.name() == "MaxRange")
+    else if(reader.name() == QStringLiteral("MaxRange"))
       maxRange = xmlStream.readElementTextInt();
-    else if(reader.name() == "AiAircraftGround")
+    else if(reader.name() == QStringLiteral("AiAircraftGround"))
       aiAircraftGround = xmlStream.readElementTextBool();
-    else if(reader.name() == "AiAircraftGroundText")
+    else if(reader.name() == QStringLiteral("AiAircraftGroundText"))
       aiAircraftGroundText = xmlStream.readElementTextBool();
-    else if(reader.name() == "AiAircraftLarge")
+    else if(reader.name() == QStringLiteral("AiAircraftLarge"))
       aiAircraftLarge = xmlStream.readElementTextBool();
-    else if(reader.name() == "AiAircraftSize")
+    else if(reader.name() == QStringLiteral("AiAircraftSize"))
       aiAircraftSize = xmlStream.readElementTextInt();
-    else if(reader.name() == "AiAircraftSmall")
+    else if(reader.name() == QStringLiteral("AiAircraftSmall"))
       aiAircraftSmall = xmlStream.readElementTextBool();
-    else if(reader.name() == "AiAircraftText")
+    else if(reader.name() == QStringLiteral("AiAircraftText"))
       aiAircraftText = xmlStream.readElementTextBool();
-    else if(reader.name() == "AiAircraftTextDetail")
+    else if(reader.name() == QStringLiteral("AiAircraftTextDetail"))
       aiAircraftTextDetail = xmlStream.readElementTextBool();
-    else if(reader.name() == "AiAircraftTextDetail2")
+    else if(reader.name() == QStringLiteral("AiAircraftTextDetail2"))
       aiAircraftTextDetail2 = xmlStream.readElementTextBool();
-    else if(reader.name() == "AiAircraftTextDetail3")
+    else if(reader.name() == QStringLiteral("AiAircraftTextDetail3"))
       aiAircraftTextDetail3 = xmlStream.readElementTextBool();
-    else if(reader.name() == "AiShipLarge")
+    else if(reader.name() == QStringLiteral("AiShipLarge"))
       aiShipLarge = xmlStream.readElementTextBool();
-    else if(reader.name() == "AiShipSmall")
+    else if(reader.name() == QStringLiteral("AiShipSmall"))
       aiShipSmall = xmlStream.readElementTextBool();
-    else if(reader.name() == "Airport")
+    else if(reader.name() == QStringLiteral("Airport"))
       airport = xmlStream.readElementTextBool();
-    else if(reader.name() == "AirportDiagram")
+    else if(reader.name() == QStringLiteral("AirportDiagram"))
       airportDiagram = xmlStream.readElementTextBool();
-    else if(reader.name() == "AirportDiagramDetail")
+    else if(reader.name() == QStringLiteral("AirportDiagramDetail"))
       airportDiagramDetail = xmlStream.readElementTextBool();
-    else if(reader.name() == "AirportDiagramDetail2")
+    else if(reader.name() == QStringLiteral("AirportDiagramDetail2"))
       airportDiagramDetail2 = xmlStream.readElementTextBool();
-    else if(reader.name() == "AirportDiagramDetail3")
+    else if(reader.name() == QStringLiteral("AirportDiagramDetail3"))
       airportDiagramDetail3 = xmlStream.readElementTextBool();
-    else if(reader.name() == "AirportDiagramRunway")
+    else if(reader.name() == QStringLiteral("AirportDiagramRunway"))
       airportDiagramRunway = xmlStream.readElementTextBool();
-    else if(reader.name() == "AirportIdent")
+    else if(reader.name() == QStringLiteral("AirportIdent"))
       airportIdent = xmlStream.readElementTextBool();
-    else if(reader.name() == "AirportInfo")
+    else if(reader.name() == QStringLiteral("AirportInfo"))
       airportInfo = xmlStream.readElementTextBool();
-    else if(reader.name() == "AirportMsa")
+    else if(reader.name() == QStringLiteral("AirportMsa"))
       airportMsa = xmlStream.readElementTextBool();
-    else if(reader.name() == "AirportMsaDetails")
+    else if(reader.name() == QStringLiteral("AirportMsaDetails"))
       airportMsaDetails = xmlStream.readElementTextBool();
-    else if(reader.name() == "AirportMsaSymbolScale")
+    else if(reader.name() == QStringLiteral("AirportMsaSymbolScale"))
       airportMsaSymbolScale = xmlStream.readElementTextFloat();
-    else if(reader.name() == "AirportName")
+    else if(reader.name() == QStringLiteral("AirportName"))
       airportName = xmlStream.readElementTextBool();
-    else if(reader.name() == "AirportNoRating")
+    else if(reader.name() == QStringLiteral("AirportNoRating"))
       airportNoRating = xmlStream.readElementTextBool();
-    else if(reader.name() == "AirportOverviewRunway")
+    else if(reader.name() == QStringLiteral("AirportOverviewRunway"))
       airportOverviewRunway = xmlStream.readElementTextBool();
-    else if(reader.name() == "AirportRouteInfo")
+    else if(reader.name() == QStringLiteral("AirportRouteInfo"))
       airportRouteInfo = xmlStream.readElementTextBool();
-    else if(reader.name() == "AirportMinor")
+    else if(reader.name() == QStringLiteral("AirportMinor"))
       airportMinor = xmlStream.readElementTextBool();
-    else if(reader.name() == "AirportMinorIdent")
+    else if(reader.name() == QStringLiteral("AirportMinorIdent"))
       airportMinorIdent = xmlStream.readElementTextBool();
-    else if(reader.name() == "AirportMinorInfo")
+    else if(reader.name() == QStringLiteral("AirportMinorInfo"))
       airportMinorInfo = xmlStream.readElementTextBool();
-    else if(reader.name() == "AirportMinorName")
+    else if(reader.name() == QStringLiteral("AirportMinorName"))
       airportMinorName = xmlStream.readElementTextBool();
-    else if(reader.name() == "AirportMinorSymbolSize")
+    else if(reader.name() == QStringLiteral("AirportMinorSymbolSize"))
       airportMinorSymbolSize = xmlStream.readElementTextInt();
-    else if(reader.name() == "AirportSymbolSize")
+    else if(reader.name() == QStringLiteral("AirportSymbolSize"))
       airportSymbolSize = xmlStream.readElementTextInt();
-    else if(reader.name() == "AirportWeather")
+    else if(reader.name() == QStringLiteral("AirportWeather"))
       airportWeather = xmlStream.readElementTextBool();
-    else if(reader.name() == "AirportWeatherDetails")
+    else if(reader.name() == QStringLiteral("AirportWeatherDetails"))
       airportWeatherDetails = xmlStream.readElementTextBool();
-    else if(reader.name() == "AirspaceCenter")
+    else if(reader.name() == QStringLiteral("AirspaceCenter"))
       airspaceCenter = xmlStream.readElementTextBool();
-    else if(reader.name() == "AirspaceFg")
+    else if(reader.name() == QStringLiteral("AirspaceFg"))
       airspaceFg = xmlStream.readElementTextBool();
-    else if(reader.name() == "AirspaceFirUir")
+    else if(reader.name() == QStringLiteral("AirspaceFirUir"))
       airspaceFirUir = xmlStream.readElementTextBool();
-    else if(reader.name() == "AirspaceIcao")
+    else if(reader.name() == QStringLiteral("AirspaceIcao"))
       airspaceIcao = xmlStream.readElementTextBool();
-    else if(reader.name() == "AirspaceOther")
+    else if(reader.name() == QStringLiteral("AirspaceOther"))
       airspaceOther = xmlStream.readElementTextBool();
-    else if(reader.name() == "AirspaceRestricted")
+    else if(reader.name() == QStringLiteral("AirspaceRestricted"))
       airspaceRestricted = xmlStream.readElementTextBool();
-    else if(reader.name() == "AirspaceSpecial")
+    else if(reader.name() == QStringLiteral("AirspaceSpecial"))
       airspaceSpecial = xmlStream.readElementTextBool();
-    else if(reader.name() == "AirspaceCenterText")
+    else if(reader.name() == QStringLiteral("AirspaceCenterText"))
       airspaceCenterText = xmlStream.readElementTextBool();
-    else if(reader.name() == "AirspaceFgText")
+    else if(reader.name() == QStringLiteral("AirspaceFgText"))
       airspaceFgText = xmlStream.readElementTextBool();
-    else if(reader.name() == "AirspaceFirUirText")
+    else if(reader.name() == QStringLiteral("AirspaceFirUirText"))
       airspaceFirUirText = xmlStream.readElementTextBool();
-    else if(reader.name() == "AirspaceIcaoText")
+    else if(reader.name() == QStringLiteral("AirspaceIcaoText"))
       airspaceIcaoText = xmlStream.readElementTextBool();
-    else if(reader.name() == "AirspaceOtherText")
+    else if(reader.name() == QStringLiteral("AirspaceOtherText"))
       airspaceOtherText = xmlStream.readElementTextBool();
-    else if(reader.name() == "AirspaceRestrictedText")
+    else if(reader.name() == QStringLiteral("AirspaceRestrictedText"))
       airspaceRestrictedText = xmlStream.readElementTextBool();
-    else if(reader.name() == "AirspaceSpecialText")
+    else if(reader.name() == QStringLiteral("AirspaceSpecialText"))
       airspaceSpecialText = xmlStream.readElementTextBool();
-    else if(reader.name() == "Airway")
+    else if(reader.name() == QStringLiteral("Airway"))
       airway = xmlStream.readElementTextBool();
-    else if(reader.name() == "AirwayDetails")
+    else if(reader.name() == QStringLiteral("AirwayDetails"))
       airwayDetails = xmlStream.readElementTextBool();
-    else if(reader.name() == "AirwayIdent")
+    else if(reader.name() == QStringLiteral("AirwayIdent"))
       airwayIdent = xmlStream.readElementTextBool();
-    else if(reader.name() == "AirwayInfo")
+    else if(reader.name() == QStringLiteral("AirwayInfo"))
       airwayInfo = xmlStream.readElementTextBool();
-    else if(reader.name() == "AirwayWaypoint")
+    else if(reader.name() == QStringLiteral("AirwayWaypoint"))
       airwayWaypoint = xmlStream.readElementTextBool();
-    else if(reader.name() == "Approach")
+    else if(reader.name() == QStringLiteral("Approach"))
       approach = xmlStream.readElementTextBool();
-    else if(reader.name() == "ApproachDetail")
+    else if(reader.name() == QStringLiteral("ApproachDetail"))
       approachDetail = xmlStream.readElementTextBool();
-    else if(reader.name() == "ApproachText")
+    else if(reader.name() == QStringLiteral("ApproachText"))
       approachText = xmlStream.readElementTextBool();
-    else if(reader.name() == "ApproachTextDetail")
+    else if(reader.name() == QStringLiteral("ApproachTextDetail"))
       approachTextDetail = xmlStream.readElementTextBool();
-    else if(reader.name() == "Holding")
+    else if(reader.name() == QStringLiteral("Holding"))
       holding = xmlStream.readElementTextBool();
-    else if(reader.name() == "HoldingInfo")
+    else if(reader.name() == QStringLiteral("HoldingInfo"))
       holdingInfo = xmlStream.readElementTextBool();
-    else if(reader.name() == "HoldingInfo2")
+    else if(reader.name() == QStringLiteral("HoldingInfo2"))
       holdingInfo2 = xmlStream.readElementTextBool();
-    else if(reader.name() == "Ils")
+    else if(reader.name() == QStringLiteral("Ils"))
       ils = xmlStream.readElementTextBool();
-    else if(reader.name() == "IlsDetail")
+    else if(reader.name() == QStringLiteral("IlsDetail"))
       ilsDetail = xmlStream.readElementTextBool();
-    else if(reader.name() == "IlsIdent")
+    else if(reader.name() == QStringLiteral("IlsIdent"))
       ilsIdent = xmlStream.readElementTextBool();
-    else if(reader.name() == "IlsInfo")
+    else if(reader.name() == QStringLiteral("IlsInfo"))
       ilsInfo = xmlStream.readElementTextBool();
-    else if(reader.name() == "Marker")
+    else if(reader.name() == QStringLiteral("Marker"))
       marker = xmlStream.readElementTextBool();
-    else if(reader.name() == "MarkerInfo")
+    else if(reader.name() == QStringLiteral("MarkerInfo"))
       markerInfo = xmlStream.readElementTextBool();
-    else if(reader.name() == "MarkerSymbolSize")
+    else if(reader.name() == QStringLiteral("MarkerSymbolSize"))
       markerSymbolSize = xmlStream.readElementTextInt();
-    else if(reader.name() == "Mora")
+    else if(reader.name() == QStringLiteral("Mora"))
       mora = xmlStream.readElementTextBool();
-    else if(reader.name() == "Ndb")
+    else if(reader.name() == QStringLiteral("Ndb"))
       ndb = xmlStream.readElementTextBool();
-    else if(reader.name() == "NdbIdent")
+    else if(reader.name() == QStringLiteral("NdbIdent"))
       ndbIdent = xmlStream.readElementTextBool();
-    else if(reader.name() == "NdbInfo")
+    else if(reader.name() == QStringLiteral("NdbInfo"))
       ndbInfo = xmlStream.readElementTextBool();
-    else if(reader.name() == "NdbRouteIdent")
+    else if(reader.name() == QStringLiteral("NdbRouteIdent"))
       ndbRouteIdent = xmlStream.readElementTextBool();
-    else if(reader.name() == "NdbRouteInfo")
+    else if(reader.name() == QStringLiteral("NdbRouteInfo"))
       ndbRouteInfo = xmlStream.readElementTextBool();
-    else if(reader.name() == "NdbSymbolSize")
+    else if(reader.name() == QStringLiteral("NdbSymbolSize"))
       ndbSymbolSize = xmlStream.readElementTextInt();
-    else if(reader.name() == "OnlineAircraft")
+    else if(reader.name() == QStringLiteral("OnlineAircraft"))
       onlineAircraft = xmlStream.readElementTextBool();
-    else if(reader.name() == "OnlineAircraftText")
+    else if(reader.name() == QStringLiteral("OnlineAircraftText"))
       onlineAircraftText = xmlStream.readElementTextBool();
-    else if(reader.name() == "RouteTextAndDetail")
+    else if(reader.name() == QStringLiteral("RouteTextAndDetail"))
       routeTextAndDetail = xmlStream.readElementTextBool();
-    else if(reader.name() == "RouteTextAndDetail2")
+    else if(reader.name() == QStringLiteral("RouteTextAndDetail2"))
       routeTextAndDetail2 = xmlStream.readElementTextBool();
-    else if(reader.name() == "Track")
+    else if(reader.name() == QStringLiteral("Track"))
       track = xmlStream.readElementTextBool();
-    else if(reader.name() == "TrackIdent")
+    else if(reader.name() == QStringLiteral("TrackIdent"))
       trackIdent = xmlStream.readElementTextBool();
-    else if(reader.name() == "TrackInfo")
+    else if(reader.name() == QStringLiteral("TrackInfo"))
       trackInfo = xmlStream.readElementTextBool();
-    else if(reader.name() == "TrackWaypoint")
+    else if(reader.name() == QStringLiteral("TrackWaypoint"))
       trackWaypoint = xmlStream.readElementTextBool();
-    else if(reader.name() == "Userpoint")
+    else if(reader.name() == QStringLiteral("Userpoint"))
       userpoint = xmlStream.readElementTextBool();
-    else if(reader.name() == "UserpointInfo")
+    else if(reader.name() == QStringLiteral("UserpointInfo"))
       userpointInfo = xmlStream.readElementTextBool();
-    else if(reader.name() == "UserpointSymbolSize")
+    else if(reader.name() == QStringLiteral("UserpointSymbolSize"))
       userpointSymbolSize = xmlStream.readElementTextInt();
-    else if(reader.name() == "Vor")
+    else if(reader.name() == QStringLiteral("Vor"))
       vor = xmlStream.readElementTextBool();
-    else if(reader.name() == "VorIdent")
+    else if(reader.name() == QStringLiteral("VorIdent"))
       vorIdent = xmlStream.readElementTextBool();
-    else if(reader.name() == "VorInfo")
+    else if(reader.name() == QStringLiteral("VorInfo"))
       vorInfo = xmlStream.readElementTextBool();
-    else if(reader.name() == "VorLarge")
+    else if(reader.name() == QStringLiteral("VorLarge"))
       vorLarge = xmlStream.readElementTextBool();
-    else if(reader.name() == "VorRouteIdent")
+    else if(reader.name() == QStringLiteral("VorRouteIdent"))
       vorRouteIdent = xmlStream.readElementTextBool();
-    else if(reader.name() == "VorRouteInfo")
+    else if(reader.name() == QStringLiteral("VorRouteInfo"))
       vorRouteInfo = xmlStream.readElementTextBool();
-    else if(reader.name() == "VorSymbolSize")
+    else if(reader.name() == QStringLiteral("VorSymbolSize"))
       vorSymbolSize = xmlStream.readElementTextInt();
-    else if(reader.name() == "Waypoint")
+    else if(reader.name() == QStringLiteral("Waypoint"))
       waypoint = xmlStream.readElementTextBool();
-    else if(reader.name() == "WaypointName")
+    else if(reader.name() == QStringLiteral("WaypointName"))
       waypointName = xmlStream.readElementTextBool();
-    else if(reader.name() == "WaypointRouteName")
+    else if(reader.name() == QStringLiteral("WaypointRouteName"))
       waypointRouteName = xmlStream.readElementTextBool();
-    else if(reader.name() == "WaypointSymbolSize")
+    else if(reader.name() == QStringLiteral("WaypointSymbolSize"))
       waypointSymbolSize = xmlStream.readElementTextInt();
-    else if(reader.name() == "WindBarbs")
+    else if(reader.name() == QStringLiteral("WindBarbs"))
       windBarbs = xmlStream.readElementTextInt();
-    else if(reader.name() == "WindBarbsSymbolSize")
+    else if(reader.name() == QStringLiteral("WindBarbsSymbolSize"))
       windBarbsSymbolSize = xmlStream.readElementTextInt();
-    else if(reader.name() == "MaximumTextLengthAirport")
+    else if(reader.name() == QStringLiteral("MaximumTextLengthAirport"))
       maximumTextLengthAirport = xmlStream.readElementTextInt();
-    else if(reader.name() == "MaximumTextLengthAirportMinor")
+    else if(reader.name() == QStringLiteral("MaximumTextLengthAirportMinor"))
       maximumTextLengthAirportMinor = xmlStream.readElementTextInt();
-    else if(reader.name() == "MaximumTextLengthUserpoint")
+    else if(reader.name() == QStringLiteral("MaximumTextLengthUserpoint"))
       maximumTextLengthUserpoint = xmlStream.readElementTextInt();
-    else if(reader.name() == "AirportFontScale")
+    else if(reader.name() == QStringLiteral("AirportFontScale"))
       airportFontScale = xmlStream.readElementTextFloat();
-    else if(reader.name() == "AirportMinorFontScale")
+    else if(reader.name() == QStringLiteral("AirportMinorFontScale"))
       airportMinorFontScale = xmlStream.readElementTextFloat();
-    else if(reader.name() == "RouteFontScale")
+    else if(reader.name() == QStringLiteral("RouteFontScale"))
       routeFontScale = xmlStream.readElementTextFloat();
-    else if(reader.name() == "AirspaceFontScale")
+    else if(reader.name() == QStringLiteral("AirspaceFontScale"))
       airspaceFontScale = xmlStream.readElementTextFloat();
     else
       xmlStream.skipCurrentElement(true /* warn */);
@@ -339,113 +339,113 @@ QDebug operator<<(QDebug out, const MapLayer& record)
   QDebugStateSaver saver(out);
 
   out.nospace().noquote();
-  out << "<Layer>" << endl;
-  out << "<AiAircraftGround>" << record.aiAircraftGround << "</AiAircraftGround>" << endl;
-  out << "<AiAircraftGroundText>" << record.aiAircraftGroundText << "</AiAircraftGroundText>" << endl;
-  out << "<AiAircraftLarge>" << record.aiAircraftLarge << "</AiAircraftLarge>" << endl;
-  out << "<AiAircraftSize>" << record.aiAircraftSize << "</AiAircraftSize>" << endl;
-  out << "<AiAircraftSmall>" << record.aiAircraftSmall << "</AiAircraftSmall>" << endl;
-  out << "<AiAircraftText>" << record.aiAircraftText << "</AiAircraftText>" << endl;
-  out << "<AiAircraftTextDetail>" << record.aiAircraftTextDetail << "</AiAircraftTextDetail>" << endl;
-  out << "<AiAircraftTextDetail2>" << record.aiAircraftTextDetail2 << "</AiAircraftTextDetail2>" << endl;
-  out << "<AiAircraftTextDetail3>" << record.aiAircraftTextDetail2 << "</AiAircraftTextDetail3>" << endl;
-  out << "<AiShipLarge>" << record.aiShipLarge << "</AiShipLarge>" << endl;
-  out << "<AiShipSmall>" << record.aiShipSmall << "</AiShipSmall>" << endl;
-  out << "<Airport>" << record.airport << "</Airport>" << endl;
-  out << "<AirportDiagram>" << record.airportDiagram << "</AirportDiagram>" << endl;
-  out << "<AirportDiagramDetail>" << record.airportDiagramDetail << "</AirportDiagramDetail>" << endl;
-  out << "<AirportDiagramDetail2>" << record.airportDiagramDetail2 << "</AirportDiagramDetail2>" << endl;
-  out << "<AirportDiagramDetail3>" << record.airportDiagramDetail3 << "</AirportDiagramDetail3>" << endl;
-  out << "<AirportDiagramRunway>" << record.airportDiagramRunway << "</AirportDiagramRunway>" << endl;
-  out << "<AirportFontScale>" << record.airportFontScale << "</AirportFontScale>" << endl;
-  out << "<AirportIdent>" << record.airportIdent << "</AirportIdent>" << endl;
-  out << "<AirportInfo>" << record.airportInfo << "</AirportInfo>" << endl;
-  out << "<AirportMinor>" << record.airportMinor << "</AirportMinor>" << endl;
-  out << "<AirportMinorFontScale>" << record.airportMinorFontScale << "</AirportMinorFontScale>" << endl;
-  out << "<AirportMinorIdent>" << record.airportMinorIdent << "</AirportMinorIdent>" << endl;
-  out << "<AirportMinorInfo>" << record.airportMinorInfo << "</AirportMinorInfo>" << endl;
-  out << "<AirportMinorName>" << record.airportMinorName << "</AirportMinorName>" << endl;
-  out << "<AirportMinorSymbolSize>" << record.airportMinorSymbolSize << "</AirportMinorSymbolSize>" << endl;
-  out << "<AirportMsa>" << record.airportMsa << "</AirportMsa>" << endl;
-  out << "<AirportMsaDetails>" << record.airportMsaDetails << "</AirportMsaDetails>" << endl;
-  out << "<AirportMsaSymbolScale>" << record.airportMsaSymbolScale << "</AirportMsaSymbolScale>" << endl;
-  out << "<AirportName>" << record.airportName << "</AirportName>" << endl;
-  out << "<AirportNoRating>" << record.airportNoRating << "</AirportNoRating>" << endl;
-  out << "<AirportOverviewRunway>" << record.airportOverviewRunway << "</AirportOverviewRunway>" << endl;
-  out << "<AirportRouteInfo>" << record.airportRouteInfo << "</AirportRouteInfo>" << endl;
-  out << "<AirportSymbolSize>" << record.airportSymbolSize << "</AirportSymbolSize>" << endl;
-  out << "<AirportWeather>" << record.airportWeather << "</AirportWeather>" << endl;
-  out << "<AirportWeatherDetails>" << record.airportWeatherDetails << "</AirportWeatherDetails>" << endl;
-  out << "<AirspaceCenter>" << record.airspaceCenter << "</AirspaceCenter>" << endl;
-  out << "<AirspaceFg>" << record.airspaceFg << "</AirspaceFg>" << endl;
-  out << "<AirspaceFirUir>" << record.airspaceFirUir << "</AirspaceFirUir>" << endl;
-  out << "<AirspaceIcao>" << record.airspaceIcao << "</AirspaceIcao>" << endl;
-  out << "<AirspaceOther>" << record.airspaceOther << "</AirspaceOther>" << endl;
-  out << "<AirspaceRestricted>" << record.airspaceRestricted << "</AirspaceRestricted>" << endl;
-  out << "<AirspaceSpecial>" << record.airspaceSpecial << "</AirspaceSpecial>" << endl;
-  out << "<AirspaceCenterText>" << record.airspaceCenterText << "</AirspaceCenterText>" << endl;
-  out << "<AirspaceFgText>" << record.airspaceFgText << "</AirspaceFgText>" << endl;
-  out << "<AirspaceFirUirText>" << record.airspaceFirUirText << "</AirspaceFirUirText>" << endl;
-  out << "<AirspaceIcaoText>" << record.airspaceIcaoText << "</AirspaceIcaoText>" << endl;
-  out << "<AirspaceOtherText>" << record.airspaceOtherText << "</AirspaceOtherText>" << endl;
-  out << "<AirspaceRestrictedText>" << record.airspaceRestrictedText << "</AirspaceRestrictedText>" << endl;
-  out << "<AirspaceSpecialText>" << record.airspaceSpecialText << "</AirspaceSpecialText>" << endl;
-  out << "<Airway>" << record.airway << "</Airway>" << endl;
-  out << "<AirwayDetails>" << record.airway << "</AirwayDetails>" << endl;
-  out << "<AirwayIdent>" << record.airwayIdent << "</AirwayIdent>" << endl;
-  out << "<AirwayInfo>" << record.airwayInfo << "</AirwayInfo>" << endl;
-  out << "<AirwayWaypoint>" << record.airwayWaypoint << "</AirwayWaypoint>" << endl;
-  out << "<Approach>" << record.approach << "</Approach>" << endl;
-  out << "<ApproachDetail>" << record.approachDetail << "</ApproachDetail>" << endl;
-  out << "<ApproachText>" << record.approachText << "</ApproachText>" << endl;
-  out << "<ApproachTextDetail>" << record.approachTextDetail << "</ApproachTextDetail>" << endl;
-  out << "<Holding>" << record.holding << "</Holding>" << endl;
-  out << "<HoldingInfo>" << record.holdingInfo << "</HoldingInfo>" << endl;
-  out << "<HoldingInfo2>" << record.holdingInfo2 << "</HoldingInfo2>" << endl;
-  out << "<Ils>" << record.ils << "</Ils>" << endl;
-  out << "<IlsDetail>" << record.ilsDetail << "</IlsDetail>" << endl;
-  out << "<IlsIdent>" << record.ilsIdent << "</IlsIdent>" << endl;
-  out << "<IlsInfo>" << record.ilsInfo << "</IlsInfo>" << endl;
-  out << "<Marker>" << record.marker << "</Marker>" << endl;
-  out << "<MarkerInfo>" << record.markerInfo << "</MarkerInfo>" << endl;
-  out << "<MarkerSymbolSize>" << record.markerSymbolSize << "</MarkerSymbolSize>" << endl;
-  out << "<MaxRange>" << record.maxRange << "</MaxRange>" << endl;
-  out << "<MaximumTextLengthAirport>" << record.maximumTextLengthAirport << "</MaximumTextLengthAirport>" << endl;
-  out << "<MaximumTextLengthAirportMinor>" << record.maximumTextLengthAirportMinor << "</MaximumTextLengthAirportMinor>" << endl;
-  out << "<MaximumTextLengthUserpoint>" << record.maximumTextLengthUserpoint << "</MaximumTextLengthUserpoint>" << endl;
-  out << "<MinRunwayLength>" << record.minRunwayLength << "</MinRunwayLength>" << endl;
-  out << "<Mora>" << record.mora << "</Mora>" << endl;
-  out << "<Ndb>" << record.ndb << "</Ndb>" << endl;
-  out << "<NdbIdent>" << record.ndbIdent << "</NdbIdent>" << endl;
-  out << "<NdbInfo>" << record.ndbInfo << "</NdbInfo>" << endl;
-  out << "<NdbRouteIdent>" << record.ndbRouteIdent << "</NdbRouteIdent>" << endl;
-  out << "<NdbRouteInfo>" << record.ndbRouteInfo << "</NdbRouteInfo>" << endl;
-  out << "<NdbSymbolSize>" << record.ndbSymbolSize << "</NdbSymbolSize>" << endl;
-  out << "<OnlineAircraft>" << record.onlineAircraft << "</OnlineAircraft>" << endl;
-  out << "<OnlineAircraftText>" << record.onlineAircraftText << "</OnlineAircraftText>" << endl;
-  out << "<RouteTextAndDetail>" << record.routeTextAndDetail << "</RouteTextAndDetail>" << endl;
-  out << "<RouteTextAndDetail2>" << record.routeTextAndDetail2 << "</RouteTextAndDetail2>" << endl;
-  out << "<Track>" << record.track << "</Track>" << endl;
-  out << "<TrackIdent>" << record.trackIdent << "</TrackIdent>" << endl;
-  out << "<TrackInfo>" << record.trackInfo << "</TrackInfo>" << endl;
-  out << "<TrackWaypoint>" << record.trackWaypoint << "</TrackWaypoint>" << endl;
-  out << "<Userpoint>" << record.userpoint << "</Userpoint>" << endl;
-  out << "<UserpointInfo>" << record.userpointInfo << "</UserpointInfo>" << endl;
-  out << "<UserpointSymbolSize>" << record.userpointSymbolSize << "</UserpointSymbolSize>" << endl;
-  out << "<Vor>" << record.vor << "</Vor>" << endl;
-  out << "<VorIdent>" << record.vorIdent << "</VorIdent>" << endl;
-  out << "<VorInfo>" << record.vorInfo << "</VorInfo>" << endl;
-  out << "<VorLarge>" << record.vorLarge << "</VorLarge>" << endl;
-  out << "<VorRouteIdent>" << record.vorRouteIdent << "</VorRouteIdent>" << endl;
-  out << "<VorRouteInfo>" << record.vorRouteInfo << "</VorRouteInfo>" << endl;
-  out << "<VorSymbolSize>" << record.vorSymbolSize << "</VorSymbolSize>" << endl;
-  out << "<Waypoint>" << record.waypoint << "</Waypoint>" << endl;
-  out << "<WaypointName>" << record.waypointName << "</WaypointName>" << endl;
-  out << "<WaypointRouteName>" << record.waypointRouteName << "</WaypointRouteName>" << endl;
-  out << "<WaypointSymbolSize>" << record.waypointSymbolSize << "</WaypointSymbolSize>" << endl;
-  out << "<WindBarbs>" << record.windBarbs << "</WindBarbs>" << endl;
-  out << "<WindBarbsSymbolSize>" << record.windBarbsSymbolSize << "</WindBarbsSymbolSize>" << endl;
-  out << "</Layer>" << endl;
+  out << "<Layer>" << Qt::endl;
+  out << "<AiAircraftGround>" << record.aiAircraftGround << "</AiAircraftGround>" << Qt::endl;
+  out << "<AiAircraftGroundText>" << record.aiAircraftGroundText << "</AiAircraftGroundText>" << Qt::endl;
+  out << "<AiAircraftLarge>" << record.aiAircraftLarge << "</AiAircraftLarge>" << Qt::endl;
+  out << "<AiAircraftSize>" << record.aiAircraftSize << "</AiAircraftSize>" << Qt::endl;
+  out << "<AiAircraftSmall>" << record.aiAircraftSmall << "</AiAircraftSmall>" << Qt::endl;
+  out << "<AiAircraftText>" << record.aiAircraftText << "</AiAircraftText>" << Qt::endl;
+  out << "<AiAircraftTextDetail>" << record.aiAircraftTextDetail << "</AiAircraftTextDetail>" << Qt::endl;
+  out << "<AiAircraftTextDetail2>" << record.aiAircraftTextDetail2 << "</AiAircraftTextDetail2>" << Qt::endl;
+  out << "<AiAircraftTextDetail3>" << record.aiAircraftTextDetail2 << "</AiAircraftTextDetail3>" << Qt::endl;
+  out << "<AiShipLarge>" << record.aiShipLarge << "</AiShipLarge>" << Qt::endl;
+  out << "<AiShipSmall>" << record.aiShipSmall << "</AiShipSmall>" << Qt::endl;
+  out << "<Airport>" << record.airport << "</Airport>" << Qt::endl;
+  out << "<AirportDiagram>" << record.airportDiagram << "</AirportDiagram>" << Qt::endl;
+  out << "<AirportDiagramDetail>" << record.airportDiagramDetail << "</AirportDiagramDetail>" << Qt::endl;
+  out << "<AirportDiagramDetail2>" << record.airportDiagramDetail2 << "</AirportDiagramDetail2>" << Qt::endl;
+  out << "<AirportDiagramDetail3>" << record.airportDiagramDetail3 << "</AirportDiagramDetail3>" << Qt::endl;
+  out << "<AirportDiagramRunway>" << record.airportDiagramRunway << "</AirportDiagramRunway>" << Qt::endl;
+  out << "<AirportFontScale>" << record.airportFontScale << "</AirportFontScale>" << Qt::endl;
+  out << "<AirportIdent>" << record.airportIdent << "</AirportIdent>" << Qt::endl;
+  out << "<AirportInfo>" << record.airportInfo << "</AirportInfo>" << Qt::endl;
+  out << "<AirportMinor>" << record.airportMinor << "</AirportMinor>" << Qt::endl;
+  out << "<AirportMinorFontScale>" << record.airportMinorFontScale << "</AirportMinorFontScale>" << Qt::endl;
+  out << "<AirportMinorIdent>" << record.airportMinorIdent << "</AirportMinorIdent>" << Qt::endl;
+  out << "<AirportMinorInfo>" << record.airportMinorInfo << "</AirportMinorInfo>" << Qt::endl;
+  out << "<AirportMinorName>" << record.airportMinorName << "</AirportMinorName>" << Qt::endl;
+  out << "<AirportMinorSymbolSize>" << record.airportMinorSymbolSize << "</AirportMinorSymbolSize>" << Qt::endl;
+  out << "<AirportMsa>" << record.airportMsa << "</AirportMsa>" << Qt::endl;
+  out << "<AirportMsaDetails>" << record.airportMsaDetails << "</AirportMsaDetails>" << Qt::endl;
+  out << "<AirportMsaSymbolScale>" << record.airportMsaSymbolScale << "</AirportMsaSymbolScale>" << Qt::endl;
+  out << "<AirportName>" << record.airportName << "</AirportName>" << Qt::endl;
+  out << "<AirportNoRating>" << record.airportNoRating << "</AirportNoRating>" << Qt::endl;
+  out << "<AirportOverviewRunway>" << record.airportOverviewRunway << "</AirportOverviewRunway>" << Qt::endl;
+  out << "<AirportRouteInfo>" << record.airportRouteInfo << "</AirportRouteInfo>" << Qt::endl;
+  out << "<AirportSymbolSize>" << record.airportSymbolSize << "</AirportSymbolSize>" << Qt::endl;
+  out << "<AirportWeather>" << record.airportWeather << "</AirportWeather>" << Qt::endl;
+  out << "<AirportWeatherDetails>" << record.airportWeatherDetails << "</AirportWeatherDetails>" << Qt::endl;
+  out << "<AirspaceCenter>" << record.airspaceCenter << "</AirspaceCenter>" << Qt::endl;
+  out << "<AirspaceFg>" << record.airspaceFg << "</AirspaceFg>" << Qt::endl;
+  out << "<AirspaceFirUir>" << record.airspaceFirUir << "</AirspaceFirUir>" << Qt::endl;
+  out << "<AirspaceIcao>" << record.airspaceIcao << "</AirspaceIcao>" << Qt::endl;
+  out << "<AirspaceOther>" << record.airspaceOther << "</AirspaceOther>" << Qt::endl;
+  out << "<AirspaceRestricted>" << record.airspaceRestricted << "</AirspaceRestricted>" << Qt::endl;
+  out << "<AirspaceSpecial>" << record.airspaceSpecial << "</AirspaceSpecial>" << Qt::endl;
+  out << "<AirspaceCenterText>" << record.airspaceCenterText << "</AirspaceCenterText>" << Qt::endl;
+  out << "<AirspaceFgText>" << record.airspaceFgText << "</AirspaceFgText>" << Qt::endl;
+  out << "<AirspaceFirUirText>" << record.airspaceFirUirText << "</AirspaceFirUirText>" << Qt::endl;
+  out << "<AirspaceIcaoText>" << record.airspaceIcaoText << "</AirspaceIcaoText>" << Qt::endl;
+  out << "<AirspaceOtherText>" << record.airspaceOtherText << "</AirspaceOtherText>" << Qt::endl;
+  out << "<AirspaceRestrictedText>" << record.airspaceRestrictedText << "</AirspaceRestrictedText>" << Qt::endl;
+  out << "<AirspaceSpecialText>" << record.airspaceSpecialText << "</AirspaceSpecialText>" << Qt::endl;
+  out << "<Airway>" << record.airway << "</Airway>" << Qt::endl;
+  out << "<AirwayDetails>" << record.airway << "</AirwayDetails>" << Qt::endl;
+  out << "<AirwayIdent>" << record.airwayIdent << "</AirwayIdent>" << Qt::endl;
+  out << "<AirwayInfo>" << record.airwayInfo << "</AirwayInfo>" << Qt::endl;
+  out << "<AirwayWaypoint>" << record.airwayWaypoint << "</AirwayWaypoint>" << Qt::endl;
+  out << "<Approach>" << record.approach << "</Approach>" << Qt::endl;
+  out << "<ApproachDetail>" << record.approachDetail << "</ApproachDetail>" << Qt::endl;
+  out << "<ApproachText>" << record.approachText << "</ApproachText>" << Qt::endl;
+  out << "<ApproachTextDetail>" << record.approachTextDetail << "</ApproachTextDetail>" << Qt::endl;
+  out << "<Holding>" << record.holding << "</Holding>" << Qt::endl;
+  out << "<HoldingInfo>" << record.holdingInfo << "</HoldingInfo>" << Qt::endl;
+  out << "<HoldingInfo2>" << record.holdingInfo2 << "</HoldingInfo2>" << Qt::endl;
+  out << "<Ils>" << record.ils << "</Ils>" << Qt::endl;
+  out << "<IlsDetail>" << record.ilsDetail << "</IlsDetail>" << Qt::endl;
+  out << "<IlsIdent>" << record.ilsIdent << "</IlsIdent>" << Qt::endl;
+  out << "<IlsInfo>" << record.ilsInfo << "</IlsInfo>" << Qt::endl;
+  out << "<Marker>" << record.marker << "</Marker>" << Qt::endl;
+  out << "<MarkerInfo>" << record.markerInfo << "</MarkerInfo>" << Qt::endl;
+  out << "<MarkerSymbolSize>" << record.markerSymbolSize << "</MarkerSymbolSize>" << Qt::endl;
+  out << "<MaxRange>" << record.maxRange << "</MaxRange>" << Qt::endl;
+  out << "<MaximumTextLengthAirport>" << record.maximumTextLengthAirport << "</MaximumTextLengthAirport>" << Qt::endl;
+  out << "<MaximumTextLengthAirportMinor>" << record.maximumTextLengthAirportMinor << "</MaximumTextLengthAirportMinor>" << Qt::endl;
+  out << "<MaximumTextLengthUserpoint>" << record.maximumTextLengthUserpoint << "</MaximumTextLengthUserpoint>" << Qt::endl;
+  out << "<MinRunwayLength>" << record.minRunwayLength << "</MinRunwayLength>" << Qt::endl;
+  out << "<Mora>" << record.mora << "</Mora>" << Qt::endl;
+  out << "<Ndb>" << record.ndb << "</Ndb>" << Qt::endl;
+  out << "<NdbIdent>" << record.ndbIdent << "</NdbIdent>" << Qt::endl;
+  out << "<NdbInfo>" << record.ndbInfo << "</NdbInfo>" << Qt::endl;
+  out << "<NdbRouteIdent>" << record.ndbRouteIdent << "</NdbRouteIdent>" << Qt::endl;
+  out << "<NdbRouteInfo>" << record.ndbRouteInfo << "</NdbRouteInfo>" << Qt::endl;
+  out << "<NdbSymbolSize>" << record.ndbSymbolSize << "</NdbSymbolSize>" << Qt::endl;
+  out << "<OnlineAircraft>" << record.onlineAircraft << "</OnlineAircraft>" << Qt::endl;
+  out << "<OnlineAircraftText>" << record.onlineAircraftText << "</OnlineAircraftText>" << Qt::endl;
+  out << "<RouteTextAndDetail>" << record.routeTextAndDetail << "</RouteTextAndDetail>" << Qt::endl;
+  out << "<RouteTextAndDetail2>" << record.routeTextAndDetail2 << "</RouteTextAndDetail2>" << Qt::endl;
+  out << "<Track>" << record.track << "</Track>" << Qt::endl;
+  out << "<TrackIdent>" << record.trackIdent << "</TrackIdent>" << Qt::endl;
+  out << "<TrackInfo>" << record.trackInfo << "</TrackInfo>" << Qt::endl;
+  out << "<TrackWaypoint>" << record.trackWaypoint << "</TrackWaypoint>" << Qt::endl;
+  out << "<Userpoint>" << record.userpoint << "</Userpoint>" << Qt::endl;
+  out << "<UserpointInfo>" << record.userpointInfo << "</UserpointInfo>" << Qt::endl;
+  out << "<UserpointSymbolSize>" << record.userpointSymbolSize << "</UserpointSymbolSize>" << Qt::endl;
+  out << "<Vor>" << record.vor << "</Vor>" << Qt::endl;
+  out << "<VorIdent>" << record.vorIdent << "</VorIdent>" << Qt::endl;
+  out << "<VorInfo>" << record.vorInfo << "</VorInfo>" << Qt::endl;
+  out << "<VorLarge>" << record.vorLarge << "</VorLarge>" << Qt::endl;
+  out << "<VorRouteIdent>" << record.vorRouteIdent << "</VorRouteIdent>" << Qt::endl;
+  out << "<VorRouteInfo>" << record.vorRouteInfo << "</VorRouteInfo>" << Qt::endl;
+  out << "<VorSymbolSize>" << record.vorSymbolSize << "</VorSymbolSize>" << Qt::endl;
+  out << "<Waypoint>" << record.waypoint << "</Waypoint>" << Qt::endl;
+  out << "<WaypointName>" << record.waypointName << "</WaypointName>" << Qt::endl;
+  out << "<WaypointRouteName>" << record.waypointRouteName << "</WaypointRouteName>" << Qt::endl;
+  out << "<WaypointSymbolSize>" << record.waypointSymbolSize << "</WaypointSymbolSize>" << Qt::endl;
+  out << "<WindBarbs>" << record.windBarbs << "</WindBarbs>" << Qt::endl;
+  out << "<WindBarbsSymbolSize>" << record.windBarbsSymbolSize << "</WindBarbsSymbolSize>" << Qt::endl;
+  out << "</Layer>" << Qt::endl;
 
   return out;
 }

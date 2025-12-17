@@ -280,11 +280,11 @@ public:
 
   /* Get nearest flight plan leg to given screen position xs/ys. */
   void getNearest(const CoordinateConverter& conv, int xs, int ys, int screenDistance, map::MapResult& mapobjects,
-                  map::MapObjectQueryTypes types, const QVector<map::MapRef>& routeDrawnNavaids) const;
+                  map::MapObjectQueryTypes types, const QList<map::MapRef>& routeDrawnNavaids) const;
 
   /* Get nearest recommended navaids to given screen position xs/ys. */
   void getNearestRecommended(const CoordinateConverter& conv, int xs, int ys, int screenDistance, map::MapResult& mapobjects,
-                             map::MapObjectQueryTypes types, const QVector<map::MapRef>& routeDrawnNavaids) const;
+                             map::MapObjectQueryTypes types, const QList<map::MapRef>& routeDrawnNavaids) const;
 
   /* Removes airway from flight plan entry */
   void eraseAirwayFlightplan(int row);
@@ -620,19 +620,19 @@ public:
   }
 
   /* Get ILS which are referenced from the recommended fix of the approach procedure for display in the flight plan table. */
-  const QVector<map::MapIls>& getDestRunwayIlsFlightplanTable() const
+  const QList<map::MapIls>& getDestRunwayIlsFlightplanTable() const
   {
     return destRunwayIlsFlightplanTable;
   }
 
   /* Get a list of matching ILS/LOC which are not too far away from runway (in case of CTL) */
-  const QVector<map::MapIls>& getDestRunwayIlsMap() const
+  const QList<map::MapIls>& getDestRunwayIlsMap() const
   {
     return destRunwayIlsMap;
   }
 
   /* As above but filtered out for elevation profile only having slope  */
-  const QVector<map::MapIls>& getDestRunwayIlsProfile() const
+  const QList<map::MapIls>& getDestRunwayIlsProfile() const
   {
     return destRunwayIlsProfile;
   }
@@ -682,7 +682,7 @@ public:
   /* Get display idents (ICAO, IATA, FAA or local) of all alternates */
   QStringList getAlternateDisplayIdents() const;
 
-  const QVector<map::MapAirport> getAlternateAirports() const;
+  const QList<map::MapAirport> getAlternateAirports() const;
 
   /* Get a bit array which indicates high/low airways - needed for some export formats.
    *  True indicates high airway used towards waypoint at the same index. */
@@ -738,7 +738,7 @@ public:
 
 private:
   /* Get a list of approach ILS (not localizer) and the used runway end. Only for approaches. */
-  void updateApproachRunwayEndAndIls(QVector<map::MapIls>& ilsVector, map::MapRunwayEnd *runwayEnd,
+  void updateApproachRunwayEndAndIls(QList<map::MapIls>& ilsVector, map::MapRunwayEnd *runwayEnd,
                                      bool recommended, bool map, bool profile) const;
 
   /* Copy flight plan profile altitudes into entries for FMS and other formats
@@ -817,7 +817,7 @@ private:
       alternateLegsOffset = map::INVALID_INDEX_VALUE; /* First alternate airport*/
   int numAlternateLegs = 0;
 
-  QVector<map::MapIls>
+  QList<map::MapIls>
   /* Get a list of matching ILS which have a slope and are not too far away from runway (in case of CTL).
    * These ones can be used for map display. */
   destRunwayIlsMap,

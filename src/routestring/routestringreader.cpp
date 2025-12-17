@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2024 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2025 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -150,7 +150,7 @@ RouteStringReader::~RouteStringReader()
 }
 
 bool RouteStringReader::createRouteFromString(const QString& routeString, rs::RouteStringOptions options,
-                                              atools::fs::pln::Flightplan *flightplan, map::MapRefExtVector *mapObjectRefs,
+                                              atools::fs::pln::Flightplan *flightplan, map::MapRefExtList *mapObjectRefs,
                                               float *speedKtsParam, bool *altIncludedParam)
 {
 #ifdef DEBUG_INFORMATION
@@ -176,7 +176,7 @@ bool RouteStringReader::createRouteFromString(const QString& routeString, rs::Ro
   fp = flightplan != nullptr ? flightplan : &tempFp;
 
 #ifdef DEBUG_INFORMATION
-  map::MapRefExtVector refTemp;
+  map::MapRefExtList refTemp;
   mapObjectRefs = mapObjectRefs != nullptr ? mapObjectRefs : &refTemp;
 
   qDebug() << "items" << items;
@@ -297,7 +297,7 @@ bool RouteStringReader::createRouteFromString(const QString& routeString, rs::Ro
   }
 
   QList<ParseEntry> resultList;
-  for(const QString& item : qAsConst(cleanItems))
+  for(const QString& item : std::as_const(cleanItems))
   {
     // Fetch all possible waypoints
     MapResult result;
@@ -357,7 +357,7 @@ bool RouteStringReader::createRouteFromString(const QString& routeString, rs::Ro
 
 #ifdef DEBUG_INFORMATION
 
-  for(const ParseEntry& parse : qAsConst(resultList))
+  for(const ParseEntry& parse : std::as_const(resultList))
     qDebug() << parse.item << parse.airway << parse.result;
 
 #endif
@@ -530,7 +530,7 @@ bool RouteStringReader::createRouteFromString(const QString& routeString, rs::Ro
   if(mapObjectRefs != nullptr)
   {
     qDebug() << "===============================";
-    for(const map::MapRefExt& r : qAsConst(*mapObjectRefs))
+    for(const map::MapRefExt& r : std::as_const(*mapObjectRefs))
       qDebug() << r;
   }
 #endif
@@ -627,7 +627,7 @@ void RouteStringReader::addReport(atools::fs::pln::Flightplan *flightplan, const
   }
 
   // Alternates ===================================================================================
-  const QVector<const atools::fs::pln::FlightplanEntry *> alternates = flightplan->getAlternates();
+  const QList<const atools::fs::pln::FlightplanEntry *> alternates = flightplan->getAlternates();
   if(!alternates.isEmpty())
   {
     QStringList alternateIdents;
@@ -934,7 +934,7 @@ void RouteStringReader::readSidAndTrans(QStringList& items, int& sidId, int& sid
   } // if(!foundAirway)
 }
 
-bool RouteStringReader::addDeparture(atools::fs::pln::Flightplan *flightplan, map::MapRefExtVector *mapObjectRefs, QStringList& items,
+bool RouteStringReader::addDeparture(atools::fs::pln::Flightplan *flightplan, map::MapRefExtList *mapObjectRefs, QStringList& items,
                                      QString& sidExitWp)
 {
   QString airportIdent, runway;
@@ -1035,11 +1035,11 @@ bool RouteStringReader::addDeparture(atools::fs::pln::Flightplan *flightplan, ma
 }
 
 bool RouteStringReader::addDestination(atools::fs::pln::Flightplan *flightplan, QList<atools::fs::pln::FlightplanEntry> *alternates,
-                                       map::MapRefExtVector *mapObjectRefs, QStringList& items, QString& starEntryWp,
+                                       map::MapRefExtList *mapObjectRefs, QStringList& items, QString& starEntryWp,
                                        rs::RouteStringOptions options)
 {
   // Collect information for all trailing airports
-  QVector<DestInfo> destInfos;
+  QList<DestInfo> destInfos;
 
   // Iterate from end of list and collect airports with possible STAR, runways or approaches in reverse order
   int idx = items.size() - 1;
@@ -1409,7 +1409,7 @@ atools::geo::Pos RouteStringReader::findFirstCoordinate(const QStringList& items
         if(items.size() > 1)
         {
           const QString& secondItem = items.at(1);
-          for(const map::MapWaypoint& w : qAsConst(result.waypoints))
+          for(const map::MapWaypoint& w : std::as_const(result.waypoints))
           {
             QList<map::MapWaypoint> waypoints;
             airwayQuery->getWaypointsForAirway(waypoints, secondItem, w.ident);
@@ -1548,7 +1548,7 @@ void RouteStringReader::filterWaypoints(MapResult& result, atools::geo::Pos& las
     {
       // Extract unique airways names
       QSet<QString> airwayNames;
-      for(const map::MapAirway& a : qAsConst(result.airways))
+      for(const map::MapAirway& a : std::as_const(result.airways))
         airwayNames.insert(a.name);
 
       // Extract unique waypoint idents
@@ -1584,7 +1584,7 @@ void RouteStringReader::filterWaypoints(MapResult& result, atools::geo::Pos& las
       map::MapTypes type;
 
       // Find something whatever is nearest and use that for the last position
-      QVector<TypeDist> dists;
+      QList<TypeDist> dists;
       if(result.hasAirports())
         dists.append(TypeDist(result.airports.constFirst().position, lastPos, destPos, map::AIRPORT));
 
@@ -1676,7 +1676,7 @@ void RouteStringReader::filterAirways(QList<ParseEntry>& resultList, int i)
       airwayQuery->getWaypointListForAirwayName(allAirwayWaypoints, airwayName);
 
 #ifdef DEBUG_INFORMATION
-      for(const map::MapAirwayWaypoint& w : qAsConst(allAirwayWaypoints))
+      for(const map::MapAirwayWaypoint& w : std::as_const(allAirwayWaypoints))
         qDebug() << w.waypoint.id << w.waypoint.ident << w.waypoint.region;
 #endif
 
@@ -1685,9 +1685,9 @@ void RouteStringReader::filterAirways(QList<ParseEntry>& resultList, int i)
         int startIndex = -1, endIndex = -1;
 
         // Iterate through all found waypoint combinations (same ident) and try to match them to an airway
-        for(const map::MapWaypoint& wpLast : qAsConst(lastResult.waypoints))
+        for(const map::MapWaypoint& wpLast : std::as_const(lastResult.waypoints))
         {
-          for(const map::MapWaypoint& wpNext : qAsConst(nextResult.waypoints))
+          for(const map::MapWaypoint& wpNext : std::as_const(nextResult.waypoints))
           {
             // Find the waypoint indexes by id in the list of all waypoints for this airway
             findIndexesInAirway(allAirwayWaypoints, wpLast.id, wpNext.id, startIndex, endIndex, airwayName);

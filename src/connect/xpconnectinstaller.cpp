@@ -179,7 +179,7 @@ bool XpconnectInstaller::install()
         if(questionBox.exec() == QMessageBox::Yes)
         {
           // Delete all found plugins
-          for(const QString& xpc : qAsConst(xpconnects))
+          for(const QString& xpc : std::as_const(xpconnects))
           {
             fileOperations.removeDirectoryToTrash(xpc);
             if(fileOperations.hasErrors())

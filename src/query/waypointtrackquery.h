@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2024 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2025 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -56,7 +56,7 @@ public:
 
   /* Get waypoints in rectangle by point and radius for maximum distance. Results are sorted by distance closest first.
    * Does not interfere with the cache. */
-  void getWaypointsRect(QVector<map::MapWaypoint>& waypoints, const atools::geo::Pos& pos, float distanceNm);
+  void getWaypointsRect(QList<map::MapWaypoint>& waypoints, const atools::geo::Pos& pos, float distanceNm);
   void getWaypointRectNearest(map::MapWaypoint& waypoint, const atools::geo::Pos& pos, float distanceNm);
 
   /* Wrapper for getWaypoints usage by atools Rect */
@@ -126,7 +126,6 @@ private:
 
   /* Copies objects and avoids duplicates in the to list/vector. */
   void copy(const QList<map::MapWaypoint>& from, QList<map::MapWaypoint>& to);
-  void copy(const QVector<map::MapWaypoint>& from, QVector<map::MapWaypoint>& to);
 
   WaypointQuery *waypointQuery = nullptr, *trackQuery = nullptr;
   bool useTracks = true;

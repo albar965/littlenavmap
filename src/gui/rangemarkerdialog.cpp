@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2024 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2025 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -46,10 +46,15 @@ const float MIN_RANGE_RING_SIZE = 0.01f;
 const float MAX_RANGE_RING_SIZE_METER = atools::geo::EARTH_CIRCUMFERENCE_METER / 2.f * 0.98f;
 
 const int MAX_RANGE_RINGS = 10;
-const QVector<float> RangeMarkerDialog::MAP_RANGERINGS_DEFAULT({50.f, 100.f, 200.f, 500.f});
+const QList<float> RangeMarkerDialog::MAP_RANGERINGS_DEFAULT({50.f, 100.f, 200.f, 500.f});
 
 RangeRingValidator::RangeRingValidator()
 {
+}
+
+RangeRingValidator::~RangeRingValidator()
+{
+
 }
 
 QValidator::State RangeRingValidator::validate(QString& input, int&) const
@@ -61,7 +66,7 @@ QValidator::State RangeRingValidator::validate(QString& input, int&) const
     return Intermediate;
 
   QValidator::State state = Acceptable;
-  for(const QString& str : qAsConst(split))
+  for(const QString& str : std::as_const(split))
   {
     QString val = str.trimmed();
     if(!val.isEmpty())
@@ -92,7 +97,8 @@ QValidator::State RangeRingValidator::validate(QString& input, int&) const
 RangeMarkerDialog::RangeMarkerDialog(QWidget *parent, const atools::geo::Pos& pos)
   : QDialog(parent), ui(new Ui::RangeMarkerDialog), color(Qt::darkRed)
 {
-  setWindowFlags(windowFlags() & ~Qt::WindowContextHelpButtonHint);
+  setWindowFlag(Qt::WindowContextHelpButtonHint, false);
+
   setWindowModality(Qt::ApplicationModal);
 
   ui->setupUi(this);
@@ -242,7 +248,7 @@ void RangeMarkerDialog::fillRangeMarker(map::RangeMarker& marker, bool dialogOpe
   }
 
   marker.id = map::getNextUserFeatureId();
-  marker.navType = navType;  // Use the stored navType instead of map::NONE
+  marker.navType = navType; // Use the stored navType instead of map::NONE
   marker.position = *position;
   marker.color = color;
 
@@ -278,7 +284,7 @@ bool RangeMarkerDialog::isNoShowShiftClickEnabled()
   return ui->checkBoxRangeMarkerDoNotShow->isChecked();
 }
 
-QString RangeMarkerDialog::rangeFloatToString(const QVector<float>& ranges) const
+QString RangeMarkerDialog::rangeFloatToString(const QList<float>& ranges) const
 {
   QLocale locale;
   // Do not print group separator - can cause issues if space is used
@@ -297,9 +303,9 @@ QString RangeMarkerDialog::rangeFloatToString(const QVector<float>& ranges) cons
     return txt.join(tr(" ", "Range ring number separator"));
 }
 
-const QVector<float> RangeMarkerDialog::rangeStringToFloat(const QString& rangeStr) const
+const QList<float> RangeMarkerDialog::rangeStringToFloat(const QString& rangeStr) const
 {
-  QVector<float> retval;
+  QList<float> retval;
   for(const QString& str : rangeStr.simplified().split(tr(" ", "Range ring separator")))
   {
     QString val = str.trimmed();

@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2024 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2025 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -235,17 +235,17 @@ QDebug operator<<(QDebug out, const RouteAltitudeLeg& obj)
     << ", procedure " << obj.procedure
     << ", climb time " << obj.climbTime
     << ", cruise time " << obj.cruiseTime
-    << ", descent time " << obj.descentTime << endl
+    << ", descent time " << obj.descentTime << Qt::endl
     << ", climb fuel " << obj.climbFuel
     << ", cruise fuel " << obj.cruiseFuel
     << ", descent fuel " << obj.descentFuel
-    << ", fuel to dest " << obj.fuelToDest << endl
-    << ", time to dest " << obj.timeToDest << endl
+    << ", fuel to dest " << obj.fuelToDest << Qt::endl
+    << ", time to dest " << obj.timeToDest << Qt::endl
     << ", wind speed " << obj.windSpeed
-    << ", wind dir " << obj.windDirection << endl
-    << ", geometry " << obj.geometry << "NM/ft " << endl
-    << ", angles " << obj.angles << "° " << endl
-    << ", line " << obj.line << endl
+    << ", wind dir " << obj.windDirection << Qt::endl
+    << ", geometry " << obj.geometry << "NM/ft " << Qt::endl
+    << ", angles " << obj.angles << "° " << Qt::endl
+    << ", line " << obj.line << Qt::endl
     << ", geoLine " << obj.geoLine;
   return out;
 }

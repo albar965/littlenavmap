@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2024 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2025 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -45,7 +45,7 @@
 class Query
 {
 public:
-  Query(const QString& labelParam, const QStringList& headerParam, const QVector<Qt::Alignment>& alignParam,
+  Query(const QString& labelParam, const QStringList& headerParam, const QList<Qt::Alignment>& alignParam,
         const QStringList& colParam, int sortColumnParam, Qt::SortOrder sortCrderParam, const QString& queryParam)
     : label(labelParam), query(queryParam), cols(colParam), header(headerParam), align(alignParam),
     defaultSortColumn(sortColumnParam), defaultSortCrder(sortCrderParam)
@@ -57,7 +57,7 @@ public:
 
   QString label, /* Combo box label */ query; /* SQL query */
   QStringList cols, header; /* SQL columns and Result table headers - must be equal to query columns */
-  QVector<Qt::Alignment> align; /* Column alignment - must be equal to query columns */
+  QList<Qt::Alignment> align; /* Column alignment - must be equal to query columns */
 
   int defaultSortColumn; /* Index into list cols */
   Qt::SortOrder defaultSortCrder;
@@ -70,7 +70,7 @@ class LogStatsDelegate
   : public QStyledItemDelegate
 {
 public:
-  QVector<Qt::Alignment> align;
+  QList<Qt::Alignment> align;
 
 private:
   virtual void paint(QPainter *painter, const QStyleOptionViewItem& option, const QModelIndex& index) const override;
@@ -190,7 +190,8 @@ QVariant LogStatsSqlModel::data(const QModelIndex& index, int role) const
 LogStatisticsDialog::LogStatisticsDialog(QWidget *parent, LogdataController *logdataControllerParam)
   : QDialog(parent), ui(new Ui::LogStatisticsDialog), logdataController(logdataControllerParam)
 {
-  setWindowFlags(windowFlags() & ~Qt::WindowContextHelpButtonHint);
+  setWindowFlag(Qt::WindowContextHelpButtonHint, false);
+
   setWindowModality(Qt::NonModal);
 
   // Prefill query vector
@@ -209,7 +210,7 @@ LogStatisticsDialog::LogStatisticsDialog(QWidget *parent, LogdataController *log
   button->setToolTip(tr("Copies overview as formatted text or table as CSV to clipboard"));
 
   // Fill query labels into combo box ==============================
-  for(const Query& q : qAsConst(queries))
+  for(const Query& q : std::as_const(queries))
     ui->comboBoxLogStatsGrouped->addItem(q.label, q.query);
 
   // Create and set delegate ==============================
@@ -423,10 +424,10 @@ void LogStatisticsDialog::updateStatisticsText()
   html.tableEnd();
 
   html.p(tr("Simulators"), header);
-  QVector<std::pair<int, QString> > simulators;
+  QList<std::pair<int, QString> > simulators;
   logdataController->getFlightStatsSimulator(simulators);
   html.table();
-  for(const std::pair<int, QString>& sim : qAsConst(simulators))
+  for(const std::pair<int, QString>& sim : std::as_const(simulators))
     html.row2(tr("%1:").arg(sim.second.isEmpty() ? tr("Unknown") : sim.second),
               tr("%1 flights").arg(locale.toString(sim.first)), right);
   html.tableEnd();

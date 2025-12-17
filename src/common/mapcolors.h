@@ -215,7 +215,7 @@ const QPen aircraftGroundFillPen = QPen(Qt::yellow, 4, Qt::SolidLine, Qt::RoundC
 const QColor highlightProcedureColor = QColor(80, 80, 255);
 
 /* Use rotating colors for procedure multi preview */
-const QVector<QColor> highlightProcedureColorTable(
+const QList<QColor> highlightProcedureColorTable(
   {QColor(Qt::black), QColor(Qt::red), QColor(Qt::green), QColor(Qt::blue), QColor(Qt::cyan), QColor(Qt::magenta),
    QColor(Qt::yellow), QColor(Qt::darkRed), QColor(Qt::darkGreen), QColor(Qt::darkBlue), QColor(Qt::darkCyan), QColor(Qt::darkMagenta),
    QColor(Qt::darkYellow) /*, QColor(Qt::white)*/, QColor(Qt::darkGray), QColor(Qt::gray) /*, QColor(Qt::lightGray)*/});

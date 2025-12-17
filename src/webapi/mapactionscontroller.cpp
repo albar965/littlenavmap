@@ -116,7 +116,7 @@ WebApiResponse MapActionsController::featuresAction(WebApiRequest request)
 
   // Init dummy image request
   WebApiRequest *imageRequest = new WebApiRequest();
-  imageRequest->parameters = QMap<QByteArray, QByteArray>();
+  imageRequest->parameters = QMultiMap<QByteArray, QByteArray>();
   imageRequest->parameters.insert("leftlon", request.parameters.value("leftlon"));
   imageRequest->parameters.insert("toplat", request.parameters.value("toplat"));
   imageRequest->parameters.insert("rightlon", request.parameters.value("rightlon"));
@@ -218,8 +218,7 @@ WebApiResponse MapActionsController::featureAction(WebApiRequest request)
 
 MapActionsController::~MapActionsController()
 {
-  qDebug() << Q_FUNC_INFO;
-  deInit();
+
 }
 
 void MapActionsController::init()
@@ -256,7 +255,7 @@ MapPixmap MapActionsController::getPixmap(int width, int height)
     qDebug() << Q_FUNC_INFO << width << "x" << height;
 
   return getPixmapPosDistance(width, height, atools::geo::EMPTY_POS,
-                              static_cast<float>(mapPaintWidget->distance()), QLatin1String(""));
+                              static_cast<float>(mapPaintWidget->distance()), QString());
 }
 
 MapPixmap MapActionsController::getPixmapPosDistance(int width, int height, atools::geo::Pos pos, float distanceKm,

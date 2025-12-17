@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2024 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2025 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -29,6 +29,7 @@
 #include <QWidgetAction>
 #include <QDebug>
 #include <QStringBuilder>
+#include <QActionGroup>
 
 static const int MIN_SLIDER_ALL_FT = 0;
 static const int MAX_SLIDER_FT = 140;
@@ -42,6 +43,11 @@ AirportSliderAction::AirportSliderAction(QObject *parent) : QWidgetAction(parent
 {
   sliderValue = minValue();
   setValue(sliderValue);
+}
+
+AirportSliderAction::~AirportSliderAction()
+{
+
 }
 
 int AirportSliderAction::getSliderValue() const
@@ -86,7 +92,7 @@ void AirportSliderAction::optionsChanged()
   }
 
   atools::gui::SignalBlocker blocker(sliders);
-  for(QSlider *slider : qAsConst(sliders))
+  for(QSlider *slider : std::as_const(sliders))
   {
     slider->setValue(sliderValue);
     slider->setMinimum(minValue());
@@ -164,7 +170,7 @@ int AirportSliderAction::maxValue() const
 
 void AirportSliderAction::setValue(int value)
 {
-  for(QSlider *slider : qAsConst(sliders))
+  for(QSlider *slider : std::as_const(sliders))
   {
     slider->blockSignals(true);
     slider->setValue(value);
@@ -199,7 +205,7 @@ protected:
   virtual void deleteWidget(QWidget *widget) override;
 
   /* List of created/registered labels */
-  QVector<QLabel *> labels;
+  QList<QLabel *> labels;
   QString text;
 };
 
@@ -207,7 +213,7 @@ void AirportLabelAction::setText(const QString& textParam)
 {
   text = textParam;
   // Set text to all registered labels
-  for(QLabel *label : qAsConst(labels))
+  for(QLabel *label : std::as_const(labels))
     label->setText(text);
 }
 
@@ -508,7 +514,7 @@ void MapAirportHandler::updateButtons()
   actionAddonOnly->setEnabled(airportTypes != (map::AIRPORT | map::AIRPORT_ADDON_ZOOM_FILTER) && mainChecked);
 
   // Disable all other depending on main state
-  for(QAction *action : qAsConst(allActions))
+  for(QAction *action : std::as_const(allActions))
     action->setEnabled(mainChecked);
 }
 

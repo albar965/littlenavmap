@@ -708,7 +708,7 @@ void AirportQuery::startByNameAndPos(map::MapStart& start, int airportId, const 
   query.exec();
 
   // Get all start positions
-  QVector<map::MapStart> starts;
+  QList<map::MapStart> starts;
   while(query.next())
   {
     map::MapStart s;
@@ -721,7 +721,7 @@ void AirportQuery::startByNameAndPos(map::MapStart& start, int airportId, const 
     // Now find the nearest since number is not unique for helipads and runways
     map::MapStart minStart;
     float minDistance = map::INVALID_DISTANCE_VALUE;
-    for(const map::MapStart& s : qAsConst(starts))
+    for(const map::MapStart& s : std::as_const(starts))
     {
       float dist = position.distanceMeterTo(s.position);
 

@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2020 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2025 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -22,8 +22,8 @@
 
 #include <QRandomGenerator>
 
-QVector<std::pair<int, atools::geo::Pos> > *RandomDepartureAirportPickingByCriteria::data = nullptr;
-QVector<std::pair<int, int> > *RandomDepartureAirportPickingByCriteria::antiData = nullptr;
+QList<std::pair<int, atools::geo::Pos> > *RandomDepartureAirportPickingByCriteria::data = nullptr;
+QList<std::pair<int, int> > *RandomDepartureAirportPickingByCriteria::antiData = nullptr;
 int RandomDepartureAirportPickingByCriteria::predefinedAirportIndex = -1;
 int RandomDepartureAirportPickingByCriteria::numberDestinationsSetParts = 0;
 bool RandomDepartureAirportPickingByCriteria::stopExecution = false;
@@ -32,8 +32,13 @@ RandomDepartureAirportPickingByCriteria::RandomDepartureAirportPickingByCriteria
 {
 }
 
-void RandomDepartureAirportPickingByCriteria::initStatics(QVector<std::pair<int, atools::geo::Pos> > *data,
-                                                          QVector<std::pair<int, int> > *antiData,
+RandomDepartureAirportPickingByCriteria::~RandomDepartureAirportPickingByCriteria()
+{
+
+}
+
+void RandomDepartureAirportPickingByCriteria::initStatics(QList<std::pair<int, atools::geo::Pos> > *data,
+                                                          QList<std::pair<int, int> > *antiData,
                                                           int distanceMinMeter,
                                                           int distanceMaxMeter,
                                                           int predefinedAirportIndex)
@@ -69,8 +74,7 @@ void RandomDepartureAirportPickingByCriteria::run()
         }
         data->remove(indexDeparture);
         --size;
-      }
-      while(size && !stopExecution);
+      }while(size && !stopExecution);
     }
     else
     {
@@ -85,7 +89,7 @@ void RandomDepartureAirportPickingByCriteria::run()
       // (at least with a Process Lasso version used)
 
       destinationPickerState.clear();
-      QVector<RandomDestinationAirportPickingByCriteria*> destinationThreads;
+      QList<RandomDestinationAirportPickingByCriteria *> destinationThreads;
 
       int runningDestinationThreads = 0;
 
@@ -93,9 +97,11 @@ void RandomDepartureAirportPickingByCriteria::run()
       int counter = numberDestinationsSetParts - 1;
       int lengthLastDestinationsSetPart = size - counter * lengthDestinationsSetPart;
 
-      RandomDestinationAirportPickingByCriteria *destinationPicker = new RandomDestinationAirportPickingByCriteria(runningDestinationThreads,
-                                                                                                                   counter * lengthDestinationsSetPart,
-                                                                                                                   lengthLastDestinationsSetPart);
+      RandomDestinationAirportPickingByCriteria *destinationPicker =
+        new RandomDestinationAirportPickingByCriteria(runningDestinationThreads,
+                                                      counter *
+                                                      lengthDestinationsSetPart,
+                                                      lengthLastDestinationsSetPart);
       destinationThreads.append(destinationPicker);
       destinationPickerState.append(false);
       connect(destinationPicker, &RandomDestinationAirportPickingByCriteria::resultReady,
@@ -117,7 +123,7 @@ void RandomDepartureAirportPickingByCriteria::run()
         }
       }
 
-      QVector<int> idsNonGrata;
+      QList<int> idsNonGrata;
       std::pair<int, int> antiDatum;
       foreach(antiDatum, *antiData)
       {
@@ -131,7 +137,7 @@ void RandomDepartureAirportPickingByCriteria::run()
           idsNonGrata.append(antiDatum.first);
         }
       }
-      QVector<int> sortedIdsNonGrata = map_sort(idsNonGrata.data(), idsNonGrata.size());
+      QList<int> sortedIdsNonGrata = map_sort(idsNonGrata.data(), idsNonGrata.size());
 
       RandomDestinationAirportPickingByCriteria::initData(data->data(),
                                                           indexDeparture,
@@ -139,8 +145,8 @@ void RandomDepartureAirportPickingByCriteria::run()
                                                           sortedIdsNonGrata.size());
 
       dataDestinationPickerState = destinationPickerState.data();
-      foreach (destinationPicker, destinationThreads)
-        destinationPicker->start();
+      foreach(destinationPicker, destinationThreads)
+      destinationPicker->start();
 
       while(destinationPickerState.contains(false))
       {
@@ -193,7 +199,7 @@ void RandomDepartureAirportPickingByCriteria::dataReceived(const bool isSuccess,
   // this would keep resources in use unnecessarily and which could be used elsewhere better
   // furthermore this thread used to be parented to the main thread and would only
   // be deleted on program exit.
-  // QVector.replace is not marked as thread-safe in Qt documentation
+  // QList.replace is not marked as thread-safe in Qt documentation
   dataDestinationPickerState[threadIndex] = true;
 }
 
@@ -202,7 +208,7 @@ void RandomDepartureAirportPickingByCriteria::cancellationReceived()
   stopExecution = true;
 }
 
-QVector<int> RandomDepartureAirportPickingByCriteria::map_sort(int* array, int arrayLength)
+QList<int> RandomDepartureAirportPickingByCriteria::map_sort(int *array, int arrayLength)
 {
   QMap<int, int> sorter;
   int index = -1;

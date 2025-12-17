@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2023 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2025 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -98,7 +98,7 @@ void ProfileLabelWidgetVert::paintEvent(QPaintEvent *)
 
       // Draw altitude labels ================================
       SymbolPainter symPainter;
-      const QVector<std::pair<int, int> > scaleValues = profileWidget->calcScaleValues();
+      const QList<std::pair<int, int> > scaleValues = profileWidget->calcScaleValues();
 
       QFont f = QApplication::font();
       f.setPointSizeF(f.pointSizeF() * 0.9);

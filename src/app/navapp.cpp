@@ -474,7 +474,7 @@ void NavApp::updateAllMaps()
     mainWindow->getProfileWidget()->update();
 }
 
-const QVector<atools::fs::sc::SimConnectAircraft>& NavApp::getAiAircraft()
+const QList<atools::fs::sc::SimConnectAircraft>& NavApp::getAiAircraft()
 {
   return mainWindow->getMapWidget()->getAiAircraft();
 }
@@ -572,12 +572,12 @@ QString NavApp::getSimulatorBasePath(atools::fs::FsPaths::SimulatorType type)
   return databaseManager->getSimulatorBasePath(type);
 }
 
-QString NavApp::getSimulatorFilesPathBest(const QVector<atools::fs::FsPaths::SimulatorType>& types, const QString& defaultPath)
+QString NavApp::getSimulatorFilesPathBest(const QList<atools::fs::FsPaths::SimulatorType>& types, const QString& defaultPath)
 {
   return databaseManager->getSimulatorFilesPathBest(types, defaultPath);
 }
 
-QString NavApp::getSimulatorBasePathBest(const QVector<atools::fs::FsPaths::SimulatorType>& types)
+QString NavApp::getSimulatorBasePathBest(const QList<atools::fs::FsPaths::SimulatorType>& types)
 {
   return databaseManager->getSimulatorBasePathBest(types);
 }

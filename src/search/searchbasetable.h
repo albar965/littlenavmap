@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2023 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2025 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -21,6 +21,7 @@
 #include "search/abstractsearch.h"
 
 #include "common/mapflags.h"
+#include "geo/pos.h"
 
 class QTableView;
 class SqlController;
@@ -49,7 +50,6 @@ class SqlRecord;
 }
 
 namespace geo {
-class Pos;
 class Rect;
 }
 }
@@ -131,10 +131,10 @@ public:
   int getSelectedRowCount() const;
 
   /* Get ids of all selected objects */
-  QVector<int> getSelectedIds() const;
+  QList<int> getSelectedIds() const;
 
   /* Get selected rows in order from bottom to top */
-  QVector<int> getSelectedRows() const;
+  QList<int> getSelectedRows() const;
 
   /* Default handler */
   QVariant modelDataHandler(int colIndex, int rowIndex, const Column *col, const QVariant&,

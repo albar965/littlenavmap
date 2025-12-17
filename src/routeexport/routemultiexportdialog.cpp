@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2024 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2025 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -171,7 +171,8 @@ bool TableSortProxyModel::lessThan(const QModelIndex& leftIndex, const QModelInd
 RouteMultiExportDialog::RouteMultiExportDialog(QWidget *parent, RouteExportFormatMap *exportFormatMap)
   : QDialog(parent), formatMapSystem(exportFormatMap), ui(new Ui::RouteMultiExportDialog)
 {
-  setWindowFlags(windowFlags() & ~Qt::WindowContextHelpButtonHint);
+  setWindowFlag(Qt::WindowContextHelpButtonHint, false);
+
   setWindowModality(Qt::ApplicationModal);
   ui->setupUi(this);
   formatMapDialog = new RouteExportFormatMap;
@@ -512,7 +513,7 @@ void RouteMultiExportDialog::updateModel()
 
   // Fill model ============================================
   int row = 0;
-  for(const RouteExportFormat& format : qAsConst(values))
+  for(const RouteExportFormat& format : std::as_const(values))
   {
     // Userdata needed in callbacks
     int userdata = format.getTypeAsInt();

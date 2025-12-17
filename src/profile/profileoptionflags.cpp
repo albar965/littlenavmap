@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2024 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2025 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -20,7 +20,7 @@
 namespace optsp {
 
 /* All available options for loops */
-const QVector<optsp::DisplayOptionProfile> ALL_OPTIONS({optsp::PROFILE_LABELS_DISTANCE, optsp::PROFILE_LABELS_MAG_COURSE,
+const QList<optsp::DisplayOptionProfile> ALL_OPTIONS({optsp::PROFILE_LABELS_DISTANCE, optsp::PROFILE_LABELS_MAG_COURSE,
                                                         optsp::PROFILE_LABELS_TRUE_COURSE, optsp::PROFILE_LABELS_RELATED,
                                                         optsp::PROFILE_FP_DIST, optsp::PROFILE_FP_MAG_COURSE,
                                                         optsp::PROFILE_FP_TRUE_COURSE, optsp::PROFILE_FP_VERTICAL_ANGLE,

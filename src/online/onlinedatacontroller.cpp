@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2024 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2025 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -36,9 +36,13 @@
 #include "zip/gzip.h"
 
 #include <QDebug>
-#include <QTextCodec>
+
 #include <QCoreApplication>
 #include <QDir>
+
+#ifdef QT_CORE5COMPAT_LIB
+#include <QtCore5Compat/QTextCodec>
+#endif
 
 static const int MIN_SERVER_DOWNLOAD_INTERVAL_MIN = 15;
 static const int MIN_TRANSCEIVER_DOWNLOAD_INTERVAL_MIN = 5;
@@ -76,9 +80,11 @@ OnlinedataController::OnlinedataController(atools::fs::online::OnlinedataManager
   : manager(onlineManager), mainWindow(parent), aircraftCache()
 {
   // Files use Windows code with embedded UTF-8 for ATIS text
+#ifdef QT_CORE5COMPAT_LIB
   codec = QTextCodec::codecForName("Windows-1252");
   if(codec == nullptr)
     codec = QTextCodec::codecForLocale();
+#endif
 
   atools::settings::Settings& settings = atools::settings::Settings::instance();
   verbose = settings.getAndStoreValue(lnm::OPTIONS_ONLINE_NETWORK_DEBUG, false).toBool();
@@ -280,8 +286,12 @@ QString OnlinedataController::uncompress(const QByteArray& data, const QString& 
   if(utf8)
     return QString(textData);
   else
+#ifdef QT_CORE5COMPAT_LIB
     // Convert from encoding to UTF-8. Some formats use windows encoding
     return codec->toUnicode(textData);
+#else
+    return QString(textData);
+#endif
 }
 
 void OnlinedataController::downloadFinished(const QByteArray& data, QString url)
@@ -765,7 +775,7 @@ OnlineAircraft OnlinedataController::shadowAircraftInternal(const atools::fs::sc
   if(!onlineAircraftSpatialIndex.isEmpty())
   {
     // First get all nearest aircraft from spatial index ======================================
-    QVector<OnlineAircraft> nearest;
+    QList<OnlineAircraft> nearest;
     onlineAircraftSpatialIndex.getRadius(nearest, simAircraft.getPosition(), atools::geo::nmToMeter(maxShadowDistanceNm));
 
     if(verbose && simAircraft.isUser())

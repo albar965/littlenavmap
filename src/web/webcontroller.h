@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2024 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2025 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -20,7 +20,7 @@
 
 #include <QHash>
 #include <QObject>
-#include <QVector>
+#include <QList>
 
 namespace stefanfrings {
 class HttpListener;
@@ -156,7 +156,7 @@ private:
   bool verbose = false;
 
   /* Caches host names sorted by IPv4 and IPv6 */
-  QVector<Host> hosts;
+  QList<Host> hosts;
 
   /* Remember custom certifiates. */
   QString sslKeyFile, sslCertFile;

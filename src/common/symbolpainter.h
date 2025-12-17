@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2024 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2025 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -182,8 +182,8 @@ private:
   void drawWindBarbs(QPainter *painter, const atools::fs::weather::MetarParser& parsedMetar, float x, float y,
                      float size, bool windBarbs, bool altWind, bool route, bool fast) const;
 
-  QVector<int> calculateWindBarbs(float& lineLength, float lineWidth, float wind, bool useBarb50) const;
-  void drawBarbFeathers(QPainter *painter, const QVector<int>& barbs, float lineLength, float barbLength5,
+  QList<int> calculateWindBarbs(float& lineLength, float lineWidth, float wind, bool useBarb50) const;
+  void drawBarbFeathers(QPainter *painter, const QList<int>& barbs, float lineLength, float barbLength5,
                         float barbLength10, float barbLength50, float barbStep) const;
 
   static int airportMsaSize(QPainter *painter, const map::MapAirportMsa& airportMsa, float sizeFactor, bool drawDetails);

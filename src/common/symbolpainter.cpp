@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2024 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2025 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -535,7 +535,7 @@ void SymbolPainter::drawWindBarbs(QPainter *painter, float wind, float gust, flo
     float barbStep = lineWidth * 1.5f;
 
     float lineLength = size;
-    QVector<int> barbs, barbsGust, *barbsBackground = nullptr;
+    QList<int> barbs, barbsGust, *barbsBackground = nullptr;
 
     lineLength = size;
 
@@ -614,7 +614,7 @@ void SymbolPainter::drawWindBarbs(QPainter *painter, float wind, float gust, flo
   }
 }
 
-void SymbolPainter::drawBarbFeathers(QPainter *painter, const QVector<int>& barbs, float lineLength, float barbLength5,
+void SymbolPainter::drawBarbFeathers(QPainter *painter, const QList<int>& barbs, float lineLength, float barbLength5,
                                      float barbLength10, float barbLength50, float barbStep) const
 {
   if(!barbs.isEmpty())
@@ -637,9 +637,9 @@ void SymbolPainter::drawBarbFeathers(QPainter *painter, const QVector<int>& barb
   }
 }
 
-QVector<int> SymbolPainter::calculateWindBarbs(float& lineLength, float lineWidth, float wind, bool useBarb50) const
+QList<int> SymbolPainter::calculateWindBarbs(float& lineLength, float lineWidth, float wind, bool useBarb50) const
 {
-  QVector<int> barbs;
+  QList<int> barbs;
 
   float barbStep = lineWidth * 1.5f;
 
@@ -1484,8 +1484,8 @@ void SymbolPainter::textBoxF(QPainter *painter, QStringList texts, QPen textPen,
   // Draw background rectangle if and calculate text positions ===================
   painter->setPen(Qt::NoPen);
 
-  QVector<QPointF> textPt;
-  for(const QString& text : qAsConst(texts))
+  QList<QPointF> textPt;
+  for(const QString& text : std::as_const(texts))
   {
     QRectF boundingRect = metrics.boundingRect(text);
     double w = boundingRect.width();

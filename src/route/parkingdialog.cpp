@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2024 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2025 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -82,7 +82,8 @@ public:
 ParkingDialog::ParkingDialog(QWidget *parent, const map::MapAirport& departureAirportParam)
   : QDialog(parent), ui(new Ui::ParkingDialog), departureAirport(departureAirportParam)
 {
-  setWindowFlags(windowFlags() & ~Qt::WindowContextHelpButtonHint);
+  setWindowFlag(Qt::WindowContextHelpButtonHint, false);
+
   setWindowModality(Qt::ApplicationModal);
 
   ui->setupUi(this);
@@ -189,7 +190,7 @@ void ParkingDialog::updateTable()
   for(int i = 0; i < startPositions.size(); i++)
   {
     const internal::StartPosition& startPos = startPositions.at(i);
-    QVector<QTableWidgetItem *> items(5, nullptr);
+    QList<QTableWidgetItem *> items(5, nullptr);
     if(startPos.airport.isValid())
     {
       // First airport entry =======================================================================

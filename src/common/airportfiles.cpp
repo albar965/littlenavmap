@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2023 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2025 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -43,25 +43,26 @@ const QStringList AirportFiles::getAirportFilesBase(const QString& airportIdent)
 
   /*: Important path parts "Files/Airports" to airport and files (".../Documents/Litte Navmap Files/Airports").
    *  Do not change after initial translation to avoid breaking the file lookup. */
-  QFileInfo translatedPath = atools::documentsDir() +
-                             QDir::separator() +
-                             tr("%1 Files").arg(QCoreApplication::applicationName()) +
-                             QDir::separator() +
-                             tr("Airports") +
-                             QDir::separator() + airportIdent;
+  QFileInfo translatedPath(atools::documentsDir() +
+                           QDir::separator() +
+                           tr("%1 Files").arg(QCoreApplication::applicationName()) +
+                           QDir::separator() +
+                           tr("Airports") +
+                           QDir::separator() + airportIdent);
+
   if(translatedPath.exists() && translatedPath.isDir())
     retval.insert(translatedPath.canonicalFilePath());
 
-  QFileInfo path = atools::documentsDir() +
-                   QDir::separator() + QCoreApplication::applicationName() +
-                   " Files" +
-                   QDir::separator() +
-                   "Airports" +
-                   QDir::separator() + airportIdent;
+  QFileInfo path(atools::documentsDir() +
+                 QDir::separator() + QCoreApplication::applicationName() +
+                 " Files" +
+                 QDir::separator() +
+                 "Airports" +
+                 QDir::separator() + airportIdent);
 
   if(path.exists() && path.isDir())
     retval.insert(path.canonicalFilePath());
-  return retval.toList();
+  return QStringList(retval.begin(), retval.end());
 }
 
 void AirportFiles::updateAirportFiles(const QString& airportIdent)

@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2023 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2025 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -27,60 +27,69 @@ using InfoBuilderTypes::AirportInfoData;
 
 #include <QDebug>
 
-AirportActionsController::AirportActionsController(QObject *parent, bool verboseParam, AbstractInfoBuilder* infoBuilder) :
-    AbstractLnmActionsController(parent, verboseParam, infoBuilder)
+AirportActionsController::AirportActionsController(QObject *parent, bool verboseParam, AbstractInfoBuilder *infoBuilder) :
+  AbstractLnmActionsController(parent, verboseParam, infoBuilder)
 {
-    if(verbose)
-        qDebug() << Q_FUNC_INFO;
+  if(verbose)
+    qDebug() << Q_FUNC_INFO;
 }
 
-WebApiResponse AirportActionsController::infoAction(WebApiRequest request){
-    if(verbose)
-        qDebug() << Q_FUNC_INFO << request.parameters.value("ident");
+AirportActionsController::~AirportActionsController()
+{
 
-    // Get a new response object
-    WebApiResponse response = getResponse();
+}
 
-    // Query item
-    map::MapAirport airport = getAirportByIdent(request.parameters.value("ident").toUpper());
+WebApiResponse AirportActionsController::infoAction(WebApiRequest request)
+{
+  if(verbose)
+    qDebug() << Q_FUNC_INFO << request.parameters.value("ident");
 
-    if(airport.isValid()){
+  // Get a new response object
+  WebApiResponse response = getResponse();
 
-        // Fetch related data
-        const SqlRecord airportInformation = getAirportInformation(airport.id);
-        const AirportAdminNames airportAdminNames = getAirportAdminNames(airport);
-        const int transitionAltitude = getTransitionAltitude(airport);
+  // Query item
+  map::MapAirport airport = getAirportByIdent(request.parameters.value("ident").toUpper());
 
-        const QTime sunrise = getSunrise(airportInformation);
-        const QTime sunset =  getSunset(airportInformation);
-        const QDateTime activeDateTime = getActiveDateTime();
-        const QString activeDateTimeSource = getActiveDateTimeSource();
+  if(airport.isValid())
+  {
 
-        // Compose data container
-        AirportInfoData data = {
-            airport,
-            getWeatherContext(airport),
-            nullptr,
-            &airportInformation,
-            &airportAdminNames,
-            &transitionAltitude,
-            &sunrise,
-            &sunset,
-            &activeDateTime,
-            &activeDateTimeSource
-        };
+    // Fetch related data
+    const SqlRecord airportInformation = getAirportInformation(airport.id);
+    const AirportAdminNames airportAdminNames = getAirportAdminNames(airport);
+    const int transitionAltitude = getTransitionAltitude(airport);
 
-        // Pass data to builder to assembly the return value
-        response.body = infoBuilder->airport(data);
-        response.status = 200;
+    const QTime sunrise = getSunrise(airportInformation);
+    const QTime sunset = getSunset(airportInformation);
+    const QDateTime activeDateTime = getActiveDateTime();
+    const QString activeDateTimeSource = getActiveDateTimeSource();
 
-    }else{
+    // Compose data container
+    AirportInfoData data = {
+      airport,
+      getWeatherContext(airport),
+      nullptr,
+      &airportInformation,
+      &airportAdminNames,
+      &transitionAltitude,
+      &sunrise,
+      &sunset,
+      &activeDateTime,
+      &activeDateTimeSource
+    };
 
-        response.body = "Airport not found";
-        response.status = 404;
+    // Pass data to builder to assembly the return value
+    response.body = infoBuilder->airport(data);
+    response.status = 200;
 
-    }
+  }
+  else
+  {
 
-    return response;
+    response.body = "Airport not found";
+    response.status = 404;
+
+  }
+
+  return response;
 
 }

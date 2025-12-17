@@ -126,7 +126,7 @@ struct PaintContext
   QSet<int> *shownDetailAirportIds;
 
   /* All navaids drawn for route and procedures. Points to vector in MapScreenIndex */
-  QVector<map::MapRef> *routeDrawnNavaids;
+  QList<map::MapRef> *routeDrawnNavaids;
 
   /* ===============================================================================
    * Text sizes and line thickness in percent / 100 as set in options dialog */
@@ -365,11 +365,11 @@ protected:
   void drawLine(Marble::GeoPainter *painter, const atools::geo::Line& line, bool forceDraw = false) const;
 
   void drawPolygon(Marble::GeoPainter *painter, const atools::geo::LineString& linestring) const;
-  void drawPolygons(Marble::GeoPainter *painter, const QVector<QPolygonF *>& polygons) const;
+  void drawPolygons(Marble::GeoPainter *painter, const QList<QPolygonF *>& polygons) const;
   void drawPolygon(Marble::GeoPainter *painter, const QPolygonF& polygon) const;
 
   void drawPolyline(Marble::GeoPainter *painter, const atools::geo::LineString& linestring) const;
-  void drawPolylines(Marble::GeoPainter *painter, const QVector<QPolygonF *>& polygons) const;
+  void drawPolylines(Marble::GeoPainter *painter, const QList<QPolygonF *>& polygons) const;
   void drawPolyline(Marble::GeoPainter *painter, const QPolygonF& polygon) const;
 
   /* Draw simple text with current settings. Corners are the text corners pointing to the position */
@@ -404,15 +404,15 @@ protected:
 
   void paintHoldWithText(QPainter *painter, float x, float y, float direction, float lengthNm, float minutes, bool left,
                          const QString& text, const QString& text2, const QColor& textColor, const QColor& textColorBackground,
-                         const QVector<float>& inboundArrows = QVector<float>(),
-                         const QVector<float>& outboundArrows = QVector<float>()) const;
+                         const QList<float>& inboundArrows = QList<float>(),
+                         const QList<float>& outboundArrows = QList<float>()) const;
 
   /* Draw PI turn */
   void paintProcedureTurnWithText(QPainter *painter, float x, float y, float turnHeading, float distanceNm, bool left,
                                   QLineF *extensionLine, const QString& text, const QColor& textColor,
                                   const QColor& textColorBackground) const;
 
-  void paintAircraftTrail(const QVector<atools::geo::LineString>& lineStrings, float minAlt, float maxAlt,
+  void paintAircraftTrail(const QList<atools::geo::LineString>& lineStrings, float minAlt, float maxAlt,
                           const atools::geo::Pos& aircraftPos) const;
 
   /* Arrow pointing upwards or downwards */

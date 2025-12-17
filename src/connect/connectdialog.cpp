@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2024 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2025 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -37,7 +37,8 @@ using atools::gui::HelpHandler;
 ConnectDialog::ConnectDialog(QWidget *parent, bool simConnectAvailable)
   : QDialog(parent), ui(new Ui::ConnectDialog), simConnect(simConnectAvailable)
 {
-  setWindowFlags(windowFlags() & ~Qt::WindowContextHelpButtonHint);
+  setWindowFlag(Qt::WindowContextHelpButtonHint, false);
+
   setWindowModality(Qt::ApplicationModal);
 
   ui->setupUi(this);
@@ -73,9 +74,6 @@ ConnectDialog::ConnectDialog(QWidget *parent, bool simConnectAvailable)
   if(idx != -1)
     ui->tabWidgetConnect->removeTab(idx);
 #endif
-
-  ui->comboBoxConnectHostname->setAutoCompletion(true);
-  ui->comboBoxConnectHostname->setAutoCompletionCaseSensitivity(Qt::CaseInsensitive);
 
   // Change button texts
   QPushButton *okButton = ui->buttonBoxConnect->button(QDialogButtonBox::Ok);
@@ -360,7 +358,7 @@ void ConnectDialog::restoreState()
   QStringList entries = Settings::instance().valueStrList(lnm::NAVCONNECT_REMOTEHOSTS);
   entries.removeDuplicates();
 
-  for(const QString& entry : qAsConst(entries))
+  for(const QString& entry : std::as_const(entries))
     if(!entry.isEmpty())
       ui->comboBoxConnectHostname->addItem(entry);
 

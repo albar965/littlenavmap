@@ -331,8 +331,8 @@ void MapPainter::paintCircleLargeInternal(GeoPainter *painter, const Pos& center
   if(textPos != nullptr)
     *textPos = QPoint(0, 0);
 
-  QVector<int> xtexts;
-  QVector<int> ytexts;
+  QList<int> xtexts;
+  QList<int> ytexts;
 
   // Use north endpoint of radius as start position
   Pos startPoint = centerPos.endpoint(radiusMeter, 0);
@@ -458,12 +458,12 @@ void MapPainter::drawCross(Marble::GeoPainter *painter, int x, int y, int size) 
 
 void MapPainter::drawPolyline(Marble::GeoPainter *painter, const atools::geo::LineString& linestring) const
 {
-  QVector<QPolygonF *> polygons = createPolylines(linestring, context->screenRect, true /* splitLongLines */);
+  QList<QPolygonF *> polygons = createPolylines(linestring, context->screenRect, true /* splitLongLines */);
   drawPolylines(painter, polygons);
   releasePolylines(polygons);
 }
 
-void MapPainter::drawPolylines(Marble::GeoPainter *painter, const QVector<QPolygonF *>& polygons) const
+void MapPainter::drawPolylines(Marble::GeoPainter *painter, const QList<QPolygonF *>& polygons) const
 {
   for(const QPolygonF *polygon : polygons)
     drawPolyline(painter, *polygon);
@@ -498,12 +498,12 @@ void MapPainter::drawPolyline(Marble::GeoPainter *painter, const QPolygonF& poly
 
 void MapPainter::drawPolygon(Marble::GeoPainter *painter, const atools::geo::LineString& linestring) const
 {
-  QVector<QPolygonF *> polygons = createPolygons(linestring, context->screenRect);
+  QList<QPolygonF *> polygons = createPolygons(linestring, context->screenRect);
   drawPolygons(painter, polygons);
   releasePolygons(polygons);
 }
 
-void MapPainter::drawPolygons(Marble::GeoPainter *painter, const QVector<QPolygonF *>& polygons) const
+void MapPainter::drawPolygons(Marble::GeoPainter *painter, const QList<QPolygonF *>& polygons) const
 {
   for(const QPolygonF *polygon : polygons)
     drawPolygon(painter, *polygon);
@@ -544,7 +544,7 @@ void MapPainter::drawLine(Marble::GeoPainter *painter, const atools::geo::Line& 
   // Move latitude values slightly up and down to workaround Marble drawing straight lines
   maptools::correctLatY(linestring, false /* polygon */);
 
-  QVector<QPolygonF *> polygons = createPolylines(linestring, context->screenRect, true /* splitLongLines */);
+  QList<QPolygonF *> polygons = createPolylines(linestring, context->screenRect, true /* splitLongLines */);
   if(!polygons.isEmpty())
   {
     drawPolylines(painter, polygons);
@@ -576,7 +576,7 @@ void MapPainter::paintArc(QPainter *painter, const QPointF& p1, const QPointF& p
 void MapPainter::paintHoldWithText(QPainter *painter, float x, float y, float direction,
                                    float lengthNm, float minutes, bool left, const QString& text, const QString& text2,
                                    const QColor& textColor, const QColor& textColorBackground,
-                                   const QVector<float>& inboundArrows, const QVector<float>& outboundArrows) const
+                                   const QList<float>& inboundArrows, const QList<float>& outboundArrows) const
 {
   // Scale to total length given in the leg
   // length = 2 * p + 2 * PI * p / 2
@@ -804,7 +804,7 @@ void MapPainter::paintProcedureTurnWithText(QPainter *painter, float x, float y,
   painter->restore();
 }
 
-void MapPainter::paintAircraftTrail(const QVector<LineString>& lineStrings, float minAlt, float maxAlt,
+void MapPainter::paintAircraftTrail(const QList<LineString>& lineStrings, float minAlt, float maxAlt,
                                     const atools::geo::Pos& aircraftPos) const
 {
   if(!lineStrings.isEmpty())
@@ -976,7 +976,7 @@ void MapPainter::paintMsaMarks(const QList<map::MapAirportMsa>& airportMsa, bool
       drawPolygon(painter, msa.geometry);
 
       TextPlacement textPlacement(painter, this, context->screenRect);
-      QVector<atools::geo::Line> lines;
+      QList<atools::geo::Line> lines;
       QStringList texts;
 
       if(!drawFast)
@@ -1145,8 +1145,8 @@ void MapPainter::paintHoldingMarks(const QList<map::MapHolding>& holdings, const
         paintHoldWithText(context->painter, static_cast<float>(pt.x()), static_cast<float>(pt.y()),
                           holding.courseTrue, dist, 0.f, holding.turnLeft,
                           inboundText.join(tr("/")), outboundText.join(tr("/")), color, backColor,
-                          detail && !drawFast ? QVector<float>({0.80f}) : QVector<float>() /* inbound arrows */,
-                          detail && !drawFast ? QVector<float>({0.80f}) : QVector<float>() /* outbound arrows */);
+                          detail && !drawFast ? QList<float>({0.80f}) : QList<float>() /* inbound arrows */,
+                          detail && !drawFast ? QList<float>({0.80f}) : QList<float>() /* outbound arrows */);
       } // if(context->viewportRect.overlaps(rect))
     } // if(context->mapLayer->isApproach() && scale->getPixelForNm(hold.distance()) > 10.f)
 

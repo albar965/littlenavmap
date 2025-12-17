@@ -1113,7 +1113,7 @@ void ProcedureQuery::processArtificialLegs(proc::MapProcedureLegs& legs, const m
 
       if(runwayPos.isValid())
       {
-        proc::MapProcedureLegVector& legVector = legs.procedureLegs.isEmpty() ? legs.transitionLegs : legs.procedureLegs;
+        proc::MapProcedureLegList& legVector = legs.procedureLegs.isEmpty() ? legs.transitionLegs : legs.procedureLegs;
 
         if(!legVector.isEmpty())
         {
@@ -1476,7 +1476,7 @@ void ProcedureQuery::processApproachRunway(proc::MapProcedureLegs& legs, const m
   if(legs.mapType & proc::PROCEDURE_APPROACH)
   {
     // Look for runway
-    proc::MapProcedureLegVector& legVector = legs.procedureLegs;
+    proc::MapProcedureLegList& legVector = legs.procedureLegs;
     for(int i = 0; i < legVector.size(); i++)
     {
       proc::MapProcedureLeg& leg = legVector[i];
@@ -2664,7 +2664,7 @@ int ProcedureQuery::getApproachId(map::MapAirport destination, const QString& ar
 
       qDebug() << Q_FUNC_INFO << "Nothing found for ARINC" << arincName << "trying" << variants;
 
-      for(const QString& variant : qAsConst(variants))
+      for(const QString& variant : std::as_const(variants))
       {
         procedureIdByArincNameQuery->bindValue(":arincname", variant);
 
@@ -2909,9 +2909,9 @@ void ProcedureQuery::clearCache()
   transitionLegIndex.clear();
 }
 
-const QVector<int> ProcedureQuery::getTransitionIdsForProcedure(int procedureId)
+const QList<int> ProcedureQuery::getTransitionIdsForProcedure(int procedureId)
 {
-  QVector<int> transitionIds;
+  QList<int> transitionIds;
 
   if(!query::valid(Q_FUNC_INFO, transitionIdsForProcedureQuery))
     return transitionIds;
@@ -3349,7 +3349,7 @@ int ProcedureQuery::findProcedureId(const map::MapAirport& airport, atools::sql:
 
     qDebug() << Q_FUNC_INFO << "Nothing found for runway" << runway << "trying" << variants;
 
-    for(const QString& rw : qAsConst(variants))
+    for(const QString& rw : std::as_const(variants))
     {
       if((id = findProcedureLegId(airport, query, suffix, rw, false, strict)) != -1)
         return id;
@@ -3470,7 +3470,7 @@ int ProcedureQuery::findProcedureLegId(const map::MapAirport& airport, atools::s
     return -1;
 
   int procedureId = -1;
-  QVector<int> ids;
+  QList<int> ids;
   query->exec();
   while(query->next())
   {

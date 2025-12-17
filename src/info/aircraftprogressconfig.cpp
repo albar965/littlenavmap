@@ -32,7 +32,7 @@ AircraftProgressConfig::AircraftProgressConfig(QWidget *parentWidget)
 }
 
 // All available ids. Keep this updated with pid::ProgressConfId
-const static QVector<pid::ProgressConfId> ALLIDS({
+const static QList<pid::ProgressConfId> ALLIDS({
   pid::DATE_TIME, pid::LOCAL_TIME, pid::DATE_TIME_REAL, pid::LOCAL_TIME_REAL, pid::FLOWN, pid::DEST_DIST_TIME_ARR, pid::DEST_FUEL,
   pid::DEST_GROSS_WEIGHT, pid::TOD_DIST_TIME_ARR, pid::TOD_FUEL, pid::TOD_TO_DESTINATION, pid::TOC_DIST_TIME_ARR, pid::TOC_FUEL,
   pid::TOC_FROM_DESTINATION, pid::NEXT_LEG_TYPE, pid::NEXT_INSTRUCTIONS, pid::NEXT_RELATED, pid::NEXT_RESTRICTION, pid::NEXT_DIST_TIME_ARR,
@@ -46,7 +46,7 @@ const static QVector<pid::ProgressConfId> ALLIDS({
   pid::ENV_DENSITY_ALTITUDE, pid::ENV_CONDITIONS, pid::ENV_VISIBILITY, pid::POS_COORDINATES});
 
 // Default ids which are enabled without settings
-const static QVector<pid::ProgressConfId> DEFAULTIDS({
+const static QList<pid::ProgressConfId> DEFAULTIDS({
   pid::DATE_TIME, pid::LOCAL_TIME, pid::FLOWN, pid::DEST_DIST_TIME_ARR, pid::DEST_FUEL, pid::DEST_GROSS_WEIGHT, pid::TOD_DIST_TIME_ARR,
   pid::TOD_FUEL, pid::TOD_TO_DESTINATION, pid::NEXT_LEG_TYPE, pid::NEXT_INSTRUCTIONS, pid::NEXT_RELATED, pid::NEXT_RESTRICTION,
   pid::NEXT_DIST_TIME_ARR, pid::NEXT_ALTITUDE, pid::NEXT_FUEL, pid::NEXT_COURSE_TO_WP, pid::NEXT_LEG_COURSE, pid::NEXT_HEADING,
@@ -58,7 +58,7 @@ const static QVector<pid::ProgressConfId> DEFAULTIDS({
   pid::ENV_VISIBILITY});
 
 // Always enables coordinate display or other required fields for web interface
-const static QVector<pid::ProgressConfId> ADDITIONAL_WEB_IDS({pid::POS_COORDINATES});
+const static QList<pid::ProgressConfId> ADDITIONAL_WEB_IDS({pid::POS_COORDINATES});
 
 void AircraftProgressConfig::treeDialogItemToggled(atools::gui::TreeDialog *treeDialog, int id, bool checked)
 {
@@ -231,7 +231,7 @@ void AircraftProgressConfig::progressConfiguration()
 
   // Check all items from enabled
   treeDialog.setAllChecked(false);
-  for(pid::ProgressConfId id : qAsConst(enabledIds))
+  for(pid::ProgressConfId id : std::as_const(enabledIds))
     treeDialog.setItemChecked(id);
 
   if(treeDialog.exec() == QDialog::Accepted)
@@ -261,7 +261,7 @@ void AircraftProgressConfig::restoreState()
   {
     // Load from settings
     QString idStr = settings.valueStr(lnm::INFOWINDOW_PROGRESS_FIELDS);
-    enabledIds = atools::strListToNumVector<pid::ProgressConfId>(idStr.split(";", QString::SkipEmptyParts));
+    enabledIds = atools::strListToNumVector<pid::ProgressConfId>(idStr.split(";", Qt::SkipEmptyParts));
   }
   else
     // Not saved yet - use defaults
@@ -274,7 +274,7 @@ void AircraftProgressConfig::updateBits()
 {
   // Update bitfield for HtmlBuilder
   enabledBits.fill(false, pid::LAST + 1);
-  for(pid::ProgressConfId id : qAsConst(enabledIds))
+  for(pid::ProgressConfId id : std::as_const(enabledIds))
     enabledBits.setBit(id, true);
 
   // Update separate bitfield with required additional fields

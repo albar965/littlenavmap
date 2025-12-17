@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2023 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2025 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -87,7 +87,7 @@ public:
   atools::fs::FsPaths::SimulatorType getBestInstalled() const;
 
   /* Get files path for installed simulators in order of the given list */
-  atools::fs::FsPaths::SimulatorType getBestInstalled(const atools::fs::FsPaths::SimulatorTypeVector& types) const;
+  atools::fs::FsPaths::SimulatorType getBestInstalled(const atools::fs::FsPaths::SimulatorTypeList& types) const;
 
   /* Get all installed simulators */
   QList<atools::fs::FsPaths::SimulatorType> getAllInstalled() const;

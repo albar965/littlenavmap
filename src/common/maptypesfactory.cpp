@@ -748,7 +748,7 @@ void MapTypesFactory::fillParking(const SqlRecord& record, map::MapParking& park
 
       // Try to extract prefixed number like B1, A101
       if(!ok)
-        txt.midRef(1).toInt(&ok);
+        txt.mid(1).toInt(&ok);
 
       // Try suffixed number like 1C, 23D
       if(!ok)

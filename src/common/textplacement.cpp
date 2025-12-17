@@ -70,7 +70,7 @@ void TextPlacement::calculateTextPositions(const atools::geo::LineString& points
 #endif
 }
 
-void TextPlacement::calculateTextAlongLines(const QVector<atools::geo::Line>& lines, const QStringList& lineTexts)
+void TextPlacement::calculateTextAlongLines(const QList<atools::geo::Line>& lines, const QStringList& lineTexts)
 {
   visibleStartPoints.resize(lines.size() + 1);
 
@@ -85,7 +85,7 @@ void TextPlacement::calculateTextAlongLines(const QVector<atools::geo::Line>& li
         continue;
 
       // Get a safe properly ordered list of points to avoid issues with Mercator projection
-      const QVector<QPolygonF *> polylines = converter->createPolylines(LineString(line.getPos1(), line.getPos2()), screenRect,
+      const QList<QPolygonF *> polylines = converter->createPolylines(LineString(line.getPos1(), line.getPos2()), screenRect,
                                                                         false /* splitLongLines */);
 
       if(polylines.isEmpty())
@@ -251,7 +251,7 @@ void TextPlacement::drawTextAlongLines()
   {
     // Draw text with direction arrow along lines
     int i = 0;
-    for(const QPointF& textCoord : qAsConst(textCoords))
+    for(const QPointF& textCoord : std::as_const(textCoords))
     {
       if(!colors2.isEmpty() && colors2.at(i).isValid())
         painter->setPen(colors2.at(i));
@@ -290,8 +290,8 @@ float TextPlacement::getArrowWidth() const
                             metrics.horizontalAdvance(' '));
 }
 
-int TextPlacement::findClosestInternal(const QVector<int>& fullyVisibleValid, const QVector<int>& pointsIdxValid, const QPolygonF& points,
-                                       const QVector<QPointF>& neighbors) const
+int TextPlacement::findClosestInternal(const QList<int>& fullyVisibleValid, const QList<int>& pointsIdxValid, const QPolygonF& points,
+                                       const QList<QPointF>& neighbors) const
 {
   int closestIndex = -1;
   double closestDist = map::INVALID_DISTANCE_VALUE;
@@ -332,7 +332,7 @@ bool TextPlacement::findTextPosInternal(const Line& line, float distanceMeter, f
   positions.append(line.getPos2());
 
   // Get a safe properly ordered list of points to avoid issues with Mercator projection
-  const QVector<QPolygonF *> polylines = converter->createPolylines(positions, screenRect, false /* splitLongLines */);
+  const QList<QPolygonF *> polylines = converter->createPolylines(positions, screenRect, false /* splitLongLines */);
   if(polylines.isEmpty())
     return false;
 
@@ -368,8 +368,8 @@ bool TextPlacement::findTextPosInternal(const Line& line, float distanceMeter, f
     QRectF screenRectF = screenRect;
 
     // Calculate bearing and do some first rough filtering ============================================
-    QVector<int> pointsIdxValid; // Index into "points" of fully or partially visible points
-    QVector<double> bearingsValid; // Same size vector as above
+    QList<int> pointsIdxValid; // Index into "points" of fully or partially visible points
+    QList<double> bearingsValid; // Same size vector as above
     for(int i = 0; i < points.size(); i++)
     {
       const QPointF& pt = points.at(i);
@@ -418,9 +418,9 @@ bool TextPlacement::findTextPosInternal(const Line& line, float distanceMeter, f
       QPolygonF screenPolygon({screenRect.topLeft(), screenRect.topRight(), screenRect.bottomRight(), screenRect.bottomLeft(),
                                screenRect.topLeft()});
 
-      QVector<int> fullyVisibleValid /* Index into "pointsIdxValid". Fully within screen rect */,
+      QList<int> fullyVisibleValid /* Index into "pointsIdxValid". Fully within screen rect */,
                    partiallyVisibleValid /* Index into "pointsIdxValid". Only touching screen rect */;
-      QMatrix matrix;
+      QTransform transform;
       for(int i = 0; i < pointsIdxValid.size(); i++)
       {
         const QPointF& pt = points.at(pointsIdxValid.at(i));
@@ -431,9 +431,9 @@ bool TextPlacement::findTextPosInternal(const Line& line, float distanceMeter, f
                                QPointF(pt.x() - textWidth2, pt.y() + textHeight2), QPointF(pt.x() - textWidth2, pt.y() - textHeight2)});
 
         // Translate, rotate and translate text rectangle back ======================================
-        matrix.translate(pt.x(), pt.y()).rotate(bearingsValid.at(i)).translate(-pt.x(), -pt.y());
-        textPolygon = matrix.map(textPolygon);
-        matrix.reset();
+        transform.translate(pt.x(), pt.y()).rotate(bearingsValid.at(i)).translate(-pt.x(), -pt.y());
+        textPolygon = transform.map(textPolygon);
+        transform.reset();
 
         // Check full visibility ================
         if(screenRectSmall.contains(CoordinateConverter::correctBounding(textPolygon.boundingRect())))
@@ -471,7 +471,7 @@ bool TextPlacement::findTextPosInternal(const Line& line, float distanceMeter, f
         else
         {
           // Get one point closest to either last or first
-          QVector<QPointF> nearest;
+          QList<QPointF> nearest;
           if(firstVisible)
             nearest.append(points.constFirst());
           if(lastVisible)

@@ -235,29 +235,29 @@ QPointF CoordinateConverter::wToSF(const Marble::GeoDataCoordinates& coords, con
   }
 }
 
-QVector<QPolygonF> CoordinateConverter::wToS(const atools::geo::Pos& pos1, const atools::geo::Pos& pos2) const
+QList<QPolygonF> CoordinateConverter::wToS(const atools::geo::Pos& pos1, const atools::geo::Pos& pos2) const
 {
   return wToS(mconvert::toGdcStr(Line(pos1, pos2)));
 }
 
-QVector<QPolygonF> CoordinateConverter::wToS(const atools::geo::Line& line) const
+QList<QPolygonF> CoordinateConverter::wToS(const atools::geo::Line& line) const
 {
   return wToS(mconvert::toGdcStr(line));
 }
 
-QVector<QPolygonF> CoordinateConverter::wToS(const atools::geo::LineString& linestring) const
+QList<QPolygonF> CoordinateConverter::wToS(const atools::geo::LineString& linestring) const
 {
   return wToS(mconvert::toGdcStr(linestring));
 }
 
-QVector<QPolygonF> CoordinateConverter::wToS(const Marble::GeoDataLineString& line) const
+QList<QPolygonF> CoordinateConverter::wToS(const Marble::GeoDataLineString& line) const
 {
-  QVector<QPolygonF *> polygons;
+  QList<QPolygonF *> polygons;
   viewport->screenCoordinates(line, polygons);
 
   // Copy polygons and delete pointers
-  QVector<QPolygonF> retval;
-  for(const QPolygonF *poly : qAsConst(polygons))
+  QList<QPolygonF> retval;
+  for(const QPolygonF *poly : std::as_const(polygons))
     retval.append(*poly);
   qDeleteAll(polygons);
 
@@ -291,23 +291,23 @@ atools::geo::Pos CoordinateConverter::sToW(const QPointF& point) const
   return sToW(atools::roundToInt(point.x()), atools::roundToInt(point.y()));
 }
 
-bool CoordinateConverter::wToSPoints(const atools::geo::Pos& pos, QVector<double>& x, double& y, const QSize& size, bool *isHidden) const
+bool CoordinateConverter::wToSPoints(const atools::geo::Pos& pos, QList<double>& x, double& y, const QSize& size, bool *isHidden) const
 {
   return wToSPoints(mconvert::toGdc(pos), x, y, size, isHidden);
 }
 
-bool CoordinateConverter::wToSPoints(const atools::geo::Pos& pos, QVector<float>& x, float& y, const QSize& size, bool *isHidden) const
+bool CoordinateConverter::wToSPoints(const atools::geo::Pos& pos, QList<float>& x, float& y, const QSize& size, bool *isHidden) const
 {
-  QVector<double> xDouble;
+  QList<double> xDouble;
   double yDouble;
   bool retval = wToSPoints(mconvert::toGdc(pos), xDouble, yDouble, size, isHidden);
-  for(double xd : qAsConst(xDouble))
+  for(double xd : std::as_const(xDouble))
     x.append(static_cast<float>(xd));
   y = static_cast<float>(yDouble);
   return retval;
 }
 
-bool CoordinateConverter::wToSPoints(const Marble::GeoDataCoordinates& coords, QVector<double>& x, double& y, const QSize& size,
+bool CoordinateConverter::wToSPoints(const Marble::GeoDataCoordinates& coords, QList<double>& x, double& y, const QSize& size,
                                      bool *isHidden) const
 {
   bool hidden;
@@ -378,12 +378,12 @@ bool CoordinateConverter::wToSInternal(const Marble::GeoDataCoordinates& coords,
   return visible && !hidden;
 }
 
-const QVector<QPolygonF *> CoordinateConverter::createPolygons(const atools::geo::LineString& linestring, const QRectF& screenRect) const
+const QList<QPolygonF *> CoordinateConverter::createPolygons(const atools::geo::LineString& linestring, const QRectF& screenRect) const
 {
-  QVector<QPolygonF *> polys;
+  QList<QPolygonF *> polys;
   for(const LineString& ls : linestring.splitAtAntiMeridianList())
   {
-    const QVector<QPolygonF *> polyVector = createPolygonsInternal(ls, screenRect);
+    const QList<QPolygonF *> polyVector = createPolygonsInternal(ls, screenRect);
 
     if(!polyVector.isEmpty())
       polys.append(polyVector);
@@ -391,12 +391,12 @@ const QVector<QPolygonF *> CoordinateConverter::createPolygons(const atools::geo
   return polys;
 }
 
-const QVector<QPolygonF *> CoordinateConverter::createPolygonsInternal(const atools::geo::LineString& linestring,
+const QList<QPolygonF *> CoordinateConverter::createPolygonsInternal(const atools::geo::LineString& linestring,
                                                                        const QRectF& screenRect) const
 {
   Marble::GeoDataLinearRing linearRing = mconvert::toGdcRing(linestring);
 
-  QVector<QPolygonF *> polygons;
+  QList<QPolygonF *> polygons;
   if(viewport->viewLatLonAltBox().intersects(linearRing.latLonAltBox()) && viewport->resolves(linearRing.latLonAltBox()))
     // Function might return two polygons in Mercator where one is not visible on the screen
     // Polygons will contain more points than the world coordinate polygon
@@ -417,7 +417,7 @@ const QVector<QPolygonF *> CoordinateConverter::createPolygonsInternal(const ato
     }
 
     // Remove all points which are too close together
-    for(QPolygonF *polygon : qAsConst(polygons))
+    for(QPolygonF *polygon : std::as_const(polygons))
     {
       // Remove all consecutive duplicate points from the range
       polygon->erase(std::unique(polygon->begin(), polygon->end(), [](const QPointF& p1, const QPointF& p2) -> bool {
@@ -457,10 +457,10 @@ bool CoordinateConverter::resolves(const atools::geo::Line& line) const
   return resolves(mconvert::toGdc(line.getPos1()), mconvert::toGdc(line.getPos2()));
 }
 
-const QVector<QPolygonF *> CoordinateConverter::createPolylinesInternal(const atools::geo::LineString& linestring,
+const QList<QPolygonF *> CoordinateConverter::createPolylinesInternal(const atools::geo::LineString& linestring,
                                                                         const QRectF& screenRect, bool splitLongLines) const
 {
-  QVector<QPolygonF *> polylineVector;
+  QList<QPolygonF *> polylineVector;
 
   // Build Marble geometry object
   if(!linestring.isEmpty())
@@ -485,7 +485,7 @@ const QVector<QPolygonF *> CoordinateConverter::createPolylinesInternal(const at
             lines.append(splitLine.getPos1());
 
           // Append split points or single point
-          for(const Pos& pos : qAsConst(lines))
+          for(const Pos& pos : std::as_const(lines))
             geoLineStr << mconvert::toGdc(pos);
         }
       }
@@ -507,12 +507,12 @@ const QVector<QPolygonF *> CoordinateConverter::createPolylinesInternal(const at
 #endif
 
     // Build polyline vector ==============================================
-    QVector<GeoDataLineString *> geoLineStrCorrected = geoLineStr.toDateLineCorrected();
-    for(const GeoDataLineString *geoLine : qAsConst(geoLineStrCorrected))
+    QList<GeoDataLineString *> geoLineStrCorrected = geoLineStr.toDateLineCorrected();
+    for(const GeoDataLineString *geoLine : std::as_const(geoLineStrCorrected))
     {
       if(viewport->viewLatLonAltBox().intersects(geoLine->latLonAltBox()))
       {
-        QVector<QPolygonF *> polygons;
+        QList<QPolygonF *> polygons;
         viewport->screenCoordinates(*geoLine, polygons);
 
         if(!polygons.isEmpty())

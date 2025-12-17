@@ -73,7 +73,7 @@ void AirwayQuery::getAirwaysForWaypoints(QList<map::MapAirway>& airways, int way
   QList<map::MapAirway> temp;
   getAirwaysForWaypoint(temp, waypointId1);
 
-  for(const map::MapAirway& a : qAsConst(airways))
+  for(const map::MapAirway& a : std::as_const(airways))
   {
     if((airwayName.isEmpty() || a.name == airwayName) &&
        (waypointId2 == a.fromWaypointId || waypointId2 == a.toWaypointId))
@@ -108,7 +108,7 @@ void AirwayQuery::getWaypointListForAirwayName(QList<map::MapAirwayWaypoint>& wa
   airwayWaypointsQuery->exec();
 
   // Collect records first
-  QVector<SqlRecord> records;
+  QList<SqlRecord> records;
   while(airwayWaypointsQuery->next())
     records.append(airwayWaypointsQuery->record());
 

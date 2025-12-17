@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2024 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2025 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -97,8 +97,8 @@ void MapPainterWeather::render()
         visibleAirportWeather.append(AirportPaintData(airport, x, y));
     }
 
-    QVector<MapAirport> alternates = context->route->getAlternateAirports();
-    for(const map::MapAirport& airport : qAsConst(alternates))
+    QList<MapAirport> alternates = context->route->getAlternateAirports();
+    for(const map::MapAirport& airport : std::as_const(alternates))
     {
       visibleOnMap = wToS(airport.position, x, y, scale->getScreeenSizeForRect(airport.bounding), &hidden);
       if(!hidden && visibleOnMap)
@@ -129,7 +129,7 @@ void MapPainterWeather::render()
   std::sort(visibleAirportWeather.begin(), visibleAirportWeather.end(), std::bind(&MapPainter::sortAirportFunction, this, _1, _2));
 
   WeatherReporter *reporter = NavApp::getWeatherReporter();
-  for(const AirportPaintData& airportPaintData : qAsConst(visibleAirportWeather))
+  for(const AirportPaintData& airportPaintData : std::as_const(visibleAirportWeather))
   {
     const atools::fs::weather::Metar& metar = reporter->getAirportWeather(airportPaintData.getAirport(), true /* stationOnly */);
 

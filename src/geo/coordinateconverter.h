@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2024 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2025 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -21,7 +21,7 @@
 #include <QPoint>
 #include <QPolygonF>
 #include <QSize>
-#include <QVector>
+#include <QList>
 
 class QPolygonF;
 
@@ -93,10 +93,10 @@ public:
 
   /* Reliable world to screen conversion. Polygons are already divided into segments.
    *  Result might contain duplicates for Mercator projection. */
-  QVector<QPolygonF> wToS(const atools::geo::Pos& pos1, const atools::geo::Pos& pos2) const;
-  QVector<QPolygonF> wToS(const atools::geo::Line& line) const;
-  QVector<QPolygonF> wToS(const atools::geo::LineString& linestring) const;
-  QVector<QPolygonF> wToS(const Marble::GeoDataLineString& line) const;
+  QList<QPolygonF> wToS(const atools::geo::Pos& pos1, const atools::geo::Pos& pos2) const;
+  QList<QPolygonF> wToS(const atools::geo::Line& line) const;
+  QList<QPolygonF> wToS(const atools::geo::LineString& linestring) const;
+  QList<QPolygonF> wToS(const Marble::GeoDataLineString& line) const;
 
   /*
    * Convert world to screen coordinates for GeoDataCoordinates
@@ -138,19 +138,19 @@ public:
 
   /* Get screen polygons for given line string. Polygons are cleaned up from duplicates and split at anti-meridian.
    * Free with releasePolygons() */
-  const QVector<QPolygonF *> createPolygons(const atools::geo::LineString& linestring, const QRectF& screenRect) const;
+  const QList<QPolygonF *> createPolygons(const atools::geo::LineString& linestring, const QRectF& screenRect) const;
 
-  void releasePolygons(const QVector<QPolygonF *>& polygons) const
+  void releasePolygons(const QList<QPolygonF *>& polygons) const
   {
     qDeleteAll(polygons);
   }
 
-  const QVector<QPolygonF *> createPolylines(const atools::geo::LineString& linestring, const QRectF& screenRect, bool splitLongLines) const
+  const QList<QPolygonF *> createPolylines(const atools::geo::LineString& linestring, const QRectF& screenRect, bool splitLongLines) const
   {
     return createPolylinesInternal(linestring, screenRect, splitLongLines);
   }
 
-  void releasePolylines(const QVector<QPolygonF *>& polylines) const
+  void releasePolylines(const QList<QPolygonF *>& polylines) const
   {
     qDeleteAll(polylines);
   }
@@ -162,15 +162,15 @@ public:
   bool resolves(const atools::geo::Rect& rect) const;
   bool resolves(const atools::geo::Line& line) const;
 
-  bool wToSPoints(const atools::geo::Pos& pos, QVector<double>& x, double& y, const QSize& size, bool *isHidden) const;
-  bool wToSPoints(const atools::geo::Pos& pos, QVector<float>& x, float& y, const QSize& size, bool *isHidden) const;
-  bool wToSPoints(const Marble::GeoDataCoordinates& coords, QVector<double>& x, double& y, const QSize& size, bool *isHidden) const;
+  bool wToSPoints(const atools::geo::Pos& pos, QList<double>& x, double& y, const QSize& size, bool *isHidden) const;
+  bool wToSPoints(const atools::geo::Pos& pos, QList<float>& x, float& y, const QSize& size, bool *isHidden) const;
+  bool wToSPoints(const Marble::GeoDataCoordinates& coords, QList<double>& x, double& y, const QSize& size, bool *isHidden) const;
 
 private:
   bool wToSInternal(const Marble::GeoDataCoordinates& coords, double& x, double& y, const QSize& size, bool *isHidden) const;
 
-  const QVector<QPolygonF *> createPolygonsInternal(const atools::geo::LineString& linestring, const QRectF& screenRect) const;
-  const QVector<QPolygonF *> createPolylinesInternal(const atools::geo::LineString& linestring, const QRectF& screenRect,
+  const QList<QPolygonF *> createPolygonsInternal(const atools::geo::LineString& linestring, const QRectF& screenRect) const;
+  const QList<QPolygonF *> createPolylinesInternal(const atools::geo::LineString& linestring, const QRectF& screenRect,
                                                      bool splitLongLines) const;
 
   const Marble::ViewportParams *viewport;

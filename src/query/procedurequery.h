@@ -87,7 +87,7 @@ public:
   const proc::MapProcedureLegs *getTransitionLegs(map::MapAirport airport, int transitionId);
 
   /* Get all available transitions for the given procedure ID (approach.approach_id in database */
-  const QVector<int> getTransitionIdsForProcedure(int procedureId);
+  const QList<int> getTransitionIdsForProcedure(int procedureId);
 
   /* Resolves all procedures based on given properties and loads them from the database.
    * Procedures are partially resolved in a fuzzy way. */

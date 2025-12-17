@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2024 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2025 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -46,7 +46,7 @@ struct MapWaypoint;
 struct MapAirport;
 struct MapRefExt;
 struct MapAirway;
-typedef QVector<map::MapRefExt> MapRefExtVector;
+typedef QList<map::MapRefExt> MapRefExtList;
 }
 
 namespace proc {
@@ -82,7 +82,7 @@ public:
    * Fills either flightplan and/or mapObjectRefs if not null.
    * Get error, warning and information messages with getMessages() */
   bool createRouteFromString(const QString& routeString, rs::RouteStringOptions options, atools::fs::pln::Flightplan *flightplan,
-                             map::MapRefExtVector *mapObjectRefs = nullptr, float *speedKtsParam = nullptr,
+                             map::MapRefExtList *mapObjectRefs = nullptr, float *speedKtsParam = nullptr,
                              bool *altIncludedParam = nullptr);
 
   /* Set to true to generate non HTML messages */
@@ -147,11 +147,11 @@ private:
   void removeEmptyResults(QList<ParseEntry>& resultList);
 
   /* Fetch departure airport as well as SID */
-  bool addDeparture(atools::fs::pln::Flightplan *flightplan, map::MapRefExtVector *mapObjectRefs, QStringList& items, QString& sidExitWp);
+  bool addDeparture(atools::fs::pln::Flightplan *flightplan, map::MapRefExtList *mapObjectRefs, QStringList& items, QString& sidExitWp);
 
   /* Fetch destination airport as well as STAR */
   bool addDestination(atools::fs::pln::Flightplan *flightplan, QList<atools::fs::pln::FlightplanEntry> *alternates,
-                      map::MapRefExtVector *mapObjectRefs, QStringList& items, QString& starEntryWp, rs::RouteStringOptions options);
+                      map::MapRefExtList *mapObjectRefs, QStringList& items, QString& starEntryWp, rs::RouteStringOptions options);
   void destinationInternal(map::MapAirport& destAirport, proc::MapProcedureLegs& starLegs, proc::MapProcedureLegs& approachLegs,
                            QStringList& items, QString& starEntryWp, map::MapRunwayEnd& runwayEnd, int& consume, int index);
 

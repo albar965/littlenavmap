@@ -212,7 +212,7 @@ QDateTime readDateTime(QString str)
 
   str = str.simplified();
 
-  for(const QString& format : qAsConst(dateTimeFormats))
+  for(const QString& format : std::as_const(dateTimeFormats))
   {
     retval = locale.toDateTime(str, format);
     if(retval.isValid())

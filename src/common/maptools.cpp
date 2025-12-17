@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2020 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2025 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -80,7 +80,7 @@ void RwVector::sortRunwayEnds()
   {
     QMap<RwKey, RwEnd> endMap;
 
-    for(const RwEnd& end : qAsConst(*this))
+    for(const RwEnd& end : std::as_const(*this))
     {
       RwKey key(end);
       if(endMap.contains(key))
@@ -111,7 +111,7 @@ void RwVector::sortRunwayEnds()
 QStringList RwVector::getSortedRunways(int minHeadWind) const
 {
   QStringList runways;
-  for(const maptools::RwEnd& end : qAsConst(*this))
+  for(const maptools::RwEnd& end : std::as_const(*this))
   {
     if(end.headWind <= minHeadWind)
       break;

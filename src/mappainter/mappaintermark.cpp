@@ -200,7 +200,7 @@ void MapPainterMark::paintHighlights()
   // ====================================================================
   // Collect all highlight rings for positions =============
   // Feature position and size (not radius)
-  QVector<std::pair<ageo::Pos, float> > positionSizeList;
+  QList<std::pair<ageo::Pos, float> > positionSizeList;
   for(const MapAirport& ap : highlightResultsSearch.airports)
   {
     // Do not add if already drawn by logbook preview
@@ -414,10 +414,10 @@ void MapPainterMark::paintLogEntries(const QList<map::MapLogbookEntry>& entries)
   float minAltitude = std::numeric_limits<float>::max(), maxAltitude = std::numeric_limits<float>::min();
   // Collect visible feature parts ==========================================================================
   atools::fs::userdata::LogdataManager *logdataManager = NavApp::getLogdataManager();
-  QVector<const MapLogbookEntry *> visibleLogEntries, allLogEntries;
+  QList<const MapLogbookEntry *> visibleLogEntries, allLogEntries;
   ageo::LineString visibleRouteGeometries;
   QStringList visibleRouteTexts;
-  QVector<ageo::LineString> visibleTrailGeometries;
+  QList<ageo::LineString> visibleTrailGeometries;
   bool showRouteAndTrail = entries.size() == 1;
 
   for(const MapLogbookEntry& logEntry : entries)
@@ -553,7 +553,7 @@ void MapPainterMark::paintLogEntries(const QList<map::MapLogbookEntry>& entries)
     QPen directOutlinePen(mapcolors::routeLogEntryOutlineColor, outerlinewidth, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin);
     float size = context->szF(context->symbolSizeAirport, context->mapLayer->getAirportSymbolSize());
 
-    QVector<ageo::LineString> geo;
+    QList<ageo::LineString> geo;
     for(const MapLogbookEntry *entry : visibleLogEntries)
       geo.append(entry->lineString());
 
@@ -698,7 +698,7 @@ void MapPainterMark::paintAirwayList(const QList<map::MapAirway>& airwayList)
   }
 
   // Draw waypoint triangles =============================================
-  for(const ageo::Pos& pos : qAsConst(linestring))
+  for(const ageo::Pos& pos : std::as_const(linestring))
   {
     QPointF pt = wToS(pos);
     if(!pt.isNull())
@@ -772,7 +772,7 @@ void MapPainterMark::paintAirspace(const map::MapAirspace& airspace)
 
     if(lineString != nullptr)
     {
-      const QVector<QPolygonF *> polygons = createPolygons(*lineString, context->screenRect);
+      const QList<QPolygonF *> polygons = createPolygons(*lineString, context->screenRect);
 
       // Can be empty for online centers
       if(!polygons.isEmpty())
@@ -1065,8 +1065,8 @@ void MapPainterMark::paintCompassRose()
     if(!context->dOptRose(optsd::ROSE_TRUE_HEADING))
       magVar = hasAircraft ? aircraft.getMagVarDeg() : NavApp::getMagVar(pos);
 
-    QVector<ageo::Pos> endpoints;
-    QVector<QPointF> endpointsScreen;
+    QList<ageo::Pos> endpoints;
+    QList<QPointF> endpointsScreen;
     for(float angle = 0.f; angle < 360.f; angle += 5)
     {
       endpoints.append(pos.endpoint(radiusMeter, magVar + angle));
@@ -1653,7 +1653,7 @@ void MapPainterMark::paintRouteDrag()
       context->painter->setPen(QPen(mapcolors::mapDragColor, 3, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin));
 
       // Draw lines from current mouse position to all fixed points which can be waypoints or several alternates
-      for(const ageo::Pos& pos : qAsConst(fixed))
+      for(const ageo::Pos& pos : std::as_const(fixed))
         drawLine(context->painter, ageo::Line(curGeo, pos));
     }
   }

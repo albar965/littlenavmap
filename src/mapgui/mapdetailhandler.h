@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2024 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2025 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -107,6 +107,7 @@ class DetailSliderAction
 
 public:
   explicit DetailSliderAction(QObject *parent, const QString& settingsKeyParam, int minimumValue, int maximumValue);
+  virtual ~DetailSliderAction() override;
 
   /* MAP_MIN_DETAIL_LEVEL = 8 -> MAP_DEFAULT_DETAIL_LEVEL = 10 -> MAP_MAX_DETAIL_LEVEL = 15 */
   int getSliderValue() const;
@@ -127,7 +128,7 @@ protected:
   virtual void deleteWidget(QWidget *widget) override;
 
   /* List of created/registered slider widgets */
-  QVector<QSlider *> sliders;
+  QList<QSlider *> sliders;
   int sliderValue = 0, minValue, maxValue;
   QString settingsKey;
 };

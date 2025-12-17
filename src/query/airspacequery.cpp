@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2024 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2025 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -181,7 +181,7 @@ const QList<map::MapAirspace> *AirspaceQuery::getAirspaces(const GeoDataLatLonBo
         // Get the airspace objects without geometry
         for(const GeoDataLatLonBox& r : query::splitAtAntiMeridian(rect, queryRectInflationFactor, queryRectInflationIncrement))
         {
-          for(const QString& typeStr : qAsConst(typeStrings))
+          for(const QString& typeStr : std::as_const(typeStrings))
           {
             query::bindRect(r, query);
             query->bindValue(":type", typeStr);

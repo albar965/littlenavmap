@@ -1622,7 +1622,7 @@ bool RouteController::insertFlightplan(const QString& filename, int insertBefore
       insertPosSelection = route.size();
 
       // Append flight plan to current flightplan object - route is updated later
-      for(const FlightplanEntry& entry : qAsConst(flightplan))
+      for(const FlightplanEntry& entry : std::as_const(flightplan))
         routePlan.append(entry);
 
       // Appended after destination airport
@@ -2217,7 +2217,7 @@ bool RouteController::calculateRouteInternal(atools::routing::RouteFinder *route
   QGuiApplication::setOverrideCursor(Qt::WaitCursor);
 
   float distance = 0.f;
-  QVector<RouteEntry> calculatedRoute;
+  QList<RouteEntry> calculatedRoute;
 
   if(found && !canceled)
   {
@@ -2257,7 +2257,7 @@ bool RouteController::calculateRouteInternal(atools::routing::RouteFinder *route
 
       int idx = 1;
       // Create flight plan entries - will be copied later to the route map objects
-      for(const RouteEntry& routeEntry : qAsConst(calculatedRoute))
+      for(const RouteEntry& routeEntry : std::as_const(calculatedRoute))
       {
         FlightplanEntry flightplanEntry;
         entryBuilder->buildFlightplanEntry(routeEntry.ref.id, atools::geo::EMPTY_POS, routeEntry.ref.objType,
@@ -3072,7 +3072,7 @@ void RouteController::tableContextMenu(const QPoint& pos)
   // If there are any radio navaids in the selected list enable range menu item
   int numRadioNavaids = 0;
   QString navaidText;
-  for(int idx : qAsConst(selectedRows))
+  for(int idx : std::as_const(selectedRows))
   {
     const RouteLeg& leg = route.value(idx);
     if((leg.getVor().isValid() && leg.getVor().range > 0) || (leg.getNdb().isValid() && leg.getNdb().range > 0))
@@ -3223,7 +3223,7 @@ void RouteController::tableContextMenu(const QPoint& pos)
     else if(action == ui->actionMapNavaidRange)
     {
       // Show range rings for all radio navaids
-      for(int idx : qAsConst(selectedRows))
+      for(int idx : std::as_const(selectedRows))
       {
         const RouteLeg& routeLegSel = route.value(idx);
         if(routeLegSel.getNdb().isValid() || routeLegSel.getVor().isValid())
@@ -3660,7 +3660,7 @@ void RouteController::moveSelectedLegsInternal(MoveDirection direction)
 
     // Avoid callback selection changed which can result in crashes due to inconsistent route
     blockModel();
-    for(int row : qAsConst(rows))
+    for(int row : std::as_const(rows))
     {
       // Change flight plan
       route.getFlightplan().move(row, row + direction);
@@ -5626,7 +5626,7 @@ void RouteController::validAircraftReceived(const atools::fs::sc::SimConnectUser
 
 void RouteController::simDataChanged(const atools::fs::sc::SimConnectData& simulatorData)
 {
-  if(!loadingDatabaseState && atools::almostNotEqual(QDateTime::currentDateTime().toMSecsSinceEpoch(),
+  if(!loadingDatabaseState && atools::almostNotEqual(QDateTime::currentMSecsSinceEpoch(),
                                                      lastSimUpdate, static_cast<qint64>(MIN_SIM_UPDATE_TIME_MS)))
   {
     if(simulatorData.isUserAircraftValid())
@@ -5661,7 +5661,7 @@ void RouteController::simDataChanged(const atools::fs::sc::SimConnectData& simul
       else
         route.updateActivePos(position);
     }
-    lastSimUpdate = QDateTime::currentDateTime().toMSecsSinceEpoch();
+    lastSimUpdate = QDateTime::currentMSecsSinceEpoch();
   }
 }
 

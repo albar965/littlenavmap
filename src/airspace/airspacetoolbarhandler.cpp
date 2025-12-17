@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2024 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2025 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -27,6 +27,7 @@
 #include "ui_mainwindow.h"
 
 #include <QAction>
+#include <QActionGroup>
 #include <QToolButton>
 #include <QDebug>
 
@@ -37,6 +38,11 @@ AirspaceAltSliderAction::AirspaceAltSliderAction(QObject *parent, bool maxSlider
 {
   sliderValue = minValue();
   setSliderValue(sliderValue);
+}
+
+AirspaceAltSliderAction::~AirspaceAltSliderAction()
+{
+
 }
 
 int AirspaceAltSliderAction::getAltitudeFt() const
@@ -103,7 +109,7 @@ int AirspaceAltSliderAction::maxValue() const
 void AirspaceAltSliderAction::setSliderValue(int value)
 {
   sliderValue = value;
-  for(QSlider *slider : qAsConst(sliders))
+  for(QSlider *slider : std::as_const(sliders))
   {
     slider->blockSignals(true);
     slider->setValue(sliderValue);
@@ -113,35 +119,20 @@ void AirspaceAltSliderAction::setSliderValue(int value)
 
 // =======================================================================================
 
-/*
- * Wrapper for label action. Does not send any signals. No Q_OBJECT needed.
- * Labels are disabled too if wrapper widget is disabled.
- */
-class AirspaceLabelAction
-  : public QWidgetAction
+AirspaceLabelAction::AirspaceLabelAction(QObject *parent) : QWidgetAction(parent)
 {
-public:
-  AirspaceLabelAction(QObject *parent) : QWidgetAction(parent)
-  {
-  }
+}
 
-  void setText(const QString& textParam);
+AirspaceLabelAction::~AirspaceLabelAction()
+{
 
-protected:
-  /* Create a delete widget for more than one menu (tearout and normal) */
-  virtual QWidget *createWidget(QWidget *parent) override;
-  virtual void deleteWidget(QWidget *widget) override;
-
-  /* List of created/registered labels */
-  QVector<QLabel *> labels;
-  QString text;
-};
+}
 
 void AirspaceLabelAction::setText(const QString& textParam)
 {
   text = textParam;
   // Set text to all registered labels
-  for(QLabel *label : qAsConst(labels))
+  for(QLabel *label : std::as_const(labels))
     label->setText(text);
 }
 
@@ -221,7 +212,7 @@ void AirspaceToolBarHandler::updateToolActions()
 {
   bool enable = NavApp::getMainUi()->actionShowAirspaces->isChecked();
   bool hasAirspaces = QueryManager::instance()->getQueriesGui()->getAirspaceQueries()->hasAnyAirspaces();
-  for(QToolButton *toolButton : qAsConst(airspaceToolButtons))
+  for(QToolButton *toolButton : std::as_const(airspaceToolButtons))
   {
     const QList<QAction *> actions = toolButton->menu()->actions();
     for(QAction *action : actions)
@@ -239,7 +230,7 @@ void AirspaceToolBarHandler::updateSliders()
 
 void AirspaceToolBarHandler::actionsToFilterTypes(map::MapAirspaceFilter& currentFilter)
 {
-  for(QToolButton *toolButton : qAsConst(airspaceToolButtons))
+  for(QToolButton *toolButton : std::as_const(airspaceToolButtons))
   {
     const QList<QAction *> actions = toolButton->menu()->actions();
     for(QAction *action : actions)
@@ -258,7 +249,7 @@ void AirspaceToolBarHandler::actionsToFilterTypes(map::MapAirspaceFilter& curren
 
 void AirspaceToolBarHandler::filterTypesToActions(const map::MapAirspaceFilter& currentFilter)
 {
-  for(QToolButton *toolButton : qAsConst(airspaceToolButtons))
+  for(QToolButton *toolButton : std::as_const(airspaceToolButtons))
   {
     const QList<QAction *> actions = toolButton->menu()->actions();
     for(QAction *action : actions)

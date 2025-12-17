@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2020 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2025 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -18,13 +18,12 @@
 #ifndef RANDOMDESTINATIONAIRPORTPICKINGBYCRITERIA_H
 #define RANDOMDESTINATIONAIRPORTPICKINGBYCRITERIA_H
 
+#include "geo/pos.h"
+
 #include <QObject>
 #include <QThread>
 
 namespace atools {
-  namespace geo {
-    class Pos;
-  }
 }
 
 class RandomDestinationAirportPickingByCriteria :
@@ -36,6 +35,7 @@ public:
   RandomDestinationAirportPickingByCriteria(int threadIndex,
                                             int dataRangeIndexStart,
                                             int dataRangeLength);
+  virtual ~RandomDestinationAirportPickingByCriteria() override;
 
   // required calling !!! once, before first construction
   static void initStatics(int distanceMinMeter,
@@ -56,7 +56,7 @@ signals:
 private:
   // do the thing no C++ brain (std specifier) wanted to do before
   // returns index when found searchFor, else -1
-  int binary_search(int searchFor, int* inArray, int arrayLength);
+  int binary_search(int searchFor, int *inArray, int arrayLength);
 
   int threadIndex;
   int dataRangeIndexStart;

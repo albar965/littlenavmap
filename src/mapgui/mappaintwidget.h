@@ -129,7 +129,7 @@ public:
 
   /* Update procedure highlights, update screen index and redraw map */
   void changeProcedureHighlight(const proc::MapProcedureLegs& procedure);
-  void changeProcedureHighlights(const QVector<proc::MapProcedureLegs>& procedures);
+  void changeProcedureHighlights(const QList<proc::MapProcedureLegs>& procedures);
   void changeProcedureLegHighlight(const proc::MapProcedureLeg& procedureLeg);
 
   /* Update route screen coordinate index */
@@ -163,7 +163,7 @@ public:
 
   /* Procedure preview. Delegates to map screen index. */
   const proc::MapProcedureLegs& getProcedureHighlight() const;
-  const QVector<proc::MapProcedureLegs>& getProcedureHighlights() const;
+  const QList<proc::MapProcedureLegs>& getProcedureHighlights() const;
   const proc::MapProcedureLeg& getProcedureLegHighlight() const;
 
   const QList<int>& getRouteHighlights() const;
@@ -243,7 +243,7 @@ public:
   const atools::fs::sc::SimConnectData& getSimConnectData() const;
 
   /* AI aircraft as shown on the map */
-  const QVector<atools::fs::sc::SimConnectAircraft>& getAiAircraft() const;
+  const QList<atools::fs::sc::SimConnectAircraft>& getAiAircraft() const;
 
   /* Get currently loaded KML file paths */
   const QStringList& getKmlFiles() const
@@ -393,9 +393,9 @@ public:
   /* Print all layers to debug channel */
   void dumpMapLayers() const;
 
-  const QVector<map::MapRef>& getRouteDrawnNavaidsConst() const;
+  const QList<map::MapRef>& getRouteDrawnNavaidsConst() const;
 
-  QVector<map::MapRef> *getRouteDrawnNavaids();
+  QList<map::MapRef> *getRouteDrawnNavaids();
 
   const QString& getCurrentThemeId() const
   {

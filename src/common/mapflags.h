@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2024 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2025 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -20,7 +20,7 @@
 
 #include "util/flags.h"
 
-#include <QVector>
+#include <QList>
 #include <QObject>
 
 /*
@@ -363,8 +363,8 @@ ATOOLS_DECLARE_OPERATORS_FOR_FLAGS(map::MapAirspaceSources)
 QDebug operator<<(QDebug out, const map::MapAirspaceSource& type);
 QDebug operator<<(QDebug out, const map::MapAirspaceSources& type);
 
-extern const QVector<map::MapAirspaceSource> MAP_AIRSPACE_SRC_VALUES;
-extern const QVector<map::MapAirspaceSource> MAP_AIRSPACE_SRC_NO_ONLINE_VALUES;
+extern const QList<map::MapAirspaceSource> MAP_AIRSPACE_SRC_VALUES;
+extern const QList<map::MapAirspaceSource> MAP_AIRSPACE_SRC_NO_ONLINE_VALUES;
 
 /* Airspace filter flags */
 enum MapAirspaceFlag : quint32

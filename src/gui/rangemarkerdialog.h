@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2024 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2025 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -79,8 +79,8 @@ private:
   void coordinatesEdited(const QString&);
 
   /* Convert string to ranges. Falls back to defaults if invalid */
-  QString rangeFloatToString(const QVector<float>& ranges) const;
-  const QVector<float> rangeStringToFloat(const QString& rangeStr) const;
+  QString rangeFloatToString(const QList<float>& ranges) const;
+  const QList<float> rangeStringToFloat(const QString& rangeStr) const;
 
   Ui::RangeMarkerDialog *ui;
 
@@ -96,7 +96,7 @@ private:
   // Validates the space separated list of ring sizes
   RangeRingValidator *rangeRingValidator;
 
-  const static QVector<float> MAP_RANGERINGS_DEFAULT;
+  const static QList<float> MAP_RANGERINGS_DEFAULT;
 };
 
 /* Validates the space separated list of range ring sizes */
@@ -107,6 +107,7 @@ class RangeRingValidator :
 
 public:
   RangeRingValidator();
+  virtual ~RangeRingValidator() override;
 
 private:
   virtual QValidator::State validate(QString& input, int&) const override;

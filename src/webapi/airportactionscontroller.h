@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2020 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2025 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -24,15 +24,18 @@
  * @brief Airport actions controller implementation.
  */
 class AirportActionsController :
-        public AbstractLnmActionsController
+  public AbstractLnmActionsController
 {
-    Q_OBJECT
+  Q_OBJECT
+
 public:
-    Q_INVOKABLE AirportActionsController(QObject *parent, bool verboseParam, AbstractInfoBuilder* infoBuilder);
-    /**
-     * @brief get airport info
-     */
-    Q_INVOKABLE WebApiResponse infoAction(WebApiRequest request);
+  Q_INVOKABLE AirportActionsController(QObject *parent, bool verboseParam, AbstractInfoBuilder *infoBuilder);
+  virtual ~AirportActionsController() override;
+  /**
+   * @brief get airport info
+   */
+  Q_INVOKABLE WebApiResponse infoAction(WebApiRequest request);
+
 };
 
 #endif // AIRPORTACTIONSCONTROLLER_H

@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2024 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2025 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -23,7 +23,7 @@
 
 namespace map {
 struct MapRefExt;
-typedef QVector<map::MapRefExt> MapObjectRefExtVector;
+typedef QList<map::MapRefExt> MapObjectRefExtList;
 }
 
 /*
@@ -37,7 +37,7 @@ typedef QVector<map::MapRefExt> MapObjectRefExtVector;
 class TrackManager
   : public atools::sql::DataManagerBase
 {
-  Q_DECLARE_TR_FUNCTIONS(TrackManager)
+  Q_OBJECT
 
 public:
   explicit TrackManager(atools::sql::SqlDatabase *trackDatabase, atools::sql::SqlDatabase *navDatabase);
@@ -48,7 +48,7 @@ public:
 
   /* Clears database and loads the given tracks.
    * onlyValid: Do not load tracks that are currently not valid. */
-  void loadTracks(const atools::track::TrackVectorType& tracks, bool onlyValid);
+  void loadTracks(const atools::track::TrackListType& tracks, bool onlyValid);
 
   /* More log messages if true */
   void setVerbose(bool value)

@@ -257,7 +257,7 @@ void LogdataController::getFlightStatsAircraft(int& numTypes, int& numRegistrati
   manager->getFlightStatsAircraft(numTypes, numRegistrations, numNames, numSimulators);
 }
 
-void LogdataController::getFlightStatsSimulator(QVector<std::pair<int, QString> >& numSimulators)
+void LogdataController::getFlightStatsSimulator(QList<std::pair<int, QString> >& numSimulators)
 {
   manager->getFlightStatsSimulator(numSimulators);
 }
@@ -636,7 +636,7 @@ void LogdataController::connectDialogSignals(LogdataDialog *dialogParam)
   connect(dialogParam, &LogdataDialog::perfSaveAs, this, &LogdataController::perfSaveAs);
 }
 
-void LogdataController::editLogEntries(const QVector<int>& ids)
+void LogdataController::editLogEntries(const QList<int>& ids)
 {
   qDebug() << Q_FUNC_INFO << ids;
 
@@ -835,7 +835,7 @@ void LogdataController::cleanupLogEntries()
     // Show preview table ===============================================
     if(choiceDialog.isButtonChecked(SHOW_PREVIEW))
     {
-      QVector<atools::sql::SqlColumn> previewCols({
+      QList<atools::sql::SqlColumn> previewCols({
         SqlColumn("departure_time", tr("Departure\nReal Time")),
         SqlColumn("aircraft_name", tr("Aircraft\nModel")),
         SqlColumn("aircraft_type", tr("Aircraft\nType")),
@@ -1078,7 +1078,7 @@ void LogdataController::exportCsv()
 
       if(!file.isEmpty())
       {
-        QVector<int> ids;
+        QList<int> ids;
         if(choiceDialog.isButtonChecked(SELECTED))
           ids = NavApp::getLogdataSearch()->getSelectedIds();
 
@@ -1313,7 +1313,6 @@ void LogdataController::gpxAdd(atools::sql::SqlRecord *record, QWidget *parent)
       if(file.open(QIODevice::ReadOnly | QIODevice::Text))
       {
         QTextStream stream(&file);
-        stream.setCodec("UTF-8");
 
         // Decompress GPX and save as is into the database
         record->setValue("aircraft_trail", atools::zip::gzipCompress(stream.readAll().toUtf8()));
@@ -1388,7 +1387,6 @@ void LogdataController::gpxSaveAs(atools::sql::SqlRecord *record, QWidget *paren
       {
         // Decompress and save track as is ==============
         QTextStream stream(&file);
-        stream.setCodec("UTF-8");
         stream << QString(atools::zip::gzipDecompress(record->value("aircraft_trail").toByteArray())).toUtf8();
         file.close();
       }

@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2024 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2025 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -21,7 +21,8 @@
 #include "common/mapflags.h"
 
 #include <QCoreApplication>
-#include <QVector>
+#include <QList>
+#include <QLabel>
 #include <QWidgetAction>
 
 class QAction;
@@ -97,13 +98,13 @@ private:
   void updateSliderLabel();
 
   /* List of actions that are not grouped */
-  QVector<QToolButton *> airspaceToolButtons;
+  QList<QToolButton *> airspaceToolButtons;
 
   /* List of grouped actions or null if not grouped */
-  QVector<QActionGroup *> airspaceToolGroups;
+  QList<QActionGroup *> airspaceToolGroups;
 
   /* Flags and types for each button */
-  QVector<map::MapAirspaceFilter> airspaceToolButtonFilters;
+  QList<map::MapAirspaceFilter> airspaceToolButtonFilters;
   QWidget *parentWidget;
 
   /* Widget wrapper allowing to put an arbitrary widget into a menu */
@@ -126,6 +127,7 @@ class AirspaceAltSliderAction
 
 public:
   explicit AirspaceAltSliderAction(QObject *parent, bool maxSliderParam);
+  virtual ~AirspaceAltSliderAction() override;
 
   int getAltitudeFt() const;
 
@@ -156,7 +158,7 @@ protected:
   void setSliderValue(int value);
 
   /* List of created/registered slider widgets */
-  QVector<QSlider *> sliders;
+  QList<QSlider *> sliders;
 
   /* Altitude in feet / WIND_SLIDER_STEP_ALT_FT */
   int sliderValue = 0;
@@ -164,6 +166,32 @@ protected:
   /* true if reversed for maximum slider */
   bool maxSlider;
 };
+
+/*
+ * Wrapper for label action. Does not send any signals. No Q_OBJECT needed.
+ * Labels are disabled too if wrapper widget is disabled.
+ */
+class AirspaceLabelAction
+  : public QWidgetAction
+{
+  Q_OBJECT
+
+public:
+  AirspaceLabelAction(QObject *parent);
+  virtual ~AirspaceLabelAction() override;
+
+  void setText(const QString& textParam);
+
+protected:
+  /* Create a delete widget for more than one menu (tearout and normal) */
+  virtual QWidget *createWidget(QWidget *parent) override;
+  virtual void deleteWidget(QWidget *widget) override;
+
+  /* List of created/registered labels */
+  QList<QLabel *> labels;
+  QString text;
+};
+
 }
 
 #endif // AIRSPACETOOLBARHANDLER_H

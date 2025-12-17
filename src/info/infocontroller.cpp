@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2024 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2025 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -131,7 +131,7 @@ InfoController::InfoController(MainWindow *parent)
 
   // Create a layout to position the button automatically
   QVBoxLayout *layout = new QVBoxLayout(ui->textBrowserAircraftProgressInfo->viewport());
-  layout->setMargin(5);
+  layout->setContentsMargins(5, 5, 5, 5);
   layout->setSpacing(0);
   layout->addWidget(button, 0, Qt::AlignRight); // Add button to the right
   layout->addSpacerItem(new QSpacerItem(10, 10, QSizePolicy::Minimum, QSizePolicy::Expanding)); // Move button up with spacer
@@ -469,35 +469,35 @@ void InfoController::anchorClicked(const QUrl& url)
 void InfoController::saveState() const
 {
   // Store currently shown map objects in a string list containing id and type
-  map::MapRefVector refs;
-  for(const map::MapAirport& airport  : qAsConst(currentSearchResult->airports))
+  map::MapRefList refs;
+  for(const map::MapAirport& airport  : std::as_const(currentSearchResult->airports))
     refs.append({airport.id, map::AIRPORT});
 
-  for(const map::MapAirportMsa& msa  : qAsConst(currentSearchResult->airportMsa))
+  for(const map::MapAirportMsa& msa  : std::as_const(currentSearchResult->airportMsa))
     refs.append({msa.id, map::AIRPORT_MSA});
 
-  for(const map::MapVor& vor : qAsConst(currentSearchResult->vors))
+  for(const map::MapVor& vor : std::as_const(currentSearchResult->vors))
     refs.append({vor.id, map::VOR});
 
-  for(const map::MapNdb& ndb : qAsConst(currentSearchResult->ndbs))
+  for(const map::MapNdb& ndb : std::as_const(currentSearchResult->ndbs))
     refs.append({ndb.id, map::NDB});
 
-  for(const map::MapWaypoint& waypoint : qAsConst(currentSearchResult->waypoints))
+  for(const map::MapWaypoint& waypoint : std::as_const(currentSearchResult->waypoints))
     refs.append({waypoint.id, map::WAYPOINT});
 
-  for(const map::MapIls& ils : qAsConst(currentSearchResult->ils))
+  for(const map::MapIls& ils : std::as_const(currentSearchResult->ils))
     refs.append({ils.id, map::ILS});
 
-  for(const map::MapHolding& holding : qAsConst(currentSearchResult->holdings))
+  for(const map::MapHolding& holding : std::as_const(currentSearchResult->holdings))
     refs.append({holding.id, map::HOLDING});
 
-  for(const map::MapUserpoint& userpoint: qAsConst(currentSearchResult->userpoints))
+  for(const map::MapUserpoint& userpoint: std::as_const(currentSearchResult->userpoints))
     refs.append({userpoint.id, map::USERPOINT});
 
-  for(const map::MapLogbookEntry& logEntry : qAsConst(currentSearchResult->logbookEntries))
+  for(const map::MapLogbookEntry& logEntry : std::as_const(currentSearchResult->logbookEntries))
     refs.append({logEntry.id, map::LOGBOOK});
 
-  for(const map::MapAirway& airway : qAsConst(currentSearchResult->airways))
+  for(const map::MapAirway& airway : std::as_const(currentSearchResult->airways))
     refs.append({airway.id, map::AIRWAY});
 
   // Save list =====================================================
@@ -509,7 +509,7 @@ void InfoController::saveState() const
 
   // Save airspaces =====================================================
   refList.clear();
-  for(const map::MapAirspace& airspace : qAsConst(currentSearchResult->airspaces))
+  for(const map::MapAirspace& airspace : std::as_const(currentSearchResult->airspaces))
   {
     // Do not save online airspace ids since they will change on next startup
     if(!airspace.isOnline())
@@ -543,14 +543,14 @@ void InfoController::restoreInformation()
 
     // All objects =================================
     QString refsStr = atools::settings::Settings::instance().valueStr(lnm::INFOWINDOW_CURRENTMAPOBJECTS);
-    QStringList refsStrList = refsStr.split(";", QString::SkipEmptyParts);
+    QStringList refsStrList = refsStr.split(";", Qt::SkipEmptyParts);
     for(int i = 0; i < refsStrList.size(); i += 2)
       queries->getMapQuery()->getMapObjectById(res, map::MapTypes(refsStrList.value(i + 1).toULongLong()), map::AIRSPACE_SRC_NONE,
                                                refsStrList.value(i).toInt(), false /* airport from nav database */);
 
     // Airspaces =================================
     refsStr = atools::settings::Settings::instance().valueStr(lnm::INFOWINDOW_CURRENTAIRSPACES);
-    refsStrList = refsStr.split(";", QString::SkipEmptyParts);
+    refsStrList = refsStr.split(";", Qt::SkipEmptyParts);
     for(int i = 0; i < refsStrList.size(); i += 2)
     {
       map::MapAirspaceId id;
@@ -675,7 +675,7 @@ void InfoController::onlineNetworkChanged()
 
   // Remove all online network airspaces from current result
   QList<map::MapAirspace> airspaces;
-  for(const map::MapAirspace& airspace : qAsConst(currentSearchResult->airspaces))
+  for(const map::MapAirspace& airspace : std::as_const(currentSearchResult->airspaces))
     if(!airspace.isOnline())
       airspaces.append(airspace);
   currentSearchResult->airspaces = airspaces;
@@ -720,7 +720,7 @@ void InfoController::showInformationInternal(map::MapResult result, bool showWin
     QSet<int> onlineIds;
 
     // Get shadowed online aircraft from AI shadows ====================
-    for(const map::MapAiAircraft& mapAiAircraft : qAsConst(result.aiAircraft))
+    for(const map::MapAiAircraft& mapAiAircraft : std::as_const(result.aiAircraft))
     {
       atools::fs::sc::SimConnectAircraft onlineAircraft = onlineDataController->getShadowedOnlineAircraft(mapAiAircraft.getAircraft());
 
@@ -733,7 +733,7 @@ void InfoController::showInformationInternal(map::MapResult result, bool showWin
     }
 
     // Add present online aircraft which are not already added by shadow above ================
-    for(const map::MapOnlineAircraft& mapOnlineAircraft : qAsConst(result.onlineAircraft))
+    for(const map::MapOnlineAircraft& mapOnlineAircraft : std::as_const(result.onlineAircraft))
     {
       if(!onlineIds.contains(mapOnlineAircraft.getId()))
         onlineAircraftList.append(map::MapOnlineAircraft(mapOnlineAircraft));
@@ -789,7 +789,7 @@ void InfoController::showInformationInternal(map::MapResult result, bool showWin
       currentSearchResult->onlineAircraft.clear();
       currentSearchResult->onlineAircraftIds.clear();
 
-      for(const map::MapOnlineAircraft& mapOnlineAircraft : qAsConst(result.onlineAircraft))
+      for(const map::MapOnlineAircraft& mapOnlineAircraft : std::as_const(result.onlineAircraft))
       {
         atools::fs::sc::SimConnectAircraft ac = onlineDataController->getClientAircraftById(mapOnlineAircraft.getId());
 
@@ -914,7 +914,7 @@ void InfoController::showInformationInternal(map::MapResult result, bool showWin
     html.b().a(tr("Remove Center Highlights"), QString("lnm://do?hideonlineairspaces"),
                ahtml::LINK_NO_UL).bEnd().tdEnd().trEnd().tableEnd();
 
-    for(const map::MapAirspace& airspace : qAsConst(onlineAirspaces))
+    for(const map::MapAirspace& airspace : std::as_const(onlineAirspaces))
     {
 #ifdef DEBUG_INFORMATION
       qDebug() << "Found airspace" << airspace.id;
@@ -942,7 +942,7 @@ void InfoController::showInformationInternal(map::MapResult result, bool showWin
 
     currentSearchResult->logbookEntries.clear();
 
-    for(const map::MapLogbookEntry& logEntry : qAsConst(result.logbookEntries))
+    for(const map::MapLogbookEntry& logEntry : std::as_const(result.logbookEntries))
     {
       qDebug() << "Found log entry" << logEntry.id;
 
@@ -1125,7 +1125,7 @@ bool InfoController::updateUserpointInternal(const map::MapResult& result, bool 
   bool foundUserpoint = false;
 
   // Userpoints on top of the list
-  for(const map::MapUserpoint& userpoint : qAsConst(result.userpoints))
+  for(const map::MapUserpoint& userpoint : std::as_const(result.userpoints))
   {
 #ifdef DEBUG_INFORMATION
     qDebug() << "Found waypoint" << userpoint.ident;
@@ -1168,7 +1168,7 @@ void InfoController::postDatabaseLoad()
 
   // Reload navaids by ident, region and position ===================================
   // Insert only the first one for each getMapObjectByIdent() query
-  for(const map::MapWaypoint& waypoint : qAsConst(savedSearchResult->waypoints))
+  for(const map::MapWaypoint& waypoint : std::as_const(savedSearchResult->waypoints))
   {
     map::MapResult result;
     mapQuery->getMapObjectByIdent(result, map::WAYPOINT, waypoint.ident, waypoint.region, QString(), waypoint.position, 50);
@@ -1176,7 +1176,7 @@ void InfoController::postDatabaseLoad()
       currentSearchResult->waypoints.append(result.waypoints.constFirst());
   }
 
-  for(const map::MapVor& vor : qAsConst(savedSearchResult->vors))
+  for(const map::MapVor& vor : std::as_const(savedSearchResult->vors))
   {
     map::MapResult result;
     mapQuery->getMapObjectByIdent(result, map::VOR, vor.ident, vor.region, QString(), vor.position, 50);
@@ -1184,7 +1184,7 @@ void InfoController::postDatabaseLoad()
       currentSearchResult->vors.append(result.vors.constFirst());
   }
 
-  for(const map::MapNdb& ndb : qAsConst(savedSearchResult->ndbs))
+  for(const map::MapNdb& ndb : std::as_const(savedSearchResult->ndbs))
   {
     map::MapResult result;
     mapQuery->getMapObjectByIdent(result, map::NDB, ndb.ident, ndb.region, QString(), ndb.position, 50);
@@ -1302,7 +1302,7 @@ void InfoController::updateAiAircraftText()
         if(!currentSearchResult->aiAircraft.isEmpty())
         {
           int num = 1;
-          for(const map::MapAiAircraft& aircraft : qAsConst(currentSearchResult->aiAircraft))
+          for(const map::MapAiAircraft& aircraft : std::as_const(currentSearchResult->aiAircraft))
           {
             infoBuilder->aircraftText(aircraft.getAircraft(), html, num, lastSimData->getAiAircraftConst().size());
 
@@ -1349,7 +1349,7 @@ void InfoController::simDataChanged(const atools::fs::sc::SimConnectData& data)
 
   Ui::MainWindow *ui = NavApp::getMainUi();
 
-  if(atools::almostNotEqual(QDateTime::currentDateTime().toMSecsSinceEpoch(),
+  if(atools::almostNotEqual(QDateTime::currentMSecsSinceEpoch(),
                             lastSimUpdate, static_cast<qint64>(MIN_SIM_UPDATE_TIME_MS)))
   {
     // Last update was more than 500 ms ago
@@ -1367,10 +1367,10 @@ void InfoController::simDataChanged(const atools::fs::sc::SimConnectData& data)
       if(tabHandlerAircraft->getCurrentTabId() == ic::AIRCRAFT_AI)
         updateAiAircraftText();
     }
-    lastSimUpdate = QDateTime::currentDateTime().toMSecsSinceEpoch();
+    lastSimUpdate = QDateTime::currentMSecsSinceEpoch();
   }
 
-  if(atools::almostNotEqual(QDateTime::currentDateTime().toMSecsSinceEpoch(),
+  if(atools::almostNotEqual(QDateTime::currentMSecsSinceEpoch(),
                             lastSimBearingUpdate, static_cast<qint64>(MIN_SIM_UPDATE_BEARING_TIME_MS)))
   {
     // Last update was more than a second ago
@@ -1385,7 +1385,7 @@ void InfoController::simDataChanged(const atools::fs::sc::SimConnectData& data)
       if(tabHandlerInfo->getCurrentTabId() == ic::INFO_USERPOINT)
         updateUserpointInternal(*currentSearchResult, true /* bearing changed */, false /* scrollToTop */);
     }
-    lastSimBearingUpdate = QDateTime::currentDateTime().toMSecsSinceEpoch();
+    lastSimBearingUpdate = QDateTime::currentMSecsSinceEpoch();
   }
 }
 
@@ -1394,11 +1394,11 @@ void InfoController::updateAiAirports(const atools::fs::sc::SimConnectData& data
   if(data.getPacketId() > 0)
   {
     // Ignore weather updates
-    const QVector<atools::fs::sc::SimConnectAircraft>& newAiAircraft = data.getAiAircraftConst();
+    const QList<atools::fs::sc::SimConnectAircraft>& newAiAircraft = data.getAiAircraftConst();
     QList<map::MapAiAircraft> newAiAircraftShown;
 
     // Find all aircraft currently shown on the page in the newly arrived ai list
-    for(const map::MapAiAircraft& aircraft : qAsConst(currentSearchResult->aiAircraft))
+    for(const map::MapAiAircraft& aircraft : std::as_const(currentSearchResult->aiAircraft))
     {
       auto it = std::find_if(newAiAircraft.constBegin(), newAiAircraft.constEnd(), [&aircraft](const SimConnectAircraft& ac) -> bool {
         return ac.getObjectId() == aircraft.getAircraft().getObjectId();

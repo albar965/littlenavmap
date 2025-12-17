@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2024 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2025 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -56,7 +56,7 @@ struct MapContextMenu::MenuData
 };
 
 // Default sort order for disambiguation sub-menus
-const static QVector<map::MapTypes> DEFAULT_TYPE_SORT(
+const static QList<map::MapTypes> DEFAULT_TYPE_SORT(
 {
   map::MARK_RANGE,
   map::MARK_DISTANCE,

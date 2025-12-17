@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2020 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2025 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -18,7 +18,7 @@
 #ifndef LNM_COMMON_TABINDEXES_H
 #define LNM_COMMON_TABINDEXES_H
 
-#include <QVector>
+#include <QList>
 
 /* Flight plan dock window tabs */
 namespace rc {
@@ -30,7 +30,7 @@ enum TabRouteId
   COLLECTION = 3
 };
 
-const QVector<int> TabRouteIds = {ROUTE, REMARKS, AIRCRAFT, COLLECTION};
+const QList<int> TabRouteIds = {ROUTE, REMARKS, AIRCRAFT, COLLECTION};
 
 }
 
@@ -48,7 +48,7 @@ enum TabInfoId
   INFO_ONLINE_CENTER = 6
 };
 
-const QVector<int> TabInfoIds = {
+const QList<int> TabInfoIds = {
   INFO_AIRPORT, INFO_NAVAID, INFO_AIRSPACE, INFO_USERPOINT, INFO_LOGBOOK, INFO_ONLINE_CLIENT, INFO_ONLINE_CENTER};
 
 /* Info controller tabs - subwindow for airport */
@@ -62,7 +62,7 @@ enum TabAirportInfoId
   INFO_AIRPORT_WEATHER = 5
 };
 
-const QVector<int> TabAirportInfoIds = {
+const QList<int> TabAirportInfoIds = {
   INFO_AIRPORT_OVERVIEW, INFO_AIRPORT_RUNWAYS, INFO_AIRPORT_COM, INFO_AIRPORT_APPROACHES, INFO_AIRPORT_NEAREST,
   INFO_AIRPORT_WEATHER
 };
@@ -75,7 +75,7 @@ enum TabAircraftId
   AIRCRAFT_AI = 2
 };
 
-const QVector<int> TabAircraftIds = {AIRCRAFT_USER, AIRCRAFT_USER_PROGRESS, AIRCRAFT_AI};
+const QList<int> TabAircraftIds = {AIRCRAFT_USER, AIRCRAFT_USER_PROGRESS, AIRCRAFT_AI};
 
 }
 
@@ -94,7 +94,7 @@ enum TabSearchId
   SEARCH_ONLINE_SERVER = 7
 };
 
-const QVector<int> TabSearchIds = {
+const QList<int> TabSearchIds = {
   SEARCH_AIRPORT, SEARCH_NAV, SEARCH_PROC, SEARCH_USER, SEARCH_LOG, SEARCH_ONLINE_CLIENT, SEARCH_ONLINE_CENTER,
   SEARCH_ONLINE_SERVER};
 }

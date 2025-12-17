@@ -1369,7 +1369,7 @@ void procedureFlags(const Route& route, const map::MapBase *base, bool *departur
 QStringList procedureTextFirstAndLastFix(const MapProcedureLegs& legs, proc::MapProcedureTypes mapType)
 {
   // First create a vector with either all legs or only approach legs depending on type related to leg
-  QVector<const MapProcedureLeg *> tempLegs;
+  QList<const MapProcedureLeg *> tempLegs;
   if(mapType & proc::PROCEDURE_ANY_TRANSITION)
   {
     for(int i = 0; i < legs.size(); i++)

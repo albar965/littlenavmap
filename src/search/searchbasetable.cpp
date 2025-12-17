@@ -821,9 +821,9 @@ int SearchBaseTable::getSelectedRowCount() const
   return selectedRows;
 }
 
-QVector<int> SearchBaseTable::getSelectedIds() const
+QList<int> SearchBaseTable::getSelectedIds() const
 {
-  QVector<int> retval;
+  QList<int> retval;
 
   for(const QItemSelectionRange& rng : controller->getSelection())
   {
@@ -836,9 +836,9 @@ QVector<int> SearchBaseTable::getSelectedIds() const
   return retval;
 }
 
-QVector<int> SearchBaseTable::getSelectedRows() const
+QList<int> SearchBaseTable::getSelectedRows() const
 {
-  QVector<int> retval;
+  QList<int> retval;
 
   for(const QItemSelectionRange& rng : controller->getSelection())
   {
@@ -1679,7 +1679,7 @@ void SearchBaseTable::contextMenu(const QPoint& pos)
       emit addAirportMsa(msaResult.airportMsa.value(0));
     else if(action == ui->actionSearchMarkAddon)
     {
-      for(const map::MapAirport& ap : qAsConst(result.airports))
+      for(const map::MapAirport& ap : std::as_const(result.airports))
         emit addUserpointFromMap(map::MapResult::createFromMapBase(&ap), ap.position, true /* airportAddon */);
     }
     else if(action == ui->actionRouteAddPos)
@@ -1725,7 +1725,7 @@ map::MapAirport SearchBaseTable::currentAirport()
   map::MapAirport airport;
 
   int row = -1;
-  QVector<int> rows = getSelectedRows();
+  QList<int> rows = getSelectedRows();
   QModelIndex index = view->currentIndex();
   if(!rows.isEmpty())
     // Get topmost airport from selection

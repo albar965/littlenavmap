@@ -92,7 +92,8 @@ OptionsDialog::OptionsDialog(QMainWindow *parentWindow)
   : QDialog(parentWindow), ui(new Ui::Options), mainWindow(parentWindow)
 {
   qDebug() << Q_FUNC_INFO;
-  setWindowFlags(windowFlags() & ~Qt::WindowContextHelpButtonHint);
+  setWindowFlag(Qt::WindowContextHelpButtonHint, false);
+
   setWindowModality(Qt::ApplicationModal);
 
   ui->setupUi(this);
@@ -125,7 +126,7 @@ OptionsDialog::OptionsDialog(QMainWindow *parentWindow)
   // 21 "Cache and Files"
   // 22 "Scenery Library Database"
 
-  const static QVector<QLabel *> HINT_LABELS({
+  const static QList<QLabel *> HINT_LABELS({
     ui->labelOptionsUpdatesHint,
     ui->labelOptionsUnitsHint,
     ui->labelOptionsGuiFontHint,
@@ -830,7 +831,7 @@ void OptionsDialog::hintLinkActivated(const QString& link)
   if(link.startsWith("lnm://"))
   {
     bool ok;
-    int index = link.midRef(6).toInt(&ok);
+    int index = link.mid(6).toInt(&ok);
     if(ok && index < ui->listWidgetOptionPages->count())
     {
       ui->lineEditOptionSearch->clear();
@@ -1073,7 +1074,7 @@ void OptionsDialog::onlineTestUrl(const QString& url, bool statusFile)
   if(atools::fs::weather::testUrl(result, url, QString(), QHash<QString, QString>(), 250))
   {
     bool ok = false;
-    for(const QString& str : qAsConst(result))
+    for(const QString& str : std::as_const(result))
     {
       if(statusFile)
         ok |= str.simplified().startsWith("url0") || str.simplified().startsWith("url1");
@@ -1406,7 +1407,7 @@ void OptionsDialog::udpdateLanguageComboBox(const QString& lang)
   if(ui->comboBoxOptionsGuiLanguage->count() == 0)
   {
     // Fill combo box with all available locale =========================
-    QVector<QLocale> locales = atools::gui::Translator::findTranslationFiles();
+    QList<QLocale> locales = atools::gui::Translator::findTranslationFiles();
     ui->comboBoxOptionsGuiLanguage->clear();
     for(int i = 0; i < locales.size(); i++)
     {

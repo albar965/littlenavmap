@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2024 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2025 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -38,17 +38,6 @@ void correctLatY(atools::geo::LineString& linestring, bool polygon);
  * Container conversion functions for map::MapBase derived structs and objects
  */
 
-/* Vector to hash with id as key */
-template<typename TYPE>
-QHash<int, TYPE> toHash(const QVector<TYPE>& list)
-{
-  QHash<int, TYPE> retval;
-  for(const TYPE& t : list)
-    retval.insert(t.id, t);
-
-  return retval;
-}
-
 /* List to hash with id as key */
 template<typename TYPE>
 QHash<int, TYPE> toHash(const QList<TYPE>& list)
@@ -58,14 +47,6 @@ QHash<int, TYPE> toHash(const QList<TYPE>& list)
     retval.insert(t.id, t);
 
   return retval;
-}
-
-/* Insert vector in hash with id as key. Duplicates are removed. */
-template<typename TYPE>
-void insert(QHash<int, TYPE>& map, const QVector<TYPE>& list)
-{
-  for(const TYPE& t : list)
-    map.insert(t.id, t);
 }
 
 /* Insert list in hash with id as key. Duplicates are removed. */
@@ -162,31 +143,9 @@ void sortByDistance(QList<TYPE>& list, const atools::geo::Pos& pos)
     });
 }
 
-template<typename TYPE>
-void sortByDistance(QVector<TYPE>& list, const atools::geo::Pos& pos)
-{
-  if(list.size() <= 1 || !pos.isValid())
-    return;
-
-  std::sort(list.begin(), list.end(), [&pos](const TYPE& t1, const TYPE& t2) -> bool {
-      return t1.getPosition().distanceMeterTo(pos) < t2.getPosition().distanceMeterTo(pos);
-    });
-}
-
 /* Sorts elements by distance to a point including simple altitude difference */
 template<typename TYPE>
 void sortByDistanceAndAltitude(QList<TYPE>& list, const atools::geo::Pos& pos, float altitudeWeight = 1.f)
-{
-  if(list.size() <= 1 || !pos.isValid())
-    return;
-
-  std::sort(list.begin(), list.end(), [&pos, altitudeWeight](const TYPE& t1, const TYPE& t2) -> bool {
-      return t1.getPosition().distanceMeterTo3d(pos, altitudeWeight) < t2.getPosition().distanceMeterTo3d(pos, altitudeWeight);
-    });
-}
-
-template<typename TYPE>
-void sortByDistanceAndAltitude(QVector<TYPE>& list, const atools::geo::Pos& pos, float altitudeWeight = 1.f)
 {
   if(list.size() <= 1 || !pos.isValid())
     return;
@@ -309,15 +268,6 @@ void removeDuplicatesById(QList<TYPE>& list)
   list.erase(std::unique(list.begin(), list.end()), list.end());
 }
 
-template<typename TYPE>
-void removeDuplicatesById(QVector<TYPE>& vector)
-{
-  std::sort(vector.begin(), vector.end(), [](const TYPE& obj1, const TYPE& obj2) {
-      return obj1.getId() < obj2.getId();
-    });
-  vector.erase(std::unique(vector.begin(), vector.end()), vector.end());
-}
-
 // ==============================================================================
 /* Runway sorting tools. Allows to sort runways by headwind and crosswind */
 struct RwEnd
@@ -335,7 +285,7 @@ struct RwEnd
 
 /* List of runway ends */
 class RwVector
-  : public QVector<maptools::RwEnd>
+  : public QList<maptools::RwEnd>
 {
 public:
   RwVector(float windSpeed, float windDirectionDeg)

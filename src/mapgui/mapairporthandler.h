@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2024 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2025 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -98,7 +98,7 @@ private:
           *actionAddonNone = nullptr, *actionAddonZoom = nullptr, *actionAddonZoomFilter = nullptr,
           *actionUnlighted = nullptr, *actionNoProcedures = nullptr, *actionClosed = nullptr, *actionMil = nullptr, *actionWater = nullptr,
           *actionHelipad = nullptr;
-  QVector<QAction *> allActions;
+  QList<QAction *> allActions;
 
   QActionGroup * actionGroupAddon = nullptr;
 
@@ -124,6 +124,7 @@ class AirportSliderAction
 
 public:
   explicit AirportSliderAction(QObject *parent);
+  virtual ~AirportSliderAction() override;
 
   /* value or -1 for leftmost in local units */
   int getSliderValue() const;
@@ -152,7 +153,7 @@ protected:
   int maxValue() const;
 
   /* List of created/registered slider widgets */
-  QVector<QSlider *> sliders;
+  QList<QSlider *> sliders;
   int sliderValue = 0;
   opts::UnitShortDist sliderDistUnit = opts::DIST_SHORT_FT;
 };

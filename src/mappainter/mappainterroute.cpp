@@ -231,7 +231,7 @@ void MapPainterRoute::paintRoute()
 
   // Collect line text and geometry from the route
   QStringList routeTexts;
-  QVector<Line> lines;
+  QList<Line> lines;
   bool drawAlternate = context->objectDisplayTypes.testFlag(map::FLIGHTPLAN_ALTERNATE);
 
   // Collect route - only coordinates and texts ===============================
@@ -418,7 +418,7 @@ void MapPainterRoute::paintRecommended(int passedRouteLeg, QSet<map::MapRef>& id
   } // for(int i = passedRouteLeg; i < route.size(); i++)
 }
 
-void MapPainterRoute::paintRouteInternal(QStringList routeTexts, QVector<Line> lines, int passedRouteLeg)
+void MapPainterRoute::paintRouteInternal(QStringList routeTexts, QList<Line> lines, int passedRouteLeg)
 {
   const static QMargins MARGINS(100, 100, 100, 100);
 
@@ -859,8 +859,8 @@ void MapPainterRoute::paintProcedure(QSet<map::MapRef>& idMap, const proc::MapPr
   // Draw black background ========================================
 
   // Keep a stack of last painted geometry since some functions need access back into the history
-  QVector<QLineF> lastLines({QLineF()});
-  QVector<QLineF> lastActiveLines({QLineF()});
+  QList<QLineF> lastLines({QLineF()});
+  QList<QLineF> lastActiveLines({QLineF()});
 
   if(!transparent)
   {
@@ -889,7 +889,7 @@ void MapPainterRoute::paintProcedure(QSet<map::MapRef>& idMap, const proc::MapPr
 
   lastLines.clear();
   lastLines.append(QLineF());
-  QVector<DrawText> drawTextLines, lastActiveDrawTextLines;
+  QList<DrawText> drawTextLines, lastActiveDrawTextLines;
   drawTextLines.fill(DrawText(), legs.size());
   lastActiveDrawTextLines = drawTextLines;
 
@@ -962,8 +962,8 @@ void MapPainterRoute::paintProcedure(QSet<map::MapRef>& idMap, const proc::MapPr
     {
       // Build text strings for drawing along the line ===========================
       QStringList approachTexts;
-      QVector<Line> lines;
-      QVector<QColor> textColors;
+      QList<Line> lines;
+      QList<QColor> textColors;
 
       for(int i = 0; i < legs.size(); i++)
       {
@@ -1017,10 +1017,10 @@ void MapPainterRoute::paintProcedure(QSet<map::MapRef>& idMap, const proc::MapPr
         // Make the font larger for better arrow visibility in multi preview
         context->szFont(context->textSizeFlightplan * 1.5f * context->mapLayerRouteText->getRouteFontScale());
 
-      QVector<Line> textLines;
+      QList<Line> textLines;
       LineString positions;
 
-      for(const DrawText& dt : qAsConst(drawTextLines))
+      for(const DrawText& dt : std::as_const(drawTextLines))
       {
         textLines.append(dt.line);
         positions.append(dt.line.getPos1());
@@ -1083,8 +1083,8 @@ void MapPainterRoute::paintProcedure(QSet<map::MapRef>& idMap, const proc::MapPr
   } // for(int i = legs.size() - 1; i >= 0; i--)
 }
 
-void MapPainterRoute::paintProcedureSegment(const proc::MapProcedureLegs& legs, int index, QVector<QLineF>& lastLines,
-                                            QVector<DrawText> *drawTextLines, bool noText, bool previewAll, bool draw)
+void MapPainterRoute::paintProcedureSegment(const proc::MapProcedureLegs& legs, int index, QList<QLineF>& lastLines,
+                                            QList<DrawText> *drawTextLines, bool noText, bool previewAll, bool draw)
 {
   const static QMargins MARGINS(50, 50, 50, 50);
   const proc::MapProcedureLeg& leg = legs.at(index);
@@ -1427,7 +1427,7 @@ void MapPainterRoute::paintProcedureSegment(const proc::MapProcedureLegs& legs, 
   }
 }
 
-void MapPainterRoute::paintProcedureBow(const proc::MapProcedureLeg *prevLeg, QVector<QLineF>& lastLines, QPainter *painter, QLineF line,
+void MapPainterRoute::paintProcedureBow(const proc::MapProcedureLeg *prevLeg, QList<QLineF>& lastLines, QPainter *painter, QLineF line,
                                         const proc::MapProcedureLeg& leg, const QPointF& intersectPoint, bool draw)
 {
   if(!prevLeg->line.getPos2().isValid() || !leg.line.getPos1().isValid())
@@ -1539,7 +1539,7 @@ void MapPainterRoute::paintProcedureBow(const proc::MapProcedureLeg *prevLeg, QV
   }
 }
 
-QLineF MapPainterRoute::paintProcedureTurn(QVector<QLineF>& lastLines, QLineF line, const proc::MapProcedureLeg& leg,
+QLineF MapPainterRoute::paintProcedureTurn(QList<QLineF>& lastLines, QLineF line, const proc::MapProcedureLeg& leg,
                                            QPainter *painter, const QPointF& intersectPoint, bool draw)
 {
   QPointF endPos = line.p2();
@@ -1615,7 +1615,7 @@ QLineF MapPainterRoute::paintProcedureTurn(QVector<QLineF>& lastLines, QLineF li
 void MapPainterRoute::paintProcedurePoint(QSet<map::MapRef>& idMap, const proc::MapProcedureLegs& legs, int index, int routeIndex,
                                           bool preview, bool previewAll, bool drawTextFlag)
 {
-  static const QVector<proc::ProcedureLegType> CALCULATED_END_POS_TYPES(
+  static const QList<proc::ProcedureLegType> CALCULATED_END_POS_TYPES(
     {proc::COURSE_TO_ALTITUDE,
      proc::COURSE_TO_DME_DISTANCE,
      proc::COURSE_TO_INTERCEPT,

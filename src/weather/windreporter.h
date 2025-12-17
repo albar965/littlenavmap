@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2024 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2025 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -44,6 +44,7 @@ class QToolButton;
 class QAction;
 class QActionGroup;
 class QSlider;
+class QLabel;
 class Route;
 
 namespace wind {
@@ -176,7 +177,7 @@ signals:
 private:
   /* Get a list of winds for the given position at all given altitudes. Altitiude field in resulting pos contains the altitude.
    * Adds flight plan altitude if needed and selected in GUI. Does not use manual wind setting.*/
-  atools::grib::WindPosList windStackForPosInternal(const atools::geo::Pos& pos, QVector<int> altitudesFt) const;
+  atools::grib::WindPosList windStackForPosInternal(const atools::geo::Pos& pos, QList<int> altitudesFt) const;
 
   /* One of the toolbar dropdown menu items of main menu items was triggered */
   void toolbarActionTriggered();
@@ -224,7 +225,7 @@ private:
   QActionGroup *actionGroup = nullptr;
 
   /* Levels for the tooltip */
-  QVector<int> levelsTooltipFt = {0 /* interpreted at AGL */, 1000, 2000, 5000, 10000, 15000, 20000, 25000, 30000, 35000, 40000, 45000};
+  QList<int> levelsTooltipFt = {0 /* interpreted at AGL */, 1000, 2000, 5000, 10000, 15000, 20000, 25000, 30000, 35000, 40000, 45000};
 
   /* Currently displayed altitude or one of SpecialLevels */
   wind::WindSelection currentWindSelection = wind::NONE;
@@ -256,6 +257,7 @@ class WindSliderAction
 
 public:
   explicit WindSliderAction(QObject *parent);
+  virtual ~WindSliderAction() override;
 
   int getAltitudeFt() const;
 
@@ -282,10 +284,36 @@ protected:
   void setSliderValue(int value);
 
   /* List of created/registered slider widgets */
-  QVector<QSlider *> sliders;
+  QList<QSlider *> sliders;
 
   /* Altitude in feet / WIND_SLIDER_STEP_ALT_FT */
   int sliderValue = 0;
+};
+
+/*
+ * Wrapper for label action.
+ */
+class WindLabelAction
+  : public QWidgetAction
+{
+  Q_OBJECT
+
+public:
+  WindLabelAction(QObject *parent) : QWidgetAction(parent)
+  {
+  }
+  virtual ~WindLabelAction() override;
+
+  void setText(const QString& textParam);
+
+protected:
+  /* Create a delete widget for more than one menu (tearout and normal) */
+  virtual QWidget *createWidget(QWidget *parent) override;
+  virtual void deleteWidget(QWidget *widget) override;
+
+  /* List of created/registered labels */
+  QList<QLabel *> labels;
+  QString text;
 };
 }
 

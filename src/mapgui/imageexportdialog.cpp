@@ -50,7 +50,8 @@ const static QMap<ResolutionIndex, std::pair<int, int> > resolutions({
 ImageExportDialog::ImageExportDialog(QWidget *parent, const QString& titleParam, const QString& optionPrefixParam, const QSize& size)
   : QDialog(parent), ui(new Ui::ImageExportDialog), optionPrefix(optionPrefixParam), currentSize(size)
 {
-  setWindowFlags(windowFlags() & ~Qt::WindowContextHelpButtonHint);
+  setWindowFlag(Qt::WindowContextHelpButtonHint, false);
+
   setWindowModality(Qt::ApplicationModal);
 
   ui->setupUi(this);

@@ -84,7 +84,7 @@ private:
 
   /* Draw route only legs - not procedures */
   void paintRoute();
-  void paintRouteInternal(QStringList routeTexts, QVector<atools::geo::Line> lines, int passedRouteLeg);
+  void paintRouteInternal(QStringList routeTexts, QList<atools::geo::Line> lines, int passedRouteLeg);
 
   /* Draw recommended navaids */
   void paintRecommended(int passedRouteLeg, QSet<map::MapRef>& idMap);
@@ -106,7 +106,7 @@ private:
                       const proc::MapProcedureLegs& legs, int legsRouteOffset, const QColor& color, bool preview, bool previewAll);
 
   /* Draw line and collect information for text along lines.  Called from destination to departure/aircraft */
-  void paintProcedureSegment(const proc::MapProcedureLegs& legs, int index, QVector<QLineF>& lastLines, QVector<DrawText> *drawTextLines,
+  void paintProcedureSegment(const proc::MapProcedureLegs& legs, int index, QList<QLineF>& lastLines, QList<DrawText> *drawTextLines,
                              bool noText, bool previewAll, bool draw);
 
   /* Draw procedure position including text label and icon */
@@ -117,9 +117,9 @@ private:
   /* Draw procedure point like manual */
   void paintProcedurePoint(float x, float y, bool preview);
 
-  QLineF paintProcedureTurn(QVector<QLineF>& lastLines, QLineF line, const proc::MapProcedureLeg& leg, QPainter *painter,
+  QLineF paintProcedureTurn(QList<QLineF>& lastLines, QLineF line, const proc::MapProcedureLeg& leg, QPainter *painter,
                             const QPointF& intersectPoint, bool draw);
-  void paintProcedureBow(const proc::MapProcedureLeg *prevLeg, QVector<QLineF>& lastLines, QPainter *painter, QLineF line,
+  void paintProcedureBow(const proc::MapProcedureLeg *prevLeg, QList<QLineF>& lastLines, QPainter *painter, QLineF line,
                          const proc::MapProcedureLeg& leg, const QPointF& intersectPoint, bool draw);
 
   /* Draw navaid labels */

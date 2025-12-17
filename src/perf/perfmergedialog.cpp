@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2024 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2025 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -32,7 +32,8 @@ using atools::fs::perf::AircraftPerf;
 PerfMergeDialog::PerfMergeDialog(QWidget *parent, const AircraftPerf& sourcePerfLbs, AircraftPerf& destPerf, bool showAll)
   : QDialog(parent), ui(new Ui::PerfMergeDialog), to(destPerf), showAllWidgets(showAll)
 {
-  setWindowFlags(windowFlags() & ~Qt::WindowContextHelpButtonHint);
+  setWindowFlag(Qt::WindowContextHelpButtonHint, false);
+
   setWindowModality(Qt::ApplicationModal);
 
   from = new atools::fs::perf::AircraftPerf(sourcePerfLbs);

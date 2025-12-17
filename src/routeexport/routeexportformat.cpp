@@ -39,9 +39,9 @@ quint16 RouteExportFormatMap::version = 0;
 // Simply log warnings instead of throwing exceptions on read errors
 bool RouteExportFormatMap::exceptionOnReadError = false;
 
-const QVector<RouteExportFormat> RouteExportFormatMap::getSelected() const
+const QList<RouteExportFormat> RouteExportFormatMap::getSelected() const
 {
-  QVector<RouteExportFormat> retval;
+  QList<RouteExportFormat> retval;
   for(const RouteExportFormat& fmt : (*this))
   {
     if(fmt.isSelected())
@@ -137,7 +137,7 @@ void RouteExportFormatMap::restoreState()
   }
 
   // Copy loaded states into stock formats ==================================================
-  for(const RouteExportFormat& loadedFmt : qAsConst(loadedFormats))
+  for(const RouteExportFormat& loadedFmt : std::as_const(loadedFormats))
   {
     if(contains(loadedFmt.getType()))
     {

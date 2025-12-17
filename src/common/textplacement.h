@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2023 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2025 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -24,7 +24,7 @@
 #include <QPoint>
 #include <QCoreApplication>
 #include <QColor>
-#include <QVector>
+#include <QList>
 #include <QRect>
 
 namespace atools {
@@ -52,7 +52,7 @@ public:
 
   /* Prepare for drawTextAlongLines and also fills data for getVisibleStartPoints and getStartPoints.
    *  Lines do not have to form a connected linestring. */
-  void calculateTextAlongLines(const QVector<atools::geo::Line>& lines, const QStringList& lineTexts);
+  void calculateTextAlongLines(const QList<atools::geo::Line>& lines, const QStringList& lineTexts);
   void calculateTextAlongLine(const atools::geo::Line& line, const QString& lineText);
 
   /* Calculate point coordinates and visibility. */
@@ -127,7 +127,7 @@ public:
   }
 
   /* Set an array of colors with the same size as lines in calculateTextAlongLines */
-  void setColors(const QVector<QColor>& value)
+  void setColors(const QList<QColor>& value)
   {
     colors = value;
   }
@@ -166,8 +166,8 @@ private:
   bool findTextPosInternal(const atools::geo::Line& line, float distanceMeter, float textWidth, float textHeight, int numPoints,
                            bool allowPartial,
                            float& x, float& y, float& bearing) const;
-  int findClosestInternal(const QVector<int>& fullyVisibleValid, const QVector<int>& pointsIdxValid, const QPolygonF& points,
-                          const QVector<QPointF>& neighbors) const;
+  int findClosestInternal(const QList<int>& fullyVisibleValid, const QList<int>& pointsIdxValid, const QPolygonF& points,
+                          const QList<QPointF>& neighbors) const;
 
   /* Elide text with a buffer depending on font height. Elides separate lines in text split with '\n'. */
   QString elideText(const QString& text, const QString& arrow, const QFontMetricsF& metrics, float lineLength) const;
@@ -194,8 +194,8 @@ private:
   const CoordinateConverter *converter = nullptr;
   QString arrowRight, arrowLeft, sectionSeparator;
   float lineWidth = 10.f;
-  QVector<QColor> colors;
-  QVector<QColor> colors2;
+  QList<QColor> colors;
+  QList<QColor> colors2;
 
   QRect screenRect;
 

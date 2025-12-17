@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2023 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2025 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -19,7 +19,7 @@
 #define LNM_QUERYBUILDER_H
 
 #include <QStringList>
-#include <QVector>
+#include <QList>
 
 #include <functional>
 
@@ -107,8 +107,8 @@ private:
   bool allowOverride, allowExclude;
 };
 
-typedef QVector<QueryWidget> QueryWidgetVector;
-typedef QVector<QueryBuilderResult> QueryBuilderResultVector;
+typedef QList<QueryWidget> QueryWidgetList;
+typedef QList<QueryBuilderResult> QueryBuilderResultList;
 typedef std::function<QueryBuilderResult(const QueryWidget& queryWidget)> QueryBuilderFuncType;
 
 /*
@@ -125,7 +125,7 @@ public:
    *                        Currently only line edit widgets supported.
    * @param cols Affected/used column names.
    */
-  QueryBuilder(QueryBuilderFuncType funcParam, const QueryWidgetVector& queryWidgetsParam)
+  QueryBuilder(QueryBuilderFuncType funcParam, const QueryWidgetList& queryWidgetsParam)
     : func(funcParam), queryWidgets(queryWidgetsParam)
   {
   }
@@ -142,11 +142,11 @@ public:
   }
 
   /* Invoke callback to get query string for each query widget. */
-  QueryBuilderResultVector build() const;
+  QueryBuilderResultList build() const;
 
   /* Get triggering widgets. Normally used in the callback function to extract filter values.
    * Currently only line edit widgets supported. */
-  const QVector<QWidget *> getWidgets() const;
+  const QList<QWidget *> getWidgets() const;
 
   /* Get affected or used column names for all query widgets */
   const QStringList getColumns() const;
@@ -154,14 +154,14 @@ public:
   /* Clear contents of all widgets of type QLineEdit, QCheckBox, QComboBox and QSpinBox */
   void resetWidgets();
 
-  const QueryWidgetVector& getQueryWidgets() const
+  const QueryWidgetList& getQueryWidgets() const
   {
     return queryWidgets;
   }
 
 private:
   QueryBuilderFuncType func;
-  QueryWidgetVector queryWidgets;
+  QueryWidgetList queryWidgets;
 };
 
 #endif // LNM_QUERYBUILDER_H

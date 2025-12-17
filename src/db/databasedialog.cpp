@@ -36,7 +36,8 @@ using atools::gui::HelpHandler;
 DatabaseDialog::DatabaseDialog(QWidget *parent, const SimulatorTypeMap& pathMap)
   : QDialog(parent), ui(new Ui::DatabaseDialog), simulators(pathMap)
 {
-  setWindowFlags(windowFlags() & ~Qt::WindowContextHelpButtonHint);
+  setWindowFlag(Qt::WindowContextHelpButtonHint, false);
+
   setWindowModality(Qt::ApplicationModal);
 
   ui->setupUi(this);
@@ -53,7 +54,7 @@ DatabaseDialog::DatabaseDialog(QWidget *parent, const SimulatorTypeMap& pathMap)
 
   // Add an item to the combo box for each installed simulator
   bool simFound = false, anyXplaneFound = false;
-  for(atools::fs::FsPaths::SimulatorType type : qAsConst(keys))
+  for(atools::fs::FsPaths::SimulatorType type : std::as_const(keys))
   {
     if(simulators.value(type).isInstalled)
     {

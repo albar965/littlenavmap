@@ -763,7 +763,7 @@ void HtmlInfoBuilder::bestRunwaysText(const MapAirport& airport, HtmlBuilder& ht
 
   if(!ends.isEmpty())
   {
-    max = std::min(ends.size(), max);
+    max = std::min(ends.size(), static_cast<qsizetype>(max));
 
     if(details)
     {
@@ -777,7 +777,7 @@ void HtmlInfoBuilder::bestRunwaysText(const MapAirport& airport, HtmlBuilder& ht
       // Create runway table for details =====================================
       // Table for detailed view
       int num = 0;
-      for(const maptools::RwEnd& end : qAsConst(ends))
+      for(const maptools::RwEnd& end : std::as_const(ends))
       {
         // Stop at maximum number - tailwind is alread sorted out
         if(num > max)
@@ -1115,7 +1115,7 @@ void HtmlInfoBuilder::runwayEndText(HtmlBuilder& html, const MapAirport& airport
   html.tableEnd();
 
   // Show none, one or more ILS
-  const QVector<map::MapIls> ilsVector = queries->getMapQuery()->getIlsByAirportAndRunway(airport.ident, rec->valueStr("name"));
+  const QList<map::MapIls> ilsVector = queries->getMapQuery()->getIlsByAirportAndRunway(airport.ident, rec->valueStr("name"));
   for(const map::MapIls& ils : ilsVector)
     ilsTextRunwayInfo(ils, html);
 }
@@ -1509,7 +1509,7 @@ void HtmlInfoBuilder::procedureText(const MapAirport& airport, HtmlBuilder& html
 
             if(!backcourseEndIdent.isEmpty())
             {
-              QVector<map::MapIls> ilsVector = mapQuery->getIlsByAirportAndRunway(airport.ident, backcourseEndIdent);
+              QList<map::MapIls> ilsVector = mapQuery->getIlsByAirportAndRunway(airport.ident, backcourseEndIdent);
               if(!ilsVector.isEmpty())
               {
                 for(int i = 0; i < ilsVector.size(); i++)
@@ -1529,7 +1529,7 @@ void HtmlInfoBuilder::procedureText(const MapAirport& airport, HtmlBuilder& html
         else if(proc::MapProcedureLegs::hasFrequency(procType))
         {
           // Display ILS information ===========================================
-          QVector<map::MapIls> ilsVector = mapQuery->getIlsByAirportAndRunway(airport.ident, runwayIdent);
+          QList<map::MapIls> ilsVector = mapQuery->getIlsByAirportAndRunway(airport.ident, runwayIdent);
           if(!ilsVector.isEmpty())
           {
             for(int i = 0; i < ilsVector.size(); i++)
@@ -1548,7 +1548,7 @@ void HtmlInfoBuilder::procedureText(const MapAirport& airport, HtmlBuilder& html
         else if(proc::MapProcedureLegs::hasChannel(procType))
         {
           // Display GLS information ===========================================
-          const QVector<map::MapIls> ilsVector = mapQuery->getIlsByAirportAndRunway(airport.ident, runwayIdent);
+          const QList<map::MapIls> ilsVector = mapQuery->getIlsByAirportAndRunway(airport.ident, runwayIdent);
           if(!ilsVector.isEmpty())
           {
             for(const map::MapIls& ils : ilsVector)
@@ -3043,8 +3043,8 @@ void HtmlInfoBuilder::waypointAirwayText(const MapWaypoint& waypoint, HtmlBuilde
       // Add airway information
 
       // Add airway name/text to vector
-      QVector<QStringList> airwayTexts;
-      for(const MapAirway& aw : qAsConst(airways))
+      QList<QStringList> airwayTexts;
+      for(const MapAirway& aw : std::as_const(airways))
       {
         QString txt(map::airwayTrackTypeToString(aw.type));
 
@@ -3073,7 +3073,7 @@ void HtmlInfoBuilder::waypointAirwayText(const MapWaypoint& waypoint, HtmlBuilde
           html.br().b(tr("Connections: "));
 
         html.table();
-        int size = info ? airwayTexts.size() : std::min(airwayTexts.size(), 5);
+        int size = info ? airwayTexts.size() : std::min(airwayTexts.size(), static_cast<qsizetype>(5));
         for(int i = 0; i < size; i++)
         {
           const QStringList& aw = airwayTexts.at(i);
@@ -3414,7 +3414,7 @@ void HtmlInfoBuilder::airwayText(const MapAirway& airway, HtmlBuilder& html) con
     if(!waypointList.isEmpty())
     {
       HtmlBuilder tempLinkHtml = html.cleared();
-      for(const map::MapAirwayWaypoint& airwayWaypoint : qAsConst(waypointList))
+      for(const map::MapAirwayWaypoint& airwayWaypoint : std::as_const(waypointList))
       {
         if(!tempLinkHtml.isEmpty())
           tempLinkHtml.text(", ");
@@ -5121,7 +5121,7 @@ void HtmlInfoBuilder::addAirportFolder(const MapAirport& airport, HtmlBuilder& h
     html.table();
 
     for(const QString& dir : AirportFiles::getAirportFilesBase(airport.displayIdent()))
-      html.row2(tr("Path:"), filepathTextOpen(dir, true), ahtml::NO_ENTITIES | ahtml::SMALL);
+      html.row2(tr("Path:"), filepathTextOpen(QFileInfo(dir), true), ahtml::NO_ENTITIES | ahtml::SMALL);
 
     int i = 0;
     for(const QFileInfo& file : airportFiles)

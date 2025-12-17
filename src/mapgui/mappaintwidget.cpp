@@ -195,7 +195,7 @@ void MapPaintWidget::copySettings(const MapPaintWidget& other, bool deep)
   if(kmlFilePaths != other.kmlFilePaths)
   {
     clearKmlFiles();
-    for(const QString& kml : qAsConst(other.kmlFilePaths))
+    for(const QString& kml : std::as_const(other.kmlFilePaths))
       loadKml(kml, false /* center */);
     kmlFilePaths = other.kmlFilePaths;
   }
@@ -422,12 +422,12 @@ void MapPaintWidget::dumpMapLayers() const
   paintLayer->dumpMapLayers();
 }
 
-const QVector<map::MapRef>& MapPaintWidget::getRouteDrawnNavaidsConst() const
+const QList<map::MapRef>& MapPaintWidget::getRouteDrawnNavaidsConst() const
 {
   return screenIndex->getRouteDrawnNavaidsConst();
 }
 
-QVector<map::MapRef> *MapPaintWidget::getRouteDrawnNavaids()
+QList<map::MapRef> *MapPaintWidget::getRouteDrawnNavaids()
 {
   return screenIndex->getRouteDrawnNavaids();
 }
@@ -1005,7 +1005,7 @@ bool MapPaintWidget::addKmlFile(const QString& kmlFile)
 
 void MapPaintWidget::clearKmlFiles()
 {
-  for(const QString& file : qAsConst(kmlFilePaths))
+  for(const QString& file : std::as_const(kmlFilePaths))
     model()->removeGeoData(file);
   kmlFilePaths.clear();
 }
@@ -1080,12 +1080,12 @@ const proc::MapProcedureLeg& MapPaintWidget::getProcedureLegHighlight() const
   return screenIndex->getProcedureLegHighlight();
 }
 
-const QVector<proc::MapProcedureLegs>& MapPaintWidget::getProcedureHighlights() const
+const QList<proc::MapProcedureLegs>& MapPaintWidget::getProcedureHighlights() const
 {
   return screenIndex->getProcedureHighlights();
 }
 
-void MapPaintWidget::changeProcedureHighlights(const QVector<proc::MapProcedureLegs>& procedures)
+void MapPaintWidget::changeProcedureHighlights(const QList<proc::MapProcedureLegs>& procedures)
 {
 #ifdef DEBUG_INFORMATION_PROC_HIGHLIGHT
   qDebug() << Q_FUNC_INFO << procedures;
@@ -1286,7 +1286,7 @@ const atools::fs::sc::SimConnectData& MapPaintWidget::getSimConnectData() const
   return screenIndex->getSimConnectData();
 }
 
-const QVector<atools::fs::sc::SimConnectAircraft>& MapPaintWidget::getAiAircraft() const
+const QList<atools::fs::sc::SimConnectAircraft>& MapPaintWidget::getAiAircraft() const
 {
   return screenIndex->getAiAircraft();
 }

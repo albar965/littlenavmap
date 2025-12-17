@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2020 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2025 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -53,13 +53,13 @@ protected:
 
   /* Get table header names with any LF or dash cleaned out */
   QStringList headerNames(int cnt);
-  QStringList headerNames(int cnt, const QVector<int>& visualToIndex);
+  QStringList headerNames(int cnt, const QList<int>& visualToIndex);
 
   /* Open document with application */
   void openDocument(const QString& file);
 
   /* Create an index mapping physical to logical column numbers */
-  void createVisualColumnIndex(int cnt, QVector<int>& visualToIndex);
+  void createVisualColumnIndex(int cnt, QList<int>& visualToIndex);
 
   /* Create an SQL record from column names and values */
   void fillRecord(const QVariantList& values, const QStringList& cols, QSqlRecord& rec);

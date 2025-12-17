@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2024 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2025 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -200,8 +200,8 @@ void MapPainterNav::paintAirways(const QList<map::MapAirway> *airways, bool fast
     }
 
     QStringList texts; // Prepared airway texts
-    QVector<int> airwayIndexByText; // Index into "airways" for each text
-    QVector<bool> positionReversed; // Line is reversed for text
+    QList<int> airwayIndexByText; // Index into "airways" for each text
+    QList<bool> positionReversed; // Line is reversed for text
   };
 
   bool fill = context->flags2 & opts2::MAP_AIRWAY_TEXT_BACKGROUND;
@@ -213,7 +213,7 @@ void MapPainterNav::paintAirways(const QList<map::MapAirway> *airways, bool fast
   // value is index into texts and airwayIndex
   QHash<QString, int> lines;
   // Contains combined text for overlapping airway lines and points to index or airway in airway list
-  QVector<Place> textlist;
+  QList<Place> textlist;
   QPolygonF arrowAirway = buildArrow(static_cast<float>(linewidthAirway * 2.5));
   QPolygonF arrowTrack = buildArrow(static_cast<float>(linewidthTrack * 2.5));
   Marble::GeoPainter *painter = context->painter;

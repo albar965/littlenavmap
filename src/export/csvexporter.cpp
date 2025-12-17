@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2020 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2025 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -23,13 +23,11 @@
 #include "gui/dialog.h"
 #include "sql/sqlexport.h"
 #include "search/sqlcontroller.h"
-#include "options/optiondata.h"
 
 #include "sql/sqlrecord.h"
 
 #include <QDebug>
 #include <QFile>
-#include <QTextCodec>
 #include <QIODevice>
 #include <QHeaderView>
 #include <QTableView>
@@ -77,7 +75,7 @@ int CsvExporter::selectionAsCsv(QTableView *view, bool header, bool rows, QStrin
       QTextStream stream(&result, QIODevice::WriteOnly);
       QHeaderView *headerView = view->horizontalHeader();
       if(header)
-        stream << buildHeader(view, exporter, additionalHeader, additionalFields) << endl;
+        stream << buildHeader(view, exporter, additionalHeader, additionalFields) << Qt::endl;
 
       for(const QItemSelectionRange& rng : selection->selection())
       {
@@ -104,7 +102,7 @@ int CsvExporter::selectionAsCsv(QTableView *view, bool header, bool rows, QStrin
           }
 
           stream << exporter.getResultSetRow(vars) +
-          (additionalHeader.isEmpty() || !additionalFields ? QString() : ";" + additionalFields(row).join(";")) << endl;
+          (additionalHeader.isEmpty() || !additionalFields ? QString() : ";" + additionalFields(row).join(";")) << Qt::endl;
 
           exported++;
         }
@@ -144,7 +142,7 @@ int CsvExporter::tableAsCsv(QTableView *view, bool header, QString& result,
   QTextStream stream(&result, QIODevice::WriteOnly);
   QHeaderView *headerView = view->horizontalHeader();
   if(header)
-    stream << buildHeader(view, exporter, additionalHeader, additionalFields) << endl;
+    stream << buildHeader(view, exporter, additionalHeader, additionalFields) << Qt::endl;
 
   for(int row = 0; row < model->rowCount(); row++)
   {
@@ -163,7 +161,7 @@ int CsvExporter::tableAsCsv(QTableView *view, bool header, QString& result,
     }
 
     stream << exporter.getResultSetRow(vars) +
-    (additionalHeader.isEmpty() || !additionalFields ? QString() : ";" + additionalFields(row).join(";")) << endl;
+    (additionalHeader.isEmpty() || !additionalFields ? QString() : ";" + additionalFields(row).join(";")) << Qt::endl;
 
     exported++;
   }

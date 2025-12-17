@@ -49,6 +49,7 @@
 
 #include <QDir>
 #include <QStringBuilder>
+#include <QActionGroup>
 
 using atools::sql::SqlUtil;
 using atools::fs::NavDatabase;
@@ -567,7 +568,7 @@ QString DatabaseManager::getSimulatorBasePath(atools::fs::FsPaths::SimulatorType
   return simulators.value(type).basePath;
 }
 
-QString DatabaseManager::getSimulatorFilesPathBest(const FsPaths::SimulatorTypeVector& types, const QString& defaultPath) const
+QString DatabaseManager::getSimulatorFilesPathBest(const FsPaths::SimulatorTypeList& types, const QString& defaultPath) const
 {
   QString path;
   FsPaths::SimulatorType type = simulators.getBestInstalled(types);
@@ -604,7 +605,7 @@ QString DatabaseManager::getSimulatorFilesPathBest(const FsPaths::SimulatorTypeV
   return path.isEmpty() ? defaultPath : path;
 }
 
-QString DatabaseManager::getSimulatorBasePathBest(const FsPaths::SimulatorTypeVector& types) const
+QString DatabaseManager::getSimulatorBasePathBest(const FsPaths::SimulatorTypeList& types) const
 {
   FsPaths::SimulatorType type = simulators.getBestInstalled(types);
   switch(type)
@@ -654,7 +655,7 @@ void DatabaseManager::insertSimSwitchActions()
   });
 
   // Add real simulators first
-  for(atools::fs::FsPaths::SimulatorType type : qAsConst(keys))
+  for(atools::fs::FsPaths::SimulatorType type : std::as_const(keys))
   {
     const FsPathType pathType = simulators.value(type);
 
@@ -976,7 +977,7 @@ void DatabaseManager::switchSimInternal(atools::fs::FsPaths::SimulatorType type)
   {
     // Check and uncheck manually since the QActionGroup is unreliable
     atools::gui::SignalBlocker blocker(simDbActions);
-    for(QAction *action : qAsConst(simDbActions))
+    for(QAction *action : std::as_const(simDbActions))
       action->setChecked(action->data().value<atools::fs::FsPaths::SimulatorType>() == currentFsType);
   }
 }
@@ -1992,7 +1993,7 @@ void DatabaseManager::freeActions()
   ATOOLS_DELETE_LATER_LOG(navDbSubMenu);
   ATOOLS_DELETE_LATER_LOG(navDbGroup);
 
-  for(QAction *action : qAsConst(simDbActions))
+  for(QAction *action : std::as_const(simDbActions))
     ATOOLS_DELETE_LATER_LOG(action);
   simDbActions.clear();
 }

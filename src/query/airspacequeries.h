@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2024 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2025 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -33,7 +33,7 @@ class SqlDatabase;
 class AirspaceQuery;
 
 typedef  QHash<map::MapAirspaceSources, AirspaceQuery *> AirspaceQueryMapType;
-typedef  QVector<const map::MapAirspace *> AirspaceVector;
+typedef  QList<const map::MapAirspace *> AirspaceList;
 
 /*
  * Aggregates all four airspace database types: Navigraph, Sim, Online and User.
@@ -47,7 +47,7 @@ public:
   AirspaceQueries& operator=(const AirspaceQueries& other) = delete;
 
   /* Get airspaces from all enabled sources for map display */
-  void getAirspaces(AirspaceVector& airspaces, const Marble::GeoDataLatLonBox& rect, const MapLayer *mapLayer,
+  void getAirspaces(AirspaceList& airspaces, const Marble::GeoDataLatLonBox& rect, const MapLayer *mapLayer,
                     const map::MapAirspaceFilter& filter, float flightplanAltitude, bool lazy,
                     map::MapAirspaceSources sourcesParam, bool& overflow);
 
@@ -137,7 +137,7 @@ private:
   void preLoadAirspaces();
   void postLoadAirspaces();
 
-  void getAirspacesInternal(AirspaceVector& airspaceVector, const Marble::GeoDataLatLonBox& rect,
+  void getAirspacesInternal(AirspaceList& airspaceVector, const Marble::GeoDataLatLonBox& rect,
                             const MapLayer *mapLayer, const map::MapAirspaceFilter& filter, float flightplanAltitude,
                             bool lazy, map::MapAirspaceSources src, bool& overflow);
 

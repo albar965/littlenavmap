@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2024 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2025 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -288,11 +288,11 @@ private:
   struct MenuData;
   // Index mapped to menu data which also contains a pointer to result above
   // Id is stored as action data
-  QVector<MenuData> dataIndex;
+  QList<MenuData> dataIndex;
 
   // Actions have to be generated with parent main window and therefore menu does not take ownership
   // Actions are kept here for later deletion
-  QVector<QObject *> actionsAndMenus;
+  QList<QObject *> actionsAndMenus;
 
   // true if clicked position is within globe
   bool visibleOnMap = false;

@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2024 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2025 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -141,11 +141,11 @@ void MapLayerSettings::loadXmlInternal(atools::util::XmlStream& xmlStream)
   while(xmlStream.readNextStartElement())
   {
     // Read data from header =========================================
-    if(reader.name() == "Layers")
+    if(reader.name() == QStringLiteral("Layers"))
     {
       while(xmlStream.readNextStartElement())
       {
-        if(reader.name() == "Layer")
+        if(reader.name() == QStringLiteral("Layer"))
         {
           if(xmlStream.readAttributeBool("Base"))
           {
@@ -184,15 +184,15 @@ QDebug operator<<(QDebug out, const MapLayerSettings& record)
 {
   QDebugStateSaver saver(out);
 
-  out.nospace().noquote() << "LayerSettings[" << endl;
+  out.nospace().noquote() << "LayerSettings[" << Qt::endl;
 
-  out << "DEFAULT ------------------------------" << endl;
-  out << MapLayer(0) << endl;
+  out << "DEFAULT ------------------------------" << Qt::endl;
+  out << MapLayer(0) << Qt::endl;
 
   for(const MapLayer& layer : record.layers)
   {
-    out << "------------------------------" << endl;
-    out << layer << endl;
+    out << "------------------------------" << Qt::endl;
+    out << layer << Qt::endl;
   }
 
   out << "]";

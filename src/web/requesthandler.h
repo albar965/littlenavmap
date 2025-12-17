@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2024 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2025 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -68,7 +68,7 @@ signals:
   MapPixmap getPixmap(int width, int height);
   MapPixmap getPixmapObject(int width, int height, web::ObjectType type, const QString& ident, float distanceKm);
   MapPixmap getPixmapPosDistance(int width, int height, atools::geo::Pos pos, float distanceKm, const QString& mapCommand,
-                                 const QString& errorCase = QLatin1String(""));
+                                 const QString& errorCase = QString());
   MapPixmap getPixmapRect(int width, int height, atools::geo::Rect rect, const QString& errorCase = tr("Invalid rectangle"));
 
   atools::fs::sc::SimConnectUserAircraft getUserAircraft();

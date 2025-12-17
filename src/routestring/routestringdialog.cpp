@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2024 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2025 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -35,6 +35,7 @@
 #include <QClipboard>
 #include <QMenu>
 #include <QButtonGroup>
+#include <QActionGroup>
 #include <QScrollBar>
 #include <QFontDatabase>
 #include <QSyntaxHighlighter>
@@ -45,36 +46,21 @@ const static int TEXT_CHANGE_DELAY_MS = 500;
 using atools::gui::HelpHandler;
 namespace apln = atools::fs::pln;
 
-// =================================================================================================
-/* Makes first block bold and rest gray to indicate active description text. */
-class SyntaxHighlighter :
-  public QSyntaxHighlighter
+SyntaxHighlighter::SyntaxHighlighter(QObject *parent)
+  : QSyntaxHighlighter(parent)
 {
-public:
-  SyntaxHighlighter(QObject *parent)
-    : QSyntaxHighlighter(parent)
-  {
-  }
+}
 
-  void styleChanged()
-  {
-    formatHighlight.setFontWeight(QFont::Bold);
-    formatNormal.setForeground(NavApp::isGuiStyleDark() ? QColor(180, 180, 180) : QColor(100, 100, 100));
-  }
+SyntaxHighlighter::~SyntaxHighlighter()
+{
 
-private:
-  virtual void highlightBlock(const QString& text) override;
+}
 
-  QTextCharFormat formatHighlight, formatNormal;
-
-  enum
-  {
-    BEFORE_START = -1, // First line or empty lines before any text
-    IN_HIGHLIGHT_BLOCK = 0, // Currently non-empty lines
-    AFTER_HIGHLIGHT_BLOCK = 1 // After one filled block now coloring gray
-  };
-
-};
+void SyntaxHighlighter::styleChanged()
+{
+  formatHighlight.setFontWeight(QFont::Bold);
+  formatNormal.setForeground(NavApp::isGuiStyleDark() ? QColor(180, 180, 180) : QColor(100, 100, 100));
+}
 
 void SyntaxHighlighter::highlightBlock(const QString& text)
 {
@@ -89,22 +75,10 @@ void SyntaxHighlighter::highlightBlock(const QString& text)
   setFormat(0, text.size(), currentBlockState() == IN_HIGHLIGHT_BLOCK ? formatHighlight : formatNormal);
 }
 
-// =================================================================================================
-class TextEditEventFilter :
-  public QObject
+TextEditEventFilter::~TextEditEventFilter()
 {
 
-public:
-  TextEditEventFilter(RouteStringDialog *parent)
-    : QObject(parent), dialog(parent)
-  {
-  }
-
-private:
-  virtual bool eventFilter(QObject *object, QEvent *event) override;
-
-  RouteStringDialog *dialog;
-};
+}
 
 bool TextEditEventFilter::eventFilter(QObject *object, QEvent *event)
 {
@@ -125,7 +99,7 @@ bool TextEditEventFilter::eventFilter(QObject *object, QEvent *event)
 RouteStringDialog::RouteStringDialog(QWidget *parent, const QString& settingsSuffixParam)
   : QDialog(parent), ui(new Ui::RouteStringDialog), settingsSuffix(settingsSuffixParam)
 {
-  setWindowFlags(windowFlags() & ~Qt::WindowContextHelpButtonHint);
+  setWindowFlag(Qt::WindowContextHelpButtonHint, false);
 
   blocking = parent != nullptr;
 
@@ -440,7 +414,7 @@ void RouteStringDialog::showHelpButtonToggled(bool checked)
 {
   QList<int> sizes = ui->splitterRouteString->sizes();
   int total = 0;
-  for(int size : qAsConst(sizes))
+  for(int size : std::as_const(sizes))
     total += size;
 
   if(sizes.size() == 3)
@@ -488,7 +462,7 @@ void RouteStringDialog::toolButtonOptionTriggered(QAction *act)
     return;
 
   // Copy menu state for options bitfield
-  for(const QAction *action : qAsConst(actions))
+  for(const QAction *action : std::as_const(actions))
     options.setFlag(static_cast<rs::RouteStringOption>(action->data().toInt()), action->isChecked());
 
   // Call immediately and update even if string is unchanged
@@ -796,7 +770,7 @@ void RouteStringDialog::updateButtonState()
 
   // Copy option flags to dropdown menu items
   updatingActions = true;
-  for(QAction *action : qAsConst(actions))
+  for(QAction *action : std::as_const(actions))
     action->setChecked(rs::RouteStringOptions(static_cast<quint32>(action->data().toInt())) & options);
 
   updatingActions = false;

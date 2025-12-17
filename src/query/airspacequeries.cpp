@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2024 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2025 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -44,13 +44,13 @@ AirspaceQueries::~AirspaceQueries()
 
 void AirspaceQueries::initQueries()
 {
-  for(AirspaceQuery *query : qAsConst(airspaceQueries))
+  for(AirspaceQuery *query : std::as_const(airspaceQueries))
     query->initQueries();
 }
 
 void AirspaceQueries::deInitQueries()
 {
-  for(AirspaceQuery *query : qAsConst(airspaceQueries))
+  for(AirspaceQuery *query : std::as_const(airspaceQueries))
     query->deInitQueries();
 }
 
@@ -132,7 +132,7 @@ atools::sql::SqlRecord AirspaceQueries::getAirspaceInfoRecordById(map::MapAirspa
   return rec;
 }
 
-void AirspaceQueries::getAirspacesInternal(AirspaceVector& airspaceVector, const Marble::GeoDataLatLonBox& rect,
+void AirspaceQueries::getAirspacesInternal(AirspaceList& airspaceVector, const Marble::GeoDataLatLonBox& rect,
                                            const MapLayer *mapLayer, const map::MapAirspaceFilter& filter, float flightplanAltitude,
                                            bool lazy, map::MapAirspaceSources src, bool& overflow)
 {
@@ -159,7 +159,7 @@ void AirspaceQueries::getAirspacesInternal(AirspaceVector& airspaceVector, const
   }
 }
 
-void AirspaceQueries::getAirspaces(AirspaceVector& airspaces, const Marble::GeoDataLatLonBox& rect, const MapLayer *mapLayer,
+void AirspaceQueries::getAirspaces(AirspaceList& airspaces, const Marble::GeoDataLatLonBox& rect, const MapLayer *mapLayer,
                                    const map::MapAirspaceFilter& filter, float flightplanAltitude, bool lazy,
                                    map::MapAirspaceSources sourcesParam, bool& overflow)
 {

@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2024 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2025 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -498,7 +498,7 @@ void SqlModel::sort(int column, Qt::SortOrder order)
 /* Build full list of columns to query */
 QString SqlModel::buildColumnList(const atools::sql::SqlRecord& tableCols)
 {
-  QVector<QString> colNames;
+  QList<QString> colNames;
   for(const Column *col : columns->getColumns())
   {
     if(!col->getSqlFunc().isEmpty())
@@ -515,7 +515,7 @@ QString SqlModel::buildColumnList(const atools::sql::SqlRecord& tableCols)
   // Concatenate to one string
   QString queryCols;
   bool first = true;
-  for(const QString& cname : qAsConst(colNames))
+  for(const QString& cname : std::as_const(colNames))
   {
     if(!first)
       queryCols += ", ";
@@ -538,7 +538,7 @@ void SqlModel::buildQuery()
   atools::sql::SqlRecord tableCols = db->record(tablename);
   QString queryCols = buildColumnList(tableCols);
 
-  QVector<const Column *> overrideColumns;
+  QList<const Column *> overrideColumns;
   QString queryWhere = buildWhere(tableCols, overrideColumns);
 
   QString queryOrder;
@@ -601,7 +601,7 @@ void SqlModel::buildQuery()
   QStringList overrideColumnTitles;
   if(!overrideColumns.isEmpty())
   {
-    for(const Column *ocol : qAsConst(overrideColumns))
+    for(const Column *ocol : std::as_const(overrideColumns))
       overrideColumnTitles.append(ocol->getDisplayName());
   }
   emit overrideMode(overrideColumnTitles);
@@ -641,7 +641,7 @@ void SqlModel::updateTotalCount()
 }
 
 /* Build where statement */
-QString SqlModel::buildWhere(const atools::sql::SqlRecord& tableCols, QVector<const Column *>& overridingColumns)
+QString SqlModel::buildWhere(const atools::sql::SqlRecord& tableCols, QList<const Column *>& overridingColumns)
 {
   const static QRegularExpression REQUIRED_COL_MATCH(".*/\\*([A-Za-z0-9_]+)\\*/.*");
 
@@ -653,7 +653,7 @@ QString SqlModel::buildWhere(const atools::sql::SqlRecord& tableCols, QVector<co
   QStringList queryWhereBuilder;
 
   // Use query builder callback to get all where clauses ==================================
-  const QueryBuilderResultVector results = queryBuilder.build();
+  const QueryBuilderResultList results = queryBuilder.build();
   for(const QueryBuilderResult& builderResult : results)
   {
     if(!builderResult.isEmpty())
@@ -869,7 +869,7 @@ QVariant SqlModel::getFormattedFieldData(const QModelIndex& index) const
   return data(index);
 }
 
-void SqlModel::getFullResultSet(QVector<std::pair<int, atools::geo::Pos> >& result)
+void SqlModel::getFullResultSet(QList<std::pair<int, atools::geo::Pos> >& result)
 {
   if(!currentSqlFetchQuery.isEmpty())
   {

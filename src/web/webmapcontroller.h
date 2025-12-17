@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2024 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2025 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -101,7 +101,7 @@ public:
    * "in", "out", "left", "right", "up" and "down".
    * Qt::BlockingQueuedConnection */
   MapPixmap getPixmapPosDistance(int width, int height, atools::geo::Pos pos, float distanceKm, const QString& mapCommand,
-                                 const QString& errorCase = QLatin1String(""));
+                                 const QString& errorCase = QString());
 
   /* Zoom to rectangle on map. Qt::BlockingQueuedConnection */
   MapPixmap getPixmapRect(int width, int height, atools::geo::Rect rect, const QString& errorCase = tr("Invalid rectangle"));
