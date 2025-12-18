@@ -81,9 +81,9 @@ OnlinedataController::OnlinedataController(atools::fs::online::OnlinedataManager
 {
   // Files use Windows code with embedded UTF-8 for ATIS text
 #ifdef QT_CORE5COMPAT_LIB
-  codec = QTextCodec::codecForName("Windows-1252");
-  if(codec == nullptr)
-    codec = QTextCodec::codecForLocale();
+  codecWin1252 = QTextCodec::codecForName("Windows-1252");
+  if(codecWin1252 == nullptr)
+    codecWin1252 = QTextCodec::codecForLocale();
 #endif
 
   atools::settings::Settings& settings = atools::settings::Settings::instance();
@@ -283,15 +283,13 @@ QString OnlinedataController::uncompress(const QByteArray& data, const QString& 
 {
   QByteArray textData = atools::zip::gzipDecompressIf(data, func);
 
-  if(utf8)
-    return QString(textData);
-  else
 #ifdef QT_CORE5COMPAT_LIB
+  if(!utf8)
     // Convert from encoding to UTF-8. Some formats use windows encoding
-    return codec->toUnicode(textData);
-#else
-    return QString(textData);
+    return codecWin1252->toUnicode(textData);
 #endif
+
+  return QString(textData);
 }
 
 void OnlinedataController::downloadFinished(const QByteArray& data, QString url)

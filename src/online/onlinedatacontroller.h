@@ -227,7 +227,7 @@ private:
   QString whazzupUrlFromStatus;
 
 #ifdef QT_CORE5COMPAT_LIB
-  QTextCodec *codec = nullptr;
+  QTextCodec *codecWin1252 = nullptr;
 #endif
 
   bool verbose = false;
