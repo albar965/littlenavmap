@@ -1467,7 +1467,7 @@ struct MapAirportMsa :
         magvar; /* Taken from environment or navaid */
 
   QList<float> bearings, /* Bearings in true or mag degree - same size as altitudes */
-               altitudes;   /* Altitudes in feet - same size as bearings */
+               altitudes; /* Altitudes in feet - same size as bearings */
 
   bool trueBearing; /* true if all bearing values are true - otherwise magnetic */
   atools::geo::LineString geometry, /* Outer circle/arcs geometry. 180 points for full circle. */

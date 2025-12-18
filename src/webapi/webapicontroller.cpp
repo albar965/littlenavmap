@@ -161,9 +161,9 @@ QObject *WebApiController::getControllerInstance(QByteArray controllerName)
     // Instantiate
     const QMetaObject *mo = QMetaType::metaObjectForType(id);
     QObject *controller = mo->newInstance(
-      Q_ARG(QObject*, parent()),
+      Q_ARG(QObject *, parent()),
       Q_ARG(bool, verbose),
-      Q_ARG(AbstractInfoBuilder*, infoBuilder));
+      Q_ARG(AbstractInfoBuilder *, infoBuilder));
 
     // Store instance
     controllerInstances.insert(controllerName, controller);

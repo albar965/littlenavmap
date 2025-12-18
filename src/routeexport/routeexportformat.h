@@ -254,7 +254,7 @@ private:
 
 Q_DECLARE_METATYPE(RouteExportFormat)
 
-QDataStream& operator>>(QDataStream& dataStream, RouteExportFormat& obj);
+QDataStream& operator>>(QDataStream & dataStream, RouteExportFormat & obj);
 QDataStream& operator<<(QDataStream& dataStream, const RouteExportFormat& obj);
 
 /* ======================================================================= */
@@ -343,7 +343,7 @@ private:
 
 Q_DECLARE_METATYPE(RouteExportFormatMap)
 
-QDataStream& operator>>(QDataStream& dataStream, RouteExportFormatMap& obj);
+QDataStream& operator>>(QDataStream & dataStream, RouteExportFormatMap & obj);
 QDataStream& operator<<(QDataStream& dataStream, const RouteExportFormatMap& obj);
 
 #endif // LNM_ROUTEEXPORTFORMAT_H

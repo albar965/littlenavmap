@@ -171,7 +171,7 @@ private:
 
   const QList<QPolygonF *> createPolygonsInternal(const atools::geo::LineString& linestring, const QRectF& screenRect) const;
   const QList<QPolygonF *> createPolylinesInternal(const atools::geo::LineString& linestring, const QRectF& screenRect,
-                                                     bool splitLongLines) const;
+                                                   bool splitLongLines) const;
 
   const Marble::ViewportParams *viewport;
 };

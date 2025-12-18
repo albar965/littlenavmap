@@ -115,7 +115,7 @@ MapPixmap WebMapController::getPixmapPosDistance(int width, int height, atools::
   {
     if(errorCase == QLatin1String(""))
       // Use current map position
-      pos= NavApp::getMapWidgetGui()->getCenterPos();
+      pos = NavApp::getMapWidgetGui()->getCenterPos();
     else
     {
       if(verbose)

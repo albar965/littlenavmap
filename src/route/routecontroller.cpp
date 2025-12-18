@@ -176,7 +176,7 @@ using namespace atools::geo;
 
 namespace pln = atools::fs::pln;
 
-RouteController::RouteController(MainWindow* parentWindow, QTableView *tableView)
+RouteController::RouteController(MainWindow *parentWindow, QTableView *tableView)
   : QObject(parentWindow), mainWindow(parentWindow), tableViewRoute(tableView)
 {
   routeFilenameDefault = atools::settings::Settings::getConfigFilename(lnm::ROUTE_DEFAULT_SUFFIX);

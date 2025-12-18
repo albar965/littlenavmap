@@ -23,9 +23,9 @@
 
 void ActionsControllerIndex::registerQMetaTypes()
 {
-    /* Available action controllers must be registered here */
-    qRegisterMetaType<AirportActionsController*>();
-    qRegisterMetaType<MapActionsController*>();
-    qRegisterMetaType<SimActionsController*>();
-    qRegisterMetaType<UiActionsController*>();
+  /* Available action controllers must be registered here */
+  qRegisterMetaType<AirportActionsController *>();
+  qRegisterMetaType<MapActionsController *>();
+  qRegisterMetaType<SimActionsController *>();
+  qRegisterMetaType<UiActionsController *>();
 }

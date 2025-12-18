@@ -392,7 +392,7 @@ const QList<QPolygonF *> CoordinateConverter::createPolygons(const atools::geo::
 }
 
 const QList<QPolygonF *> CoordinateConverter::createPolygonsInternal(const atools::geo::LineString& linestring,
-                                                                       const QRectF& screenRect) const
+                                                                     const QRectF& screenRect) const
 {
   Marble::GeoDataLinearRing linearRing = mconvert::toGdcRing(linestring);
 
@@ -458,7 +458,7 @@ bool CoordinateConverter::resolves(const atools::geo::Line& line) const
 }
 
 const QList<QPolygonF *> CoordinateConverter::createPolylinesInternal(const atools::geo::LineString& linestring,
-                                                                        const QRectF& screenRect, bool splitLongLines) const
+                                                                      const QRectF& screenRect, bool splitLongLines) const
 {
   QList<QPolygonF *> polylineVector;
 

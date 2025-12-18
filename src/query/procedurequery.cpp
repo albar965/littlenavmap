@@ -389,8 +389,8 @@ void ProcedureQuery::buildLegEntry(atools::sql::SqlQuery *query, proc::MapProced
       // For DME-distance legs (CD, VD, FD), use DME antenna position if available
       // For other leg types, use LOC antenna position
       if(atools::contains(leg.type, {proc::COURSE_TO_DME_DISTANCE,
-                                      proc::HEADING_TO_DME_DISTANCE_TERMINATION,
-                                      proc::TRACK_FROM_FIX_TO_DME_DISTANCE}) &&
+                                     proc::HEADING_TO_DME_DISTANCE_TERMINATION,
+                                     proc::TRACK_FROM_FIX_TO_DME_DISTANCE}) &&
          ils.dmePos.isValid())
         leg.fixPos = ils.dmePos;
       else
@@ -446,8 +446,8 @@ void ProcedureQuery::buildLegEntry(atools::sql::SqlQuery *query, proc::MapProced
       // For DME-distance legs (CD, VD, FD), use DME antenna position if available
       // For other leg types, use LOC antenna position
       if(atools::contains(leg.type, {proc::COURSE_TO_DME_DISTANCE,
-                                      proc::HEADING_TO_DME_DISTANCE_TERMINATION,
-                                      proc::TRACK_FROM_FIX_TO_DME_DISTANCE}) &&
+                                     proc::HEADING_TO_DME_DISTANCE_TERMINATION,
+                                     proc::TRACK_FROM_FIX_TO_DME_DISTANCE}) &&
          ils.dmePos.isValid())
         leg.fixPos = ils.dmePos;
       else
@@ -545,8 +545,8 @@ void ProcedureQuery::buildLegEntry(atools::sql::SqlQuery *query, proc::MapProced
       // For DME-distance legs (CD, VD, FD), use DME antenna position if available
       // For other leg types, use LOC antenna position
       if(atools::contains(leg.type, {proc::COURSE_TO_DME_DISTANCE,
-                                      proc::HEADING_TO_DME_DISTANCE_TERMINATION,
-                                      proc::TRACK_FROM_FIX_TO_DME_DISTANCE}) &&
+                                     proc::HEADING_TO_DME_DISTANCE_TERMINATION,
+                                     proc::TRACK_FROM_FIX_TO_DME_DISTANCE}) &&
          ils.dmePos.isValid())
         leg.recFixPos = ils.dmePos;
       else
@@ -580,8 +580,8 @@ void ProcedureQuery::buildLegEntry(atools::sql::SqlQuery *query, proc::MapProced
         // For DME-distance legs (CD, VD, FD), use DME antenna position if available
         // For other leg types, use LOC antenna position
         if(atools::contains(leg.type, {proc::COURSE_TO_DME_DISTANCE,
-                                        proc::HEADING_TO_DME_DISTANCE_TERMINATION,
-                                        proc::TRACK_FROM_FIX_TO_DME_DISTANCE}) &&
+                                       proc::HEADING_TO_DME_DISTANCE_TERMINATION,
+                                       proc::TRACK_FROM_FIX_TO_DME_DISTANCE}) &&
            ils.dmePos.isValid())
           leg.recFixPos = ils.dmePos;
         else
@@ -624,8 +624,8 @@ void ProcedureQuery::buildLegEntry(atools::sql::SqlQuery *query, proc::MapProced
       // For DME-distance legs (CD, VD, FD), use DME antenna position if available
       // For other leg types, use LOC antenna position
       if(atools::contains(leg.type, {proc::COURSE_TO_DME_DISTANCE,
-                                      proc::HEADING_TO_DME_DISTANCE_TERMINATION,
-                                      proc::TRACK_FROM_FIX_TO_DME_DISTANCE}) &&
+                                     proc::HEADING_TO_DME_DISTANCE_TERMINATION,
+                                     proc::TRACK_FROM_FIX_TO_DME_DISTANCE}) &&
          ils.dmePos.isValid())
         leg.recFixPos = ils.dmePos;
       else

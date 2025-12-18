@@ -78,9 +78,7 @@
 #include <marble/MapThemeManager.h>
 
 #if QT_VERSION >= QT_VERSION_CHECK(5, 14, 0)
-using Qt::hex;
-using Qt::dec;
-using Qt::endl;
+
 #endif
 
 /* Stores delta values depending on fast or slow update. User aircraft is only updated if

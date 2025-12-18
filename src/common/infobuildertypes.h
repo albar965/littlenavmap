@@ -18,7 +18,6 @@
 #ifndef INFOBUILDERTYPES_H
 #define INFOBUILDERTYPES_H
 
-
 #include "common/maptypes.h"
 #include "fs/sc/simconnectdata.h"
 
@@ -26,11 +25,13 @@
 
 class Route;
 
-namespace map { struct WeatherContext; }
+namespace map {
+struct WeatherContext;
+}
 namespace atools {
-    namespace sql {
-        class SqlRecord;
-    }
+namespace sql {
+class SqlRecord;
+}
 }
 
 using atools::sql::SqlRecord;
@@ -42,64 +43,69 @@ using atools::fs::sc::SimConnectData;
  */
 namespace InfoBuilderTypes {
 
-    /**
-     * @brief Data container for airport admin information
-     */
-    struct AirportAdminNames{
-        const QString city;
-        const QString state;
-        const QString country;
-    };
+/**
+ * @brief Data container for airport admin information
+ */
+struct AirportAdminNames
+{
+  const QString city;
+  const QString state;
+  const QString country;
+};
 
-    /**
-     * @brief Data container for airport information
-     */
-    struct AirportInfoData{
-        // required
-        const map::MapAirport& airport;
-        const map::WeatherContext& weatherContext;
-        // optional
-        const Route *route = nullptr;
-        const SqlRecord* airportInformation = nullptr;
-        const AirportAdminNames* airportAdminNames = nullptr;
-        const int* transitionAltitude = nullptr;
-        const QTime* sunrise = nullptr;
-        const QTime* sunset = nullptr;
-        const QDateTime* activeDateTime = nullptr;
-        const QString* activeDateTimeSource = nullptr;
-    };
+/**
+ * @brief Data container for airport information
+ */
+struct AirportInfoData
+{
+  // required
+  const map::MapAirport& airport;
+  const map::WeatherContext& weatherContext;
+  // optional
+  const Route *route = nullptr;
+  const SqlRecord *airportInformation = nullptr;
+  const AirportAdminNames *airportAdminNames = nullptr;
+  const int *transitionAltitude = nullptr;
+  const QTime *sunrise = nullptr;
+  const QTime *sunset = nullptr;
+  const QDateTime *activeDateTime = nullptr;
+  const QString *activeDateTimeSource = nullptr;
+};
 
-    /**
-     * @brief Data container for simconnect data
-     */
-    struct SimConnectInfoData{
-        const SimConnectData* data;
-        const float windSpeed;
-        const float windDir;
-    };
+/**
+ * @brief Data container for simconnect data
+ */
+struct SimConnectInfoData
+{
+  const SimConnectData *data;
+  const float windSpeed;
+  const float windDir;
+};
 
-    /**
-     * @brief Data container for ui data
-     */
-    struct UiInfoData{
-        const int zoomUi;
-        const int zoomWeb;
-        const qreal distanceUi;
-        const qreal distanceWeb;
-        const float latLonRectUi[4];
-        const float latLonRectWeb[4];
-    };
+/**
+ * @brief Data container for ui data
+ */
+struct UiInfoData
+{
+  const int zoomUi;
+  const int zoomWeb;
+  const qreal distanceUi;
+  const qreal distanceWeb;
+  const float latLonRectUi[4];
+  const float latLonRectWeb[4];
+};
 
-    /**
-     * @brief Data container for map features data
-     */
-    struct MapFeaturesData{
-        const QList<map::MapAirport> airports;
-        const QList<map::MapNdb> ndbs;
-        const QList<map::MapVor> vors;
-        const QList<map::MapMarker> markers;
-        const QList<map::MapWaypoint> waypoints;
-    };
+/**
+ * @brief Data container for map features data
+ */
+struct MapFeaturesData
+{
+  const QList<map::MapAirport> airports;
+  const QList<map::MapNdb> ndbs;
+  const QList<map::MapVor> vors;
+  const QList<map::MapMarker> markers;
+  const QList<map::MapWaypoint> waypoints;
+};
 
 }
 

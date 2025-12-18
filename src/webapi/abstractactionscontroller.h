@@ -29,34 +29,38 @@ class AbstractInfoBuilder;
  * @brief Base class for all invokable API action controllers
  */
 class AbstractActionsController :
-        public QObject
+  public QObject
 {
-    Q_OBJECT
+  Q_OBJECT
+
 public:
-    AbstractActionsController(QObject *parent, bool verboseParam, AbstractInfoBuilder* infoBuilder);
-    virtual ~AbstractActionsController() override;
-    /**
-     * @brief example for inheritable and invokable method/action
-     */
-    Q_INVOKABLE virtual WebApiResponse defaultAction(WebApiRequest request);
-    /**
-     * @brief return a "404 not found" response
-     */
-    Q_INVOKABLE virtual WebApiResponse notFoundAction(WebApiRequest request);
+  AbstractActionsController(QObject *parent, bool verboseParam, AbstractInfoBuilder *infoBuilder);
+  virtual ~AbstractActionsController() override;
+  /**
+   * @brief example for inheritable and invokable method/action
+   */
+  Q_INVOKABLE virtual WebApiResponse defaultAction(WebApiRequest request);
+
+  /**
+   * @brief return a "404 not found" response
+   */
+  Q_INVOKABLE virtual WebApiResponse notFoundAction(WebApiRequest request);
+
 protected:
-    /**
-     * @brief get new response object
-     * @return
-     */
-    WebApiResponse getResponse();
-    /**
-     * @brief verbose
-     */
-    bool verbose = false;
-    /**
-     * @brief the response body builder
-     */
-    AbstractInfoBuilder* infoBuilder;
+  /**
+   * @brief get new response object
+   * @return
+   */
+  WebApiResponse getResponse();
+
+  /**
+   * @brief verbose
+   */
+  bool verbose = false;
+  /**
+   * @brief the response body builder
+   */
+  AbstractInfoBuilder *infoBuilder;
 };
 
 #endif // ABSTRACTACTIONSCONTROLLER_H

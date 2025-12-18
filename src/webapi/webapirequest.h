@@ -24,17 +24,18 @@
 /**
  * @brief Generic WebApiRequest POD object
  */
-class WebApiRequest {
+class WebApiRequest
+{
 public:
-    /**
-     * @brief API request path
-     * without WebApiController.webApiPathPrefix
-     */
-    QByteArray path;
-    QByteArray method;
-    QMultiMap<QByteArray, QByteArray> headers;
-    QMultiMap<QByteArray, QByteArray> parameters;
-    QByteArray body;
+  /**
+   * @brief API request path
+   * without WebApiController.webApiPathPrefix
+   */
+  QByteArray path;
+  QByteArray method;
+  QMultiMap<QByteArray, QByteArray> headers;
+  QMultiMap<QByteArray, QByteArray> parameters;
+  QByteArray body;
 };
 
 #endif // WEBAPIREQUEST_H

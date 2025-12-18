@@ -25,9 +25,9 @@
 #include <QMap>
 
 namespace atools {
-  namespace geo {
-    class Pos;
-  }
+namespace geo {
+class Pos;
+}
 }
 
 // 1 departure thread creates many destination threads.
@@ -72,10 +72,10 @@ signals:
 private:
   friend class RandomDestinationAirportPickingByCriteria;
 
-  QList<int> map_sort(int* array, int arrayLength);
+  QList<int> map_sort(int *array, int arrayLength);
 
-  QList<bool> destinationPickerState;   // false = running, true = done
-  bool* dataDestinationPickerState;
+  QList<bool> destinationPickerState; // false = running, true = done
+  bool *dataDestinationPickerState;
   int foundIndexDestination = -1;
   bool success = false;
   static QList<std::pair<int, atools::geo::Pos> > *data;

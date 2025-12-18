@@ -302,6 +302,7 @@ public:
   WindLabelAction(QObject *parent) : QWidgetAction(parent)
   {
   }
+
   virtual ~WindLabelAction() override;
 
   void setText(const QString& textParam);

@@ -22,18 +22,18 @@
 #include <QLocale>
 
 namespace InfoBuilderTypes {
-    struct AirportInfoData;
-    struct SimConnectInfoData;
-    struct UiInfoData;
-    struct MapFeaturesData;
+struct AirportInfoData;
+struct SimConnectInfoData;
+struct UiInfoData;
+struct MapFeaturesData;
 }
 namespace atools {
-    namespace sql {
-        class SqlRecord;
-    }
-    namespace geo {
-        class Pos;
-    }
+namespace sql {
+class SqlRecord;
+}
+namespace geo {
+class Pos;
+}
 }
 
 using atools::geo::Pos;
@@ -47,7 +47,8 @@ using InfoBuilderTypes::MapFeaturesData;
  * Base class for info builders
  * creating representations of supplied data.
  */
-class AbstractInfoBuilder : public QObject
+class AbstractInfoBuilder :
+  public QObject
 {
   Q_OBJECT
 
@@ -91,13 +92,13 @@ public:
    */
   virtual QByteArray siminfo(SimConnectInfoData simConnectInfoData) const;
 
-
   /**
    * Creates a description for the provided UI data.
    *
    * @param uiInfoData
    */
   virtual QByteArray uiinfo(UiInfoData uiInfoData) const;
+
 protected:
   /**
    * @brief Get heading and opposed heading corrected by magnetic variation
@@ -106,42 +107,49 @@ protected:
    * @return both headings as formatted string
    */
   virtual QString getHeadingsStringByMagVar(float heading, float magvar) const;
+
   /**
    * @brief Pretty print-format frequency
    * @param frequency
    * @return
    */
   virtual QString formatComFrequency(int frequency) const;
+
   /**
    * @brief Get pretty printed coords from suitable sql record
    * @param rec
    * @return printable string
    */
   virtual QString getCoordinatesString(const atools::sql::SqlRecord *rec) const;
+
   /**
    * @brief get pretty printed coords from Pos
    * @param rec
    * @return printable string
    */
   virtual QString getCoordinatesString(const Pos& pos) const;
+
   /**
    * @brief get pretty printed coords from Pos
    * @param rec
    * @return printable string
    */
   virtual QString getLocalizedCoordinatesString(const Pos& pos) const;
+
   /**
    * @brief get a map of coordinate data from suitable sql record
    * @param pos
    * @return map of coordinate data
    */
-  virtual QMap<QString,float> getCoordinates(const atools::sql::SqlRecord *rec) const;
+  virtual QMap<QString, float> getCoordinates(const atools::sql::SqlRecord *rec) const;
+
   /**
    * @brief get a map of coordinate data from Pos
    * @param pos
    * @return map of coordinate data
    */
-  virtual QMap<QString,float> getCoordinates(const Pos& pos) const;
+  virtual QMap<QString, float> getCoordinates(const Pos& pos) const;
+
 private:
   QLocale locale;
 };

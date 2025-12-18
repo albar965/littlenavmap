@@ -109,7 +109,7 @@ private:
 
 typedef QList<QueryWidget> QueryWidgetList;
 typedef QList<QueryBuilderResult> QueryBuilderResultList;
-typedef std::function<QueryBuilderResult(const QueryWidget& queryWidget)> QueryBuilderFuncType;
+typedef std::function<QueryBuilderResult (const QueryWidget& queryWidget)> QueryBuilderFuncType;
 
 /*
  * A callback object which can build a where clause for more than one column in search.

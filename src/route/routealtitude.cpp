@@ -2116,9 +2116,9 @@ QDebug operator<<(QDebug out, const RouteAltitude& obj)
                           << ", tripFuel " << obj.getTripFuel()
                           << ", alternateFuel " << obj.getAlternateFuel()
                           << ", totalDistance " << obj.route->getTotalDistance()
-                           << Qt::endl;
+                          << Qt::endl;
 
   for(int i = 0; i < obj.size(); i++)
-    out << "++++++++++++++++++++++"  << Qt::endl << i << " " << obj.value(i)  << Qt::endl;
+    out << "++++++++++++++++++++++" << Qt::endl << i << " " << obj.value(i) << Qt::endl;
   return out;
 }

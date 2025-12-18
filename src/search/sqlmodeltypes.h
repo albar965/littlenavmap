@@ -47,8 +47,8 @@ enum SearchDirection
  * @param role Data role
  * @return a variant. Mostly string for display role.
  */
-typedef std::function<QVariant(int colIndex, int rowIndex, const Column *col, const QVariant& roleValue,
-                               const QVariant& displayRoleValue, Qt::ItemDataRole role)> DataFunctionType;
+typedef std::function<QVariant (int colIndex, int rowIndex, const Column *col, const QVariant& roleValue,
+                                const QVariant& displayRoleValue, Qt::ItemDataRole role)> DataFunctionType;
 
 }
 

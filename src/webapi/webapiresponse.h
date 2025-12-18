@@ -24,10 +24,12 @@
 /**
  * @brief Generic WebApiResponse POD object
  */
-class WebApiResponse {
+class WebApiResponse
+{
 public:
-    int status;
-    QMultiMap<QByteArray, QByteArray> headers;
-    QByteArray body;
+  int status;
+  QMultiMap<QByteArray, QByteArray> headers;
+  QByteArray body;
 };
+
 #endif // WEBAPIRESPONSE_H

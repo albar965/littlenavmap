@@ -34,7 +34,7 @@
 namespace proc  {
 
 #if QT_VERSION >= QT_VERSION_CHECK(5, 14, 0)
-using Qt::endl;
+
 #endif
 
 static QHash<QString, QString> approachFixTypeToStr;
@@ -533,12 +533,12 @@ QDebug operator<<(QDebug out, const ProcedureLegType& type)
 QDebug operator<<(QDebug out, const MapProcedureLegs& legs)
 {
   QDebugStateSaver saver(out);
-  out << "MapProcedureLegs =====" << endl;
-  out << "maptype" << legs.mapType << endl;
+  out << "MapProcedureLegs =====" << Qt::endl;
+  out << "maptype" << legs.mapType << Qt::endl;
 
   out << "procedureDistance" << legs.procedureDistance
       << "transitionDistance" << legs.transitionDistance
-      << "missedDistance" << legs.missedDistance << endl;
+      << "missedDistance" << legs.missedDistance << Qt::endl;
 
   out << "type" << legs.type
       << "suffix" << legs.suffix
@@ -553,59 +553,59 @@ QDebug operator<<(QDebug out, const MapProcedureLegs& legs)
       << "runwayEnd.name" << legs.runwayEnd.name
       << "bounding" << legs.bounding
       << "boundingWithRecommended" << legs.boundingWithRecommended
-      << "boundingWithMissed" << legs.boundingWithMissed << endl;
+      << "boundingWithMissed" << legs.boundingWithMissed << Qt::endl;
 
-  out << "===== Legs =====" << endl;
+  out << "===== Legs =====" << Qt::endl;
   for(int i = 0; i < legs.size(); i++)
     out << "#" << i << legs.at(i);
-  out << "==========================" << endl;
+  out << "==========================" << Qt::endl;
   return out;
 }
 
 QDebug operator<<(QDebug out, const MapProcedureLeg& leg)
 {
   QDebugStateSaver saver(out);
-  out << "MapProcedureLeg =============" << endl;
+  out << "MapProcedureLeg =============" << Qt::endl;
   out << "approachId" << leg.procedureId
       << "transitionId" << leg.transitionId
-      << "legId" << leg.legId << endl
+      << "legId" << leg.legId << Qt::endl
       << "type" << leg.type
       << "maptype" << leg.mapType
       << "missed" << leg.missed
-      << "line" << leg.line << endl
-      << "geometry" << leg.geometry << endl;
+      << "line" << leg.line << Qt::endl
+      << "geometry" << leg.geometry << Qt::endl;
 
   out << "displayText" << leg.displayText
       << "remarks" << leg.remarks;
 
-  out << "fix" << leg.fixType << leg.fixIdent << leg.fixRegion << leg.fixPos << endl;
+  out << "fix" << leg.fixType << leg.fixIdent << leg.fixRegion << leg.fixPos << Qt::endl;
 
-  out << leg.recFixType << leg.recFixIdent << leg.recFixRegion << leg.recFixPos << endl;
-  out << "intercept" << leg.interceptPos << leg.intercept << endl;
-  out << "procturn pos" << leg.procedureTurnPos << endl;
-  out << "rw sim" << leg.runwaySim << endl;
+  out << leg.recFixType << leg.recFixIdent << leg.recFixRegion << leg.recFixPos << Qt::endl;
+  out << "intercept" << leg.interceptPos << leg.intercept << Qt::endl;
+  out << "procturn pos" << leg.procedureTurnPos << Qt::endl;
+  out << "rw sim" << leg.runwaySim << Qt::endl;
 
   out << "turnDirection" << leg.turnDirection
       << "flyover" << leg.flyover
       << "trueCourse" << leg.trueCourse
       << "disabled" << leg.disabled
-      << "course" << leg.course << endl;
+      << "course" << leg.course << Qt::endl;
 
   out << "calculatedDistance" << leg.calculatedDistance
-      << "calculatedTrueCourse" << leg.calculatedTrueCourse << endl;
+      << "calculatedTrueCourse" << leg.calculatedTrueCourse << Qt::endl;
 
   out << "magvar" << leg.magvar
       << "theta" << leg.theta
       << "rho" << leg.rho
       << "distance" << leg.distance
-      << "time" << leg.time << endl;
+      << "time" << leg.time << Qt::endl;
 
   out << "altDescriptor" << leg.altRestriction.descriptor
       << "alt1" << leg.altRestriction.alt1
-      << "alt2" << leg.altRestriction.alt2 << endl;
+      << "alt2" << leg.altRestriction.alt2 << Qt::endl;
 
   out << "speedDescriptor" << leg.speedRestriction.descriptor
-      << "speed" << leg.speedRestriction.speed << endl;
+      << "speed" << leg.speedRestriction.speed << Qt::endl;
   return out;
 }
 

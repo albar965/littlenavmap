@@ -27,7 +27,6 @@
 #include <QObject>
 #include <QList>
 
-
 class SearchWidgetEventFilter;
 namespace atools {
 namespace gui {

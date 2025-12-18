@@ -41,21 +41,21 @@ class RouteAltitudeLeg;
  * Leg methods return invalid legs if unusable index.
  *
  * Example layout of the list:
- *  0	DEPARTURE (AIRPORT), distanceTo 0
- *  1	SID Leg 1 (RW)
- *  2	SID Leg 2
- *  3	WPT 1
- *  4	WPT 2
- *  4	WPT 3
- *  5	STAR Leg 1
- *  6	STAR Leg 2
- *  7	APPR Leg 1
- *  8	APPR Leg 2 (RW), distanceTo = totalDistance
- *  9	MISSED Leg 1, (excluded from total distance), distanceTo = distance to end of missed
- * 10	MISSED Leg 2,              "
- * 11	DESTINATION (AIRPORT), distanceTo = distance from "APPR Leg 2 (RW)"
- * 12	ALTERNATE 1 (distance calculated from dest airport)
- * 13	ALTERNATE 2               "
+ *  0 DEPARTURE (AIRPORT), distanceTo 0
+ *  1 SID Leg 1 (RW)
+ *  2 SID Leg 2
+ *  3 WPT 1
+ *  4 WPT 2
+ *  4 WPT 3
+ *  5 STAR Leg 1
+ *  6 STAR Leg 2
+ *  7 APPR Leg 1
+ *  8 APPR Leg 2 (RW), distanceTo = totalDistance
+ *  9 MISSED Leg 1, (excluded from total distance), distanceTo = distance to end of missed
+ * 10 MISSED Leg 2,              "
+ * 11 DESTINATION (AIRPORT), distanceTo = distance from "APPR Leg 2 (RW)"
+ * 12 ALTERNATE 1 (distance calculated from dest airport)
+ * 13 ALTERNATE 2               "
  */
 class Route :
   private QList<RouteLeg>

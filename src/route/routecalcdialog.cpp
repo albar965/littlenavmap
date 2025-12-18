@@ -34,8 +34,8 @@
 // Factor to put on costs for direct connections. Airways <-> Waypoints
 // Sync withAIRWAY_WAYPOINT_PREF_MIN and AIRWAY_WAYPOINT_PREF_MAX
 static const QList<float> DIRECT_COST_FACTORS({10.00f, 09.00f, 08.00f, 07.00f, 06.00f, 04.00f, 03.00f,
-                                                 02.00f, // Center/both
-                                                 01.50f, 01.30f, 01.20f, 01.15f, 01.10f, 01.05f, 01.00f});
+                                               02.00f,   // Center/both
+                                               01.50f, 01.30f, 01.20f, 01.15f, 01.10f, 01.05f, 01.00f});
 
 using atools::util::HtmlBuilder;
 

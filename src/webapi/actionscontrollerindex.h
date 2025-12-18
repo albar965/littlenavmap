@@ -10,7 +10,8 @@
 class ActionsControllerIndex
 {
 public:
-    static void registerQMetaTypes();
+  static void registerQMetaTypes();
+
 };
 
 #endif // ACTIONSCONTROLLERINDEX_H

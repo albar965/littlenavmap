@@ -105,7 +105,7 @@ struct MapProcedureRef
   MapProcedureRef(int airportIdParam, int runwayEndIdParam, int procIdParam, int transIdParam, int legIdParam,
                   proc::MapProcedureTypes type)
     : airportId(airportIdParam), runwayEndId(runwayEndIdParam), procedureId(procIdParam), transitionId(transIdParam), legId(legIdParam),
-      mapType(type)
+    mapType(type)
   {
   }
 

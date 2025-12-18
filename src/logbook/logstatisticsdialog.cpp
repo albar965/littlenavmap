@@ -538,7 +538,8 @@ void LogStatisticsDialog::initQueries()
            tr("Total simulator time\nhours"), tr("Total real time\nhours"), tr("Model"), tr("Type"), tr(
              "Registration")},
           {RIGHT, LEFT, RIGHT, RIGHT, RIGHT, LEFT, LEFT, LEFT},
-          {"cnt", "simulator", "dist", "time", "simtime", "aircraft_name", "aircraft_type", "aircraft_registration"}, 0, Qt::DescendingOrder,
+          {"cnt", "simulator", "dist", "time", "simtime", "aircraft_name", "aircraft_type", "aircraft_registration"}, 0,
+          Qt::DescendingOrder,
           "select count(1) as cnt, simulator, cast(round(sum(distance) * %1) as int) as dist, "
           "cast(sum((strftime('%s', destination_time) - strftime('%s', departure_time)) / 3600.) as double) as time, "
           "cast(sum(max(strftime('%s', destination_time_sim) - strftime('%s', departure_time_sim), 0) / 3600.) as double) as simtime, "

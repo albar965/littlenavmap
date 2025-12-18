@@ -86,7 +86,7 @@ void TextPlacement::calculateTextAlongLines(const QList<atools::geo::Line>& line
 
       // Get a safe properly ordered list of points to avoid issues with Mercator projection
       const QList<QPolygonF *> polylines = converter->createPolylines(LineString(line.getPos1(), line.getPos2()), screenRect,
-                                                                        false /* splitLongLines */);
+                                                                      false /* splitLongLines */);
 
       if(polylines.isEmpty())
         continue;
@@ -419,7 +419,7 @@ bool TextPlacement::findTextPosInternal(const Line& line, float distanceMeter, f
                                screenRect.topLeft()});
 
       QList<int> fullyVisibleValid /* Index into "pointsIdxValid". Fully within screen rect */,
-                   partiallyVisibleValid /* Index into "pointsIdxValid". Only touching screen rect */;
+                 partiallyVisibleValid /* Index into "pointsIdxValid". Only touching screen rect */;
       QTransform transform;
       for(int i = 0; i < pointsIdxValid.size(); i++)
       {

@@ -23,41 +23,49 @@
 
 #include <QDebug>
 
-AbstractActionsController::AbstractActionsController(QObject *parent, bool verboseParam, AbstractInfoBuilder* infoBuilder) : QObject(parent), verbose(verboseParam), infoBuilder(infoBuilder)
+AbstractActionsController::AbstractActionsController(QObject *parent, bool verboseParam,
+                                                     AbstractInfoBuilder *infoBuilder) : QObject(parent), verbose(verboseParam),
+  infoBuilder(infoBuilder)
 {
-    // qDebug() << Q_FUNC_INFO;
-}
-AbstractActionsController::~AbstractActionsController(){
-    // qDebug() << Q_FUNC_INFO;
-}
-WebApiResponse AbstractActionsController::defaultAction(WebApiRequest request){
-Q_UNUSED(request)
-    WebApiResponse response = getResponse();
-    // Example
-    response.body = "Default action";
-    response.status = 200;
-
-    return response;
-
+  // qDebug() << Q_FUNC_INFO;
 }
 
-WebApiResponse AbstractActionsController::notFoundAction(WebApiRequest request){
-Q_UNUSED(request)
+AbstractActionsController::~AbstractActionsController()
+{
+  // qDebug() << Q_FUNC_INFO;
+}
 
-    WebApiResponse response = this->getResponse();
+WebApiResponse AbstractActionsController::defaultAction(WebApiRequest request)
+{
+  Q_UNUSED(request)
+  WebApiResponse response = getResponse();
+  // Example
+  response.body = "Default action";
+  response.status = 200;
 
-    response.body = "Not found";
-    response.status = 404;
-
-    return response;
+  return response;
 
 }
 
-WebApiResponse AbstractActionsController::getResponse(){
+WebApiResponse AbstractActionsController::notFoundAction(WebApiRequest request)
+{
+  Q_UNUSED(request)
 
-    WebApiResponse response = WebApiResponse();
+  WebApiResponse response = this->getResponse();
 
-    response.headers.insert("Content-Type", infoBuilder->contentTypeHeader);
+  response.body = "Not found";
+  response.status = 404;
 
-    return response;
+  return response;
+
+}
+
+WebApiResponse AbstractActionsController::getResponse()
+{
+
+  WebApiResponse response = WebApiResponse();
+
+  response.headers.insert("Content-Type", infoBuilder->contentTypeHeader);
+
+  return response;
 }

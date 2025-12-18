@@ -102,7 +102,7 @@ int CsvExporter::selectionAsCsv(QTableView *view, bool header, bool rows, QStrin
           }
 
           stream << exporter.getResultSetRow(vars) +
-          (additionalHeader.isEmpty() || !additionalFields ? QString() : ";" + additionalFields(row).join(";")) << Qt::endl;
+            (additionalHeader.isEmpty() || !additionalFields ? QString() : ";" + additionalFields(row).join(";")) << Qt::endl;
 
           exported++;
         }
@@ -161,7 +161,7 @@ int CsvExporter::tableAsCsv(QTableView *view, bool header, QString& result,
     }
 
     stream << exporter.getResultSetRow(vars) +
-    (additionalHeader.isEmpty() || !additionalFields ? QString() : ";" + additionalFields(row).join(";")) << Qt::endl;
+      (additionalHeader.isEmpty() || !additionalFields ? QString() : ";" + additionalFields(row).join(";")) << Qt::endl;
 
     exported++;
   }

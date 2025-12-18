@@ -100,7 +100,7 @@ private:
           *actionHelipad = nullptr;
   QList<QAction *> allActions;
 
-  QActionGroup * actionGroupAddon = nullptr;
+  QActionGroup *actionGroupAddon = nullptr;
 
   /* Widget wrapper allowing to put an arbitrary widget into a menu */
   apinternal::AirportSliderAction *sliderActionRunwayLength = nullptr;

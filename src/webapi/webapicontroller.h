@@ -57,12 +57,11 @@ public:
   WebApiResponse service(WebApiRequest& request);
 
 private:
-
   /**
    * @brief already instanced controllers keyed
    * by controller name
    */
-  QMap<QString,QObject *> controllerInstances;
+  QMap<QString, QObject *> controllerInstances;
 
   /**
    * @brief return stored action controller instance
@@ -70,28 +69,31 @@ private:
    * @param controllerName
    * @return the controller instance
    */
-  QObject* getControllerInstance(QByteArray controllerName);
+  QObject *getControllerInstance(QByteArray controllerName);
 
   /**
    * @brief register available controllers for dynamic invocation
    */
   void registerControllers();
+
   /**
    * @brief register available info builders
    */
   void registerInfoBuilders();
+
   bool verbose = false;
 
   /**
    * @brief requested content-type info builder
    */
-  AbstractInfoBuilder* infoBuilder;
+  AbstractInfoBuilder *infoBuilder;
   /**
    * @brief create controller name from path string
    * @param path
    * @return the controller class name
    */
   QByteArray getControllerNameByPath(QByteArray path);
+
   /**
    * @brief create action name from path string
    * @param path
@@ -105,6 +107,7 @@ private:
    */
   void addCommonResponseHeaders(WebApiResponse& response);
   void deleteControllerInstance(QByteArray controllerName);
+
 };
 
 #endif // LNM_WebApiController_H

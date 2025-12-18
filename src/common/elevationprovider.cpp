@@ -106,7 +106,7 @@ void ElevationProvider::getElevations(atools::geo::LineString& elevations, const
     // The might not be complete and will be more complete on further iterations when we get a signal
     // from the elevation model
     const QList<GeoDataCoordinates> temp = marbleModel->heightProfile(line.getPos1().getLonX(), line.getPos1().getLatY(),
-                                                                        line.getPos2().getLonX(), line.getPos2().getLatY());
+                                                                      line.getPos2().getLonX(), line.getPos2().getLatY());
 
     // Limit long legs to a maximum of 2000 points - minimum of 1000 points
     int divisor = 1;

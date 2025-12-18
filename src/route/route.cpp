@@ -3938,45 +3938,45 @@ QString Route::buildDefaultFilenameShort(const QString& separator, const QString
 QDebug operator<<(QDebug out, const Route& route)
 {
   QDebugStateSaver saver(out);
-  out << route.getFlightplanConst().getProperties()  << Qt::endl  << Qt::endl;
+  out << route.getFlightplanConst().getProperties() << Qt::endl << Qt::endl;
 
-  out  << Qt::endl << "Route =================================================================="  << Qt::endl;
+  out << Qt::endl << "Route ==================================================================" << Qt::endl;
   for(int i = 0; i < route.size(); ++i)
-    out << "===" << i << route.value(i)  << Qt::endl;
+    out << "===" << i << route.value(i) << Qt::endl;
 
-  out  << Qt::endl << "Departure Parking ==========="  << Qt::endl;
-  out << "parking" << route.getDepartureParking()  << Qt::endl;
+  out << Qt::endl << "Departure Parking ===========" << Qt::endl;
+  out << "parking" << route.getDepartureParking() << Qt::endl;
 
-  out  << Qt::endl << "Departure Start ==========="  << Qt::endl;
-  out << "start" << route.getDepartureStart()  << Qt::endl;
+  out << Qt::endl << "Departure Start ===========" << Qt::endl;
+  out << "start" << route.getDepartureStart() << Qt::endl;
 
-  out  << Qt::endl << "Departure ==========="  << Qt::endl;
+  out << Qt::endl << "Departure ===========" << Qt::endl;
   out << "offset" << route.getDepartureAirportLegIndex();
-  out << route.getDepartureAirportLeg()  << Qt::endl;
+  out << route.getDepartureAirportLeg() << Qt::endl;
 
-  out  << Qt::endl << "Destination ==========="  << Qt::endl;
+  out << Qt::endl << "Destination ===========" << Qt::endl;
   out << "offset" << route.getDestinationAirportLegIndex();
-  out << route.getDestinationAirportLeg()  << Qt::endl;
+  out << route.getDestinationAirportLeg() << Qt::endl;
 
-  out  << Qt::endl << "Departure Procedure ==========="  << Qt::endl;
+  out << Qt::endl << "Departure Procedure ===========" << Qt::endl;
   out << "offset" << route.getSidLegsOffset();
-  out << route.getSidLegs()  << Qt::endl;
+  out << route.getSidLegs() << Qt::endl;
 
-  out << "STAR Procedure ==========="  << Qt::endl;
-  out << "offset" << route.getStarLegsOffset()  << Qt::endl;
-  out << route.getStarLegs()  << Qt::endl;
+  out << "STAR Procedure ===========" << Qt::endl;
+  out << "offset" << route.getStarLegsOffset() << Qt::endl;
+  out << route.getStarLegs() << Qt::endl;
 
-  out << "Arrival Procedure ========"  << Qt::endl;
-  out << "offset" << route.getApproachLegsOffset()  << Qt::endl;
-  out << route.getApproachLegs()  << Qt::endl;
+  out << "Arrival Procedure ========" << Qt::endl;
+  out << "offset" << route.getApproachLegsOffset() << Qt::endl;
+  out << route.getApproachLegs() << Qt::endl;
 
-  out << "Alternates ========"  << Qt::endl;
-  out << "offset" << route.getAlternateLegsOffset() << "num" << route.getNumAlternateLegs()  << Qt::endl;
-  out << "=================================================================="  << Qt::endl;
+  out << "Alternates ========" << Qt::endl;
+  out << "offset" << route.getAlternateLegsOffset() << "num" << route.getNumAlternateLegs() << Qt::endl;
+  out << "==================================================================" << Qt::endl;
 
-  out  << Qt::endl << "RouteAltitudeLegs =================================================================="  << Qt::endl;
+  out << Qt::endl << "RouteAltitudeLegs ==================================================================" << Qt::endl;
   out << route.getAltitudeLegs();
-  out << "=================================================================="  << Qt::endl;
+  out << "==================================================================" << Qt::endl;
 
   return out;
 }

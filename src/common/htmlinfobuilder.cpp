@@ -4762,7 +4762,7 @@ void HtmlInfoBuilder::aircraftProgressText(const atools::fs::sc::SimConnectAircr
           otherTrue = tr(", %1").arg(Unit::speedKtsOther(aircraft.getTrueAirspeedKts()).join(tr(", ")));
 
         html.id(pid::SPEED_TRUE).row2(longDisplay ? tr("True:") : tr("True Airspeed:"),
-                                        Unit::speedKts(aircraft.getTrueAirspeedKts()) % otherTrue);
+                                      Unit::speedKts(aircraft.getTrueAirspeedKts()) % otherTrue);
       }
 
       if(!aircraft.isAnyBoat())
