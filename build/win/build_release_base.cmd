@@ -23,6 +23,7 @@ mkdir "%APROJECTS%\deploy\Little Navconnect %WINARCH%"
 
 setlocal
 
+set QTDIR=%QTDIR_SHARED%
 set PATH=%PATH%;%PATH_SHARED%
 
 rem ===========================================================================

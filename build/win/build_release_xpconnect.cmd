@@ -1,4 +1,4 @@
-@echo off
+REM ~ @echo off
 
 echo ============================================================================================
 echo ======== build_release_xpconnect.cmd =======================================================
@@ -29,11 +29,16 @@ if defined ATOOLS_LIB_PATH ( echo ATOOLS_LIB_PATH=%ATOOLS_LIB_PATH% ) else ( set
 if defined DEPLOY_BASE ( echo DEPLOY_BASE=%DEPLOY_BASE% ) else ( set DEPLOY_BASE=%APROJECTS%\deploy)
 if defined ATOOLS_GIT_PATH ( echo ATOOLS_GIT_PATH=%ATOOLS_GIT_PATH% ) else ( set ATOOLS_GIT_PATH=C:\Git\bin\git)
 
+set QT_VERSION=6.5.3
+
 rem Windows/qmake cannot deal with paths containing spaces/quotes - defines these variables in the Windows GUI
 rem if defined XPSDK_BASE ( echo %XPSDK_BASE% ) else ( set XPSDK_BASE="%APROJECTS%\X-Plane SDK")
 
 rem Defines the used Qt for Xpconnect
-if defined PATH_STATIC ( echo PATH_STATIC=%PATH_STATIC% ) else ( set PATH_STATIC=C:\msys64\mingw64\qt6-static\bin;C:\msys64\mingw64\bin)
+if defined QTDIR_STATIC ( echo QTDIR_STATIC=%QTDIR_STATIC% ) else ( set QTDIR_STATIC=%APROJECTS%\qt-%QT_VERSION%-static)
+if defined PATH_STATIC ( echo PATH_STATIC=%PATH_STATIC% ) else ( set PATH_STATIC=C:\Qt\Tools\mingw1120_64\bin\;%QTDIR_STATIC%\bin)
+
+
 
 rem === Build littlexpconnect =============================
 
@@ -54,7 +59,11 @@ mkdir "%APROJECTS%\build-atools-%CONF_TYPE%"
 pushd "%APROJECTS%\build-atools-%CONF_TYPE%"
 if errorlevel 1 goto :err
 
+set QTDIR=%QTDIR_STATIC%
 set PATH=%PATH%;%PATH_STATIC%
+
+echo QTDIR=%QTDIR%
+echo PATH=%PATH%
 
 set ATOOLS_NO_FS=true
 set ATOOLS_NO_GRIB=true
