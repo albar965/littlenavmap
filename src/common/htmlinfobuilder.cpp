@@ -4356,7 +4356,7 @@ void HtmlInfoBuilder::aircraftProgressText(const atools::fs::sc::SimConnectAircr
           recHtml.textBr(tr(", ")).
           a(tr("Map"), QString("lnm://show?lonx=%1&laty=%2").arg(recPos.getLonX()).arg(recPos.getLatY()), LINK_FLAGS);
           recHtml.text(tr(", ")).
-          a(tr("Info"), QString("lnm://info?id=%1&type=%2").arg(id).arg(procMapType), LINK_FLAGS);
+          a(tr("Info"), QString("lnm://info?id=%1&type=%2").arg(id).arg(procMapType.asFlagType()), LINK_FLAGS);
         }
         else if(recPos.isValid())
           // Only map

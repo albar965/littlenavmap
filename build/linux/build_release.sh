@@ -19,7 +19,7 @@ if [ ! -d "$APROJECTS" ]; then echo "$APROJECTS" does not exist ; exit 1 ; fi
 # See the *.pro project files for more information.
 #
 # Example:
-# export QMAKE_STATIC=~/Projekte/qt-6.5.3-release/bin/qmake
+# export QMAKE_STATIC=~/Projekte/qt-6.5.99-release/bin/qmake
 # export MARBLE_LIB_PATH=~/Programme/Marble-debug/lib
 # export MARBLE_INC_PATH=~/Programme/Marble-debug/include
 
@@ -34,10 +34,10 @@ export HELP_BASE=${HELP_BASE:-"${APROJECTS}/little_navmap_help"}
 export ATOOLS_NO_CRASHHANDLER=${ATOOLS_NO_CRASHHANDLER:-"true"}
 
 # Defines the used Qt for all builds
-export QMAKE_SHARED=${QMAKE_SHARED:-"${HOME}/Qt/6.5.3/gcc_64/bin/qmake"}
+export QMAKE_SHARED=${QMAKE_SHARED:-"${HOME}/Qt/${QT_VERSION}/gcc_64/bin/qmake"}
 
-# Defines the used Qt for Xpconnect (/mnt/disk/qt-6.5.3-release/bin/qmake)
-export QMAKE_STATIC=${QMAKE_STATIC:-"${APROJECTS}/qt-6.5.3-release/bin/qmake"}
+# Defines the used Qt for Xpconnect (/mnt/disk/qt-6.5.99-static/bin/qmake)
+export QMAKE_STATIC=${QMAKE_STATIC:-"${APROJECTS}/qt-${QT_VERSION}-static/bin/qmake"}
 
 # Do not change the DEPLOY_BASE since some scripts depend on it
 export DEPLOY_BASE="${APROJECTS}/deploy"

@@ -1,13 +1,13 @@
 @echo off
 
 if defined APROJECTS ( echo APROJECTS=%APROJECTS% ) else ( echo APROJECTS not set && exit /b 1 )
+if defined QT_VERSION ( echo QT_VERSION=%QT_VERSION% ) else ( echo QT_VERSION not set && exit /b 1 )
 
 setlocal enableextensions
 
 setlocal
 
 rem Defines the used Qt for all builds
-set QT_VERSION=6.5.3
 if defined QTDIR_SHARED ( echo QTDIR_SHARED=%QTDIR_SHARED% ) else ( set QTDIR_SHARED=C:\Qt\%QT_VERSION%\mingw_64)
 if defined PATH_SHARED ( echo PATH_SHARED=%PATH_SHARED% ) else ( set PATH_SHARED=C:\Qt\Tools\CMake_64\bin;C:\Qt\Tools\mingw1120_64\bin\;%QTDIR_SHARED%\bin)
 

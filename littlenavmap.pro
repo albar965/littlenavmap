@@ -133,10 +133,6 @@ isEmpty(MARBLE_INC_PATH) : MARBLE_INC_PATH=$$PWD/../Marble-$$CONF_TYPE/include
 isEmpty(MARBLE_LIB_PATH) : MARBLE_LIB_PATH=$$PWD/../Marble-$$CONF_TYPE/lib
 }
 
-# QT_INSTALL_PREFIX: C:/Qt/6.5.3/mingw81_32
-# C:\Qt\Tools\OpenSSL\Win_x86\bin\
-# win32: isEmpty(OPENSSL_PATH) : OPENSSL_PATH=$$[QT_INSTALL_PREFIX])\..\..\Tools\OpenSSL\Win_x86\bin\
-
 # =======================================================================
 # Set compiler flags and paths
 

@@ -7,6 +7,7 @@ echo ===========================================================================
 setlocal enableextensions
 
 if defined APROJECTS ( echo APROJECTS=%APROJECTS% ) else ( echo APROJECTS not set && exit /b 1 )
+if defined QT_VERSION ( echo QT_VERSION=%QT_VERSION% ) else ( echo QT_VERSION not set && exit /b 1 )
 
 rem =============================================================================
 rem Set the required environment variable APROJECTS to the base directory for
@@ -28,8 +29,6 @@ if defined ATOOLS_INC_PATH ( echo ATOOLS_INC_PATH=%ATOOLS_INC_PATH% ) else ( set
 if defined ATOOLS_LIB_PATH ( echo ATOOLS_LIB_PATH=%ATOOLS_LIB_PATH% ) else ( set ATOOLS_LIB_PATH=%APROJECTS%\build-atools-%CONF_TYPE%)
 if defined DEPLOY_BASE ( echo DEPLOY_BASE=%DEPLOY_BASE% ) else ( set DEPLOY_BASE=%APROJECTS%\deploy)
 if defined ATOOLS_GIT_PATH ( echo ATOOLS_GIT_PATH=%ATOOLS_GIT_PATH% ) else ( set ATOOLS_GIT_PATH=C:\Git\bin\git)
-
-set QT_VERSION=6.5.3
 
 rem Windows/qmake cannot deal with paths containing spaces/quotes - defines these variables in the Windows GUI
 rem if defined XPSDK_BASE ( echo %XPSDK_BASE% ) else ( set XPSDK_BASE="%APROJECTS%\X-Plane SDK")
