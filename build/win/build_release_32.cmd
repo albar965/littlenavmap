@@ -52,7 +52,7 @@ rem if defined ATOOLS_SIMCONNECT_PATH ( echo ATOOLS_SIMCONNECT_PATH ) else ( set
 rem if defined XPSDK_BASE ( echo %XPSDK_BASE% ) else ( set XPSDK_BASE="%APROJECTS%\X-Plane SDK")
 
 rem Defines the used Qt for all builds
-if defined PATH_SHARED ( echo PATH_SHARED=%PATH_SHARED% ) else ( set PATH_SHARED=C:\Qt\$QT_VERSION\mingw_64\bin;C:\Qt\Tools\mingw1120_64\bin)
+if defined PATH_SHARED ( echo PATH_SHARED=%PATH_SHARED% ) else ( set PATH_SHARED=C:\Qt\%QT_VERSION%\mingw_64\bin;C:\Qt\Tools\mingw1120_64\bin)
 
 call build_release_base.cmd nopause
 if errorlevel 1 goto :err
