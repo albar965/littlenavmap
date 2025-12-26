@@ -38,24 +38,7 @@ XpconnectInstaller::XpconnectInstaller(QWidget *parentWidget)
 
 QString XpconnectInstaller::xpconnectName()
 {
-#ifdef Q_OS_MACOS
-
-  if(QSysInfo::productVersion().toFloat() >= 10.14)
-    // "Little Xpconnect arm64":
-    // This is for Apple computers having an Apple Silicon or an Intel CPU.
-    // It supports only newer macOS releases from Mojave 10.14 and later.
-    return "Little Xpconnect arm64";
-  else
-    // "Little Xpconnect x86":
-    // This is for Apple computers having an Intel CPU. This supports
-    // older macOS releases from High Sierra 10.13.
-    return "Little Xpconnect x86";
-
-#else
-  return "Little Xpconnect";
-
-#endif
-
+  return QStringLiteral("Little Xpconnect");
 }
 
 QString XpconnectInstaller::xpconnectPath()
