@@ -119,7 +119,6 @@ const static int MAX_STATUS_MESSAGES = 20;
 const static int CLOCK_TIMER_MS = 1000;
 const static int RENDER_STATUS_TIMER_MS = 5000;
 const static int SHRINK_STATUS_BAR_TIMER_MS = 10000;
-const static int AIRCRAFT_TRAIL_MAXPOINTS_WARNING = 100000;
 
 using namespace Marble;
 using atools::settings::Settings;

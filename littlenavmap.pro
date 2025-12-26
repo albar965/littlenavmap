@@ -193,6 +193,7 @@ macx {
   CONFIG(debug, debug|release) : MACDEPLOY_FLAGS += -no-strip
 
   LIBS += -L$$MARBLE_LIB_PATH -lmarblewidget-lnm-qt6 -L$$ATOOLS_LIB_PATH -latools  -lz
+  QMAKE_MACOSX_DEPLOYMENT_TARGET = 11.0
 }
 
 # Cpptrace ==========================
@@ -896,12 +897,6 @@ macx {
          -change  $$INSTALL_MARBLE_DYLIB \
          @executable_path/../Frameworks/libmarblewidget-lnm-qt6.dylib $$OUT_PWD/littlenavmap.app/Contents/PlugIns
 
-  # Needs "-rpath" in GUI
-#  INSTALL_MARBLE_DYLIB_CMD=install_name_tool \
-#         -change  $$INSTALL_MARBLE_DYLIB \
-#         -rpath @executable_path/../Frameworks/libmarblewidget-qt5.25.dylib $$OUT_PWD/littlenavmap.app/Contents/PlugIns
-
-
   DEPLOY_APP=\"$$PWD/../deploy/Little Navmap.app\"
   DEPLOY_DIR=\"$$PWD/../deploy\"
 
@@ -909,8 +904,11 @@ macx {
 
   deploy.commands = rm -Rfv $$DEPLOY_APP &&
   deploy.commands += mkdir -p $$OUT_PWD/littlenavmap.app/Contents/PlugIns &&
+  deploy.commands += mkdir -p $$OUT_PWD/littlenavmap.app/Contents/Frameworks &&
   exists($$DATABASE_BASE) : deploy.commands += cp -Rvf $$DATABASE_BASE $$OUT_PWD/littlenavmap.app/Contents/MacOS &&
   exists($$HELP_BASE) : deploy.commands += cp -Rvf $$HELP_BASE/* $$OUT_PWD/littlenavmap.app/Contents/MacOS/help &&
+
+  deploy.commands += cp -Rfv $$MARBLE_LIB_PATH/libmarblewidget-lnm-qt6*.dylib $$OUT_PWD/littlenavmap.app/Contents/Frameworks &&
   deploy.commands += cp -Rvf \
     $$MARBLE_LIB_PATH/plugins/libCachePlugin.so \
     $$MARBLE_LIB_PATH/plugins/libAtmospherePlugin.so \
@@ -933,20 +931,17 @@ macx {
   deploy.commands +=  $$INSTALL_MARBLE_DYLIB_CMD/libOverviewMap.so &&
   deploy.commands += $$[QT_INSTALL_BINS]/macdeployqt littlenavmap.app $$MACDEPLOY_FLAGS &&
   deploy.commands += cp -vf $$PWD/desktop/\"Little Navmap Portable macOS.command\" $$DEPLOY_DIR/\"Little Navmap Portable.command\" &&
-  deploy.commands += cp -rfv $$OUT_PWD/littlenavmap.app $$DEPLOY_APP &&
+  deploy.commands += cp -Rfv $$OUT_PWD/littlenavmap.app $$DEPLOY_APP &&
   deploy.commands += cp -fv $$[QT_INSTALL_TRANSLATIONS]/qt_??.qm  $$DEPLOY_APP/Contents/MacOS &&
   deploy.commands += cp -fv $$[QT_INSTALL_TRANSLATIONS]/qt_??_??.qm  $$DEPLOY_APP/Contents/MacOS &&
   deploy.commands += cp -fv $$[QT_INSTALL_TRANSLATIONS]/qtbase*.qm  $$DEPLOY_APP/Contents/MacOS &&
-  deploy.commands += cp -Rv $$PWD/CHANGELOG.txt $$DEPLOY_APP/Contents/MacOS &&
+  deploy.commands += cp -fv $$PWD/CHANGELOG.txt $$DEPLOY_APP/Contents/MacOS &&
   deploy.commands += cp -fv $$PWD/build/mac/Info.plist $$ $$DEPLOY_APP/Contents &&
   deploy.commands += echo $$VERSION_NUMBER > $$DEPLOY_DIR/version-LittleNavmap.txt &&
   deploy.commands += echo $$GIT_REVISION_FULL > $$DEPLOY_DIR/revision-LittleNavmap.txt &&
   deploy.commands += cp -fv $$PWD/LICENSE.txt $$DEPLOY_DIR &&
   deploy.commands += cp -fv $$PWD/README.txt $$DEPLOY_DIR/README-LittleNavmap.txt &&
   deploy.commands += cp -fv $$PWD/CHANGELOG.txt $$DEPLOY_DIR/CHANGELOG-LittleNavmap.txt
-
-
-# -verbose=3
 }
 
 # Windows specific deploy target to "deploy\Little Navmap win64"

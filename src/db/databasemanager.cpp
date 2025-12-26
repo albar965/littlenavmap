@@ -62,9 +62,11 @@ using atools::fs::FsPaths;
 // Maximum age of database before showing a warning dialog
 const static int MAX_AGE_DAYS = 60;
 
+#ifdef Q_OS_WIN
 // Note dialog letting user know about loading time
 const static int SIMCONNECT_LOADING_MINUTES_MIN = 10;
 const static int SIMCONNECT_LOADING_MINUTES_MAX = 15;
+#endif
 
 DatabaseManager::DatabaseManager(MainWindow *parent)
   : QObject(parent), mainWindow(parent)
