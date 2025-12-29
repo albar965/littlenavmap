@@ -348,6 +348,8 @@ Filename: "{app}\CHANGELOG.txt"; Description: "{cm:ChangelogMessage}"; Flags: no
   Filename: "{tmp}\vcredist_x86.exe"; StatusMsg: "{cm:InstallingRedistMessage}"; Parameters: "/Q"; Flags: runascurrentuser waituntilterminated
 #endif
 
+; ==========================================================================
+// Ask if running program should be terminated
 [Code]
 function InitializeUninstall(): Boolean;
   var ErrorCode: Integer;
@@ -358,9 +360,7 @@ begin
   result := True;
 end;
 
-; ==========================================================================
-; Ask to delete 'ABarthel' settings and the Marble cache files on uninstall
-[Code]
+// Ask to delete 'ABarthel' settings and the Marble cache files on uninstall
 procedure CurUninstallStepChanged(CurUninstallStep : TUninstallStep);
 var
   appdata : string;
