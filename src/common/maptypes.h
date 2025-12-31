@@ -217,6 +217,27 @@ struct MapBase
   {
   }
 
+  MapBase(const MapBase& other)
+  {
+    this->operator=(other);
+  }
+
+  MapBase(const MapBase && other)
+  {
+    id = std::move(other.id);
+    position = std::move(other.position);
+    objType = std::move(other.objType);
+  }
+
+  MapBase& operator=(const MapBase& other)
+  {
+    id = other.id;
+    position = other.position;
+    objType = other.objType;
+
+    return *this;
+  }
+
   int id;
   atools::geo::Pos position;
 
@@ -320,20 +341,6 @@ struct MapBase
   map::MapType getTypeEnum() const
   {
     return objType;
-  }
-
-  MapBase(const MapBase& other)
-  {
-    this->operator=(other);
-  }
-
-  MapBase& operator=(const MapBase& other)
-  {
-    id = other.id;
-    position = other.position;
-    objType = other.objType;
-
-    return *this;
   }
 
 protected:
@@ -1905,13 +1912,22 @@ int getNextUserFeatureId();
 } // namespace map
 
 /* Type info */
+/* Produces error static assertion failed: map::MapBase is neither copy- nor move-constructible, so cannot be Q_RELOCATABLE_TYPE
+ * QTypeInfo<TYPE>::isRelocatable * std::is_copy_constructible_v<TYPE > */
+// static_assert(std::is_copy_constructible<map::MapBase>);
+#if QT_VERSION < QT_VERSION_CHECK(6, 8, 0)
+Q_DECLARE_TYPEINFO(map::MapBase, Q_PRIMITIVE_TYPE);
+#else
+Q_DECLARE_TYPEINFO(map::MapBase, Q_MOVABLE_TYPE);
+#endif
+
+
 Q_DECLARE_TYPEINFO(map::MapAirport, Q_MOVABLE_TYPE);
 Q_DECLARE_TYPEINFO(map::MapAirportMsa, Q_MOVABLE_TYPE);
 Q_DECLARE_TYPEINFO(map::MapAirspace, Q_MOVABLE_TYPE);
 Q_DECLARE_TYPEINFO(map::MapAirway, Q_MOVABLE_TYPE);
 Q_DECLARE_TYPEINFO(map::MapAirwayWaypoint, Q_MOVABLE_TYPE);
 Q_DECLARE_TYPEINFO(map::MapApron, Q_MOVABLE_TYPE);
-Q_DECLARE_TYPEINFO(map::MapBase, Q_PRIMITIVE_TYPE);
 Q_DECLARE_TYPEINFO(map::MapHelipad, Q_MOVABLE_TYPE);
 Q_DECLARE_TYPEINFO(map::MapHolding, Q_MOVABLE_TYPE);
 Q_DECLARE_TYPEINFO(map::MapIls, Q_MOVABLE_TYPE);

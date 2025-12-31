@@ -80,7 +80,7 @@ VERSION_NUMBER=3.1.0.develop
 
 QT += core gui sql xml network svg printsupport widgets
 
-CONFIG += build_all c++17
+CONFIG += build_all c++20
 CONFIG -= debug_and_release debug_and_release_target
 
 TARGET = littlenavmap
