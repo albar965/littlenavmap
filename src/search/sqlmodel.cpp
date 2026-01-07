@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2025 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2026 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -297,7 +297,7 @@ void SqlModel::filter(const Column *col, const QVariant& variantDisp, const QVar
       }
       else
         // Min and max values set - use range and leave newVariant invalid
-        oper = QString("between %1 and %2").arg(variantDisp.toInt()).arg(maxValue.toInt());
+        oper = QStringLiteral("between %1 and %2").arg(variantDisp.toInt()).arg(maxValue.toInt());
     }
     else if(!col->getCondition().isEmpty())
     {
@@ -503,7 +503,7 @@ QString SqlModel::buildColumnList(const atools::sql::SqlRecord& tableCols)
   {
     if(!col->getSqlFunc().isEmpty())
       // Use SQL function as column if defined
-      colNames.append(QString("(%1) as %2").arg(col->getSqlFunc()).arg(col->getColumnName()));
+      colNames.append(QStringLiteral("(%1) as %2").arg(col->getSqlFunc()).arg(col->getColumnName()));
     else if(col->isDistance() || !tableCols.contains(col->getColumnName()))
       // Add null for special distance columns
       // Null for columns which do not exist in the database
@@ -735,7 +735,7 @@ QString SqlModel::buildWhere(const atools::sql::SqlRecord& tableCols, QList<cons
                  arg(rect.at(1).getBottomRight().getLatY()).arg(rect.at(1).getTopLeft().getLatY());
     }
     else
-      rectCond = QString("(lonx between %1 and %2 and laty between %3 and %4)").
+      rectCond = QStringLiteral("(lonx between %1 and %2 and laty between %3 and %4)").
                  arg(boundingRect.getTopLeft().getLonX()).arg(boundingRect.getBottomRight().getLonX()).
                  arg(boundingRect.getBottomRight().getLatY()).arg(boundingRect.getTopLeft().getLatY());
 

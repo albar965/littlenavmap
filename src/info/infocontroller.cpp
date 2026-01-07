@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2025 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2026 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -504,7 +504,7 @@ void InfoController::saveState() const
   atools::settings::Settings& settings = atools::settings::Settings::instance();
   QStringList refList;
   for(const map::MapRef& ref : refs)
-    refList.append(QString("%1;%2").arg(ref.id).arg(ref.objType));
+    refList.append(QStringLiteral("%1;%2").arg(ref.id).arg(ref.objType));
   settings.setValue(lnm::INFOWINDOW_CURRENTMAPOBJECTS, refList.join(";"));
 
   // Save airspaces =====================================================
@@ -513,7 +513,7 @@ void InfoController::saveState() const
   {
     // Do not save online airspace ids since they will change on next startup
     if(!airspace.isOnline())
-      refList.append(QString("%1;%2").arg(airspace.id).arg(airspace.src));
+      refList.append(QStringLiteral("%1;%2").arg(airspace.id).arg(airspace.src));
   }
   settings.setValue(lnm::INFOWINDOW_CURRENTAIRSPACES, refList.join(";"));
 

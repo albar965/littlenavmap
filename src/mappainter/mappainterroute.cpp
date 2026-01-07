@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2025 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2026 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -1732,7 +1732,7 @@ void MapPainterRoute::paintProcedurePoint(QSet<map::MapRef>& idMap, const proc::
 
   QStringList texts, restrTexts;
 #ifdef DEBUG_INFORMATION_PROCEDURE_INDEX
-  texts.append(QString("#%1 ").arg(index + legsRouteOffset));
+  texts.append(QStringLiteral("#%1 ").arg(index + legsRouteOffset));
 #endif
 
   float x = 0, y = 0;

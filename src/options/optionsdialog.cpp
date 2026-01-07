@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2025 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2026 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -967,7 +967,8 @@ void OptionsDialog::buttonBoxClicked(QAbstractButton *button)
   }
   else if(button == ui->buttonBoxOptions->button(QDialogButtonBox::Help))
     HelpHandler::openHelpUrlWeb(this,
-                                lnm::helpOnlineUrl + QString("OPTIONS.html#page%1").arg(ui->stackedWidgetOptions->currentIndex() + 1),
+                                lnm::helpOnlineUrl +
+                                QStringLiteral("OPTIONS.html#page%1").arg(ui->stackedWidgetOptions->currentIndex() + 1),
                                 lnm::helpLanguageOnline());
   else if(button == ui->buttonBoxOptions->button(QDialogButtonBox::Cancel))
     reject();
@@ -3244,7 +3245,7 @@ void OptionsDialog::mapboxUserMapClicked()
                           "OPTIONS.html#mapboxtheme");
 
     // Prefill with present keys ==============
-    dialog.setText(QString("mapbox://styles/%1/%2").arg(userNameItem->text()).arg(userStyleItem->text()));
+    dialog.setText(QStringLiteral("mapbox://styles/%1/%2").arg(userNameItem->text()).arg(userStyleItem->text()));
     dialog.setText2(tokenItem->text());
 
     if(dialog.exec() == QDialog::Accepted)

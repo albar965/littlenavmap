@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2025 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2026 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -1941,7 +1941,7 @@ QTreeWidgetItem *ProcedureSearch::buildLegItem(const MapProcedureLeg& leg)
     remarkStr.append(QObject::tr("Related: %1").arg(related.join(QObject::tr(", "))));
 
 #ifdef DEBUG_INFORMATION
-  remarkStr.append(QString(" | leg_id = %1 approach_id = %2 transition_id = %3").
+  remarkStr.append(QStringLiteral(" | leg_id = %1 approach_id = %2 transition_id = %3").
                    arg(leg.legId).arg(leg.procedureId).arg(leg.transitionId));
 #endif
   texts << remarkStr.join(tr(", "));

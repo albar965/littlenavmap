@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2025 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2026 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -858,7 +858,7 @@ void MapPainterAirport::drawAirportDiagram(const map::MapAirport& airport)
         if(runway.width > 8.f)
           // Skip dummy lines where the runway is done by photo scenery or similar
           runwayText.append(tr(" x ") % QString::number(Unit::distShortFeetF(runway.width), 'f', 0));
-        runwayText.append(" " % Unit::getUnitShortDistStr());
+        runwayText.append(QStringLiteral(" ") % Unit::getUnitShortDistStr());
 
         // Add light indicator
         if(!runway.edgeLight.isEmpty())
@@ -1197,7 +1197,7 @@ QString MapPainterAirport::parkingNameForSize(const map::MapParking& parking, fl
   QString text;
   if(parking.number != -1)
     // FSX/P3D style names =========
-    text = map::parkingName(parking.name) % " " % QLocale().toString(parking.number) % parking.suffix;
+    text = map::parkingName(parking.name) % QStringLiteral(" ") % QLocale().toString(parking.number) % parking.suffix;
   else if(!parking.name.isEmpty())
     // X-Plane style names =========
     text = parking.name;

@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2025 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2026 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -367,7 +367,7 @@ QString MapTooltip::buildTooltip(const map::MapResult& mapSearchResult, const at
           info.windText(winds, html, map::INVALID_ALTITUDE_VALUE, false /* table */);
 
 #ifdef DEBUG_INFORMATION_WIND
-          html.hr().small(QString("Pos(%1, %2), alt(%3)").
+          html.hr().small(QStringLiteral("Pos(%1, %2), alt(%3)").
                           arg(mapSearchResult.windPos.getLonX()).arg(mapSearchResult.windPos.getLatY()).
                           arg(windReporter->getAltitudeFt(), 0, 'f', 2)).br();
 

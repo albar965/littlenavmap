@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2025 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2026 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -147,11 +147,11 @@ bool checkCoordinates(QString& message, const QString& text, atools::geo::Pos *p
 
 QString yearVariant(QString dateTimeFormat)
 {
-  const static QRegularExpression YEAR_REGEXP("\\byy\\b");
-  if(dateTimeFormat.contains("yyyy"))
-    return dateTimeFormat.replace("yyyy", "yy");
+  const static QRegularExpression YEAR_REGEXP(QStringLiteral("\\byy\\b"));
+  if(dateTimeFormat.contains(QStringLiteral("yyyy")))
+    return dateTimeFormat.replace(QStringLiteral("yyyy"), QStringLiteral("yy"));
   else if(dateTimeFormat.contains(YEAR_REGEXP))
-    return dateTimeFormat.replace("yy", "yyyy");
+    return dateTimeFormat.replace(QStringLiteral("yy"), QStringLiteral("yyyy"));
 
   return dateTimeFormat;
 }
@@ -189,10 +189,10 @@ void initTranslateableTexts()
   const QStringList temp(dateTimeFormats);
   for(const QString& t : temp)
   {
-    if(!t.endsWith("t"))
+    if(!t.endsWith(QStringLiteral("t")))
     {
-      dateTimeFormats.append(t + " t");
-      dateTimeFormats.append(t + "t");
+      dateTimeFormats.append(t + QStringLiteral(" t"));
+      dateTimeFormats.append(t + QStringLiteral("t"));
     }
   }
 #ifdef DEBUG_INFORMATION
@@ -305,14 +305,14 @@ QString courseText(float magCourse, float trueCourse, bool magBold, bool magBig,
   // Formatting for magnetic course
   QString style, styleEnd;
   if(magBold)
-    style.append("<b>");
+    style.append(QStringLiteral("<b>"));
   if(magBig)
-    style.append("<big>");
+    style.append(QStringLiteral("<big>"));
 
   if(magBig)
-    styleEnd.append("</big>");
+    styleEnd.append(QStringLiteral("</big>"));
   if(magBold)
-    styleEnd.append("</b>");
+    styleEnd.append(QStringLiteral("</b>"));
 
   if(atools::almostEqual(magCourse, trueCourse, 1.5f))
   {
@@ -375,7 +375,7 @@ QString courseTextNarrow(float magCourse, float trueCourse)
 QString formatDateTimeSeconds(const QDateTime& datetime, bool overrideLocale)
 {
   QString dateTimeStr = overrideLocale ?
-                        "MM/dd/yy h:mm:ss AP" :
+                        QStringLiteral("MM/dd/yy h:mm:ss AP") :
                         QObject::tr("dd.MM.yy hh:mm:ss", "Translate to short date and time format in your language with seconds."
                                                          "See https://doc.qt.io/qt-5/qtime.html#toString and "
                                                          "https://doc.qt.io/qt-5/qdate.html#toString-2 "

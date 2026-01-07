@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2025 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2026 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -96,16 +96,16 @@ StyleHandler::StyleHandler(QMainWindow *mainWindowParam)
   // Add stylesheet for better checkbox radio button and toolbutton visibility
   QString darkStyleSheet(
     // Menu item separator ===============
-    QString("QMenu::separator { background-color: %1; }").arg(darkPalette.color(QPalette::Light).name()) %
+    QStringLiteral("QMenu::separator { background-color: %1; }").arg(darkPalette.color(QPalette::Light).name()) %
 
     // Toolbutton checked background ===============
-    QString("QToolButton:checked { background-color: %1; }").arg(darkPalette.color(QPalette::Light).name()) %
-    QString("QPushButton:checked { background-color: %1; }").arg(darkPalette.color(QPalette::Light).name()) %
+    QStringLiteral("QToolButton:checked { background-color: %1; }").arg(darkPalette.color(QPalette::Light).name()) %
+    QStringLiteral("QPushButton:checked { background-color: %1; }").arg(darkPalette.color(QPalette::Light).name()) %
 
     // Thicker frame for selected menu items with icons
     "QMenu::icon:checked:enabled { background: #808080; border: 2px solid darkgray; border-radius: 2px; }" %
     "QMenu::icon:checked:disabled { background: #808080; border: 2px solid dimgray; border-radius: 2px; }" %
-    QString("QMenu::item:selected { border-color: lightgray; background: %1; }").arg(darkPalette.color(QPalette::Highlight).name()) %
+    QStringLiteral("QMenu::item:selected { border-color: lightgray; background: %1; }").arg(darkPalette.color(QPalette::Highlight).name()) %
     "QMenu::item { padding: 2px 2px; }" %
 
     // Checkbox images ====================

@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2025 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2026 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -442,7 +442,7 @@ bool TextPlacement::findTextPosInternal(const Line& line, float distanceMeter, f
 #ifdef DEBUG_TEXPLACEMENT_PAINT
           painter->setPen(QPen(Qt::red, 0.8));
           painter->drawPolyline(textPolygon);
-          painter->drawText(textPolygon.constFirst(), QString("ptIdx %1 i %2").arg(pointsIdxValid.at(i)).arg(i));
+          painter->drawText(textPolygon.constFirst(), QStringLiteral("ptIdx %1 i %2").arg(pointsIdxValid.at(i)).arg(i));
 #endif
         }
         // Check partial visibility ================
@@ -452,7 +452,7 @@ bool TextPlacement::findTextPosInternal(const Line& line, float distanceMeter, f
 #ifdef DEBUG_TEXPLACEMENT_PAINT
           painter->setPen(QPen(Qt::blue, 0.8, Qt::DotLine));
           painter->drawPolyline(textPolygon);
-          painter->drawText(textPolygon.constFirst(), QString("ptIdx %1 i %2").arg(pointsIdxValid.at(i)).arg(i));
+          painter->drawText(textPolygon.constFirst(), QStringLiteral("ptIdx %1 i %2").arg(pointsIdxValid.at(i)).arg(i));
 #endif
         }
       }

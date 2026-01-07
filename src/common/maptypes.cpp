@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2025 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2026 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -67,194 +67,194 @@ void initTranslateableTexts()
 {
   surfaceMap = QHash<QString, QString>(
     {
-      {"C", QObject::tr("Concrete")},
-      {"G", QObject::tr("Grass")},
-      {"W", QObject::tr("Water")},
-      {"A", QObject::tr("Asphalt")},
-      {"CE", QObject::tr("Cement")},
-      {"CL", QObject::tr("Clay")},
-      {"SN", QObject::tr("Snow")},
-      {"I", QObject::tr("Ice")},
-      {"D", QObject::tr("Dirt")},
-      {"CR", QObject::tr("Coral")},
-      {"GR", QObject::tr("Gravel")},
-      {"OT", QObject::tr("Oil treated")},
-      {"SM", QObject::tr("Steel Mats")},
-      {"B", QObject::tr("Bituminous")},
-      {"BR", QObject::tr("Brick")},
-      {"M", QObject::tr("Macadam")},
-      {"PL", QObject::tr("Planks")},
-      {"S", QObject::tr("Sand")},
-      {"SH", QObject::tr("Shale")},
-      {"T", QObject::tr("Tarmac")},
-      {"TR", QObject::tr("Transparent")},
-      {"UNKNOWN", QObject::tr("Unknown")},
-      {"INVALID", QObject::tr("Invalid")},
+      {QStringLiteral("C"), QObject::tr("Concrete")},
+      {QStringLiteral("G"), QObject::tr("Grass")},
+      {QStringLiteral("W"), QObject::tr("Water")},
+      {QStringLiteral("A"), QObject::tr("Asphalt")},
+      {QStringLiteral("CE"), QObject::tr("Cement")},
+      {QStringLiteral("CL"), QObject::tr("Clay")},
+      {QStringLiteral("SN"), QObject::tr("Snow")},
+      {QStringLiteral("I"), QObject::tr("Ice")},
+      {QStringLiteral("D"), QObject::tr("Dirt")},
+      {QStringLiteral("CR"), QObject::tr("Coral")},
+      {QStringLiteral("GR"), QObject::tr("Gravel")},
+      {QStringLiteral("OT"), QObject::tr("Oil treated")},
+      {QStringLiteral("SM"), QObject::tr("Steel Mats")},
+      {QStringLiteral("B"), QObject::tr("Bituminous")},
+      {QStringLiteral("BR"), QObject::tr("Brick")},
+      {QStringLiteral("M"), QObject::tr("Macadam")},
+      {QStringLiteral("PL"), QObject::tr("Planks")},
+      {QStringLiteral("S"), QObject::tr("Sand")},
+      {QStringLiteral("SH"), QObject::tr("Shale")},
+      {QStringLiteral("T"), QObject::tr("Tarmac")},
+      {QStringLiteral("TR"), QObject::tr("Transparent")},
+      {QStringLiteral("UNKNOWN"), QObject::tr("Unknown")},
+      {QStringLiteral("INVALID"), QObject::tr("Invalid")},
       {QString(), QObject::tr("Unknown")}
     });
 
   /* Short size name for gate and full name for others */
   parkingMapGate = QHash<QString, QString>(
     {
-      {"INVALID", QObject::tr("Invalid")},
-      {"UNKNOWN", QObject::tr("Unknown")},
-      {"RGA", QObject::tr("Ramp GA")},
-      {"RGAS", QObject::tr("Ramp GA Small")},
-      {"RGAM", QObject::tr("Ramp GA Medium")},
-      {"RGAL", QObject::tr("Ramp GA Large")},
-      {"RE", QObject::tr("Ramp Extra")},
-      {"RC", QObject::tr("Ramp Cargo")},
-      {"RM", QObject::tr("Ramp Mil")},
-      {"RMC", QObject::tr("Ramp Mil Cargo")},
-      {"RMCB", QObject::tr("Ramp Mil Combat")},
-      {"T", QObject::tr("Tie down")},
-      {"H", QObject::tr("Hangar")},
-      {"G", QString()},
-      {"GS", QObject::tr("Small")},
-      {"GM", QObject::tr("Medium")},
-      {"GH", QObject::tr("Heavy")},
-      {"GE", QObject::tr("Extra")},
-      {"DGA", QObject::tr("Dock GA")},
-      {"FUEL", QObject::tr("Fuel")},
-      {"V", QObject::tr("Vehicles")}
+      {QStringLiteral("INVALID"), QObject::tr("Invalid")},
+      {QStringLiteral("UNKNOWN"), QObject::tr("Unknown")},
+      {QStringLiteral("RGA"), QObject::tr("Ramp GA")},
+      {QStringLiteral("RGAS"), QObject::tr("Ramp GA Small")},
+      {QStringLiteral("RGAM"), QObject::tr("Ramp GA Medium")},
+      {QStringLiteral("RGAL"), QObject::tr("Ramp GA Large")},
+      {QStringLiteral("RE"), QObject::tr("Ramp Extra")},
+      {QStringLiteral("RC"), QObject::tr("Ramp Cargo")},
+      {QStringLiteral("RM"), QObject::tr("Ramp Mil")},
+      {QStringLiteral("RMC"), QObject::tr("Ramp Mil Cargo")},
+      {QStringLiteral("RMCB"), QObject::tr("Ramp Mil Combat")},
+      {QStringLiteral("T"), QObject::tr("Tie down")},
+      {QStringLiteral("H"), QObject::tr("Hangar")},
+      {QStringLiteral("G"), QString()},
+      {QStringLiteral("GS"), QObject::tr("Small")},
+      {QStringLiteral("GM"), QObject::tr("Medium")},
+      {QStringLiteral("GH"), QObject::tr("Heavy")},
+      {QStringLiteral("GE"), QObject::tr("Extra")},
+      {QStringLiteral("DGA"), QObject::tr("Dock GA")},
+      {QStringLiteral("FUEL"), QObject::tr("Fuel")},
+      {QStringLiteral("V"), QObject::tr("Vehicles")}
     });
 
   /* Short size name for parking and full name for others */
   parkingMapRamp = QHash<QString, QString>(
     {
-      {"UNKNOWN", QObject::tr("Unknown")},
-      {"RGA", QObject::tr("Ramp GA")},
-      {"RGAS", QObject::tr("Small")},
-      {"RGAM", QObject::tr("Medium")},
-      {"RGAL", QObject::tr("Large")},
-      {"RC", QObject::tr("Ramp Cargo")},
-      {"RE", QObject::tr("Ramp Extra")},
-      {"RM", QObject::tr("Ramp Mil")},
-      {"RMC", QObject::tr("Ramp Mil Cargo")},
-      {"RMCB", QObject::tr("Ramp Mil Combat")},
-      {"T", QObject::tr("Tie down")},
-      {"H", QObject::tr("Hangar")},
-      {"G", QObject::tr("Gate")},
-      {"GS", QObject::tr("Gate Small")},
-      {"GM", QObject::tr("Gate Medium")},
-      {"GH", QObject::tr("Gate Heavy")},
-      {"GE", QObject::tr("Gate Extra")},
-      {"DGA", QObject::tr("Dock GA")},
-      {"FUEL", QObject::tr("Fuel")},
-      {"V", QObject::tr("Vehicles")}
+      {QStringLiteral("UNKNOWN"), QObject::tr("Unknown")},
+      {QStringLiteral("RGA"), QObject::tr("Ramp GA")},
+      {QStringLiteral("RGAS"), QObject::tr("Small")},
+      {QStringLiteral("RGAM"), QObject::tr("Medium")},
+      {QStringLiteral("RGAL"), QObject::tr("Large")},
+      {QStringLiteral("RC"), QObject::tr("Ramp Cargo")},
+      {QStringLiteral("RE"), QObject::tr("Ramp Extra")},
+      {QStringLiteral("RM"), QObject::tr("Ramp Mil")},
+      {QStringLiteral("RMC"), QObject::tr("Ramp Mil Cargo")},
+      {QStringLiteral("RMCB"), QObject::tr("Ramp Mil Combat")},
+      {QStringLiteral("T"), QObject::tr("Tie down")},
+      {QStringLiteral("H"), QObject::tr("Hangar")},
+      {QStringLiteral("G"), QObject::tr("Gate")},
+      {QStringLiteral("GS"), QObject::tr("Gate Small")},
+      {QStringLiteral("GM"), QObject::tr("Gate Medium")},
+      {QStringLiteral("GH"), QObject::tr("Gate Heavy")},
+      {QStringLiteral("GE"), QObject::tr("Gate Extra")},
+      {QStringLiteral("DGA"), QObject::tr("Dock GA")},
+      {QStringLiteral("FUEL"), QObject::tr("Fuel")},
+      {QStringLiteral("V"), QObject::tr("Vehicles")}
     });
 
   /* Full name for all parking including type */
   parkingTypeMap = QHash<QString, QString>(
     {
-      {"INVALID", QObject::tr("Invalid")},
-      {"UNKNOWN", QObject::tr("Unknown")},
-      {"RGA", QObject::tr("Ramp GA")},
-      {"RGAS", QObject::tr("Ramp GA Small")},
-      {"RGAM", QObject::tr("Ramp GA Medium")},
-      {"RGAL", QObject::tr("Ramp GA Large")},
-      {"RE", QObject::tr("Ramp GA Extra")},
-      {"RC", QObject::tr("Ramp Cargo")},
-      {"RM", QObject::tr("Ramp Mil")},
-      {"RMC", QObject::tr("Ramp Mil Cargo")},
-      {"RMCB", QObject::tr("Ramp Mil Combat")},
-      {"T", QObject::tr("Tie down")},
-      {"H", QObject::tr("Hangar")},
-      {"G", QObject::tr("Gate")},
-      {"GS", QObject::tr("Gate Small")},
-      {"GM", QObject::tr("Gate Medium")},
-      {"GH", QObject::tr("Gate Heavy")},
-      {"GE", QObject::tr("Gate Extra")},
-      {"DGA", QObject::tr("Dock GA")},
-      {"FUEL", QObject::tr("Fuel")},
-      {"V", QObject::tr("Vehicles")}
+      {QStringLiteral("INVALID"), QObject::tr("Invalid")},
+      {QStringLiteral("UNKNOWN"), QObject::tr("Unknown")},
+      {QStringLiteral("RGA"), QObject::tr("Ramp GA")},
+      {QStringLiteral("RGAS"), QObject::tr("Ramp GA Small")},
+      {QStringLiteral("RGAM"), QObject::tr("Ramp GA Medium")},
+      {QStringLiteral("RGAL"), QObject::tr("Ramp GA Large")},
+      {QStringLiteral("RE"), QObject::tr("Ramp GA Extra")},
+      {QStringLiteral("RC"), QObject::tr("Ramp Cargo")},
+      {QStringLiteral("RM"), QObject::tr("Ramp Mil")},
+      {QStringLiteral("RMC"), QObject::tr("Ramp Mil Cargo")},
+      {QStringLiteral("RMCB"), QObject::tr("Ramp Mil Combat")},
+      {QStringLiteral("T"), QObject::tr("Tie down")},
+      {QStringLiteral("H"), QObject::tr("Hangar")},
+      {QStringLiteral("G"), QObject::tr("Gate")},
+      {QStringLiteral("GS"), QObject::tr("Gate Small")},
+      {QStringLiteral("GM"), QObject::tr("Gate Medium")},
+      {QStringLiteral("GH"), QObject::tr("Gate Heavy")},
+      {QStringLiteral("GE"), QObject::tr("Gate Extra")},
+      {QStringLiteral("DGA"), QObject::tr("Dock GA")},
+      {QStringLiteral("FUEL"), QObject::tr("Fuel")},
+      {QStringLiteral("V"), QObject::tr("Vehicles")}
     });
 
   // Map for user interface names
   parkingNameMap = QHash<QString, QString>(
     {
-      {"INVALID", QObject::tr("Invalid")},
-      {"UNKNOWN", QObject::tr("Unknown")},
-      {"NONE", QObject::tr("Parking")},
-      {"P", QObject::tr("Parking")},
-      {"NP", QObject::tr("N Parking")},
-      {"NEP", QObject::tr("NE Parking")},
-      {"EP", QObject::tr("E Parking")},
-      {"SEP", QObject::tr("SE Parking")},
-      {"SP", QObject::tr("S Parking")},
-      {"SWP", QObject::tr("SW Parking")},
-      {"WP", QObject::tr("W Parking")},
-      {"NWP", QObject::tr("NW Parking")},
-      {"G", QObject::tr("Gate")},
-      {"D", QObject::tr("Dock")},
-      {"GA", QObject::tr("Gate A")},
-      {"GB", QObject::tr("Gate B")},
-      {"GC", QObject::tr("Gate C")},
-      {"GD", QObject::tr("Gate D")},
-      {"GE", QObject::tr("Gate E")},
-      {"GF", QObject::tr("Gate F")},
-      {"GG", QObject::tr("Gate G")},
-      {"GH", QObject::tr("Gate H")},
-      {"GI", QObject::tr("Gate I")},
-      {"GJ", QObject::tr("Gate J")},
-      {"GK", QObject::tr("Gate K")},
-      {"GL", QObject::tr("Gate L")},
-      {"GM", QObject::tr("Gate M")},
-      {"GN", QObject::tr("Gate N")},
-      {"GO", QObject::tr("Gate O")},
-      {"GP", QObject::tr("Gate P")},
-      {"GQ", QObject::tr("Gate Q")},
-      {"GR", QObject::tr("Gate R")},
-      {"GS", QObject::tr("Gate S")},
-      {"GT", QObject::tr("Gate T")},
-      {"GU", QObject::tr("Gate U")},
-      {"GV", QObject::tr("Gate V")},
-      {"GW", QObject::tr("Gate W")},
-      {"GX", QObject::tr("Gate X")},
-      {"GY", QObject::tr("Gate Y")},
-      {"GZ", QObject::tr("Gate Z")}
+      {QStringLiteral("INVALID"), QObject::tr("Invalid")},
+      {QStringLiteral("UNKNOWN"), QObject::tr("Unknown")},
+      {QStringLiteral("NONE"), QObject::tr("Parking")},
+      {QStringLiteral("P"), QObject::tr("Parking")},
+      {QStringLiteral("NP"), QObject::tr("N Parking")},
+      {QStringLiteral("NEP"), QObject::tr("NE Parking")},
+      {QStringLiteral("EP"), QObject::tr("E Parking")},
+      {QStringLiteral("SEP"), QObject::tr("SE Parking")},
+      {QStringLiteral("SP"), QObject::tr("S Parking")},
+      {QStringLiteral("SWP"), QObject::tr("SW Parking")},
+      {QStringLiteral("WP"), QObject::tr("W Parking")},
+      {QStringLiteral("NWP"), QObject::tr("NW Parking")},
+      {QStringLiteral("G"), QObject::tr("Gate")},
+      {QStringLiteral("D"), QObject::tr("Dock")},
+      {QStringLiteral("GA"), QObject::tr("Gate A")},
+      {QStringLiteral("GB"), QObject::tr("Gate B")},
+      {QStringLiteral("GC"), QObject::tr("Gate C")},
+      {QStringLiteral("GD"), QObject::tr("Gate D")},
+      {QStringLiteral("GE"), QObject::tr("Gate E")},
+      {QStringLiteral("GF"), QObject::tr("Gate F")},
+      {QStringLiteral("GG"), QObject::tr("Gate G")},
+      {QStringLiteral("GH"), QObject::tr("Gate H")},
+      {QStringLiteral("GI"), QObject::tr("Gate I")},
+      {QStringLiteral("GJ"), QObject::tr("Gate J")},
+      {QStringLiteral("GK"), QObject::tr("Gate K")},
+      {QStringLiteral("GL"), QObject::tr("Gate L")},
+      {QStringLiteral("GM"), QObject::tr("Gate M")},
+      {QStringLiteral("GN"), QObject::tr("Gate N")},
+      {QStringLiteral("GO"), QObject::tr("Gate O")},
+      {QStringLiteral("GP"), QObject::tr("Gate P")},
+      {QStringLiteral("GQ"), QObject::tr("Gate Q")},
+      {QStringLiteral("GR"), QObject::tr("Gate R")},
+      {QStringLiteral("GS"), QObject::tr("Gate S")},
+      {QStringLiteral("GT"), QObject::tr("Gate T")},
+      {QStringLiteral("GU"), QObject::tr("Gate U")},
+      {QStringLiteral("GV"), QObject::tr("Gate V")},
+      {QStringLiteral("GW"), QObject::tr("Gate W")},
+      {QStringLiteral("GX"), QObject::tr("Gate X")},
+      {QStringLiteral("GY"), QObject::tr("Gate Y")},
+      {QStringLiteral("GZ"), QObject::tr("Gate Z")}
     });
 
   parkingDatabaseNameMap = QHash<QString, QString>(
     {
-      {"NO_PARKING", "NONE"},
-      {"PARKING", "P"},
-      {"N_PARKING", "NP"},
-      {"NE_PARKING", "NEP"},
-      {"E_PARKING", "EP"},
-      {"SE_PARKING", "SEP"},
-      {"S_PARKING", "SP"},
-      {"SW_PARKING", "SWP"},
-      {"W_PARKING", "WP"},
-      {"NW_PARKING", "NWP"},
-      {"GATE", "G"},
-      {"DOCK", "D"},
-      {"GATE_A", "GA"},
-      {"GATE_B", "GB"},
-      {"GATE_C", "GC"},
-      {"GATE_D", "GD"},
-      {"GATE_E", "GE"},
-      {"GATE_F", "GF"},
-      {"GATE_G", "GG"},
-      {"GATE_H", "GH"},
-      {"GATE_I", "GI"},
-      {"GATE_J", "GJ"},
-      {"GATE_K", "GK"},
-      {"GATE_L", "GL"},
-      {"GATE_M", "GM"},
-      {"GATE_N", "GN"},
-      {"GATE_O", "GO"},
-      {"GATE_P", "GP"},
-      {"GATE_Q", "GQ"},
-      {"GATE_R", "GR"},
-      {"GATE_S", "GS"},
-      {"GATE_T", "GT"},
-      {"GATE_U", "GU"},
-      {"GATE_V", "GV"},
-      {"GATE_W", "GW"},
-      {"GATE_X", "GX"},
-      {"GATE_Y", "GY"},
-      {"GATE_Z", "GZ"},
+      {QStringLiteral("NO_PARKING"), QStringLiteral("NONE")},
+      {QStringLiteral("PARKING"), QStringLiteral("P")},
+      {QStringLiteral("N_PARKING"), QStringLiteral("NP")},
+      {QStringLiteral("NE_PARKING"), QStringLiteral("NEP")},
+      {QStringLiteral("E_PARKING"), QStringLiteral("EP")},
+      {QStringLiteral("SE_PARKING"), QStringLiteral("SEP")},
+      {QStringLiteral("S_PARKING"), QStringLiteral("SP")},
+      {QStringLiteral("SW_PARKING"), QStringLiteral("SWP")},
+      {QStringLiteral("W_PARKING"), QStringLiteral("WP")},
+      {QStringLiteral("NW_PARKING"), QStringLiteral("NWP")},
+      {QStringLiteral("GATE"), QStringLiteral("G")},
+      {QStringLiteral("DOCK"), QStringLiteral("D")},
+      {QStringLiteral("GATE_A"), QStringLiteral("GA")},
+      {QStringLiteral("GATE_B"), QStringLiteral("GB")},
+      {QStringLiteral("GATE_C"), QStringLiteral("GC")},
+      {QStringLiteral("GATE_D"), QStringLiteral("GD")},
+      {QStringLiteral("GATE_E"), QStringLiteral("GE")},
+      {QStringLiteral("GATE_F"), QStringLiteral("GF")},
+      {QStringLiteral("GATE_G"), QStringLiteral("GG")},
+      {QStringLiteral("GATE_H"), QStringLiteral("GH")},
+      {QStringLiteral("GATE_I"), QStringLiteral("GI")},
+      {QStringLiteral("GATE_J"), QStringLiteral("GJ")},
+      {QStringLiteral("GATE_K"), QStringLiteral("GK")},
+      {QStringLiteral("GATE_L"), QStringLiteral("GL")},
+      {QStringLiteral("GATE_M"), QStringLiteral("GM")},
+      {QStringLiteral("GATE_N"), QStringLiteral("GN")},
+      {QStringLiteral("GATE_O"), QStringLiteral("GO")},
+      {QStringLiteral("GATE_P"), QStringLiteral("GP")},
+      {QStringLiteral("GATE_Q"), QStringLiteral("GQ")},
+      {QStringLiteral("GATE_R"), QStringLiteral("GR")},
+      {QStringLiteral("GATE_S"), QStringLiteral("GS")},
+      {QStringLiteral("GATE_T"), QStringLiteral("GT")},
+      {QStringLiteral("GATE_U"), QStringLiteral("GU")},
+      {QStringLiteral("GATE_V"), QStringLiteral("GV")},
+      {QStringLiteral("GATE_W"), QStringLiteral("GW")},
+      {QStringLiteral("GATE_X"), QStringLiteral("GX")},
+      {QStringLiteral("GATE_Y"), QStringLiteral("GY")},
+      {QStringLiteral("GATE_Z"), QStringLiteral("GZ")},
     });
 
   /* *INDENT-OFF* */
@@ -321,78 +321,78 @@ void initTranslateableTexts()
 
   navTypeNamesVor = QHash<QString, QString>(
     {
-      {"INVALID", QObject::tr("Invalid", "VOR type name")},
-      {"H", QObject::tr("H", "VOR type name")},
-      {"L", QObject::tr("L", "VOR type name")},
-      {"T", QObject::tr("T", "VOR type name")},
-      {"VH", QObject::tr("H", "VOR type name")},
-      {"VL", QObject::tr("L", "VOR type name")},
-      {"VT", QObject::tr("T", "VOR type name")},
+      {QStringLiteral("INVALID"), QObject::tr("Invalid", "VOR type name")},
+      {QStringLiteral("H"), QObject::tr("H", "VOR type name")},
+      {QStringLiteral("L"), QObject::tr("L", "VOR type name")},
+      {QStringLiteral("T"), QObject::tr("T", "VOR type name")},
+      {QStringLiteral("VH"), QObject::tr("H", "VOR type name")},
+      {QStringLiteral("VL"), QObject::tr("L", "VOR type name")},
+      {QStringLiteral("VT"), QObject::tr("T", "VOR type name")},
     });
 
   navTypeNamesVorLong = QHash<QString, QString>(
     {
-      {"INVALID", QObject::tr("Invalid", "Long VOR type name")},
-      {"H", QObject::tr("High", "Long VOR type name")},
-      {"L", QObject::tr("Low", "Long VOR type name")},
-      {"T", QObject::tr("Terminal", "Long VOR type name")},
-      {"VTH", QObject::tr("High", "Long VOR type name")},
-      {"VTL", QObject::tr("Low", "Long VOR type name")},
-      {"VTT", QObject::tr("Terminal", "Long VOR type name")}
+      {QStringLiteral("INVALID"), QObject::tr("Invalid", "Long VOR type name")},
+      {QStringLiteral("H"), QObject::tr("High", "Long VOR type name")},
+      {QStringLiteral("L"), QObject::tr("Low", "Long VOR type name")},
+      {QStringLiteral("T"), QObject::tr("Terminal", "Long VOR type name")},
+      {QStringLiteral("VTH"), QObject::tr("High", "Long VOR type name")},
+      {QStringLiteral("VTL"), QObject::tr("Low", "Long VOR type name")},
+      {QStringLiteral("VTT"), QObject::tr("Terminal", "Long VOR type name")}
     });
 
   navTypeNamesNdb = QHash<QString, QString>(
     {
-      {"INVALID", QObject::tr("Invalid", "NDB type name")},
-      {"HH", QObject::tr("HH", "NDB type name")},
-      {"H", QObject::tr("H", "NDB type name")},
-      {"MH", QObject::tr("MH", "NDB type name")},
-      {"CP", QObject::tr("Compass Locator", "NDB type name")},
-      {"NHH", QObject::tr("HH", "NDB type name")},
-      {"NH", QObject::tr("H", "NDB type name")},
-      {"NMH", QObject::tr("MH", "NDB type name")},
-      {"NCP", QObject::tr("Compass Locator", "NDB type name")},
+      {QStringLiteral("INVALID"), QObject::tr("Invalid", "NDB type name")},
+      {QStringLiteral("HH"), QObject::tr("HH", "NDB type name")},
+      {QStringLiteral("H"), QObject::tr("H", "NDB type name")},
+      {QStringLiteral("MH"), QObject::tr("MH", "NDB type name")},
+      {QStringLiteral("CP"), QObject::tr("Compass Locator", "NDB type name")},
+      {QStringLiteral("NHH"), QObject::tr("HH", "NDB type name")},
+      {QStringLiteral("NH"), QObject::tr("H", "NDB type name")},
+      {QStringLiteral("NMH"), QObject::tr("MH", "NDB type name")},
+      {QStringLiteral("NCP"), QObject::tr("Compass Locator", "NDB type name")},
     });
 
   navTypeNamesWaypoint = QHash<QString, QString>(
     {
-      {"INVALID", QObject::tr("Invalid", "Waypoint type name")},
-      {"WN", QObject::tr("Named", "Waypoint type name")},
-      {"WT", QObject::tr("Track", "Waypoint type name")},
-      {"WU", QObject::tr("Unnamed", "Waypoint type name")},
-      {"V", QObject::tr("VOR", "Waypoint type name")},
-      {"N", QObject::tr("NDB", "Waypoint type name")},
-      {"VFR", QObject::tr("VFR", "Waypoint type name")},
-      {"RNAV", QObject::tr("RNAV", "Waypoint type name")},
-      {"OA", QObject::tr("Off Airway", "Waypoint type name")},
-      {"IAF", QObject::tr("IAF", "Waypoint type name")},
-      {"FAF", QObject::tr("FAF", "Waypoint type name")}
+      {QStringLiteral("INVALID"), QObject::tr("Invalid", "Waypoint type name")},
+      {QStringLiteral("WN"), QObject::tr("Named", "Waypoint type name")},
+      {QStringLiteral("WT"), QObject::tr("Track", "Waypoint type name")},
+      {QStringLiteral("WU"), QObject::tr("Unnamed", "Waypoint type name")},
+      {QStringLiteral("V"), QObject::tr("VOR", "Waypoint type name")},
+      {QStringLiteral("N"), QObject::tr("NDB", "Waypoint type name")},
+      {QStringLiteral("VFR"), QObject::tr("VFR", "Waypoint type name")},
+      {QStringLiteral("RNAV"), QObject::tr("RNAV", "Waypoint type name")},
+      {QStringLiteral("OA"), QObject::tr("Off Airway", "Waypoint type name")},
+      {QStringLiteral("IAF"), QObject::tr("IAF", "Waypoint type name")},
+      {QStringLiteral("FAF"), QObject::tr("FAF", "Waypoint type name")}
     });
 
   navTypeNames = QHash<QString, QString>(
     {
-      {"INVALID", QObject::tr("Invalid", "All navaids type name")},
-      {"VD", QObject::tr("VORDME", "All navaids type name")},
-      {"VT", QObject::tr("VORTAC", "All navaids type name")},
-      {"VTD", QObject::tr("DME only VORTAC", "All navaids type name")},
-      {"V", QObject::tr("VOR", "All navaids type name")},
-      {"D", QObject::tr("DME", "All navaids type name")},
-      {"TC", QObject::tr("TACAN", "All navaids type name")},
-      {"TCD", QObject::tr("DME only TACAN", "All navaids type name")},
-      {"N", QObject::tr("NDB", "All navaids type name")},
-      {"W", QObject::tr("Waypoint", "All navaids type name")}
+      {QStringLiteral("INVALID"), QObject::tr("Invalid", "All navaids type name")},
+      {QStringLiteral("VD"), QObject::tr("VORDME", "All navaids type name")},
+      {QStringLiteral("VT"), QObject::tr("VORTAC", "All navaids type name")},
+      {QStringLiteral("VTD"), QObject::tr("DME only VORTAC", "All navaids type name")},
+      {QStringLiteral("V"), QObject::tr("VOR", "All navaids type name")},
+      {QStringLiteral("D"), QObject::tr("DME", "All navaids type name")},
+      {QStringLiteral("TC"), QObject::tr("TACAN", "All navaids type name")},
+      {QStringLiteral("TCD"), QObject::tr("DME only TACAN", "All navaids type name")},
+      {QStringLiteral("N"), QObject::tr("NDB", "All navaids type name")},
+      {QStringLiteral("W"), QObject::tr("Waypoint", "All navaids type name")}
     });
 
   comTypeNames = QHash<QString, QString>(
     {
-      {"INVALID", QObject::tr("Invalid", "COM type name")},
-      {"NONE", QObject::tr("None", "COM type name")},
+      {QStringLiteral("INVALID"), QObject::tr("Invalid", "COM type name")},
+      {QStringLiteral("NONE"), QObject::tr("None", "COM type name")},
 
       // FSX/P3D types
       // {"ATIS", QObject::tr("ATIS")},
       // {"MC", QObject::tr("Multicom")},
       // {"UC", QObject::tr("Unicom")},
-      {"CTAF", QObject::tr("CTAF", "COM type name")},
+      {QStringLiteral("CTAF"), QObject::tr("CTAF", "COM type name")},
       // {"G", QObject::tr("Ground")},
       // {"T", QObject::tr("Tower")},
       // {"C", QObject::tr("Clearance")},
@@ -403,51 +403,51 @@ void initTranslateableTexts()
       // {"AWOS", QObject::tr("AWOS")},
       // {"ASOS", QObject::tr("ASOS")},
       // {"CPT", QObject::tr("Clearance pre Taxi")},
-      {"RCD", QObject::tr("Remote Clearance Delivery", "COM type name")},
+      {QStringLiteral("RCD"), QObject::tr("Remote Clearance Delivery", "COM type name")},
 
       // All new AIRAC types
-      {"CTR", QObject::tr("Area Control Center", "COM type name")},
-      {"ACP", QObject::tr("Airlift Command Post", "COM type name")},
-      {"AIR", QObject::tr("Air to Air", "COM type name")},
-      {"A", QObject::tr("Approach Control", "COM type name")},
-      {"ARR", QObject::tr("Arrival Control", "COM type name")},
-      {"ASOS", QObject::tr("ASOS", "COM type name")},
-      {"ATIS", QObject::tr("ATIS", "COM type name")},
-      {"AWI", QObject::tr("AWIB", "COM type name")},
-      {"AWOS", QObject::tr("AWOS", "COM type name")},
-      {"AWS", QObject::tr("AWIS", "COM type name")},
-      {"C", QObject::tr("Clearance Delivery", "COM type name")},
-      {"CPT", QObject::tr("Clearance Pre-Taxi", "COM type name")},
-      {"CTA", QObject::tr("Terminal Control Area", "COM type name")},
-      {"CTL", QObject::tr("Control", "COM type name")},
-      {"D", QObject::tr("Departure Control", "COM type name")},
-      {"DIR", QObject::tr("Director (Approach Control Radar)", "COM type name")},
-      {"EFS", QObject::tr("En-route Flight Advisory Service (EFAS)", "COM type name")},
-      {"EMR", QObject::tr("Emergency", "COM type name")},
-      {"FSS", QObject::tr("Flight Service Station", "COM type name")},
-      {"GCO", QObject::tr("Ground Comm Outlet", "COM type name")},
-      {"GET", QObject::tr("Gate Control", "COM type name")},
-      {"G", QObject::tr("Ground Control", "COM type name")},
-      {"HEL", QObject::tr("Helicopter Frequency", "COM type name")},
-      {"INF", QObject::tr("Information", "COM type name")},
-      {"MIL", QObject::tr("Military Frequency", "COM type name")},
-      {"MC", QObject::tr("Multicom", "COM type name")},
-      {"OPS", QObject::tr("Operations", "COM type name")},
-      {"PAL", QObject::tr("Pilot Activated Lighting", "COM type name")},
-      {"RDO", QObject::tr("Radio", "COM type name")},
-      {"RDR", QObject::tr("Radar", "COM type name")},
-      {"RFS", QObject::tr("Remote Flight Service Station (RFSS)", "COM type name")},
-      {"RMP", QObject::tr("Ramp or Taxi Control", "COM type name")},
-      {"RSA", QObject::tr("Airport Radar Service Area (ARSA)", "COM type name")},
-      {"TCA", QObject::tr("Terminal Control Area (TCA)", "COM type name")},
-      {"TMA", QObject::tr("Terminal Control Area (TMA)", "COM type name")},
-      {"TML", QObject::tr("Terminal", "COM type name")},
-      {"TRS", QObject::tr("Terminal Radar Service Area (TRSA)", "COM type name")},
-      {"TWE", QObject::tr("Transcriber Weather Broadcast (TWEB)", "COM type name")},
-      {"T", QObject::tr("Tower, Air Traffic Control", "COM type name")},
-      {"UAC", QObject::tr("Upper Area Control", "COM type name")},
-      {"UC", QObject::tr("UNICOM", "COM type name")},
-      {"VOL", QObject::tr("VOLMET", "COM type name")}
+      {QStringLiteral("CTR"), QObject::tr("Area Control Center", "COM type name")},
+      {QStringLiteral("ACP"), QObject::tr("Airlift Command Post", "COM type name")},
+      {QStringLiteral("AIR"), QObject::tr("Air to Air", "COM type name")},
+      {QStringLiteral("A"), QObject::tr("Approach Control", "COM type name")},
+      {QStringLiteral("ARR"), QObject::tr("Arrival Control", "COM type name")},
+      {QStringLiteral("ASOS"), QObject::tr("ASOS", "COM type name")},
+      {QStringLiteral("ATIS"), QObject::tr("ATIS", "COM type name")},
+      {QStringLiteral("AWI"), QObject::tr("AWIB", "COM type name")},
+      {QStringLiteral("AWOS"), QObject::tr("AWOS", "COM type name")},
+      {QStringLiteral("AWS"), QObject::tr("AWIS", "COM type name")},
+      {QStringLiteral("C"), QObject::tr("Clearance Delivery", "COM type name")},
+      {QStringLiteral("CPT"), QObject::tr("Clearance Pre-Taxi", "COM type name")},
+      {QStringLiteral("CTA"), QObject::tr("Terminal Control Area", "COM type name")},
+      {QStringLiteral("CTL"), QObject::tr("Control", "COM type name")},
+      {QStringLiteral("D"), QObject::tr("Departure Control", "COM type name")},
+      {QStringLiteral("DIR"), QObject::tr("Director (Approach Control Radar)", "COM type name")},
+      {QStringLiteral("EFS"), QObject::tr("En-route Flight Advisory Service (EFAS)", "COM type name")},
+      {QStringLiteral("EMR"), QObject::tr("Emergency", "COM type name")},
+      {QStringLiteral("FSS"), QObject::tr("Flight Service Station", "COM type name")},
+      {QStringLiteral("GCO"), QObject::tr("Ground Comm Outlet", "COM type name")},
+      {QStringLiteral("GET"), QObject::tr("Gate Control", "COM type name")},
+      {QStringLiteral("G"), QObject::tr("Ground Control", "COM type name")},
+      {QStringLiteral("HEL"), QObject::tr("Helicopter Frequency", "COM type name")},
+      {QStringLiteral("INF"), QObject::tr("Information", "COM type name")},
+      {QStringLiteral("MIL"), QObject::tr("Military Frequency", "COM type name")},
+      {QStringLiteral("MC"), QObject::tr("Multicom", "COM type name")},
+      {QStringLiteral("OPS"), QObject::tr("Operations", "COM type name")},
+      {QStringLiteral("PAL"), QObject::tr("Pilot Activated Lighting", "COM type name")},
+      {QStringLiteral("RDO"), QObject::tr("Radio", "COM type name")},
+      {QStringLiteral("RDR"), QObject::tr("Radar", "COM type name")},
+      {QStringLiteral("RFS"), QObject::tr("Remote Flight Service Station (RFSS)", "COM type name")},
+      {QStringLiteral("RMP"), QObject::tr("Ramp or Taxi Control", "COM type name")},
+      {QStringLiteral("RSA"), QObject::tr("Airport Radar Service Area (ARSA)", "COM type name")},
+      {QStringLiteral("TCA"), QObject::tr("Terminal Control Area (TCA)", "COM type name")},
+      {QStringLiteral("TMA"), QObject::tr("Terminal Control Area (TMA)", "COM type name")},
+      {QStringLiteral("TML"), QObject::tr("Terminal", "COM type name")},
+      {QStringLiteral("TRS"), QObject::tr("Terminal Radar Service Area (TRSA)", "COM type name")},
+      {QStringLiteral("TWE"), QObject::tr("Transcriber Weather Broadcast (TWEB)", "COM type name")},
+      {QStringLiteral("T"), QObject::tr("Tower, Air Traffic Control", "COM type name")},
+      {QStringLiteral("UAC"), QObject::tr("Upper Area Control", "COM type name")},
+      {QStringLiteral("UC"), QObject::tr("UNICOM", "COM type name")},
+      {QStringLiteral("VOL"), QObject::tr("VOLMET", "COM type name")}
     });
 
   airspaceTypeNameMap = QHash<map::MapAirspaceType, QString>(
@@ -583,149 +583,149 @@ void initTranslateableTexts()
 // Map for flight plan values
 static QHash<QString, QString> parkingNameMapUntranslated(
   {
-    {"INVALID", "Invalid"},
-    {"UNKNOWN", "Unknown"},
-    {"NONE", "Parking None"},
-    {"P", "Parking"},
-    {"NP", "N Parking"},
-    {"NEP", "NE Parking"},
-    {"EP", "E Parking"},
-    {"SEP", "SE Parking"},
-    {"SP", "S Parking"},
-    {"SWP", "SW Parking"},
-    {"WP", "W Parking"},
-    {"NWP", "NW Parking"},
-    {"G", "Gate"},
-    {"D", "Dock"},
-    {"GA", "Gate A"},
-    {"GB", "Gate B"},
-    {"GC", "Gate C"},
-    {"GD", "Gate D"},
-    {"GE", "Gate E"},
-    {"GF", "Gate F"},
-    {"GG", "Gate G"},
-    {"GH", "Gate H"},
-    {"GI", "Gate I"},
-    {"GJ", "Gate J"},
-    {"GK", "Gate K"},
-    {"GL", "Gate L"},
-    {"GM", "Gate M"},
-    {"GN", "Gate N"},
-    {"GO", "Gate O"},
-    {"GP", "Gate P"},
-    {"GQ", "Gate Q"},
-    {"GR", "Gate R"},
-    {"GS", "Gate S"},
-    {"GT", "Gate T"},
-    {"GU", "Gate U"},
-    {"GV", "Gate V"},
-    {"GW", "Gate W"},
-    {"GX", "Gate X"},
-    {"GY", "Gate Y"},
-    {"GZ", "Gate Z"}
+    {QStringLiteral("INVALID"), QStringLiteral("Invalid")},
+    {QStringLiteral("UNKNOWN"), QStringLiteral("Unknown")},
+    {QStringLiteral("NONE"), QStringLiteral("Parking None")},
+    {QStringLiteral("P"), QStringLiteral("Parking")},
+    {QStringLiteral("NP"), QStringLiteral("N Parking")},
+    {QStringLiteral("NEP"), QStringLiteral("NE Parking")},
+    {QStringLiteral("EP"), QStringLiteral("E Parking")},
+    {QStringLiteral("SEP"), QStringLiteral("SE Parking")},
+    {QStringLiteral("SP"), QStringLiteral("S Parking")},
+    {QStringLiteral("SWP"), QStringLiteral("SW Parking")},
+    {QStringLiteral("WP"), QStringLiteral("W Parking")},
+    {QStringLiteral("NWP"), QStringLiteral("NW Parking")},
+    {QStringLiteral("G"), QStringLiteral("Gate")},
+    {QStringLiteral("D"), QStringLiteral("Dock")},
+    {QStringLiteral("GA"), QStringLiteral("Gate A")},
+    {QStringLiteral("GB"), QStringLiteral("Gate B")},
+    {QStringLiteral("GC"), QStringLiteral("Gate C")},
+    {QStringLiteral("GD"), QStringLiteral("Gate D")},
+    {QStringLiteral("GE"), QStringLiteral("Gate E")},
+    {QStringLiteral("GF"), QStringLiteral("Gate F")},
+    {QStringLiteral("GG"), QStringLiteral("Gate G")},
+    {QStringLiteral("GH"), QStringLiteral("Gate H")},
+    {QStringLiteral("GI"), QStringLiteral("Gate I")},
+    {QStringLiteral("GJ"), QStringLiteral("Gate J")},
+    {QStringLiteral("GK"), QStringLiteral("Gate K")},
+    {QStringLiteral("GL"), QStringLiteral("Gate L")},
+    {QStringLiteral("GM"), QStringLiteral("Gate M")},
+    {QStringLiteral("GN"), QStringLiteral("Gate N")},
+    {QStringLiteral("GO"), QStringLiteral("Gate O")},
+    {QStringLiteral("GP"), QStringLiteral("Gate P")},
+    {QStringLiteral("GQ"), QStringLiteral("Gate Q")},
+    {QStringLiteral("GR"), QStringLiteral("Gate R")},
+    {QStringLiteral("GS"), QStringLiteral("Gate S")},
+    {QStringLiteral("GT"), QStringLiteral("Gate T")},
+    {QStringLiteral("GU"), QStringLiteral("Gate U")},
+    {QStringLiteral("GV"), QStringLiteral("Gate V")},
+    {QStringLiteral("GW"), QStringLiteral("Gate W")},
+    {QStringLiteral("GX"), QStringLiteral("Gate X")},
+    {QStringLiteral("GY"), QStringLiteral("Gate Y")},
+    {QStringLiteral("GZ"), QStringLiteral("Gate Z")}
   });
 
 /* The higher the better */
 static QHash<QString, int> surfaceQualityMap(
   {
-    {"C", 20},
-    {"A", 20},
-    {"B", 20},
-    {"T", 20},
-    {"M", 15},
-    {"CE", 15},
-    {"OT", 15},
-    {"BR", 10},
-    {"SM", 10},
-    {"PL", 10},
-    {"GR", 5},
-    {"CR", 5},
-    {"D", 5},
-    {"SH", 5},
-    {"CL", 5},
-    {"S", 5},
-    {"G", 5},
-    {"SN", 5},
-    {"I", 5},
-    {"W", 1},
-    {"TR", 1},
-    {"UNKNOWN", 0},
-    {"INVALID", 0}
+    {QStringLiteral("C"), 20},
+    {QStringLiteral("A"), 20},
+    {QStringLiteral("B"), 20},
+    {QStringLiteral("T"), 20},
+    {QStringLiteral("M"), 15},
+    {QStringLiteral("CE"), 15},
+    {QStringLiteral("OT"), 15},
+    {QStringLiteral("BR"), 10},
+    {QStringLiteral("SM"), 10},
+    {QStringLiteral("PL"), 10},
+    {QStringLiteral("GR"), 5},
+    {QStringLiteral("CR"), 5},
+    {QStringLiteral("D"), 5},
+    {QStringLiteral("SH"), 5},
+    {QStringLiteral("CL"), 5},
+    {QStringLiteral("S"), 5},
+    {QStringLiteral("G"), 5},
+    {QStringLiteral("SN"), 5},
+    {QStringLiteral("I"), 5},
+    {QStringLiteral("W"), 1},
+    {QStringLiteral("TR"), 1},
+    {QStringLiteral("UNKNOWN"), 0},
+    {QStringLiteral("INVALID"), 0}
   });
 
 const static QHash<QString, map::MapAirspaceType> airspaceTypeFromDatabaseMap(
   {
-    {"NONE", map::AIRSPACE_NONE},
-    {"C", map::CENTER},
-    {"CA", map::CLASS_A},
-    {"CB", map::CLASS_B},
-    {"CC", map::CLASS_C},
-    {"CD", map::CLASS_D},
-    {"CE", map::CLASS_E},
-    {"CF", map::CLASS_F},
-    {"CG", map::CLASS_G},
-    {"FIR", map::FIR}, // New FIR region that replaces certain centers
-    {"UIR", map::UIR}, // As above for UIR
-    {"T", map::TOWER},
-    {"CL", map::CLEARANCE},
-    {"G", map::GROUND},
-    {"D", map::DEPARTURE},
-    {"A", map::APPROACH},
-    {"M", map::MOA},
-    {"R", map::RESTRICTED},
-    {"P", map::PROHIBITED},
-    {"CN", map::CAUTION},
-    {"W", map::WARNING},
-    {"AL", map::ALERT},
-    {"DA", map::DANGER},
-    {"NP", map::NATIONAL_PARK},
-    {"MD", map::MODEC},
-    {"RD", map::RADAR},
-    {"GCA", map::GCA}, // Control area - new type
-    {"MCTR", map::MCTR},
-    {"TRSA", map::TRSA},
-    {"TR", map::TRAINING},
-    {"GP", map::GLIDERPROHIBITED},
-    {"WW", map::WAVEWINDOW},
-    {"OBS", map::ONLINE_OBSERVER} /* No database type */
+    {QStringLiteral("NONE"), map::AIRSPACE_NONE},
+    {QStringLiteral("C"), map::CENTER},
+    {QStringLiteral("CA"), map::CLASS_A},
+    {QStringLiteral("CB"), map::CLASS_B},
+    {QStringLiteral("CC"), map::CLASS_C},
+    {QStringLiteral("CD"), map::CLASS_D},
+    {QStringLiteral("CE"), map::CLASS_E},
+    {QStringLiteral("CF"), map::CLASS_F},
+    {QStringLiteral("CG"), map::CLASS_G},
+    {QStringLiteral("FIR"), map::FIR}, // New FIR region that replaces certain centers
+    {QStringLiteral("UIR"), map::UIR}, // As above for UIR
+    {QStringLiteral("T"), map::TOWER},
+    {QStringLiteral("CL"), map::CLEARANCE},
+    {QStringLiteral("G"), map::GROUND},
+    {QStringLiteral("D"), map::DEPARTURE},
+    {QStringLiteral("A"), map::APPROACH},
+    {QStringLiteral("M"), map::MOA},
+    {QStringLiteral("R"), map::RESTRICTED},
+    {QStringLiteral("P"), map::PROHIBITED},
+    {QStringLiteral("CN"), map::CAUTION},
+    {QStringLiteral("W"), map::WARNING},
+    {QStringLiteral("AL"), map::ALERT},
+    {QStringLiteral("DA"), map::DANGER},
+    {QStringLiteral("NP"), map::NATIONAL_PARK},
+    {QStringLiteral("MD"), map::MODEC},
+    {QStringLiteral("RD"), map::RADAR},
+    {QStringLiteral("GCA"), map::GCA}, // Control area - new type
+    {QStringLiteral("MCTR"), map::MCTR},
+    {QStringLiteral("TRSA"), map::TRSA},
+    {QStringLiteral("TR"), map::TRAINING},
+    {QStringLiteral("GP"), map::GLIDERPROHIBITED},
+    {QStringLiteral("WW"), map::WAVEWINDOW},
+    {QStringLiteral("OBS"), map::ONLINE_OBSERVER} /* No database type */
   });
 
 static QHash<map::MapAirspaceType, QString> airspaceTypeToDatabaseMap(
   {
-    {map::AIRSPACE_NONE, "NONE"},
-    {map::CENTER, "C"},
-    {map::CLASS_A, "CA"},
-    {map::CLASS_B, "CB"},
-    {map::CLASS_C, "CC"},
-    {map::CLASS_D, "CD"},
-    {map::CLASS_E, "CE"},
-    {map::CLASS_F, "CF"},
-    {map::CLASS_G, "CG"},
-    {map::FIR, "FIR"},
-    {map::UIR, "UIR"},
-    {map::TOWER, "T"},
-    {map::CLEARANCE, "CL"},
-    {map::GROUND, "G"},
-    {map::DEPARTURE, "D"},
-    {map::APPROACH, "A"},
-    {map::MOA, "M"},
-    {map::RESTRICTED, "R"},
-    {map::PROHIBITED, "P"},
-    {map::WARNING, "W"},
-    {map::CAUTION, "CN"},
-    {map::ALERT, "AL"},
-    {map::DANGER, "DA"},
-    {map::NATIONAL_PARK, "NP"},
-    {map::MODEC, "MD"},
-    {map::RADAR, "RD"},
-    {map::GCA, "GCA"},
-    {map::MCTR, "MCTR"},
-    {map::TRSA, "TRSA"},
-    {map::TRAINING, "TR"},
-    {map::GLIDERPROHIBITED, "GP"},
-    {map::WAVEWINDOW, "WW"},
+    {map::AIRSPACE_NONE, QStringLiteral("NONE")},
+    {map::CENTER, QStringLiteral("C")},
+    {map::CLASS_A, QStringLiteral("CA")},
+    {map::CLASS_B, QStringLiteral("CB")},
+    {map::CLASS_C, QStringLiteral("CC")},
+    {map::CLASS_D, QStringLiteral("CD")},
+    {map::CLASS_E, QStringLiteral("CE")},
+    {map::CLASS_F, QStringLiteral("CF")},
+    {map::CLASS_G, QStringLiteral("CG")},
+    {map::FIR, QStringLiteral("FIR")},
+    {map::UIR, QStringLiteral("UIR")},
+    {map::TOWER, QStringLiteral("T")},
+    {map::CLEARANCE, QStringLiteral("CL")},
+    {map::GROUND, QStringLiteral("G")},
+    {map::DEPARTURE, QStringLiteral("D")},
+    {map::APPROACH, QStringLiteral("A")},
+    {map::MOA, QStringLiteral("M")},
+    {map::RESTRICTED, QStringLiteral("R")},
+    {map::PROHIBITED, QStringLiteral("P")},
+    {map::WARNING, QStringLiteral("W")},
+    {map::CAUTION, QStringLiteral("CN")},
+    {map::ALERT, QStringLiteral("AL")},
+    {map::DANGER, QStringLiteral("DA")},
+    {map::NATIONAL_PARK, QStringLiteral("NP")},
+    {map::MODEC, QStringLiteral("MD")},
+    {map::RADAR, QStringLiteral("RD")},
+    {map::GCA, QStringLiteral("GCA")},
+    {map::MCTR, QStringLiteral("MCTR")},
+    {map::TRSA, QStringLiteral("TRSA")},
+    {map::TRAINING, QStringLiteral("TR")},
+    {map::GLIDERPROHIBITED, QStringLiteral("GP")},
+    {map::WAVEWINDOW, QStringLiteral("WW")},
 
-    {map::ONLINE_OBSERVER, "OBS"} /* Not a database type */
+    {map::ONLINE_OBSERVER, QStringLiteral("OBS")} /* Not a database type */
   });
 
 /* Defines drawing sort order - lower values are drawn first - higher values are drawn on top */
@@ -874,7 +874,7 @@ QString navTypeArincNamesWaypoint(const QString& type)
     types.append(QObject::tr("Multiple"));
 
 #ifdef DEBUG_INFORMATION
-  types.append(QString("[%1]").arg(type));
+  types.append(QStringLiteral("[%1]").arg(type));
 #endif
 
   return types.join(QObject::tr(", "));
@@ -887,7 +887,8 @@ const QString& navName(const QString& type)
 
 bool surfaceValid(const QString& surface)
 {
-  return !surface.isEmpty() && surface != "TR" && surface != "UNKNOWN" && surface != "INVALID";
+  return !surface.isEmpty() && surface != QStringLiteral("TR") && surface != QStringLiteral("UNKNOWN") &&
+         surface != QStringLiteral("INVALID");
 }
 
 const QString& surfaceName(const QString& surface)
@@ -952,7 +953,7 @@ QString parkingText(const MapParking& parking)
 
   retval.append(map::parkingName(parking.name));
 
-  retval.append(parking.number != -1 ? " " % QLocale().toString(parking.number) % parking.suffix : QString());
+  retval.append(parking.number != -1 ? QStringLiteral(" ") % QLocale().toString(parking.number) % parking.suffix : QString());
   return atools::strJoin(retval, QObject::tr(" "));
 }
 
@@ -974,7 +975,7 @@ QString parkingNameNumberAndType(const map::MapParking& parking)
 QString parkingNameOrNumber(const MapParking& parking)
 {
   if(parking.number != -1)
-    return map::parkingName(parking.name) % " " % QLocale().toString(parking.number) % parking.suffix;
+    return map::parkingName(parking.name) % QStringLiteral(" ") % QLocale().toString(parking.number) % parking.suffix;
   else
     return map::parkingName(parking.name);
 }
@@ -998,7 +999,8 @@ QString parkingNameForFlightplan(const map::MapParking& parking)
     return parking.name;
   else
     // FSX/P3D type
-    return parkingNameMapUntranslated.value(parking.name).toUpper() % " " % QString::number(parking.number) % parking.suffix;
+    return parkingNameMapUntranslated.value(parking.name).toUpper() % QStringLiteral(" ") % QString::number(parking.number) %
+           parking.suffix;
 }
 
 const QString& MapAirport::displayIdent(bool useIata) const
@@ -1254,23 +1256,23 @@ bool MapAirport::isVisible(map::MapTypes types, int minRunwayFt, const MapLayer 
 map::MapTypes navTypeToMapType(const QString& navType)
 {
   map::MapTypes type = NONE;
-  if(navType.startsWith("V") || navType == "D" || navType.startsWith("TC"))
+  if(navType.startsWith(QStringLiteral("V")) || navType == QStringLiteral("D") || navType.startsWith(QStringLiteral("TC")))
     type = map::VOR;
-  else if(navType == "N")
+  else if(navType == QStringLiteral("N"))
     type = map::NDB;
-  else if(navType == "W")
+  else if(navType == QStringLiteral("W"))
     type = map::WAYPOINT;
   return type;
 }
 
 bool navTypeTacan(const QString& navType)
 {
-  return navType == "TC" || navType == "TCD";
+  return navType == QStringLiteral("TC") || navType == QStringLiteral("TCD");
 }
 
 bool navTypeVortac(const QString& navType)
 {
-  return navType == "VT" || navType == "VTD";
+  return navType == QStringLiteral("VT") || navType == QStringLiteral("VTD");
 }
 
 QString airwayTrackTypeToShortString(MapAirwayTrackType type)
@@ -1383,47 +1385,47 @@ QString airwayRouteTypeToStringShort(map::MapAirwayRouteType type)
       break;
 
     case map::RT_AIRLINE:
-      return "A";
+      return QStringLiteral("A");
 
     case map::RT_CONTROL:
-      return "C";
+      return QStringLiteral("C");
 
     case map::RT_DIRECT:
-      return "D";
+      return QStringLiteral("D");
 
     case map::RT_HELICOPTER:
-      return "H";
+      return QStringLiteral("H");
 
     case map::RT_OFFICIAL:
-      return "O";
+      return QStringLiteral("O");
 
     case map::RT_RNAV:
-      return "R";
+      return QStringLiteral("R");
 
     case map::RT_UNDESIGNATED:
-      return "S";
+      return QStringLiteral("S");
 
     case map::RT_TRACK:
-      return "T";
+      return QStringLiteral("T");
   }
   return QString();
 }
 
 MapAirwayRouteType airwayRouteTypeFromString(const QString& typeStr)
 {
-  if(typeStr == "A")
+  if(typeStr == QStringLiteral("A"))
     return RT_AIRLINE; /* A Airline Airway (Tailored Data) */
-  else if(typeStr == "C")
+  else if(typeStr == QStringLiteral("C"))
     return RT_CONTROL; /* C Control */
-  else if(typeStr == "D")
+  else if(typeStr == QStringLiteral("D"))
     return RT_DIRECT; /* D Direct Route */
-  else if(typeStr == "H")
+  else if(typeStr == QStringLiteral("H"))
     return RT_HELICOPTER; /* H Helicopter Airways */
-  else if(typeStr == "O")
+  else if(typeStr == QStringLiteral("O"))
     return RT_OFFICIAL; /* O Officially Designated Airways, except RNAV, Helicopter Airways */
-  else if(typeStr == "R")
+  else if(typeStr == QStringLiteral("R"))
     return RT_RNAV; /* R RNAV Airways */
-  else if(typeStr == "S")
+  else if(typeStr == QStringLiteral("S"))
     return RT_UNDESIGNATED; /* S Undesignated ATS Route */
   else
     return RT_NONE;
@@ -1577,7 +1579,7 @@ QString vorFullShortText(const QString& vorType, bool dmeOnly, bool hasDme, bool
   }
   else
   {
-    QString type = vorType.startsWith("VT") ? vorType.at(vorType.size() - 1) : vorType.at(0);
+    QString type = vorType.startsWith(QStringLiteral("VT")) ? vorType.at(vorType.size() - 1) : vorType.at(0);
 
     if(vortac)
       return QObject::tr("VORTAC (%1)").arg(type);
@@ -1791,7 +1793,7 @@ QString magvarText(float magvar, bool shortText, bool degSign)
     QString pt = QLocale().decimalPoint();
     if(num.endsWith(pt))
       num.chop(1);
-    if(num.endsWith(pt % "0"))
+    if(num.endsWith(pt % QStringLiteral("0")))
       num.chop(2);
 
     const QString txt = degSign ? QObject::tr("%1°%2") : QObject::tr("%1%2");
@@ -1809,12 +1811,13 @@ QString magvarText(float magvar, bool shortText, bool degSign)
 
 bool isHardSurface(const QString& surface)
 {
-  return surface == "C" || surface == "A" || surface == "B" || surface == "T";
+  return surface == QStringLiteral("C") || surface == QStringLiteral("A") || surface == QStringLiteral("B") ||
+         surface == QStringLiteral("T");
 }
 
 bool isWaterSurface(const QString& surface)
 {
-  return surface == "W";
+  return surface == QStringLiteral("W");
 }
 
 bool isSoftSurface(const QString& surface)
@@ -1824,11 +1827,11 @@ bool isSoftSurface(const QString& surface)
 
 QString edgeLights(const QString& type)
 {
-  if(type == "L")
+  if(type == QStringLiteral("L"))
     return QObject::tr("Low", "Taxi edge lights");
-  else if(type == "M")
+  else if(type == QStringLiteral("M"))
     return QObject::tr("Medium", "Taxi edge lights");
-  else if(type == "H")
+  else if(type == QStringLiteral("H"))
     return QObject::tr("High", "Taxi edge lights");
   else
     return QString();
@@ -1836,9 +1839,9 @@ QString edgeLights(const QString& type)
 
 QString patternDirection(const QString& type)
 {
-  if(type == "L")
+  if(type == QStringLiteral("L"))
     return QObject::tr("Left", "Traffic pattern direction");
-  else if(type == "R")
+  else if(type == QStringLiteral("R"))
     return QObject::tr("Right", "Traffic pattern direction");
   else
     return QString();
@@ -1847,7 +1850,7 @@ QString patternDirection(const QString& type)
 QString ndbFullShortText(const MapNdb& ndb)
 {
   // Compass point vs. compass locator
-  QString type = ndb.type == "CP" ? QObject::tr("CL") : ndb.type;
+  QString type = ndb.type == QStringLiteral("CP") ? QObject::tr("CL") : ndb.type;
   return type.isEmpty() ? QObject::tr("NDB") : QObject::tr("NDB (%1)").arg(type);
 }
 
@@ -2200,7 +2203,7 @@ QStringList airspaceNameMap(const MapAirspace& airspace, int maxTextLength, bool
 
     if(airspace.maxAltitude != 0 || airspace.minAltitude != 0)
     {
-      if(airspace.maxAltitudeType != "UL" && airspace.maxAltitude < 60000)
+      if(airspace.maxAltitudeType != QStringLiteral("UL") && airspace.maxAltitude < 60000)
         // Upper altitude text if not unlimited
         altTextUpper = Unit::altFeet(airspace.maxAltitude, false /* addUnit */, true /* narrow */);
 
@@ -2472,7 +2475,7 @@ QIcon mapBaseIcon(const map::MapBase *base, int size)
         return SymbolPainter::createAirportIcon(*base->asPtr<map::MapAirport>(), size);
 
       case map::AIRPORT_MSA:
-        return QIcon(":/littlenavmap/resources/icons/msa.svg");
+        return QIcon(QStringLiteral(":/littlenavmap/resources/icons/msa.svg"));
 
       case map::VOR:
         return SymbolPainter::createVorIcon(*base->asPtr<map::MapVor>(), size, NavApp::isGuiStyleDark());
@@ -2484,7 +2487,7 @@ QIcon mapBaseIcon(const map::MapBase *base, int size)
         return map::ilsIcon(base->asObj<map::MapIls>());
 
       case map::HOLDING:
-        return QIcon(":/littlenavmap/resources/icons/enroutehold.svg");
+        return QIcon(QStringLiteral(":/littlenavmap/resources/icons/enroutehold.svg"));
 
       case map::WAYPOINT:
         return SymbolPainter::createWaypointIcon(size);
@@ -2525,25 +2528,25 @@ QIcon mapBaseIcon(const map::MapBase *base, int size)
         return QIcon(NavApp::getUserdataIcons()->getIconPath(base->asPtr<map::MapUserpoint>()->type));
 
       case map::LOGBOOK:
-        return QIcon(":/littlenavmap/resources/icons/logbook.svg");
+        return QIcon(QStringLiteral(":/littlenavmap/resources/icons/logbook.svg"));
 
       case map::PROCEDURE_POINT:
-        return QIcon(":/littlenavmap/resources/icons/approach.svg");
+        return QIcon(QStringLiteral(":/littlenavmap/resources/icons/approach.svg"));
 
       case map::MARK_RANGE:
-        return QIcon(":/littlenavmap/resources/icons/rangerings.svg");
+        return QIcon(QStringLiteral(":/littlenavmap/resources/icons/rangerings.svg"));
 
       case map::MARK_DISTANCE:
-        return QIcon(":/littlenavmap/resources/icons/distancemeasure.svg");
+        return QIcon(QStringLiteral(":/littlenavmap/resources/icons/distancemeasure.svg"));
 
       case map::MARK_HOLDING:
-        return QIcon(":/littlenavmap/resources/icons/hold.svg");
+        return QIcon(QStringLiteral(":/littlenavmap/resources/icons/hold.svg"));
 
       case map::MARK_PATTERNS:
-        return QIcon(":/littlenavmap/resources/icons/trafficpattern.svg");
+        return QIcon(QStringLiteral(":/littlenavmap/resources/icons/trafficpattern.svg"));
 
       case map::MARK_MSA:
-        return QIcon(":/littlenavmap/resources/icons/msa.svg");
+        return QIcon(QStringLiteral(":/littlenavmap/resources/icons/msa.svg"));
     }
   }
   return QIcon();
@@ -2715,9 +2718,9 @@ QString procedurePointTextShort(const MapProcedurePoint& procPoint)
 
 const QIcon& ilsIcon(const MapIls& ils)
 {
-  const static QIcon GLS(":/littlenavmap/resources/icons/gls.svg");
-  const static QIcon ILS(":/littlenavmap/resources/icons/ils.svg");
-  const static QIcon LOC(":/littlenavmap/resources/icons/loc.svg");
+  const static QIcon GLS(QStringLiteral(":/littlenavmap/resources/icons/gls.svg"));
+  const static QIcon ILS(QStringLiteral(":/littlenavmap/resources/icons/ils.svg"));
+  const static QIcon LOC(QStringLiteral(":/littlenavmap/resources/icons/loc.svg"));
 
   if(ils.isAnyGlsRnp())
     return GLS;

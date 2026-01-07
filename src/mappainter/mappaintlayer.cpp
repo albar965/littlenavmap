@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2025 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2026 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -619,7 +619,7 @@ bool MapPaintLayer::render(GeoPainter *painter, ViewportParams *viewport, const 
         context.painter->drawLine(mapPaintWidget->geometry().topLeft(), mapPaintWidget->geometry().bottomRight());
         context.painter->drawLine(mapPaintWidget->geometry().topRight(), mapPaintWidget->geometry().bottomLeft());
         context.painter->setFont(context.defaultFont);
-        context.painter->drawText(mapPaintWidget->geometry().center(), QString("%1x%2").
+        context.painter->drawText(mapPaintWidget->geometry().center(), QStringLiteral("%1x%2").
                                   arg(mapPaintWidget->width()).arg(mapPaintWidget->height()));
       }
     } // if(!noRender())

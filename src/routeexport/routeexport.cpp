@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2025 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2026 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -1833,7 +1833,7 @@ bool RouteExport::exportFlighplanAsIvap(const RouteExportData& exportData, const
       writeIvapLine(stream, "ROUTE", exportData.getRoute(), type);
       writeIvapLine(stream, "LEVEL", exportData.getCruiseAltitude() / 100, type);
       writeIvapLine(stream, "LEVELTYPE", "F", type);
-      writeIvapLine(stream, "SPEED", QString("%1").arg(exportData.getSpeed(), 4, 10, QChar('0')), type);
+      writeIvapLine(stream, "SPEED", QStringLiteral("%1").arg(exportData.getSpeed(), 4, 10, QChar('0')), type);
       writeIvapLine(stream, "DEPTIME", exportData.getDepartureTime().toString("HHmm"), type);
       writeIvapLine(stream, "DEPICAO", exportData.getDeparture(), type);
       writeIvapLine(stream, "TRANSPONDER", exportData.getTransponder(), type);
@@ -1857,7 +1857,7 @@ bool RouteExport::exportFlighplanAsIvap(const RouteExportData& exportData, const
       writeIvapLine(stream, "DEPICAO", exportData.getDeparture(), type);
       writeIvapLine(stream, "DEPTIME", exportData.getDepartureTime().toString("HHmm"), type);
       writeIvapLine(stream, "SPEEDTYPE", "N", type);
-      writeIvapLine(stream, "SPEED", QString("%1").arg(exportData.getSpeed(), 4, 10, QChar('0')), type);
+      writeIvapLine(stream, "SPEED", QStringLiteral("%1").arg(exportData.getSpeed(), 4, 10, QChar('0')), type);
       writeIvapLine(stream, "LEVELTYPE", "F", type);
       writeIvapLine(stream, "LEVEL", exportData.getCruiseAltitude() / 100, type);
       writeIvapLine(stream, "ROUTE", exportData.getRoute(), type);
@@ -1938,10 +1938,10 @@ bool RouteExport::exportFlighplanAsCorteIn(const QString& filename)
   while(routeNames.contains(name) && i < 99)
   {
     QString str = name.left(6);
-    name = QString("%1%2").arg(str).arg(i++, 8 - str.size(), 10, QChar('0'));
+    name = QStringLiteral("%1%2").arg(str).arg(i++, 8 - str.size(), 10, QChar('0'));
   }
 
-  txt.prepend(QString("RTE %1 ").arg(name));
+  txt.prepend(QStringLiteral("RTE %1 ").arg(name));
 
   // Check if we have to insert an endl first
   bool endsWithEol = atools::fileEndsWithEol(filename);
@@ -2031,7 +2031,7 @@ bool RouteExport::exportFlighplanAsProSim(const QString& filename)
   QString newname = name;
   int i = 1;
   while(routeNames.contains(newname) && i < 99)
-    newname = QString("%1%2").arg(name).arg(i++, 2, 10, QChar('0'));
+    newname = QStringLiteral("%1%2").arg(name).arg(i++, 2, 10, QChar('0'));
 
   // Add new route
   routes.append(std::make_pair(newname, route));
@@ -2128,7 +2128,7 @@ Route RouteExport::buildAdjustedRoute(rf::RouteAdjustOptions options)
 QString RouteExport::minToHourMinStr(int minutes)
 {
   int enrouteHours = minutes / 60;
-  return QString("%1%2").arg(enrouteHours, 2, 10, QChar('0')).arg(minutes - enrouteHours * 60, 2, 10, QChar('0'));
+  return QStringLiteral("%1%2").arg(enrouteHours, 2, 10, QChar('0')).arg(minutes - enrouteHours * 60, 2, 10, QChar('0'));
 }
 
 void RouteExport::writeIvapLine(QTextStream& stream, const QString& string, re::RouteExportType type)

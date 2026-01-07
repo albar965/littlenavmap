@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2025 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2026 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -157,7 +157,7 @@ MainWindow::MainWindow()
            "</a>."
          "</p>"
          "<p>"
-           "<b>Copyright 2015-2025 Alexander Barthel"
+           "<b>Copyright 2015-2026 Alexander Barthel"
            "</b>"
          "</p>").arg(lnm::helpDonateUrl).arg(QCoreApplication::applicationName());
 
@@ -2054,7 +2054,7 @@ void MainWindow::distanceChanged()
   QString text = distStr % " " % Unit::getUnitDistStr();
 
 #ifdef DEBUG_INFORMATION
-  text += QString("[%1km][%2z]").arg(mapWidget->distance(), 0, 'f', 2).arg(mapWidget->zoom());
+  text += QStringLiteral("[%1km][%2z]").arg(mapWidget->distance(), 0, 'f', 2).arg(mapWidget->zoom());
 #endif
 
   mapDistanceLabel->setText(text);
@@ -2158,14 +2158,14 @@ void MainWindow::updateMapPosLabel(const atools::geo::Pos& pos, int screenX, int
     float magVar = NavApp::getMagVar(pos);
     QString magVarText = map::magvarText(magVar, true /* short text */);
 #ifdef DEBUG_INFORMATION
-    magVarText = QString("%1 [%2]").arg(magVarText).arg(magVar, 0, 'f', 2);
+    magVarText = QStringLiteral("%1 [%2]").arg(magVarText).arg(magVar, 0, 'f', 2);
 #endif
 
     mapMagvarLabel->setText(magVarText);
     mapMagvarLabel->setMinimumWidth(mapMagvarLabel->width());
 
 #ifdef DEBUG_INFORMATION
-    text.append(QString(" [L %1,%2/G %3,%4]").arg(screenX).arg(screenY).arg(QCursor::pos().x()).arg(QCursor::pos().y()));
+    text.append(QStringLiteral(" [L %1,%2/G %3,%4]").arg(screenX).arg(screenY).arg(QCursor::pos().x()).arg(QCursor::pos().y()));
 #endif
 
     mapPositionLabel->setText(text);
@@ -4245,7 +4245,7 @@ void MainWindow::resetWindowLayout()
 
   bool allowUndockMap = OptionData::instance().getFlags2().testFlag(opts2::MAP_ALLOW_UNDOCK);
   dockHandler->resetWindowState(lnm::DEFAULT_MAINWINDOW_SIZE,
-                                QString(":/littlenavmap/resources/config/mainwindow_state_%1.bin").
+                                QStringLiteral(":/littlenavmap/resources/config/mainwindow_state_%1.bin").
                                 arg(allowUndockMap ? "dock" : "nodock"));
 
   ui->dockWidgetMap->setVisible(allowUndockMap);
@@ -4460,7 +4460,7 @@ void MainWindow::saveStateMain()
 #ifdef DEBUG_CREATE_WINDOW_STATE
     // Save the state into a binary file to be used for reset window layout
     // One state is needed with undockable map window and one without
-    QFile stateFile(QString("mainwindow_state_%1.bin").
+    QFile stateFile(QStringLiteral("mainwindow_state_%1.bin").
                     arg(OptionData::instance().getFlags2().testFlag(opts2::MAP_ALLOW_UNDOCK) ? "dock" : "nodock"));
     if(stateFile.open(QFile::WriteOnly))
     {
@@ -4723,7 +4723,7 @@ void MainWindow::printShortcuts()
             if(!subAction->text().isEmpty() && !subAction->shortcut().isEmpty())
             {
               if(keys.contains(subAction->shortcut()))
-                warnings.append(QString("Duplicate shortcut \"%1\"").arg(subAction->shortcut().toString()));
+                warnings.append(QStringLiteral("Duplicate shortcut \"%1\"").arg(subAction->shortcut().toString()));
 
               streamShortcuts << "| "
                               << QString(mainmenu + " -> " + submenu + " -> " + subAction->text().remove(QChar('&'))).leftJustified(c1 - 1)
@@ -4770,7 +4770,7 @@ void MainWindow::printShortcuts()
           if(!mainAction->text().isEmpty() && !mainAction->shortcut().isEmpty())
           {
             if(keys.contains(mainAction->shortcut()))
-              warnings.append(QString("Duplicate shortcut \"%1\"").arg(mainAction->shortcut().toString()));
+              warnings.append(QStringLiteral("Duplicate shortcut \"%1\"").arg(mainAction->shortcut().toString()));
 
             streamShortcuts << "| "
                             << QString(mainmenu + " -> " + mainAction->text().remove(QChar('&'))).leftJustified(c1 - 1)

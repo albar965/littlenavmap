@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2025 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2026 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -107,25 +107,25 @@ QString Unit::replacePlaceholders(const QString& text, bool fuelAsVolume)
 QString Unit::replacePlaceholders(const QString& text, bool fuelAsVolume, opts::UnitFuelAndWeight unit)
 {
   QString retval(text);
-  retval.replace("%distshort%", unitShortDistStr);
-  retval.replace("%dists%", unitShortDistStr);
-  retval.replace("%dist%", unitDistStr);
-  retval.replace("%alt%", unitAltStr);
-  retval.replace("%speed%", unitSpeedStr);
-  retval.replace("%vspeed%", unitVertSpeedStr);
+  retval.replace(QStringLiteral("%distshort%"), unitShortDistStr);
+  retval.replace(QStringLiteral("%dists%"), unitShortDistStr);
+  retval.replace(QStringLiteral("%dist%"), unitDistStr);
+  retval.replace(QStringLiteral("%alt%"), unitAltStr);
+  retval.replace(QStringLiteral("%speed%"), unitSpeedStr);
+  retval.replace(QStringLiteral("%vspeed%"), unitVertSpeedStr);
 
   switch(unit)
   {
     case opts::FUEL_WEIGHT_GAL_LBS:
-      retval.replace("%fuel%", fuelAsVolume ? suffixFuelVolGal : suffixFuelWeightLbs);
-      retval.replace("%weight%", suffixFuelWeightLbs);
-      retval.replace("%volume%", suffixFuelVolGal);
+      retval.replace(QStringLiteral("%fuel%"), fuelAsVolume ? suffixFuelVolGal : suffixFuelWeightLbs);
+      retval.replace(QStringLiteral("%weight%"), suffixFuelWeightLbs);
+      retval.replace(QStringLiteral("%volume%"), suffixFuelVolGal);
       break;
 
     case opts::FUEL_WEIGHT_LITER_KG:
-      retval.replace("%fuel%", fuelAsVolume ? suffixFuelVolLiter : suffixFuelWeightKg);
-      retval.replace("%weight%", suffixFuelWeightKg);
-      retval.replace("%volume%", suffixFuelVolLiter);
+      retval.replace(QStringLiteral("%fuel%"), fuelAsVolume ? suffixFuelVolLiter : suffixFuelWeightKg);
+      retval.replace(QStringLiteral("%weight%"), suffixFuelWeightKg);
+      retval.replace(QStringLiteral("%volume%"), suffixFuelVolLiter);
       break;
   }
 
@@ -381,10 +381,10 @@ QString Unit::speedVertFpm(float fpm, bool addUnit)
   switch(unitVertSpeed)
   {
     case opts::VERT_SPEED_FPM:
-      return locale->toString(fpm, 'f', 0) % (addUnit ? " " % unitVertSpeedStr : QString());
+      return locale->toString(fpm, 'f', 0) % (addUnit ? QStringLiteral(" ") % unitVertSpeedStr : QString());
 
     case opts::VERT_SPEED_MS:
-      return locale->toString(ageo::feetToMeter(fpm) / 60.f, 'f', 2) % (addUnit ? " " % unitVertSpeedStr : QString());
+      return locale->toString(ageo::feetToMeter(fpm) / 60.f, 'f', 2) % (addUnit ? QStringLiteral(" ") % unitVertSpeedStr : QString());
   }
   return QString();
 }
@@ -408,11 +408,11 @@ QString Unit::speedVertFpmOther(float fpm, bool addUnit)
   {
     case opts::VERT_SPEED_FPM:
       // Default is ft/m and ft/m input - print m/s
-      return locale->toString(ageo::feetToMeter(fpm) / 60.f, 'f', 2) % (addUnit ? " " % suffixVertSpeedMs : QString());
+      return locale->toString(ageo::feetToMeter(fpm) / 60.f, 'f', 2) % (addUnit ? QStringLiteral(" ") % suffixVertSpeedMs : QString());
 
     case opts::VERT_SPEED_MS:
       // Default is m/s and ft/m input - print ft/m
-      return locale->toString(fpm, 'f', 0) % (addUnit ? " " % suffixVertSpeedFpm : QString());
+      return locale->toString(fpm, 'f', 0) % (addUnit ? QStringLiteral(" ") % suffixVertSpeedFpm : QString());
   }
   return QString();
 
@@ -854,12 +854,12 @@ QString Unit::u(const QString& num, const QString& un, bool addUnit, bool narrow
   {
     // Get rid of the trailing dot zeroes
     QString nm(num);
-    if(nm.endsWith(QString(locale->decimalPoint()) + "0"))
+    if(nm.endsWith(QString(locale->decimalPoint()) + QStringLiteral("0")))
       nm.chop(2);
     return nm % (addUnit ? un : QString());
   }
   else
-    return num % (addUnit ? " " % un : QString());
+    return num % (addUnit ? QStringLiteral(" ") % un : QString());
 }
 
 QString Unit::u(float num, const QString& un, bool addUnit, bool narrow)
@@ -867,7 +867,7 @@ QString Unit::u(float num, const QString& un, bool addUnit, bool narrow)
   if(narrow)
     return clocale->toString(num, 'f', 0) % (addUnit ? QString() % un : QString());
   else
-    return locale->toString(num, 'f', 0) % (addUnit ? " " % un : QString());
+    return locale->toString(num, 'f', 0) % (addUnit ? QStringLiteral(" ") % un : QString());
 }
 
 void Unit::optionsChanged()

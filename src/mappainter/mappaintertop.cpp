@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2025 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2026 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -118,7 +118,7 @@ void MapPainterTop::render()
       context->painter->setPen(QPen(Qt::yellow, 3));
       drawLine(context->painter, leg.line);
       drawText(context->painter, leg.line.getPos1(), "P1", false, false);
-      drawText(context->painter, leg.line.getPos2(), QString("P2,%1°,%2nm").
+      drawText(context->painter, leg.line.getPos2(), QStringLiteral("P2,%1°,%2nm").
                arg(leg.course, 0, 'f', 1).arg(leg.distance, 0, 'f', 1), false, false);
 
     }
@@ -156,17 +156,17 @@ void MapPainterTop::render()
     context->szFont(0.8f);
 
     QStringList labels;
-    labels.append(QString("Layer %1").arg(context->mapLayer->getMaxRange()));
-    labels.append(QString("Layer text %1").arg(context->mapLayerText->getMaxRange()));
-    labels.append(QString("Layer effective %1").arg(context->mapLayerEffective->getMaxRange()));
-    labels.append(QString("Layer route %1").arg(context->mapLayerRoute->getMaxRange()));
-    labels.append(QString("Layer route text %1").arg(context->mapLayerRouteText->getMaxRange()));
-    labels.append(QString("Airport sym %1").arg(context->mapLayer->getAirportSymbolSize()));
-    labels.append(QString("Min RW %1").arg(context->mapLayer->getMinRunwayLength()));
-    labels.append("-");
+    labels.append(QStringLiteral("Layer %1").arg(context->mapLayer->getMaxRange()));
+    labels.append(QStringLiteral("Layer text %1").arg(context->mapLayerText->getMaxRange()));
+    labels.append(QStringLiteral("Layer effective %1").arg(context->mapLayerEffective->getMaxRange()));
+    labels.append(QStringLiteral("Layer route %1").arg(context->mapLayerRoute->getMaxRange()));
+    labels.append(QStringLiteral("Layer route text %1").arg(context->mapLayerRouteText->getMaxRange()));
+    labels.append(QStringLiteral("Airport sym %1").arg(context->mapLayer->getAirportSymbolSize()));
+    labels.append(QStringLiteral("Min RW %1").arg(context->mapLayer->getMinRunwayLength()));
+    labels.append(QStringLiteral("-"));
 
     for(auto it = context->renderTimesMs.constBegin(); it != context->renderTimesMs.constEnd(); ++it)
-      labels.append(QString("%1: %2 ms").arg(it.key()).arg(it.value()));
+      labels.append(QStringLiteral("%1: %2 ms").arg(it.key()).arg(it.value()));
 
     symbolPainter->textBox(context->painter, labels, QPen(Qt::black), 1, 1, textatt::BELOW);
   }
@@ -191,7 +191,7 @@ void MapPainterTop::paintCopyright()
 
       // Draw text
       painter->setPen(Qt::black);
-      painter->setBackground(QColor("#b0ffffff"));
+      painter->setBackground(QColor(QStringLiteral("#b0ffffff")));
       painter->setBrush(Qt::NoBrush);
       painter->setBackgroundMode(Qt::OpaqueMode);
       painter->drawText(painter->viewport().width() - painter->fontMetrics().horizontalAdvance(mapCopyright) - rightOffset,
@@ -210,28 +210,28 @@ void MapPainterTop::drawTouchIcons(int iconSize)
 
   // Get pixmap from cache
   QPixmap pixmap;
-  getPixmap(pixmap, ":/littlenavmap/resources/icons/zoomin.svg", iconSize);
+  getPixmap(pixmap, QStringLiteral(":/littlenavmap/resources/icons/zoomin.svg"), iconSize);
   painter->drawPixmap(QPoint(borderDist, borderDist), pixmap);
 
-  getPixmap(pixmap, ":/littlenavmap/resources/icons/arrowup.svg", iconSize);
+  getPixmap(pixmap, QStringLiteral(":/littlenavmap/resources/icons/arrowup.svg"), iconSize);
   painter->drawPixmap(QPoint(w / 2 - iconSize, borderDist), pixmap);
 
-  getPixmap(pixmap, ":/littlenavmap/resources/icons/zoomout.svg", iconSize);
+  getPixmap(pixmap, QStringLiteral(":/littlenavmap/resources/icons/zoomout.svg"), iconSize);
   painter->drawPixmap(QPoint(w - iconSize - borderDist, borderDist), pixmap);
 
-  getPixmap(pixmap, ":/littlenavmap/resources/icons/arrowleft.svg", iconSize);
+  getPixmap(pixmap, QStringLiteral(":/littlenavmap/resources/icons/arrowleft.svg"), iconSize);
   painter->drawPixmap(QPoint(borderDist, h / 2 - iconSize), pixmap);
 
-  getPixmap(pixmap, ":/littlenavmap/resources/icons/arrowright.svg", iconSize);
+  getPixmap(pixmap, QStringLiteral(":/littlenavmap/resources/icons/arrowright.svg"), iconSize);
   painter->drawPixmap(QPoint(w - iconSize - borderDist, h / 2 - iconSize), pixmap);
 
-  getPixmap(pixmap, ":/littlenavmap/resources/icons/back.svg", iconSize);
+  getPixmap(pixmap, QStringLiteral(":/littlenavmap/resources/icons/back.svg"), iconSize);
   painter->drawPixmap(QPoint(borderDist, h - iconSize - borderDist), pixmap);
 
-  getPixmap(pixmap, ":/littlenavmap/resources/icons/arrowdown.svg", iconSize);
+  getPixmap(pixmap, QStringLiteral(":/littlenavmap/resources/icons/arrowdown.svg"), iconSize);
   painter->drawPixmap(QPoint(w / 2 - iconSize, h - iconSize - borderDist), pixmap);
 
-  getPixmap(pixmap, ":/littlenavmap/resources/icons/next.svg", iconSize);
+  getPixmap(pixmap, QStringLiteral(":/littlenavmap/resources/icons/next.svg"), iconSize);
   painter->drawPixmap(QPoint(w - iconSize - borderDist, h - iconSize - borderDist), pixmap);
 }
 

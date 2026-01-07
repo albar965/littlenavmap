@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2025 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2026 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -2395,7 +2395,7 @@ void ProfileWidget::buildTooltipText(int x, bool force)
       if(tas < map::INVALID_SPEED_VALUE)
       {
 #ifdef DEBUG_INFORMATION_PROFILE
-        html.brText(QString("[TAS %1 kts, %2°T %3 kts]").
+        html.brText(QStringLiteral("[TAS %1 kts, %2°T %3 kts]").
                     arg(tas, 0, 'f', 0).arg(wind.dir, 0, 'f', 0).arg(wind.speed, 0, 'f', 0));
 #endif
 

@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2025 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2026 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -313,7 +313,7 @@ const QString& proceduresLegSecialTypeLongStr(proc::LegSpecialType type)
 QString procedureLegTypeStr(proc::ProcedureLegType type)
 {
 #ifdef DEBUG_INFORMATION
-  return QString("%1 [%2]").arg(approachLegTypeToStr.value(type)).arg(approachLegTypeToShortStr.value(type));
+  return QStringLiteral("%1 [%2]").arg(approachLegTypeToStr.value(type)).arg(approachLegTypeToShortStr.value(type));
 #else
   return approachLegTypeToStr.value(type);
 #endif
@@ -1447,7 +1447,7 @@ QString aircraftCategoryText(const QString& cat)
     return QObject::tr("Twin Engine");
 
 #ifdef DEBUG_INFORMATION
-  return QString("[Aircraft %1]").arg(cat);
+  return QStringLiteral("[Aircraft %1]").arg(cat);
 
 #else
   return QString();

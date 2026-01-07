@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2025 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2026 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -598,7 +598,7 @@ QString RequestHandler::buildRefreshSelect(int defaultValue)
   QString retval;
   retval.append("<select id=\"refreshselect\" onchange=\"refreshPage()\">");
   for(const std::pair<int, QString>& rate : rates)
-    retval.append(QString("<option value=\"%1\" %2>%3</option>").
+    retval.append(QStringLiteral("<option value=\"%1\" %2>%3</option>").
                   arg(rate.first).arg(rate.first == defaultValue ? "selected" : QString()).arg(rate.second));
   retval.append("</select>");
   return retval;

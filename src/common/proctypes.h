@@ -483,7 +483,7 @@ struct MapProcedureLegs
   QString displayType() const
   {
     // Correct wrong designation of GLS approaches as GNSS for display
-    return type == "GNSS" ? "GLS" : type;
+    return type == QStringLiteral("GNSS") ? QStringLiteral("GLS") : type;
   }
 
   /* "VOR-A" or "ILS-Z" */
@@ -495,7 +495,7 @@ struct MapProcedureLegs
   static QString displayType(const QString& type)
   {
     // Correct wrong designation of GLS approaches as GNSS for display
-    return type == "GNSS" ? "GLS" : type;
+    return type == QStringLiteral("GNSS") ? QStringLiteral("GLS") : type;
   }
 
   /* Anything that needs to display an ILS frequency or GNSS channel */
@@ -524,13 +524,13 @@ struct MapProcedureLegs
 
   static bool hasFrequency(const QString& approachType)
   {
-    return approachType == "ILS" || approachType == "LOC" || approachType == "LOCB" || approachType == "LDA" ||
-           approachType == "IGS" || approachType == "SDF";
+    return approachType == QStringLiteral("ILS") || approachType == QStringLiteral("LOC") || approachType == QStringLiteral("LOCB") ||
+           approachType == QStringLiteral("LDA") || approachType == QStringLiteral("IGS") || approachType == QStringLiteral("SDF");
   }
 
   static bool hasChannel(const QString& approachType)
   {
-    return approachType == "GNSS" || approachType == "GLS";
+    return approachType == QStringLiteral("GNSS") || approachType == QStringLiteral("GLS");
   }
 
   bool isAnyCustom() const
@@ -550,22 +550,22 @@ struct MapProcedureLegs
 
   bool isRnavGps() const
   {
-    return type == "RNAV" || type == "GPS";
+    return type == QStringLiteral("RNAV") || type == QStringLiteral("GPS");
   }
 
   bool isPrecision() const
   {
-    return type == "ILS" || type == "GNSS" /* GLS */;
+    return type == QStringLiteral("ILS") || type == QStringLiteral("GNSS") /* GLS */;
   }
 
   bool isGls() const
   {
-    return type == "GNSS" /* GLS */;
+    return type == QStringLiteral("GNSS") /* GLS */;
   }
 
   bool isIls() const
   {
-    return type == "ILS";
+    return type == QStringLiteral("ILS");
   }
 
   bool isNonPrecision() const

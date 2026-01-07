@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2025 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2026 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -343,7 +343,7 @@ void MapPainterVehicle::paintTextLabelAi(float x, float y, float size, const Sim
       texts.prepend(tr("ID %1").arg(aircraft.getObjectId()));
 
 #ifdef DEBUG_INFORMATION_AI
-    texts.prepend(QString("[%1%2%3%4%5]").
+    texts.prepend(QStringLiteral("[%1%2%3%4%5]").
                   arg(forceLabelNearby ? "F" : "").arg(text ? "T" : "-").
                   arg(detail ? "D" : "-").arg(detail2 ? "2" : "").arg(detail3 ? "3" : ""));
 #endif

@@ -222,7 +222,7 @@ struct MapBase
     this->operator=(other);
   }
 
-  MapBase(const MapBase && other)
+  MapBase(const MapBase&& other)
   {
     id = std::move(other.id);
     position = std::move(other.position);
@@ -586,7 +586,7 @@ struct MapRunwayEnd
   /* True if coordinates and name are ok */
   bool isFullyValid() const
   {
-    return isValid() && !name.isEmpty() && name != "RW";
+    return isValid() && !name.isEmpty() && name != QStringLiteral("RW");
   }
 
   QString name, leftVasiType, rightVasiType, pattern;
@@ -610,12 +610,12 @@ struct MapRunwayEnd
 
   QString leftVasiTypeStr() const
   {
-    return leftVasiType == "UNKN" ? QString() : leftVasiType;
+    return leftVasiType == QStringLiteral("UNKN") ? QString() : leftVasiType;
   }
 
   QString rightVasiTypeStr() const
   {
-    return rightVasiType == "UNKN" ? QString() : rightVasiType;
+    return rightVasiType == QStringLiteral("UNKN") ? QString() : rightVasiType;
   }
 
   QStringList uniqueVasiTypeStr() const;
@@ -865,12 +865,12 @@ struct MapWaypoint
 
   bool isVor() const
   {
-    return type == "V";
+    return type == QStringLiteral("V");
   }
 
   bool isNdb() const
   {
-    return type == "N";
+    return type == QStringLiteral("N");
   }
 
 };
@@ -920,46 +920,46 @@ struct MapUserpoint
 
   bool isAddon() const
   {
-    return type.compare("Addon", Qt::CaseInsensitive) == 0;
+    return type.compare(QStringLiteral("Addon"), Qt::CaseInsensitive) == 0;
   }
 
   bool isVor() const
   {
-    return type.compare("VOR", Qt::CaseInsensitive) == 0 ||
-           type.compare("VORDME", Qt::CaseInsensitive) == 0 ||
-           type.compare("DME", Qt::CaseInsensitive) == 0 ||
-           type.compare("VORTAC", Qt::CaseInsensitive) == 0 ||
-           type.compare("TACAN", Qt::CaseInsensitive) == 0;
+    return type.compare(QStringLiteral("VOR"), Qt::CaseInsensitive) == 0 ||
+           type.compare(QStringLiteral("VORDME"), Qt::CaseInsensitive) == 0 ||
+           type.compare(QStringLiteral("DME"), Qt::CaseInsensitive) == 0 ||
+           type.compare(QStringLiteral("VORTAC"), Qt::CaseInsensitive) == 0 ||
+           type.compare(QStringLiteral("TACAN"), Qt::CaseInsensitive) == 0;
   }
 
   bool isWaypoint() const
   {
-    return type.compare("Waypoint", Qt::CaseInsensitive) == 0;
+    return type.compare(QStringLiteral("Waypoint"), Qt::CaseInsensitive) == 0;
   }
 
   bool isVrp() const
   {
-    return type.compare("VRP", Qt::CaseInsensitive) == 0;
+    return type.compare(QStringLiteral("VRP"), Qt::CaseInsensitive) == 0;
   }
 
   bool isObstacle() const
   {
-    return type.compare("Obstacle", Qt::CaseInsensitive) == 0;
+    return type.compare(QStringLiteral("Obstacle"), Qt::CaseInsensitive) == 0;
   }
 
   bool isNdb() const
   {
-    return type.compare("NDB", Qt::CaseInsensitive) == 0;
+    return type.compare(QStringLiteral("NDB"), Qt::CaseInsensitive) == 0;
   }
 
   bool isAirport() const
   {
-    return type.compare("Airport", Qt::CaseInsensitive) == 0;
+    return type.compare(QStringLiteral("Airport"), Qt::CaseInsensitive) == 0;
   }
 
   bool isLogbook() const
   {
-    return type.compare("Logbook", Qt::CaseInsensitive) == 0;
+    return type.compare(QStringLiteral("Logbook"), Qt::CaseInsensitive) == 0;
   }
 
   QString name, ident, region, type, description, tags;
@@ -1920,7 +1920,6 @@ Q_DECLARE_TYPEINFO(map::MapBase, Q_PRIMITIVE_TYPE);
 #else
 Q_DECLARE_TYPEINFO(map::MapBase, Q_MOVABLE_TYPE);
 #endif
-
 
 Q_DECLARE_TYPEINFO(map::MapAirport, Q_MOVABLE_TYPE);
 Q_DECLARE_TYPEINFO(map::MapAirportMsa, Q_MOVABLE_TYPE);

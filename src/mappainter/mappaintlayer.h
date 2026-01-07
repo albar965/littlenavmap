@@ -199,7 +199,7 @@ private:
   /* Implemented from LayerInterface: We  draw above all but below user tools */
   virtual QStringList renderPosition() const override
   {
-    return QStringList("ORBIT");
+    return QStringList(QStringLiteral("ORBIT"));
   }
 
   // Implemented from LayerInterface

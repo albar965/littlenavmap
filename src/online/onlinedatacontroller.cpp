@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2025 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2026 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -247,7 +247,7 @@ void OnlinedataController::startDownloadInternal()
     {
       // Create a default user agent if not disabled for debugging
       if(!atools::settings::Settings::instance().valueBool(lnm::OPTIONS_NO_USER_AGENT))
-        downloader->setDefaultUserAgentShort(QString(" Config/%1").arg(getNetwork()));
+        downloader->setDefaultUserAgentShort(QStringLiteral(" Config/%1").arg(getNetwork()));
 
       if(whazzupUrlFromStatus.isEmpty() && // Status not downloaded yet
          !onlineStatusUrl.isEmpty()) // Need  status.txt by configuration

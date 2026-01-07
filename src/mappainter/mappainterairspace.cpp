@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2025 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2026 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -144,7 +144,7 @@ void MapPainterAirspace::render()
               debug.append("\nQPolygonF polygon({\n");
               for(const QPointF& pt : *poly)
                 /// * 13 */ {0, 3}, /* -> 3 */
-                debug.append(QString("/* %1 */ {%2, %3}, /* ->  */\n").arg(i++).arg(pt.x(), 0, 'f', 1).arg(pt.y(), 0, 'f', 1));
+                debug.append(QStringLiteral("/* %1 */ {%2, %3}, /* ->  */\n").arg(i++).arg(pt.x(), 0, 'f', 1).arg(pt.y(), 0, 'f', 1));
               debug.append("});\n");
             }
             qDebug().noquote().nospace() << Q_FUNC_INFO << debug;
@@ -324,7 +324,7 @@ void MapPainterAirspace::render()
 #endif
 
 #ifdef DEBUG_INFORMATION_PAINT_POLYGON_PX
-                      airspaceText.prepend(QString("[%1px]").arg(dx, 0, 'f', 0));
+                      airspaceText.prepend(QStringLiteral("[%1px]").arg(dx, 0, 'f', 0));
 #endif
 
                       // Rotate text to show at the inside of the polygon ==================

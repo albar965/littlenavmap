@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2025 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2026 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -932,7 +932,7 @@ void MapPainter::initQueries()
 
 void MapPainter::getPixmap(QPixmap& pixmap, const QString& resource, int size) const
 {
-  if(!QPixmapCache::find(resource % "_" % QString::number(size), &pixmap))
+  if(!QPixmapCache::find(resource % QStringLiteral("_") % QString::number(size), &pixmap))
   {
     // Not found - create new one from resource
     pixmap = QIcon(resource).pixmap(QSize(size, size));

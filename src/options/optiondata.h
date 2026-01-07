@@ -1722,10 +1722,11 @@ private:
   int displayTextSizeAirspace = 100;
 
   // Default values
-  QColor flightplanColor = QColor("#ff0000"), flightplanOutlineColor = QColor(Qt::black), flightplanProcedureColor = QColor("#aa0000"),
-         flightplanActiveColor = QColor("#ff00ff"), flightplanPassedColor = QColor("#a0a0a4"),
+  QColor flightplanColor = QColor(Qt::red),
+         flightplanOutlineColor = QColor(Qt::black), flightplanProcedureColor = QColor(QStringLiteral("#aa0000")),
+         flightplanActiveColor = QColor(Qt::magenta), flightplanPassedColor = QColor(QStringLiteral("#a0a0a4")),
          trailColor = QColor(Qt::black), measurementColor = QColor(Qt::black),
-         highlightFlightplanColor = QColor("#00ff00"), highlightSearchColor = QColor("#ffff00"), highlightProfileColor = QColor("#00ffff");
+         highlightFlightplanColor = QColor(Qt::green), highlightSearchColor = QColor(Qt::yellow), highlightProfileColor = QColor(Qt::cyan);
 
   // comboBoxOptionsDisplayTrailType
   opts::DisplayTrailType displayTrailType = opts::TRAIL_TYPE_DASHED;

@@ -29,39 +29,39 @@ class SqlDatabase;
 namespace dbtools {
 
 /* Database name for all loaded from simulators */
-const QString DATABASE_NAME_SIM = "LNMDBSIM";
+const QLatin1String DATABASE_NAME_SIM("LNMDBSIM");
 
 /* Navaid database e.g. from Navigraph */
-const QString DATABASE_NAME_NAV = "LNMDBNAV";
+const QLatin1String DATABASE_NAME_NAV("LNMDBNAV");
 
 /* Userpoint database */
-const QString DATABASE_NAME_USER = "LNMDBUSER";
+const QLatin1String DATABASE_NAME_USER("LNMDBUSER");
 
 /* NAT or PACOTS */
-const QString DATABASE_NAME_TRACK = "LNMDBTRACK";
+const QLatin1String DATABASE_NAME_TRACK("LNMDBTRACK");
 
 /* Logbook database */
-const QString DATABASE_NAME_LOGBOOK = "LNMDBLOG";
+const QLatin1String DATABASE_NAME_LOGBOOK("LNMDBLOG");
 
 /* User, sim and navdata airspace database */
-const QString DATABASE_NAME_USER_AIRSPACE = "LNMDBUSERAS";
-const QString DATABASE_NAME_SIM_AIRSPACE = "LNMDBSIMAS";
-const QString DATABASE_NAME_NAV_AIRSPACE = "LNMDBNAVAS";
+const QLatin1String DATABASE_NAME_USER_AIRSPACE("LNMDBUSERAS");
+const QLatin1String DATABASE_NAME_SIM_AIRSPACE("LNMDBSIMAS");
+const QLatin1String DATABASE_NAME_NAV_AIRSPACE("LNMDBNAVAS");
 
 /* Network online player data */
-const QString DATABASE_NAME_ONLINE = "LNMDBONLINE";
+const QLatin1String DATABASE_NAME_ONLINE("LNMDBONLINE");
 
 /* Temporary database used for database checking, copying and preparation */
-const QString DATABASE_NAME_TEMP = "LNMTEMPDB";
+const QLatin1String DATABASE_NAME_TEMP("LNMTEMPDB");
 
 /* Temporary database used for compiling the scenery library */
-const QString DATABASE_NAME_LOADER = "LNMLOADER";
+const QLatin1String DATABASE_NAME_LOADER("LNMLOADER");
 
 /* Used to temporary load metadata */
-const QString DATABASE_NAME_DLG_INFO_TEMP = "LNMTEMPDB2";
+const QLatin1String DATABASE_NAME_DLG_INFO_TEMP("LNMTEMPDB2");
 
 /* Common type for all databases */
-const QString DATABASE_TYPE = "QSQLITE";
+const QLatin1String DATABASE_TYPE("QSQLITE");
 
 /* Catches exceptions and terminates program if any */
 void openDatabaseFile(atools::sql::SqlDatabase *db, const QString& file, bool readonly, bool createSchema);
