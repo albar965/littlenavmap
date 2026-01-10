@@ -117,11 +117,17 @@ public:
 
   MapWidget *getMapWidget() const
   {
+    if(mapWidget == nullptr)
+      qWarning() << Q_FUNC_INFO << "mapWidget==nullptr";
+
     return mapWidget;
   }
 
   ProfileWidget *getProfileWidget() const
   {
+    if(profileWidget == nullptr)
+      qWarning() << Q_FUNC_INFO << "profileWidget==nullptr";
+
     return profileWidget;
   }
 
@@ -129,6 +135,9 @@ public:
 
   RouteController *getRouteController() const
   {
+    if(routeController == nullptr)
+      qWarning() << Q_FUNC_INFO << "routeController==nullptr";
+
     return routeController;
   }
 

@@ -131,7 +131,6 @@ OptionsDialog::OptionsDialog(QMainWindow *parentWindow)
     ui->labelOptionsUnitsHint,
     ui->labelOptionsGuiFontHint,
     ui->labelOptionsFreetypeHint,
-    ui->labelOptionsGuiHighDpiNoteHint,
     ui->labelOptionsGuiTooltipHint,
     ui->labelOptionsUnitsTextSizeHint,
     ui->labelOptionsFilePatternsHint,
@@ -403,7 +402,6 @@ OptionsDialog::OptionsDialog(QMainWindow *parentWindow)
      ui->checkBoxOptionsGuiAddDeparture,
      ui->checkBoxOptionsGuiAvoidOverwrite,
      ui->checkBoxOptionsGuiOverrideLocale,
-     ui->checkBoxOptionsGuiHighDpi, // Read in main.cpp
      ui->checkBoxOptionsFreetype, // Read in main.cpp
      ui->checkBoxOptionsGuiTooltipsAll,
      ui->checkBoxOptionsGuiTooltipsMenu,
@@ -1908,7 +1906,6 @@ void OptionsDialog::widgetsToOptionData()
 
   toFlags(data.flags2, ui->checkBoxOptionsMapZoomAvoidBlurred, opts2::MAP_AVOID_BLURRED_MAP);
   toFlags(data.flags2, ui->checkBoxOptionsMapUndock, opts2::MAP_ALLOW_UNDOCK);
-  toFlags(data.flags2, ui->checkBoxOptionsGuiHighDpi, opts2::HIGH_DPI_DISPLAY_SUPPORT);
   toFlags(data.flags2, ui->checkBoxOptionsGuiToolbarSize, opts2::OVERRIDE_TOOLBAR_SIZE);
   toFlags(data.flags, ui->checkBoxOptionsFreetype, opts::GUI_FREETYPE_FONT_ENGINE);
 
@@ -2232,7 +2229,6 @@ void OptionsDialog::optionDataToWidgets(const OptionData& data)
 
   fromFlags(data.flags2, ui->checkBoxOptionsMapZoomAvoidBlurred, opts2::MAP_AVOID_BLURRED_MAP);
   fromFlags(data.flags2, ui->checkBoxOptionsMapUndock, opts2::MAP_ALLOW_UNDOCK);
-  fromFlags(data.flags2, ui->checkBoxOptionsGuiHighDpi, opts2::HIGH_DPI_DISPLAY_SUPPORT);
   fromFlags(data.flags2, ui->checkBoxOptionsGuiToolbarSize, opts2::OVERRIDE_TOOLBAR_SIZE);
   fromFlags(data.flags, ui->checkBoxOptionsFreetype, opts::GUI_FREETYPE_FONT_ENGINE);
 

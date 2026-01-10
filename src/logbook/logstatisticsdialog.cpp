@@ -166,19 +166,19 @@ QVariant LogStatsSqlModel::data(const QModelIndex& index, int role) const
   {
     // Apply locale formatting for numeric values
     QVariant dataValue = QSqlQueryModel::data(index, Qt::DisplayRole);
-    QVariant::Type type = dataValue.type();
+    QMetaType type = dataValue.metaType();
 
-    if(type == QVariant::Int)
+    if(type == QMetaType::fromType<int>())
       return locale.toString(dataValue.toInt());
-    else if(type == QVariant::UInt)
+    else if(type == QMetaType::fromType<unsigned int>())
       return locale.toString(dataValue.toUInt());
-    else if(type == QVariant::LongLong)
+    else if(type == QMetaType::fromType<long long>())
       return locale.toString(dataValue.toLongLong());
-    else if(type == QVariant::ULongLong)
+    else if(type == QMetaType::fromType<unsigned long long>())
       return locale.toString(dataValue.toULongLong());
-    else if(type == QVariant::Double)
+    else if(type == QMetaType::fromType<double>())
       return locale.toString(dataValue.toDouble(), 'f', 1);
-    else if(type == QVariant::DateTime)
+    else if(type == QMetaType::fromType<QDateTime>())
       return locale.toString(dataValue.toDateTime());
   }
 

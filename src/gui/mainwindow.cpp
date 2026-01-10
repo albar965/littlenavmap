@@ -245,7 +245,7 @@ MainWindow::MainWindow()
     marbleAboutDialog->setApplicationTitle(QCoreApplication::applicationName());
 
     // Update pointer characters on font change
-    connect(NavApp::applicationInstance(), &QGuiApplication::fontChanged, TextPointer::initPointerCharacters);
+    connect(NavApp::applicationInstance(), &Application::fontChanged, TextPointer::initPointerCharacters);
 
     routeExport = new RouteExport(this);
     simbriefHandler = new SimBriefHandler(this);
@@ -340,6 +340,12 @@ MainWindow::MainWindow()
       setCentralWidget(mapWidget);
       ui->dockWidgetMap->hide();
     }
+
+    // Connect route controlle to newly created map widget
+    routeController->connectMapWidget();
+
+    // Update timeouts now since map widget is needed
+    weatherReporter->updateTimeouts();
 
     // Fill theme handler and menus after setting up map widget
     mapThemeHandler->setupMapThemesUi();
@@ -1111,16 +1117,16 @@ void MainWindow::connectAllSlots()
   connect(optionsDialog, &OptionsDialog::optionsChanged, this, &MainWindow::optionsChanged);
 
   // Options dialog font ===================================================================
-  QGuiApplication *app = dynamic_cast<QGuiApplication *>(QCoreApplication::instance());
+  Application *app = NavApp::applicationInstance();
   if(app != nullptr)
   {
-    connect(app, &QGuiApplication::fontChanged, this, &MainWindow::fontChanged);
-    connect(app, &QGuiApplication::fontChanged, NavApp::getLogdataController(), &LogdataController::fontChanged);
-    connect(app, &QGuiApplication::fontChanged, routeController, &RouteController::fontChanged);
-    connect(app, &QGuiApplication::fontChanged, infoController, &InfoController::fontChanged);
-    connect(app, &QGuiApplication::fontChanged, optionsDialog, &OptionsDialog::fontChanged);
-    connect(app, &QGuiApplication::fontChanged, profileWidget, &ProfileWidget::fontChanged);
-    connect(app, &QGuiApplication::fontChanged, menuWidget(), &QWidget::setFont);
+    connect(app, &Application::fontChanged, this, &MainWindow::fontChanged);
+    connect(app, &Application::fontChanged, NavApp::getLogdataController(), &LogdataController::fontChanged);
+    connect(app, &Application::fontChanged, routeController, &RouteController::fontChanged);
+    connect(app, &Application::fontChanged, infoController, &InfoController::fontChanged);
+    connect(app, &Application::fontChanged, optionsDialog, &OptionsDialog::fontChanged);
+    connect(app, &Application::fontChanged, profileWidget, &ProfileWidget::fontChanged);
+    connect(app, &Application::fontChanged, menuWidget(), &QWidget::setFont);
   }
 
   // Warning when selecting export options ===================================================================
@@ -2368,7 +2374,7 @@ void MainWindow::routeFromStringCurrent()
 
     // Connect signals from and to non-modal dialog
     connect(routeStringDialog, &RouteStringDialog::routeFromFlightplan, this, &MainWindow::routeFromFlightplan);
-    connect(NavApp::navAppInstance(), &QGuiApplication::fontChanged, routeStringDialog, &RouteStringDialog::fontChanged);
+    connect(NavApp::navAppInstance(), &Application::fontChanged, routeStringDialog, &RouteStringDialog::fontChanged);
     connect(routeController, &RouteController::routeChanged, routeStringDialog, &RouteStringDialog::updateButtonState);
     connect(NavApp::getStyleHandler(), &StyleHandler::styleChanged, routeStringDialog, &RouteStringDialog::styleChanged);
     connect(NavApp::getTrackController(), &TrackController::postTrackLoad, routeStringDialog, &RouteStringDialog::tracksChanged);

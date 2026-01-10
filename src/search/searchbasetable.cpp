@@ -2017,9 +2017,11 @@ QVariant SearchBaseTable::modelDataHandler(int colIndex, int rowIndex, const Col
       return formatModelData(col, displayRoleValue);
 
     case Qt::TextAlignmentRole:
-      if(displayRoleValue.type() == QVariant::Int || displayRoleValue.type() == QVariant::UInt ||
-         displayRoleValue.type() == QVariant::LongLong || displayRoleValue.type() == QVariant::ULongLong ||
-         displayRoleValue.type() == QVariant::Double)
+      if(displayRoleValue.metaType() == QMetaType::fromType<int>() ||
+         displayRoleValue.metaType() == QMetaType::fromType<unsigned int>() ||
+         displayRoleValue.metaType() == QMetaType::fromType<long long>() ||
+         displayRoleValue.metaType() == QMetaType::fromType<unsigned long long>() ||
+         displayRoleValue.metaType() == QMetaType::fromType<double>())
         // Align all numeric columns right
         return Qt::AlignRight;
 
@@ -2043,11 +2045,13 @@ QVariant SearchBaseTable::modelDataHandler(int colIndex, int rowIndex, const Col
 QString SearchBaseTable::formatModelData(const Column *, const QVariant& displayRoleValue) const
 {
   // Called directly by the model for export functions
-  if(displayRoleValue.type() == QVariant::Int || displayRoleValue.type() == QVariant::UInt)
+  if(displayRoleValue.metaType() == QMetaType::fromType<int>() ||
+     displayRoleValue.metaType() == QMetaType::fromType<unsigned int>())
     return QLocale().toString(displayRoleValue.toInt());
-  else if(displayRoleValue.type() == QVariant::LongLong || displayRoleValue.type() == QVariant::ULongLong)
+  else if(displayRoleValue.metaType() == QMetaType::fromType<long long>() ||
+          displayRoleValue.metaType() == QMetaType::fromType<unsigned long long>())
     return QLocale().toString(displayRoleValue.toLongLong());
-  else if(displayRoleValue.type() == QVariant::Double)
+  else if(displayRoleValue.metaType() == QMetaType::fromType<double>())
     return QLocale().toString(displayRoleValue.toDouble());
 
   return displayRoleValue.toString();

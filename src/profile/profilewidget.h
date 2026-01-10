@@ -316,7 +316,7 @@ private:
   int lastTooltipX = -999;
   QString lastTooltipString;
   atools::geo::Pos lastTooltipPos;
-  QPoint lastTooltipScreenPos;
+  QPointF lastTooltipScreenPos;
 
   bool widgetVisible = false, showAircraft = false, showAircraftTrail = false;
   QList<int> waypointX; /* Flight plan waypoint screen coordinates - does contain the dummy

@@ -268,7 +268,7 @@ void SqlModel::filter(const Column *col, const QVariant& variantDisp, const QVar
   bool colAlreadyFiltered = whereConditionMap.contains(colName);
 
   if((variantDisp.isNull() && !maxValue.isValid()) || (variantDisp.isNull() && maxValue.isNull()) ||
-     (variantDisp.type() == QVariant::String && variantDisp.toString().isEmpty()))
+     (variantDisp.metaType() == QMetaType::fromType<QString>() && variantDisp.toString().isEmpty()))
   {
     // If we get a null value or an empty string and the
     // column is already filtered remove it
@@ -318,7 +318,7 @@ void SqlModel::filter(const Column *col, const QVariant& variantDisp, const QVar
     }
     else
     {
-      if(variantDisp.type() == QVariant::String)
+      if(variantDisp.metaType() == QMetaType::fromType<QString>())
       {
         // Use like queries for strings so we will query case insensitive
         QString newVal = variantDisp.toString();
@@ -349,9 +349,11 @@ void SqlModel::filter(const Column *col, const QVariant& variantDisp, const QVar
 
         variantSql = newVal;
       }
-      else if(variantDisp.type() == QVariant::Int || variantDisp.type() == QVariant::UInt ||
-              variantDisp.type() == QVariant::LongLong || variantDisp.type() == QVariant::ULongLong ||
-              variantDisp.type() == QVariant::Double)
+      else if(variantDisp.metaType() == QMetaType::fromType<int>() ||
+              variantDisp.metaType() == QMetaType::fromType<unsigned int>() ||
+              variantDisp.metaType() == QMetaType::fromType<long long>() ||
+              variantDisp.metaType() == QMetaType::fromType<unsigned long long>() ||
+              variantDisp.metaType() == QMetaType::fromType<double>())
       {
         // Use equal for numbers
         variantSql = variantDisp;
@@ -758,13 +760,17 @@ bool SqlModel::isDistanceSearchActive() const
 /* Convert a value to string for the where clause */
 QString SqlModel::buildWhereValue(const WhereCondition& cond)
 {
-  QVariant::Type type = cond.getValueSql().type();
+  QMetaType type = cond.getValueSql().metaType();
   QString val;
-  if(type == QVariant::String || type == QVariant::Char)
+  if(type == QMetaType::fromType<QString>() || type == QMetaType::fromType<QChar>())
     // Use semicolons for string and escape single quotes
     val = " '" % cond.getValueSql().toString().replace("'", "''") % "'";
-  else if(type == QVariant::Bool || type == QVariant::Int || type == QVariant::UInt || type == QVariant::LongLong ||
-          type == QVariant::ULongLong || type == QVariant::Double)
+  else if(type == QMetaType::fromType<bool>() ||
+          type == QMetaType::fromType<int>() ||
+          type == QMetaType::fromType<unsigned int>() ||
+          type == QMetaType::fromType<long long>() ||
+          type == QMetaType::fromType<unsigned long long>() ||
+          type == QMetaType::fromType<double>())
     val = ' ' % cond.getValueSql().toString();
   return val;
 }

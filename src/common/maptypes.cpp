@@ -2751,4 +2751,20 @@ QString airspaceRestrictiveName(const MapAirspace& airspace)
   return QString();
 }
 
+void registerMetaTypes()
+{
+  qRegisterMetaType<map::MapRef>();
+  qRegisterMetaType<QList<map::MapRef> >();
+  qRegisterMetaType<map::RangeMarker>();
+  qRegisterMetaType<QList<map::RangeMarker> >();
+  qRegisterMetaType<map::DistanceMarker>();
+  qRegisterMetaType<QList<map::DistanceMarker> >();
+  qRegisterMetaType<map::PatternMarker>();
+  qRegisterMetaType<QList<map::PatternMarker> >();
+  qRegisterMetaType<map::HoldingMarker>();
+  qRegisterMetaType<QList<map::HoldingMarker> >();
+  qRegisterMetaType<map::MsaMarker>();
+  qRegisterMetaType<QList<map::MsaMarker> >();
+}
+
 } // namespace types

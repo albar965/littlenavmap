@@ -354,6 +354,9 @@ public:
   /* Convert given procedure type at leg index to waypoints */
   void convertProcedure(int routeIndex);
 
+  /* Connect buttons after creating map widget */
+  void connectMapWidget();
+
 signals:
   /* Show airport on map */
   void showRect(const atools::geo::Rect& rect, bool doubleClick);

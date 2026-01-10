@@ -154,23 +154,29 @@ QObject *WebApiController::getControllerInstance(QByteArray controllerName)
   if(controllerInstances.contains(controllerName))
     return controllerInstances[controllerName];
 
+  QObject *controller = nullptr;
+
   // Get controller class id
-  int id = QMetaType::type(controllerName + "*");
-  if(id != 0)
+  QMetaType type = QMetaType::fromName(controllerName + "*");
+  if(type.isValid())
   {
     // Instantiate
-    const QMetaObject *mo = QMetaType::metaObjectForType(id);
-    QObject *controller = mo->newInstance(
-      Q_ARG(QObject *, parent()),
-      Q_ARG(bool, verbose),
-      Q_ARG(AbstractInfoBuilder *, infoBuilder));
+    const QMetaObject *mo = type.metaObject();
+    if(mo != nullptr)
+    {
+      controller = mo->newInstance(parent(), verbose, infoBuilder);
 
-    // Store instance
-    controllerInstances.insert(controllerName, controller);
-
-    return controller;
+      if(controller != nullptr)
+        // Store instance
+        controllerInstances.insert(controllerName, controller);
+      else
+        qWarning() << Q_FUNC_INFO << "Controller for" << QString(controllerName) << "not found";
+    }
+    else
+      qWarning() << Q_FUNC_INFO << "QMetaObject is null";
   }
-  return nullptr;
+
+  return controller;
 }
 
 void WebApiController::deleteControllerInstance(QByteArray controllerName)

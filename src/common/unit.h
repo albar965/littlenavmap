@@ -403,7 +403,7 @@ private:
   /* Negative sign or empty */
   static QString s(float ord)
   {
-    return ord < 0.f ? QStringLiteral("-") : QString();
+    return ord < 0.f ? QLatin1String("-") : QString();
   }
 
   static const OptionData *opts;

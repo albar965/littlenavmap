@@ -327,6 +327,9 @@ public:
 
 #endif
 
+  /* Register serializable objects */
+  static void registerMetaTypes();
+
 private:
   friend QDataStream& operator>>(QDataStream& dataStream, RouteExportFormatMap& obj);
 

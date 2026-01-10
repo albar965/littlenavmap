@@ -227,7 +227,7 @@ void SqlController::filterBySpinBox(const Column *col, int value)
   view->clearSelection();
   if(col->getSpinBoxWidget()->value() == col->getSpinBoxWidget()->minimum())
     // Send a null variant if spin box is at minimum value
-    model->filter(col, QVariant(QVariant::Int), QVariant(), false /* exact */);
+    model->filter(col, QVariant(QMetaType::fromType<int>()), QVariant(), false /* exact */);
   else
     model->filter(col, value, QVariant(), false /* exact */);
   searchParamsChanged = true;
@@ -252,11 +252,11 @@ void SqlController::filterByMinMaxSpinBox(const Column *col, int minValue, int m
   QVariant minVal(minValue), maxVal(maxValue);
   if(col->getMinSpinBoxWidget()->value() == col->getMinSpinBoxWidget()->minimum())
     // Send a null variant for min if minimum spin box is at minimum value
-    minVal = QVariant(QVariant::Int);
+    minVal = QVariant(QMetaType::fromType<int>());
 
   if(col->getMaxSpinBoxWidget()->value() == col->getMaxSpinBoxWidget()->maximum())
     // Send a null variant for max if maximum spin box is at maximum value
-    maxVal = QVariant(QVariant::Int);
+    maxVal = QVariant(QMetaType::fromType<int>());
 
   model->filter(col, minVal, maxVal, false /* exact */);
   searchParamsChanged = true;
@@ -278,7 +278,7 @@ void SqlController::filterByCheckbox(const Column *col, int state, bool triState
         break;
       case Qt::PartiallyChecked:
         // null for partially checked
-        model->filter(col, QVariant(QVariant::Int), QVariant(), false /* exact */);
+        model->filter(col, QVariant(QMetaType::fromType<int>()), QVariant(), false /* exact */);
         break;
       case Qt::Checked:
         model->filter(col, 1, QVariant(), false /* exact */);
@@ -286,7 +286,7 @@ void SqlController::filterByCheckbox(const Column *col, int state, bool triState
     }
   }
   else
-    model->filter(col, state == Qt::Checked ? 1 : QVariant(QVariant::Int), QVariant(), false /* exact */);
+    model->filter(col, state == Qt::Checked ? 1 : QVariant(QMetaType::fromType<int>()), QVariant(), false /* exact */);
   searchParamsChanged = true;
 }
 
@@ -298,7 +298,7 @@ void SqlController::filterByComboBox(const Column *col, int value, bool noFilter
   view->clearSelection();
   if(noFilter)
     // Index 0 for combo box means here: no filter, so remove it and send null variant
-    model->filter(col, QVariant(QVariant::Int), QVariant(), false /* exact */);
+    model->filter(col, QVariant(QMetaType::fromType<int>()), QVariant(), false /* exact */);
   else
     model->filter(col, value, QVariant(), false /* exact */);
   searchParamsChanged = true;

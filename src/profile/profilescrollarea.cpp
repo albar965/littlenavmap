@@ -156,7 +156,7 @@ void ProfileScrollArea::expandWidget()
   scrollArea->setWidgetResizable(false);
 }
 
-void ProfileScrollArea::showTooltip(const QPoint& globalPos, const QString& text)
+void ProfileScrollArea::showTooltip(const QPointF& globalPos, const QString& text)
 {
   if(profileWidget->getProfileOptions()->getDisplayOptions().testFlag(optsp::PROFILE_TOOLTIP))
   {

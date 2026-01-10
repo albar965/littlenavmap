@@ -429,8 +429,12 @@ private:
   virtual void wheelEvent(QWheelEvent *event) override;
 
   virtual void contextMenuEvent(QContextMenuEvent *event) override;
+
+  /* Stop all line drag and drop if the map loses focus */
   virtual void focusOutEvent(QFocusEvent *) override;
   virtual void keyPressEvent(QKeyEvent *keyEvent) override;
+
+  /* Hide tooltip and coordinate display */
   virtual void leaveEvent(QEvent *) override;
 
   /* Catch tooltip event */

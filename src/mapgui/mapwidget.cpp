@@ -679,7 +679,6 @@ void MapWidget::showTooltip(bool update)
   }
 }
 
-/* Stop all line drag and drop if the map loses focus */
 void MapWidget::focusOutEvent(QFocusEvent *)
 {
   if(atools::gui::Application::isShuttingDown())
@@ -1417,7 +1416,8 @@ MapWidget::TouchArea MapWidget::touchAreaClick(QMouseEvent *event)
     int h = height() * areaSize / 100;
 
     // 3 x 3 grid
-    int col, row, x = event->x(), y = event->y();
+    int col, row;
+    qreal x = event->position().x(), y = event->position().y();
     if(x < w)
       col = 0;
     else if(x < width() - w)

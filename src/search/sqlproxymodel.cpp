@@ -23,6 +23,7 @@
 #include "common/mapflags.h"
 
 #include <QApplication>
+#include <QDate>
 
 using namespace atools::geo;
 
@@ -120,8 +121,14 @@ QVariant SqlProxyModel::headerData(int section, Qt::Orientation orientation, int
 bool SqlProxyModel::lessThan(const QModelIndex& sourceLeft, const QModelIndex& sourceRight) const
 {
   // These types can be converted to long long and compared
-  const static QSet<QVariant::Type> NUMERIC_TYPES({QVariant::Bool, QVariant::Int, QVariant::UInt, QVariant::LongLong, QVariant::ULongLong,
-                                                   QVariant::Date, QVariant::Time, QVariant::DateTime});
+  const static QSet<QMetaType> NUMERIC_TYPES({QMetaType::fromType<bool>(),
+                                              QMetaType::fromType<int>(),
+                                              QMetaType::fromType<unsigned int>(),
+                                              QMetaType::fromType<long long>(),
+                                              QMetaType::fromType<unsigned long long>(),
+                                              QMetaType::fromType<QDate>(),
+                                              QMetaType::fromType<QTime>(),
+                                              QMetaType::fromType<QDateTime>()});
 
   QString leftCol = sourceSqlModel->getColumnName(sourceLeft.column());
   QString rightCol = sourceSqlModel->getColumnName(sourceRight.column());
@@ -146,10 +153,10 @@ bool SqlProxyModel::lessThan(const QModelIndex& sourceLeft, const QModelIndex& s
     QVariant leftData = sourceSqlModel->rawData(sourceLeft);
     QVariant rightData = sourceSqlModel->rawData(sourceRight);
 
-    if(leftData.type() == QVariant::Double && rightData.type() == QVariant::Double)
+    if(leftData.metaType() == QMetaType::fromType<double>() && rightData.metaType() == QMetaType::fromType<double>())
       // Compare float and double numerically
       return leftData.toDouble() < rightData.toDouble();
-    else if(NUMERIC_TYPES.contains(leftData.type()) && NUMERIC_TYPES.contains(rightData.type()))
+    else if(NUMERIC_TYPES.contains(leftData.metaType()) && NUMERIC_TYPES.contains(rightData.metaType()))
       // Compare bool, int to long long numerically
       return leftData.toLongLong() < rightData.toLongLong();
     else

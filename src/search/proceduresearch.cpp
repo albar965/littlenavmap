@@ -182,7 +182,7 @@ ProcedureSearch::ProcedureSearch(QMainWindow *main, QTreeWidget *treeWidgetParam
   savedAirportSim = new map::MapAirport;
 
   zoomHandler = new atools::gui::ItemViewZoomHandler(treeWidget);
-  connect(NavApp::navAppInstance(), &QGuiApplication::fontChanged, this, &ProcedureSearch::fontChanged);
+  connect(NavApp::navAppInstance(), &atools::gui::Application::fontChanged, this, &ProcedureSearch::fontChanged);
   gridDelegate = new atools::gui::GridDelegate(treeWidget);
   gridDelegate->setHeightIncrease(0);
   treeWidget->setItemDelegate(gridDelegate);
@@ -896,7 +896,7 @@ void ProcedureSearch::fillProcedureTreeWidget()
           // Keep the runway list for the context menu
           procedureRec.appendFieldAndValue("sid_star_runways", sidStarRunways);
 
-          procedureRec.appendField("sid_star_arinc_name", QVariant::String);
+          procedureRec.appendField("sid_star_arinc_name", QMetaType::fromType<QString>());
           if(type & proc::PROCEDURE_SID_STAR_ALL && runwayName.isEmpty())
             procedureRec.setValue("sid_star_arinc_name", sidStarArincDispNames.join(", "));
 

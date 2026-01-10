@@ -424,7 +424,6 @@ RouteController::RouteController(MainWindow *parentWindow, QTableView *tableView
   connect(ui->actionRouteTableSelectNothing, &QAction::triggered, this, &RouteController::clearTableSelection);
   connect(ui->actionRouteTableSelectAll, &QAction::triggered, this, &RouteController::selectAllTriggered);
   connect(ui->pushButtonRouteClearSelection, &QPushButton::clicked, this, &RouteController::clearTableSelection);
-  connect(ui->pushButtonRouteClearSelection, &QPushButton::clicked, NavApp::getMapWidgetGui(), &MapPaintWidget::clearRouteHighlights);
   connect(ui->pushButtonRouteHelp, &QPushButton::clicked, this, &RouteController::helpClicked);
   connect(ui->actionRouteActivateLeg, &QAction::triggered, this, &RouteController::activateLegTriggered);
   connect(ui->actionRouteDisplayOptions, &QAction::triggered, this, &RouteController::routeTableOptions);
@@ -467,6 +466,12 @@ RouteController::~RouteController()
   ATOOLS_DELETE_LOG(routeLabel);
   ATOOLS_DELETE_LOG(flightplanIO);
   ATOOLS_DELETE_LOG(dialog);
+}
+
+void RouteController::connectMapWidget()
+{
+  connect(NavApp::getMainUi()->pushButtonRouteClearSelection, &QPushButton::clicked,
+          NavApp::getMapWidgetGui(), &MapPaintWidget::clearRouteHighlights);
 }
 
 void RouteController::undoTriggered()

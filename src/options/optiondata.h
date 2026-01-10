@@ -370,8 +370,8 @@ enum Flag2 : quint64
   /* checkBoxOptionsMapUndock */
   MAP_ALLOW_UNDOCK = 1ULL << 12,
 
-  /* checkBoxOptionsGuiHighDpi */
-  HIGH_DPI_DISPLAY_SUPPORT = 1ULL << 13,
+  /* checkBoxOptionsGuiHighDpi - DISABLED in Qt 6 since always on */
+  // HIGH_DPI_DISPLAY_SUPPORT = 1ULL << 13,
 
   /* checkBoxDisplayOnlineNameLookup */
   ONLINE_AIRSPACE_BY_NAME = 1ULL << 14,
@@ -1430,7 +1430,6 @@ private:
                          opts2::MAP_ROUTE_TEXT_BACKGROUND | opts2::MAP_USER_TEXT_BACKGROUND | opts2::ROUTE_HIGHLIGHT_ACTIVE_TABLE |
                          opts2::MAP_AI_TEXT_BACKGROUND | opts2::MAP_ROUTE_DIM_PASSED | opts2::MAP_AVOID_BLURRED_MAP |
                          opts2::ONLINE_AIRSPACE_BY_FILE | opts2::ONLINE_AIRSPACE_BY_NAME | opts2::RAISE_WINDOWS |
-                         opts2::HIGH_DPI_DISPLAY_SUPPORT | opts2::ROUTE_CENTER_ACTIVE_LEG |
                          opts2::ROUTE_CENTER_ACTIVE_LEG | opts2::ROUTE_NO_FOLLOW_ON_MOVE | opts2::MAP_ROUTE_HIGHLIGHT_ACTIVE |
                          opts2::MAP_ROUTE_TRANSPARENT | opts2::MAP_HIGHLIGHT_TRANSPARENT | opts2::MAP_WEB_USE_UI_SCALE;
 
@@ -1723,8 +1722,8 @@ private:
 
   // Default values
   QColor flightplanColor = QColor(Qt::red),
-         flightplanOutlineColor = QColor(Qt::black), flightplanProcedureColor = QColor(QStringLiteral("#aa0000")),
-         flightplanActiveColor = QColor(Qt::magenta), flightplanPassedColor = QColor(QStringLiteral("#a0a0a4")),
+         flightplanOutlineColor = QColor(Qt::black), flightplanProcedureColor = QColor(QLatin1String("#aa0000")),
+         flightplanActiveColor = QColor(Qt::magenta), flightplanPassedColor = QColor(QLatin1String("#a0a0a4")),
          trailColor = QColor(Qt::black), measurementColor = QColor(Qt::black),
          highlightFlightplanColor = QColor(Qt::green), highlightSearchColor = QColor(Qt::yellow), highlightProfileColor = QColor(Qt::cyan);
 

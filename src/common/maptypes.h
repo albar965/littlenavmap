@@ -222,7 +222,7 @@ struct MapBase
     this->operator=(other);
   }
 
-  MapBase(const MapBase&& other)
+  MapBase(const MapBase && other)
   {
     id = std::move(other.id);
     position = std::move(other.position);
@@ -586,7 +586,7 @@ struct MapRunwayEnd
   /* True if coordinates and name are ok */
   bool isFullyValid() const
   {
-    return isValid() && !name.isEmpty() && name != QStringLiteral("RW");
+    return isValid() && !name.isEmpty() && name != QLatin1String("RW");
   }
 
   QString name, leftVasiType, rightVasiType, pattern;
@@ -610,12 +610,12 @@ struct MapRunwayEnd
 
   QString leftVasiTypeStr() const
   {
-    return leftVasiType == QStringLiteral("UNKN") ? QString() : leftVasiType;
+    return leftVasiType == QLatin1String("UNKN") ? QString() : leftVasiType;
   }
 
   QString rightVasiTypeStr() const
   {
-    return rightVasiType == QStringLiteral("UNKN") ? QString() : rightVasiType;
+    return rightVasiType == QLatin1String("UNKN") ? QString() : rightVasiType;
   }
 
   QStringList uniqueVasiTypeStr() const;
@@ -865,12 +865,12 @@ struct MapWaypoint
 
   bool isVor() const
   {
-    return type == QStringLiteral("V");
+    return type == QLatin1String("V");
   }
 
   bool isNdb() const
   {
-    return type == QStringLiteral("N");
+    return type == QLatin1String("N");
   }
 
 };
@@ -920,46 +920,46 @@ struct MapUserpoint
 
   bool isAddon() const
   {
-    return type.compare(QStringLiteral("Addon"), Qt::CaseInsensitive) == 0;
+    return type.compare(QLatin1String("Addon"), Qt::CaseInsensitive) == 0;
   }
 
   bool isVor() const
   {
-    return type.compare(QStringLiteral("VOR"), Qt::CaseInsensitive) == 0 ||
-           type.compare(QStringLiteral("VORDME"), Qt::CaseInsensitive) == 0 ||
-           type.compare(QStringLiteral("DME"), Qt::CaseInsensitive) == 0 ||
-           type.compare(QStringLiteral("VORTAC"), Qt::CaseInsensitive) == 0 ||
-           type.compare(QStringLiteral("TACAN"), Qt::CaseInsensitive) == 0;
+    return type.compare(QLatin1String("VOR"), Qt::CaseInsensitive) == 0 ||
+           type.compare(QLatin1String("VORDME"), Qt::CaseInsensitive) == 0 ||
+           type.compare(QLatin1String("DME"), Qt::CaseInsensitive) == 0 ||
+           type.compare(QLatin1String("VORTAC"), Qt::CaseInsensitive) == 0 ||
+           type.compare(QLatin1String("TACAN"), Qt::CaseInsensitive) == 0;
   }
 
   bool isWaypoint() const
   {
-    return type.compare(QStringLiteral("Waypoint"), Qt::CaseInsensitive) == 0;
+    return type.compare(QLatin1String("Waypoint"), Qt::CaseInsensitive) == 0;
   }
 
   bool isVrp() const
   {
-    return type.compare(QStringLiteral("VRP"), Qt::CaseInsensitive) == 0;
+    return type.compare(QLatin1String("VRP"), Qt::CaseInsensitive) == 0;
   }
 
   bool isObstacle() const
   {
-    return type.compare(QStringLiteral("Obstacle"), Qt::CaseInsensitive) == 0;
+    return type.compare(QLatin1String("Obstacle"), Qt::CaseInsensitive) == 0;
   }
 
   bool isNdb() const
   {
-    return type.compare(QStringLiteral("NDB"), Qt::CaseInsensitive) == 0;
+    return type.compare(QLatin1String("NDB"), Qt::CaseInsensitive) == 0;
   }
 
   bool isAirport() const
   {
-    return type.compare(QStringLiteral("Airport"), Qt::CaseInsensitive) == 0;
+    return type.compare(QLatin1String("Airport"), Qt::CaseInsensitive) == 0;
   }
 
   bool isLogbook() const
   {
-    return type.compare(QStringLiteral("Logbook"), Qt::CaseInsensitive) == 0;
+    return type.compare(QLatin1String("Logbook"), Qt::CaseInsensitive) == 0;
   }
 
   QString name, ident, region, type, description, tags;
@@ -1909,6 +1909,9 @@ int surfaceQuality(const QString& surface);
 /* Assign artificial ids to measurement and range rings which allow to identify them. Not thread safe. */
 int getNextUserFeatureId();
 
+/* Register serializable objects */
+void registerMetaTypes();
+
 } // namespace map
 
 /* Type info */
@@ -1948,20 +1951,26 @@ Q_DECLARE_TYPEINFO(map::PosCourse, Q_PRIMITIVE_TYPE);
 /* Type info and serializable objects */
 Q_DECLARE_TYPEINFO(map::MapRef, Q_PRIMITIVE_TYPE);
 Q_DECLARE_METATYPE(map::MapRef)
+Q_DECLARE_METATYPE(QList<map::MapRef>)
 
 Q_DECLARE_TYPEINFO(map::RangeMarker, Q_MOVABLE_TYPE);
 Q_DECLARE_METATYPE(map::RangeMarker)
+Q_DECLARE_METATYPE(QList<map::RangeMarker>)
 
 Q_DECLARE_TYPEINFO(map::DistanceMarker, Q_MOVABLE_TYPE);
 Q_DECLARE_METATYPE(map::DistanceMarker)
+Q_DECLARE_METATYPE(QList<map::DistanceMarker>)
 
 Q_DECLARE_TYPEINFO(map::PatternMarker, Q_MOVABLE_TYPE);
 Q_DECLARE_METATYPE(map::PatternMarker)
+Q_DECLARE_METATYPE(QList<map::PatternMarker>)
 
 Q_DECLARE_TYPEINFO(map::HoldingMarker, Q_MOVABLE_TYPE);
 Q_DECLARE_METATYPE(map::HoldingMarker)
+Q_DECLARE_METATYPE(QList<map::HoldingMarker>)
 
 Q_DECLARE_TYPEINFO(map::MsaMarker, Q_MOVABLE_TYPE);
 Q_DECLARE_METATYPE(map::MsaMarker)
+Q_DECLARE_METATYPE(QList<map::MsaMarker>)
 
 #endif // LITTLENAVMAP_MAPTYPES_H

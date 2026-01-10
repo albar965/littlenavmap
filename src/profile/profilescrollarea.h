@@ -123,7 +123,7 @@ public:
   }
 
   /* Show or hide tooltip. Windows will be positioned on the left or right side depending on global mouse position */
-  void showTooltip(const QPoint& globalPos, const QString& text);
+  void showTooltip(const QPointF& globalPos, const QString& text);
   void hideTooltip();
   bool isTooltipVisible() const;
 

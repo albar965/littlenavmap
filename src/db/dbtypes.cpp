@@ -56,6 +56,11 @@ atools::fs::FsPaths::SimulatorType SimulatorTypeMap::getBest() const
   return FsPaths::NONE;
 }
 
+void SimulatorTypeMap::registerMetaTypes()
+{
+  qRegisterMetaType<SimulatorTypeMap>();
+}
+
 FsPaths::SimulatorType SimulatorTypeMap::getBestInstalled() const
 {
   return getBestInstalled({FsPaths::MSFS_2024, FsPaths::MSFS,

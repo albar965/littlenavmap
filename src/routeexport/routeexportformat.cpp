@@ -74,6 +74,11 @@ void RouteExportFormatMap::setDebugOptions(rexp::RouteExportFormatType type)
     format.setFlag(rexp::SELECTED, true);
 }
 
+void RouteExportFormatMap::registerMetaTypes()
+{
+  qRegisterMetaType<RouteExportFormatMap>();
+}
+
 #endif
 
 void RouteExportFormatMap::clearPath(rexp::RouteExportFormatType type)

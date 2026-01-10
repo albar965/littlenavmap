@@ -112,9 +112,6 @@ WeatherReporter::WeatherReporter(MainWindow *parentWindow, atools::fs::FsPaths::
   }
   ivaoWeather->setFetchAirportCoords(coordFunc);
 
-  // Update IVAO and NOAA timeout periods - timeout is disable if weather services are not used
-  updateTimeouts();
-
   initActiveSkyPaths();
 
   // Set callback so the reader can build an index for nearest airports

@@ -2290,7 +2290,7 @@ void ProfileWidget::mouseMoveEvent(QMouseEvent *mouseEvent)
 
   // Also updates lastTooltipPos
   buildTooltipText(x, false /* force */);
-  lastTooltipScreenPos = mouseEvent->globalPos();
+  lastTooltipScreenPos = mouseEvent->globalPosition();
   // Show tooltip
   if(!lastTooltipString.isEmpty())
     scrollArea->showTooltip(lastTooltipScreenPos, lastTooltipString);

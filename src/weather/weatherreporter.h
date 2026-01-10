@@ -178,6 +178,9 @@ public:
   /* Print the size of all container classes to detect overflow or memory leak conditions */
   void debugDumpContainerSizes() const;
 
+  /* Update IVAO and NOAA timeout periods - timeout is disabled if weather services are not used */
+  void updateTimeouts();
+
 signals:
   /* Emitted when Active Sky or X-Plane weather file changes or a request to weather was fullfilled */
   void weatherUpdated();
@@ -227,9 +230,6 @@ private:
   void showXplaneWarningDialog(const QString& message);
 
   atools::geo::Pos fetchAirportCoordinates(const QString& airportIdent, AirportQuery *airportQuery, bool xplane);
-
-  /* Update IVAO and NOAA timeout periods - timeout is disable if weather services are not used */
-  void updateTimeouts();
 
   atools::fs::weather::NoaaWeatherDownloader *noaaWeather = nullptr;
   atools::fs::weather::WeatherNetDownload *vatsimWeather = nullptr;

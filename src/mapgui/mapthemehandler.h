@@ -43,7 +43,7 @@ public:
   /* Use bright colors for MORA and other texts on map */
   bool isDarkTheme() const
   {
-    return theme == QStringLiteral("cartodark") || theme == QStringLiteral("mapboxdark");
+    return theme == QLatin1String("cartodark") || theme == QLatin1String("mapboxdark");
   }
 
   /* Enable show city and other POIs button if true */

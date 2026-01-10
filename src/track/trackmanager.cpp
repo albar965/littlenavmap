@@ -318,11 +318,11 @@ int TrackManager::addTrackpoint(QHash<int, SqlRecord>& trackpoints, atools::sql:
         rec.setValue("trackpoint_id", ref.id);
         rec.setValue("nav_id", waypointQuery->value("nav_id"));
         rec.setValue("ident", waypointQuery->value("ident"));
-        rec.setValue("name", waypointQuery->value("name", QVariant::String));
+        rec.setValue("name", waypointQuery->value("name", QVariant(QMetaType::fromType<QString>())));
         rec.setValue("region", waypointQuery->value("region"));
-        rec.setValue("artificial", waypointQuery->value("artificial", QVariant::Int));
+        rec.setValue("artificial", waypointQuery->value("artificial", QVariant(QMetaType::fromType<int>())));
         rec.setValue("type", waypointQuery->value("type"));
-        rec.setValue("arinc_type", waypointQuery->value("arinc_type", QVariant::String));
+        rec.setValue("arinc_type", waypointQuery->value("arinc_type", QVariant(QMetaType::fromType<QString>())));
         rec.setValue("num_victor_airway", waypointQuery->value("num_victor_airway"));
         rec.setValue("num_jet_airway", waypointQuery->value("num_jet_airway"));
         rec.setValue("mag_var", waypointQuery->value("mag_var"));
@@ -364,7 +364,7 @@ int TrackManager::addTrackpoint(QHash<int, SqlRecord>& trackpoints, atools::sql:
           rec.setValue("trackpoint_id", trackpointId);
           rec.setValue("nav_id", ref.id);
           rec.setValue("ident", navaidQuery->value("ident"));
-          rec.setValue("name", navaidQuery->value("name", QVariant::String));
+          rec.setValue("name", navaidQuery->value("name", QVariant(QMetaType::fromType<QString>())));
           rec.setValue("region", navaidQuery->value("region"));
           rec.setValue("artificial", 1); // Created for airways
           rec.setValue("type", type);

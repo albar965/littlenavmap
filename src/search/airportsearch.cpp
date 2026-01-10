@@ -489,10 +489,11 @@ QVariant AirportSearch::modelDataHandler(int colIndex, int rowIndex, const Colum
       if(col->getColumnName() == "rating")
         return Qt::AlignLeft;
       else if(col->getColumnName() == "ident" ||
-              displayRoleValue.type() == QVariant::Int || displayRoleValue.type() == QVariant::UInt ||
-              displayRoleValue.type() == QVariant::LongLong || displayRoleValue.type() ==
-              QVariant::ULongLong ||
-              displayRoleValue.type() == QVariant::Double)
+              displayRoleValue.metaType() == QMetaType::fromType<int>() ||
+              displayRoleValue.metaType() == QMetaType::fromType<unsigned int>() ||
+              displayRoleValue.metaType() == QMetaType::fromType<long long>() ||
+              displayRoleValue.metaType() == QMetaType::fromType<unsigned long long>() ||
+              displayRoleValue.metaType() == QMetaType::fromType<double>())
         // Align all numeric columns right
         return Qt::AlignRight;
 
@@ -539,11 +540,13 @@ QString AirportSearch::formatModelData(const Column *col, const QVariant& displa
     return map::parkingGateName(displayRoleValue.toString());
   else if(col->getColumnName() == "rating")
     return atools::ratingString(displayRoleValue.toInt(), 5);
-  else if(displayRoleValue.type() == QVariant::Int || displayRoleValue.type() == QVariant::UInt)
+  else if(displayRoleValue.metaType() == QMetaType::fromType<int>() ||
+          displayRoleValue.metaType() == QMetaType::fromType<unsigned int>())
     return QLocale().toString(displayRoleValue.toInt());
-  else if(displayRoleValue.type() == QVariant::LongLong || displayRoleValue.type() == QVariant::ULongLong)
+  else if(displayRoleValue.metaType() == QMetaType::fromType<long long>() ||
+          displayRoleValue.metaType() == QMetaType::fromType<unsigned long long>())
     return QLocale().toString(displayRoleValue.toLongLong());
-  else if(displayRoleValue.type() == QVariant::Double)
+  else if(displayRoleValue.metaType() == QMetaType::fromType<double>())
     return QLocale().toString(displayRoleValue.toDouble());
 
   return displayRoleValue.toString();
@@ -929,8 +932,11 @@ void AirportSearch::dataRandomAirportsReceived(bool isSuccess, int indexDepartur
                       QMessageBox::Yes | QMessageBox::No | QMessageBox::Cancel, NavApp::getQMainWidget());
 
       // Rename yes and no buttons
-      box.setButtonText(QMessageBox::Yes, tr("&Use as Flight Plan"));
-      box.setButtonText(QMessageBox::No, tr("&Search again"));
+      if(box.button(QMessageBox::Yes) != nullptr)
+        box.button(QMessageBox::Yes)->setText(tr("&Use as Flight Plan"));
+      if(box.button(QMessageBox::No) != nullptr)
+        box.button(QMessageBox::No)->setText(tr("&Search again"));
+
       box.setWindowFlag(Qt::WindowContextHelpButtonHint, false);
       box.setWindowModality(Qt::ApplicationModal);
       box.setTextInteractionFlags(Qt::TextSelectableByMouse);

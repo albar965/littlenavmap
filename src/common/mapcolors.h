@@ -165,8 +165,8 @@ extern QColor aircraftAiLabelColorBg;
 // ==========================================================================
 
 /* Web page table background colors */
-const QColor webTableBackgroundColor(QStringLiteral("#f3f3f3"));
-const QColor webTableAltBackgroundColor(QStringLiteral("#eceae8"));
+const QColor webTableBackgroundColor(QLatin1String("#f3f3f3"));
+const QColor webTableAltBackgroundColor(QLatin1String("#eceae8"));
 
 extern QPen taxiwayLinePen;
 extern QColor taxiwayNameColor;

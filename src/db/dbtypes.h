@@ -108,6 +108,9 @@ public:
   using QHash::size;
   using QHash::operator[];
 
+  /* Register serializable objects */
+  static void registerMetaTypes();
+
 private:
   friend QDataStream& operator<<(QDataStream& out, const SimulatorTypeMap& obj);
   friend QDataStream& operator>>(QDataStream& in, SimulatorTypeMap& obj);

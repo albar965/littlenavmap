@@ -28,6 +28,7 @@
 #include "common/unit.h"
 #include "db/databasemanager.h"
 #include "exception.h"
+#include "common/maptypes.h"
 #include "fs/sc/simconnectdata.h"
 #include "fs/sc/simconnectreply.h"
 #include "fs/weather/metarparser.h"
@@ -36,6 +37,7 @@
 #include "logging/logginghandler.h"
 #include "logging/loggingutil.h"
 #include "options/optionsdialog.h"
+#include "routeexport/routeexportformat.h"
 #include "settings/settings.h"
 #include "userdata/userdataicons.h"
 #include "util/crashhandler.h"
@@ -76,6 +78,9 @@ int main(int argc, char *argv[])
 
   // Register types and load process environment
   atools::fs::FsPaths::intitialize();
+  SimulatorTypeMap::registerMetaTypes();
+  RouteExportFormatMap::registerMetaTypes();
+  map::registerMetaTypes();
 
   // Tasks that have to be done before creating the application object and logging system =================
   // Application name is not available yet
@@ -121,42 +126,6 @@ int main(int argc, char *argv[])
       logMessages.append("Wrong renderer " + renderOpt);
   }
   logMessages.append("RenderOpt " + renderOpt);
-
-  // High DPI option =================================================
-  if(settings.valueInt("OptionsDialog/Widget_checkBoxOptionsGuiHighDpi", 2) == 2)
-  {
-    logMessages.append("High DPI scaling enabled");
-
-    // Enables high-DPI scaling in Qt on supported platforms (see also High DPI Displays). Supported
-    // platforms are X11, Windows and Android. Enabling makes Qt scale the main (device independent)
-    // coordinate system according to display scale factors provided by the operating system.
-    QGuiApplication::setAttribute(Qt::AA_EnableHighDpiScaling, true);
-
-    // Make QIcon::pixmap() generate high-dpi pixmaps that can be larger than the requested size. Such
-    // pixmaps will have devicePixelRatio() set to a value higher than 1. After setting this attribute,
-    // application code that uses pixmap sizes in layout geometry calculations should typically divide by
-    // devicePixelRatio() to get device-independent layout geometry.
-    QGuiApplication::setAttribute(Qt::AA_UseHighDpiPixmaps, true);
-  }
-  else
-  {
-    logMessages.append("High DPI scaling disabled");
-
-    // Disables high-DPI scaling in Qt, exposing window system coordinates. Note that the window
-    // system may do its own scaling, so this does not guarantee that QPaintDevice::devicePixelRatio()
-    // will be equal to 1. In addition, scale factors set by QT_SCALE_FACTOR will not be affected.
-    QGuiApplication::setAttribute(Qt::AA_EnableHighDpiScaling, false);
-    // QGuiApplication::setAttribute(Qt::AA_DisableHighDpiScaling, true); // Freezes with QT_SCALE_FACTOR=2 on Linux
-
-    QGuiApplication::setAttribute(Qt::AA_UseHighDpiPixmaps, false);
-#if !defined(Q_OS_WIN32)
-    // Assume the screen has a resolution of 96 DPI rather than using the OS-provided resolution. This
-    // will cause font rendering to be consistent in pixels-per-point across devices rather than defining
-    // 1 point as 1/72 inch
-    // Causes weird font effects on Windows
-    QGuiApplication::setAttribute(Qt::AA_Use96Dpi, true);
-#endif
-  }
 
   // Show dialog on exception in main event queue - can be disabled for debugging purposes
   NavApp::setShowExceptionDialog(settings.valueBool("Options/ExceptionDialog", true));

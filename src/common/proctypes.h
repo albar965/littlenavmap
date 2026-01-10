@@ -483,7 +483,7 @@ struct MapProcedureLegs
   QString displayType() const
   {
     // Correct wrong designation of GLS approaches as GNSS for display
-    return type == QStringLiteral("GNSS") ? QStringLiteral("GLS") : type;
+    return type == QLatin1String("GNSS") ? QLatin1String("GLS") : type;
   }
 
   /* "VOR-A" or "ILS-Z" */
@@ -495,7 +495,7 @@ struct MapProcedureLegs
   static QString displayType(const QString& type)
   {
     // Correct wrong designation of GLS approaches as GNSS for display
-    return type == QStringLiteral("GNSS") ? QStringLiteral("GLS") : type;
+    return type == QLatin1String("GNSS") ? QLatin1String("GLS") : type;
   }
 
   /* Anything that needs to display an ILS frequency or GNSS channel */
@@ -524,13 +524,13 @@ struct MapProcedureLegs
 
   static bool hasFrequency(const QString& approachType)
   {
-    return approachType == QStringLiteral("ILS") || approachType == QStringLiteral("LOC") || approachType == QStringLiteral("LOCB") ||
-           approachType == QStringLiteral("LDA") || approachType == QStringLiteral("IGS") || approachType == QStringLiteral("SDF");
+    return approachType == QLatin1String("ILS") || approachType == QLatin1String("LOC") || approachType == QLatin1String("LOCB") ||
+           approachType == QLatin1String("LDA") || approachType == QLatin1String("IGS") || approachType == QLatin1String("SDF");
   }
 
   static bool hasChannel(const QString& approachType)
   {
-    return approachType == QStringLiteral("GNSS") || approachType == QStringLiteral("GLS");
+    return approachType == QLatin1String("GNSS") || approachType == QLatin1String("GLS");
   }
 
   bool isAnyCustom() const
@@ -550,22 +550,22 @@ struct MapProcedureLegs
 
   bool isRnavGps() const
   {
-    return type == QStringLiteral("RNAV") || type == QStringLiteral("GPS");
+    return type == QLatin1String("RNAV") || type == QLatin1String("GPS");
   }
 
   bool isPrecision() const
   {
-    return type == QStringLiteral("ILS") || type == QStringLiteral("GNSS") /* GLS */;
+    return type == QLatin1String("ILS") || type == QLatin1String("GNSS") /* GLS */;
   }
 
   bool isGls() const
   {
-    return type == QStringLiteral("GNSS") /* GLS */;
+    return type == QLatin1String("GNSS") /* GLS */;
   }
 
   bool isIls() const
   {
-    return type == QStringLiteral("ILS");
+    return type == QLatin1String("ILS");
   }
 
   bool isNonPrecision() const
