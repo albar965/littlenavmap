@@ -186,7 +186,7 @@ win32 {
 
   DEFINES += _USE_MATH_DEFINES
 
-  CONFIG(debug, debug|release) : LIBS += -L$$MARBLE_LIB_PATH -llibmarblewidget-lnm-qt6
+  CONFIG(debug, debug|release) : LIBS += -L$$MARBLE_LIB_PATH -llibmarblewidget-lnm-qt6d
   CONFIG(release, debug|release) : LIBS += -L$$MARBLE_LIB_PATH -llibmarblewidget-lnm-qt6
   LIBS += -L$$ATOOLS_LIB_PATH -latools -lz
 }
@@ -261,7 +261,6 @@ message(OPENSSL_PATH_WIN: $$OPENSSL_PATH_WIN)
 message(ATOOLS_INC_PATH: $$ATOOLS_INC_PATH)
 message(ATOOLS_LIB_PATH: $$ATOOLS_LIB_PATH)
 message(MARBLE_INC_PATH: $$MARBLE_INC_PATH)
-message(SIMCONNECT_PATH_WIN32: $$SIMCONNECT_PATH_WIN32)
 message(SIMCONNECT_PATH_WIN64_MSFS_2020: $$SIMCONNECT_PATH_WIN64_MSFS_2020)
 message(SIMCONNECT_PATH_WIN64_MSFS_2024: $$SIMCONNECT_PATH_WIN64_MSFS_2024)
 message(ATOOLS_NO_CRASHHANDLER: $$ATOOLS_NO_CRASHHANDLER)

@@ -198,7 +198,7 @@ int main(int argc, char *argv[])
       LoggingUtil::logSystemInformation();
 
       for(const QString& message : logMessages)
-        qInfo() << message;
+        qInfo() << Q_FUNC_INFO << message;
 
       // Initialize crashhandler - disable on Linux to get core files
       if(settings.valueBool("Options/PrintStackTrace", true))
@@ -218,7 +218,7 @@ int main(int argc, char *argv[])
         // Use system default for now if not given in settings yet
         language = QLocale().name();
 
-      qInfo() << "Loading translations for" << language;
+      qInfo() << Q_FUNC_INFO << "Loading translations for" << language;
       Translator::load(language);
 
       // Load help URLs from urls.cfg =================================
@@ -238,41 +238,41 @@ int main(int argc, char *argv[])
 
       LoggingUtil::logStandardPaths();
 
-      qInfo() << "SSL supported" << QSslSocket::supportsSsl()
+      qInfo() << Q_FUNC_INFO << "SSL supported" << QSslSocket::supportsSsl()
               << "build library" << QSslSocket::sslLibraryBuildVersionString()
               << "library" << QSslSocket::sslLibraryVersionString();
 
-      qInfo() << "Available styles" << QStyleFactory::keys();
+      qInfo() << Q_FUNC_INFO << "Available styles" << QStyleFactory::keys();
 
-      qInfo() << "SimConnectData Version" << atools::fs::sc::SimConnectData::getDataVersion()
+      qInfo() << Q_FUNC_INFO << "SimConnectData Version" << atools::fs::sc::SimConnectData::getDataVersion()
               << "SimConnectReply Version" << atools::fs::sc::SimConnectReply::getReplyVersion();
 
-      qInfo() << "QT_OPENGL" << QProcessEnvironment::systemEnvironment().value("QT_OPENGL");
-      qInfo() << "QT_SCALE_FACTOR" << QProcessEnvironment::systemEnvironment().value("QT_SCALE_FACTOR");
+      qInfo() << Q_FUNC_INFO << "QT_OPENGL" << QProcessEnvironment::systemEnvironment().value("QT_OPENGL");
+      qInfo() << Q_FUNC_INFO << "QT_SCALE_FACTOR" << QProcessEnvironment::systemEnvironment().value("QT_SCALE_FACTOR");
       if(QApplication::testAttribute(Qt::AA_UseDesktopOpenGL))
-        qInfo() << "Using Qt desktop renderer";
+        qInfo() << Q_FUNC_INFO << "Using Qt desktop renderer";
       if(QApplication::testAttribute(Qt::AA_UseOpenGLES))
-        qInfo() << "Using Qt angle renderer";
+        qInfo() << Q_FUNC_INFO << "Using Qt angle renderer";
       if(QApplication::testAttribute(Qt::AA_UseSoftwareOpenGL))
-        qInfo() << "Using Qt software renderer";
+        qInfo() << Q_FUNC_INFO << "Using Qt software renderer";
 
-      qInfo() << "UI default font" << QApplication::font();
+      qInfo() << Q_FUNC_INFO << "UI default font" << QApplication::font();
       const QList<QScreen *> screens = QGuiApplication::screens();
       for(const QScreen *screen: screens)
-        qInfo() << "Screen" << screen->name() << "size" << screen->size() << "physical size" << screen->physicalSize()
+        qInfo() << Q_FUNC_INFO << "Screen" << screen->name() << "size" << screen->size() << "physical size" << screen->physicalSize()
                 << "DPI ratio" << screen->devicePixelRatio() << "DPI x" << screen->logicalDotsPerInchX()
                 << "y" << screen->logicalDotsPerInchX();
 
       // Start settings and file migration
       migrate::checkAndMigrateSettings();
 
-      qInfo() << "Settings dir name" << Settings::getDirName();
+      qInfo() << Q_FUNC_INFO << "Settings dir name" << Settings::getDirName();
 
       int pixmapCache = settings.valueInt(lnm::OPTIONS_PIXMAP_CACHE, -1);
-      qInfo() << "QPixmapCache cacheLimit" << QPixmapCache::cacheLimit() << "KB";
+      qInfo() << Q_FUNC_INFO << "QPixmapCache cacheLimit" << QPixmapCache::cacheLimit() << "KB";
       if(pixmapCache != -1)
       {
-        qInfo() << "Overriding pixmap cache" << pixmapCache << "KB";
+        qInfo() << Q_FUNC_INFO << "Overriding pixmap cache" << pixmapCache << "KB";
         QPixmapCache::setCacheLimit(pixmapCache);
       }
 
@@ -286,17 +286,17 @@ int main(int argc, char *argv[])
       }
 
       TextPointer::initPointerCharacters(QApplication::font());
-      qInfo() << "Loaded font" << font.toString() << "from options. Stored font info" << fontStr;
+      qInfo() << Q_FUNC_INFO << "Loaded font" << font.toString() << "from options. Stored font info" << fontStr;
 
       // Load region override ============================================
       // Forcing the English locale if the user has chosen it this way
       if(OptionsDialog::isOverrideRegion())
       {
-        qInfo() << "Overriding region settings";
+        qInfo() << Q_FUNC_INFO << "Overriding region settings";
         QLocale::setDefault(QLocale("en"));
       }
 
-      qDebug() << "Locale after setting to" << OptionData::getLanguageFromConfigFile() << QLocale()
+      qDebug() << Q_FUNC_INFO << "Locale after setting to" << OptionData::getLanguageFromConfigFile() << QLocale()
                << "decimal point" << QString(QLocale().decimalPoint())
                << "group separator" << QString(QLocale().groupSeparator());
 
@@ -322,12 +322,12 @@ int main(int argc, char *argv[])
       MarbleGlobal::Profiles profiles = MarbleGlobal::detectProfiles();
       MarbleGlobal::getInstance()->setProfiles(profiles);
 
-      qDebug() << "Marble Local Path:" << MarbleDirs::localPath();
-      qDebug() << "Marble Plugin Local Path:" << MarbleDirs::pluginLocalPath();
-      qDebug() << "Marble Data Path (Run Time) :" << MarbleDirs::marbleDataPath();
-      qDebug() << "Marble Plugin Path (Run Time) :" << MarbleDirs::marblePluginPath();
-      qDebug() << "Marble System Path:" << MarbleDirs::systemPath();
-      qDebug() << "Marble Plugin System Path:" << MarbleDirs::pluginSystemPath();
+      qDebug() << Q_FUNC_INFO << "Marble Local Path:" << MarbleDirs::localPath();
+      qDebug() << Q_FUNC_INFO << "Marble Plugin Local Path:" << MarbleDirs::pluginLocalPath();
+      qDebug() << Q_FUNC_INFO << "Marble Data Path (Run Time) :" << MarbleDirs::marbleDataPath();
+      qDebug() << Q_FUNC_INFO << "Marble Plugin Path (Run Time) :" << MarbleDirs::marblePluginPath();
+      qDebug() << Q_FUNC_INFO << "Marble System Path:" << MarbleDirs::systemPath();
+      qDebug() << Q_FUNC_INFO << "Marble Plugin System Path:" << MarbleDirs::pluginSystemPath();
 
       MarbleDirs::setMarbleDataPath(QApplication::applicationDirPath() + atools::SEP + "data");
 
@@ -368,12 +368,12 @@ int main(int argc, char *argv[])
 
       MarbleDebug::setEnabled(settings.getAndStoreValue(lnm::OPTIONS_MARBLE_DEBUG, false).toBool());
 
-      qDebug() << "New Marble Local Path:" << MarbleDirs::localPath();
-      qDebug() << "New Marble Plugin Local Path:" << MarbleDirs::pluginLocalPath();
-      qDebug() << "New Marble Data Path (Run Time) :" << MarbleDirs::marbleDataPath();
-      qDebug() << "New Marble Plugin Path (Run Time) :" << MarbleDirs::marblePluginPath();
-      qDebug() << "New Marble System Path:" << MarbleDirs::systemPath();
-      qDebug() << "New Marble Plugin System Path:" << MarbleDirs::pluginSystemPath();
+      qDebug() << Q_FUNC_INFO << "New Marble Local Path:" << MarbleDirs::localPath();
+      qDebug() << Q_FUNC_INFO << "New Marble Plugin Local Path:" << MarbleDirs::pluginLocalPath();
+      qDebug() << Q_FUNC_INFO << "New Marble Data Path (Run Time) :" << MarbleDirs::marbleDataPath();
+      qDebug() << Q_FUNC_INFO << "New Marble Plugin Path (Run Time) :" << MarbleDirs::marblePluginPath();
+      qDebug() << Q_FUNC_INFO << "New Marble System Path:" << MarbleDirs::systemPath();
+      qDebug() << Q_FUNC_INFO << "New Marble Plugin System Path:" << MarbleDirs::pluginSystemPath();
 
       // =============================================================================================
       // Disable tooltip effects since these do not work well with tooltip updates while displaying
@@ -384,7 +384,7 @@ int main(int argc, char *argv[])
       // Check if database is compatible and ask the user to erase all incompatible ones
       // If erasing databases is refused exit application
       bool databasesErased = false;
-      dbManager = new DatabaseManager(nullptr);
+      dbManager = new DatabaseManager(nullptr, false /* verbose - log database parameters */);
 
       /* Copy from application directory to settings directory if newer and create indexes if missing */
       dbManager->checkCopyAndPrepareDatabases();

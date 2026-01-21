@@ -130,7 +130,7 @@ void NavApp::init(MainWindow *mainWindowParam)
 
   elevationProvider = new ElevationProvider(mainWindow);
 
-  databaseManager = new DatabaseManager(mainWindow);
+  databaseManager = new DatabaseManager(mainWindow, true /* Verbose - log database parameters */);
   databaseManager->openAllDatabases(); // Only readonly databases
   databaseManager->loadLanguageIndex(); // MSFS translations from table "translation"
   databaseManager->loadAircraftIndex(); // MSFS aircraft.cfg properties

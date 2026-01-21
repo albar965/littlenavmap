@@ -72,7 +72,7 @@ public:
   /*
    * @param parent can be null if only checkIncompatibleDatabases is to be called
    */
-  explicit DatabaseManager(MainWindow *parent);
+  explicit DatabaseManager(MainWindow *parent, bool verbose);
 
   /* Also closes database if not already done */
   virtual ~DatabaseManager() override;
@@ -334,9 +334,11 @@ private:
   void switchSimInternal(atools::fs::FsPaths::SimulatorType type);
 
   /* Navdatabase mode change from main menu */
+  /* User changed navdatabase in main menu */
   void switchNavFromMainMenu();
 
   /* Navdatabase auto mode changed from main menu */
+  /* User changed nav auto main menu */
   void switchNavAutoFromMainMenu();
 
   /* Set menus according to correction */
@@ -428,6 +430,9 @@ private:
 
   /* Show hint dialog only once per session */
   bool backgroundHintShown = false;
+
+  /* Log databases only on first start up */
+  bool verbose = true;
 };
 
 #endif // LITTLENAVMAP_DATABASEMANAGER_H

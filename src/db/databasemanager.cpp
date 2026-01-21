@@ -68,7 +68,7 @@ const static int SIMCONNECT_LOADING_MINUTES_MIN = 10;
 const static int SIMCONNECT_LOADING_MINUTES_MAX = 15;
 #endif
 
-DatabaseManager::DatabaseManager(MainWindow *parent)
+DatabaseManager::DatabaseManager(MainWindow *parent, bool verbose)
   : QObject(parent), mainWindow(parent)
 {
   databaseMetaText = tr("<p><big>Last Update: %1. Database Version: %2. Program Version: %3.%4</big></p>");
@@ -104,14 +104,18 @@ DatabaseManager::DatabaseManager(MainWindow *parent)
   // Find any stale databases that do not belong to a simulator and update installed and has database flags
   updateSimulatorFlags();
 
-  qDebug() << Q_FUNC_INFO << "Detected simulators =====================================================";
-  for(auto it = simulators.constBegin(); it != simulators.constEnd(); ++it)
-    qDebug() << Q_FUNC_INFO << it.key() << it.value();
+  if(verbose)
+  {
+    qInfo() << Q_FUNC_INFO << "Detected simulators =====================================================";
+    for(auto it = simulators.constBegin(); it != simulators.constEnd(); ++it)
+      qInfo() << Q_FUNC_INFO << it.key() << it.value();
+  }
 
   // Correct if current simulator is invalid
   correctSimulatorType();
 
-  qDebug() << Q_FUNC_INFO << "fs type" << currentFsType;
+  if(verbose)
+    qInfo() << Q_FUNC_INFO << "fs type" << currentFsType;
 
   if(mainWindow != nullptr)
   {
@@ -833,7 +837,6 @@ void DatabaseManager::updateNavMenuStatus()
   navDbActionOff->setDisabled(navDatabaseAuto);
 }
 
-/* User changed nav auto main menu */
 void DatabaseManager::switchNavAutoFromMainMenu()
 {
   qDebug() << Q_FUNC_INFO;
@@ -842,7 +845,6 @@ void DatabaseManager::switchNavAutoFromMainMenu()
   switchSimInternal(currentFsType);
 }
 
-/* User changed navdatabase in main menu */
 void DatabaseManager::switchNavFromMainMenu()
 {
   qDebug() << Q_FUNC_INFO;
@@ -1095,15 +1097,15 @@ void DatabaseManager::openAllDatabases()
   if(navDatabaseStatus == navdb::ALL)
   {
     simDbFile = navDbFile;
-    qDebug() << Q_FUNC_INFO << "Using database mode navdb::ALL";
+    qInfo() << Q_FUNC_INFO << "Using database mode navdb::ALL";
   }
   else if(navDatabaseStatus == navdb::OFF)
   {
     navDbFile = simDbFile;
-    qDebug() << Q_FUNC_INFO << "Using database mode navdb::OFF";
+    qInfo() << Q_FUNC_INFO << "Using database mode navdb::OFF";
   }
   else if(navDatabaseStatus == navdb::MIXED)
-    qDebug() << Q_FUNC_INFO << "Using database mode navdb::MIXED";
+    qInfo() << Q_FUNC_INFO << "Using database mode navdb::MIXED";
 
   dbtools::openDatabaseFile(databaseSim, simDbFile, true /* readonly */, true /* createSchema */);
   dbtools::openDatabaseFile(databaseNav, navDbFile, true /* readonly */, true /* createSchema */);
