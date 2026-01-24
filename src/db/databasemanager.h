@@ -346,6 +346,9 @@ private:
 
   void freeActions();
   void insertSimSwitchAction(atools::fs::FsPaths::SimulatorType type, QAction *before, QMenu *menu, int index);
+
+  /* Updates the flags for installed simulators and removes all entries where neither database
+   * not simulator installation was found */
   void updateSimulatorFlags();
   void updateSimulatorPathsFromDialog();
 

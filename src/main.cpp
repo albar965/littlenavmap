@@ -161,6 +161,7 @@ int main(int argc, char *argv[])
   DatabaseManager *dbManager = nullptr;
 
 #if defined(Q_OS_WIN32)
+  // Add Marble plugins on Windows
   QApplication::addLibraryPath(QApplication::applicationDirPath() + atools::SEP + "plugins");
 #endif
 

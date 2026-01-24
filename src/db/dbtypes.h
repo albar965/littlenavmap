@@ -42,7 +42,8 @@ enum Correction : quint8
   CORRECT_FSX_P3D_UPDATED, /* Any FSX or P3D with updated cycle -> mixed or sim only mode */
   CORRECT_FSX_P3D_OUTDATED, /* Any FSX or P3D with old included AIRAC - sim only mode */
   CORRECT_XP_CYCLE_NAV_EQUAL, /* XP nav cycle is equal to sim cycle -> mixed mode */
-  CORRECT_XP_CYCLE_NAV_SMALLER, /* XP nav cycle is equal to sim cycle -> no navdatabase */
+  CORRECT_XP_CYCLE_NAV_OLDER, /* XP nav cycle is older than sim cycle -> no navdatabase */
+  CORRECT_XP_CYCLE_NAV_NEWER, /* XP nav cycle is newer than sim cycle -> mixed mode and show hint */
   CORRECT_EMPTY, /* Sim database is empty - use navdata for all */
   CORRECT_EMPTY_CHANGE, /* Sim database is empty and wrong mode */
   CORRECT_ALL /* Navdata for all selected - change mode */

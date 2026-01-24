@@ -28,7 +28,6 @@
 #include <marble/MarbleGlobal.h>
 
 class ConnectClient;
-class DatabaseManager;
 class InfoController;
 class MapThemeHandler;
 class OptionsDialog;

@@ -4684,10 +4684,6 @@ QList<QAction *> MainWindow::getMainWindowActions()
 #ifdef DEBUG_DUMP_SHORTCUTS
 void MainWindow::printShortcuts()
 {
-#if QT_VERSION >= QT_VERSION_CHECK(5, 14, 0)
-
-#endif
-
   // Print all main menu and sub menu shortcuts ==============================================
   qDebug() << "===============================================================================";
 

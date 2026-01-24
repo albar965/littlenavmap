@@ -33,10 +33,6 @@
 
 namespace proc  {
 
-#if QT_VERSION >= QT_VERSION_CHECK(5, 14, 0)
-
-#endif
-
 static QHash<QString, QString> approachFixTypeToStr;
 static QHash<QString, QString> approachTypeToStr;
 static QHash<ProcedureLegType, QString> approachLegTypeToStr;
