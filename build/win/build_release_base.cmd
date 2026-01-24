@@ -39,7 +39,7 @@ if errorlevel 1 goto :err
 qmake.exe "%APROJECTS%\atools\atools.pro" -spec win32-g++ CONFIG+=%CONF_TYPE%
 if errorlevel 1 goto :err
 
-mingw32-make.exe -j4
+mingw32-make.exe
 if errorlevel 1 goto :err
 
 popd
@@ -57,7 +57,7 @@ if errorlevel 1 goto :err
 qmake.exe "%APROJECTS%\littlenavconnect\littlenavconnect.pro" -spec win32-g++ CONFIG+=%CONF_TYPE%
 if errorlevel 1 goto :err
 
-mingw32-make.exe -j4
+mingw32-make.exe
 if errorlevel 1 goto :err
 
 mingw32-make.exe deploy
@@ -78,7 +78,7 @@ if errorlevel 1 goto :err
 qmake.exe "%APROJECTS%\littlenavmap\littlenavmap.pro" -spec win32-g++ CONFIG+=%CONF_TYPE%
 if errorlevel 1 goto :err
 
-mingw32-make.exe -j4
+mingw32-make.exe
 if errorlevel 1 goto :err
 
 mingw32-make.exe deploy

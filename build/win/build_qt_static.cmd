@@ -30,7 +30,7 @@ if errorlevel 1 goto :err
 
 echo Building ... ========================================
 cd %APROJECTS%/build-qt-%QT_VERSION%-static
-cmake --build . -j4
+cmake --build .
 if errorlevel 1 goto :err
 
 echo Installing ... ========================================

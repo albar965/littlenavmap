@@ -65,7 +65,7 @@ mkdir -p ${APROJECTS}/build-atools-${CONF_TYPE}
 cd ${APROJECTS}/build-atools-${CONF_TYPE}
 
 ${QMAKE_SHARED} ${APROJECTS}/atools/atools.pro -spec linux-g++ CONFIG+=${CONF_TYPE}
-make -j4
+nice make
 
 # ===========================================================================
 # ========================== littlenavmap
@@ -74,7 +74,7 @@ mkdir -p ${APROJECTS}/build-littlenavmap-${CONF_TYPE}
 cd ${APROJECTS}/build-littlenavmap-${CONF_TYPE}
 
 ${QMAKE_SHARED} ${APROJECTS}/littlenavmap/littlenavmap.pro -spec linux-g++ CONFIG+=${CONF_TYPE}
-make -j4
+nice make
 
 make copydata
 make deploy
@@ -86,7 +86,7 @@ mkdir -p ${APROJECTS}/build-littlenavconnect-${CONF_TYPE}
 cd ${APROJECTS}/build-littlenavconnect-${CONF_TYPE}
 
 ${QMAKE_SHARED} ${APROJECTS}/littlenavconnect/littlenavconnect.pro -spec linux-g++ CONFIG+=${CONF_TYPE}
-make -j4
+nice make
 
 make copydata
 make deploy
@@ -115,7 +115,7 @@ export ATOOLS_NO_CRASHHANDLER=true
 export ATOOLS_NO_QT5COMPAT=true
 
 ${QMAKE_STATIC} ${APROJECTS}/atools/atools.pro -spec linux-g++ CONFIG+=${CONF_TYPE}
-make -j4
+nice make
 
 # ========================== xpconnect
 rm -rf ${APROJECTS}/build-littlexpconnect-${CONF_TYPE}
@@ -123,6 +123,6 @@ mkdir -p ${APROJECTS}/build-littlexpconnect-${CONF_TYPE}
 cd ${APROJECTS}/build-littlexpconnect-${CONF_TYPE}
 
 ${QMAKE_STATIC} ${APROJECTS}/littlexpconnect/littlexpconnect.pro -spec linux-g++ CONFIG+=${CONF_TYPE}
-make -j4
+nice make
 
 make deploy

@@ -23,7 +23,7 @@ $APROJECTS/qt-everywhere-src-$QT_VERSION/configure -submodules qtbase -openssl-l
 
 echo Building ... ========================================
 cd $APROJECTS/build-qt-$QT_VERSION-static
-nice cmake --build . -j8
+nice cmake --build .
 
 #echo Installing ... ========================================
 cd $APROJECTS/build-qt-$QT_VERSION-static
