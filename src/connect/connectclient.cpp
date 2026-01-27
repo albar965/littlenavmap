@@ -181,7 +181,7 @@ void ConnectClient::connectToServerDialog()
     dataReader->terminateThread();
 
     // Let the dataReader send its message to the statusbar so it does not overwrite the socket message
-    QApplication::processEvents(QEventLoop::ExcludeUserInputEvents);
+    atools::gui::Application::processEventsExtended();
 
     connectInternal();
   }

@@ -419,8 +419,6 @@ MainWindow::MainWindow()
 
     qDebug() << Q_FUNC_INFO << "Setting theme";
     updateMapKeys(); // First update keys in GUI map widget - web API not started yet
-    mapThemeHandler->changeMapTheme();
-    mapThemeHandler->changeMapProjection();
 
     // Wait until everything is set up and update map
     updateMapObjectsShown();
@@ -3515,14 +3513,12 @@ void MainWindow::mainWindowShown()
   mapWidget->mainWindowShown();
   profileWidget->mainWindowShown();
 
-  mapWidget->showSavedPosOnStartup();
-
   NavApp::logDatabaseMeta();
 
   renderStatusUpdateLabel(Marble::Complete, true /* forceUpdate */);
 
   // Do delayed dock window formatting and fullscreen state after widget layout is done ================================
-  QTimer::singleShot(100, this, &MainWindow::mainWindowShownDelayed);
+  QTimer::singleShot(10, this, &MainWindow::mainWindowShownDelayed);
 
   // Log screen information ==============
   const QList<QScreen *> screens = QGuiApplication::screens();
@@ -3542,7 +3538,7 @@ void MainWindow::loadLayoutDelayed(const QString& filename)
   {
     // Load layout file delayed - does not apply state
     dockHandler->loadWindowState(filename, OptionData::instance().getFlags2().testFlag(opts2::MAP_ALLOW_UNDOCK), layoutWarnText);
-    QTimer::singleShot(200, dockHandler, &atools::gui::DockWidgetHandler::currentStateToWindow);
+    QTimer::singleShot(10, dockHandler, &atools::gui::DockWidgetHandler::currentStateToWindow);
   }
   catch(atools::Exception& e)
   {
@@ -3589,6 +3585,13 @@ void MainWindow::mainWindowShownDelayed()
 
   // Raise all floating docks and focus map widget
   raiseFloatingWindows();
+
+  // Set theme later to avoid window jumping when loading offline themes - no theme results in blank window
+  mapThemeHandler->changeMapTheme();
+  mapThemeHandler->changeMapProjection();
+  mapWidget->showSavedPosOnStartup();
+
+  Application::closeSplashScreen();
 
   if(migrate::getOptionsVersion().isValid() && migrate::getOptionsVersion() <= atools::util::Version("3.0.9"))
   {

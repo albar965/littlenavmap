@@ -3019,6 +3019,7 @@ void MapWidget::showSavedPosOnStartup()
 {
   qDebug() << Q_FUNC_INFO;
 
+  // Start drawing
   active = true;
 
   const atools::gui::MapPosHistoryEntry& currentPos = history.current();

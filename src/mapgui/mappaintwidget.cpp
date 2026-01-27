@@ -57,8 +57,7 @@ constexpr float DISTANCE_CUT_OFF_LIMIT_SPHERICAL_KM = 8000.f;
 
 // Placemark files to remove or add
 const static QStringList PLACEMARK_FILES_CACHE({
-  "baseplacemarks.cache", "boundaryplacemarks.cache", "cityplacemarks.cache", "elevplacemarks.cache",
-  "otherplacemarks.cache"});
+  "baseplacemarks.cache", "boundaryplacemarks.cache", "cityplacemarks.cache", "elevplacemarks.cache", "otherplacemarks.cache"});
 
 // Additional maps refer to KML files get rid of these too
 const static QStringList PLACEMARK_FILES_KML({

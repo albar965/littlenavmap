@@ -110,7 +110,7 @@ void RouteCalcDialog::buttonBoxClicked(QAbstractButton *button)
   {
     calculating = true;
     updateWidgets();
-    QApplication::processEvents(QEventLoop::ExcludeUserInputEvents);
+    atools::gui::Application::processEventsExtended();
     emit calculateClicked();
     calculating = false;
     updateWidgets();
