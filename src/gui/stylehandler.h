@@ -22,6 +22,7 @@
 #include <QList>
 #include <QObject>
 
+class QStyleHints;
 class QMenu;
 class QPalette;
 class QActionGroup;
@@ -58,6 +59,9 @@ public:
   /* true if style requires darkening the map */
   bool isGuiStyleDark() const;
 
+  /* System setting. Currently only usable on Windows and macOS */
+  bool isSystemStyleDark() const;
+
   const static QLatin1String STYLE_FUSION; /* Fusion */
   const static QLatin1String STYLE_DARK; /* Dark / Fusion */
   const static QLatin1String STYLE_WINDOWSVISTA; /* Windows 10 and 11 */
@@ -69,33 +73,92 @@ signals:
   void styleChanged(const QString& name, bool dark);
 
 private:
-  struct Style
+  /* Immutable internal class describing a style */
+  class StyleDescription
   {
-    Style(const QString& displayNameParam, const QString& styleNameParam, const QString& stylesheetParam,
-          const QPalette& paletteParam, bool darkParam) :
-      displayName(displayNameParam), styleName(styleNameParam), stylesheet(stylesheetParam), palette(paletteParam), dark(darkParam)
+public:
+    StyleDescription(const QString& displayNameParam, const QString& styleNameParam, const QString& stylesheetParam,
+                     const QPalette& paletteParam, bool darkParam)
+      : displayName(displayNameParam), styleName(styleNameParam), stylesheet(stylesheetParam), palette(paletteParam),
+      dark(darkParam), paletteValid(true)
     {
     }
 
+    StyleDescription(const QString& displayNameParam, const QString& styleNameParam, const QString& stylesheetParam,
+                     bool darkParam)
+      : displayName(displayNameParam), styleName(styleNameParam), stylesheet(stylesheetParam),
+      dark(darkParam), paletteValid(false)
+    {
+    }
+
+    const QString& getDisplayName() const
+    {
+      return displayName;
+    }
+
+    const QString& getStyleName() const
+    {
+      return styleName;
+    }
+
+    const QString& getStylesheet() const
+    {
+      return stylesheet;
+    }
+
+    const QPalette& getPalette() const
+    {
+      return palette;
+    }
+
+    bool isDark() const
+    {
+      return dark;
+    }
+
+    bool isPaletteValid() const
+    {
+      return paletteValid;
+    }
+
+private:
     QString displayName, styleName, stylesheet;
     QPalette palette;
-    bool dark;
+    bool dark, paletteValid;
   };
 
   void applyCurrentStyle();
-  void createGrayPalette(QPalette& palette);
   void createDarkPalette(QPalette& palette);
   void menuItemTriggered();
+  void menuItemAutoTriggered();
+  void updateMenuStatus();
 
-  /* All system and custom styles */
-  QList<Style> styles;
+  void colorSchemeChanged(Qt::ColorScheme colorScheme);
+
+  /* Index to current or dark/fusion */
+  int styleIndex() const;
+
+  /* All system and custom styleDescriptions */
+  QList<StyleDescription> styleDescriptions;
+
   /* Currently selected as in menu order */
   int currentStyleIndex = 0;
+
+  /* Dark and light indices */
+  int darkStyleIndex = -1, fusionStyleIndex = -1;
 
   /* Menus*/
   QActionGroup *styleActionGroup = nullptr;
   QList<QAction *> menuItems;
+
+  QAction *menuItemAuto = nullptr;
+
   QMainWindow *mainWindow;
+
+  QStyleHints *styleHints;
+
+  /* Switch between dark and light (Fusion) depending on os */
+  bool automaticStyle = true;
 };
 
 #endif // LNM_STYLEHANDLER_H

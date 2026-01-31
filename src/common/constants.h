@@ -362,6 +362,7 @@ const QLatin1String OPTIONS_DIALOG_DISPLAY_OPTIONS_ROUTE("OptionsDialog/DisplayO
 const QLatin1String OPTIONS_DIALOG_DISPLAY_OPTIONS_NAVAID("OptionsDialog/DisplayOptionsNavAid");
 const QLatin1String OPTIONS_DIALOG_DISPLAY_OPTIONS_AIRSPACE("OptionsDialog/DisplayOptionsAirspace");
 const QLatin1String OPTIONS_DIALOG_GUI_STYLE_INDEX("OptionsDialog/GuiStyleIndex");
+const QLatin1String OPTIONS_DIALOG_GUI_STYLE_AUTO("OptionsDialog/GuiStyleAuto");
 const QLatin1String OPTIONS_DIALOG_WEB_DOCROOT_DLG("OptionsDialog/WebDocroot");
 const QLatin1String OPTIONS_DIALOG_SHOW_SPLASH("OptionsDialog/Widget_checkBoxOptionsStartupShowSplash");
 

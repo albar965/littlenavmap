@@ -16,9 +16,12 @@
 *****************************************************************************/
 
 #include "gui/stylehandler.h"
+
+#include "atools.h"
+#include "common/constants.h"
+#include "gui/application.h"
 #include "gui/palettesettings.h"
 #include "settings/settings.h"
-#include "common/constants.h"
 
 #include <QStyle>
 #include <QMenu>
@@ -31,6 +34,7 @@
 #include <QMainWindow>
 #include <QWindow>
 #include <QStringBuilder>
+#include <QStyleHints>
 
 const QLatin1String StyleHandler::STYLE_FUSION("Fusion");
 const QLatin1String StyleHandler::STYLE_DARK("Dark");
@@ -42,6 +46,11 @@ using atools::settings::Settings;
 StyleHandler::StyleHandler(QMainWindow *mainWindowParam)
   : QObject(mainWindowParam), mainWindow(mainWindowParam)
 {
+  // Owned by QGuiApplication
+  styleHints = QGuiApplication::styleHints();
+
+  // Catch dark/light mode changes
+  connect(styleHints, &QStyleHints::colorSchemeChanged, this, &StyleHandler::colorSchemeChanged);
 
   // Override fusion tab close buttons on Windows and macOS
 #if defined(Q_OS_WIN32) || defined(Q_OS_MACOS)
@@ -67,29 +76,37 @@ StyleHandler::StyleHandler(QMainWindow *mainWindowParam)
   QString vistaStyleSheet;
 #endif
 
-  // Collect names and palettes from all system styles
-  const QStringList keys = QStyleFactory::keys();
-  for(const QString& styleName : keys)
+  // Collect names and palettes from all system styles ===================================
+  for(const QString& styleName : QStyleFactory::keys())
   {
-    QStyle *style = QStyleFactory::create(styleName);
+    qDebug() << Q_FUNC_INFO << "Found style" << styleName;
+    const QStyle *style = QStyleFactory::create(styleName);
 
-    QPalette palette = style->standardPalette();
-    QString stylesheet;
-    if(styleName == STYLE_FUSION)
+    if(style != nullptr)
     {
-      // Store fusion palette settings a in a separate ini file
-      QString filename = Settings::getConfigFilename("_fusionstyle.ini");
-      atools::gui::PaletteSettings paletteSettings(filename, "StyleColors");
-      paletteSettings.syncPalette(palette);
-      stylesheet = fusionStyleSheet;
-    }
-    else if(styleName == STYLE_WINDOWSVISTA || styleName == STYLE_WINDOWS)
-      stylesheet = vistaStyleSheet;
+      if(styleName == STYLE_FUSION)
+      {
+        // Store fusion palette settings a in a separate ini file
+        atools::gui::PaletteSettings paletteSettings(Settings::getConfigFilename("_fusionstyle.ini"), "StyleColors");
+        QPalette styleStandardPalette = style->standardPalette();
+        paletteSettings.syncPalette(styleStandardPalette);
+        styleDescriptions.append(StyleDescription(styleName, styleName, fusionStyleSheet, styleStandardPalette, false /* dark */));
+        fusionStyleIndex = styleDescriptions.size() - 1;
+      }
+      else if(styleName == STYLE_WINDOWSVISTA || styleName == STYLE_WINDOWS)
+        styleDescriptions.append(StyleDescription(styleName, styleName, vistaStyleSheet, false /* dark */));
+      else
+        styleDescriptions.append(StyleDescription(styleName, styleName, QString(), false /* dark */));
 
-    styles.append(Style(styleName, styleName, stylesheet, palette, false /* dark */));
-    delete style;
+      delete style;
+    }
+    else
+      qWarning() << Q_FUNC_INFO << "Style is null" << styleName;
   }
 
+  qDebug() << Q_FUNC_INFO << "colorScheme" << QGuiApplication::styleHints()->colorScheme();
+
+  // Create dark style ==================================================================
   QPalette darkPalette;
   createDarkPalette(darkPalette);
 
@@ -102,18 +119,18 @@ StyleHandler::StyleHandler(QMainWindow *mainWindowParam)
     QStringLiteral("QToolButton:checked { background-color: %1; }").arg(darkPalette.color(QPalette::Light).name()) %
     QStringLiteral("QPushButton:checked { background-color: %1; }").arg(darkPalette.color(QPalette::Light).name()) %
 
-    // Thicker frame for selected menu items with icons
-    "QMenu::icon:checked:enabled { background: #808080; border: 2px solid darkgray; border-radius: 2px; }" %
+    // Thicker frame for selected menu items with icons ====================
+    "QMenu::icon:checked:enabled { background: #808080; border: 2px solid darkgray; border-radius: 2px; }"
     "QMenu::icon:checked:disabled { background: #808080; border: 2px solid dimgray; border-radius: 2px; }" %
     QStringLiteral("QMenu::item:selected { border-color: lightgray; background: %1; }").arg(darkPalette.color(QPalette::Highlight).name()) %
-    "QMenu::item { padding: 2px 2px; }" %
+    "QMenu::item { padding: 2px 2px; }"
 
     // Checkbox images ====================
-    "QCheckBox::indicator:checked { image: url(:/littlenavmap/resources/icons/checkbox_dark_checked.png); }" %
-    "QCheckBox::indicator:checked:!enabled { image: url(:/littlenavmap/resources/icons/checkbox_dark_checked_disabled.png); }" %
+    "QCheckBox::indicator:checked { image: url(:/littlenavmap/resources/icons/checkbox_dark_checked.png); }"
+    "QCheckBox::indicator:checked:!enabled { image: url(:/littlenavmap/resources/icons/checkbox_dark_checked_disabled.png); }"
 
-    "QCheckBox::indicator:unchecked { image: url(:/littlenavmap/resources/icons/checkbox_dark_unchecked.png); }" %
-    "QCheckBox::indicator:unchecked:!enabled { image: url(:/littlenavmap/resources/icons/checkbox_dark_unchecked_disabled.png); }" %
+    "QCheckBox::indicator:unchecked { image: url(:/littlenavmap/resources/icons/checkbox_dark_unchecked.png); }"
+    "QCheckBox::indicator:unchecked:!enabled { image: url(:/littlenavmap/resources/icons/checkbox_dark_unchecked_disabled.png); }"
 
     // Tree view checkboxes ====================
     "QTreeView::indicator:checked {image: url(:/littlenavmap/resources/icons/checkbox_dark_checked.png);}"
@@ -123,16 +140,16 @@ StyleHandler::StyleHandler(QMainWindow *mainWindowParam)
     "QTreeView::indicator:unchecked:!enabled {image: url(:/littlenavmap/resources/icons/checkbox_dark_unchecked_disabled.png);}"
 
     // Radio button images ====================
-    "QRadioButton::indicator:checked { image: url(:/littlenavmap/resources/icons/radiobutton_dark_checked.png); }" %
-    "QRadioButton::indicator:checked:!enabled { image: url(:/littlenavmap/resources/icons/radiobutton_dark_checked_disabled.png); }" %
+    "QRadioButton::indicator:checked { image: url(:/littlenavmap/resources/icons/radiobutton_dark_checked.png); }"
+    "QRadioButton::indicator:checked:!enabled { image: url(:/littlenavmap/resources/icons/radiobutton_dark_checked_disabled.png); }"
 
-    "QRadioButton::indicator:unchecked { image: url(:/littlenavmap/resources/icons/radiobutton_dark_unchecked.png); }" %
+    "QRadioButton::indicator:unchecked { image: url(:/littlenavmap/resources/icons/radiobutton_dark_unchecked.png); }"
     "QRadioButton::indicator:unchecked:!enabled { image: url(:/littlenavmap/resources/icons/radiobutton_dark_unchecked_disabled.png); }"
 
 #if !defined(Q_OS_MACOS)
     // Night mode shows bright tab bars with this change in macOS
-    %
-    "QTabBar::close-button { image: url(:/littlenavmap/resources/icons/tab_close_button_night.png); }" %
+
+    "QTabBar::close-button { image: url(:/littlenavmap/resources/icons/tab_close_button_night.png); }"
     "QTabBar::close-button:hover { image: url(:/littlenavmap/resources/icons/tab_close_button_hover_night.png); }"
 #endif
     );
@@ -142,45 +159,73 @@ StyleHandler::StyleHandler(QMainWindow *mainWindowParam)
   atools::gui::PaletteSettings paletteSettings(filename, "StyleColors");
   paletteSettings.syncPalette(darkPalette);
 
-  styles.append(Style(STYLE_DARK, STYLE_FUSION, darkStyleSheet, darkPalette, true /* dark */));
+  styleDescriptions.append(StyleDescription(STYLE_DARK, STYLE_FUSION, darkStyleSheet, darkPalette, true /* dark */));
+  darkStyleIndex = styleDescriptions.size() - 1;
 }
 
 StyleHandler::~StyleHandler()
 {
-  delete styleActionGroup;
+  ATOOLS_DELETE(styleActionGroup);
 }
 
 QString StyleHandler::getCurrentGuiStyleDisplayName() const
 {
-  return styles.at(currentStyleIndex).displayName;
+  return styleDescriptions.at(styleIndex()).getDisplayName();
 }
 
 bool StyleHandler::isGuiStyleDark() const
 {
-  return styles.at(currentStyleIndex).dark;
+  return styleDescriptions.at(styleIndex()).isDark();
+}
+
+bool StyleHandler::isSystemStyleDark() const
+{
+  Qt::ColorScheme colorScheme = QGuiApplication::styleHints()->colorScheme();
+  // if(colorScheme == Qt::ColorScheme::Unknown)
+  //// Dark if text is brighter than background
+  // return systemPalette.color(QPalette::WindowText).lightness() > systemPalette.color(QPalette::Window).lightness();
+  // else
+  return colorScheme == Qt::ColorScheme::Dark;
+}
+
+int StyleHandler::styleIndex() const
+{
+  int index = -1;
+  if(automaticStyle)
+    index = isSystemStyleDark() ? darkStyleIndex : fusionStyleIndex;
+  else
+    index = currentStyleIndex;
+  return index;
 }
 
 void StyleHandler::insertMenuItems(QMenu *menu)
 {
+  menuItemAuto = new QAction(tr("&Select automatically"), menu);
+  menuItemAuto->setCheckable(true);
+  menuItemAuto->setChecked(automaticStyle);
+  menuItemAuto->setStatusTip(tr("Switch user interface style based on system settings"));
+  menu->addAction(menuItemAuto);
+  menu->addSeparator();
+  connect(menuItemAuto, &QAction::triggered, this, &StyleHandler::menuItemAutoTriggered);
+
   delete styleActionGroup;
   styleActionGroup = new QActionGroup(menu);
-
   int index = 0;
-  for(const Style& style : std::as_const(styles))
+  for(const StyleDescription& styleDescription : std::as_const(styleDescriptions))
   {
-    QAction *action = new QAction('&' % style.displayName, menu);
+    QAction *action = new QAction('&' % styleDescription.getDisplayName(), menu);
     action->setData(index);
     action->setCheckable(true);
     action->setChecked(index == currentStyleIndex);
-    action->setStatusTip(tr("Switch user interface style to \"%1\"").arg(style.displayName));
+    action->setStatusTip(tr("Switch user interface style to \"%1\"").arg(styleDescription.getDisplayName()));
     action->setActionGroup(styleActionGroup);
 
-    if(style.displayName == STYLE_FUSION)
+    if(styleDescription.getDisplayName() == STYLE_FUSION)
     {
       action->setShortcut(QKeySequence(tr("Shift+F2")));
       action->setShortcutContext(Qt::ApplicationShortcut);
     }
-    else if(style.displayName == STYLE_DARK)
+    else if(styleDescription.getDisplayName() == STYLE_DARK)
     {
       action->setShortcut(QKeySequence(tr("Shift+F3")));
       action->setShortcutContext(Qt::ApplicationShortcut);
@@ -192,6 +237,21 @@ void StyleHandler::insertMenuItems(QMenu *menu)
     connect(action, &QAction::triggered, this, &StyleHandler::menuItemTriggered);
     index++;
   }
+
+  updateMenuStatus();
+}
+
+void StyleHandler::updateMenuStatus()
+{
+  for(QAction *action : std::as_const(menuItems))
+    action->setDisabled(automaticStyle);
+}
+
+void StyleHandler::menuItemAutoTriggered()
+{
+  automaticStyle = menuItemAuto->isChecked();
+  updateMenuStatus();
+  applyCurrentStyle();
 }
 
 void StyleHandler::menuItemTriggered()
@@ -205,28 +265,53 @@ void StyleHandler::menuItemTriggered()
   }
 }
 
+void StyleHandler::colorSchemeChanged(Qt::ColorScheme colorScheme)
+{
+  qDebug() << Q_FUNC_INFO << colorScheme;
+  applyCurrentStyle();
+}
+
 void StyleHandler::applyCurrentStyle()
 {
   qDebug() << Q_FUNC_INFO << "index" << currentStyleIndex;
 
-  const Style& style = styles.at(currentStyleIndex);
-  emit preStyleChange(style.displayName, style.dark);
+  const StyleDescription& styleDescription = styleDescriptions.at(styleIndex());
+  emit preStyleChange(styleDescription.getDisplayName(), styleDescription.isDark());
 
-  QApplication::setStyle(QStyleFactory::create(style.styleName));
+  // Ownership of the style object is transferred to QApplication
+  QStyle *style = QStyleFactory::create(styleDescription.getStyleName());
 
-  qApp->setPalette(style.palette);
-  qApp->setStyleSheet(style.stylesheet);
+  if(style != nullptr)
+  {
+    QApplication::setStyle(style);
+
+    if(automaticStyle)
+      // Default constructor builds system palette which is unchanged by styles
+      QApplication::setPalette(QPalette());
+    else
+    {
+      if(styleDescription.isPaletteValid())
+        QApplication::setPalette(styleDescription.getPalette());
+      else
+        QApplication::setPalette(style->standardPalette());
+    }
+  }
+  else
+    qWarning() << Q_FUNC_INFO << "Style is null" << styleDescription.getStyleName();
+
+  atools::gui::Application::applicationInstance()->setStyleSheet(styleDescription.getStylesheet());
 
   // Need to clear due to Qt bug
   QPixmapCache::clear();
 
-  emit styleChanged(style.displayName, style.dark);
+  emit styleChanged(styleDescription.getDisplayName(), styleDescription.isDark());
 }
 
 void StyleHandler::saveState() const
 {
   Settings& settings = Settings::instance();
   settings.setValue(lnm::OPTIONS_DIALOG_GUI_STYLE_INDEX, currentStyleIndex);
+  settings.setValue(lnm::OPTIONS_DIALOG_GUI_STYLE_AUTO, automaticStyle);
 }
 
 void StyleHandler::restoreState()
@@ -239,11 +324,14 @@ void StyleHandler::restoreState()
     return;
   }
 
+  automaticStyle = settings.valueBool(lnm::OPTIONS_DIALOG_GUI_STYLE_AUTO, true);
+  menuItemAuto->setChecked(automaticStyle);
+
   if(settings.contains(lnm::OPTIONS_DIALOG_GUI_STYLE_INDEX))
   {
     // Style already selected
     currentStyleIndex = settings.valueInt(lnm::OPTIONS_DIALOG_GUI_STYLE_INDEX);
-    if(currentStyleIndex >= 0 && currentStyleIndex < styles.size())
+    if(currentStyleIndex >= 0 && currentStyleIndex < styleDescriptions.size())
       menuItems[currentStyleIndex]->setChecked(true);
     else
     {
@@ -296,6 +384,7 @@ void StyleHandler::restoreState()
   }
 
   applyCurrentStyle();
+  updateMenuStatus();
 }
 
 void StyleHandler::createDarkPalette(QPalette& palette)
