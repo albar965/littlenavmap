@@ -52,6 +52,9 @@ const static QLatin1String OBJ_NAME_EXP_SELECT("MultiExpSelectButton");
 const static QLatin1String OBJ_NAME_EXP_SAVE("MultiExpSaveButton");
 const static QLatin1String OBJ_NAME_EXP_RESET("MultiExpResetButton");
 
+// Increase number of lines in the label to avoid too much resizing action
+const static int LABEL_LINES = 3;
+
 // Data role for checkbox status set in model for first BUTTONS column
 // Needed for sorting
 static int CHECK_STATE_ROLE = Qt::UserRole;
@@ -71,27 +74,6 @@ enum Columns
 };
 
 // TableItemDelegate  ==================================================================================================
-
-/* Delegate to paint errors in normal and selected state in red */
-class TableItemDelegate :
-  public QStyledItemDelegate
-{
-public:
-  explicit TableItemDelegate(QObject *parent, const RouteExportFormatMap *formatMap)
-    : QStyledItemDelegate(parent), formats(formatMap)
-  {
-  }
-
-  virtual ~TableItemDelegate() override
-  {
-
-  }
-
-private:
-  virtual void paint(QPainter *painter, const QStyleOptionViewItem& option, const QModelIndex& index) const override;
-
-  const RouteExportFormatMap *formats;
-};
 
 void TableItemDelegate::paint(QPainter *painter, const QStyleOptionViewItem& option, const QModelIndex& index) const
 {
@@ -375,7 +357,7 @@ void RouteMultiExportDialog::updateLabel()
 
   // Remove empty string and append empty to avoid label resizing while scrolling
   texts.removeAll(QString());
-  for(int i = texts.size(); i < 6; i++)
+  for(int i = texts.size(); i < LABEL_LINES; i++)
     texts.append(QString());
 
   ui->labelRouteExportPath->setText(texts.join("<br/>"));

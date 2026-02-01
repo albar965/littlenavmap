@@ -22,6 +22,7 @@
 
 #include <QDialog>
 #include <QMap>
+#include <QStyledItemDelegate>
 
 namespace Ui {
 class RouteMultiExportDialog;
@@ -183,6 +184,29 @@ private:
   ExportOptions exportOptions = FILEDIALOG;
 
   Ui::RouteMultiExportDialog *ui;
+};
+
+/* Delegate to paint errors in normal and selected state in red */
+class TableItemDelegate :
+  public QStyledItemDelegate
+{
+  Q_OBJECT
+
+public:
+  explicit TableItemDelegate(QObject *parent, const RouteExportFormatMap *formatMap)
+    : QStyledItemDelegate(parent), formats(formatMap)
+  {
+  }
+
+  virtual ~TableItemDelegate() override
+  {
+
+  }
+
+private:
+  virtual void paint(QPainter *painter, const QStyleOptionViewItem& option, const QModelIndex& index) const override;
+
+  const RouteExportFormatMap *formats;
 };
 
 #endif // LNM_ROUTEEXPORTALLDIALOG_H
