@@ -157,7 +157,8 @@ private:
   /* Event filter on scroll area and viewport -passes events to methods below */
   virtual bool eventFilter(QObject *object, QEvent *event) override;
 
-  /* All event methods return true if event should not be propagated */
+  /* All event methods return true if event should not be propagated.
+   * All are called from eventFilter() */
   bool wheelEvent(QWheelEvent *event);
   bool mousePressEvent(QMouseEvent *event);
   bool mouseReleaseEvent(QMouseEvent *event);

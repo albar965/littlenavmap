@@ -360,31 +360,21 @@ void ProfileScrollArea::updateWidgets()
 bool ProfileScrollArea::eventFilter(QObject *object, QEvent *event)
 {
   bool consumed = false;
-  if(object == scrollArea->viewport())
-  {
-    // Do not let wheel event propagate from the viewport to the scroll bars
-    if(event->type() == QEvent::Wheel)
-      return true;
-  }
-  else if(object == scrollArea)
-  {
-    // Work on own events
-    // qDebug() << Q_FUNC_INFO << event->type();
-    if(event->type() == QEvent::Resize)
-      consumed = resizeEvent();
-    else if(event->type() == QEvent::Wheel)
-      consumed = wheelEvent(dynamic_cast<QWheelEvent *>(event));
-    else if(event->type() == QEvent::MouseButtonPress)
-      consumed = mousePressEvent(dynamic_cast<QMouseEvent *>(event));
-    else if(event->type() == QEvent::MouseButtonRelease)
-      consumed = mouseReleaseEvent(dynamic_cast<QMouseEvent *>(event));
-    else if(event->type() == QEvent::MouseMove)
-      consumed = mouseMoveEvent(dynamic_cast<QMouseEvent *>(event));
-    else if(event->type() == QEvent::MouseButtonDblClick)
-      consumed = mouseDoubleClickEvent(dynamic_cast<QMouseEvent *>(event));
-    else if(event->type() == QEvent::KeyPress)
-      consumed = keyEvent(dynamic_cast<QKeyEvent *>(event));
-  }
+
+  if(event->type() == QEvent::Resize)
+    consumed = resizeEvent();
+  else if(event->type() == QEvent::Wheel)
+    consumed = wheelEvent(dynamic_cast<QWheelEvent *>(event));
+  else if(event->type() == QEvent::MouseButtonPress)
+    consumed = mousePressEvent(dynamic_cast<QMouseEvent *>(event));
+  else if(event->type() == QEvent::MouseButtonRelease)
+    consumed = mouseReleaseEvent(dynamic_cast<QMouseEvent *>(event));
+  else if(event->type() == QEvent::MouseMove)
+    consumed = mouseMoveEvent(dynamic_cast<QMouseEvent *>(event));
+  else if(event->type() == QEvent::MouseButtonDblClick)
+    consumed = mouseDoubleClickEvent(dynamic_cast<QMouseEvent *>(event));
+  else if(event->type() == QEvent::KeyPress)
+    consumed = keyEvent(dynamic_cast<QKeyEvent *>(event));
 
   if(!consumed)
     // if you want to filter the event out, i.e. stop it being handled further, return true
