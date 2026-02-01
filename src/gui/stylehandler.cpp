@@ -175,24 +175,29 @@ QString StyleHandler::getCurrentGuiStyleDisplayName() const
 
 bool StyleHandler::isGuiStyleDark() const
 {
-  return styleDescriptions.at(styleIndex()).isDark();
-}
+  if(automaticStyle)
+  {
+    Qt::ColorScheme colorScheme = QGuiApplication::styleHints()->colorScheme();
+    if(colorScheme == Qt::ColorScheme::Unknown)
+    {
+      // Default constructor builds system palette which is unchanged by styles
+      QPalette systemPalette;
 
-bool StyleHandler::isSystemStyleDark() const
-{
-  Qt::ColorScheme colorScheme = QGuiApplication::styleHints()->colorScheme();
-  // if(colorScheme == Qt::ColorScheme::Unknown)
-  //// Dark if text is brighter than background
-  // return systemPalette.color(QPalette::WindowText).lightness() > systemPalette.color(QPalette::Window).lightness();
-  // else
-  return colorScheme == Qt::ColorScheme::Dark;
+      // Dark if text is brighter than background
+      return systemPalette.color(QPalette::WindowText).lightness() > systemPalette.color(QPalette::Window).lightness();
+    }
+    else
+      return colorScheme == Qt::ColorScheme::Dark;
+  }
+  else
+    return styleDescriptions.at(styleIndex()).isDark();
 }
 
 int StyleHandler::styleIndex() const
 {
   int index = -1;
   if(automaticStyle)
-    index = isSystemStyleDark() ? darkStyleIndex : fusionStyleIndex;
+    index = /*isSystemStyleDark() ? darkStyleIndex : */ fusionStyleIndex; // Fusion takes the system palette which covers dark too
   else
     index = currentStyleIndex;
   return index;

@@ -59,20 +59,13 @@ public:
   /* true if style requires darkening the map */
   bool isGuiStyleDark() const;
 
-  /* System setting. Currently only usable on Windows and macOS */
-  bool isSystemStyleDark() const;
-
-  const static QLatin1String STYLE_FUSION; /* Fusion */
-  const static QLatin1String STYLE_DARK; /* Dark / Fusion */
-  const static QLatin1String STYLE_WINDOWSVISTA; /* Windows 10 and 11 */
-  const static QLatin1String STYLE_WINDOWS; /* Old Windows */
-
 signals:
   /* Sent on change */
   void preStyleChange(const QString& name, bool dark);
   void styleChanged(const QString& name, bool dark);
 
 private:
+  // ============================================
   /* Immutable internal class describing a style */
   class StyleDescription
   {
@@ -126,6 +119,13 @@ private:
     QPalette palette;
     bool dark, paletteValid;
   };
+
+  // ============================================
+
+  const static QLatin1String STYLE_FUSION; /* Fusion */
+  const static QLatin1String STYLE_DARK; /* Dark / Fusion */
+  const static QLatin1String STYLE_WINDOWSVISTA; /* Windows 10 and 11 */
+  const static QLatin1String STYLE_WINDOWS; /* Old Windows */
 
   void applyCurrentStyle();
   void createDarkPalette(QPalette& palette);

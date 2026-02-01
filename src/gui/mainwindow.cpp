@@ -994,16 +994,16 @@ void MainWindow::updateStatusBarStyle()
   if(NavApp::getStyleHandler() != nullptr)
   {
     QString style = NavApp::getStyleHandler()->getCurrentGuiStyleDisplayName();
-    if(style.compare(StyleHandler::STYLE_FUSION, Qt::CaseInsensitive) == 0)
-    {
-      shadow = QFrame::Sunken;
-      shape = QFrame::StyledPanel;
-      adjustFrame = true;
-    }
-    else if(style.compare(StyleHandler::STYLE_DARK, Qt::CaseInsensitive) == 0)
+    if(NavApp::isGuiStyleDark())
     {
       shadow = QFrame::Sunken;
       shape = QFrame::Box;
+      adjustFrame = true;
+    }
+    else
+    {
+      shadow = QFrame::Sunken;
+      shape = QFrame::StyledPanel;
       adjustFrame = true;
     }
     // Windows styles already use a box
