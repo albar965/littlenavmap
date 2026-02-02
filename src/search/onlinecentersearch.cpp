@@ -164,15 +164,15 @@ QVariant OnlineCenterSearch::modelDataHandler(int colIndex, int rowIndex, const 
       return formatModelData(col, displayRoleValue);
 
     case Qt::ToolTipRole:
-      if(col->getColumnName() == "atis")
+      if(col->getColumnName() == QStringLiteral("atis"))
         return atools::elideTextLinesShort(displayRoleValue.toString(), 40);
 
       break;
 
     case Qt::TextAlignmentRole:
-      if(col->getColumnName() == "frequency")
+      if(col->getColumnName() == QStringLiteral("frequency"))
         return Qt::AlignRight;
-      else if(col->getColumnName() == "facility_type")
+      else if(col->getColumnName() == QStringLiteral("facility_type"))
         return Qt::AlignLeft;
 
       break;
@@ -189,7 +189,7 @@ QString OnlineCenterSearch::formatModelData(const Column *col, const QVariant& d
   if(!displayRoleValue.isNull())
   {
     // Called directly by the model for export functions
-    if(col->getColumnName() == "frequency")
+    if(col->getColumnName() == QStringLiteral("frequency"))
     {
       QStringList freqs;
       const QStringList dispRoles = displayRoleValue.toString().split('&');
@@ -197,17 +197,17 @@ QString OnlineCenterSearch::formatModelData(const Column *col, const QVariant& d
         freqs.append(QLocale().toString(str.toDouble() / 1000., 'f', 3));
       return freqs.join(tr(", "));
     }
-    else if(col->getColumnName() == "visual_range")
+    else if(col->getColumnName() == QStringLiteral("visual_range"))
       return !displayRoleValue.isNull() &&
              displayRoleValue.toFloat() < map::INVALID_ALTITUDE_VALUE &&
              displayRoleValue.toFloat() > 0.f ?
              Unit::distNm(displayRoleValue.toFloat(), false) : QString();
-    else if(col->getColumnName() == "facility_type")
+    else if(col->getColumnName() == QStringLiteral("facility_type"))
       return atools::fs::online::facilityTypeText(
         static_cast<atools::fs::online::fac::FacilityType>(displayRoleValue.toInt()));
-    else if(col->getColumnName() == "atis")
+    else if(col->getColumnName() == QStringLiteral("atis"))
       return displayRoleValue.toString().simplified();
-    else if(col->getColumnName() == "atis_time" || col->getColumnName() == "connection_time")
+    else if(col->getColumnName() == QStringLiteral("atis_time") || col->getColumnName() == QStringLiteral("connection_time"))
       return QLocale().toString(displayRoleValue.toDateTime(), QLocale::NarrowFormat);
 
     return SearchBaseTable::formatModelData(col, displayRoleValue);

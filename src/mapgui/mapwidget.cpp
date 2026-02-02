@@ -3618,7 +3618,7 @@ void MapWidget::showResultInSearch(const map::MapBase *base)
     map::MapUserpoint userpoint = base->asObj<map::MapUserpoint>();
 
     SqlRecord rec;
-    rec.appendFieldAndValue("ident", userpoint.ident);
+    rec.appendFieldAndValueIf("ident", userpoint.ident);
     rec.appendFieldAndValueIf("region", userpoint.region);
     rec.appendFieldAndValueIf("name", userpoint.name);
     rec.appendFieldAndValueIf("type", userpoint.type);

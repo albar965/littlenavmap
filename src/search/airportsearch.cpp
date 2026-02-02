@@ -486,9 +486,9 @@ QVariant AirportSearch::modelDataHandler(int colIndex, int rowIndex, const Colum
       return formatModelData(col, displayRoleValue);
 
     case Qt::TextAlignmentRole:
-      if(col->getColumnName() == "rating")
+      if(col->getColumnName() == QStringLiteral("rating"))
         return Qt::AlignLeft;
-      else if(col->getColumnName() == "ident" ||
+      else if(col->getColumnName() == QStringLiteral("ident") ||
               displayRoleValue.metaType() == QMetaType::fromType<int>() ||
               displayRoleValue.metaType() == QMetaType::fromType<unsigned int>() ||
               displayRoleValue.metaType() == QMetaType::fromType<long long>() ||
@@ -515,30 +515,30 @@ QVariant AirportSearch::modelDataHandler(int colIndex, int rowIndex, const Colum
 QString AirportSearch::formatModelData(const Column *col, const QVariant& displayRoleValue) const
 {
   // Called directly by the model for export functions
-  if(col->getColumnName() == "tower_frequency" || col->getColumnName() == "atis_frequency" ||
-     col->getColumnName() == "awos_frequency" || col->getColumnName() == "asos_frequency" ||
-     col->getColumnName() == "unicom_frequency")
+  if(col->getColumnName() == QStringLiteral("tower_frequency") || col->getColumnName() == QStringLiteral("atis_frequency") ||
+     col->getColumnName() == QStringLiteral("awos_frequency") || col->getColumnName() == QStringLiteral("asos_frequency") ||
+     col->getColumnName() == QStringLiteral("unicom_frequency"))
   {
     if(displayRoleValue.isNull())
       return QString();
     else
       return QLocale().toString(atools::fs::util::roundComFrequency(displayRoleValue.toInt()), 'f', 3);
   }
-  else if(col->getColumnName() == "altitude")
+  else if(col->getColumnName() == QStringLiteral("altitude"))
     return Unit::altFeet(displayRoleValue.toFloat(), false);
-  else if(col->getColumnName() == "longest_runway_length")
+  else if(col->getColumnName() == QStringLiteral("longest_runway_length"))
     return Unit::distShortFeet(displayRoleValue.toFloat(), false);
-  else if(col->getColumnName() == "mag_var")
+  else if(col->getColumnName() == QStringLiteral("mag_var"))
     return map::magvarText(displayRoleValue.toFloat(), true /* shortText */, false /* degSign */);
   else if(AIRPORT_NUMBER_COLUMNS.contains(col->getColumnName()))
     return displayRoleValue.toInt() > 0 ? displayRoleValue.toString() : QString();
-  else if(col->getColumnName() == "longest_runway_surface")
+  else if(col->getColumnName() == QStringLiteral("longest_runway_surface"))
     return map::surfaceName(displayRoleValue.toString());
-  else if(col->getColumnName() == "largest_parking_ramp")
+  else if(col->getColumnName() == QStringLiteral("largest_parking_ramp"))
     return map::parkingRampName(displayRoleValue.toString());
-  else if(col->getColumnName() == "largest_parking_gate")
+  else if(col->getColumnName() == QStringLiteral("largest_parking_gate"))
     return map::parkingGateName(displayRoleValue.toString());
-  else if(col->getColumnName() == "rating")
+  else if(col->getColumnName() == QStringLiteral("rating"))
     return atools::ratingString(displayRoleValue.toInt(), 5);
   else if(displayRoleValue.metaType() == QMetaType::fromType<int>() ||
           displayRoleValue.metaType() == QMetaType::fromType<unsigned int>())

@@ -240,9 +240,9 @@ QVariant LogdataSearch::modelDataHandler(int colIndex, int rowIndex, const Colum
 
     case Qt::TextAlignmentRole:
       // Align all numeric columns right
-      if(col->getColumnName().endsWith("_ident") || col->getColumnName() == "distance" ||
-         col->getColumnName().startsWith("departure_time") || col->getColumnName().startsWith("destination_time") ||
-         col->getColumnName() == "travel_time" || col->getColumnName() == "travel_time_sim" ||
+      if(col->getColumnName().endsWith(QStringLiteral("_ident")) || col->getColumnName() == QStringLiteral("distance") ||
+         col->getColumnName().startsWith(QStringLiteral("departure_time")) || col->getColumnName().startsWith(QStringLiteral("destination_time")) ||
+         col->getColumnName() == QStringLiteral("travel_time") || col->getColumnName() == QStringLiteral("travel_time_sim") ||
          displayRoleValue.metaType() == QMetaType::fromType<int>() ||
          displayRoleValue.metaType() == QMetaType::fromType<unsigned int>() ||
          displayRoleValue.metaType() == QMetaType::fromType<long long>() ||
@@ -258,13 +258,13 @@ QVariant LogdataSearch::modelDataHandler(int colIndex, int rowIndex, const Colum
 
       break;
     case Qt::ToolTipRole:
-      if(col->getColumnName() == "description")
+      if(col->getColumnName() == QStringLiteral("description"))
         return atools::elideTextLinesShort(displayRoleValue.toString(), 40);
 
       break;
 
     case Qt::FontRole:
-      if(col->getColumnName().endsWith("_ident"))
+      if(col->getColumnName().endsWith(QStringLiteral("_ident")))
       {
         QFont font = view->font();
         font.setBold(true);
@@ -284,9 +284,9 @@ QVariant LogdataSearch::modelDataHandler(int colIndex, int rowIndex, const Colum
 QString LogdataSearch::formatModelData(const Column *col, const QVariant& displayRoleValue) const
 {
   // Called directly by the model for export functions
-  if(col->getColumnName().startsWith("departure_time") || col->getColumnName().startsWith("destination_time"))
+  if(col->getColumnName().startsWith(QStringLiteral("departure_time")) || col->getColumnName().startsWith(QStringLiteral("destination_time")))
     return QLocale().toString(displayRoleValue.toDateTime(), QLocale::NarrowFormat);
-  else if(col->getColumnName() == "travel_time" || col->getColumnName() == "travel_time_sim")
+  else if(col->getColumnName() == QStringLiteral("travel_time") || col->getColumnName() == QStringLiteral("travel_time_sim"))
   {
     // Virtual columns from SQL functions
     if(displayRoleValue.isNull())
@@ -294,16 +294,16 @@ QString LogdataSearch::formatModelData(const Column *col, const QVariant& displa
     else
       return formatter::formatMinutesHours(displayRoleValue.toDouble() / 3600.);
   }
-  else if(col->getColumnName() == "distance" || col->getColumnName() == "distance_flown")
+  else if(col->getColumnName() == QStringLiteral("distance") || col->getColumnName() == QStringLiteral("distance_flown"))
     return Unit::distNm(displayRoleValue.toFloat(), false, 0);
-  else if(col->getColumnName() == "flightplan_cruise_altitude")
+  else if(col->getColumnName() == QStringLiteral("flightplan_cruise_altitude"))
   {
     if(displayRoleValue.isNull())
       return QString();
     else
       return Unit::altFeet(displayRoleValue.toFloat(), false, 0);
   }
-  else if(col->getColumnName() == "description")
+  else if(col->getColumnName() == QStringLiteral("description"))
     return atools::elideTextShort(displayRoleValue.toString().simplified(), 80);
   else if(displayRoleValue.metaType() == QMetaType::fromType<int>() ||
           displayRoleValue.metaType() == QMetaType::fromType<unsigned int>())

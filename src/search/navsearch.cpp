@@ -319,7 +319,7 @@ QVariant NavSearch::modelDataHandler(int colIndex, int rowIndex, const Column *c
       return formatModelData(col, rowIndex, displayRoleValue);
 
     case Qt::TextAlignmentRole:
-      if(col->getColumnName() == "ident" || col->getColumnName() == "airport_ident" ||
+      if(col->getColumnName() == QStringLiteral("ident") || col->getColumnName() == QStringLiteral("airport_ident") ||
          displayRoleValue.metaType() == QMetaType::fromType<int>() ||
          displayRoleValue.metaType() == QMetaType::fromType<unsigned int>() ||
          displayRoleValue.metaType() == QMetaType::fromType<long long>() ||
@@ -345,25 +345,25 @@ QVariant NavSearch::modelDataHandler(int colIndex, int rowIndex, const Column *c
 QString NavSearch::formatModelData(const Column *col, int row, const QVariant& displayRoleValue) const
 {
   // Called directly by the model for export functions
-  if(col->getColumnName() == "nav_type")
+  if(col->getColumnName() == QStringLiteral("nav_type"))
     return map::navName(displayRoleValue.toString());
-  else if(col->getColumnName() == "type")
+  else if(col->getColumnName() == QStringLiteral("type"))
     return map::navTypeName(displayRoleValue.toString());
-  else if(col->getColumnName() == "name")
+  else if(col->getColumnName() == QStringLiteral("name"))
   {
-    if(controller->getRawData(row, "nav_type").toString() == 'W')
+    if(controller->getRawData(row, QStringLiteral("nav_type")).toString() == QChar('W'))
       // Is waypoint
-      return atools::fs::util::capWaypointNameString(controller->getRawData(row, "ident").toString(), displayRoleValue.toString(),
+      return atools::fs::util::capWaypointNameString(controller->getRawData(row, QStringLiteral("ident")).toString(), displayRoleValue.toString(),
                                                      false /* emptyIfEqual */);
     else
       return atools::capString(displayRoleValue.toString());
   }
-  else if(col->getColumnName() == "range" && displayRoleValue.toFloat() > 0.f)
+  else if(col->getColumnName() == QStringLiteral("range") && displayRoleValue.toFloat() > 0.f)
     return Unit::distNm(displayRoleValue.toFloat(), false);
-  else if(col->getColumnName() == "altitude")
+  else if(col->getColumnName() == QStringLiteral("altitude"))
     return !displayRoleValue.isNull() && displayRoleValue.toFloat() < map::INVALID_ALTITUDE_VALUE ?
            Unit::altFeet(displayRoleValue.toFloat(), false) : QString();
-  else if(col->getColumnName() == "frequency" && !displayRoleValue.isNull())
+  else if(col->getColumnName() == QStringLiteral("frequency") && !displayRoleValue.isNull())
   {
     // VOR and/or DME
     int freq = displayRoleValue.toInt();
@@ -373,9 +373,9 @@ QString NavSearch::formatModelData(const Column *col, int row, const QVariant& d
     else if(freq >= 10000 && freq <= 120000)
       return QLocale().toString(static_cast<float>(freq) / 100.f, 'f', 1);
     else
-      return "Invalid";
+      return QStringLiteral("Invalid");
   }
-  else if(col->getColumnName() == "mag_var")
+  else if(col->getColumnName() == QStringLiteral("mag_var"))
     return map::magvarText(displayRoleValue.toFloat(), true /* shortText */, false /* degSign */);
   else if(displayRoleValue.metaType() == QMetaType::fromType<int>() ||
           displayRoleValue.metaType() == QMetaType::fromType<unsigned int>())
@@ -401,15 +401,15 @@ void NavSearch::getSelectedMapObjects(map::MapResult& result) const
     for(int row = rng.top(); row <= rng.bottom(); ++row)
     {
       // All objects are fully populated
-      map::MapTypes type = map::navTypeToMapType(controller->getRawData(row, "nav_type").toString());
+      map::MapTypes type = map::navTypeToMapType(controller->getRawData(row, QStringLiteral("nav_type")).toString());
       QVariant idVar;
 
       if(type == map::WAYPOINT)
-        idVar = controller->getRawData(row, "waypoint_id");
+        idVar = controller->getRawData(row, QStringLiteral("waypoint_id"));
       else if(type == map::NDB)
-        idVar = controller->getRawData(row, "ndb_id");
+        idVar = controller->getRawData(row, QStringLiteral("ndb_id"));
       else if(type == map::VOR)
-        idVar = controller->getRawData(row, "vor_id");
+        idVar = controller->getRawData(row, QStringLiteral("vor_id"));
 
       if(idVar.isValid())
         mapQuery->getMapObjectById(result, type, map::AIRSPACE_SRC_NONE, idVar.toInt(), false /* airportFromNavDatabase */);
