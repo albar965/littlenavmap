@@ -98,7 +98,7 @@ OnlinedataController::OnlinedataController(atools::fs::online::OnlinedataManager
   downloader = new atools::util::HttpDownloader(mainWindow, verbose);
 
   // Request gzipped content if possible
-  downloader->setAcceptEncoding("gzip");
+  downloader->setAcceptEncoding(QStringLiteral("gzip"));
 
   updateAtcSizes();
 
@@ -435,12 +435,12 @@ void OnlinedataController::downloadFinished(const QByteArray& data, QString url)
       case atools::fs::online::UNKNOWN:
       case atools::fs::online::VATSIM:
       case atools::fs::online::IVAO:
-        suffix = "txt";
+        suffix = QStringLiteral("txt");
         break;
 
       case atools::fs::online::VATSIM_JSON3:
       case atools::fs::online::IVAO_JSON2:
-        suffix = "json";
+        suffix = QStringLiteral("json");
         break;
     }
     atools::strToFile(QDir::tempPath() + "/lnm_servers." + suffix, serversTxt);
@@ -614,17 +614,17 @@ QString OnlinedataController::getNetwork() const
       return QString();
 
     case opts::ONLINE_VATSIM:
-      return "VATSIM";
+      return QStringLiteral("VATSIM");
 
     case opts::ONLINE_IVAO:
-      return "IVAO";
+      return QStringLiteral("IVAO");
 
     case opts::ONLINE_PILOTEDGE:
-      return "PilotEdge";
+      return QStringLiteral("PilotEdge");
 
     case opts::ONLINE_CUSTOM_STATUS:
     case opts::ONLINE_CUSTOM:
-      return "Custom Network";
+      return QStringLiteral("Custom Network");
   }
   return QString();
 }
@@ -664,7 +664,7 @@ const QList<atools::fs::sc::SimConnectAircraft> *OnlinedataController::getAircra
       {
         SimConnectAircraft onlineAircraft;
         OnlinedataManager::fillFromClient(onlineAircraft, aircraftByRectQuery->record(),
-                                          getShadowSimAircraft(aircraftByRectQuery->valueInt("client_id")));
+                                          getShadowSimAircraft(aircraftByRectQuery->valueInt(QStringLiteral("client_id"))));
 
         if(!aircraftIdOnlineToSim.contains(onlineAircraft.getId()))
           // Avoid duplicates with simulator shadow aircraft - sim aircraft are drawn in another context
@@ -931,7 +931,7 @@ atools::fs::sc::SimConnectAircraft OnlinedataController::getClientAircraftById(i
 
 void OnlinedataController::fillAircraftFromClient(atools::fs::sc::SimConnectAircraft& ac, const atools::sql::SqlRecord& record)
 {
-  OnlinedataManager::fillFromClient(ac, record, getShadowSimAircraft(record.valueInt("client_id")));
+  OnlinedataManager::fillFromClient(ac, record, getShadowSimAircraft(record.valueInt(QStringLiteral("client_id"))));
 }
 
 /* Removes the online aircraft from "onlineAircraft" which also have a simulator shadow in "simAircraft" */
@@ -966,7 +966,7 @@ void OnlinedataController::initQueries()
   manager->initQueries();
 
   aircraftByRectQuery = new atools::sql::SqlQuery(getDatabase());
-  aircraftByRectQuery->prepare("select * from client where lonx between :leftx and :rightx and laty between :bottomy and :topy");
+  aircraftByRectQuery->prepare(QStringLiteral("select * from client where lonx between :leftx and :rightx and laty between :bottomy and :topy"));
 }
 
 void OnlinedataController::deInitQueries()
@@ -996,19 +996,19 @@ void OnlinedataController::startDownloadTimer()
 
   if(onlineNetwork == opts::ONLINE_CUSTOM || onlineNetwork == opts::ONLINE_CUSTOM_STATUS)
     // Use options for custom network - ignore reload in whazzup.txt
-    source = "options";
+    source = QStringLiteral("options");
   else
   {
     if(intervalSeconds == -1)
     {
       // Use time from whazzup.txt - mode auto
       intervalSeconds = std::max(manager->getReloadMinutesFromWhazzup() * 60, 60);
-      source = "whazzup";
+      source = QStringLiteral("whazzup");
     }
     else
     {
       intervalSeconds = std::max(intervalSeconds, MIN_RELOAD_TIME_SECONDS);
-      source = "networks.cfg";
+      source = QStringLiteral("networks.cfg");
     }
   }
 
@@ -1028,19 +1028,19 @@ QString OnlinedataController::stateAsStr(OnlinedataController::State state)
   switch(state)
   {
     case OnlinedataController::NONE:
-      return "None";
+      return QStringLiteral("None");
 
     case OnlinedataController::DOWNLOADING_STATUS:
-      return "Downloading Status";
+      return QStringLiteral("Downloading Status");
 
     case OnlinedataController::DOWNLOADING_WHAZZUP:
-      return "Downloading Whazzup";
+      return QStringLiteral("Downloading Whazzup");
 
     case OnlinedataController::DOWNLOADING_TRANSCEIVERS:
-      return "Downloading Transceivers";
+      return QStringLiteral("Downloading Transceivers");
 
     case OnlinedataController::DOWNLOADING_WHAZZUP_SERVERS:
-      return "Downloading Servers";
+      return QStringLiteral("Downloading Servers");
   }
   return QString();
 }
