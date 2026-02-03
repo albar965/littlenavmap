@@ -183,8 +183,8 @@ ProcedureSearch::ProcedureSearch(QMainWindow *main, QTreeWidget *treeWidgetParam
 
   zoomHandler = new atools::gui::ItemViewZoomHandler(treeWidget);
   connect(NavApp::navAppInstance(), &atools::gui::Application::fontChanged, this, &ProcedureSearch::fontChanged);
-  gridDelegate = new atools::gui::GridDelegate(treeWidget);
-  gridDelegate->setHeightIncrease(0);
+  gridDelegate = new atools::gui::GridDelegate(treeWidget, 1. /* borderPenWidth */, 0 /* heightIncrease */);
+
   treeWidget->setItemDelegate(gridDelegate);
   atools::gui::adjustSelectionColors(treeWidget);
 
