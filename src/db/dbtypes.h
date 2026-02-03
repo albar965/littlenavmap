@@ -67,7 +67,7 @@ QDataStream& operator<<(QDataStream& out, const FsPathType& obj);
 QDataStream& operator>>(QDataStream& in, FsPathType& obj);
 
 Q_DECLARE_METATYPE(FsPathType)
-Q_DECLARE_TYPEINFO(FsPathType, Q_MOVABLE_TYPE);
+Q_DECLARE_TYPEINFO(FsPathType, Q_RELOCATABLE_TYPE);
 
 /* Hash map for simulator type and FsPathType. Can be converted to QVariant */
 class SimulatorTypeMap :

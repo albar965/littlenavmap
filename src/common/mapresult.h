@@ -412,6 +412,6 @@ QDebug operator<<(QDebug out, const map::MapResultIndex& record);
 
 } // namespace map
 
-Q_DECLARE_TYPEINFO(map::MapResult, Q_MOVABLE_TYPE);
+Q_DECLARE_TYPEINFO(map::MapResult, Q_RELOCATABLE_TYPE);
 
 #endif // LITTLENAVMAP_MAPRESULT_H

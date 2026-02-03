@@ -310,6 +310,6 @@ private:
 
 QDebug operator<<(QDebug out, const MapTheme& theme);
 
-Q_DECLARE_TYPEINFO(MapTheme, Q_MOVABLE_TYPE);
+Q_DECLARE_TYPEINFO(MapTheme, Q_RELOCATABLE_TYPE);
 
 #endif // LNM_MAPTHEMEHANDLER_H

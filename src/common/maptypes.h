@@ -1915,37 +1915,38 @@ void registerMetaTypes();
 } // namespace map
 
 /* Type info */
+
+/* Q_PRIMITIVE_TYPE specifies that Type can be created by zero-initializing its storage, requires no operation to be properly destroyed,
+ * and for which memcpy()ing creates a valid independent copy of the object. */
+/* Q_RELOCATABLE_TYPE specifies that Type has a constructor and/or a destructor but can be moved in memory using memcpy(). */
+/* Q_COMPLEX_TYPE (the default) specifies that Type has constructors and/or a destructor and that it may not be moved in memory. */
+
 /* Produces error static assertion failed: map::MapBase is neither copy- nor move-constructible, so cannot be Q_RELOCATABLE_TYPE
  * QTypeInfo<TYPE>::isRelocatable * std::is_copy_constructible_v<TYPE > */
 // static_assert(std::is_copy_constructible<map::MapBase>);
-#if QT_VERSION < QT_VERSION_CHECK(6, 8, 0)
-Q_DECLARE_TYPEINFO(map::MapBase, Q_PRIMITIVE_TYPE);
-#else
-Q_DECLARE_TYPEINFO(map::MapBase, Q_MOVABLE_TYPE);
-#endif
-
-Q_DECLARE_TYPEINFO(map::MapAirport, Q_MOVABLE_TYPE);
-Q_DECLARE_TYPEINFO(map::MapAirportMsa, Q_MOVABLE_TYPE);
-Q_DECLARE_TYPEINFO(map::MapAirspace, Q_MOVABLE_TYPE);
-Q_DECLARE_TYPEINFO(map::MapAirway, Q_MOVABLE_TYPE);
-Q_DECLARE_TYPEINFO(map::MapAirwayWaypoint, Q_MOVABLE_TYPE);
-Q_DECLARE_TYPEINFO(map::MapApron, Q_MOVABLE_TYPE);
-Q_DECLARE_TYPEINFO(map::MapHelipad, Q_MOVABLE_TYPE);
-Q_DECLARE_TYPEINFO(map::MapHolding, Q_MOVABLE_TYPE);
-Q_DECLARE_TYPEINFO(map::MapIls, Q_MOVABLE_TYPE);
-Q_DECLARE_TYPEINFO(map::MapLogbookEntry, Q_MOVABLE_TYPE);
-Q_DECLARE_TYPEINFO(map::MapMarker, Q_MOVABLE_TYPE);
-Q_DECLARE_TYPEINFO(map::MapNdb, Q_MOVABLE_TYPE);
-Q_DECLARE_TYPEINFO(map::MapRefExt, Q_MOVABLE_TYPE);
-Q_DECLARE_TYPEINFO(map::MapParking, Q_MOVABLE_TYPE);
-Q_DECLARE_TYPEINFO(map::MapProcedurePoint, Q_MOVABLE_TYPE);
-Q_DECLARE_TYPEINFO(map::MapRunway, Q_MOVABLE_TYPE);
-Q_DECLARE_TYPEINFO(map::MapRunwayEnd, Q_MOVABLE_TYPE);
-Q_DECLARE_TYPEINFO(map::MapStart, Q_MOVABLE_TYPE);
-Q_DECLARE_TYPEINFO(map::MapTaxiPath, Q_MOVABLE_TYPE);
-Q_DECLARE_TYPEINFO(map::MapUserpointRoute, Q_MOVABLE_TYPE);
-Q_DECLARE_TYPEINFO(map::MapVor, Q_MOVABLE_TYPE);
-Q_DECLARE_TYPEINFO(map::MapWaypoint, Q_MOVABLE_TYPE);
+Q_DECLARE_TYPEINFO(map::MapBase, Q_RELOCATABLE_TYPE);
+Q_DECLARE_TYPEINFO(map::MapAirport, Q_RELOCATABLE_TYPE);
+Q_DECLARE_TYPEINFO(map::MapAirportMsa, Q_RELOCATABLE_TYPE);
+Q_DECLARE_TYPEINFO(map::MapAirspace, Q_RELOCATABLE_TYPE);
+Q_DECLARE_TYPEINFO(map::MapAirway, Q_RELOCATABLE_TYPE);
+Q_DECLARE_TYPEINFO(map::MapAirwayWaypoint, Q_RELOCATABLE_TYPE);
+Q_DECLARE_TYPEINFO(map::MapApron, Q_RELOCATABLE_TYPE);
+Q_DECLARE_TYPEINFO(map::MapHelipad, Q_RELOCATABLE_TYPE);
+Q_DECLARE_TYPEINFO(map::MapHolding, Q_RELOCATABLE_TYPE);
+Q_DECLARE_TYPEINFO(map::MapIls, Q_RELOCATABLE_TYPE);
+Q_DECLARE_TYPEINFO(map::MapLogbookEntry, Q_RELOCATABLE_TYPE);
+Q_DECLARE_TYPEINFO(map::MapMarker, Q_RELOCATABLE_TYPE);
+Q_DECLARE_TYPEINFO(map::MapNdb, Q_RELOCATABLE_TYPE);
+Q_DECLARE_TYPEINFO(map::MapRefExt, Q_RELOCATABLE_TYPE);
+Q_DECLARE_TYPEINFO(map::MapParking, Q_RELOCATABLE_TYPE);
+Q_DECLARE_TYPEINFO(map::MapProcedurePoint, Q_RELOCATABLE_TYPE);
+Q_DECLARE_TYPEINFO(map::MapRunway, Q_RELOCATABLE_TYPE);
+Q_DECLARE_TYPEINFO(map::MapRunwayEnd, Q_RELOCATABLE_TYPE);
+Q_DECLARE_TYPEINFO(map::MapStart, Q_RELOCATABLE_TYPE);
+Q_DECLARE_TYPEINFO(map::MapTaxiPath, Q_RELOCATABLE_TYPE);
+Q_DECLARE_TYPEINFO(map::MapUserpointRoute, Q_RELOCATABLE_TYPE);
+Q_DECLARE_TYPEINFO(map::MapVor, Q_RELOCATABLE_TYPE);
+Q_DECLARE_TYPEINFO(map::MapWaypoint, Q_RELOCATABLE_TYPE);
 Q_DECLARE_TYPEINFO(map::PosCourse, Q_PRIMITIVE_TYPE);
 
 /* Type info and serializable objects */
@@ -1953,23 +1954,23 @@ Q_DECLARE_TYPEINFO(map::MapRef, Q_PRIMITIVE_TYPE);
 Q_DECLARE_METATYPE(map::MapRef)
 Q_DECLARE_METATYPE(QList<map::MapRef>)
 
-Q_DECLARE_TYPEINFO(map::RangeMarker, Q_MOVABLE_TYPE);
+Q_DECLARE_TYPEINFO(map::RangeMarker, Q_RELOCATABLE_TYPE);
 Q_DECLARE_METATYPE(map::RangeMarker)
 Q_DECLARE_METATYPE(QList<map::RangeMarker>)
 
-Q_DECLARE_TYPEINFO(map::DistanceMarker, Q_MOVABLE_TYPE);
+Q_DECLARE_TYPEINFO(map::DistanceMarker, Q_RELOCATABLE_TYPE);
 Q_DECLARE_METATYPE(map::DistanceMarker)
 Q_DECLARE_METATYPE(QList<map::DistanceMarker>)
 
-Q_DECLARE_TYPEINFO(map::PatternMarker, Q_MOVABLE_TYPE);
+Q_DECLARE_TYPEINFO(map::PatternMarker, Q_RELOCATABLE_TYPE);
 Q_DECLARE_METATYPE(map::PatternMarker)
 Q_DECLARE_METATYPE(QList<map::PatternMarker>)
 
-Q_DECLARE_TYPEINFO(map::HoldingMarker, Q_MOVABLE_TYPE);
+Q_DECLARE_TYPEINFO(map::HoldingMarker, Q_RELOCATABLE_TYPE);
 Q_DECLARE_METATYPE(map::HoldingMarker)
 Q_DECLARE_METATYPE(QList<map::HoldingMarker>)
 
-Q_DECLARE_TYPEINFO(map::MsaMarker, Q_MOVABLE_TYPE);
+Q_DECLARE_TYPEINFO(map::MsaMarker, Q_RELOCATABLE_TYPE);
 Q_DECLARE_METATYPE(map::MsaMarker)
 Q_DECLARE_METATYPE(QList<map::MsaMarker>)
 

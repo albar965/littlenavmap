@@ -777,8 +777,8 @@ QString aircraftCategoryText(const QString& cat);
 } // namespace types
 
 Q_DECLARE_TYPEINFO(proc::MapProcedureRef, Q_PRIMITIVE_TYPE);
-Q_DECLARE_TYPEINFO(proc::MapProcedureLeg, Q_MOVABLE_TYPE);
+Q_DECLARE_TYPEINFO(proc::MapProcedureLeg, Q_RELOCATABLE_TYPE);
 Q_DECLARE_TYPEINFO(proc::MapAltRestriction, Q_PRIMITIVE_TYPE);
-Q_DECLARE_TYPEINFO(proc::MapProcedureLegs, Q_MOVABLE_TYPE);
+Q_DECLARE_TYPEINFO(proc::MapProcedureLegs, Q_RELOCATABLE_TYPE);
 
 #endif // LITTLENAVMAP_PROCTYPES_H
