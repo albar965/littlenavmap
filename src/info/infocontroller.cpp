@@ -874,7 +874,7 @@ void InfoController::showInformationInternal(map::MapResult result, bool showWin
     html.tdAtts({
       {"align", "right"}, {"valign", "top"}
     });
-    html.b().a(tr("Remove Airspace Highlights"), QString("lnm://do?hideairspaces"),
+    html.b().a(tr("Remove Airspace Highlights"), QStringLiteral("lnm://do?hideairspaces"),
                ahtml::LINK_NO_UL).bEnd().tdEnd().trEnd().tableEnd();
 
     for(const map::MapAirspace& airspace : result.getSimNavUserAirspaces())
@@ -911,7 +911,7 @@ void InfoController::showInformationInternal(map::MapResult result, bool showWin
     html.tdAtts({
       {"align", "right"}, {"valign", "top"}
     });
-    html.b().a(tr("Remove Center Highlights"), QString("lnm://do?hideonlineairspaces"),
+    html.b().a(tr("Remove Center Highlights"), QStringLiteral("lnm://do?hideonlineairspaces"),
                ahtml::LINK_NO_UL).bEnd().tdEnd().trEnd().tableEnd();
 
     for(const map::MapAirspace& airspace : std::as_const(onlineAirspaces))
@@ -1094,7 +1094,7 @@ bool InfoController::updateNavaidInternal(const map::MapResult& result, bool bea
   html.tdAtts({
     {"align", "right"}, {"valign", "top"}
   });
-  html.b().a(tr("Remove Airway and Track Highlights"), QString("lnm://do?hideairways"),
+  html.b().a(tr("Remove Airway and Track Highlights"), QStringLiteral("lnm://do?hideairways"),
              ahtml::LINK_NO_UL).bEnd().tdEnd().trEnd().tableEnd();
 
   buildOneNavaid(html, bearingChanged, foundNavaid, result.vors, currentSearchResult->vors, infoBuilder, &HtmlInfoBuilder::vorText);

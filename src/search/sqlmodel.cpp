@@ -729,8 +729,8 @@ QString SqlModel::buildWhere(const atools::sql::SqlRecord& tableCols, QList<cons
     {
       QList<atools::geo::Rect> rect = boundingRect.splitAtAntiMeridian();
 
-      rectCond = QString("((lonx between %1 and %2 and laty between %3 and %4) or "
-                         "(lonx between %5 and %6 and laty between %7 and %8))").
+      rectCond = QStringLiteral("((lonx between %1 and %2 and laty between %3 and %4) or "
+                                "(lonx between %5 and %6 and laty between %7 and %8))").
                  arg(rect.at(0).getTopLeft().getLonX()).arg(rect.at(0).getBottomRight().getLonX()).
                  arg(rect.at(0).getBottomRight().getLatY()).arg(rect.at(0).getTopLeft().getLatY()).
                  arg(rect.at(1).getTopLeft().getLonX()).arg(rect.at(1).getBottomRight().getLonX()).

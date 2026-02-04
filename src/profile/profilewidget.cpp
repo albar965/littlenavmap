@@ -2472,9 +2472,9 @@ void ProfileWidget::buildTooltipText(int x, bool force)
   NavApp::getAircraftPerfController()->calculateFuelAndTimeTo(result, distanceToGo, INVALID_DISTANCE_VALUE,
                                                               index + 1);
 
-  html.append(QString("<br/><code>[alt %1,idx %2, crs %3, "
-                        "fuel dest %4/%5, fuel TOD %6/%7, "
-                        "time dest %8 (%9), time TOD %10 (%11)]</code>").
+  html.append(QStringLiteral("<br/><code>[alt %1,idx %2, crs %3, "
+                               "fuel dest %4/%5, fuel TOD %6/%7, "
+                               "time dest %8 (%9), time TOD %10 (%11)]</code>").
               arg(NavApp::getRoute().getAltitudeForDistance(distanceToGo)).
               arg(index).
               arg(leg != nullptr ? QString::number(leg->getCourseToTrue()) : "-").

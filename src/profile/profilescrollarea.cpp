@@ -881,10 +881,10 @@ void ProfileScrollArea::styleChanged()
 #if !defined(Q_OS_LINUX) || defined(DEBUG_INFORMATION)
   // Make the elevation profile splitter handle better visible - update background color
   NavApp::getMainUi()->splitterProfile->setStyleSheet(
-    QString("QSplitter::handle { "
-            "background: %1;"
-            "image: url(:/littlenavmap/resources/icons/splitterhandhoriz.png);"
-            " }").
+    QStringLiteral("QSplitter::handle { "
+                   "background: %1;"
+                   "image: url(:/littlenavmap/resources/icons/splitterhandhoriz.png);"
+                   " }").
     arg(QApplication::palette().color(QPalette::Window).darker(120).name()));
 #endif
   optionsChanged();

@@ -139,7 +139,7 @@ int main(int argc, char *argv[])
 #endif
 
   // Byte arrays have to remain for the whole runtime
-  QByteArray argument = QString("-platform").toLatin1(), value = QString("windows:fontengine=freetype").toLatin1();
+  QByteArray argument("-platform"), value("windows:fontengine=freetype");
 
   // Copy pointers to regular arguments - add two for freetype options if needed
   int appArgc = freetype ? argc + 2 : argc;

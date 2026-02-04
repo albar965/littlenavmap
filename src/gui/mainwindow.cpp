@@ -4708,12 +4708,12 @@ void MainWindow::printShortcuts()
       streamShortcuts << Qt::endl << ".. _shortcuts-main-" << text.toLower() << ":" << Qt::endl << Qt::endl;
 
       streamShortcuts << text << Qt::endl;
-      streamShortcuts << QString("^").repeated(text.size()) << Qt::endl << Qt::endl;
+      streamShortcuts << QStringLiteral("^").repeated(text.size()) << Qt::endl << Qt::endl;
 
-      streamShortcuts << "+" << QString("-").repeated(c1) << "+" << QString("-").repeated(c2) << "+" << Qt::endl;
-      streamShortcuts << "| " << QString("Menu").leftJustified(c1 - 1)
-                      << "| " << QString("Shortcut").leftJustified(c2 - 1) << "|" << Qt::endl;
-      streamShortcuts << "+" << QString("=").repeated(c1) << "+" << QString("=").repeated(c2) << "+" << Qt::endl;
+      streamShortcuts << "+" << QStringLiteral("-").repeated(c1) << "+" << QString("-").repeated(c2) << "+" << Qt::endl;
+      streamShortcuts << "| " << QStringLiteral("Menu").leftJustified(c1 - 1)
+                      << "| " << QStringLiteral("Shortcut").leftJustified(c2 - 1) << "|" << Qt::endl;
+      streamShortcuts << "+" << QStringLiteral("=").repeated(c1) << "+" << QString("=").repeated(c2) << "+" << Qt::endl;
 
       QString mainmenu = mainmenus->text().remove(QChar('&'));
       const QList<QAction *> menuActions = mainmenus->menu()->actions();

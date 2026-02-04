@@ -5222,7 +5222,7 @@ QString HtmlInfoBuilder::filepathTextShow(const QString& filepath, const QString
   if(fileinfo.exists())
   {
     QString filepathStr = atools::nativeCleanPath(canonical ? atools::canonicalFilePath(fileinfo) : fileinfo.absoluteFilePath());
-    link.small(prefix).a(filepathStr, QString("lnm://show?filepath=%1").arg(filepathStr), ahtml::LINK_NO_UL | ahtml::SMALL);
+    link.small(prefix).a(filepathStr, QStringLiteral("lnm://show?filepath=%1").arg(filepathStr), ahtml::LINK_NO_UL | ahtml::SMALL);
   }
   else
     link.small(prefix).small(filepath).text(tr(" (file not found)"), ahtml::SMALL | ahtml::BOLD);

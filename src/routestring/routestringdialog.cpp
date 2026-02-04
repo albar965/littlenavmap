@@ -571,10 +571,10 @@ void RouteStringDialog::styleChanged()
   // Styles cascade to children and mess up UI themes on linux - even if widget is selected by name
 #if !defined(Q_OS_LINUX) || defined(DEBUG_INFORMATION)
   // Make the splitter handle better visible
-  ui->splitterRouteString->setStyleSheet(QString("QSplitter::handle { "
-                                                 "background: %1;"
-                                                 "image: url(:/littlenavmap/resources/icons/splitterhandvert.png); "
-                                                 "}").arg(QApplication::palette().color(QPalette::Window).darker(120).name()));
+  ui->splitterRouteString->setStyleSheet(QStringLiteral("QSplitter::handle { "
+                                                        "background: %1;"
+                                                        "image: url(:/littlenavmap/resources/icons/splitterhandvert.png); "
+                                                        "}").arg(QApplication::palette().color(QPalette::Window).darker(120).name()));
 #endif
 }
 

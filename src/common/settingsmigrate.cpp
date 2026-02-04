@@ -168,7 +168,7 @@ void checkAndMigrateSettings()
 
         // and vatsim URL,
         settings.setValue("OptionsDialog/Widget_lineEditOptionsWeatherVatsimUrl",
-                          QString("https://metar.vatsim.net/metar.php?id=ALL"));
+                          QStringLiteral("https://metar.vatsim.net/metar.php?id=ALL"));
 
         // clear allow undock map?
 
