@@ -118,12 +118,15 @@ StyleHandler::StyleHandler(QMainWindow *mainWindowParam)
     // Toolbutton checked background ===============
     QStringLiteral("QToolButton:checked { background-color: %1; }").arg(darkPalette.color(QPalette::Light).name()) %
     QStringLiteral("QPushButton:checked { background-color: %1; }").arg(darkPalette.color(QPalette::Light).name()) %
+    QStringLiteral("QMenu::item:selected { border-color: lightgray; background: %1; }").arg(darkPalette.color(QPalette::Highlight).name()) %
+    QStringLiteral("QGroupBox {background-color: %2; }").arg(darkPalette.color(QPalette::Mid).name()) %
+
+    // Menu padding ====================
+    "QMenu::item { padding: 2px 2px; }"
 
     // Thicker frame for selected menu items with icons ====================
     "QMenu::icon:checked:enabled { background: #808080; border: 2px solid darkgray; border-radius: 2px; }"
-    "QMenu::icon:checked:disabled { background: #808080; border: 2px solid dimgray; border-radius: 2px; }" %
-    QStringLiteral("QMenu::item:selected { border-color: lightgray; background: %1; }").arg(darkPalette.color(QPalette::Highlight).name()) %
-    "QMenu::item { padding: 2px 2px; }"
+    "QMenu::icon:checked:disabled { background: #808080; border: 2px solid dimgray; border-radius: 2px; }"
 
     // Checkbox images ====================
     "QCheckBox::indicator:checked { image: url(:/littlenavmap/resources/icons/checkbox_dark_checked.png); }"
