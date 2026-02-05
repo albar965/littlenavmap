@@ -20,7 +20,7 @@
 
 #include "mappainter/mappainter.h"
 
-#include <QPen>
+#include "mappainter/paintcontext.h"
 
 #include <marble/LayerInterface.h>
 
@@ -199,7 +199,7 @@ private:
   /* Implemented from LayerInterface: We  draw above all but below user tools */
   virtual QStringList renderPosition() const override
   {
-    return QStringList(QLatin1String("ORBIT"));
+    return RENDER_POS;
   }
 
   // Implemented from LayerInterface
@@ -258,6 +258,7 @@ private:
   bool verbose = false, verboseDraw = false, debugTileSize = false;
   QFont::StyleStrategy savedFontStrategy, savedDefaultFontStrategy;
 
+  static QStringList RENDER_POS;
 };
 
 #endif // LITTLENAVMAP_MAPPAINTLAYER_H

@@ -20,6 +20,7 @@
 
 #include "mappainter/mappainter.h"
 
+#include "common/mapflags.h"
 #include "geo/line.h"
 
 namespace Marble {

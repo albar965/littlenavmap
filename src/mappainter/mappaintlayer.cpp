@@ -53,6 +53,9 @@
 using namespace Marble;
 using namespace atools::geo;
 
+/* Render on top of all except overlays */
+QStringList MapPaintLayer::RENDER_POS("ORBIT");
+
 MapPaintLayer::MapPaintLayer(MapPaintWidget *widget)
   : mapPaintWidget(widget)
 {

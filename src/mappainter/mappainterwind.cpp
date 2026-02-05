@@ -17,12 +17,13 @@
 
 #include "mappainter/mappainterwind.h"
 
-#include "common/symbolpainter.h"
-#include "mapgui/maplayer.h"
-#include "util/paintercontextsaver.h"
 #include "app/navapp.h"
-#include "weather/windreporter.h"
+#include "common/symbolpainter.h"
 #include "mapgui/mapfunctions.h"
+#include "mapgui/maplayer.h"
+#include "mappainter/paintcontext.h"
+#include "util/paintercontextsaver.h"
+#include "weather/windreporter.h"
 
 #include <marble/GeoPainter.h>
 #include <marble/ViewportParams.h>

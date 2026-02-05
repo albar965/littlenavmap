@@ -19,9 +19,9 @@
 
 #include "app/navapp.h"
 #include "fs/sc/simconnectaircraft.h"
-#include "fs/sc/simconnectuseraircraft.h"
 #include "mapgui/maplayer.h"
 #include "mapgui/mappaintwidget.h"
+#include "mappainter/paintcontext.h"
 #include "util/paintercontextsaver.h"
 
 #include <marble/GeoPainter.h>

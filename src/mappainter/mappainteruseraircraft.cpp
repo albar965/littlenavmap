@@ -20,6 +20,7 @@
 #include "app/navapp.h"
 #include "mapgui/mapfunctions.h"
 #include "mapgui/mappaintwidget.h"
+#include "mappainter/paintcontext.h"
 #include "online/onlinedatacontroller.h"
 #include "util/paintercontextsaver.h"
 

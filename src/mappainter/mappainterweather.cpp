@@ -17,16 +17,17 @@
 
 #include "mappainter/mappainterweather.h"
 
+#include "app/navapp.h"
 #include "common/symbolpainter.h"
-#include "fs/weather/metarparser.h"
 #include "fs/weather/metar.h"
-#include "mapgui/mapscale.h"
+#include "fs/weather/metarparser.h"
 #include "mapgui/maplayer.h"
+#include "mapgui/mapscale.h"
+#include "mappainter/paintcontext.h"
 #include "query/mapquery.h"
 #include "query/querymanager.h"
-#include "util/paintercontextsaver.h"
-#include "app/navapp.h"
 #include "route/route.h"
+#include "util/paintercontextsaver.h"
 #include "weather/weatherreporter.h"
 
 #include <marble/GeoPainter.h>

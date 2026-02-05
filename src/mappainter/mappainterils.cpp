@@ -17,15 +17,16 @@
 
 #include "mappainter/mappainterils.h"
 
-#include "mapgui/mapscale.h"
+#include "common/mapcolors.h"
+#include "geo/calculations.h"
 #include "mapgui/maplayer.h"
+#include "mapgui/mapscale.h"
+#include "mappainter/paintcontext.h"
 #include "query/airportquery.h"
 #include "query/mapquery.h"
-#include "geo/calculations.h"
-#include "common/mapcolors.h"
 #include "query/querymanager.h"
-#include "util/paintercontextsaver.h"
 #include "route/route.h"
+#include "util/paintercontextsaver.h"
 
 #include <QElapsedTimer>
 #include <QStringBuilder>

@@ -17,12 +17,13 @@
 
 #include "mappainter/mappaintermsa.h"
 
-#include "mapgui/mapscale.h"
+#include "common/symbolpainter.h"
 #include "mapgui/maplayer.h"
+#include "mapgui/mapscale.h"
+#include "mappainter/paintcontext.h"
 #include "query/mapquery.h"
 #include "query/querymanager.h"
 #include "util/paintercontextsaver.h"
-#include "common/symbolpainter.h"
 
 #include <QElapsedTimer>
 

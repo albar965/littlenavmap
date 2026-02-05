@@ -17,13 +17,14 @@
 
 #include "mappainter/mappaintertop.h"
 
-#include "common/mapcolors.h"
 #include "app/navapp.h"
+#include "common/mapcolors.h"
 #include "common/symbolpainter.h"
 #include "mapgui/maplayer.h"
-#include "util/paintercontextsaver.h"
-#include "mapgui/mapthemehandler.h"
 #include "mapgui/mappaintwidget.h"
+#include "mapgui/mapthemehandler.h"
+#include "mappainter/paintcontext.h"
+#include "util/paintercontextsaver.h"
 
 #ifdef DEBUG_APPROACH_PAINT
 #include "common/proctypes.h"

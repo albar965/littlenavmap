@@ -17,10 +17,11 @@
 
 #include "mappainter/mappainteruser.h"
 
+#include "app/navapp.h"
 #include "atools.h"
 #include "common/symbolpainter.h"
 #include "mapgui/maplayer.h"
-#include "app/navapp.h"
+#include "mappainter/paintcontext.h"
 #include "query/mapquery.h"
 #include "query/querymanager.h"
 #include "userdata/userdataicons.h"

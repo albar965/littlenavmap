@@ -17,11 +17,12 @@
 
 #include "mappainter/mappainteraiaircraft.h"
 
+#include "app/navapp.h"
 #include "common/constants.h"
 #include "geo/calculations.h"
 #include "mapgui/mapfunctions.h"
 #include "mapgui/mappaintwidget.h"
-#include "app/navapp.h"
+#include "mappainter/paintcontext.h"
 #include "online/onlinedatacontroller.h"
 #include "settings/settings.h"
 #include "util/paintercontextsaver.h"

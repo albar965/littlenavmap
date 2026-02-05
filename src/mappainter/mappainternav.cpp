@@ -23,6 +23,7 @@
 #include "common/textplacement.h"
 #include "common/textpointer.h"
 #include "mapgui/maplayer.h"
+#include "mappainter/paintcontext.h"
 #include "query/airwaytrackquery.h"
 #include "query/mapquery.h"
 #include "query/querymanager.h"

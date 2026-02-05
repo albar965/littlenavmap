@@ -30,6 +30,7 @@
 #include "mapgui/mappaintwidget.h"
 #include "mapgui/mapscale.h"
 #include "mapgui/mapscreenindex.h"
+#include "mappainter/paintcontext.h"
 
 #include <marble/GeoPainter.h>
 

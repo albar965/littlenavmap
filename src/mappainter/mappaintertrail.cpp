@@ -20,6 +20,7 @@
 #include "fs/sc/simconnectuseraircraft.h"
 #include "geo/aircrafttrail.h"
 #include "mapgui/mappaintwidget.h"
+#include "mappainter/paintcontext.h"
 #include "route/route.h"
 #include "util/paintercontextsaver.h"
 

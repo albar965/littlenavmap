@@ -392,6 +392,7 @@ SOURCES += \
   src/mappainter/mappainterweather.cpp \
   src/mappainter/mappainterwind.cpp \
   src/mappainter/mappaintlayer.cpp \
+  src/mappainter/paintcontext.cpp \
   src/online/onlinedatacontroller.cpp \
   src/options/optiondata.cpp \
   src/options/optionsdialog.cpp \
@@ -602,6 +603,7 @@ HEADERS  += \
   src/mappainter/mappainterweather.h \
   src/mappainter/mappainterwind.h \
   src/mappainter/mappaintlayer.h \
+  src/mappainter/paintcontext.h \
   src/online/onlinedatacontroller.h \
   src/options/optiondata.h \
   src/options/optionsdialog.h \

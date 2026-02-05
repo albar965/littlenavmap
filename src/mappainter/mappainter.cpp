@@ -25,14 +25,12 @@
 #include "common/symbolpainter.h"
 #include "common/textplacement.h"
 #include "common/unit.h"
-#include "geo/calculations.h"
 #include "mapgui/maplayer.h"
 #include "mapgui/mappaintwidget.h"
 #include "mapgui/mapscale.h"
+#include "mappainter/paintcontext.h"
 #include "util/paintercontextsaver.h"
 
-#include <marble/GeoDataLineString.h>
-#include <marble/GeoDataLinearRing.h>
 #include <marble/GeoPainter.h>
 
 #include <QPixmapCache>
@@ -77,73 +75,6 @@ AirportPaintData& AirportPaintData::operator=(const AirportPaintData& other)
   return *this;
 }
 
-void PaintContext::szFont(float scale) const
-{
-  mapcolors::scaleFont(painter, scale, &defaultFont);
-}
-
-textflags::TextFlags PaintContext::airportTextFlags() const
-{
-  // Build and draw airport text
-  textflags::TextFlags textflags = textflags::NONE;
-
-  if(mapLayerText->isAirportInfo())
-    textflags = textflags::INFO;
-
-  if(mapLayerText->isAirportIdent())
-    textflags |= textflags::IDENT;
-
-  if(mapLayerText->isAirportName())
-    textflags |= textflags::NAME;
-
-  if(!flags2.testFlag(opts2::MAP_AIRPORT_TEXT_BACKGROUND))
-    textflags |= textflags::NO_BACKGROUND;
-
-  return textflags;
-}
-
-textflags::TextFlags PaintContext::airportTextFlagsMinor() const
-{
-  // Build and draw airport text
-  textflags::TextFlags textflags = textflags::NONE;
-
-  if(mapLayerText->isAirportMinorInfo())
-    textflags = textflags::INFO;
-
-  if(mapLayerText->isAirportMinorIdent())
-    textflags |= textflags::IDENT;
-
-  if(mapLayerText->isAirportMinorName())
-    textflags |= textflags::NAME;
-
-  if(!flags2.testFlag(opts2::MAP_AIRPORT_TEXT_BACKGROUND))
-    textflags |= textflags::NO_BACKGROUND;
-
-  return textflags;
-}
-
-textflags::TextFlags PaintContext::airportTextFlagsRoute(bool drawAsRoute, bool drawAsLog) const
-{
-  // Show ident always on route
-  textflags::TextFlags textflags = textflags::IDENT;
-
-  if(drawAsRoute)
-    textflags |= textflags::ROUTE_TEXT;
-
-  if(drawAsLog)
-    textflags |= textflags::LOG_TEXT;
-
-  // Use more more detailed text for flight plan
-  if(mapLayerRouteText->isAirportRouteInfo())
-    textflags |= textflags::NAME | textflags::INFO;
-
-  if(!(flags2 & opts2::MAP_ROUTE_TEXT_BACKGROUND))
-    textflags |= textflags::NO_BACKGROUND;
-
-  return textflags;
-}
-
-// =================================================
 MapPainter::MapPainter(MapPaintWidget *parentMapWidget, MapScale *mapScale, PaintContext *paintContext)
   : CoordinateConverter(parentMapWidget->viewport()), context(paintContext), mapPaintWidget(parentMapWidget), scale(mapScale)
 {

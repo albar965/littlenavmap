@@ -29,6 +29,7 @@
 #include "mapgui/maplayer.h"
 #include "mapgui/mappaintwidget.h"
 #include "mapgui/mapscale.h"
+#include "mappainter/paintcontext.h"
 #include "query/airportquery.h"
 #include "query/mapquery.h"
 #include "route/route.h"

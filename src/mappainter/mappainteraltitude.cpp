@@ -25,6 +25,7 @@
 #include "geo/marbleconverter.h"
 #include "mapgui/maplayer.h"
 #include "mapgui/mapscale.h"
+#include "mappainter/paintcontext.h"
 #include "util/paintercontextsaver.h"
 
 #include <QElapsedTimer>

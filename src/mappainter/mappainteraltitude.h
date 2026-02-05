@@ -21,6 +21,7 @@
 #include "mappainter/mappainter.h"
 
 class SymbolPainter;
+class PaintContext;
 
 /*
  * Draws MORA (minimum off route altitude) data and grid on the map

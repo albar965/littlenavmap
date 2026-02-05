@@ -32,6 +32,7 @@
 #include "mapgui/maplayer.h"
 #include "mapgui/mapscale.h"
 #include "mapgui/mapwidget.h"
+#include "mappainter/paintcontext.h"
 #include "perf/aircraftperfcontroller.h"
 #include "query/airspacequeries.h"
 #include "route/route.h"
