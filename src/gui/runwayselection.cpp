@@ -257,7 +257,14 @@ void RunwaySelection::fillRunwayList()
     // Fill header texts ===================================================
     runwayTableWidget->setHorizontalHeaderLabels(header);
     for(int i = 0; i < headerTooltips.size(); i++)
-      runwayTableWidget->horizontalHeaderItem(i)->setToolTip(headerTooltips.at(i));
+    {
+      QTableWidgetItem *item = runwayTableWidget->horizontalHeaderItem(i);
+
+      if(item != nullptr)
+        item->setToolTip(headerTooltips.at(i));
+      else
+        qWarning() << Q_FUNC_INFO << "Item" << i << "is null";
+    }
 
     // Fetch airport wind ===================================================
     float windSpeedKts, windDirectionDeg;

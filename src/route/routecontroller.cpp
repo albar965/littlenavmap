@@ -5346,7 +5346,13 @@ void RouteController::updateTableModelAndErrors()
 
   // Update header tooltips
   for(int col = rcol::FIRST_COLUMN; col <= rcol::LAST_COLUMN; col++)
-    model->horizontalHeaderItem(col)->setToolTip(routeColumnDescription.at(col));
+  {
+    QStandardItem *item = model->horizontalHeaderItem(col);
+    if(item != nullptr)
+      item->setToolTip(routeColumnDescription.at(col));
+    else
+      qWarning() << Q_FUNC_INFO << "Item" << col << "is null";
+  }
 
   updateModelHighlightsAndErrors();
   highlightNextWaypoint(route.getActiveLegIndexCorrected());
