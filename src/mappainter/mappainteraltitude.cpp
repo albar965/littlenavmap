@@ -139,7 +139,7 @@ void MapPainterAltitude::render()
         textCol.setAlphaF(atools::minmax(0., 1., 1. - context->transparencyMora));
         context->painter->setPen(textCol);
 
-        float fontSize = minWidth * context->textSizeMora;
+        float fontSize = minWidth * context->textSizeMora * context->sizeAll;
         QFont font = context->painter->font();
         font.setItalic(true);
         font.setPixelSize(atools::roundToInt(fontSize));

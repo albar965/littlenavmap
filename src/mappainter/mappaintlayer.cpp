@@ -273,15 +273,28 @@ void MapPaintLayer::updateLayers()
     mapLayerEffective = mapLayer = mapLayerText = mapLayerRoute = mapLayerRouteText = nullptr;
   else
   {
+    // Adjusted to -0.5 to 0.0 to 1.0 from UI setting 50% to 100% to 200%
+    float scale = (mapPaintWidget->isWeb() ?
+                   OptionData::instance().getDisplayScaleAllWeb() :
+                   OptionData::instance().getDisplayScaleAll()) / 100.f - 1.f;
+
+    // Adjust level of detail depending on overall scale to avoid cluttering up the map
+    // Scale change effect reduced by 1.5
+    int level = detailLevel - scale * 1.5f;
+    int levelText = detailLevelText - scale * 1.5f;
+
     float distKm = static_cast<float>(mapPaintWidget->distance());
-    // Get the uncorrected effective layer - route painting is independent of declutter
+
+    // Get the uncorrected effective layer not considering detail settings
     mapLayerEffective = layers->getLayer(distKm);
 
-    mapLayer = layers->getLayer(distKm, detailLevel);
-    mapLayerText = layers->getLayer(distKm, detailLevelText);
+    // Get layers depending on user detail level settings
+    mapLayer = layers->getLayer(distKm, level);
+    mapLayerText = layers->getLayer(distKm, levelText);
 
-    mapLayerRoute = layers->getLayer(distKm, detailLevel + 1);
-    mapLayerRouteText = layers->getLayer(distKm, detailLevelText + 1);
+    // Get layers for flight plan display using more details than normal and depending on user detail level settings
+    mapLayerRoute = layers->getLayer(distKm, level + 1);
+    mapLayerRouteText = layers->getLayer(distKm, levelText + 1);
   }
 }
 
@@ -372,8 +385,10 @@ bool MapPaintLayer::render(GeoPainter *painter, ViewportParams *viewport, const 
 
       const OptionData& od = OptionData::instance();
 
+      // Overall scale different for desktop and web
+      context.sizeAll = (mapPaintWidget->isWeb() ? od.getDisplayScaleAllWeb() : od.getDisplayScaleAll()) / 100.f;
+
       context.symbolSizeAircraftAi = od.getDisplaySymbolSizeAircraftAi() / 100.f;
-      context.symbolSizeWeb = od.getWebIconScale() / 100.f;
       context.symbolSizeAircraftUser = od.getDisplaySymbolSizeAircraftUser() / 100.f;
       context.symbolSizeAirport = od.getDisplaySymbolSizeAirport() / 100.f;
       context.symbolSizeAirportWeather = od.getDisplaySymbolSizeAirportWeather() / 100.f;

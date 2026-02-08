@@ -77,7 +77,7 @@
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>629</width>
+             <width>630</width>
              <height>530</height>
             </rect>
            </property>
@@ -329,7 +329,7 @@ This is the file on top of the list &quot;Recent Window Layouts&quot;.</string>
                  </property>
                 </widget>
                </item>
-               <item row="1" column="0">
+               <item row="1" column="0" alignment="Qt::AlignVCenter">
                 <widget class="QLabel" name="labelOptionsStartupUpdateChannels">
                  <property name="text">
                   <string>Update &amp;Channels:</string>
@@ -361,7 +361,7 @@ This is the file on top of the list &quot;Recent Window Layouts&quot;.</string>
                  </item>
                 </widget>
                </item>
-               <item row="0" column="0">
+               <item row="0" column="0" alignment="Qt::AlignVCenter">
                 <widget class="QLabel" name="labelOptionsStartupUpdateRate">
                  <property name="text">
                   <string>Check for &amp;Updates:</string>
@@ -434,7 +434,7 @@ This is the file on top of the list &quot;Recent Window Layouts&quot;.</string>
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>629</width>
+             <width>630</width>
              <height>530</height>
             </rect>
            </property>
@@ -509,7 +509,7 @@ Note that some translations might be incomplete.</string>
                  </property>
                 </widget>
                </item>
-               <item row="0" column="0">
+               <item row="0" column="0" alignment="Qt::AlignVCenter">
                 <widget class="QLabel" name="label_8">
                  <property name="text">
                   <string>&amp;User interface language:</string>
@@ -627,8 +627,8 @@ opening files, modifying the flight plan and other operations.</string>
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>615</width>
-             <height>835</height>
+             <width>616</width>
+             <height>838</height>
             </rect>
            </property>
            <layout class="QVBoxLayout" name="verticalLayout_23">
@@ -866,7 +866,7 @@ This does not affect the map window which can be changed separately on the optio
                  </property>
                 </widget>
                </item>
-               <item row="0" column="1">
+               <item row="0" column="1" alignment="Qt::AlignVCenter">
                 <widget class="QCheckBox" name="checkBoxOptionsGuiToolbarSize">
                  <property name="toolTip">
                   <string>Allows to change the size of the toolbar icons from system default if checked.</string>
@@ -1239,7 +1239,7 @@ This does not affect the map window which can be changed separately on the optio
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>629</width>
+             <width>630</width>
              <height>530</height>
             </rect>
            </property>
@@ -1265,7 +1265,7 @@ This does not affect the map window which can be changed separately on the optio
                <property name="horizontalSpacing">
                 <number>2</number>
                </property>
-               <item row="0" column="0">
+               <item row="0" column="0" alignment="Qt::AlignVCenter">
                 <widget class="QLabel" name="labelOptionsUnitDistance">
                  <property name="text">
                   <string>&amp;Distance:</string>
@@ -1294,7 +1294,7 @@ This does not affect the map window which can be changed separately on the optio
                  </item>
                 </widget>
                </item>
-               <item row="1" column="0">
+               <item row="1" column="0" alignment="Qt::AlignVCenter">
                 <widget class="QLabel" name="labelOptionsUnitShortDistance">
                  <property name="text">
                   <string>&amp;Short Distance:</string>
@@ -1318,7 +1318,7 @@ This does not affect the map window which can be changed separately on the optio
                  </item>
                 </widget>
                </item>
-               <item row="2" column="0">
+               <item row="2" column="0" alignment="Qt::AlignVCenter">
                 <widget class="QLabel" name="labelOptionsUnitAlt">
                  <property name="text">
                   <string>&amp;Altitude and elevation:</string>
@@ -1342,7 +1342,7 @@ This does not affect the map window which can be changed separately on the optio
                  </item>
                 </widget>
                </item>
-               <item row="3" column="0">
+               <item row="3" column="0" alignment="Qt::AlignVCenter">
                 <widget class="QLabel" name="labelOptionsUnitSpeed">
                  <property name="text">
                   <string>&amp;Speed:</string>
@@ -1371,7 +1371,7 @@ This does not affect the map window which can be changed separately on the optio
                  </item>
                 </widget>
                </item>
-               <item row="4" column="0">
+               <item row="4" column="0" alignment="Qt::AlignVCenter">
                 <widget class="QLabel" name="labelOptionsUnitVertSpeed">
                  <property name="text">
                   <string>&amp;Vertical Speed:</string>
@@ -1395,7 +1395,7 @@ This does not affect the map window which can be changed separately on the optio
                  </item>
                 </widget>
                </item>
-               <item row="5" column="0">
+               <item row="5" column="0" alignment="Qt::AlignVCenter">
                 <widget class="QLabel" name="labelOptionsUnitFuel">
                  <property name="text">
                   <string>&amp;Fuel and Weight:</string>
@@ -1433,7 +1433,7 @@ information displays and tooltips besides selected units.</string>
                  </property>
                 </widget>
                </item>
-               <item row="6" column="0">
+               <item row="6" column="0" alignment="Qt::AlignVCenter">
                 <widget class="QLabel" name="labelOptionsUnitCoords">
                  <property name="text">
                   <string>&amp;Coordinates:</string>
@@ -1559,8 +1559,8 @@ Also affects labels at holds and traffic patterns.</string>
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>517</width>
-             <height>397</height>
+             <width>630</width>
+             <height>530</height>
             </rect>
            </property>
            <layout class="QVBoxLayout" name="verticalLayout_59">
@@ -1788,8 +1788,8 @@ The &quot;Save as&quot; dialog will show up instead of overwriting the current f
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>318</width>
-             <height>489</height>
+             <width>630</width>
+             <height>530</height>
             </rect>
            </property>
            <layout class="QGridLayout" name="gridLayout">
@@ -1896,7 +1896,7 @@ Restart the program after changing this option. You might also need to reset the
                <property name="spacing">
                 <number>2</number>
                </property>
-               <item row="0" column="0">
+               <item row="0" column="0" alignment="Qt::AlignVCenter">
                 <widget class="QLabel" name="label">
                  <property name="text">
                   <string>&amp;Sun shading darkness:</string>
@@ -1931,7 +1931,7 @@ Restart the program after changing this option. You might also need to reset the
                  </property>
                 </widget>
                </item>
-               <item row="1" column="0">
+               <item row="1" column="0" alignment="Qt::AlignVCenter">
                 <widget class="QLabel" name="labelOptionsGuiThemeMapDimming">
                  <property name="text">
                   <string>Map &amp;dimming in dark style:</string>
@@ -2059,8 +2059,8 @@ Note that this function is disabled for X-Plane 12 since the 3D flag is unreliab
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>597</width>
-             <height>388</height>
+             <width>630</width>
+             <height>530</height>
             </rect>
            </property>
            <layout class="QGridLayout" name="gridLayout_2">
@@ -2537,8 +2537,8 @@ Smaller values will allow a finer selection.</string>
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>510</width>
-             <height>521</height>
+             <width>630</width>
+             <height>530</height>
             </rect>
            </property>
            <layout class="QVBoxLayout" name="verticalLayout_12">
@@ -2574,7 +2574,7 @@ Enable &quot;Navigation Aids&quot;, &quot;Screen Areas&quot; on options page &qu
                  </property>
                 </widget>
                </item>
-               <item row="3" column="0">
+               <item row="3" column="0" alignment="Qt::AlignVCenter">
                 <widget class="QLabel" name="labelOptionsMapNavTouchscreenArea">
                  <property name="text">
                   <string>&amp;Screen click area size:</string>
@@ -2866,8 +2866,8 @@ Map views might be shown with a larger zoom distance than expected if this optio
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>499</width>
-             <height>1059</height>
+             <width>616</width>
+             <height>1183</height>
             </rect>
            </property>
            <layout class="QVBoxLayout" name="verticalLayout_20">
@@ -2949,6 +2949,81 @@ Note that some fonts, especially large fonts, can result in display errors on th
              </widget>
             </item>
             <item>
+             <widget class="QGroupBox" name="groupBox_39">
+              <property name="title">
+               <string>Map Display Scaling</string>
+              </property>
+              <layout class="QGridLayout" name="gridLayout_12">
+               <property name="leftMargin">
+                <number>2</number>
+               </property>
+               <property name="topMargin">
+                <number>2</number>
+               </property>
+               <property name="rightMargin">
+                <number>2</number>
+               </property>
+               <property name="bottomMargin">
+                <number>2</number>
+               </property>
+               <item row="0" column="2">
+                <widget class="QSpinBox" name="spinBoxOptionsDisplayScaleAll">
+                 <property name="toolTip">
+                  <string/>
+                 </property>
+                 <property name="suffix">
+                  <string> %</string>
+                 </property>
+                 <property name="prefix">
+                  <string/>
+                 </property>
+                 <property name="minimum">
+                  <number>50</number>
+                 </property>
+                 <property name="maximum">
+                  <number>200</number>
+                 </property>
+                 <property name="singleStep">
+                  <number>10</number>
+                 </property>
+                 <property name="value">
+                  <number>100</number>
+                 </property>
+                </widget>
+               </item>
+               <item row="2" column="0" colspan="3">
+                <widget class="QLabel" name="labelOptionsMapScaleHint">
+                 <property name="text">
+                  <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;img src=&quot;:/littlenavmap/resources/icons/bulb.svg&quot;/&gt;&lt;span style=&quot; font-style:italic;&quot;&gt; You can further fine tune the size of individual features below and on the next pages.&lt;br/&gt;&lt;/span&gt;&lt;span style=&quot; font-style:italic;&quot;&gt;Change the scale for the Web Server map on page &lt;/span&gt;&lt;a href=&quot;lnm://20&quot;&gt;&lt;span style=&quot; font-style:italic; text-decoration: underline; color:#0057ae;&quot;&gt;Web Server&lt;/span&gt;&lt;/a&gt;&lt;span style=&quot; font-style:italic;&quot;&gt; separately.&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+                 </property>
+                 <property name="wordWrap">
+                  <bool>true</bool>
+                 </property>
+                 <property name="margin">
+                  <number>10</number>
+                 </property>
+                 <property name="textInteractionFlags">
+                  <set>Qt::LinksAccessibleByMouse|Qt::TextSelectableByMouse</set>
+                 </property>
+                </widget>
+               </item>
+               <item row="0" column="0" colspan="2" alignment="Qt::AlignVCenter">
+                <widget class="QLabel" name="labelOptionsMapSizeAirport_2">
+                 <property name="text">
+                  <string>&amp;Scale factor for all map display features, labels and symbols:</string>
+                 </property>
+                 <property name="alignment">
+                  <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignTop</set>
+                 </property>
+                 <property name="buddy">
+                  <cstring>spinBoxOptionsDisplayScaleAll</cstring>
+                 </property>
+                </widget>
+               </item>
+              </layout>
+             </widget>
+            </item>
+            <item>
              <widget class="QGroupBox" name="groupBoxOptionsDisplay">
               <property name="title">
                <string>Symbol, Text Sizes and Colors for Map Display</string>
@@ -2969,19 +3044,6 @@ Note that some fonts, especially large fonts, can result in display errors on th
                <property name="spacing">
                 <number>2</number>
                </property>
-               <item row="0" column="0" rowspan="5">
-                <widget class="QLabel" name="labelOptionsMapSizeAirport">
-                 <property name="text">
-                  <string>&amp;Airports:</string>
-                 </property>
-                 <property name="alignment">
-                  <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignTop</set>
-                 </property>
-                 <property name="buddy">
-                  <cstring>spinBoxOptionsDisplaySymbolSizeAirport</cstring>
-                 </property>
-                </widget>
-               </item>
                <item row="25" column="1">
                 <widget class="QSpinBox" name="spinBoxOptionsDisplaySymbolSizeAircraftUser">
                  <property name="toolTip">
@@ -3055,20 +3117,7 @@ Note that some fonts, especially large fonts, can result in display errors on th
                  </property>
                 </widget>
                </item>
-               <item row="25" column="0" rowspan="2">
-                <widget class="QLabel" name="labelOptionsMapSizeAircraftUser">
-                 <property name="text">
-                  <string>&amp;User aircraft:</string>
-                 </property>
-                 <property name="alignment">
-                  <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignTop</set>
-                 </property>
-                 <property name="buddy">
-                  <cstring>spinBoxOptionsDisplaySymbolSizeAircraftUser</cstring>
-                 </property>
-                </widget>
-               </item>
-               <item row="8" column="0">
+               <item row="8" column="0" alignment="Qt::AlignVCenter">
                 <widget class="QLabel" name="labelOptionsMapSizeAirportWindBarbs">
                  <property name="text">
                   <string>Wind &amp;Barbs:</string>
@@ -3234,7 +3283,7 @@ For VOR, NDB, ILS, waypoints and holdings. Not for flight plan labels.</string>
                  </property>
                 </widget>
                </item>
-               <item row="7" column="0">
+               <item row="7" column="0" alignment="Qt::AlignVCenter">
                 <widget class="QLabel" name="labelOptionsMapSizeAirportWeather">
                  <property name="text">
                   <string>Airport &amp;Weather:</string>
@@ -3357,19 +3406,6 @@ For VOR, NDB, ILS, waypoints and holdings. Not for flight plan labels.</string>
                  </property>
                  <property name="value">
                   <number>100</number>
-                 </property>
-                </widget>
-               </item>
-               <item row="20" column="0" rowspan="3">
-                <widget class="QLabel" name="labelOptionsMapSizeAirspace">
-                 <property name="text">
-                  <string>Air&amp;spaces:</string>
-                 </property>
-                 <property name="alignment">
-                  <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignTop</set>
-                 </property>
-                 <property name="buddy">
-                  <cstring>spinBoxOptionsDisplayThicknessAirspace</cstring>
                  </property>
                 </widget>
                </item>
@@ -3559,19 +3595,6 @@ to avoid a cluttered up airports</string>
                  </property>
                 </widget>
                </item>
-               <item row="14" column="0" rowspan="4">
-                <widget class="QLabel" name="labelOptionsMapSizeAirway">
-                 <property name="text">
-                  <string>Air&amp;ways:</string>
-                 </property>
-                 <property name="alignment">
-                  <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignTop</set>
-                 </property>
-                 <property name="buddy">
-                  <cstring>spinBoxOptionsDisplayThicknessAirway</cstring>
-                 </property>
-                </widget>
-               </item>
                <item row="21" column="1">
                 <widget class="QSpinBox" name="spinBoxOptionsDisplayTransparencyAirspace">
                  <property name="toolTip">
@@ -3595,32 +3618,6 @@ Lower values make the airspace more opaque and higher values more transparent.</
                  </property>
                  <property name="value">
                   <number>80</number>
-                 </property>
-                </widget>
-               </item>
-               <item row="29" column="0" rowspan="2">
-                <widget class="QLabel" name="labelOptionsMapSizeAircraftAi">
-                 <property name="text">
-                  <string>AI or &amp;multiplayer aircraft:</string>
-                 </property>
-                 <property name="alignment">
-                  <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignTop</set>
-                 </property>
-                 <property name="buddy">
-                  <cstring>spinBoxOptionsDisplaySymbolSizeAircraftAi</cstring>
-                 </property>
-                </widget>
-               </item>
-               <item row="11" column="0" rowspan="2">
-                <widget class="QLabel" name="labelOptionsMapSizeNavaid">
-                 <property name="text">
-                  <string>&amp;Navaids:</string>
-                 </property>
-                 <property name="alignment">
-                  <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignTop</set>
-                 </property>
-                 <property name="buddy">
-                  <cstring>spinBoxOptionsDisplaySymbolSizeNavaid</cstring>
                  </property>
                 </widget>
                </item>
@@ -3699,6 +3696,84 @@ Lower values make the airspace more opaque and higher values more transparent.</
                  </property>
                 </widget>
                </item>
+               <item row="11" column="0" alignment="Qt::AlignVCenter">
+                <widget class="QLabel" name="labelOptionsMapSizeNavaid">
+                 <property name="text">
+                  <string>&amp;Navaids:</string>
+                 </property>
+                 <property name="alignment">
+                  <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignTop</set>
+                 </property>
+                 <property name="buddy">
+                  <cstring>spinBoxOptionsDisplaySymbolSizeNavaid</cstring>
+                 </property>
+                </widget>
+               </item>
+               <item row="14" column="0" rowspan="3" alignment="Qt::AlignVCenter">
+                <widget class="QLabel" name="labelOptionsMapSizeAirway">
+                 <property name="text">
+                  <string>Air&amp;ways:</string>
+                 </property>
+                 <property name="alignment">
+                  <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignTop</set>
+                 </property>
+                 <property name="buddy">
+                  <cstring>spinBoxOptionsDisplayThicknessAirway</cstring>
+                 </property>
+                </widget>
+               </item>
+               <item row="20" column="0" alignment="Qt::AlignVCenter">
+                <widget class="QLabel" name="labelOptionsMapSizeAirspace">
+                 <property name="text">
+                  <string>Air&amp;spaces:</string>
+                 </property>
+                 <property name="alignment">
+                  <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignTop</set>
+                 </property>
+                 <property name="buddy">
+                  <cstring>spinBoxOptionsDisplayThicknessAirspace</cstring>
+                 </property>
+                </widget>
+               </item>
+               <item row="25" column="0" alignment="Qt::AlignVCenter">
+                <widget class="QLabel" name="labelOptionsMapSizeAircraftUser">
+                 <property name="text">
+                  <string>&amp;User aircraft:</string>
+                 </property>
+                 <property name="alignment">
+                  <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignTop</set>
+                 </property>
+                 <property name="buddy">
+                  <cstring>spinBoxOptionsDisplaySymbolSizeAircraftUser</cstring>
+                 </property>
+                </widget>
+               </item>
+               <item row="29" column="0" alignment="Qt::AlignVCenter">
+                <widget class="QLabel" name="labelOptionsMapSizeAircraftAi">
+                 <property name="text">
+                  <string>AI or &amp;multiplayer aircraft:</string>
+                 </property>
+                 <property name="alignment">
+                  <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignTop</set>
+                 </property>
+                 <property name="buddy">
+                  <cstring>spinBoxOptionsDisplaySymbolSizeAircraftAi</cstring>
+                 </property>
+                </widget>
+               </item>
+               <item row="0" column="0" alignment="Qt::AlignVCenter">
+                <widget class="QLabel" name="labelOptionsMapSizeAirport">
+                 <property name="text">
+                  <string>&amp;Airports:</string>
+                 </property>
+                 <property name="alignment">
+                  <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignTop</set>
+                 </property>
+                 <property name="buddy">
+                  <cstring>spinBoxOptionsDisplaySymbolSizeAirport</cstring>
+                 </property>
+                </widget>
+               </item>
               </layout>
              </widget>
             </item>
@@ -3764,8 +3839,8 @@ Lower values make the airspace more opaque and higher values more transparent.</
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>430</width>
-             <height>492</height>
+             <width>630</width>
+             <height>530</height>
             </rect>
            </property>
            <layout class="QVBoxLayout" name="verticalLayout_35">
@@ -3853,7 +3928,7 @@ Lower values make the airspace more opaque and higher values more transparent.</
                  </property>
                 </widget>
                </item>
-               <item row="0" column="0" rowspan="2">
+               <item row="0" column="0" alignment="Qt::AlignVCenter">
                 <widget class="QLabel" name="labelOptionsMapSizeFlightplan">
                  <property name="text">
                   <string>&amp;Flight plan:</string>
@@ -3890,7 +3965,7 @@ Lower values make the airspace more opaque and higher values more transparent.</
                <property name="spacing">
                 <number>2</number>
                </property>
-               <item row="0" column="0">
+               <item row="0" column="0" alignment="Qt::AlignVCenter">
                 <widget class="QLabel" name="labelOptionsMapSizeFlightplanProfile">
                  <property name="text">
                   <string>&amp;Flight plan line:</string>
@@ -4198,8 +4273,8 @@ Also used in the elevation profile.</string>
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>554</width>
-             <height>369</height>
+             <width>630</width>
+             <height>530</height>
             </rect>
            </property>
            <layout class="QVBoxLayout" name="verticalLayout_57">
@@ -4294,7 +4369,7 @@ Also used in the elevation profile.</string>
                  </property>
                 </widget>
                </item>
-               <item row="13" column="0">
+               <item row="13" column="0" alignment="Qt::AlignVCenter">
                 <widget class="QLabel" name="labelOptionsMapSizeTrail">
                  <property name="text">
                   <string>User aircraft &amp;trail:</string>
@@ -4399,7 +4474,7 @@ Note that this does not affect the stored trail points.</string>
                  </property>
                 </widget>
                </item>
-               <item row="0" column="0">
+               <item row="0" column="0" alignment="Qt::AlignVCenter">
                 <widget class="QLabel" name="labelSimMaxTrackPoints">
                  <property name="text">
                   <string>Maximum number of aircraft &amp;trail points shown:</string>
@@ -4491,8 +4566,8 @@ Note that this does not affect the stored trail points.</string>
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>459</width>
-             <height>762</height>
+             <width>616</width>
+             <height>655</height>
             </rect>
            </property>
            <layout class="QGridLayout" name="gridLayout_35">
@@ -4546,25 +4621,6 @@ Note that this does not affect the stored trail points.</string>
                  </property>
                 </widget>
                </item>
-               <item row="8" column="2" rowspan="4">
-                <widget class="QLabel" name="labelOptionsMapSizeHighlight">
-                 <property name="text">
-                  <string>&amp;Highlights for selection in search tables, flight plan table or elevation profile hover:</string>
-                 </property>
-                 <property name="alignment">
-                  <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignTop</set>
-                 </property>
-                 <property name="wordWrap">
-                  <bool>true</bool>
-                 </property>
-                 <property name="textInteractionFlags">
-                  <set>Qt::LinksAccessibleByMouse|Qt::TextSelectableByMouse</set>
-                 </property>
-                 <property name="buddy">
-                  <cstring>spinBoxOptionsDisplaySymbolSizeHighlight</cstring>
-                 </property>
-                </widget>
-               </item>
                <item row="13" column="3">
                 <widget class="QSpinBox" name="spinBoxOptionsDisplaySymbolSizeUserpoint">
                  <property name="toolTip">
@@ -4615,7 +4671,7 @@ Note that this does not affect the stored trail points.</string>
                  </property>
                 </widget>
                </item>
-               <item row="0" column="3">
+               <item row="0" column="3" alignment="Qt::AlignTop">
                 <widget class="QSpinBox" name="spinBoxOptionsDisplayThicknessUserFeature">
                  <property name="toolTip">
                   <string>Line width for these user features</string>
@@ -4637,22 +4693,6 @@ Note that this does not affect the stored trail points.</string>
                  </property>
                  <property name="value">
                   <number>100</number>
-                 </property>
-                </widget>
-               </item>
-               <item row="13" column="2" rowspan="2">
-                <widget class="QLabel" name="labelOptionsMapSizeUserpoint">
-                 <property name="text">
-                  <string>&amp;Userpoints:</string>
-                 </property>
-                 <property name="alignment">
-                  <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignTop</set>
-                 </property>
-                 <property name="wordWrap">
-                  <bool>true</bool>
-                 </property>
-                 <property name="buddy">
-                  <cstring>spinBoxOptionsDisplaySymbolSizeUserpoint</cstring>
                  </property>
                 </widget>
                </item>
@@ -4679,7 +4719,7 @@ Note that this does not affect the stored trail points.</string>
                  </property>
                 </widget>
                </item>
-               <item row="20" column="3">
+               <item row="20" column="3" alignment="Qt::AlignTop">
                 <widget class="QSpinBox" name="spinBoxOptionsDisplayTransparencyMora">
                  <property name="toolTip">
                   <string>Transparency of the MORA text and grid.
@@ -4738,7 +4778,7 @@ Value 0 is opaque and 90 is most transparent.</string>
                  </property>
                 </widget>
                </item>
-               <item row="23" column="2">
+               <item row="23" column="2" alignment="Qt::AlignVCenter">
                 <widget class="QLabel" name="labelOptionsMapAirportMsa">
                  <property name="toolTip">
                   <string/>
@@ -4868,7 +4908,7 @@ if you hover over the elevation profile.</string>
                  </property>
                 </widget>
                </item>
-               <item row="3" column="3">
+               <item row="3" column="3" alignment="Qt::AlignTop">
                 <widget class="QSpinBox" name="spinBoxOptionsDisplayThicknessMeasurement">
                  <property name="toolTip">
                   <string>Line width for measurement lines</string>
@@ -4893,7 +4933,7 @@ if you hover over the elevation profile.</string>
                  </property>
                 </widget>
                </item>
-               <item row="20" column="4">
+               <item row="20" column="4" alignment="Qt::AlignTop">
                 <widget class="QSpinBox" name="spinBoxOptionsDisplayTextSizeMora">
                  <property name="toolTip">
                   <string>Text size of the MORA altitude labels</string>
@@ -4932,25 +4972,6 @@ Does not apply to lines originating from airports or navaids.</string>
                  </property>
                  <property name="text">
                   <string>Distance &amp;Measurement Line Color</string>
-                 </property>
-                </widget>
-               </item>
-               <item row="3" column="2" rowspan="2">
-                <widget class="QLabel" name="labelOptionsMapDistanceMeasurement">
-                 <property name="text">
-                  <string>&amp;Distance measurements:</string>
-                 </property>
-                 <property name="alignment">
-                  <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignTop</set>
-                 </property>
-                 <property name="wordWrap">
-                  <bool>true</bool>
-                 </property>
-                 <property name="textInteractionFlags">
-                  <set>Qt::LinksAccessibleByMouse|Qt::TextSelectableByMouse</set>
-                 </property>
-                 <property name="buddy">
-                  <cstring>spinBoxOptionsDisplayThicknessMeasurement</cstring>
                  </property>
                 </widget>
                </item>
@@ -5082,7 +5103,7 @@ Value 0 is opaque and 90 is most transparent.</string>
                  </property>
                 </widget>
                </item>
-               <item row="0" column="4">
+               <item row="0" column="4" alignment="Qt::AlignTop">
                 <widget class="QSpinBox" name="spinBoxOptionsDisplayTextSizeUserFeature">
                  <property name="toolTip">
                   <string>Text size for labels</string>
@@ -5107,7 +5128,7 @@ Value 0 is opaque and 90 is most transparent.</string>
                  </property>
                 </widget>
                </item>
-               <item row="3" column="4">
+               <item row="3" column="4" alignment="Qt::AlignTop">
                 <widget class="QSpinBox" name="spinBoxOptionsDisplayTextSizeMeasurement">
                  <property name="toolTip">
                   <string>Text size for measurement labels</string>
@@ -5155,7 +5176,7 @@ Value 0 is opaque and 90 is most transparent.</string>
                  </property>
                 </widget>
                </item>
-               <item row="16" column="2" rowspan="2" alignment="Qt::AlignTop">
+               <item row="16" column="2" rowspan="2" alignment="Qt::AlignVCenter">
                 <widget class="QLabel" name="labelOptionsMapCompassRoseThickness">
                  <property name="toolTip">
                   <string/>
@@ -5184,6 +5205,60 @@ Value 0 is opaque and 90 is most transparent.</string>
                  </property>
                  <property name="textInteractionFlags">
                   <set>Qt::LinksAccessibleByMouse|Qt::TextSelectableByMouse</set>
+                 </property>
+                </widget>
+               </item>
+               <item row="8" column="2" rowspan="4">
+                <widget class="QLabel" name="labelOptionsMapSizeHighlight">
+                 <property name="text">
+                  <string>&amp;Highlights for selection in search tables, flight plan table or elevation profile hover:</string>
+                 </property>
+                 <property name="alignment">
+                  <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignTop</set>
+                 </property>
+                 <property name="wordWrap">
+                  <bool>true</bool>
+                 </property>
+                 <property name="textInteractionFlags">
+                  <set>Qt::LinksAccessibleByMouse|Qt::TextSelectableByMouse</set>
+                 </property>
+                 <property name="buddy">
+                  <cstring>spinBoxOptionsDisplaySymbolSizeHighlight</cstring>
+                 </property>
+                </widget>
+               </item>
+               <item row="3" column="2" rowspan="2">
+                <widget class="QLabel" name="labelOptionsMapDistanceMeasurement">
+                 <property name="text">
+                  <string>&amp;Distance measurements:</string>
+                 </property>
+                 <property name="alignment">
+                  <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignTop</set>
+                 </property>
+                 <property name="wordWrap">
+                  <bool>true</bool>
+                 </property>
+                 <property name="textInteractionFlags">
+                  <set>Qt::LinksAccessibleByMouse|Qt::TextSelectableByMouse</set>
+                 </property>
+                 <property name="buddy">
+                  <cstring>spinBoxOptionsDisplayThicknessMeasurement</cstring>
+                 </property>
+                </widget>
+               </item>
+               <item row="13" column="2" alignment="Qt::AlignVCenter">
+                <widget class="QLabel" name="labelOptionsMapSizeUserpoint">
+                 <property name="text">
+                  <string>&amp;Userpoints:</string>
+                 </property>
+                 <property name="alignment">
+                  <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignTop</set>
+                 </property>
+                 <property name="wordWrap">
+                  <bool>true</bool>
+                 </property>
+                 <property name="buddy">
+                  <cstring>spinBoxOptionsDisplaySymbolSizeUserpoint</cstring>
                  </property>
                 </widget>
                </item>
@@ -5381,8 +5456,8 @@ Value 0 is opaque and 90 is most transparent.</string>
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>328</width>
-             <height>534</height>
+             <width>630</width>
+             <height>530</height>
             </rect>
            </property>
            <layout class="QGridLayout" name="gridLayout_39">
@@ -5495,7 +5570,7 @@ airspace filename has to match the callsign of the online center.</string>
                  </property>
                 </widget>
                </item>
-               <item row="4" column="0">
+               <item row="4" column="0" alignment="Qt::AlignVCenter">
                 <widget class="QLabel" name="labelDisplayOnlineGround">
                  <property name="text">
                   <string>&amp;Ground Control:</string>
@@ -5567,7 +5642,7 @@ airspace filename has to match the callsign of the online center.</string>
                  </property>
                 </widget>
                </item>
-               <item row="1" column="0">
+               <item row="1" column="0" alignment="Qt::AlignVCenter">
                 <widget class="QLabel" name="labelDisplayOnlineObserver">
                  <property name="text">
                   <string>&amp;Online Observer:</string>
@@ -5577,7 +5652,7 @@ airspace filename has to match the callsign of the online center.</string>
                  </property>
                 </widget>
                </item>
-               <item row="7" column="0">
+               <item row="7" column="0" alignment="Qt::AlignVCenter">
                 <widget class="QLabel" name="labelDisplayOnlineArea">
                  <property name="text">
                   <string>&amp;Area Control Center:</string>
@@ -5629,7 +5704,7 @@ airspace filename has to match the callsign of the online center.</string>
                  </property>
                 </widget>
                </item>
-               <item row="8" column="0">
+               <item row="8" column="0" alignment="Qt::AlignVCenter">
                 <widget class="QLabel" name="labelDisplayOnlineDeparture">
                  <property name="text">
                   <string>&amp;Departure Control:</string>
@@ -5639,7 +5714,7 @@ airspace filename has to match the callsign of the online center.</string>
                  </property>
                 </widget>
                </item>
-               <item row="2" column="0">
+               <item row="2" column="0" alignment="Qt::AlignVCenter">
                 <widget class="QLabel" name="labelDisplayOnlineFir">
                  <property name="text">
                   <string>&amp;Center:</string>
@@ -5755,7 +5830,7 @@ airspace filename has to match the callsign of the online center.</string>
                  </property>
                 </widget>
                </item>
-               <item row="3" column="0">
+               <item row="3" column="0" alignment="Qt::AlignVCenter">
                 <widget class="QLabel" name="labelDisplayOnlineClearance">
                  <property name="text">
                   <string>&amp;Clearance Delivery:</string>
@@ -5794,7 +5869,7 @@ airspace filename has to match the callsign of the online center.</string>
                  </property>
                 </widget>
                </item>
-               <item row="5" column="0">
+               <item row="5" column="0" alignment="Qt::AlignVCenter">
                 <widget class="QLabel" name="labelDisplayOnlineTower">
                  <property name="text">
                   <string>&amp;Tower:</string>
@@ -5804,7 +5879,7 @@ airspace filename has to match the callsign of the online center.</string>
                  </property>
                 </widget>
                </item>
-               <item row="6" column="0">
+               <item row="6" column="0" alignment="Qt::AlignVCenter">
                 <widget class="QLabel" name="labelDisplayOnlineApproach">
                  <property name="text">
                   <string>&amp;Approach Control:</string>
@@ -5851,8 +5926,8 @@ airspace filename has to match the callsign of the online center.</string>
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>571</width>
-             <height>627</height>
+             <width>616</width>
+             <height>618</height>
             </rect>
            </property>
            <layout class="QVBoxLayout" name="verticalLayout_25">
@@ -5965,7 +6040,7 @@ This is also used for &quot;Center map on aircraft and next flight plan waypoint
                  </property>
                 </widget>
                </item>
-               <item row="1" column="0">
+               <item row="1" column="0" alignment="Qt::AlignVCenter">
                 <widget class="QLabel" name="labelOptionsSimCenterLegZoom">
                  <property name="text">
                   <string>Zoom &amp;distance:</string>
@@ -6298,8 +6373,8 @@ put the active leg back on top after the given timeout while flying.</string>
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>317</width>
-             <height>241</height>
+             <width>630</width>
+             <height>530</height>
             </rect>
            </property>
            <layout class="QVBoxLayout" name="verticalLayout_26">
@@ -6458,8 +6533,8 @@ Note that this value does not affect flight plan calculation or saving of flight
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>271</width>
-             <height>755</height>
+             <width>616</width>
+             <height>612</height>
             </rect>
            </property>
            <layout class="QVBoxLayout" name="verticalLayout_27">
@@ -6699,8 +6774,8 @@ Note that this value does not affect flight plan calculation or saving of flight
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>360</width>
-             <height>944</height>
+             <width>616</width>
+             <height>876</height>
             </rect>
            </property>
            <layout class="QVBoxLayout" name="verticalLayout_28">
@@ -7297,8 +7372,8 @@ Entering a wrong value will cause errors when downloading weather reports.</stri
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>388</width>
-             <height>368</height>
+             <width>630</width>
+             <height>530</height>
             </rect>
            </property>
            <layout class="QVBoxLayout" name="verticalLayout_29">
@@ -7450,7 +7525,7 @@ Entering a wrong value will cause errors when downloading weather reports.</stri
                  </property>
                 </widget>
                </item>
-               <item row="3" column="0">
+               <item row="3" column="0" alignment="Qt::AlignVCenter">
                 <widget class="QLabel" name="labelOptionsOnlineWhazzupUrl">
                  <property name="text">
                   <string>&amp;Whazzup File URL:</string>
@@ -7470,7 +7545,7 @@ Entering a wrong value will cause errors when downloading weather reports.</stri
                  </property>
                 </widget>
                </item>
-               <item row="1" column="0">
+               <item row="1" column="0" alignment="Qt::AlignVCenter">
                 <widget class="QLabel" name="labelOptionsOnlineStatusUrl">
                  <property name="text">
                   <string>&amp;Status File URL:</string>
@@ -7515,7 +7590,7 @@ Entering a wrong value will cause errors when downloading weather reports.</stri
                  </property>
                 </widget>
                </item>
-               <item row="4" column="0">
+               <item row="4" column="0" alignment="Qt::AlignVCenter">
                 <widget class="QLabel" name="labelOptionsOnlineUpdate">
                  <property name="text">
                   <string>&amp;Update every:</string>
@@ -7555,7 +7630,7 @@ Entering a wrong value will cause errors when downloading weather reports.</stri
                  </item>
                 </widget>
                </item>
-               <item row="5" column="0">
+               <item row="5" column="0" alignment="Qt::AlignVCenter">
                 <widget class="QLabel" name="labelOptionsOnlineFormat">
                  <property name="text">
                   <string>&amp;Format:</string>
@@ -7599,8 +7674,8 @@ Entering a wrong value will cause errors when downloading weather reports.</stri
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>542</width>
-             <height>400</height>
+             <width>630</width>
+             <height>530</height>
             </rect>
            </property>
            <layout class="QGridLayout" name="gridLayout_37">
@@ -7662,7 +7737,7 @@ Change this if you get an error message like &quot;Bound address already in use&
                  </property>
                 </widget>
                </item>
-               <item row="5" column="0">
+               <item row="5" column="0" alignment="Qt::AlignVCenter">
                 <widget class="QLabel" name="labelOptionsWebPort">
                  <property name="text">
                   <string>&amp;Port number:</string>
@@ -7672,7 +7747,7 @@ Change this if you get an error message like &quot;Bound address already in use&
                  </property>
                 </widget>
                </item>
-               <item row="9" column="1" colspan="3">
+               <item row="9" column="1" colspan="3" alignment="Qt::AlignTop">
                 <widget class="QLabel" name="labelOptionsWebStatus">
                  <property name="text">
                   <string>Server is running.</string>
@@ -7730,7 +7805,7 @@ Use this to serve your own modified Little Navmap web page.</string>
                  </property>
                 </widget>
                </item>
-               <item row="9" column="0">
+               <item row="9" column="0" alignment="Qt::AlignTop">
                 <widget class="QPushButton" name="pushButtonOptionsWebStart">
                  <property name="toolTip">
                   <string>Start or stop the server to test the values above.</string>
@@ -7740,7 +7815,7 @@ Use this to serve your own modified Little Navmap web page.</string>
                  </property>
                 </widget>
                </item>
-               <item row="0" column="0">
+               <item row="0" column="0" alignment="Qt::AlignVCenter">
                 <widget class="QLabel" name="labelOptionsWebDocroot">
                  <property name="text">
                   <string>&amp;Document root directory:</string>
@@ -7811,40 +7886,7 @@ Little Navmap GIT repository.
                <property name="spacing">
                 <number>2</number>
                </property>
-               <item row="1" column="1">
-                <widget class="QSpinBox" name="spinBoxOptionWebIconSize">
-                 <property name="toolTip">
-                  <string>Change the icon size for the user and AI/multiplayer aircraft in the map display. 
-Increase this value if you are using a high resolution display on the client and the aircraft icons are too small.
-
-Note that this does not apply to the Dynamic Touch and Drag map and 
-does not affect the map display in the main program.</string>
-                 </property>
-                 <property name="suffix">
-                  <string> %</string>
-                 </property>
-                 <property name="minimum">
-                  <number>50</number>
-                 </property>
-                 <property name="maximum">
-                  <number>500</number>
-                 </property>
-                 <property name="singleStep">
-                  <number>10</number>
-                 </property>
-                 <property name="value">
-                  <number>100</number>
-                 </property>
-                </widget>
-               </item>
-               <item row="1" column="0">
-                <widget class="QLabel" name="labelOptionWebIconSize">
-                 <property name="text">
-                  <string>Icon size for user and AI/multiplayer aircraft:</string>
-                 </property>
-                </widget>
-               </item>
-               <item row="2" column="0" colspan="2">
+               <item row="1" column="0" colspan="2">
                 <widget class="QCheckBox" name="checkBoxOptionsWebScale">
                  <property name="toolTip">
                   <string>This will deliver map images scaled according to your user interface scale level if checked and 
@@ -7857,6 +7899,44 @@ Uncheck if you use such an add-on or see issues like a corruped map display.</st
                  </property>
                  <property name="checked">
                   <bool>true</bool>
+                 </property>
+                </widget>
+               </item>
+               <item row="0" column="0" alignment="Qt::AlignVCenter">
+                <widget class="QLabel" name="labelOptionsMapSizeAirport_3">
+                 <property name="text">
+                  <string>&amp;Scale factor for all map display features, labels and symbols:</string>
+                 </property>
+                 <property name="alignment">
+                  <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignTop</set>
+                 </property>
+                 <property name="buddy">
+                  <cstring>spinBoxOptionsDisplayScaleAll</cstring>
+                 </property>
+                </widget>
+               </item>
+               <item row="0" column="1">
+                <widget class="QSpinBox" name="spinBoxOptionsDisplayScaleAllWeb">
+                 <property name="toolTip">
+                  <string/>
+                 </property>
+                 <property name="suffix">
+                  <string> %</string>
+                 </property>
+                 <property name="prefix">
+                  <string/>
+                 </property>
+                 <property name="minimum">
+                  <number>50</number>
+                 </property>
+                 <property name="maximum">
+                  <number>200</number>
+                 </property>
+                 <property name="singleStep">
+                  <number>10</number>
+                 </property>
+                 <property name="value">
+                  <number>100</number>
                  </property>
                 </widget>
                </item>
@@ -7881,8 +7961,8 @@ Uncheck if you use such an add-on or see issues like a corruped map display.</st
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>443</width>
-             <height>708</height>
+             <width>616</width>
+             <height>634</height>
             </rect>
            </property>
            <layout class="QVBoxLayout" name="verticalLayout_30">
@@ -7936,7 +8016,7 @@ Uncheck if you use such an add-on or see issues like a corruped map display.</st
                  </property>
                 </widget>
                </item>
-               <item row="1" column="0">
+               <item row="1" column="0" alignment="Qt::AlignVCenter">
                 <widget class="QLabel" name="labelOptionsCacheDisk">
                  <property name="text">
                   <string>Maximum size of &amp;disk cache:</string>
@@ -7971,7 +8051,7 @@ Uncheck if you use such an add-on or see issues like a corruped map display.</st
                  </property>
                 </widget>
                </item>
-               <item row="0" column="0">
+               <item row="0" column="0" alignment="Qt::AlignVCenter">
                 <widget class="QLabel" name="labelOptionsCacheMemory">
                  <property name="text">
                   <string>&amp;Maximum size of memory cache:</string>
@@ -8044,7 +8124,7 @@ Uncheck if you use such an add-on or see issues like a corruped map display.</st
                  </property>
                 </widget>
                </item>
-               <item row="1" column="0">
+               <item row="1" column="0" alignment="Qt::AlignVCenter">
                 <widget class="QLabel" name="labelOptionsMapThemeDir">
                  <property name="text">
                   <string>Directory for additional &amp;map themes:</string>
@@ -8243,7 +8323,7 @@ Source data has many errors.</string>
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>629</width>
+             <width>630</width>
              <height>530</height>
             </rect>
            </property>
@@ -8705,6 +8785,7 @@ You have to reload the scenery library so that the changes take effect.</string>
   <tabstop>scrollAreaMapDisplay</tabstop>
   <tabstop>pushButtonOptionsDisplaySelectFont</tabstop>
   <tabstop>pushButtonOptionsDisplayResetFont</tabstop>
+  <tabstop>spinBoxOptionsDisplayScaleAll</tabstop>
   <tabstop>spinBoxOptionsDisplaySymbolSizeAirport</tabstop>
   <tabstop>spinBoxOptionsDisplayTextSizeAirport</tabstop>
   <tabstop>spinBoxOptionsDisplayTextSizeAirportRunway</tabstop>
@@ -8866,6 +8947,11 @@ You have to reload the scenery library so that the changes take effect.</string>
   <tabstop>scrollArea_14</tabstop>
   <tabstop>lineEditOptionsWebDocroot</tabstop>
   <tabstop>pushButtonOptionsWebSelectDocroot</tabstop>
+  <tabstop>spinBoxOptionsWebPort</tabstop>
+  <tabstop>checkBoxOptionsWebEncrypted</tabstop>
+  <tabstop>pushButtonOptionsWebStart</tabstop>
+  <tabstop>spinBoxOptionsDisplayScaleAllWeb</tabstop>
+  <tabstop>checkBoxOptionsWebScale</tabstop>
   <tabstop>scrollArea_15</tabstop>
   <tabstop>spinBoxOptionsCacheMemorySize</tabstop>
   <tabstop>pushButtonOptionsCacheClearMemory</tabstop>
@@ -8888,6 +8974,8 @@ You have to reload the scenery library so that the changes take effect.</string>
   <tabstop>tableWidgetOptionsDatabaseExcludeAddon</tabstop>
   <tabstop>pushButtonOptionsDatabaseAddAddon</tabstop>
   <tabstop>pushButtonOptionsDatabaseRemoveAddon</tabstop>
+  <tabstop>checkBoxOptionsMapTooltipDistBrgFlightplan</tabstop>
+  <tabstop>checkBoxOptionsMapTooltipDistBrgUser</tabstop>
  </tabstops>
  <resources>
   <include location="../../littlenavmap.qrc"/>

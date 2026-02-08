@@ -84,9 +84,6 @@ void MapPainterVehicle::paintAiVehicle(const SimConnectAircraft& vehicle, float 
     float size = std::max(context->szF(context->symbolSizeAircraftAi, minSize),
                           scale->getPixelForFeet(std::min(vehicle.getModelSize(), 1000)));
 
-    if(mapPaintWidget->isWeb())
-      size *= context->symbolSizeWeb;
-
     float offset = -(size / 2.f);
 
     // Draw symbol
@@ -107,8 +104,6 @@ void MapPainterVehicle::paintAiVehicle(const SimConnectAircraft& vehicle, float 
 void MapPainterVehicle::paintUserAircraft(const SimConnectUserAircraft& userAircraft, float x, float y) const
 {
   int size = std::max(context->sz(context->symbolSizeAircraftUser, 32), scale->getPixelIntForFeet(userAircraft.getModelSize()));
-  if(mapPaintWidget->isWeb())
-    size *= context->symbolSizeWeb;
 
   context->szFont(context->textSizeAircraftUser);
   int offset = -(size / 2);

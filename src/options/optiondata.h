@@ -1400,9 +1400,14 @@ public:
     return displayTextSizeAirspace;
   }
 
-  int getWebIconScale() const
+  int getDisplayScaleAll() const
   {
-    return webIconScale;
+    return displayScaleAll;
+  }
+
+  int getDisplayScaleAllWeb() const
+  {
+    return displayScaleAllWeb;
   }
 
 private:
@@ -1720,6 +1725,12 @@ private:
   // spinBoxOptionsDisplayTextSizeAirspace
   int displayTextSizeAirspace = 100;
 
+  // spinBoxOptionsDisplayScaleAll,
+  int displayScaleAll = 100;
+
+  // spinBoxOptionsDisplayScaleAllWeb,
+  int displayScaleAllWeb = 100;
+
   // Default values
   QColor flightplanColor = QColor(Qt::red),
          flightplanOutlineColor = QColor(Qt::black), flightplanProcedureColor = QColor(QLatin1String("#aa0000")),
@@ -1795,7 +1806,6 @@ private:
   /* Webserver values */
   QString webDocumentRoot;
   int webPort = 8965;
-  int webIconScale = 100;
 
   /* true for HTTPS / SSL */
   bool webEncrypted = false;

@@ -927,7 +927,7 @@ void MapPainter::paintMsaMarks(const QList<map::MapAirportMsa>& airportMsa, bool
         }
 
         // Calculate font size from radius
-        float fontSize = scale->getPixelForNm(msa.radius) / 8.f * context->textSizeAirportMsa;
+        float fontSize = scale->getPixelForNm(msa.radius) / 8.f * context->textSizeAirportMsa * context->sizeAll;
 
         if(msa.altitudes.size() == 1)
           // Larger font for full circle restriction

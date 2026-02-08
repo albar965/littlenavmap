@@ -146,6 +146,7 @@ OptionsDialog::OptionsDialog(QMainWindow *parentWindow)
     ui->labelOptionsLabelHint,
     ui->labelOptionsProfileHint,
     ui->labelOptionsFlightPlanLabelHint,
+    ui->labelOptionsMapScaleHint,
     ui->labelOptionsTrailHintOpen,
     ui->labelOptionsTrailHintStored,
     ui->labelOptionsTrailWarn,
@@ -630,8 +631,10 @@ OptionsDialog::OptionsDialog(QMainWindow *parentWindow)
      ui->checkBoxOptionsUnitFuelOther,
      ui->checkBoxOptionsUnitTrueCourse,
 
+     ui->spinBoxOptionsDisplayScaleAllWeb,
+     ui->spinBoxOptionsDisplayScaleAll,
+
      ui->spinBoxOptionsWebPort,
-     ui->spinBoxOptionWebIconSize,
      ui->checkBoxOptionsWebEncrypted,
      ui->lineEditOptionsWebDocroot});
 
@@ -2137,12 +2140,14 @@ void OptionsDialog::widgetsToOptionData()
   data.displayOnlineTower = ui->spinBoxDisplayOnlineTower->value();
 
   data.webPort = ui->spinBoxOptionsWebPort->value();
-  data.webIconScale = ui->spinBoxOptionWebIconSize->value();
   data.webDocumentRoot = QDir::fromNativeSeparators(ui->lineEditOptionsWebDocroot->text());
   data.webEncrypted = ui->checkBoxOptionsWebEncrypted->isChecked();
 
   data.weatherXplaneWind = ui->lineEditOptionsWeatherXplaneWind->text();
   data.weatherNoaaWindBaseUrl = ui->lineEditOptionsWeatherNoaaWindUrl->text().trimmed();
+
+  data.displayScaleAll = ui->spinBoxOptionsDisplayScaleAll->value();
+  data.displayScaleAllWeb = ui->spinBoxOptionsDisplayScaleAllWeb->value();
 
   widgetToMapThemeKeys(data);
 
@@ -2456,12 +2461,14 @@ void OptionsDialog::optionDataToWidgets(const OptionData& data)
   ui->spinBoxDisplayOnlineTower->setValue(data.displayOnlineTower);
 
   ui->spinBoxOptionsWebPort->setValue(data.webPort);
-  ui->spinBoxOptionWebIconSize->setValue(data.webIconScale);
   ui->checkBoxOptionsWebEncrypted->setChecked(data.webEncrypted);
   ui->lineEditOptionsWebDocroot->setText(atools::nativeCleanPath(data.webDocumentRoot));
 
   ui->lineEditOptionsWeatherXplaneWind->setText(data.weatherXplaneWind);
   ui->lineEditOptionsWeatherNoaaWindUrl->setText(data.weatherNoaaWindBaseUrl.trimmed());
+
+  ui->spinBoxOptionsDisplayScaleAll->setValue(data.displayScaleAll);
+  ui->spinBoxOptionsDisplayScaleAllWeb->setValue(data.displayScaleAllWeb);
 
   mapThemeKeysToWidget(data);
 }
