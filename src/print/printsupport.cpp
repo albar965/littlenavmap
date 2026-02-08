@@ -210,8 +210,7 @@ void PrintSupport::createFlightplanDocuments()
 
     float fontPointSize = static_cast<float>(printDocumentFont.pointSizeF()) *
                           printDialog->getPrintTextSizeFlightplan() / 100.f;
-    NavApp::getRouteController()->flightplanTableAsTextTable(cursor, printDialog->getSelectedRouteTableColumns(),
-                                                             fontPointSize);
+    NavApp::getRouteController()->flightplanTableAsTextTable(cursor, printDialog->getSelectedRouteTableColumns(), fontPointSize);
     if(newPage)
       cursor.insertBlock(pageBreakBlock);
   }

@@ -512,8 +512,7 @@ void RouteController::tableCopyClipboardTriggered()
   }
 }
 
-void RouteController::flightplanTableAsTextTable(QTextCursor& cursor, const QBitArray& selectedCols,
-                                                 float fontPointSize) const
+void RouteController::flightplanTableAsTextTable(QTextCursor& cursor, const QBitArray& selectedCols, float fontPointSize) const
 {
   // Check if model is already initailized
   if(model->rowCount() == 0)
@@ -524,16 +523,23 @@ void RouteController::flightplanTableAsTextTable(QTextCursor& cursor, const QBit
   // Prepare table format ===================================
   QTextTableFormat fmt;
   fmt.setHeaderRowCount(1);
-  fmt.setCellPadding(1);
-  fmt.setCellSpacing(0);
-  fmt.setBorder(2);
+  fmt.setCellPadding(1.);
+  fmt.setCellSpacing(0.);
+
+  fmt.setBorder(2.);
+  fmt.setMargin(0.);
+  fmt.setPadding(0.);
+  fmt.setBorderCollapse(true);
   fmt.setBorderBrush(Qt::lightGray);
   fmt.setBorderStyle(QTextFrameFormat::BorderStyle_Solid);
+
   QTextTable *table = cursor.insertTable(model->rowCount() + 1, numCols, fmt);
 
   // Cell alignment formats ===================================
   QTextBlockFormat alignRight;
   alignRight.setAlignment(Qt::AlignRight);
+  alignRight.setNonBreakableLines(true); // Do not break numeric right aligned formats
+
   QTextBlockFormat alignLeft;
   alignLeft.setAlignment(Qt::AlignLeft);
 
@@ -570,7 +576,11 @@ void RouteController::flightplanTableAsTextTable(QTextCursor& cursor, const QBit
     table->cellAt(0, cellIdx).setFormat(headerFormat);
     cursor.setPosition(table->cellAt(0, cellIdx).firstPosition());
 
-    QString txt = model->headerData(logicalCol, Qt::Horizontal).toString().replace("-\n", "").replace("\n", " ");
+    QString txt = model->headerData(logicalCol, Qt::Horizontal).toString().
+                  replace(tr("-\n", "Replaces dash linefeed in table headers when printing"),
+                          tr("", "Dash linefeed replacement in table headers when printing")).
+                  replace(tr("\n", "Replaces linefeed in table headers when printing"),
+                          tr(" ", "Linefeed replacement in table headers when printing"));
     cursor.insertText(txt);
 
     cellIdx++;

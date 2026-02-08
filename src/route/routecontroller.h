@@ -242,13 +242,13 @@ public:
    * Uses own colors for table background. Used by web server. */
   QString getFlightplanTableAsHtml(float iconSizePixel, bool print) const;
 
-  /* Same as above but full HTML document for export */
+  /* Same as above but full HTML document for export to file. */
   QString getFlightplanTableAsHtmlDoc(float iconSizePixel) const;
 
   /* Get flight plan extracted from table selection */
   Route getRouteForSelection() const;
 
-  /* Insert a flight plan table as QTextTable object at the cursor position.
+  /* Insert a flight plan table as QTextTable object at the cursor position. Used for printing.
    * @param selectedCols Physical/logical and not view order. */
   void flightplanTableAsTextTable(QTextCursor& cursor, const QBitArray& selectedCols, float fontPointSize) const;
 
