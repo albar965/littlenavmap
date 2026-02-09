@@ -4944,12 +4944,16 @@ void HtmlInfoBuilder::aircraftProgressText(const atools::fs::sc::SimConnectAircr
     html.tableEndIf();
   }
 
+  // ================================================================================
+  // Coordinates ====================================================================
   if(longDisplay && html.isIdSet(pid::POS_COORDINATES))
   {
     head(html, tr("Position"));
+    html.id(pid::POS_COORDINATES).table(); // Set current id, otherwise addCoordinates() skips it
     addCoordinates(aircraft.getPosition(), html);
     html.tableEnd();
   }
+
   html.row2AlignRight(false);
   html.clearId();
 
