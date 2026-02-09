@@ -1414,7 +1414,7 @@ void OptionsDialog::udpdateLanguageComboBox(const QString& lang)
     {
       // Usedata for item is locale object
       const QLocale& locale = locales.at(i);
-      ui->comboBoxOptionsGuiLanguage->addItem(tr("%1, %2").arg(locale.nativeLanguageName()).arg(locale.nativeCountryName()), locale);
+      ui->comboBoxOptionsGuiLanguage->addItem(tr("%1, %2").arg(locale.nativeLanguageName()).arg(locale.nativeTerritoryName()), locale);
     }
   }
 
@@ -1426,7 +1426,7 @@ void OptionsDialog::udpdateLanguageComboBox(const QString& lang)
     const QLocale& locale = ui->comboBoxOptionsGuiLanguage->itemData(i).value<QLocale>();
 
     // Check if language and country match - this is the most precise match
-    if(system.language() == locale.language() && system.country() == locale.country())
+    if(system.language() == locale.language() && system.territory() == locale.territory())
       currentIndexLangCountry = i;
 
     // Check if language matches

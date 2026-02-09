@@ -64,6 +64,7 @@
 #include <QToolTip>
 #include <QRegularExpression>
 #include <QDir>
+#include <QTimeZone>
 
 // Use % to concatenate strings faster than +
 #include <QStringBuilder>
@@ -3967,7 +3968,7 @@ void HtmlInfoBuilder::aircraftTrailText(const AircraftTrailSegment& trailSegment
   html.table();
 
   // Simulator date and time with seconds - interpolated ========================
-  QDateTime datetime = QDateTime::fromMSecsSinceEpoch(trailSegment.timestampPos, Qt::UTC);
+  QDateTime datetime = QDateTime::fromMSecsSinceEpoch(trailSegment.timestampPos, QTimeZone::UTC);
   bool overrideLocale = OptionData::instance().getFlags().testFlag(opts::GUI_OVERRIDE_LOCALE);
   html.row2(tr("Simulator Date and Time:"),
             formatter::formatDateTimeSeconds(datetime, overrideLocale) % tr(" ") % datetime.timeZoneAbbreviation());

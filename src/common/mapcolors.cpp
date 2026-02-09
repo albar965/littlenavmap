@@ -650,14 +650,14 @@ const QColor colorForAirwayOrTrack(const map::MapAirway& airway, bool darkMap)
 void loadColorArgb(const QSettings& settings, const QString& key, QColor& color)
 {
   if(settings.contains(key))
-    color.setNamedColor(settings.value(key).toString());
+    color = QColor::fromString(settings.value(key).toString());
 }
 
 /* Read color if value exists in settings or update in settings with given value */
 void loadColor(const QSettings& settings, const QString& key, QColor& color)
 {
   if(settings.contains(key))
-    color.setNamedColor(settings.value(key).toString());
+    color = QColor::fromString(settings.value(key).toString());
 }
 
 /* Read color and pen width if value exists in settings or update in settings with values of given pen */

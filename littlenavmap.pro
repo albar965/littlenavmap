@@ -214,7 +214,7 @@ macx {
 # https://doc.qt.io/qt-6.5/qtcore5-index.html - needed for QTextCodec
 !isEqual(ATOOLS_NO_QT5COMPAT, "true"): QT += core5compat
 
-DEFINES += QT_DISABLE_DEPRECATED_UP_TO=0x060500
+DEFINES += QT_DISABLE_DEPRECATED_UP_TO=0x061000
 
 isEmpty(GIT_PATH) {
   GIT_REVISION=UNKNOWN
