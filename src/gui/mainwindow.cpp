@@ -769,9 +769,12 @@ void MainWindow::updateClock() const
   if(!Application::isShuttingDown())
   {
     timeLabel->setText(QDateTime::currentDateTimeUtc().toString("d   HH:mm:ss UTC "));
-    timeLabel->setToolTip(tr("Day of month and UTC time.\n%1\nLocal: %2")
-                          .arg(QDateTime::currentDateTimeUtc().toString())
-                          .arg(QDateTime::currentDateTime().toString()));
+    timeLabel->setToolTip(tr("Day of month and UTC time.\n%1\nLocal: %2 %3").
+                          arg(QDateTime::currentDateTimeUtc().toString().
+                               replace(tr("GMT", "Replaces wrong GMT indication in statusbar with UTC"),
+                                       tr("UTC", "Replaces wrong GMT indication in statusbar with UTC"))).
+                          arg(QDateTime::currentDateTime().toString()).
+                          arg(QDateTime::currentDateTime().timeZoneAbbreviation()));
     timeLabel->setMinimumWidth(timeLabel->width());
   }
 }
