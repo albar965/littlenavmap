@@ -5210,6 +5210,10 @@ void HtmlInfoBuilder::addAirportSceneryAndLinks(const MapAirport& airport, HtmlB
                                   QStringLiteral("https://fltplan.com/Airport.cgi?%1").
                                   arg(airportNav.displayIdent()), flags).getHtml());
 
+    links.append(html.cleared().a(tr("METAR & TAF"),
+                                  QStringLiteral("https://metar-taf.com/airport/%1").
+                                  arg(airportNav.displayIdent()), flags).getHtml());
+
     links.append(html.cleared().a(tr("OpenNav"),
                                   QStringLiteral("https://opennav.com/airport/%1").
                                   arg(airportNav.displayIdent()), flags).getHtml());
