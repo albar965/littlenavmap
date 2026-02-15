@@ -47,6 +47,8 @@ bool checkCoordinates(QString& message, const QString& text, atools::geo::Pos *p
 /* Format a decimal time in hours to h:mm format */
 QString formatMinutesHours(double timeHours);
 
+QString formatTimeZoneOffset(int seconds);
+
 /* Format a decimal time in hours to X h Y m format */
 QString formatMinutesHoursLong(double timeHours);
 

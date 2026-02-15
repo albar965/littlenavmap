@@ -297,6 +297,7 @@ void HtmlInfoBuilder::airportText(const MapAirport& airport, const map::WeatherC
   if(verbose)
     html.row2(tr("Magnetic declination:"), map::magvarText(airport.magvar));
 
+  // Transition altitude and/or level ===========================
   if(info)
   {
     // Try transition altitude from nav database
@@ -311,16 +312,38 @@ void HtmlInfoBuilder::airportText(const MapAirport& airport, const map::WeatherC
       // standard of 1013 back to the local QNH. This is above the Transition Altitude.
       html.row2(tr("Transition level:"), tr("%1 (FL%2)").
                 arg(Unit::altFeet(transitionLevel)).arg(transitionLevel / 100.f, 3, 'f', 0, QChar('0')));
-
-    // Sunrise and sunset ===========================
-    QDateTime datetime = NavApp::isConnectedAndAircraft() ? NavApp::getUserAircraft().getZuluTime() : QDateTime::currentDateTimeUtc();
-
-    if(datetime.isValid() && rec != nullptr)
-      html.row2(tr("Sunrise and sunset:"), sunriseSunsetText(Pos(rec->valueFloat("lonx"), rec->valueFloat("laty")), datetime));
-
-    // Coordinates ===============================================
-    addCoordinates(rec, html);
   }
+
+  const QDateTime datetime = NavApp::getUtcDateTimeSimOrCurrent();
+  if(datetime.isValid())
+  {
+    // Sunrise and sunset =======================================
+    if(info)
+      html.row2(tr("Sunrise and sunset:"), sunriseSunsetText(airport.getPosition(), datetime));
+
+    // Time Zone ================================================
+    const QTimeZone zone = NavApp::getTimeZone(airport.getPosition());
+
+    QStringList timezoneText;
+#ifdef DEBUG_INFORMATION
+    timezoneText.append("[" % QString(zone.id()) % "]");
+#endif
+
+    QString territory = QLocale::territoryToString(zone.territory());
+    if(country != territory && territory != QStringLiteral("Default"))
+      timezoneText.append(territory);
+
+    if(info)
+      timezoneText.append(zone.displayName(QTimeZone::StandardTime, QTimeZone::LongName));
+
+    timezoneText.append(zone.displayName(QTimeZone::StandardTime, QTimeZone::OffsetName));
+    timezoneText.append(tr("(no DST)"));
+    html.row2(tr("Time Zone:"), atools::strJoin(timezoneText, tr(", ")));
+  }
+
+  // Coordinates ===============================================
+  if(info)
+    addCoordinates(rec, html);
 
   html.tableEnd();
   // Create a list of facilities =============================
@@ -1729,7 +1752,7 @@ void HtmlInfoBuilder::weatherText(const map::WeatherContext& context, const MapA
       html.br().br().b(tr("Transition: ")).text(transitionStr.join(tr(", ")));
 
     // Sunrise and sunset ===========================
-    QDateTime datetime = NavApp::isConnectedAndAircraft() ? NavApp::getUserAircraft().getZuluTime() : QDateTime::currentDateTimeUtc();
+    QDateTime datetime = NavApp::getUtcDateTimeSimOrCurrent();
     if(datetime.isValid())
     {
       if(transitionStr.isEmpty())

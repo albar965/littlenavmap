@@ -695,7 +695,7 @@ void MapWidget::leaveEvent(QEvent *)
     return;
 
   hideTooltip();
-  mainWindow->updateMapPosLabel(Pos(), -1, -1);
+  mainWindow->updateMapPositionLabel(Pos(), -1, -1);
 }
 
 void MapWidget::keyPressEvent(QKeyEvent *keyEvent)
@@ -1516,7 +1516,7 @@ void MapWidget::elevationDisplayTimerTimeout()
       if(pos.isValid())
       {
         pos.setAltitude(NavApp::getElevationProvider()->getElevationMeter(pos));
-        mainWindow->updateMapPosLabel(pos, point.x(), point.y());
+        mainWindow->updateMapPositionLabel(pos, point.x(), point.y());
       }
     }
   }
@@ -1637,11 +1637,11 @@ bool MapWidget::eventFilter(QObject *obj, QEvent *eventParam)
     {
       if(NavApp::isGlobeOfflineProvider())
         elevationDisplayTimer.start();
-      mainWindow->updateMapPosLabel(pos.alt(static_cast<double>(map::INVALID_ALTITUDE_VALUE)),
+      mainWindow->updateMapPositionLabel(pos.alt(static_cast<double>(map::INVALID_ALTITUDE_VALUE)),
                                     mouseEvent->pos().x(), mouseEvent->pos().y());
     }
     else
-      mainWindow->updateMapPosLabel(atools::geo::EMPTY_POS, -1, -1);
+      mainWindow->updateMapPositionLabel(atools::geo::EMPTY_POS, -1, -1);
   }
 
   if(eventParam->type() == QEvent::MouseMove && mouseState != mapwin::NONE)

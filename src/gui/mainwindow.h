@@ -170,8 +170,8 @@ public:
   /* Update tooltip state in recent menus */
   void setToolTipsEnabledMainMenu(bool enabled);
 
-  /* Update coordinate display in status bar */
-  void updateMapPosLabel(const atools::geo::Pos& pos, int screenX, int screenY);
+  /* Update coordinate, declination and time zone displays in status bar */
+  void updateMapPositionLabel(const atools::geo::Pos& pos, int screenX, int screenY);
 
   /* Sets the text and tooltip of the statusbar label that indicates what objects are shown on the map */
   /* Updates label and tooltip for objects shown on map */
@@ -619,8 +619,9 @@ private:
   PrintSupport *printSupport = nullptr;
 
   /* Status bar labels */
-  QLabel *mapDistanceLabel = nullptr, *mapPositionLabel = nullptr, *mapMagvarLabel = nullptr, *mapRenderStatusLabel = nullptr,
-         *mapDetailLabel = nullptr, *mapVisibleLabel = nullptr, *connectStatusLabel = nullptr, *timeLabel = nullptr;
+  QLabel *mapDistanceLabel = nullptr, *mapPositionLabel = nullptr, *mapMagvarLabel = nullptr, *timeZoneLabel = nullptr,
+         *mapRenderStatusLabel = nullptr, *mapDetailLabel = nullptr, *mapVisibleLabel = nullptr, *connectStatusLabel = nullptr,
+         *timeLabel = nullptr;
 
   /* Connection field and tooltip in statusbar */
   QString connectionStatus, connectionStatusTooltip, onlineConnectionStatus, onlineConnectionStatusTooltip;

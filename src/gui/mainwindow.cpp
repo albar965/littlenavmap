@@ -112,6 +112,7 @@
 #include <QStringBuilder>
 #include <QToolTip>
 #include <QActionGroup>
+#include <QTimeZone>
 
 #include "ui_mainwindow.h"
 
@@ -771,8 +772,8 @@ void MainWindow::updateClock() const
     timeLabel->setText(QDateTime::currentDateTimeUtc().toString("d   HH:mm:ss UTC "));
     timeLabel->setToolTip(tr("Day of month and UTC time.\n%1\nLocal: %2 %3").
                           arg(QDateTime::currentDateTimeUtc().toString().
-                               replace(tr("GMT", "Replaces wrong GMT indication in statusbar with UTC"),
-                                       tr("UTC", "Replaces wrong GMT indication in statusbar with UTC"))).
+                              replace(tr("GMT", "Replaces wrong GMT indication in statusbar with UTC"),
+                                      tr("UTC", "Replaces wrong GMT indication in statusbar with UTC"))).
                           arg(QDateTime::currentDateTime().toString()).
                           arg(QDateTime::currentDateTime().timeZoneAbbreviation()));
     timeLabel->setMinimumWidth(timeLabel->width());
@@ -974,6 +975,10 @@ void MainWindow::setupUi()
   mapMagvarLabel->setToolTip(tr("Magnetic declination at cursor position."));
   ui->statusBar->addPermanentWidget(mapMagvarLabel);
 
+  timeZoneLabel = new QLabel();
+  timeZoneLabel->setToolTip(tr("Time Zone country and offset from UTC (excluding DST) at cursor position."));
+  ui->statusBar->addPermanentWidget(timeZoneLabel);
+
   timeLabel = new QLabel();
   timeLabel->setToolTip(tr("Day of month and UTC time."));
   ui->statusBar->addPermanentWidget(timeLabel);
@@ -1042,6 +1047,10 @@ void MainWindow::updateStatusBarStyle()
     mapMagvarLabel->setFrameShape(shape);
     mapMagvarLabel->setMargin(1);
 
+    timeZoneLabel->setFrameShadow(shadow);
+    timeZoneLabel->setFrameShape(shape);
+    timeZoneLabel->setMargin(1);
+
     timeLabel->setFrameShadow(shadow);
     timeLabel->setFrameShape(shape);
     timeLabel->setMargin(1);
@@ -1071,6 +1080,10 @@ void MainWindow::updateStatusBarStyle()
   mapMagvarLabel->setAlignment(align);
   mapMagvarLabel->setMinimumWidth(20);
   mapMagvarLabel->setText(tr(" — "));
+
+  timeZoneLabel->setAlignment(align);
+  timeZoneLabel->setMinimumWidth(20);
+  timeZoneLabel->setText(tr(" — "));
 
   timeLabel->setAlignment(align);
   timeLabel->setMinimumWidth(20);
@@ -2147,30 +2160,26 @@ void MainWindow::shrinkStatusBar()
       mapMagvarLabel->setText(tr(" — "));
       mapMagvarLabel->setMinimumWidth(20);
       mapMagvarLabel->resize(20, mapMagvarLabel->height());
+
+      timeZoneLabel->clear();
+      timeZoneLabel->setText(tr(" — "));
+      timeZoneLabel->setMinimumWidth(20);
+      timeZoneLabel->resize(20, timeZoneLabel->height());
     }
     else
       shrinkStatusBarTimer.start();
   }
 }
 
-void MainWindow::updateMapPosLabel(const atools::geo::Pos& pos, int screenX, int screenY)
+void MainWindow::updateMapPositionLabel(const atools::geo::Pos& pos, int screenX, int screenY)
 {
   if(pos.isValid())
   {
+    // Coordinates ============================
     QString text(Unit::coords(pos));
 
     if(NavApp::isGlobeOfflineProvider() && pos.getAltitude() < map::INVALID_ALTITUDE_VALUE)
       text += tr(" / ") % Unit::altMeter(pos.getAltitude());
-
-    float magVar = NavApp::getMagVar(pos);
-    QString magVarText = map::magvarText(magVar, true /* short text */);
-#ifdef DEBUG_INFORMATION
-    magVarText = QStringLiteral("%1 [%2]").arg(magVarText).arg(magVar, 0, 'f', 2);
-#endif
-
-    mapMagvarLabel->setText(magVarText);
-    mapMagvarLabel->setMinimumWidth(mapMagvarLabel->width());
-
 #ifdef DEBUG_INFORMATION
     text.append(QStringLiteral(" [L %1,%2/G %3,%4]").arg(screenX).arg(screenY).arg(QCursor::pos().x()).arg(QCursor::pos().y()));
 #endif
@@ -2178,7 +2187,29 @@ void MainWindow::updateMapPosLabel(const atools::geo::Pos& pos, int screenX, int
     mapPositionLabel->setText(text);
     mapPositionLabel->setMinimumWidth(mapPositionLabel->width());
 
-    // Stop status bar time to avoid shrinking
+    // Declination ============================
+    float magVar = NavApp::getMagVar(pos);
+    QString magVarText = map::magvarText(magVar, true /* short text */);
+
+#ifdef DEBUG_INFORMATION
+    magVarText += QStringLiteral(" [%1]").arg(magVar, 0, 'f', 2);
+#endif
+
+    mapMagvarLabel->setText(magVarText);
+    mapMagvarLabel->setMinimumWidth(mapMagvarLabel->width());
+
+    // Time Zone  ============================
+    const QTimeZone zone = NavApp::getTimeZone(pos);
+    const QString offset = formatter::formatTimeZoneOffset(zone.standardTimeOffset(NavApp::getUtcDateTimeSimOrCurrent()));
+    QLocale::Territory territory = zone.territory();
+    if(territory != QLocale::AnyTerritory)
+      timeZoneLabel->setText(tr("%1 / %2").arg(QLocale::territoryToString(territory)).arg(offset));
+    else
+      timeZoneLabel->setText(tr("%1").arg(offset));
+
+    timeZoneLabel->setMinimumWidth(timeZoneLabel->width());
+
+    // Stop status bar time to avoid shrinking =====================
     shrinkStatusBarTimer.stop();
   }
   else
@@ -2186,8 +2217,9 @@ void MainWindow::updateMapPosLabel(const atools::geo::Pos& pos, int screenX, int
     mapPositionLabel->setText(tr(" — "));
     mapPositionLabel->setMinimumWidth(mapPositionLabel->width());
     mapMagvarLabel->setText(tr(" — "));
+    timeZoneLabel->setText(tr(" — "));
 
-    // Reduce status fields bar after timeout
+    // Reduce status fields bar after timeout =====================
     shrinkStatusBarTimer.start();
   }
 }
@@ -3770,6 +3802,7 @@ void MainWindow::mainWindowShownDelayed()
   qDebug() << "mapDistanceLabel->size()" << mapDistanceLabel->size();
   qDebug() << "mapPositionLabel->size()" << mapPositionLabel->size();
   qDebug() << "mapMagvarLabel->size()" << mapMagvarLabel->size();
+  qDebug() << "timeZoneLabel ->size()" << timeZoneLabel->size();
   qDebug() << "mapRenderStatusLabel->size()" << mapRenderStatusLabel->size();
   qDebug() << "mapDetailLabel->size()" << mapDetailLabel->size();
   qDebug() << "mapVisibleLabel->size()" << mapVisibleLabel->size();

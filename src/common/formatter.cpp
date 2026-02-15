@@ -50,6 +50,23 @@ QString formatMinutesHours(double timeHours)
   return QObject::tr("%L1:%L2").arg(hours).arg(minutes, 2, 10, QChar('0'));
 }
 
+QString formatTimeZoneOffset(int seconds)
+{
+  int minutes = seconds / 60;
+  int hours = seconds / 3600;
+  minutes -= hours * 60;
+  if(minutes == 60)
+  {
+    hours++;
+    minutes = 0;
+  }
+
+  return QObject::tr("%1%L2:%L3").
+         arg(hours < 0 ? QObject::tr("-") : QObject::tr("+")).
+         arg(std::abs(hours), 2, 10, QChar('0')).
+         arg(std::abs(minutes), 2, 10, QChar('0'));
+}
+
 QString formatMinutesHoursLong(double timeHours)
 {
   int hours = static_cast<int>(timeHours);
