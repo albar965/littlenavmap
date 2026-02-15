@@ -53,6 +53,7 @@
 #include "routestring/routestringwriter.h"
 #include "search/searchcontroller.h"
 #include "settings/settings.h"
+#include "timezone/timezonemanager.h"
 #include "track/trackcontroller.h"
 #include "userdata/userdatacontroller.h"
 #include "weather/weatherreporter.h"
@@ -71,7 +72,6 @@ MainWindow *NavApp::mainWindow = nullptr;
 ElevationProvider *NavApp::elevationProvider = nullptr;
 atools::fs::db::DatabaseMeta *NavApp::databaseMetaSim = nullptr;
 atools::fs::db::DatabaseMeta *NavApp::databaseMetaNav = nullptr;
-
 atools::fs::common::MagDecReader *NavApp::magDecReader = nullptr;
 atools::fs::common::MoraReader *NavApp::moraReader = nullptr;
 UpdateHandler *NavApp::updateHandler = nullptr;
@@ -86,10 +86,9 @@ AircraftPerfController *NavApp::aircraftPerfController = nullptr;
 AirspaceController *NavApp::airspaceController = nullptr;
 VehicleIcons *NavApp::vehicleIcons = nullptr;
 StyleHandler *NavApp::styleHandler = nullptr;
-
 WebController *NavApp::webController = nullptr;
-
 atools::gui::DataExchange *NavApp::dataExchange = nullptr;
+atools::timezone::TimeZoneManager *NavApp::timeZone = nullptr;
 
 bool NavApp::closeCalled = false;
 bool NavApp::loadingDatabase = false;
@@ -150,6 +149,9 @@ void NavApp::init(MainWindow *mainWindowParam)
 
   moraReader = new atools::fs::common::MoraReader(getDatabaseNav(), getDatabaseSim());
   moraReader->readFromTable();
+
+  timeZone = new atools::timezone::TimeZoneManager;
+  timeZone->readFile(Settings::getOverloadedPath(lnm::TIMEZONE_DATABASE));
 
   // Cache for aircraft and other icons
   vehicleIcons = new VehicleIcons();
@@ -221,6 +223,7 @@ void NavApp::deInit()
   ATOOLS_DELETE_LOG(databaseMetaNav);
   ATOOLS_DELETE_LOG(magDecReader);
   ATOOLS_DELETE_LOG(moraReader);
+  ATOOLS_DELETE_LOG(timeZone);
   ATOOLS_DELETE_LOG(vehicleIcons);
 }
 
@@ -934,6 +937,22 @@ StyleHandler *NavApp::getStyleHandler()
 atools::fs::common::MoraReader *NavApp::getMoraReader()
 {
   return moraReader;
+}
+
+const atools::timezone::TimeZoneManager *NavApp::getTimeZoneManager()
+{
+  return timeZone;
+}
+
+QTimeZone NavApp::getTimeZone(const atools::geo::Pos& position)
+{
+  return timeZone->getTimezone(position);
+}
+
+QDateTime NavApp::getUtcDateTimeSimOrCurrent()
+{
+  return NavApp::isConnectedAndAircraft() && getUserAircraft().getZuluTime().isValid() ?
+         getUserAircraft().getZuluTime() : QDateTime::currentDateTimeUtc();
 }
 
 atools::sql::SqlDatabase *NavApp::getDatabaseUser()

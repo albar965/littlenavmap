@@ -482,6 +482,8 @@ const QLatin1String TRACK_CONFIG(":/littlenavmap/resources/config/track.cfg");
 /* Map display configuration */
 const QLatin1String MAP_LAYER_CONFIG(":/littlenavmap/resources/config/maplayers.xml");
 
+const QLatin1String TIMEZONE_DATABASE("timezone/timezone21");
+
 /* Main window state for first startup. Generated in MainWindow::writeSettings() */
 extern const QSize DEFAULT_MAINWINDOW_SIZE;
 

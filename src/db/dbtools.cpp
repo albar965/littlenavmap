@@ -152,10 +152,10 @@ void createEmptySchema(atools::sql::SqlDatabase *db, bool boundary)
     atools::fs::NavDatabaseOptions opts;
     if(boundary)
       // Does not use a transaction
-      atools::fs::NavDatabase(&opts, db, nullptr, GIT_REVISION_LITTLENAVMAP).createAirspaceSchema();
+      atools::fs::NavDatabase(opts, *db, nullptr, GIT_REVISION_LITTLENAVMAP).createAirspaceSchema();
     else
     {
-      atools::fs::NavDatabase(&opts, db, nullptr, GIT_REVISION_LITTLENAVMAP).createSchema();
+      atools::fs::NavDatabase(opts, *db, nullptr, GIT_REVISION_LITTLENAVMAP).createSchema();
       atools::fs::db::DatabaseMeta(db).updateVersion();
     }
   }

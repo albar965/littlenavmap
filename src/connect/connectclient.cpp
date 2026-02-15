@@ -32,6 +32,7 @@
 #include "gui/mainwindow.h"
 #include "online/onlinedatacontroller.h"
 #include "settings/settings.h"
+#include "timezone/timezonemanager.h"
 #include "util/version.h"
 #include "win/activationcontext.h"
 
@@ -317,6 +318,20 @@ void ConnectClient::postSimConnectData(atools::fs::sc::SimConnectData dataPacket
 
       // Modify AI aircraft and set shadow flag if a online network aircraft is registered as shadowed in the index
       NavApp::getOnlinedataController()->updateAircraftShadowState(dataPacket);
+
+      if(userAircraft.isFullyValid() && userAircraft.isAnyXplane())
+      {
+        int localDateDays;
+        float localTimeSec, zuluTimeSec;
+        userAircraft.getXPlaneDate(localDateDays, localTimeSec, zuluTimeSec);
+        if(localDateDays != atools::fs::sc::SC_INVALID_INT)
+        {
+          QDateTime datetimeLocal, datetimeUtc;
+          NavApp::getTimeZoneManager()->correctDateLocal(datetimeLocal, datetimeUtc, localDateDays, localTimeSec, zuluTimeSec,
+                                                         userAircraft.getPosition().getLonX(), userAircraft.getPosition().getLatY());
+          userAircraft.setDateTime(datetimeLocal, datetimeUtc);
+        }
+      }
 
       // Update the MSFS translated aircraft names and types ===================================
       /* Mooney, Boeing, Actually aircraft model. */

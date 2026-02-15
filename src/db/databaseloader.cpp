@@ -243,10 +243,11 @@ void DatabaseLoader::loadScenery()
 
   navDatabaseOpts->setProgressCallback(std::bind(&DatabaseLoader::progressCallbackThread, this, std::placeholders::_1));
   navDatabaseOpts->setCallDefaultCallback(true);
+  navDatabaseOpts->setTimeZoneDatabase(lnm::TIMEZONE_DATABASE);
 
   // ==================================================================================
   // Compile navdata in background ==================================================================
-  atools::fs::NavDatabase navDatabase(navDatabaseOpts, compileDb, navDatabaseErrors, GIT_REVISION_LITTLENAVMAP);
+  atools::fs::NavDatabase navDatabase(*navDatabaseOpts, *compileDb, navDatabaseErrors, GIT_REVISION_LITTLENAVMAP);
 
   // Load MSFS 2024 SimConnect DLL since only this can be used to fetch facilities
   // The library will be freed after loading in compileDatabasePost()

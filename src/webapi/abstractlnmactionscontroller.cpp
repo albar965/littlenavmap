@@ -136,7 +136,7 @@ const QTime AbstractLnmActionsController::getSunrise(const Pos& pos)
 QTime AbstractLnmActionsController::calculateSunriseSunset(const Pos& pos, float zenith)
 {
   QTime result;
-  QDateTime datetime = NavApp::isConnectedAndAircraft() ? NavApp::getUserAircraft().getZuluTime() : QDateTime::currentDateTimeUtc();
+  QDateTime datetime = NavApp::getUtcDateTimeSimOrCurrent();
 
   if(datetime.isValid())
   {
@@ -155,7 +155,7 @@ Pos AbstractLnmActionsController::getPosFromAirportInformation(const SqlRecord& 
 
 const QDateTime AbstractLnmActionsController::getActiveDateTime()
 {
-  return NavApp::isConnectedAndAircraft() ? NavApp::getUserAircraft().getZuluTime() : QDateTime::currentDateTimeUtc();
+  return NavApp::getUtcDateTimeSimOrCurrent();
 }
 
 const QString AbstractLnmActionsController::getActiveDateTimeSource()

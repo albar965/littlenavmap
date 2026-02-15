@@ -61,10 +61,15 @@ class MapThemeHandler;
 class QAction;
 class WeatherContextHandler;
 
+class QTimeZone;
 namespace map {
 struct MapAirport;
 }
 namespace atools {
+
+namespace timezone {
+class TimeZoneManager;
+}
 
 namespace win {
 class ActivationContext;
@@ -379,6 +384,12 @@ public:
 
   static atools::fs::common::MoraReader *getMoraReader();
 
+  static const atools::timezone::TimeZoneManager *getTimeZoneManager();
+  static QTimeZone getTimeZone(const atools::geo::Pos& position);
+
+  /* Time from either simulator if connected or current time */
+  static QDateTime getUtcDateTimeSimOrCurrent();
+
   static VehicleIcons *getVehicleIcons();
 
   /* Not entirely reliable since other modules might be initialized later */
@@ -472,6 +483,8 @@ private:
   static WebController *webController;
 
   static atools::gui::DataExchange *dataExchange;
+
+  static atools::timezone::TimeZoneManager *timeZone;
 
   static bool loadingDatabase;
   static bool closeCalled;
