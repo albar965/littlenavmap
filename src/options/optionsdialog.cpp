@@ -210,7 +210,7 @@ OptionsDialog::OptionsDialog(QMainWindow *parentWindow)
   zoomHandlerDatabaseExclude = new atools::gui::ItemViewZoomHandler(ui->tableWidgetOptionsDatabaseExclude);
   zoomHandlerDatabaseAddonExclude = new atools::gui::ItemViewZoomHandler(ui->tableWidgetOptionsDatabaseExcludeAddon);
 
-  gridDelegate = new atools::gui::GridDelegate(ui->treeWidgetOptionsDisplayTextOptions, 1. /* borderPenWidth */, 0 /* heightIncrease */);
+  gridDelegate = new atools::gui::GridDelegate(ui->treeWidgetOptionsDisplayTextOptions, 1. /* borderPenWidth */, 1 /* heightIncrease */);
   listWidgetIndex = new atools::gui::ListWidgetIndex(ui->listWidgetOptionPages, ui->stackedWidgetOptions);
   ui->treeWidgetOptionsDisplayTextOptions->setItemDelegate(gridDelegate);
 
