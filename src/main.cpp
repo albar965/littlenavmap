@@ -64,7 +64,7 @@ using atools::gui::Translator;
 int main(int argc, char *argv[])
 {
   // Start timer to measure startup time
-  Application::startup();
+  Application::setStartingUp();
 
   // Initialize the resources from atools static library
   Q_INIT_RESOURCE(atools);

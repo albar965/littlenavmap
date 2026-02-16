@@ -118,8 +118,15 @@
 
 const static int MAX_STATUS_MESSAGES = 20;
 const static int CLOCK_TIMER_MS = 1000;
+
+// Clear render status after time
 const static int RENDER_STATUS_TIMER_MS = 5000;
+
+// Reduce size of status bar fields after inactivity
 const static int SHRINK_STATUS_BAR_TIMER_MS = 10000;
+
+// Shutdown will be delayed if closing early to avoid deadlocks in Marble
+const static int SHUTDOWN_DELAY_PERIOD_MS = 3000;
 
 using namespace Marble;
 using atools::settings::Settings;
@@ -1542,7 +1549,7 @@ void MainWindow::connectAllSlots()
   connect(mapWidget, &MapWidget::showInSearch, searchController, &SearchController::showInSearch);
   // Connect the map widget to the position label.
   connect(mapWidget, &MapPaintWidget::distanceChanged, this, &MainWindow::distanceChanged);
-  connect(mapWidget, &MapPaintWidget::renderStateChanged, this, &MainWindow::renderStatusChanged);
+  connect(mapWidget, &MapPaintWidget::renderStateChanged, this, &MainWindow::renderStateChanged);
   connect(mapWidget, &MapPaintWidget::updateActionStates, this, &MainWindow::updateActionStates);
   connect(mapWidget, &MapWidget::showInformation, infoController, &InfoController::showInformation);
   connect(mapWidget, &MapWidget::showProcedures, searchController->getProcedureSearch(), &ProcedureSearch::showProcedures);
@@ -2088,32 +2095,49 @@ void MainWindow::renderStatusReset()
     renderStatusUpdateLabel(Marble::Complete, false /* forceUpdate */);
 }
 
+QString MainWindow::renderStatusString(RenderStatus status)
+{
+  switch(status)
+  {
+    case Marble::Complete:
+      // All data is there and up to date
+      return tr("Done");
+
+    case Marble::WaitingForUpdate:
+      // Rendering is based on complete, but outdated data, data update was requested
+      return tr("Updating");
+
+    case Marble::WaitingForData:
+      // Rendering is based on no or partial data, more data was requested (e.g. pending network queries)
+      return tr("Loading");
+
+    case Marble::Incomplete:
+      // Data is missing and some error occurred when trying to retrieve it (e.g. network failure)
+      return tr("Incomplete");
+  }
+
+  return tr("Unknown");
+}
+
 void MainWindow::renderStatusUpdateLabel(RenderStatus status, bool forceUpdate)
 {
   if(status != lastRenderStatus || forceUpdate)
   {
-    switch(status)
-    {
-      case Marble::Complete:
-        mapRenderStatusLabel->setText(tr("Done"));
-        break;
-      case Marble::WaitingForUpdate:
-        mapRenderStatusLabel->setText(tr("Updating"));
-        break;
-      case Marble::WaitingForData:
-        mapRenderStatusLabel->setText(tr("Loading"));
-        break;
-      case Marble::Incomplete:
-        mapRenderStatusLabel->setText(tr("Incomplete"));
-        break;
-    }
+    mapRenderStatusLabel->setText(renderStatusString(status));
     lastRenderStatus = status;
     mapRenderStatusLabel->setMinimumWidth(mapRenderStatusLabel->width());
   }
 }
 
-void MainWindow::renderStatusChanged(const RenderState& state)
+void MainWindow::renderStateChanged(const RenderState& state)
 {
+#ifdef DEBUG_INFORMATION
+  qDebug() << Q_FUNC_INFO << renderStatusString(state.status());
+
+  for(int i = 0; i < state.children(); i++)
+    qDebug() << Q_FUNC_INFO << state.childAt(i).name() << renderStatusString(state.status());
+#endif
+
   RenderStatus status = state.status();
   renderStatusUpdateLabel(status, false /* forceUpdate */);
 
@@ -3811,9 +3835,15 @@ void MainWindow::mainWindowShownDelayed()
 #endif
 
   // Log startup time
-  Application::startupFinished(Q_FUNC_INFO);
+  Application::setStartupFinished(Q_FUNC_INFO);
 
   mapWidget->printMapTypesToLog();
+
+  // Delay shutdown in closeEvent() if timer is still active to
+  // avoid dead locks in Marble while it is still loading files
+  shutdownDelayTimer.setSingleShot(true);
+  shutdownDelayTimer.setInterval(SHUTDOWN_DELAY_PERIOD_MS);
+  shutdownDelayTimer.start();
 
   qDebug() << Q_FUNC_INFO << "leave";
 }
@@ -4877,7 +4907,38 @@ void MainWindow::printShortcuts()
 
 void MainWindow::closeEvent(QCloseEvent *event)
 {
-  qDebug() << Q_FUNC_INFO << "Enter deInitCalled" << deInitCalled;
+  qDebug() << Q_FUNC_INFO << "Enter deInitCalled" << deInitCalled
+           << "StartingUp" << Application::isStartingUp() << "pendingFileManagerTasks" << mapWidget->model()->pendingFileManagerTasks()
+           << "renderStatus" << mapWidget->renderStatus() << "delayedShutdownInProgress" << delayedShutdownInProgress
+           << "remainingTime" << shutdownDelayTimer.remainingTime();
+
+  // Ignore close if singleShot timer below is already running
+  if(delayedShutdownInProgress)
+  {
+    event->ignore(); // Do not exit
+    return;
+  }
+
+  // Still in waiting time after startup - delay shutdown using a timer
+  if(shutdownDelayTimer.isActive())
+  {
+    delayedShutdownInProgress = true; // Ignore other close calls
+    int remaining = shutdownDelayTimer.remainingTime();
+    shutdownDelayTimer.stop();
+
+    setStatusMessage(tr("Closing ..."));
+
+    // Send a close again once the remaining time is over
+    QTimer::singleShot(remaining, [this]()->void {
+      delayedShutdownInProgress = false;
+      close();
+    });
+
+    // Do not exit yet
+    event->ignore();
+    return;
+  }
+
   bool quit = false;
 
   if(!deInitCalled)

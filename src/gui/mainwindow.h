@@ -189,13 +189,14 @@ public:
   void setDetailLabelText(const QString& text);
 
   /* Render state from marble widget. Get the more detailed state since it updates more often */
-  void renderStatusChanged(const Marble::RenderState& state);
+  void renderStateChanged(const Marble::RenderState& state);
 
   /* Clear render status if no updates appear */
   void renderStatusReset();
 
   /* Update label */
   void renderStatusUpdateLabel(Marble::RenderStatus status, bool forceUpdate);
+  QString renderStatusString(Marble::RenderStatus status);
 
   /* Show "Too many objects" label if number of map features was truncated */
   /* Called after each query */
@@ -681,6 +682,11 @@ private:
 
   /* Show hint dialog only once per session */
   bool backgroundHintRouteStringShown = false;
+
+  bool delayedShutdownInProgress = false; // Ingnore other close calls while delaying shutdown
+
+  /* Delay shutdown to avoid deadlock in MarbleWidget while it is still loading files */
+  QTimer shutdownDelayTimer;
 
   /* Call debugDumpContainerSizes() every 30 seconds */
   QTimer debugDumpContainerSizesTimer;
