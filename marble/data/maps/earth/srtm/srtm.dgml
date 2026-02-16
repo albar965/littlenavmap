@@ -114,10 +114,6 @@
                     <sourcefile> naturalearth/ne_50m_admin_1_states_provinces_lines.pn2 </sourcefile>
                     <pen color="#f86649" style="dashdotline" />
                 </geodata>
-                <geodata name="international dateline" property="borders">
-                    <sourcefile> mwdbii/DATELINE.PNT </sourcefile>
-                    <pen color="#000000" />
-                </geodata>
                 <geodata name="rivers" property="waterbodies">
                     <sourcefile> naturalearth/ne_50m_rivers_lake_centerlines.pn2 </sourcefile>
                     <pen color="#637bff" />
