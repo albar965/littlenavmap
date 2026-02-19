@@ -48,7 +48,7 @@ class NavSearch :
   Q_OBJECT
 
 public:
-  explicit NavSearch(QMainWindow *parent, QTableView *tableView, si::TabSearchId tabWidgetIndex);
+  explicit NavSearch(MainWindow *parent, QTableView *tableView, si::TabSearchId tabWidgetIndex);
   virtual ~NavSearch() override;
 
   NavSearch(const NavSearch& other) = delete;

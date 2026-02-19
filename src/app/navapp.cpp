@@ -35,6 +35,7 @@
 #include "gui/dataexchange.h"
 #include "gui/errorhandler.h"
 #include "gui/mainwindow.h"
+#include "gui/statusbar.h"
 #include "gui/stylehandler.h"
 #include "logbook/logdatacontroller.h"
 #include "logging/logginghandler.h"
@@ -1022,7 +1023,7 @@ void NavApp::updateErrorLabel()
 
 void NavApp::setStatusMessage(const QString& message, bool addToLog, bool popup)
 {
-  mainWindow->setStatusMessage(message, addToLog, popup);
+  mainWindow->getStatusBar()->setStatusMessage(message, addToLog, popup);
 }
 
 QWidget *NavApp::getQMainWidget()
@@ -1053,6 +1054,11 @@ void NavApp::removeDialogFromDockHandler(QDialog *dialog)
 QList<QAction *> NavApp::getMainWindowActions()
 {
   return mainWindow->getMainWindowActions();
+}
+
+StatusBar *NavApp::getStatusBar()
+{
+  return mainWindow->getStatusBar();
 }
 
 bool NavApp::isMenuToolTipsVisible()

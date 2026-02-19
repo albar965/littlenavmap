@@ -26,7 +26,7 @@
 #include "search/columnlist.h"
 #include "gui/widgetstate.h"
 
-OnlineServerSearch::OnlineServerSearch(QMainWindow *parent, QTableView *tableView, si::TabSearchId tabWidgetIndex)
+OnlineServerSearch::OnlineServerSearch(MainWindow *parent, QTableView *tableView, si::TabSearchId tabWidgetIndex)
   : SearchBaseTable(parent, tableView, new ColumnList("server", "server_id"), tabWidgetIndex)
 {
   // Default view column descriptors

@@ -48,7 +48,6 @@ class GeoDataLatLonBox;
 class AirspaceQuery;
 class MapLayer;
 class AirspaceToolBarHandler;
-class MainWindow;
 
 /*
  * Wraps the airspace queries for nav, sim, user and online airspaces.
@@ -60,7 +59,7 @@ class AirspaceController
   Q_OBJECT
 
 public:
-  explicit AirspaceController(MainWindow *mainWindowParam);
+  explicit AirspaceController(QWidget *mainWindowParam);
   virtual ~AirspaceController() override;
 
   AirspaceController(const AirspaceController& other) = delete;
@@ -115,7 +114,7 @@ private:
   atools::geo::Pos fetchAirportCoordinates(const QString& airportIdent);
 
   AirspaceToolBarHandler *airspaceHandler = nullptr;
-  MainWindow *mainWindow;
+  QWidget *parentWidget;
 };
 
 #endif // LNM_AIRSPACECONTROLLER_H

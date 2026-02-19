@@ -58,7 +58,7 @@ using atools::gui::ActionTool;
 const int DISTANCE_EDIT_UPDATE_TIMEOUT_MS = 500;
 
 // ==================================================================================
-SearchBaseTable::SearchBaseTable(QMainWindow *parent, QTableView *tableView, ColumnList *columnList,
+SearchBaseTable::SearchBaseTable(MainWindow *parent, QTableView *tableView, ColumnList *columnList,
                                  si::TabSearchId tabWidgetIndex)
   : AbstractSearch(parent, tabWidgetIndex), columns(columnList), view(tableView)
 {
@@ -344,7 +344,7 @@ void SearchBaseTable::initViewAndController(atools::sql::SqlDatabase *db)
   controller = new SqlController(db, columns, view);
   controller->prepareModel();
 
-  csvExporter = new CsvExporter(mainWindow, controller);
+  csvExporter = new CsvExporter(parentWidget, controller);
 }
 
 void SearchBaseTable::showInSearch(const atools::sql::SqlRecord& record, bool ignoreQueryBuilder)
@@ -621,11 +621,11 @@ void SearchBaseTable::distanceSearchChanged(bool changeViewState)
     MapWidget *mapWidget = NavApp::getMapWidgetGui();
 
     if((mapWidget->getSearchMarkPos().isNull() || !mapWidget->getSearchMarkPos().isValid()) && viewStateDistSearch)
-      atools::gui::Dialog(mainWindow).showInfoMsgBox(lnm::ACTIONS_SHOW_SEARCH_CENTER_NULL,
-                                                     tr("The search center is not set.\n"
-                                                        "Right-click into the map and select\n"
-                                                        "\"Set Center for Distance Search\"."),
-                                                     tr("Do not &show this dialog again."));
+      atools::gui::Dialog(parentWidget).showInfoMsgBox(lnm::ACTIONS_SHOW_SEARCH_CENTER_NULL,
+                                                       tr("The search center is not set.\n"
+                                                          "Right-click into the map and select\n"
+                                                          "\"Set Center for Distance Search\"."),
+                                                       tr("Do not &show this dialog again."));
 
     QSpinBox *minDistanceWidget = columns->getMinDistanceWidget();
     QSpinBox *maxDistanceWidget = columns->getMaxDistanceWidget();
@@ -1706,16 +1706,15 @@ void SearchBaseTable::contextMenu(const QPoint& pos)
       emit loadPerfFile(logEntry.performanceFile);
     // Logbook actions are not connected to anything - execute here =========
     else if(action == ui->actionSearchLogdataOpenPlan)
-      logdataController->planOpen(&logRecord, mainWindow);
+      logdataController->planOpen(&logRecord, parentWidget);
     else if(action == ui->actionSearchLogdataSavePlanAs)
-      logdataController->planSaveAs(&logRecord, mainWindow);
+      logdataController->planSaveAs(&logRecord, parentWidget);
     else if(action == ui->actionSearchLogdataOpenPerf)
-      logdataController->perfOpen(&logRecord, mainWindow);
+      logdataController->perfOpen(&logRecord, parentWidget);
     else if(action == ui->actionSearchLogdataSavePerfAs)
-      logdataController->perfSaveAs(&logRecord, mainWindow);
+      logdataController->perfSaveAs(&logRecord, parentWidget);
     else if(action == ui->actionSearchLogdataSaveGpxAs)
-      logdataController->gpxSaveAs(&logRecord, mainWindow);
-
+      logdataController->gpxSaveAs(&logRecord, parentWidget);
     // Other actions are connected
   }
 }

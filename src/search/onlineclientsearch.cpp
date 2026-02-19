@@ -31,7 +31,7 @@
 #include "sql/sqlrecord.h"
 #include "ui_mainwindow.h"
 
-OnlineClientSearch::OnlineClientSearch(QMainWindow *parent, QTableView *tableView, si::TabSearchId tabWidgetIndex)
+OnlineClientSearch::OnlineClientSearch(MainWindow *parent, QTableView *tableView, si::TabSearchId tabWidgetIndex)
   : SearchBaseTable(parent, tableView, new ColumnList("client", "client_id"), tabWidgetIndex)
 {
   /* *INDENT-OFF* */

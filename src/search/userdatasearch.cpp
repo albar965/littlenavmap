@@ -36,7 +36,7 @@
 #include "ui_mainwindow.h"
 #include "userdata/userdataicons.h"
 
-UserdataSearch::UserdataSearch(QMainWindow *parent, QTableView *tableView, si::TabSearchId tabWidgetIndex)
+UserdataSearch::UserdataSearch(MainWindow *parent, QTableView *tableView, si::TabSearchId tabWidgetIndex)
   : SearchBaseTable(parent, tableView, new ColumnList("userdata", "userdata_id"), tabWidgetIndex)
 {
   /* *INDENT-OFF* */

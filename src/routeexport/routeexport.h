@@ -42,7 +42,6 @@ class Dialog;
 }
 }
 
-class MainWindow;
 class Route;
 class RouteExportData;
 class QTextStream;
@@ -61,7 +60,7 @@ class RouteExport :
   Q_OBJECT
 
 public:
-  explicit RouteExport(MainWindow *parent = nullptr);
+  explicit RouteExport(QWidget *parent = nullptr);
   virtual ~RouteExport() override;
 
   RouteExport(const RouteExport& other) = delete;
@@ -253,6 +252,9 @@ signals:
   /* Number of selected has changed */
   void  optionsUpdated();
 
+  /* Called from the export if LNMPLN was bulk exported */
+  void routeSaveLnmExported(const QString& filename);
+
 private:
   /* Warning dialog when changing export options */
   void warnExportOptions();
@@ -325,7 +327,7 @@ private:
 
   bool routeExportCheckDatabase(const QString& exportSimulatorName, const QList<atools::fs::FsPaths::SimulatorType> requiredDbTypes);
 
-  MainWindow *mainWindow;
+  QWidget *parentWidget;
   atools::gui::Dialog *dialog;
   RouteMultiExportDialog *multiExportDialog;
   RouteExportFormatMap *exportFormatMap;

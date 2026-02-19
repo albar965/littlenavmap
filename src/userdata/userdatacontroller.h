@@ -56,7 +56,6 @@ struct MapUserpoint;
 
 }
 
-class MainWindow;
 class UserdataIcons;
 class QToolButton;
 class QAction;
@@ -70,7 +69,7 @@ class UserdataController :
   Q_OBJECT
 
 public:
-  explicit UserdataController(atools::fs::userdata::UserdataManager *userdataManager, MainWindow *parent);
+  explicit UserdataController(atools::fs::userdata::UserdataManager *userdataManager, QWidget *parent);
   virtual ~UserdataController() override;
 
   UserdataController(const UserdataController& other) = delete;
@@ -161,6 +160,9 @@ signals:
   /* Issue a redraw of the map */
   void userdataChanged();
 
+  /* Show and raise window after loading or creating new files */
+  void showUserpointSearch();
+
 private:
   /* Called by any action */
   void toolbarActionTriggered(QAction *);
@@ -191,7 +193,7 @@ private:
 
   atools::fs::userdata::UserdataManager *manager;
   atools::gui::Dialog *dialog;
-  MainWindow *mainWindow;
+  QWidget *parentWidget;
   UserdataIcons *icons;
 
   // Buttons and actions for toolbar and menu

@@ -25,7 +25,6 @@
 
 class AircraftPerfController;
 class AircraftTrail;
-class TrackController;
 class AirspaceController;
 class ConnectClient;
 class DatabaseManager;
@@ -34,7 +33,10 @@ class InfoController;
 class LogdataController;
 class LogdataSearch;
 class MainWindow;
+class MapDetailHandler;
+class MapMarkHandler;
 class MapPaintWidget;
+class MapThemeHandler;
 class MapWidget;
 class OnlinedataController;
 class OptionsDialog;
@@ -44,24 +46,24 @@ class Route;
 class RouteAltitude;
 class RouteController;
 class SearchController;
+class StatusBar;
 class StyleHandler;
+class TrackController;
+class TrackManager;
 class UpdateHandler;
 class UserdataController;
 class UserdataIcons;
 class UserdataSearch;
 class VehicleIcons;
+class WeatherContextHandler;
 class WeatherReporter;
 class WebController;
 class WindReporter;
-class MapMarkHandler;
 struct MapAirportHandler;
-class MapDetailHandler;
-class TrackManager;
-class MapThemeHandler;
-class QAction;
-class WeatherContextHandler;
 
+class QAction;
 class QTimeZone;
+
 namespace map {
 struct MapAirport;
 }
@@ -313,6 +315,7 @@ public:
   static void addDialogToDockHandler(QDialog *dialog);
   static void removeDialogFromDockHandler(QDialog *dialog);
   static QList<QAction *> getMainWindowActions();
+  static StatusBar *getStatusBar();
 
   static MapWidget *getMapWidgetGui();
   static MapPaintWidget *getMapPaintWidgetGui();

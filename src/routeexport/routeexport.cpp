@@ -28,7 +28,6 @@
 #include "geo/aircrafttrail.h"
 #include "gui/dialog.h"
 #include "gui/errorhandler.h"
-#include "gui/mainwindow.h"
 #include "io/fileroller.h"
 #include "route/routealtitude.h"
 #include "route/routecontroller.h"
@@ -47,13 +46,13 @@
 
 using atools::fs::pln::FlightplanIO;
 
-RouteExport::RouteExport(MainWindow *parent)
-  : mainWindow(parent)
+RouteExport::RouteExport(QWidget *parent)
+  : parentWidget(parent)
 {
   exportFormatMap = new RouteExportFormatMap;
   flightplanIO = new FlightplanIO;
-  dialog = new atools::gui::Dialog(mainWindow);
-  multiExportDialog = new RouteMultiExportDialog(mainWindow, exportFormatMap);
+  dialog = new atools::gui::Dialog(parentWidget);
+  multiExportDialog = new RouteMultiExportDialog(parentWidget, exportFormatMap);
 
   // Save now button in list
   connect(multiExportDialog, &RouteMultiExportDialog::saveNowButtonClicked, this, &RouteExport::exportType);
@@ -106,7 +105,7 @@ void RouteExport::exportType(RouteExportFormat format)
 {
   // Export only selected type with file dialog - triggered from multiexport dialog
   if(format.copyForManualSaveFileDialog().callExport())
-    mainWindow->setStatusMessage(tr("Exported flight plan."));
+    NavApp::setStatusMessage(tr("Exported flight plan."));
 }
 
 void RouteExport::formatExportedCallback(const RouteExportFormat& format, const QString& filename)
@@ -131,7 +130,7 @@ void RouteExport::routeMultiExport()
   if(!errorFormats.isEmpty())
   {
     // One or more paths are not valid - do not export
-    atools::gui::Dialog::warning(mainWindow,
+    atools::gui::Dialog::warning(parentWidget,
                                  tr("<p>The following export formats have an invalid path or filename pattern:</p>"
                                       "<ul><li>%1</li></ul>"
                                         "<p>Export stopped.</p>"
@@ -152,14 +151,14 @@ void RouteExport::routeMultiExport()
           numExported += fmt.copyForMultiSave().callExport();
       }
       if(numExported == 0)
-        mainWindow->setStatusMessage(tr("No flight plan exported."));
+        NavApp::setStatusMessage(tr("No flight plan exported."));
       else
-        mainWindow->setStatusMessage(tr("Exported %1 flight plans.").arg(numExported));
+        NavApp::setStatusMessage(tr("Exported %1 flight plans.").arg(numExported));
     }
 
     // Check if native LNMPLN was exported, update filename and change status of the file if
     if(exported.contains(rexp::LNMPLN))
-      mainWindow->routeSaveLnmExported(exported.value(rexp::LNMPLN));
+      emit routeSaveLnmExported(exported.value(rexp::LNMPLN));
     exported.clear();
   }
 }
@@ -392,7 +391,7 @@ bool RouteExport::routeExportInternalPln(const RouteExportFormat& format)
 
       if(result)
       {
-        mainWindow->setStatusMessage(tr("Flight plan saved as %1PLN.").arg(QString())); // Was annotated
+        NavApp::setStatusMessage(tr("Flight plan saved as %1PLN.").arg(QString())); // Was annotated
         formatExportedCallback(format, routeFile);
         return true;
       }
@@ -414,7 +413,7 @@ bool RouteExport::routeExportFms3IniBuildsMulti(const RouteExportFormat& format)
       if(exportFlighplan(routeFile, rf::DEFAULT_OPTS_FMS3 | rf::REMOVE_RUNWAY_PROC,
                          std::bind(&FlightplanIO::saveIniBuildsMsfs, flightplanIO, _1, _2)))
       {
-        mainWindow->setStatusMessage(tr("Flight plan saved as FMS 3."));
+        NavApp::setStatusMessage(tr("Flight plan saved as FMS 3."));
         formatExportedCallback(format, routeFile);
         return true;
       }
@@ -435,7 +434,7 @@ bool RouteExport::routeExportFms3Multi(const RouteExportFormat& format)
       using namespace std::placeholders;
       if(exportFlighplan(routeFile, rf::DEFAULT_OPTS_FMS3, std::bind(&FlightplanIO::saveFms3, flightplanIO, _1, _2)))
       {
-        mainWindow->setStatusMessage(tr("Flight plan saved as FMS 3."));
+        NavApp::setStatusMessage(tr("Flight plan saved as FMS 3."));
         formatExportedCallback(format, routeFile);
         return true;
       }
@@ -456,7 +455,7 @@ bool RouteExport::routeExportCivaFmsMulti(const RouteExportFormat& format)
       using namespace std::placeholders;
       if(exportFlighplan(routeFile, rf::DEFAULT_OPTS_CIVA_FMS, std::bind(&FlightplanIO::saveCivaFms, flightplanIO, _1, _2)))
       {
-        mainWindow->setStatusMessage(tr("Flight plan saved for CIVA Navigation System."));
+        NavApp::setStatusMessage(tr("Flight plan saved for CIVA Navigation System."));
         formatExportedCallback(format, routeFile);
         return true;
       }
@@ -486,7 +485,7 @@ bool RouteExport::routeExportFms11(const RouteExportFormat& format)
       using namespace std::placeholders;
       if(exportFlighplan(routeFile, rf::DEFAULT_OPTS_FMS11, std::bind(&FlightplanIO::saveFms11, flightplanIO, _1, _2)))
       {
-        mainWindow->setStatusMessage(tr("Flight plan saved as FMS 11."));
+        NavApp::setStatusMessage(tr("Flight plan saved as FMS 11."));
         formatExportedCallback(format, routeFile);
         return true;
       }
@@ -507,7 +506,7 @@ bool RouteExport::routeExportFmsT7Multi(const RouteExportFormat& format)
       using namespace std::placeholders;
       if(exportFlighplan(routeFile, rf::DEFAULT_OPTS_FMS_T7, std::bind(&FlightplanIO::saveFms11, flightplanIO, _1, _2)))
       {
-        mainWindow->setStatusMessage(tr("Flight plan saved as FMS 11 for FlightFactor B777."));
+        NavApp::setStatusMessage(tr("Flight plan saved as FMS 11 for FlightFactor B777."));
         formatExportedCallback(format, routeFile);
         return true;
       }
@@ -1036,12 +1035,12 @@ bool RouteExport::routeExportTfdiMulti(const RouteExportFormat& format)
       }
       catch(atools::Exception& e)
       {
-        atools::gui::ErrorHandler(mainWindow).handleException(e);
+        atools::gui::ErrorHandler(parentWidget).handleException(e);
         return false;
       }
       catch(...)
       {
-        atools::gui::ErrorHandler(mainWindow).handleUnknownException();
+        atools::gui::ErrorHandler(parentWidget).handleUnknownException();
         return false;
       }
 
@@ -1068,12 +1067,12 @@ bool RouteExport::routeExportIflyMulti(const RouteExportFormat& format)
       }
       catch(atools::Exception& e)
       {
-        atools::gui::ErrorHandler(mainWindow).handleException(e);
+        atools::gui::ErrorHandler(parentWidget).handleException(e);
         return false;
       }
       catch(...)
       {
-        atools::gui::ErrorHandler(mainWindow).handleUnknownException();
+        atools::gui::ErrorHandler(parentWidget).handleUnknownException();
         return false;
       }
 
@@ -1098,12 +1097,12 @@ bool RouteExport::routeExportPms50Multi(const RouteExportFormat& format)
       }
       catch(atools::Exception& e)
       {
-        atools::gui::ErrorHandler(mainWindow).handleException(e);
+        atools::gui::ErrorHandler(parentWidget).handleException(e);
         return false;
       }
       catch(...)
       {
-        atools::gui::ErrorHandler(mainWindow).handleUnknownException();
+        atools::gui::ErrorHandler(parentWidget).handleUnknownException();
         return false;
       }
 
@@ -1129,12 +1128,12 @@ bool RouteExport::routeExportIsgMulti(const RouteExportFormat& format)
       }
       catch(atools::Exception& e)
       {
-        atools::gui::ErrorHandler(mainWindow).handleException(e);
+        atools::gui::ErrorHandler(parentWidget).handleException(e);
         return false;
       }
       catch(...)
       {
-        atools::gui::ErrorHandler(mainWindow).handleUnknownException();
+        atools::gui::ErrorHandler(parentWidget).handleUnknownException();
         return false;
       }
 
@@ -1284,7 +1283,7 @@ RouteExportData RouteExport::createRouteExportData(re::RouteExportType routeExpo
 
 bool RouteExport::routeExportDialog(RouteExportData& exportData, re::RouteExportType flightplanType)
 {
-  RouteExportDialog exportDialog(mainWindow, flightplanType);
+  RouteExportDialog exportDialog(parentWidget, flightplanType);
   exportDialog.setExportData(exportData);
   if(exportDialog.exec() == QDialog::Accepted)
   {
@@ -1311,9 +1310,9 @@ bool RouteExport::routeExportGpx(const RouteExportFormat& format)
     if(exportFlightplanAsGpx(routeFile))
     {
       if(NavApp::getAircraftTrail().isEmpty())
-        mainWindow->setStatusMessage(tr("Flight plan saved as GPX."));
+        NavApp::setStatusMessage(tr("Flight plan saved as GPX."));
       else
-        mainWindow->setStatusMessage(tr("Flight plan and track saved as GPX."));
+        NavApp::setStatusMessage(tr("Flight plan and track saved as GPX."));
       return true;
     }
   }
@@ -1339,11 +1338,11 @@ bool RouteExport::routeExportHtml(const RouteExportFormat& format)
     {
       QTextStream stream(&file);
       stream << NavApp::getRouteController()->getFlightplanTableAsHtmlDoc(24 /* iconSizePixel */);
-      mainWindow->setStatusMessage(tr("Flight plan saved as HTML."));
+      NavApp::setStatusMessage(tr("Flight plan saved as HTML."));
       return true;
     }
     else
-      atools::gui::ErrorHandler(mainWindow).handleIOError(file);
+      atools::gui::ErrorHandler(parentWidget).handleIOError(file);
   }
   return false;
 }
@@ -1556,7 +1555,7 @@ bool RouteExport::exportFlighplanAsGfp(const QString& filename, bool saveAsUserW
   }
   else
   {
-    atools::gui::ErrorHandler(mainWindow).handleIOError(file, tr("While saving GFP file:"));
+    atools::gui::ErrorHandler(parentWidget).handleIOError(file, tr("While saving GFP file:"));
     return false;
   }
 }
@@ -1577,7 +1576,7 @@ bool RouteExport::exportFlighplanAsTxt(const QString& filename)
   }
   else
   {
-    atools::gui::ErrorHandler(mainWindow).handleIOError(file, tr("While saving TXT or FPL file:"));
+    atools::gui::ErrorHandler(parentWidget).handleIOError(file, tr("While saving TXT or FPL file:"));
     return false;
   }
 }
@@ -1621,7 +1620,7 @@ bool RouteExport::exportFlighplanAsUFmc(const QString& filename)
       return true;
     }
     else
-      atools::gui::ErrorHandler(mainWindow).handleIOError(file, tr("While saving UFMC file:"));
+      atools::gui::ErrorHandler(parentWidget).handleIOError(file, tr("While saving UFMC file:"));
   }
   return false;
 }
@@ -1638,12 +1637,12 @@ bool RouteExport::exportFlighplanAsRxpGns(const QString& filename, bool saveAsUs
   }
   catch(atools::Exception& e)
   {
-    atools::gui::ErrorHandler(mainWindow).handleException(e);
+    atools::gui::ErrorHandler(parentWidget).handleException(e);
     return false;
   }
   catch(...)
   {
-    atools::gui::ErrorHandler(mainWindow).handleUnknownException();
+    atools::gui::ErrorHandler(parentWidget).handleUnknownException();
     return false;
   }
   return true;
@@ -1665,7 +1664,7 @@ bool RouteExport::exportFlighplanAsRxpGtn(const QString& filename, bool saveAsUs
   }
   else
   {
-    atools::gui::ErrorHandler(mainWindow).handleIOError(file, tr("While saving GFP file:"));
+    atools::gui::ErrorHandler(parentWidget).handleIOError(file, tr("While saving GFP file:"));
     return false;
   }
 }
@@ -1746,7 +1745,7 @@ bool RouteExport::exportFlighplanAsVfp(const RouteExportData& exportData, const 
   }
   else
   {
-    atools::gui::ErrorHandler(mainWindow).handleIOError(xmlFile, tr("While saving VFP file:"));
+    atools::gui::ErrorHandler(parentWidget).handleIOError(xmlFile, tr("While saving VFP file:"));
     return false;
   }
 }
@@ -1875,7 +1874,7 @@ bool RouteExport::exportFlighplanAsIvap(const RouteExportData& exportData, const
   }
   else
   {
-    atools::gui::ErrorHandler(mainWindow).handleIOError(file, tr("While saving FPL file:"));
+    atools::gui::ErrorHandler(parentWidget).handleIOError(file, tr("While saving FPL file:"));
     return false;
   }
 }
@@ -1889,12 +1888,12 @@ bool RouteExport::exportFlighplan(const QString& filename, rf::RouteAdjustOption
   }
   catch(atools::Exception& e)
   {
-    atools::gui::ErrorHandler(mainWindow).handleException(e);
+    atools::gui::ErrorHandler(parentWidget).handleException(e);
     return false;
   }
   catch(...)
   {
-    atools::gui::ErrorHandler(mainWindow).handleUnknownException();
+    atools::gui::ErrorHandler(parentWidget).handleUnknownException();
     return false;
   }
   return true;
@@ -1927,7 +1926,7 @@ bool RouteExport::exportFlighplanAsCorteIn(const QString& filename)
   }
   else
   {
-    atools::gui::ErrorHandler(mainWindow).handleIOError(file, tr("While reading file \"%1\":").arg(filename));
+    atools::gui::ErrorHandler(parentWidget).handleIOError(file, tr("While reading file \"%1\":").arg(filename));
     return false;
   }
 
@@ -1959,7 +1958,7 @@ bool RouteExport::exportFlighplanAsCorteIn(const QString& filename)
   }
   else
   {
-    atools::gui::ErrorHandler(mainWindow).handleIOError(file, tr("While saving to file \"%1\":").arg(filename));
+    atools::gui::ErrorHandler(parentWidget).handleIOError(file, tr("While saving to file \"%1\":").arg(filename));
     return false;
   }
 }
@@ -2005,7 +2004,7 @@ bool RouteExport::exportFlighplanAsProSim(const QString& filename)
     }
     else
     {
-      atools::gui::ErrorHandler(mainWindow).handleIOError(file, tr("While reading from companyroutes.xml file:"));
+      atools::gui::ErrorHandler(parentWidget).handleIOError(file, tr("While reading from companyroutes.xml file:"));
       return false;
     }
   }
@@ -2062,7 +2061,7 @@ bool RouteExport::exportFlighplanAsProSim(const QString& filename)
   }
   else
   {
-    atools::gui::ErrorHandler(mainWindow).handleIOError(file, tr("While saving to companyroutes.xml file:"));
+    atools::gui::ErrorHandler(parentWidget).handleIOError(file, tr("While saving to companyroutes.xml file:"));
     return false;
   }
 }
@@ -2078,12 +2077,12 @@ bool RouteExport::exportFlightplanAsGpx(const QString& filename)
   }
   catch(atools::Exception& e)
   {
-    atools::gui::ErrorHandler(mainWindow).handleException(e);
+    atools::gui::ErrorHandler(parentWidget).handleException(e);
     return false;
   }
   catch(...)
   {
-    atools::gui::ErrorHandler(mainWindow).handleUnknownException();
+    atools::gui::ErrorHandler(parentWidget).handleUnknownException();
     return false;
   }
   return true;

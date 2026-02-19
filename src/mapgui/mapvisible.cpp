@@ -22,7 +22,7 @@
 #include "common/maptypes.h"
 #include "common/unit.h"
 #include "fs/common/morareader.h"
-#include "gui/mainwindow.h"
+#include "gui/statusbar.h"
 #include "mapgui/mapairporthandler.h"
 #include "mapgui/maplayer.h"
 #include "mapgui/mapmarkhandler.h"
@@ -52,7 +52,7 @@ void MapVisible::updateVisibleObjectsStatusBar()
 {
   if(simDbEmpty)
   {
-    NavApp::getMainWindow()->setMapObjectsShownMessageText(
+    NavApp::getStatusBar()->setMapObjectsShownMessageText(
       atools::util::HtmlBuilder::errorMessage(tr("Database is empty")),
       tr("<p style='white-space:pre'>The currently selected scenery database for the simulator is empty.<br/>Go to: "
            "Main menu -&gt; \"Scenery Library\" -&gt; \"Load Scenery Library\" "
@@ -443,10 +443,10 @@ void MapVisible::updateVisibleObjectsStatusBar()
         label.append(tr(" — "));
 
       // Update the statusbar label text and tooltip of the label
-      NavApp::getMainWindow()->setMapObjectsShownMessageText(atools::elideTextShort(label.join(tr("/")), 40), tooltip.getHtml());
+      NavApp::getStatusBar()->setMapObjectsShownMessageText(atools::elideTextShort(label.join(tr("/")), 40), tooltip.getHtml());
     } // if(layer != nullptr && !paintLayer->noRender())
     else
-      NavApp::getMainWindow()->setMapObjectsShownMessageText(tr(" — "), tr("Nothing shown. Zoom in to see map features."));
+      NavApp::getStatusBar()->setMapObjectsShownMessageText(tr(" — "), tr("Nothing shown. Zoom in to see map features."));
   } // if(!NavApp::hasDataInDatabase()) ... else
 }
 

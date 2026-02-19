@@ -26,6 +26,8 @@ namespace Ui {
 class MainWindow;
 }
 
+class MainWindow;
+
 namespace map {
 struct MapResult;
 
@@ -37,15 +39,13 @@ class ItemViewZoomHandler;
 }
 }
 
-class QMainWindow;
-
 class AbstractSearch :
   public QObject
 {
   Q_OBJECT
 
 public:
-  explicit AbstractSearch(QMainWindow *parent, si::TabSearchId tabWidgetIndex);
+  explicit AbstractSearch(MainWindow *parent, si::TabSearchId tabWidgetIndex);
   virtual ~AbstractSearch() override;
 
   /* Disconnect and reconnect queries on database change */
@@ -96,7 +96,9 @@ protected:
   atools::gui::ItemViewZoomHandler *zoomHandler = nullptr;
   /* Tab index of this search tab on the search dock window */
   si::TabSearchId tabIndex;
-  QMainWindow *mainWindow = nullptr;
+  MainWindow *mainWindow = nullptr;
+  QWidget *parentWidget = nullptr; // Avoid unneeded inclusion of MainWindow
+
   Ui::MainWindow *ui = nullptr;
 };
 

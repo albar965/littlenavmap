@@ -29,7 +29,6 @@
 #include "fs/weather/weathernetdownload.h"
 #include "fs/weather/xpweatherreader.h"
 #include "gui/dialog.h"
-#include "gui/mainwindow.h"
 #include "options/optiondata.h"
 #include "query/airportquery.h"
 #include "query/infoquery.h"
@@ -60,8 +59,8 @@ using atools::fs::weather::Metar;
 using atools::util::FileSystemWatcher;
 using atools::settings::Settings;
 
-WeatherReporter::WeatherReporter(MainWindow *parentWindow, atools::fs::FsPaths::SimulatorType type)
-  : QObject(parentWindow), simType(type), mainWindow(parentWindow)
+WeatherReporter::WeatherReporter(QWidget *parent, atools::fs::FsPaths::SimulatorType type)
+  : QObject(parent), simType(type), parentWidget(parent)
 {
   queries = QueryManager::instance()->getQueriesGui();
 
@@ -92,15 +91,15 @@ WeatherReporter::WeatherReporter(MainWindow *parentWindow, atools::fs::FsPaths::
 
   xpWeatherReader = new atools::fs::weather::XpWeatherReader(this, verbose);
 
-  noaaWeather = new NoaaWeatherDownloader(parentWindow, verbose);
+  noaaWeather = new NoaaWeatherDownloader(parent, verbose);
   noaaWeather->setRequestUrl(OptionData::instance().getWeatherNoaaUrl());
   noaaWeather->setFetchAirportCoords(coordFunc); //// Set callback so the reader can build an index for nearest airports
 
-  vatsimWeather = new WeatherNetDownload(parentWindow, atools::fs::weather::FLAT, verbose);
+  vatsimWeather = new WeatherNetDownload(parent, atools::fs::weather::FLAT, verbose);
   vatsimWeather->setRequestUrl(OptionData::instance().getWeatherVatsimUrl());
   vatsimWeather->setFetchAirportCoords(coordFunc);
 
-  ivaoWeather = new WeatherNetDownload(parentWindow, atools::fs::weather::JSON, verbose);
+  ivaoWeather = new WeatherNetDownload(parent, atools::fs::weather::JSON, verbose);
   const QLatin1String KEY(":/littlenavmap/little_navmap_keys/ivao_weather_api_key.bin");
   if(QFile::exists(KEY))
   {
@@ -165,7 +164,7 @@ void WeatherReporter::noaaWeatherUpdated()
 {
   if(!atools::gui::Application::isShuttingDown())
   {
-    mainWindow->setStatusMessage(tr("NOAA weather downloaded."), true /* addToLog */);
+    NavApp::setStatusMessage(tr("NOAA weather downloaded."), true /* addToLog */);
     emit weatherUpdated();
   }
 }
@@ -174,7 +173,7 @@ void WeatherReporter::ivaoWeatherUpdated()
 {
   if(!atools::gui::Application::isShuttingDown())
   {
-    mainWindow->setStatusMessage(tr("IVAO weather downloaded."), true /* addToLog */);
+    NavApp::setStatusMessage(tr("IVAO weather downloaded."), true /* addToLog */);
     emit weatherUpdated();
   }
 }
@@ -183,7 +182,7 @@ void WeatherReporter::vatsimWeatherUpdated()
 {
   if(!atools::gui::Application::isShuttingDown())
   {
-    mainWindow->setStatusMessage(tr("VATSIM weather downloaded."), true /* addToLog */);
+    NavApp::setStatusMessage(tr("VATSIM weather downloaded."), true /* addToLog */);
     emit weatherUpdated();
   }
 }
@@ -324,13 +323,13 @@ void WeatherReporter::showXplaneWarningDialog(const QString& message)
 
   if(NavApp::hasInstalledSimulator(simType))
     // Path not valid ==========
-    atools::gui::Dialog(mainWindow).showWarnMsgBox(
+    atools::gui::Dialog(parentWidget).showWarnMsgBox(
       xpWeatherReader->getWeatherType() == atools::fs::weather::WEATHER_XP11 ?
       lnm::ACTIONS_SHOW_XP11_WEATHER_FILE_INVALID : lnm::ACTIONS_SHOW_XP12_WEATHER_FILE_INVALID,
       message % xplaneFileWarningMsg, tr("Do not &show this dialog again."));
   else
     // X-Plane is not installed ==========
-    atools::gui::Dialog(mainWindow).showWarnMsgBox(
+    atools::gui::Dialog(parentWidget).showWarnMsgBox(
       xpWeatherReader->getWeatherType() == atools::fs::weather::WEATHER_XP11 ?
       lnm::ACTIONS_SHOW_XP11_WEATHER_FILE_NO_SIM : lnm::ACTIONS_SHOW_XP12_WEATHER_FILE_NO_SIM,
       xplaneMissingWarningMsg, tr("Do not &show this dialog again."));
@@ -761,7 +760,7 @@ void WeatherReporter::weatherDownloadSslErrors(const QStringList& errors, const 
 {
   qWarning() << Q_FUNC_INFO;
 
-  int result = atools::gui::Dialog(mainWindow).
+  int result = atools::gui::Dialog(parentWidget).
                showQuestionMsgBox(lnm::ACTIONS_SHOW_SSL_WARNING_WEATHER,
                                   tr("<p>Errors while trying to establish an encrypted "
                                        "connection to download weather information:</p>"
@@ -784,19 +783,18 @@ void WeatherReporter::weatherDownloadSslErrors(const QStringList& errors, const 
 
 void WeatherReporter::weatherDownloadFailed(const QString& error, int errorCode, QString url)
 {
-  mainWindow->setStatusMessage(tr("Weather download failed."), true /* addToLog */);
+  NavApp::setStatusMessage(tr("Weather download failed."), true /* addToLog */);
 
   if(!errorReported)
   {
     // Show an error dialog for any failed downloads but only once per session
     errorReported = true;
-    atools::gui::Dialog(mainWindow).showWarnMsgBox(lnm::ACTIONS_SHOW_WEATHER_DOWNLOAD_FAIL,
-                                                   tr(
-                                                     "<p>Download of weather from<br/>\"%1\"<br/>failed.</p><p>Error: %2 (%3)</p>"
-                                                       "<p>Check weather settings or disable weather downloads.</p>"
-                                                         "<p>Suppressing further messages during this session.</p>").
-                                                   arg(url).arg(error).arg(errorCode),
-                                                   tr("Do not &show this dialog again."));
+    atools::gui::Dialog(parentWidget).showWarnMsgBox(lnm::ACTIONS_SHOW_WEATHER_DOWNLOAD_FAIL,
+                                                     tr("<p>Download of weather from<br/>\"%1\"<br/>failed.</p><p>Error: %2 (%3)</p>"
+                                                          "<p>Check weather settings or disable weather downloads.</p>"
+                                                            "<p>Suppressing further messages during this session.</p>").
+                                                     arg(url).arg(error).arg(errorCode),
+                                                     tr("Do not &show this dialog again."));
   }
 }
 
@@ -1025,7 +1023,7 @@ void WeatherReporter::activeSkyWeatherFilesChanged(const QStringList& paths)
 
     if(asSnapshotPathChecker->isValid())
     {
-      mainWindow->setStatusMessage(tr("Active Sky weather information updated."), true /* addToLog */);
+      NavApp::setStatusMessage(tr("Active Sky weather information updated."), true /* addToLog */);
       emit weatherUpdated();
     }
   }
@@ -1035,7 +1033,7 @@ void WeatherReporter::xplaneWeatherFileChanged()
 {
   if(!atools::gui::Application::isShuttingDown())
   {
-    mainWindow->setStatusMessage(tr("X-Plane weather information updated."), true /* addToLog */);
+    NavApp::setStatusMessage(tr("X-Plane weather information updated."), true /* addToLog */);
     emit weatherUpdated();
   }
 }

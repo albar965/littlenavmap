@@ -72,7 +72,7 @@ class ConnectClient :
   Q_OBJECT
 
 public:
-  explicit ConnectClient(MainWindow *parent);
+  explicit ConnectClient(QWidget *parent);
   virtual ~ConnectClient() override;
 
   ConnectClient(const ConnectClient& other) = delete;
@@ -151,6 +151,9 @@ signals:
   /* Fetch boat or aircraft AI has been changed */
   void aiFetchOptionsChanged();
 
+  /* Start installation for Little Xpconnect */
+  void installXpconnect();
+
 private:
   void readFromSocket();
   void readFromSocketError(QAbstractSocket::SocketError);
@@ -196,9 +199,10 @@ private:
   QTcpSocket *socket = nullptr;
   /* Used to trigger reconnects on socket base connections */
   QTimer reconnectNetworkTimer, flushQueuedRequestsTimer;
-  MainWindow *mainWindow;
   bool verbose = false;
   atools::util::TimedCache<QString, atools::fs::weather::Metar> metarIdentCache;
+
+  QWidget *parentWidget;
 
   /* Waiting for these replies for airport idents */
   QSet<QString> outstandingReplies;

@@ -49,6 +49,8 @@ class WeatherReporter;
 class WindReporter;
 
 class WeatherContextHandler;
+
+class StatusBar;
 namespace Marble {
 class MarbleAboutDialog;
 class RenderState;
@@ -163,44 +165,17 @@ public:
     return windReporter;
   }
 
+  StatusBar *getStatusBar() const
+  {
+    return statusBar;
+  }
+
   /* Update the window title after switching simulators, flight plan name or change status. */
   /* Updates main window title with simulator type, flight plan name and change status */
   void updateWindowTitle();
 
   /* Update tooltip state in recent menus */
   void setToolTipsEnabledMainMenu(bool enabled);
-
-  /* Update coordinate, declination and time zone displays in status bar */
-  void updateMapPositionLabel(const atools::geo::Pos& pos, int screenX, int screenY);
-
-  /* Sets the text and tooltip of the statusbar label that indicates what objects are shown on the map */
-  /* Updates label and tooltip for objects shown on map */
-  void setMapObjectsShownMessageText(const QString& text = QString(), const QString& tooltipText = QString());
-
-  /* Updates label and tooltip for connection status */
-  void setConnectionStatusMessageText(const QString& text, const QString& tooltipText);
-  void setOnlineConnectionStatusMessageText(const QString& text, const QString& tooltipText);
-
-  /* Sets a general status bar message which is shared with all widgets/actions status text */
-  /* Set a general status message */
-  void setStatusMessage(const QString& message, bool addToLog = false, bool popup = false);
-  void statusMessageChanged(const QString& text);
-
-  void setDetailLabelText(const QString& text);
-
-  /* Render state from marble widget. Get the more detailed state since it updates more often */
-  void renderStateChanged(const Marble::RenderState& state);
-
-  /* Clear render status if no updates appear */
-  void renderStatusReset();
-
-  /* Update label */
-  void renderStatusUpdateLabel(Marble::RenderStatus status, bool forceUpdate);
-  QString renderStatusString(Marble::RenderStatus status);
-
-  /* Show "Too many objects" label if number of map features was truncated */
-  /* Called after each query */
-  void resultTruncated();
 
   void setDatabaseErased(bool value)
   {
@@ -384,13 +359,8 @@ private:
   void runDirToolManual();
   void runDirTool(bool manual = true);
 
-  /* Update status bar section for online status */
-  void updateConnectionStatusMessageText();
-
   /* Set up own UI elements that cannot be created in designer */
   void setupUi();
-
-  void updateStatusBarStyle();
 
   /* Call other other classes to close queries and clear caches */
   void preDatabaseLoad();
@@ -487,7 +457,6 @@ private:
   /* Opens dialog for image resolution and returns pixmap and optionally AviTab JSON */
   bool createMapImage(QPixmap& pixmap, const QString& dialogTitle, const QString& optionPrefx, QString *json, bool dynamicFeatures);
 
-  void distanceChanged();
   void showDonationPage();
   void showManualDownloadPage();
   void showFaqPage();
@@ -535,7 +504,6 @@ private:
 
   /* Check manually for updates as triggered by the action */
   void checkForUpdates();
-  void updateClock() const;
 
   /* Actions that define the time source call this*/
   void sunShadingTimeChanged();
@@ -577,9 +545,6 @@ private:
   /* Print the size of all container classes to detect overflow or memory leak conditions */
   void debugDumpContainerSizes() const;
 
-  /* Reduce status bar size if no mouse movement */
-  void shrinkStatusBar();
-
   /* Called by DataExchangeFetcher::dataExchangeDataFetched(). Takes command line options from another instance. */
   void dataExchangeDataFetched(atools::util::Properties properties);
 
@@ -619,23 +584,6 @@ private:
   ProfileWidget *profileWidget = nullptr;
   PrintSupport *printSupport = nullptr;
 
-  /* Status bar labels */
-  QLabel *mapDistanceLabel = nullptr, *mapPositionLabel = nullptr, *mapMagvarLabel = nullptr, *timeZoneLabel = nullptr,
-         *mapRenderStatusLabel = nullptr, *mapDetailLabel = nullptr, *mapVisibleLabel = nullptr, *connectStatusLabel = nullptr,
-         *timeLabel = nullptr;
-
-  /* Connection field and tooltip in statusbar */
-  QString connectionStatus, connectionStatusTooltip, onlineConnectionStatus, onlineConnectionStatusTooltip;
-
-  /* List of status bar messages. First is shown and others are shown in tooltip. */
-  struct StatusMessage
-  {
-    QDateTime timestamp;
-    QString message;
-  };
-
-  QList<StatusMessage> statusMessages;
-
   /* true if database is currently switched off (i.e. the scenery library loading is open) */
   bool hasDatabaseLoadStatus = false;
 
@@ -656,6 +604,7 @@ private:
   SimBriefHandler *simbriefHandler = nullptr;
   MapThemeHandler *mapThemeHandler = nullptr;
   RouteStringDialog *routeStringDialog = nullptr;
+  StatusBar *statusBar = nullptr;
 
   /* Action  groups for main menu */
   QActionGroup *actionGroupMapProjection = nullptr, *actionGroupMapSunShading = nullptr,
@@ -675,10 +624,6 @@ private:
   bool databasesErased = false;
   QSize defaultToolbarIconSize;
   QString aboutMessage, layoutWarnText;
-  QTimer clockTimer /* MainWindow::updateClock() every second */,
-         renderStatusTimer /* MainWindow::renderStatusReset() if render status is stalled */,
-         shrinkStatusBarTimer /* calls MainWindow::shrinkStatusBar() once map pos and magvar are "-" */;
-  Marble::RenderStatus lastRenderStatus = Marble::Incomplete;
 
   /* Show hint dialog only once per session */
   bool backgroundHintRouteStringShown = false;

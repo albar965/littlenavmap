@@ -39,7 +39,7 @@
 
 #include <QStringBuilder>
 
-NavSearch::NavSearch(QMainWindow *parent, QTableView *tableView, si::TabSearchId tabWidgetIndex)
+NavSearch::NavSearch(MainWindow *parent, QTableView *tableView, si::TabSearchId tabWidgetIndex)
   : SearchBaseTable(parent, tableView, new ColumnList("nav_search", "nav_search_id"), tabWidgetIndex)
 {
   /* *INDENT-OFF* */
@@ -353,7 +353,8 @@ QString NavSearch::formatModelData(const Column *col, int row, const QVariant& d
   {
     if(controller->getRawData(row, QStringLiteral("nav_type")).toString() == QChar('W'))
       // Is waypoint
-      return atools::fs::util::capWaypointNameString(controller->getRawData(row, QStringLiteral("ident")).toString(), displayRoleValue.toString(),
+      return atools::fs::util::capWaypointNameString(controller->getRawData(row, QStringLiteral("ident")).toString(),
+                                                     displayRoleValue.toString(),
                                                      false /* emptyIfEqual */);
     else
       return atools::capString(displayRoleValue.toString());

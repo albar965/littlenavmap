@@ -64,8 +64,6 @@ struct MapResult;
 
 }
 
-class MainWindow;
-
 /*
  * Manages recurring download of online network data from the status.txt and whazzup.txt files.
  * Uses options to determine how to download data.
@@ -76,7 +74,7 @@ class OnlinedataController :
   Q_OBJECT
 
 public:
-  explicit OnlinedataController(atools::fs::online::OnlinedataManager *onlineManager, MainWindow *parent);
+  explicit OnlinedataController(atools::fs::online::OnlinedataManager *onlineManager, QWidget *parent);
   virtual ~OnlinedataController() override;
 
   OnlinedataController(const OnlinedataController& other) = delete;
@@ -193,7 +191,7 @@ private:
   /* Downloader for all files */
   atools::util::HttpDownloader *downloader;
 
-  MainWindow *mainWindow;
+  QWidget *parentWidget;
 
   /* State is set before triggering the download and clear on the last download in the chain.
    *  Set to NONE while timeout for whazzup download is running. */

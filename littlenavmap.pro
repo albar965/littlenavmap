@@ -341,6 +341,7 @@ SOURCES += \
   src/gui/mainwindow.cpp \
   src/gui/messagesettings.cpp \
   src/gui/runwayselection.cpp \
+  src/gui/statusbar.cpp \
   src/gui/statusbareventfilter.cpp \
   src/gui/stylehandler.cpp \
   src/gui/textdialog.cpp \
@@ -553,6 +554,7 @@ HEADERS  += \
   src/gui/mainwindow.h \
   src/gui/messagesettings.h \
   src/gui/runwayselection.h \
+  src/gui/statusbar.h \
   src/gui/statusbareventfilter.h \
   src/gui/stylehandler.h \
   src/gui/textdialog.h \

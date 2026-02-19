@@ -42,7 +42,7 @@ class OnlineCenterSearch :
   Q_OBJECT
 
 public:
-  explicit OnlineCenterSearch(QMainWindow *parent, QTableView *tableView, si::TabSearchId tabWidgetIndex);
+  explicit OnlineCenterSearch(MainWindow *parent, QTableView *tableView, si::TabSearchId tabWidgetIndex);
   virtual ~OnlineCenterSearch() override;
 
   /* All state saving is done through the widget state */

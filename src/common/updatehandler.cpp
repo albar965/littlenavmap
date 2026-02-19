@@ -19,7 +19,6 @@
 
 #include "common/constants.h"
 #include "gui/dialog.h"
-#include "gui/mainwindow.h"
 #include "gui/updatedialog.h"
 #include "app/navapp.h"
 #include "settings/settings.h"
@@ -33,8 +32,8 @@ using atools::util::UpdateCheck;
 using atools::settings::Settings;
 namespace html = atools::util::html;
 
-UpdateHandler::UpdateHandler(MainWindow *parent)
-  : QObject(parent), mainWindow(parent)
+UpdateHandler::UpdateHandler(QWidget *parent)
+  : QObject(parent), parentWidget(parent)
 {
   updateCheck = new UpdateCheck();
 
@@ -167,7 +166,7 @@ void UpdateHandler::updateFound(atools::util::UpdateList updates)
     atools::gui::Application::closeSplashScreen();
 
     // Show dialog
-    UpdateDialog updateDialog(mainWindow, updateReason == UPDATE_REASON_MANUAL);
+    UpdateDialog updateDialog(parentWidget, updateReason == UPDATE_REASON_MANUAL);
     updateDialog.setMessage(html.getHtml());
 
     // Show dialog
@@ -186,7 +185,7 @@ void UpdateHandler::updateFound(atools::util::UpdateList updates)
   }
   else
     // Nothing found but notification requested for manual trigger
-    atools::gui::Dialog::information(mainWindow, QObject::tr("No Updates available."));
+    atools::gui::Dialog::information(parentWidget, QObject::tr("No Updates available."));
 }
 
 /* Called by update checker */
@@ -198,7 +197,7 @@ void UpdateHandler::updateFailed(QString errorString)
                     arg(updateCheck->getUrl().toDisplayString()).arg(errorString);
 
   if(updateReason == UPDATE_REASON_MANUAL)
-    atools::gui::Dialog::warning(mainWindow, message);
+    atools::gui::Dialog::warning(parentWidget, message);
   else
-    atools::gui::Dialog(mainWindow).showWarnMsgBox(lnm::ACTIONS_SHOW_UPDATE_FAILED, message, tr("Do not &show this dialog again."));
+    atools::gui::Dialog(parentWidget).showWarnMsgBox(lnm::ACTIONS_SHOW_UPDATE_FAILED, message, tr("Do not &show this dialog again."));
 }

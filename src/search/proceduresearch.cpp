@@ -132,25 +132,6 @@ Q_DECLARE_TYPEINFO(ProcIndexEntry, Q_PRIMITIVE_TYPE);
 
 // =============================================================================================
 
-/* Use event filter to catch mouse click in white area and deselect all entries */
-class TreeEventFilter :
-  public QObject
-{
-
-public:
-  TreeEventFilter(ProcedureSearch *parent)
-    : QObject(parent), search(parent)
-  {
-  }
-
-private:
-  virtual bool eventFilter(QObject *object, QEvent *event) override;
-
-  ProcedureSearch *search;
-};
-
-// =============================================================================================
-
 bool TreeEventFilter::eventFilter(QObject *object, QEvent *event)
 {
   if(event->type() == QEvent::MouseButtonPress)
@@ -168,7 +149,7 @@ bool TreeEventFilter::eventFilter(QObject *object, QEvent *event)
 
 // =====================================================================================================
 
-ProcedureSearch::ProcedureSearch(QMainWindow *main, QTreeWidget *treeWidgetParam, si::TabSearchId tabWidgetIndex)
+ProcedureSearch::ProcedureSearch(MainWindow *main, QTreeWidget *treeWidgetParam, si::TabSearchId tabWidgetIndex)
   : AbstractSearch(main, tabWidgetIndex), treeWidget(treeWidgetParam)
 {
   const Queries *queries = QueryManager::instance()->getQueriesGui();
@@ -190,8 +171,6 @@ ProcedureSearch::ProcedureSearch(QMainWindow *main, QTreeWidget *treeWidgetParam
 
   transitionIndicator = tr(" (%L1 transitions)");
   transitionIndicatorOne = tr(" (one transition)");
-
-  Ui::MainWindow *ui = NavApp::getMainUi();
 
   ui->labelProcedureSearchWarn->installEventFilter(new atools::gui::ClickToolTipHandler(ui->labelProcedureSearchWarn));
   ui->labelProcedureSearchWarn->hide();
@@ -293,7 +272,6 @@ void ProcedureSearch::fontChanged(const QFont&)
 
 void ProcedureSearch::resetSearch()
 {
-  Ui::MainWindow *ui = NavApp::getMainUi();
   if(NavApp::getSearchController()->getCurrentSearchTabId() == tabIndex)
   {
     // Only reset if this tab is active
@@ -398,7 +376,6 @@ void ProcedureSearch::showProceduresInternal(const map::MapAirport& airportSim, 
 
   if(!silent)
   {
-    Ui::MainWindow *ui = NavApp::getMainUi();
     ui->dockWidgetSearch->show();
     ui->dockWidgetSearch->raise();
     NavApp::getSearchController()->setCurrentSearchTabId(si::SEARCH_PROC);
@@ -537,7 +514,6 @@ void ProcedureSearch::treeViewStateFromRoute()
 
 void ProcedureSearch::updateWidgets()
 {
-  Ui::MainWindow *ui = NavApp::getMainUi();
   ui->pushButtonProcedureShowAll->setDisabled(itemIndex.isEmpty());
   ui->pushButtonProcedureSearchClearSelection->setEnabled(!treeWidget->selectedItems().isEmpty() ||
                                                           ui->pushButtonProcedureShowAll->isChecked());
@@ -553,7 +529,6 @@ void ProcedureSearch::updateHeaderLabel()
     procs.append(procedureAndTransitionText(item, true /* header */));
 
   QString tooltip, statusTip;
-  Ui::MainWindow *ui = NavApp::getMainUi();
   HtmlBuilder html;
 
   if(currentAirportSim->isValid())
@@ -702,7 +677,6 @@ QString ProcedureSearch::procedureAndTransitionText(const QTreeWidgetItem *item,
 
 void ProcedureSearch::clearRunwayFilter()
 {
-  Ui::MainWindow *ui = NavApp::getMainUi();
 
   ui->comboBoxProcedureRunwayFilter->blockSignals(true);
   ui->comboBoxProcedureRunwayFilter->setCurrentIndex(FILTER_ALL_RUNWAYS);
@@ -715,7 +689,6 @@ void ProcedureSearch::clearRunwayFilter()
 
 void ProcedureSearch::clearTypeFilter()
 {
-  Ui::MainWindow *ui = NavApp::getMainUi();
 
   // Remove all additional type filters below approach all
   ui->comboBoxProcedureSearchFilter->blockSignals(true);
@@ -726,7 +699,6 @@ void ProcedureSearch::clearTypeFilter()
 
 void ProcedureSearch::updateFilterBoxes()
 {
-  Ui::MainWindow *ui = NavApp::getMainUi();
   runwayMismatches.clear();
 
   clearRunwayFilter();
@@ -835,7 +807,6 @@ void ProcedureSearch::fillProcedureTreeWidget()
     if(procedureRecords != nullptr)
     {
       QStringList runwayNames = airportQueryNav->getRunwayNames(currentAirportNav->id);
-      Ui::MainWindow *ui = NavApp::getMainUi();
       QTreeWidgetItem *root = treeWidget->invisibleRootItem();
       QList<SqlRecord> filteredProcedures;
 
@@ -1059,7 +1030,6 @@ void ProcedureSearch::fillProcedureTreeWidget()
 
 void ProcedureSearch::saveState()
 {
-  Ui::MainWindow *ui = NavApp::getMainUi();
   WidgetState(lnm::APPROACHTREE_WIDGET).save(QList<const QObject *>({ui->comboBoxProcedureSearchFilter, ui->comboBoxProcedureRunwayFilter,
                                                                      ui->actionSearchProcedureFollowSelection,
                                                                      ui->lineEditProcedureSearchIdentFilter}));
@@ -1106,7 +1076,6 @@ void ProcedureSearch::restoreState()
   QSet<int> state;
   if(OptionData::instance().getFlags() & opts::STARTUP_LOAD_SEARCH && !atools::gui::Application::isSafeMode())
   {
-    Ui::MainWindow *ui = NavApp::getMainUi();
     WidgetState(lnm::APPROACHTREE_WIDGET).restore({ui->comboBoxProcedureSearchFilter, ui->comboBoxProcedureRunwayFilter,
                                                    ui->actionSearchProcedureFollowSelection, ui->lineEditProcedureSearchIdentFilter});
 
@@ -1193,7 +1162,6 @@ void ProcedureSearch::itemSelectionChangedInternal(bool noFollow)
   qDebug() << Q_FUNC_INFO;
 #endif
 
-  Ui::MainWindow *ui = NavApp::getMainUi();
   const QList<QTreeWidgetItem *> selectedItems = treeWidget->selectedItems();
   if(selectedItems.isEmpty() || NavApp::getSearchController()->getCurrentSearchTabId() != tabIndex)
   {
@@ -1426,7 +1394,6 @@ void ProcedureSearch::contextMenu(const QPoint& pos)
   menuPos += QPoint(3, 3);
 
   // Save text which will be changed below
-  Ui::MainWindow *ui = NavApp::getMainUi();
   ActionTextSaver saver({ui->actionInfoApproachShow, ui->actionSearchProcedureShowAll, ui->actionSearchProcedureFollowSelection,
                          ui->actionInfoApproachAttach, ui->actionInfoApproachExpandAll,
                          ui->actionInfoApproachCollapseAll, ui->actionSearchProcedureInformation,
@@ -1668,12 +1635,12 @@ void ProcedureSearch::attachProcedure()
   {
     if(procedureLegs->hasHardError)
     {
-      atools::gui::Dialog::warning(mainWindow, tr("Procedure has errors and cannot be added to the flight plan.\n"
-                                                  "This can happen due to inconsistent navdata, missing waypoints or other reasons."));
+      atools::gui::Dialog::warning(parentWidget, tr("Procedure has errors and cannot be added to the flight plan.\n"
+                                                    "This can happen due to inconsistent navdata, missing waypoints or other reasons."));
     }
     else if(procedureLegs->hasError)
     {
-      int result = atools::gui::Dialog(mainWindow).
+      int result = atools::gui::Dialog(parentWidget).
                    showQuestionMsgBox(lnm::ACTIONS_SHOW_INVALID_PROC_WARNING,
                                       tr("Procedure has errors and will not display correctly.\n"
                                          "This can happen due to inconsistent navdata, "

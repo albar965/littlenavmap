@@ -58,7 +58,7 @@ const static QSet<QString> AIRPORT_NUMBER_COLUMNS({"num_approach", "num_runway_h
                                                    "num_parking_ga_ramp", "num_parking_cargo", "num_parking_mil_cargo",
                                                    "num_parking_mil_combat", "num_helipad"});
 
-AirportSearch::AirportSearch(QMainWindow *parent, QTableView *tableView, si::TabSearchId tabWidgetIndex)
+AirportSearch::AirportSearch(MainWindow *parent, QTableView *tableView, si::TabSearchId tabWidgetIndex)
   : SearchBaseTable(parent, tableView, new ColumnList("airport", "airport_id"), tabWidgetIndex)
 {
   // Have to convert units for these two spin boxes here since they are not registered in the base
@@ -959,7 +959,7 @@ void AirportSearch::dataRandomAirportsReceived(bool isSuccess, int indexDepartur
         if(result == QMessageBox::Yes)
           // Use data
           // Does not show a question dialog if flight plan has changes since this is save to the undo/redo stack
-          NavApp::getMainWindow()->routeNewFromAirports(airportDeparture, airportDestination);
+          mainWindow->routeNewFromAirports(airportDeparture, airportDestination);
         else if(result == QMessageBox::No)
           // Start again in main event loop after leaving this method
           tryAgain = true;
@@ -968,7 +968,7 @@ void AirportSearch::dataRandomAirportsReceived(bool isSuccess, int indexDepartur
       }
     }
     else
-      atools::gui::Dialog::information(NavApp::getMainWindow(),
+      atools::gui::Dialog::information(mainWindow,
                                        tr("No (further) airports satisfying your criteria\nfound in the airport search result table."));
 
     // we can delete, due to dialog giving signalling thread

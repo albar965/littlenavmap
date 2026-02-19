@@ -33,7 +33,6 @@
 #include "fs/xp/scenerypacks.h"
 #include "gui/dialog.h"
 #include "gui/helphandler.h"
-#include "gui/mainwindow.h"
 #include "io/fileroller.h"
 #include "app/navapp.h"
 #include "options/optiondata.h"
@@ -74,13 +73,13 @@ const static int SIMCONNECT_LOADING_MINUTES_MIN = 10;
 const static int SIMCONNECT_LOADING_MINUTES_MAX = 15;
 #endif
 
-DatabaseManager::DatabaseManager(MainWindow *parent, bool verbose)
-  : QObject(parent), mainWindow(parent)
+DatabaseManager::DatabaseManager(QWidget *parent, bool verbose)
+  : QObject(parent), parentWidget(parent)
 {
   databaseMetaText = tr("<p><big>Last Update: %1. Database Version: %2. Program Version: %3.%4</big></p>");
   databaseAiracCycleText = tr(" AIRAC Cycle %1.");
 
-  dialog = new Dialog(mainWindow);
+  dialog = new Dialog(parentWidget);
 
   // Keeps MSFS translations from table "translation" in memory
   languageIndex = new atools::fs::scenery::LanguageJson;
@@ -123,9 +122,9 @@ DatabaseManager::DatabaseManager(MainWindow *parent, bool verbose)
   if(verbose)
     qInfo() << Q_FUNC_INFO << "fs type" << currentFsType;
 
-  if(mainWindow != nullptr)
+  if(parentWidget != nullptr)
   {
-    databaseDialog = new DatabaseDialog(mainWindow, simulators);
+    databaseDialog = new DatabaseDialog(parentWidget, simulators);
     databaseDialog->setReadInactive(readInactive);
     databaseDialog->setReadAddOnXml(readAddOnXml);
 
@@ -140,7 +139,7 @@ DatabaseManager::DatabaseManager(MainWindow *parent, bool verbose)
   databaseSim = new SqlDatabase(dbtools::DATABASE_NAME_SIM);
   databaseNav = new SqlDatabase(dbtools::DATABASE_NAME_NAV);
 
-  if(mainWindow != nullptr)
+  if(parentWidget != nullptr)
   {
     // Open only for instantiation in main window and not in main function
     SqlDatabase::addDatabase(dbtools::DATABASE_TYPE, dbtools::DATABASE_NAME_USER);
@@ -215,9 +214,9 @@ DatabaseManager::DatabaseManager(MainWindow *parent, bool verbose)
   }
 
   // Run if instantiated from the GUI
-  if(mainWindow != nullptr)
+  if(parentWidget != nullptr)
   {
-    databaseLoader = new DatabaseLoader(mainWindow);
+    databaseLoader = new DatabaseLoader(parentWidget);
     connect(databaseLoader, &DatabaseLoader::loadingFinished, this, &DatabaseManager::loadSceneryInternalPost);
 
     // Correct navdata selection automatically if enabled
@@ -342,7 +341,7 @@ bool DatabaseManager::checkIncompatibleDatabases(bool *databasesErased)
       Application::closeSplashScreen();
 
       QMessageBox box(QMessageBox::Question, QCoreApplication::applicationName(), msg.arg(databaseNames.join("<br/>")).arg(trailingMsg),
-                      QMessageBox::No | QMessageBox::Yes, mainWindow);
+                      QMessageBox::No | QMessageBox::Yes, parentWidget);
       box.button(QMessageBox::No)->setText(tr("&No and Exit Application"));
       box.button(QMessageBox::Yes)->setText(tr("&Erase"));
       box.setWindowFlag(Qt::WindowContextHelpButtonHint, false);
@@ -356,7 +355,7 @@ bool DatabaseManager::checkIncompatibleDatabases(bool *databasesErased)
         ok = false;
       else if(result == QMessageBox::Yes)
       {
-        SimpleWaitDialog *simpleWaitDialog = new SimpleWaitDialog(mainWindow, tr("Deleting ..."));
+        SimpleWaitDialog *simpleWaitDialog = new SimpleWaitDialog(parentWidget, tr("Deleting ..."));
 
         int i = 0;
         for(const QString& dbfile : databaseFiles)
@@ -379,8 +378,8 @@ bool DatabaseManager::checkIncompatibleDatabases(bool *databasesErased)
           else
           {
             qWarning() << "Removing database failed" << dbfile;
-            Dialog::warning(mainWindow, tr("Deleting of database<br/><br/>\"%1\"<br/><br/>failed.<br/><br/>"
-                                           "Remove the database file manually and restart the program.").arg(dbfile));
+            Dialog::warning(parentWidget, tr("Deleting of database<br/><br/>\"%1\"<br/><br/>failed.<br/><br/>"
+                                             "Remove the database file manually and restart the program.").arg(dbfile));
             ok = false;
           }
           i++;
@@ -465,7 +464,7 @@ void DatabaseManager::checkCopyAndPrepareDatabases()
       if(result == QMessageBox::Yes)
       {
         // We have a database in the application folder and it is newer than the one in the settings folder
-        SimpleWaitDialog *simpleWaitDialog = new SimpleWaitDialog(mainWindow, tr("Preparing %1 Database ...").
+        SimpleWaitDialog *simpleWaitDialog = new SimpleWaitDialog(parentWidget, tr("Preparing %1 Database ...").
                                                                   arg(FsPaths::typeToDisplayName(FsPaths::NAVIGRAPH)));
 
         bool resultRemove = true, resultCopy = false;
@@ -502,12 +501,12 @@ void DatabaseManager::checkCopyAndPrepareDatabases()
         delete simpleWaitDialog;
 
         if(!resultRemove)
-          Dialog::warning(mainWindow,
+          Dialog::warning(parentWidget,
                           tr("Deleting of database<br/><br/>\"%1\"<br/><br/>failed.<br/><br/>"
                              "Remove the database file manually and restart the program.").arg(settingsDb));
 
         if(!resultCopy)
-          Dialog::warning(mainWindow,
+          Dialog::warning(parentWidget,
                           tr("Cannot copy database<br/><br/>\"%1\"<br/><br/>to<br/><br/>"
                              "\"%2\"<br/><br/>.").arg(appDb).arg(settingsDb));
       }
@@ -516,7 +515,7 @@ void DatabaseManager::checkCopyAndPrepareDatabases()
 
   if(settingsNeedsPreparation && hasSettings)
   {
-    SimpleWaitDialog *simpleWaitDialog = new SimpleWaitDialog(mainWindow, tr("Preparing %1 Database ...").
+    SimpleWaitDialog *simpleWaitDialog = new SimpleWaitDialog(parentWidget, tr("Preparing %1 Database ...").
                                                               arg(FsPaths::typeToDisplayName(FsPaths::NAVIGRAPH)));
 
     SqlDatabase tempDb(dbtools::DATABASE_NAME_TEMP);
@@ -1001,7 +1000,7 @@ void DatabaseManager::openWriteableDatabase(atools::sql::SqlDatabase *database, 
   }
   catch(atools::sql::SqlException& e)
   {
-    Dialog::critical(mainWindow,
+    Dialog::critical(parentWidget,
                      tr("Cannot open database. Error message:<br/><br/>"
                         "%1<br/><br/>"
                         "File is either malformed or this is an internal error.<br/><br/>"
@@ -1130,7 +1129,7 @@ void DatabaseManager::checkForChangedNavAndSimDatabases()
       files.removeDuplicates();
       if(!files.isEmpty())
       {
-        Dialog::warning(mainWindow,
+        Dialog::warning(parentWidget,
                         tr("<p>Detected a modification of one or more database files:<br/>"
                            "\"%1\"<br/><br/>"
                            "Always close %2 before copying, overwriting or updating scenery library databases.</p>").
@@ -1375,7 +1374,7 @@ void DatabaseManager::checkSceneryOptions(bool manualCheck)
   {
     case navdb::CORRECT_NONE:
       if(manualCheck)
-        Dialog::information(mainWindow,
+        Dialog::information(parentWidget,
                             navDbActionAuto->isChecked() ?
                             tr("<p>Scenery library mode is correct. Mode is set automatically by Little Navmap.</p>") :
                             tr("<p>No issues found. Scenery library mode is correct and "
@@ -1384,7 +1383,7 @@ void DatabaseManager::checkSceneryOptions(bool manualCheck)
 
     case navdb::CORRECT_EMPTY:
       if(manualCheck)
-        Dialog::information(mainWindow,
+        Dialog::information(parentWidget,
                             tr("<p>Simulator database is empty.</p>"
                                  "<p>Showing Navigraph airports and navaids.</p>"
                                    "<p style='white-space:pre'>You can load the simulator scenery library "
@@ -1394,7 +1393,7 @@ void DatabaseManager::checkSceneryOptions(bool manualCheck)
 
     case navdb::CORRECT_EMPTY_CHANGE:
       if(manualCheck)
-        Dialog::information(mainWindow,
+        Dialog::information(parentWidget,
                             tr("<p>Simulator database is empty.</p>"
                                  "<p style='white-space:pre'>You can load the simulator scenery library "
                                    "database in the menu<br/>"
@@ -1887,7 +1886,7 @@ void DatabaseManager::restoreState()
 /* Updates metadata, version and object counts in the scenery loading dialog */
 void DatabaseManager::updateDialogInfo(atools::fs::FsPaths::SimulatorType value)
 {
-  Q_ASSERT(mainWindow != nullptr);
+  Q_ASSERT(parentWidget != nullptr);
 
   QString metaText;
 

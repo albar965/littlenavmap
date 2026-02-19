@@ -26,7 +26,7 @@
 #include "fs/sc/simconnectdata.h"
 #include "gui/desktopservices.h"
 #include "gui/helphandler.h"
-#include "gui/mainwindow.h"
+#include "gui/statusbar.h"
 #include "gui/tabwidgethandler.h"
 #include "gui/tools.h"
 #include "gui/widgetutil.h"
@@ -53,8 +53,8 @@ using atools::fs::sc::SimConnectUserAircraft;
 
 namespace ahtml = atools::util::html;
 
-InfoController::InfoController(MainWindow *parent)
-  : QObject(parent), mainWindow(parent)
+InfoController::InfoController(QWidget *parent)
+  : QObject(parent), parentWidget(parent)
 {
   lastSimData = new atools::fs::sc::SimConnectData;
   currentSearchResult = new map::MapResult;
@@ -120,7 +120,7 @@ InfoController::InfoController(MainWindow *parent)
                         "Then select the simulator and click \"Connect\".\n",
                         "Keep instructions in sync with translated menus and shortcuts");
 
-  aircraftProgressConfig = new AircraftProgressConfig(mainWindow);
+  aircraftProgressConfig = new AircraftProgressConfig(parentWidget);
 
   // ==================================================================================
   // Create a configuration push button and place it into the aircraft progress info text browser
@@ -325,7 +325,7 @@ void InfoController::anchorClicked(const QUrl& url)
 
   if(url.scheme() == "http" || url.scheme() == "https" || url.scheme() == "ftp" || url.scheme() == "file")
     // Open a normal link or file from the userpoint description
-    atools::gui::DesktopServices::openUrl(mainWindow, url);
+    atools::gui::DesktopServices::openUrl(parentWidget, url);
   else if(url.scheme() == "lnm")
   {
     // Internal link like "show on map"
@@ -347,13 +347,13 @@ void InfoController::anchorClicked(const QUrl& url)
       {
         // Hide normal airspace highlights from information window =========================================
         mapWidget->clearAirspaceHighlights();
-        mainWindow->updateHighlightActionStates();
+        emit updateHighlightActionStates();
       }
       else if(query.hasQueryItem("hideairways"))
       {
         // Hide airway highlights from information window =========================================
         mapWidget->clearAirwayHighlights();
-        mainWindow->updateHighlightActionStates();
+        emit updateHighlightActionStates();
       }
     }
     else if(url.host() == "info")
@@ -405,7 +405,7 @@ void InfoController::anchorClicked(const QUrl& url)
             airspaceHighlights.append(airspace);
           mapWidget->changeAirspaceHighlights(airspaceHighlights);
 
-          mainWindow->updateHighlightActionStates();
+          emit updateHighlightActionStates();
           emit showRect(airspace.bounding, false);
         }
         else if(type == map::AIRWAY)
@@ -421,7 +421,7 @@ void InfoController::anchorClicked(const QUrl& url)
           QList<QList<map::MapAirway> > airwayHighlights = mapWidget->getAirwayHighlights();
           airwayHighlights.append(airways);
           mapWidget->changeAirwayHighlights(airwayHighlights);
-          mainWindow->updateHighlightActionStates();
+          emit updateHighlightActionStates();
           emit showRect(bounding, false);
         }
         else if(type == map::ILS)
@@ -448,7 +448,7 @@ void InfoController::anchorClicked(const QUrl& url)
       }
       else if(query.hasQueryItem("filepath"))
         // Show path in any OS dependent file manager. Selects the file in Windows Explorer.
-        atools::gui::DesktopServices::openFile(mainWindow, query.queryItemValue("filepath"), true /* showInFileManager */);
+        atools::gui::DesktopServices::openFile(parentWidget, query.queryItemValue("filepath"), true /* showInFileManager */);
       else
         qWarning() << Q_FUNC_INFO << "Unknwown URL" << url;
     }
@@ -1041,7 +1041,7 @@ void InfoController::showInformationInternal(map::MapResult result, bool showWin
         objType = tr("online center");
         break;
     }
-    mainWindow->setStatusMessage(tr("Showing information for %1.").arg(objType));
+    NavApp::getStatusBar()->setStatusMessage(tr("Showing information for %1.").arg(objType));
 
     // Switch to a tab in aircraft window
     ic::TabAircraftId acidx = static_cast<ic::TabAircraftId>(tabHandlerAircraft->getCurrentTabId());

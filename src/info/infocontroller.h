@@ -23,7 +23,6 @@
 #include <QObject>
 #include <QSet>
 
-class MainWindow;
 class MapQuery;
 class AirportQuery;
 class InfoQuery;
@@ -68,7 +67,7 @@ class InfoController :
   Q_OBJECT
 
 public:
-  explicit InfoController(MainWindow *parent);
+  explicit InfoController(QWidget *parent);
   virtual ~InfoController() override;
 
   InfoController(const InfoController& other) = delete;
@@ -145,6 +144,9 @@ signals:
   void showRect(const atools::geo::Rect& rect, bool doubleClick);
   void showProcedures(const map::MapAirport& airport, bool departureFilter, bool arrivalFilter);
 
+  /* Enable or disable actions */
+  void updateHighlightActionStates();
+
 private:
   /* Do not update aircraft progress more than every 0.5 seconds */
   static Q_DECL_CONSTEXPR int MIN_SIM_UPDATE_TIME_MS = 500;
@@ -212,7 +214,7 @@ private:
   /* Airport and navaids that are currently shown in the tabs */
   map::MapResult *currentSearchResult, *savedSearchResult;
 
-  MainWindow *mainWindow = nullptr;
+  QWidget *parentWidget = nullptr;
   HtmlInfoBuilder *infoBuilder = nullptr;
   Queries *queries;
 

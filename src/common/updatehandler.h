@@ -31,8 +31,6 @@ typedef QList<atools::util::Update> UpdateList;
 }
 }
 
-class MainWindow;
-
 /*
  * Update handler that drives all checks for updates and show dialogs,
  * stores versions to skip, maintains a timestamp, etc.
@@ -43,7 +41,7 @@ class UpdateHandler :
   Q_OBJECT
 
 public:
-  explicit UpdateHandler(MainWindow *parent = nullptr);
+  explicit UpdateHandler(QWidget *parent = nullptr);
   virtual ~UpdateHandler() override;
 
   UpdateHandler(const UpdateHandler& other) = delete;
@@ -98,7 +96,7 @@ private:
   UpdateReason updateReason = UPDATE_REASON_UNKNOWN;
   bool enabled = true;
   atools::util::UpdateCheck *updateCheck;
-  MainWindow *mainWindow = nullptr;
+  QWidget *parentWidget = nullptr;
 };
 
 #endif // LITTLENAVMAP_UPDATEHANDLER_H

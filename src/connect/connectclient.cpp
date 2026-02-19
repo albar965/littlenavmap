@@ -29,7 +29,7 @@
 #include "geo/calculations.h"
 #include "gui/dialog.h"
 #include "gui/helphandler.h"
-#include "gui/mainwindow.h"
+#include "gui/statusbar.h"
 #include "online/onlinedatacontroller.h"
 #include "settings/settings.h"
 #include "timezone/timezonemanager.h"
@@ -53,8 +53,8 @@ const static int FLUSH_QUEUE_MS = 50;
 const static int WEATHER_TIMEOUT_FS_SECS = 15;
 const static int NOT_AVAILABLE_TIMEOUT_FS_SECS = 300;
 
-ConnectClient::ConnectClient(MainWindow *parent)
-  : QObject(parent), mainWindow(parent), metarIdentCache(WEATHER_TIMEOUT_FS_SECS), notAvailableStations(NOT_AVAILABLE_TIMEOUT_FS_SECS),
+ConnectClient::ConnectClient(QWidget *parent)
+  : QObject(parent), metarIdentCache(WEATHER_TIMEOUT_FS_SECS), parentWidget(parent), notAvailableStations(NOT_AVAILABLE_TIMEOUT_FS_SECS),
 
   // VERSION_NUMBER_TODO update minimum Xpconnect version
   minimumXpconnectVersion("1.2.2")
@@ -65,7 +65,7 @@ ConnectClient::ConnectClient(MainWindow *parent)
   atools::settings::Settings& settings = atools::settings::Settings::instance();
   verbose = settings.getAndStoreValue(lnm::OPTIONS_CONNECTCLIENT_DEBUG, false).toBool();
 
-  errorMessageBox = new QMessageBox(QMessageBox::Critical, QCoreApplication::applicationName(), QString(), QMessageBox::Ok, mainWindow);
+  errorMessageBox = new QMessageBox(QMessageBox::Critical, QCoreApplication::applicationName(), QString(), QMessageBox::Ok, parentWidget);
   errorMessageBox->setWindowFlag(Qt::WindowContextHelpButtonHint, false);
   errorMessageBox->setWindowModality(Qt::ApplicationModal);
   errorMessageBox->setTextInteractionFlags(Qt::TextSelectableByMouse);
@@ -78,7 +78,7 @@ ConnectClient::ConnectClient(MainWindow *parent)
   xpConnectHandler = new atools::fs::sc::XpConnectHandler();
 
   // Create thread class that reads data from handler
-  dataReader = new DataReaderThread(mainWindow, settings.getAndStoreValue(lnm::OPTIONS_DATAREADER_DEBUG, false).toBool());
+  dataReader = new DataReaderThread(parentWidget, settings.getAndStoreValue(lnm::OPTIONS_DATAREADER_DEBUG, false).toBool());
 
   directReconnectSimSec = settings.getAndStoreValue(lnm::OPTIONS_DATAREADER_RECONNECT_SIM, 15).toInt();
   directReconnectXpSec = settings.getAndStoreValue(lnm::OPTIONS_DATAREADER_RECONNECT_XP, 5).toInt();
@@ -100,7 +100,7 @@ ConnectClient::ConnectClient(MainWindow *parent)
   connect(dataReader, &DataReaderThread::connectedToSimulator, this, &ConnectClient::connectedToSimulatorDirect);
   connect(dataReader, &DataReaderThread::disconnectedFromSimulator, this, &ConnectClient::disconnectedFromSimulatorDirect);
 
-  connectDialog = new ConnectDialog(mainWindow, simConnectHandler->isLoaded());
+  connectDialog = new ConnectDialog(parentWidget, simConnectHandler->isLoaded());
   connect(connectDialog, &ConnectDialog::updateRateChanged, this, &ConnectClient::updateRateChanged);
   connect(connectDialog, &ConnectDialog::aiFetchRadiusChanged, this, &ConnectClient::aiFetchRadiusChanged);
   connect(connectDialog, &ConnectDialog::fetchOptionsChanged, this, &ConnectClient::fetchOptionsChanged);
@@ -248,10 +248,12 @@ void ConnectClient::connectedToSimulatorDirect()
 {
   qDebug() << Q_FUNC_INFO;
 
-  mainWindow->setConnectionStatusMessageText(tr("Connected (%1)").arg(simShortName()),
-                                             tr("Connected to local flight simulator (%1).").arg(simName()));
+  StatusBar *statusBar = NavApp::getStatusBar();
+
+  statusBar->setConnectionStatusMessageText(tr("Connected (%1)").arg(simShortName()),
+                                            tr("Connected to local flight simulator (%1).").arg(simName()));
   connectDialog->setConnected(isConnected());
-  mainWindow->setStatusMessage(tr("Connected to simulator."), true /* addLog */);
+  statusBar->setStatusMessage(tr("Connected to simulator."), true /* addLog */);
 
   // Clear status for first valid aircraft detection
   foundValidAircraft = false;
@@ -264,6 +266,8 @@ void ConnectClient::disconnectedFromSimulatorDirect()
 {
   qDebug() << Q_FUNC_INFO;
 
+  StatusBar *statusBar = NavApp::getStatusBar();
+
   // Clear status for first valid aircraft detection
   foundValidAircraft = false;
 
@@ -273,7 +277,7 @@ void ConnectClient::disconnectedFromSimulatorDirect()
   if(!errorState && connectDialog->isAutoConnect() && connectDialog->isAnyConnectDirect() && !manualDisconnect && !simconnectPaused)
     connectInternal();
   else
-    mainWindow->setConnectionStatusMessageText(tr("Disconnected"), tr("Disconnected from local flight simulator."));
+    statusBar->setConnectionStatusMessageText(tr("Disconnected"), tr("Disconnected from local flight simulator."));
   connectDialog->setConnected(isConnected());
 
   metarIdentCache.clear();
@@ -284,7 +288,7 @@ void ConnectClient::disconnectedFromSimulatorDirect()
 
   if(!atools::gui::Application::isShuttingDown())
   {
-    mainWindow->setStatusMessage(tr("Disconnected from simulator."), true /* addLog */);
+    statusBar->setStatusMessage(tr("Disconnected from simulator."), true /* addLog */);
     emit disconnectedFromSimulator();
     emit weatherUpdated();
   }
@@ -524,7 +528,7 @@ void ConnectClient::statusPosted(atools::fs::sc::SimConnectStatus status, QStrin
   if(status != atools::fs::sc::OK)
     handleError(status, statusText, dataReader->isXplaneHandler(), isNetworkConnect());
   else
-    mainWindow->setConnectionStatusMessageText(QString(), statusText);
+    NavApp::getStatusBar()->setConnectionStatusMessageText(QString(), statusText);
 }
 
 void ConnectClient::saveState() const
@@ -704,7 +708,7 @@ void ConnectClient::autoConnectToggled(bool state)
       dataReader->terminateThread();
       qDebug() << Q_FUNC_INFO << "Stopping reconnect done";
     }
-    mainWindow->setConnectionStatusMessageText(tr("Disconnected"), tr("Auto connect switched off."));
+    NavApp::getStatusBar()->setConnectionStatusMessageText(tr("Disconnected"), tr("Auto connect switched off."));
   }
 }
 
@@ -755,13 +759,13 @@ void ConnectClient::showXpconnectVersionWarning(const QString& xpconnectVersion)
     atools::gui::DialogButton(QString(), QMessageBox::Help)
   };
 
-  int retval = atools::gui::Dialog(mainWindow).showQuestionMsgBox(QString(), message,
-                                                                  QString(), buttonList, QMessageBox::Ok, QMessageBox::Help);
+  int retval = atools::gui::Dialog(parentWidget).showQuestionMsgBox(QString(), message,
+                                                                    QString(), buttonList, QMessageBox::Ok, QMessageBox::Help);
 
   if(retval == QMessageBox::Help)
-    atools::gui::HelpHandler::openHelpUrlWeb(mainWindow, lnm::helpOnlineUrl + "XPCONNECT.html", lnm::helpLanguageOnline());
+    atools::gui::HelpHandler::openHelpUrlWeb(parentWidget, lnm::helpOnlineUrl + "XPCONNECT.html", lnm::helpLanguageOnline());
   else if(retval == QMessageBox::Save)
-    mainWindow->installXpconnect();
+    emit installXpconnect();
 }
 
 void ConnectClient::showTerminalError()
@@ -771,7 +775,7 @@ void ConnectClient::showTerminalError()
     if(!terminalErrorShown)
     {
       terminalErrorShown = true;
-      atools::gui::Dialog::warning(mainWindow,
+      atools::gui::Dialog::warning(parentWidget,
                                    tr("Too many errors when trying to connect to simulator.\n\n"
                                       "Not matching simulator interface or other SimConnect problem.\n\n"
                                       "Make sure to use the right version of %1 with the right simulator:\n"
@@ -784,6 +788,8 @@ void ConnectClient::showTerminalError()
 
 void ConnectClient::connectInternal()
 {
+  StatusBar *statusBar = NavApp::getStatusBar();
+
   if(connectDialog->isAnyConnectDirect() && !simconnectPaused)
   {
     qDebug() << Q_FUNC_INFO << "Starting direct connection";
@@ -805,13 +811,13 @@ void ConnectClient::connectInternal()
     aiFetchRadiusChanged(connectDialog->getCurrentSimType());
 
     if(dataReader->isFailedTerminally())
-      mainWindow->setConnectionStatusMessageText(tr("Error (%1) ...").arg(simShortName()),
-                                                 tr("Too many errors when trying to connect to simulator (%1).").arg(simName()));
+      statusBar->setConnectionStatusMessageText(tr("Error (%1) ...").arg(simShortName()),
+                                                tr("Too many errors when trying to connect to simulator (%1).").arg(simName()));
     else
     {
       dataReader->start();
-      mainWindow->setConnectionStatusMessageText(tr("Connecting (%1) ...").arg(simShortName()),
-                                                 tr("Trying to connect to local flight simulator (%1).").arg(simName()));
+      statusBar->setConnectionStatusMessageText(tr("Connecting (%1) ...").arg(simShortName()),
+                                                tr("Trying to connect to local flight simulator (%1).").arg(simName()));
     }
   }
   else if(socket == nullptr && !connectDialog->getRemoteHostname().isEmpty())
@@ -829,9 +835,9 @@ void ConnectClient::connectInternal()
     socket->connectToHost(connectDialog->getRemoteHostname(), connectDialog->getRemotePort(),
                           QAbstractSocket::ReadWrite, QAbstractSocket::AnyIPProtocol);
 
-    mainWindow->setConnectionStatusMessageText(tr("Connecting ..."),
-                                               tr("Trying to connect to remote flight simulator on \"%1\".").
-                                               arg(connectDialog->getRemoteHostname()));
+    statusBar->setConnectionStatusMessageText(tr("Connecting ..."),
+                                              tr("Trying to connect to remote flight simulator on \"%1\".").
+                                              arg(connectDialog->getRemoteHostname()));
   }
 }
 
@@ -883,9 +889,9 @@ void ConnectClient::readFromSocketError(QAbstractSocket::SocketError)
     if(socket->error() == QAbstractSocket::RemoteHostClosedError)
     {
       // Nicely closed on the other end
-      atools::gui::Dialog(mainWindow).showInfoMsgBox(lnm::ACTIONS_SHOW_DISCONNECT_INFO,
-                                                     tr("Remote end closed connection."),
-                                                     tr("Do not &show this dialog again."));
+      atools::gui::Dialog(parentWidget).showInfoMsgBox(lnm::ACTIONS_SHOW_DISCONNECT_INFO,
+                                                       tr("Remote end closed connection."),
+                                                       tr("Do not &show this dialog again."));
     }
     else
     {
@@ -895,7 +901,7 @@ void ConnectClient::readFromSocketError(QAbstractSocket::SocketError)
                     arg(connectDialog->isAutoConnect() ? tr("\nWill retry to connect.") : QString());
 
       // Closed due to error
-      atools::gui::Dialog::critical(mainWindow, msg, QMessageBox::Close);
+      atools::gui::Dialog::critical(parentWidget, msg, QMessageBox::Close);
     }
   }
 
@@ -944,7 +950,8 @@ void ConnectClient::closeSocket(bool allowRestart)
     }
   }
 
-  mainWindow->setConnectionStatusMessageText(msg, msgTooltip);
+  StatusBar *statusBar = NavApp::getStatusBar();
+  statusBar->setConnectionStatusMessageText(msg, msgTooltip);
   connectDialog->setConnected(isConnected());
 
   metarIdentCache.clear();
@@ -959,7 +966,7 @@ void ConnectClient::closeSocket(bool allowRestart)
 
     if(!atools::gui::Application::isShuttingDown())
     {
-      mainWindow->setStatusMessage(tr("Disconnected from simulator."), true /* addLog */);
+      statusBar->setStatusMessage(tr("Disconnected from simulator."), true /* addLog */);
 
       // Clear status for first valid aircraft detection
       foundValidAircraft = false;
@@ -989,7 +996,7 @@ void ConnectClient::writeReplyToSocket(atools::fs::sc::SimConnectReply& reply)
     if(reply.getStatus() != atools::fs::sc::OK)
     {
       // Something went wrong - shutdown
-      atools::gui::Dialog::critical(mainWindow, tr("Error writing reply to Little Navconnect: %1.").arg(reply.getStatusText()));
+      atools::gui::Dialog::critical(parentWidget, tr("Error writing reply to Little Navconnect: %1.").arg(reply.getStatusText()));
       closeSocket(false);
       return;
     }
@@ -1005,17 +1012,18 @@ void ConnectClient::connectedToServerSocket()
   qInfo() << Q_FUNC_INFO << "Connected to" << socket->peerName() << socket->peerPort() << socket->peerAddress().protocol();
   socketConnected = true;
   reconnectNetworkTimer.stop();
+  StatusBar *statusBar = NavApp::getStatusBar();
 
-  mainWindow->setConnectionStatusMessageText(tr("Connected"),
-                                             tr("Connected to remote flight simulator on \"%1\".").
-                                             arg(socket->peerName()));
+  statusBar->setConnectionStatusMessageText(tr("Connected"),
+                                            tr("Connected to remote flight simulator on \"%1\".").
+                                            arg(socket->peerName()));
 
   silent = false;
 
   connectDialog->setConnected(isConnected());
 
   // Let other program parts know about the new connection
-  mainWindow->setStatusMessage(tr("Connected to simulator."), true /* addLog */);
+  statusBar->setStatusMessage(tr("Connected to simulator."), true /* addLog */);
 
   // Clear status for first valid aircraft detection
   foundValidAircraft = false;
@@ -1156,6 +1164,5 @@ void ConnectClient::resumeSimConnect()
     }
     else
       connectInternal();
-
   }
 }

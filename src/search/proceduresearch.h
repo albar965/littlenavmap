@@ -61,7 +61,7 @@ class ProcedureSearch :
   Q_OBJECT
 
 public:
-  ProcedureSearch(QMainWindow *main, QTreeWidget *treeWidgetParam, si::TabSearchId tabWidgetIndex);
+  ProcedureSearch(MainWindow *main, QTreeWidget *treeWidgetParam, si::TabSearchId tabWidgetIndex);
   virtual ~ProcedureSearch() override;
 
   ProcedureSearch(const ProcedureSearch& other) = delete;
@@ -300,6 +300,24 @@ private:
   bool errors = false;
 
   bool savedDepartureFilter = false, savedArrivalFilter = false;
+};
+
+/* Use event filter to catch mouse click in white area and deselect all entries */
+class TreeEventFilter :
+  public QObject
+{
+  Q_OBJECT
+
+public:
+  TreeEventFilter(ProcedureSearch *parent)
+    : QObject(parent), search(parent)
+  {
+  }
+
+private:
+  virtual bool eventFilter(QObject *object, QEvent *event) override;
+
+  ProcedureSearch *search;
 };
 
 #endif // LITTLENAVMAP_PROCTREECONTROLLER_H

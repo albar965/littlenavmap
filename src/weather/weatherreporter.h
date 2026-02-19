@@ -51,8 +51,6 @@ class NoaaWeatherDownloader;
 }
 }
 
-class MainWindow;
-
 /*
  * Provides a source of metar data for airports. Supports ActiveSkyNext, NOAA and VATSIM weather.
  * The Active Sky (Next and 16) weather files are monitored for changes and the signal
@@ -71,7 +69,7 @@ class WeatherReporter :
 
 public:
   /* @param type flight simulator type needed to find Active Sky weather file. */
-  explicit WeatherReporter(MainWindow *parentWindow, atools::fs::FsPaths::SimulatorType type);
+  explicit WeatherReporter(QWidget *parent, atools::fs::FsPaths::SimulatorType type);
   virtual ~WeatherReporter() override;
 
   WeatherReporter(const WeatherReporter& other) = delete;
@@ -247,7 +245,7 @@ private:
 
   atools::fs::weather::XpWeatherReader *xpWeatherReader = nullptr;
 
-  MainWindow *mainWindow;
+  QWidget *parentWidget;
 
   ActiveSkyType activeSkyType = NONE;
   QString asSnapshotPath, asFlightplanPath;

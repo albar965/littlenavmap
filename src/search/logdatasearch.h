@@ -44,7 +44,7 @@ class LogdataSearch :
   Q_OBJECT
 
 public:
-  explicit LogdataSearch(QMainWindow *parent, QTableView *tableView, si::TabSearchId tabWidgetIndex);
+  explicit LogdataSearch(MainWindow *parent, QTableView *tableView, si::TabSearchId tabWidgetIndex);
   virtual ~LogdataSearch() override;
 
   /* All state saving is done through the widget state */

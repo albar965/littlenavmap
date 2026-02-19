@@ -24,7 +24,7 @@
 #ifndef LITTLENAVMAP_SEARCHCONTROLLER_H
 #define LITTLENAVMAP_SEARCHCONTROLLER_H
 
-class QMainWindow;
+class MainWindow;
 class AbstractSearch;
 class AirportSearch;
 class NavSearch;
@@ -69,7 +69,7 @@ class SearchController :
   Q_OBJECT
 
 public:
-  explicit SearchController(QMainWindow *parent, QTabWidget *tabWidgetSearchParam);
+  explicit SearchController(MainWindow *parent, QTabWidget *tabWidgetSearchParam);
   virtual ~SearchController() override;
 
   SearchController(const SearchController& other) = delete;
@@ -202,7 +202,7 @@ private:
   OnlineCenterSearch *onlineCenterSearch = nullptr;
   OnlineServerSearch *onlineServerSearch = nullptr;
 
-  QMainWindow *mainWindow = nullptr;
+  MainWindow *mainWindow = nullptr;
   QTabWidget *tabWidgetSearch = nullptr;
   QList<AbstractSearch *> allSearchTabs;
 

@@ -37,7 +37,7 @@
 
 #include <QDateTime>
 
-LogdataSearch::LogdataSearch(QMainWindow *parent, QTableView *tableView, si::TabSearchId tabWidgetIndex)
+LogdataSearch::LogdataSearch(MainWindow *parent, QTableView *tableView, si::TabSearchId tabWidgetIndex)
   : SearchBaseTable(parent, tableView, new ColumnList("logbook", "logbook_id"), tabWidgetIndex)
 {
   /* *INDENT-OFF* */
@@ -241,7 +241,8 @@ QVariant LogdataSearch::modelDataHandler(int colIndex, int rowIndex, const Colum
     case Qt::TextAlignmentRole:
       // Align all numeric columns right
       if(col->getColumnName().endsWith(QStringLiteral("_ident")) || col->getColumnName() == QStringLiteral("distance") ||
-         col->getColumnName().startsWith(QStringLiteral("departure_time")) || col->getColumnName().startsWith(QStringLiteral("destination_time")) ||
+         col->getColumnName().startsWith(QStringLiteral("departure_time")) ||
+         col->getColumnName().startsWith(QStringLiteral("destination_time")) ||
          col->getColumnName() == QStringLiteral("travel_time") || col->getColumnName() == QStringLiteral("travel_time_sim") ||
          displayRoleValue.metaType() == QMetaType::fromType<int>() ||
          displayRoleValue.metaType() == QMetaType::fromType<unsigned int>() ||
@@ -284,7 +285,8 @@ QVariant LogdataSearch::modelDataHandler(int colIndex, int rowIndex, const Colum
 QString LogdataSearch::formatModelData(const Column *col, const QVariant& displayRoleValue) const
 {
   // Called directly by the model for export functions
-  if(col->getColumnName().startsWith(QStringLiteral("departure_time")) || col->getColumnName().startsWith(QStringLiteral("destination_time")))
+  if(col->getColumnName().startsWith(QStringLiteral("departure_time")) ||
+     col->getColumnName().startsWith(QStringLiteral("destination_time")))
     return QLocale().toString(displayRoleValue.toDateTime(), QLocale::NarrowFormat);
   else if(col->getColumnName() == QStringLiteral("travel_time") || col->getColumnName() == QStringLiteral("travel_time_sim"))
   {

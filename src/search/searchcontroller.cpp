@@ -45,7 +45,7 @@
 
 using atools::gui::HelpHandler;
 
-SearchController::SearchController(QMainWindow *parent, QTabWidget *tabWidgetSearchParam)
+SearchController::SearchController(MainWindow* parent, QTabWidget *tabWidgetSearchParam)
   : mainWindow(parent), tabWidgetSearch(tabWidgetSearchParam)
 {
   mapQuery = QueryManager::instance()->getQueriesGui()->getMapQuery();

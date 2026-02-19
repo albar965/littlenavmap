@@ -30,7 +30,6 @@
 #include "fs/userdata/airspacereadervatsim.h"
 #include "gui/dialog.h"
 #include "gui/errorhandler.h"
-#include "gui/mainwindow.h"
 #include "gui/textdialog.h"
 #include "gui/widgetstate.h"
 #include "query/airportquery.h"
@@ -46,13 +45,13 @@
 #include <QDirIterator>
 #include <QProgressDialog>
 
-AirspaceController::AirspaceController(MainWindow *mainWindowParam)
-  : QObject(mainWindowParam), mainWindow(mainWindowParam)
+AirspaceController::AirspaceController(QWidget *parent)
+  : QObject(parent), parentWidget(parent)
 {
   // Button and action handler =================================
   qDebug() << Q_FUNC_INFO;
 
-  airspaceHandler = new AirspaceToolBarHandler(NavApp::getMainWindow());
+  airspaceHandler = new AirspaceToolBarHandler(parentWidget);
   airspaceHandler->createToolButtons();
 
   connect(airspaceHandler, &AirspaceToolBarHandler::updateAirspaceTypes, this, &AirspaceController::updateAirspaceTypes);
@@ -209,7 +208,7 @@ void AirspaceController::loadAirspaces()
 
   using atools::fs::userdata::AirspaceReaderBase;
 
-  AirspaceDialog dialog(mainWindow);
+  AirspaceDialog dialog(parentWidget);
   int result = dialog.exec();
 
   if(result == QDialog::Accepted)
@@ -252,7 +251,7 @@ void AirspaceController::loadAirspaces()
       }
 
       // Set up progress dialog ==================================================
-      QProgressDialog progress(tr("Reading airspaces ..."), tr("&Cancel"), 0, numFiles, mainWindow);
+      QProgressDialog progress(tr("Reading airspaces ..."), tr("&Cancel"), 0, numFiles, parentWidget);
       progress.setWindowModality(Qt::WindowModal);
       progress.setMinimumDuration(0);
       progress.show();
@@ -324,11 +323,11 @@ void AirspaceController::loadAirspaces()
     }
     catch(atools::Exception& e)
     {
-      atools::gui::ErrorHandler(mainWindow).handleException(e);
+      atools::gui::ErrorHandler(parentWidget).handleException(e);
     }
     catch(...)
     {
-      atools::gui::ErrorHandler(mainWindow).handleUnknownException();
+      atools::gui::ErrorHandler(parentWidget).handleUnknownException();
     }
 
     // Show messages only if no exception and not canceled by user
@@ -356,13 +355,13 @@ void AirspaceController::loadAirspaces()
           html.li(err);
         html.olEnd();
 
-        TextDialog error(mainWindow, QCoreApplication::applicationName() + tr(" - Errors"));
+        TextDialog error(parentWidget, QCoreApplication::applicationName() + tr(" - Errors"));
         error.setHtmlMessage(html.getHtml(), true /* print to log */);
         error.exec();
       }
       else
         // No errors ======================
-        atools::gui::Dialog::information(mainWindow, message);
+        atools::gui::Dialog::information(parentWidget, message);
     }
 
     // Re-initialize queries again

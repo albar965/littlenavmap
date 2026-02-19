@@ -24,18 +24,14 @@
 #include "fs/sc/simconnectdata.h"
 #include "geo/calculations.h"
 #include "gui/dialog.h"
-#include "gui/mainwindow.h"
+#include "gui/statusbar.h"
 #include "mapgui/maplayer.h"
 #include "options/optiondata.h"
 #include "query/airspacequeries.h"
 #include "query/querymanager.h"
 #include "settings/settings.h"
-#include "sql/sqlquery.h"
-#include "sql/sqlrecord.h"
 #include "util/httpdownloader.h"
 #include "zip/gzip.h"
-
-#include <QDebug>
 
 #include <QCoreApplication>
 #include <QDir>
@@ -76,8 +72,8 @@ atools::fs::online::Format convertFormat(opts::OnlineFormat format)
   return atools::fs::online::UNKNOWN;
 }
 
-OnlinedataController::OnlinedataController(atools::fs::online::OnlinedataManager *onlineManager, MainWindow *parent)
-  : manager(onlineManager), mainWindow(parent), aircraftCache()
+OnlinedataController::OnlinedataController(atools::fs::online::OnlinedataManager *onlineManager, QWidget *parent)
+  : manager(onlineManager), parentWidget(parent), aircraftCache()
 {
   // Files use Windows code with embedded UTF-8 for ATIS text
 #ifdef QT_CORE5COMPAT_LIB
@@ -95,7 +91,7 @@ OnlinedataController::OnlinedataController(atools::fs::online::OnlinedataManager
   maxShadowGsDiffKts = settings.getAndStoreValue(lnm::OPTIONS_ONLINE_NETWORK_MAX_SHADOW_GS_DIFF_KTS, 50.).toFloat();
   maxShadowHdgDiffDeg = settings.getAndStoreValue(lnm::OPTIONS_ONLINE_NETWORK_MAX_SHADOW_HDG_DIFF_DEG, 90.).toFloat();
 
-  downloader = new atools::util::HttpDownloader(mainWindow, verbose);
+  downloader = new atools::util::HttpDownloader(parentWidget, verbose);
 
   // Request gzipped content if possible
   downloader->setAcceptEncoding(QStringLiteral("gzip"));
@@ -475,10 +471,10 @@ void OnlinedataController::downloadFailed(const QString& error, int errorCode, Q
   qWarning() << Q_FUNC_INFO << "Failed" << error << errorCode << url;
   stopAllProcesses();
 
-  mainWindow->setOnlineConnectionStatusMessageText(tr("Online Network Failed"),
-                                                   tr("Download from\n\"%1\"\nfailed. "
-                                                      "Reason:\n%2\nRetrying again in three minutes.").
-                                                   arg(url).arg(error));
+  NavApp::getStatusBar()->setOnlineConnectionStatusMessageText(tr("Online Network Failed"),
+                                                               tr("Download from\n\"%1\"\nfailed. "
+                                                                  "Reason:\n%2\nRetrying again in three minutes.").
+                                                               arg(url).arg(error));
 
   // Delay next download for three minutes to give the user a chance to correct the URLs
   QTimer::singleShot(180 * 1000, this, &OnlinedataController::startProcessing);
@@ -488,7 +484,7 @@ void OnlinedataController::downloadSslErrors(const QStringList& errors, const QS
 {
   qWarning() << Q_FUNC_INFO;
 
-  int result = atools::gui::Dialog(mainWindow).
+  int result = atools::gui::Dialog(parentWidget).
                showQuestionMsgBox(lnm::ACTIONS_SHOW_SSL_WARNING_ONLINE,
                                   tr("<p>Errors while trying to establish an encrypted connection "
                                        "to download online network data:</p>"
@@ -507,9 +503,9 @@ void OnlinedataController::statusBarMessage()
 {
   QString net = getNetworkTranslated();
   if(!net.isEmpty())
-    mainWindow->setOnlineConnectionStatusMessageText(QString(), tr("Connected to %1.").arg(net));
+    NavApp::getStatusBar()->setOnlineConnectionStatusMessageText(QString(), tr("Connected to %1.").arg(net));
   else
-    mainWindow->setOnlineConnectionStatusMessageText(QString(), QString());
+    NavApp::getStatusBar()->setOnlineConnectionStatusMessageText(QString(), QString());
 }
 
 void OnlinedataController::stopAllProcesses()
@@ -522,7 +518,7 @@ void OnlinedataController::stopAllProcesses()
 
 void OnlinedataController::showMessageDialog()
 {
-  atools::gui::Dialog::information(mainWindow, tr("Message from downloaded status file:\n\n%2\n").arg(manager->getMessageFromStatus()));
+  atools::gui::Dialog::information(parentWidget, tr("Message from downloaded status file:\n\n%2\n").arg(manager->getMessageFromStatus()));
 }
 
 const LineString *OnlinedataController::airspaceGeometryCallback(const QString& callsign, atools::fs::online::fac::FacilityType type)
@@ -966,7 +962,7 @@ void OnlinedataController::initQueries()
   manager->initQueries();
 
   aircraftByRectQuery = new atools::sql::SqlQuery(getDatabase());
-  aircraftByRectQuery->prepare(QStringLiteral("select * from client where lonx between :leftx and :rightx and laty between :bottomy and :topy"));
+  aircraftByRectQuery->prepare("select * from client where lonx between :leftx and :rightx and laty between :bottomy and :topy");
 }
 
 void OnlinedataController::deInitQueries()

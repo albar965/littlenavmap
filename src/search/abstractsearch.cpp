@@ -18,11 +18,10 @@
 #include "search/abstractsearch.h"
 
 #include "app/navapp.h"
+#include "gui/mainwindow.h"
 
-#include <QMainWindow>
-
-AbstractSearch::AbstractSearch(QMainWindow *parent, si::TabSearchId tabWidgetIndex)
-  : QObject(parent), tabIndex(tabWidgetIndex), mainWindow(parent)
+AbstractSearch::AbstractSearch(MainWindow *parent, si::TabSearchId tabWidgetIndex)
+  : QObject(parent), tabIndex(tabWidgetIndex), mainWindow(parent), parentWidget(parent)
 {
   ui = NavApp::getMainUi();
 }
