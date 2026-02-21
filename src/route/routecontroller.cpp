@@ -1017,11 +1017,11 @@ void RouteController::restoreState()
   updateTableHeaders();
 
   Ui::MainWindow *ui = NavApp::getMainUi();
-  atools::gui::WidgetState state(lnm::ROUTE_VIEW, true, true);
+  atools::gui::WidgetState state(lnm::ROUTE_VIEW, false /* visibility */, true /* blockSignals */);
   state.restore({ui->comboBoxRouteType, ui->spinBoxRouteAlt, ui->actionRouteFollowSelection});
 
   // Use own state for table
-  atools::gui::WidgetState stateTable(lnm::ROUTE_VIEW_TABLE, true, true);
+  atools::gui::WidgetState stateTable(lnm::ROUTE_VIEW_TABLE, false /* visibility */, true /* blockSignals */);
   if(stateTable.contains(tableViewRoute))
     stateTable.restore(tableViewRoute);
   else

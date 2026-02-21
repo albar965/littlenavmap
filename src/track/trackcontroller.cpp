@@ -78,19 +78,15 @@ TrackController::~TrackController()
 
 void TrackController::restoreState()
 {
-  atools::gui::WidgetState state(lnm::AIRSPACE_CONTROLLER_WIDGETS, false /* visibility */, true /* block signals */);
-
   Ui::MainWindow *ui = NavApp::getMainUi();
-  state.restore(QList<QObject *>({ /*ui->actionTrackSourcesNat, ui->actionTrackSourcesPacots, */ ui->actionRouteDownloadTracks}));
+  atools::gui::WidgetState(lnm::AIRSPACE_CONTROLLER_WIDGETS, false /* visibility */, true /* blockSignals */).
+  restore(QList<QObject *>({ui->actionRouteDownloadTracks}));
 }
 
 void TrackController::saveState() const
 {
   Ui::MainWindow *ui = NavApp::getMainUi();
-
-  atools::gui::WidgetState state(lnm::AIRSPACE_CONTROLLER_WIDGETS);
-
-  state.save(QList<const QObject *>({ /*ui->actionTrackSourcesNat, ui->actionTrackSourcesPacots, */ ui->actionRouteDownloadTracks}));
+  atools::gui::WidgetState(lnm::AIRSPACE_CONTROLLER_WIDGETS).save(QList<const QObject *>({ui->actionRouteDownloadTracks}));
 }
 
 void TrackController::optionsChanged()

@@ -90,7 +90,6 @@ using atools::sql::SqlRecordList;
 using proc::MapProcedureLeg;
 using proc::MapProcedureLegs;
 using proc::MapProcedureRef;
-using atools::gui::WidgetState;
 using atools::gui::ActionTextSaver;
 using atools::gui::ActionStateSaver;
 
@@ -1030,9 +1029,10 @@ void ProcedureSearch::fillProcedureTreeWidget()
 
 void ProcedureSearch::saveState()
 {
-  WidgetState(lnm::APPROACHTREE_WIDGET).save(QList<const QObject *>({ui->comboBoxProcedureSearchFilter, ui->comboBoxProcedureRunwayFilter,
-                                                                     ui->actionSearchProcedureFollowSelection,
-                                                                     ui->lineEditProcedureSearchIdentFilter}));
+  atools::gui::WidgetState(lnm::APPROACHTREE_WIDGET).save(QList<const QObject *>({ui->comboBoxProcedureSearchFilter,
+                                                                                  ui->comboBoxProcedureRunwayFilter,
+                                                                                  ui->actionSearchProcedureFollowSelection,
+                                                                                  ui->lineEditProcedureSearchIdentFilter}));
 
   atools::settings::Settings& settings = atools::settings::Settings::instance();
 
@@ -1042,7 +1042,7 @@ void ProcedureSearch::saveState()
   settings.setValueVar(lnm::APPROACHTREE_STATE, atools::numSetToStrList(savedState));
 
   // Save column order and width
-  WidgetState(lnm::APPROACHTREE_WIDGET).save(treeWidget);
+  atools::gui::WidgetState(lnm::APPROACHTREE_WIDGET).save(treeWidget);
 
   if(currentAirportSim->isValid() && currentAirportNav->isValid())
   {
@@ -1076,8 +1076,9 @@ void ProcedureSearch::restoreState()
   QSet<int> state;
   if(OptionData::instance().getFlags() & opts::STARTUP_LOAD_SEARCH && !atools::gui::Application::isSafeMode())
   {
-    WidgetState(lnm::APPROACHTREE_WIDGET).restore({ui->comboBoxProcedureSearchFilter, ui->comboBoxProcedureRunwayFilter,
-                                                   ui->actionSearchProcedureFollowSelection, ui->lineEditProcedureSearchIdentFilter});
+    atools::gui::WidgetState(lnm::APPROACHTREE_WIDGET).restore({ui->comboBoxProcedureSearchFilter, ui->comboBoxProcedureRunwayFilter,
+                                                                ui->actionSearchProcedureFollowSelection,
+                                                                ui->lineEditProcedureSearchIdentFilter});
 
     fillProcedureTreeWidget();
     if(currentAirportNav->isValid() && currentAirportNav->procedure())
@@ -1088,7 +1089,7 @@ void ProcedureSearch::restoreState()
   }
 
   updateTreeHeader();
-  WidgetState(lnm::APPROACHTREE_WIDGET).restore(treeWidget);
+  atools::gui::WidgetState(lnm::APPROACHTREE_WIDGET).restore(treeWidget);
 
   if(OptionData::instance().getFlags() & opts::STARTUP_LOAD_SEARCH && !atools::gui::Application::isSafeMode())
   {

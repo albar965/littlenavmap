@@ -106,7 +106,7 @@ void AirspaceController::sourceToActions()
 void AirspaceController::restoreState()
 {
   Ui::MainWindow *ui = NavApp::getMainUi();
-  atools::gui::WidgetState state(lnm::AIRSPACE_CONTROLLER_WIDGETS, false /* visibility */, true /* block signals */);
+  atools::gui::WidgetState state(lnm::AIRSPACE_CONTROLLER_WIDGETS, false /* visibility */, true /* blockSignals */);
   state.restore({ui->actionViewAirspaceSrcSimulator, ui->actionViewAirspaceSrcNavigraph, ui->actionViewAirspaceSrcUser,
                  ui->actionViewAirspaceSrcOnline});
 

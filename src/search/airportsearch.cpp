@@ -469,10 +469,9 @@ void AirportSearch::restoreViewState(bool distanceSearchState)
   qDebug() << Q_FUNC_INFO << "distSearchActive" << distanceSearchState;
 #endif
 
-  atools::gui::WidgetState(
-    distanceSearchState ?
-    lnm::SEARCHTAB_AIRPORT_VIEW_DIST_WIDGET :
-    lnm::SEARCHTAB_AIRPORT_VIEW_WIDGET).restore(ui->tableViewAirportSearch);
+  atools::gui::WidgetState(distanceSearchState ?
+                           lnm::SEARCHTAB_AIRPORT_VIEW_DIST_WIDGET :
+                           lnm::SEARCHTAB_AIRPORT_VIEW_WIDGET).restore(ui->tableViewAirportSearch);
 }
 
 /* Callback for the controller. Is called for each table cell and should return a formatted value. */

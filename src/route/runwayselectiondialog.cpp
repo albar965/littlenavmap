@@ -70,7 +70,7 @@ void RunwaySelectionDialog::doubleClicked()
 
 void RunwaySelectionDialog::restoreState()
 {
-  atools::gui::WidgetState widgetState(lnm::RUNWAY_SELECTION_DIALOG, false);
+  atools::gui::WidgetState widgetState(lnm::RUNWAY_SELECTION_DIALOG);
   // Angle not saved on purpose
   widgetState.restore(this);
 
@@ -82,7 +82,7 @@ void RunwaySelectionDialog::restoreState()
 
 void RunwaySelectionDialog::saveState() const
 {
-  atools::gui::WidgetState widgetState(lnm::RUNWAY_SELECTION_DIALOG, false);
+  atools::gui::WidgetState widgetState(lnm::RUNWAY_SELECTION_DIALOG);
   widgetState.save(this);
 }
 

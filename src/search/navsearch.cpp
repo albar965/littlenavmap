@@ -295,8 +295,8 @@ void NavSearch::saveViewState(bool distanceSearchState)
 #endif
 
   // Save layout for normal and distance search separately
-  atools::gui::WidgetState(distanceSearchState ? lnm::SEARCHTAB_NAV_VIEW_DIST_WIDGET : lnm::SEARCHTAB_NAV_VIEW_WIDGET).save(
-    ui->tableViewNavSearch);
+  atools::gui::WidgetState(distanceSearchState ? lnm::SEARCHTAB_NAV_VIEW_DIST_WIDGET : lnm::SEARCHTAB_NAV_VIEW_WIDGET).
+  save(ui->tableViewNavSearch);
 }
 
 void NavSearch::restoreViewState(bool distanceSearchState)
@@ -305,8 +305,8 @@ void NavSearch::restoreViewState(bool distanceSearchState)
   qDebug() << Q_FUNC_INFO << "distSearchActive" << distanceSearchState;
 #endif
 
-  atools::gui::WidgetState(distanceSearchState ? lnm::SEARCHTAB_NAV_VIEW_DIST_WIDGET : lnm::SEARCHTAB_NAV_VIEW_WIDGET).restore(
-    ui->tableViewNavSearch);
+  atools::gui::WidgetState(distanceSearchState ? lnm::SEARCHTAB_NAV_VIEW_DIST_WIDGET : lnm::SEARCHTAB_NAV_VIEW_WIDGET).
+  restore(ui->tableViewNavSearch);
 }
 
 /* Callback for the controller. Will be called for each table cell and should return a formatted value */

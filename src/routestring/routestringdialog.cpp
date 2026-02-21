@@ -517,7 +517,7 @@ void RouteStringDialog::restoreState()
   {
     atools::settings::Settings& settings = atools::settings::Settings::instance();
     // Load from settings
-    textEditRouteStringPrepend(settings.valueStr(lnm::ROUTE_STRING_DIALOG_DESCR + settingsSuffix), false /* newline*/);
+    textEditRouteStringPrepend(settings.valueStr(lnm::ROUTE_STRING_DIALOG_DESCR + settingsSuffix), false /* newline */);
 
     // Avoid clean undo step
     ui->textEditRouteString->setUndoRedoEnabled(true);

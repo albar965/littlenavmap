@@ -3224,7 +3224,7 @@ void MapWidget::saveState() const
   aircraftTrailLogbook->saveState(lnm::LOGBOOK_TRACK_SUFFIX, 0 /* numBackups */);
 
   overlayStateToMenu();
-  atools::gui::WidgetState state(lnm::MAP_OVERLAY_VISIBLE, false /*save visibility*/, true /*block signals*/);
+  atools::gui::WidgetState state(lnm::MAP_OVERLAY_VISIBLE, false /* visibility */, true /* blockSignals */);
   for(QAction *action : std::as_const(mapOverlays))
     state.save(action);
 
@@ -3288,7 +3288,7 @@ void MapWidget::restoreState()
   // aircraftTrailLogbook uses AircraftTrail::MAX_TRACK_ENTRIES
   aircraftTrailLogbook->restoreState(lnm::LOGBOOK_TRACK_SUFFIX);
 
-  atools::gui::WidgetState state(lnm::MAP_OVERLAY_VISIBLE, false /*save visibility*/, true /*block signals*/);
+  atools::gui::WidgetState state(lnm::MAP_OVERLAY_VISIBLE, false /* visibility */, true /* blockSignals */);
   for(QAction *action : std::as_const(mapOverlays))
     state.restore(action);
 

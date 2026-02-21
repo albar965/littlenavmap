@@ -119,7 +119,7 @@ void ImageExportDialog::buttonBoxClicked(QAbstractButton *button)
 
 void ImageExportDialog::saveState() const
 {
-  atools::gui::WidgetState widgetState(optionPrefix, false);
+  atools::gui::WidgetState widgetState(optionPrefix);
   widgetState.save({
     this,
     ui->comboBoxResolution,
@@ -131,7 +131,7 @@ void ImageExportDialog::saveState() const
 
 void ImageExportDialog::restoreState()
 {
-  atools::gui::WidgetState widgetState(optionPrefix, false);
+  atools::gui::WidgetState widgetState(optionPrefix);
   widgetState.restore({
     this,
     ui->comboBoxResolution,

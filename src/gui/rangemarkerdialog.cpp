@@ -192,7 +192,7 @@ void RangeMarkerDialog::buttonBoxClicked(QAbstractButton *button)
 
 void RangeMarkerDialog::restoreState()
 {
-  atools::gui::WidgetState widgetState(lnm::RANGE_MARKER_DIALOG, false);
+  atools::gui::WidgetState widgetState(lnm::RANGE_MARKER_DIALOG);
   widgetState.restore({this, ui->buttonGroupRangeMarker, ui->lineEditRangeMarkerRadii, ui->lineEditRangeMarkerLabel,
                        ui->checkBoxRangeMarkerDoNotShow});
 
@@ -208,7 +208,7 @@ void RangeMarkerDialog::restoreState()
 
 void RangeMarkerDialog::saveState() const
 {
-  atools::gui::WidgetState widgetState(lnm::RANGE_MARKER_DIALOG, false);
+  atools::gui::WidgetState widgetState(lnm::RANGE_MARKER_DIALOG);
   widgetState.save({this, ui->buttonGroupRangeMarker, ui->lineEditRangeMarkerRadii, ui->lineEditRangeMarkerLabel,
                     ui->checkBoxRangeMarkerDoNotShow});
 

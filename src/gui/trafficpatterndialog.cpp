@@ -97,7 +97,7 @@ void TrafficPatternDialog::doubleClicked()
 
 void TrafficPatternDialog::restoreState()
 {
-  atools::gui::WidgetState widgetState(lnm::TRAFFIC_PATTERN_DIALOG, false);
+  atools::gui::WidgetState widgetState(lnm::TRAFFIC_PATTERN_DIALOG);
   widgetState.restore({
     this,
     ui->doubleSpinBoxDownwindDistance,
@@ -117,7 +117,7 @@ void TrafficPatternDialog::restoreState()
 
 void TrafficPatternDialog::saveState() const
 {
-  atools::gui::WidgetState widgetState(lnm::TRAFFIC_PATTERN_DIALOG, false);
+  atools::gui::WidgetState widgetState(lnm::TRAFFIC_PATTERN_DIALOG);
   widgetState.save({
     this,
     ui->doubleSpinBoxDownwindDistance,

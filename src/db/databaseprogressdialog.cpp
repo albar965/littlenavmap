@@ -74,13 +74,13 @@ void DatabaseProgressDialog::reject()
 
 void DatabaseProgressDialog::restoreState()
 {
-  atools::gui::WidgetState widgetState(lnm::OPTIONS_DIALOG_DB_PROGRESS_DLG, false);
+  atools::gui::WidgetState widgetState(lnm::OPTIONS_DIALOG_DB_PROGRESS_DLG);
   widgetState.restore(this);
 }
 
 void DatabaseProgressDialog::saveState() const
 {
-  atools::gui::WidgetState widgetState(lnm::OPTIONS_DIALOG_DB_PROGRESS_DLG, false);
+  atools::gui::WidgetState widgetState(lnm::OPTIONS_DIALOG_DB_PROGRESS_DLG);
   widgetState.save(this);
 }
 

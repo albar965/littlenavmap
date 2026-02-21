@@ -1429,7 +1429,7 @@ void AircraftPerfController::restoreState()
   }
 
   Ui::MainWindow *ui = NavApp::getMainUi();
-  atools::gui::WidgetState state(lnm::AIRCRAFT_PERF_WIDGETS, true /* visibility */, true /* block signals */);
+  atools::gui::WidgetState state(lnm::AIRCRAFT_PERF_WIDGETS, false /* visibility */, true /* blockSignals */);
   state.restore({ui->spinBoxAircraftPerformanceWindSpeed,
                  ui->spinBoxAircraftPerformanceWindDirection,
                  ui->spinBoxAircraftPerformanceWindAlt});

@@ -101,7 +101,7 @@ void HoldDialog::buttonBoxClicked(QAbstractButton *button)
 
 void HoldDialog::restoreState()
 {
-  atools::gui::WidgetState widgetState(lnm::HOLD_DIALOG, false);
+  atools::gui::WidgetState widgetState(lnm::HOLD_DIALOG);
   widgetState.restore({this,
                        ui->spinBoxHoldCourse,
                        ui->spinBoxHoldSpeed,
@@ -117,7 +117,7 @@ void HoldDialog::restoreState()
 
 void HoldDialog::saveState() const
 {
-  atools::gui::WidgetState widgetState(lnm::HOLD_DIALOG, false);
+  atools::gui::WidgetState widgetState(lnm::HOLD_DIALOG);
   widgetState.save({this,
                     ui->spinBoxHoldCourse,
                     ui->spinBoxHoldSpeed,

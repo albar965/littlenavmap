@@ -68,13 +68,13 @@ QString AirspaceDialog::getAirspaceFilePatterns() const
 
 void AirspaceDialog::saveState() const
 {
-  atools::gui::WidgetState widgetState(lnm::DATABASE_AIRSPACECONFIG, false);
+  atools::gui::WidgetState widgetState(lnm::DATABASE_AIRSPACECONFIG);
   widgetState.save({this, ui->lineEditAirspacePath, ui->lineEditAirspaceExtensions});
 }
 
 void AirspaceDialog::restoreState()
 {
-  atools::gui::WidgetState widgetState(lnm::DATABASE_AIRSPACECONFIG, false);
+  atools::gui::WidgetState widgetState(lnm::DATABASE_AIRSPACECONFIG);
   widgetState.restore({this, ui->lineEditAirspacePath, ui->lineEditAirspaceExtensions});
 }
 

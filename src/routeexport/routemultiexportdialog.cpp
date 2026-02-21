@@ -287,7 +287,7 @@ void RouteMultiExportDialog::buttonBoxClicked(QAbstractButton *button)
 
 void RouteMultiExportDialog::restoreState()
 {
-  atools::gui::WidgetState widgetState(lnm::ROUTE_EXPORT_DIALOG, false);
+  atools::gui::WidgetState widgetState(lnm::ROUTE_EXPORT_DIALOG);
   widgetState.restore({this, ui->comboBoxRouteExportOptions});
 
   // Check if there is no save widget state - fix sorting if not
@@ -308,13 +308,13 @@ void RouteMultiExportDialog::fontChanged(const QFont&)
 
 void RouteMultiExportDialog::saveDialogState()
 {
-  atools::gui::WidgetState widgetState(lnm::ROUTE_EXPORT_DIALOG, false);
+  atools::gui::WidgetState widgetState(lnm::ROUTE_EXPORT_DIALOG);
   widgetState.save(this);
 }
 
 void RouteMultiExportDialog::saveState() const
 {
-  atools::gui::WidgetState widgetState(lnm::ROUTE_EXPORT_DIALOG, false);
+  atools::gui::WidgetState widgetState(lnm::ROUTE_EXPORT_DIALOG);
   widgetState.save({this, ui->comboBoxRouteExportOptions});
 }
 
@@ -1032,12 +1032,12 @@ void RouteMultiExportDialog::actionSelectTriggered()
 
 void RouteMultiExportDialog::saveTableLayout()
 {
-  atools::gui::WidgetState(lnm::ROUTE_EXPORT_DIALOG, false).save(ui->tableViewRouteExport);
+  atools::gui::WidgetState(lnm::ROUTE_EXPORT_DIALOG).save(ui->tableViewRouteExport);
 }
 
 void RouteMultiExportDialog::loadTableLayout()
 {
-  atools::gui::WidgetState(lnm::ROUTE_EXPORT_DIALOG, false).restore(ui->tableViewRouteExport);
+  atools::gui::WidgetState(lnm::ROUTE_EXPORT_DIALOG).restore(ui->tableViewRouteExport);
 }
 
 void RouteMultiExportDialog::setLnmplnExportDir(const QString& dir)

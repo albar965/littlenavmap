@@ -1213,7 +1213,7 @@ void OptionsDialog::saveState()
   optionDataToWidgets(OptionData::instanceInternal());
 
   // Save widgets to settings
-  atools::gui::WidgetState state(lnm::OPTIONS_DIALOG_WIDGET, false /* save visibility */, true /* block signals */);
+  atools::gui::WidgetState state(lnm::OPTIONS_DIALOG_WIDGET, false /* visibility */, true /* blockSignals */);
 
   state.save(widgets);
   state.save(this);
@@ -1295,7 +1295,7 @@ void OptionsDialog::restoreState()
   ui->radioButtonOptionsOnlinePilotEdge->setVisible(!od.onlinePilotEdgeStatusUrl.isEmpty());
   ui->radioButtonOptionsOnlineVatsim->setVisible(!od.onlineVatsimStatusUrl.isEmpty());
 
-  atools::gui::WidgetState state(lnm::OPTIONS_DIALOG_WIDGET, false /*save visibility*/, true /*block signals*/);
+  atools::gui::WidgetState state(lnm::OPTIONS_DIALOG_WIDGET, false /* visibility */, true /* blockSignals */);
   if(!state.contains(ui->splitterOptions))
   {
     // First start - splitter not saved yet

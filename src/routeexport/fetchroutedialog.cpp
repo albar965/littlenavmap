@@ -146,14 +146,14 @@ void FetchRouteDialog::updateButtonStates()
 
 void FetchRouteDialog::restoreState()
 {
-  atools::gui::WidgetState widgetState(lnm::FETCH_SIMBRIEF_DIALOG, false);
+  atools::gui::WidgetState widgetState(lnm::FETCH_SIMBRIEF_DIALOG);
   widgetState.restore({this, ui->comboBoxLoginType, ui->lineEditLogin});
   updateButtonStates();
 }
 
 void FetchRouteDialog::saveState() const
 {
-  atools::gui::WidgetState widgetState(lnm::FETCH_SIMBRIEF_DIALOG, false);
+  atools::gui::WidgetState widgetState(lnm::FETCH_SIMBRIEF_DIALOG);
   widgetState.save({this, ui->comboBoxLoginType, ui->lineEditLogin});
 }
 

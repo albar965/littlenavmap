@@ -344,7 +344,7 @@ void LogStatisticsDialog::saveState() const
 
 void LogStatisticsDialog::restoreState()
 {
-  atools::gui::WidgetState state(lnm::LOGDATA_STATS_DIALOG, true, true);
+  atools::gui::WidgetState state(lnm::LOGDATA_STATS_DIALOG, false /* visibility */, true /* blockSignals */);
   state.setDialogOptions(true /* position */, true /* size */);
   state.restore({this, ui->tabWidget, ui->comboBoxLogStatsGrouped});
 }
