@@ -358,6 +358,7 @@ void AirportSearch::connectSearchSlots()
   SearchBaseTable::connectSearchWidgets();
 
   QMenu *menu = new QMenu(ui->toolButtonAirportSearch);
+  menu->setToolTipsVisible(true);
   ui->toolButtonAirportSearch->setMenu(menu);
   menu->addAction(airportSearchMenuActions.first());
   menu->addSeparator();

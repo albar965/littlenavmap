@@ -3924,64 +3924,67 @@ void MainWindow::restoreStateMain()
   // Errors are show later in MainWindow::mainWindowShown()
   NavApp::initElevationProvider();
 
-  qDebug() << "kmlFileHistory";
+  qDebug() << Q_FUNC_INFO << "statusBar";
+  statusBar->restoreState();
+
+  qDebug() << Q_FUNC_INFO << "kmlFileHistory";
   kmlFileHistory->restoreState();
 
-  qDebug() << "layoutFileHistory";
+  qDebug() << Q_FUNC_INFO << "layoutFileHistory";
   layoutFileHistory->restoreState();
 
-  qDebug() << "searchController";
+  qDebug() << Q_FUNC_INFO << "searchController";
   routeFileHistory->restoreState();
 
-  qDebug() << "mapWidget";
+  qDebug() << Q_FUNC_INFO << "mapWidget";
   mapWidget->restoreState();
 
-  qDebug() << "searchController";
+  qDebug() << Q_FUNC_INFO << "searchController";
   searchController->restoreState();
 
-  qDebug() << "logdataController";
+  qDebug() << Q_FUNC_INFO << "logdataController";
   NavApp::getLogdataController()->restoreState();
 
-  qDebug() << "mapMarkHandler";
+  qDebug() << Q_FUNC_INFO << "mapMarkHandler";
   NavApp::getMapMarkHandler()->restoreState();
 
-  qDebug() << "mapAirportHandler";
+  qDebug() << Q_FUNC_INFO << "mapAirportHandler";
   NavApp::getMapAirportHandler()->restoreState();
 
-  qDebug() << "mapDetailHandler";
+  qDebug() << Q_FUNC_INFO << "mapDetailHandler";
   NavApp::getMapDetailHandler()->restoreState();
 
-  qDebug() << "userdataController";
+  qDebug() << Q_FUNC_INFO << "userdataController";
   NavApp::getUserdataController()->restoreState();
 
-  qDebug() << "windReporter";
+  qDebug() << Q_FUNC_INFO << "windReporter";
   NavApp::getWindReporter()->restoreState();
 
-  qDebug() << "airspaceController";
+  qDebug() << Q_FUNC_INFO << "airspaceController";
   NavApp::getAirspaceController()->restoreState();
 
-  qDebug() << "aircraftPerfController";
+  qDebug() << Q_FUNC_INFO << "aircraftPerfController";
   NavApp::getAircraftPerfController()->restoreState();
 
-  qDebug() << "routeController";
+  qDebug() << Q_FUNC_INFO << "routeController";
   routeController->restoreState();
 
-  qDebug() << "profileWidget";
+  qDebug() << Q_FUNC_INFO << "profileWidget";
   profileWidget->restoreState();
 
-  qDebug() << "connectClient";
+  qDebug() << Q_FUNC_INFO << "connectClient";
   NavApp::getConnectClient()->restoreState();
 
-  qDebug() << "trackController";
+  qDebug() << Q_FUNC_INFO << "trackController";
   NavApp::getTrackController()->restoreState();
 
-  qDebug() << "infoController";
+  qDebug() << Q_FUNC_INFO << "infoController";
   infoController->restoreState();
 
-  qDebug() << "printSupport";
+  qDebug() << Q_FUNC_INFO << "printSupport";
   printSupport->restoreState();
 
-  qDebug() << "routeExport";
+  qDebug() << Q_FUNC_INFO << "routeExport";
   routeExport->restoreState();
 
   mapThemeHandler->restoreState();

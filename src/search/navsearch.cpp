@@ -230,6 +230,7 @@ void NavSearch::connectSearchSlots()
   ui->toolButtonNavSearch->addActions(navSearchMenuActions);
 
   QMenu *menu = new QMenu(ui->toolButtonNavSearch);
+  menu->setToolTipsVisible(true);
   ui->toolButtonNavSearch->setMenu(menu);
   menu->addAction(navSearchMenuActions.first());
   menu->addSeparator();
