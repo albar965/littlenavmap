@@ -207,9 +207,9 @@ void WindReporter::optionsChanged()
 void WindReporter::saveState() const
 {
   atools::settings::Settings::instance().setValue(lnm::MAP_WIND_LEVEL, sliderActionAltitude->getAltitudeFt());
-  atools::settings::Settings::instance().setValue(lnm::MAP_WIND_SELECTION, currentWindSelection);
+  atools::settings::Settings::instance().setValueEnum(lnm::MAP_WIND_SELECTION, currentWindSelection);
   atools::settings::Settings::instance().setValue(lnm::MAP_WIND_LEVEL_ROUTE, showFlightplanWaypoints);
-  atools::settings::Settings::instance().setValue(lnm::MAP_WIND_SOURCE, currentSource);
+  atools::settings::Settings::instance().setValueEnum(lnm::MAP_WIND_SOURCE, currentSource);
 }
 
 void WindReporter::restoreState()
@@ -219,9 +219,9 @@ void WindReporter::restoreState()
     atools::settings::Settings& settings = atools::settings::Settings::instance();
 
     // Defaults also set if keys are missing
-    currentWindSelection = static_cast<wind::WindSelection>(settings.valueInt(lnm::MAP_WIND_SELECTION, wind::NONE));
+    currentWindSelection = settings.valueEnum(lnm::MAP_WIND_SELECTION, wind::NONE);
     showFlightplanWaypoints = settings.valueBool(lnm::MAP_WIND_LEVEL_ROUTE, false);
-    currentSource = static_cast<wind::WindSource>(settings.valueInt(lnm::MAP_WIND_SOURCE, wind::WIND_SOURCE_NOAA));
+    currentSource = settings.valueEnum(lnm::MAP_WIND_SOURCE, wind::WIND_SOURCE_NOAA);
     sliderActionAltitude->setAltitudeFt(settings.valueInt(lnm::MAP_WIND_LEVEL, 10000));
   }
   valuesToAction();

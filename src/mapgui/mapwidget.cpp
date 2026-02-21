@@ -3239,8 +3239,7 @@ void MapWidget::restoreState()
   readPluginSettings(*atools::settings::Settings::getQSettings());
 
   // Sun shading settings ========================================
-  map::MapSunShading sunShading =
-    static_cast<map::MapSunShading>(settings.valueInt(lnm::MAP_SUN_SHADING_TIME_OPTION, map::SUN_SHADING_SIMULATOR_TIME));
+  map::MapSunShading sunShading = settings.valueEnum(lnm::MAP_SUN_SHADING_TIME_OPTION, map::SUN_SHADING_SIMULATOR_TIME);
 
   if(sunShading == map::SUN_SHADING_USER_TIME)
     sunShading = map::SUN_SHADING_SIMULATOR_TIME;
@@ -3249,8 +3248,7 @@ void MapWidget::restoreState()
   paintLayer->setSunShading(sunShading);
 
   // Weather source settings ========================================
-  map::MapWeatherSource weatherSource =
-    static_cast<map::MapWeatherSource>(settings.valueInt(lnm::MAP_WEATHER_SOURCE, map::WEATHER_SOURCE_SIMULATOR));
+  map::MapWeatherSource weatherSource = settings.valueEnum(lnm::MAP_WEATHER_SOURCE, map::WEATHER_SOURCE_SIMULATOR);
   weatherSourceToUi(weatherSource);
   paintLayer->setWeatherSource(weatherSource);
 

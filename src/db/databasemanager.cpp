@@ -1867,7 +1867,7 @@ void DatabaseManager::saveState() const
   settings.setValue(lnm::DATABASE_LOADINGSIMULATOR, atools::fs::FsPaths::typeToShortName(selectedFsType));
   settings.setValue(lnm::DATABASE_LOAD_INACTIVE, readInactive);
   settings.setValue(lnm::DATABASE_LOAD_ADDONXML, readAddOnXml);
-  settings.setValue(lnm::DATABASE_NAVDB_STATUS, static_cast<int>(navDatabaseStatus));
+  settings.setValueEnum(lnm::DATABASE_NAVDB_STATUS, navDatabaseStatus);
   settings.setValue(lnm::DATABASE_NAVDB_AUTO, navDatabaseAuto);
 }
 
@@ -1879,7 +1879,7 @@ void DatabaseManager::restoreState()
   selectedFsType = atools::fs::FsPaths::stringToType(settings.valueStr(lnm::DATABASE_LOADINGSIMULATOR));
   readInactive = settings.valueBool(lnm::DATABASE_LOAD_INACTIVE, false);
   readAddOnXml = settings.valueBool(lnm::DATABASE_LOAD_ADDONXML, true);
-  navDatabaseStatus = static_cast<navdb::Status>(settings.valueInt(lnm::DATABASE_NAVDB_STATUS, navdb::MIXED));
+  navDatabaseStatus = settings.valueEnum(lnm::DATABASE_NAVDB_STATUS, navdb::MIXED);
   navDatabaseAuto = settings.valueBool(lnm::DATABASE_NAVDB_AUTO, true);
 }
 
