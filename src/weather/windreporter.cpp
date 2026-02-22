@@ -338,7 +338,7 @@ void WindReporter::windDownloadProgress(qint64 bytesReceived, qint64 bytesTotal,
     qDebug() << Q_FUNC_INFO << "bytesReceived" << bytesReceived << "bytesTotal" << bytesTotal
              << "downloadUrl" << downloadUrl;
 
-  QApplication::processEvents(QEventLoop::WaitForMoreEvents);
+  QApplication::processEvents();
 }
 
 void WindReporter::windDownloadSslErrors(const QStringList& errors, const QString& downloadUrl)

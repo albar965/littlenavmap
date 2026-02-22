@@ -93,7 +93,7 @@ WeatherReporter::WeatherReporter(QWidget *parent, atools::fs::FsPaths::Simulator
 
   noaaWeather = new NoaaWeatherDownloader(parent, verbose);
   noaaWeather->setRequestUrl(OptionData::instance().getWeatherNoaaUrl());
-  noaaWeather->setFetchAirportCoords(coordFunc); //// Set callback so the reader can build an index for nearest airports
+  noaaWeather->setFetchAirportCoords(coordFunc); // Set callback so the reader can build an index for nearest airports
 
   vatsimWeather = new WeatherNetDownload(parent, atools::fs::weather::FLAT, verbose);
   vatsimWeather->setRequestUrl(OptionData::instance().getWeatherVatsimUrl());
@@ -157,7 +157,7 @@ void WeatherReporter::weatherDownloadProgress(qint64 bytesReceived, qint64 bytes
   if(verbose)
     qDebug() << Q_FUNC_INFO << "bytesReceived" << bytesReceived << "bytesTotal" << bytesTotal << "downloadUrl" << downloadUrl;
 
-  QApplication::processEvents(QEventLoop::WaitForMoreEvents);
+  atools::gui::Application::processEventsExtended(10L, false /* excludeInputEvents */);
 }
 
 void WeatherReporter::noaaWeatherUpdated()
