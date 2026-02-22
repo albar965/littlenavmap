@@ -337,7 +337,7 @@ MainWindow::MainWindow()
       ui->dockWidgetMap->hide();
     }
 
-    statusBar = new StatusBar(this);
+    statusBar = new StatusBar(ui->statusBar);
     statusBar->init();
 
     // Connect route controlle to newly created map widget
@@ -4179,6 +4179,10 @@ void MainWindow::saveStateMain()
     qDebug() << Q_FUNC_INFO << "routeExport";
     if(routeExport != nullptr)
       routeExport->saveState();
+
+    qDebug() << Q_FUNC_INFO << "statusBar";
+    if(statusBar != nullptr)
+      statusBar->saveState();
 
     qDebug() << Q_FUNC_INFO << "optionsDialog";
     if(optionsDialog != nullptr)

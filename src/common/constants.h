@@ -305,6 +305,9 @@ const QLatin1String SETTINGS_DATABASE("Settings/Database");
 /* Aircraft trail densisity settings */
 const QLatin1String SETTINGS_AIRCRAFT_TRAIL("Settings/AircraftTrail2");
 
+const QLatin1String MAINWINDOW_STATUSBAR("StatusBar/Label");
+const QLatin1String MAINWINDOW_STATUSBAR_TIME_TYPE("StatusBar/TimeType");
+
 const QLatin1String APPROACHTREE_WIDGET("ApproachTree/Widget2");
 const QLatin1String APPROACHTREE_STATE("ApproachTree/TreeState2");
 const QLatin1String APPROACHTREE_AIRPORT_NAV("ApproachTree/AirportNav2");

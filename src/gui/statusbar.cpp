@@ -18,15 +18,20 @@
 #include "statusbar.h"
 
 #include "app/navapp.h"
+#include "common/constants.h"
 #include "common/formatter.h"
 #include "common/maptypes.h"
 #include "common/unit.h"
 #include "gui/statusbareventfilter.h"
 #include "gui/stylehandler.h"
+#include "gui/widgetstate.h"
 #include "mapgui/mappaintwidget.h"
-#include "ui_mainwindow.h"
+#include "settings/settings.h"
 #include "util/htmlbuilder.h"
 
+#include <QActionGroup>
+#include <QMenu>
+#include <QStatusBar>
 #include <QTimeZone>
 #include <QToolTip>
 
@@ -37,15 +42,20 @@ const static int RENDER_STATUS_TIMER_MS = 5000;
 const static int SHRINK_STATUS_BAR_TIMER_MS = 10000;
 
 // Maximum number of status messages to show in tooltip
-const static int MAX_STATUS_MESSAGES = 20;
+const static int MAXIMUM_NUM_STATUS_MESSAGES = 20;
 
 // Refresh clock seconds period
 const static int CLOCK_TIMER_MS = 1000;
 
-StatusBar::StatusBar(QObject *parent)
-  : QObject(parent)
-{
+// Minimum label width
+const static int MINIMUM_LABEL_WIDTH = 20;
 
+StatusBar::StatusBar(QStatusBar *statusBarParam)
+  : QObject(statusBarParam),
+  GMT(tr("GMT", "Replaces wrong GMT indication in statusbar with UTC")),
+  UTC(tr("UTC", "Replaces wrong GMT indication in statusbar with UTC"))
+{
+  statusBar = statusBarParam;
 }
 
 StatusBar::~StatusBar()
@@ -55,7 +65,8 @@ StatusBar::~StatusBar()
 
 void StatusBar::init()
 {
-  setupUi();
+  qDebug() << Q_FUNC_INFO;
+  setupLabels();
 
   // Update clock =====================
   clockTimer.setInterval(CLOCK_TIMER_MS);
@@ -79,6 +90,7 @@ void StatusBar::init()
 
 void StatusBar::deInit()
 {
+  qDebug() << Q_FUNC_INFO;
   clockTimer.stop();
   renderStatusTimer.stop();
   shrinkStatusBarTimer.stop();
@@ -93,64 +105,230 @@ void StatusBar::updateClock() const
 {
   if(!atools::gui::Application::isShuttingDown())
   {
-    timeLabel->setText(QDateTime::currentDateTimeUtc().toString("d   HH:mm:ss UTC "));
-    timeLabel->setToolTip(tr("Day of month and UTC time.\n%1\nLocal: %2 %3").
-                          arg(QDateTime::currentDateTimeUtc().toString().
-                              replace(tr("GMT", "Replaces wrong GMT indication in statusbar with UTC"),
-                                      tr("UTC", "Replaces wrong GMT indication in statusbar with UTC"))).
-                          arg(QDateTime::currentDateTime().toString()).
-                          arg(QDateTime::currentDateTime().timeZoneAbbreviation()));
+    // Get timedate depending on settings in menu ===================================
+    QDateTime datetimeText, // Label and first line in tooltip
+              datetimeAlt; // Alternate time in tooltip
+    QString timeTypeStr, invalidStr;
+    switch(timeType)
+    {
+      case TIME_UTC_REAL:
+        datetimeText = QDateTime::currentDateTimeUtc();
+        datetimeAlt = QDateTime::currentDateTime();
+        timeTypeStr = tr("UTC real");
+        invalidStr = tr(" — ");
+        break;
+
+      case TIME_LOCAL_REAL:
+        datetimeText = QDateTime::currentDateTime();
+        datetimeAlt = QDateTime::currentDateTimeUtc();
+        timeTypeStr = tr("local real");
+        invalidStr = tr(" — ");
+        break;
+
+      case TIME_UTC_SIM:
+        if(NavApp::isConnectedAndAircraft())
+        {
+          datetimeText = NavApp::getUserAircraft().getZuluTime();
+          datetimeAlt = NavApp::getUserAircraft().getLocalTime();
+        }
+        invalidStr = tr("Not connected to simulator");
+        timeTypeStr = tr("UTC simulator");
+        break;
+
+      case TIME_LOCAL_SIM:
+        if(NavApp::isConnectedAndAircraft())
+        {
+          datetimeText = NavApp::getUserAircraft().getLocalTime();
+          datetimeAlt = NavApp::getUserAircraft().getZuluTime();
+        }
+        invalidStr = tr("Not connected to simulator");
+        timeTypeStr = tr("local simulator");
+        break;
+    }
+
+    // Label text ===========================
+    if(datetimeText.isNull())
+      timeLabel->setText(tr(" — "));
+    else
+      timeLabel->setText(datetimeText.toString(QStringLiteral("d   HH:mm:ss %1 ").arg(datetimeText.timeZoneAbbreviation())));
+
+    // Tooltip text ===========================
+    if(timeLabel->isVisible())
+    {
+      atools::util::HtmlBuilder html;
+      html.p(atools::util::html::NOBR_WHITESPACE);
+      if(datetimeText.isNull())
+      {
+        // Time not valid - sim time selected and not connected to simulator
+        html.textBr(tr("Day of month and %1 time.").arg(timeTypeStr), atools::util::html::BOLD);
+        html.text(invalidStr);
+      }
+      else
+      {
+        // Real time or sim time and connected
+        html.textBr(tr("Day of month and %1 time.").arg(timeTypeStr), atools::util::html::BOLD);
+        html.textBr(dateTimeString(datetimeText, invalidStr, timeType == TIME_UTC_SIM || timeType == TIME_LOCAL_SIM),
+                    atools::util::html::ITALIC);
+        html.text(dateTimeString(datetimeAlt, invalidStr, timeType == TIME_UTC_SIM || timeType == TIME_LOCAL_SIM));
+      }
+      html.pEnd();
+
+      // Do not use setToolTip(). This allows to update time on the fly with seconds ticking
+      if(timeLabel->rect().contains(timeLabel->mapFromGlobal(QCursor::pos())))
+        QToolTip::showText(QCursor::pos(), html.getHtml());
+    }
+
     timeLabel->setMinimumWidth(timeLabel->width());
   }
 }
 
-void StatusBar::setupUi()
+QString StatusBar::dateTimeString(const QDateTime& datetime, const QString& invalidStr, bool sim) const
 {
-  Ui::MainWindow *ui = NavApp::getMainUi();
+  if(datetime.isValid())
+    return tr("%1%2 (%3)").
+           arg(datetime.timeZone() == QDateTime::currentDateTime().timeZone() ?
+               tr("Local%1: ").arg(sim ? tr(" simulator") : tr(" real")) :
+               tr("UTC%1: ").arg(sim ? tr(" simulator") : tr(" real"))).
+           arg(QLocale().toString(datetime).replace(GMT, UTC).replace(UTC % QStringLiteral(" ") % UTC, UTC)).
+           arg(formatter::formatTimeZoneOffset(datetime.timeZone().standardTimeOffset(datetime)));
+  else
+    return invalidStr;
+}
 
+void StatusBar::addLabel(QLabel *& label, const QString& objectName, const QString& text, const QString& tooltip)
+{
+  label = new QLabel();
+  label->setObjectName(objectName);
+  label->setText(text);
+  label->setToolTip(tooltip);
+  label->setMinimumWidth(label->width());
+
+  statusBar->addPermanentWidget(label);
+  labels.insert(objectName, label);
+}
+
+void StatusBar::setupLabels()
+{
   // ==============================================================
   // Create labels for the statusbar
-  connectStatusLabel = new QLabel();
-  connectStatusLabel->setText(tr("Not connected."));
-  connectStatusLabel->setToolTip(tr("Simulator connection status."));
-  ui->statusBar->addPermanentWidget(connectStatusLabel);
-  connectStatusLabel->setMinimumWidth(connectStatusLabel->width());
-
-  mapVisibleLabel = new QLabel();
-  ui->statusBar->addPermanentWidget(mapVisibleLabel);
-
-  mapDetailLabel = new QLabel();
-  mapDetailLabel->setToolTip(tr("Map detail level / text label level."));
-  ui->statusBar->addPermanentWidget(mapDetailLabel);
-
-  mapRenderStatusLabel = new QLabel();
-  mapRenderStatusLabel->setToolTip(tr("Map rendering and download status."));
-  ui->statusBar->addPermanentWidget(mapRenderStatusLabel);
-
-  mapDistanceLabel = new QLabel();
-  mapDistanceLabel->setToolTip(tr("Map view distance to ground."));
-  ui->statusBar->addPermanentWidget(mapDistanceLabel);
-
-  mapPositionLabel = new QLabel();
-  mapPositionLabel->setToolTip(tr("Coordinates and elevation at cursor position."));
-  ui->statusBar->addPermanentWidget(mapPositionLabel);
-
-  mapMagvarLabel = new QLabel();
-  mapMagvarLabel->setToolTip(tr("Magnetic declination at cursor position."));
-  ui->statusBar->addPermanentWidget(mapMagvarLabel);
-
-  timeZoneLabel = new QLabel();
-  timeZoneLabel->setToolTip(tr("Time Zone country and offset from UTC (excluding DST) at cursor position."));
-  ui->statusBar->addPermanentWidget(timeZoneLabel);
-
-  timeLabel = new QLabel();
-  timeLabel->setToolTip(tr("Day of month and UTC time."));
-  ui->statusBar->addPermanentWidget(timeLabel);
+  addLabel(connectStatusLabel, "connectStatusLabel", tr("Not connected."),
+           tr("Simulator connection status."));
+  addLabel(mapVisibleLabel, "mapVisibleLabel");
+  addLabel(mapDetailLabel, "mapDetailLabel", QStringLiteral(),
+           tr("Map detail level / text label level."));
+  addLabel(mapRenderStatusLabel, "mapRenderStatusLabel", QStringLiteral(),
+           tr("Map rendering and download status."));
+  addLabel(mapDistanceLabel, "mapDistanceLabel", QStringLiteral(),
+           tr("Map view distance to ground."));
+  addLabel(mapPositionLabel, "mapPositionLabel", QStringLiteral(),
+           tr("Coordinates and elevation at cursor position."));
+  addLabel(mapMagvarLabel, "mapMagvarLabel", QStringLiteral(),
+           tr("Magnetic declination at cursor position."));
+  addLabel(timeZoneLabel, "timeZoneLabel", QStringLiteral(),
+           tr("Time Zone country and offset from UTC (excluding DST) at cursor position."));
+  addLabel(timeLabel, "timeLabel");
 
   // Status bar takes ownership of filter which handles tooltip on click
-  ui->statusBar->installEventFilter(new StatusBarEventFilter(ui->statusBar, connectStatusLabel));
+  statusBar->installEventFilter(new StatusBarEventFilter(statusBar, connectStatusLabel));
 
-  connect(ui->statusBar, &QStatusBar::messageChanged, this, &StatusBar::statusMessageChanged);
+  connect(statusBar, &QStatusBar::messageChanged, this, &StatusBar::statusMessageChanged);
+  connect(statusBar, &QStatusBar::customContextMenuRequested, this, &StatusBar::customContextMenuRequested);
+}
+
+QAction *StatusBar::addMenuAction(QMenu& menu, QList<QAction *>& labelActions, const QLabel *label, const QString& text,
+                                  const QString& tooltip) const
+{
+  QAction *action = new QAction(text, &menu);
+  action->setToolTip(tooltip);
+  action->setObjectName(label->objectName());
+  action->setCheckable(true);
+  action->setChecked(label->isVisible());
+  labelActions.append(action);
+  return action;
+}
+
+void StatusBar::customContextMenuRequested(const QPoint& point)
+{
+  qDebug() << Q_FUNC_INFO;
+
+  // Label show/hide actions =======================
+  QList<QAction *> labelActions;
+  QMenu menu(statusBar);
+  menu.setToolTipsVisible(NavApp::isMenuToolTipsVisible());
+  addMenuAction(menu, labelActions, connectStatusLabel, tr("&Simulator connection status"),
+                tr("Shows if Little Navmap is connected to the simulator"));
+  addMenuAction(menu, labelActions, mapVisibleLabel, tr("Map &content indicator"),
+                tr("Shows visible features on the map"));
+  addMenuAction(menu, labelActions, mapDetailLabel, tr("Map &detail level and map label level"),
+                tr("Shows map detail levels as set in menu \"View\""));
+  addMenuAction(menu, labelActions, mapRenderStatusLabel, tr("&Online map download progress indicator"),
+                tr("Show the download status for the background map"));
+  addMenuAction(menu, labelActions, mapDistanceLabel, tr("&Zoom Distance"),
+                tr("Zoom distance to map surface"));
+  addMenuAction(menu, labelActions, mapPositionLabel, tr("&Cursor Coordinates"),
+                tr("Map coordinates and altitude at cursor position"));
+  addMenuAction(menu, labelActions, mapMagvarLabel, tr("&Magnetic Declination"),
+                tr("Magnetic declination at map cursor position"));
+  addMenuAction(menu, labelActions, timeZoneLabel, tr("&Country and Time Zone"),
+                tr("Country and time zone at map cursor position"));
+  menu.addActions(labelActions);
+  menu.addSeparator();
+  QAction *actionTimeLabel = addMenuAction(menu, labelActions, timeLabel, tr("&Time"),
+                                           tr("Current or simulator time"));
+  menu.addAction(actionTimeLabel);
+  menu.addSeparator();
+
+  // Time type actions =======================
+  QActionGroup *group = new QActionGroup(&menu);
+  QAction *actionUtcReal = new QAction(tr("UTC Real Time"), group);
+  actionUtcReal->setToolTip(tr(""));
+  actionUtcReal->setCheckable(true);
+  actionUtcReal->setChecked(timeType == TIME_UTC_REAL);
+  actionUtcReal->setEnabled(actionTimeLabel->isChecked());
+  group->addAction(actionUtcReal);
+  menu.addAction(actionUtcReal);
+
+  QAction *actionLocalReal = new QAction(tr("Local Real Time"), group);
+  actionLocalReal->setToolTip(tr(""));
+  actionLocalReal->setCheckable(true);
+  actionLocalReal->setChecked(timeType == TIME_LOCAL_REAL);
+  actionLocalReal->setEnabled(actionTimeLabel->isChecked());
+  group->addAction(actionLocalReal);
+  menu.addAction(actionLocalReal);
+
+  QAction *actionUtcSim = new QAction(tr("UTC Simulator Time"), group);
+  actionUtcSim->setToolTip(tr(""));
+  actionUtcSim->setCheckable(true);
+  actionUtcSim->setChecked(timeType == TIME_UTC_SIM);
+  actionUtcSim->setEnabled(actionTimeLabel->isChecked());
+  group->addAction(actionUtcSim);
+  menu.addAction(actionUtcSim);
+
+  QAction *actionLocalSim = new QAction(tr("Local Simulator Time"), group);
+  actionLocalSim->setToolTip(tr(""));
+  actionLocalSim->setCheckable(true);
+  actionLocalSim->setChecked(timeType == TIME_LOCAL_SIM);
+  actionLocalSim->setEnabled(actionTimeLabel->isChecked());
+  group->addAction(actionLocalSim);
+  menu.addAction(actionLocalSim);
+
+  // Show menu =======================================================
+  menu.exec(statusBar->mapToGlobal(point));
+
+  // Load values from menu =======================================================
+  for(const QAction *action : std::as_const(labelActions))
+    labels.value(action->objectName())->setVisible(action->isChecked());
+
+  if(actionUtcReal->isChecked())
+    timeType = TIME_UTC_REAL;
+  else if(actionLocalReal->isChecked())
+    timeType = TIME_LOCAL_REAL;
+  else if(actionUtcSim->isChecked())
+    timeType = TIME_UTC_SIM;
+  else if(actionLocalSim->isChecked())
+    timeType = TIME_LOCAL_SIM;
+
+  updateClock();
 }
 
 void StatusBar::styleChanged()
@@ -183,89 +361,66 @@ void StatusBar::styleChanged()
 
   if(adjustFrame)
   {
-    connectStatusLabel->setFrameShadow(shadow);
-    connectStatusLabel->setFrameShape(shape);
-    connectStatusLabel->setMargin(1);
-
-    mapVisibleLabel->setFrameShadow(shadow);
-    mapVisibleLabel->setFrameShape(shape);
-    mapVisibleLabel->setMargin(1);
-
-    mapDetailLabel->setFrameShadow(shadow);
-    mapDetailLabel->setFrameShape(shape);
-    mapDetailLabel->setMargin(1);
-
-    mapRenderStatusLabel->setFrameShadow(shadow);
-    mapRenderStatusLabel->setFrameShape(shape);
-    mapRenderStatusLabel->setMargin(1);
-
-    mapDistanceLabel->setFrameShadow(shadow);
-    mapDistanceLabel->setFrameShape(shape);
-    mapDistanceLabel->setMargin(1);
-
-    mapPositionLabel->setFrameShadow(shadow);
-    mapPositionLabel->setFrameShape(shape);
-    mapPositionLabel->setMargin(1);
-
-    mapMagvarLabel->setFrameShadow(shadow);
-    mapMagvarLabel->setFrameShape(shape);
-    mapMagvarLabel->setMargin(1);
-
-    timeZoneLabel->setFrameShadow(shadow);
-    timeZoneLabel->setFrameShape(shape);
-    timeZoneLabel->setMargin(1);
-
-    timeLabel->setFrameShadow(shadow);
-    timeLabel->setFrameShape(shape);
-    timeLabel->setMargin(1);
+    for(auto it = labels.begin(); it != labels.end(); ++it)
+    {
+      it.value()->setFrameShadow(shadow);
+      it.value()->setFrameShape(shape);
+      it.value()->setMargin(1);
+    }
   }
 #endif
 
   // Set a minimum width - the labels grow (but do not shrink) with content changes
-  connectStatusLabel->setAlignment(align);
-  connectStatusLabel->setMinimumWidth(20);
+  for(auto it = labels.begin(); it != labels.end(); ++it)
+  {
+    it.value()->setAlignment(align);
+    it.value()->setMinimumWidth(MINIMUM_LABEL_WIDTH);
+  }
 
-  mapVisibleLabel->setAlignment(align);
-  mapVisibleLabel->setMinimumWidth(20);
-
-  mapDetailLabel->setAlignment(align);
-  mapDetailLabel->setMinimumWidth(20);
-
-  mapRenderStatusLabel->setAlignment(align);
-  mapRenderStatusLabel->setMinimumWidth(20);
-
-  mapDistanceLabel->setAlignment(align);
-  mapDistanceLabel->setMinimumWidth(20);
-
-  mapPositionLabel->setAlignment(align);
-  mapPositionLabel->setMinimumWidth(20);
   mapPositionLabel->setText(tr(" — "));
-
-  mapMagvarLabel->setAlignment(align);
-  mapMagvarLabel->setMinimumWidth(20);
   mapMagvarLabel->setText(tr(" — "));
-
-  timeZoneLabel->setAlignment(align);
-  timeZoneLabel->setMinimumWidth(20);
   timeZoneLabel->setText(tr(" — "));
-
-  timeLabel->setAlignment(align);
-  timeLabel->setMinimumWidth(20);
 }
 
 void StatusBar::setConnectionStatusMessageText(const QString& text, const QString& tooltipText)
 {
-  if(!text.isEmpty())
-    connectionStatus = text;
-  connectionStatusTooltip = tooltipText;
-  updateConnectionStatusMessageText();
+  if(!NavApp::isShuttingDown())
+  {
+    if(!text.isEmpty())
+      connectionStatus = text;
+    connectionStatusTooltip = tooltipText;
+    updateConnectionStatusMessageText();
+  }
 }
 
 void StatusBar::setOnlineConnectionStatusMessageText(const QString& text, const QString& tooltipText)
 {
-  onlineConnectionStatus = text;
-  onlineConnectionStatusTooltip = tooltipText;
-  updateConnectionStatusMessageText();
+  if(!NavApp::isShuttingDown())
+  {
+    onlineConnectionStatus = text;
+    onlineConnectionStatusTooltip = tooltipText;
+    updateConnectionStatusMessageText();
+  }
+}
+
+void StatusBar::saveState() const
+{
+  atools::gui::WidgetState state(lnm::MAINWINDOW_STATUSBAR, true /* visibility */);
+
+  for(auto it = labels.constBegin(); it != labels.constEnd(); ++it)
+    state.save(it.value());
+
+  atools::settings::Settings::instance().setValueEnum(lnm::MAINWINDOW_STATUSBAR_TIME_TYPE, timeType);
+}
+
+void StatusBar::restoreState()
+{
+  atools::gui::WidgetState state(lnm::MAINWINDOW_STATUSBAR, true /* visibility */);
+
+  for(auto it = labels.begin(); it != labels.end(); ++it)
+    state.restore(it.value());
+
+  timeType = atools::settings::Settings::instance().valueEnum(lnm::MAINWINDOW_STATUSBAR_TIME_TYPE, TIME_UTC_REAL);
 }
 
 void StatusBar::updateConnectionStatusMessageText()
@@ -288,64 +443,70 @@ void StatusBar::updateConnectionStatusMessageText()
 
 void StatusBar::setMapObjectsShownMessageText(const QString& text, const QString& tooltipText)
 {
-  mapVisibleLabel->setText(text);
-  mapVisibleLabel->setToolTip(tooltipText);
-  mapVisibleLabel->setMinimumWidth(mapVisibleLabel->width());
+  if(!NavApp::isShuttingDown())
+  {
+    mapVisibleLabel->setText(text);
+    mapVisibleLabel->setToolTip(tooltipText);
+    mapVisibleLabel->setMinimumWidth(mapVisibleLabel->width());
+  }
 }
 
 void StatusBar::resultTruncated()
 {
-  mapVisibleLabel->setText(atools::util::HtmlBuilder::errorMessage(tr("Too many objects")));
-  mapVisibleLabel->setToolTip(tr("Too many objects to show on map.\n"
-                                 "Display might be incomplete.\n"
-                                 "Reduce map details in the \"View\" menu.",
-                                 "Keep menu item in sync with menu translation"));
-  mapVisibleLabel->setMinimumWidth(mapVisibleLabel->width());
+  if(!NavApp::isShuttingDown())
+  {
+    mapVisibleLabel->setText(atools::util::HtmlBuilder::errorMessage(tr("Too many objects")));
+    mapVisibleLabel->setToolTip(tr("Too many objects to show on map.\n"
+                                   "Display might be incomplete.\n"
+                                   "Reduce map details in the \"View\" menu.",
+                                   "Keep menu item in sync with menu translation"));
+    mapVisibleLabel->setMinimumWidth(mapVisibleLabel->width());
+  }
 }
 
 void StatusBar::distanceChanged()
 {
-  const MapPaintWidget *mapWidget = NavApp::getMapPaintWidgetGui();
-  float dist = Unit::distMeterF(static_cast<float>(mapWidget->distance() * 1000.f));
-  QString distStr = QLocale().toString(dist, 'f', dist < 20.f ? (dist < 0.2f ? 2 : 1) : 0);
-  if(distStr.endsWith(QString(QLocale().decimalPoint()) % "0"))
-    distStr.chop(2);
-
-  QString text = distStr % " " % Unit::getUnitDistStr();
+  if(!NavApp::isShuttingDown())
+  {
+    const MapPaintWidget *mapWidget = NavApp::getMapPaintWidgetGui();
+    if(mapWidget != nullptr)
+    {
+      QString text = Unit::distMeter(mapWidget->distance() * 1000.f);
 
 #ifdef DEBUG_INFORMATION
-  text += QStringLiteral("[%1km][%2z]").arg(mapWidget->distance(), 0, 'f', 2).arg(mapWidget->zoom());
+      text += QStringLiteral(" [%1km][%2z]").arg(mapWidget->distance(), 0, 'f', 2).arg(mapWidget->zoom());
 #endif
 
-  mapDistanceLabel->setText(text);
-  mapDistanceLabel->setMinimumWidth(mapDistanceLabel->width());
+      mapDistanceLabel->setText(text);
+      mapDistanceLabel->setMinimumWidth(mapDistanceLabel->width());
+    }
+  }
 }
 
 void StatusBar::renderStatusReset()
 {
-  if(!atools::gui::Application::isShuttingDown())
-    // Force reset to complete to avoid forever "Waiting"
-    renderStatusUpdateLabel(Marble::Complete, false /* forceUpdate */);
+  // Force reset to complete to avoid forever "Waiting"
+  renderStatusUpdateLabel(Marble::Complete, false /* forceUpdate */);
 }
 
 QString StatusBar::renderStatusString(Marble::RenderStatus status)
 {
   switch(status)
   {
+    // All data is there and up to date
     case Marble::Complete:
-      // All data is there and up to date
       return tr("Done");
 
+    // Rendering is based on complete, but outdated data, data update was requested
     case Marble::WaitingForUpdate:
-      // Rendering is based on complete, but outdated data, data update was requested
       return tr("Updating");
 
+    // Rendering is based on no or partial data, more data was requested (e.g. pending network queries)
     case Marble::WaitingForData:
-      // Rendering is based on no or partial data, more data was requested (e.g. pending network queries)
       return tr("Loading");
 
+    // Data is missing and some error occurred when trying to retrieve it (e.g. network failure)
     case Marble::Incomplete:
-      // Data is missing and some error occurred when trying to retrieve it (e.g. network failure)
       return tr("Incomplete");
   }
 
@@ -354,60 +515,64 @@ QString StatusBar::renderStatusString(Marble::RenderStatus status)
 
 void StatusBar::renderStatusUpdateLabel(Marble::RenderStatus status, bool forceUpdate)
 {
-  if(status != lastRenderStatus || forceUpdate)
+  if(!atools::gui::Application::isShuttingDown())
   {
-    mapRenderStatusLabel->setText(renderStatusString(status));
-    lastRenderStatus = status;
-    mapRenderStatusLabel->setMinimumWidth(mapRenderStatusLabel->width());
+    if(status != lastRenderStatus || forceUpdate)
+    {
+      mapRenderStatusLabel->setText(renderStatusString(status));
+      lastRenderStatus = status;
+      mapRenderStatusLabel->setMinimumWidth(mapRenderStatusLabel->width());
+    }
   }
 }
 
 void StatusBar::renderStateChanged(const Marble::RenderState& state)
 {
+  if(!atools::gui::Application::isShuttingDown())
+  {
 #ifdef DEBUG_INFORMATION
-  qDebug() << Q_FUNC_INFO << renderStatusString(state.status());
+    qDebug() << Q_FUNC_INFO << renderStatusString(state.status());
 
-  for(int i = 0; i < state.children(); i++)
-    qDebug() << Q_FUNC_INFO << state.childAt(i).name() << renderStatusString(state.status());
+    for(int i = 0; i < state.children(); i++)
+      qDebug() << Q_FUNC_INFO << state.childAt(i).name() << renderStatusString(state.status());
 #endif
 
-  Marble::RenderStatus status = state.status();
-  renderStatusUpdateLabel(status, false /* forceUpdate */);
+    Marble::RenderStatus status = state.status();
+    renderStatusUpdateLabel(status, false /* forceUpdate */);
 
-  if(status == Marble::WaitingForUpdate || status == Marble::WaitingForData)
-    // Reset forever lasting waiting status if Marble cannot fetch tiles
-    renderStatusTimer.start();
-  else if(status == Marble::Complete || status == Marble::Incomplete)
-    renderStatusTimer.stop();
+    if(status == Marble::WaitingForUpdate || status == Marble::WaitingForData)
+      // Reset forever lasting waiting status if Marble cannot fetch tiles
+      renderStatusTimer.start();
+    else if(status == Marble::Complete || status == Marble::Incomplete)
+      renderStatusTimer.stop();
+  }
 }
 
 void StatusBar::shrinkStatusBar()
 {
   if(!atools::gui::Application::isShuttingDown())
   {
-    Ui::MainWindow *ui = NavApp::getMainUi();
-
 #ifdef DEBUG_INFORMATION
-    qDebug() << Q_FUNC_INFO << ui->statusBar->geometry() << QCursor::pos();
+    qDebug() << Q_FUNC_INFO << statusBar->geometry() << QCursor::pos();
 #endif
 
     // Do not shrink status bar if cursor is above
-    if(!ui->statusBar->rect().contains(ui->statusBar->mapFromGlobal(QCursor::pos())))
+    if(!statusBar->rect().contains(statusBar->mapFromGlobal(QCursor::pos())))
     {
       mapPositionLabel->clear();
       mapPositionLabel->setText(tr(" — "));
-      mapPositionLabel->setMinimumWidth(20);
-      mapPositionLabel->resize(20, mapPositionLabel->height());
+      mapPositionLabel->setMinimumWidth(MINIMUM_LABEL_WIDTH);
+      mapPositionLabel->resize(MINIMUM_LABEL_WIDTH, mapPositionLabel->height());
 
       mapMagvarLabel->clear();
       mapMagvarLabel->setText(tr(" — "));
-      mapMagvarLabel->setMinimumWidth(20);
-      mapMagvarLabel->resize(20, mapMagvarLabel->height());
+      mapMagvarLabel->setMinimumWidth(MINIMUM_LABEL_WIDTH);
+      mapMagvarLabel->resize(MINIMUM_LABEL_WIDTH, mapMagvarLabel->height());
 
       timeZoneLabel->clear();
       timeZoneLabel->setText(tr(" — "));
-      timeZoneLabel->setMinimumWidth(20);
-      timeZoneLabel->resize(20, timeZoneLabel->height());
+      timeZoneLabel->setMinimumWidth(MINIMUM_LABEL_WIDTH);
+      timeZoneLabel->resize(MINIMUM_LABEL_WIDTH, timeZoneLabel->height());
     }
     else
       shrinkStatusBarTimer.start();
@@ -416,7 +581,7 @@ void StatusBar::shrinkStatusBar()
 
 void StatusBar::updateMapPositionLabel(const atools::geo::Pos& pos, const QPoint& point)
 {
-  if(pos.isValid())
+  if(!atools::gui::Application::isShuttingDown() && pos.isValid())
   {
     // Coordinates ============================
     QString text(Unit::coords(pos));
@@ -469,8 +634,6 @@ void StatusBar::updateMapPositionLabel(const atools::geo::Pos& pos, const QPoint
 
 void StatusBar::setStatusMessage(const QString& message, bool addToLog, bool popup)
 {
-  Ui::MainWindow *ui = NavApp::getMainUi();
-
   if(addToLog && !message.isEmpty() && !NavApp::isShuttingDown())
   {
     qInfo() << Q_FUNC_INFO << "Message" << message;
@@ -478,7 +641,7 @@ void StatusBar::setStatusMessage(const QString& message, bool addToLog, bool pop
     statusMessages.append({QDateTime::currentDateTime(), message});
 
     bool removed = false;
-    while(statusMessages.size() > MAX_STATUS_MESSAGES)
+    while(statusMessages.size() > MAXIMUM_NUM_STATUS_MESSAGES)
     {
       statusMessages.removeFirst();
       removed = true;
@@ -495,35 +658,37 @@ void StatusBar::setStatusMessage(const QString& message, bool addToLog, bool pop
                  arg(QLocale().toString(statusMessages.at(i).getTimestamp().time(), tr("hh:mm:ss"))).
                  arg(statusMessages.at(i).getMessage()));
 
-    ui->statusBar->setToolTip(msg.join(tr("<br/>")) % tr("</p>"));
+    statusBar->setToolTip(msg.join(tr("<br/>")) % tr("</p>"));
 
     if(popup)
       // Always shown with offset relative to point
-      QToolTip::showText(ui->statusBar->mapToGlobal(QPoint(0, 0)), message, ui->statusBar, QRect(), 4000);
+      QToolTip::showText(statusBar->mapToGlobal(QPoint(0, 0)), message, statusBar, QRect(), 4000);
   }
 
-  ui->statusBar->showMessage(message);
+  statusBar->showMessage(message);
 }
 
 void StatusBar::statusMessageChanged(const QString& text)
 {
   if(text.isEmpty() && !NavApp::isShuttingDown())
   {
-    Ui::MainWindow *ui = NavApp::getMainUi();
     // Field is cleared. Show number of messages in otherwise empty field.
     if(statusMessages.isEmpty())
-      ui->statusBar->showMessage(tr("No Messages"));
+      statusBar->showMessage(tr("No Messages"));
     else
-      ui->statusBar->showMessage(tr("%1 %2").
-                                 arg(statusMessages.size()).
-                                 arg(statusMessages.size() > 1 ? tr("Messages") : tr("Message")));
+      statusBar->showMessage(tr("%1 %2").
+                             arg(statusMessages.size()).
+                             arg(statusMessages.size() > 1 ? tr("Messages") : tr("Message")));
   }
 }
 
 void StatusBar::setDetailLabelText(const QString& text)
 {
-  mapDetailLabel->setText(text);
-  mapDetailLabel->setMinimumWidth(mapDetailLabel->width());
+  if(!atools::gui::Application::isShuttingDown())
+  {
+    mapDetailLabel->setText(text);
+    mapDetailLabel->setMinimumWidth(mapDetailLabel->width());
+  }
 }
 
 void StatusBar::printDebugInformation()

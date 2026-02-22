@@ -26,6 +26,7 @@
 #include <marble/MarbleGlobal.h>
 #include <marble/RenderState.h>
 
+class QStatusBar;
 namespace atools {
 namespace geo {
 class Pos;
@@ -43,8 +44,26 @@ class StatusBar
 
 public:
   /* parent should be MainWindow */
-  explicit StatusBar(QObject *parent);
+  explicit StatusBar(QStatusBar *statusBarParam);
   virtual ~StatusBar() override;
+
+  /* Allocate labels, connect and start timers */
+  void init();
+
+  /* Stops timers */
+  void deInit();
+
+  void saveState() const;
+  void restoreState();
+
+  /* Update style for dark and other styles */
+  void styleChanged();
+
+  /* Update distance in case of unit changes */
+  void optionsChanged();
+
+  /* Print label sizes to log */
+  void printDebugInformation();
 
   /* Sets a general status bar message which is shared with all widgets/actions status text
    * Set a general status message */
@@ -55,21 +74,6 @@ public:
 
   /* Update label for Marble download and file load status. */
   void renderStatusUpdateLabel(Marble::RenderStatus status, bool forceUpdate);
-
-  /* Update style for dark and other styles */
-  void styleChanged();
-
-  /* Allocate labels, connect and start timers */
-  void init();
-
-  /* Stops timers */
-  void deInit();
-
-  /* Update distance in case of unit changes */
-  void optionsChanged();
-
-  /* Print label sizes to log */
-  void printDebugInformation();
 
   /* Show "Too many objects" label if number of map features was truncated */
   /* Called after each query */
@@ -114,15 +118,14 @@ private:
   void updateClock() const;
 
   /* Allocate all labels */
-  void setupUi();
+  void setupLabels();
 
-  /* Status bar labels */
-  QLabel *mapDistanceLabel = nullptr, *mapPositionLabel = nullptr, *mapMagvarLabel = nullptr, *timeZoneLabel = nullptr,
-         *mapRenderStatusLabel = nullptr, *mapDetailLabel = nullptr, *mapVisibleLabel = nullptr, *connectStatusLabel = nullptr,
-         *timeLabel = nullptr;
+  void addLabel(QLabel *& label, const QString& objectName, const QString& text = QString(), const QString& tooltip = QString());
+  QAction *addMenuAction(QMenu& menu, QList<QAction *>& labelActions, const QLabel *label, const QString& text = QString(),
+                         const QString& tooltip = QString()) const;
+  void customContextMenuRequested(const QPoint& point);
 
-  /* Connection field and tooltip in statusbar */
-  QString connectionStatus, connectionStatusTooltip, onlineConnectionStatus, onlineConnectionStatusTooltip;
+  QString dateTimeString(const QDateTime& datetime, const QString& invalidStr, bool sim) const;
 
   /* List of status bar messages. First is shown and others are shown in tooltip. */
   class StatusMessage
@@ -148,6 +151,15 @@ private:
     QString message;
   };
 
+  /* Status bar labels */
+  QLabel *mapDistanceLabel = nullptr, *mapPositionLabel = nullptr, *mapMagvarLabel = nullptr, *timeZoneLabel = nullptr,
+         *mapRenderStatusLabel = nullptr, *mapDetailLabel = nullptr, *mapVisibleLabel = nullptr, *connectStatusLabel = nullptr,
+         *timeLabel = nullptr;
+
+  /* Connection field and tooltip in statusbar */
+  QString connectionStatus, connectionStatusTooltip, onlineConnectionStatus, onlineConnectionStatusTooltip;
+  const QString GMT, UTC;
+
   QList<StatusMessage> statusMessages;
 
   QTimer renderStatusTimer /* MainWindow::renderStatusReset() if render status is stalled */,
@@ -155,8 +167,20 @@ private:
 
   Marble::RenderStatus lastRenderStatus = Marble::Incomplete;
 
+  QHash<QString, QLabel *> labels;
+
   QTimer clockTimer /* MainWindow::updateClock() every second */;
 
+  enum TimeType
+  {
+    TIME_UTC_REAL,
+    TIME_LOCAL_REAL,
+    TIME_UTC_SIM,
+    TIME_LOCAL_SIM
+  };
+
+  TimeType timeType = TIME_UTC_REAL;
+  QStatusBar *statusBar = nullptr;
 };
 
 #endif // LNM_GUI_STATUSBAR_H
