@@ -86,18 +86,15 @@ WeatherReporter::WeatherReporter(QWidget *parent, atools::fs::FsPaths::Simulator
 
   verbose = Settings::instance().getAndStoreValue(lnm::OPTIONS_WEATHER_DEBUG, false).toBool();
 
-  auto coordFunc = std::bind(&WeatherReporter::fetchAirportCoordinates, this, std::placeholders::_1,
-                             queries->getAirportQuerySim(), atools::fs::FsPaths::isAnyXplane(simType));
-
   xpWeatherReader = new atools::fs::weather::XpWeatherReader(this, verbose);
 
   noaaWeather = new NoaaWeatherDownloader(parent, verbose);
   noaaWeather->setRequestUrl(OptionData::instance().getWeatherNoaaUrl());
-  noaaWeather->setFetchAirportCoords(coordFunc); // Set callback so the reader can build an index for nearest airports
+  noaaWeather->setFetchAirportCoords(&WeatherReporter::fetchAirportCoordinates, this); // Set callback so the reader can build an index for nearest airports
 
   vatsimWeather = new WeatherNetDownload(parent, atools::fs::weather::FLAT, verbose);
   vatsimWeather->setRequestUrl(OptionData::instance().getWeatherVatsimUrl());
-  vatsimWeather->setFetchAirportCoords(coordFunc);
+  vatsimWeather->setFetchAirportCoords(&WeatherReporter::fetchAirportCoordinates, this);
 
   ivaoWeather = new WeatherNetDownload(parent, atools::fs::weather::JSON, verbose);
   const QLatin1String KEY(":/littlenavmap/little_navmap_keys/ivao_weather_api_key.bin");
@@ -109,12 +106,12 @@ WeatherReporter::WeatherReporter(QWidget *parent, atools::fs::FsPaths::Simulator
       {"apiKey", atools::strFromCryptFile(KEY, 0x2B1A96468EB62460)}
     });
   }
-  ivaoWeather->setFetchAirportCoords(coordFunc);
+  ivaoWeather->setFetchAirportCoords(&WeatherReporter::fetchAirportCoordinates, this);
 
   initActiveSkyPaths();
 
   // Set callback so the reader can build an index for nearest airports
-  xpWeatherReader->setFetchAirportCoords(coordFunc);
+  xpWeatherReader->setFetchAirportCoords(&WeatherReporter::fetchAirportCoordinates, this);
   initXplane();
 
   connect(xpWeatherReader, &atools::fs::weather::XpWeatherReader::weatherUpdated, this, &WeatherReporter::xplaneWeatherFileChanged);
@@ -157,7 +154,7 @@ void WeatherReporter::weatherDownloadProgress(qint64 bytesReceived, qint64 bytes
   if(verbose)
     qDebug() << Q_FUNC_INFO << "bytesReceived" << bytesReceived << "bytesTotal" << bytesTotal << "downloadUrl" << downloadUrl;
 
-  atools::gui::Application::processEventsExtended(10L, false /* excludeInputEvents */);
+  atools::gui::Application::processEventsExtended(0L, false /* excludeInputEvents */);
 }
 
 void WeatherReporter::noaaWeatherUpdated()
@@ -187,10 +184,17 @@ void WeatherReporter::vatsimWeatherUpdated()
   }
 }
 
-atools::geo::Pos WeatherReporter::fetchAirportCoordinates(const QString& airportIdent, AirportQuery *airportQuery, bool xplane)
+atools::geo::Pos WeatherReporter::fetchAirportCoordinates(const QByteArray& airportIdent, void *object)
 {
   if(!NavApp::isLoadingDatabase())
-    return xplane ? airportQuery->getAirportPosByIdentOrIcao(airportIdent) : airportQuery->getAirportPosByIdent(airportIdent);
+  {
+    const WeatherReporter *reporter = static_cast<WeatherReporter *>(object);
+    AirportQuery *airportQuery = reporter->queries->getAirportQuerySim();
+
+    return atools::fs::FsPaths::isAnyXplane(reporter->simType) ?
+           airportQuery->getAirportPosByIdentOrIcao(airportIdent) :
+           airportQuery->getAirportPosByIdent(airportIdent);
+  }
   else
     return atools::geo::EMPTY_POS;
 }
@@ -502,16 +506,13 @@ void WeatherReporter::loadActiveSkySnapshot(const QString& path)
 
     int lineNum = 1;
     QString line;
-    AirportQuery *airportQuerySim = queries->getAirportQuerySim();
     while(weatherSnapshot.readLineInto(&line))
     {
       QStringList list = line.split("::");
       if(list.size() >= 2)
       {
         num++;
-        Metar metar(list.at(0),
-                    fetchAirportCoordinates(list.at(0), airportQuerySim, atools::fs::FsPaths::isAnyXplane(simType)),
-                    list.at(1));
+        Metar metar(list.at(0), fetchAirportCoordinates(list.at(0).toLatin1(), this), list.at(1));
         metar.parseAll(true /* useTimestamp */);
         activeSkyMetars.insert(list.at(0), metar);
       }

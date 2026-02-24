@@ -377,7 +377,7 @@ void AirspaceController::loadAirspace(atools::fs::userdata::AirspaceReaderBase& 
 {
   // Read OpenAir file =============================================================
   qDebug() << Q_FUNC_INFO << "Reading" << file << "as OpenAIR";
-  reader.setFetchAirportCoords(std::bind(&AirspaceController::fetchAirportCoordinates, this, std::placeholders::_1));
+  reader.setFetchAirportCoords(&AirspaceController::fetchAirportCoordinates, this);
 
   reader.setFileId(fileId);
   reader.setAirspaceId(nextAirspaceId);
@@ -386,7 +386,7 @@ void AirspaceController::loadAirspace(atools::fs::userdata::AirspaceReaderBase& 
   nextAirspaceId = reader.getNextAirspaceId();
 }
 
-atools::geo::Pos AirspaceController::fetchAirportCoordinates(const QString& airportIdent)
+atools::geo::Pos AirspaceController::fetchAirportCoordinates(const QByteArray& airportIdent, void *)
 {
   if(!NavApp::isLoadingDatabase())
   {

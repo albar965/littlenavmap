@@ -227,7 +227,7 @@ private:
   /* Show warning dialog in main loop to avoid issues when being called from draw handler */
   void showXplaneWarningDialog(const QString& message);
 
-  atools::geo::Pos fetchAirportCoordinates(const QString& airportIdent, AirportQuery *airportQuery, bool xplane);
+  static atools::geo::Pos fetchAirportCoordinates(const QByteArray& airportIdent, void *object);
 
   atools::fs::weather::NoaaWeatherDownloader *noaaWeather = nullptr;
   atools::fs::weather::WeatherNetDownload *vatsimWeather = nullptr;

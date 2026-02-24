@@ -111,7 +111,7 @@ private:
   void loadAirspace(atools::fs::userdata::AirspaceReaderBase& reader, const QString& file, int fileId, int& nextAirspaceId,
                     int& numReadFile);
   void collectErrors(QStringList& errors, const atools::fs::userdata::AirspaceReaderBase& reader, const QString& basePath);
-  atools::geo::Pos fetchAirportCoordinates(const QString& airportIdent);
+  static atools::geo::Pos fetchAirportCoordinates(const QByteArray& airportIdent, void *object);
 
   AirspaceToolBarHandler *airspaceHandler = nullptr;
   QWidget *parentWidget;
