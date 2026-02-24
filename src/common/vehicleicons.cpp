@@ -49,10 +49,9 @@ struct PixmapKey
   int size, rotate;
 };
 
-size_t qHash(const PixmapKey& key)
+size_t qHash(const PixmapKey& key, size_t seed)
 {
-  return static_cast<size_t>(key.size ^ (key.type << 8) ^ (key.ground << 12) ^
-                             (key.user << 13) ^ (key.rotate << 14) ^ (key.online << 15));
+  return qHashMulti(seed, key.size, key.type, key.ground, key.user, key.rotate, key.online);
 }
 
 struct VehicleIconsPrivate
