@@ -230,9 +230,9 @@ struct NearestCacheKeyNavaid
 
 };
 
-inline uint qHash(const query::NearestCacheKeyNavaid& key)
+inline size_t qHash(const query::NearestCacheKeyNavaid& key, size_t seed)
 {
-  return atools::geo::qHash(key.pos) ^ ::qHash(map::MapTypes(key.type).asFlagType()) ^ ::qHash(key.distanceNm);
+  return qHashMulti(seed, key.pos.getLonX(), key.pos.getLatY(), key.type, key.distanceNm);
 }
 
 } // namespace query

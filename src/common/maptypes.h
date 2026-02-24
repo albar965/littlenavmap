@@ -119,9 +119,9 @@ struct MapRef
 
 QDebug operator<<(QDebug out, const map::MapRef& ref);
 
-inline size_t qHash(const map::MapRef& type)
+inline size_t qHash(const map::MapRef& type, size_t seed)
 {
-  return static_cast<uint>(type.id) ^ static_cast<uint>(type.objType);
+  return qHashMulti(seed, type.id, type.objType);
 }
 
 typedef QList<MapRef> MapRefList;
@@ -177,9 +177,9 @@ struct MapRefExt
 
 QDebug operator<<(QDebug out, const map::MapRefExt& ref);
 
-inline size_t qHash(const map::MapRefExt& type)
+inline size_t qHash(const map::MapRefExt& type, size_t seed)
 {
-  return qHash(static_cast<map::MapRef>(type)) ^ qHash(type.position);
+  return qHashMulti(seed, type.id, type.objType, type.position.getLonX(), type.position.getLatY());
 }
 
 typedef QList<MapRefExt> MapRefExtList;

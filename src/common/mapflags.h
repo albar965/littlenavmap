@@ -435,9 +435,9 @@ struct MapAirspaceId
   MapAirspaceSource src;
 };
 
-inline uint qHash(const map::MapAirspaceId& id)
+inline size_t qHash(const map::MapAirspaceId& id, size_t seed)
 {
-  return static_cast<unsigned int>(id.id) ^ id.src;
+  return qHashMulti(seed, id.id, id.src);
 }
 
 inline bool operator==(const map::MapAirspaceId& id1, const map::MapAirspaceId& id2)

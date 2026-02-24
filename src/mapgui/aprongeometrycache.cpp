@@ -24,9 +24,9 @@
 #include <QPainterPath>
 
 // ======= Key  ===============================================================
-uint qHash(const ApronGeometryCache::Key& key)
+size_t qHash(const ApronGeometryCache::Key& key, size_t seed)
 {
-  return static_cast<uint>(key.apronId) ^ key.fast ^ static_cast<uint>(key.zoomDistanceMeter);
+  return qHashMulti(seed, key.apronId, key.fast, key.zoomDistanceMeter);
 }
 
 ApronGeometryCache::Key::Key(int apronIdParam, float zoomDistanceMeterParam, bool fastParam)

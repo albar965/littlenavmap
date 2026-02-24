@@ -72,7 +72,7 @@ private:
 
   };
 
-  friend uint qHash(const ApronGeometryCache::Key& key);
+  friend size_t qHash(const ApronGeometryCache::Key& key, size_t seed);
 
   /* Calculate X-Plane aprons including bezier curves */
   QPainterPath pathForBoundary(const atools::fs::common::Boundary& boundaryNodes, bool fast);

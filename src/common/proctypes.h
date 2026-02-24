@@ -105,7 +105,7 @@ struct MapProcedureRef
   MapProcedureRef(int airportIdParam, int runwayEndIdParam, int procIdParam, int transIdParam, int legIdParam,
                   proc::MapProcedureTypes type)
     : airportId(airportIdParam), runwayEndId(runwayEndIdParam), procedureId(procIdParam), transitionId(transIdParam), legId(legIdParam),
-    mapType(type)
+      mapType(type)
   {
   }
 
@@ -169,11 +169,9 @@ struct MapProcedureRef
 
 QDebug operator<<(QDebug out, const proc::MapProcedureRef& ref);
 
-inline uint qHash(const proc::MapProcedureRef& ref)
+inline uint qHash(const proc::MapProcedureRef& ref, size_t seed)
 {
-  return static_cast<unsigned int>(ref.airportId) ^ static_cast<unsigned int>(ref.procedureId) ^
-         static_cast<unsigned int>(ref.runwayEndId) ^
-         static_cast<unsigned int>(ref.transitionId) ^ static_cast<unsigned int>(ref.legId) ^ qHash(ref.mapType);
+  return qHashMulti(seed, ref.airportId, ref.procedureId, ref.runwayEndId, ref.transitionId, ref.legId, ref.mapType);
 }
 
 // =====================================================================
