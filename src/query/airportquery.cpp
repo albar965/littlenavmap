@@ -49,9 +49,9 @@ const static float MAX_RUNWAY_DISTANCE_METER_2 = 2000.f; // Second iteration if 
 const static float MAX_FUZZY_AIRPORT_DISTANCE_METER = 2000.f;
 const static float MAX_FUZZY_AIRPORT_DISTANCE_METER_UNIQUE = 10000.f;
 
-inline uint qHash(const NearestCacheKeyPosIdentDist& key)
+inline size_t qHash(const NearestCacheKeyPosIdentDist& key, size_t seed)
 {
-  return qHash(std::get<0>(key)) ^ qHash(std::get<1>(key)) ^ qHash(std::get<2>(key));
+  return qHashMulti(seed, std::get<0>(key).getLonX(), std::get<0>(key).getLatY(), std::get<1>(key), std::get<2>(key));
 }
 
 AirportQuery::AirportQuery(atools::sql::SqlDatabase *sqlDb, const Queries *queriesParam, bool nav)
@@ -87,9 +87,9 @@ void AirportQuery::loadAirportProcedureCache()
   {
     QString queryStr;
     if(iataCol)
-      queryStr = "select ident, iata from airport where num_approach > 0";
+      queryStr = QStringLiteral("select ident, iata from airport where num_approach > 0");
     else
-      queryStr = "select ident, null as iata from airport where num_approach > 0";
+      queryStr = QStringLiteral("select ident, null as iata from airport where num_approach > 0");
 
     SqlQuery query(db);
     query.exec(queryStr);
@@ -123,13 +123,13 @@ void AirportQuery::getAirportAdminNamesById(int airportId, QString& city, QStrin
   if(!query::valid(Q_FUNC_INFO, airportAdminByIdQuery))
     return;
 
-  airportAdminByIdQuery->bindValue(":id", airportId);
+  airportAdminByIdQuery->bindValue(QStringLiteral(":id"), airportId);
   airportAdminByIdQuery->exec();
   if(airportAdminByIdQuery->next())
   {
-    city = airportAdminByIdQuery->value("city").toString();
-    state = airportAdminByIdQuery->value("state").toString();
-    country = airportAdminByIdQuery->value("country").toString();
+    city = airportAdminByIdQuery->value(QStringLiteral("city")).toString();
+    state = airportAdminByIdQuery->value(QStringLiteral("state")).toString();
+    country = airportAdminByIdQuery->value(QStringLiteral("country")).toString();
   }
   airportAdminByIdQuery->finish();
 }
@@ -155,7 +155,7 @@ void AirportQuery::getAirportById(map::MapAirport& airport, int airportId)
   {
     ap = new map::MapAirport;
 
-    airportByIdQuery->bindValue(":id", airportId);
+    airportByIdQuery->bindValue(QStringLiteral(":id"), airportId);
     airportByIdQuery->exec();
     if(airportByIdQuery->next())
       mapTypesFactory->fillAirport(airportByIdQuery->record(), *ap, true /* complete */, navdata, NavApp::isAirportDatabaseXPlane(navdata));
@@ -191,7 +191,7 @@ void AirportQuery::getAirportByIdent(map::MapAirport& airport, const QString& id
   {
     ap = new map::MapAirport;
 
-    airportByIdentQuery->bindValue(":ident", ident);
+    airportByIdentQuery->bindValue(QStringLiteral(":ident"), ident);
     airportByIdentQuery->exec();
     if(airportByIdentQuery->next())
       mapTypesFactory->fillAirport(airportByIdentQuery->record(), *ap, true /* complete */, navdata,
@@ -220,7 +220,7 @@ void AirportQuery::getAirportsByTruncatedIdent(QList<map::MapAirport>& airports,
   if(!ident.endsWith(QChar('%')))
     ident.append(QChar('%'));
 
-  airportsByTruncatedIdentQuery->bindValue(":ident", ident);
+  airportsByTruncatedIdentQuery->bindValue(QStringLiteral(":ident"), ident);
   airportsByTruncatedIdentQuery->exec();
   while(airportsByTruncatedIdentQuery->next())
   {
@@ -268,19 +268,19 @@ void AirportQuery::getAirportsByOfficialIdent(QList<map::MapAirport>& airports, 
 
   if(!ident.isEmpty())
   {
-    airportByOfficialQuery->bindValue(":ident", flags.testFlag(map::AP_QUERY_IDENT) ? ident : INVALID_ID);
+    airportByOfficialQuery->bindValue(QStringLiteral(":ident"), flags.testFlag(map::AP_QUERY_IDENT) ? ident : INVALID_ID);
 
     if(icaoCol)
-      airportByOfficialQuery->bindValue(":icao", flags.testFlag(map::AP_QUERY_ICAO) ? ident : INVALID_ID);
+      airportByOfficialQuery->bindValue(QStringLiteral(":icao"), flags.testFlag(map::AP_QUERY_ICAO) ? ident : INVALID_ID);
 
     if(faaCol)
-      airportByOfficialQuery->bindValue(":faa", flags.testFlag(map::AP_QUERY_FAA) ? ident : INVALID_ID);
+      airportByOfficialQuery->bindValue(QStringLiteral(":faa"), flags.testFlag(map::AP_QUERY_FAA) ? ident : INVALID_ID);
 
     if(iataCol)
-      airportByOfficialQuery->bindValue(":iata", flags.testFlag(map::AP_QUERY_IATA) ? ident : INVALID_ID);
+      airportByOfficialQuery->bindValue(QStringLiteral(":iata"), flags.testFlag(map::AP_QUERY_IATA) ? ident : INVALID_ID);
 
     if(localCol)
-      airportByOfficialQuery->bindValue(":local", flags.testFlag(map::AP_QUERY_LOCAL) ? ident : INVALID_ID);
+      airportByOfficialQuery->bindValue(QStringLiteral(":local"), flags.testFlag(map::AP_QUERY_LOCAL) ? ident : INVALID_ID);
 
     airportByOfficialQuery->exec();
     while(airportByOfficialQuery->next())
@@ -415,10 +415,10 @@ atools::geo::Pos AirportQuery::getAirportPosByIdent(const QString& ident)
     return atools::geo::EMPTY_POS;
 
   ageo::Pos pos;
-  airportCoordsByIdentQuery->bindValue(":ident", ident);
+  airportCoordsByIdentQuery->bindValue(0, ident);
   airportCoordsByIdentQuery->exec();
   if(airportCoordsByIdentQuery->next())
-    pos = ageo::Pos(airportCoordsByIdentQuery->value("lonx").toFloat(), airportCoordsByIdentQuery->value("laty").toFloat());
+    pos = ageo::Pos(airportCoordsByIdentQuery->value(0).toFloat(), airportCoordsByIdentQuery->value(1).toFloat());
   airportCoordsByIdentQuery->finish();
   return pos;
 }
@@ -429,10 +429,12 @@ atools::geo::Pos AirportQuery::getAirportPosByIdentOrIcao(const QString& identOr
     return atools::geo::EMPTY_POS;
 
   ageo::Pos pos;
-  airportCoordsByIdentOrIcaoQuery->bindValue(":identicao", identOrIcao);
+  airportCoordsByIdentOrIcaoQuery->bindValue(0, identOrIcao);
+  if(icaoCol)
+    airportCoordsByIdentOrIcaoQuery->bindValue(1, identOrIcao);
   airportCoordsByIdentOrIcaoQuery->exec();
   if(airportCoordsByIdentOrIcaoQuery->next())
-    pos = ageo::Pos(airportCoordsByIdentOrIcaoQuery->value("lonx").toFloat(), airportCoordsByIdentOrIcaoQuery->value("laty").toFloat());
+    pos = ageo::Pos(airportCoordsByIdentOrIcaoQuery->value(0).toFloat(), airportCoordsByIdentOrIcaoQuery->value(1).toFloat());
   airportCoordsByIdentOrIcaoQuery->finish();
   return pos;
 }
@@ -455,7 +457,7 @@ bool AirportQuery::hasDepartureProcedures(const map::MapAirport& airport) const
 bool AirportQuery::hasQueryByAirportId(atools::sql::SqlQuery& query, int id) const
 {
   bool retval = false;
-  query.bindValue(":id", id);
+  query.bindValue(QStringLiteral(":id"), id);
   query.exec();
   if(query.next())
     retval = true;
@@ -475,8 +477,8 @@ void AirportQuery::getAirportRegion(map::MapAirport& airport)
                 "where w.region is not null "
                 "order by (abs(:lonx - w.lonx) + abs(:laty - w.laty)) limit 1");
 
-  query.bindValue(":lonx", airport.position.getLonX());
-  query.bindValue(":laty", airport.position.getLatY());
+  query.bindValue(QStringLiteral(":lonx"), airport.position.getLonX());
+  query.bindValue(QStringLiteral(":laty"), airport.position.getLatY());
 
   query.exec();
   if(query.next())
@@ -490,7 +492,7 @@ map::MapRunwayEnd AirportQuery::getRunwayEndById(int id)
   if(!query::valid(Q_FUNC_INFO, runwayEndByIdQuery))
     return end;
 
-  runwayEndByIdQuery->bindValue(":id", id);
+  runwayEndByIdQuery->bindValue(QStringLiteral(":id"), id);
   runwayEndByIdQuery->exec();
   if(runwayEndByIdQuery->next())
     mapTypesFactory->fillRunwayEnd(runwayEndByIdQuery->record(), end, navdata);
@@ -546,11 +548,11 @@ void AirportQuery::runwayEndByNames(map::MapResult& result, const QString& runwa
     return;
 
   QString rname(runwayName);
-  if(rname.startsWith("RW"))
+  if(rname.startsWith(QStringLiteral("RW")))
     rname.remove(0, 2);
 
-  runwayEndByNameQuery->bindValue(":name", rname);
-  runwayEndByNameQuery->bindValue(":airport", airportIdent);
+  runwayEndByNameQuery->bindValue(QStringLiteral(":name"), rname);
+  runwayEndByNameQuery->bindValue(QStringLiteral(":airport"), airportIdent);
   runwayEndByNameQuery->exec();
   while(runwayEndByNameQuery->next())
   {
@@ -569,7 +571,7 @@ const QList<map::MapApron> *AirportQuery::getAprons(int airportId)
     return apronCache.object(airportId);
   else
   {
-    apronQuery->bindValue(":airportId", airportId);
+    apronQuery->bindValue(QStringLiteral(":airportId"), airportId);
     apronQuery->exec();
 
     QList<map::MapApron> *aprons = new QList<map::MapApron>;
@@ -577,12 +579,12 @@ const QList<map::MapApron> *AirportQuery::getAprons(int airportId)
     {
       map::MapApron ap;
 
-      ap.id = apronQuery->valueInt("apron_id");
-      ap.surface = apronQuery->value("surface").toString();
+      ap.id = apronQuery->valueInt(QStringLiteral("apron_id"));
+      ap.surface = apronQuery->value(QStringLiteral("surface")).toString();
 
-      if(!apronQuery->isNull("geometry"))
+      if(!apronQuery->isNull(QStringLiteral("geometry")))
       {
-        QByteArray bytes = apronQuery->value("geometry").toByteArray();
+        QByteArray bytes = apronQuery->value(QStringLiteral("geometry")).toByteArray();
 
         if(!bytes.isEmpty())
         {
@@ -597,9 +599,9 @@ const QList<map::MapApron> *AirportQuery::getAprons(int airportId)
       }
 
       // Decode vertices into a position list - FSX/P3D
-      if(!apronQuery->isNull("vertices"))
+      if(!apronQuery->isNull(QStringLiteral("vertices")))
       {
-        QByteArray bytes = apronQuery->value("vertices").toByteArray();
+        QByteArray bytes = apronQuery->value(QStringLiteral("vertices")).toByteArray();
 
         if(!bytes.isEmpty())
         {
@@ -633,7 +635,7 @@ const QList<map::MapParking> *AirportQuery::getParkingsForAirport(int airportId)
     return parkingCache.object(airportId);
   else
   {
-    parkingQuery->bindValue(":airportId", airportId);
+    parkingQuery->bindValue(QStringLiteral(":airportId"), airportId);
     parkingQuery->exec();
 
     QList<map::MapParking> *ps = new QList<map::MapParking>;
@@ -659,7 +661,7 @@ const QList<map::MapStart> *AirportQuery::getStartPositionsForAirport(int airpor
     return startCache.object(airportId);
   else
   {
-    startQuery->bindValue(":airportId", airportId);
+    startQuery->bindValue(QStringLiteral(":airportId"), airportId);
     startQuery->exec();
 
     QList<map::MapStart> *ps = new QList<map::MapStart>;
@@ -702,9 +704,9 @@ void AirportQuery::startByNameAndPos(map::MapStart& start, int airportId, const 
     "from start s "
     "where s.airport_id = :airportId and s.runway_name = :runwayName)");
 
-  query.bindValue(":number", number);
-  query.bindValue(":runwayName", runwayEndName);
-  query.bindValue(":airportId", airportId);
+  query.bindValue(QStringLiteral(":number"), number);
+  query.bindValue(QStringLiteral(":runwayName"), runwayEndName);
+  query.bindValue(QStringLiteral(":airportId"), airportId);
   query.exec();
 
   // Get all start positions
@@ -742,7 +744,7 @@ void AirportQuery::getStartById(map::MapStart& start, int startId)
   if(!query::valid(Q_FUNC_INFO, startByIdQuery))
     return;
 
-  startByIdQuery->bindValue(":id", startId);
+  startByIdQuery->bindValue(QStringLiteral(":id"), startId);
   startByIdQuery->exec();
 
   if(startByIdQuery->next())
@@ -765,16 +767,16 @@ void AirportQuery::getParkingByNameNumberSuffix(QList<map::MapParking>& parkings
   if(!query::valid(Q_FUNC_INFO, query))
     return;
 
-  query->bindValue(":airportId", airportId);
+  query->bindValue(QStringLiteral(":airportId"), airportId);
   if(name.isEmpty())
     // Use "like "%" if name is empty
-    query->bindValue(":name", "%");
+    query->bindValue(QStringLiteral(":name"), QStringLiteral("%"));
   else
-    query->bindValue(":name", name);
-  query->bindValue(":number", number);
+    query->bindValue(QStringLiteral(":name"), name);
+  query->bindValue(QStringLiteral(":number"), number);
 
   if(hasSuffix)
-    query->bindValue(":suffix", suffix.isEmpty() ? "%" : suffix);
+    query->bindValue(QStringLiteral(":suffix"), suffix.isEmpty() ? QStringLiteral("%") : suffix);
 
   query->exec();
 
@@ -792,12 +794,12 @@ void AirportQuery::getParkingByName(QList<map::MapParking>& parkings, int airpor
   if(!query::valid(Q_FUNC_INFO, parkingNameQuery))
     return;
 
-  parkingNameQuery->bindValue(":airportId", airportId);
+  parkingNameQuery->bindValue(QStringLiteral(":airportId"), airportId);
   if(name.isEmpty())
     // Use "like "%" if name is empty
-    parkingNameQuery->bindValue(":name", "%");
+    parkingNameQuery->bindValue(QStringLiteral(":name"), QStringLiteral("%"));
   else
-    parkingNameQuery->bindValue(":name", name);
+    parkingNameQuery->bindValue(QStringLiteral(":name"), name);
   parkingNameQuery->exec();
 
   while(parkingNameQuery->next())
@@ -818,7 +820,7 @@ const QList<map::MapHelipad> *AirportQuery::getHelipads(int airportId)
     return helipadCache.object(airportId);
   else
   {
-    helipadQuery->bindValue(":airportId", airportId);
+    helipadQuery->bindValue(QStringLiteral(":airportId"), airportId);
     helipadQuery->exec();
 
     QList<map::MapHelipad> *hs = new QList<map::MapHelipad>;
@@ -1037,8 +1039,9 @@ void AirportQuery::getRunwaysAndAirports(map::MapResultIndex& runwayAirports, co
   // Get airports without runways within rectangle too =====================
   if(noRunway)
   {
-    query.prepare("select " % airportOverviewColumns(db).join(", ") % " from airport " %
-                  "where lonx between :leftx and :rightx and laty between :bottomy and :topy and longest_runway_length = 0");
+    query.prepare(QStringLiteral("select ") % airportOverviewColumns(db).join(QStringLiteral(", ")) % QStringLiteral(" from airport ") %
+                  QStringLiteral(
+                    "where lonx between :leftx and :rightx and laty between :bottomy and :topy and longest_runway_length = 0"));
 
     bool xp = NavApp::isAirportDatabaseXPlane(navdata /* navdata */);
     for(const ageo::Rect& splitRect : rect.splitAtAntiMeridian())
@@ -1070,7 +1073,7 @@ const QList<map::MapTaxiPath> *AirportQuery::getTaxiPaths(int airportId)
     return taxipathCache.object(airportId);
   else
   {
-    taxiparthQuery->bindValue(":airportId", airportId);
+    taxiparthQuery->bindValue(QStringLiteral(":airportId"), airportId);
     taxiparthQuery->exec();
 
     QList<map::MapTaxiPath> *tps = new QList<map::MapTaxiPath>;
@@ -1078,12 +1081,14 @@ const QList<map::MapTaxiPath> *AirportQuery::getTaxiPaths(int airportId)
     {
       // TODO should be moved to MapTypesFactory
       map::MapTaxiPath tp;
-      tp.closed = taxiparthQuery->value("type").toString() == "CLOSED";
-      tp.start = ageo::Pos(taxiparthQuery->value("start_lonx").toFloat(), taxiparthQuery->value("start_laty").toFloat());
-      tp.end = ageo::Pos(taxiparthQuery->value("end_lonx").toFloat(), taxiparthQuery->value("end_laty").toFloat());
-      tp.surface = taxiparthQuery->value("surface").toString();
-      tp.name = taxiparthQuery->value("name").toString();
-      tp.width = taxiparthQuery->value("width").toInt();
+      tp.closed = taxiparthQuery->value(QStringLiteral("type")).toString() == QStringLiteral("CLOSED");
+      tp.start = ageo::Pos(taxiparthQuery->value(QStringLiteral("start_lonx")).toFloat(),
+                           taxiparthQuery->value(QStringLiteral("start_laty")).toFloat());
+      tp.end = ageo::Pos(taxiparthQuery->value(QStringLiteral("end_lonx")).toFloat(),
+                         taxiparthQuery->value(QStringLiteral("end_laty")).toFloat());
+      tp.surface = taxiparthQuery->value(QStringLiteral("surface")).toString();
+      tp.name = taxiparthQuery->value(QStringLiteral("name")).toString();
+      tp.width = taxiparthQuery->value(QStringLiteral("width")).toInt();
 
       tps->append(tp);
     }
@@ -1101,7 +1106,7 @@ const QList<map::MapRunway> *AirportQuery::getRunways(int airportId)
     return runwayCache.object(airportId);
   else
   {
-    runwaysQuery->bindValue(":airportId", airportId);
+    runwaysQuery->bindValue(QStringLiteral(":airportId"), airportId);
     runwaysQuery->exec();
 
     QList<map::MapRunway> *rs = new QList<map::MapRunway>;
@@ -1367,13 +1372,13 @@ void AirportQuery::initQueries()
   airportByPosQuery->prepare("select " % airportQueryBase.join(", ") % " from airport  where " % whereRect % whereLimit);
 
   airportCoordsByIdentQuery = new SqlQuery(db);
-  airportCoordsByIdentQuery->prepare("select lonx, laty from airport where ident = :ident ");
+  airportCoordsByIdentQuery->prepare("select lonx, laty from airport where ident = ? ");
 
   airportCoordsByIdentOrIcaoQuery = new SqlQuery(db);
   if(icaoCol)
-    airportCoordsByIdentOrIcaoQuery->prepare("select lonx, laty from airport where ident = :identicao or icao = :identicao ");
+    airportCoordsByIdentOrIcaoQuery->prepare("select lonx, laty from airport where ident = ? or icao = ? ");
   else
-    airportCoordsByIdentOrIcaoQuery->prepare("select lonx, laty from airport where ident = :identicao ");
+    airportCoordsByIdentOrIcaoQuery->prepare("select lonx, laty from airport where ident = ? ");
 
   airportByRectAndProcQuery = new SqlQuery(db);
   airportByRectAndProcQuery->prepare("select " % airportQueryBase.join(", ") % " from airport where " % whereRect %

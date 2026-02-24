@@ -57,7 +57,7 @@ void AirwayQuery::getAirwaysForWaypoint(QList<map::MapAirway>& airways, int wayp
   if(!query::valid(Q_FUNC_INFO, airwayByWaypointIdQuery))
     return;
 
-  airwayByWaypointIdQuery->bindValue(":id", waypointId);
+  airwayByWaypointIdQuery->bindValue(QStringLiteral(":id"), waypointId);
   airwayByWaypointIdQuery->exec();
   while(airwayByWaypointIdQuery->next())
   {
@@ -87,8 +87,8 @@ void AirwayQuery::getWaypointsForAirway(QList<map::MapWaypoint>& waypoints, cons
   if(!query::valid(Q_FUNC_INFO, airwayWaypointByIdentQuery))
     return;
 
-  airwayWaypointByIdentQuery->bindValue(":waypoint", waypointIdent.isEmpty() ? "%" : waypointIdent);
-  airwayWaypointByIdentQuery->bindValue(":airway", airwayName.isEmpty() ? "%" : airwayName);
+  airwayWaypointByIdentQuery->bindValue(QStringLiteral(":waypoint"), waypointIdent.isEmpty() ? QStringLiteral("%") : waypointIdent);
+  airwayWaypointByIdentQuery->bindValue(QStringLiteral(":airway"), airwayName.isEmpty() ? QStringLiteral("%") : airwayName);
   airwayWaypointByIdentQuery->exec();
   while(airwayWaypointByIdentQuery->next())
   {
@@ -104,7 +104,7 @@ void AirwayQuery::getWaypointListForAirwayName(QList<map::MapAirwayWaypoint>& wa
   if(!query::valid(Q_FUNC_INFO, airwayWaypointsQuery))
     return;
 
-  airwayWaypointsQuery->bindValue(":name", airwayName);
+  airwayWaypointsQuery->bindValue(QStringLiteral(":name"), airwayName);
   airwayWaypointsQuery->exec();
 
   // Collect records first
@@ -112,7 +112,7 @@ void AirwayQuery::getWaypointListForAirwayName(QList<map::MapAirwayWaypoint>& wa
   while(airwayWaypointsQuery->next())
     records.append(airwayWaypointsQuery->record());
 
-  QString fragmentCol = track ? "track_fragment_no" : "airway_fragment_no";
+  QString fragmentCol = track ? QStringLiteral("track_fragment_no") : QStringLiteral("airway_fragment_no");
 
   for(int i = 0; i < records.size(); i++)
   {
@@ -128,17 +128,17 @@ void AirwayQuery::getWaypointListForAirwayName(QList<map::MapAirwayWaypoint>& wa
 
     map::MapAirwayWaypoint aw;
     aw.airwayFragmentId = fragment;
-    aw.seqNum = rec.valueInt("sequence_no");
+    aw.seqNum = rec.valueInt(QStringLiteral("sequence_no"));
     aw.airwayId = rec.valueInt(airwayIdCol);
 
     // Add from waypoint
-    aw.waypoint = waypointById(rec.valueInt("from_waypoint_id"));
+    aw.waypoint = waypointById(rec.valueInt(QStringLiteral("from_waypoint_id")));
     waypoints.append(aw);
 
     if(i == records.size() - 1 || fragment != nextFragment)
     {
       // Add to waypoint if this is the last one or if the fragment is about to change
-      aw.waypoint = waypointById(rec.valueInt("to_waypoint_id"));
+      aw.waypoint = waypointById(rec.valueInt(QStringLiteral("to_waypoint_id")));
       waypoints.append(aw);
     }
   }
@@ -150,7 +150,7 @@ map::MapWaypoint AirwayQuery::waypointById(int id)
   if(!query::valid(Q_FUNC_INFO, waypointByIdQuery))
     return wp;
 
-  waypointByIdQuery->bindValue(":id", id);
+  waypointByIdQuery->bindValue(QStringLiteral(":id"), id);
   waypointByIdQuery->exec();
   if(waypointByIdQuery->next())
     mapTypesFactory->fillWaypoint(waypointByIdQuery->record(), wp, track);
@@ -164,8 +164,8 @@ void AirwayQuery::getAirwayFull(QList<map::MapAirway>& airways, atools::geo::Rec
   if(!query::valid(Q_FUNC_INFO, airwayFullQuery))
     return;
 
-  airwayFullQuery->bindValue(":name", airwayName);
-  airwayFullQuery->bindValue(":fragment", fragment);
+  airwayFullQuery->bindValue(QStringLiteral(":name"), airwayName);
+  airwayFullQuery->bindValue(QStringLiteral(":fragment"), fragment);
   airwayFullQuery->exec();
   while(airwayFullQuery->next())
   {
@@ -188,7 +188,7 @@ void AirwayQuery::getAirwayById(map::MapAirway& airway, int airwayId)
   if(!query::valid(Q_FUNC_INFO, airwayByIdQuery))
     return;
 
-  airwayByIdQuery->bindValue(":id", airwayId);
+  airwayByIdQuery->bindValue(QStringLiteral(":id"), airwayId);
   airwayByIdQuery->exec();
   if(airwayByIdQuery->next())
     mapTypesFactory->fillAirwayOrTrack(airwayByIdQuery->record(), airway, track);
@@ -201,7 +201,7 @@ void AirwayQuery::getAirwaysByName(QList<map::MapAirway>& airways, const QString
   if(!query::valid(Q_FUNC_INFO, airwayByNameQuery))
     return;
 
-  airwayByNameQuery->bindValue(":name", name);
+  airwayByNameQuery->bindValue(QStringLiteral(":name"), name);
   airwayByNameQuery->exec();
   while(airwayByNameQuery->next())
   {
@@ -229,9 +229,9 @@ void AirwayQuery::getAirwaysByNameAndWaypoint(QList<map::MapAirway>& airways, co
     airwaysObj = new QList<map::MapAirway>(airways);
 
     // Query from database
-    airwayByNameAndWaypointQuery->bindValue(":airway", airwayName.isEmpty() ? "%" : airwayName);
-    airwayByNameAndWaypointQuery->bindValue(":ident1", waypoint1);
-    airwayByNameAndWaypointQuery->bindValue(":ident2", waypoint2.isEmpty() ? "%" : waypoint2);
+    airwayByNameAndWaypointQuery->bindValue(QStringLiteral(":airway"), airwayName.isEmpty() ? QStringLiteral("%") : airwayName);
+    airwayByNameAndWaypointQuery->bindValue(QStringLiteral(":ident1"), waypoint1);
+    airwayByNameAndWaypointQuery->bindValue(QStringLiteral(":ident2"), waypoint2.isEmpty() ? QStringLiteral("%") : waypoint2);
     airwayByNameAndWaypointQuery->exec();
     while(airwayByNameAndWaypointQuery->next())
     {

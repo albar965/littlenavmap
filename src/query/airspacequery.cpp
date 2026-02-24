@@ -73,7 +73,7 @@ bool AirspaceQuery::hasAirspaceById(int airspaceId)
     return false;
 
   bool retval = false;
-  airspaceByIdQuery->bindValue(":id", airspaceId);
+  airspaceByIdQuery->bindValue(QStringLiteral(":id"), airspaceId);
   airspaceByIdQuery->exec();
   if(airspaceByIdQuery->next())
     retval = true;
@@ -86,8 +86,8 @@ SqlRecord AirspaceQuery::getOnlineAirspaceRecordById(int airspaceId)
   if(source == map::AIRSPACE_SRC_ONLINE)
   {
     SqlQuery query(db);
-    query.prepare("select * from atc where atc_id = :id");
-    query.bindValue(":id", airspaceId);
+    query.prepare(QStringLiteral("select * from atc where atc_id = :id"));
+    query.bindValue(QStringLiteral(":id"), airspaceId);
     query.exec();
     if(query.next())
       return query.record();
@@ -100,7 +100,7 @@ void AirspaceQuery::getAirspaceById(map::MapAirspace& airspace, int airspaceId)
   if(!query::valid(Q_FUNC_INFO, airspaceByIdQuery))
     return;
 
-  airspaceByIdQuery->bindValue(":id", airspaceId);
+  airspaceByIdQuery->bindValue(QStringLiteral(":id"), airspaceId);
   airspaceByIdQuery->exec();
   if(airspaceByIdQuery->next())
     mapTypesFactory->fillAirspace(airspaceByIdQuery->record(), airspace, source);
@@ -136,7 +136,7 @@ const QList<map::MapAirspace> *AirspaceQuery::getAirspaces(const GeoDataLatLonBo
     {
       // Build a list of query strings based on the bitfield
       if(filter.types == map::AIRSPACE_ALL)
-        typeStrings.append("%");
+        typeStrings.append(QStringLiteral("%"));
       else
       {
         for(int i = 0; i <= map::MAP_AIRSPACE_TYPE_BITS; i++)
@@ -184,15 +184,15 @@ const QList<map::MapAirspace> *AirspaceQuery::getAirspaces(const GeoDataLatLonBo
           for(const QString& typeStr : std::as_const(typeStrings))
           {
             query::bindRect(r, query);
-            query->bindValue(":type", typeStr);
+            query->bindValue(QStringLiteral(":type"), typeStr);
 
             // Bind altitude values ===========================
             if(query == airspaceByRectAltQuery)
-              query->bindValue(":alt", minAlt);
+              query->bindValue(QStringLiteral(":alt"), minAlt);
             else if(query == airspaceByRectAltRangeQuery)
             {
-              query->bindValue(":minalt", minAlt);
-              query->bindValue(":maxalt", maxAlt);
+              query->bindValue(QStringLiteral(":minalt"), minAlt);
+              query->bindValue(QStringLiteral(":maxalt"), maxAlt);
             }
 
             // Run query ===========================================
@@ -200,25 +200,25 @@ const QList<map::MapAirspace> *AirspaceQuery::getAirspaces(const GeoDataLatLonBo
             while(query->next())
             {
               // Avoid double airspaces which can happen if they cross the date boundary
-              if(ids.contains(query->valueInt("boundary_id")))
+              if(ids.contains(query->valueInt(QStringLiteral("boundary_id"))))
                 continue;
 
               if(filter.flags.testFlag(map::AIRSPACE_NO_MULTIPLE_Z))
               {
-                if(hasMultipleCode && query->valueStr("multiple_code") == "Z")
+                if(hasMultipleCode && query->valueStr(QStringLiteral("multiple_code")) == QStringLiteral("Z"))
                   continue;
 
-                if(atools::contains(query->valueStr("restrictive_type", QString()), {"T", "D", "R"}) &&
-                   (REGEXP_FBZ_RESTR_DESIG.match(query->valueStr("restrictive_designation", QString())).hasMatch() ||
-                    REGEXP_FBZ_NAME.match(query->valueStr("name", QString())).hasMatch()))
+                if(atools::contains(query->valueStr(QStringLiteral("restrictive_type"), QString()), {QStringLiteral("T"), QStringLiteral("D"), QStringLiteral("R")}) &&
+                   (REGEXP_FBZ_RESTR_DESIG.match(query->valueStr(QStringLiteral("restrictive_designation"), QString())).hasMatch() ||
+                    REGEXP_FBZ_NAME.match(query->valueStr(QStringLiteral("name"), QString())).hasMatch()))
                   continue;
               }
 
               if(hasFirUir)
               {
                 // Database has new FIR/UIR types - filter out the old deprecated centers
-                QString name = query->valueStr("name");
-                if(name.contains("(FIR)") || name.contains("(UIR)") || name.contains("(FIR/UIR)"))
+                QString name = query->valueStr(QStringLiteral("name"));
+                if(name.contains(QStringLiteral("(FIR)")) || name.contains(QStringLiteral("(UIR)")) || name.contains(QStringLiteral("(FIR/UIR)")))
                   continue;
               }
 
@@ -263,10 +263,10 @@ const LineString *AirspaceQuery::getAirspaceGeometryById(int airspaceId)
   {
     LineString *linestring = new LineString;
 
-    airspaceLinesByIdQuery->bindValue(":id", airspaceId);
+    airspaceLinesByIdQuery->bindValue(QStringLiteral(":id"), airspaceId);
     airspaceLinesByIdQuery->exec();
     if(airspaceLinesByIdQuery->next())
-      airspaceGeometry(linestring, airspaceLinesByIdQuery->value("geometry").toByteArray());
+      airspaceGeometry(linestring, airspaceLinesByIdQuery->value(QStringLiteral("geometry")).toByteArray());
     airspaceLinesByIdQuery->finish();
     airspaceLineCache.insert(airspaceId, linestring);
 
@@ -291,18 +291,18 @@ const LineString *AirspaceQuery::getAirspaceGeometryByFile(QString callsign)
       callsign = callsign.trimmed().toUpper();
 
       // Do a pattern query and check for basename matches later
-      airspaceGeoByFileQuery->bindValue(":filepath", "%" + callsign + "%");
+      airspaceGeoByFileQuery->bindValue(QStringLiteral(":filepath"), QStringLiteral("%") + callsign + QStringLiteral("%"));
       airspaceGeoByFileQuery->exec();
 
       while(airspaceGeoByFileQuery->next())
       {
-        QFileInfo fi(airspaceGeoByFileQuery->valueStr("filepath").trimmed());
+        QFileInfo fi(airspaceGeoByFileQuery->valueStr(QStringLiteral("filepath")).trimmed());
         QString basename = fi.baseName().toUpper().trimmed();
 
         // Check if the basename matches the callsign
         if(basename == callsign.toUpper())
         {
-          airspaceGeometry(lineString, airspaceGeoByFileQuery->value("geometry").toByteArray());
+          airspaceGeometry(lineString, airspaceGeoByFileQuery->value(QStringLiteral("geometry")).toByteArray());
           break;
         }
       }
@@ -317,7 +317,7 @@ const LineString *AirspaceQuery::getAirspaceGeometryByFile(QString callsign)
 
 const LineString *AirspaceQuery::getAirspaceGeometryByName(QString callsign, const QString& facilityType)
 {
-  callsign.replace('-', '_').replace("__", "_");
+  callsign.replace('-', '_').replace(QStringLiteral("__"), QStringLiteral("_"));
 
   const LineString *geometry = airspaceGeometryByNameInternal(callsign, facilityType);
   if(geometry == nullptr)
@@ -333,19 +333,19 @@ const LineString *AirspaceQuery::getAirspaceGeometryByName(QString callsign, con
         callsignSplit[1] = callsignSplit[1].mid(1);
 
         // Escape "_" to avoid using it as a placeholder
-        geometry = airspaceGeometryByNameInternal(callsignSplit.join("\\_"), facilityType);
+        geometry = airspaceGeometryByNameInternal(callsignSplit.join(QStringLiteral("\\_")), facilityType);
       }
 
       if(geometry == nullptr)
       {
         // Remove middle initial "EDGG_D_CTR" to "EDGG_CTR" and query exact
         callsignSplit.removeAt(1);
-        geometry = airspaceGeometryByNameInternal(callsignSplit.join("\\_"), facilityType);
+        geometry = airspaceGeometryByNameInternal(callsignSplit.join(QStringLiteral("\\_")), facilityType);
       }
 
       if(geometry == nullptr)
         // Look for "EDGG_%_CTR" - escape "_"
-        geometry = airspaceGeometryByNameInternal(callsignSplit.join("\\_%\\_"), facilityType);
+        geometry = airspaceGeometryByNameInternal(callsignSplit.join(QStringLiteral("\\_%\\_")), facilityType);
 
     }
   }
@@ -372,12 +372,12 @@ const LineString *AirspaceQuery::airspaceGeometryByNameInternal(const QString& c
       LineString *lineString = new LineString();
 
       // Check if the airspace name matches the callsign
-      airspaceGeoByNameQuery->bindValue(":name", callsign);
-      airspaceGeoByNameQuery->bindValue(":type", facilityType.isEmpty() ? "%" : facilityType);
+      airspaceGeoByNameQuery->bindValue(QStringLiteral(":name"), callsign);
+      airspaceGeoByNameQuery->bindValue(QStringLiteral(":type"), facilityType.isEmpty() ? QStringLiteral("%") : facilityType);
       airspaceGeoByNameQuery->exec();
 
       if(airspaceGeoByNameQuery->next())
-        airspaceGeometry(lineString, airspaceGeoByNameQuery->value("geometry").toByteArray());
+        airspaceGeometry(lineString, airspaceGeoByNameQuery->value(QStringLiteral("geometry")).toByteArray());
 
       airspaceGeoByNameQuery->finish();
       onlineCenterGeoCache.insert(callsign, lineString);
@@ -393,7 +393,7 @@ SqlRecord AirspaceQuery::getAirspaceInfoRecordById(int airspaceId)
   SqlRecord retval;
   if(airspaceInfoQuery != nullptr)
   {
-    airspaceInfoQuery->bindValue(":id", airspaceId);
+    airspaceInfoQuery->bindValue(QStringLiteral(":id"), airspaceId);
     airspaceInfoQuery->exec();
     if(airspaceInfoQuery->next())
       retval = airspaceInfoQuery->record();
@@ -405,14 +405,14 @@ SqlRecord AirspaceQuery::getAirspaceInfoRecordById(int airspaceId)
 void AirspaceQuery::updateAirspaceStatus()
 {
   if(source & map::AIRSPACE_SRC_ONLINE)
-    hasAirspaces = SqlUtil(db).hasTableAndRows("atc");
+    hasAirspaces = SqlUtil(db).hasTableAndRows(QStringLiteral("atc"));
   else
-    hasAirspaces = SqlUtil(db).hasTableAndRows("boundary");
+    hasAirspaces = SqlUtil(db).hasTableAndRows(QStringLiteral("boundary"));
 
   if(source & map::AIRSPACE_SRC_NAV && hasAirspaces)
   {
     // Check if the database contains the new FIR/UIR types which are preferred before FIR/UIR center types
-    SqlQuery query("select count(1) from boundary where type in ('FIR', 'UIR')", db);
+    SqlQuery query(QStringLiteral("select count(1) from boundary where type in ('FIR', 'UIR')"), db);
     query.exec();
     hasFirUir = query.next() && query.valueInt(0) > 0;
   }
@@ -428,8 +428,8 @@ void AirspaceQuery::initQueries()
   if(source == map::AIRSPACE_SRC_ONLINE)
   {
     // Use modified result rows from online atc table
-    table = "atc";
-    id = "atc_id";
+    table = QStringLiteral("atc");
+    id = QStringLiteral("atc_id");
     airspaceQueryBase =
       "atc_id as boundary_id, type, com_type, callsign, name, frequency as com_frequency, "
       "server, facility_type, visual_range, atis, atis_time, max_lonx, max_laty, min_lonx, min_laty, "
