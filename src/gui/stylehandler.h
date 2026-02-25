@@ -138,6 +138,8 @@ private:
   /* Index to current or dark/fusion */
   int styleIndex() const;
 
+  void logPalette(const QPalette& palette) const;
+
   /* All system and custom styleDescriptions */
   QList<StyleDescription> styleDescriptions;
 
@@ -156,6 +158,9 @@ private:
   QMainWindow *mainWindow;
 
   QStyleHints *styleHints;
+
+  QPalette systemPalette, /* Unchanged system palette. Can be dark or bright */
+           brightFusionPalette; /* Bright Fusion palette loaded from resources */
 
   /* Switch between dark and light (Fusion) depending on os */
   bool automaticStyle = true;

@@ -41,13 +41,21 @@ const QLatin1String StyleHandler::STYLE_DARK("Dark");
 const QLatin1String StyleHandler::STYLE_WINDOWSVISTA("windowsvista");
 const QLatin1String StyleHandler::STYLE_WINDOWS("Windows");
 
+const static QLatin1String STYLE_COLOR_GROUP("StyleColors");
+
 using atools::settings::Settings;
+using atools::gui::PaletteSettings;
 
 StyleHandler::StyleHandler(QMainWindow *mainWindowParam)
   : QObject(mainWindowParam), mainWindow(mainWindowParam)
 {
   // Owned by QGuiApplication
   styleHints = QGuiApplication::styleHints();
+
+  // Get unchanged system palette
+  systemPalette = QGuiApplication::palette();
+
+  qDebug() << Q_FUNC_INFO << "Default style name" << QApplication::style()->name();
 
   // Catch dark/light mode changes
   connect(styleHints, &QStyleHints::colorSchemeChanged, this, &StyleHandler::colorSchemeChanged);
@@ -87,10 +95,30 @@ StyleHandler::StyleHandler(QMainWindow *mainWindowParam)
       if(styleName == STYLE_FUSION)
       {
         // Store fusion palette settings a in a separate ini file
-        atools::gui::PaletteSettings paletteSettings(Settings::getConfigFilename("_fusionstyle.ini"), "StyleColors");
-        QPalette styleStandardPalette = style->standardPalette();
-        paletteSettings.syncPalette(styleStandardPalette);
-        styleDescriptions.append(StyleDescription(styleName, styleName, fusionStyleSheet, styleStandardPalette, false /* dark */));
+        const QString paletteFile = Settings::getConfigFilename(QStringLiteral("_fusionstyle.ini"));
+        QPalette stylePalette;
+
+        if(atools::checkFile(Q_FUNC_INFO, paletteFile, false /* warn */))
+        {
+          qDebug() << Q_FUNC_INFO << "Loading Fusion palette from" << paletteFile;
+
+          // Palette file already exists - sync and assign it to Fusion
+          PaletteSettings paletteSettings(paletteFile, STYLE_COLOR_GROUP);
+          stylePalette = style->standardPalette();
+          paletteSettings.syncPalette(stylePalette);
+        }
+        else
+        {
+          qDebug() << Q_FUNC_INFO << "Loading Fusion palette from resources";
+
+          // Palette missing - load bright default from resources
+          // Load fusion palette which is always bright, also with dark system settings
+          PaletteSettings(QStringLiteral(":littlenavmap/resources/config/little_navmap_fusionstyle.ini"), STYLE_COLOR_GROUP).
+          loadPalette(brightFusionPalette);
+          stylePalette = brightFusionPalette;
+        }
+
+        styleDescriptions.append(StyleDescription(styleName, styleName, fusionStyleSheet, stylePalette, false /* dark */));
         fusionStyleIndex = styleDescriptions.size() - 1;
       }
       else if(styleName == STYLE_WINDOWSVISTA || styleName == STYLE_WINDOWS)
@@ -159,7 +187,7 @@ StyleHandler::StyleHandler(QMainWindow *mainWindowParam)
 
   // Store dark palette settings a in a separate ini file
   QString filename = Settings::getConfigFilename(lnm::DARKSTYLE_INI_SUFFIX);
-  atools::gui::PaletteSettings paletteSettings(filename, "StyleColors");
+  PaletteSettings paletteSettings(filename, STYLE_COLOR_GROUP);
   paletteSettings.syncPalette(darkPalette);
 
   styleDescriptions.append(StyleDescription(STYLE_DARK, STYLE_FUSION, darkStyleSheet, darkPalette, true /* dark */));
@@ -169,6 +197,25 @@ StyleHandler::StyleHandler(QMainWindow *mainWindowParam)
 StyleHandler::~StyleHandler()
 {
   ATOOLS_DELETE(styleActionGroup);
+}
+
+void StyleHandler::logPalette(const QPalette& palette) const
+{
+  qDebug() << "Palette =========================================";
+
+  qDebug() << Q_FUNC_INFO << "Window" << palette.color(QPalette::Active, QPalette::Window).name(QColor::HexRgb)
+           << "WindowText" << palette.color(QPalette::Active, QPalette::WindowText).name(QColor::HexRgb)
+           << "Base" << palette.color(QPalette::Active, QPalette::Base).name(QColor::HexRgb)
+           << "AlternateBase" << palette.color(QPalette::Active, QPalette::AlternateBase).name(QColor::HexRgb);
+
+  qDebug() << Q_FUNC_INFO << "ToolTipBase" << palette.color(QPalette::Active, QPalette::ToolTipBase).name(QColor::HexRgb)
+           << "ToolTipText" << palette.color(QPalette::Active, QPalette::ToolTipText).name(QColor::HexRgb)
+           << "PlaceholderText" << palette.color(QPalette::Active, QPalette::PlaceholderText).name(QColor::HexRgb);
+
+  qDebug() << Q_FUNC_INFO << "Text" << palette.color(QPalette::Active, QPalette::Text).name(QColor::HexRgb)
+           << "Button" << palette.color(QPalette::Active, QPalette::Button).name(QColor::HexRgb)
+           << "ButtonText" << palette.color(QPalette::Active, QPalette::ButtonText).name(QColor::HexRgb)
+           << "BrightText" << palette.color(QPalette::Active, QPalette::BrightText).name(QColor::HexRgb);
 }
 
 QString StyleHandler::getCurrentGuiStyleDisplayName() const
@@ -294,8 +341,8 @@ void StyleHandler::applyCurrentStyle()
     QApplication::setStyle(style);
 
     if(automaticStyle)
-      // Default constructor builds system palette which is unchanged by styles
-      QApplication::setPalette(QPalette());
+      // Unchanged system palette
+      QApplication::setPalette(systemPalette);
     else
     {
       if(styleDescription.isPaletteValid())

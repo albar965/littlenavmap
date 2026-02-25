@@ -357,5 +357,6 @@
         <file>resources/icons/windpointer.svg</file>
         <file>resources/icons/zoomin.svg</file>
         <file>resources/icons/zoomout.svg</file>
+        <file>resources/config/little_navmap_fusionstyle.ini</file>
     </qresource>
 </RCC>
