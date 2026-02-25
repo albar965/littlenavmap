@@ -3516,7 +3516,7 @@ void MapWidget::updateMapObjectsShown()
   Ui::MainWindow *ui = NavApp::getMainUi();
 
   // Sun shading ====================================================
-  setShowMapSunShading(ui->actionMapShowSunShading->isChecked());
+  setShowMapSunShading(ui->actionMapShowSunShading->isEnabled() && ui->actionMapShowSunShading->isChecked());
   paintLayer->setSunShading(sunShadingFromUi());
 
   // Weather source ====================================================
