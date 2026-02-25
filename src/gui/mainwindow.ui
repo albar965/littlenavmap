@@ -7233,7 +7233,7 @@ relation to shown airport</string>
     <string>Show airports on the map</string>
    </property>
    <property name="shortcut">
-    <string>Ctrl+Alt+H</string>
+    <string>Ctrl+Alt+A</string>
    </property>
   </action>
   <action name="actionMapShowVor">
@@ -7833,7 +7833,7 @@ relation to shown airport</string>
     <string>Keep the user aircraft visible on the map</string>
    </property>
    <property name="shortcut">
-    <string>Ctrl+Alt+A</string>
+    <string>Ctrl+Alt+H</string>
    </property>
   </action>
   <action name="actionMapShowAircraftTrack">
