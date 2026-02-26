@@ -2188,7 +2188,12 @@ QStringList airspaceNameMap(const MapAirspace& airspace, int maxTextLength, bool
     // Type only if it not a part of the restrictive name
     const QString& typeStr = airspaceTypeShortToString(airspace.type);
     if(!((name && airspace.name.startsWith(typeStr % '-')) || (restrictiveName && restrNameStr.startsWith(typeStr % '-'))))
-      texts.append(typeStr);
+    {
+      if(airspace.type == map::DANGER)
+        texts.append(airspaceTypeToString(airspace.type));
+      else
+        texts.append(typeStr);
+    }
   }
 
   // Name if requested but always for FIR and UIR spaces
