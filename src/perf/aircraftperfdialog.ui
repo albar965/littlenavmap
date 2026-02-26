@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>611</width>
-    <height>774</height>
+    <height>777</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -106,7 +106,6 @@ A performance file can often be used for all simulators.</string>
           <widget class="QLabel" name="labelType">
            <property name="font">
             <font>
-             <weight>75</weight>
              <bold>true</bold>
             </font>
            </property>
@@ -125,8 +124,8 @@ A performance file can often be used for all simulators.</string>
            </property>
            <property name="text">
             <string>&lt;p&gt;Click on the links below to look up aircraft types:&lt;br/&gt;
-&lt;a style=&quot;text-decoration:none;&quot; href=&quot;https://www.icao.int/publications/DOC8643/Pages/Search.aspx&quot;&gt;&lt;b&gt;ICAO - Aircraft Type Designators&lt;/b&gt;&lt;/a&gt; or&lt;br/&gt;
-&lt;a style=&quot;text-decoration:none;&quot; href=&quot;https://en.wikipedia.org/wiki/List_of_ICAO_aircraft_type_designators&quot;&gt;&lt;b&gt;Wikipedia - List of ICAO aircraft type designators&lt;/b&gt;&lt;/a&gt;.&lt;/p&gt;</string>
+&lt;a style=&quot;text-decoration:none;&quot; href=&quot;https://www2023.icao.int/publications/DOC8643/Pages/Search.aspx&quot;&gt;&lt;b&gt;ICAO - Aircraft Type Designators&lt;/b&gt;&lt;/a&gt; or&lt;br/&gt;
+&lt;a style=&quot;text-decoration:none;&quot; href=&quot;https://en.wikipedia.org/wiki/List_of_aircraft_type_designators&quot;&gt;&lt;b&gt;Wikipedia - List of ICAO aircraft type designators&lt;/b&gt;&lt;/a&gt;.&lt;/p&gt;</string>
            </property>
            <property name="wordWrap">
             <bool>true</bool>
@@ -618,7 +617,6 @@ This will increase the trip fuel by the given percentage.</string>
            <widget class="QLabel" name="labelClimbSpeed">
             <property name="font">
              <font>
-              <weight>75</weight>
               <bold>true</bold>
              </font>
             </property>
@@ -634,7 +632,6 @@ This will increase the trip fuel by the given percentage.</string>
            <widget class="QLabel" name="labelVertClimbSpeed">
             <property name="font">
              <font>
-              <weight>75</weight>
               <bold>true</bold>
              </font>
             </property>
@@ -650,7 +647,6 @@ This will increase the trip fuel by the given percentage.</string>
            <widget class="QLabel" name="labelClimbFuelFlow">
             <property name="font">
              <font>
-              <weight>75</weight>
               <bold>true</bold>
              </font>
             </property>
@@ -734,7 +730,6 @@ This will increase the trip fuel by the given percentage.</string>
            <widget class="QLabel" name="labelCruiseSpeed">
             <property name="font">
              <font>
-              <weight>75</weight>
               <bold>true</bold>
              </font>
             </property>
@@ -772,7 +767,6 @@ This will increase the trip fuel by the given percentage.</string>
            <widget class="QLabel" name="labelCruiseFuelFlow">
             <property name="font">
              <font>
-              <weight>75</weight>
               <bold>true</bold>
              </font>
             </property>
@@ -828,7 +822,6 @@ This will increase the trip fuel by the given percentage.</string>
            <widget class="QLabel" name="labelDescentVertSpeed">
             <property name="font">
              <font>
-              <weight>75</weight>
               <bold>true</bold>
              </font>
             </property>
@@ -844,7 +837,6 @@ This will increase the trip fuel by the given percentage.</string>
            <widget class="QLabel" name="labelDescentSpeed">
             <property name="font">
              <font>
-              <weight>75</weight>
               <bold>true</bold>
              </font>
             </property>
@@ -882,7 +874,6 @@ This will increase the trip fuel by the given percentage.</string>
            <widget class="QLabel" name="labelDescentFuelFlow">
             <property name="font">
              <font>
-              <weight>75</weight>
               <bold>true</bold>
              </font>
             </property>
