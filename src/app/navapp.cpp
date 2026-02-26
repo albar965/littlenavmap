@@ -276,11 +276,6 @@ void NavApp::updateChannels(int channelOpts)
   updateHandler->setChannelOpts(static_cast<opts::UpdateChannels>(channelOpts));
 }
 
-void NavApp::optionsChanged()
-{
-  qDebug() << Q_FUNC_INFO;
-}
-
 void NavApp::readMagDecFromDatabase()
 {
   if(hasDataInDatabase())

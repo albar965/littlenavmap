@@ -29,6 +29,8 @@ class AbstractSearch;
 class SearchViewEventFilter :
   public QObject
 {
+  Q_OBJECT
+
 public:
   SearchViewEventFilter(AbstractSearch *parent);
 
@@ -44,6 +46,8 @@ private:
 class SearchWidgetEventFilter :
   public QObject
 {
+  Q_OBJECT
+
 public:
   SearchWidgetEventFilter(AbstractSearch *parent);
 

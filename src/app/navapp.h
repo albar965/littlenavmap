@@ -166,7 +166,6 @@ public:
   static void checkForUpdates(int channelOpts, bool manual, bool startup, bool forceDebug);
   static void updateChannels(int channelOpts);
 
-  static void optionsChanged();
   static void preDatabaseLoad();
   static void postDatabaseLoad();
 

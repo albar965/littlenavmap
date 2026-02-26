@@ -927,7 +927,6 @@ void MainWindow::connectAllSlots()
   // Notify others of options change
   // The units need to be called before all others
   connect(optionsDialog, &OptionsDialog::optionsChanged, &Unit::optionsChanged);
-  connect(optionsDialog, &OptionsDialog::optionsChanged, &NavApp::optionsChanged);
 
   // Need to clean cache to regenerate some text if units have changed
   connect(optionsDialog, &OptionsDialog::optionsChanged, this, &MainWindow::clearProcedureCache);

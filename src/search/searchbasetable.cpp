@@ -167,14 +167,6 @@ SearchBaseTable::~SearchBaseTable()
   delete widgetEventFilter;
 }
 
-void SearchBaseTable::fontChanged()
-{
-  qDebug() << Q_FUNC_INFO;
-
-  optionsChanged();
-  zoomHandler->zoomPercent(OptionData::instance().getGuiSearchTableTextSize());
-}
-
 /* Copy the selected rows of the table view as CSV into clipboard */
 void SearchBaseTable::tableCopyClipboard()
 {
@@ -190,8 +182,7 @@ void SearchBaseTable::tableCopyClipboard()
       // Full CSV export including coordinates and full rows
       exported = CsvExporter::selectionAsCsv(view, true /* header */, true /* rows */, csv,
                                              {tr("Longitude"), tr("Latitude")},
-                                             [c](int index) -> QStringList
-      {
+                                             [c](int index) -> QStringList {
         return {QLocale().toString(c->getRawData(index, "lonx").toFloat(), 'f', 8),
                 QLocale().toString(c->getRawData(index, "laty").toFloat(), 'f', 8)};
       });
@@ -352,12 +343,14 @@ void SearchBaseTable::showInSearch(const atools::sql::SqlRecord& record, bool ig
   controller->showInSearch(record, ignoreQueryBuilder);
 }
 
+void SearchBaseTable::fontChanged()
+{
+  // Do next main event loop cycle - otherwise change is not taken
+  QTimer::singleShot(10L, this, &SearchBaseTable::optionsChanged);
+}
+
 void SearchBaseTable::optionsChanged()
 {
-  // Need to reset model for "treat empty icons special"
-  preDatabaseLoad();
-  postDatabaseLoad();
-
   // Adapt table view text size
   zoomHandler->zoomPercent(OptionData::instance().getGuiSearchTableTextSize());
 
