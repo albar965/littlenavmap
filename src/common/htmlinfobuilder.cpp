@@ -5195,8 +5195,8 @@ void HtmlInfoBuilder::addAirportSceneryAndLinks(const MapAirport& airport, HtmlB
 
   if(airportNav.isValid() && airportNav.navdata)
   {
-    links.append(html.cleared().a(tr("AirNav.com"),
-                                  QStringLiteral("https://www.airnav.com/airport/%1").arg(airportNav.displayIdent()), flags).getHtml());
+    // links.append(html.cleared().a(tr("AirNav.com"),
+    //                               QStringLiteral("https://www.airnav.com/airport/%1").arg(airportNav.displayIdent()), flags).getHtml());
 
     links.append(html.cleared().a(tr("ChartFox"),
                                   QStringLiteral("https://chartfox.org/%1").arg(airportNav.displayIdent()), flags).
@@ -5212,6 +5212,10 @@ void HtmlInfoBuilder::addAirportSceneryAndLinks(const MapAirport& airport, HtmlB
 
     links.append(html.cleared().a(tr("METAR & TAF"),
                                   QStringLiteral("https://metar-taf.com/airport/%1").
+                                  arg(airportNav.displayIdent()), flags).getHtml());
+
+    links.append(html.cleared().a(tr("metar.cloud"),
+                                  QStringLiteral("https://metar.cloud/airport/%1").
                                   arg(airportNav.displayIdent()), flags).getHtml());
 
     links.append(html.cleared().a(tr("OpenNav"),
