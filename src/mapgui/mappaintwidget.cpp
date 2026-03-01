@@ -595,7 +595,7 @@ QString MapPaintWidget::createAvitabJson()
     doc.setObject(calibrationObj);
     return doc.toJson();
   }
-  return QString();
+  return QStringLiteral();
 }
 
 void MapPaintWidget::centerRectOnMapPrecise(const atools::geo::Rect& rect)

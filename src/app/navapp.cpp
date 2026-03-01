@@ -789,7 +789,7 @@ void NavApp::getReportFiles(QStringList& crashReportFiles, QString& reportFilena
     if(!filename.isEmpty() && !QFile::exists(filename))
       filename.clear();
   }
-  crashReportFiles.removeAll(QString());
+  crashReportFiles.removeAll(QStringLiteral());
 }
 
 void NavApp::recordStartNavApp()
@@ -1176,12 +1176,12 @@ ConnectClient *NavApp::getConnectClient()
 
 QString NavApp::getDatabaseAiracCycleSim()
 {
-  return databaseMetaSim != nullptr ? databaseMetaSim->getAiracCycle() : QString();
+  return databaseMetaSim != nullptr ? databaseMetaSim->getAiracCycle() : QStringLiteral();
 }
 
 QString NavApp::getDatabaseAiracCycleNav()
 {
-  return databaseMetaNav != nullptr ? databaseMetaNav->getAiracCycle() : QString();
+  return databaseMetaNav != nullptr ? databaseMetaNav->getAiracCycle() : QStringLiteral();
 }
 
 bool NavApp::hasOnlineData()

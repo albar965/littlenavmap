@@ -622,7 +622,7 @@ void MapWidget::hideTooltip()
 {
   // Passing empty string hides tooltip
   // This affects and hides tooltips across the whole application
-  QToolTip::showText(tooltipGlobalPos, QString(), this);
+  QToolTip::showText(tooltipGlobalPos, QStringLiteral(), this);
 
   tooltipGlobalPos = QPoint();
 }
@@ -2129,12 +2129,12 @@ void MapWidget::contextMenuEvent(QContextMenuEvent *event)
 
         case mc::CUSTOMAPPROACH:
           if(airport.isValid())
-            emit showCustomApproach(airport, QString());
+            emit showCustomApproach(airport, QStringLiteral());
           break;
 
         case mc::CUSTOMDEPARTURE:
           if(airport.isValid())
-            emit showCustomDeparture(airport, QString());
+            emit showCustomDeparture(airport, QStringLiteral());
           break;
 
         case mc::MEASURE:
@@ -3653,7 +3653,7 @@ void MapWidget::showResultInSearch(const map::MapBase *base)
     map::MapWaypoint waypoint = base->asObj<map::MapWaypoint>();
     SqlRecord rec;
     rec.appendFieldAndValue("ident", QString("\"" % waypoint.ident % "\""));
-    rec.appendFieldAndValueIf("name", QString());
+    rec.appendFieldAndValueIf("name", QStringLiteral());
     rec.appendFieldAndValueIf("region", waypoint.region);
 
     emit showInSearch(map::WAYPOINT, rec, true /* select */);

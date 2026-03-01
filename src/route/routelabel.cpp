@@ -657,9 +657,9 @@ void RouteLabel::updateFooterErrorLabel()
   else
   {
     ui->labelRouteError->setVisible(false);
-    ui->labelRouteError->setText(QString());
-    ui->labelRouteError->setToolTip(QString());
-    ui->labelRouteError->setStatusTip(QString());
+    ui->labelRouteError->setText(QStringLiteral());
+    ui->labelRouteError->setToolTip(QStringLiteral());
+    ui->labelRouteError->setStatusTip(QStringLiteral());
   }
 }
 
@@ -772,7 +772,7 @@ void RouteLabel::updateFooterSelectionLabel()
   else
   {
     ui->labelRouteSelection->setVisible(false);
-    ui->labelRouteSelection->setText(QString());
-    ui->labelRouteSelection->setToolTip(QString());
+    ui->labelRouteSelection->setText(QStringLiteral());
+    ui->labelRouteSelection->setToolTip(QStringLiteral());
   }
 }

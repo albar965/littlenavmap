@@ -218,7 +218,7 @@ QString RouteExport::exportFile(const RouteExportFormat& format, const QString& 
       // Show file dialog for all formats selected
       case RouteMultiExportDialog::FILEDIALOG:
         routeFile = dialog->saveFileDialog(tr("Export for %1").arg(format.getComment()), filter,
-                                           suffix, QString() /* settingsPrefix */, format.getPath(), filename, dontComfirmOverwrite);
+                                           suffix, QStringLiteral() /* settingsPrefix */, format.getPath(), filename, dontComfirmOverwrite);
         break;
 
       case RouteMultiExportDialog::RENAME_EXISTING:
@@ -238,12 +238,13 @@ QString RouteExport::exportFile(const RouteExportFormat& format, const QString& 
 
 QString RouteExport::exportFileMulti(const RouteExportFormat& format, const QString& filename)
 {
-  return exportFile(format, QString() /* settingsPrefix */, QString() /* path */, filename, format.isAppendToFile());
+  return exportFile(format, QStringLiteral() /* settingsPrefix */, QStringLiteral() /* path */, filename, format.isAppendToFile());
 }
 
 QString RouteExport::exportFileMulti(const RouteExportFormat& format)
 {
-  return exportFile(format, QString() /* settingsPrefix */, QString() /* path */, buildDefaultFilename(format), format.isAppendToFile());
+  return exportFile(format, QStringLiteral() /* settingsPrefix */, QStringLiteral() /* path */, buildDefaultFilename(format),
+                    format.isAppendToFile());
 }
 
 void RouteExport::rotateFile(const QString& filename)
@@ -391,7 +392,7 @@ bool RouteExport::routeExportInternalPln(const RouteExportFormat& format)
 
       if(result)
       {
-        NavApp::setStatusMessage(tr("Flight plan saved as %1PLN.").arg(QString())); // Was annotated
+        NavApp::setStatusMessage(tr("Flight plan saved as %1PLN.").arg(QStringLiteral())); // Was annotated
         formatExportedCallback(format, routeFile);
         return true;
       }
@@ -968,7 +969,7 @@ bool RouteExport::routeExportEfbrMulti(const RouteExportFormat& format)
       QString cycle = NavApp::getDatabaseAiracCycleNav();
       using namespace std::placeholders;
       if(exportFlighplan(routeFile, rf::DEFAULT_OPTS_NO_PROC,
-                         std::bind(&FlightplanIO::saveEfbr, flightplanIO, _1, _2, route, cycle, QString(), QString())))
+                         std::bind(&FlightplanIO::saveEfbr, flightplanIO, _1, _2, route, cycle, QStringLiteral(), QStringLiteral())))
       {
         formatExportedCallback(format, routeFile);
         return true;
@@ -1151,7 +1152,7 @@ void RouteExport::routeExportVfpMan()
 
 bool RouteExport::routeExportVfp(const RouteExportFormat& format)
 {
-  return routeExportVfpInternal(format, QString());
+  return routeExportVfpInternal(format, QStringLiteral());
 }
 
 bool RouteExport::routeExportVfpInternal(const RouteExportFormat& format, const QString& settingsSuffix)
@@ -1189,7 +1190,7 @@ void RouteExport::routeExportXIvapMan()
 
 bool RouteExport::routeExportXIvap(const RouteExportFormat& format)
 {
-  return routeExportIvapInternal(re::XIVAP, format, QString());
+  return routeExportIvapInternal(re::XIVAP, format, QStringLiteral());
 }
 
 void RouteExport::routeExportIvapMan()
@@ -1199,7 +1200,7 @@ void RouteExport::routeExportIvapMan()
 
 bool RouteExport::routeExportIvap(const RouteExportFormat& format)
 {
-  return routeExportIvapInternal(re::IVAP, format, QString());
+  return routeExportIvapInternal(re::IVAP, format, QStringLiteral());
 }
 
 bool RouteExport::routeExportIvapInternal(re::RouteExportType type, const RouteExportFormat& format,
@@ -1507,10 +1508,10 @@ bool RouteExport::routeValidate(const QList<RouteExportFormat>& formats, bool mu
   {
     // Airport has parking but no one is selected
     const static atools::gui::DialogButtonList BUTTONS({
-      atools::gui::DialogButton(QString(), QMessageBox::Cancel),
+      atools::gui::DialogButton(QStringLiteral(), QMessageBox::Cancel),
       atools::gui::DialogButton(tr("Select Start &Position"), QMessageBox::Yes),
       atools::gui::DialogButton(tr("Show &Departure on Map"), QMessageBox::YesToAll),
-      atools::gui::DialogButton(QString(), QMessageBox::Save)
+      atools::gui::DialogButton(QStringLiteral(), QMessageBox::Save)
     });
 
     QString message;
@@ -1818,7 +1819,7 @@ bool RouteExport::exportFlighplanAsIvap(const RouteExportData& exportData, const
     {
       writeIvapLine(stream, "CALLSIGN", exportData.getCallsign(), type);
       writeIvapLine(stream, "PIC", exportData.getPilotInCommand(), type);
-      writeIvapLine(stream, "FMCROUTE", QString(), type);
+      writeIvapLine(stream, "FMCROUTE", QStringLiteral(), type);
       writeIvapLine(stream, "LIVERY", exportData.getLivery(), type);
       writeIvapLine(stream, "AIRLINE", exportData.getAirline(), type);
       writeIvapLine(stream, "SPEEDTYPE", "N", type);
@@ -2024,7 +2025,7 @@ bool RouteExport::exportFlighplanAsProSim(const QString& filename)
 
   // Create route name inside file
   QString name = NavApp::getRouteConst().buildDefaultFilename(atools::fs::pln::pattern::DEPARTIDENT % atools::fs::pln::pattern::DESTIDENT,
-                                                              QString());
+                                                              QStringLiteral());
 
   // Find a unique name between all loaded
   QString newname = name;
@@ -2091,7 +2092,7 @@ bool RouteExport::exportFlightplanAsGpx(const QString& filename)
 QString RouteExport::buildDefaultFilename(const RouteExportFormat& format, bool normalize)
 {
   // No suffix since pattern includes it
-  QString name = NavApp::getRouteConst().buildDefaultFilename(format.getPatternOrDefault(), QString());
+  QString name = NavApp::getRouteConst().buildDefaultFilename(format.getPatternOrDefault(), QStringLiteral());
   return normalize ? atools::normalizeStr(name) : name;
 }
 

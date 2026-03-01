@@ -314,7 +314,7 @@ void checkAndMigrateSettings()
         QSettings registrySettings("HKEY_CURRENT_USER\\SOFTWARE\\ABarthel", QSettings::NativeFormat);
         if(registrySettings.contains("Little Navmap/cleanupInterval"))
         {
-          registrySettings.remove(QString());
+          registrySettings.remove(QStringLiteral());
           registrySettings.clear();
           registrySettings.sync();
         }

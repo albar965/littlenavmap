@@ -150,13 +150,13 @@ AirportSearch::AirportSearch(MainWindow *parent, QTableView *tableView, si::TabS
 
   // Build SQL query conditions
   QStringList gateCondMap;
-  gateCondMap << QString()
+  gateCondMap << QStringLiteral()
               << "like 'G%'"
               << "in ('GM', 'GH')"
               << "= 'GH'";
 
   QStringList ratingCondMap;
-  ratingCondMap << QString()
+  ratingCondMap << QStringLiteral()
                 << "rating >= 1"
                 << "rating >= 2"
                 << "rating >= 3"
@@ -165,7 +165,7 @@ AirportSearch::AirportSearch(MainWindow *parent, QTableView *tableView, si::TabS
                 << "is_3d > 0 /*is_3d*/"; // Add required column for this query as comment - will be checked if available
 
   QStringList rampCondMap;
-  rampCondMap << QString()
+  rampCondMap << QStringLiteral()
               << "largest_parking_ramp like 'RGA%'"
               << "largest_parking_ramp in ('RGAM', 'RGAL')"
               << "largest_parking_ramp = 'RGAL'"
@@ -174,7 +174,7 @@ AirportSearch::AirportSearch(MainWindow *parent, QTableView *tableView, si::TabS
               << "num_parking_mil_combat > 0";
 
   QStringList rwSurface;
-  rwSurface << QString()
+  rwSurface << QStringLiteral()
             << "num_runway_hard > 0"
             << "num_runway_soft > 0"
             << "num_runway_water > 0"
@@ -184,7 +184,7 @@ AirportSearch::AirportSearch(MainWindow *parent, QTableView *tableView, si::TabS
             << "num_runway_water = 0 and num_runway_hard = 0 and num_runway_soft = 0";
 
   QStringList helipadCondMap;
-  helipadCondMap << QString()
+  helipadCondMap << QStringLiteral()
                  << "num_helipad > 0"
                  << "num_helipad > 0 and num_runway_hard = 0  and "
      "num_runway_soft = 0 and num_runway_water = 0";
@@ -520,7 +520,7 @@ QString AirportSearch::formatModelData(const Column *col, const QVariant& displa
      col->getColumnName() == QStringLiteral("unicom_frequency"))
   {
     if(displayRoleValue.isNull())
-      return QString();
+      return QStringLiteral();
     else
       return QLocale().toString(atools::fs::util::roundComFrequency(displayRoleValue.toInt()), 'f', 3);
   }
@@ -531,7 +531,7 @@ QString AirportSearch::formatModelData(const Column *col, const QVariant& displa
   else if(col->getColumnName() == QStringLiteral("mag_var"))
     return map::magvarText(displayRoleValue.toFloat(), true /* shortText */, false /* degSign */);
   else if(AIRPORT_NUMBER_COLUMNS.contains(col->getColumnName()))
-    return displayRoleValue.toInt() > 0 ? displayRoleValue.toString() : QString();
+    return displayRoleValue.toInt() > 0 ? displayRoleValue.toString() : QStringLiteral();
   else if(col->getColumnName() == QStringLiteral("longest_runway_surface"))
     return map::surfaceName(displayRoleValue.toString());
   else if(col->getColumnName() == QStringLiteral("largest_parking_ramp"))
@@ -734,7 +734,7 @@ void AirportSearch::randomFlightClicked(bool showDialog)
     choiceDialog.addRadioButton(RANDOM_ALL, RANDOM_BUTTON_GROUP,
                                 tr("Let select departure and destination airport\n"
                                    "from airport search result table at random."),
-                                QString(), true /* checked */);
+                                QStringLiteral(), true /* checked */);
 
     choiceDialog.addLine(QFrame::Plain, 1, lineColor);
 

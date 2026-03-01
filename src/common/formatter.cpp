@@ -251,7 +251,7 @@ QString windInformationTailHead(float headWindKts, bool addUnit)
       windPtr += TextPointer::getWindPointerSouth(); // Headwind
     return QObject::tr(" %1").arg(windPtr);
   }
-  return QString();
+  return QStringLiteral();
 }
 
 QString windInformationCross(float crossWindKts, bool addUnit)
@@ -334,7 +334,7 @@ QString courseText(float magCourse, float trueCourse, bool magBold, bool magBig,
   if(atools::almostEqual(magCourse, trueCourse, 1.5f))
   {
     if(magStr.isEmpty())
-      return QString();
+      return QStringLiteral();
 
     // Values are close - display only magnetic
     return QObject::tr("%1%2°M%3").arg(style).arg(magStr).arg(styleEnd);
@@ -350,7 +350,7 @@ QString courseText(float magCourse, float trueCourse, bool magBold, bool magBig,
       // Values differ and both are valid - display magnetic and true
       return QObject::tr("%1%2°M%3,%4%5%6°T%7").
              arg(style).arg(magStr).arg(styleEnd).
-             arg(narrow ? QString() : QObject::tr(" ", "Separator for mag/true course text")).
+             arg(narrow ? QStringLiteral() : QObject::tr(" ", "Separator for mag/true course text")).
              arg(small).arg(trueStr).arg(smallEnd);
     }
     else if(!magStr.isEmpty())
@@ -360,7 +360,7 @@ QString courseText(float magCourse, float trueCourse, bool magBold, bool magBig,
       // Only true value is valid
       return QObject::tr("%1%2°T%3").arg(style).arg(trueStr).arg(styleEnd);
   }
-  return QString();
+  return QStringLiteral();
 }
 
 QString courseTextNarrow(float magCourse, float trueCourse)

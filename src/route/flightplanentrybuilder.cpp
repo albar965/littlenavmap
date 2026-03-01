@@ -218,7 +218,7 @@ void FlightplanEntryBuilder::buildFlightplanEntry(const atools::geo::Pos& userPo
   else if(moType == map::USERPOINT)
     entryFromUserpoint(result.userpoints.constFirst(), entry);
   else if(moType == map::USERPOINTROUTE)
-    entryFromUserPos(userPos, entry, QString(), QString(), QString());
+    entryFromUserPos(userPos, entry, QStringLiteral(), QStringLiteral(), QStringLiteral());
   else
     qWarning() << "Unknown Map object type" << moType;
 }
@@ -241,7 +241,7 @@ void FlightplanEntryBuilder::buildFlightplanEntry(const proc::MapProcedureLeg& l
   else if(leg.navaids.hasNdb())
     entryFromNdb(leg.navaids.ndbs.constFirst(), entry);
   else
-    entryFromUserPos(leg.line.getPos2(), entry, leg.fixIdent, leg.fixRegion, QString());
+    entryFromUserPos(leg.line.getPos2(), entry, leg.fixIdent, leg.fixRegion, QStringLiteral());
 
   // Position is not correct for some leg types
   // entry.setPosition(leg.line.getPos2());

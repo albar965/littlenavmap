@@ -619,9 +619,9 @@ QString DatabaseManager::getSimulatorBasePathBest(const FsPaths::SimulatorTypeLi
     case atools::fs::FsPaths::DFD:
     case atools::fs::FsPaths::ALL_SIMULATORS:
     case atools::fs::FsPaths::NONE:
-      return QString();
+      return QStringLiteral();
   }
-  return QString();
+  return QStringLiteral();
 }
 
 atools::sql::SqlDatabase *DatabaseManager::getDatabaseOnline() const
@@ -1406,7 +1406,7 @@ void DatabaseManager::checkSceneryOptions(bool manualCheck)
       break;
 
     case navdb::CORRECT_MSFS_HAS_NAVIGRAPH:
-      if(dialog->showQuestionMsgBox(manualCheck ? QString() : lnm::ACTIONS_SHOW_CORRECT_MSFS_HAS_NAVIGRAPH,
+      if(dialog->showQuestionMsgBox(manualCheck ? QStringLiteral() : lnm::ACTIONS_SHOW_CORRECT_MSFS_HAS_NAVIGRAPH,
                                     tr("<p style='white-space:pre'>"
                                          "You are using MSFS 2020 or 2024 with the Navigraph navdata update.</p>"
                                          "<p>You should update the Little Navmap navdata with the "
@@ -1416,13 +1416,14 @@ void DatabaseManager::checkSceneryOptions(bool manualCheck)
                                            "<p style='white-space:pre'>You can change the mode manually in the menu<br/>"
                                            "\"Scenery Library\" -> \"Navigraph\" -> \"Use Navigraph for Navaids and Procedures\".</p>"
                                            "<p>Correct the scenery library mode now?</p>", "Sync texts with menu items"),
-                                    manualCheck ? QString() : tr("Do not &show this dialog again and always correct mode after loading."),
+                                    manualCheck ? QStringLiteral() :
+                                    tr("Do not &show this dialog again and always correct mode after loading."),
                                     QMessageBox::Yes | QMessageBox::No, QMessageBox::Yes, QMessageBox::Yes) == QMessageBox::Yes)
         correctSceneryOptions(correction);
       break;
 
     case navdb::CORRECT_MSFS_NO_NAVIGRAPH:
-      if(dialog->showQuestionMsgBox(manualCheck ? QString() : lnm::ACTIONS_SHOW_CORRECT_MSFS_NO_NAVIGRAPH,
+      if(dialog->showQuestionMsgBox(manualCheck ? QStringLiteral() : lnm::ACTIONS_SHOW_CORRECT_MSFS_NO_NAVIGRAPH,
                                     tr("<p style='white-space:pre'>"
                                          "You are using MSFS 2020 or 2024 without the Navigraph navdata update.</p>"
                                          "<p>You should use the scenery library mode \"Do not use Navigraph Database\" "
@@ -1430,13 +1431,14 @@ void DatabaseManager::checkSceneryOptions(bool manualCheck)
                                            "<p style='white-space:pre'>You can change the mode manually in the menu<br/>"
                                            "\"Scenery Library\" -> \"Navigraph\" -> \"Do not use Navigraph Database\".</p>"
                                            "<p>Correct the scenery library mode now?</p>", "Sync texts with menu items"),
-                                    manualCheck ? QString() : tr("Do not &show this dialog again and always correct mode after loading."),
+                                    manualCheck ? QStringLiteral() :
+                                    tr("Do not &show this dialog again and always correct mode after loading."),
                                     QMessageBox::Yes | QMessageBox::No, QMessageBox::Yes, QMessageBox::Yes) == QMessageBox::Yes)
         correctSceneryOptions(correction);
       break;
 
     case navdb::CORRECT_XP_CYCLE_NAV_EQUAL:
-      if(dialog->showQuestionMsgBox(manualCheck ? QString() : lnm::ACTIONS_SHOW_CORRECT_XP_CYCLE_NAV_EQUAL,
+      if(dialog->showQuestionMsgBox(manualCheck ? QStringLiteral() : lnm::ACTIONS_SHOW_CORRECT_XP_CYCLE_NAV_EQUAL,
                                     tr("<p style='white-space:pre'>The AIRAC cycle %1 of your navigation data is "
                                          "equal to the simulator cycle.<p>"
                                          "<p>You should use the scenery library mode \"Use Navigraph for Navaids and Procedures\" "
@@ -1445,13 +1447,14 @@ void DatabaseManager::checkSceneryOptions(bool manualCheck)
                                            "\"Scenery Library\" -> \"Navigraph\" -> \"Use Navigraph for Navaids and Procedures\".</p>"
                                            "<p>Correct the scenery library mode now?</p>", "Sync texts with menu items").
                                     arg(metaNav.getAiracCycle()),
-                                    manualCheck ? QString() : tr("Do not &show this dialog again and always correct mode after loading."),
+                                    manualCheck ? QStringLiteral() :
+                                    tr("Do not &show this dialog again and always correct mode after loading."),
                                     QMessageBox::Yes | QMessageBox::No, QMessageBox::Yes, QMessageBox::Yes) == QMessageBox::Yes)
         correctSceneryOptions(correction);
       break;
 
     case navdb::CORRECT_XP_CYCLE_NAV_NEWER:
-      if(dialog->showQuestionMsgBox(manualCheck ? QString() : lnm::ACTIONS_SHOW_CORRECT_XP_CYCLE_NAV_SMALLER,
+      if(dialog->showQuestionMsgBox(manualCheck ? QStringLiteral() : lnm::ACTIONS_SHOW_CORRECT_XP_CYCLE_NAV_SMALLER,
                                     tr("<p style='white-space:pre'>The AIRAC cycle %1 of the Little Navmap navigation data is "
                                          "newer than the simulator cycle %2.</p>"
                                          "<p>Update the X-Plane navdata to use the same cycle as the Little Navmap "
@@ -1460,13 +1463,14 @@ void DatabaseManager::checkSceneryOptions(bool manualCheck)
                                            "\"Scenery Library\" -> \"Navigraph\" -> \"Do not use Navigraph Database\".</p>"
                                            "<p>Correct the scenery library mode now?</p>", "Sync texts with menu items").
                                     arg(metaNav.getAiracCycle()).arg(metaSim.getAiracCycle()),
-                                    manualCheck ? QString() : tr("Do not &show this dialog again and always correct mode after loading."),
+                                    manualCheck ? QStringLiteral() :
+                                    tr("Do not &show this dialog again and always correct mode after loading."),
                                     QMessageBox::Yes | QMessageBox::No, QMessageBox::Yes, QMessageBox::Yes) == QMessageBox::Yes)
         correctSceneryOptions(correction);
       break;
 
     case navdb::CORRECT_XP_CYCLE_NAV_OLDER:
-      if(dialog->showQuestionMsgBox(manualCheck ? QString() : lnm::ACTIONS_SHOW_CORRECT_XP_CYCLE_NAV_SMALLER,
+      if(dialog->showQuestionMsgBox(manualCheck ? QStringLiteral() : lnm::ACTIONS_SHOW_CORRECT_XP_CYCLE_NAV_SMALLER,
                                     tr("<p style='white-space:pre'>The AIRAC cycle %1 of your navigation data is "
                                          "older than the simulator cycle %2.</p>"
                                          "<p>This can result in warning messages when loading flight plans in X-Plane.</p>"
@@ -1478,13 +1482,14 @@ void DatabaseManager::checkSceneryOptions(bool manualCheck)
                                                "\"Scenery Library\" -> \"Navigraph\" -> \"Do not use Navigraph Database\".</p>"
                                                "<p>Correct the scenery library mode now?</p>", "Sync texts with menu items").
                                     arg(metaNav.getAiracCycle()).arg(metaSim.getAiracCycle()),
-                                    manualCheck ? QString() : tr("Do not &show this dialog again and always correct mode after loading."),
+                                    manualCheck ? QStringLiteral() :
+                                    tr("Do not &show this dialog again and always correct mode after loading."),
                                     QMessageBox::Yes | QMessageBox::No, QMessageBox::Yes, QMessageBox::Yes) == QMessageBox::Yes)
         correctSceneryOptions(correction);
       break;
 
     case navdb::CORRECT_FSX_P3D_OUTDATED:
-      if(dialog->showQuestionMsgBox(manualCheck ? QString() : lnm::ACTIONS_SHOW_CORRECT_FSX_P3D_OUTDATED,
+      if(dialog->showQuestionMsgBox(manualCheck ? QStringLiteral() : lnm::ACTIONS_SHOW_CORRECT_FSX_P3D_OUTDATED,
                                     tr("<p style='white-space:pre'>Your navdata based on AIRAC cycle %1 is outdated.</p>"
                                          "<p>This can result in warning messages when loading flight plans.</p>"
                                            "<p>Update the Little Navmap navdata with the Navigraph FMS Data Manager to fix this.</p>"
@@ -1494,25 +1499,27 @@ void DatabaseManager::checkSceneryOptions(bool manualCheck)
                                                "\"Scenery Library\" -> \"Navigraph\" -> \"Do not use Navigraph Database\".</p>"
                                                "<p>Correct the scenery library mode now?</p>", "Sync texts with menu items").
                                     arg(DatabaseMeta::getDbIncludedNavdataCycle()),
-                                    manualCheck ? QString() : tr("Do not &show this dialog again and always correct mode after loading."),
+                                    manualCheck ? QStringLiteral() :
+                                    tr("Do not &show this dialog again and always correct mode after loading."),
                                     QMessageBox::Yes | QMessageBox::No, QMessageBox::Yes, QMessageBox::Yes) == QMessageBox::Yes)
         correctSceneryOptions(correction);
       break;
 
     case navdb::CORRECT_FSX_P3D_UPDATED:
-      if(dialog->showQuestionMsgBox(manualCheck ? QString() : lnm::ACTIONS_SHOW_CORRECT_FSX_P3D_UPDATED,
+      if(dialog->showQuestionMsgBox(manualCheck ? QStringLiteral() : lnm::ACTIONS_SHOW_CORRECT_FSX_P3D_UPDATED,
                                     tr("<p style='white-space:pre'>"
                                          "<p>You are using an updated Navigraph database with a not optimal scenery library mode.</p>"
                                            "<p style='white-space:pre'>You can fix this in the menu<br/>"
                                            "\"Scenery Library\" -> \"Navigraph\" -> \"Use Navigraph for Navaids and Procedures\".</p>"
                                            "<p>Correct the scenery library mode now?</p>", "Sync texts with menu items"),
-                                    manualCheck ? QString() : tr("Do not &show this dialog again and always correct mode after loading."),
+                                    manualCheck ? QStringLiteral() :
+                                    tr("Do not &show this dialog again and always correct mode after loading."),
                                     QMessageBox::Yes | QMessageBox::No, QMessageBox::Yes, QMessageBox::Yes) == QMessageBox::Yes)
         correctSceneryOptions(correction);
       break;
 
     case navdb::CORRECT_ALL:
-      if(dialog->showQuestionMsgBox(manualCheck ? QString() : lnm::ACTIONS_SHOW_DATABASE_MSFS_NAVIGRAPH_ALL,
+      if(dialog->showQuestionMsgBox(manualCheck ? QStringLiteral() : lnm::ACTIONS_SHOW_DATABASE_MSFS_NAVIGRAPH_ALL,
                                     tr("<p style='white-space:pre'>Your current scenery library mode is "
                                          "\"Use Navigraph for all Features\".</p>"
                                          "<p>All information from the simulator scenery library is ignored in this mode.</p>"
@@ -1525,7 +1532,8 @@ void DatabaseManager::checkSceneryOptions(bool manualCheck)
                                              "\"Scenery Library\" -> \"Navigraph\" -> \"Use Navigraph for Navaids and Procedures\".</p>"
                                              "<p><b>Normally you should not use this mode.</b></p>"
                                                "<p>Correct the scenery library mode now?</p>", "Sync texts with menu items"),
-                                    manualCheck ? QString() : tr("Do not &show this dialog again and always correct mode after loading."),
+                                    manualCheck ? QStringLiteral() :
+                                    tr("Do not &show this dialog again and always correct mode after loading."),
                                     QMessageBox::Yes | QMessageBox::No, QMessageBox::Yes, QMessageBox::Yes) == QMessageBox::Yes)
         correctSceneryOptions(correction);
       break;
@@ -1599,7 +1607,7 @@ bool DatabaseManager::checkValidBasePaths() const
     {
       // Check scenery.cfg for FSX and P3D ========================================================
       QString sceneryCfgCodec = (selectedFsType == atools::fs::FsPaths::P3D_V4 || selectedFsType == atools::fs::FsPaths::P3D_V5 ||
-                                 selectedFsType == atools::fs::FsPaths::P3D_V6) ? "UTF-8" : QString();
+                                 selectedFsType == atools::fs::FsPaths::P3D_V6) ? "UTF-8" : QStringLiteral();
 
       if(!NavDatabase::isSceneryConfigValid(databaseDialog->getSceneryConfigFile(), sceneryCfgCodec, errors))
       {
@@ -1875,7 +1883,7 @@ void DatabaseManager::restoreState()
 {
   const Settings& settings = Settings::instance();
   simulators = settings.valueVar(lnm::DATABASE_PATHS).value<SimulatorTypeMap>();
-  currentFsType = atools::fs::FsPaths::stringToType(settings.valueStr(lnm::DATABASE_SIMULATOR, QString()));
+  currentFsType = atools::fs::FsPaths::stringToType(settings.valueStr(lnm::DATABASE_SIMULATOR, QStringLiteral()));
   selectedFsType = atools::fs::FsPaths::stringToType(settings.valueStr(lnm::DATABASE_LOADINGSIMULATOR));
   readInactive = settings.valueBool(lnm::DATABASE_LOAD_INACTIVE, false);
   readAddOnXml = settings.valueBool(lnm::DATABASE_LOAD_ADDONXML, true);
@@ -1907,7 +1915,7 @@ void DatabaseManager::updateDialogInfo(atools::fs::FsPaths::SimulatorType value)
     atools::util::Version databaseVersion = dbmeta.getDatabaseVersion();
 
     if(!dbmeta.isValid())
-      metaText = databaseMetaText.arg(tr("None")).arg(tr("None")).arg(applicationVersion.getVersionString()).arg(QString());
+      metaText = databaseMetaText.arg(tr("None")).arg(tr("None")).arg(applicationVersion.getVersionString()).arg(QStringLiteral());
     else
     {
       QString cycleText;
@@ -1920,7 +1928,7 @@ void DatabaseManager::updateDialogInfo(atools::fs::FsPaths::SimulatorType value)
     }
   }
   else
-    metaText = databaseMetaText.arg(tr("None")).arg(tr("None")).arg(applicationVersion.getVersionString()).arg(QString());
+    metaText = databaseMetaText.arg(tr("None")).arg(tr("None")).arg(applicationVersion.getVersionString()).arg(QStringLiteral());
 
   QString tableText, databaseInfoText = databaseLoader->getDatabaseInfoText();
   if(tempDb.isOpen() && dbtools::hasSchema(&tempDb))

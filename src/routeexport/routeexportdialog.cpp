@@ -307,7 +307,7 @@ QString RouteExportDialog::getRouteTypeAsString(re::RouteExportType routeType)
       return "XIvap";
 
   }
-  return QString();
+  return QStringLiteral();
 }
 
 QString RouteExportDialog::getRouteTypeAsDisplayString(re::RouteExportType routeType)
@@ -327,7 +327,7 @@ QString RouteExportDialog::getRouteTypeAsDisplayString(re::RouteExportType route
       return tr("X-IvAp");
 
   }
-  return QString();
+  return QStringLiteral();
 }
 
 RouteExportData RouteExportDialog::getExportData() const

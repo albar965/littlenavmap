@@ -503,9 +503,9 @@ void OnlinedataController::statusBarMessage()
 {
   QString net = getNetworkTranslated();
   if(!net.isEmpty())
-    NavApp::getStatusBar()->setOnlineConnectionStatusMessageText(QString(), tr("Connected to %1.").arg(net));
+    NavApp::getStatusBar()->setOnlineConnectionStatusMessageText(QStringLiteral(), tr("Connected to %1.").arg(net));
   else
-    NavApp::getStatusBar()->setOnlineConnectionStatusMessageText(QString(), QString());
+    NavApp::getStatusBar()->setOnlineConnectionStatusMessageText(QStringLiteral(), QStringLiteral());
 }
 
 void OnlinedataController::stopAllProcesses()
@@ -583,7 +583,7 @@ QString OnlinedataController::getNetworkTranslated() const
   switch(onlineNetwork)
   {
     case opts::ONLINE_NONE:
-      return QString();
+      return QStringLiteral();
 
     case opts::ONLINE_VATSIM:
       return tr("VATSIM");
@@ -598,7 +598,7 @@ QString OnlinedataController::getNetworkTranslated() const
     case opts::ONLINE_CUSTOM:
       return tr("Custom Network");
   }
-  return QString();
+  return QStringLiteral();
 }
 
 QString OnlinedataController::getNetwork() const
@@ -607,7 +607,7 @@ QString OnlinedataController::getNetwork() const
   switch(onlineNetwork)
   {
     case opts::ONLINE_NONE:
-      return QString();
+      return QStringLiteral();
 
     case opts::ONLINE_VATSIM:
       return QStringLiteral("VATSIM");
@@ -622,7 +622,7 @@ QString OnlinedataController::getNetwork() const
     case opts::ONLINE_CUSTOM:
       return QStringLiteral("Custom Network");
   }
-  return QString();
+  return QStringLiteral();
 }
 
 bool OnlinedataController::isNetworkActive() const
@@ -1038,7 +1038,7 @@ QString OnlinedataController::stateAsStr(OnlinedataController::State state)
     case OnlinedataController::DOWNLOADING_WHAZZUP_SERVERS:
       return QStringLiteral("Downloading Servers");
   }
-  return QString();
+  return QStringLiteral();
 }
 
 void OnlinedataController::debugDumpContainerSizes() const

@@ -156,7 +156,7 @@ bool XpconnectInstaller::install()
                                     "<p><ul>%1</ul>(click to show)</p>"
                                       "<p>Check these plugins manually if you are not sure what they are.</p>"
                                         "<p>Move these plugins to the system trash now to avoid issues like X-Plane crashes?</p>").
-                               arg(xpconnectsText.join(QString())));
+                               arg(xpconnectsText.join(QStringLiteral())));
         questionBox.setIcon(QMessageBox::Question);
 
         if(questionBox.exec() == QMessageBox::Yes)

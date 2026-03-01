@@ -601,7 +601,7 @@ void MapPainterMark::paintLogEntries(const QList<map::MapLogbookEntry>& entries)
         // text.append(atools::elideTextShort(entry->aircraftRegistration, 7));
         if(entry->distanceGcNm > 0.f)
           text.append(Unit::distNm(entry->distanceGcNm, true /* unit */, 20, true /* narrow */));
-        text.removeAll(QString());
+        text.removeAll(QStringLiteral());
 
         if(positions.size() >= 2)
         {
@@ -977,7 +977,8 @@ void MapPainterMark::paintEnduranceRing(float enduranceHours, float enduranceNm,
 
       QStringList texts;
 
-      texts.append(Unit::distNm(enduranceNm, true, 5, true) + (critical ? QString() : tr(" (RSV)", "Acronym for reserve on the map")));
+      texts.append(Unit::distNm(enduranceNm, true, 5,
+                                true) + (critical ? QStringLiteral() : tr(" (RSV)", "Acronym for reserve on the map")));
 
       if(enduranceHours < map::INVALID_TIME_VALUE)
         texts.append(formatter::formatMinutesHoursLong(enduranceHours));
@@ -1360,7 +1361,7 @@ QStringList MapPainterMark::distanceMarkText(const map::DistanceMarker& marker, 
     texts << atools::strJoin({textStr, radialStr, distStr}, tr(" / "));
 
   texts.append(trueStr);
-  texts.removeAll(QString());
+  texts.removeAll(QStringLiteral());
 
 #ifdef DEBUG_INFORMATION_MEASUREMENT
   texts.append("[" + QString::number(distanceMeter, 'f', 0) + " m]");

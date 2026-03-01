@@ -80,7 +80,7 @@ QString OptionData::getOnlineStatusUrl() const
     case opts::ONLINE_CUSTOM:
     case opts::ONLINE_NONE:
     case opts::ONLINE_IVAO:
-      return QString();
+      return QStringLiteral();
 
     case opts::ONLINE_VATSIM:
       return onlineVatsimStatusUrl;
@@ -91,7 +91,7 @@ QString OptionData::getOnlineStatusUrl() const
     case opts::ONLINE_CUSTOM_STATUS:
       return onlineStatusUrl;
   }
-  return QString();
+  return QStringLiteral();
 }
 
 QString OptionData::getOnlineTransceiverUrl() const
@@ -103,12 +103,12 @@ QString OptionData::getOnlineTransceiverUrl() const
     case opts::ONLINE_IVAO:
     case opts::ONLINE_PILOTEDGE:
     case opts::ONLINE_CUSTOM_STATUS:
-      return QString();
+      return QStringLiteral();
 
     case opts::ONLINE_VATSIM:
       return onlineVatsimTransceiverUrl;
   }
-  return QString();
+  return QStringLiteral();
 }
 
 QString OptionData::getOnlineWhazzupUrl() const
@@ -125,9 +125,9 @@ QString OptionData::getOnlineWhazzupUrl() const
     case opts::ONLINE_VATSIM:
     case opts::ONLINE_PILOTEDGE:
     case opts::ONLINE_CUSTOM_STATUS:
-      return QString();
+      return QStringLiteral();
   }
-  return QString();
+  return QStringLiteral();
 }
 
 const QFont OptionData::getMapFont() const

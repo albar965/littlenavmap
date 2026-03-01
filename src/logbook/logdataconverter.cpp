@@ -497,5 +497,5 @@ QString LogdataConverter::find(const QStringList& lines, QString nameTr, QString
         return line.mid(idx).trimmed();
     }
   }
-  return QString();
+  return QStringLiteral();
 }

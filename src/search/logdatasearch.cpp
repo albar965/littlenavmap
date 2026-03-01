@@ -292,7 +292,7 @@ QString LogdataSearch::formatModelData(const Column *col, const QVariant& displa
   {
     // Virtual columns from SQL functions
     if(displayRoleValue.isNull())
-      return QString();
+      return QStringLiteral();
     else
       return formatter::formatMinutesHours(displayRoleValue.toDouble() / 3600.);
   }
@@ -301,7 +301,7 @@ QString LogdataSearch::formatModelData(const Column *col, const QVariant& displa
   else if(col->getColumnName() == QStringLiteral("flightplan_cruise_altitude"))
   {
     if(displayRoleValue.isNull())
-      return QString();
+      return QStringLiteral();
     else
       return Unit::altFeet(displayRoleValue.toFloat(), false, 0);
   }

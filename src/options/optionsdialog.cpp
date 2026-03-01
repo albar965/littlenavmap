@@ -257,7 +257,7 @@ OptionsDialog::OptionsDialog(QMainWindow *parentWindow)
   addItem<optsac::DisplayOptionsUserAircraft>(topOfMap, displayOptItemIndexUser, tr("Wind Pointer"), tr("Show wind direction pointer on the top center of the map."), optsac::ITEM_USER_AIRCRAFT_WIND_POINTER, true);
 
   // Map Navigation Aids =====================================================
-  QTreeWidgetItem *navAids = addTopItem(tr("Map Navigation Aids"), QString());
+  QTreeWidgetItem *navAids = addTopItem(tr("Map Navigation Aids"), QStringLiteral());
   addItem<optsd::DisplayOptionsNavAid>(navAids , displayOptItemIndexNavAid, tr("Center Cross"), tr("Shows the map center. Useful if \"Click map to center position\"\n"
                                                                                                    "on page \"Map Navigation\" is enabled."), optsd::NAVAIDS_CENTER_CROSS);
   addItem<optsd::DisplayOptionsNavAid>(navAids , displayOptItemIndexNavAid, tr("Screen Area"), tr("Highlight click- or touchable areas on screen.\nOnly shown if \"Use map areas\"\n"
@@ -273,8 +273,8 @@ OptionsDialog::OptionsDialog(QMainWindow *parentWindow)
   QTreeWidgetItem *airport = addTopItem(tr("Airports"), tr("Select airport labels to display on the map."));
   addItem<optsd::DisplayOptionsAirport>(airport, displayOptItemIndexAirport, tr("Name (Ident)"), tr("Airport name and ident in brackets depending on zoom factor.\n"
                                                                                                     "Ident can be internal, ICAO, FAA, IATA or local depending on availability."), optsd::ITEM_AIRPORT_NAME, true);
-  addItem<optsd::DisplayOptionsAirport>(airport, displayOptItemIndexAirport, tr("Tower Frequency"), QString(), optsd::ITEM_AIRPORT_TOWER, true);
-  addItem<optsd::DisplayOptionsAirport>(airport, displayOptItemIndexAirport, tr("ATIS / ASOS / AWOS Frequency"), QString(), optsd::ITEM_AIRPORT_ATIS, true);
+  addItem<optsd::DisplayOptionsAirport>(airport, displayOptItemIndexAirport, tr("Tower Frequency"), QStringLiteral(), optsd::ITEM_AIRPORT_TOWER, true);
+  addItem<optsd::DisplayOptionsAirport>(airport, displayOptItemIndexAirport, tr("ATIS / ASOS / AWOS Frequency"), QStringLiteral(), optsd::ITEM_AIRPORT_ATIS, true);
   addItem<optsd::DisplayOptionsAirport>(airport, displayOptItemIndexAirport, tr("Runway Information"), tr("Show runway elevation, light indicator \"L\" and length text."), optsd::ITEM_AIRPORT_RUNWAY, true);
 
   // Airport details =====================================================
@@ -311,7 +311,7 @@ OptionsDialog::OptionsDialog(QMainWindow *parentWindow)
                                                                                                            "The label is fixed. Not shown at procedure legs."), optsd::ROUTE_INITIAL_FINAL_TRUE_COURSE);
 
   // Airspace =====================================================
-  QTreeWidgetItem *airspaces = addTopItem(tr("Airspaces"), QString());
+  QTreeWidgetItem *airspaces = addTopItem(tr("Airspaces"), QStringLiteral());
   addItem<optsd::DisplayOptionsAirspace>(airspaces , displayOptItemIndexAirspace, tr("Name"), tr("Shows the airspace name."), optsd::AIRSPACE_NAME);
   addItem<optsd::DisplayOptionsAirspace>(airspaces , displayOptItemIndexAirspace, tr("Restrictive Name"), tr("Shows the restrictive name like \"P-51\" of an airspace."), optsd::AIRSPACE_RESTRICTIVE_NAME, true);
   addItem<optsd::DisplayOptionsAirspace>(airspaces , displayOptItemIndexAirspace, tr("Type"), tr("Type of airspace like \"Prohibited\"."), optsd::AIRSPACE_TYPE, true);
@@ -328,7 +328,7 @@ OptionsDialog::OptionsDialog(QMainWindow *parentWindow)
   addItem<optsac::DisplayOptionsUserAircraft>(userAircraft, displayOptItemIndexUser, tr("Indicated Airspeed"), tr("Value prefixed with \"IAS\" on the map."), optsac::ITEM_USER_AIRCRAFT_IAS);
   addItem<optsac::DisplayOptionsUserAircraft>(userAircraft, displayOptItemIndexUser, tr("Ground Speed"), tr("Value prefixed with \"GS\" on the map."), optsac::ITEM_USER_AIRCRAFT_GS, true);
   addItem<optsac::DisplayOptionsUserAircraft>(userAircraft, displayOptItemIndexUser, tr("True Airspeed"), tr("Value prefixed with \"TAS\" on the map."), optsac::ITEM_USER_AIRCRAFT_TAS);
-  addItem<optsac::DisplayOptionsUserAircraft>(userAircraft, displayOptItemIndexUser, tr("Climb- and Sinkrate"), QString(), optsac::ITEM_USER_AIRCRAFT_CLIMB_SINK);
+  addItem<optsac::DisplayOptionsUserAircraft>(userAircraft, displayOptItemIndexUser, tr("Climb- and Sinkrate"), QStringLiteral(), optsac::ITEM_USER_AIRCRAFT_CLIMB_SINK);
   addItem<optsac::DisplayOptionsUserAircraft>(userAircraft, displayOptItemIndexUser, tr("Heading"), tr("Aircraft magnetic heading prefixed with \"HDG\" on the map."), optsac::ITEM_USER_AIRCRAFT_HEADING);
   addItem<optsac::DisplayOptionsUserAircraft>(userAircraft, displayOptItemIndexUser, tr("Actual Altitude"), tr("Real aircraft altitude prefixed with \"ALT\" on the map."), optsac::ITEM_USER_AIRCRAFT_ALTITUDE, true);
   addItem<optsac::DisplayOptionsUserAircraft>(userAircraft, displayOptItemIndexUser, tr("Indicated Altitude"), tr("Indicated aircraft altitude prefixed with \"IND\" on the map."), optsac::ITEM_USER_AIRCRAFT_INDICATED_ALTITUDE);
@@ -350,7 +350,7 @@ OptionsDialog::OptionsDialog(QMainWindow *parentWindow)
   addItem<optsac::DisplayOptionsAiAircraft>(aiAircraft, displayOptItemIndexAi, tr("Indicated Airspeed"), tr("Value prefixed with \"IAS\" on the map"), optsac::ITEM_AI_AIRCRAFT_IAS);
   addItem<optsac::DisplayOptionsAiAircraft>(aiAircraft, displayOptItemIndexAi, tr("Ground Speed"), tr("Value prefixed with \"GS\" on the map"), optsac::ITEM_AI_AIRCRAFT_GS, true);
   addItem<optsac::DisplayOptionsAiAircraft>(aiAircraft, displayOptItemIndexAi, tr("True Airspeed"), tr("Value prefixed with \"TAS\" on the map"), optsac::ITEM_AI_AIRCRAFT_TAS);
-  addItem<optsac::DisplayOptionsAiAircraft>(aiAircraft, displayOptItemIndexAi, tr("Climb- and Sinkrate"), QString(), optsac::ITEM_AI_AIRCRAFT_CLIMB_SINK);
+  addItem<optsac::DisplayOptionsAiAircraft>(aiAircraft, displayOptItemIndexAi, tr("Climb- and Sinkrate"), QStringLiteral(), optsac::ITEM_AI_AIRCRAFT_CLIMB_SINK);
   addItem<optsac::DisplayOptionsAiAircraft>(aiAircraft, displayOptItemIndexAi, tr("Heading"), tr("Aircraft magnetic heading prefixed with \"HDG\" on the map"), optsac::ITEM_AI_AIRCRAFT_HEADING);
   addItem<optsac::DisplayOptionsAiAircraft>(aiAircraft, displayOptItemIndexAi, tr("Actual Altitude"), tr("Real aircraft altitude prefixed with \"ALT\" on the map"), optsac::ITEM_AI_AIRCRAFT_ALTITUDE, true);
   addItem<optsac::DisplayOptionsAiAircraft>(aiAircraft, displayOptItemIndexAi, tr("Indicated Altitude"), tr("Indicated aircraft altitude prefixed with \"IND\" on the map"), optsac::ITEM_AI_AIRCRAFT_INDICATED_ALTITUDE);
@@ -837,7 +837,7 @@ void OptionsDialog::hintLinkActivated(const QString& link)
     if(ok && index < ui->listWidgetOptionPages->count())
     {
       ui->lineEditOptionSearch->clear();
-      searchTextEdited(QString());
+      searchTextEdited(QStringLiteral());
       ui->listWidgetOptionPages->setCurrentRow(index);
     }
   }
@@ -854,7 +854,7 @@ void OptionsDialog::styleChanged()
 
   // Update potential search hightlights with new color
   listWidgetIndex->setHighlightColor(NavApp::isGuiStyleDark() ? QColor(200, 0, 0, 200) : QColor(255, 255, 0, 200));
-  listWidgetIndex->find(QString());
+  listWidgetIndex->find(QStringLiteral());
   listWidgetIndex->find(ui->lineEditOptionSearch->text());
 
   atools::gui::updateAllPalette(this, QApplication::palette());
@@ -1090,7 +1090,7 @@ void OptionsDialog::onlineTestUrl(const QString& url, bool statusFile)
   qDebug() << Q_FUNC_INFO << url;
   QStringList result;
 
-  if(atools::fs::weather::testUrl(result, url, QString(), QHash<QString, QString>(), 250))
+  if(atools::fs::weather::testUrl(result, url, QStringLiteral(), QHash<QString, QString>(), 250))
   {
     bool ok = false;
     for(const QString& str : std::as_const(result))
@@ -1394,8 +1394,8 @@ void OptionsDialog::restoreState()
                                             defaultData.highlightProfileColor).value<QColor>();
 
   guiLanguage = settings.valueStr(lnm::OPTIONS_DIALOG_LANGUAGE, QLocale().name());
-  guiFont = settings.valueStr(lnm::OPTIONS_DIALOG_FONT, QString());
-  mapFont = settings.valueStr(lnm::OPTIONS_DIALOG_MAP_FONT, QString());
+  guiFont = settings.valueStr(lnm::OPTIONS_DIALOG_FONT, QStringLiteral());
+  mapFont = settings.valueStr(lnm::OPTIONS_DIALOG_MAP_FONT, QStringLiteral());
 
   widgetsToOptionData();
   updateWidgetUnits();
@@ -1676,7 +1676,7 @@ void OptionsDialog::testWeatherNoaaUrlClicked()
   datetime.setTime(QTime(datetime.time().hour(), 0, 0));
   QString url = ui->lineEditOptionsWeatherNoaaStationsUrl->text().arg(datetime.time().hour(), 2, 10, QChar('0')).trimmed();
 
-  bool result = WeatherReporter::testUrl(resultStr, url, QString());
+  bool result = WeatherReporter::testUrl(resultStr, url, QStringLiteral());
 
   QGuiApplication::restoreOverrideCursor();
 
@@ -1694,7 +1694,7 @@ void OptionsDialog::testWeatherVatsimUrlClicked()
   QStringList resultStr;
 
   QGuiApplication::setOverrideCursor(Qt::WaitCursor);
-  bool result = WeatherReporter::testUrl(resultStr, ui->lineEditOptionsWeatherVatsimUrl->text().trimmed(), QString());
+  bool result = WeatherReporter::testUrl(resultStr, ui->lineEditOptionsWeatherVatsimUrl->text().trimmed(), QStringLiteral());
   QGuiApplication::restoreOverrideCursor();
 
   if(result)
@@ -1711,7 +1711,7 @@ void OptionsDialog::testWeatherIvaoUrlClicked()
   QStringList resultStr;
 
   QGuiApplication::setOverrideCursor(Qt::WaitCursor);
-  bool result = WeatherReporter::testUrl(resultStr, ui->lineEditOptionsWeatherIvaoUrl->text().trimmed(), QString(), {
+  bool result = WeatherReporter::testUrl(resultStr, ui->lineEditOptionsWeatherIvaoUrl->text().trimmed(), QStringLiteral(), {
     {"accept", "application/json"},
     {"apiKey",
      atools::strFromCryptFile(":/littlenavmap/little_navmap_keys/ivao_weather_api_key.bin",
@@ -1733,7 +1733,7 @@ void OptionsDialog::testWeatherNoaaWindUrlClicked()
   qDebug() << Q_FUNC_INFO;
   QStringList resultStr;
   QGuiApplication::setOverrideCursor(Qt::WaitCursor);
-  bool result = WeatherReporter::testUrl(resultStr, ui->lineEditOptionsWeatherNoaaWindUrl->text().trimmed(), QString());
+  bool result = WeatherReporter::testUrl(resultStr, ui->lineEditOptionsWeatherNoaaWindUrl->text().trimmed(), QStringLiteral());
   QGuiApplication::restoreOverrideCursor();
   if(result)
     atools::gui::Dialog::information(this, tr("Success."));
@@ -1796,7 +1796,7 @@ void OptionsDialog::addDatabaseExcludeFileClicked()
   qDebug() << Q_FUNC_INFO;
 
   const QStringList paths = atools::gui::Dialog(this).openFileDialogMulti(tr("Open Files to exclude from Scenery Loading"),
-                                                                          QString(), // filter lnm::OPTIONS_DIALOG_DB_FILE_DLG,
+                                                                          QStringLiteral(), // filter lnm::OPTIONS_DIALOG_DB_FILE_DLG,
                                                                           NavApp::getCurrentSimulatorBasePath());
 
   for(const QString& path : paths)
@@ -2586,7 +2586,7 @@ void OptionsDialog::mapThemeDirSelectClicked()
   qDebug() << Q_FUNC_INFO;
 
   QString path = atools::gui::Dialog(this).
-                 openDirectoryDialog(tr("Select directory for map themes"), QString(), ui->lineEditCacheMapThemeDir->text());
+                 openDirectoryDialog(tr("Select directory for map themes"), QStringLiteral(), ui->lineEditCacheMapThemeDir->text());
 
   if(!path.isEmpty())
     ui->lineEditCacheMapThemeDir->setText(atools::nativeCleanPath(path));
@@ -2615,7 +2615,7 @@ void OptionsDialog::offlineDataSelectClicked()
   qDebug() << Q_FUNC_INFO;
 
   QString path = atools::gui::Dialog(this).
-                 openDirectoryDialog(tr("Open GLOBE data directory"), QString(), ui->lineEditCacheOfflineDataPath->text());
+                 openDirectoryDialog(tr("Open GLOBE data directory"), QStringLiteral(), ui->lineEditCacheOfflineDataPath->text());
 
   if(!path.isEmpty())
     ui->lineEditCacheOfflineDataPath->setText(atools::nativeCleanPath(path));
@@ -3300,7 +3300,7 @@ void OptionsDialog::mapboxUserMapClicked()
 
       if(url.startsWith("mapbox://styles/", Qt::CaseInsensitive))
       {
-        url.replace("mapbox://styles/", QString(), Qt::CaseInsensitive);
+        url.replace("mapbox://styles/", QStringLiteral(), Qt::CaseInsensitive);
         // Now "USERNAME/STYLEID"
 
         QString userName = url.section('/', 0, 0);

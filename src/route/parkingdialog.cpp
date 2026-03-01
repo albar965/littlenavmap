@@ -205,7 +205,7 @@ void ParkingDialog::updateTable()
       items[internal::TYPE] = new QTableWidgetItem(map::parkingTypeName(startPos.parking.type));
       items[internal::SIZE] = new QTableWidgetItem(Unit::distShortFeet(startPos.parking.getRadius() * 2));
       items[internal::CODES] = new QTableWidgetItem(startPos.parking.airlineCodes.split(",").join(tr(", ")));
-      items[internal::FACILITIES] = new QTableWidgetItem(startPos.parking.jetway ? tr("Has Jetway") : QString());
+      items[internal::FACILITIES] = new QTableWidgetItem(startPos.parking.jetway ? tr("Has Jetway") : QStringLiteral());
     }
     else if(startPos.start.isValid())
     {
@@ -249,7 +249,7 @@ void ParkingDialog::updateTable()
               for(const map::MapIls& ils : queries->getMapQuery()->getIlsByAirportAndRunway(departureAirport.ident, end.name))
                 atts.append(map::ilsTypeShort(ils));
             }
-            atts.removeAll(QString());
+            atts.removeAll(QStringLiteral());
             atts.removeDuplicates();
             items[internal::FACILITIES] = new QTableWidgetItem(atts.join(tr(",")));
           }

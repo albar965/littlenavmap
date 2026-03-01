@@ -122,7 +122,7 @@ NavSearch::NavSearch(MainWindow *parent, QTableView *tableView, si::TabSearchId 
   // WU      W
   // Build SQL query conditions
   QStringList typeCondMap;
-  typeCondMap << QString()
+  typeCondMap << QStringLiteral()
               << "type = 'VH'"  // VOR/VORTAC - High
               << "type = 'VL'"  // VOR/VORTAC - Low
               << "type = 'VT'"  // VOR/VORTAC - Terminal
@@ -135,7 +135,7 @@ NavSearch::NavSearch(MainWindow *parent, QTableView *tableView, si::TabSearchId 
               << "type in ('WN', 'WU', 'FAF', 'IAF', 'VFR', 'RNAV', 'OA')"; // Waypoint - Other
 
   QStringList navTypeCondMap;
-  navTypeCondMap << QString()
+  navTypeCondMap << QStringLiteral()
                  << "(nav_type like ('V%') or nav_type in ('D', 'TC'))"      // All VOR/VORTAC/TACAN
                  << "(nav_type like ('V%') or nav_type in ('D', 'TC', 'N'))" // All VOR/VORTAC/TACAN/NDB
                  << "nav_type = 'VD'"                                        // Only VOR-DME
@@ -364,7 +364,7 @@ QString NavSearch::formatModelData(const Column *col, int row, const QVariant& d
     return Unit::distNm(displayRoleValue.toFloat(), false);
   else if(col->getColumnName() == QStringLiteral("altitude"))
     return !displayRoleValue.isNull() && displayRoleValue.toFloat() < map::INVALID_ALTITUDE_VALUE ?
-           Unit::altFeet(displayRoleValue.toFloat(), false) : QString();
+           Unit::altFeet(displayRoleValue.toFloat(), false) : QStringLiteral();
   else if(col->getColumnName() == QStringLiteral("frequency") && !displayRoleValue.isNull())
   {
     // VOR and/or DME

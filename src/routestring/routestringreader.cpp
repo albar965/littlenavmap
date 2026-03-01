@@ -245,7 +245,7 @@ bool RouteStringReader::createRouteFromString(const QString& routeString, rs::Ro
     cleanItems.append(starEntryWp);
 
     // Remove empty entries and all consecutive duplicates
-    cleanItems.removeAll(QString());
+    cleanItems.removeAll(QStringLiteral());
     cleanItems.erase(std::unique(cleanItems.begin(), cleanItems.end()), cleanItems.end());
 
 #ifdef DEBUG_INFORMATION
@@ -273,7 +273,7 @@ bool RouteStringReader::createRouteFromString(const QString& routeString, rs::Ro
   if(!lastPos.isValid())
   {
     appendError(tr("Could not determine starting position for first item %1.").
-                arg(cleanItems.isEmpty() ? QString() : cleanItems.constFirst()));
+                arg(cleanItems.isEmpty() ? QStringLiteral() : cleanItems.constFirst()));
     return false;
   }
 
@@ -311,7 +311,7 @@ bool RouteStringReader::createRouteFromString(const QString& routeString, rs::Ro
     filterWaypoints(result, lastPos, fp->getDestinationPosition(), lastResult, item, maxDistance);
 
     if(!result.isEmpty(ROUTE_TYPES_AND_AIRWAY))
-      resultList.append({item, QString(), result});
+      resultList.append({item, QStringLiteral(), result});
     else
       appendWarning(tr("Nothing found for %1. Ignoring.").arg(item));
   }
@@ -543,11 +543,11 @@ const QStringList RouteStringReader::getAllMessages() const
   QStringList messages(errorMessages);
 
   if(!messages.isEmpty() && !warningMessages.isEmpty())
-    messages << QString(); // Converted to newline
+    messages << QStringLiteral(); // Converted to newline
   messages << warningMessages;
 
   if(!messages.isEmpty() && !logMessages.isEmpty())
-    messages << QString(); // Converted to newline
+    messages << QStringLiteral(); // Converted to newline
   messages << logMessages;
 
   return messages;
@@ -593,7 +593,7 @@ void RouteStringReader::addReport(atools::fs::pln::Flightplan *flightplan, const
     QString sid = ProcedureQuery::getSidAndTransition(properties, sidRunway);
     if(!sid.isEmpty())
     {
-      QString rwMsg = !sidRunway.isEmpty() ? tr(" and runway <b>%1</b>").arg(sidRunway) : QString();
+      QString rwMsg = !sidRunway.isEmpty() ? tr(" and runway <b>%1</b>").arg(sidRunway) : QStringLiteral();
       insertMessage(tr("Depart using SID <b>%1</b>%2.").arg(sid).arg(rwMsg), insertIndex++);
     }
   }
@@ -603,7 +603,7 @@ void RouteStringReader::addReport(atools::fs::pln::Flightplan *flightplan, const
   QString star = ProcedureQuery::getStarAndTransition(properties, starRunway);
   if(!star.isEmpty())
   {
-    QString rwMsg = !starRunway.isEmpty() ? tr(" and runway <b>%1</b>").arg(starRunway) : QString();
+    QString rwMsg = !starRunway.isEmpty() ? tr(" and runway <b>%1</b>").arg(starRunway) : QStringLiteral();
     insertMessage(tr("Arrive using STAR <b>%1</b>%2.").arg(star).arg(rwMsg), insertIndex++);
   }
 
@@ -640,7 +640,7 @@ void RouteStringReader::addReport(atools::fs::pln::Flightplan *flightplan, const
   }
 
   // Add empty line ==============
-  insertMessage(QString(), insertIndex++);
+  insertMessage(QStringLiteral(), insertIndex++);
 
   // Raw route description and found waypoints ===================================================================================
   insertMessage(tr("Route description:<br/>"
@@ -1070,7 +1070,7 @@ bool RouteStringReader::addDestination(atools::fs::pln::Flightplan *flightplan, 
       {
         // Get VOR, NDB or waypoints
         map::MapResult result;
-        mapQuery->getMapObjectByIdent(result, map::VOR | map::NDB | map::WAYPOINT, items.value(idx), QString(), QString(),
+        mapQuery->getMapObjectByIdent(result, map::VOR | map::NDB | map::WAYPOINT, items.value(idx), QStringLiteral(), QStringLiteral(),
                                       airport.position, ageo::nmToMeter(MAX_ALTERNATE_DISTANCE_NM));
         if(result.hasNavaids())
           // Have overlapping navaid names - ignore airport identifier and stop here
@@ -1180,7 +1180,7 @@ bool RouteStringReader::addDestination(atools::fs::pln::Flightplan *flightplan, 
   } // if(!airports.isEmpty())
   else
   {
-    QString airport = items.isEmpty() ? QString() : items.constLast();
+    QString airport = items.isEmpty() ? QStringLiteral() : items.constLast();
     if(airport.contains('/'))
       appendError(tr("Required destination airport %1 not found or wrong runway given after \"/\".").arg(airport));
     else
@@ -1197,10 +1197,10 @@ void RouteStringReader::readApproachAndTrans(const QString& approachArinc, const
   approachId = transitionId = -1;
 
   if(!approachArinc.isEmpty())
-    approachId = procQuery->getApproachId(destAirport, approachArinc, QString());
+    approachId = procQuery->getApproachId(destAirport, approachArinc, QStringLiteral());
 
   if(approachId != -1 && !approachTrans.isEmpty())
-    transitionId = procQuery->getTransitionId(destAirport, approachTrans, QString(), approachId);
+    transitionId = procQuery->getTransitionId(destAirport, approachTrans, QStringLiteral(), approachId);
 }
 
 void RouteStringReader::readStarAndTransDot(const QString& starTrans, const QString& runway, int& starId, int& starTransId,
@@ -1395,7 +1395,7 @@ atools::geo::Pos RouteStringReader::findFirstCoordinate(const QStringList& items
 
   if(result.isEmpty(ROUTE_TYPES_NAVAIDS))
     // No navaid found ===============================================
-    appendError(tr("First item %1 not found as waypoint, VOR or NDB.").arg(items.isEmpty() ? QString() : items.constFirst()));
+    appendError(tr("First item %1 not found as waypoint, VOR or NDB.").arg(items.isEmpty() ? QStringLiteral() : items.constFirst()));
   else
   {
     if(result.size(ROUTE_TYPES_NAVAIDS) == 1)
@@ -1725,12 +1725,12 @@ void RouteStringReader::filterAirways(QList<ParseEntry>& resultList, int i)
         {
           if(startIndex == -1)
             appendWarning(tr("Waypoint %1 not found in airway %2. Ignoring flight plan segment.").
-                          arg(lastResult.waypoints.isEmpty() ? QString() : lastResult.waypoints.constFirst().ident).
+                          arg(lastResult.waypoints.isEmpty() ? QStringLiteral() : lastResult.waypoints.constFirst().ident).
                           arg(airwayName));
 
           if(endIndex == -1)
             appendWarning(tr("Waypoint %1 not found in airway %2. Ignoring flight plan segment.").
-                          arg(nextResult.waypoints.isEmpty() ? QString() : nextResult.waypoints.constFirst().ident).
+                          arg(nextResult.waypoints.isEmpty() ? QStringLiteral() : nextResult.waypoints.constFirst().ident).
                           arg(airwayName));
           result.airways.clear();
         }
@@ -1758,7 +1758,8 @@ void RouteStringReader::findWaypoints(MapResult& result, const QString& item, bo
     // User coordinates for sure
     searchCoords = true;
 
-  mapQuery->getMapObjectByIdent(result, ROUTE_TYPES_AND_AIRWAY, item, QString(), QString(), false /* airportFromNavdatabase */,
+  mapQuery->getMapObjectByIdent(result, ROUTE_TYPES_AND_AIRWAY, item, QStringLiteral(), QStringLiteral(),
+                                false /* airportFromNavdatabase */,
                                 map::AP_QUERY_ALL);
 
   if(item.length() == 5 && result.waypoints.isEmpty())

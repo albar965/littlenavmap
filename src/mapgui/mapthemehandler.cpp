@@ -150,7 +150,7 @@ void MapThemeHandler::loadThemes()
         QStringList otherDgmlFilepaths;
         for(const MapTheme& t : otherThemes)
           otherDgmlFilepaths.append(t.displayPath());
-        otherDgmlFilepaths.removeAll(QString());
+        otherDgmlFilepaths.removeAll(QStringLiteral());
         otherDgmlFilepaths.removeDuplicates();
 
         QStringList otherDgmlFilepathsText;
@@ -258,7 +258,7 @@ void MapThemeHandler::loadThemes()
 
       // Collect all keys and insert with empty value
       for(const QString& key : std::as_const(theme.keys))
-        mapThemeKeys.insert(key, QString());
+        mapThemeKeys.insert(key, QStringLiteral());
     }
     else
       qInfo() << Q_FUNC_INFO << "Theme" << theme.theme << "not visible";
@@ -338,7 +338,7 @@ QString MapThemeHandler::currentThemeId() const
   if(actionGroupMapTheme->checkedAction() == nullptr)
   {
     qWarning() << Q_FUNC_INFO << "checkedAction is null";
-    return QString();
+    return QStringLiteral();
   }
   else
     return actionGroupMapTheme->checkedAction()->data().toString();
@@ -618,7 +618,7 @@ MapTheme MapThemeHandler::loadTheme(const QFileInfo& dgml)
   qDebug() << Q_FUNC_INFO << theme;
 #endif
 
-  theme.sourceDirs.removeAll(QString());
+  theme.sourceDirs.removeAll(QStringLiteral());
   theme.sourceDirs.sort();
   return theme;
 }
@@ -984,7 +984,7 @@ void MapThemeHandler::validateMapThemeDirectories(QWidget *parent)
     msg.append(atools::checkDirMsg(mapThemeUserDir()));
 
   // Remove empty error messages
-  msg.removeAll(QString());
+  msg.removeAll(QStringLiteral());
 
   if(!msg.isEmpty())
     atools::gui::Dialog::warning(parent, tr("Base path(s) for map themes not found.\n%1\n\n"

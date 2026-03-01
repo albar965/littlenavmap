@@ -271,7 +271,7 @@ void AirspaceController::loadAirspaces()
         QString file = dirIter.next();
 
         // Write file metadata for display in information window
-        metadataWriter.writeFile(file, QString(), sceneryId, fileId);
+        metadataWriter.writeFile(file, QStringLiteral(), sceneryId, fileId);
 
         // Get first lines at beginning of file and remove empty lines
         AirspaceReaderBase::Format format = AirspaceReaderBase::detectFileFormat(file);

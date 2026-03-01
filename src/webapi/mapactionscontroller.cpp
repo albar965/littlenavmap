@@ -63,7 +63,7 @@ WebApiResponse MapActionsController::imageAction(WebApiRequest request)
                                 // Now using exact width and height of 256x256
                                 request.parameters.value("height").toInt(),
                                 rect, detailFactor,
-                                QString(), false /* ignoreUiScale */);
+                                QStringLiteral(), false /* ignoreUiScale */);
 
   QString format = QString(request.parameters.value("format"));
   int quality = request.parameters.value("quality").toInt();
@@ -255,7 +255,7 @@ MapPixmap MapActionsController::getPixmap(int width, int height)
     qDebug() << Q_FUNC_INFO << width << "x" << height;
 
   return getPixmapPosDistance(width, height, atools::geo::EMPTY_POS,
-                              static_cast<float>(mapPaintWidget->distance()), QString());
+                              static_cast<float>(mapPaintWidget->distance()), QStringLiteral());
 }
 
 MapPixmap MapActionsController::getPixmapPosDistance(int width, int height, atools::geo::Pos pos, float distanceKm,

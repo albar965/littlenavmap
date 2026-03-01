@@ -120,7 +120,7 @@ void TextPlacement::calculateTextAlongLines(const QList<atools::geo::Line>& line
         // No text - append all dummy values
         textCoords.append(QPointF());
         textBearings.append(0.f);
-        texts.append(QString());
+        texts.append(QStringLiteral());
         textLineLengths.append(0.f);
         if(!colors.isEmpty())
           colors2.append(QColor());

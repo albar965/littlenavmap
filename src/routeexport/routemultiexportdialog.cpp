@@ -190,8 +190,8 @@ RouteMultiExportDialog::RouteMultiExportDialog(QWidget *parent, RouteExportForma
 
   // Resize widget to get rid of the too large default margins and allow to change size from context menu
   zoomHandler = new atools::gui::WidgetZoomHandler(ui->tableViewRouteExport, ui->actionIncreaseTextSize,
-                                                     ui->actionDecreaseTextSize, ui->actionDefaultTextSize,
-                                                     lnm::ROUTE_EXPORT_DIALOG_ZOOM, 1.);
+                                                   ui->actionDecreaseTextSize, ui->actionDefaultTextSize,
+                                                   lnm::ROUTE_EXPORT_DIALOG_ZOOM, 1.);
 
   connect(ui->buttonBoxRouteExport, &QDialogButtonBox::clicked, this, &RouteMultiExportDialog::buttonBoxClicked);
   ui->buttonBoxRouteExport->button(QDialogButtonBox::SaveAll)->setText(tr("&Export Selected Formats"));
@@ -356,9 +356,9 @@ void RouteMultiExportDialog::updateLabel()
     texts.append(tr("Click on a row in the table above to see the resulting filename, path and other information."));
 
   // Remove empty string and append empty to avoid label resizing while scrolling
-  texts.removeAll(QString());
+  texts.removeAll(QStringLiteral());
   for(int i = texts.size(); i < LABEL_LINES; i++)
-    texts.append(QString());
+    texts.append(QStringLiteral());
 
   ui->labelRouteExportPath->setText(texts.join("<br/>"));
 }
@@ -520,7 +520,7 @@ void RouteMultiExportDialog::updateModel()
     connect(checkBox, &QCheckBox::toggled, this, &RouteMultiExportDialog::selectForExportToggled);
     selectCheckBoxIndex.insert(format.getType(), checkBox);
 
-    QPushButton *selectButton = new QPushButton(QIcon(":/littlenavmap/resources/icons/fileopen.svg"), QString(), cellWidget);
+    QPushButton *selectButton = new QPushButton(QIcon(":/littlenavmap/resources/icons/fileopen.svg"), QStringLiteral(), cellWidget);
     selectButton->setObjectName(OBJ_NAME_EXP_SELECT);
     selectButton->setToolTip(tr("Select %1 that will be used to export the flight plan").
                              arg(format.isAppendToFile() ? tr("an existing file") : tr("a directory")));
@@ -529,7 +529,7 @@ void RouteMultiExportDialog::updateModel()
     selectButton->setAutoFillBackground(true);
     connect(selectButton, &QPushButton::clicked, this, &RouteMultiExportDialog::selectPathClicked);
 
-    QPushButton *saveButton = new QPushButton(QIcon(":/littlenavmap/resources/icons/filesaveas.svg"), QString(), cellWidget);
+    QPushButton *saveButton = new QPushButton(QIcon(":/littlenavmap/resources/icons/filesaveas.svg"), QStringLiteral(), cellWidget);
     saveButton->setObjectName(OBJ_NAME_EXP_SAVE);
     saveButton->setToolTip(tr("Export flight plan now"));
     saveButton->setProperty(FORMAT_PROP_NAME, userdata);
@@ -537,7 +537,7 @@ void RouteMultiExportDialog::updateModel()
     saveButton->setAutoFillBackground(true);
     connect(saveButton, &QPushButton::clicked, this, &RouteMultiExportDialog::saveNowClicked);
 
-    QPushButton *resetButton = new QPushButton(QIcon(":/littlenavmap/resources/icons/reset.svg"), QString(), cellWidget);
+    QPushButton *resetButton = new QPushButton(QIcon(":/littlenavmap/resources/icons/reset.svg"), QStringLiteral(), cellWidget);
     resetButton->setObjectName(OBJ_NAME_EXP_RESET);
     resetButton->setToolTip(tr("Reset path back to default.\n"
                                "The default path is determined by the current scenery library or simulator selection.\n"
@@ -671,11 +671,11 @@ void RouteMultiExportDialog::selectPath(rexp::RouteExportFormatType type, int ro
   if(format.isAppendToFile())
     // Format use a file to append plan
     filepath = atools::gui::Dialog(this).openFileDialog(tr("Select Export File for %1").arg(format.getComment()),
-                                                        filter, QString(), format.getPath());
+                                                        filter, QStringLiteral(), format.getPath());
   else
     // Format uses a directory to save a file
     filepath = atools::gui::Dialog(this).openDirectoryDialog(tr("Select Export Directory for %1").
-                                                             arg(format.getComment()), QString(), format.getPath());
+                                                             arg(format.getComment()), QStringLiteral(), format.getPath());
 
   if(!filepath.isEmpty())
   {

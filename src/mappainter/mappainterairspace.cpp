@@ -217,8 +217,8 @@ void MapPainterAirspace::render()
       // Prepare text placement without arrows
       TextPlacement textPlacement(painter, this, context->screenRect);
       textPlacement.setArrowForEmpty(false);
-      textPlacement.setArrowLeft(QString());
-      textPlacement.setArrowRight(QString());
+      textPlacement.setArrowLeft(QStringLiteral());
+      textPlacement.setArrowRight(QStringLiteral());
       textPlacement.setTextOnTopOfLine(false);
 
       // Look at all visible airspaces collected earlier ===============================

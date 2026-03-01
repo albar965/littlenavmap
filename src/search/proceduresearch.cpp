@@ -760,7 +760,7 @@ void ProcedureSearch::updateFilterBoxes()
           types.append(recApp.valueStr("type"));
       }
 
-      types.removeAll(QString());
+      types.removeAll(QStringLiteral());
       types.removeDuplicates();
       if(types.size() > 1)
       {
@@ -828,7 +828,7 @@ void ProcedureSearch::fillProcedureTreeWidget()
         QStringList sidStarArincDispNames, sidStarRunways;
         QString allRunwayDispText(tr("All"));
         if(type & proc::PROCEDURE_SID_STAR_ALL)
-          atools::fs::util::sidStarMultiRunways(runwayNames, procedureRec.valueStr("arinc_name", QString()),
+          atools::fs::util::sidStarMultiRunways(runwayNames, procedureRec.valueStr("arinc_name", QStringLiteral()),
                                                 &sidStarRunways, allRunwayDispText, &sidStarArincDispNames);
 
         QString runwayName;
@@ -1742,16 +1742,16 @@ void ProcedureSearch::procedureDisplayText(QString& procTypeText, QString& heade
       attText.append(tr("GPS Overlay"));
   }
 
-  if(!recProcedure.valueStr("airport_runway_name", QString()).isEmpty())
+  if(!recProcedure.valueStr("airport_runway_name", QStringLiteral()).isEmpty())
   {
     procTypeText.append(tr(" %1").arg(recProcedure.valueStr("airport_runway_name")));
     headerText.append(tr(" <b>%1</b>").arg(recProcedure.valueStr("airport_runway_name")));
   }
 
-  if(!recProcedure.valueStr("sid_star_arinc_name", QString()).isEmpty())
+  if(!recProcedure.valueStr("sid_star_arinc_name", QStringLiteral()).isEmpty())
   {
-    procTypeText.append(tr(" %1").arg(recProcedure.valueStr("sid_star_arinc_name", QString())));
-    headerText.append(tr(" <b>%1</b>").arg(recProcedure.valueStr("sid_star_arinc_name", QString())));
+    procTypeText.append(tr(" %1").arg(recProcedure.valueStr("sid_star_arinc_name", QStringLiteral())));
+    headerText.append(tr(" <b>%1</b>").arg(recProcedure.valueStr("sid_star_arinc_name", QStringLiteral())));
   }
 
   // Menu text is no HTML and same as row text
@@ -1761,7 +1761,7 @@ void ProcedureSearch::procedureDisplayText(QString& procTypeText, QString& heade
   // if(recApp.valueBool("has_vertical_angle", false))
   // attText.append(tr("VNAV"));
 
-  QString cat = proc::aircraftCategoryText(recProcedure.valueStr("aircraft_category", QString()));
+  QString cat = proc::aircraftCategoryText(recProcedure.valueStr("aircraft_category", QStringLiteral()));
   if(!cat.isEmpty())
     attText.append(cat);
 
@@ -1808,11 +1808,11 @@ QTreeWidgetItem *ProcedureSearch::buildProcedureItem(QTreeWidgetItem *rootItem, 
   QStringList firstLastWp = firstLastWaypoint(recProcedure);
   QTreeWidgetItem *item = new QTreeWidgetItem({procTypeText, // COL_DESCRIPTION
                                                ident, // COL_IDENT
-                                               QString(), // COL_RESTR
+                                               QStringLiteral(), // COL_RESTR
                                                atools::strJoin(tr(" "), firstLastWp, tr(", "), tr(" to ")), // COL_FROMTO
-                                               QString(), // COL_COURSE
-                                               QString(), // COL_DISTANCE
-                                               QString(), // COL_WIND
+                                               QStringLiteral(), // COL_COURSE
+                                               QStringLiteral(), // COL_DISTANCE
+                                               QStringLiteral(), // COL_WIND
                                                attStr.join(tr(", ")) // COL_REMARKS
                                               }, nextIndexId++);
 
@@ -1851,11 +1851,11 @@ QTreeWidgetItem *ProcedureSearch::buildTransitionItem(QTreeWidgetItem *procItem,
   QStringList firstLastWp = firstLastWaypoint(recTrans);
   QTreeWidgetItem *item = new QTreeWidgetItem({tr("Transition"), // COL_DESCRIPTION
                                                recTrans.valueStr("fix_ident"), // COL_IDENT
-                                               QString(), // COL_RESTR
+                                               QStringLiteral(), // COL_RESTR
                                                atools::strJoin(tr(" "), firstLastWp, tr(", "), tr(" to ")), // COL_FROMTO
-                                               QString(), // COL_COURSE
-                                               QString(), // COL_DISTANCE
-                                               QString(), // COL_WIND
+                                               QStringLiteral(), // COL_COURSE
+                                               QStringLiteral(), // COL_DISTANCE
+                                               QStringLiteral(), // COL_WIND
                                                attStr.join(tr(", ")) // COL_REMARKS
                                               }, nextIndexId++);
 
@@ -1889,10 +1889,10 @@ QTreeWidgetItem *ProcedureSearch::buildLegItem(const MapProcedureLeg& leg)
   texts.append(proc::procedureLegTypeStr(leg.type));
   texts.append(proc::procedureLegFixStr(leg));
   texts.append(proc::restrictionText(leg).join(tr(", ")));
-  texts.append(QString()); // From to not shown
+  texts.append(QStringLiteral()); // From to not shown
   texts.append(proc::procedureLegCourse(leg));
   texts.append(proc::procedureLegDistance(leg));
-  texts.append(QString()); // Wind filled in updateProcedureWind()
+  texts.append(QStringLiteral()); // Wind filled in updateProcedureWind()
 
   QStringList remarkStr = proc::procedureLegRemark(leg);
 
@@ -2192,7 +2192,7 @@ QStringList ProcedureSearch::firstLastWaypoint(const atools::sql::SqlRecord& rec
 
   if(record.contains("fix_last"))
     fromToString.append(record.valueStr("fix_last"));
-  fromToString.removeAll(QString());
+  fromToString.removeAll(QStringLiteral());
 
   return fromToString;
 }

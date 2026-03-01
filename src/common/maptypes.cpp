@@ -90,7 +90,7 @@ void initTranslateableTexts()
       {QStringLiteral("TR"), QObject::tr("Transparent")},
       {QStringLiteral("UNKNOWN"), QObject::tr("Unknown")},
       {QStringLiteral("INVALID"), QObject::tr("Invalid")},
-      {QString(), QObject::tr("Unknown")}
+      {QStringLiteral(), QObject::tr("Unknown")}
     });
 
   /* Short size name for gate and full name for others */
@@ -109,7 +109,7 @@ void initTranslateableTexts()
       {QStringLiteral("RMCB"), QObject::tr("Ramp Mil Combat")},
       {QStringLiteral("T"), QObject::tr("Tie down")},
       {QStringLiteral("H"), QObject::tr("Hangar")},
-      {QStringLiteral("G"), QString()},
+      {QStringLiteral("G"), QStringLiteral()},
       {QStringLiteral("GS"), QObject::tr("Small")},
       {QStringLiteral("GM"), QObject::tr("Medium")},
       {QStringLiteral("GH"), QObject::tr("Heavy")},
@@ -543,7 +543,7 @@ void initTranslateableTexts()
   airspaceRemarkMap = QHash<map::MapAirspaceType, QString>(
     {
       {map::AIRSPACE_NONE, QObject::tr("No Airspace")},
-      {map::CENTER, QString()},
+      {map::CENTER, QStringLiteral()},
       {map::CLASS_A, QObject::tr("Controlled, above 18,000 ft MSL, IFR, no VFR, ATC clearance required.")},
       {map::CLASS_B, QObject::tr("Controlled, IFR and VFR, ATC clearance required.")},
       {map::CLASS_C, QObject::tr("Controlled, IFR and VFR, ATC clearance required, transponder required.")},
@@ -553,27 +553,27 @@ void initTranslateableTexts()
       {map::CLASS_G, QObject::tr("Uncontrolled, IFR and VFR, ATC clearance not required.")},
       {map::FIR, QObject::tr("Uncontrolled, IFR and VFR, ATC clearance not required.")},
       {map::UIR, QObject::tr("Uncontrolled, IFR and VFR, ATC clearance not required.")},
-      {map::TOWER, QString()},
-      {map::CLEARANCE, QString()},
-      {map::GROUND, QString()},
-      {map::DEPARTURE, QString()},
-      {map::APPROACH, QString()},
+      {map::TOWER, QStringLiteral()},
+      {map::CLEARANCE, QStringLiteral()},
+      {map::GROUND, QStringLiteral()},
+      {map::DEPARTURE, QStringLiteral()},
+      {map::APPROACH, QStringLiteral()},
       {map::MOA,
        QObject::tr("Military operations area. Needs clearance for IFR if active. Check for traffic advisories.")},
       {map::RESTRICTED, QObject::tr("Needs authorization.")},
       {map::PROHIBITED, QObject::tr("No flight allowed.")},
       {map::WARNING, QObject::tr("Contains activity that may be hazardous to aircraft.")},
-      {map::CAUTION, QString()},
+      {map::CAUTION, QStringLiteral()},
       {map::ALERT, QObject::tr("High volume of pilot training or an unusual type of aerial activity.")},
       {map::DANGER, QObject::tr("Avoid or proceed with caution.")},
-      {map::NATIONAL_PARK, QString()},
+      {map::NATIONAL_PARK, QStringLiteral()},
       {map::MODEC, QObject::tr("Needs altitude aware transponder.")},
       {map::RADAR, QObject::tr("Terminal radar area. Not controlled.")},
-      {map::GCA, QString()},
-      {map::MCTR, QString()},
-      {map::TRSA, QString()},
-      {map::TRAINING, QString()},
-      {map::GLIDERPROHIBITED, QString()},
+      {map::GCA, QStringLiteral()},
+      {map::MCTR, QStringLiteral()},
+      {map::TRSA, QStringLiteral()},
+      {map::TRAINING, QStringLiteral()},
+      {map::GLIDERPROHIBITED, QStringLiteral()},
       {map::WAVEWINDOW, QObject::tr("Sailplane Area.")},
       {map::ONLINE_OBSERVER, QObject::tr("Online network observer")}
     });
@@ -953,7 +953,7 @@ QString parkingText(const MapParking& parking)
 
   retval.append(map::parkingName(parking.name));
 
-  retval.append(parking.number != -1 ? QStringLiteral(" ") % QLocale().toString(parking.number) % parking.suffix : QString());
+  retval.append(parking.number != -1 ? QStringLiteral(" ") % QLocale().toString(parking.number) % parking.suffix : QStringLiteral());
   return atools::strJoin(retval, QObject::tr(" "));
 }
 
@@ -989,7 +989,7 @@ QString startType(const map::MapStart& start)
   else if(start.isHelipad())
     return QObject::tr("Helipad");
   else
-    return QString();
+    return QStringLiteral();
 }
 
 QString parkingNameForFlightplan(const map::MapParking& parking)
@@ -1298,7 +1298,7 @@ QString airwayTrackTypeToShortString(MapAirwayTrackType type)
       return QObject::tr("B", "Oceanic track type");
 
   }
-  return QString();
+  return QStringLiteral();
 }
 
 QString airwayTrackTypeToString(MapAirwayTrackType type)
@@ -1324,7 +1324,7 @@ QString airwayTrackTypeToString(MapAirwayTrackType type)
       return QObject::tr("Both", "Oceanic track system name");
 
   }
-  return QString();
+  return QStringLiteral();
 }
 
 MapAirwayTrackType airwayTrackTypeFromString(const QString& typeStr)
@@ -1374,7 +1374,7 @@ QString airwayRouteTypeToString(map::MapAirwayRouteType type)
     case map::RT_TRACK:
       return QObject::tr("Track");
   }
-  return QString();
+  return QStringLiteral();
 }
 
 QString airwayRouteTypeToStringShort(map::MapAirwayRouteType type)
@@ -1408,7 +1408,7 @@ QString airwayRouteTypeToStringShort(map::MapAirwayRouteType type)
     case map::RT_TRACK:
       return QStringLiteral("T");
   }
-  return QString();
+  return QStringLiteral();
 }
 
 MapAirwayRouteType airwayRouteTypeFromString(const QString& typeStr)
@@ -1526,7 +1526,7 @@ QString vorType(const MapVor& vor)
   if(vor.isValid())
     return vorType(vor.dmeOnly, vor.hasDme, vor.tacan, vor.vortac);
   else
-    return QString();
+    return QStringLiteral();
 }
 
 QString vorType(bool dmeOnly, bool hasDme, bool tacan, bool vortac)
@@ -1650,7 +1650,7 @@ QString rangeMarkText(const RangeMarker& obj)
 QString distanceMarkText(const DistanceMarker& obj)
 {
   float distanceMeter = obj.getDistanceMeter();
-  QString distStr(distanceMeter < map::INVALID_DISTANCE_VALUE ? Unit::distMeter(distanceMeter) : QString());
+  QString distStr(distanceMeter < map::INVALID_DISTANCE_VALUE ? Unit::distMeter(distanceMeter) : QStringLiteral());
 
   if(obj.text.isEmpty())
     return QObject::tr("Measurement %1").arg(distStr);
@@ -1729,7 +1729,7 @@ QString airwayAltTextShort(const MapAirway& airway, bool addUnit, bool narrow)
   else if(airway.minAltitude > 0)
     return Unit::altFeet(airway.minAltitude, addUnit, narrow);
   else
-    return QString();
+    return QStringLiteral();
 }
 
 QString airportText(const MapAirport& airport, int elideName, bool includeIdent)
@@ -1806,7 +1806,7 @@ QString magvarText(float magvar, bool shortText, bool degSign)
     else
       return degSign ? QObject::tr("0°") : QObject::tr("0");
   }
-  return QString();
+  return QStringLiteral();
 }
 
 bool isHardSurface(const QString& surface)
@@ -1834,7 +1834,7 @@ QString edgeLights(const QString& type)
   else if(type == QStringLiteral("H"))
     return QObject::tr("High", "Taxi edge lights");
   else
-    return QString();
+    return QStringLiteral();
 }
 
 QString patternDirection(const QString& type)
@@ -1844,7 +1844,7 @@ QString patternDirection(const QString& type)
   else if(type == QStringLiteral("R"))
     return QObject::tr("Right", "Traffic pattern direction");
   else
-    return QString();
+    return QStringLiteral();
 }
 
 QString ndbFullShortText(const MapNdb& ndb)
@@ -2136,7 +2136,7 @@ QString MapIls::freqMHzOrChannelLocale() const
 QString MapIls::freqMHz() const
 {
   if(type == GLS_GROUND_STATION || type == SBAS_GBAS_THRESHOLD)
-    return QString();
+    return QStringLiteral();
   else
     return QObject::tr("%1").arg(static_cast<float>(frequency / 1000.f), 0, 'f', 2);
 }
@@ -2144,7 +2144,7 @@ QString MapIls::freqMHz() const
 QString MapIls::freqMHzLocale() const
 {
   if(type == GLS_GROUND_STATION || type == SBAS_GBAS_THRESHOLD)
-    return QString();
+    return QStringLiteral();
   else
     return QObject::tr("%L1").arg(static_cast<float>(frequency / 1000.f), 0, 'f', 2);
 }
@@ -2431,7 +2431,7 @@ QString mapBaseText(const map::MapBase *base, int elideAirportName)
         return map::parkingText(*base->asPtr<map::MapParking>());
 
       case map::START:
-        return QString();
+        return QStringLiteral();
 
       case map::HELIPAD:
         return map::helipadText(*base->asPtr<map::MapHelipad>());
@@ -2461,7 +2461,7 @@ QString mapBaseText(const map::MapBase *base, int elideAirportName)
         return map::msaMarkText(*base->asPtr<map::MsaMarker>());
     }
   }
-  return QString();
+  return QStringLiteral();
 }
 
 QIcon mapBaseIcon(const map::MapBase *base, int size)
@@ -2617,7 +2617,7 @@ bool aircraftHasIcing(const atools::fs::sc::SimConnectUserAircraft& aircraft)
 QStringList MapRunwayEnd::uniqueVasiTypeStr() const
 {
   QStringList vasi({leftVasiTypeStr(), rightVasiTypeStr()});
-  vasi.removeAll(QString());
+  vasi.removeAll(QStringLiteral());
   vasi.removeDuplicates();
   return vasi;
 }
@@ -2753,7 +2753,7 @@ QString airspaceRestrictiveName(const MapAirspace& airspace)
     if(restrictedName != airspace.name)
       return restrictedName;
   }
-  return QString();
+  return QStringLiteral();
 }
 
 void registerMetaTypes()

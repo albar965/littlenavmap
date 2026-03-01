@@ -277,7 +277,7 @@ QueryBuilderResult SearchBaseTable::queryBuilderFunc(const QueryWidget& queryWid
             clauses.append("coalesce(" % col % ", '') not like \''" % text % "\' escape '\\'");
           else
             clauses.append(col % " like " % '\'' % text % "\' escape '\\'");
-        clauses.removeAll(QString());
+        clauses.removeAll(QStringLiteral());
         clauses.removeDuplicates();
 
         QString query = joinQuery(clauses, exclude /* concatAnd */);
@@ -295,7 +295,7 @@ QueryBuilderResult SearchBaseTable::queryBuilderFunc(const QueryWidget& queryWid
     QStringList queryTextList;
     queryTextList.append(joinQuery(queryList, false /* concatAnd */));
     queryTextList.append(joinQuery(excludeQueryList, true /* concatAnd */));
-    queryTextList.removeAll(QString());
+    queryTextList.removeAll(QStringLiteral());
     queryTextList.removeDuplicates();
 
     QString query = joinQuery(queryTextList, false /* concatAnd */);
@@ -1077,7 +1077,7 @@ void SearchBaseTable::contextMenu(const QPoint& pos)
     std::initializer_list<map::MapTypes> msaTypeList = {map::AIRPORT, map::VOR, map::NDB, map::WAYPOINT};
     if(result.hasTypes(map::AIRPORT | map::VOR | map::NDB | map::WAYPOINT))
       mapQuery->getMapObjectByIdent(msaResult, map::AIRPORT_MSA, result.getIdent(msaTypeList),
-                                    result.getRegion(msaTypeList), QString(), result.getPosition(msaTypeList));
+                                    result.getRegion(msaTypeList), QStringLiteral(), result.getPosition(msaTypeList));
 
     if(mapObjType == map::AIRPORT && result.hasAirports())
       airport = result.airports.constFirst();
@@ -1121,7 +1121,7 @@ void SearchBaseTable::contextMenu(const QPoint& pos)
     qDebug() << "Invalid index at" << pos;
 
   // Add data to menu item text ======================================================================
-  QString filterText = fieldData.isEmpty() ? QString() : tr("\"%1\"").arg(fieldData);
+  QString filterText = fieldData.isEmpty() ? QStringLiteral() : tr("\"%1\"").arg(fieldData);
 
   ui->actionSearchFilterIncluding->setEnabled(!fieldData.isEmpty() && index.isValid() && columnCanFilter);
   ActionTool::setText(ui->actionSearchFilterIncluding, filterText);
@@ -1254,8 +1254,8 @@ void SearchBaseTable::contextMenu(const QPoint& pos)
 
   if(airport.noRunways())
   {
-    ActionTool::setText(ui->actionSearchShowApproachCustom, false, QString(), tr(" (no runway)"));
-    ActionTool::setText(ui->actionSearchShowDepartureCustom, false, QString(), tr(" (no runway)"));
+    ActionTool::setText(ui->actionSearchShowApproachCustom, false, QStringLiteral(), tr(" (no runway)"));
+    ActionTool::setText(ui->actionSearchShowDepartureCustom, false, QStringLiteral(), tr(" (no runway)"));
   }
   else
   {
@@ -1372,7 +1372,7 @@ void SearchBaseTable::contextMenu(const QPoint& pos)
         ui->actionLogdataRouteOpen->setText(ui->actionLogdataRouteOpen->text().arg(tr("(file not found)")));
     }
     else
-      ui->actionLogdataRouteOpen->setText(ui->actionLogdataRouteOpen->text().arg(QString()));
+      ui->actionLogdataRouteOpen->setText(ui->actionLogdataRouteOpen->text().arg(QStringLiteral()));
 
     ui->actionLogdataPerfLoad->setEnabled(false);
     if(!logEntry.performanceFile.isEmpty())
@@ -1388,7 +1388,7 @@ void SearchBaseTable::contextMenu(const QPoint& pos)
         ui->actionLogdataPerfLoad->setText(ui->actionLogdataPerfLoad->text().arg(tr("(file not found)")));
     }
     else
-      ui->actionLogdataPerfLoad->setText(ui->actionLogdataPerfLoad->text().arg(QString()));
+      ui->actionLogdataPerfLoad->setText(ui->actionLogdataPerfLoad->text().arg(QStringLiteral()));
   }
 
   // Replace any left over placeholders ========================================================
@@ -1830,12 +1830,12 @@ void SearchBaseTable::showApproaches(bool customApproach, bool customDeparture)
         if(customApproach)
         {
           if(!departure || route.getSizeWithoutAlternates() == 1)
-            emit showCustomApproach(airport, QString());
+            emit showCustomApproach(airport, QStringLiteral());
         }
         else if(customDeparture)
         {
           if(!destination || route.getSizeWithoutAlternates() == 1)
-            emit showCustomDeparture(airport, QString());
+            emit showCustomDeparture(airport, QStringLiteral());
         }
         else
         {

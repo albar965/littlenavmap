@@ -242,8 +242,8 @@ void RunwaySelection::fillRunwayList()
     QStringList headerTooltips({tr("Runway number."),
                                 tr("Length and width of runway in %1.").arg(Unit::getUnitShortDistStr()),
                                 tr("Runway heading in degree magnetic."),
-                                QString(),
-                                QString(),
+                                QStringLiteral(),
+                                QStringLiteral(),
                                 tr("Head- and crosswind components for runway in %1.\n"
                                    "Weather source is selected in menu \"Weather\" -> \"Airport Weather Source\".\n"
                                    "Tailwinds are omitted.").arg(Unit::getUnitSpeedStr())});
@@ -296,7 +296,7 @@ void RunwaySelection::addItem(const RunwayIdxEntry& entry, const QString& windTe
   // Add ILS and similar approach aids
   for(const map::MapIls& ils : mapQuery->getIlsByAirportAndRunway(airport->ident, entry.end.name))
     atts.append(map::ilsTypeShort(ils));
-  atts.removeAll(QString());
+  atts.removeAll(QStringLiteral());
   atts.removeDuplicates();
 
   if(showPattern && entry.runway.patternAlt > 100.f)

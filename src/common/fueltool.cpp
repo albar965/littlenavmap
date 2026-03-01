@@ -82,7 +82,7 @@ QString FuelTool::fuelWeightVol(opts::UnitFuelAndWeight unitFuelAndWeight, float
                // liter
                arg(gallonToLiter(fromLbsToGal(jetfuel, valueLbsGal)), 0, 'f', 0).arg(Unit::getSuffixFuelVolLiter());
   }
-  return QString();
+  return QStringLiteral();
 }
 
 QString FuelTool::weightVolLocal(float valueLbsGal) const
@@ -105,7 +105,7 @@ QString FuelTool::weightVolOther(float valueLbsGal) const
         return fuelWeightVol(opts::FUEL_WEIGHT_GAL_LBS, valueLbsGal);
     }
   }
-  return QString();
+  return QStringLiteral();
 }
 
 QString FuelTool::flowWeightVolLocal(float valueLbsGal) const

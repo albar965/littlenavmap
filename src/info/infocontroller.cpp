@@ -68,7 +68,8 @@ InfoController::InfoController(QWidget *parent)
   // Get base font size for widgets
   Ui::MainWindow *ui = NavApp::getMainUi();
 
-  QPushButton *pushButtonInfoHelp = new QPushButton(QIcon(":/littlenavmap/resources/icons/help.svg"), QString(), ui->tabWidgetInformation);
+  QPushButton *pushButtonInfoHelp = new QPushButton(QIcon(":/littlenavmap/resources/icons/help.svg"), QStringLiteral(),
+                                                    ui->tabWidgetInformation);
   pushButtonInfoHelp->setToolTip(tr("Show help for the information window"));
   pushButtonInfoHelp->setStatusTip(tr("Show help for the information window"));
 
@@ -82,7 +83,8 @@ InfoController::InfoController(QWidget *parent)
                                                             tr("Open or close tabs"));
   tabHandlerAirportInfo->init(ic::TabAirportInfoIds, lnm::INFOWINDOW_WIDGET_AIRPORT_TABS);
 
-  QPushButton *pushButtonAircraftHelp = new QPushButton(QIcon(":/littlenavmap/resources/icons/help.svg"), QString(), ui->tabWidgetAircraft);
+  QPushButton *pushButtonAircraftHelp = new QPushButton(QIcon(":/littlenavmap/resources/icons/help.svg"), QStringLiteral(),
+                                                        ui->tabWidgetAircraft);
   pushButtonAircraftHelp->setToolTip(tr("Show help for the aircraft window"));
   pushButtonAircraftHelp->setStatusTip(tr("Show help for the aircraft window"));
 
@@ -125,7 +127,7 @@ InfoController::InfoController(QWidget *parent)
   // ==================================================================================
   // Create a configuration push button and place it into the aircraft progress info text browser
   QPushButton *button = new QPushButton(QIcon(":/littlenavmap/resources/icons/settingsroute.svg"),
-                                        QString(), ui->textBrowserAircraftProgressInfo->viewport());
+                                        QStringLiteral(), ui->textBrowserAircraftProgressInfo->viewport());
   button->setToolTip(tr("Select the fields to show in the aircraft progress tab."));
   button->setSizePolicy(QSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed));
 
@@ -216,7 +218,7 @@ QString InfoController::getConnectionTypeText()
 
 #endif
 
-  return QString();
+  return QStringLiteral();
 }
 
 void InfoController::showProgressContextMenu(const QPoint& point)
@@ -1172,7 +1174,7 @@ void InfoController::postDatabaseLoad()
   for(const map::MapWaypoint& waypoint : std::as_const(savedSearchResult->waypoints))
   {
     map::MapResult result;
-    mapQuery->getMapObjectByIdent(result, map::WAYPOINT, waypoint.ident, waypoint.region, QString(), waypoint.position, 50);
+    mapQuery->getMapObjectByIdent(result, map::WAYPOINT, waypoint.ident, waypoint.region, QStringLiteral(), waypoint.position, 50);
     if(result.hasWaypoints())
       currentSearchResult->waypoints.append(result.waypoints.constFirst());
   }
@@ -1180,7 +1182,7 @@ void InfoController::postDatabaseLoad()
   for(const map::MapVor& vor : std::as_const(savedSearchResult->vors))
   {
     map::MapResult result;
-    mapQuery->getMapObjectByIdent(result, map::VOR, vor.ident, vor.region, QString(), vor.position, 50);
+    mapQuery->getMapObjectByIdent(result, map::VOR, vor.ident, vor.region, QStringLiteral(), vor.position, 50);
     if(result.hasVor())
       currentSearchResult->vors.append(result.vors.constFirst());
   }
@@ -1188,7 +1190,7 @@ void InfoController::postDatabaseLoad()
   for(const map::MapNdb& ndb : std::as_const(savedSearchResult->ndbs))
   {
     map::MapResult result;
-    mapQuery->getMapObjectByIdent(result, map::NDB, ndb.ident, ndb.region, QString(), ndb.position, 50);
+    mapQuery->getMapObjectByIdent(result, map::NDB, ndb.ident, ndb.region, QStringLiteral(), ndb.position, 50);
     if(result.hasNdb())
       currentSearchResult->ndbs.append(result.ndbs.constFirst());
   }
@@ -1241,8 +1243,8 @@ void InfoController::updateUserAircraftText()
         infoBuilder->aircraftTextWeightAndFuel(lastSimData->getUserAircraftConst(), html);
         updateTextEdit(ui->textBrowserAircraftInfo, html.getHtml(), false /* scrollToTop*/, true /* keepSelection */);
       }
-      ui->textBrowserAircraftInfo->setToolTip(QString());
-      ui->textBrowserAircraftInfo->setStatusTip(QString());
+      ui->textBrowserAircraftInfo->setToolTip(QStringLiteral());
+      ui->textBrowserAircraftInfo->setStatusTip(QStringLiteral());
     }
     else
     {
@@ -1272,8 +1274,8 @@ void InfoController::updateAircraftProgressText()
         infoBuilder->aircraftProgressText(lastSimData->getUserAircraftConst(), html, NavApp::getRouteConst());
         updateTextEdit(ui->textBrowserAircraftProgressInfo, html.getHtml(), false /* scrollToTop*/, true /* keepSelection */);
       }
-      ui->textBrowserAircraftProgressInfo->setToolTip(QString());
-      ui->textBrowserAircraftProgressInfo->setStatusTip(QString());
+      ui->textBrowserAircraftProgressInfo->setToolTip(QStringLiteral());
+      ui->textBrowserAircraftProgressInfo->setStatusTip(QStringLiteral());
     }
     else
     {
@@ -1327,8 +1329,8 @@ void InfoController::updateAiAircraftText()
           updateTextEdit(ui->textBrowserAircraftAiInfo, text, false /* scrollToTop*/, true /* keepSelection */);
         }
       }
-      ui->textBrowserAircraftAiInfo->setToolTip(QString());
-      ui->textBrowserAircraftAiInfo->setStatusTip(QString());
+      ui->textBrowserAircraftAiInfo->setToolTip(QStringLiteral());
+      ui->textBrowserAircraftAiInfo->setStatusTip(QStringLiteral());
     }
     else
     {

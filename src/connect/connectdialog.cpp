@@ -208,7 +208,7 @@ void ConnectDialog::updateWarningMessage()
   {
     ui->labelConnectWarning->hide();
     ui->labelConnectWarning->clear();
-    ui->labelConnectWarning->setToolTip(QString());
+    ui->labelConnectWarning->setToolTip(QStringLiteral());
   }
 }
 

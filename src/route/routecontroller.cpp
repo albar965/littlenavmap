@@ -687,7 +687,7 @@ QString RouteController::getFlightplanTableAsHtmlDoc(float iconSizePixel) const
 
   atools::util::HtmlBuilder html(true);
   html.doc(tr("%1 - %2").arg(QCoreApplication::applicationName()).arg(QFileInfo(routeFilename).fileName()),
-           css, QString() /* bodyStyle */, headerLines);
+           css, QStringLiteral() /* bodyStyle */, headerLines);
   html.text(NavApp::getRouteController()->getFlightplanTableAsHtml(iconSizePixel, true /* print */),
             atools::util::html::NO_ENTITIES);
 
@@ -707,7 +707,7 @@ QString RouteController::getFlightplanTableAsHtml(float iconSizePixel, bool prin
 
   // Check if model is already initailized
   if(model->rowCount() == 0)
-    return QString();
+    return QStringLiteral();
 
   using atools::util::HtmlBuilder;
 
@@ -731,7 +731,7 @@ QString RouteController::getFlightplanTableAsHtml(float iconSizePixel, bool prin
   // Table header
   QHeaderView *header = tableViewRoute->horizontalHeader();
   html.tr(Qt::lightGray);
-  html.th(QString()); // Icon
+  html.th(QStringLiteral()); // Icon
   for(int viewCol = 0; viewCol < model->columnCount(); viewCol++)
   {
     // Convert view position to model position - needed to keep order
@@ -760,7 +760,7 @@ QString RouteController::getFlightplanTableAsHtml(float iconSizePixel, bool prin
       int sizeInt = atools::roundToInt(iconSizePixel);
 
       html.td();
-      html.img(iconForLeg(leg, atools::roundToInt(iconSizePixel)), QString(), QString(), QSize(sizeInt, sizeInt));
+      html.img(iconForLeg(leg, atools::roundToInt(iconSizePixel)), QStringLiteral(), QStringLiteral(), QSize(sizeInt, sizeInt));
       html.tdEnd();
     }
 
@@ -809,7 +809,7 @@ QString RouteController::getFlightplanTableAsHtml(float iconSizePixel, bool prin
             html.td(item->text(), flags, color);
         }
         else
-          html.td(QString());
+          html.td(QStringLiteral());
       }
     }
     html.trEnd();
@@ -1508,7 +1508,7 @@ bool RouteController::loadFlightplanLnmLogdataStr(const QString& string)
     // Will throw an exception if something goes wrong
     flightplanIO->loadLnmStr(fp, string);
 
-    loadFlightplanInternal(fp, atools::fs::pln::LNM_PLN, QString(),
+    loadFlightplanInternal(fp, atools::fs::pln::LNM_PLN, QStringLiteral(),
                            false /*changed*/, false /* adjustAltitude */, false /* undo */, true /* warnAltitude */,
                            true /* correctProfile */, false /* clearUndoState */);
   }
@@ -1570,7 +1570,7 @@ bool RouteController::loadFlightplanRouteStrCmdOrDataExchange(const QString& rou
     if(!altIncluded)
       fp.setCruiseAltitudeFt(0.f);
 
-    loadFlightplanInternal(fp, atools::fs::pln::LNM_PLN, QString(),
+    loadFlightplanInternal(fp, atools::fs::pln::LNM_PLN, QStringLiteral(),
                            false /* changed */, !altIncluded /* adjustAltitude */, false /* undo */, false /* warnAltitude */,
                            true /* correctProfile */, true /* clearUndoState */);
     return true;
@@ -1875,7 +1875,7 @@ bool RouteController::saveFlightplanLnmSelectionAs(const QString& filename, int 
     saveplan.adjustDepartureAndDestination(true /* force */);
 
     // Remove original comment
-    saveplan.setComment(QString());
+    saveplan.setComment(QStringLiteral());
 
     // Add performance file type and name ===============
     saveRoute.updateAircraftPerfMetadata();
@@ -2268,7 +2268,7 @@ bool RouteController::calculateRouteInternal(atools::routing::RouteFinder *route
 
       if(calcRange)
       {
-        flightplan[toIndex].setAirway(QString());
+        flightplan[toIndex].setAirway(QStringLiteral());
         flightplan[toIndex].setFlag(atools::fs::pln::entry::TRACK, false);
         flightplan.erase(flightplan.begin() + fromIndex + 1, flightplan.begin() + toIndex);
       }
@@ -2436,12 +2436,12 @@ void RouteController::reverseRoute()
   // Overwrite parking position with airport position
   flightplan.setDepartureParkingPosition(flightplan.constFirst().getPosition(),
                                          atools::fs::pln::INVALID_ALTITUDE, atools::fs::pln::INVALID_HEADING);
-  flightplan.setDepartureParkingName(QString());
+  flightplan.setDepartureParkingName(QStringLiteral());
   flightplan.setDepartureParkingType(departureIsAirport ? atools::fs::pln::AIRPORT : atools::fs::pln::NO_POS);
 
   // Erase all airways to avoid wrong direction travel against one way
   for(atools::fs::pln::FlightplanEntry& entry : flightplan)
-    entry.setAirway(QString());
+    entry.setAirway(QStringLiteral());
   flightplan.getProperties().remove(atools::fs::pln::PROCAIRWAY);
 
   // Rebuild route from flight plan ========================================
@@ -2916,7 +2916,7 @@ void RouteController::tableContextMenu(const QPoint& pos)
 
     if(routeLeg->getVor().isValid() || routeLeg->getNdb().isValid() || routeLeg->getWaypoint().isValid() || routeLeg->isAirport())
       QueryManager::instance()->getQueriesGui()->getMapQuery()->getMapObjectByIdent(msaResult, map::AIRPORT_MSA, routeLeg->getIdent(),
-                                                                                    routeLeg->getRegion(), QString(),
+                                                                                    routeLeg->getRegion(), QStringLiteral(),
                                                                                     routeLeg->getPosition());
 
     if(routeLeg->isAnyProcedure())
@@ -3032,9 +3032,9 @@ void RouteController::tableContextMenu(const QPoint& pos)
 
     if(routeLeg->getAirport().noRunways())
     {
-      QString norw = routeLeg->isAirport() ? tr(" (no runway)") : QString();
-      ActionTool::setText(ui->actionRouteShowApproachCustom, false, QString(), norw);
-      ActionTool::setText(ui->actionRouteShowDepartureCustom, false, QString(), norw);
+      QString norw = routeLeg->isAirport() ? tr(" (no runway)") : QStringLiteral();
+      ActionTool::setText(ui->actionRouteShowApproachCustom, false, QStringLiteral(), norw);
+      ActionTool::setText(ui->actionRouteShowDepartureCustom, false, QStringLiteral(), norw);
     }
     else
     {
@@ -3988,7 +3988,7 @@ void RouteController::routeClearParkingAndStart()
 
   // Update flightplan copy
   pln::Flightplan& flightplan = route.getFlightplan();
-  flightplan.setDepartureParkingName(QString());
+  flightplan.setDepartureParkingName(QStringLiteral());
   flightplan.setDepartureParkingType(atools::fs::pln::NO_POS);
   flightplan.setDepartureParkingPosition(atools::geo::EMPTY_POS, atools::fs::pln::INVALID_ALTITUDE, atools::fs::pln::INVALID_HEADING);
 
@@ -4341,7 +4341,7 @@ void RouteController::showCustomApproachRouteTriggered()
 
   // Allow for departure airport only or single airport plan where airport can be used both as departure and destination
   if(index.isValid() && (route.getDepartureAirportLegIndex() != index.row() || route.getSizeWithoutAlternates() == 1))
-    showCustomApproach(route.value(index.row()).getAirport(), QString());
+    showCustomApproach(route.value(index.row()).getAirport(), QStringLiteral());
 }
 
 void RouteController::showCustomDepartureRouteTriggered()
@@ -4349,7 +4349,7 @@ void RouteController::showCustomDepartureRouteTriggered()
   QModelIndex index = tableViewRoute->currentIndex();
   // Allow for destination airport only or single airport plan where airport can be used both as departure and destination
   if(index.isValid() && (route.getDestinationAirportLegIndex() != index.row() || route.getSizeWithoutAlternates() == 1))
-    showCustomDeparture(route.value(index.row()).getAirport(), QString());
+    showCustomDeparture(route.value(index.row()).getAirport(), QStringLiteral());
 }
 
 void RouteController::showCustomApproach(map::MapAirport airport, QString dialogHeader)
@@ -4492,7 +4492,7 @@ void RouteController::updateRouteTabChangedStatus()
         ui->tabWidgetRoute->setTabText(idxRoute, ui->tabWidgetRoute->tabText(idxRoute) % tr(" *"));
     }
     else
-      ui->tabWidgetRoute->setTabText(idxRoute, ui->tabWidgetRoute->tabText(idxRoute).replace(tr(" *"), QString()));
+      ui->tabWidgetRoute->setTabText(idxRoute, ui->tabWidgetRoute->tabText(idxRoute).replace(tr(" *"), QStringLiteral()));
   }
 
   // Update status in remarks tab
@@ -4506,7 +4506,7 @@ void RouteController::updateRouteTabChangedStatus()
         ui->tabWidgetRoute->setTabText(idxRemark, ui->tabWidgetRoute->tabText(idxRemark) % tr(" *"));
     }
     else
-      ui->tabWidgetRoute->setTabText(idxRemark, ui->tabWidgetRoute->tabText(idxRemark).replace(tr(" *"), QString()));
+      ui->tabWidgetRoute->setTabText(idxRemark, ui->tabWidgetRoute->tabText(idxRemark).replace(tr(" *"), QStringLiteral()));
   }
 }
 
@@ -5199,7 +5199,7 @@ void RouteController::updateTableModelAndErrors()
         awname.append("[" + map::airwayRouteTypeToStringShort(airway.routeType) + "]");
 #endif
 
-        awname.removeAll(QString());
+        awname.removeAll(QStringLiteral());
         itemRow[rcol::RESTRICTION] = new QStandardItem(map::airwayAltTextShort(airway, false /* addUnit */, false /* narrow */));
       }
 
@@ -5447,14 +5447,14 @@ void RouteController::updateModelTimeFuelWindAlt()
     if(!setValues)
     {
       // Do not fill if collecting performance or route altitude is invalid
-      model->item(row, rcol::LEG_TIME)->setText(QString());
-      model->item(row, rcol::ETA)->setText(QString());
-      model->item(row, rcol::FUEL_WEIGHT)->setText(QString());
-      model->item(row, rcol::FUEL_VOLUME)->setText(QString());
-      model->item(row, rcol::WIND)->setText(QString());
-      model->item(row, rcol::WIND_HEAD_TAIL)->setText(QString());
-      model->item(row, rcol::ALTITUDE)->setText(QString());
-      model->item(row, rcol::SAFE_ALTITUDE)->setText(QString());
+      model->item(row, rcol::LEG_TIME)->setText(QStringLiteral());
+      model->item(row, rcol::ETA)->setText(QStringLiteral());
+      model->item(row, rcol::FUEL_WEIGHT)->setText(QStringLiteral());
+      model->item(row, rcol::FUEL_VOLUME)->setText(QStringLiteral());
+      model->item(row, rcol::WIND)->setText(QStringLiteral());
+      model->item(row, rcol::WIND_HEAD_TAIL)->setText(QStringLiteral());
+      model->item(row, rcol::ALTITUDE)->setText(QStringLiteral());
+      model->item(row, rcol::SAFE_ALTITUDE)->setText(QStringLiteral());
     }
     else
     {
@@ -5464,7 +5464,7 @@ void RouteController::updateModelTimeFuelWindAlt()
       // Leg time =====================================================================
       float travelTime = altLeg.getTime();
       if(row == 0 || !(travelTime < map::INVALID_TIME_VALUE) || leg.getProcedureLeg().isMissed())
-        model->item(row, rcol::LEG_TIME)->setText((QString()));
+        model->item(row, rcol::LEG_TIME)->setText((QStringLiteral()));
       else
       {
         QString txt = formatter::formatMinutesHours(travelTime);
@@ -5515,10 +5515,10 @@ void RouteController::updateModelTimeFuelWindAlt()
           // Avoid -0 case
           weight = 0.f;
 
-        txt = perf.isFuelFlowValid() ? Unit::weightLbs(weight, false /* addUnit */) : QString();
+        txt = perf.isFuelFlowValid() ? Unit::weightLbs(weight, false /* addUnit */) : QStringLiteral();
         model->item(row, rcol::FUEL_WEIGHT)->setText(txt);
 
-        txt = perf.isFuelFlowValid() ? Unit::volGallon(vol, false /* addUnit */) : QString();
+        txt = perf.isFuelFlowValid() ? Unit::volGallon(vol, false /* addUnit */) : QStringLiteral();
         model->item(row, rcol::FUEL_VOLUME)->setText(txt);
 
         // Wind at waypoint ========================================================
@@ -5868,7 +5868,7 @@ void RouteController::updateModelHighlightsAndErrors()
             flightplanErrors.append(err);
           }
           else
-            item->setToolTip(QString());
+            item->setToolTip(QStringLiteral());
 
           if(leg.isAirport())
           {
@@ -5908,7 +5908,7 @@ void RouteController::updateModelHighlightsAndErrors()
             QFont font = item->font();
             font.setBold(tableViewRoute->font().bold());
             item->setFont(font);
-            item->setToolTip(QString());
+            item->setToolTip(QStringLiteral());
           }
 
           trackErrors |= trackError;
@@ -6193,10 +6193,10 @@ void RouteController::updateRemarkHeader()
     QString navcycle = props.value(atools::fs::pln::NAVDATA_CYCLE);
 
     if(!simdata.isEmpty())
-      data.append(tr("%1%2").arg(simdata).arg(simcycle.isEmpty() ? QString() : tr(" cycle %1").arg(simcycle)));
+      data.append(tr("%1%2").arg(simdata).arg(simcycle.isEmpty() ? QStringLiteral() : tr(" cycle %1").arg(simcycle)));
 
     if(!navdata.isEmpty() && (navdata != simdata || simcycle != navcycle))
-      data.append(tr("%1%2").arg(navdata).arg(navcycle.isEmpty() ? QString() : tr(" cycle %1").arg(navcycle)));
+      data.append(tr("%1%2").arg(navdata).arg(navcycle.isEmpty() ? QStringLiteral() : tr(" cycle %1").arg(navcycle)));
 
     if(!data.isEmpty())
     {

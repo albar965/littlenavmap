@@ -106,8 +106,8 @@ void DirTool::run(bool manual, bool& created)
 
   // Save "do not again" checkbox state only if called automatically
   atools::gui::MessageBox box(parentWidget, QCoreApplication::applicationName(),
-                              manual ? QString() : settingsPrefix,
-                              manual ? QString() : QObject::tr("Do not &show this dialog again."));
+                              manual ? QStringLiteral() : settingsPrefix,
+                              manual ? QStringLiteral() : QObject::tr("Do not &show this dialog again."));
   box.setMessage(message);
   box.setIcon(QMessageBox::Question);
   box.setHelpUrl(lnm::helpOnlineInstallDirUrl, lnm::helpLanguageOnline());

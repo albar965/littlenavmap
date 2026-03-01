@@ -412,23 +412,23 @@ void SearchController::searchSelectionChanged(const SearchBaseTable *source, int
   if(source->getTabIndex() == si::SEARCH_ONLINE_CLIENT || source->getTabIndex() == si::SEARCH_ONLINE_CENTER)
   {
     QDateTime lastUpdateTime = NavApp::getOnlinedataController()->getLastUpdateTime();
-    lastUpdate = lastUpdateTime.isValid() ? tr(" Last Update: %1").arg(QLocale().toString(QLocale::ShortFormat)) : QString();
+    lastUpdate = lastUpdateTime.isValid() ? tr(" Last Update: %1").arg(QLocale().toString(QLocale::ShortFormat)) : QStringLiteral();
   }
 
   if(source->getTabIndex() == si::SEARCH_AIRPORT)
   {
     type = tr("Airports");
-    ui->labelAirportSearchStatus->setText(selectionLabelText.arg(selected).arg(total).arg(type).arg(visible).arg(QString()));
+    ui->labelAirportSearchStatus->setText(selectionLabelText.arg(selected).arg(total).arg(type).arg(visible).arg(QStringLiteral()));
   }
   else if(source->getTabIndex() == si::SEARCH_NAV)
   {
     type = tr("Navaids");
-    ui->labelNavSearchStatus->setText(selectionLabelText.arg(selected).arg(total).arg(type).arg(visible).arg(QString()));
+    ui->labelNavSearchStatus->setText(selectionLabelText.arg(selected).arg(total).arg(type).arg(visible).arg(QStringLiteral()));
   }
   else if(source->getTabIndex() == si::SEARCH_USER)
   {
     type = tr("Userpoints");
-    ui->labelUserdata->setText(selectionLabelText.arg(selected).arg(total).arg(type).arg(visible).arg(QString()));
+    ui->labelUserdata->setText(selectionLabelText.arg(selected).arg(total).arg(type).arg(visible).arg(QStringLiteral()));
   }
   else if(source->getTabIndex() == si::SEARCH_LOG)
   {

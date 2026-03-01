@@ -40,7 +40,7 @@ RouteStringWriter::~RouteStringWriter()
 QString RouteStringWriter::createStringForRoute(const Route& route, float speedKts, rs::RouteStringOptions options) const
 {
   if(route.isEmpty())
-    return QString();
+    return QStringLiteral();
 
 #ifdef DEBUG_INFORMATION_ROUTE_STRING
 
@@ -78,7 +78,7 @@ QStringList RouteStringWriter::createStringListForRoute(const Route& route, floa
 QString RouteStringWriter::createGfpStringForRoute(const Route& route, bool procedures, bool userWaypointOption, bool gfpCoordinates) const
 {
   if(route.isEmpty())
-    return QString();
+    return QStringLiteral();
 
   return procedures ?
          createGfpStringForRouteInternalProc(route, userWaypointOption, gfpCoordinates) :
@@ -171,8 +171,8 @@ QString RouteStringWriter::createGfpStringForRouteInternalProc(const Route& rout
 
     // Add SID and departure airport
     retval.prepend("FPN/RI:DA:" % route.getDepartureAirportLeg().getIdent() %
-                   ":D:" % sid % (sidTrans.isEmpty() ? QString() : '.' % sidTrans) %
-                   (departureRw.isEmpty() ? QString() : ":R:" % departureRw));
+                   ":D:" % sid % (sidTrans.isEmpty() ? QStringLiteral() : '.' % sidTrans) %
+                   (departureRw.isEmpty() ? QStringLiteral() : ":R:" % departureRw));
   }
   else
   {
@@ -190,8 +190,8 @@ QString RouteStringWriter::createGfpStringForRouteInternalProc(const Route& rout
     {
       if(!starRw.isEmpty() && !(starRw.endsWith('L') || starRw.endsWith('C') || starRw.endsWith('R')))
         starRw.append('O');
-      retval.append(":A:" % star % (starTrans.isEmpty() ? QString() : '.' % starTrans) %
-                    (starRw.isEmpty() ? QString() : '(' % starRw % ')'));
+      retval.append(":A:" % star % (starTrans.isEmpty() ? QStringLiteral() : '.' % starTrans) %
+                    (starRw.isEmpty() ? QStringLiteral() : '(' % starRw % ')'));
     }
 
     // Approach ===============================
@@ -199,7 +199,7 @@ QString RouteStringWriter::createGfpStringForRouteInternalProc(const Route& rout
     {
       QString apprArinc, apprTrans, appSuffixDummy;
       route.getApproachNames(apprArinc, apprTrans, appSuffixDummy);
-      retval.append(":AP:" % apprArinc % (apprTrans.isEmpty() ? QString() : '.' % apprTrans));
+      retval.append(":AP:" % apprArinc % (apprTrans.isEmpty() ? QStringLiteral() : '.' % apprTrans));
     }
   }
   else
@@ -364,7 +364,7 @@ QStringList RouteStringWriter::createStringForRouteInternal(const Route& routePa
         if(userWpt && lastIndex > 0)
           items.append(coords::toGfpFormat(lastPos));
         else
-          items.append(lastId % (gfpCoords && lastType != map::USERPOINTROUTE ? ',' % coords::toGfpFormat(lastPos) : QString()));
+          items.append(lastId % (gfpCoords && lastType != map::USERPOINTROUTE ? ',' % coords::toGfpFormat(lastPos) : QStringLiteral()));
 
         if(lastIndex == 0 && options.testFlag(rs::CORTEIN_DEPARTURE_RUNWAY) && !departureRunway.isEmpty() && !route.hasCustomDeparture())
           // Add runway after departure
@@ -387,7 +387,7 @@ QStringList RouteStringWriter::createStringForRouteInternal(const Route& routePa
         if(userWpt && lastIndex > 0)
           items.append(coords::toGfpFormat(lastPos));
         else
-          items.append(lastId % (gfpCoords && lastType != map::USERPOINTROUTE ? ',' % coords::toGfpFormat(lastPos) : QString()));
+          items.append(lastId % (gfpCoords && lastType != map::USERPOINTROUTE ? ',' % coords::toGfpFormat(lastPos) : QStringLiteral()));
 
         // Convert track characters into NAT notation like "A" to "NATA" if tracks are available, enabled and if
         // the coordinates are in the right range
@@ -445,7 +445,7 @@ QStringList RouteStringWriter::createStringForRouteInternal(const Route& routePa
         items.insert(insertPosition, sid);
       }
       else
-        items.insert(insertPosition, sid % (sidTrans.isEmpty() ? QString() : '.' % sidTrans));
+        items.insert(insertPosition, sid % (sidTrans.isEmpty() ? QStringLiteral() : '.' % sidTrans));
     }
   }
   else if(options.testFlag(rs::SID_STAR_GENERIC))
@@ -478,7 +478,7 @@ QStringList RouteStringWriter::createStringForRouteInternal(const Route& routePa
           items.append(star);
         }
         else
-          items.append((starTrans.isEmpty() ? QString() : starTrans % '.') % star);
+          items.append((starTrans.isEmpty() ? QStringLiteral() : starTrans % '.') % star);
       }
     }
     else
@@ -491,7 +491,7 @@ QStringList RouteStringWriter::createStringForRouteInternal(const Route& routePa
           items.append(starTrans);
       }
       else
-        items.append(star % (starTrans.isEmpty() ? QString() : '.' % starTrans));
+        items.append(star % (starTrans.isEmpty() ? QStringLiteral() : '.' % starTrans));
     }
   }
   else if(options.testFlag(rs::SID_STAR_GENERIC))
@@ -526,7 +526,7 @@ QStringList RouteStringWriter::createStringForRouteInternal(const Route& routePa
       }
     }
 
-    items.append(lastId % approachDest % (gfpCoords ? ',' % coords::toGfpFormat(lastPos) : QString()));
+    items.append(lastId % approachDest % (gfpCoords ? ',' % coords::toGfpFormat(lastPos) : QStringLiteral()));
   }
 
   if(!route.hasCustomApproach()) // Do not add custom approach
@@ -546,7 +546,7 @@ QStringList RouteStringWriter::createStringForRouteInternal(const Route& routePa
     items.append(QStringLiteral("FL%1").arg(static_cast<int>(route.getCruiseAltitudeFt()) / 100));
 
   // Remove empty and consecutive duplicates ===========================
-  items.removeAll(QString());
+  items.removeAll(QStringLiteral());
   items.erase(std::unique(items.begin(), items.end()), items.end());
 
   qDebug() << Q_FUNC_INFO << items;

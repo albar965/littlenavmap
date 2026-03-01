@@ -381,12 +381,13 @@ QString Unit::speedVertFpm(float fpm, bool addUnit)
   switch(unitVertSpeed)
   {
     case opts::VERT_SPEED_FPM:
-      return locale->toString(fpm, 'f', 0) % (addUnit ? QStringLiteral(" ") % unitVertSpeedStr : QString());
+      return locale->toString(fpm, 'f', 0) % (addUnit ? QStringLiteral(" ") % unitVertSpeedStr : QStringLiteral());
 
     case opts::VERT_SPEED_MS:
-      return locale->toString(ageo::feetToMeter(fpm) / 60.f, 'f', 2) % (addUnit ? QStringLiteral(" ") % unitVertSpeedStr : QString());
+      return locale->toString(ageo::feetToMeter(fpm) / 60.f, 'f',
+                              2) % (addUnit ? QStringLiteral(" ") % unitVertSpeedStr : QStringLiteral());
   }
-  return QString();
+  return QStringLiteral();
 }
 
 float Unit::speedVertFpmF(float fpm)
@@ -408,13 +409,14 @@ QString Unit::speedVertFpmOther(float fpm, bool addUnit)
   {
     case opts::VERT_SPEED_FPM:
       // Default is ft/m and ft/m input - print m/s
-      return locale->toString(ageo::feetToMeter(fpm) / 60.f, 'f', 2) % (addUnit ? QStringLiteral(" ") % suffixVertSpeedMs : QString());
+      return locale->toString(ageo::feetToMeter(fpm) / 60.f, 'f',
+                              2) % (addUnit ? QStringLiteral(" ") % suffixVertSpeedMs : QStringLiteral());
 
     case opts::VERT_SPEED_MS:
       // Default is m/s and ft/m input - print ft/m
-      return locale->toString(fpm, 'f', 0) % (addUnit ? QStringLiteral(" ") % suffixVertSpeedFpm : QString());
+      return locale->toString(fpm, 'f', 0) % (addUnit ? QStringLiteral(" ") % suffixVertSpeedFpm : QStringLiteral());
   }
-  return QString();
+  return QStringLiteral();
 
 }
 
@@ -440,7 +442,7 @@ QString Unit::altFeetOther(float ft, bool addUnit, bool narrow, float round)
       // Default is meter and ft input - print ft
       return u(atools::roundToNearest(ft, round), suffixAltFt, addUnit, narrow);
   }
-  return QString();
+  return QStringLiteral();
 }
 
 float Unit::altMeterF(float meter)
@@ -590,7 +592,7 @@ QString Unit::weightLbsLocalOther(float lbs, bool localBold, bool otherSmall)
         return localOtherText(localBold, otherSmall).
                arg(u(ageo::lbsToKg(lbs), suffixFuelWeightKg, true));
   }
-  return QString();
+  return QStringLiteral();
 }
 
 QString Unit::fuelLbsAndGalLocalOther(float lbs, float gal, bool localBold, bool otherSmall)
@@ -625,7 +627,7 @@ QString Unit::fuelLbsAndGalLocalOther(float lbs, float gal, bool localBold, bool
                arg(u(ageo::lbsToKg(lbs), suffixFuelWeightKg, true)).
                arg(u(ageo::gallonToLiter(gal), suffixFuelVolLiter, true));
   }
-  return QString();
+  return QStringLiteral();
 }
 
 QString Unit::ffGallon(float gal, bool addUnit)
@@ -803,7 +805,7 @@ QString Unit::coordsLonX(const ageo::Pos& pos, opts::UnitCoords coordUnit)
              arg(std::abs(pos.getLonXDeg())).
              arg(std::abs(pos.getLonXMin() + pos.getLonXSec() / 60.f), 0, 'f', 2);
   }
-  return QString();
+  return QStringLiteral();
 }
 
 QString Unit::coordsLatY(const ageo::Pos& pos)
@@ -845,7 +847,7 @@ QString Unit::coordsLatY(const ageo::Pos& pos, opts::UnitCoords coordUnit)
              arg(std::abs(pos.getLatYDeg())).
              arg(std::abs(pos.getLatYMin() + pos.getLatYSec() / 60.f), 0, 'f', 2);
   }
-  return QString();
+  return QStringLiteral();
 }
 
 QString Unit::u(const QString& num, const QString& un, bool addUnit, bool narrow)
@@ -856,18 +858,18 @@ QString Unit::u(const QString& num, const QString& un, bool addUnit, bool narrow
     QString nm(num);
     if(nm.endsWith(QString(locale->decimalPoint()) + QStringLiteral("0")))
       nm.chop(2);
-    return nm % (addUnit ? un : QString());
+    return nm % (addUnit ? un : QStringLiteral());
   }
   else
-    return num % (addUnit ? QStringLiteral(" ") % un : QString());
+    return num % (addUnit ? QStringLiteral(" ") % un : QStringLiteral());
 }
 
 QString Unit::u(float num, const QString& un, bool addUnit, bool narrow)
 {
   if(narrow)
-    return clocale->toString(num, 'f', 0) % (addUnit ? QString() % un : QString());
+    return clocale->toString(num, 'f', 0) % (addUnit ? QStringLiteral() % un : QStringLiteral());
   else
-    return locale->toString(num, 'f', 0) % (addUnit ? QStringLiteral(" ") % un : QString());
+    return locale->toString(num, 'f', 0) % (addUnit ? QStringLiteral(" ") % un : QStringLiteral());
 }
 
 void Unit::optionsChanged()

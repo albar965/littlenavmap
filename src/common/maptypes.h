@@ -222,7 +222,7 @@ struct MapBase
     this->operator=(other);
   }
 
-  MapBase(const MapBase && other)
+  MapBase(const MapBase&& other)
   {
     id = std::move(other.id);
     position = std::move(other.position);

@@ -324,7 +324,7 @@ void WaypointQuery::initQueries()
   waypointsByRectQuery = new SqlQuery(dbNav);
   waypointsByRectQuery->prepare("select " % waypointQueryBase % " from " % table % " where " % whereRect % " " % whereLimit);
 
-  QString airwayCond = trackDatabase ? QString() : "num_victor_airway + num_jet_airway > 0 and";
+  QString airwayCond = trackDatabase ? QStringLiteral() : "num_victor_airway + num_jet_airway > 0 and";
   waypointsAirwayByRectQuery = new SqlQuery(dbNav);
   waypointsAirwayByRectQuery->prepare("select " % waypointQueryBase % " from " % table %
                                       " where " % airwayCond % " " % whereRect % " " % whereLimit);

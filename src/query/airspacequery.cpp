@@ -208,9 +208,10 @@ const QList<map::MapAirspace> *AirspaceQuery::getAirspaces(const GeoDataLatLonBo
                 if(hasMultipleCode && query->valueStr(QStringLiteral("multiple_code")) == QStringLiteral("Z"))
                   continue;
 
-                if(atools::contains(query->valueStr(QStringLiteral("restrictive_type"), QString()), {QStringLiteral("T"), QStringLiteral("D"), QStringLiteral("R")}) &&
-                   (REGEXP_FBZ_RESTR_DESIG.match(query->valueStr(QStringLiteral("restrictive_designation"), QString())).hasMatch() ||
-                    REGEXP_FBZ_NAME.match(query->valueStr(QStringLiteral("name"), QString())).hasMatch()))
+                if(atools::contains(query->valueStr(QStringLiteral("restrictive_type"), QStringLiteral()),
+                                    {QStringLiteral("T"), QStringLiteral("D"), QStringLiteral("R")}) &&
+                   (REGEXP_FBZ_RESTR_DESIG.match(query->valueStr(QStringLiteral("restrictive_designation"), QStringLiteral())).hasMatch() ||
+                    REGEXP_FBZ_NAME.match(query->valueStr(QStringLiteral("name"), QStringLiteral())).hasMatch()))
                   continue;
               }
 
@@ -218,7 +219,8 @@ const QList<map::MapAirspace> *AirspaceQuery::getAirspaces(const GeoDataLatLonBo
               {
                 // Database has new FIR/UIR types - filter out the old deprecated centers
                 QString name = query->valueStr(QStringLiteral("name"));
-                if(name.contains(QStringLiteral("(FIR)")) || name.contains(QStringLiteral("(UIR)")) || name.contains(QStringLiteral("(FIR/UIR)")))
+                if(name.contains(QStringLiteral("(FIR)")) || name.contains(QStringLiteral("(UIR)")) ||
+                   name.contains(QStringLiteral("(FIR/UIR)")))
                   continue;
               }
 

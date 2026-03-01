@@ -220,8 +220,8 @@ void DatabaseLoader::loadScenery()
   navDatabaseOpts->setBasepath(basePath);
 
   // Clear defaults
-  navDatabaseOpts->setMsfsCommunityPath(QString());
-  navDatabaseOpts->setMsfsOfficialPath(QString());
+  navDatabaseOpts->setMsfsCommunityPath(QStringLiteral());
+  navDatabaseOpts->setMsfsOfficialPath(QStringLiteral());
 
   // Set MSFS pecularities
   if(selectedFsType == atools::fs::FsPaths::MSFS)
@@ -236,7 +236,8 @@ void DatabaseLoader::loadScenery()
 
   // Initial text
   progressDialog->setLabelText(databaseTimeText.arg(tr("Counting files ...")).
-                               arg(QString()).arg(QString()).arg(QString()).arg(0).arg(0).arg(0).arg(0).arg(0).arg(0).arg(0).arg(0).arg(0));
+                               arg(QStringLiteral()).arg(QStringLiteral()).arg(QStringLiteral()).arg(0).arg(0).arg(0).arg(0).arg(0).arg(
+                                 0).arg(0).arg(0).arg(0));
 
   // Dialog does not close when clicking cancel
   progressDialog->show();
@@ -283,7 +284,7 @@ void DatabaseLoader::compileDatabasePost()
   {
     // Show dialog if something went wrong but do not exit program
     ErrorHandler(progressDialog).handleException(e, currentBglFilePath.isEmpty() ?
-                                                 QString() : tr("Processed files:\n%1\n").arg(currentBglFilePath));
+                                                 QStringLiteral() : tr("Processed files:\n%1\n").arg(currentBglFilePath));
     resultFlagsShared |= atools::fs::COMPILE_FAILED;
   }
 
@@ -354,8 +355,8 @@ void DatabaseLoader::progressCallback()
       progressDialog->setLabelText(
         databaseTimeText.arg(atools::elideTextShortMiddle(navDatabaseProgressShared->getOtherAction(), MAX_TEXT_LENGTH)).
         arg(formatter::formatElapsed(timer)).
-        arg(QString()).
-        arg(QString()).
+        arg(QStringLiteral()).
+        arg(QStringLiteral()).
         arg(navDatabaseProgressShared->getNumErrors()).
         arg(navDatabaseProgressShared->getNumFiles()).
         arg(navDatabaseProgressShared->getNumAirports()).
@@ -406,8 +407,8 @@ void DatabaseLoader::progressCallback()
       progressDialog->setLabelText(
         databaseTimeText.arg(tr("<big>Done.</big>")).
         arg(formatter::formatElapsed(timer)).
-        arg(QString()).
-        arg(QString()).
+        arg(QStringLiteral()).
+        arg(QStringLiteral()).
         arg(navDatabaseProgressShared->getNumErrors()).
         arg(navDatabaseProgressShared->getNumFiles()).
         arg(navDatabaseProgressShared->getNumAirports()).

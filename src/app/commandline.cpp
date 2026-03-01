@@ -133,7 +133,7 @@ QString CommandLine::getOption(int argc, char *argv[], const QString& name, cons
     }
   }
 
-  return QString();
+  return QStringLiteral();
 }
 
 void CommandLine::process()
@@ -166,7 +166,7 @@ void CommandLine::process()
     Application::addStartupOptionStr(lnm::STARTUP_LAYOUT, parser->value(*layoutOpt));
 
   if(parser->isSet(*quitOpt))
-    Application::addStartupOptionStr(lnm::STARTUP_QUIT, QString());
+    Application::addStartupOptionStr(lnm::STARTUP_QUIT, QStringLiteral());
 
   // Other arguments without option
   if(!parser->positionalArguments().isEmpty())

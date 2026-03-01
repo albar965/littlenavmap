@@ -837,7 +837,7 @@ const QList<map::MapHelipad> *AirportQuery::getHelipads(int airportId)
 
 const map::MapResultIndex *AirportQuery::getNearestAirportObjects(const atools::geo::Pos& pos, float distanceNm)
 {
-  const NearestCacheKeyPosIdentDist key(pos, QString(), distanceNm);
+  const NearestCacheKeyPosIdentDist key(pos, QStringLiteral(), distanceNm);
 
   map::MapResultIndex *resultIndex = nearestAirportObjectCache.object(key);
 

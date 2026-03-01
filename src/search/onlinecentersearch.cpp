@@ -50,7 +50,7 @@ OnlineCenterSearch::OnlineCenterSearch(MainWindow *parent, QTableView *tableView
   /* *INDENT-ON* */
 
   QStringList facilityType;
-  facilityType << QString()
+  facilityType << QStringLiteral()
                << " > 0"    // No OBSERVER,
                << " = 0"    // OBSERVER = 0,
                << " = 1"    // FLIGHT_INFORMATION = 1,
@@ -201,7 +201,7 @@ QString OnlineCenterSearch::formatModelData(const Column *col, const QVariant& d
       return !displayRoleValue.isNull() &&
              displayRoleValue.toFloat() < map::INVALID_ALTITUDE_VALUE &&
              displayRoleValue.toFloat() > 0.f ?
-             Unit::distNm(displayRoleValue.toFloat(), false) : QString();
+             Unit::distNm(displayRoleValue.toFloat(), false) : QStringLiteral();
     else if(col->getColumnName() == QStringLiteral("facility_type"))
       return atools::fs::online::facilityTypeText(
         static_cast<atools::fs::online::fac::FacilityType>(displayRoleValue.toInt()));

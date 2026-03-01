@@ -51,7 +51,7 @@ QString CsvExporter::saveCsvFileDialog()
   return dialog->saveFileDialog(tr("Export CSV Document"),
                                 tr("CSV Documents (*.csv);;All Files (*)"),
                                 "csv", lnm::EXPORT_FILEDIALOG,
-                                QString(), QString(), false);
+                                QStringLiteral(), QStringLiteral(), false);
 }
 
 int CsvExporter::selectionAsCsv(QTableView *view, bool header, bool rows, QString& result,
@@ -102,7 +102,7 @@ int CsvExporter::selectionAsCsv(QTableView *view, bool header, bool rows, QStrin
           }
 
           stream << exporter.getResultSetRow(vars) +
-            (additionalHeader.isEmpty() || !additionalFields ? QString() : ";" + additionalFields(row).join(";")) << Qt::endl;
+            (additionalHeader.isEmpty() || !additionalFields ? QStringLiteral() : ";" + additionalFields(row).join(";")) << Qt::endl;
 
           exported++;
         }
@@ -161,7 +161,7 @@ int CsvExporter::tableAsCsv(QTableView *view, bool header, QString& result,
     }
 
     stream << exporter.getResultSetRow(vars) +
-      (additionalHeader.isEmpty() || !additionalFields ? QString() : ";" + additionalFields(row).join(";")) << Qt::endl;
+      (additionalHeader.isEmpty() || !additionalFields ? QStringLiteral() : ";" + additionalFields(row).join(";")) << Qt::endl;
 
     exported++;
   }
@@ -189,6 +189,6 @@ QString CsvExporter::buildHeader(QTableView *view, atools::sql::SqlExport& expor
   }
 
   return exporter.getResultSetHeader(headers) +
-         (additionalHeader.isEmpty() || !additionalFields ? QString() : ";" + additionalHeader.join(";"));
+         (additionalHeader.isEmpty() || !additionalFields ? QStringLiteral() : ";" + additionalHeader.join(";"));
 
 }

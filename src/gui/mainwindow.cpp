@@ -1925,7 +1925,7 @@ void MainWindow::updateWindowTitle()
   if(!NavApp::getCurrentAircraftPerfFilePath().isEmpty())
     title += tr(" — %1%2").
              arg(QFileInfo(NavApp::getCurrentAircraftPerfFilePath()).fileName()).
-             arg(NavApp::getAircraftPerfController()->hasChanged() ? tr(" *") : QString());
+             arg(NavApp::getAircraftPerfController()->hasChanged() ? tr(" *") : QStringLiteral());
   else if(NavApp::getAircraftPerfController()->hasChanged())
     title += tr(" — *");
 
@@ -2037,7 +2037,7 @@ void MainWindow::routeFromStringCurrent()
     }
 
     // No parent to create non-modal dialog
-    routeStringDialog = new RouteStringDialog(nullptr, QString());
+    routeStringDialog = new RouteStringDialog(nullptr, QStringLiteral());
 
     // Load last content
     routeStringDialog->restoreState();
@@ -2092,7 +2092,7 @@ void MainWindow::routeFromFlightplan(const atools::fs::pln::Flightplan& flightpl
   {
     // Transfer flag to new flightplan to avoid silently overwriting non LNMPLN files with own format
     bool lnmpln = routeController->getRouteConst().getFlightplanConst().isLnmFormat();
-    routeController->loadFlightplan(flightplan, atools::fs::pln::LNM_PLN, QString(), changed, adjustAltitude, undo, correctProfile,
+    routeController->loadFlightplan(flightplan, atools::fs::pln::LNM_PLN, QStringLiteral(), changed, adjustAltitude, undo, correctProfile,
                                     false /* clearUndoState */);
     routeController->getRoute().getFlightplan().setLnmFormat(lnmpln);
     if(OptionData::instance().getFlags() & opts::GUI_CENTER_ROUTE)
@@ -2415,9 +2415,9 @@ bool MainWindow::routeSaveLnm()
     // Forbid saving of other formats than LNMPLN directly =========================================
     atools::gui::DialogButtonList buttonList =
     {
-      atools::gui::DialogButton(QString(), QMessageBox::Cancel),
+      atools::gui::DialogButton(QStringLiteral(), QMessageBox::Cancel),
       atools::gui::DialogButton(tr("Save &as LNMPLN ..."), QMessageBox::Save),
-      atools::gui::DialogButton(QString(), QMessageBox::Help)
+      atools::gui::DialogButton(QStringLiteral(), QMessageBox::Help)
     };
 
     // Ask before saving file
@@ -2507,7 +2507,7 @@ void MainWindow::kmlOpen()
   QString kmlFile = dialog->openFileDialog(
     tr("Google Earth KML"),
     tr("Google Earth KML %1;;All Files (*)").arg(lnm::FILE_PATTERN_KML),
-    "Kml/", QString());
+    "Kml/", QStringLiteral());
 
   QString errors = atools::checkFileMsg(kmlFile);
   if(errors.isEmpty())
@@ -2550,7 +2550,7 @@ void MainWindow::layoutOpen()
 {
   QString layoutFile = dialog->openFileDialog(tr("Window Layout"),
                                               tr("Window Layout Files %1;;All Files (*)").
-                                              arg(lnm::FILE_PATTERN_LAYOUT), "WindowLayout/", QString());
+                                              arg(lnm::FILE_PATTERN_LAYOUT), "WindowLayout/", QStringLiteral());
 
   if(!layoutFile.isEmpty())
   {
@@ -2565,7 +2565,7 @@ void MainWindow::layoutSaveAs()
   QString layoutFile = dialog->saveFileDialog(
     tr("Window Layout"),
     tr("Window Layout Files %1;;All Files (*)").arg(lnm::FILE_PATTERN_LAYOUT),
-    "lnmlayout", "WindowLayout/", atools::documentsDir(), QString(), false /* confirm overwrite */);
+    "lnmlayout", "WindowLayout/", atools::documentsDir(), QStringLiteral(), false /* confirm overwrite */);
 
   if(!layoutFile.isEmpty())
   {
@@ -2734,7 +2734,7 @@ void MainWindow::mapSaveImage()
     QString imageFile = dialog->saveFileDialog(
       tr("Save Map as Image"),
       tr("JPG Image Files (*.jpg *.jpeg);;PNG Image Files (*.png);;BMP Image Files (*.bmp);;All Files (*)"),
-      QString(), "MainWindow/MapSaveImage",
+      QStringLiteral(), "MainWindow/MapSaveImage",
       atools::fs::FsPaths::getFilesPath(NavApp::getCurrentSimulatorDb()), tr("Little Navmap Map %1.jpg").
       arg(QDateTime::currentDateTime().toString("yyyyMMdd-HHmmss")),
       false /* confirm overwrite */,
@@ -2797,7 +2797,7 @@ void MainWindow::mapSaveImageAviTab()
 
         QString imageFile = dialog->saveFileDialog(tr("Save Map as Image for AviTab"),
                                                    tr("PNG Image Files (*.png);;JPG Image Files (*.jpg *.jpeg);;All Files (*)"),
-                                                   QString(), "MainWindow/MapSaveImageAviTab",
+                                                   QStringLiteral(), "MainWindow/MapSaveImageAviTab",
                                                    path, defaultFileName, false /* confirm overwrite */, false /* autoNumber */,
                                                    &filterIndex);
 
@@ -3132,7 +3132,7 @@ void MainWindow::mainWindowShown()
   QApplication::setFont(QApplication::font());
 
   // Set empty to disable arbitrary messages from map view changes
-  statusBar->setStatusMessage(QString());
+  statusBar->setStatusMessage(QStringLiteral());
 
   // Enable dock handler
   dockHandler->setHandleDockViews(true);
@@ -3895,7 +3895,7 @@ void MainWindow::resetWindowLayout()
   ui->menuBar->setVisible(true);
 
   // Reset non modal dialogs and center them on the main screen again
-  RouteStringDialog::resetWindowLayout(routeStringDialog, QString()); // RouteStringDialog is created on demand
+  RouteStringDialog::resetWindowLayout(routeStringDialog, QStringLiteral()); // RouteStringDialog is created on demand
   routeController->resetWindowLayout(); // RouteCalcDialog is permanent
   optionsDialog->resetWindowLayout();
   NavApp::getLogdataController()->resetWindowLayout(); // LogStatisticsDialog is permanent
@@ -4382,7 +4382,8 @@ void MainWindow::printShortcuts()
             if(!submenu.startsWith("Recent") && !subAction->text().isEmpty())
             {
               QString actionText = subAction->text().remove(QChar('&')).simplified().remove(" ...").remove("...");
-              QString imageName = subAction->icon().name().isEmpty() ? QString() : QFileInfo(subAction->icon().name()).baseName() % ".png";
+              QString imageName = subAction->icon().name().isEmpty() ? QStringLiteral() : QFileInfo(subAction->icon().name()).baseName() %
+                                  ".png";
 
               streamItems << (".. ===== " % mainmenu % " -> " % submenu % " -> " % subAction->text().remove(QChar('&'))) << Qt::endl;
 
@@ -4430,7 +4431,8 @@ void MainWindow::printShortcuts()
           {
             streamItems << (".. ===== " % mainmenu % " -> " % mainAction->text().remove(QChar('&'))) << Qt::endl;
             QString actionText = mainAction->text().remove(QChar('&')).simplified().remove(" ...").remove("...");
-            QString imageName = mainAction->icon().name().isEmpty() ? QString() : QFileInfo(mainAction->icon().name()).baseName() % ".png";
+            QString imageName = mainAction->icon().name().isEmpty() ? QStringLiteral() : QFileInfo(mainAction->icon().name()).baseName() %
+                                ".png";
 
             // if(imageName.isEmpty())
             // {

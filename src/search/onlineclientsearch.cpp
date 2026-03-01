@@ -194,7 +194,7 @@ QString OnlineClientSearch::formatModelData(const Column *col, const QVariant& d
   {
     // Called directly by the model for export functions
     if(col->getColumnName() == QStringLiteral("on_ground"))
-      return displayRoleValue.toInt() > 0 ? tr("Yes") : QString();
+      return displayRoleValue.toInt() > 0 ? tr("Yes") : QStringLiteral();
     else if(col->getColumnName() == QStringLiteral("atis"))
       return displayRoleValue.toString().simplified();
     else if(col->getColumnName() == QStringLiteral("atis_time") || col->getColumnName() == QStringLiteral("connection_time"))

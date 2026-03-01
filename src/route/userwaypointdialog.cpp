@@ -83,7 +83,7 @@ UserWaypointDialog::UserWaypointDialog(QWidget *parent, const atools::fs::pln::F
     ui->lineEditRouteUserWaypointRegion->setText(entry->getRegion());
     ui->lineEditRouteUserWaypointName->setText(entry->getName());
     ui->lineEditRouteUserWaypointLatLon->setText(Unit::coords(entry->getPosition()));
-    coordsEdited(QString());
+    coordsEdited(QStringLiteral());
   }
 
   connect(ui->lineEditRouteUserWaypointLatLon, &QLineEdit::textChanged, this, &UserWaypointDialog::coordsEdited);

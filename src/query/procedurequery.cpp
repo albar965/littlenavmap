@@ -203,7 +203,7 @@ void ProcedureQuery::buildLegEntry(atools::sql::SqlQuery *query, proc::MapProced
   leg.type = proc::procedureLegEnum(query->valueStr(QStringLiteral("type")));
 
   leg.turnDirection = query->valueStr(QStringLiteral("turn_direction"));
-  leg.arincDescrCode = query->valueStr(QStringLiteral("arinc_descr_code"), QString()).toUpper();
+  leg.arincDescrCode = query->valueStr(QStringLiteral("arinc_descr_code"), QStringLiteral()).toUpper();
 
   leg.fixType = query->valueStr(QStringLiteral("fix_type"));
   leg.fixIdent = query->valueStr(QStringLiteral("fix_ident"));
@@ -345,7 +345,7 @@ void ProcedureQuery::buildLegEntry(atools::sql::SqlQuery *query, proc::MapProced
     if(leg.navaids.waypoints.isEmpty() && !leg.fixAirportIdent.isEmpty())
     {
       // Try again without airport id if nothing found and airport id given
-      mapObjectByIdent(leg.navaids, map::WAYPOINT, leg.fixIdent, leg.fixRegion, QString(), fixPos);
+      mapObjectByIdent(leg.navaids, map::WAYPOINT, leg.fixIdent, leg.fixRegion, QStringLiteral(), fixPos);
     }
 
     if(!leg.navaids.waypoints.isEmpty())
@@ -357,8 +357,8 @@ void ProcedureQuery::buildLegEntry(atools::sql::SqlQuery *query, proc::MapProced
   else if(leg.fixType == QStringLiteral("V"))
   {
     // Get both VOR with region and ILS without region
-    mapObjectByIdent(leg.navaids, map::VOR, leg.fixIdent, leg.fixRegion, QString(), fixPos);
-    mapObjectByIdent(leg.navaids, map::ILS, leg.fixIdent, QString(), airport.ident, fixPos);
+    mapObjectByIdent(leg.navaids, map::VOR, leg.fixIdent, leg.fixRegion, QStringLiteral(), fixPos);
+    mapObjectByIdent(leg.navaids, map::ILS, leg.fixIdent, QStringLiteral(), airport.ident, fixPos);
 
     // Get closest navaid ============================
     if(leg.navaids.hasVor() && leg.navaids.hasIls())
@@ -407,7 +407,7 @@ void ProcedureQuery::buildLegEntry(atools::sql::SqlQuery *query, proc::MapProced
   }
   else if(leg.fixType == QStringLiteral("N") || leg.fixType == QStringLiteral("TN"))
   {
-    mapObjectByIdent(leg.navaids, map::NDB, leg.fixIdent, leg.fixRegion, QString(), fixPos);
+    mapObjectByIdent(leg.navaids, map::NDB, leg.fixIdent, leg.fixRegion, QStringLiteral(), fixPos);
     if(!leg.navaids.ndbs.isEmpty())
     {
       leg.fixPos = leg.navaids.ndbs.constFirst().position;
@@ -422,12 +422,13 @@ void ProcedureQuery::buildLegEntry(atools::sql::SqlQuery *query, proc::MapProced
   }
   else if(leg.fixType == QStringLiteral("A"))
   {
-    mapObjectByIdent(leg.navaids, map::AIRPORT, leg.fixIdent, QString(), airport.ident, fixPos);
+    mapObjectByIdent(leg.navaids, map::AIRPORT, leg.fixIdent, QStringLiteral(), airport.ident, fixPos);
 
     // Try to workaround the 4/3 three letter airport idents (K1G5 vs 1G5)
     if(leg.navaids.airports.isEmpty() && leg.fixIdent.size() == 4 &&
-       (leg.fixIdent.startsWith(QStringLiteral("X")) || leg.fixIdent.startsWith(QStringLiteral("K")) || leg.fixIdent.startsWith(QStringLiteral("C"))))
-      mapObjectByIdent(leg.navaids, map::AIRPORT, leg.fixIdent.right(3), QString(), airport.ident, fixPos);
+       (leg.fixIdent.startsWith(QStringLiteral("X")) || leg.fixIdent.startsWith(QStringLiteral("K")) ||
+        leg.fixIdent.startsWith(QStringLiteral("C"))))
+      mapObjectByIdent(leg.navaids, map::AIRPORT, leg.fixIdent.right(3), QStringLiteral(), airport.ident, fixPos);
 
     if(!leg.navaids.airports.isEmpty())
     {
@@ -438,7 +439,7 @@ void ProcedureQuery::buildLegEntry(atools::sql::SqlQuery *query, proc::MapProced
   }
   else if(leg.fixType == QStringLiteral("L") || leg.fixType.isEmpty() /* Workaround for missing navaid type in DFD */)
   {
-    mapObjectByIdent(leg.navaids, map::ILS, leg.fixIdent, QString(), airport.ident, fixPos);
+    mapObjectByIdent(leg.navaids, map::ILS, leg.fixIdent, QStringLiteral(), airport.ident, fixPos);
     if(!leg.navaids.ils.isEmpty())
     {
       const map::MapIls& ils = leg.navaids.ils.constFirst();
@@ -464,7 +465,7 @@ void ProcedureQuery::buildLegEntry(atools::sql::SqlQuery *query, proc::MapProced
     {
       // Use a VOR or DME as fallback
       leg.navaids.clear();
-      mapObjectByIdent(leg.navaids, map::VOR, leg.fixIdent, QString(), airport.ident, fixPos);
+      mapObjectByIdent(leg.navaids, map::VOR, leg.fixIdent, QStringLiteral(), airport.ident, fixPos);
       if(!leg.navaids.vors.isEmpty())
       {
         leg.fixPos = leg.navaids.vors.constFirst().position;
@@ -479,7 +480,7 @@ void ProcedureQuery::buildLegEntry(atools::sql::SqlQuery *query, proc::MapProced
       {
         // Use a NDB as second fallback
         leg.navaids.clear();
-        mapObjectByIdent(leg.navaids, map::NDB, leg.fixIdent, QString(), airport.ident, fixPos);
+        mapObjectByIdent(leg.navaids, map::NDB, leg.fixIdent, QStringLiteral(), airport.ident, fixPos);
         if(!leg.navaids.ndbs.isEmpty())
         {
           leg.fixPos = leg.navaids.ndbs.constFirst().position;
@@ -499,7 +500,7 @@ void ProcedureQuery::buildLegEntry(atools::sql::SqlQuery *query, proc::MapProced
   // Also update magvar if not already set
   if(leg.recFixType == QStringLiteral("W") || leg.recFixType == QStringLiteral("TW"))
   {
-    mapObjectByIdent(leg.recNavaids, map::WAYPOINT, leg.recFixIdent, leg.recFixRegion, QString(), recFixPos);
+    mapObjectByIdent(leg.recNavaids, map::WAYPOINT, leg.recFixIdent, leg.recFixRegion, QStringLiteral(), recFixPos);
     if(!leg.recNavaids.waypoints.isEmpty())
     {
       leg.recFixPos = leg.recNavaids.waypoints.constFirst().position;
@@ -511,8 +512,8 @@ void ProcedureQuery::buildLegEntry(atools::sql::SqlQuery *query, proc::MapProced
   else if(leg.recFixType == QStringLiteral("V"))
   {
     // Get both VOR with region and ILS without region
-    mapObjectByIdent(leg.recNavaids, map::VOR, leg.recFixIdent, leg.recFixRegion, QString(), recFixPos);
-    mapObjectByIdent(leg.recNavaids, map::ILS, leg.recFixIdent, QString(), airport.ident, recFixPos);
+    mapObjectByIdent(leg.recNavaids, map::VOR, leg.recFixIdent, leg.recFixRegion, QStringLiteral(), recFixPos);
+    mapObjectByIdent(leg.recNavaids, map::ILS, leg.recFixIdent, QStringLiteral(), airport.ident, recFixPos);
 
     if(leg.recNavaids.hasVor() && leg.recNavaids.hasIls())
     {
@@ -571,7 +572,7 @@ void ProcedureQuery::buildLegEntry(atools::sql::SqlQuery *query, proc::MapProced
     bool foundIls = false;
     if((NavApp::isNavdataAll() || NavApp::isNavdataMixed()) && legs.hasFrequency())
     {
-      mapObjectByIdent(leg.recNavaids, map::ILS, leg.recFixIdent, leg.recFixRegion, QString(), recFixPos);
+      mapObjectByIdent(leg.recNavaids, map::ILS, leg.recFixIdent, leg.recFixRegion, QStringLiteral(), recFixPos);
       if(!leg.recNavaids.ils.isEmpty() &&
          airport.position.distanceMeterTo(leg.recNavaids.ils.constFirst().position) < atools::geo::nmToMeter(20))
       {
@@ -598,7 +599,7 @@ void ProcedureQuery::buildLegEntry(atools::sql::SqlQuery *query, proc::MapProced
 
     if(!foundIls)
     {
-      mapObjectByIdent(leg.recNavaids, map::NDB, leg.recFixIdent, leg.recFixRegion, QString(), recFixPos);
+      mapObjectByIdent(leg.recNavaids, map::NDB, leg.recFixIdent, leg.recFixRegion, QStringLiteral(), recFixPos);
       if(!leg.recNavaids.ndbs.isEmpty())
       {
         leg.recFixPos = leg.recNavaids.ndbs.constFirst().position;
@@ -616,7 +617,7 @@ void ProcedureQuery::buildLegEntry(atools::sql::SqlQuery *query, proc::MapProced
   }
   else if(leg.recFixType == QStringLiteral("L") || leg.recFixType.isEmpty() /* Workaround for missing navaid type in DFD */)
   {
-    mapObjectByIdent(leg.recNavaids, map::ILS, leg.recFixIdent, QString(), airport.ident, recFixPos);
+    mapObjectByIdent(leg.recNavaids, map::ILS, leg.recFixIdent, QStringLiteral(), airport.ident, recFixPos);
     if(!leg.recNavaids.ils.isEmpty())
     {
       const map::MapIls& ils = leg.recNavaids.ils.constFirst();
@@ -644,7 +645,7 @@ void ProcedureQuery::buildLegEntry(atools::sql::SqlQuery *query, proc::MapProced
     {
       // Use a VOR or DME as fallback
       leg.recNavaids.clear();
-      mapObjectByIdent(leg.recNavaids, map::VOR, leg.recFixIdent, QString(), airport.ident, recFixPos);
+      mapObjectByIdent(leg.recNavaids, map::VOR, leg.recFixIdent, QStringLiteral(), airport.ident, recFixPos);
       if(!leg.recNavaids.vors.isEmpty())
       {
         leg.recFixPos = leg.recNavaids.vors.constFirst().position;
@@ -662,7 +663,7 @@ void ProcedureQuery::buildLegEntry(atools::sql::SqlQuery *query, proc::MapProced
       {
         // Use a NDB as second fallback
         leg.recNavaids.clear();
-        mapObjectByIdent(leg.recNavaids, map::NDB, leg.recFixIdent, QString(), airport.ident, recFixPos);
+        mapObjectByIdent(leg.recNavaids, map::NDB, leg.recFixIdent, QStringLiteral(), airport.ident, recFixPos);
         if(!leg.recNavaids.ndbs.isEmpty())
         {
           leg.recFixPos = leg.recNavaids.ndbs.constFirst().position;
@@ -704,12 +705,12 @@ void ProcedureQuery::mapObjectByIdent(map::MapResult& result, map::MapTypes type
 
   if(result.isEmpty(type) && !region.isEmpty())
     // Try again in 1000 nm radius by excluding the region if given
-    mapQuery->getMapObjectByIdent(result, type, ident, QString(), airport, sortByDistancePos,
+    mapQuery->getMapObjectByIdent(result, type, ident, QStringLiteral(), airport, sortByDistancePos,
                                   nmToMeter(1000.f), true /* airport from nav database */);
 
   if(result.isEmpty(type) && !airport.isEmpty())
     // Try again in 1000 nm radius by excluding the region and airport
-    mapQuery->getMapObjectByIdent(result, type, ident, QString(), QString(), sortByDistancePos,
+    mapQuery->getMapObjectByIdent(result, type, ident, QStringLiteral(), QStringLiteral(), sortByDistancePos,
                                   nmToMeter(1000.f), true /* airport from nav database */);
 
   // result always sorted by distance
@@ -911,9 +912,9 @@ proc::MapProcedureLegs *ProcedureQuery::buildProcedureLegs(const map::MapAirport
     legs->type = procedureQuery->valueStr(QStringLiteral("type"));
     legs->suffix = procedureQuery->valueStr(QStringLiteral("suffix"));
     legs->procedureFixIdent = procedureQuery->valueStr(QStringLiteral("fix_ident"));
-    legs->arincName = procedureQuery->valueStr(QStringLiteral("arinc_name"), QString());
-    legs->airportIdent = procedureQuery->valueStr(QStringLiteral("airport_ident"), QString());
-    legs->aircraftCategory = procedureQuery->valueStr(QStringLiteral("aircraft_category"), QString());
+    legs->arincName = procedureQuery->valueStr(QStringLiteral("arinc_name"), QStringLiteral());
+    legs->airportIdent = procedureQuery->valueStr(QStringLiteral("airport_ident"), QStringLiteral());
+    legs->aircraftCategory = procedureQuery->valueStr(QStringLiteral("aircraft_category"), QStringLiteral());
     legs->gpsOverlay = procedureQuery->valueBool(QStringLiteral("has_gps_overlay"), false);
     legs->verticalAngle = procedureQuery->valueBool(QStringLiteral("has_vertical_angle"), false);
     legs->rnp = procedureQuery->valueBool(QStringLiteral("has_rnp"), false);
@@ -2535,7 +2536,7 @@ int ProcedureQuery::getSidId(map::MapAirport departure, const QString& sid, cons
 
     if(sidApprId == -1)
       // Try again without runway
-      sidApprId = findProcedureId(departure, procedureIdByNameQuery, "D", QString(), strict);
+      sidApprId = findProcedureId(departure, procedureIdByNameQuery, "D", QStringLiteral(), strict);
 
     if(sidApprId == -1 && verbose)
       qWarning() << "Loading of SID" << sid << "failed";
@@ -2598,7 +2599,7 @@ int ProcedureQuery::getStarId(map::MapAirport destination, const QString& star, 
 
     if(starId == -1)
       // Try again without runway
-      starId = findProcedureId(destination, procedureIdByNameQuery, "A", QString(), strict);
+      starId = findProcedureId(destination, procedureIdByNameQuery, "A", QStringLiteral(), strict);
 
     if(starId == -1 && verbose)
       qWarning() << "Loading of STAR" << star << "failed";
@@ -2653,7 +2654,7 @@ int ProcedureQuery::getApproachId(map::MapAirport destination, const QString& ar
     procedureIdByArincNameQuery->bindValue(":arincname", arincName);
     procedureIdByArincNameQuery->bindValue(":apident", bestAirportIdent(destination));
 
-    approachId = findProcedureId(destination, procedureIdByArincNameQuery, QString(), runway, false);
+    approachId = findProcedureId(destination, procedureIdByArincNameQuery, QStringLiteral(), runway, false);
 
     if(approachId == -1)
     {
@@ -2668,7 +2669,7 @@ int ProcedureQuery::getApproachId(map::MapAirport destination, const QString& ar
       {
         procedureIdByArincNameQuery->bindValue(":arincname", variant);
 
-        approachId = findProcedureId(destination, procedureIdByArincNameQuery, QString(), runway, false);
+        approachId = findProcedureId(destination, procedureIdByArincNameQuery, QStringLiteral(), runway, false);
         if(approachId != -1)
           break;
       }
@@ -3259,7 +3260,7 @@ QString ProcedureQuery::getCustomDepartureRunway(const QHash<QString, QString>& 
   if(properties.value(pln::SID_TYPE) == atools::fs::pln::SID_TYPE_CUSTOM)
     return properties.value(pln::SID_RW);
   else
-    return QString();
+    return QStringLiteral();
 }
 
 QString ProcedureQuery::getCustomApprochRunway(const QHash<QString, QString>& properties)
@@ -3267,7 +3268,7 @@ QString ProcedureQuery::getCustomApprochRunway(const QHash<QString, QString>& pr
   if(properties.value(pln::APPROACH_TYPE) == atools::fs::pln::APPROACH_TYPE_CUSTOM)
     return properties.value(pln::APPROACH_RW);
   else
-    return QString();
+    return QStringLiteral();
 }
 
 QString ProcedureQuery::getSidAndTransition(const QHash<QString, QString>& properties, QString& runway)
@@ -3331,7 +3332,7 @@ void ProcedureQuery::getApproachAndTransitionDisplay(const QHash<QString, QStrin
 
 int ProcedureQuery::findTransitionId(const map::MapAirport& airport, atools::sql::SqlQuery *query, bool strict)
 {
-  return findProcedureLegId(airport, query, QString(), QString(), true, strict);
+  return findProcedureLegId(airport, query, QStringLiteral(), QStringLiteral(), true, strict);
 }
 
 int ProcedureQuery::findProcedureId(const map::MapAirport& airport, atools::sql::SqlQuery *query,
@@ -3417,7 +3418,7 @@ QString ProcedureQuery::anyMatchingRunwayForSidStar(const QString& arincName, co
     }
   }
 
-  return airportRunways.isEmpty() ? QString() : airportRunways.constFirst();
+  return airportRunways.isEmpty() ? QStringLiteral() : airportRunways.constFirst();
 }
 
 void ProcedureQuery::insertSidStarRunway(proc::MapProcedureLegs& legs, const QString& runway)
@@ -3477,7 +3478,7 @@ int ProcedureQuery::findProcedureLegId(const map::MapAirport& airport, atools::s
     // Compare the suffix manually since the ifnull function makes the query unstable (did not work with undo)
     if(!transition && (suffix != query->valueStr("suffix") ||
                        // Runway will be compared directly to the approach and not the airport runway
-                       !doesRunwayMatch(runway, query->valueStr("runway_name"), query->valueStr("arinc_name", QString()),
+                       !doesRunwayMatch(runway, query->valueStr("runway_name"), query->valueStr("arinc_name", QStringLiteral()),
                                         airportRunways, false /* Match empty rw */)))
       continue;
 
@@ -3516,7 +3517,7 @@ int ProcedureQuery::findProcedureLegId(const map::MapAirport& airport, atools::s
       if(!transition && (suffix != query->valueStr("suffix") ||
                          // Runway will be compared directly to the approach and not the airport runway
                          // The method will check here if the runway in the query result is empty
-                         !doesRunwayMatch(runway, query->valueStr("runway_name"), query->valueStr("arinc_name", QString()),
+                         !doesRunwayMatch(runway, query->valueStr("runway_name"), query->valueStr("arinc_name", QStringLiteral()),
                                           airportRunways, true /* Match empty rw */)))
         continue;
 

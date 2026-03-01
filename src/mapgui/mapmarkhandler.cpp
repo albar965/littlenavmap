@@ -272,7 +272,7 @@ void MapMarkHandler::routeResetAll()
   choiceDialog.setHelpOnlineUrl(lnm::helpOnlineUrl);
   choiceDialog.setHelpLanguageOnline(lnm::helpLanguageOnline());
 
-  choiceDialog.addCheckBox(EMPTY_FLIGHT_PLAN, tr("&Create an empty flight plan"), QString(), true /* checked */);
+  choiceDialog.addCheckBox(EMPTY_FLIGHT_PLAN, tr("&Create an empty flight plan"), QStringLiteral(), true /* checked */);
 
   choiceDialog.addLine();
   choiceDialog.addCheckBox(DELETE_TRAIL, tr("&Delete user aircraft trail"),
@@ -286,11 +286,11 @@ void MapMarkHandler::routeResetAll()
 
   choiceDialog.addLine();
   choiceDialog.addLabel(tr("Remove user features placed on map:"));
-  choiceDialog.addCheckBox(REMOVE_MARK_RANGE, tr("&Range rings"), QString(), false /* checked */);
-  choiceDialog.addCheckBox(REMOVE_MARK_DISTANCE, tr("&Measurement lines"), QString(), false /* checked */);
-  choiceDialog.addCheckBox(REMOVE_MARK_HOLDING, tr("&Holdings"), QString(), false /* checked */);
-  choiceDialog.addCheckBox(REMOVE_MARK_PATTERNS, tr("&Traffic patterns"), QString(), false /* checked */);
-  choiceDialog.addCheckBox(REMOVE_MARK_MSA, tr("&MSA diagrams"), QString(), false /* checked */);
+  choiceDialog.addCheckBox(REMOVE_MARK_RANGE, tr("&Range rings"), QStringLiteral(), false /* checked */);
+  choiceDialog.addCheckBox(REMOVE_MARK_DISTANCE, tr("&Measurement lines"), QStringLiteral(), false /* checked */);
+  choiceDialog.addCheckBox(REMOVE_MARK_HOLDING, tr("&Holdings"), QStringLiteral(), false /* checked */);
+  choiceDialog.addCheckBox(REMOVE_MARK_PATTERNS, tr("&Traffic patterns"), QStringLiteral(), false /* checked */);
+  choiceDialog.addCheckBox(REMOVE_MARK_MSA, tr("&MSA diagrams"), QStringLiteral(), false /* checked */);
   choiceDialog.addSpacer();
   choiceDialog.setRequiredAnyChecked({EMPTY_FLIGHT_PLAN, DELETE_TRAIL, DELETE_ACTIVE_LEG, RESTART_PERF, RESTART_LOGBOOK, REMOVE_MARK_RANGE,
                                       REMOVE_MARK_DISTANCE, REMOVE_MARK_HOLDING, REMOVE_MARK_PATTERNS, REMOVE_MARK_MSA});

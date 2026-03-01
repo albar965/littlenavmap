@@ -176,7 +176,7 @@ void ColumnList::resetWidgets(const QStringList& exceptColNames)
       {
         if(cb->isEditable())
         {
-          cb->setCurrentText(QString());
+          cb->setCurrentText(QStringLiteral());
           cb->setCurrentIndex(-1);
         }
         else

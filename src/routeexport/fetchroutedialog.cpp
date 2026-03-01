@@ -295,9 +295,9 @@ void FetchRouteDialog::downloadFinished(const QByteArray& data, QString)
   if(alternate == departure || alternate == destination)
     alternate.clear();
 
-  routeString = departure % (departureRunway.isEmpty() ? QString() : '/' % departureRunway) % ' ' %
+  routeString = departure % (departureRunway.isEmpty() ? QStringLiteral() : '/' % departureRunway) % ' ' %
                 route % ' ' %
-                destination % (destinationRunway.isEmpty() ? QString() : '/' % destinationRunway) % ' ' % alternate;
+                destination % (destinationRunway.isEmpty() ? QStringLiteral() : '/' % destinationRunway) % ' ' % alternate;
 
   // Read string to flight plan
   RouteStringReader routeStringReader(NavApp::getRouteController()->getFlightplanEntryBuilder());

@@ -309,7 +309,7 @@ void MapPainterVehicle::paintTextLabelAi(float x, float y, float size, const Sim
       // Actual altitude ====================================================================================
       if(aiDisp(hidden, optsac::ITEM_AI_AIRCRAFT_ALTITUDE, detail1,
                 aircraft.getActualAltitudeFt()) && aircraft.isActualAltitudeFullyValid())
-        altTexts.append(tr("ALT %1%2").arg(Unit::altFeet(aircraft.getActualAltitudeFt())).arg(QString()));
+        altTexts.append(tr("ALT %1%2").arg(Unit::altFeet(aircraft.getActualAltitudeFt())).arg(QStringLiteral()));
 
       QString upDown;
       if(!aiDisp(hidden, optsac::ITEM_AI_AIRCRAFT_CLIMB_SINK, detail1, aircraft.getVerticalSpeedFeetPerMin()))

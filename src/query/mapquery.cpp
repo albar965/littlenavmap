@@ -1345,7 +1345,8 @@ void MapQuery::runwayEndByNameFuzzy(QList<map::MapRunwayEnd>& runwayEnds, const 
     QString bestRunway = atools::fs::util::runwayBestFit(name, queries->getAirportQuery(navData)->getRunwayNames(airport.id));
 
     if(!bestRunway.isEmpty())
-      getMapObjectByIdent(result, map::RUNWAYEND, bestRunway, QString(), airport.ident, navData /* airport or runway from nav database */);
+      getMapObjectByIdent(result, map::RUNWAYEND, bestRunway, QStringLiteral(), airport.ident,
+                          navData /* airport or runway from nav database */);
   }
 
   if(result.runwayEnds.isEmpty())

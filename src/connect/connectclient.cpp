@@ -65,7 +65,8 @@ ConnectClient::ConnectClient(QWidget *parent)
   atools::settings::Settings& settings = atools::settings::Settings::instance();
   verbose = settings.getAndStoreValue(lnm::OPTIONS_CONNECTCLIENT_DEBUG, false).toBool();
 
-  errorMessageBox = new QMessageBox(QMessageBox::Critical, QCoreApplication::applicationName(), QString(), QMessageBox::Ok, parentWidget);
+  errorMessageBox = new QMessageBox(QMessageBox::Critical, QCoreApplication::applicationName(), QStringLiteral(), QMessageBox::Ok,
+                                    parentWidget);
   errorMessageBox->setWindowFlag(Qt::WindowContextHelpButtonHint, false);
   errorMessageBox->setWindowModality(Qt::ApplicationModal);
   errorMessageBox->setTextInteractionFlags(Qt::TextSelectableByMouse);
@@ -218,7 +219,7 @@ QString ConnectClient::simName() const
 
 #endif
   }
-  return QString();
+  return QStringLiteral();
 }
 
 QString ConnectClient::simShortName() const
@@ -241,7 +242,7 @@ QString ConnectClient::simShortName() const
 #endif
     }
   }
-  return QString();
+  return QStringLiteral();
 }
 
 void ConnectClient::connectedToSimulatorDirect()
@@ -528,7 +529,7 @@ void ConnectClient::statusPosted(atools::fs::sc::SimConnectStatus status, QStrin
   if(status != atools::fs::sc::OK)
     handleError(status, statusText, dataReader->isXplaneHandler(), isNetworkConnect());
   else
-    NavApp::getStatusBar()->setConnectionStatusMessageText(QString(), statusText);
+    NavApp::getStatusBar()->setConnectionStatusMessageText(QStringLiteral(), statusText);
 }
 
 void ConnectClient::saveState() const
@@ -754,13 +755,13 @@ void ConnectClient::showXpconnectVersionWarning(const QString& xpconnectVersion)
 
   atools::gui::DialogButtonList buttonList =
   {
-    atools::gui::DialogButton(QString(), QMessageBox::Ok),
+    atools::gui::DialogButton(QStringLiteral(), QMessageBox::Ok),
     atools::gui::DialogButton(tr("&Install Now ..."), QMessageBox::Save),
-    atools::gui::DialogButton(QString(), QMessageBox::Help)
+    atools::gui::DialogButton(QStringLiteral(), QMessageBox::Help)
   };
 
-  int retval = atools::gui::Dialog(parentWidget).showQuestionMsgBox(QString(), message,
-                                                                    QString(), buttonList, QMessageBox::Ok, QMessageBox::Help);
+  int retval = atools::gui::Dialog(parentWidget).showQuestionMsgBox(QStringLiteral(), message,
+                                                                    QStringLiteral(), buttonList, QMessageBox::Ok, QMessageBox::Help);
 
   if(retval == QMessageBox::Help)
     atools::gui::HelpHandler::openHelpUrlWeb(parentWidget, lnm::helpOnlineUrl + "XPCONNECT.html", lnm::helpLanguageOnline());
@@ -898,7 +899,7 @@ void ConnectClient::readFromSocketError(QAbstractSocket::SocketError)
       QString msg = tr("Error in server connection: %1 (%2).%3").
                     arg(socket->errorString()).
                     arg(socket->error()).
-                    arg(connectDialog->isAutoConnect() ? tr("\nWill retry to connect.") : QString());
+                    arg(connectDialog->isAutoConnect() ? tr("\nWill retry to connect.") : QStringLiteral());
 
       // Closed due to error
       atools::gui::Dialog::critical(parentWidget, msg, QMessageBox::Close);

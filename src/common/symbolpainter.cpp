@@ -1380,7 +1380,7 @@ void SymbolPainter::textBoxF(QPainter *painter, QStringList texts, QPen textPen,
 #endif
 
   // Remove empty lines
-  texts.removeAll(QString());
+  texts.removeAll(QStringLiteral());
 
   if(texts.isEmpty())
     return;

@@ -595,7 +595,7 @@ QString MapResult::getIdent(const std::initializer_list<MapTypes>& types) const
         return msaMarks.constFirst().msa.navIdent;
     }
   }
-  return QString();
+  return QStringLiteral();
 }
 
 QString MapResult::getRegion(const std::initializer_list<MapTypes>& types) const
@@ -622,7 +622,7 @@ QString MapResult::getRegion(const std::initializer_list<MapTypes>& types) const
         return userpoints.constFirst().region;
     }
   }
-  return QString();
+  return QStringLiteral();
 }
 
 bool MapResult::getIdAndType(int& id, MapTypes& type, const std::initializer_list<MapTypes>& types) const

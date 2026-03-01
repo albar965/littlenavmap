@@ -1287,7 +1287,7 @@ void ProfileWidget::paintEvent(QPaintEvent *)
           float pathAngle = angles.value(j - 1, map::INVALID_ANGLE_VALUE);
           QString angleText = pathAngle < -0.5f ?
                               tr(" %1° %2 ").arg(pathAngle, 0, 'g', requiredByProcedure ? 3 : 2).arg(TextPointer::getPointerRight()) :
-                              QString();
+                              QStringLiteral();
 
           QString separator(tr(" /"));
           QLineF line(geometry.at(j - 1), geometry.at(j));
@@ -1866,7 +1866,7 @@ QStringList ProfileWidget::textsAndColorForLeg(QColor& color, bool& procSymbol, 
 
   // Elide all texts in the list
   texts = atools::elidedTexts(fontMetrics(), texts, Qt::ElideRight, legWidth);
-  texts.removeAll(QString());
+  texts.removeAll(QStringLiteral());
   texts.removeDuplicates();
 
   return texts;
@@ -2446,7 +2446,7 @@ void ProfileWidget::buildTooltipText(int x, bool force)
     QString windText = tr("%1°M, %2").
                        arg(atools::geo::normalizeCourse(wind.dir - magVar), 0, 'f', 0).
                        arg(Unit::speedKts(wind.speed));
-    html.br().b(tr("%1Wind: ").arg(windReporter->isWindManual() ? tr("Manual ") : QString())).text(windText);
+    html.br().b(tr("%1Wind: ").arg(windReporter->isWindManual() ? tr("Manual ") : QStringLiteral())).text(windText);
 
     // Add tail/headwind if sufficient =======================================
     if(std::abs(headWind) >= 1.f)
@@ -2646,7 +2646,7 @@ void ProfileWidget::updateHeaderLabel()
             if(timeToTodOpt && todAhead)
               text.append(tr("<b>Top of Descent:</b> %1%2").
                           arg(todAhead ? Unit::distNm(toTod) : tr("Passed")).
-                          arg(todAhead ? tr(" (%1)").arg(formatter::formatMinutesHoursLong(fuelTime.timeToTod)) : QString()));
+                          arg(todAhead ? tr(" (%1)").arg(formatter::formatMinutesHoursLong(fuelTime.timeToTod)) : QStringLiteral()));
 
             // Descent angle and speed after TOD ==========================================
             if((vertDeviationOpt || descentAngleOpt) && !todAhead)

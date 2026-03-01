@@ -81,7 +81,6 @@ void RouteExportFormatMap::registerMetaTypes()
   qRegisterMetaType<RouteExportFormatMap>();
 }
 
-
 void RouteExportFormatMap::clearPath(rexp::RouteExportFormatType type)
 {
   (*this)[type].setPath((*this)[type].getDefaultPath());
@@ -430,7 +429,7 @@ void RouteExportFormatMap::updateDefaultPaths()
 
   // Get for current database selection if not X-Plane or MSFS
   if(curDb != FsPaths::XPLANE_11 && curDb != FsPaths::XPLANE_12 && curDb != FsPaths::MSFS && curDb != FsPaths::NAVIGRAPH)
-    fsxP3dBasePath = NavApp::getSimulatorFilesPathBest({curDb}, QString());
+    fsxP3dBasePath = NavApp::getSimulatorFilesPathBest({curDb}, QStringLiteral());
 
   // Get best installed simulator
   if(fsxP3dBasePath.isEmpty())

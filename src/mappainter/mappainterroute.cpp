@@ -176,7 +176,7 @@ void MapPainterRoute::paintDirectToDeparture()
 QString MapPainterRoute::buildLegText(const RouteLeg& leg)
 {
   if(mapPaintWidget->isDistanceCutOff())
-    return QString();
+    return QStringLiteral();
 
   QStringList texts;
   if(context->dOptRoute(optsd::ROUTE_AIRWAY) && !leg.getAirwayName().isEmpty())
@@ -191,7 +191,7 @@ QString MapPainterRoute::buildLegText(const RouteLeg& leg)
 QString MapPainterRoute::buildLegText(float distance, float courseMag, float courseTrue)
 {
   if(mapPaintWidget->isDistanceCutOff())
-    return QString();
+    return QStringLiteral();
 
   if(!context->dOptRoute(optsd::ROUTE_DISTANCE))
     distance = map::INVALID_DISTANCE_VALUE;
@@ -252,7 +252,7 @@ void MapPainterRoute::paintRoute()
       else
       {
         // Add empty texts to skip drawing
-        routeTexts.append(QString());
+        routeTexts.append(QStringLiteral());
         lines.append(Line());
       }
     }
@@ -267,14 +267,14 @@ void MapPainterRoute::paintRoute()
           routeTexts.append(buildLegText(leg));
         else
           // No texts for passed legs
-          routeTexts.append(QString());
+          routeTexts.append(QStringLiteral());
 
         lines.append(Line(last.getPosition(), leg.getPosition()));
       }
       else
       {
         // Text and lines are drawn by paintProcedure
-        routeTexts.append(QString());
+        routeTexts.append(QStringLiteral());
         lines.append(Line());
       }
     }
@@ -973,7 +973,7 @@ void MapPainterRoute::paintProcedure(QSet<map::MapRef>& idMap, const proc::MapPr
         if((i < passedProcLeg && activeValid && !preview) || (previewAll && leg.isMissed()))
         {
           // No texts for passed legs and missed approach legs in mult preview
-          approachTexts.append(QString());
+          approachTexts.append(QStringLiteral());
           lines.append(leg.line);
           textColors.append(Qt::transparent);
         }
@@ -1000,7 +1000,7 @@ void MapPainterRoute::paintProcedure(QSet<map::MapRef>& idMap, const proc::MapPr
             approachTexts.append(buildLegText(dist, courseMag, courseTrue));
           }
           else
-            approachTexts.append(QString() /*legs.approachFixIdent*/);
+            approachTexts.append(QStringLiteral() /*legs.approachFixIdent*/);
 
           lines.append(leg.line);
           textColors.append(leg.missed ? mapcolors::routeProcedureMissedTextColor : mapcolors::routeProcedureTextColor);
@@ -1941,7 +1941,7 @@ void MapPainterRoute::paintProcedurePoint(QSet<map::MapRef>& idMap, const proc::
   texts.append(restrTexts);
 
   // Remove duplicates and empty strings
-  texts.removeAll(QString());
+  texts.removeAll(QStringLiteral());
   texts.removeDuplicates();
 
   const map::MapResult& navaids = leg.navaids;
@@ -2204,7 +2204,7 @@ void MapPainterRoute::paintText(const QColor& color, float x, float y, float siz
                                 textatt::TextAttributes atts)
 {
   texts.removeDuplicates();
-  texts.removeAll(QString());
+  texts.removeAll(QStringLiteral());
 
   // Move position according to text placement
   symbolPainter->adjustPos(x, y, size, atts);

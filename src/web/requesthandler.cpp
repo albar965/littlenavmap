@@ -599,7 +599,7 @@ QString RequestHandler::buildRefreshSelect(int defaultValue)
   retval.append("<select id=\"refreshselect\" onchange=\"refreshPage()\">");
   for(const std::pair<int, QString>& rate : rates)
     retval.append(QStringLiteral("<option value=\"%1\" %2>%3</option>").
-                  arg(rate.first).arg(rate.first == defaultValue ? "selected" : QString()).arg(rate.second));
+                  arg(rate.first).arg(rate.first == defaultValue ? "selected" : QStringLiteral()).arg(rate.second));
   retval.append("</select>");
   return retval;
 }

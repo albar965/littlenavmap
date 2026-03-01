@@ -46,7 +46,7 @@ void MapTypesFactory::fillAirport(const SqlRecord& record, map::MapAirport& airp
     airport.unicomFrequency = record.valueInt(QStringLiteral("unicom_frequency"));
     airport.position = Pos(record.valueFloat(QStringLiteral("lonx")), record.valueFloat(QStringLiteral("laty")),
                            record.valueFloat(QStringLiteral("altitude")));
-    airport.region = record.valueStr(QStringLiteral("region"), QString());
+    airport.region = record.valueStr(QStringLiteral("region"), QStringLiteral());
   }
   else
     airport.position = Pos(record.valueFloat(QStringLiteral("lonx")), record.valueFloat(QStringLiteral("laty")), 0.f);
@@ -59,7 +59,7 @@ void MapTypesFactory::fillRunway(const atools::sql::SqlRecord& record, map::MapR
   if(!overview)
   {
     runway.surface = record.valueStr(QStringLiteral("surface"));
-    runway.shoulder = record.valueStr(QStringLiteral("shoulder"), QString()); // Optional X-Plane field
+    runway.shoulder = record.valueStr(QStringLiteral("shoulder"), QStringLiteral()); // Optional X-Plane field
     runway.primaryName = record.valueStr(QStringLiteral("primary_name"));
     runway.secondaryName = record.valueStr(QStringLiteral("secondary_name"));
     runway.edgeLight = record.valueStr(QStringLiteral("edge_light"));
@@ -118,7 +118,7 @@ void MapTypesFactory::fillRunwayEnd(const atools::sql::SqlRecord& record, MapRun
   end.rightVasiPitch = record.valueFloat(QStringLiteral("right_vasi_pitch"));
   end.leftVasiType = record.valueStr(QStringLiteral("left_vasi_type"));
   end.rightVasiType = record.valueStr(QStringLiteral("right_vasi_type"));
-  end.pattern = record.valueStr(QStringLiteral("is_pattern"), QString());
+  end.pattern = record.valueStr(QStringLiteral("is_pattern"), QStringLiteral());
 }
 
 void MapTypesFactory::fillAirportBase(const SqlRecord& record, map::MapAirport& ap, bool complete)
@@ -130,10 +130,10 @@ void MapTypesFactory::fillAirportBase(const SqlRecord& record, map::MapAirport& 
   {
     ap.towerFrequency = record.valueInt(QStringLiteral("tower_frequency"));
     ap.ident = record.valueStr(QStringLiteral("ident"));
-    ap.icao = record.valueStr(QStringLiteral("icao"), QString());
-    ap.iata = record.valueStr(QStringLiteral("iata"), QString());
-    ap.faa = record.valueStr(QStringLiteral("faa"), QString());
-    ap.local = record.valueStr(QStringLiteral("local"), QString());
+    ap.icao = record.valueStr(QStringLiteral("icao"), QStringLiteral());
+    ap.iata = record.valueStr(QStringLiteral("iata"), QStringLiteral());
+    ap.faa = record.valueStr(QStringLiteral("faa"), QStringLiteral());
+    ap.local = record.valueStr(QStringLiteral("local"), QStringLiteral());
     ap.name = record.valueStr(QStringLiteral("name"));
     ap.type = static_cast<map::MapAirportType>(record.valueInt(QStringLiteral("type"), map::AP_TYPE_NONE));
     ap.longestRunwayLength = record.valueInt(QStringLiteral("longest_runway_length"));
@@ -435,9 +435,9 @@ void MapTypesFactory::fillWaypoint(const SqlRecord& record, map::MapWaypoint& wa
   waypoint.id = record.valueInt(track ? QStringLiteral("trackpoint_id") : QStringLiteral("waypoint_id"));
   waypoint.ident = record.valueStr(QStringLiteral("ident"));
   waypoint.region = record.valueStr(QStringLiteral("region"));
-  waypoint.name = record.valueStr(QStringLiteral("name"), QString());
+  waypoint.name = record.valueStr(QStringLiteral("name"), QStringLiteral());
   waypoint.type = record.valueStr(QStringLiteral("type"));
-  waypoint.arincType = record.valueStr(QStringLiteral("arinc_type"), QString());
+  waypoint.arincType = record.valueStr(QStringLiteral("arinc_type"), QStringLiteral());
   waypoint.magvar = record.valueFloat(QStringLiteral("mag_var"));
   waypoint.hasVictorAirways = record.valueInt(QStringLiteral("num_victor_airway")) > 0;
   waypoint.hasJetAirways = record.valueInt(QStringLiteral("num_jet_airway")) > 0;
@@ -452,9 +452,9 @@ void MapTypesFactory::fillWaypointFromNav(const SqlRecord& record, map::MapWaypo
   waypoint.id = record.valueInt(QStringLiteral("waypoint_id"));
   waypoint.ident = record.valueStr(QStringLiteral("ident"));
   waypoint.region = record.valueStr(QStringLiteral("region"));
-  waypoint.name = record.valueStr(QStringLiteral("name"), QString());
+  waypoint.name = record.valueStr(QStringLiteral("name"), QStringLiteral());
   waypoint.type = record.valueStr(QStringLiteral("type"));
-  waypoint.arincType = record.valueStr(QStringLiteral("arinc_type"), QString());
+  waypoint.arincType = record.valueStr(QStringLiteral("arinc_type"), QStringLiteral());
   waypoint.magvar = record.valueFloat(QStringLiteral("mag_var"));
   waypoint.hasVictorAirways = record.valueInt(QStringLiteral("waypoint_num_victor_airway")) > 0;
   waypoint.hasJetAirways = record.valueInt(QStringLiteral("waypoint_num_jet_airway")) > 0;
@@ -532,7 +532,7 @@ void MapTypesFactory::fillAirwayOrTrack(const SqlRecord& record, map::MapAirway&
   {
     airway.id = record.valueInt(QStringLiteral("airway_id"));
     airway.type = airwayTrackTypeFromString(record.valueStr(QStringLiteral("airway_type")));
-    airway.routeType = airwayRouteTypeFromString(record.valueStr(QStringLiteral("route_type"), QString()));
+    airway.routeType = airwayRouteTypeFromString(record.valueStr(QStringLiteral("route_type"), QStringLiteral()));
     airway.name = record.valueStr(QStringLiteral("airway_name"));
 
     airway.minAltitude = record.valueInt(QStringLiteral("minimum_altitude"));
@@ -576,11 +576,11 @@ void MapTypesFactory::fillIls(const SqlRecord& record, map::MapIls& ils, float r
   ils.runwayName = record.valueStr(QStringLiteral("loc_runway_name"));
   ils.ident = record.valueStr(QStringLiteral("ident"));
   ils.name = record.valueStr(QStringLiteral("name"));
-  ils.region = record.valueStr(QStringLiteral("region"), QString());
+  ils.region = record.valueStr(QStringLiteral("region"), QStringLiteral());
 
-  ils.type = static_cast<map::IlsType>(atools::strToChar(record.valueStr(QStringLiteral("type"), QString())));
-  ils.perfIndicator = record.valueStr(QStringLiteral("perf_indicator"), QString());
-  ils.provider = record.valueStr(QStringLiteral("provider"), QString());
+  ils.type = static_cast<map::IlsType>(atools::strToChar(record.valueStr(QStringLiteral("type"), QStringLiteral())));
+  ils.perfIndicator = record.valueStr(QStringLiteral("perf_indicator"), QStringLiteral());
+  ils.provider = record.valueStr(QStringLiteral("provider"), QStringLiteral());
 
   ils.displayHeading = ils.heading = atools::geo::normalizeCourse(record.valueFloat(QStringLiteral("loc_heading")));
   ils.width = record.valueFloat(QStringLiteral("loc_width"));
@@ -738,7 +738,7 @@ void MapTypesFactory::fillParking(const SqlRecord& record, map::MapParking& park
   parking.airportId = record.valueInt(QStringLiteral("airport_id"));
   parking.type = record.valueStr(QStringLiteral("type"));
   parking.name = record.valueStr(QStringLiteral("name"));
-  parking.suffix = record.valueStr(QStringLiteral("suffix"), QString());
+  parking.suffix = record.valueStr(QStringLiteral("suffix"), QStringLiteral());
   parking.airlineCodes = record.valueStr(QStringLiteral("airline_codes"));
 
   parking.position = Pos(record.valueFloat(QStringLiteral("lonx")), record.valueFloat(QStringLiteral("laty")));
@@ -780,7 +780,7 @@ void MapTypesFactory::fillParking(const SqlRecord& record, map::MapParking& park
         // Found one number with or without suffix or prefix to build short text
         textsShort.append(txt);
     }
-    textsShort.removeAll(QString());
+    textsShort.removeAll(QStringLiteral());
 
     if(!textsShort.isEmpty())
     {
@@ -824,7 +824,7 @@ void MapTypesFactory::fillAirspace(const SqlRecord& record, map::MapAirspace& ai
   else if(record.contains(QStringLiteral("frequency")))
     comCol = QStringLiteral("frequency");
 
-  const QStringList split = record.valueStr(comCol, QString()).split(QStringLiteral("&"));
+  const QStringList split = record.valueStr(comCol, QStringLiteral()).split(QStringLiteral("&"));
   for(const QString& str : split)
   {
     bool ok;
@@ -835,13 +835,14 @@ void MapTypesFactory::fillAirspace(const SqlRecord& record, map::MapAirspace& ai
   }
 
   // Use default values for online network ATC centers
-  airspace.comName = atools::fs::util::capNavString(record.valueStr(QStringLiteral("com_name"), QString()).trimmed());
-  airspace.multipleCode = record.valueStr(QStringLiteral("multiple_code"), QString()).trimmed();
-  airspace.restrictiveDesignation = atools::fs::util::capNavString(record.valueStr(QStringLiteral("restrictive_designation"), QString()));
-  airspace.restrictiveType = record.valueStr(QStringLiteral("restrictive_type"), QString());
-  airspace.timeCode = record.valueStr(QStringLiteral("time_code"), QString());
-  airspace.minAltitudeType = record.valueStr(QStringLiteral("min_altitude_type"), QString());
-  airspace.maxAltitudeType = record.valueStr(QStringLiteral("max_altitude_type"), QString());
+  airspace.comName = atools::fs::util::capNavString(record.valueStr(QStringLiteral("com_name"), QStringLiteral()).trimmed());
+  airspace.multipleCode = record.valueStr(QStringLiteral("multiple_code"), QStringLiteral()).trimmed();
+  airspace.restrictiveDesignation = atools::fs::util::capNavString(record.valueStr(QStringLiteral("restrictive_designation"),
+                                                                                   QStringLiteral()));
+  airspace.restrictiveType = record.valueStr(QStringLiteral("restrictive_type"), QStringLiteral());
+  airspace.timeCode = record.valueStr(QStringLiteral("time_code"), QStringLiteral());
+  airspace.minAltitudeType = record.valueStr(QStringLiteral("min_altitude_type"), QStringLiteral());
+  airspace.maxAltitudeType = record.valueStr(QStringLiteral("max_altitude_type"), QStringLiteral());
   airspace.maxAltitude = record.valueInt(QStringLiteral("max_altitude"), 0);
   airspace.minAltitude = record.valueInt(QStringLiteral("min_altitude"), 70000);
 

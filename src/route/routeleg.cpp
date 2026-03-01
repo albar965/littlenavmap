@@ -131,7 +131,7 @@ void RouteLeg::assignAnyNavaid(atools::fs::pln::FlightplanEntry *flightplanEntry
   QueryManager::instance()->getQueriesGui()->getMapQuery()->getMapObjectByIdent(mapobjectResult,
                                                                                 map::WAYPOINT | map::VOR | map::NDB | map::AIRPORT,
                                                                                 flightplanEntry->getIdent(), flightplanEntry->getRegion(),
-                                                                                QString(), last, maxDistance);
+                                                                                QStringLiteral(), last, maxDistance);
 
   if(mapobjectResult.hasVor())
   {
@@ -211,8 +211,8 @@ void RouteLeg::createFromDatabaseByEntry(int entryIndex, const RouteLeg *prevLeg
     case atools::fs::pln::entry::AIRPORT:
       // Set alternate flight also for probably invalid legs to allow correct sorting
       alternate = flightplanEntry->isAlternate();
-      mapQuery->getMapObjectByIdent(result, map::AIRPORT, flightplanEntry->getIdent(), QString(),
-                                    QString(), flightplanEntry->getPosition(), MAX_AIRPORT_DISTANCE_METER);
+      mapQuery->getMapObjectByIdent(result, map::AIRPORT, flightplanEntry->getIdent(), QStringLiteral(),
+                                    QStringLiteral(), flightplanEntry->getPosition(), MAX_AIRPORT_DISTANCE_METER);
       if(result.hasAirports())
       {
         assignAirport(result, flightplanEntry);
@@ -300,12 +300,12 @@ void RouteLeg::createFromDatabaseByEntry(int entryIndex, const RouteLeg *prevLeg
     case atools::fs::pln::entry::WAYPOINT:
       mapQuery->getMapObjectByIdent(result, map::WAYPOINT | map::AIRPORT,
                                     flightplanEntry->getIdent(), region, /* region is ignored for airports */
-                                    QString(), flightplanEntry->getPosition(), MAX_WAYPOINT_DISTANCE_METER);
+                                    QStringLiteral(), flightplanEntry->getPosition(), MAX_WAYPOINT_DISTANCE_METER);
 
       if(!result.hasWaypoints())
         // Nothing found for waypoints - try again without region - result is appended
-        mapQuery->getMapObjectByIdent(result, map::WAYPOINT, flightplanEntry->getIdent(), QString(),
-                                      QString(), flightplanEntry->getPosition(), MAX_WAYPOINT_DISTANCE_METER);
+        mapQuery->getMapObjectByIdent(result, map::WAYPOINT, flightplanEntry->getIdent(), QStringLiteral(),
+                                      QStringLiteral(), flightplanEntry->getPosition(), MAX_WAYPOINT_DISTANCE_METER);
 
       if(result.hasWaypoints())
       {
@@ -330,12 +330,12 @@ void RouteLeg::createFromDatabaseByEntry(int entryIndex, const RouteLeg *prevLeg
     // =============================== Navaid VOR
     case atools::fs::pln::entry::VOR:
       mapQuery->getMapObjectByIdent(result, map::VOR, flightplanEntry->getIdent(), region,
-                                    QString(), flightplanEntry->getPosition(), MAX_WAYPOINT_DISTANCE_METER);
+                                    QStringLiteral(), flightplanEntry->getPosition(), MAX_WAYPOINT_DISTANCE_METER);
 
       if(!result.hasVor())
         // Nothing found for VOR - try again without region
-        mapQuery->getMapObjectByIdent(result, map::VOR, flightplanEntry->getIdent(), QString(),
-                                      QString(), flightplanEntry->getPosition(), MAX_WAYPOINT_DISTANCE_METER);
+        mapQuery->getMapObjectByIdent(result, map::VOR, flightplanEntry->getIdent(), QStringLiteral(),
+                                      QStringLiteral(), flightplanEntry->getPosition(), MAX_WAYPOINT_DISTANCE_METER);
 
       if(result.hasVor())
       {
@@ -347,12 +347,12 @@ void RouteLeg::createFromDatabaseByEntry(int entryIndex, const RouteLeg *prevLeg
     // =============================== Navaid NDB
     case atools::fs::pln::entry::NDB:
       mapQuery->getMapObjectByIdent(result, map::NDB, flightplanEntry->getIdent(), region,
-                                    QString(), flightplanEntry->getPosition(), MAX_WAYPOINT_DISTANCE_METER);
+                                    QStringLiteral(), flightplanEntry->getPosition(), MAX_WAYPOINT_DISTANCE_METER);
 
       if(!result.hasNdb())
         // Nothing found for NDB - try again without region
-        mapQuery->getMapObjectByIdent(result, map::NDB, flightplanEntry->getIdent(), QString(),
-                                      QString(), flightplanEntry->getPosition(), MAX_WAYPOINT_DISTANCE_METER);
+        mapQuery->getMapObjectByIdent(result, map::NDB, flightplanEntry->getIdent(), QStringLiteral(),
+                                      QStringLiteral(), flightplanEntry->getPosition(), MAX_WAYPOINT_DISTANCE_METER);
 
       if(result.hasNdb())
       {
@@ -616,8 +616,8 @@ QString RouteLeg::getDisplayText(int elideName) const
   {
     QStringList texts;
     texts << getMapTypeNameShort() << atools::elideTextShort(getName(), elideName)
-          << (getIdent().isEmpty() ? QString() : tr("(%1)").arg(getIdent()));
-    texts.removeAll(QString());
+          << (getIdent().isEmpty() ? QStringLiteral() : tr("(%1)").arg(getIdent()));
+    texts.removeAll(QStringLiteral());
     return texts.join(tr(" "));
   }
 }
@@ -1180,10 +1180,10 @@ QDebug operator<<(QDebug out, const RouteLeg& leg)
                           << ", course start " << leg.getCourseStartMag() << "°M " << leg.getCourseStartTrue() << "°T"
                           << ", course end " << leg.getCourseEndMag() << "°M " << leg.getCourseEndTrue() << "°T"
                           << ", magvar start " << leg.magvarStart << ", magvar end " << leg.magvarEnd
-                          << (leg.isValidWaypoint() ? ", valid" : QString())
-                          << (leg.isNavdata() ? ", nav" : QString())
-                          << (leg.isAlternate() ? ", alternate" : QString())
-                          << (leg.isAnyProcedure() ? ", procedure" : QString())
+                          << (leg.isValidWaypoint() ? ", valid" : QStringLiteral())
+                          << (leg.isNavdata() ? ", nav" : QStringLiteral())
+                          << (leg.isAlternate() ? ", alternate" : QStringLiteral())
+                          << (leg.isAnyProcedure() ? ", procedure" : QStringLiteral())
                           << ", " << proc::procedureLegTypeStr(leg.getProcedureLegType())
                           << ", verticalAngle " << leg.getProcedureLeg().verticalAngle
                           << ", forceFinal " << leg.getProcedureLeg().altRestriction.forceFinal

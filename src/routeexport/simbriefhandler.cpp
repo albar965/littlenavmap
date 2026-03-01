@@ -58,7 +58,7 @@ void SimBriefHandler::sendRouteToSimBrief()
 
   // Ask user ================================
   const static atools::gui::DialogButtonList BUTTONS({
-    atools::gui::DialogButton(QString(), QMessageBox::Cancel),
+    atools::gui::DialogButton(QStringLiteral(), QMessageBox::Cancel),
     atools::gui::DialogButton(tr("&Export"), QMessageBox::Yes),
     atools::gui::DialogButton(tr("&Help"), QMessageBox::Help),
     atools::gui::DialogButton(tr("&Copy web address to clipboard"), QMessageBox::YesToAll)

@@ -112,7 +112,7 @@ void MapPainterUser::paintUserpoints(const QList<MapUserpoint>& userpoints, bool
           int maxTextLength = context->mapLayerText->getMaxTextLengthUserpoint();
           QStringList texts;
           texts.append(atools::elideTextShort(userpoint.ident, maxTextLength));
-          texts.append(userpoint.name != userpoint.ident ? atools::elideTextShort(userpoint.name, maxTextLength) : QString());
+          texts.append(userpoint.name != userpoint.ident ? atools::elideTextShort(userpoint.name, maxTextLength) : QStringLiteral());
 
           textatt::TextAttributes textatts = textatt::NONE;
           float xpos = x, ypos = y;

@@ -72,7 +72,7 @@ public:
   /*
    * @param parent can be null if only checkIncompatibleDatabases is to be called
    */
-  explicit DatabaseManager(QWidget* parent, bool verbose);
+  explicit DatabaseManager(QWidget *parent, bool verbose);
 
   /* Also closes database if not already done */
   virtual ~DatabaseManager() override;

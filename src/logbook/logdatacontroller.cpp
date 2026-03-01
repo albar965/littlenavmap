@@ -349,16 +349,16 @@ void LogdataController::createTakeoffLanding(const atools::fs::sc::SimConnectUse
 
 bool LogdataController::doesFlightMatchRecord(const atools::sql::SqlRecord& record, const atools::fs::sc::SimConnectUserAircraft& aircraft)
 {
-  return record.valueStr("aircraft_type", QString()) == aircraft.getAirplaneModel() &&
-         record.valueStr("simulator", QString()) == NavApp::getCurrentSimulatorShortName();
+  return record.valueStr("aircraft_type", QStringLiteral()) == aircraft.getAirplaneModel() &&
+         record.valueStr("simulator", QStringLiteral()) == NavApp::getCurrentSimulatorShortName();
 }
 
 bool LogdataController::recordIsTakeoff(const atools::sql::SqlRecord& record)
 {
   // Requires not empty record, departure set and destination empty
   return !record.isEmpty() &&
-         !record.valueStr("departure_ident", QString()).isEmpty() &&
-         record.valueStr("destination_ident", QString()).isEmpty();
+         !record.valueStr("departure_ident", QStringLiteral()).isEmpty() &&
+         record.valueStr("destination_ident", QStringLiteral()).isEmpty();
 }
 
 void LogdataController::recordTakeoff(const atools::fs::sc::SimConnectUserAircraft& aircraft, const map::MapAirport& airport,
@@ -420,7 +420,7 @@ void LogdataController::recordTakeoff(const atools::fs::sc::SimConnectUserAircra
   aircraftAtTakeoff = new atools::fs::sc::SimConnectUserAircraft(aircraft);
 
   NavApp::setStatusMessage(tr("Logbook entry for %1 at %2%3 added.").arg(tr("departure")).arg(ident).
-                           arg(runwayEnd.isValid() ? tr(" runway %1").arg(runwayEnd.name) : QString()), true /* addToLog */);
+                           arg(runwayEnd.isValid() ? tr(" runway %1").arg(runwayEnd.name) : QStringLiteral()), true /* addToLog */);
 }
 
 void LogdataController::recordLanding(atools::sql::SqlRecord& record, const atools::fs::sc::SimConnectUserAircraft& aircraft,
@@ -483,7 +483,7 @@ void LogdataController::recordLanding(atools::sql::SqlRecord& record, const atoo
   NavApp::setStatusMessage(tr("Logbook entry for %1 at %2%3 updated.").
                            arg(tr("arrival")).
                            arg(ident).
-                           arg(runwayEnd.isValid() ? tr(" runway %1").arg(runwayEnd.name) : QString()), true /* addToLog */);
+                           arg(runwayEnd.isValid() ? tr(" runway %1").arg(runwayEnd.name) : QStringLiteral()), true /* addToLog */);
 
   logEntryId = -1;
   saveLogEntryId();
@@ -1051,9 +1051,9 @@ void LogdataController::exportCsv()
     int numSelected = NavApp::getLogdataSearch()->getSelectedRowCount();
     choiceDialog.addCheckBox(APPEND, tr("&Append to an already present file"),
                              tr("File header will be ignored if this is enabled."), false);
-    choiceDialog.addCheckBox(SELECTED, tr("Export &selected entries only"), QString(), true,
+    choiceDialog.addCheckBox(SELECTED, tr("Export &selected entries only"), QStringLiteral(), true,
                              numSelected == 0 /* disabled */);
-    choiceDialog.addCheckBox(HEADER, tr("Add a &header to the first line"), QString(), false);
+    choiceDialog.addCheckBox(HEADER, tr("Add a &header to the first line"), QStringLiteral(), false);
     choiceDialog.addLine();
     choiceDialog.addCheckBox(EXPORTPLAN, tr("&Flight plan in LNMPLN format"), attachmentToolTip, false);
     choiceDialog.addCheckBox(EXPORTPERF, tr("&Aircraft performance"), attachmentToolTip, false);
@@ -1074,7 +1074,7 @@ void LogdataController::exportCsv()
       QString file = dialog->saveFileDialog(
         tr("Export Logbook Entry CSV File"),
         tr("CSV Files %1;;All Files (*)").arg(lnm::FILE_PATTERN_USERDATA_CSV), ".csv", "Logdata/Csv",
-        QString(), QString(), choiceDialog.isButtonChecked(APPEND));
+        QStringLiteral(), QStringLiteral(), choiceDialog.isButtonChecked(APPEND));
 
       if(!file.isEmpty())
       {

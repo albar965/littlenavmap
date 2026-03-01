@@ -127,7 +127,7 @@ StyleHandler::StyleHandler(QMainWindow *mainWindowParam)
       else if(styleName == STYLE_WINDOWSVISTA || styleName == STYLE_WINDOWS)
         styleDescriptions.append(StyleDescription(styleName, styleName, vistaStyleSheet, false /* dark */));
       else
-        styleDescriptions.append(StyleDescription(styleName, styleName, QString(), false /* dark */));
+        styleDescriptions.append(StyleDescription(styleName, styleName, QStringLiteral(), false /* dark */));
 
       delete style;
     }

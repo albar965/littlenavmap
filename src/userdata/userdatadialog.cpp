@@ -302,7 +302,7 @@ void UserdataDialog::recordToDialog()
 
   if(!record->isNull("lonx") && !record->isNull("laty"))
     ui->lineEditUserdataLatLon->setText(Unit::coords(atools::geo::Pos(record->valueFloat("lonx"), record->valueFloat("laty"))));
-  coordsEdited(QString());
+  coordsEdited(QStringLiteral());
   updateWidgets();
 }
 

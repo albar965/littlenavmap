@@ -89,14 +89,14 @@ QString AbstractInfoBuilder::getCoordinatesString(const atools::sql::SqlRecord *
 {
   if(rec != nullptr && rec->contains("lonx") && rec->contains("laty"))
     return getCoordinatesString(Pos(rec->valueFloat("lonx"), rec->valueFloat("laty"), rec->valueFloat("altitude", 0.f)));
-  return QString();
+  return QStringLiteral();
 }
 
 QString AbstractInfoBuilder::getCoordinatesString(const Pos& pos) const
 {
   if(pos.isValid())
     return QString::number(pos.getLatY()) + " " + QString::number(pos.getLonX());
-  return QString();
+  return QStringLiteral();
 }
 
 QMap<QString, float> AbstractInfoBuilder::getCoordinates(const atools::sql::SqlRecord *rec) const
@@ -121,5 +121,5 @@ QString AbstractInfoBuilder::getLocalizedCoordinatesString(const Pos& pos) const
 {
   if(pos.isValid())
     return Unit::coords(pos);
-  return QString();
+  return QStringLiteral();
 }

@@ -305,7 +305,7 @@ void WindReporter::windDownloadFinished()
 
     QString validText = from.isValid() && to.isValid() ? tr(" Forecast from %1 to %2 UTC.").
                         arg(QLocale().toString(from, QLocale::ShortFormat)).
-                        arg(QLocale().toString(to, QLocale::ShortFormat)) : QString();
+                        arg(QLocale().toString(to, QLocale::ShortFormat)) : QStringLiteral();
 
     QString msg;
     switch(currentSource)
@@ -638,7 +638,7 @@ QString WindReporter::getLevelText() const
     case wind::SELECTED:
       return Unit::altFeet(sliderActionAltitude->getAltitudeFt());
   }
-  return QString();
+  return QStringLiteral();
 }
 
 QString WindReporter::getSourceText() const
@@ -657,7 +657,7 @@ QString WindReporter::getSourceText() const
     case wind::WIND_SOURCE_SIMULATOR:
       return tr("Simulator");
   }
-  return QString();
+  return QStringLiteral();
 }
 
 wind::WindSource WindReporter::getSource() const

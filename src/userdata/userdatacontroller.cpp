@@ -677,7 +677,7 @@ void UserdataController::importCsv()
   {
     QStringList files = dialog->openFileDialogMulti(tr("Open Userpoint CSV File(s)"),
                                                     tr("CSV Files %1;;All Files (*)").arg(lnm::FILE_PATTERN_USERDATA_CSV), "Userdata/Csv");
-    files.removeAll(QString());
+    files.removeAll(QStringLiteral());
 
     if(!files.isEmpty())
     {
@@ -791,7 +791,7 @@ void UserdataController::exportCsv()
       QString file = dialog->saveFileDialog(
         tr("Export Userpoint CSV File"),
         tr("CSV Files %1;;All Files (*)").arg(lnm::FILE_PATTERN_USERDATA_CSV),
-        ".csv", "Userdata/Csv", QString(), QString(), append /* dont confirm overwrite */);
+        ".csv", "Userdata/Csv", QStringLiteral(), QStringLiteral(), append /* dont confirm overwrite */);
 
       if(!file.isEmpty())
       {
@@ -898,7 +898,7 @@ void UserdataController::exportBglXml()
       QString file = dialog->saveFileDialog(
         tr("Export XML File for FSX/P3D BGL Compiler"),
         tr("XML Files %1;;All Files (*)").arg(lnm::FILE_PATTERN_BGL_XML),
-        ".xml", "Userdata/BglXml", QString(), QString(), false);
+        ".xml", "Userdata/BglXml", QStringLiteral(), QStringLiteral(), false);
 
       if(!file.isEmpty())
       {
@@ -977,11 +977,11 @@ bool UserdataController::exportSelectedQuestion(bool& selected, bool& append, bo
     // Add a hidden dummy which still allows to save the settings to the same key/variable
     choiceDialog.addCheckBoxHidden(APPEND);
 
-  choiceDialog.addCheckBox(SELECTED, tr("Export &selected entries only"), QString(), true,
+  choiceDialog.addCheckBox(SELECTED, tr("Export &selected entries only"), QStringLiteral(), true,
                            numSelected == 0 /* disabled */);
 
   if(headerAllowed)
-    choiceDialog.addCheckBox(HEADER, tr("Add a &header to the first line"), QString(), false);
+    choiceDialog.addCheckBox(HEADER, tr("Add a &header to the first line"), QStringLiteral(), false);
   else
     choiceDialog.addCheckBoxHidden(HEADER);
 
@@ -1029,7 +1029,7 @@ void UserdataController::cleanupUserdata()
   choiceDialog.setHelpLanguageOnline(lnm::helpLanguageOnline());
 
   choiceDialog.addCheckBox(EMPTY, tr("Delete userpoints having no information\n"
-                                     "except coordinates and type."), QString(), true);
+                                     "except coordinates and type."), QStringLiteral(), true);
   choiceDialog.addLine();
 
   choiceDialog.addLabel(tr("Remove duplicates using the additional fields below as criteria.\n"

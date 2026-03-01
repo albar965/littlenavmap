@@ -130,7 +130,7 @@ void DatabaseDialog::simComboChanged(int index)
 void DatabaseDialog::selectBasePathClicked()
 {
   QString path = atools::gui::Dialog(this).openDirectoryDialog(
-    tr("Select Flight Simulator Basepath"), QString() /* lnm::DATABASE_BASEPATH */,
+    tr("Select Flight Simulator Basepath"), QStringLiteral() /* lnm::DATABASE_BASEPATH */,
     ui->lineEditDatabaseBasePath->text());
 
   if(!path.isEmpty())
@@ -145,7 +145,7 @@ void DatabaseDialog::selectSceneryConfigClicked()
   QString path = atools::gui::Dialog(this).openFileDialog(
     tr("Open Scenery Configuration File"),
     tr("Scenery Configuration Files %1;;All Files (*)").arg(lnm::FILE_PATTERN_SCENERYCONFIG),
-    QString() /* lnm::DATABASE_SCENERYCONFIG */, ui->lineEditDatabaseSceneryFile->text());
+    QStringLiteral() /* lnm::DATABASE_SCENERYCONFIG */, ui->lineEditDatabaseSceneryFile->text());
 
   if(!path.isEmpty())
   {

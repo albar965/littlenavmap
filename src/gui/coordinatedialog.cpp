@@ -53,7 +53,7 @@ CoordinateDialog::CoordinateDialog(QWidget *parent, const atools::geo::Pos& pos)
   else
     ui->labelMapCoordinateLatLon->setText(tr("&Latitude and Longitude:"));
 
-  coordsEdited(QString());
+  coordsEdited(QStringLiteral());
 
   connect(ui->lineEditMapCoordinateLatLon, &QLineEdit::textChanged, this, &CoordinateDialog::coordsEdited);
   connect(ui->buttonBoxMapCoordinate, &QDialogButtonBox::clicked, this, &CoordinateDialog::buttonBoxClicked);

@@ -50,7 +50,7 @@ void initTranslateableTexts()
       {proc::FACF, QObject::tr("FACF")},
       {proc::MAP, QObject::tr("MAP")},
       {proc::FEP, QObject::tr("FEP")},
-      {proc::NONE, QString()}
+      {proc::NONE, QStringLiteral()}
     });
 
   specialTypeLongStr = QHash<LegSpecialType, QString>(
@@ -60,7 +60,7 @@ void initTranslateableTexts()
       {proc::FACF, QObject::tr("Final Approach Course Fix")},
       {proc::MAP, QObject::tr("Missed Approach Point")},
       {proc::FEP, QObject::tr("Final Endpoint Fix")},
-      {proc::NONE, QString()}
+      {proc::NONE, QStringLiteral()}
     });
 
   approachFixTypeToStr = QHash<QString, QString>(
@@ -144,41 +144,41 @@ void initTranslateableTexts()
 
   approachLegRemarkStr = QHash<ProcedureLegType, QString>(
     {
-      {ARC_TO_FIX, QString()},
-      {COURSE_TO_ALTITUDE, QString()},
-      {COURSE_TO_DME_DISTANCE, QString()},
-      {COURSE_TO_FIX, QString()},
-      {COURSE_TO_INTERCEPT, QString()},
-      {COURSE_TO_RADIAL_TERMINATION, QString()},
-      {DIRECT_TO_FIX, QString()},
-      {FIX_TO_ALTITUDE, QString()},
-      {TRACK_FROM_FIX_FROM_DISTANCE, QString()},
-      {TRACK_FROM_FIX_TO_DME_DISTANCE, QString()},
-      {FROM_FIX_TO_MANUAL_TERMINATION, QString()},
+      {ARC_TO_FIX, QStringLiteral()},
+      {COURSE_TO_ALTITUDE, QStringLiteral()},
+      {COURSE_TO_DME_DISTANCE, QStringLiteral()},
+      {COURSE_TO_FIX, QStringLiteral()},
+      {COURSE_TO_INTERCEPT, QStringLiteral()},
+      {COURSE_TO_RADIAL_TERMINATION, QStringLiteral()},
+      {DIRECT_TO_FIX, QStringLiteral()},
+      {FIX_TO_ALTITUDE, QStringLiteral()},
+      {TRACK_FROM_FIX_FROM_DISTANCE, QStringLiteral()},
+      {TRACK_FROM_FIX_TO_DME_DISTANCE, QStringLiteral()},
+      {FROM_FIX_TO_MANUAL_TERMINATION, QStringLiteral()},
       {HOLD_TO_ALTITUDE, QObject::tr("Mandatory hold")},
       {HOLD_TO_FIX, QObject::tr("Single circuit")},
       {HOLD_TO_MANUAL_TERMINATION, QObject::tr("Mandatory hold")},
-      {INITIAL_FIX, QString()},
-      {PROCEDURE_TURN, QString()},
-      {CONSTANT_RADIUS_ARC, QString()},
-      {TRACK_TO_FIX, QString()},
-      {HEADING_TO_ALTITUDE_TERMINATION, QString()},
-      {HEADING_TO_DME_DISTANCE_TERMINATION, QString()},
-      {HEADING_TO_INTERCEPT, QString()},
-      {HEADING_TO_MANUAL_TERMINATION, QString()},
-      {HEADING_TO_RADIAL_TERMINATION, QString()},
+      {INITIAL_FIX, QStringLiteral()},
+      {PROCEDURE_TURN, QStringLiteral()},
+      {CONSTANT_RADIUS_ARC, QStringLiteral()},
+      {TRACK_TO_FIX, QStringLiteral()},
+      {HEADING_TO_ALTITUDE_TERMINATION, QStringLiteral()},
+      {HEADING_TO_DME_DISTANCE_TERMINATION, QStringLiteral()},
+      {HEADING_TO_INTERCEPT, QStringLiteral()},
+      {HEADING_TO_MANUAL_TERMINATION, QStringLiteral()},
+      {HEADING_TO_RADIAL_TERMINATION, QStringLiteral()},
 
-      {DIRECT_TO_RUNWAY, QString()},
-      {CIRCLE_TO_LAND, QString()},
-      {STRAIGHT_IN, QString()},
-      {START_OF_PROCEDURE, QString()},
-      {VECTORS, QString()},
+      {DIRECT_TO_RUNWAY, QStringLiteral()},
+      {CIRCLE_TO_LAND, QStringLiteral()},
+      {STRAIGHT_IN, QStringLiteral()},
+      {START_OF_PROCEDURE, QStringLiteral()},
+      {VECTORS, QStringLiteral()},
 
-      {CUSTOM_APP_START, QString()},
-      {CUSTOM_APP_RUNWAY, QString()},
+      {CUSTOM_APP_START, QStringLiteral()},
+      {CUSTOM_APP_RUNWAY, QStringLiteral()},
 
-      {CUSTOM_DEP_END, QString()},
-      {CUSTOM_DEP_RUNWAY, QString()},
+      {CUSTOM_DEP_END, QStringLiteral()},
+      {CUSTOM_DEP_RUNWAY, QStringLiteral()},
     });
 }
 
@@ -350,7 +350,7 @@ QString vertRestrictionText(const MapProcedureLeg& procedureLeg)
   if(procedureLeg.isVerticalAngleValid())
     return QObject::tr("%L1°").arg(procedureLeg.verticalAngle, 0, 'g', 3);
 
-  return QString();
+  return QStringLiteral();
 }
 
 QString altRestrictionText(const MapAltRestriction& restriction)
@@ -366,7 +366,7 @@ QString altRestrictionText(const MapAltRestriction& restriction)
         return QObject::tr("ILS GS %1").arg(Unit::altFeet(restriction.alt1));
 
       case proc::MapAltRestriction::NO_ALT_RESTR:
-        return QString();
+        return QStringLiteral();
 
       case proc::MapAltRestriction::AT:
         return QObject::tr("At %1").arg(Unit::altFeet(restriction.alt1));
@@ -383,7 +383,7 @@ QString altRestrictionText(const MapAltRestriction& restriction)
                arg(Unit::altFeet(restriction.alt1));
     }
   }
-  return QString();
+  return QStringLiteral();
 }
 
 QString altRestrictionTextNarrow(const proc::MapAltRestriction& altRestriction)
@@ -463,7 +463,7 @@ QString speedRestrictionTextShort(const proc::MapSpeedRestriction& speedRestrict
     case proc::MapSpeedRestriction::MAX:
       return QObject::tr("B ") + Unit::speedKts(speedRestriction.speed, false);
   }
-  return QString();
+  return QStringLiteral();
 }
 
 QString speedRestrictionText(const proc::MapSpeedRestriction& speedRestriction)
@@ -482,7 +482,7 @@ QString speedRestrictionText(const proc::MapSpeedRestriction& speedRestriction)
     case proc::MapSpeedRestriction::MAX:
       return QObject::tr("Below ") + Unit::speedKts(speedRestriction.speed);
   }
-  return QString();
+  return QStringLiteral();
 }
 
 QString speedRestrictionTextNarrow(const proc::MapSpeedRestriction& speedRestriction)
@@ -503,7 +503,7 @@ QString speedRestrictionTextNarrow(const proc::MapSpeedRestriction& speedRestric
       return QObject::tr("B", "Procedure speed restriction - avoid translation") +
              Unit::speedKts(speedRestriction.speed, false) + Unit::getUnitSpeedStr();
   }
-  return QString();
+  return QStringLiteral();
 }
 
 QDebug operator<<(QDebug out, const proc::MapProcedureRef& ref)
@@ -810,7 +810,7 @@ QString procedureLegCourse(const MapProcedureLeg& leg)
   if(!leg.noCalcCourseDisplay() && leg.calculatedDistance > 0.f && leg.calculatedTrueCourse < map::INVALID_COURSE_VALUE)
     return QLocale().toString(leg.calculatedMagCourse(), 'f', 0);
   else
-    return QString();
+    return QStringLiteral();
 }
 
 QString procedureLegDistance(const MapProcedureLeg& leg)
@@ -918,7 +918,7 @@ QStringList procedureLegRemark(const MapProcedureLeg& leg)
                    arg(leg.recFixIdent).arg(leg.recFixRegion).arg(leg.recFixType));
 
   remarks.removeDuplicates();
-  remarks.removeAll(QString());
+  remarks.removeAll(QStringLiteral());
 
   return remarks;
 }
@@ -988,11 +988,11 @@ QString procedureLegsText(const proc::MapProcedureLegs& legs, proc::MapProcedure
         // Approach procedure or transition =================================================
         procText = QObject::tr("%1%2%3 %4").
                    // Add missed text if leg ist missed
-                   arg(narrow ? QString() :
+                   arg(narrow ? QStringLiteral() :
                        (procType.testFlag(proc::PROCEDURE_MISSED) && !missedAsApproach ?
                         QObject::tr("Missed ") : QObject::tr("Approach "))).
                    arg(legs.displayType()).
-                   arg(legs.suffix.isEmpty() ? QString() : (QObject::tr("-") + legs.suffix)).
+                   arg(legs.suffix.isEmpty() ? QStringLiteral() : (QObject::tr("-") + legs.suffix)).
                    arg(legs.procedureFixIdent);
 
         // Add transition text if type from related leg is a transitionn
@@ -1411,7 +1411,7 @@ QString aircraftCategoryText(const QString& cat)
 {
   // Aircraft category
   if(cat.isEmpty())
-    return QString();
+    return QStringLiteral();
   else if(cat == "A")
     return QObject::tr("All Aircraft");
   else if(cat == "C")
@@ -1436,7 +1436,7 @@ QString aircraftCategoryText(const QString& cat)
     return QObject::tr("Non-Jet, Cruise below 190 kts");
   else if(cat == "R")
     // return QObject::tr("Aircraft as defined in a Notes Continuation Record");
-    return QString();
+    return QStringLiteral();
   else if(cat == "S")
     return QObject::tr("Single Engine");
   else if(cat == "T")
@@ -1446,7 +1446,7 @@ QString aircraftCategoryText(const QString& cat)
   return QStringLiteral("[Aircraft %1]").arg(cat);
 
 #else
-  return QString();
+  return QStringLiteral();
 
 #endif
 }

@@ -45,7 +45,7 @@ using atools::track::Track;
 TrackManager::TrackManager(SqlDatabase *trackDatabase, SqlDatabase *navDatabase)
   : atools::sql::DataManagerBase(trackDatabase, "track", "track_id",
                                  {":/atools/resources/sql/fs/track/create_track_schema.sql"},
-                                 QString(), /* undoSqlScript */
+                                 QStringLiteral(), /* undoSqlScript */
                                  ":/atools/resources/sql/fs/track/drop_track_schema.sql"),
   dbNav(navDatabase)
 {

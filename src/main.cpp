@@ -278,7 +278,7 @@ int main(int argc, char *argv[])
       }
 
       // Load font from options settings ========================================
-      QString fontStr = settings.valueStr(lnm::OPTIONS_DIALOG_FONT, QString());
+      QString fontStr = settings.valueStr(lnm::OPTIONS_DIALOG_FONT, QStringLiteral());
       QFont font;
       if(!fontStr.isEmpty())
       {

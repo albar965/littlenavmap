@@ -209,7 +209,7 @@ void SqlModel::filterBy(bool exclude, QString whereCol, QVariant whereValueDisp,
   else if(QLineEdit *edit = columns->getColumn(whereCol)->getLineEditWidget())
   {
     // Set the search text into the corresponding line edit
-    edit->setText((exclude ? "-" : QString()) % whereValueDisp.toString());
+    edit->setText((exclude ? "-" : QStringLiteral()) % whereValueDisp.toString());
   }
   else if(QComboBox *combo = columns->getColumn(whereCol)->getComboBoxWidget())
   {
@@ -225,7 +225,7 @@ void SqlModel::filterBy(bool exclude, QString whereCol, QVariant whereValueDisp,
         dispStr.chop(1);
 
       // Set the search text into the corresponding line edit
-      combo->setCurrentText((exclude ? "-" : QString()) % dispStr);
+      combo->setCurrentText((exclude ? "-" : QStringLiteral()) % dispStr);
     }
   }
   else if(QCheckBox *checkBox = columns->getColumn(whereCol)->getCheckBoxWidget())
@@ -479,7 +479,7 @@ QString SqlModel::sortOrderToSql(Qt::SortOrder order)
     case Qt::DescendingOrder:
       return "desc";
   }
-  return QString();
+  return QStringLiteral();
 }
 
 /* Do own sorting in the SQL model */
@@ -676,7 +676,7 @@ QString SqlModel::buildWhere(const atools::sql::SqlRecord& tableCols, QList<cons
     }
   }
 
-  queryWhereBuilder.removeAll(QString());
+  queryWhereBuilder.removeAll(QStringLiteral());
   queryWhereBuilder.removeDuplicates();
 
   QString queryWhere;

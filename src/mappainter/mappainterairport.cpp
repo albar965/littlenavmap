@@ -1175,7 +1175,7 @@ QString MapPainterAirport::parkingCompressDigits(const QString& parkingName)
       }
     }
   }
-  strings.removeAll(QString());
+  strings.removeAll(QStringLiteral());
   return strings.join(' ');
 }
 

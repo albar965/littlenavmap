@@ -357,7 +357,7 @@ void AircraftPerfDialog::fromDialogToPerf(atools::fs::perf::AircraftPerf *aircra
 
   if(ui->comboBoxSimulator->currentIndex() == 0)
     // First index is always "all"
-    aircraftPerf->setSimulator(QString());
+    aircraftPerf->setSimulator(QStringLiteral());
   else
     aircraftPerf->setSimulator(ui->comboBoxSimulator->currentText());
 

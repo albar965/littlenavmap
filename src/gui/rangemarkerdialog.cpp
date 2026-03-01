@@ -153,7 +153,7 @@ RangeMarkerDialog::RangeMarkerDialog(QWidget *parent, const atools::geo::Pos& po
   restoreState();
 
   ui->lineEditRangeMarkerLatLon->setText(Unit::coords(*position));
-  coordinatesEdited(QString());
+  coordinatesEdited(QStringLiteral());
 }
 
 RangeMarkerDialog::~RangeMarkerDialog()
@@ -182,7 +182,7 @@ void RangeMarkerDialog::buttonBoxClicked(QAbstractButton *button)
   {
     // Reset all back to default
     ui->lineEditRangeMarkerLatLon->setText(Unit::coords(*position));
-    coordinatesEdited(QString());
+    coordinatesEdited(QStringLiteral());
     color = Qt::red;
     updateButtonColor();
     ui->lineEditRangeMarkerRadii->setText(rangeFloatToString(MAP_RANGERINGS_DEFAULT));

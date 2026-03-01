@@ -657,7 +657,7 @@ void RouteStringDialog::textChangedInternal(bool forceUpdate)
                                           true /* keepSelection */);
     }
     else
-      atools::gui::util::updateTextEdit(ui->textEditRouteStringErrors, QString(), false /* scrollToTop */, true /* keepSelection */);
+      atools::gui::util::updateTextEdit(ui->textEditRouteStringErrors, QStringLiteral(), false /* scrollToTop */, true /* keepSelection */);
   }
 
   // Avoid update issues with macOS and mac style - force repaint

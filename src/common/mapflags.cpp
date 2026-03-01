@@ -382,7 +382,7 @@ QString mapWeatherSourceString(MapWeatherSource source)
     case map::WEATHER_SOURCE_IVAO:
       return QObject::tr("IVAO");
   }
-  return QString();
+  return QStringLiteral();
 }
 
 QString mapWeatherSourceStringShort(MapWeatherSource source)
@@ -407,7 +407,7 @@ QString mapWeatherSourceStringShort(MapWeatherSource source)
     case map::WEATHER_SOURCE_IVAO:
       return QObject::tr("IVAO");
   }
-  return QString();
+  return QStringLiteral();
 }
 
 } // namespace map

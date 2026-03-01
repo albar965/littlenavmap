@@ -75,7 +75,7 @@ void QueryBuilder::resetWidgets()
       {
         if(cb->isEditable())
         {
-          cb->setCurrentText(QString());
+          cb->setCurrentText(QStringLiteral());
           cb->setCurrentIndex(-1);
         }
         else

@@ -368,10 +368,10 @@ void WeatherReporter::initActiveSkyPaths()
             asFsSnapshotPath, asFsFlightplanSnapshotPath;
 
     // Find paths for old sim independent files ===================================================
-    findActiveSkyFiles(asnSnapshotPath, asnFlightplanSnapshotPath, "ASN", QString());
+    findActiveSkyFiles(asnSnapshotPath, asnFlightplanSnapshotPath, "ASN", QStringLiteral());
     qInfo() << Q_FUNC_INFO << "ASN snapshot" << asnSnapshotPath << "flight plan weather" << asnFlightplanSnapshotPath;
 
-    findActiveSkyFiles(as16SnapshotPath, as16FlightplanSnapshotPath, "AS16_", QString());
+    findActiveSkyFiles(as16SnapshotPath, as16FlightplanSnapshotPath, "AS16_", QStringLiteral());
     qInfo() << Q_FUNC_INFO << "AS16 snapshot" << as16SnapshotPath << "flight plan weather" << as16FlightplanSnapshotPath;
 
     // Find paths for sim specific files ===================================================

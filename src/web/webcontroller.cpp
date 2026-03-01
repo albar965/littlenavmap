@@ -43,7 +43,7 @@ using namespace stefanfrings;
 
 struct Host
 {
-  Host(QHostAddress addrParam, QString nameParam = QString())
+  Host(QHostAddress addrParam, QString nameParam = QStringLiteral())
     : addr(addrParam), name(nameParam)
   {
   }
@@ -380,5 +380,5 @@ QString WebController::hostName(const QHostAddress& hostAddr)
     return it->name;
   }
 
-  return QString();
+  return QStringLiteral();
 }

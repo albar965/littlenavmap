@@ -37,14 +37,14 @@
 // logbook/logdatacontroller.cpp:showQuestionMsgBox(lnm::ACTIONS_SHOW_LOGBOOK_CONVERSION
 // online/onlinedatacontroller.cpp:showQuestionMsgBox(lnm::ACTIONS_SHOW_SSL_WARNING_ONLINE
 // db/databasemanager.cpp:showQuestionMsgBox(lnm::ACTIONS_SHOW_NAVDATA_WARNING
-// db/databasemanager.cpp:showQuestionMsgBox(manualCheck ? QString() : lnm::ACTIONS_SHOW_CORRECT_MSFS_HAS_NAVIGRAPH
-// db/databasemanager.cpp:showQuestionMsgBox(manualCheck ? QString() : lnm::ACTIONS_SHOW_CORRECT_MSFS_NO_NAVIGRAPH
-// db/databasemanager.cpp:showQuestionMsgBox(manualCheck ? QString() : lnm::ACTIONS_SHOW_CORRECT_MSFS_NO_NAVIGRAPH
-// db/databasemanager.cpp:showQuestionMsgBox(manualCheck ? QString() : lnm::ACTIONS_SHOW_CORRECT_XP_CYCLE_NAV_EQUAL
-// db/databasemanager.cpp:showQuestionMsgBox(manualCheck ? QString() : lnm::ACTIONS_SHOW_CORRECT_XP_CYCLE_NAV_SMALLER
-// db/databasemanager.cpp:showQuestionMsgBox(manualCheck ? QString() : lnm::ACTIONS_SHOW_CORRECT_FSX_P3D_OUTDATED
-// db/databasemanager.cpp:showQuestionMsgBox(manualCheck ? QString() : lnm::ACTIONS_SHOW_CORRECT_FSX_P3D_UPDATED
-// db/databasemanager.cpp:showQuestionMsgBox(manualCheck ? QString() : lnm::ACTIONS_SHOW_DATABASE_MSFS_NAVIGRAPH_ALL
+// db/databasemanager.cpp:showQuestionMsgBox(manualCheck ? QStringLiteral() : lnm::ACTIONS_SHOW_CORRECT_MSFS_HAS_NAVIGRAPH
+// db/databasemanager.cpp:showQuestionMsgBox(manualCheck ? QStringLiteral() : lnm::ACTIONS_SHOW_CORRECT_MSFS_NO_NAVIGRAPH
+// db/databasemanager.cpp:showQuestionMsgBox(manualCheck ? QStringLiteral() : lnm::ACTIONS_SHOW_CORRECT_MSFS_NO_NAVIGRAPH
+// db/databasemanager.cpp:showQuestionMsgBox(manualCheck ? QStringLiteral() : lnm::ACTIONS_SHOW_CORRECT_XP_CYCLE_NAV_EQUAL
+// db/databasemanager.cpp:showQuestionMsgBox(manualCheck ? QStringLiteral() : lnm::ACTIONS_SHOW_CORRECT_XP_CYCLE_NAV_SMALLER
+// db/databasemanager.cpp:showQuestionMsgBox(manualCheck ? QStringLiteral() : lnm::ACTIONS_SHOW_CORRECT_FSX_P3D_OUTDATED
+// db/databasemanager.cpp:showQuestionMsgBox(manualCheck ? QStringLiteral() : lnm::ACTIONS_SHOW_CORRECT_FSX_P3D_UPDATED
+// db/databasemanager.cpp:showQuestionMsgBox(manualCheck ? QStringLiteral() : lnm::ACTIONS_SHOW_DATABASE_MSFS_NAVIGRAPH_ALL
 // db/databasemanager.cpp:showInfoMsgBox(lnm::ACTIONS_SHOW_DATABASE_SIMCONNECT
 // db/databasemanager.cpp:showInfoMsgBox(lnm::ACTIONS_SHOW_DATABASE_BACKGROUND_HINT
 // db/databasemanager.cpp:showQuestionMsgBox(lnm::ACTIONS_SHOW_DATABASE_OLD
