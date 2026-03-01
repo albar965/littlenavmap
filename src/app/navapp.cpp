@@ -1036,14 +1036,14 @@ MainWindow *NavApp::getMainWindow()
   return mainWindow;
 }
 
-void NavApp::addDialogToDockHandler(QDialog *dialog)
+void NavApp::registerDialogInDockHandler(QDialog *dialog)
 {
-  mainWindow->addDialogToDockHandler(dialog);
+  mainWindow->registerDialogInDockHandler(dialog);
 }
 
-void NavApp::removeDialogFromDockHandler(QDialog *dialog)
+void NavApp::unregisterDialogInDockHandler(QDialog *dialog)
 {
-  mainWindow->removeDialogFromDockHandler(dialog);
+  mainWindow->unregisterDialogInDockHandler(dialog);
 }
 
 QList<QAction *> NavApp::getMainWindowActions()

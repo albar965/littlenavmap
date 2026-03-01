@@ -94,6 +94,8 @@ public:
 
   void optionsChanged();
 
+  void fontChanged(const QFont& font);
+
   /* Airway or radionav */
   rd::RoutingType getRoutingType() const;
 

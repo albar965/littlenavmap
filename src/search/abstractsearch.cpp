@@ -18,15 +18,29 @@
 #include "search/abstractsearch.h"
 
 #include "app/navapp.h"
+#include "atools.h"
 #include "gui/mainwindow.h"
+#include "gui/widgetzoomhandler.h"
+#include "options/optiondata.h"
 
-AbstractSearch::AbstractSearch(MainWindow *parent, si::TabSearchId tabWidgetIndex)
+AbstractSearch::AbstractSearch(MainWindow *parent, QWidget *resultWidgetParam, si::TabSearchId tabWidgetIndex)
   : QObject(parent), tabIndex(tabWidgetIndex), mainWindow(parent), parentWidget(parent)
 {
   ui = NavApp::getMainUi();
+  zoomHandler = new atools::gui::WidgetZoomHandler(resultWidgetParam);
+
+  // Load text size from options
+  zoomHandler->zoomPercent(OptionData::instance().getGuiSearchTableTextSize());
+
+  connect(atools::gui::Application::applicationInstance(), &atools::gui::Application::fontChanged, this, &AbstractSearch::fontChanged);
 }
 
 AbstractSearch::~AbstractSearch()
 {
+  ATOOLS_DELETE_LOG(zoomHandler);
+}
 
+void AbstractSearch::fontChanged(const QFont&)
+{
+  zoomHandler->zoomPercent(OptionData::instance().getGuiSearchTableTextSize());
 }

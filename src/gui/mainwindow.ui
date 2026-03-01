@@ -644,6 +644,12 @@
      </property>
      <item>
       <widget class="QTabWidget" name="tabWidgetSearch">
+       <property name="minimumSize">
+        <size>
+         <width>0</width>
+         <height>20</height>
+        </size>
+       </property>
        <property name="tabShape">
         <enum>QTabWidget::Rounded</enum>
        </property>
@@ -1826,6 +1832,12 @@ Not available for all simulators.</string>
            </item>
            <item>
             <widget class="QTableView" name="tableViewAirportSearch">
+             <property name="minimumSize">
+              <size>
+               <width>0</width>
+               <height>20</height>
+              </size>
+             </property>
              <property name="font">
               <font>
                <pointsize>9</pointsize>
@@ -2525,6 +2537,12 @@ Not available for all simulators.</string>
            </item>
            <item>
             <widget class="QTableView" name="tableViewNavSearch">
+             <property name="minimumSize">
+              <size>
+               <width>0</width>
+               <height>20</height>
+              </size>
+             </property>
              <property name="font">
               <font>
                <pointsize>9</pointsize>
@@ -2614,10 +2632,7 @@ Not available for all simulators.</string>
         <attribute name="toolTip">
          <string>Search for SID, STAR and approach procedures of an airport</string>
         </attribute>
-        <layout class="QVBoxLayout" name="verticalLayout_6">
-         <property name="spacing">
-          <number>2</number>
-         </property>
+        <layout class="QGridLayout" name="gridLayout">
          <property name="leftMargin">
           <number>2</number>
          </property>
@@ -2630,7 +2645,7 @@ Not available for all simulators.</string>
          <property name="bottomMargin">
           <number>2</number>
          </property>
-         <item>
+         <item row="0" column="0">
           <layout class="QHBoxLayout" name="horizontalLayout_2">
            <property name="spacing">
             <number>0</number>
@@ -2781,7 +2796,7 @@ Hides all items not beginning with the specified search term.</string>
            </item>
           </layout>
          </item>
-         <item>
+         <item row="1" column="0">
           <widget class="QLabel" name="labelProcedureSearch">
            <property name="text">
             <string/>
@@ -2794,7 +2809,7 @@ Hides all items not beginning with the specified search term.</string>
            </property>
           </widget>
          </item>
-         <item>
+         <item row="2" column="0">
           <widget class="QLabel" name="labelProcedureSearchWarn">
            <property name="text">
             <string/>
@@ -2807,13 +2822,13 @@ Hides all items not beginning with the specified search term.</string>
            </property>
           </widget>
          </item>
-         <item>
+         <item row="3" column="0">
           <widget class="QTreeWidget" name="treeWidgetApproachSearch">
-           <property name="sizePolicy">
-            <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
-             <horstretch>0</horstretch>
-             <verstretch>1</verstretch>
-            </sizepolicy>
+           <property name="minimumSize">
+            <size>
+             <width>0</width>
+             <height>20</height>
+            </size>
            </property>
            <property name="contextMenuPolicy">
             <enum>Qt::CustomContextMenu</enum>
@@ -3175,6 +3190,12 @@ Hides all items not beginning with the specified search term.</string>
          </item>
          <item>
           <widget class="QTableView" name="tableViewUserdata">
+           <property name="minimumSize">
+            <size>
+             <width>0</width>
+             <height>20</height>
+            </size>
+           </property>
            <property name="font">
             <font>
              <pointsize>9</pointsize>
@@ -3706,6 +3727,12 @@ Matches any visited airport.</string>
          </item>
          <item>
           <widget class="QTableView" name="tableViewLogdata">
+           <property name="minimumSize">
+            <size>
+             <width>0</width>
+             <height>20</height>
+            </size>
+           </property>
            <property name="font">
             <font>
              <pointsize>9</pointsize>
@@ -3963,6 +3990,12 @@ Matches any visited airport.</string>
          </item>
          <item>
           <widget class="QTableView" name="tableViewOnlineClientSearch">
+           <property name="minimumSize">
+            <size>
+             <width>0</width>
+             <height>20</height>
+            </size>
+           </property>
            <property name="font">
             <font>
              <pointsize>9</pointsize>
@@ -4218,6 +4251,12 @@ Matches any visited airport.</string>
          </item>
          <item>
           <widget class="QTableView" name="tableViewOnlineCenterSearch">
+           <property name="minimumSize">
+            <size>
+             <width>0</width>
+             <height>20</height>
+            </size>
+           </property>
            <property name="font">
             <font>
              <pointsize>9</pointsize>
@@ -4301,6 +4340,12 @@ Matches any visited airport.</string>
          </property>
          <item>
           <widget class="QTableView" name="tableViewOnlineServerSearch">
+           <property name="minimumSize">
+            <size>
+             <width>0</width>
+             <height>20</height>
+            </size>
+           </property>
            <property name="font">
             <font>
              <pointsize>9</pointsize>
@@ -4589,6 +4634,12 @@ Matches any visited airport.</string>
          </item>
          <item>
           <widget class="QTextBrowser" name="textBrowserViewRoute">
+           <property name="minimumSize">
+            <size>
+             <width>0</width>
+             <height>20</height>
+            </size>
+           </property>
            <property name="placeholderText">
             <string>No flight plan.</string>
            </property>
@@ -4599,6 +4650,12 @@ Matches any visited airport.</string>
          </item>
          <item>
           <widget class="QTableView" name="tableViewRoute">
+           <property name="minimumSize">
+            <size>
+             <width>0</width>
+             <height>20</height>
+            </size>
+           </property>
            <property name="font">
             <font>
              <pointsize>9</pointsize>
@@ -4703,6 +4760,12 @@ Matches any visited airport.</string>
          </item>
          <item>
           <widget class="QPlainTextEdit" name="plainTextEditRouteRemarks">
+           <property name="minimumSize">
+            <size>
+             <width>0</width>
+             <height>20</height>
+            </size>
+           </property>
            <property name="toolTip">
             <string/>
            </property>
@@ -5066,6 +5129,12 @@ Wind speed will be interpolated between this altitude and ground level.</string>
          </item>
          <item>
           <widget class="QTextBrowser" name="textBrowserAircraftPerformanceReport">
+           <property name="minimumSize">
+            <size>
+             <width>0</width>
+             <height>20</height>
+            </size>
+           </property>
            <property name="placeholderText">
             <string>No aircraft performance report available.</string>
            </property>
@@ -5193,6 +5262,12 @@ Wind speed will be interpolated between this altitude and ground level.</string>
          </item>
          <item>
           <widget class="QTextBrowser" name="textBrowserAircraftPerformanceCurrent">
+           <property name="minimumSize">
+            <size>
+             <width>0</width>
+             <height>20</height>
+            </size>
+           </property>
            <property name="placeholderText">
             <string>No report for current performance available.</string>
            </property>
@@ -5350,6 +5425,12 @@ Wind speed will be interpolated between this altitude and ground level.</string>
              </property>
              <item>
               <widget class="QTextBrowser" name="textBrowserAirportInfo">
+               <property name="minimumSize">
+                <size>
+                 <width>0</width>
+                 <height>20</height>
+                </size>
+               </property>
                <property name="readOnly">
                 <bool>true</bool>
                </property>
@@ -5388,6 +5469,12 @@ Wind speed will be interpolated between this altitude and ground level.</string>
              </property>
              <item>
               <widget class="QTextBrowser" name="textBrowserRunwayInfo">
+               <property name="minimumSize">
+                <size>
+                 <width>0</width>
+                 <height>20</height>
+                </size>
+               </property>
                <property name="readOnly">
                 <bool>true</bool>
                </property>
@@ -5426,6 +5513,12 @@ Wind speed will be interpolated between this altitude and ground level.</string>
              </property>
              <item>
               <widget class="QTextBrowser" name="textBrowserComInfo">
+               <property name="minimumSize">
+                <size>
+                 <width>0</width>
+                 <height>20</height>
+                </size>
+               </property>
                <property name="readOnly">
                 <bool>true</bool>
                </property>
@@ -5470,6 +5563,12 @@ Wind speed will be interpolated between this altitude and ground level.</string>
                  <verstretch>3</verstretch>
                 </sizepolicy>
                </property>
+               <property name="minimumSize">
+                <size>
+                 <width>0</width>
+                 <height>20</height>
+                </size>
+               </property>
                <property name="readOnly">
                 <bool>true</bool>
                </property>
@@ -5509,6 +5608,12 @@ relation to shown airport</string>
              </property>
              <item>
               <widget class="QTextBrowser" name="textBrowserNearestInfo">
+               <property name="minimumSize">
+                <size>
+                 <width>0</width>
+                 <height>20</height>
+                </size>
+               </property>
                <property name="placeholderText">
                 <string>No airport selected.</string>
                </property>
@@ -5544,6 +5649,12 @@ relation to shown airport</string>
              </property>
              <item>
               <widget class="QTextBrowser" name="textBrowserWeatherInfo">
+               <property name="minimumSize">
+                <size>
+                 <width>0</width>
+                 <height>20</height>
+                </size>
+               </property>
                <property name="placeholderText">
                 <string>No airport selected.</string>
                </property>
@@ -5583,6 +5694,12 @@ relation to shown airport</string>
          </property>
          <item>
           <widget class="QTextBrowser" name="textBrowserNavaidInfo">
+           <property name="minimumSize">
+            <size>
+             <width>0</width>
+             <height>20</height>
+            </size>
+           </property>
            <property name="readOnly">
             <bool>true</bool>
            </property>
@@ -5618,6 +5735,12 @@ relation to shown airport</string>
          </property>
          <item>
           <widget class="QTextBrowser" name="textBrowserAirspaceInfo">
+           <property name="minimumSize">
+            <size>
+             <width>0</width>
+             <height>20</height>
+            </size>
+           </property>
            <property name="placeholderText">
             <string>No airspace selected.</string>
            </property>
@@ -5650,6 +5773,12 @@ relation to shown airport</string>
          </property>
          <item>
           <widget class="QTextBrowser" name="textBrowserUserpointInfo">
+           <property name="minimumSize">
+            <size>
+             <width>0</width>
+             <height>20</height>
+            </size>
+           </property>
            <property name="placeholderText">
             <string>No userpoint selected.</string>
            </property>
@@ -5685,6 +5814,12 @@ relation to shown airport</string>
          </property>
          <item>
           <widget class="QTextBrowser" name="textBrowserLogbookInfo">
+           <property name="minimumSize">
+            <size>
+             <width>0</width>
+             <height>20</height>
+            </size>
+           </property>
            <property name="placeholderText">
             <string>No logbook entry selected.</string>
            </property>
@@ -5720,6 +5855,12 @@ relation to shown airport</string>
          </property>
          <item>
           <widget class="QTextBrowser" name="textBrowserClientInfo">
+           <property name="minimumSize">
+            <size>
+             <width>0</width>
+             <height>20</height>
+            </size>
+           </property>
            <property name="placeholderText">
             <string>No online client/aircraft selected.</string>
            </property>
@@ -5755,6 +5896,12 @@ relation to shown airport</string>
          </property>
          <item>
           <widget class="QTextBrowser" name="textBrowserCenterInfo">
+           <property name="minimumSize">
+            <size>
+             <width>0</width>
+             <height>20</height>
+            </size>
+           </property>
            <property name="placeholderText">
             <string>No online network center selected.</string>
            </property>
@@ -5864,7 +6011,7 @@ relation to shown airport</string>
             <property name="geometry">
              <rect>
               <x>0</x>
-              <y>0</y>
+              <y>98</y>
               <width>228</width>
               <height>86</height>
              </rect>
@@ -6172,6 +6319,12 @@ relation to shown airport</string>
      </property>
      <item>
       <widget class="QTabWidget" name="tabWidgetAircraft">
+       <property name="minimumSize">
+        <size>
+         <width>0</width>
+         <height>20</height>
+        </size>
+       </property>
        <property name="currentIndex">
         <number>0</number>
        </property>
@@ -6206,6 +6359,12 @@ relation to shown airport</string>
          </property>
          <item>
           <widget class="QTextBrowser" name="textBrowserAircraftInfo">
+           <property name="minimumSize">
+            <size>
+             <width>0</width>
+             <height>20</height>
+            </size>
+           </property>
            <property name="readOnly">
             <bool>true</bool>
            </property>
@@ -6244,6 +6403,12 @@ relation to shown airport</string>
          </property>
          <item>
           <widget class="QTextBrowser" name="textBrowserAircraftProgressInfo">
+           <property name="minimumSize">
+            <size>
+             <width>0</width>
+             <height>20</height>
+            </size>
+           </property>
            <property name="readOnly">
             <bool>true</bool>
            </property>

@@ -29,7 +29,6 @@
 #include "gui/clicktooltiphandler.h"
 #include "gui/dialog.h"
 #include "gui/griddelegate.h"
-#include "gui/itemviewzoomhandler.h"
 #include "gui/tools.h"
 #include "gui/widgetstate.h"
 #include "query/airportquery.h"
@@ -149,7 +148,7 @@ bool TreeEventFilter::eventFilter(QObject *object, QEvent *event)
 // =====================================================================================================
 
 ProcedureSearch::ProcedureSearch(MainWindow *main, QTreeWidget *treeWidgetParam, si::TabSearchId tabWidgetIndex)
-  : AbstractSearch(main, tabWidgetIndex), treeWidget(treeWidgetParam)
+  : AbstractSearch(main, treeWidgetParam, tabWidgetIndex), treeWidget(treeWidgetParam)
 {
   const Queries *queries = QueryManager::instance()->getQueriesGui();
   infoQuery = queries->getInfoQuery();
@@ -161,8 +160,6 @@ ProcedureSearch::ProcedureSearch(MainWindow *main, QTreeWidget *treeWidgetParam,
   currentAirportSim = new map::MapAirport;
   savedAirportSim = new map::MapAirport;
 
-  zoomHandler = new atools::gui::ItemViewZoomHandler(treeWidget);
-  connect(NavApp::navAppInstance(), &atools::gui::Application::fontChanged, this, &ProcedureSearch::fontChanged);
   gridDelegate = new atools::gui::GridDelegate(treeWidget, 1. /* borderPenWidth */, 1 /* heightIncrease */);
 
   treeWidget->setItemDelegate(gridDelegate);
@@ -221,10 +218,7 @@ ProcedureSearch::ProcedureSearch(MainWindow *main, QTreeWidget *treeWidgetParam,
 
   connect(ui->labelProcedureSearch, &QLabel::linkActivated, this, &ProcedureSearch::airportLabelLinkActivated);
 
-  // Load text size from options
-  zoomHandler->zoomPercent(OptionData::instance().getGuiSearchTableTextSize());
-
-  createFonts();
+  createFontsFromTreeWidget();
 
   treeEventFilter = new TreeEventFilter(this);
   treeWidget->viewport()->installEventFilter(treeEventFilter);
@@ -238,7 +232,6 @@ ProcedureSearch::~ProcedureSearch()
   ui->lineEditProcedureSearchIdentFilter->removeEventFilter(lineInputEventFilter);
   ATOOLS_DELETE_LOG(lineInputEventFilter);
 
-  ATOOLS_DELETE_LOG(zoomHandler);
   treeWidget->setItemDelegate(nullptr);
   treeWidget->viewport()->removeEventFilter(treeEventFilter);
   ATOOLS_DELETE_LOG(treeEventFilter);
@@ -259,14 +252,6 @@ void ProcedureSearch::airportLabelLinkActivated(const QString& link)
     showAirportOnMapSelected();
     showInformationSelected();
   }
-}
-
-void ProcedureSearch::fontChanged(const QFont&)
-{
-  qDebug() << Q_FUNC_INFO;
-
-  optionsChanged();
-  zoomHandler->zoomPercent(OptionData::instance().getGuiSearchTableTextSize());
 }
 
 void ProcedureSearch::resetSearch()
@@ -307,20 +292,27 @@ void ProcedureSearch::filterChanged(const QString&)
   updateFilter();
 }
 
+void ProcedureSearch::fontChanged(const QFont&)
+{
+  // Need to rebuild the whole tree to get the correct bold and other fonts
+  optionsChanged();
+}
+
 void ProcedureSearch::optionsChanged()
 {
-  QSet<int> state = treeViewStateSave();
+  // Save state for restore later
+  QSet<int> state = treeWidgetStateSave();
 
   // Adapt table view text size
   gridDelegate->styleChanged();
   atools::gui::adjustSelectionColors(treeWidget);
-  zoomHandler->zoomPercent(OptionData::instance().getGuiSearchTableTextSize());
-  createFonts();
+  AbstractSearch::fontChanged(QApplication::font());
+  createFontsFromTreeWidget();
   updateHeaderLabel();
   updateTreeHeader();
   fillProcedureTreeWidget();
 
-  treeViewStateRestore(state);
+  treeWidgetStateRestore(state);
 }
 
 void ProcedureSearch::styleChanged()
@@ -411,7 +403,7 @@ void ProcedureSearch::showProceduresInternal(const map::MapAirport& airportSim, 
     return;
 
   // Save current state on stack =========================================================
-  recentTreeState.insert(currentAirportNav->id, treeViewStateSave());
+  recentTreeState.insert(currentAirportNav->id, treeWidgetStateSave());
 
   // Remove all previews ===============
   treeWidget->clearSelection();
@@ -434,19 +426,19 @@ void ProcedureSearch::showProceduresInternal(const map::MapAirport& airportSim, 
   if(departureFilter || arrivalFilter)
   {
     // Expand procedure elements found in route ========
-    treeViewStateFromRoute();
+    treeWidgetStateFromRoute();
 
     // Save this state
-    recentTreeState.insert(currentAirportNav->id, treeViewStateSave());
+    recentTreeState.insert(currentAirportNav->id, treeWidgetStateSave());
   }
   else
-    treeViewStateRestore(recentTreeState.value(currentAirportNav->id));
+    treeWidgetStateRestore(recentTreeState.value(currentAirportNav->id));
 
   updateHeaderLabel();
   updateWidgets();
 }
 
-void ProcedureSearch::treeViewStateFromRoute()
+void ProcedureSearch::treeWidgetStateFromRoute()
 {
 #ifdef DEBUG_INFORMATION
   qDebug() << Q_FUNC_INFO;
@@ -1037,7 +1029,7 @@ void ProcedureSearch::saveState()
   atools::settings::Settings& settings = atools::settings::Settings::instance();
 
   // Use current state and update the map too
-  QSet<int> savedState = treeViewStateSave();
+  QSet<int> savedState = treeWidgetStateSave();
   recentTreeState.insert(currentAirportNav->id, savedState);
   settings.setValueVar(lnm::APPROACHTREE_STATE, atools::numSetToStrList(savedState));
 
@@ -1096,7 +1088,7 @@ void ProcedureSearch::restoreState()
     // Restoring state will emit above signal
     if(currentAirportNav->isValid() && currentAirportNav->procedure())
     {
-      treeViewStateRestore(state);
+      treeWidgetStateRestore(state);
       *savedAirportSim = *currentAirportSim;
     }
   }
@@ -1951,14 +1943,14 @@ void ProcedureSearch::setItemStyle(QTreeWidgetItem *item, const MapProcedureLeg&
     }
     else
     {
-      item->setFont(i, invalidLegFont);
+      item->setFont(i, invalidLegBoldFont);
       item->setForeground(i, Qt::red);
       errors = true;
     }
   }
 }
 
-QSet<int> ProcedureSearch::treeViewStateSave() const
+QSet<int> ProcedureSearch::treeWidgetStateSave() const
 {
 #ifdef DEBUG_INFORMATION
   qDebug() << Q_FUNC_INFO;
@@ -1992,7 +1984,7 @@ QSet<int> ProcedureSearch::treeViewStateSave() const
   return state;
 }
 
-void ProcedureSearch::treeViewStateRestore(const QSet<int>& state)
+void ProcedureSearch::treeWidgetStateRestore(const QSet<int>& state)
 {
 #ifdef DEBUG_INFORMATION
   qDebug() << Q_FUNC_INFO;
@@ -2026,13 +2018,12 @@ void ProcedureSearch::treeViewStateRestore(const QSet<int>& state)
     item->setExpanded(true);
 }
 
-void ProcedureSearch::createFonts()
+void ProcedureSearch::createFontsFromTreeWidget()
 {
-
-  identFont = procedureNormalFont = procedureBoldFont = legFont = missedLegFont = invalidLegFont = treeWidget->font();
-  identFont.setWeight(QFont::Bold);
+  identBoldFont = procedureNormalFont = procedureBoldFont = legFont = missedLegFont = invalidLegBoldFont = treeWidget->font();
+  identBoldFont.setWeight(QFont::Bold);
   procedureBoldFont.setWeight(QFont::Bold);
-  invalidLegFont.setWeight(QFont::Bold);
+  invalidLegBoldFont.setWeight(QFont::Bold);
 }
 
 void ProcedureSearch::getSelectedMapObjects(map::MapResult&) const

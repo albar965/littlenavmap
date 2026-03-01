@@ -35,7 +35,7 @@ class RouteNetwork;
 namespace gui {
 
 class Dialog;
-class ItemViewZoomHandler;
+class WidgetZoomHandler;
 class TabWidgetHandler;
 }
 namespace util {
@@ -605,7 +605,7 @@ private:
 
   static Q_DECL_CONSTEXPR int ROUTE_UNDO_LIMIT = 50;
 
-  atools::gui::ItemViewZoomHandler *zoomHandler = nullptr;
+  atools::gui::WidgetZoomHandler *zoomHandlerTable = nullptr, *zoomHandlerRemarks = nullptr, *zoomHandlerPlaceholder = nullptr;
 
   /* Need a workaround since QUndoStack does not report current indices and clean state correctly */
   int undoIndex = 0;

@@ -17,7 +17,7 @@
 
 #include "print/printdialog.h"
 #include "ui_printdialog.h"
-#include "gui/itemviewzoomhandler.h"
+#include "gui/widgetzoomhandler.h"
 #include "gui/widgetstate.h"
 #include "gui/helphandler.h"
 #include "common/constants.h"
@@ -60,7 +60,7 @@ PrintDialog::PrintDialog(QWidget *parent)
   connect(ui->checkBoxPrintFuel, &QCheckBox::toggled, this, &PrintDialog::updateButtonStates);
 
   // Use saved font size for table view
-  zoomHandler = new atools::gui::ItemViewZoomHandler(ui->tableWidgetPrintFlightplanCols);
+  zoomHandler = new atools::gui::WidgetZoomHandler(ui->tableWidgetPrintFlightplanCols);
 }
 
 PrintDialog::~PrintDialog()

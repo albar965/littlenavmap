@@ -23,7 +23,7 @@
 #include "fs/pln/flightplan.h"
 #include "gui/dialog.h"
 #include "gui/helphandler.h"
-#include "gui/itemviewzoomhandler.h"
+#include "gui/widgetzoomhandler.h"
 #include "gui/widgetstate.h"
 #include "app/navapp.h"
 #include "routeexport/routeexportformat.h"
@@ -189,7 +189,7 @@ RouteMultiExportDialog::RouteMultiExportDialog(QWidget *parent, RouteExportForma
   ui->tableViewRouteExport->horizontalHeader()->setFirstSectionMovable(false);
 
   // Resize widget to get rid of the too large default margins and allow to change size from context menu
-  zoomHandler = new atools::gui::ItemViewZoomHandler(ui->tableViewRouteExport, ui->actionIncreaseTextSize,
+  zoomHandler = new atools::gui::WidgetZoomHandler(ui->tableViewRouteExport, ui->actionIncreaseTextSize,
                                                      ui->actionDecreaseTextSize, ui->actionDefaultTextSize,
                                                      lnm::ROUTE_EXPORT_DIALOG_ZOOM, 1.);
 

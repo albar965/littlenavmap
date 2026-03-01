@@ -24,6 +24,8 @@
 #include "common/unitstringtool.h"
 #include "gui/clicktooltiphandler.h"
 #include "gui/helphandler.h"
+#include "gui/widgetzoomhandler.h"
+#include "gui/tools.h"
 #include "gui/widgetstate.h"
 #include "gui/widgetutil.h"
 #include "route/route.h"
@@ -333,6 +335,11 @@ void RouteCalcDialog::postDatabaseLoad()
 void RouteCalcDialog::optionsChanged()
 {
   units->init({ui->spinBoxRouteCalcCruiseAltitude});
+}
+
+void RouteCalcDialog::fontChanged(const QFont& font)
+{
+  atools::gui::updateAllFonts(this, font, atools::gui::WidgetZoomHandler::getRegisteredWidgets());
 }
 
 rd::RoutingType RouteCalcDialog::getRoutingType() const

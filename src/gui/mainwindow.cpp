@@ -41,6 +41,7 @@
 #include "gui/errorhandler.h"
 #include "gui/filehistoryhandler.h"
 #include "gui/helphandler.h"
+#include "gui/widgetzoomhandler.h"
 #include "gui/messagebox.h"
 #include "gui/messagesettings.h"
 #include "gui/statusbar.h"
@@ -247,8 +248,8 @@ MainWindow::MainWindow()
     routeExport = new RouteExport(this);
     simbriefHandler = new SimBriefHandler(this);
 
-    qDebug() << Q_FUNC_INFO << "Creating OptionsDialog";
-    optionsDialog = new OptionsDialog(this);
+    qDebug() << Q_FUNC_INFO << "Creating non-modal OptionsDialog";
+    optionsDialog = new OptionsDialog(nullptr);
 
     // get best language and fill options combo box
     optionsDialog->initLanguage();
@@ -430,6 +431,7 @@ MainWindow::MainWindow()
 
     // Enable or disable tooltips - call later since it needs the map window
     optionsDialog->updateTooltipOption();
+    optionsDialog->initActions();
 
     // Print the size of all container classes to detect overflow or memory leak conditions
     // Do this every 30 seconds if enabled with "[Options] StorageDebug=true" in ini file
@@ -566,7 +568,10 @@ void MainWindow::deInit()
 
     // Set all pointers to null to catch errors for late access
     qDebug() << Q_FUNC_INFO << "NavApp::removeDialogFromDockHandler()";
-    NavApp::removeDialogFromDockHandler(routeStringDialog);
+    dockHandler->unregisterDialog(routeStringDialog);
+
+    // Add to dock handler to enable auto raise and closing on exit
+    dockHandler->unregisterDialog(optionsDialog);
 
     ATOOLS_DELETE_LOG(routeStringDialog);
     ATOOLS_DELETE_LOG(routeController);
@@ -960,7 +965,10 @@ void MainWindow::connectAllSlots()
   Application *app = NavApp::applicationInstance();
   if(app != nullptr)
   {
+    // Needs to be called first since it updates the font in all windows
     connect(app, &Application::fontChanged, this, &MainWindow::fontChanged);
+
+    // Rest later
     connect(app, &Application::fontChanged, NavApp::getLogdataController(), &LogdataController::fontChanged);
     connect(app, &Application::fontChanged, routeController, &RouteController::fontChanged);
     connect(app, &Application::fontChanged, infoController, &InfoController::fontChanged);
@@ -982,6 +990,7 @@ void MainWindow::connectAllSlots()
   AircraftPerfController *perfController = NavApp::getAircraftPerfController();
   const StyleHandler *styleHandler = NavApp::getStyleHandler();
   connect(styleHandler, &StyleHandler::preStyleChange, this, &MainWindow::saveStateNow);
+  connect(styleHandler, &StyleHandler::styleChanged, this, &MainWindow::styleChanged);
   connect(styleHandler, &StyleHandler::styleChanged, mapcolors::styleChanged);
   connect(styleHandler, &StyleHandler::styleChanged, infoController, &InfoController::optionsChanged);
   connect(styleHandler, &StyleHandler::styleChanged, routeController, &RouteController::styleChanged);
@@ -1651,6 +1660,7 @@ void MainWindow::connectAllSlots()
   connect(ui->actionRunWebserver, &QAction::toggled, this, &MainWindow::toggleWebserver);
   connect(ui->actionOpenWebserver, &QAction::triggered, this, &MainWindow::openWebserver);
   connect(NavApp::getWebController(), &WebController::webserverStatusChanged, this, &MainWindow::webserverStatusChanged);
+  connect(NavApp::getWebController(), &WebController::webserverStatusChanged, optionsDialog, &OptionsDialog::webserverStatusChanged);
 
   // Shortcut menu
   connect(ui->actionShortcutMap, &QAction::triggered, this, &MainWindow::actionShortcutMapTriggered);
@@ -2033,11 +2043,11 @@ void MainWindow::routeFromStringCurrent()
     routeStringDialog->restoreState();
 
     // Add to dock handler to enable auto raise and closing on exit
-    NavApp::addDialogToDockHandler(routeStringDialog);
+    dockHandler->registerDialog(routeStringDialog);
 
     // Connect signals from and to non-modal dialog
     connect(routeStringDialog, &RouteStringDialog::routeFromFlightplan, this, &MainWindow::routeFromFlightplan);
-    connect(NavApp::navAppInstance(), &Application::fontChanged, routeStringDialog, &RouteStringDialog::fontChanged);
+    connect(atools::gui::Application::applicationInstance(), &Application::fontChanged, routeStringDialog, &RouteStringDialog::fontChanged);
     connect(routeController, &RouteController::routeChanged, routeStringDialog, &RouteStringDialog::updateButtonState);
     connect(NavApp::getStyleHandler(), &StyleHandler::styleChanged, routeStringDialog, &RouteStringDialog::styleChanged);
     connect(NavApp::getTrackController(), &TrackController::postTrackLoad, routeStringDialog, &RouteStringDialog::tracksChanged);
@@ -3073,18 +3083,28 @@ void MainWindow::openOptionsDialog()
     return;
   }
 #endif
-  NavApp::setStayOnTop(optionsDialog);
-  optionsDialog->open();
+
+  if(optionsDialog->isVisible())
+  {
+    optionsDialog->activateWindow();
+    optionsDialog->setFocus();
+  }
+  else
+  {
+    setStayOnTop(optionsDialog);
+    dockHandler->registerDialog(optionsDialog);
+    optionsDialog->show();
+  }
 }
 
-void MainWindow::addDialogToDockHandler(QDialog *dialogWidget)
+void MainWindow::registerDialogInDockHandler(QDialog *dialogWidget)
 {
-  dockHandler->addDialogWidget(dialogWidget);
+  dockHandler->registerDialog(dialogWidget);
 }
 
-void MainWindow::removeDialogFromDockHandler(QDialog *dialogWidget)
+void MainWindow::unregisterDialogInDockHandler(QDialog *dialogWidget)
 {
-  dockHandler->removeDialogWidget(dialogWidget);
+  dockHandler->unregisterDialog(dialogWidget);
 }
 
 void MainWindow::resetMessages()
@@ -3500,7 +3520,7 @@ void MainWindow::stayOnTop()
   bool onTop = ui->actionWindowStayOnTop->isChecked();
   dockHandler->setStayOnTop(marbleAboutDialog, onTop);
   dockHandler->setStayOnTop(optionsDialog, onTop);
-  dockHandler->setStayOnTopDialogWidgets(onTop);
+  dockHandler->setStayOnTopDialogs(onTop);
   dockHandler->setStayOnTopMain(onTop);
 }
 
@@ -3877,6 +3897,7 @@ void MainWindow::resetWindowLayout()
   // Reset non modal dialogs and center them on the main screen again
   RouteStringDialog::resetWindowLayout(routeStringDialog, QString()); // RouteStringDialog is created on demand
   routeController->resetWindowLayout(); // RouteCalcDialog is permanent
+  optionsDialog->resetWindowLayout();
   NavApp::getLogdataController()->resetWindowLayout(); // LogStatisticsDialog is permanent
 }
 
@@ -4048,7 +4069,12 @@ void MainWindow::optionsChanged()
 
 void MainWindow::fontChanged(const QFont& font)
 {
-  atools::gui::updateAllFonts(this, font);
+  atools::gui::updateAllFonts(font, atools::gui::WidgetZoomHandler::getRegisteredWidgets());
+}
+
+void MainWindow::styleChanged()
+{
+  atools::gui::updateAllPalette(QApplication::palette());
 }
 
 void MainWindow::updateMapKeys()
@@ -4443,7 +4469,7 @@ void MainWindow::printShortcuts()
 
   QStringList keysStr;
   for(const std::pair<QKeySequence, QString>& key: keys)
-    keysStr.append(key.first.toString()% " " % key.second);
+    keysStr.append(key.first.toString() % " " % key.second);
   std::sort(keysStr.begin(), keysStr.end());
 
   qInfo().nospace().noquote() << Q_FUNC_INFO << " " << keysStr.join("\n") << Qt::endl;
@@ -4567,7 +4593,7 @@ void MainWindow::closeEvent(QCloseEvent *event)
       NavApp::getDatabaseManager()->loadSceneryStop();
 
       // Close all registerd non-modal dialogs to allow application to close
-      dockHandler->closeAllDialogWidgets();
+      dockHandler->closeAllDialogs();
     }
 
     saveStateMain();

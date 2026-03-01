@@ -311,8 +311,8 @@ public:
   static QWidget *getQMainWidget();
   static QMainWindow *getQMainWindow();
   static MainWindow *getMainWindow();
-  static void addDialogToDockHandler(QDialog *dialog);
-  static void removeDialogFromDockHandler(QDialog *dialog);
+  static void registerDialogInDockHandler(QDialog *dialog);
+  static void unregisterDialogInDockHandler(QDialog *dialog);
   static QList<QAction *> getMainWindowActions();
   static StatusBar *getStatusBar();
 

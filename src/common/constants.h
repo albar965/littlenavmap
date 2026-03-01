@@ -333,6 +333,7 @@ const QLatin1String LOGDATA_ENTRY_ID("Logdata/LogEntryIdTakeoff");
 const QLatin1String LOGDATA_TAKEOFF_LANDING_DISTANCE("Logdata/TakeoffLandingDistance");
 
 /* Options dialog */
+const QLatin1String OPTIONS_DIALOG("OptionsDialog/Dialog");
 const QLatin1String OPTIONS_DIALOG_WIDGET("OptionsDialog/Widget");
 const QLatin1String OPTIONS_DIALOG_AS_FILE_DLG("OptionsDialog/WeatherFileDialogAsn");
 const QLatin1String OPTIONS_DIALOG_XPLANE_DLG("OptionsDialog/WeatherFileDialogXplane");

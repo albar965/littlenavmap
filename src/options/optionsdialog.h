@@ -46,7 +46,7 @@ namespace atools {
 namespace gui {
 class ListWidgetIndex;
 class GridDelegate;
-class ItemViewZoomHandler;
+class WidgetZoomHandler;
 }
 }
 /* Takes care about loading, changing and saving of global options.
@@ -71,14 +71,17 @@ public:
   /* Load and select best language option and fill combo box. */
   void initLanguage();
 
+  /* Copy main menu actions to allow using shortcuts in the non-modal dialog too */
+  void initActions();
+
   /* Saves the state of all widgets */
   void saveState();
 
   /* Restores state of all widgets. Has to be called before getting the OptionData instance. */
   void restoreState();
 
-  /* Show the dialog */
-  virtual void open() override;
+  /* Assign default size and center window */
+  void resetWindowLayout();
 
   /* Get override region settings options directly from settings file*/
   static bool isOverrideRegion();
@@ -97,6 +100,9 @@ public:
 
   void fontChanged(const QFont& font);
 
+  /* Called by signal from WebController */
+  void webserverStatusChanged(bool);
+
 signals:
   /* Emitted whenever OK or Apply is pressed on the dialog window */
   void optionsChanged();
@@ -106,6 +112,12 @@ signals:
 private:
   /* Catch close button too since dialog is kept alive */
   virtual void reject() override;
+
+  /* Dialog shown */
+  virtual void showEvent(QShowEvent *) override;
+
+  /* Dialog hidden. Save state. */
+  virtual void hideEvent(QHideEvent *) override;
 
   void updateWidgetStates();
   void updateTrailStates();
@@ -267,6 +279,10 @@ private:
 
   void searchTextEdited(const QString& text);
 
+  /* Save and reload window position and size */
+  void restoreDialogState();
+  void saveDialogState();
+
   QString guiLanguage, guiFont, mapFont;
   QColor flightplanColor, flightplanOutlineColor, flightplanProcedureColor, flightplanActiveColor, trailColor, measurementColor,
          flightplanPassedColor, highlightFlightplanColor, highlightSearchColor, highlightProfileColor;
@@ -289,13 +305,16 @@ private:
 
   QFontDialog *fontDialog = nullptr;
 
-  atools::gui::ItemViewZoomHandler *zoomHandlerLabelTree = nullptr, *zoomHandlerMapThemeKeysTable = nullptr,
-                                   *zoomHandlerDatabaseInclude = nullptr, *zoomHandlerDatabaseExclude = nullptr,
-                                   *zoomHandlerDatabaseAddonExclude = nullptr;
+  atools::gui::WidgetZoomHandler *zoomHandlerLabelTree = nullptr, *zoomHandlerMapThemeKeysTable = nullptr,
+                                 *zoomHandlerDatabaseInclude = nullptr, *zoomHandlerDatabaseExclude = nullptr,
+                                 *zoomHandlerDatabaseAddonExclude = nullptr;
 
   atools::gui::GridDelegate *gridDelegate = nullptr;
 
   atools::gui::ListWidgetIndex *listWidgetIndex = nullptr;
+
+  /* Size as given in UI */
+  QSize defaultSize;
 };
 
 #endif // LITTLENAVMAP_OPTIONSDIALOG_H

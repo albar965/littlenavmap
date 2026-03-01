@@ -31,6 +31,10 @@ struct MapRunwayEnd;
 struct MapRunway;
 }
 namespace atools {
+
+namespace gui {
+class WidgetZoomHandler;
+}
 namespace util {
 class HtmlBuilder;
 }
@@ -68,8 +72,9 @@ public:
   void restoreState();
 
   void styleChanged();
-
   void optionsChanged();
+
+  void fontChanged(const QFont&);
 
   /* Set and read display configuration */
   void setFlag(routelabel::LabelFlag flag, bool on = true)
@@ -105,13 +110,16 @@ private:
   void buildErrorLabel(QString& toolTipText, QStringList errors, const QString& header);
 
   void updateAll();
-  void updateFont();
 
   void fetchTakeoffRunway(map::MapRunway& runway, map::MapRunwayEnd& runwayEnd);
   void fetchLandingRunway(map::MapRunway& runway, map::MapRunwayEnd& runwayEnd);
 
   const Route& route;
   routelabel::LabelFlags flags = routelabel::LABEL_ALL;
+
+  /* Used to make the table rows smaller and also used to adjust font size */
+  atools::gui::WidgetZoomHandler *zoomHandler = nullptr;
+
 };
 
 #endif // LNM_ROUTELABEL_H

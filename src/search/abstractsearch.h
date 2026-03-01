@@ -35,7 +35,7 @@ struct MapResult;
 
 namespace atools {
 namespace gui {
-class ItemViewZoomHandler;
+class WidgetZoomHandler;
 }
 }
 
@@ -45,7 +45,7 @@ class AbstractSearch :
   Q_OBJECT
 
 public:
-  explicit AbstractSearch(MainWindow *parent, si::TabSearchId tabWidgetIndex);
+  explicit AbstractSearch(MainWindow *parent, QWidget *resultWidgetParam, si::TabSearchId tabWidgetIndex);
   virtual ~AbstractSearch() override;
 
   /* Disconnect and reconnect queries on database change */
@@ -91,15 +91,20 @@ public:
     return tabIndex;
   }
 
+  virtual void fontChanged(const QFont&);
+
 protected:
-  /* Used to make the table rows smaller and also used to adjust font size */
-  atools::gui::ItemViewZoomHandler *zoomHandler = nullptr;
   /* Tab index of this search tab on the search dock window */
   si::TabSearchId tabIndex;
   MainWindow *mainWindow = nullptr;
   QWidget *parentWidget = nullptr; // Avoid unneeded inclusion of MainWindow
 
   Ui::MainWindow *ui = nullptr;
+
+private:
+  /* Used to make the table rows smaller and also used to adjust font size */
+  atools::gui::WidgetZoomHandler *zoomHandler = nullptr;
+  QWidget *resultWidget = nullptr;
 };
 
 #endif // LITTLENAVMAP_ABSTRACTSEARCH_H

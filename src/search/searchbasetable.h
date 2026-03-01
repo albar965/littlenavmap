@@ -259,7 +259,6 @@ private:
   void updateFromMinSpinBox(int value, const Column *col);
   void updateFromMaxSpinBox(int value, const Column *col);
   void showRow(int row, bool showInfo);
-  void fontChanged();
   void showApproaches(bool customApproach, bool customDeparture);
   void fetchedMore();
 

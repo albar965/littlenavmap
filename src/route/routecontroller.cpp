@@ -40,7 +40,7 @@
 #include "gui/dialog.h"
 #include "gui/errorhandler.h"
 #include "gui/helphandler.h"
-#include "gui/itemviewzoomhandler.h"
+#include "gui/widgetzoomhandler.h"
 #include "gui/mainwindow.h"
 #include "gui/tabwidgethandler.h"
 #include "gui/tools.h"
@@ -277,7 +277,9 @@ RouteController::RouteController(MainWindow *parentWindow, QTableView *tableView
   units->init({ui->spinBoxRouteAlt, ui->spinBoxAircraftPerformanceWindSpeed, ui->spinBoxAircraftPerformanceWindAlt});
 
   // Set default table cell and font size to avoid Qt overly large cell sizes
-  zoomHandler = new atools::gui::ItemViewZoomHandler(tableViewRoute);
+  zoomHandlerTable = new atools::gui::WidgetZoomHandler(tableViewRoute);
+  zoomHandlerPlaceholder = new atools::gui::WidgetZoomHandler(ui->textBrowserViewRoute);
+  zoomHandlerRemarks = new atools::gui::WidgetZoomHandler(ui->plainTextEditRouteRemarks);
 
   entryBuilder = new FlightplanEntryBuilder();
 
@@ -285,7 +287,9 @@ RouteController::RouteController(MainWindow *parentWindow, QTableView *tableView
   routeLabel = new RouteLabel(mainWindow, route);
 
   // Use saved font size for table view
-  zoomHandler->zoomPercent(OptionData::instance().getGuiRouteTableTextSize());
+  zoomHandlerTable->zoomPercent(OptionData::instance().getGuiRouteTableTextSize());
+  zoomHandlerPlaceholder->zoomPercent(OptionData::instance().getGuiRouteTableTextSize());
+  zoomHandlerRemarks->zoomPercent(OptionData::instance().getGuiRouteRemarksTextSize());
   updateRemarksFont();
 
   tableViewRoute->setContextMenuPolicy(Qt::CustomContextMenu);
@@ -393,7 +397,7 @@ RouteController::RouteController(MainWindow *parentWindow, QTableView *tableView
   ui->actionRouteEditUserWaypoint->setShortcutContext(Qt::WidgetWithChildrenShortcut);
 
   // Add to dock handler to enable auto raise and closing on exit
-  NavApp::addDialogToDockHandler(routeCalcDialog);
+  mainWindow->registerDialogInDockHandler(routeCalcDialog);
 
   // Add action/shortcuts to table view
   tableViewRoute->addActions({ui->actionRouteLegDown, ui->actionRouteLegUp, ui->actionRouteDeleteLeg,
@@ -450,7 +454,7 @@ RouteController::RouteController(MainWindow *parentWindow, QTableView *tableView
 
 RouteController::~RouteController()
 {
-  NavApp::removeDialogFromDockHandler(routeCalcDialog);
+  NavApp::unregisterDialogInDockHandler(routeCalcDialog);
   routeAltDelayTimer.stop();
 
   ATOOLS_DELETE_LOG(routeCalcDialog);
@@ -461,7 +465,9 @@ RouteController::~RouteController()
   ATOOLS_DELETE_LOG(undoStack);
   ATOOLS_DELETE_LOG(routeNetworkRadio);
   ATOOLS_DELETE_LOG(routeNetworkAirway);
-  ATOOLS_DELETE_LOG(zoomHandler);
+  ATOOLS_DELETE_LOG(zoomHandlerTable);
+  ATOOLS_DELETE_LOG(zoomHandlerPlaceholder);
+  ATOOLS_DELETE_LOG(zoomHandlerRemarks);
   ATOOLS_DELETE_LOG(symbolPainter);
   ATOOLS_DELETE_LOG(routeLabel);
   ATOOLS_DELETE_LOG(flightplanIO);
@@ -3544,18 +3550,17 @@ void RouteController::styleChanged()
 
 void RouteController::updateRemarksFont()
 {
-  QFont font = QApplication::font();
-  font.setPointSizeF(font.pointSizeF() * OptionData::instance().getGuiRouteRemarksTextSize() / 100.f);
-  NavApp::getMainUi()->plainTextEditRouteRemarks->setFont(font);
+  zoomHandlerRemarks->zoomPercent(OptionData::instance().getGuiRouteRemarksTextSize());
 }
 
 void RouteController::optionsChanged()
 {
-  zoomHandler->zoomPercent(OptionData::instance().getGuiRouteTableTextSize());
+  zoomHandlerTable->zoomPercent(OptionData::instance().getGuiRouteTableTextSize());
+  zoomHandlerPlaceholder->zoomPercent(OptionData::instance().getGuiRouteTableTextSize());
+  zoomHandlerRemarks->zoomPercent(OptionData::instance().getGuiRouteRemarksTextSize());
+  routeLabel->fontChanged(QGuiApplication::font());
 
   updateRemarksFont();
-
-  routeLabel->optionsChanged();
 
   routeCalcDialog->optionsChanged();
 
@@ -3572,8 +3577,12 @@ void RouteController::optionsChanged()
 
 void RouteController::fontChanged(const QFont& font)
 {
-  atools::gui::updateAllFonts(routeCalcDialog, font);
-  zoomHandler->zoomPercent(OptionData::instance().getGuiRouteTableTextSize());
+  routeLabel->fontChanged(font);
+  routeCalcDialog->fontChanged(font);
+
+  zoomHandlerTable->zoomPercent(OptionData::instance().getGuiRouteTableTextSize());
+  zoomHandlerPlaceholder->zoomPercent(OptionData::instance().getGuiRouteTableTextSize());
+  zoomHandlerRemarks->zoomPercent(OptionData::instance().getGuiRouteRemarksTextSize());
   updateTableModelAndErrors();
 }
 

@@ -272,8 +272,8 @@ public:
   }
 
   /* Register and unregister dialogs for autoraise */
-  void addDialogToDockHandler(QDialog *dialogWidget);
-  void removeDialogFromDockHandler(QDialog *dialogWidget);
+  void registerDialogInDockHandler(QDialog *dialogWidget);
+  void unregisterDialogInDockHandler(QDialog *dialogWidget);
 
   /* Get all actions from main menu which have a text and a shortcut */
   QList<QAction *> getMainWindowActions();
@@ -286,6 +286,9 @@ public:
 
   /* Called by QApplication::fontChanged() */
   void fontChanged(const QFont& font);
+
+  /* called by StyleHandler for style or palette changes */
+  void styleChanged();
 
   /* Start installation for Little Xpconnect */
   void installXpconnect();

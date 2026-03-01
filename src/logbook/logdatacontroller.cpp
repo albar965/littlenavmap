@@ -78,7 +78,7 @@ LogdataController::LogdataController(atools::fs::userdata::LogdataManager *logda
   statsDialog = new LogStatisticsDialog(nullptr, this);
 
   // Add to dock handler to enable auto raise and closing on exit
-  NavApp::addDialogToDockHandler(statsDialog);
+  NavApp::registerDialogInDockHandler(statsDialog);
 
   connect(this, &LogdataController::logDataChanged, statsDialog, &LogStatisticsDialog::logDataChanged);
   connect(this, &LogdataController::logDataChanged, manager, &atools::sql::DataManagerBase::updateUndoRedoActions);
@@ -94,7 +94,7 @@ LogdataController::LogdataController(atools::fs::userdata::LogdataManager *logda
 
 LogdataController::~LogdataController()
 {
-  NavApp::removeDialogFromDockHandler(statsDialog);
+  NavApp::unregisterDialogInDockHandler(statsDialog);
   delete statsDialog;
   delete aircraftAtTakeoff;
   delete dialog;

@@ -26,6 +26,7 @@
 #include "fs/pln/flightplan.h"
 #include "fs/util/fsutil.h"
 #include "gui/clicktooltiphandler.h"
+#include "gui/widgetzoomhandler.h"
 #include "perf/aircraftperfcontroller.h"
 #include "query/airportquery.h"
 #include "query/mapquery.h"
@@ -57,12 +58,16 @@ RouteLabel::RouteLabel(QWidget *parent, const Route& routeParam)
 
   ui->labelRouteSelection->setVisible(false);
   ui->labelRouteInfo->setVisible(false); // Will be shown if route is created
-  updateFont();
+
+  zoomHandler = new atools::gui::WidgetZoomHandler(NavApp::getMainUi()->labelRouteInfo);
+
+  // Load text size from options
+  zoomHandler->zoomPercent(OptionData::instance().getGuiRouteInfoTextSize());
 }
 
 RouteLabel::~RouteLabel()
 {
-
+  delete zoomHandler;
 }
 
 void RouteLabel::saveState() const
@@ -88,14 +93,12 @@ void RouteLabel::styleChanged()
 
 void RouteLabel::optionsChanged()
 {
-  updateFont();
+  fontChanged(QGuiApplication::font());
 }
 
-void RouteLabel::updateFont()
+void RouteLabel::fontChanged(const QFont&)
 {
-  QFont font = QApplication::font();
-  font.setPointSizeF(font.pointSizeF() * OptionData::instance().getGuiRouteInfoTextSize() / 100.f);
-  NavApp::getMainUi()->labelRouteInfo->setFont(font);
+  zoomHandler->zoomPercent(OptionData::instance().getGuiRouteInfoTextSize());
 }
 
 void RouteLabel::updateAll()

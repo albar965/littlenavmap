@@ -134,6 +134,7 @@ private:
   void updateMenuStatus();
 
   void colorSchemeChanged(Qt::ColorScheme colorScheme);
+  void paletteChanged(const QPalette&);
 
   /* Index to current or dark/fusion */
   int styleIndex() const;

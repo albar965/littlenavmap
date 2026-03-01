@@ -30,7 +30,7 @@ class RouteMultiExportDialog;
 
 namespace atools {
 namespace gui {
-class ItemViewZoomHandler;
+class WidgetZoomHandler;
 }
 }
 
@@ -166,7 +166,7 @@ private:
   TableSortProxyModel *proxyModel = nullptr;
 
   /* Used to fix excessive default margins in table */
-  atools::gui::ItemViewZoomHandler *zoomHandler = nullptr;
+  atools::gui::WidgetZoomHandler *zoomHandler = nullptr;
 
   RouteExportFormatMap *formatMapDialog = nullptr, /* Map that will be modified in the dialog */
                        *formatMapSystem = nullptr; /* Map backup that will be used to restore in case of cancel */

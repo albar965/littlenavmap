@@ -16,16 +16,18 @@
 *****************************************************************************/
 
 #include "profile/profilescrollarea.h"
-#include "gui/tools.h"
-#include "profile/profilewidget.h"
-#include "profile/profilelabelwidgetvert.h"
-#include "profile/profilelabelwidgethoriz.h"
-#include "profile/profileoptions.h"
-#include "gui/widgetstate.h"
+
 #include "common/constants.h"
 #include "gui/helphandler.h"
-#include "route/route.h"
+#include "gui/widgetzoomhandler.h"
+#include "gui/tools.h"
+#include "gui/widgetstate.h"
 #include "options/optiondata.h"
+#include "profile/profilelabelwidgethoriz.h"
+#include "profile/profilelabelwidgetvert.h"
+#include "profile/profileoptions.h"
+#include "profile/profilewidget.h"
+#include "route/route.h"
 
 #include "app/navapp.h"
 #include "atools.h"
@@ -899,7 +901,7 @@ void ProfileScrollArea::optionsChanged()
 
 void ProfileScrollArea::fontChanged(const QFont& font)
 {
-  atools::gui::updateAllFonts(this, font);
+  atools::gui::updateAllFonts(this, font, atools::gui::WidgetZoomHandler::getRegisteredWidgets());
 }
 
 void ProfileScrollArea::setMaxVertZoom()

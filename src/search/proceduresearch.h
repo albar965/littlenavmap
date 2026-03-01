@@ -149,6 +149,8 @@ private:
   virtual void activateView() override;
   virtual void showFirstEntry() override;
 
+  virtual void fontChanged(const QFont&) override;
+
   void itemSelectionChanged();
   void itemSelectionChangedInternal(bool noFollow);
   void itemDoubleClicked(QTreeWidgetItem *item, int);
@@ -168,8 +170,8 @@ private:
   void attachProcedure();
 
   // Save and restore expanded and selected item state
-  QSet<int> treeViewStateSave() const;
-  void treeViewStateRestore(const QSet<int>& state);
+  QSet<int> treeWidgetStateSave() const;
+  void treeWidgetStateRestore(const QSet<int>& state);
 
   /* Build full approach or transition items for the tree view */
   QTreeWidgetItem *buildProcedureItem(QTreeWidgetItem *rootItem, const QString& ident, const atools::sql::SqlRecord& recProcedure,
@@ -198,7 +200,7 @@ private:
 
   /* Fill header for tree or selected/table view */
   void updateTreeHeader();
-  void createFonts();
+  void createFontsFromTreeWidget();
 
   void updateHeaderLabel();
   void updateWidgets();
@@ -212,7 +214,6 @@ private:
   void updateFilterBoxes();
   void resetSearch();
   void dockVisibilityChanged(bool visible);
-  void fontChanged(const QFont&);
 
   static proc::MapProcedureTypes buildTypeFromProcedureRec(const atools::sql::SqlRecord& recApp);
 
@@ -250,7 +251,7 @@ private:
   void updateProcedureWind();
 
   /* Intial selection and expand items for current selection in route */
-  void treeViewStateFromRoute();
+  void treeWidgetStateFromRoute();
 
   /* Get first and last waypoint from record */
   QStringList firstLastWaypoint(const atools::sql::SqlRecord& record) const;
@@ -281,7 +282,7 @@ private:
   QStringList runwayMismatches;
 
   /* Fonts for tree elements */
-  QFont procedureBoldFont, procedureNormalFont, legFont, missedLegFont, invalidLegFont, identFont;
+  QFont procedureBoldFont, procedureNormalFont, legFont, missedLegFont, invalidLegBoldFont, identBoldFont;
 
   map::MapAirport *currentAirportNav, *currentAirportSim, *savedAirportSim;
 

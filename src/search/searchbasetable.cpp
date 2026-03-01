@@ -28,12 +28,10 @@
 #include "geo/calculations.h"
 #include "gui/actiontool.h"
 #include "gui/dialog.h"
-#include "gui/itemviewzoomhandler.h"
 #include "gui/tools.h"
 #include "logbook/logdatacontroller.h"
 #include "gui/widgetutil.h"
 #include "mapgui/mapwidget.h"
-#include "options/optiondata.h"
 #include "query/airportquery.h"
 #include "query/mapquery.h"
 #include "route/route.h"
@@ -60,13 +58,10 @@ const int DISTANCE_EDIT_UPDATE_TIMEOUT_MS = 500;
 // ==================================================================================
 SearchBaseTable::SearchBaseTable(MainWindow *parent, QTableView *tableView, ColumnList *columnList,
                                  si::TabSearchId tabWidgetIndex)
-  : AbstractSearch(parent, tabWidgetIndex), columns(columnList), view(tableView)
+  : AbstractSearch(parent, tableView, tabWidgetIndex), columns(columnList), view(tableView)
 {
   mapQuery = QueryManager::instance()->getQueriesGui()->getMapQuery();
   airportQuery = QueryManager::instance()->getQueriesGui()->getAirportQuerySim();
-
-  zoomHandler = new atools::gui::ItemViewZoomHandler(view);
-  connect(NavApp::navAppInstance(), &atools::gui::Application::fontChanged, this, &SearchBaseTable::fontChanged);
 
   // Avoid stealing of Ctrl-C from other default menus
   ui->actionSearchTableCopy->setShortcutContext(Qt::WidgetWithChildrenShortcut);
@@ -146,9 +141,6 @@ SearchBaseTable::SearchBaseTable(MainWindow *parent, QTableView *tableView, Colu
   if(tabIndex == si::SEARCH_AIRPORT)
     connect(ui->actionSearchDirectTo, &QAction::triggered, this, &SearchBaseTable::routeDirectToAction);
 
-  // Load text size from options
-  zoomHandler->zoomPercent(OptionData::instance().getGuiSearchTableTextSize());
-
   viewEventFilter = new SearchViewEventFilter(this);
   widgetEventFilter = new SearchWidgetEventFilter(this);
   view->installEventFilter(viewEventFilter);
@@ -161,7 +153,6 @@ SearchBaseTable::~SearchBaseTable()
   delete controller;
   delete csvExporter;
   delete updateTimer;
-  delete zoomHandler;
   delete columns;
   delete viewEventFilter;
   delete widgetEventFilter;
@@ -343,16 +334,10 @@ void SearchBaseTable::showInSearch(const atools::sql::SqlRecord& record, bool ig
   controller->showInSearch(record, ignoreQueryBuilder);
 }
 
-void SearchBaseTable::fontChanged()
-{
-  // Do next main event loop cycle - otherwise change is not taken
-  QTimer::singleShot(10L, this, &SearchBaseTable::optionsChanged);
-}
-
 void SearchBaseTable::optionsChanged()
 {
   // Adapt table view text size
-  zoomHandler->zoomPercent(OptionData::instance().getGuiSearchTableTextSize());
+  fontChanged(QApplication::font());
 
   // Update the unit strings in the table header
   updateUnits();

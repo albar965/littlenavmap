@@ -32,7 +32,7 @@ class QTableWidget;
 
 namespace atools {
 namespace gui {
-class ItemViewZoomHandler;
+class WidgetZoomHandler;
 }
 }
 
@@ -114,7 +114,7 @@ private:
   QStringList runwayNameFilter;
   QLabel *airportLabel = nullptr;
   QTableWidget *runwayTableWidget = nullptr;
-  atools::gui::ItemViewZoomHandler *zoomHandler = nullptr;
+  atools::gui::WidgetZoomHandler *zoomHandler = nullptr;
 
   MapQuery *mapQuery;
   bool navdata;

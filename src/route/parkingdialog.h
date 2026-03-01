@@ -35,7 +35,7 @@ class QAbstractButton;
 
 namespace atools {
 namespace gui {
-class ItemViewZoomHandler;
+class WidgetZoomHandler;
 }
 }
 
@@ -83,7 +83,7 @@ private:
   QList<internal::StartPosition> startPositions;
 
   Ui::ParkingDialog *ui;
-  atools::gui::ItemViewZoomHandler *zoomHandler = nullptr;
+  atools::gui::WidgetZoomHandler *zoomHandler = nullptr;
   const map::MapAirport& departureAirport;
 
 };

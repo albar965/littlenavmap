@@ -60,6 +60,9 @@ StyleHandler::StyleHandler(QMainWindow *mainWindowParam)
   // Catch dark/light mode changes
   connect(styleHints, &QStyleHints::colorSchemeChanged, this, &StyleHandler::colorSchemeChanged);
 
+  // Send void styleChanged() on palette changes
+  connect(atools::gui::Application::applicationInstance(), &atools::gui::Application::paletteChanged, this, &StyleHandler::paletteChanged);
+
   // Override fusion tab close buttons on Windows and macOS
 #if defined(Q_OS_WIN32) || defined(Q_OS_MACOS)
   QString fusionStyleSheet(
@@ -324,6 +327,12 @@ void StyleHandler::colorSchemeChanged(Qt::ColorScheme colorScheme)
 {
   qDebug() << Q_FUNC_INFO << colorScheme;
   applyCurrentStyle();
+}
+
+void StyleHandler::paletteChanged(const QPalette&)
+{
+  const StyleDescription& styleDescription = styleDescriptions.at(styleIndex());
+  emit styleChanged(styleDescription.getDisplayName(), styleDescription.isDark());
 }
 
 void StyleHandler::applyCurrentStyle()

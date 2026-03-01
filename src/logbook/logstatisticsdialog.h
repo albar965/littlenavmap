@@ -29,7 +29,7 @@ class QAbstractButton;
 
 namespace atools {
 namespace gui {
-class ItemViewZoomHandler;
+class WidgetZoomHandler;
 }
 namespace util {
 class HtmlBuilder;
@@ -105,7 +105,7 @@ private:
   LogdataController *logdataController;
 
   /* Used to remove margins in table */
-  atools::gui::ItemViewZoomHandler *zoomHandler;
+  atools::gui::WidgetZoomHandler *zoomHandler;
 
   /* using own SQL query model to override data method */
   LogStatsSqlModel *model = nullptr;
@@ -115,6 +115,50 @@ private:
 
   /* Size as given in UI */
   QSize defaultSize;
+};
+
+/* Internal. Delegate to change table column data alignment */
+class LogStatsDelegate
+  : public QStyledItemDelegate
+{
+  Q_OBJECT
+
+public:
+  QList<Qt::Alignment> align;
+
+private:
+  virtual void paint(QPainter *painter, const QStyleOptionViewItem& option, const QModelIndex& index) const override;
+
+};
+
+/* Internal. Overrides data method for local sensitive number formatting and sorting by SQL query */
+class LogStatsSqlModel :
+  public QSqlQueryModel
+{
+  Q_OBJECT
+
+public:
+  LogStatsSqlModel(QObject *parent, const QSqlDatabase *db)
+    : QSqlQueryModel(parent), database(db)
+  {
+
+  }
+
+  void setLogStatQuery(const Query *queryParam);
+
+private:
+  virtual QVariant data(const QModelIndex& index, int role) const override;
+
+  virtual void sort(int column, Qt::SortOrder order) override;
+
+  QString buildQuery();
+
+  QLocale locale;
+  float nmToUnitFactor = 1.f;
+  const QSqlDatabase *database = nullptr;
+  const Query *query = nullptr;
+  int sortColumn = 0;
+  Qt::SortOrder sortOrder = Qt::DescendingOrder;
 };
 
 #endif // LNM_LOGSTATISTICSDIALOG_H

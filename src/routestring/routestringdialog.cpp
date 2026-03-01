@@ -20,6 +20,7 @@
 #include "atools.h"
 #include "common/constants.h"
 #include "gui/helphandler.h"
+#include "gui/widgetzoomhandler.h"
 #include "gui/tools.h"
 #include "gui/widgetstate.h"
 #include "gui/widgetutil.h"
@@ -559,7 +560,7 @@ void RouteStringDialog::addRouteDescription(const QString& routeString)
 
 void RouteStringDialog::fontChanged(const QFont& font)
 {
-  atools::gui::updateAllFonts(this, font);
+  atools::gui::updateAllFonts(this, font, atools::gui::WidgetZoomHandler::getRegisteredWidgets());
   ui->textEditRouteString->document()->setDefaultFont(atools::gui::getBestFixedFont());
 }
 
@@ -576,6 +577,8 @@ void RouteStringDialog::styleChanged()
                                                         "image: url(:/littlenavmap/resources/icons/splitterhandvert.png); "
                                                         "}").arg(QApplication::palette().color(QPalette::Window).darker(120).name()));
 #endif
+
+  atools::gui::updateAllPalette(this, QApplication::palette());
 }
 
 rs::RouteStringOptions RouteStringDialog::getOptionsFromSettings()

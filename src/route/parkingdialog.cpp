@@ -25,7 +25,7 @@
 #include "common/unit.h"
 #include "geo/calculations.h"
 #include "gui/helphandler.h"
-#include "gui/itemviewzoomhandler.h"
+#include "gui/widgetzoomhandler.h"
 #include "gui/tools.h"
 #include "gui/widgetstate.h"
 #include "query/airportquery.h"
@@ -88,7 +88,7 @@ ParkingDialog::ParkingDialog(QWidget *parent, const map::MapAirport& departureAi
 
   ui->setupUi(this);
 
-  zoomHandler = new atools::gui::ItemViewZoomHandler(ui->tableWidgetSelectParking);
+  zoomHandler = new atools::gui::WidgetZoomHandler(ui->tableWidgetSelectParking);
   atools::gui::adjustSelectionColors(ui->tableWidgetSelectParking);
 
   restoreState();

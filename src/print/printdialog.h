@@ -30,7 +30,7 @@ class QAbstractButton;
 
 namespace atools {
 namespace gui {
-class ItemViewZoomHandler;
+class WidgetZoomHandler;
 }
 }
 
@@ -78,7 +78,7 @@ private:
   void buttonBoxClicked(QAbstractButton *button);
   void updateButtonStates();
 
-  atools::gui::ItemViewZoomHandler *zoomHandler = nullptr;
+  atools::gui::WidgetZoomHandler *zoomHandler = nullptr;
 
   Ui::PrintDialog *ui;
   QBitArray selectedRows;

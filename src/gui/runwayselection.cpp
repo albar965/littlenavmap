@@ -23,7 +23,7 @@
 #include "common/unit.h"
 #include "fs/util/fsutil.h"
 #include "geo/calculations.h"
-#include "gui/itemviewzoomhandler.h"
+#include "gui/widgetzoomhandler.h"
 #include "gui/tools.h"
 #include "query/airportquery.h"
 #include "query/mapquery.h"
@@ -76,7 +76,7 @@ RunwaySelection::RunwaySelection(QObject *parent, const map::MapAirport& mapAirp
   connect(runwayTableWidget, &QTableWidget::doubleClicked, this, &RunwaySelection::doubleClicked);
 
   // Resize widget to get rid of the too large default margins
-  zoomHandler = new atools::gui::ItemViewZoomHandler(runwayTableWidget);
+  zoomHandler = new atools::gui::WidgetZoomHandler(runwayTableWidget);
   atools::gui::adjustSelectionColors(runwayTableWidget);
 }
 

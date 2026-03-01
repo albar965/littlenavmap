@@ -26,7 +26,7 @@
 #include "export/csvexporter.h"
 #include "geo/calculations.h"
 #include "gui/helphandler.h"
-#include "gui/itemviewzoomhandler.h"
+#include "gui/widgetzoomhandler.h"
 #include "gui/widgetstate.h"
 #include "gui/widgetutil.h"
 #include "logdatacontroller.h"
@@ -65,18 +65,6 @@ public:
 
 // ============================================================================================
 
-/* Delegate to change table column data alignment */
-class LogStatsDelegate
-  : public QStyledItemDelegate
-{
-public:
-  QList<Qt::Alignment> align;
-
-private:
-  virtual void paint(QPainter *painter, const QStyleOptionViewItem& option, const QModelIndex& index) const override;
-
-};
-
 void LogStatsDelegate::paint(QPainter *painter, const QStyleOptionViewItem& option, const QModelIndex& index) const
 {
   QStyleOptionViewItem opt(option);
@@ -88,77 +76,57 @@ void LogStatsDelegate::paint(QPainter *painter, const QStyleOptionViewItem& opti
 
 // ============================================================================================
 
-/* Overrides data method for local sensitive number formatting and sorting by SQL query */
-class LogStatsSqlModel :
-  public QSqlQueryModel
+QString LogStatsSqlModel::buildQuery()
 {
-public:
-  LogStatsSqlModel(QObject *parent, const QSqlDatabase *db)
-    : QSqlQueryModel(parent), database(db)
+  // Build query with current ordering, unit placeholders and conversion factor
+  QString str = query->query;
+  if(str.contains("%1"))
+    str = str.arg(nmToUnitFactor);
+  return str % " order by " % query->cols.at(sortColumn) %
+         (sortOrder == Qt::DescendingOrder ? " desc" : " asc");
+}
+
+void LogStatsSqlModel::sort(int column, Qt::SortOrder order)
+{
+  if(query != nullptr)
   {
-
-  }
-
-  void setLogStatQuery(const Query *queryParam)
-  {
-    if(queryParam != query)
-    {
-      // Update all to defaults if different
-      query = queryParam;
-      sortColumn = query->defaultSortColumn;
-      sortOrder = query->defaultSortCrder;
-    }
-
-    // Calculate the conversion factor for distances which will be set into the SQL query
-    nmToUnitFactor = 1.f;
-    switch(Unit::getUnitDist())
-    {
-      case opts::DIST_NM:
-        nmToUnitFactor = 1.f;
-        break;
-
-      case opts::DIST_KM:
-        nmToUnitFactor = atools::geo::nmToKm(1.f);
-        break;
-
-      case opts::DIST_MILES:
-        nmToUnitFactor = atools::geo::nmToMi(1.f);
-        break;
-    }
-
+    // Reset with new non default sort order and update query
+    sortColumn = column;
+    sortOrder = order;
     setQuery(buildQuery(), *database);
   }
+}
 
-private:
-  virtual QVariant data(const QModelIndex& index, int role) const override;
-
-  virtual void sort(int column, Qt::SortOrder order) override
+void LogStatsSqlModel::setLogStatQuery(const Query *queryParam)
+{
+  if(queryParam != query)
   {
-    if(query != nullptr)
-    {
-      // Reset with new non default sort order and update query
-      sortColumn = column;
-      sortOrder = order;
-      setQuery(buildQuery(), *database);
-    }
+    // Update all to defaults if different
+    query = queryParam;
+    sortColumn = query->defaultSortColumn;
+    sortOrder = query->defaultSortCrder;
   }
 
-  QString buildQuery()
+  // Calculate the conversion factor for distances which will be set into the
+  // SQL query
+  nmToUnitFactor = 1.f;
+  switch(Unit::getUnitDist())
   {
-    // Build query with current ordering, unit placeholders and conversion factor
-    QString str = query->query;
-    if(str.contains("%1"))
-      str = str.arg(nmToUnitFactor);
-    return str % " order by " % query->cols.at(sortColumn) % (sortOrder == Qt::DescendingOrder ? " desc" : " asc");
+    case opts::DIST_NM:
+      nmToUnitFactor = 1.f;
+      break;
+
+    case opts::DIST_KM:
+      nmToUnitFactor = atools::geo::nmToKm(1.f);
+      break;
+
+    case opts::DIST_MILES:
+      nmToUnitFactor = atools::geo::nmToMi(1.f);
+      break;
   }
 
-  QLocale locale;
-  float nmToUnitFactor = 1.f;
-  const QSqlDatabase *database = nullptr;
-  const Query *query = nullptr;
-  int sortColumn = 0;
-  Qt::SortOrder sortOrder = Qt::DescendingOrder;
-};
+  setQuery(buildQuery(), *database);
+}
 
 QVariant LogStatsSqlModel::data(const QModelIndex& index, int role) const
 {
@@ -219,7 +187,7 @@ LogStatisticsDialog::LogStatisticsDialog(QWidget *parent, LogdataController *log
   ui->tableViewLogStatsGrouped->setSortingEnabled(true);
 
   // Resize widget to get rid of the too large default margins
-  zoomHandler = new atools::gui::ItemViewZoomHandler(ui->tableViewLogStatsGrouped);
+  zoomHandler = new atools::gui::WidgetZoomHandler(ui->tableViewLogStatsGrouped);
 
   connect(ui->comboBoxLogStatsGrouped, QOverload<int>::of(&QComboBox::currentIndexChanged), this, &LogStatisticsDialog::groupChanged);
   connect(ui->buttonBoxLogStats, &QDialogButtonBox::clicked, this, &LogStatisticsDialog::buttonBoxClicked);
@@ -263,11 +231,12 @@ void LogStatisticsDialog::optionsChanged()
 void LogStatisticsDialog::styleChanged()
 {
   atools::gui::adjustSelectionColors(ui->tableViewLogStatsGrouped);
+  atools::gui::updateAllPalette(this, QApplication::palette());
 }
 
 void LogStatisticsDialog::fontChanged(const QFont& font)
 {
-  atools::gui::updateAllFonts(this, font);
+  atools::gui::updateAllFonts(this, font, atools::gui::WidgetZoomHandler::getRegisteredWidgets());
   zoomHandler->zoomPercent();
 }
 

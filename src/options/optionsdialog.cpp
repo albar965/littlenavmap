@@ -27,7 +27,7 @@
 #include "gui/dialog.h"
 #include "gui/griddelegate.h"
 #include "gui/helphandler.h"
-#include "gui/itemviewzoomhandler.h"
+#include "gui/widgetzoomhandler.h"
 #include "gui/listwidgetindex.h"
 #include "gui/texteditdialog.h"
 #include "gui/tools.h"
@@ -94,9 +94,11 @@ OptionsDialog::OptionsDialog(QMainWindow *parentWindow)
   qDebug() << Q_FUNC_INFO;
   setWindowFlag(Qt::WindowContextHelpButtonHint, false);
 
-  setWindowModality(Qt::ApplicationModal);
+  setWindowModality(Qt::NonModal);
 
   ui->setupUi(this);
+
+  defaultSize = size();
 
 #ifndef QT_NO_DEBUG
   ui->spinBoxSimMaxTrailPoints->setMinimum(10);
@@ -204,11 +206,11 @@ OptionsDialog::OptionsDialog(QMainWindow *parentWindow)
     ui->splitterOptions->handle(1)->setStatusTip(ui->splitterOptions->handle(1)->toolTip());
   }
 
-  zoomHandlerMapThemeKeysTable = new atools::gui::ItemViewZoomHandler(ui->tableWidgetOptionsMapKeys);
-  zoomHandlerLabelTree = new atools::gui::ItemViewZoomHandler(ui->treeWidgetOptionsDisplayTextOptions);
-  zoomHandlerDatabaseInclude = new atools::gui::ItemViewZoomHandler(ui->tableWidgetOptionsDatabaseInclude);
-  zoomHandlerDatabaseExclude = new atools::gui::ItemViewZoomHandler(ui->tableWidgetOptionsDatabaseExclude);
-  zoomHandlerDatabaseAddonExclude = new atools::gui::ItemViewZoomHandler(ui->tableWidgetOptionsDatabaseExcludeAddon);
+  zoomHandlerMapThemeKeysTable = new atools::gui::WidgetZoomHandler(ui->tableWidgetOptionsMapKeys);
+  zoomHandlerLabelTree = new atools::gui::WidgetZoomHandler(ui->treeWidgetOptionsDisplayTextOptions);
+  zoomHandlerDatabaseInclude = new atools::gui::WidgetZoomHandler(ui->tableWidgetOptionsDatabaseInclude);
+  zoomHandlerDatabaseExclude = new atools::gui::WidgetZoomHandler(ui->tableWidgetOptionsDatabaseExclude);
+  zoomHandlerDatabaseAddonExclude = new atools::gui::WidgetZoomHandler(ui->tableWidgetOptionsDatabaseExcludeAddon);
 
   gridDelegate = new atools::gui::GridDelegate(ui->treeWidgetOptionsDisplayTextOptions, 1. /* borderPenWidth */, 1 /* heightIncrease */);
   listWidgetIndex = new atools::gui::ListWidgetIndex(ui->listWidgetOptionPages, ui->stackedWidgetOptions);
@@ -854,6 +856,8 @@ void OptionsDialog::styleChanged()
   listWidgetIndex->setHighlightColor(NavApp::isGuiStyleDark() ? QColor(200, 0, 0, 200) : QColor(255, 255, 0, 200));
   listWidgetIndex->find(QString());
   listWidgetIndex->find(ui->lineEditOptionSearch->text());
+
+  atools::gui::updateAllPalette(this, QApplication::palette());
 }
 
 void OptionsDialog::setCacheMapThemeDir(const QString& mapThemesDir)
@@ -884,8 +888,10 @@ void OptionsDialog::setCacheOfflineDataPath(const QString& globeDir)
 
 void OptionsDialog::fontChanged(const QFont& font)
 {
-  atools::gui::updateAllFonts(this, font);
+  // Update all except the widgets which are updated by the zoom handler
+  atools::gui::updateAllFonts(this, font, atools::gui::WidgetZoomHandler::getRegisteredWidgets());
 
+  // Zoom handler updates font here
   zoomHandlerMapThemeKeysTable->zoomPercent();
   zoomHandlerLabelTree->zoomPercent();
   zoomHandlerDatabaseInclude->zoomPercent();
@@ -893,9 +899,17 @@ void OptionsDialog::fontChanged(const QFont& font)
   zoomHandlerDatabaseAddonExclude->zoomPercent();
 }
 
-void OptionsDialog::open()
+void OptionsDialog::webserverStatusChanged(bool)
+{
+  updateWebServerStatus();
+}
+
+void OptionsDialog::showEvent(QShowEvent *)
 {
   qDebug() << Q_FUNC_INFO;
+
+  QTimer::singleShot(100L, this, &OptionsDialog::restoreDialogState);
+
   // Fetch keys from handler
   OptionData::instanceInternal().mapThemeKeys = NavApp::getMapThemeHandler()->getMapThemeKeys();
 
@@ -919,8 +933,12 @@ void OptionsDialog::open()
   styleChanged();
 
   ui->labelOptionsTrailHintStored->setText(ui->labelOptionsTrailHintStored->text().arg(NavApp::getMaxStoredTrailEntries()));
+}
 
-  QDialog::open();
+void OptionsDialog::hideEvent(QHideEvent *)
+{
+  qDebug() << Q_FUNC_INFO;
+  saveDialogState();
 }
 
 void OptionsDialog::buttonBoxClicked(QAbstractButton *button)
@@ -1208,15 +1226,36 @@ void OptionsDialog::updateWidgetStates()
   updateTrailStates();
 }
 
+void OptionsDialog::saveDialogState()
+{
+  atools::gui::WidgetState state(lnm::OPTIONS_DIALOG);
+  state.setDialogOptions(true /* position */, true /* size */);
+  state.save(this);
+}
+
+void OptionsDialog::restoreDialogState()
+{
+  atools::gui::WidgetState state(lnm::OPTIONS_DIALOG);
+  state.setDialogOptions(true /* position */, true /* size */);
+  state.restore(this);
+}
+
+void OptionsDialog::resetWindowLayout()
+{
+  atools::gui::WidgetState state(lnm::OPTIONS_DIALOG);
+  state.clear(this);
+  state.syncSettings();
+
+  atools::gui::util::centerWidgetOnScreen(this, defaultSize);
+}
+
 void OptionsDialog::saveState()
 {
   optionDataToWidgets(OptionData::instanceInternal());
 
   // Save widgets to settings
   atools::gui::WidgetState state(lnm::OPTIONS_DIALOG_WIDGET, false /* visibility */, true /* blockSignals */);
-
   state.save(widgets);
-  state.save(this);
 
   saveDisplayOptItemStates(displayOptItemIndexUser, lnm::OPTIONS_DIALOG_DISPLAY_OPTIONS_USER_AIRCRAFT);
   saveDisplayOptItemStates(displayOptItemIndexAi, lnm::OPTIONS_DIALOG_DISPLAY_OPTIONS_AI_AIRCRAFT);
@@ -1315,7 +1354,6 @@ void OptionsDialog::restoreState()
     state.save(ui->splitterOptions);
   }
 
-  state.restore(this);
   state.restore(widgets);
 
   restoreOptionItemStates(displayOptItemIndexUser, lnm::OPTIONS_DIALOG_DISPLAY_OPTIONS_USER_AIRCRAFT);
@@ -2162,6 +2200,12 @@ void OptionsDialog::initLanguage()
   qDebug() << Q_FUNC_INFO << guiLanguage;
 }
 
+void OptionsDialog::initActions()
+{
+  // Copy main menu actions to allow using shortcuts in the non-modal dialog too
+  addActions(NavApp::getMainWindowActions());
+}
+
 void OptionsDialog::optionDataToWidgets(const OptionData& data)
 {
   guiLanguage = data.guiLanguage;
@@ -2881,6 +2925,7 @@ void OptionsDialog::changePage(QListWidgetItem *current, QListWidgetItem *previo
 
 void OptionsDialog::updateWebServerStatus()
 {
+  // Only update if visible
   if(ui->stackedWidgetOptions->currentWidget() == ui->stackedWidgetOptionsWebServer)
   {
     WebController *webController = NavApp::getWebController();
@@ -2984,8 +3029,6 @@ void OptionsDialog::startStopWebServerClicked()
     else
       // Update options from page before starting and restart
       updateWebOptionsFromGui();
-
-    updateWebServerStatus();
   }
 }
 
