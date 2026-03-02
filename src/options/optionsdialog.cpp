@@ -17,6 +17,7 @@
 
 #include "options/optionsdialog.h"
 
+#include "app/navapp.h"
 #include "atools.h"
 #include "common/constants.h"
 #include "common/elevationprovider.h"
@@ -24,22 +25,21 @@
 #include "fs/pln/flightplan.h"
 #include "fs/weather/weathertypes.h"
 #include "grib/gribreader.h"
+#include "gui/desktopservices.h"
 #include "gui/dialog.h"
 #include "gui/griddelegate.h"
 #include "gui/helphandler.h"
-#include "gui/widgetzoomhandler.h"
 #include "gui/listwidgetindex.h"
 #include "gui/texteditdialog.h"
 #include "gui/tools.h"
 #include "gui/translator.h"
 #include "gui/widgetstate.h"
 #include "gui/widgetutil.h"
-#include "gui/desktopservices.h"
+#include "gui/widgetzoomhandler.h"
 #include "mapgui/mapthemehandler.h"
 #include "mapgui/mapwidget.h"
-#include "app/navapp.h"
 #include "settings/settings.h"
-#include "ui_options.h"
+#include "ui_optionsdialog.h"
 #include "util/htmlbuilder.h"
 #include "weather/weatherreporter.h"
 #include "web/webcontroller.h"
@@ -59,7 +59,11 @@
 #include <marble/MarbleModel.h>
 #include <marble/MarbleDirs.h>
 
-const int MIN_ONLINE_UPDATE = 120;
+// Show a warning if user decreases update rate for online services below this limit
+const int MIN_ONLINE_UPDATE_SECONDS = 120;
+
+// Data role for symbolic page name
+const Qt::ItemDataRole PAGE_LIST_ITEM_DATA_ID = static_cast<Qt::ItemDataRole>(Qt::UserRole + 1);
 
 using atools::settings::Settings;
 using atools::gui::HelpHandler;
@@ -89,7 +93,7 @@ inline void fromFlags(const FIELD& field, QAbstractButton *button, FLAG flag)
 }
 
 OptionsDialog::OptionsDialog(QMainWindow *parentWindow)
-  : QDialog(parentWindow), ui(new Ui::Options), mainWindow(parentWindow)
+  : QDialog(parentWindow), ui(new Ui::OptionsDialog), mainWindow(parentWindow)
 {
   qDebug() << Q_FUNC_INFO;
   setWindowFlag(Qt::WindowContextHelpButtonHint, false);
@@ -103,30 +107,6 @@ OptionsDialog::OptionsDialog(QMainWindow *parentWindow)
 #ifndef QT_NO_DEBUG
   ui->spinBoxSimMaxTrailPoints->setMinimum(10);
 #endif
-
-  // 0 "Startup and Updates"
-  // 1 "User Interface"
-  // 2 "Display and Text"
-  // 3 "Units"
-  // 4 "Files"
-  // 5 "Map"
-  // 6 "Map Tooltips and Clicks"
-  // 7 "Map Navigation"
-  // 8 "Map Display"
-  // 9 "Map Flight Plan"
-  // 10 "Map Aircraft Trail"
-  // 11 "Map User"
-  // 12 "Map Labels"
-  // 13 "Map Keys"
-  // 14 "Map Online"
-  // 15 "Simulator Aircraft"
-  // 16 "Flight Plan"
-  // 17 "Weather"
-  // 18 "Weather Files"
-  // 19 "Online Flying"
-  // 20 "Web Server"
-  // 21 "Cache and Files"
-  // 22 "Scenery Library Database"
 
   const static QList<QLabel *> HINT_LABELS({
     ui->labelOptionsUpdatesHint,
@@ -217,176 +197,428 @@ OptionsDialog::OptionsDialog(QMainWindow *parentWindow)
   ui->treeWidgetOptionsDisplayTextOptions->setItemDelegate(gridDelegate);
 
   // Add option pages with text, icon and tooltip ========================================
-  /* *INDENT-OFF* */
-  QListWidget *list = ui->listWidgetOptionPages;
-  list->addItem(pageListItem(list, tr("Startup and Updates"), tr("Select what should be reloaded on startup and change update settings."), ":/littlenavmap/resources/icons/littlenavmap.svg"));
-  list->addItem(pageListItem(list, tr("User Interface"), tr("Change language settings, window options and other user interface behavior."), ":/littlenavmap/resources/icons/statusbar.svg"));
-  list->addItem(pageListItem(list, tr("Display and Text"), tr("Change text sizes, user interface font, tooltips and more display options."), ":/littlenavmap/resources/icons/copy.svg"));
-  list->addItem(pageListItem(list, tr("Units"), tr("Fuel, distance, speed and coordinate units as well as\noptions for course and heading display."), ":/littlenavmap/resources/icons/units.svg"));
-  list->addItem(pageListItem(list, tr("Files"), tr("Edit flight plan file pattern and more file related actions."), ":/littlenavmap/resources/icons/fileopen.svg"));
-  list->addItem(pageListItem(list, tr("Map"), tr("Change map window behavior, handling of empty airports, and general display options."), ":/littlenavmap/resources/icons/mapsettings.svg"));
-  list->addItem(pageListItem(list, tr("Map Tooltips and Clicks"), tr("Tooltip and map click settings."), ":/littlenavmap/resources/icons/mapclick.svg"));
-  list->addItem(pageListItem(list, tr("Map Navigation"), tr("Zoom, click, screen navigation and mouse wheel settings."), ":/littlenavmap/resources/icons/mapnavigation.svg"));
-  list->addItem(pageListItem(list, tr("Map Display"), tr("Change colors, symbols, texts and font for map display and elevation profile objects."), ":/littlenavmap/resources/icons/mapdisplay.svg"));
-  list->addItem(pageListItem(list, tr("Map Flight Plan"), tr("Adjust display style and colors for the flight plan on the map and the elevation profile."), ":/littlenavmap/resources/icons/mapdisplayflightplan.svg"));
-  list->addItem(pageListItem(list, tr("Map Aircraft Trail"), tr("Edit display of the user aircraft trail and number of trail points."), ":/littlenavmap/resources/icons/aircrafttrail.svg"));
-  list->addItem(pageListItem(list, tr("Map User"), tr("Change colors, symbols and texts for highlights, measurement lines and other user features for map and elevation profile."), ":/littlenavmap/resources/icons/mapdisplay2.svg"));
-  list->addItem(pageListItem(list, tr("Map Labels"), tr("Change map display and elevation profile label options for all map features."), ":/littlenavmap/resources/icons/mapdisplaylabels.svg"));
-  list->addItem(pageListItem(list, tr("Map Keys"), tr("Enter username, API keys or tokens for map services which require a login."), ":/littlenavmap/resources/icons/mapdisplaykeys.svg"));
-  list->addItem(pageListItem(list, tr("Map Online"), tr("Map display online center options."), ":/littlenavmap/resources/icons/airspaceonline.svg"));
-  list->addItem(pageListItem(list, tr("Simulator Aircraft"), tr("Update and movement options for the user aircraft."), ":/littlenavmap/resources/icons/aircraft.svg"));
-  list->addItem(pageListItem(list, tr("Flight Plan"), tr("Options for flight plan calculation and elevation profile altitude buffer."), ":/littlenavmap/resources/icons/route.svg"));
-  list->addItem(pageListItem(list, tr("Weather"), tr("Change weather sources for information and tooltips."), ":/littlenavmap/resources/icons/weather.svg"));
-  list->addItem(pageListItem(list, tr("Weather Files"), tr("Change web download addresses or file paths of weather sources."), ":/littlenavmap/resources/icons/weatherurl.svg"));
-  list->addItem(pageListItem(list, tr("Online Flying"), tr("Select online flying services like VATSIM, IVAO or custom."), ":/littlenavmap/resources/icons/aircraft_online.svg"));
-  list->addItem(pageListItem(list, tr("Web Server"), tr("Change settings for the internal web server."), ":/littlenavmap/resources/icons/web.svg"));
-  list->addItem(pageListItem(list, tr("Cache and Files"), tr("Change map cache, select elevation data source and the path for user airspaces."), ":/littlenavmap/resources/icons/filesave.svg"));
-  list->addItem(pageListItem(list, tr("Scenery Library Database"), tr("Exclude scenery files from loading and\nadd-on recognition."), ":/littlenavmap/resources/icons/database.svg"));
-  /* *INDENT-ON* */
+  // "startupandupdates" "Startup and Updates"
+  // "userinterface" "User Interface"
+  // "displayandtext" "Display and Text"
+  // "units" "Units"
+  // "files" "Files"
+  // "map" "Map"
+  // "maptooltipsandclicks" "Map Tooltips and Clicks"
+  // "mapnavigation" "Map Navigation"
+  // "mapdisplay" "Map Display"
+  // "mapflightplan" "Map Flight Plan"
+  // "mapaircrafttrail" "Map Aircraft Trail"
+  // "mapuser" "Map User"
+  // "mapoptions" "Map Options"
+  // "mapkeys" "Map Keys"
+  // "maponline" "Map Online"
+  // "simulatoraircraft" "Simulator Aircraft"
+  // "flightplan" "Flight Plan"
+  // "weather" "Weather"
+  // "weatherfiles" "Weather Files"
+  // "onlineflying" "Online Flying"
+  // "webserver" "Web Server"
+  // "cacheandfiles" "Cache and Files"
+  // "scenerylibrarydatabase" "Scenery Library Database"
 
-#ifdef DEBUG_INFORMATION
-  for(int i = 0; i < list->count(); i++)
-    qDebug() << Q_FUNC_INFO << i << list->item(i)->text();
-#endif
+  addPageListItem(QStringLiteral("startupandupdates"),
+                  tr("Startup and Updates"),
+                  tr("Select what should be reloaded on startup and change update settings."),
+                  QStringLiteral(":/littlenavmap/resources/icons/littlenavmap.svg"));
+
+  addPageListItem(QStringLiteral("userinterface"),
+                  tr("User Interface"),
+                  tr("Change language settings, window options and other user interface behavior."),
+                  QStringLiteral(":/littlenavmap/resources/icons/statusbar.svg"));
+
+  addPageListItem(QStringLiteral("displayandtext"),
+                  tr("Display and Text"),
+                  tr("Change text sizes, user interface font, tooltips and more display options."),
+                  QStringLiteral(":/littlenavmap/resources/icons/copy.svg"));
+
+  addPageListItem(QStringLiteral("units"),
+                  tr("Units"),
+                  tr("Fuel, distance, speed and coordinate units as well as\noptions for course and heading display."),
+                  QStringLiteral(":/littlenavmap/resources/icons/units.svg"));
+
+  addPageListItem(QStringLiteral("files"),
+                  tr("Files"),
+                  tr("Edit flight plan file pattern and more file related actions."),
+                  QStringLiteral(":/littlenavmap/resources/icons/fileopen.svg"));
+
+  addPageListItem(QStringLiteral("map"),
+                  tr("Map"),
+                  tr("Change map window behavior, handling of empty airports, and general display options."),
+                  QStringLiteral(":/littlenavmap/resources/icons/mapsettings.svg"));
+
+  addPageListItem(QStringLiteral("maptooltipsandclicks"),
+                  tr("Map Tooltips and Clicks"),
+                  tr("Tooltip and map click settings."),
+                  QStringLiteral(":/littlenavmap/resources/icons/mapclick.svg"));
+
+  addPageListItem(QStringLiteral("mapnavigation"),
+                  tr("Map Navigation"),
+                  tr("Zoom, click, screen navigation and mouse wheel settings."),
+                  QStringLiteral(":/littlenavmap/resources/icons/mapnavigation.svg"));
+
+  addPageListItem(QStringLiteral("mapdisplay"),
+                  tr("Map Display"),
+                  tr("Change colors, symbols, texts and font for map display and elevation profile objects."),
+                  QStringLiteral(":/littlenavmap/resources/icons/mapdisplay.svg"));
+
+  addPageListItem(QStringLiteral("mapflightplan"),
+                  tr("Map Flight Plan"),
+                  tr("Adjust display style and colors for the flight plan on the map and the elevation profile."),
+                  QStringLiteral(":/littlenavmap/resources/icons/mapdisplayflightplan.svg"));
+
+  addPageListItem(QStringLiteral("mapaircrafttrail"),
+                  tr("Map Aircraft Trail"),
+                  tr("Edit display of the user aircraft trail and number of trail points."),
+                  QStringLiteral(":/littlenavmap/resources/icons/aircrafttrail.svg"));
+
+  addPageListItem(QStringLiteral("mapuser"),
+                  tr("Map User"),
+                  tr("Change colors, symbols and texts for highlights, measurement lines and "
+                     "other user features for map and elevation profile."),
+                  QStringLiteral(":/littlenavmap/resources/icons/mapdisplay2.svg"));
+
+  addPageListItem(QStringLiteral("mapoptions"),
+                  tr("Map Options"),
+                  tr("Change map and elevation profile label and other display options for map objects."),
+                  QStringLiteral(":/littlenavmap/resources/icons/mapdisplaylabels.svg"));
+
+  addPageListItem(QStringLiteral("mapkeys"),
+                  tr("Map Keys"),
+                  tr("Enter username, API keys or tokens for map services which require a login."),
+                  QStringLiteral(":/littlenavmap/resources/icons/mapdisplaykeys.svg"));
+
+  addPageListItem(QStringLiteral("maponline"),
+                  tr("Map Online"),
+                  tr("Map display online center options."),
+                  QStringLiteral(":/littlenavmap/resources/icons/airspaceonline.svg"));
+
+  addPageListItem(QStringLiteral("simulatoraircraft"),
+                  tr("Simulator Aircraft"),
+                  tr("Update and movement options for the user aircraft."),
+                  QStringLiteral(":/littlenavmap/resources/icons/aircraft.svg"));
+
+  addPageListItem(QStringLiteral("flightplan"),
+                  tr("Flight Plan"),
+                  tr("Options for flight plan calculation and elevation profile altitude buffer."),
+                  QStringLiteral(":/littlenavmap/resources/icons/route.svg"));
+
+  addPageListItem(QStringLiteral("weather"),
+                  tr("Weather"),
+                  tr("Change weather sources for information and tooltips."),
+                  QStringLiteral(":/littlenavmap/resources/icons/weather.svg"));
+
+  addPageListItem(QStringLiteral("weatherfiles"),
+                  tr("Weather Files"),
+                  tr("Change web download addresses or file paths of weather sources."),
+                  QStringLiteral(":/littlenavmap/resources/icons/weatherurl.svg"));
+
+  addPageListItem(QStringLiteral("onlineflying"),
+                  tr("Online Flying"),
+                  tr("Select online flying services like VATSIM, IVAO or custom."),
+                  QStringLiteral(":/littlenavmap/resources/icons/aircraft_online.svg"));
+
+  addPageListItem(QStringLiteral("webserver"),
+                  tr("Web Server"),
+                  tr("Change settings for the internal web server."),
+                  QStringLiteral(":/littlenavmap/resources/icons/web.svg"));
+
+  addPageListItem(QStringLiteral("cacheandfiles"),
+                  tr("Cache and Files"),
+                  tr("Change map cache, select elevation data source and the path for user airspaces."),
+                  QStringLiteral(":/littlenavmap/resources/icons/filesave.svg"));
+
+  addPageListItem(QStringLiteral("scenerylibrarydatabase"),
+                  tr("Scenery Library Database"),
+                  tr("Exclude scenery files from loading and\nadd-on recognition."),
+                  QStringLiteral(":/littlenavmap/resources/icons/database.svg"));
 
   // Build tree settings to map tab =====================================================
-  /* *INDENT-OFF* */
   // Top of map =====================================================
   QTreeWidgetItem *topOfMap = addTopItem(tr("Top of Map"), tr("Select information that is displayed on top of the map."));
-  addItem<optsac::DisplayOptionsUserAircraft>(topOfMap, displayOptItemIndexUser, tr("Wind Direction and Speed"), tr("Show wind direction and speed on the top center of the map."), optsac::ITEM_USER_AIRCRAFT_WIND, true);
-  addItem<optsac::DisplayOptionsUserAircraft>(topOfMap, displayOptItemIndexUser, tr("Wind Pointer"), tr("Show wind direction pointer on the top center of the map."), optsac::ITEM_USER_AIRCRAFT_WIND_POINTER, true);
+  addItem<optsac::DisplayOptionsUserAircraft>(topOfMap, displayOptItemIndexUser, tr("Wind Direction and Speed"),
+                                              tr("Show wind direction and speed on the top center of the map."),
+                                              optsac::ITEM_USER_AIRCRAFT_WIND, true);
+  addItem<optsac::DisplayOptionsUserAircraft>(topOfMap, displayOptItemIndexUser, tr("Wind Pointer"),
+                                              tr("Show wind direction pointer on the top center of the map."),
+                                              optsac::ITEM_USER_AIRCRAFT_WIND_POINTER, true);
 
   // Map Navigation Aids =====================================================
   QTreeWidgetItem *navAids = addTopItem(tr("Map Navigation Aids"), QStringLiteral());
-  addItem<optsd::DisplayOptionsNavAid>(navAids , displayOptItemIndexNavAid, tr("Center Cross"), tr("Shows the map center. Useful if \"Click map to center position\"\n"
-                                                                                                   "on page \"Map Navigation\" is enabled."), optsd::NAVAIDS_CENTER_CROSS);
-  addItem<optsd::DisplayOptionsNavAid>(navAids , displayOptItemIndexNavAid, tr("Screen Area"), tr("Highlight click- or touchable areas on screen.\nOnly shown if \"Use map areas\"\n"
-                                                                                                  "on page \"Map Navigation\" is enabled as well."), optsd::NAVAIDS_TOUCHSCREEN_REGIONS);
-  addItem<optsd::DisplayOptionsNavAid>(navAids , displayOptItemIndexNavAid, tr("Screen Areas Marks"), tr("Shows corner marks to highlight the screen areas.\n"
-                                                                                                         "Helps if map areas are used for touchscreen navigation.\n"
-                                                                                                         "Only shown if \"Use map areas\" on page \"Map Navigation\" is enabled as well."), optsd::NAVAIDS_TOUCHSCREEN_AREAS);
-  addItem<optsd::DisplayOptionsNavAid>(navAids , displayOptItemIndexNavAid, tr("Screen Area Icons"), tr("Shows icons for the screen areas.\n"
-                                                                                                        "Useful if map areas are used for touchscreen navigation.\n"
-                                                                                                        "Only shown if \"Use map areas\" on page \"Map Navigation\" is enabled as well."), optsd::NAVAIDS_TOUCHSCREEN_ICONS);
+  addItem<optsd::DisplayOptionsNavAid>(navAids, displayOptItemIndexNavAid, tr("Center Cross"),
+                                       tr("Shows the map center. Useful if \"Click map to center position\"\n"
+                                          "on page \"Map Navigation\" is enabled."),
+                                       optsd::NAVAIDS_CENTER_CROSS);
+  addItem<optsd::DisplayOptionsNavAid>(navAids, displayOptItemIndexNavAid, tr("Screen Area"),
+                                       tr("Highlight click- or touchable areas on screen.\nOnly shown if \"Use map areas\"\n"
+                                          "on page \"Map Navigation\" is enabled as well."),
+                                       optsd::NAVAIDS_TOUCHSCREEN_REGIONS);
+  addItem<optsd::DisplayOptionsNavAid>(navAids, displayOptItemIndexNavAid, tr("Screen Areas Marks"),
+                                       tr("Shows corner marks to highlight the screen areas.\n"
+                                          "Helps if map areas are used for touchscreen navigation.\n"
+                                          "Only shown if \"Use map areas\" on page \"Map Navigation\" is enabled as well."),
+                                       optsd::NAVAIDS_TOUCHSCREEN_AREAS);
+  addItem<optsd::DisplayOptionsNavAid>(navAids, displayOptItemIndexNavAid, tr("Screen Area Icons"), tr("Shows icons for the screen areas.\n"
+                                                                                                       "Useful if map areas are used for touchscreen navigation.\n"
+                                                                                                       "Only shown if \"Use map areas\" on page \"Map Navigation\" is enabled as well."),
+                                       optsd::NAVAIDS_TOUCHSCREEN_ICONS);
 
   // Airport =====================================================
   QTreeWidgetItem *airport = addTopItem(tr("Airports"), tr("Select airport labels to display on the map."));
-  addItem<optsd::DisplayOptionsAirport>(airport, displayOptItemIndexAirport, tr("Name (Ident)"), tr("Airport name and ident in brackets depending on zoom factor.\n"
-                                                                                                    "Ident can be internal, ICAO, FAA, IATA or local depending on availability."), optsd::ITEM_AIRPORT_NAME, true);
-  addItem<optsd::DisplayOptionsAirport>(airport, displayOptItemIndexAirport, tr("Tower Frequency"), QStringLiteral(), optsd::ITEM_AIRPORT_TOWER, true);
-  addItem<optsd::DisplayOptionsAirport>(airport, displayOptItemIndexAirport, tr("ATIS / ASOS / AWOS Frequency"), QStringLiteral(), optsd::ITEM_AIRPORT_ATIS, true);
-  addItem<optsd::DisplayOptionsAirport>(airport, displayOptItemIndexAirport, tr("Runway Information"), tr("Show runway elevation, light indicator \"L\" and length text."), optsd::ITEM_AIRPORT_RUNWAY, true);
+  addItem<optsd::DisplayOptionsAirport>(airport, displayOptItemIndexAirport, tr("Name (Ident)"),
+                                        tr("Airport name and ident in brackets depending on zoom factor.\n"
+                                           "Ident can be internal, ICAO, FAA, IATA or local depending on availability."),
+                                        optsd::ITEM_AIRPORT_NAME, true);
+  addItem<optsd::DisplayOptionsAirport>(airport, displayOptItemIndexAirport, tr("Tower Frequency"), QStringLiteral(),
+                                        optsd::ITEM_AIRPORT_TOWER, true);
+  addItem<optsd::DisplayOptionsAirport>(airport, displayOptItemIndexAirport, tr("ATIS / ASOS / AWOS Frequency"), QStringLiteral(),
+                                        optsd::ITEM_AIRPORT_ATIS, true);
+  addItem<optsd::DisplayOptionsAirport>(airport, displayOptItemIndexAirport, tr("Runway Information"),
+                                        tr("Show runway elevation, light indicator \"L\" and length text."), optsd::ITEM_AIRPORT_RUNWAY,
+                                        true);
 
   // Airport details =====================================================
   QTreeWidgetItem *airportDetails = addTopItem(tr("Airport Details"), tr("Select airport diagram elements."));
-  addItem<optsd::DisplayOptionsAirport>(airportDetails, displayOptItemIndexAirport, tr("Runways"), tr("Show runways."), optsd::ITEM_AIRPORT_DETAIL_RUNWAY, true);
-  addItem<optsd::DisplayOptionsAirport>(airportDetails, displayOptItemIndexAirport, tr("Taxiways"), tr("Show taxiways. This applies partially to MSFS and fully to FSX and P3D.\n"
-                                                                                                       "X-Plane simulators have taxiways integrated into the apron geometry."), optsd::ITEM_AIRPORT_DETAIL_TAXI, true);
-  addItem<optsd::DisplayOptionsAirport>(airportDetails, displayOptItemIndexAirport, tr("Taxiway Lines"), tr("Show taxiway lines."), optsd::ITEM_AIRPORT_DETAIL_TAXI_LINE, true);
-  addItem<optsd::DisplayOptionsAirport>(airportDetails, displayOptItemIndexAirport, tr("Taxiway Names"), tr("Show taxiway names."), optsd::ITEM_AIRPORT_DETAIL_TAXI_NAME, true);
-  addItem<optsd::DisplayOptionsAirport>(airportDetails, displayOptItemIndexAirport, tr("Aprons"), tr("Display aprons."), optsd::ITEM_AIRPORT_DETAIL_APRON, true);
-  addItem<optsd::DisplayOptionsAirport>(airportDetails, displayOptItemIndexAirport, tr("Parking"), tr("Show fuel, tower, helipads, gates and ramp parking."), optsd::ITEM_AIRPORT_DETAIL_PARKING, true);
-  addItem<optsd::DisplayOptionsAirport>(airportDetails, displayOptItemIndexAirport, tr("Boundary"), tr("Display a white boundary around and below the airport diagram."), optsd::ITEM_AIRPORT_DETAIL_BOUNDARY);
+  addItem<optsd::DisplayOptionsAirport>(airportDetails, displayOptItemIndexAirport, tr("Runways"), tr("Show runways."),
+                                        optsd::ITEM_AIRPORT_DETAIL_RUNWAY, true);
+  addItem<optsd::DisplayOptionsAirport>(airportDetails, displayOptItemIndexAirport, tr("Taxiways"),
+                                        tr("Show taxiways. This applies partially to MSFS and fully to FSX and P3D.\n"
+                                           "X-Plane simulators have taxiways integrated into the apron geometry."),
+                                        optsd::ITEM_AIRPORT_DETAIL_TAXI, true);
+  addItem<optsd::DisplayOptionsAirport>(airportDetails, displayOptItemIndexAirport, tr("Taxiway Lines"), tr("Show taxiway lines."),
+                                        optsd::ITEM_AIRPORT_DETAIL_TAXI_LINE, true);
+  addItem<optsd::DisplayOptionsAirport>(airportDetails, displayOptItemIndexAirport, tr("Taxiway Names"), tr("Show taxiway names."),
+                                        optsd::ITEM_AIRPORT_DETAIL_TAXI_NAME, true);
+  addItem<optsd::DisplayOptionsAirport>(airportDetails, displayOptItemIndexAirport, tr("Aprons"), tr("Display aprons."),
+                                        optsd::ITEM_AIRPORT_DETAIL_APRON, true);
+  addItem<optsd::DisplayOptionsAirport>(airportDetails, displayOptItemIndexAirport, tr("Parking"),
+                                        tr("Show fuel, tower, helipads, gates and ramp parking."), optsd::ITEM_AIRPORT_DETAIL_PARKING,
+                                        true);
+  addItem<optsd::DisplayOptionsAirport>(airportDetails, displayOptItemIndexAirport, tr("Boundary"),
+                                        tr("Display a white boundary around and below the airport diagram."),
+                                        optsd::ITEM_AIRPORT_DETAIL_BOUNDARY);
 
   // Flight plan =====================================================
   QTreeWidgetItem *route = addTopItem(tr("Flight Plan"), tr("Select display options for the flight plan line."));
-  addItem<optsd::DisplayOptionsRoute>(route, displayOptItemIndexRoute, tr("Distance"), tr("Show distance along flight plan leg.\n"
-                                                                                          "The label moves to keep it visible while scrolling."), optsd::ROUTE_DISTANCE, true);
-  addItem<optsd::DisplayOptionsRoute>(route, displayOptItemIndexRoute, tr("Airway"), tr("Show airway.\n"
-                                                                                        "The label moves to keep it visible while scrolling."), optsd::ROUTE_AIRWAY);
-  addItem<optsd::DisplayOptionsRoute>(route, displayOptItemIndexRoute, tr("Magnetic Course"), tr("Show great circle magnetic start course at flight plan leg.\n"
-                                                                                                 "Does not consider VOR calibrated declination.\n"
-                                                                                                 "The label moves to keep it visible while scrolling."), optsd::ROUTE_MAG_COURSE);
-  addItem<optsd::DisplayOptionsRoute>(route, displayOptItemIndexRoute, tr("True Course"), tr("Show great circle true start course at flight plan leg.\n"
-                                                                                             "The label moves to keep it visible while scrolling."), optsd::ROUTE_TRUE_COURSE);
+  addItem<optsd::DisplayOptionsRoute>(route, displayOptItemIndexRoute, tr("Distance"),
+                                      tr("Show distance along flight plan leg.\n"
+                                         "The label moves to keep it visible while scrolling."),
+                                      optsd::ROUTE_DISTANCE, true);
+  addItem<optsd::DisplayOptionsRoute>(route, displayOptItemIndexRoute, tr("Airway"),
+                                      tr("Show airway.\n"
+                                         "The label moves to keep it visible while scrolling."),
+                                      optsd::ROUTE_AIRWAY);
+  addItem<optsd::DisplayOptionsRoute>(route, displayOptItemIndexRoute, tr("Magnetic Course"),
+                                      tr("Show great circle magnetic start course at flight plan leg.\n"
+                                         "Does not consider VOR calibrated declination.\n"
+                                         "The label moves to keep it visible while scrolling."),
+                                      optsd::ROUTE_MAG_COURSE);
+  addItem<optsd::DisplayOptionsRoute>(route, displayOptItemIndexRoute, tr("True Course"),
+                                      tr("Show great circle true start course at flight plan leg.\n"
+                                         "The label moves to keep it visible while scrolling."),
+                                      optsd::ROUTE_TRUE_COURSE);
 
-  addItem<optsd::DisplayOptionsRoute>(route, displayOptItemIndexRoute, tr("Magnetic Start and End Course"), tr("Display great circle initial and final magnetic course\n"
-                                                                                                               "at the start and end of flight plan legs.\n"
-                                                                                                               "The label is fixed. Course also depends on\n"
-                                                                                                               "VOR calibrated declination and\n"
-                                                                                                               "is colored blue if related to VOR.\n"
-                                                                                                               "Not shown at procedure legs."), optsd::ROUTE_INITIAL_FINAL_MAG_COURSE, true);
-  addItem<optsd::DisplayOptionsRoute>(route, displayOptItemIndexRoute, tr("True Start and End Course"), tr("Display great circle initial and final true course at\n"
-                                                                                                           "the start and end of flight plan legs.\n"
-                                                                                                           "The label is fixed. Not shown at procedure legs."), optsd::ROUTE_INITIAL_FINAL_TRUE_COURSE);
+  addItem<optsd::DisplayOptionsRoute>(route, displayOptItemIndexRoute, tr("Magnetic Start and End Course"),
+                                      tr("Display great circle initial and final magnetic course\n"
+                                         "at the start and end of flight plan legs.\n"
+                                         "The label is fixed. Course also depends on\n"
+                                         "VOR calibrated declination and\n"
+                                         "is colored blue if related to VOR.\n"
+                                         "Not shown at procedure legs."),
+                                      optsd::ROUTE_INITIAL_FINAL_MAG_COURSE, true);
+  addItem<optsd::DisplayOptionsRoute>(route, displayOptItemIndexRoute, tr("True Start and End Course"),
+                                      tr("Display great circle initial and final true course at\n"
+                                         "the start and end of flight plan legs.\n"
+                                         "The label is fixed. Not shown at procedure legs."),
+                                      optsd::ROUTE_INITIAL_FINAL_TRUE_COURSE);
 
   // Airspace =====================================================
   QTreeWidgetItem *airspaces = addTopItem(tr("Airspaces"), QStringLiteral());
-  addItem<optsd::DisplayOptionsAirspace>(airspaces , displayOptItemIndexAirspace, tr("Name"), tr("Shows the airspace name."), optsd::AIRSPACE_NAME);
-  addItem<optsd::DisplayOptionsAirspace>(airspaces , displayOptItemIndexAirspace, tr("Restrictive Name"), tr("Shows the restrictive name like \"P-51\" of an airspace."), optsd::AIRSPACE_RESTRICTIVE_NAME, true);
-  addItem<optsd::DisplayOptionsAirspace>(airspaces , displayOptItemIndexAirspace, tr("Type"), tr("Type of airspace like \"Prohibited\"."), optsd::AIRSPACE_TYPE, true);
-  addItem<optsd::DisplayOptionsAirspace>(airspaces , displayOptItemIndexAirspace, tr("Altitude"), tr("Display the altitude restrictions of airspaces."), optsd::AIRSPACE_ALTITUDE, true);
-  addItem<optsd::DisplayOptionsAirspace>(airspaces , displayOptItemIndexAirspace, tr("COM Frequency"), tr("Airspace COM frequency if available."), optsd::AIRSPACE_COM, true);
+  addItem<optsd::DisplayOptionsAirspace>(airspaces, displayOptItemIndexAirspace, tr("Name"),
+                                         tr("Shows the airspace name."),
+                                         optsd::AIRSPACE_NAME);
+  addItem<optsd::DisplayOptionsAirspace>(airspaces, displayOptItemIndexAirspace, tr("Restrictive Name"),
+                                         tr("Shows the restrictive name like \"P-51\" of an airspace."),
+                                         optsd::AIRSPACE_RESTRICTIVE_NAME,
+                                         true);
+  addItem<optsd::DisplayOptionsAirspace>(airspaces, displayOptItemIndexAirspace, tr("Type"),
+                                         tr("Type of airspace like \"Prohibited\"."),
+                                         optsd::AIRSPACE_TYPE, true);
+  addItem<optsd::DisplayOptionsAirspace>(airspaces, displayOptItemIndexAirspace, tr("Altitude"),
+                                         tr("Display the altitude restrictions of airspaces."),
+                                         optsd::AIRSPACE_ALTITUDE, true);
+  addItem<optsd::DisplayOptionsAirspace>(airspaces, displayOptItemIndexAirspace, tr("COM Frequency"),
+                                         tr("Airspace COM frequency if available."),
+                                         optsd::AIRSPACE_COM, true);
 
   // User aircraft =====================================================
-  QTreeWidgetItem *userAircraft = addTopItem(tr("User Aircraft"), tr("Select text labels and other options for the user aircraft."));
-  addItem<optsac::DisplayOptionsUserAircraft>(userAircraft, displayOptItemIndexUser, tr("Registration"), tr("Aircraft registration like \"N1000A\" or \"D-MABC\"."), optsac::ITEM_USER_AIRCRAFT_REGISTRATION);
-  addItem<optsac::DisplayOptionsUserAircraft>(userAircraft, displayOptItemIndexUser, tr("Type"), tr("Show the aircraft type, like B738, B350 or M20T."), optsac::ITEM_USER_AIRCRAFT_TYPE);
-  addItem<optsac::DisplayOptionsUserAircraft>(userAircraft, displayOptItemIndexUser, tr("Airline"), tr("Airline like \"Orbit Airlines\"."), optsac::ITEM_USER_AIRCRAFT_AIRLINE);
-  addItem<optsac::DisplayOptionsUserAircraft>(userAircraft, displayOptItemIndexUser, tr("Flight Number"), tr("Flight number like \"123\"."), optsac::ITEM_USER_AIRCRAFT_FLIGHT_NUMBER);
-  addItem<optsac::DisplayOptionsUserAircraft>(userAircraft, displayOptItemIndexUser, tr("Transponder Code"), tr("Transponder code prefixed with \"XPDR\" on the map."), optsac::ITEM_USER_AIRCRAFT_TRANSPONDER_CODE);
-  addItem<optsac::DisplayOptionsUserAircraft>(userAircraft, displayOptItemIndexUser, tr("Indicated Airspeed"), tr("Value prefixed with \"IAS\" on the map."), optsac::ITEM_USER_AIRCRAFT_IAS);
-  addItem<optsac::DisplayOptionsUserAircraft>(userAircraft, displayOptItemIndexUser, tr("Ground Speed"), tr("Value prefixed with \"GS\" on the map."), optsac::ITEM_USER_AIRCRAFT_GS, true);
-  addItem<optsac::DisplayOptionsUserAircraft>(userAircraft, displayOptItemIndexUser, tr("True Airspeed"), tr("Value prefixed with \"TAS\" on the map."), optsac::ITEM_USER_AIRCRAFT_TAS);
-  addItem<optsac::DisplayOptionsUserAircraft>(userAircraft, displayOptItemIndexUser, tr("Climb- and Sinkrate"), QStringLiteral(), optsac::ITEM_USER_AIRCRAFT_CLIMB_SINK);
-  addItem<optsac::DisplayOptionsUserAircraft>(userAircraft, displayOptItemIndexUser, tr("Heading"), tr("Aircraft magnetic heading prefixed with \"HDG\" on the map."), optsac::ITEM_USER_AIRCRAFT_HEADING);
-  addItem<optsac::DisplayOptionsUserAircraft>(userAircraft, displayOptItemIndexUser, tr("Actual Altitude"), tr("Real aircraft altitude prefixed with \"ALT\" on the map."), optsac::ITEM_USER_AIRCRAFT_ALTITUDE, true);
-  addItem<optsac::DisplayOptionsUserAircraft>(userAircraft, displayOptItemIndexUser, tr("Indicated Altitude"), tr("Indicated aircraft altitude prefixed with \"IND\" on the map."), optsac::ITEM_USER_AIRCRAFT_INDICATED_ALTITUDE);
-  addItem<optsac::DisplayOptionsUserAircraft>(userAircraft, displayOptItemIndexUser, tr("Altitude above ground"), tr("Actual altitude above ground. Prefixed with \"AGL\" on the map."), optsac::ITEM_USER_AIRCRAFT_ALT_ABOVE_GROUND);
-  addItem<optsac::DisplayOptionsUserAircraft>(userAircraft, displayOptItemIndexUser, tr("Track Line"), tr("Show the aircraft trail as a black needle at\n"
-                                                                                                          "the from of the user aircraft."), optsac::ITEM_USER_AIRCRAFT_TRACK_LINE, true);
-  addItem<optsac::DisplayOptionsUserAircraft>(userAircraft, displayOptItemIndexUser, tr("Coordinates"), tr("Show aircraft coordinates using the format selected on\n"
-                                                                                                           "options page \"Units\"."), optsac::ITEM_USER_AIRCRAFT_COORDINATES);
-  addItem<optsac::DisplayOptionsUserAircraft>(userAircraft, displayOptItemIndexUser, tr("Icing"), tr("Show a red label \"ICE\" and icing values in percent\n"
-                                                                                                     "when aircraft icing occurs."), optsac::ITEM_USER_AIRCRAFT_ICE);
+  QTreeWidgetItem *userAircraft = addTopItem(tr("User Aircraft"),
+                                             tr("Select text labels and other options for the user aircraft."));
+  addItem<optsac::DisplayOptionsUserAircraft>(userAircraft, displayOptItemIndexUser, tr("Registration"),
+                                              tr("Aircraft registration like \"N1000A\" or \"D-MABC\"."),
+                                              optsac::ITEM_USER_AIRCRAFT_REGISTRATION);
+  addItem<optsac::DisplayOptionsUserAircraft>(userAircraft, displayOptItemIndexUser, tr("Type"),
+                                              tr("Show the aircraft type, like B738, B350 or M20T."),
+                                              optsac::ITEM_USER_AIRCRAFT_TYPE);
+  addItem<optsac::DisplayOptionsUserAircraft>(userAircraft, displayOptItemIndexUser, tr("Airline"),
+                                              tr("Airline like \"Orbit Airlines\"."),
+                                              optsac::ITEM_USER_AIRCRAFT_AIRLINE);
+  addItem<optsac::DisplayOptionsUserAircraft>(userAircraft, displayOptItemIndexUser, tr("Flight Number"),
+                                              tr("Flight number like \"123\"."),
+                                              optsac::ITEM_USER_AIRCRAFT_FLIGHT_NUMBER);
+  addItem<optsac::DisplayOptionsUserAircraft>(userAircraft, displayOptItemIndexUser, tr("Transponder Code"),
+                                              tr("Transponder code prefixed with \"XPDR\" on the map."),
+                                              optsac::ITEM_USER_AIRCRAFT_TRANSPONDER_CODE);
+  addItem<optsac::DisplayOptionsUserAircraft>(userAircraft, displayOptItemIndexUser, tr("Indicated Airspeed"),
+                                              tr("Value prefixed with \"IAS\" on the map."),
+                                              optsac::ITEM_USER_AIRCRAFT_IAS);
+  addItem<optsac::DisplayOptionsUserAircraft>(userAircraft, displayOptItemIndexUser, tr("Ground Speed"),
+                                              tr("Value prefixed with \"GS\" on the map."),
+                                              optsac::ITEM_USER_AIRCRAFT_GS, true);
+  addItem<optsac::DisplayOptionsUserAircraft>(userAircraft, displayOptItemIndexUser, tr("True Airspeed"),
+                                              tr("Value prefixed with \"TAS\" on the map."),
+                                              optsac::ITEM_USER_AIRCRAFT_TAS);
+  addItem<optsac::DisplayOptionsUserAircraft>(userAircraft, displayOptItemIndexUser, tr("Climb- and Sinkrate"), QStringLiteral(),
+                                              optsac::ITEM_USER_AIRCRAFT_CLIMB_SINK);
+  addItem<optsac::DisplayOptionsUserAircraft>(userAircraft, displayOptItemIndexUser, tr("Heading"),
+                                              tr("Aircraft magnetic heading prefixed with \"HDG\" on the map."),
+                                              optsac::ITEM_USER_AIRCRAFT_HEADING);
+  addItem<optsac::DisplayOptionsUserAircraft>(userAircraft, displayOptItemIndexUser, tr("Actual Altitude"),
+                                              tr("Real aircraft altitude prefixed with \"ALT\" on the map."),
+                                              optsac::ITEM_USER_AIRCRAFT_ALTITUDE, true);
+  addItem<optsac::DisplayOptionsUserAircraft>(userAircraft, displayOptItemIndexUser, tr("Indicated Altitude"),
+                                              tr("Indicated aircraft altitude prefixed with \"IND\" on the map."),
+                                              optsac::ITEM_USER_AIRCRAFT_INDICATED_ALTITUDE);
+  addItem<optsac::DisplayOptionsUserAircraft>(userAircraft, displayOptItemIndexUser, tr("Altitude above ground"),
+                                              tr("Actual altitude above ground. Prefixed with \"AGL\" on the map."),
+                                              optsac::ITEM_USER_AIRCRAFT_ALT_ABOVE_GROUND);
+  addItem<optsac::DisplayOptionsUserAircraft>(userAircraft, displayOptItemIndexUser, tr("Track Line"),
+                                              tr("Show the aircraft trail as a black needle at\n"
+                                                 "the from of the user aircraft."),
+                                              optsac::ITEM_USER_AIRCRAFT_TRACK_LINE, true);
+  addItem<optsac::DisplayOptionsUserAircraft>(userAircraft, displayOptItemIndexUser, tr("Coordinates"),
+                                              tr("Show aircraft coordinates using the format selected on\n"
+                                                 "options page \"Units\"."),
+                                              optsac::ITEM_USER_AIRCRAFT_COORDINATES);
+  addItem<optsac::DisplayOptionsUserAircraft>(userAircraft, displayOptItemIndexUser, tr("Icing"),
+                                              tr("Show a red label \"ICE\" and icing values in percent\n"
+                                                 "when aircraft icing occurs."),
+                                              optsac::ITEM_USER_AIRCRAFT_ICE);
 
   // AI =====================================================
-  QTreeWidgetItem *aiAircraft = addTopItem(tr("AI, Multiplayer and Online Client Aircraft"), tr("Select text labels for the AI, multiplayer and online client aircraft."));
-  addItem<optsac::DisplayOptionsAiAircraft>(aiAircraft, displayOptItemIndexAi, tr("Registration, Number or Callsign"), tr("Aircraft registration like \"N1000A\" or \"D-MABC\"."), optsac::ITEM_AI_AIRCRAFT_REGISTRATION, true);
-  addItem<optsac::DisplayOptionsAiAircraft>(aiAircraft, displayOptItemIndexAi, tr("Type"), tr("Show the AI aircraft type, like B738, B350 or M20T."), optsac::ITEM_AI_AIRCRAFT_TYPE, true);
-  addItem<optsac::DisplayOptionsAiAircraft>(aiAircraft, displayOptItemIndexAi, tr("Airline"), tr("Airline like \"Orbit Airlines\"."), optsac::ITEM_AI_AIRCRAFT_AIRLINE, true);
-  addItem<optsac::DisplayOptionsAiAircraft>(aiAircraft, displayOptItemIndexAi, tr("Flight Number"), tr("Flight number like \"123\"."), optsac::ITEM_AI_AIRCRAFT_FLIGHT_NUMBER);
-  addItem<optsac::DisplayOptionsAiAircraft>(aiAircraft, displayOptItemIndexAi, tr("Transponder Code"), tr("Transponder code prefixed with \"XPDR\" on the map"), optsac::ITEM_AI_AIRCRAFT_TRANSPONDER_CODE);
-  addItem<optsac::DisplayOptionsAiAircraft>(aiAircraft, displayOptItemIndexAi, tr("Indicated Airspeed"), tr("Value prefixed with \"IAS\" on the map"), optsac::ITEM_AI_AIRCRAFT_IAS);
-  addItem<optsac::DisplayOptionsAiAircraft>(aiAircraft, displayOptItemIndexAi, tr("Ground Speed"), tr("Value prefixed with \"GS\" on the map"), optsac::ITEM_AI_AIRCRAFT_GS, true);
-  addItem<optsac::DisplayOptionsAiAircraft>(aiAircraft, displayOptItemIndexAi, tr("True Airspeed"), tr("Value prefixed with \"TAS\" on the map"), optsac::ITEM_AI_AIRCRAFT_TAS);
-  addItem<optsac::DisplayOptionsAiAircraft>(aiAircraft, displayOptItemIndexAi, tr("Climb- and Sinkrate"), QStringLiteral(), optsac::ITEM_AI_AIRCRAFT_CLIMB_SINK);
-  addItem<optsac::DisplayOptionsAiAircraft>(aiAircraft, displayOptItemIndexAi, tr("Heading"), tr("Aircraft magnetic heading prefixed with \"HDG\" on the map"), optsac::ITEM_AI_AIRCRAFT_HEADING);
-  addItem<optsac::DisplayOptionsAiAircraft>(aiAircraft, displayOptItemIndexAi, tr("Actual Altitude"), tr("Real aircraft altitude prefixed with \"ALT\" on the map"), optsac::ITEM_AI_AIRCRAFT_ALTITUDE, true);
-  addItem<optsac::DisplayOptionsAiAircraft>(aiAircraft, displayOptItemIndexAi, tr("Indicated Altitude"), tr("Indicated aircraft altitude prefixed with \"IND\" on the map"), optsac::ITEM_AI_AIRCRAFT_INDICATED_ALTITUDE);
-  addItem<optsac::DisplayOptionsAiAircraft>(aiAircraft, displayOptItemIndexAi, tr("Departure and Destination"), tr("Departure and destination airport idents"), optsac::ITEM_AI_AIRCRAFT_DEP_DEST);
-  addItem<optsac::DisplayOptionsAiAircraft>(aiAircraft, displayOptItemIndexAi, tr("Coordinates"), tr("Show aircraft coordinates using the format selected on\n"
-                                                                                                     "options page \"Units\"."), optsac::ITEM_AI_AIRCRAFT_COORDINATES);
-  addItem<optsac::DisplayOptionsAiAircraft>(aiAircraft, displayOptItemIndexAi, tr("Distance and Bearing from User"), tr("Distance and magnetic bearing from user aircraft\n"
-                                                                                                                        "prefixed with \"From User\"."), optsac::ITEM_AI_AIRCRAFT_DIST_BEARING_FROM_USER);
-  addItem<optsac::DisplayOptionsAiAircraft>(aiAircraft, displayOptItemIndexAi, tr("Object ID"), tr("Internal object ID for traffic development or debugging.\n"
-                                                                                                   "Value is prefixed with \"ID\" and depends on simulator."), optsac::ITEM_AI_AIRCRAFT_OBJECT_ID);
+  QTreeWidgetItem *aiAircraft = addTopItem(tr("AI, Multiplayer and Online Client Aircraft"),
+                                           tr("Select text labels for the AI, multiplayer and online client aircraft."));
+  addItem<optsac::DisplayOptionsAiAircraft>(aiAircraft, displayOptItemIndexAi, tr("Registration, Number or Callsign"),
+                                            tr("Aircraft registration like \"N1000A\" or \"D-MABC\"."),
+                                            optsac::ITEM_AI_AIRCRAFT_REGISTRATION, true);
+  addItem<optsac::DisplayOptionsAiAircraft>(aiAircraft, displayOptItemIndexAi, tr("Type"),
+                                            tr("Show the AI aircraft type, like B738, B350 or M20T."),
+                                            optsac::ITEM_AI_AIRCRAFT_TYPE, true);
+  addItem<optsac::DisplayOptionsAiAircraft>(aiAircraft, displayOptItemIndexAi, tr("Airline"),
+                                            tr("Airline like \"Orbit Airlines\"."),
+                                            optsac::ITEM_AI_AIRCRAFT_AIRLINE, true);
+  addItem<optsac::DisplayOptionsAiAircraft>(aiAircraft, displayOptItemIndexAi, tr("Flight Number"),
+                                            tr("Flight number like \"123\"."),
+                                            optsac::ITEM_AI_AIRCRAFT_FLIGHT_NUMBER);
+  addItem<optsac::DisplayOptionsAiAircraft>(aiAircraft, displayOptItemIndexAi, tr("Transponder Code"),
+                                            tr("Transponder code prefixed with \"XPDR\" on the map"),
+                                            optsac::ITEM_AI_AIRCRAFT_TRANSPONDER_CODE);
+  addItem<optsac::DisplayOptionsAiAircraft>(aiAircraft, displayOptItemIndexAi, tr("Indicated Airspeed"),
+                                            tr("Value prefixed with \"IAS\" on the map"),
+                                            optsac::ITEM_AI_AIRCRAFT_IAS);
+  addItem<optsac::DisplayOptionsAiAircraft>(aiAircraft, displayOptItemIndexAi, tr("Ground Speed"),
+                                            tr("Value prefixed with \"GS\" on the map"),
+                                            optsac::ITEM_AI_AIRCRAFT_GS, true);
+  addItem<optsac::DisplayOptionsAiAircraft>(aiAircraft, displayOptItemIndexAi, tr("True Airspeed"),
+                                            tr("Value prefixed with \"TAS\" on the map"),
+                                            optsac::ITEM_AI_AIRCRAFT_TAS);
+  addItem<optsac::DisplayOptionsAiAircraft>(aiAircraft, displayOptItemIndexAi, tr("Climb- and Sinkrate"), QStringLiteral(),
+                                            optsac::ITEM_AI_AIRCRAFT_CLIMB_SINK);
+  addItem<optsac::DisplayOptionsAiAircraft>(aiAircraft, displayOptItemIndexAi, tr("Heading"),
+                                            tr("Aircraft magnetic heading prefixed with \"HDG\" on the map"),
+                                            optsac::ITEM_AI_AIRCRAFT_HEADING);
+  addItem<optsac::DisplayOptionsAiAircraft>(aiAircraft, displayOptItemIndexAi, tr("Actual Altitude"),
+                                            tr("Real aircraft altitude prefixed with \"ALT\" on the map"),
+                                            optsac::ITEM_AI_AIRCRAFT_ALTITUDE, true);
+  addItem<optsac::DisplayOptionsAiAircraft>(aiAircraft, displayOptItemIndexAi, tr("Indicated Altitude"),
+                                            tr("Indicated aircraft altitude prefixed with \"IND\" on the map"),
+                                            optsac::ITEM_AI_AIRCRAFT_INDICATED_ALTITUDE);
+  addItem<optsac::DisplayOptionsAiAircraft>(aiAircraft, displayOptItemIndexAi, tr("Departure and Destination"),
+                                            tr("Departure and destination airport idents"),
+                                            optsac::ITEM_AI_AIRCRAFT_DEP_DEST);
+  addItem<optsac::DisplayOptionsAiAircraft>(aiAircraft, displayOptItemIndexAi, tr("Coordinates"),
+                                            tr("Show aircraft coordinates using the format selected on\n"
+                                               "options page \"Units\"."),
+                                            optsac::ITEM_AI_AIRCRAFT_COORDINATES);
+  addItem<optsac::DisplayOptionsAiAircraft>(aiAircraft, displayOptItemIndexAi, tr("Distance and Bearing from User"),
+                                            tr("Distance and magnetic bearing from user aircraft\n"
+                                               "prefixed with \"From User\"."),
+                                            optsac::ITEM_AI_AIRCRAFT_DIST_BEARING_FROM_USER);
+  addItem<optsac::DisplayOptionsAiAircraft>(aiAircraft, displayOptItemIndexAi, tr("Object ID"),
+                                            tr("Internal object ID for traffic development or debugging.\n"
+                                               "Value is prefixed with \"ID\" and depends on simulator."),
+                                            optsac::ITEM_AI_AIRCRAFT_OBJECT_ID);
 
   // Compass rose =====================================================
-  QTreeWidgetItem *compassRose = addTopItem(tr("Compass Rose"), tr("Select display options for the compass rose."));
-  addItem<optsd::DisplayOptionsRose>(compassRose, displayOptItemIndexRose, tr("Direction Labels"), tr("Show N, S, E and W labels."), optsd::ROSE_DIR_LABELS, true);
-  addItem<optsd::DisplayOptionsRose>(compassRose, displayOptItemIndexRose, tr("Degree Tick Marks"), tr("Show tick marks for degrees on ring."), optsd::ROSE_DEGREE_MARKS, true);
-  addItem<optsd::DisplayOptionsRose>(compassRose, displayOptItemIndexRose, tr("Degree Labels"), tr("Show degree labels on ring."), optsd::ROSE_DEGREE_LABELS, true);
-  addItem<optsd::DisplayOptionsRose>(compassRose, displayOptItemIndexRose, tr("Range Rings"), tr("Show range rings and distance labels inside."), optsd::ROSE_RANGE_RINGS, true);
-  addItem<optsd::DisplayOptionsRose>(compassRose, displayOptItemIndexRose, tr("Heading Line"), tr("Show the dashed heading line for user aircraft."), optsd::ROSE_HEADING_LINE, true);
-  addItem<optsd::DisplayOptionsRose>(compassRose, displayOptItemIndexRose, tr("Track Line"), tr("Show the solid track line for user aircraft."), optsd::ROSE_TRACK_LINE, true);
-  addItem<optsd::DisplayOptionsRose>(compassRose, displayOptItemIndexRose, tr("Track Label"), tr("Show track label for user aircraft."), optsd::ROSE_TRACK_LABEL, true);
-  addItem<optsd::DisplayOptionsRose>(compassRose, displayOptItemIndexRose, tr("Heading Indicator"), tr("Show the heading for the user aircraft as a\n"
-                                                                                                       "small magenta circle."), optsd::ROSE_CRAB_ANGLE, true);
-  addItem<optsd::DisplayOptionsRose>(compassRose, displayOptItemIndexRose, tr("Course to Next Waypoint"), tr("Show the course to next waypoint for the user aircraft as\n"
-                                                                                                             "a small magenta line."), optsd::ROSE_NEXT_WAYPOINT, true);
-  addItem<optsd::DisplayOptionsRose>(compassRose, displayOptItemIndexRose, tr("True Heading"), tr("Show the whole circle and tick marks using true heading."), optsd::ROSE_TRUE_HEADING);
+  QTreeWidgetItem *compassRose = addTopItem(tr("Compass Rose"),
+                                            tr("Select display options for the compass rose."));
+  addItem<optsd::DisplayOptionsRose>(compassRose, displayOptItemIndexRose, tr("Direction Labels"),
+                                     tr("Show N, S, E and W labels."),
+                                     optsd::ROSE_DIR_LABELS, true);
+  addItem<optsd::DisplayOptionsRose>(compassRose, displayOptItemIndexRose, tr("Degree Tick Marks"),
+                                     tr("Show tick marks for degrees on ring."),
+                                     optsd::ROSE_DEGREE_MARKS, true);
+  addItem<optsd::DisplayOptionsRose>(compassRose, displayOptItemIndexRose, tr("Degree Labels"),
+                                     tr("Show degree labels on ring."),
+                                     optsd::ROSE_DEGREE_LABELS, true);
+  addItem<optsd::DisplayOptionsRose>(compassRose, displayOptItemIndexRose, tr("Range Rings"),
+                                     tr("Show range rings and distance labels inside."),
+                                     optsd::ROSE_RANGE_RINGS, true);
+  addItem<optsd::DisplayOptionsRose>(compassRose, displayOptItemIndexRose, tr("Heading Line"),
+                                     tr("Show the dashed heading line for user aircraft."),
+                                     optsd::ROSE_HEADING_LINE, true);
+  addItem<optsd::DisplayOptionsRose>(compassRose, displayOptItemIndexRose, tr("Track Line"),
+                                     tr("Show the solid track line for user aircraft."),
+                                     optsd::ROSE_TRACK_LINE, true);
+  addItem<optsd::DisplayOptionsRose>(compassRose, displayOptItemIndexRose, tr("Track Label"),
+                                     tr("Show track label for user aircraft."),
+                                     optsd::ROSE_TRACK_LABEL, true);
+  addItem<optsd::DisplayOptionsRose>(compassRose, displayOptItemIndexRose, tr("Heading Indicator"),
+                                     tr("Show the heading for the user aircraft as a\n"
+                                        "small magenta circle."),
+                                     optsd::ROSE_CRAB_ANGLE, true);
+  addItem<optsd::DisplayOptionsRose>(compassRose, displayOptItemIndexRose, tr("Course to Next Waypoint"),
+                                     tr("Show the course to next waypoint for the user aircraft as\n"
+                                        "a small magenta line."),
+                                     optsd::ROSE_NEXT_WAYPOINT, true);
+  addItem<optsd::DisplayOptionsRose>(compassRose, displayOptItemIndexRose, tr("True Heading"),
+                                     tr("Show the whole circle and tick marks using true heading."),
+                                     optsd::ROSE_TRUE_HEADING);
 
   // Measurment lines =====================================================
-  QTreeWidgetItem *measurement = addTopItem(tr("Measurement Lines"), tr("Select display options for measurement lines."));
-  addItem<optsd::DisplayOptionsMeasurement>(measurement, displayOptItemIndexMeasurement, tr("Distance"), tr("Great circle distance for measurement line."), optsd::MEASUREMENT_DIST, true);
-  addItem<optsd::DisplayOptionsMeasurement>(measurement, displayOptItemIndexMeasurement, tr("Magnetic Course"), tr("Show magnetic course for start and end of line."), optsd::MEASUREMENT_MAG, true);
-  addItem<optsd::DisplayOptionsMeasurement>(measurement, displayOptItemIndexMeasurement, tr("True Course"), tr("Show true course for start and end of line."), optsd::MEASUREMENT_TRUE, true);
-  addItem<optsd::DisplayOptionsMeasurement>(measurement, displayOptItemIndexMeasurement, tr("Radial Number"), tr("Shows the radial prefixed with \"R\" for VOR, VORDME,\n"
-                                                                                                                 "VORTAC, TACAN or NDB."), optsd::MEASUREMENT_RADIAL);
-  addItem<optsd::DisplayOptionsMeasurement>(measurement, displayOptItemIndexMeasurement, tr("Navaid or airport ident"), tr("Show ident if attached to navaid or airport.\n"
-                                                                                                                           "Also show frequency if attached to a radio navaid. "), optsd::MEASUREMENT_LABEL, true);
-  /* *INDENT-ON* */
+  QTreeWidgetItem *measurement = addTopItem(tr("Measurement Lines"),
+                                            tr("Select display options for measurement lines."));
+  addItem<optsd::DisplayOptionsMeasurement>(measurement, displayOptItemIndexMeasurement, tr("Distance"),
+                                            tr("Great circle distance for measurement line."),
+                                            optsd::MEASUREMENT_DIST, true);
+  addItem<optsd::DisplayOptionsMeasurement>(measurement, displayOptItemIndexMeasurement, tr("Magnetic Course"),
+                                            tr("Show magnetic course for start and end of line."),
+                                            optsd::MEASUREMENT_MAG, true);
+  addItem<optsd::DisplayOptionsMeasurement>(measurement, displayOptItemIndexMeasurement, tr("True Course"),
+                                            tr("Show true course for start and end of line."),
+                                            optsd::MEASUREMENT_TRUE, true);
+  addItem<optsd::DisplayOptionsMeasurement>(measurement, displayOptItemIndexMeasurement, tr("Radial Number"),
+                                            tr("Shows the radial prefixed with \"R\" for VOR, VORDME,\n"
+                                               "VORTAC, TACAN or NDB."),
+                                            optsd::MEASUREMENT_RADIAL);
+  addItem<optsd::DisplayOptionsMeasurement>(measurement, displayOptItemIndexMeasurement, tr("Navaid or airport ident"),
+                                            tr("Show ident if attached to navaid or airport.\n"
+                                               "Also show frequency if attached to a radio navaid. "),
+                                            optsd::MEASUREMENT_LABEL, true);
 
   ui->treeWidgetOptionsDisplayTextOptions->resizeColumnToContents(0);
 
@@ -832,15 +1064,19 @@ void OptionsDialog::hintLinkActivated(const QString& link)
   qDebug() << Q_FUNC_INFO << link;
   if(link.startsWith("lnm://"))
   {
-    bool ok;
-    int index = link.mid(6).toInt(&ok);
-    if(ok && index < ui->listWidgetOptionPages->count())
+    const QString id = link.mid(6);
+    QListWidgetItem *item = listWidgetItemIndex.value(id, nullptr);
+    if(item != nullptr)
     {
       ui->lineEditOptionSearch->clear();
       searchTextEdited(QStringLiteral());
-      ui->listWidgetOptionPages->setCurrentRow(index);
+      ui->listWidgetOptionPages->setCurrentItem(item);
     }
+    else
+      qWarning() << Q_FUNC_INFO << "Page list item id not found in link" << link;
   }
+  else
+    qWarning() << Q_FUNC_INFO << "Unknown link format" << link;
 }
 
 void OptionsDialog::styleChanged()
@@ -986,7 +1222,8 @@ void OptionsDialog::buttonBoxClicked(QAbstractButton *button)
   else if(button == ui->buttonBoxOptions->button(QDialogButtonBox::Help))
     HelpHandler::openHelpUrlWeb(this,
                                 lnm::helpOnlineUrl +
-                                QStringLiteral("OPTIONS.html#page%1").arg(ui->stackedWidgetOptions->currentIndex() + 1),
+                                QStringLiteral("OPTIONS.html#options-page-%1").
+                                arg(ui->listWidgetOptionPages->currentItem()->data(PAGE_LIST_ITEM_DATA_ID).toString()),
                                 lnm::helpLanguageOnline());
   else if(button == ui->buttonBoxOptions->button(QDialogButtonBox::Cancel))
     reject();
@@ -1046,7 +1283,7 @@ void OptionsDialog::eastWestRuleClicked()
 
 void OptionsDialog::checkOfficialOnlineUrls()
 {
-  if(ui->spinBoxOptionsOnlineUpdate->value() < MIN_ONLINE_UPDATE)
+  if(ui->spinBoxOptionsOnlineUpdate->value() < MIN_ONLINE_UPDATE_SECONDS)
   {
     QUrl url;
     if(ui->radioButtonOptionsOnlineCustom->isChecked())
@@ -1065,11 +1302,11 @@ void OptionsDialog::checkOfficialOnlineUrls()
                    << "s for url" << url << "host" << host;
         atools::gui::Dialog::warning(this, tr("Do not use an update period smaller than %1 seconds "
                                               "for official networks like VATSIM, IVAO or PilotEdge.\n\n"
-                                              "Resetting update period back to %1 seconds.").arg(MIN_ONLINE_UPDATE));
+                                              "Resetting update period back to %1 seconds.").arg(MIN_ONLINE_UPDATE_SECONDS));
 
         // Reset both widget and data
-        ui->spinBoxOptionsOnlineUpdate->setValue(MIN_ONLINE_UPDATE);
-        OptionData::instanceInternal().onlineCustomReload = MIN_ONLINE_UPDATE;
+        ui->spinBoxOptionsOnlineUpdate->setValue(MIN_ONLINE_UPDATE_SECONDS);
+        OptionData::instanceInternal().onlineCustomReload = MIN_ONLINE_UPDATE_SECONDS;
       }
     }
   }
@@ -1714,7 +1951,7 @@ void OptionsDialog::testWeatherIvaoUrlClicked()
   bool result = WeatherReporter::testUrl(resultStr, ui->lineEditOptionsWeatherIvaoUrl->text().trimmed(), QStringLiteral(), {
     {"accept", "application/json"},
     {"apiKey",
-     atools::strFromCryptFile(":/littlenavmap/little_navmap_keys/ivao_weather_api_key.bin",
+     atools::strFromCryptFile(QStringLiteral(":/littlenavmap/little_navmap_keys/ivao_weather_api_key.bin"),
                               0x2B1A96468EB62460)}
   });
 
@@ -2903,14 +3140,25 @@ void OptionsDialog::showDiskCacheClicked()
                                                                   atools::SEP % "earth").toString());
 }
 
-QListWidgetItem *OptionsDialog::pageListItem(QListWidget *parent, const QString& text, const QString& tooltip, const QString& iconPath)
+void OptionsDialog::addPageListItem(const QString& id, const QString& text, const QString& tooltip, const QString& iconPath)
 {
-  QListWidgetItem *item = new QListWidgetItem(text, parent);
+  Q_ASSERT(!listWidgetItemIndex.contains(id));
+
+  QListWidgetItem *item = new QListWidgetItem(text, ui->listWidgetOptionPages);
+  item->setData(PAGE_LIST_ITEM_DATA_ID, id);
+
   if(!tooltip.isEmpty())
     item->setToolTip(tooltip);
+
   if(!iconPath.isEmpty())
     item->setIcon(QIcon(iconPath));
-  return item;
+
+  ui->listWidgetOptionPages->addItem(item);
+  listWidgetItemIndex.insert(id, item);
+
+#ifdef DEBUG_INFORMATION
+  qDebug() << Q_FUNC_INFO << id << item->text();
+#endif
 }
 
 void OptionsDialog::changePage(QListWidgetItem *current, QListWidgetItem *previous)

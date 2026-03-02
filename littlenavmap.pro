@@ -728,7 +728,7 @@ FORMS += \
   src/logbook/logdatadialog.ui \
   src/logbook/logstatisticsdialog.ui \
   src/mapgui/imageexportdialog.ui \
-  src/options/options.ui \
+  src/options/optionsdialog.ui \
   src/perf/aircraftperfdialog.ui \
   src/perf/perfmergedialog.ui \
   src/print/printdialog.ui \

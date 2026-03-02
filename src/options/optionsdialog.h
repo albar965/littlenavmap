@@ -24,7 +24,7 @@
 #include <QLocale>
 
 namespace Ui {
-class Options;
+class OptionsDialog;
 }
 
 class QAbstractButton;
@@ -230,8 +230,7 @@ private:
   void onlineTestUrl(const QString& url, bool statusFile);
 
   /* Add a dialog page */
-  QListWidgetItem *pageListItem(QListWidget *parent, const QString& text, const QString& tooltip = QString(),
-                                const QString& iconPath = QString());
+  void addPageListItem(const QString& id, const QString& text, const QString& tooltip, const QString& iconPath);
   void changePage(QListWidgetItem *current, QListWidgetItem *previous);
 
   /* Update label for docroot path */
@@ -287,9 +286,10 @@ private:
   QColor flightplanColor, flightplanOutlineColor, flightplanProcedureColor, flightplanActiveColor, trailColor, measurementColor,
          flightplanPassedColor, highlightFlightplanColor, highlightSearchColor, highlightProfileColor;
 
-  Ui::Options *ui;
+  Ui::OptionsDialog *ui;
   QMainWindow *mainWindow;
   QList<QObject *> widgets;
+  QHash<QString, QListWidgetItem *> listWidgetItemIndex;
 
   // Maps options flags to items in the tree widget
   QHash<optsac::DisplayOptionsUserAircraft, QTreeWidgetItem *> displayOptItemIndexUser;
