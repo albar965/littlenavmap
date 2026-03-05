@@ -61,7 +61,7 @@ class SimConnectData;
 class MainWindow;
 class MapPaintLayer;
 class MapScreenIndex;
-class ApronGeometryCache;
+class MapCache;
 class MapLayer;
 class AircraftTrail;
 
@@ -361,7 +361,7 @@ public:
     paintWindHeader = value;
   }
 
-  ApronGeometryCache *getApronGeometryCache();
+  MapCache *getMapCache();
 
   /* true if real map display widget - false if hidden for online services or other applications */
   bool isVisibleWidget() const
@@ -521,7 +521,7 @@ protected:
   static constexpr float MAX_ZOOM_RECT_DIAMETER_KM = 1000.f;
 
   /* Caches complex X-Plane apron geometry as objects in screen coordinates for faster painting. */
-  ApronGeometryCache *apronGeometryCache;
+  MapCache *mapCache;
 
   /* Keep the the overlays for the GUI widget from updating */
   bool ignoreOverlayUpdates = false;

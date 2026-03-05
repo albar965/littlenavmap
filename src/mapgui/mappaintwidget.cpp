@@ -24,7 +24,7 @@
 #include "geo/aircrafttrail.h"
 #include "geo/calculations.h"
 #include "geo/marbleconverter.h"
-#include "mapgui/aprongeometrycache.h"
+#include "mapgui/mapcache.h"
 #include "mapgui/mapscreenindex.h"
 #include "mapgui/mapthemehandler.h"
 #include "mappainter/mappaintlayer.h"
@@ -95,8 +95,8 @@ MapPaintWidget::MapPaintWidget(QWidget *parent, Queries *queriesParam, bool visi
   setFont(options.getMapFont());
 
   // Initialize the X-Plane apron geometry cache
-  apronGeometryCache = new ApronGeometryCache();
-  apronGeometryCache->setViewportParams(viewport());
+  mapCache = new MapCache();
+  mapCache->setViewportParams(viewport());
 
   paintLayer->initQueries();
 
@@ -111,7 +111,7 @@ MapPaintWidget::~MapPaintWidget()
   ATOOLS_DELETE_LOG(screenIndex);
   ATOOLS_DELETE_LOG(aircraftTrail);
   ATOOLS_DELETE_LOG(aircraftTrailLogbook);
-  ATOOLS_DELETE_LOG(apronGeometryCache);
+  ATOOLS_DELETE_LOG(mapCache);
 }
 
 // Unused options
@@ -530,9 +530,9 @@ const map::MapAirspaceFilter MapPaintWidget::getShownAirspaceTypesForLayer() con
   return paintLayer->getShownAirspacesTypesForLayer();
 }
 
-ApronGeometryCache *MapPaintWidget::getApronGeometryCache()
+MapCache *MapPaintWidget::getMapCache()
 {
-  return apronGeometryCache;
+  return mapCache;
 }
 
 void MapPaintWidget::preDatabaseLoad()
@@ -541,7 +541,7 @@ void MapPaintWidget::preDatabaseLoad()
   cancelDragAll();
 
   databaseLoadStatus = true;
-  apronGeometryCache->clear();
+  mapCache->clear();
   paintLayer->preDatabaseLoad();
 }
 

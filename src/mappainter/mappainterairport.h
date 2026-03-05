@@ -56,8 +56,9 @@ private:
 
   void drawAirportSymbol(const map::MapAirport& airport, float x, float y, float size);
 
-  /* Draws the full airport diagram including runway, taxiways, apron, parking and more */
-  void drawAirportDiagram(const map::MapAirport& airport);
+  /* Draws the full airport diagram including runway, taxiways, apron, parking and more.
+   * Airport point is needed to reposition cached taxiway labels. */
+  void drawAirportDiagram(const map::MapAirport& airport, const QPointF& airportPoint);
 
   /* Draws the full white airport diagram background including runway, taxiways, apron, parking and more */
   void drawAirportDiagramBackground(const map::MapAirport& airport);

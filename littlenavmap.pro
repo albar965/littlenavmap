@@ -357,9 +357,9 @@ SOURCES += \
   src/logbook/logdatadialog.cpp \
   src/logbook/logstatisticsdialog.cpp \
   src/main.cpp \
-  src/mapgui/aprongeometrycache.cpp \
   src/mapgui/imageexportdialog.cpp \
   src/mapgui/mapairporthandler.cpp \
+  src/mapgui/mapcache.cpp \
   src/mapgui/mapcontextmenu.cpp \
   src/mapgui/mapdetailhandler.cpp \
   src/mapgui/mapfunctions.cpp \
@@ -569,9 +569,9 @@ HEADERS  += \
   src/logbook/logdataconverter.h \
   src/logbook/logdatadialog.h \
   src/logbook/logstatisticsdialog.h \
-  src/mapgui/aprongeometrycache.h \
   src/mapgui/imageexportdialog.h \
   src/mapgui/mapairporthandler.h \
+  src/mapgui/mapcache.h \
   src/mapgui/mapcontextmenu.h \
   src/mapgui/mapdetailhandler.h \
   src/mapgui/mapfunctions.h \

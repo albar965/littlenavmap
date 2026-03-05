@@ -15,7 +15,7 @@
 * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 *****************************************************************************/
 
-#include "mapgui/aprongeometrycache.h"
+#include "mapgui/mapcache.h"
 
 #include "common/maptypes.h"
 #include "fs/common/xpgeometry.h"
@@ -23,62 +23,51 @@
 
 #include <QPainterPath>
 
-// ======= Key  ===============================================================
-size_t qHash(const ApronGeometryCache::Key& key, size_t seed)
+// ======= ApronKey  ===============================================================
+size_t qHash(const MapCache::ApronKey& key, size_t seed)
 {
   return qHashMulti(seed, key.apronId, key.fast, key.zoomDistanceMeter);
 }
 
-ApronGeometryCache::Key::Key(int apronIdParam, float zoomDistanceMeterParam, bool fastParam)
-  : apronId(apronIdParam), zoomDistanceMeter(static_cast<int>(zoomDistanceMeterParam)), fast(fastParam)
+// ======= TaxiNameKey  ===============================================================
+size_t qHash(const TaxiNameKey& key, size_t seed)
 {
-
+  return qHashMulti(seed, key.airportId, key.taxiName);
 }
 
-bool ApronGeometryCache::Key::operator==(const ApronGeometryCache::Key& other) const
-{
-  return apronId == other.apronId && fast == other.fast && zoomDistanceMeter == other.zoomDistanceMeter;
-}
-
-bool ApronGeometryCache::Key::operator!=(const ApronGeometryCache::Key& other) const
-{
-  return !(*this == other);
-}
-
-// ======= ApronGeometryCache ===============================================================
-ApronGeometryCache::ApronGeometryCache()
+// ======= MapCache ===============================================================
+MapCache::MapCache()
   : geometryCache(CACHE_SIZE)
 {
 
 }
 
-ApronGeometryCache::~ApronGeometryCache()
+MapCache::~MapCache()
 {
   delete converter;
 }
 
-void ApronGeometryCache::clear()
+void MapCache::clear()
 {
   geometryCache.clear();
 }
 
-void ApronGeometryCache::setViewportParams(const Marble::ViewportParams *viewport)
+void MapCache::setViewportParams(const Marble::ViewportParams *viewport)
 {
-  if(converter != nullptr)
-    delete converter;
+  delete converter;
 
   // Create a new converter for the viewport
   converter = new CoordinateConverter(viewport);
 }
 
-QPainterPath ApronGeometryCache::getApronGeometry(const map::MapApron& apron, float zoomDistanceMeter, bool fast)
+QPainterPath MapCache::getApronGeometry(const map::MapApron& apron, float zoomDistanceMeter, bool fast)
 {
   Q_ASSERT(converter != nullptr);
 
 #if !defined(DEBUG_NO_XP_APRON_CACHE)
 
   // Build key and get path from the cache
-  Key key(apron.id, zoomDistanceMeter, fast);
+  ApronKey key(apron.id, zoomDistanceMeter, fast);
   QPainterPath *painterPath = geometryCache.object(key);
 
   if(painterPath != nullptr)
@@ -96,8 +85,6 @@ QPainterPath ApronGeometryCache::getApronGeometry(const map::MapApron& apron, fl
   else
 #endif
   {
-    // qDebug() << Q_FUNC_INFO << "Creating new apron";
-
     // Nothing in cache - create the apron boundary
     QPainterPath boundaryPath = pathForBoundary(apron.geometry.boundary, fast);
 
@@ -127,7 +114,7 @@ QPainterPath ApronGeometryCache::getApronGeometry(const map::MapApron& apron, fl
 }
 
 /* Calculate X-Plane aprons including bezier curves */
-QPainterPath ApronGeometryCache::pathForBoundary(const atools::fs::common::Boundary& boundaryNodes, bool fast)
+QPainterPath MapCache::pathForBoundary(const atools::fs::common::Boundary& boundaryNodes, bool fast)
 {
   bool visible;
   QPainterPath apronPath;
@@ -164,15 +151,13 @@ QPainterPath ApronGeometryCache::pathForBoundary(const atools::fs::common::Bound
       {
         // One control point from last - use quad curve
         if(lastPt != pt)
-          apronPath.quadTo(converter->wToSF(lastNode.control,
-                                            CoordinateConverter::DEFAULT_WTOS_SIZE, &visible), pt);
+          apronPath.quadTo(converter->wToSF(lastNode.control, CoordinateConverter::DEFAULT_WTOS_SIZE, &visible), pt);
       }
       else if(node.control.isValid())
       {
         // One control point from current - use quad curve
         if(lastPt != pt)
-          apronPath.quadTo(pt + (pt - converter->wToSF(node.control,
-                                                       CoordinateConverter::DEFAULT_WTOS_SIZE, &visible)), pt);
+          apronPath.quadTo(pt + (pt - converter->wToSF(node.control, CoordinateConverter::DEFAULT_WTOS_SIZE, &visible)), pt);
       }
       else
         // No control point - simple line

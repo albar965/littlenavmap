@@ -55,7 +55,7 @@ struct PaintContext
 
   Marble::GeoPainter *painter;
   Marble::ViewportParams *viewport;
-  Marble::ViewContext viewContext;
+  Marble::ViewContext viewContext; /* Either Animation or Still */
   float zoomDistanceMeter;
 
   bool drawFast; /* true if reduced details should be used */
