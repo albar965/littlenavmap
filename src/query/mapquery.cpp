@@ -408,6 +408,10 @@ void MapQuery::mapObjectByIdentInternal(map::MapResult& result, map::MapTypes ty
     {
       MapAirportMsa msa;
       mapTypesFactory->fillAirportMsa(airportMsaByIdentQuery->record(), msa);
+
+      if(msa.navType == map::VOR)
+        mapTypesFactory->correctAirportMsa(getVorById(msa.navId), msa);
+
       result.airportMsa.append(msa);
     }
     maptools::sortByDistance(result.airportMsa, sortByDistancePos);
@@ -610,7 +614,11 @@ map::MapAirportMsa MapQuery::getAirportMsaById(int id) const
     airportMsaByIdQuery->bindValue(QStringLiteral(":id"), id);
     airportMsaByIdQuery->exec();
     if(airportMsaByIdQuery->next())
+    {
       mapTypesFactory->fillAirportMsa(airportMsaByIdQuery->record(), msa);
+      if(msa.navType == map::VOR)
+        mapTypesFactory->correctAirportMsa(getVorById(msa.navId), msa);
+    }
     airportMsaByIdQuery->finish();
   }
   return msa;
@@ -1178,6 +1186,8 @@ const QList<map::MapAirportMsa> *MapQuery::getAirportMsa(const Marble::GeoDataLa
         {
           MapAirportMsa msa;
           mapTypesFactory->fillAirportMsa(airportMsaByRectQuery->record(), msa);
+          if(msa.navType == map::VOR)
+            mapTypesFactory->correctAirportMsa(getVorById(msa.navId), msa);
           airportMsaCache.list.append(msa);
         }
       }
@@ -1400,7 +1410,7 @@ void MapQuery::initQueries()
                                               "name, mag_var, course, turn_direction, leg_length, leg_time, "
                                               "minimum_altitude, maximum_altitude, speed_limit, lonx, laty");
 
-  static const QLatin1String msaQueryBase("airport_msa_id, airport_ident, nav_ident, nav_type, vor_type, "
+  static const QLatin1String msaQueryBase("airport_msa_id, airport_ident, nav_ident, nav_id, nav_type, vor_type, "
                                           "vor_dme_only, vor_has_dme, region, multiple_code, true_bearing, mag_var, "
                                           "left_lonx, top_laty, right_lonx, bottom_laty, radius, lonx, laty, geometry ");
 

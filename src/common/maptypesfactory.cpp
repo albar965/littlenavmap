@@ -700,16 +700,27 @@ void MapTypesFactory::fillHolding(const atools::sql::SqlRecord& record, map::Map
   holding.speedKts = 0.f;
 }
 
+void MapTypesFactory::correctAirportMsa(const map::MapVor& vor, map::MapAirportMsa& airportMsa)
+{
+  airportMsa.vorType = vor.type;
+  airportMsa.vorTacan = airportMsa.vorType == QStringLiteral("TC");
+  airportMsa.vorVortac = airportMsa.vorType.startsWith(QStringLiteral("VT"));
+  airportMsa.vorDmeOnly = vor.dmeOnly;
+  airportMsa.vorHasDme = vor.hasDme;
+}
+
 void MapTypesFactory::fillAirportMsa(const atools::sql::SqlRecord& record, map::MapAirportMsa& airportMsa)
 {
   // left_lonx, top_laty, right_lonx, bottom_laty, radius, lonx, laty, geometry
   airportMsa.id = record.valueInt(QStringLiteral("airport_msa_id"));
   airportMsa.airportIdent = record.valueStr(QStringLiteral("airport_ident"));
   airportMsa.navIdent = record.valueStr(QStringLiteral("nav_ident"));
+  airportMsa.navId = record.valueInt(QStringLiteral("nav_id"));
   airportMsa.region = record.valueStr(QStringLiteral("region"));
   airportMsa.multipleCode = record.valueStr(QStringLiteral("multiple_code"));
 
-  airportMsa.vorType = record.valueStr(QStringLiteral("vor_type"));
+  airportMsa.vorType = record.valueStr(QStringLiteral("vor_type")); // Broken in Navigraph
+
   airportMsa.vorTacan = airportMsa.vorType == QStringLiteral("TC");
   airportMsa.vorVortac = airportMsa.vorType.startsWith(QStringLiteral("VT"));
   airportMsa.vorDmeOnly = record.valueInt(QStringLiteral("vor_dme_only")) > 0;

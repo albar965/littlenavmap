@@ -82,6 +82,7 @@ public:
   void fillIls(const atools::sql::SqlRecord& record, map::MapIls& ils, float runwayHeadingTrue = map::INVALID_HEADING_VALUE);
   void fillHolding(const atools::sql::SqlRecord& record, map::MapHolding& holding);
   void fillAirportMsa(const atools::sql::SqlRecord& record, map::MapAirportMsa& airportMsa);
+  void correctAirportMsa(const map::MapVor& vor, map::MapAirportMsa& airportMsa);
 
   void fillParking(const atools::sql::SqlRecord& record, map::MapParking& parking);
   void fillStart(const atools::sql::SqlRecord& record, map::MapStart& start);

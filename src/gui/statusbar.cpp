@@ -530,7 +530,7 @@ void StatusBar::renderStateChanged(const Marble::RenderState& state)
 {
   if(!atools::gui::Application::isShuttingDown())
   {
-#ifdef DEBUG_INFORMATION
+#ifdef DEBUG_INFORMATION_RENDER_STATE
     qDebug() << Q_FUNC_INFO << renderStatusString(state.status());
 
     for(int i = 0; i < state.children(); i++)
