@@ -43,7 +43,7 @@ Zipped Windows releases without installer are available in the alternative downl
 
 [► GitHub Profile](https://github.com/albar965) All my projects, releases, source code, issue lists and more.
 
-[**► Support Forum at _Avsim_**](https://www.avsim.com/forum/780-little-navmap-little-navconnect-little-logbook-support-forum) **Support and help for users.**
+[**► Support Forum at _Avsim_**](https://www.avsim.com/forum/780-little-navmap-little-navconnect-little-logbook-support-forum) **Support and help for users.** An ad-blocker like [uBlock Origin (uBO)](https://github.com/gorhill/uBlock) or [AdGuard](https://adguard.com) is recommended.
 
 ### Little Navmap Donations
 
