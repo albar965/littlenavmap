@@ -519,6 +519,9 @@ enum MapWeatherSource
 QString mapWeatherSourceString(map::MapWeatherSource source);
 QString mapWeatherSourceStringShort(map::MapWeatherSource source);
 
+QStringList mapTypeToString(const map::MapTypes& type);
+map::MapTypes mapTypeFromString(const QStringList& flags);
+
 QDebug operator<<(QDebug out, const map::MapWeatherSource& type);
 
 } // namespace map

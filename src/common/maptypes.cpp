@@ -18,21 +18,17 @@
 #include "common/maptypes.h"
 
 #include "app/navapp.h"
-#include "atools.h"
-#include "common/formatter.h"
 #include "common/mapcolors.h"
+#include "common/mapmarkers.h"
 #include "common/proctypes.h"
 #include "common/symbolpainter.h"
 #include "common/unit.h"
 #include "common/vehicleicons.h"
-#include "fs/util/fsutil.h"
-#include "geo/calculations.h"
 #include "mapgui/maplayer.h"
+#include "options/optiondata.h"
 #include "userdata/userdataicons.h"
+#include "fs/util/fsutil.h"
 
-#include <QDataStream>
-#include <QIcon>
-#include <QRegularExpression>
 #include <QRegularExpression>
 #include <QStringBuilder>
 
@@ -1431,96 +1427,6 @@ MapAirwayRouteType airwayRouteTypeFromString(const QString& typeStr)
     return RT_NONE;
 }
 
-QDataStream& operator>>(QDataStream& dataStream, map::RangeMarker& obj)
-{
-  dataStream >> obj.text >> obj.ranges >> obj.position >> obj.color;
-  obj.objType = map::MARK_RANGE;
-  return dataStream;
-}
-
-QDataStream& operator<<(QDataStream& dataStream, const map::RangeMarker& obj)
-{
-  dataStream << obj.text << obj.ranges << obj.position << obj.color;
-  return dataStream;
-}
-
-QDataStream& operator>>(QDataStream& dataStream, map::DistanceMarker& obj)
-{
-  dataStream >> obj.text >> obj.color >> obj.from >> obj.to >> obj.magvar >> obj.flags;
-  obj.objType = map::MARK_DISTANCE;
-  obj.position = obj.to;
-  return dataStream;
-}
-
-QDataStream& operator<<(QDataStream& dataStream, const map::DistanceMarker& obj)
-{
-  dataStream << obj.text << obj.color << obj.from << obj.to << obj.magvar << obj.flags;
-  return dataStream;
-}
-
-QDataStream& operator>>(QDataStream& dataStream, PatternMarker& obj)
-{
-  dataStream >> obj.airportIcao >> obj.runwayName >> obj.color >> obj.turnRight >> obj.base45Degree >> obj.showEntryExit
-  >> obj.runwayLength >> obj.downwindParallelDistance >> obj.finalDistance >> obj.departureDistance
-  >> obj.courseTrue >> obj.magvar >> obj.position;
-  obj.objType = map::MARK_PATTERNS;
-  return dataStream;
-}
-
-QDataStream& operator<<(QDataStream& dataStream, const PatternMarker& obj)
-{
-  dataStream << obj.airportIcao << obj.runwayName << obj.color << obj.turnRight << obj.base45Degree << obj.showEntryExit
-             << obj.runwayLength << obj.downwindParallelDistance << obj.finalDistance << obj.departureDistance
-             << obj.courseTrue << obj.magvar << obj.position;
-
-  return dataStream;
-}
-
-QDataStream& operator>>(QDataStream& dataStream, HoldingMarker& obj)
-{
-  dataStream >> obj.holding.navIdent >> obj.holding.navType >> obj.holding.vorDmeOnly >> obj.holding.vorHasDme
-  >> obj.holding.vorTacan >> obj.holding.vorVortac >> obj.holding.color >> obj.holding.turnLeft >> obj.holding.time
-  >> obj.holding.speedKts >> obj.holding.courseTrue >> obj.holding.magvar >> obj.holding.position;
-
-  obj.holding.length = obj.holding.speedLimit = obj.holding.minAltititude = obj.holding.maxAltititude = 0.f;
-  obj.holding.airportIdent.clear();
-
-  obj.position = obj.holding.position;
-  obj.objType = map::MARK_HOLDING;
-  return dataStream;
-}
-
-QDataStream& operator<<(QDataStream& dataStream, const HoldingMarker& obj)
-{
-  dataStream << obj.holding.navIdent << obj.holding.navType << obj.holding.vorDmeOnly << obj.holding.vorHasDme
-             << obj.holding.vorTacan << obj.holding.vorVortac << obj.holding.color << obj.holding.turnLeft
-             << obj.holding.time << obj.holding.speedKts << obj.holding.courseTrue << obj.holding.magvar << obj.holding.position;
-  return dataStream;
-}
-
-QDataStream& operator>>(QDataStream& dataStream, map::MsaMarker& obj)
-{
-  dataStream >> obj.msa.airportIdent >> obj.msa.navIdent >> obj.msa.region >> obj.msa.multipleCode >> obj.msa.vorType;
-  dataStream >> obj.msa.navType >> obj.msa.vorDmeOnly >> obj.msa.vorHasDme >> obj.msa.vorTacan >> obj.msa.vorVortac;
-  dataStream >> obj.msa.radius >> obj.msa.magvar;
-  dataStream >> obj.msa.bearings >> obj.msa.altitudes >> obj.msa.trueBearing
-  >> obj.msa.geometry >> obj.msa.labelPositions >> obj.msa.bearingEndPositions >> obj.msa.bounding >> obj.msa.position;
-
-  obj.position = obj.msa.position;
-  obj.objType = map::MARK_MSA;
-  return dataStream;
-}
-
-QDataStream& operator<<(QDataStream& dataStream, const map::MsaMarker& obj)
-{
-  dataStream << obj.msa.airportIdent << obj.msa.navIdent << obj.msa.region << obj.msa.multipleCode << obj.msa.vorType;
-  dataStream << obj.msa.navType << obj.msa.vorDmeOnly << obj.msa.vorHasDme << obj.msa.vorTacan << obj.msa.vorVortac;
-  dataStream << obj.msa.radius << obj.msa.magvar;
-  dataStream << obj.msa.bearings << obj.msa.altitudes << obj.msa.trueBearing
-             << obj.msa.geometry << obj.msa.labelPositions << obj.msa.bearingEndPositions << obj.msa.bounding << obj.msa.position;
-  return dataStream;
-}
-
 QString vorType(const MapVor& vor)
 {
   if(vor.isValid())
@@ -1637,56 +1543,6 @@ QString userpointShortText(const MapUserpoint& userpoint, int elideName)
 QString logEntryText(const MapLogbookEntry& logEntry)
 {
   return QObject::tr("Logbook Entry %1 to %2").arg(logEntry.departureIdent).arg(logEntry.destinationIdent);
-}
-
-QString rangeMarkText(const RangeMarker& obj)
-{
-  if(obj.text.isEmpty())
-    return QObject::tr("Range Rings");
-  else
-    return QObject::tr("Range Rings %1").arg(obj.text);
-}
-
-QString distanceMarkText(const DistanceMarker& obj)
-{
-  float distanceMeter = obj.getDistanceMeter();
-  QString distStr(distanceMeter < map::INVALID_DISTANCE_VALUE ? Unit::distMeter(distanceMeter) : QStringLiteral());
-
-  if(obj.text.isEmpty())
-    return QObject::tr("Measurement %1").arg(distStr);
-  else
-    return QObject::tr("Measurement %1 %2").arg(obj.text).arg(distStr);
-}
-
-QString holdingMarkText(const HoldingMarker& obj)
-{
-  if(obj.holding.navIdent.isEmpty())
-    return QObject::tr("User Holding %1 %2").
-           arg(obj.holding.turnLeft ? QObject::tr("L", "Holding direction") : QObject::tr("R", "Holding direction")).
-           arg(Unit::altFeet(obj.holding.position.getAltitude()));
-  else
-    return QObject::tr("User Holding %1 %2 %3").
-           arg(obj.holding.navIdent).
-           arg(obj.holding.turnLeft ? QObject::tr("L", "Holding direction") : QObject::tr("R", "Holding direction")).
-           arg(Unit::altFeet(obj.holding.position.getAltitude()));
-}
-
-QString patternMarkText(const PatternMarker& obj)
-{
-  if(obj.airportIcao.isEmpty())
-    return QObject::tr("Traffic Pattern %1 RW %2").arg(obj.turnRight ?
-                                                       QObject::tr("R", "Pattern direction") :
-                                                       QObject::tr("L", "Pattern direction")).arg(obj.runwayName);
-  else
-    return QObject::tr("Traffic Pattern %1 %2 RW %3").
-           arg(obj.airportIcao).arg(obj.turnRight ?
-                                    QObject::tr("R", "Pattern direction") :
-                                    QObject::tr("L", "Pattern direction")).arg(obj.runwayName);
-}
-
-QString msaMarkText(const MsaMarker& obj)
-{
-  return airportMsaText(obj.msa, true);
 }
 
 QString userpointRouteText(const MapUserpointRoute& userpoint)
@@ -2107,11 +1963,6 @@ float MapHolding::distance(bool *estimated) const
   return dist;
 }
 
-float PatternMarker::magCourse() const
-{
-  return atools::geo::normalizeCourse(courseTrue - magvar);
-}
-
 atools::geo::Line MapIls::centerLine() const
 {
   return atools::geo::Line(position, posmid);
@@ -2372,13 +2223,6 @@ map::MapAirspaceSources airspaceSource(const map::MapBase *base)
   return map::MapAirspaceSource::AIRSPACE_SRC_NONE;
 }
 
-int getNextUserFeatureId()
-{
-  static int currentUserFeatureId = 1;
-  return currentUserFeatureId++;
-
-}
-
 QString mapBaseText(const map::MapBase *base, int elideAirportName)
 {
   if(base != nullptr)
@@ -2446,19 +2290,19 @@ QString mapBaseText(const map::MapBase *base, int elideAirportName)
         return map::procedurePointTextShort(*base->asPtr<map::MapProcedurePoint>());
 
       case map::MARK_RANGE:
-        return map::rangeMarkText(*base->asPtr<map::RangeMarker>());
+        return base->asPtr<map::RangeMarker>()->displayText();
 
       case map::MARK_DISTANCE:
-        return map::distanceMarkText(*base->asPtr<map::DistanceMarker>());
+        return base->asPtr<map::DistanceMarker>()->displayText();
 
       case map::MARK_HOLDING:
-        return map::holdingMarkText(*base->asPtr<map::HoldingMarker>());
+        return base->asPtr<map::HoldingMarker>()->displayText();
 
       case map::MARK_PATTERNS:
-        return map::patternMarkText(*base->asPtr<map::PatternMarker>());
+        return base->asPtr<map::PatternMarker>()->displayText();
 
       case map::MARK_MSA:
-        return map::msaMarkText(*base->asPtr<map::MsaMarker>());
+        return base->asPtr<map::MsaMarker>()->displayText();
     }
   }
   return QStringLiteral();
@@ -2735,11 +2579,6 @@ const QIcon& ilsIcon(const MapIls& ils)
     return LOC;
 }
 
-float DistanceMarker::getDistanceNm() const
-{
-  return atools::geo::meterToNm(getDistanceMeter());
-}
-
 QString airspaceRestrictiveName(const MapAirspace& airspace)
 {
   if(!airspace.restrictiveDesignation.isEmpty())
@@ -2756,20 +2595,10 @@ QString airspaceRestrictiveName(const MapAirspace& airspace)
   return QStringLiteral();
 }
 
-void registerMetaTypes()
+void registerMapMetaTypes()
 {
   qRegisterMetaType<map::MapRef>();
   qRegisterMetaType<QList<map::MapRef> >();
-  qRegisterMetaType<map::RangeMarker>();
-  qRegisterMetaType<QList<map::RangeMarker> >();
-  qRegisterMetaType<map::DistanceMarker>();
-  qRegisterMetaType<QList<map::DistanceMarker> >();
-  qRegisterMetaType<map::PatternMarker>();
-  qRegisterMetaType<QList<map::PatternMarker> >();
-  qRegisterMetaType<map::HoldingMarker>();
-  qRegisterMetaType<QList<map::HoldingMarker> >();
-  qRegisterMetaType<map::MsaMarker>();
-  qRegisterMetaType<QList<map::MsaMarker> >();
 }
 
 } // namespace types

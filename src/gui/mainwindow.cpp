@@ -3597,11 +3597,11 @@ void MainWindow::updateOnlineActionStates()
 
 void MainWindow::updateMarkActionStates()
 {
-  ui->actionMapHideAllDistanceMarkers->setEnabled(!mapWidget->getDistanceMarks().isEmpty());
-  ui->actionMapHideAllRangeRings->setEnabled(!mapWidget->getRangeMarks().isEmpty());
-  ui->actionMapHideAllPatterns->setEnabled(!mapWidget->getPatternsMarks().isEmpty());
-  ui->actionMapHideAllMsa->setEnabled(!mapWidget->getMsaMarks().isEmpty());
-  ui->actionMapHideAllHoldings->setEnabled(!mapWidget->getHoldingMarks().isEmpty());
+  ui->actionMapHideAllDistanceMarkers->setEnabled(!mapWidget->getDistanceMarkers().isEmpty());
+  ui->actionMapHideAllRangeRings->setEnabled(!mapWidget->getRangeMarkers().isEmpty());
+  ui->actionMapHideAllPatterns->setEnabled(!mapWidget->getPatternsMarkers().isEmpty());
+  ui->actionMapHideAllMsa->setEnabled(!mapWidget->getMsaMarkers().isEmpty());
+  ui->actionMapHideAllHoldings->setEnabled(!mapWidget->getHoldingMarkers().isEmpty());
 }
 
 void MainWindow::updateHighlightActionStates()

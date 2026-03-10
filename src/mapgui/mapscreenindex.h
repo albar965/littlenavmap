@@ -47,6 +47,8 @@ struct MapProcedureLegs;
 }
 
 namespace map {
+
+class MapMarkers;
 struct DistanceMarker;
 struct HoldingMarker;
 struct MapAirport;
@@ -179,65 +181,6 @@ public:
 
   void setProcedureLegHighlight(const proc::MapProcedureLeg& newLegHighlight);
 
-  /* Get range rings */
-  const QHash<int, map::RangeMarker>& getRangeMarks() const
-  {
-    return rangeMarks;
-  }
-
-  /* Get distance measurement lines */
-  const QHash<int, map::DistanceMarker>& getDistanceMarks() const
-  {
-    return distanceMarks;
-  }
-
-  /* Get for editing */
-  map::DistanceMarker& getDistanceMark(int id)
-  {
-    return distanceMarks[id];
-  }
-
-  /* Airfield traffic patterns. */
-  const QHash<int, map::PatternMarker>& getPatternMarks() const
-  {
-    return patternMarks;
-  }
-
-  /* Holdings. */
-  const QHash<int, map::HoldingMarker>& getHoldingMarks() const
-  {
-    return holdingMarks;
-  }
-
-  /* Airport MSA. */
-  const QHash<int, map::MsaMarker>& getMsaMarks() const
-  {
-    return msaMarks;
-  }
-
-  /* Add user features. Id has to be set before. */
-  void addRangeMark(const map::RangeMarker& obj);
-  void addPatternMark(const map::PatternMarker& obj);
-  void addDistanceMark(const map::DistanceMarker& obj);
-  void addHoldingMark(const map::HoldingMarker& obj);
-  void addMsaMark(const map::MsaMarker& obj);
-
-  /* Remove user features by generated id */
-  void removeRangeMark(int id);
-  void removePatternMark(int id);
-  void removeDistanceMark(int id);
-  void removeHoldingMark(int id);
-  void removeMsaMark(int id);
-
-  void clearAllMarkers(map::MapTypes types);
-
-  /* Update measurement lines positions */
-  void updateDistanceMarkerFromPos(int id, const atools::geo::Pos& pos);
-  void updateDistanceMarkerToPos(int id, const atools::geo::Pos& pos);
-
-  /* Update measurement lines all fields except id where the parameter is used. */
-  void updateDistanceMarker(int id, const map::DistanceMarker& marker);
-
   // ====================
   const atools::fs::sc::SimConnectUserAircraft& getUserAircraft() const;
 
@@ -298,6 +241,16 @@ public:
 
   /* Get average ground speed and turn speed in degrees per second for user aircraft. Average is calculated for 2 seconds. */
   void getAverageGroundAndTurnSpeed(float& groundSpeedKts, float& turnSpeedDegPerSec) const;
+
+  map::MapMarkers *getMarkers()
+  {
+    return markers;
+  }
+
+  const map::MapMarkers *getMarkers() const
+  {
+    return markers;
+  }
 
 private:
   void getNearestAirways(int xs, int ys, int maxDistance, map::MapResult& result) const;
@@ -365,11 +318,7 @@ private:
   QList<int> routeHighlights;
 
   /* Objects that will be saved */
-  QHash<int, map::RangeMarker> rangeMarks;
-  QHash<int, map::DistanceMarker> distanceMarks;
-  QHash<int, map::PatternMarker> patternMarks;
-  QHash<int, map::HoldingMarker> holdingMarks;
-  QHash<int, map::MsaMarker> msaMarks;
+  map::MapMarkers *markers;
 
   /* Cached screen coordinates for flight plan to ease mouse cursor change. */
   QList<std::pair<int, QLine> > routeLines;

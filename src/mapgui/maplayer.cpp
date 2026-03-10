@@ -17,7 +17,7 @@
 
 #include "mapgui/maplayer.h"
 
-#include "util/xmlstream.h"
+#include "util/xmlstreamreader.h"
 #include "mapgui/maplayer.h"
 
 #include <QXmlStreamReader>
@@ -109,225 +109,223 @@ bool MapLayer::operator<(const MapLayer& other) const
   return maxRange < other.maxRange;
 }
 
-void MapLayer::loadFromXml(atools::util::XmlStream& xmlStream)
+void MapLayer::loadFromXml(atools::util::XmlStreamReader& xmlStream)
 {
-  QXmlStreamReader& reader = xmlStream.getReader();
-
   while(xmlStream.readNextStartElement())
   {
-    if(reader.name() == QStringLiteral("MinRunwayLength"))
+    if(xmlStream.name() == QStringLiteral("MinRunwayLength"))
       minRunwayLength = xmlStream.readElementTextInt();
-    else if(reader.name() == QStringLiteral("MaxRange"))
+    else if(xmlStream.name() == QStringLiteral("MaxRange"))
       maxRange = xmlStream.readElementTextInt();
-    else if(reader.name() == QStringLiteral("AiAircraftGround"))
+    else if(xmlStream.name() == QStringLiteral("AiAircraftGround"))
       aiAircraftGround = xmlStream.readElementTextBool();
-    else if(reader.name() == QStringLiteral("AiAircraftGroundText"))
+    else if(xmlStream.name() == QStringLiteral("AiAircraftGroundText"))
       aiAircraftGroundText = xmlStream.readElementTextBool();
-    else if(reader.name() == QStringLiteral("AiAircraftLarge"))
+    else if(xmlStream.name() == QStringLiteral("AiAircraftLarge"))
       aiAircraftLarge = xmlStream.readElementTextBool();
-    else if(reader.name() == QStringLiteral("AiAircraftSize"))
+    else if(xmlStream.name() == QStringLiteral("AiAircraftSize"))
       aiAircraftSize = xmlStream.readElementTextInt();
-    else if(reader.name() == QStringLiteral("AiAircraftSmall"))
+    else if(xmlStream.name() == QStringLiteral("AiAircraftSmall"))
       aiAircraftSmall = xmlStream.readElementTextBool();
-    else if(reader.name() == QStringLiteral("AiAircraftText"))
+    else if(xmlStream.name() == QStringLiteral("AiAircraftText"))
       aiAircraftText = xmlStream.readElementTextBool();
-    else if(reader.name() == QStringLiteral("AiAircraftTextDetail"))
+    else if(xmlStream.name() == QStringLiteral("AiAircraftTextDetail"))
       aiAircraftTextDetail = xmlStream.readElementTextBool();
-    else if(reader.name() == QStringLiteral("AiAircraftTextDetail2"))
+    else if(xmlStream.name() == QStringLiteral("AiAircraftTextDetail2"))
       aiAircraftTextDetail2 = xmlStream.readElementTextBool();
-    else if(reader.name() == QStringLiteral("AiAircraftTextDetail3"))
+    else if(xmlStream.name() == QStringLiteral("AiAircraftTextDetail3"))
       aiAircraftTextDetail3 = xmlStream.readElementTextBool();
-    else if(reader.name() == QStringLiteral("AiShipLarge"))
+    else if(xmlStream.name() == QStringLiteral("AiShipLarge"))
       aiShipLarge = xmlStream.readElementTextBool();
-    else if(reader.name() == QStringLiteral("AiShipSmall"))
+    else if(xmlStream.name() == QStringLiteral("AiShipSmall"))
       aiShipSmall = xmlStream.readElementTextBool();
-    else if(reader.name() == QStringLiteral("Airport"))
+    else if(xmlStream.name() == QStringLiteral("Airport"))
       airport = xmlStream.readElementTextBool();
-    else if(reader.name() == QStringLiteral("AirportDiagram"))
+    else if(xmlStream.name() == QStringLiteral("AirportDiagram"))
       airportDiagram = xmlStream.readElementTextBool();
-    else if(reader.name() == QStringLiteral("AirportDiagramDetail"))
+    else if(xmlStream.name() == QStringLiteral("AirportDiagramDetail"))
       airportDiagramDetail = xmlStream.readElementTextBool();
-    else if(reader.name() == QStringLiteral("AirportDiagramDetail2"))
+    else if(xmlStream.name() == QStringLiteral("AirportDiagramDetail2"))
       airportDiagramDetail2 = xmlStream.readElementTextBool();
-    else if(reader.name() == QStringLiteral("AirportDiagramDetail3"))
+    else if(xmlStream.name() == QStringLiteral("AirportDiagramDetail3"))
       airportDiagramDetail3 = xmlStream.readElementTextBool();
-    else if(reader.name() == QStringLiteral("AirportDiagramRunway"))
+    else if(xmlStream.name() == QStringLiteral("AirportDiagramRunway"))
       airportDiagramRunway = xmlStream.readElementTextBool();
-    else if(reader.name() == QStringLiteral("AirportIdent"))
+    else if(xmlStream.name() == QStringLiteral("AirportIdent"))
       airportIdent = xmlStream.readElementTextBool();
-    else if(reader.name() == QStringLiteral("AirportInfo"))
+    else if(xmlStream.name() == QStringLiteral("AirportInfo"))
       airportInfo = xmlStream.readElementTextBool();
-    else if(reader.name() == QStringLiteral("AirportMsa"))
+    else if(xmlStream.name() == QStringLiteral("AirportMsa"))
       airportMsa = xmlStream.readElementTextBool();
-    else if(reader.name() == QStringLiteral("AirportMsaDetails"))
+    else if(xmlStream.name() == QStringLiteral("AirportMsaDetails"))
       airportMsaDetails = xmlStream.readElementTextBool();
-    else if(reader.name() == QStringLiteral("AirportMsaSymbolScale"))
+    else if(xmlStream.name() == QStringLiteral("AirportMsaSymbolScale"))
       airportMsaSymbolScale = xmlStream.readElementTextFloat();
-    else if(reader.name() == QStringLiteral("AirportName"))
+    else if(xmlStream.name() == QStringLiteral("AirportName"))
       airportName = xmlStream.readElementTextBool();
-    else if(reader.name() == QStringLiteral("AirportNoRating"))
+    else if(xmlStream.name() == QStringLiteral("AirportNoRating"))
       airportNoRating = xmlStream.readElementTextBool();
-    else if(reader.name() == QStringLiteral("AirportOverviewRunway"))
+    else if(xmlStream.name() == QStringLiteral("AirportOverviewRunway"))
       airportOverviewRunway = xmlStream.readElementTextBool();
-    else if(reader.name() == QStringLiteral("AirportRouteInfo"))
+    else if(xmlStream.name() == QStringLiteral("AirportRouteInfo"))
       airportRouteInfo = xmlStream.readElementTextBool();
-    else if(reader.name() == QStringLiteral("AirportMinor"))
+    else if(xmlStream.name() == QStringLiteral("AirportMinor"))
       airportMinor = xmlStream.readElementTextBool();
-    else if(reader.name() == QStringLiteral("AirportMinorIdent"))
+    else if(xmlStream.name() == QStringLiteral("AirportMinorIdent"))
       airportMinorIdent = xmlStream.readElementTextBool();
-    else if(reader.name() == QStringLiteral("AirportMinorInfo"))
+    else if(xmlStream.name() == QStringLiteral("AirportMinorInfo"))
       airportMinorInfo = xmlStream.readElementTextBool();
-    else if(reader.name() == QStringLiteral("AirportMinorName"))
+    else if(xmlStream.name() == QStringLiteral("AirportMinorName"))
       airportMinorName = xmlStream.readElementTextBool();
-    else if(reader.name() == QStringLiteral("AirportMinorSymbolSize"))
+    else if(xmlStream.name() == QStringLiteral("AirportMinorSymbolSize"))
       airportMinorSymbolSize = xmlStream.readElementTextInt();
-    else if(reader.name() == QStringLiteral("AirportSymbolSize"))
+    else if(xmlStream.name() == QStringLiteral("AirportSymbolSize"))
       airportSymbolSize = xmlStream.readElementTextInt();
-    else if(reader.name() == QStringLiteral("AirportWeather"))
+    else if(xmlStream.name() == QStringLiteral("AirportWeather"))
       airportWeather = xmlStream.readElementTextBool();
-    else if(reader.name() == QStringLiteral("AirportWeatherDetails"))
+    else if(xmlStream.name() == QStringLiteral("AirportWeatherDetails"))
       airportWeatherDetails = xmlStream.readElementTextBool();
-    else if(reader.name() == QStringLiteral("AirspaceCenter"))
+    else if(xmlStream.name() == QStringLiteral("AirspaceCenter"))
       airspaceCenter = xmlStream.readElementTextBool();
-    else if(reader.name() == QStringLiteral("AirspaceFg"))
+    else if(xmlStream.name() == QStringLiteral("AirspaceFg"))
       airspaceFg = xmlStream.readElementTextBool();
-    else if(reader.name() == QStringLiteral("AirspaceFirUir"))
+    else if(xmlStream.name() == QStringLiteral("AirspaceFirUir"))
       airspaceFirUir = xmlStream.readElementTextBool();
-    else if(reader.name() == QStringLiteral("AirspaceIcao"))
+    else if(xmlStream.name() == QStringLiteral("AirspaceIcao"))
       airspaceIcao = xmlStream.readElementTextBool();
-    else if(reader.name() == QStringLiteral("AirspaceOther"))
+    else if(xmlStream.name() == QStringLiteral("AirspaceOther"))
       airspaceOther = xmlStream.readElementTextBool();
-    else if(reader.name() == QStringLiteral("AirspaceRestricted"))
+    else if(xmlStream.name() == QStringLiteral("AirspaceRestricted"))
       airspaceRestricted = xmlStream.readElementTextBool();
-    else if(reader.name() == QStringLiteral("AirspaceSpecial"))
+    else if(xmlStream.name() == QStringLiteral("AirspaceSpecial"))
       airspaceSpecial = xmlStream.readElementTextBool();
-    else if(reader.name() == QStringLiteral("AirspaceCenterText"))
+    else if(xmlStream.name() == QStringLiteral("AirspaceCenterText"))
       airspaceCenterText = xmlStream.readElementTextBool();
-    else if(reader.name() == QStringLiteral("AirspaceFgText"))
+    else if(xmlStream.name() == QStringLiteral("AirspaceFgText"))
       airspaceFgText = xmlStream.readElementTextBool();
-    else if(reader.name() == QStringLiteral("AirspaceFirUirText"))
+    else if(xmlStream.name() == QStringLiteral("AirspaceFirUirText"))
       airspaceFirUirText = xmlStream.readElementTextBool();
-    else if(reader.name() == QStringLiteral("AirspaceIcaoText"))
+    else if(xmlStream.name() == QStringLiteral("AirspaceIcaoText"))
       airspaceIcaoText = xmlStream.readElementTextBool();
-    else if(reader.name() == QStringLiteral("AirspaceOtherText"))
+    else if(xmlStream.name() == QStringLiteral("AirspaceOtherText"))
       airspaceOtherText = xmlStream.readElementTextBool();
-    else if(reader.name() == QStringLiteral("AirspaceRestrictedText"))
+    else if(xmlStream.name() == QStringLiteral("AirspaceRestrictedText"))
       airspaceRestrictedText = xmlStream.readElementTextBool();
-    else if(reader.name() == QStringLiteral("AirspaceSpecialText"))
+    else if(xmlStream.name() == QStringLiteral("AirspaceSpecialText"))
       airspaceSpecialText = xmlStream.readElementTextBool();
-    else if(reader.name() == QStringLiteral("Airway"))
+    else if(xmlStream.name() == QStringLiteral("Airway"))
       airway = xmlStream.readElementTextBool();
-    else if(reader.name() == QStringLiteral("AirwayDetails"))
+    else if(xmlStream.name() == QStringLiteral("AirwayDetails"))
       airwayDetails = xmlStream.readElementTextBool();
-    else if(reader.name() == QStringLiteral("AirwayIdent"))
+    else if(xmlStream.name() == QStringLiteral("AirwayIdent"))
       airwayIdent = xmlStream.readElementTextBool();
-    else if(reader.name() == QStringLiteral("AirwayInfo"))
+    else if(xmlStream.name() == QStringLiteral("AirwayInfo"))
       airwayInfo = xmlStream.readElementTextBool();
-    else if(reader.name() == QStringLiteral("AirwayWaypoint"))
+    else if(xmlStream.name() == QStringLiteral("AirwayWaypoint"))
       airwayWaypoint = xmlStream.readElementTextBool();
-    else if(reader.name() == QStringLiteral("Approach"))
+    else if(xmlStream.name() == QStringLiteral("Approach"))
       approach = xmlStream.readElementTextBool();
-    else if(reader.name() == QStringLiteral("ApproachDetail"))
+    else if(xmlStream.name() == QStringLiteral("ApproachDetail"))
       approachDetail = xmlStream.readElementTextBool();
-    else if(reader.name() == QStringLiteral("ApproachText"))
+    else if(xmlStream.name() == QStringLiteral("ApproachText"))
       approachText = xmlStream.readElementTextBool();
-    else if(reader.name() == QStringLiteral("ApproachTextDetail"))
+    else if(xmlStream.name() == QStringLiteral("ApproachTextDetail"))
       approachTextDetail = xmlStream.readElementTextBool();
-    else if(reader.name() == QStringLiteral("Holding"))
+    else if(xmlStream.name() == QStringLiteral("Holding"))
       holding = xmlStream.readElementTextBool();
-    else if(reader.name() == QStringLiteral("HoldingInfo"))
+    else if(xmlStream.name() == QStringLiteral("HoldingInfo"))
       holdingInfo = xmlStream.readElementTextBool();
-    else if(reader.name() == QStringLiteral("HoldingInfo2"))
+    else if(xmlStream.name() == QStringLiteral("HoldingInfo2"))
       holdingInfo2 = xmlStream.readElementTextBool();
-    else if(reader.name() == QStringLiteral("Ils"))
+    else if(xmlStream.name() == QStringLiteral("Ils"))
       ils = xmlStream.readElementTextBool();
-    else if(reader.name() == QStringLiteral("IlsDetail"))
+    else if(xmlStream.name() == QStringLiteral("IlsDetail"))
       ilsDetail = xmlStream.readElementTextBool();
-    else if(reader.name() == QStringLiteral("IlsIdent"))
+    else if(xmlStream.name() == QStringLiteral("IlsIdent"))
       ilsIdent = xmlStream.readElementTextBool();
-    else if(reader.name() == QStringLiteral("IlsInfo"))
+    else if(xmlStream.name() == QStringLiteral("IlsInfo"))
       ilsInfo = xmlStream.readElementTextBool();
-    else if(reader.name() == QStringLiteral("Marker"))
+    else if(xmlStream.name() == QStringLiteral("Marker"))
       marker = xmlStream.readElementTextBool();
-    else if(reader.name() == QStringLiteral("MarkerInfo"))
+    else if(xmlStream.name() == QStringLiteral("MarkerInfo"))
       markerInfo = xmlStream.readElementTextBool();
-    else if(reader.name() == QStringLiteral("MarkerSymbolSize"))
+    else if(xmlStream.name() == QStringLiteral("MarkerSymbolSize"))
       markerSymbolSize = xmlStream.readElementTextInt();
-    else if(reader.name() == QStringLiteral("Mora"))
+    else if(xmlStream.name() == QStringLiteral("Mora"))
       mora = xmlStream.readElementTextBool();
-    else if(reader.name() == QStringLiteral("Ndb"))
+    else if(xmlStream.name() == QStringLiteral("Ndb"))
       ndb = xmlStream.readElementTextBool();
-    else if(reader.name() == QStringLiteral("NdbIdent"))
+    else if(xmlStream.name() == QStringLiteral("NdbIdent"))
       ndbIdent = xmlStream.readElementTextBool();
-    else if(reader.name() == QStringLiteral("NdbInfo"))
+    else if(xmlStream.name() == QStringLiteral("NdbInfo"))
       ndbInfo = xmlStream.readElementTextBool();
-    else if(reader.name() == QStringLiteral("NdbRouteIdent"))
+    else if(xmlStream.name() == QStringLiteral("NdbRouteIdent"))
       ndbRouteIdent = xmlStream.readElementTextBool();
-    else if(reader.name() == QStringLiteral("NdbRouteInfo"))
+    else if(xmlStream.name() == QStringLiteral("NdbRouteInfo"))
       ndbRouteInfo = xmlStream.readElementTextBool();
-    else if(reader.name() == QStringLiteral("NdbSymbolSize"))
+    else if(xmlStream.name() == QStringLiteral("NdbSymbolSize"))
       ndbSymbolSize = xmlStream.readElementTextInt();
-    else if(reader.name() == QStringLiteral("OnlineAircraft"))
+    else if(xmlStream.name() == QStringLiteral("OnlineAircraft"))
       onlineAircraft = xmlStream.readElementTextBool();
-    else if(reader.name() == QStringLiteral("OnlineAircraftText"))
+    else if(xmlStream.name() == QStringLiteral("OnlineAircraftText"))
       onlineAircraftText = xmlStream.readElementTextBool();
-    else if(reader.name() == QStringLiteral("RouteTextAndDetail"))
+    else if(xmlStream.name() == QStringLiteral("RouteTextAndDetail"))
       routeTextAndDetail = xmlStream.readElementTextBool();
-    else if(reader.name() == QStringLiteral("RouteTextAndDetail2"))
+    else if(xmlStream.name() == QStringLiteral("RouteTextAndDetail2"))
       routeTextAndDetail2 = xmlStream.readElementTextBool();
-    else if(reader.name() == QStringLiteral("Track"))
+    else if(xmlStream.name() == QStringLiteral("Track"))
       track = xmlStream.readElementTextBool();
-    else if(reader.name() == QStringLiteral("TrackIdent"))
+    else if(xmlStream.name() == QStringLiteral("TrackIdent"))
       trackIdent = xmlStream.readElementTextBool();
-    else if(reader.name() == QStringLiteral("TrackInfo"))
+    else if(xmlStream.name() == QStringLiteral("TrackInfo"))
       trackInfo = xmlStream.readElementTextBool();
-    else if(reader.name() == QStringLiteral("TrackWaypoint"))
+    else if(xmlStream.name() == QStringLiteral("TrackWaypoint"))
       trackWaypoint = xmlStream.readElementTextBool();
-    else if(reader.name() == QStringLiteral("Userpoint"))
+    else if(xmlStream.name() == QStringLiteral("Userpoint"))
       userpoint = xmlStream.readElementTextBool();
-    else if(reader.name() == QStringLiteral("UserpointInfo"))
+    else if(xmlStream.name() == QStringLiteral("UserpointInfo"))
       userpointInfo = xmlStream.readElementTextBool();
-    else if(reader.name() == QStringLiteral("UserpointSymbolSize"))
+    else if(xmlStream.name() == QStringLiteral("UserpointSymbolSize"))
       userpointSymbolSize = xmlStream.readElementTextInt();
-    else if(reader.name() == QStringLiteral("Vor"))
+    else if(xmlStream.name() == QStringLiteral("Vor"))
       vor = xmlStream.readElementTextBool();
-    else if(reader.name() == QStringLiteral("VorIdent"))
+    else if(xmlStream.name() == QStringLiteral("VorIdent"))
       vorIdent = xmlStream.readElementTextBool();
-    else if(reader.name() == QStringLiteral("VorInfo"))
+    else if(xmlStream.name() == QStringLiteral("VorInfo"))
       vorInfo = xmlStream.readElementTextBool();
-    else if(reader.name() == QStringLiteral("VorLarge"))
+    else if(xmlStream.name() == QStringLiteral("VorLarge"))
       vorLarge = xmlStream.readElementTextBool();
-    else if(reader.name() == QStringLiteral("VorRouteIdent"))
+    else if(xmlStream.name() == QStringLiteral("VorRouteIdent"))
       vorRouteIdent = xmlStream.readElementTextBool();
-    else if(reader.name() == QStringLiteral("VorRouteInfo"))
+    else if(xmlStream.name() == QStringLiteral("VorRouteInfo"))
       vorRouteInfo = xmlStream.readElementTextBool();
-    else if(reader.name() == QStringLiteral("VorSymbolSize"))
+    else if(xmlStream.name() == QStringLiteral("VorSymbolSize"))
       vorSymbolSize = xmlStream.readElementTextInt();
-    else if(reader.name() == QStringLiteral("Waypoint"))
+    else if(xmlStream.name() == QStringLiteral("Waypoint"))
       waypoint = xmlStream.readElementTextBool();
-    else if(reader.name() == QStringLiteral("WaypointName"))
+    else if(xmlStream.name() == QStringLiteral("WaypointName"))
       waypointName = xmlStream.readElementTextBool();
-    else if(reader.name() == QStringLiteral("WaypointRouteName"))
+    else if(xmlStream.name() == QStringLiteral("WaypointRouteName"))
       waypointRouteName = xmlStream.readElementTextBool();
-    else if(reader.name() == QStringLiteral("WaypointSymbolSize"))
+    else if(xmlStream.name() == QStringLiteral("WaypointSymbolSize"))
       waypointSymbolSize = xmlStream.readElementTextInt();
-    else if(reader.name() == QStringLiteral("WindBarbs"))
+    else if(xmlStream.name() == QStringLiteral("WindBarbs"))
       windBarbs = xmlStream.readElementTextInt();
-    else if(reader.name() == QStringLiteral("WindBarbsSymbolSize"))
+    else if(xmlStream.name() == QStringLiteral("WindBarbsSymbolSize"))
       windBarbsSymbolSize = xmlStream.readElementTextInt();
-    else if(reader.name() == QStringLiteral("MaximumTextLengthAirport"))
+    else if(xmlStream.name() == QStringLiteral("MaximumTextLengthAirport"))
       maximumTextLengthAirport = xmlStream.readElementTextInt();
-    else if(reader.name() == QStringLiteral("MaximumTextLengthAirportMinor"))
+    else if(xmlStream.name() == QStringLiteral("MaximumTextLengthAirportMinor"))
       maximumTextLengthAirportMinor = xmlStream.readElementTextInt();
-    else if(reader.name() == QStringLiteral("MaximumTextLengthUserpoint"))
+    else if(xmlStream.name() == QStringLiteral("MaximumTextLengthUserpoint"))
       maximumTextLengthUserpoint = xmlStream.readElementTextInt();
-    else if(reader.name() == QStringLiteral("AirportFontScale"))
+    else if(xmlStream.name() == QStringLiteral("AirportFontScale"))
       airportFontScale = xmlStream.readElementTextFloat();
-    else if(reader.name() == QStringLiteral("AirportMinorFontScale"))
+    else if(xmlStream.name() == QStringLiteral("AirportMinorFontScale"))
       airportMinorFontScale = xmlStream.readElementTextFloat();
-    else if(reader.name() == QStringLiteral("RouteFontScale"))
+    else if(xmlStream.name() == QStringLiteral("RouteFontScale"))
       routeFontScale = xmlStream.readElementTextFloat();
-    else if(reader.name() == QStringLiteral("AirspaceFontScale"))
+    else if(xmlStream.name() == QStringLiteral("AirspaceFontScale"))
       airspaceFontScale = xmlStream.readElementTextFloat();
     else
       xmlStream.skipCurrentElement(true /* warn */);

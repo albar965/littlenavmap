@@ -28,6 +28,8 @@
 class MapTheme;
 
 namespace map {
+
+class MapMarkers;
 struct MapResult;
 struct MapRef;
 struct RangeMarker;
@@ -168,11 +170,11 @@ public:
 
   const QList<int>& getRouteHighlights() const;
 
-  const QHash<int, map::RangeMarker>& getRangeMarks() const;
-  const QHash<int, map::DistanceMarker>& getDistanceMarks() const;
-  const QHash<int, map::PatternMarker>& getPatternsMarks() const;
-  const QHash<int, map::HoldingMarker>& getHoldingMarks() const;
-  const QHash<int, map::MsaMarker>& getMsaMarks() const;
+  const QHash<int, map::RangeMarker>& getRangeMarkers() const;
+  const QHash<int, map::DistanceMarker>& getDistanceMarkers() const;
+  const QHash<int, map::PatternMarker>& getPatternsMarkers() const;
+  const QHash<int, map::HoldingMarker>& getHoldingMarkers() const;
+  const QHash<int, map::MsaMarker>& getMsaMarkers() const;
 
   /* Get pointers to the wrapped map objects from holdings and MSA. */
   QList<map::MapHolding> getHoldingMarksFiltered() const;
@@ -378,6 +380,9 @@ public:
     return screenIndex;
   }
 
+  map::MapMarkers *getMarkers();
+  const map::MapMarkers *getMarkers() const;
+
   MapPaintLayer *getMapPaintLayer()
   {
     return paintLayer;
@@ -457,7 +462,7 @@ protected:
   void centerRectOnMap(const atools::geo::Rect& rect, bool allowAdjust = true);
   void centerRectOnMap(const Marble::GeoDataLatLonBox& rect, bool allowAdjust);
 
-  const MapScreenIndex *getScreenIndexConst() const
+  const MapScreenIndex *getScreenIndex() const
   {
     return screenIndex;
   }

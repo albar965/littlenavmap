@@ -30,7 +30,7 @@
 #include "ui_mainwindow.h"
 #include "util/htmlbuilder.h"
 #include "util/simplecrypt.h"
-#include "util/xmlstream.h"
+#include "util/xmlstreamreader.h"
 
 #include <QActionGroup>
 #include <QCoreApplication>
@@ -492,8 +492,7 @@ MapTheme MapThemeHandler::loadTheme(const QFileInfo& dgml)
   QFile dgmlFile(dgml.filePath());
   if(dgmlFile.open(QIODevice::ReadOnly | QIODevice::Text))
   {
-    atools::util::XmlStream xmlStream(&dgmlFile);
-    QXmlStreamReader& reader = xmlStream.getReader();
+    atools::util::XmlStreamReader xmlStream(&dgmlFile);
 
     // Skip to more important parts
     xmlStream.readUntilElement("dgml");
@@ -502,37 +501,37 @@ MapTheme MapThemeHandler::loadTheme(const QFileInfo& dgml)
     while(xmlStream.readNextStartElement())
     {
       // head ====================================================================
-      if(reader.name() == QStringLiteral("head"))
+      if(xmlStream.name() == QStringLiteral("head"))
       {
         while(xmlStream.readNextStartElement())
         {
-          if(reader.name() == QStringLiteral("license"))
+          if(xmlStream.name() == QStringLiteral("license"))
           {
-            theme.copyright = reader.attributes().value("short").toString().simplified();
+            theme.copyright = xmlStream.readAttributeStr("short").simplified();
             xmlStream.skipCurrentElement();
           }
-          else if(reader.name() == QStringLiteral("name"))
-            theme.name = reader.readElementText().simplified();
-          else if(reader.name() == QStringLiteral("target"))
-            theme.target = reader.readElementText().simplified();
-          else if(reader.name() == QStringLiteral("theme"))
-            theme.theme = reader.readElementText().simplified();
-          else if(reader.name() == QStringLiteral("visible"))
-            theme.visible = reader.readElementText().simplified().toLower() == QStringLiteral("true");
-          else if(reader.name() == QStringLiteral("shortcut"))
-            theme.shortcut = reader.readElementText().simplified();
-          else if(reader.name() == QStringLiteral("url"))
+          else if(xmlStream.name() == QStringLiteral("name"))
+            theme.name = xmlStream.readElementTextStr().simplified();
+          else if(xmlStream.name() == QStringLiteral("target"))
+            theme.target = xmlStream.readElementTextStr().simplified();
+          else if(xmlStream.name() == QStringLiteral("theme"))
+            theme.theme = xmlStream.readElementTextStr().simplified();
+          else if(xmlStream.name() == QStringLiteral("visible"))
+            theme.visible = xmlStream.readElementTextStr().simplified().toLower() == QStringLiteral("true");
+          else if(xmlStream.name() == QStringLiteral("shortcut"))
+            theme.shortcut = xmlStream.readElementTextStr().simplified();
+          else if(xmlStream.name() == QStringLiteral("url"))
           {
-            theme.urlRef = reader.attributes().value(QStringLiteral("href")).toString();
-            theme.urlName = reader.readElementText().simplified();
+            theme.urlRef = xmlStream.readAttributeStr(QStringLiteral("href"));
+            theme.urlName = xmlStream.readElementTextStr().simplified();
           }
           // head/zoom ============================
-          else if(reader.name() == QStringLiteral("zoom"))
+          else if(xmlStream.name() == QStringLiteral("zoom"))
           {
             while(xmlStream.readNextStartElement())
             {
-              if(reader.name() == QStringLiteral("discrete"))
-                theme.discrete = reader.readElementText().simplified().toLower() == QStringLiteral("true");
+              if(xmlStream.name() == QStringLiteral("discrete"))
+                theme.discrete = xmlStream.readElementTextBool();
               else
                 xmlStream.skipCurrentElement();
             }
@@ -544,28 +543,28 @@ MapTheme MapThemeHandler::loadTheme(const QFileInfo& dgml)
         theme.dgmlFilepath = dgml.canonicalFilePath();
       }
       // map ====================================================================
-      else if(reader.name() == QStringLiteral("map"))
+      else if(xmlStream.name() == QStringLiteral("map"))
       {
         while(xmlStream.readNextStartElement())
         {
-          if(reader.name() == QStringLiteral("layer"))
+          if(xmlStream.name() == QStringLiteral("layer"))
           {
             while(xmlStream.readNextStartElement())
             {
               // map/layer/texture ===================
-              if(reader.name() == QStringLiteral("texture"))
+              if(xmlStream.name() == QStringLiteral("texture"))
               {
                 theme.textureLayer = true;
 
                 while(xmlStream.readNextStartElement())
                 {
-                  if(reader.name() == QStringLiteral("downloadUrl"))
+                  if(xmlStream.name() == QStringLiteral("downloadUrl"))
                   {
-                    QString host = reader.attributes().value(QStringLiteral("host")).toString();
+                    QString host = xmlStream.readAttributeStr(QStringLiteral("host"));
 
                     // Put all attributes of the download URL into one string
-                    QString atts = reader.attributes().value(QStringLiteral("protocol")).toString() % host %
-                                   reader.attributes().value(QStringLiteral("path")).toString();
+                    QString atts = xmlStream.readAttributeStr(QStringLiteral("protocol")) % host %
+                                   xmlStream.readAttributeStr(QStringLiteral("path"));
 
                     // Extract keywords from download URL
                     QRegularExpressionMatchIterator regexpIter = KEYSREGEXP.globalMatch(atts);
@@ -584,14 +583,14 @@ MapTheme MapThemeHandler::loadTheme(const QFileInfo& dgml)
                     // Online theme of download URL is given
                     theme.online = true;
                   }
-                  else if(reader.name() == QStringLiteral("sourcedir"))
-                    theme.sourceDirs.append(atools::nativeCleanPath(reader.readElementText().trimmed()));
+                  else if(xmlStream.name() == QStringLiteral("sourcedir"))
+                    theme.sourceDirs.append(atools::nativeCleanPath(xmlStream.readElementTextStr().trimmed()));
                   else
                     xmlStream.skipCurrentElement();
                 }
               }
               // map/layer/geodata ===================
-              else if(reader.name() == QStringLiteral("geodata"))
+              else if(xmlStream.name() == QStringLiteral("geodata"))
               {
                 // Offline theme of geodata is given
                 theme.geodataLayer = true;
@@ -600,7 +599,7 @@ MapTheme MapThemeHandler::loadTheme(const QFileInfo& dgml)
               else
                 xmlStream.skipCurrentElement();
             } // while(xmlStream.readNextStartElement())
-          } // if(reader.name() == "layer")
+          } // if(xmlStream.name() == "layer")
           else
             xmlStream.skipCurrentElement();
         }

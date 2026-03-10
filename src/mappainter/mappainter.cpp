@@ -916,11 +916,11 @@ void MapPainter::paintMsaMarks(const QList<map::MapAirportMsa>& airportMsa, bool
         if(msa.altitudes.size() > 1)
         {
           // Draw sector bearing lines and collect geometry and texts for placement =========================
-          for(int i = 0; i < msa.bearingEndPositions.size(); i++)
+          for(int i = 0; i < msa.bearingEndPos.size(); i++)
           {
             texts.append(tr("%1%2").arg(atools::geo::normalizeCourse(msa.bearings.value(i))).arg(msa.trueBearing ? tr("°T") : tr("°M")));
 
-            atools::geo::Line line(msa.bearingEndPositions.value(i), msa.position);
+            atools::geo::Line line(msa.bearingEndPos.value(i), msa.position);
             lines.append(line);
             drawLine(painter, line);
           }

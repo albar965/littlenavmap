@@ -80,7 +80,8 @@ int main(int argc, char *argv[])
   atools::fs::FsPaths::intitialize();
   SimulatorTypeMap::registerMetaTypes();
   RouteExportFormatMap::registerMetaTypes();
-  map::registerMetaTypes();
+  map::registerMapMetaTypes();
+  map::registerMarkerMetaTypes();
 
   // Tasks that have to be done before creating the application object and logging system =================
   // Application name is not available yet

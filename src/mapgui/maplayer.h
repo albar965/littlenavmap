@@ -22,7 +22,7 @@
 
 namespace atools {
 namespace  util {
-class XmlStream;
+class XmlStreamReader;
 }
 }
 
@@ -642,7 +642,7 @@ public:
   }
 
   /* Load layer data from stream which is already positioned inside a layer element */
-  void loadFromXml(atools::util::XmlStream& xmlStream);
+  void loadFromXml(atools::util::XmlStreamReader& xmlStream);
 
 private:
   friend QDebug operator<<(QDebug out, const MapLayer& record);

@@ -31,7 +31,7 @@
 #include "settings/settings.h"
 #include "util/htmlbuilder.h"
 #include "util/httpdownloader.h"
-#include "util/xmlstream.h"
+#include "util/xmlstreamreader.h"
 #include "zip/gzip.h"
 
 #include <QPushButton>
@@ -200,8 +200,7 @@ void FetchRouteDialog::downloadFinished(const QByteArray& data, QString)
   flightplan->clearAll();
 
   // Read downloaded XML ==================================================================
-  atools::util::XmlStream xmlStream(atools::zip::gzipDecompressIf(data, Q_FUNC_INFO));
-  QXmlStreamReader& reader = xmlStream.getReader();
+  atools::util::XmlStreamReader xmlStream(atools::zip::gzipDecompressIf(data, Q_FUNC_INFO));
 
   QString departure, departureRunway, destination, destinationRunway, alternate, route;
   xmlStream.readUntilElement("OFP");
@@ -241,46 +240,46 @@ void FetchRouteDialog::downloadFinished(const QByteArray& data, QString)
   while(xmlStream.readNextStartElement())
   {
     // Read route elements if needed ======================================================
-    if(reader.name() == QStringLiteral("origin"))
+    if(xmlStream.name() == QStringLiteral("origin"))
     {
       while(xmlStream.readNextStartElement())
       {
-        if(reader.name() == QStringLiteral("icao_code"))
-          departure = reader.readElementText();
-        else if(reader.name() == QStringLiteral("plan_rwy"))
-          departureRunway = reader.readElementText();
+        if(xmlStream.name() == QStringLiteral("icao_code"))
+          departure = xmlStream.readElementTextStr();
+        else if(xmlStream.name() == QStringLiteral("plan_rwy"))
+          departureRunway = xmlStream.readElementTextStr();
         else
           xmlStream.skipCurrentElement(false /* warn */);
       }
     }
-    else if(reader.name() == QStringLiteral("destination"))
+    else if(xmlStream.name() == QStringLiteral("destination"))
     {
       while(xmlStream.readNextStartElement())
       {
-        if(reader.name() == QStringLiteral("icao_code"))
-          destination = reader.readElementText();
-        else if(reader.name() == QStringLiteral("plan_rwy"))
-          destinationRunway = reader.readElementText();
+        if(xmlStream.name() == QStringLiteral("icao_code"))
+          destination = xmlStream.readElementTextStr();
+        else if(xmlStream.name() == QStringLiteral("plan_rwy"))
+          destinationRunway = xmlStream.readElementTextStr();
         else
           xmlStream.skipCurrentElement(false /* warn */);
       }
     }
-    else if(reader.name() == QStringLiteral("alternate"))
+    else if(xmlStream.name() == QStringLiteral("alternate"))
     {
       while(xmlStream.readNextStartElement())
       {
-        if(reader.name() == QStringLiteral("icao_code"))
-          alternate = reader.readElementText();
+        if(xmlStream.name() == QStringLiteral("icao_code"))
+          alternate = xmlStream.readElementTextStr();
         else
           xmlStream.skipCurrentElement(false /* warn */);
       }
     }
-    else if(reader.name() == QStringLiteral("atc"))
+    else if(xmlStream.name() == QStringLiteral("atc"))
     {
       while(xmlStream.readNextStartElement())
       {
-        if(reader.name() == QStringLiteral("route"))
-          route = reader.readElementText();
+        if(xmlStream.name() == QStringLiteral("route"))
+          route = xmlStream.readElementTextStr();
         else
           xmlStream.skipCurrentElement(false /* warn */);
       }

@@ -19,7 +19,7 @@
 
 #include "atools.h"
 #include "common/constants.h"
-#include "common/maptypes.h"
+#include "common/mapmarkers.h"
 #include "common/unit.h"
 #include "common/unitstringtool.h"
 #include "geo/calculations.h"
@@ -178,7 +178,7 @@ void TrafficPatternDialog::fillPatternMarker(map::PatternMarker& pattern)
   const map::MapAirport& airport = runwaySelection->getAirport();
 
   // Assign an artifical id to the hold to allow internal identification
-  pattern.id = map::getNextUserFeatureId();
+  pattern.id = map::MapMarkers::getNextUserFeatureId();
   pattern.airportIcao = airport.displayIdent();
   pattern.runwayName = primary ? rw.primaryName : rw.secondaryName;
   pattern.color = color;

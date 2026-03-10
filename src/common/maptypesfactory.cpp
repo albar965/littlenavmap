@@ -737,7 +737,7 @@ void MapTypesFactory::fillAirportMsa(const atools::sql::SqlRecord& record, map::
   airportMsa.altitudes = geo.getAltitudes();
   airportMsa.geometry = geo.getGeometry();
   airportMsa.labelPositions = geo.getLabelPositions();
-  airportMsa.bearingEndPositions = geo.getBearingEndPositions();
+  airportMsa.bearingEndPos = geo.getBearingEndPositions();
 
   airportMsa.bounding = Rect(record.valueFloat(QStringLiteral("left_lonx")), record.valueFloat(QStringLiteral("top_laty")),
                              record.valueFloat(QStringLiteral("right_lonx")), record.valueFloat(QStringLiteral("bottom_laty")));

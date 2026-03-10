@@ -18,7 +18,7 @@
 #ifndef LITTLENAVMAP_MAPRESULT_H
 #define LITTLENAVMAP_MAPRESULT_H
 
-#include "common/maptypes.h"
+#include "common/mapmarkers.h"
 
 namespace map {
 // =====================================================================

@@ -222,7 +222,7 @@ struct MapBase
     this->operator=(other);
   }
 
-  MapBase(const MapBase&& other)
+  MapBase(const MapBase && other)
   {
     id = std::move(other.id);
     position = std::move(other.position);
@@ -1466,6 +1466,7 @@ struct MapAirportMsa :
   }
 
   QString airportIdent, navIdent, region, multipleCode, vorType;
+  int navId;
 
   map::MapType navType; /* AIRPORT, VOR, NDB, ILS or WAYPOINT */
   bool vorDmeOnly, vorHasDme, vorTacan, vorVortac; /* VOR specific flags */
@@ -1479,7 +1480,7 @@ struct MapAirportMsa :
   bool trueBearing; /* true if all bearing values are true - otherwise magnetic */
   atools::geo::LineString geometry, /* Outer circle/arcs geometry. 180 points for full circle. */
                           labelPositions, /* Pre-calculated altitude label positions. */
-                          bearingEndPositions; /* Endpoints for bearing lines from center to end point */
+                          bearingEndPos; /* Endpoints for bearing lines from center to end point */
   atools::geo::Rect bounding;
 
   const QString& getIdent() const
@@ -1582,162 +1583,6 @@ struct MapProcedurePoint
   int legIndex = -1, routeIndex = -1;
   bool preview = false, previewAll = false;
 };
-
-// =====================================================================
-// Types below are user features
-// =====================================================================
-
-// =====================================================================
-/* All information for complete traffic pattern structure */
-/* Threshold position (end of final) and runway altitude MSL */
-struct PatternMarker
-  : public MapBase
-{
-  PatternMarker() :
-    MapBase(staticType())
-  {
-  }
-
-  static map::MapType staticType()
-  {
-    return map::MARK_PATTERNS;
-  }
-
-  QString airportIcao, runwayName;
-  QColor color;
-  bool turnRight,
-       base45Degree /* calculate base turn from 45 deg after threshold */,
-       showEntryExit /* Entry and exit indicators */;
-  int runwayLength; /* ft Does not include displaced threshold */
-
-  float downwindParallelDistance, finalDistance, departureDistance; /* NM */
-  float courseTrue; /* degree true final course*/
-  float magvar;
-
-  float magCourse() const;
-
-};
-
-QDataStream& operator>>(QDataStream& dataStream, map::PatternMarker& obj);
-QDataStream& operator<<(QDataStream& dataStream, const map::PatternMarker& obj);
-
-// =====================================================================
-/* Range rings marker. Can be converted to QVariant and uses its own type distinct from holdings. */
-struct HoldingMarker
-  : public MapBase
-{
-  HoldingMarker() :
-    MapBase(staticType())
-  {
-  }
-
-  static map::MapType staticType()
-  {
-    return map::MARK_HOLDING;
-  }
-
-  /* Aggregate the database holding structure */
-  map::MapHolding holding;
-};
-
-/* Save only information for user defined holds */
-QDataStream& operator>>(QDataStream& dataStream, map::HoldingMarker& obj);
-QDataStream& operator<<(QDataStream& dataStream, const map::HoldingMarker& obj);
-
-// =====================================================================
-/* MSA marker as placed by user. Can be converted to QVariant and uses its own type distinct from database MSA. */
-struct MsaMarker
-  : public MapBase
-{
-  MsaMarker() :
-    MapBase(staticType())
-  {
-  }
-
-  static map::MapType staticType()
-  {
-    return map::MARK_MSA;
-  }
-
-  /*   Aggregate the database MSA structure */
-  map::MapAirportMsa msa;
-};
-
-/* Save only information for user defined holds */
-QDataStream& operator>>(QDataStream& dataStream, map::MsaMarker& obj);
-QDataStream& operator<<(QDataStream& dataStream, const map::MsaMarker& obj);
-
-// =====================================================================
-/* Range rings marker. Can be converted to QVariant */
-struct RangeMarker
-  : public MapBase
-{
-  RangeMarker() :
-    MapBase(staticType())
-  {
-  }
-
-  static map::MapType staticType()
-  {
-    return map::MARK_RANGE;
-  }
-
-  QString text; /* Text to display like VOR name and frequency */
-  QList<float> ranges; /* Range ring list (NM) */
-  MapType navType; /* VOR, NDB, AIRPORT, etc. */
-  QColor color;
-};
-
-QDataStream& operator>>(QDataStream& dataStream, map::RangeMarker& obj);
-QDataStream& operator<<(QDataStream& dataStream, const map::RangeMarker& obj);
-
-// =====================================================================
-/* Distance measurement line. Can be converted to QVariant */
-struct DistanceMarker
-  : public MapBase
-{
-  DistanceMarker()
-    : MapBase(staticType())
-  {
-  }
-
-  static map::MapType staticType()
-  {
-    return map::MARK_DISTANCE;
-  }
-
-  QString text; /* Text to display like VOR name and frequency */
-  QColor color; /* Line color depends on origin (airport or navaid type */
-  atools::geo::Pos from, to;
-  float magvar = 0.f;
-  map::DistanceMarkerFlags flags = map::DIST_MARK_NONE;
-
-  bool isValid() const
-  {
-    return from.isValid();
-  }
-
-  const atools::geo::Pos& getPositionTo() const
-  {
-    return to;
-  }
-
-  const atools::geo::Pos& getPositionFrom() const
-  {
-    return from;
-  }
-
-  float getDistanceMeter() const
-  {
-    return from.distanceMeterTo(to);
-  }
-
-  float getDistanceNm() const;
-
-};
-
-QDataStream& operator>>(QDataStream& dataStream, map::DistanceMarker& obj);
-QDataStream& operator<<(QDataStream& dataStream, const map::DistanceMarker& obj);
 
 // =====================================================================
 /* Aircraft trail segment/point. Position and other values are
@@ -1882,13 +1727,6 @@ QString airwayText(const map::MapAirway& airway);
 QString procedurePointText(const MapProcedurePoint& procPoint);
 QString procedurePointTextShort(const MapProcedurePoint& procPoint);
 
-// Map marker / user features ==============================================================
-QString rangeMarkText(const map::RangeMarker& obj);
-QString distanceMarkText(const map::DistanceMarker& obj);
-QString holdingMarkText(const map::HoldingMarker& obj);
-QString patternMarkText(const map::PatternMarker& obj);
-QString msaMarkText(const map::MsaMarker& obj);
-
 /* Altitude text for airways */
 QString airwayAltText(const MapAirway& airway);
 
@@ -1906,11 +1744,8 @@ QIcon mapBaseIcon(const map::MapBase *base, int size);
 /* Get a number for surface quality to get the best runway. Higher numbers are better surface. */
 int surfaceQuality(const QString& surface);
 
-/* Assign artificial ids to measurement and range rings which allow to identify them. Not thread safe. */
-int getNextUserFeatureId();
-
 /* Register serializable objects */
-void registerMetaTypes();
+void registerMapMetaTypes();
 
 } // namespace map
 
@@ -1953,25 +1788,5 @@ Q_DECLARE_TYPEINFO(map::PosCourse, Q_PRIMITIVE_TYPE);
 Q_DECLARE_TYPEINFO(map::MapRef, Q_PRIMITIVE_TYPE);
 Q_DECLARE_METATYPE(map::MapRef)
 Q_DECLARE_METATYPE(QList<map::MapRef>)
-
-Q_DECLARE_TYPEINFO(map::RangeMarker, Q_RELOCATABLE_TYPE);
-Q_DECLARE_METATYPE(map::RangeMarker)
-Q_DECLARE_METATYPE(QList<map::RangeMarker>)
-
-Q_DECLARE_TYPEINFO(map::DistanceMarker, Q_RELOCATABLE_TYPE);
-Q_DECLARE_METATYPE(map::DistanceMarker)
-Q_DECLARE_METATYPE(QList<map::DistanceMarker>)
-
-Q_DECLARE_TYPEINFO(map::PatternMarker, Q_RELOCATABLE_TYPE);
-Q_DECLARE_METATYPE(map::PatternMarker)
-Q_DECLARE_METATYPE(QList<map::PatternMarker>)
-
-Q_DECLARE_TYPEINFO(map::HoldingMarker, Q_RELOCATABLE_TYPE);
-Q_DECLARE_METATYPE(map::HoldingMarker)
-Q_DECLARE_METATYPE(QList<map::HoldingMarker>)
-
-Q_DECLARE_TYPEINFO(map::MsaMarker, Q_RELOCATABLE_TYPE);
-Q_DECLARE_METATYPE(map::MsaMarker)
-Q_DECLARE_METATYPE(QList<map::MsaMarker>)
 
 #endif // LITTLENAVMAP_MAPTYPES_H

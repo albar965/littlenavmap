@@ -1140,6 +1140,16 @@ void MapPaintWidget::updateLogEntryScreenGeometry()
   screenIndex->updateLogEntryScreenGeometry(getCurrentViewBoundingBox());
 }
 
+map::MapMarkers *MapPaintWidget::getMarkers()
+{
+  return screenIndex->getMarkers();
+}
+
+const map::MapMarkers *MapPaintWidget::getMarkers() const
+{
+  return screenIndex->getMarkers();
+}
+
 void MapPaintWidget::changeSearchHighlights(const map::MapResult& newHighlights, bool updateAirspace, bool updateLogEntries)
 {
   screenIndex->setSearchHighlights(newHighlights);
@@ -1232,35 +1242,35 @@ const QList<int>& MapPaintWidget::getRouteHighlights() const
   return screenIndex->getRouteHighlights();
 }
 
-const QHash<int, map::RangeMarker>& MapPaintWidget::getRangeMarks() const
+const QHash<int, map::RangeMarker>& MapPaintWidget::getRangeMarkers() const
 {
-  return screenIndex->getRangeMarks();
+  return getMarkers()->getRangeMarkers();
 }
 
-const QHash<int, map::DistanceMarker>& MapPaintWidget::getDistanceMarks() const
+const QHash<int, map::DistanceMarker>& MapPaintWidget::getDistanceMarkers() const
 {
-  return screenIndex->getDistanceMarks();
+  return getMarkers()->getDistanceMarkers();
 }
 
-const QHash<int, map::PatternMarker>& MapPaintWidget::getPatternsMarks() const
+const QHash<int, map::PatternMarker>& MapPaintWidget::getPatternsMarkers() const
 {
-  return screenIndex->getPatternMarks();
+  return getMarkers()->getPatternMarkers();
 }
 
-const QHash<int, map::HoldingMarker>& MapPaintWidget::getHoldingMarks() const
+const QHash<int, map::HoldingMarker>& MapPaintWidget::getHoldingMarkers() const
 {
-  return screenIndex->getHoldingMarks();
+  return getMarkers()->getHoldingMarkers();
 }
 
-const QHash<int, map::MsaMarker>& MapPaintWidget::getMsaMarks() const
+const QHash<int, map::MsaMarker>& MapPaintWidget::getMsaMarkers() const
 {
-  return screenIndex->getMsaMarks();
+  return getMarkers()->getMsaMarkers();
 }
 
 QList<map::MapHolding> MapPaintWidget::getHoldingMarksFiltered() const
 {
   QList<map::MapHolding> retval;
-  const QHash<int, map::HoldingMarker>& marks = screenIndex->getHoldingMarks();
+  const QHash<int, map::HoldingMarker>& marks = getMarkers()->getHoldingMarkers();
   for(auto it = marks.constBegin(); it != marks.constEnd(); ++it)
     retval.append(it.value().holding);
   return retval;
@@ -1269,7 +1279,7 @@ QList<map::MapHolding> MapPaintWidget::getHoldingMarksFiltered() const
 QList<map::MapAirportMsa> MapPaintWidget::getMsaMarksFiltered() const
 {
   QList<map::MapAirportMsa> retval;
-  const QHash<int, map::MsaMarker>& marks = screenIndex->getMsaMarks();
+  const QHash<int, map::MsaMarker>& marks = getMarkers()->getMsaMarkers();
   for(auto it = marks.constBegin(); it != marks.constEnd(); ++it)
     retval.append(it.value().msa);
   return retval;

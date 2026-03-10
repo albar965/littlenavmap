@@ -519,6 +519,8 @@ const QLatin1String ISSUEREPORT_SUFFIX("_issuereport.zip");
 const QLatin1String MAPSTYLE_INI_SUFFIX("_mapstyle.ini");
 const QLatin1String MAPSTYLE_CONFIG(":/littlenavmap/resources/config/little_navmap_mapstyle.ini");
 
+const QLatin1String MAP_MARKERS_FILE_SUFFIX(".lnmmarker");
+
 // The 2020 SimConnect is used to connect to MSFS 2020 and 2024 for user aircraft and environment updates
 // SimConnect from 2024 has to be used to load the airport facilities from the simulator
 // Only one can be opened at a time

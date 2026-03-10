@@ -179,7 +179,7 @@ void HoldDialog::fillHold(map::HoldingMarker& holdingMarker)
   map::MapHolding& holding = holdingMarker.holding;
 
   // Assign an artifical id to the hold to allow internal identification
-  holdingMarker.id = map::getNextUserFeatureId();
+  holdingMarker.id = map::MapMarkers::getNextUserFeatureId();
   holding.color = color;
 
   holding.id = -1;

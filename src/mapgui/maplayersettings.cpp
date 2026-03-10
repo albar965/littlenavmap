@@ -21,7 +21,7 @@
 #include "exception.h"
 #include "settings/settings.h"
 #include "util/filesystemwatcher.h"
-#include "util/xmlstream.h"
+#include "util/xmlstreamreader.h"
 
 #include <algorithm>
 #include <functional>
@@ -106,7 +106,7 @@ void MapLayerSettings::reloadFromFile()
 
   if(xmlFile.open(QIODevice::ReadOnly))
   {
-    atools::util::XmlStream xmlStream(&xmlFile, filename);
+    atools::util::XmlStreamReader xmlStream(&xmlFile, filename);
     loadXmlInternal(xmlStream);
     xmlFile.close();
   }
@@ -128,10 +128,8 @@ void MapLayerSettings::loadFromFile()
     fileWatcher->setFilenameAndStart(filename);
 }
 
-void MapLayerSettings::loadXmlInternal(atools::util::XmlStream& xmlStream)
+void MapLayerSettings::loadXmlInternal(atools::util::XmlStreamReader& xmlStream)
 {
-  QXmlStreamReader& reader = xmlStream.getReader();
-
   layers.clear();
   xmlStream.readUntilElement("LittleNavmap");
   xmlStream.readUntilElement("MapLayerSettings");
@@ -141,11 +139,11 @@ void MapLayerSettings::loadXmlInternal(atools::util::XmlStream& xmlStream)
   while(xmlStream.readNextStartElement())
   {
     // Read data from header =========================================
-    if(reader.name() == QStringLiteral("Layers"))
+    if(xmlStream.name() == QStringLiteral("Layers"))
     {
       while(xmlStream.readNextStartElement())
       {
-        if(reader.name() == QStringLiteral("Layer"))
+        if(xmlStream.name() == QStringLiteral("Layer"))
         {
           if(xmlStream.readAttributeBool("Base"))
           {

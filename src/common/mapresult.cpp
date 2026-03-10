@@ -415,15 +415,15 @@ QString MapResult::objectText(MapTypes type, int elideName) const
   else if(type == map::AIRSPACE && hasOnlineAirspaces())
     str = getOnlineAirspaces().constFirst().getIdent();
   else if(type == MARK_RANGE && hasRangeMarks())
-    str = map::rangeMarkText(rangeMarks.constFirst());
+    str = rangeMarks.constFirst().displayText();
   else if(type == MARK_DISTANCE && hasDistanceMarks())
-    str = map::distanceMarkText(distanceMarks.constFirst());
+    str = distanceMarks.constFirst().displayText();
   else if(type == MARK_HOLDING && hasHoldingMarks())
-    str = map::holdingMarkText(holdingMarks.constFirst());
+    str = holdingMarks.constFirst().displayText();
   else if(type == MARK_PATTERNS && hasPatternMarks())
-    str = map::patternMarkText(patternMarks.constFirst());
+    str = patternMarks.constFirst().displayText();
   else if(type == MARK_MSA && hasMsaMarks())
-    str = map::msaMarkText(msaMarks.constFirst());
+    str = msaMarks.constFirst().displayText();
   return str;
 }
 

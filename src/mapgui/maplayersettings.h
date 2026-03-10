@@ -25,7 +25,7 @@
 
 namespace atools {
 namespace  util {
-class XmlStream;
+class XmlStreamReader;
 class FileSystemWatcher;
 }
 }
@@ -74,7 +74,7 @@ signals:
 private:
   friend QDebug operator<<(QDebug out, const MapLayerSettings& record);
 
-  void loadXmlInternal(atools::util::XmlStream& xmlStream);
+  void loadXmlInternal(atools::util::XmlStreamReader& xmlStream);
   bool compare(const MapLayer& layer, float distance) const;
   void reloadFromFile();
   void reloadFromUpdate(const QStringList&);

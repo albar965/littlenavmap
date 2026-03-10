@@ -26,7 +26,7 @@
 #include "common/unitstringtool.h"
 #include "fs/util/coordinates.h"
 #include "common/unit.h"
-#include "common/maptypes.h"
+#include "common/mapmarkers.h"
 #include "common/formatter.h"
 #include "atools.h"
 #include "geo/pos.h"
@@ -247,7 +247,7 @@ void RangeMarkerDialog::fillRangeMarker(map::RangeMarker& marker, bool dialogOpe
       atools::fs::util::maybeSwapOrdinates(*position, ui->lineEditRangeMarkerLatLon->text());
   }
 
-  marker.id = map::getNextUserFeatureId();
+  marker.id = map::MapMarkers::getNextUserFeatureId();
   marker.navType = navType; // Use the stored navType instead of map::NONE
   marker.position = *position;
   marker.color = color;
