@@ -60,13 +60,15 @@ const QSize DEFAULT_MAINWINDOW_SIZE(1360, 800);
 
 const QString helpLanguageOnline()
 {
-  const static QRegularExpression INDICATOR_FILE("little-navmap-user-manual-(.+)\\.online", QRegularExpression::CaseInsensitiveOption);
+  const static QRegularExpression INDICATOR_FILE(QStringLiteral("little-navmap-user-manual-(.+)\\.online"),
+                                                 QRegularExpression::CaseInsensitiveOption);
 
   if(supportedLanguageOnline.isEmpty())
   {
     // Get the online indicator file
     QString onlineFlagFile = atools::gui::HelpHandler::getHelpFile(
-      QLatin1String("help") % atools::SEP % "little-navmap-user-manual-${LANG}.online", OptionData::getLanguageFromConfigFile());
+      QStringLiteral("help") % atools::SEP % QStringLiteral("little-navmap-user-manual-${LANG}.online"),
+      OptionData::getLanguageFromConfigFile());
 
     // Extract language from the file
     QRegularExpressionMatch match = INDICATOR_FILE.match(onlineFlagFile);
@@ -75,7 +77,7 @@ const QString helpLanguageOnline()
 
     // Fall back to English
     if(supportedLanguageOnline.isEmpty())
-      supportedLanguageOnline = "en";
+      supportedLanguageOnline = QStringLiteral("en");
   }
 
   return supportedLanguageOnline;
@@ -96,67 +98,73 @@ void loadHelpUrls()
     lang = OptionData::getLanguageFromConfigFile().section('_', 0, 0);
 
   // .../help/en/index.html
-  QFileInfo localFile(QCoreApplication::applicationDirPath() % atools::SEP % "help" % atools::SEP % lang % atools::SEP % "index.html");
+  QFileInfo localFile(QCoreApplication::applicationDirPath() % atools::SEP % QStringLiteral("help") % atools::SEP % lang %
+                      atools::SEP % QStringLiteral("index.html"));
 
   if(!localFile.exists())
     // Try English manual
-    localFile.setFile(QCoreApplication::applicationDirPath() % atools::SEP % "help" % atools::SEP % "en" % atools::SEP % "index.html");
+    localFile.setFile(QCoreApplication::applicationDirPath() % atools::SEP % QStringLiteral("help") % atools::SEP % QStringLiteral("en") %
+                      atools::SEP % QStringLiteral("index.html"));
 
   // Check if local index.html exists
   if(localFile.exists())
   {
     // Use local files for manual
-    QString base = QUrl::fromLocalFile(localFile.path()).toString() % "/";
+    QString base = QUrl::fromLocalFile(localFile.path()).toString() % QStringLiteral("/");
     helpOnlineUrl = base;
-    helpOnlineMainUrl = base % "index.html";
-    helpOnlineMainMenuUrl = base % "MENUS.html";
-    helpOnlineShortcutsUrl = base % "SHORTCUTS.html";
-    helpOnlineMapDisplayUrl = base % "MAPDISPLAY.html";
-    helpOnlineTutorialsUrl = base % "TUTORIALS.html";
-    helpOnlineLegendUrl = base % "LEGEND.html";
-    helpOnlineFlightPlanningUrl = base % "FLIGHTPLAN.html";
-    helpOnlineAircraftPerfUrl = base % "AIRCRAFTPERF.html";
-    helpOnlineUserInterfaceUrl = base % "INTRO.html";
-    helpOnlineInstallGlobeUrl = base % "GLOBE.html";
-    helpOnlineInstallDirUrl = base % "FOLDERS.html";
-    helpOnlineNavdatabasesUrl = base % "NAVDATA.html";
-    helpOnlineStartUrl = base % "START.html";
+    helpOnlineMainUrl = base % QStringLiteral("index.html");
+    helpOnlineMainMenuUrl = base % QStringLiteral("MENUS.html");
+    helpOnlineShortcutsUrl = base % QStringLiteral("SHORTCUTS.html");
+    helpOnlineMapDisplayUrl = base % QStringLiteral("MAPDISPLAY.html");
+    helpOnlineTutorialsUrl = base % QStringLiteral("TUTORIALS.html");
+    helpOnlineLegendUrl = base % QStringLiteral("LEGEND.html");
+    helpOnlineFlightPlanningUrl = base % QStringLiteral("FLIGHTPLAN.html");
+    helpOnlineAircraftPerfUrl = base % QStringLiteral("AIRCRAFTPERF.html");
+    helpOnlineUserInterfaceUrl = base % QStringLiteral("INTRO.html");
+    helpOnlineInstallGlobeUrl = base % QStringLiteral("GLOBE.html");
+    helpOnlineInstallDirUrl = base % QStringLiteral("FOLDERS.html");
+    helpOnlineNavdatabasesUrl = base % QStringLiteral("NAVDATA.html");
+    helpOnlineStartUrl = base % QStringLiteral("START.html");
   }
   else
   {
     // Use online help links from configuration
     // [help] - Online help URLs
-    QString base = "https://www.littlenavmap.org/manuals/littlenavmap/release/latest/${LANG}/";
-    helpOnlineUrl = settings.value("help/base", base).toString();
+    const QString base = QStringLiteral("https://www.littlenavmap.org/manuals/littlenavmap/release/latest/${LANG}/");
+    helpOnlineUrl = settings.value(QStringLiteral("help/base"), base).toString();
     helpOnlineMainUrl = helpOnlineUrl;
-    helpOnlineTutorialsUrl = settings.value("help/tutorials", base + "TUTORIALS.html").toString();
-    helpOnlineMainMenuUrl = settings.value("help/mainmenu", base + "MENUS.html").toString();
-    helpOnlineShortcutsUrl = settings.value("help/shortcuts", base + "SHORTCUTS.html").toString();
-    helpOnlineMapDisplayUrl = settings.value("help/mapdisplay", base + "MAPDISPLAY.html").toString();
-    helpOnlineLegendUrl = settings.value("help/legend", base + "LEGEND.html").toString();
-    helpOnlineFlightPlanningUrl = settings.value("help/flightplanning", base + "FLIGHTPLAN.html").toString();
-    helpOnlineAircraftPerfUrl = settings.value("help/aircraftperf", base + "AIRCRAFTPERF.html").toString();
-    helpOnlineUserInterfaceUrl = settings.value("help/userinterface", base + "INTRO.html").toString();
-    helpOnlineInstallGlobeUrl = settings.value("help/installglobe", base + "GLOBE.html").toString();
-    helpOnlineInstallDirUrl = settings.value("help/installdir", base + "FOLDERS.html").toString();
-    helpOnlineNavdatabasesUrl = settings.value("help/navdata", base + "NAVDATA.html").toString();
-    helpOnlineStartUrl = settings.value("help/start", base + "START.html").toString();
+    helpOnlineTutorialsUrl = settings.value(QStringLiteral("help/tutorials"), base + QStringLiteral("TUTORIALS.html")).toString();
+    helpOnlineMainMenuUrl = settings.value(QStringLiteral("help/mainmenu"), base + QStringLiteral("MENUS.html")).toString();
+    helpOnlineShortcutsUrl = settings.value(QStringLiteral("help/shortcuts"), base + QStringLiteral("SHORTCUTS.html")).toString();
+    helpOnlineMapDisplayUrl = settings.value(QStringLiteral("help/mapdisplay"), base + QStringLiteral("MAPDISPLAY.html")).toString();
+    helpOnlineLegendUrl = settings.value(QStringLiteral("help/legend"), base + QStringLiteral("LEGEND.html")).toString();
+    helpOnlineFlightPlanningUrl = settings.value(QStringLiteral("help/flightplanning"),
+                                                 base + QStringLiteral("FLIGHTPLAN.html")).toString();
+    helpOnlineAircraftPerfUrl = settings.value(QStringLiteral("help/aircraftperf"), base + QStringLiteral("AIRCRAFTPERF.html")).toString();
+    helpOnlineUserInterfaceUrl = settings.value(QStringLiteral("help/userinterface"), base + QStringLiteral("INTRO.html")).toString();
+    helpOnlineInstallGlobeUrl = settings.value(QStringLiteral("help/installglobe"), base + QStringLiteral("GLOBE.html")).toString();
+    helpOnlineInstallDirUrl = settings.value(QStringLiteral("help/installdir"), base + QStringLiteral("FOLDERS.html")).toString();
+    helpOnlineNavdatabasesUrl = settings.value(QStringLiteral("help/navdata"), base + QStringLiteral("NAVDATA.html")).toString();
+    helpOnlineStartUrl = settings.value(QStringLiteral("help/start"), base + QStringLiteral("START.html")).toString();
   }
 
   qDebug() << Q_FUNC_INFO << "Help URL" << helpOnlineUrl;
 
-  helpOnlineDownloadsUrl = settings.value("help/downloads", "https://www.littlenavmap.org/downloads/").toString();
+  helpOnlineDownloadsUrl = settings.value(QStringLiteral("help/downloads"),
+                                          QStringLiteral("https://www.littlenavmap.org/downloads/")).toString();
 
   // [help] - Other URLs
-  helpDonateUrl = settings.value("help/donate", "https://www.littlenavmap.org/donate.html").toString();
-  helpManualDownloadUrl = settings.value("help/downloadmanual", "https://albar965.github.io/manuals.html").toString();
-  helpFaqUrl = settings.value("help/faq", "https://www.littlenavmap.org/littlenavmap-faq.html").toString();
+  helpDonateUrl = settings.value(QStringLiteral("help/donate"), QStringLiteral("https://www.littlenavmap.org/donate.html")).toString();
+  helpManualDownloadUrl = settings.value(QStringLiteral("help/downloadmanual"),
+                                         QStringLiteral("https://albar965.github.io/manuals.html")).toString();
+  helpFaqUrl = settings.value(QStringLiteral("help/faq"), QStringLiteral("https://www.littlenavmap.org/littlenavmap-faq.html")).toString();
 
   // [local] - local files
-  helpOfflineFile = settings.value("local/help", "help/little-navmap-user-manual-${LANG}.pdf").toString();
+  helpOfflineFile = settings.value(QStringLiteral("local/help"), QStringLiteral("help/little-navmap-user-manual-${LANG}.pdf")).toString();
 
   // [update] - Update control file
-  updateDefaultUrl = settings.value("update/url", "https://www.littlenavmap.org/littlenavmap-version").toString();
+  updateDefaultUrl = settings.value(QStringLiteral("update/url"),
+                                    QStringLiteral("https://www.littlenavmap.org/littlenavmap-version")).toString();
 }
 
 } // namespace lnm
