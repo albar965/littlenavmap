@@ -32,7 +32,7 @@ class XmlStreamReader;
 namespace map {
 
 /* =====================================================================
- * All user features
+ * All markers called user features in the user interface.
  * Can be converted to QVariant as well as loaded and saved from/to XML
  * ===================================================================== */
 
@@ -222,7 +222,7 @@ class MapMarkers
 
 public:
   /* Save and load to/from XML file */
-  void save(const QString& filename);
+  void save(const QString& filename, int numBackupFiles);
   void restore(const QString& filename);
 
   /* Add user features. Id has to be set before using getNextUserFeatureId(). */
@@ -288,6 +288,9 @@ public:
   /* Assign artificial ids to measurement and range rings which allow to identify them.
    * Not thread safe. */
   static int getNextUserFeatureId();
+
+  /* true if file is detected as a user feature XML file */
+  static bool isMarkersFile(const QString& filename);
 
 private:
   /* XML file version */

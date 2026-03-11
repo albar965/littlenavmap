@@ -473,7 +473,7 @@ void MapScreenIndex::updateLineScreenGeometry(QList<std::pair<int, QLine> >& ind
 
 void MapScreenIndex::saveState() const
 {
-  markers->save(atools::settings::Settings::getConfigFilename(lnm::MAP_MARKERS_FILE_SUFFIX));
+  markers->save(atools::settings::Settings::getConfigFilename(lnm::MAP_MARKERS_FILE_SUFFIX), 3 /* numBackupFiles */);
 }
 
 void MapScreenIndex::restoreState()

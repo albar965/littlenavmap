@@ -22,6 +22,7 @@
 #include "common/unit.h"
 #include "fs/common/binarymsageometry.h"
 #include "fs/db/databasemeta.h"
+#include "io/fileroller.h"
 #include "settings/settings.h"
 #include "util/xmlstreamreader.h"
 #include "util/xmlstreamwriter.h"
@@ -44,8 +45,8 @@ void assignIdAndInsert(const QString& settingsName, QHash<int, TYPE>& hash)
 
 /* Write list element and all items from the list as child elements */
 template<typename TYPE>
-void writeMarker(atools::util::XmlStreamWriter& writer, const QHash<int, TYPE>& markers, const QString& listElementName,
-                 const QString& elementName)
+void writeMarkerList(atools::util::XmlStreamWriter& writer, const QHash<int, TYPE>& markers, const QString& listElementName,
+                     const QString& elementName)
 {
   writer.writeStartElement(listElementName);
   for(const TYPE& marker : markers)
@@ -59,7 +60,7 @@ void writeMarker(atools::util::XmlStreamWriter& writer, const QHash<int, TYPE>& 
 
 /* Read all child elements from current, assign id and add to the list */
 template<typename TYPE>
-void readMarker(atools::util::XmlStreamReader& reader, QHash<int, TYPE>& markers, const QString& elementName)
+void readMarkerList(atools::util::XmlStreamReader& reader, QHash<int, TYPE>& markers, const QString& elementName)
 {
   while(reader.readNextStartElement())
   {
@@ -78,33 +79,37 @@ void readMarker(atools::util::XmlStreamReader& reader, QHash<int, TYPE>& markers
 // ######################################################################################
 /*
 <?xml version="1.0" encoding="UTF-8"?>
-<LittleNavmap xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="https://www.littlenavmap.org/schema/lnmmarker.xsd">
-  <Markers>
+<LittleNavmap xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="https://www.littlenavmap.org/schema/lnmuserfeat.xsd">
+  <UserFeatures>
     <Header>
       <CreationDate>2025-11-02T15:03:46+01:00</CreationDate>
       <FileVersion>1.2</FileVersion>
       <ProgramName>Little Navmap</ProgramName>
       <ProgramVersion>3.0.18</ProgramVersion>
-      <Documentation>https://www.littlenavmap.org/lnmmarkers.html</Documentation>
+      <Documentation>https://www.littlenavmap.org/lnmuserfeat.html</Documentation>
     </Header>
     <SimData Cycle="2509">XP12</SimData>
     <NavData Cycle="2509">NAVIGRAPH</NavData>
-    <MarkerObjects>
+    <UserFeatureList>
       ...
-    </MarkerObjects>
-  </Markers>
+    </UserFeatureList>
+  </UserFeatures>
 </LittleNavmap>
 */
-void MapMarkers::save(const QString& filename)
+void MapMarkers::save(const QString& filename, int numBackupFiles)
 {
   qDebug() << Q_FUNC_INFO << filename;
+
+  if(numBackupFiles > 0)
+    atools::io::FileRoller(numBackupFiles).rollFile(filename);
 
   QFile file(filename);
   if(file.open(QIODevice::WriteOnly | QIODevice::Text))
   {
     atools::util::XmlStreamWriter writer(&file);
 
-    writer.writeStartDocument("LittleNavmap", "https://www.littlenavmap.org/schema/lnmmarker.xsd");
+    writer.writeStartDocument("LittleNavmap", "https://www.littlenavmap.org/schema/lnmuserfeat.xsd");
+    writer.writeStartElement("UserFeatures");
 
     // Save header and metadata =======================================================
     writer.writeStartElement("Header");
@@ -112,7 +117,7 @@ void MapMarkers::save(const QString& filename)
     writer.writeTextElement("FileVersion", QStringLiteral("%1.%2").arg(MARKERS_VERSION_MAJOR).arg(MARKERS_VERSION_MINOR));
     writer.writeTextElement("ProgramName", QCoreApplication::applicationName());
     writer.writeTextElement("ProgramVersion", QCoreApplication::applicationVersion());
-    writer.writeTextElement("Documentation", QStringLiteral("https://www.littlenavmap.org/lnmmarker.html"));
+    writer.writeTextElement("Documentation", QStringLiteral("https://www.littlenavmap.org/lnmuserfeat.html"));
     writer.writeEndElement(); // Header
 
     // Nav and sim metadata =======================================================
@@ -135,14 +140,15 @@ void MapMarkers::save(const QString& filename)
     writer.writeEndElement(); // NavData
 
     // Marker list =======================================================
-    writer.writeStartElement("Markers");
-    writeMarker(writer, distanceMarkers, QStringLiteral("DistanceMarkers"), QStringLiteral("Distance"));
-    writeMarker(writer, rangeMarkers, QStringLiteral("RangeMarkers"), QStringLiteral("Range"));
-    writeMarker(writer, patternMarkers, QStringLiteral("PatternMarkers"), QStringLiteral("Pattern"));
-    writeMarker(writer, holdingMarkers, QStringLiteral("HoldingMarkers"), QStringLiteral("Holding"));
-    writeMarker(writer, msaMarkers, QStringLiteral("MsaMarkers"), QStringLiteral("Msa"));
-    writer.writeEndElement(); // Markers
+    writer.writeStartElement("UserFeatureList");
+    writeMarkerList(writer, distanceMarkers, QStringLiteral("MeasurementLineList"), QStringLiteral("MeasurementLine"));
+    writeMarkerList(writer, rangeMarkers, QStringLiteral("RangeRingList"), QStringLiteral("RangeRing"));
+    writeMarkerList(writer, patternMarkers, QStringLiteral("TrafficPatternList"), QStringLiteral("TrafficPattern"));
+    writeMarkerList(writer, holdingMarkers, QStringLiteral("HoldingList"), QStringLiteral("Holding"));
+    writeMarkerList(writer, msaMarkers, QStringLiteral("MsaDiagramList"), QStringLiteral("MsaDiagram"));
+    writer.writeEndElement(); // UserFeatureList
 
+    writer.writeEndElement(); // UserFeatures
     writer.writeEndDocument(); // LittleNavmap
     file.close();
   }
@@ -161,21 +167,23 @@ void MapMarkers::restore(const QString& filename)
     if(file.open(QIODevice::ReadOnly | QIODevice::Text))
     {
       atools::util::XmlStreamReader reader(&file);
-      reader.readUntilElement(QStringLiteral("Markers"));
+
+      // Skip header ==========
+      reader.readUntilElement(QStringLiteral("UserFeatureList"));
 
       while(reader.readNextStartElement())
       {
         QStringView name = reader.name();
-        if(name == QStringLiteral("DistanceMarkers"))
-          readMarker(reader, distanceMarkers, QStringLiteral("Distance"));
-        else if(name == QStringLiteral("RangeMarkers"))
-          readMarker(reader, rangeMarkers, QStringLiteral("Range"));
-        else if(name == QStringLiteral("PatternMarkers"))
-          readMarker(reader, patternMarkers, QStringLiteral("Pattern"));
-        else if(name == QStringLiteral("HoldingMarkers"))
-          readMarker(reader, holdingMarkers, QStringLiteral("Holding"));
-        else if(name == QStringLiteral("MsaMarkers"))
-          readMarker(reader, msaMarkers, QStringLiteral("Msa"));
+        if(name == QStringLiteral("MeasurementLineList"))
+          readMarkerList(reader, distanceMarkers, QStringLiteral("MeasurementLine"));
+        else if(name == QStringLiteral("RangeRingList"))
+          readMarkerList(reader, rangeMarkers, QStringLiteral("RangeRing"));
+        else if(name == QStringLiteral("TrafficPatternList"))
+          readMarkerList(reader, patternMarkers, QStringLiteral("TrafficPattern"));
+        else if(name == QStringLiteral("HoldingList"))
+          readMarkerList(reader, holdingMarkers, QStringLiteral("Holding"));
+        else if(name == QStringLiteral("MsaDiagramList"))
+          readMarkerList(reader, msaMarkers, QStringLiteral("MsaDiagram"));
         else
           reader.skipCurrentElement(true /* warning */);
       }
@@ -195,8 +203,7 @@ void MapMarkers::restore(const QString& filename)
   }
 }
 
-// ######################################################################################
-// . <PatternMarker>
+// PatternMarker ######################################################################################
 // .   <AirportICAO>EDDL</AirportICAO>
 // .   <RunwayName>R10L</RunwayName>
 // .   <Color>#101010</Color>
@@ -210,7 +217,6 @@ void MapMarkers::restore(const QString& filename)
 // .   <CourseTrueDeg>10.8</CourseTrueDeg>
 // .   <MagVarDeg>1.5</MagVarDeg>
 // .   <Pos Lon="13.368729" Lat="55.534626" Alt="231.00"/>
-// . </PatternMarker>
 void PatternMarker::save(atools::util::XmlStreamWriter& stream) const
 {
   stream.writeTextElement(QStringLiteral("AirportICAO"), airportIcao);
@@ -279,8 +285,7 @@ QString PatternMarker::displayText() const
                                 QObject::tr("L", "Pattern direction")).arg(runwayName);
 }
 
-// ######################################################################################
-// . <HoldingMarker>
+// HoldingMarker ######################################################################################
 // .   <NavIdent>BOMBI</NavIdent>
 // .   <NavType>VOR</NavType> AIRPORT, VOR, NDB or WAYPOINT
 // .   <VorDmeOnly>true</VorDmeOnly>
@@ -294,7 +299,6 @@ QString PatternMarker::displayText() const
 // .   <CourseTrueDeg>145</CourseTrueDeg>
 // .   <MagvarDeg>1.5</MagvarDeg>
 // .   <Pos Lon="13.368729" Lat="55.534626" Alt="231.00"/>
-// . </HoldingMarker>
 void HoldingMarker::save(atools::util::XmlStreamWriter& stream) const
 {
   stream.writeTextElement(QStringLiteral("NavIdent"), holding.navIdent);
@@ -369,8 +373,7 @@ QString HoldingMarker::displayText() const
            arg(Unit::altFeet(holding.position.getAltitude()));
 }
 
-// ######################################################################################
-// . <MsaMarker>
+// MsaMarker ######################################################################################
 // .   <AirportIdent>EDDF</AirportIdent>
 // .   <NavIdent>BOMBI</NavIdent>
 // .   <Region>ED</Region>
@@ -393,7 +396,6 @@ QString HoldingMarker::displayText() const
 // .   </Altitudes>
 // .   <TrueBearing>false</TrueBearing>
 // .   <Pos Lon="13.368729" Lat="55.534626"/>
-// . </MsaMarker>
 void MsaMarker::save(atools::util::XmlStreamWriter& stream) const
 {
   stream.writeTextElement(QStringLiteral("AirportIdent"), msa.airportIdent);
@@ -483,8 +485,7 @@ QString MsaMarker::displayText() const
   return airportMsaText(msa, true);
 }
 
-// ######################################################################################
-// . <RangeMarker>
+// RangeMarker ######################################################################################
 // .   <Text>EDDF</Text>
 // .   <Ranges>
 // .     <RangeNM>2</RangeNM>
@@ -492,7 +493,6 @@ QString MsaMarker::displayText() const
 // .   </Ranges>
 // .   <Pos Lon="13.368729" Lat="55.534626"/>
 // .   <Color>#101010</Color>
-// . </RangeMarker>
 void RangeMarker::save(atools::util::XmlStreamWriter& stream) const
 {
   stream.writeTextElement(QStringLiteral("Text"), text);
@@ -529,15 +529,13 @@ QString RangeMarker::displayText() const
     return QObject::tr("Range Rings %1").arg(text);
 }
 
-// ######################################################################################
-// . <DistanceMarker>
+// DistanceMarker ######################################################################################
 // .   <Text>EDDF</Text>
 // .   <Color>#101010</Color>
 // .   <MagVarDeg>1.5</MagVarDeg>
 // .   <Flags>RADIAL|CALIBRATED</Flags>
 // .   <PosFrom Lon="13.368729" Lat="55.534626"/>
 // .   <PosTo Lon="13.368729" Lat="55.534626"/>
-// . </DistanceMarker>
 void DistanceMarker::save(atools::util::XmlStreamWriter& stream) const
 {
   stream.writeTextElement(QStringLiteral("Text"), text);
@@ -800,6 +798,12 @@ int MapMarkers::getNextUserFeatureId()
   static int currentUserFeatureId = 1;
   return currentUserFeatureId++;
 
+}
+
+bool MapMarkers::isMarkersFile(const QString& filename)
+{
+  const QStringList lines = atools::probeFile(filename, 30);
+  return lines.at(0).startsWith("<?xml version") && lines.at(1).startsWith("<littlenavmap") && lines.at(2).startsWith("<userfeatures>");
 }
 
 float PatternMarker::magCourse() const

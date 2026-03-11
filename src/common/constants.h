@@ -442,6 +442,7 @@ const QLatin1String FILE_PATTERN_LOAD_FLIGHTPLAN("(*.lnmpln *.pln *.flp *.fms *.
 const QLatin1String FILE_PATTERN_LNMPLN("(*.lnmpln)");
 const QLatin1String FILE_PATTERN_KML("(*.kml *.kmz)");
 const QLatin1String FILE_PATTERN_GPX("(*.gpx)");
+const QLatin1String FILE_PATTERN_LNM_USERFEATURES("(*.lnmuserfeat)");
 
 const QLatin1String FILE_PATTERN_USERDATA_CSV("(*.csv)");
 const QLatin1String FILE_PATTERN_USER_FIX_DAT("(user_fix.dat)");
@@ -519,7 +520,7 @@ const QLatin1String ISSUEREPORT_SUFFIX("_issuereport.zip");
 const QLatin1String MAPSTYLE_INI_SUFFIX("_mapstyle.ini");
 const QLatin1String MAPSTYLE_CONFIG(":/littlenavmap/resources/config/little_navmap_mapstyle.ini");
 
-const QLatin1String MAP_MARKERS_FILE_SUFFIX(".lnmmarker");
+const QLatin1String MAP_MARKERS_FILE_SUFFIX(".lnmuserfeat");
 
 // The 2020 SimConnect is used to connect to MSFS 2020 and 2024 for user aircraft and environment updates
 // SimConnect from 2024 has to be used to load the airport facilities from the simulator
