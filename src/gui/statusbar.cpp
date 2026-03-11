@@ -103,7 +103,7 @@ void StatusBar::optionsChanged()
 
 void StatusBar::updateClock() const
 {
-  if(!atools::gui::Application::isShuttingDown())
+  if(!atools::gui::Application::isShuttingDown() && statusBar->isVisible())
   {
     // Get timedate depending on settings in menu ===================================
     QDateTime datetimeText, // Label and first line in tooltip
@@ -550,7 +550,7 @@ void StatusBar::renderStateChanged(const Marble::RenderState& state)
 
 void StatusBar::shrinkStatusBar()
 {
-  if(!atools::gui::Application::isShuttingDown())
+  if(!atools::gui::Application::isShuttingDown() && statusBar->isVisible())
   {
 #ifdef DEBUG_INFORMATION
     qDebug() << Q_FUNC_INFO << statusBar->geometry() << QCursor::pos();
@@ -581,54 +581,57 @@ void StatusBar::shrinkStatusBar()
 
 void StatusBar::updateMapPositionLabel(const atools::geo::Pos& pos, const QPoint& point)
 {
-  if(!atools::gui::Application::isShuttingDown() && pos.isValid())
+  if(!atools::gui::Application::isShuttingDown() && statusBar->isVisible())
   {
-    // Coordinates ============================
-    QString text(Unit::coords(pos));
+    if(pos.isValid())
+    {
+      // Coordinates ============================
+      QString text(Unit::coords(pos));
 
-    if(NavApp::isGlobeOfflineProvider() && pos.getAltitude() < map::INVALID_ALTITUDE_VALUE)
-      text += tr(" / ") % Unit::altMeter(pos.getAltitude());
+      if(NavApp::isGlobeOfflineProvider() && pos.getAltitude() < map::INVALID_ALTITUDE_VALUE)
+        text += tr(" / ") % Unit::altMeter(pos.getAltitude());
 #ifdef DEBUG_INFORMATION
-    text.append(QStringLiteral(" [L %1,%2/G %3,%4]").arg(point.x()).arg(point.y()).arg(QCursor::pos().x()).arg(QCursor::pos().y()));
+      text.append(QStringLiteral(" [L %1,%2/G %3,%4]").arg(point.x()).arg(point.y()).arg(QCursor::pos().x()).arg(QCursor::pos().y()));
 #endif
 
-    mapPositionLabel->setText(text);
-    mapPositionLabel->setMinimumWidth(mapPositionLabel->width());
+      mapPositionLabel->setText(text);
+      mapPositionLabel->setMinimumWidth(mapPositionLabel->width());
 
-    // Declination ============================
-    float magVar = NavApp::getMagVar(pos);
-    QString magVarText = map::magvarText(magVar, true /* short text */);
+      // Declination ============================
+      float magVar = NavApp::getMagVar(pos);
+      QString magVarText = map::magvarText(magVar, true /* short text */);
 
 #ifdef DEBUG_INFORMATION
-    magVarText += QStringLiteral(" [%1]").arg(magVar, 0, 'f', 2);
+      magVarText += QStringLiteral(" [%1]").arg(magVar, 0, 'f', 2);
 #endif
 
-    mapMagvarLabel->setText(magVarText);
-    mapMagvarLabel->setMinimumWidth(mapMagvarLabel->width());
+      mapMagvarLabel->setText(magVarText);
+      mapMagvarLabel->setMinimumWidth(mapMagvarLabel->width());
 
-    // Time Zone  ============================
-    const QTimeZone zone = NavApp::getTimeZone(pos);
-    const QString offset = formatter::formatTimeZoneOffset(zone.standardTimeOffset(NavApp::getUtcDateTimeSimOrCurrent()));
-    QLocale::Territory territory = zone.territory();
-    if(territory != QLocale::AnyTerritory)
-      timeZoneLabel->setText(tr("%1 / %2").arg(QLocale::territoryToString(territory)).arg(offset));
+      // Time Zone  ============================
+      const QTimeZone zone = NavApp::getTimeZone(pos);
+      const QString offset = formatter::formatTimeZoneOffset(zone.standardTimeOffset(NavApp::getUtcDateTimeSimOrCurrent()));
+      QLocale::Territory territory = zone.territory();
+      if(territory != QLocale::AnyTerritory)
+        timeZoneLabel->setText(tr("%1 / %2").arg(QLocale::territoryToString(territory)).arg(offset));
+      else
+        timeZoneLabel->setText(tr("%1").arg(offset));
+
+      timeZoneLabel->setMinimumWidth(timeZoneLabel->width());
+
+      // Stop status bar time to avoid shrinking =====================
+      shrinkStatusBarTimer.stop();
+    }
     else
-      timeZoneLabel->setText(tr("%1").arg(offset));
+    {
+      mapPositionLabel->setText(tr(" — "));
+      mapPositionLabel->setMinimumWidth(mapPositionLabel->width());
+      mapMagvarLabel->setText(tr(" — "));
+      timeZoneLabel->setText(tr(" — "));
 
-    timeZoneLabel->setMinimumWidth(timeZoneLabel->width());
-
-    // Stop status bar time to avoid shrinking =====================
-    shrinkStatusBarTimer.stop();
-  }
-  else
-  {
-    mapPositionLabel->setText(tr(" — "));
-    mapPositionLabel->setMinimumWidth(mapPositionLabel->width());
-    mapMagvarLabel->setText(tr(" — "));
-    timeZoneLabel->setText(tr(" — "));
-
-    // Reduce status fields bar after timeout =====================
-    shrinkStatusBarTimer.start();
+      // Reduce status fields bar after timeout =====================
+      shrinkStatusBarTimer.start();
+    }
   }
 }
 
