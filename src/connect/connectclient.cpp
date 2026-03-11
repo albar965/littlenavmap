@@ -882,32 +882,35 @@ void ConnectClient::readFromSocketError(QAbstractSocket::SocketError)
 
   reconnectNetworkTimer.stop();
 
+  const QString errorString = socket->errorString();
+  const QAbstractSocket::SocketError error = socket->error();
+
   qWarning() << Q_FUNC_INFO << "Error reading from" << socket->peerName() << ":" << connectDialog->getRemotePort()
-             << socket->errorString() << "open" << socket->isOpen() << "state" << socket->state();
-
-  if(!silent)
-  {
-    if(socket->error() == QAbstractSocket::RemoteHostClosedError)
-    {
-      // Nicely closed on the other end
-      atools::gui::Dialog(parentWidget).showInfoMsgBox(lnm::ACTIONS_SHOW_DISCONNECT_INFO,
-                                                       tr("Remote end closed connection."),
-                                                       tr("Do not &show this dialog again."));
-    }
-    else
-    {
-      QString msg = tr("Error in server connection: %1 (%2).%3").
-                    arg(socket->errorString()).
-                    arg(socket->error()).
-                    arg(connectDialog->isAutoConnect() ? tr("\nWill retry to connect.") : QStringLiteral());
-
-      // Closed due to error
-      atools::gui::Dialog::critical(parentWidget, msg, QMessageBox::Close);
-    }
-  }
+             << errorString << "open" << socket->isOpen() << "state" << socket->state();
 
   // Close and allow restart if auto is on
   closeSocket(true);
+
+  if(!silent)
+  {
+    // Start the error dialogs in the main loop to avoid lockups - still blocks the application
+    if(error == QAbstractSocket::RemoteHostClosedError)
+      // Nicely closed on the other end
+      QTimer::singleShot(10, [this]()->void {
+        atools::gui::Dialog(parentWidget).showInfoMsgBox(lnm::ACTIONS_SHOW_DISCONNECT_INFO,
+                                                         tr("Remote end closed connection."),
+                                                         tr("Do not &show this dialog again."));
+      });
+    else
+      // Closed due to error
+      QTimer::singleShot(10, [this, errorString, error]()->void {
+        atools::gui::Dialog::critical(parentWidget, tr("Error in server connection: %1 (%2).%3").
+                                      arg(errorString).
+                                      arg(error).
+                                      arg(connectDialog->isAutoConnect() ? tr("\nWill retry to connect.") : QStringLiteral()),
+                                      QMessageBox::Close);
+      });
+  }
 }
 
 void ConnectClient::closeSocket(bool allowRestart)
