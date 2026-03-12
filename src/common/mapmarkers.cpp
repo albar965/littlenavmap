@@ -32,13 +32,13 @@
 namespace map {
 
 template<typename TYPE>
-void assignIdAndInsert(const QString& settingsName, QHash<int, TYPE>& hash)
+void assignIdAndInsert(MapMarkers *markers, const QString& settingsName, QHash<int, TYPE>& hash)
 {
   atools::settings::Settings& settings = atools::settings::Settings::instance();
 
   for(auto obj :settings.valueVar(settingsName).value<QList<TYPE> >())
   {
-    obj.id = map::MapMarkers::getNextUserFeatureId();
+    obj.id = markers->getNextMapMarkerId();
     hash.insert(obj.id, obj);
   }
 }
@@ -60,7 +60,7 @@ void writeMarkerList(atools::util::XmlStreamWriter& writer, const QHash<int, TYP
 
 /* Read all child elements from current, assign id and add to the list */
 template<typename TYPE>
-void readMarkerList(atools::util::XmlStreamReader& reader, QHash<int, TYPE>& markers, const QString& elementName)
+void readMarkerList(MapMarkers *markers, atools::util::XmlStreamReader& reader, QHash<int, TYPE>& markerHash, const QString& elementName)
 {
   while(reader.readNextStartElement())
   {
@@ -68,8 +68,8 @@ void readMarkerList(atools::util::XmlStreamReader& reader, QHash<int, TYPE>& mar
     {
       TYPE marker;
       marker.restore(reader);
-      marker.id = map::MapMarkers::getNextUserFeatureId();
-      markers.insert(marker.id, marker);
+      marker.id = markers->getNextMapMarkerId();
+      markerHash.insert(marker.id, marker);
     }
     else
       reader.skipCurrentElement(true /* warning */);
@@ -108,39 +108,39 @@ void MapMarkers::save(const QString& filename, int numBackupFiles)
   {
     atools::util::XmlStreamWriter writer(&file);
 
-    writer.writeStartDocument("LittleNavmap", "https://www.littlenavmap.org/schema/lnmuserfeat.xsd");
-    writer.writeStartElement("UserFeatures");
+    writer.writeStartDocument(QStringLiteral("LittleNavmap"), QStringLiteral("https://www.littlenavmap.org/schema/lnmuserfeat.xsd"));
+    writer.writeStartElement(QStringLiteral("UserFeatures"));
 
     // Save header and metadata =======================================================
-    writer.writeStartElement("Header");
-    writer.writeTextElement("CreationDate", atools::currentIsoWithOffset(false /* milliseconds */));
-    writer.writeTextElement("FileVersion", QStringLiteral("%1.%2").arg(MARKERS_VERSION_MAJOR).arg(MARKERS_VERSION_MINOR));
-    writer.writeTextElement("ProgramName", QCoreApplication::applicationName());
-    writer.writeTextElement("ProgramVersion", QCoreApplication::applicationVersion());
-    writer.writeTextElement("Documentation", QStringLiteral("https://www.littlenavmap.org/lnmuserfeat.html"));
+    writer.writeStartElement(QStringLiteral("Header"));
+    writer.writeTextElement(QStringLiteral("CreationDate"), atools::currentIsoWithOffset(false /* milliseconds */));
+    writer.writeTextElement(QStringLiteral("FileVersion"), QStringLiteral("%1.%2").arg(MARKERS_VERSION_MAJOR).arg(MARKERS_VERSION_MINOR));
+    writer.writeTextElement(QStringLiteral("ProgramName"), QCoreApplication::applicationName());
+    writer.writeTextElement(QStringLiteral("ProgramVersion"), QCoreApplication::applicationVersion());
+    writer.writeTextElement(QStringLiteral("Documentation"), QStringLiteral("https://www.littlenavmap.org/lnmuserfeat.html"));
     writer.writeEndElement(); // Header
 
     // Nav and sim metadata =======================================================
     QString cycle = NavApp::getDatabaseAiracCycleSim();
     QString source = NavApp::getDatabaseMetaSim()->getDataSource();
-    writer.writeStartElement("SimData");
+    writer.writeStartElement(QStringLiteral("SimData"));
     if(!cycle.isEmpty())
-      writer.writeAttribute("Cycle", cycle);
+      writer.writeAttribute(QStringLiteral("Cycle"), cycle);
     if(!source.isEmpty())
       writer.writeCharacters(source);
     writer.writeEndElement(); // SimData
 
     cycle = NavApp::getDatabaseAiracCycleNav();
     source = NavApp::getDatabaseMetaNav()->getDataSource();
-    writer.writeStartElement("NavData");
+    writer.writeStartElement(QStringLiteral("NavData"));
     if(!cycle.isEmpty())
-      writer.writeAttribute("Cycle", cycle);
+      writer.writeAttribute(QStringLiteral("Cycle"), cycle);
     if(!source.isEmpty())
       writer.writeCharacters(source);
     writer.writeEndElement(); // NavData
 
     // Marker list =======================================================
-    writer.writeStartElement("UserFeatureList");
+    writer.writeStartElement(QStringLiteral("UserFeatureList"));
     writeMarkerList(writer, distanceMarkers, QStringLiteral("MeasurementLineList"), QStringLiteral("MeasurementLine"));
     writeMarkerList(writer, rangeMarkers, QStringLiteral("RangeRingList"), QStringLiteral("RangeRing"));
     writeMarkerList(writer, patternMarkers, QStringLiteral("TrafficPatternList"), QStringLiteral("TrafficPattern"));
@@ -160,47 +160,45 @@ void MapMarkers::restore(const QString& filename)
 {
   qDebug() << Q_FUNC_INFO << filename;
 
-  if(atools::checkFile(Q_FUNC_INFO, filename))
+  // Read XML file ================================================================
+  QFile file(filename);
+  if(file.open(QIODevice::ReadOnly | QIODevice::Text))
   {
-    // Read XML file ================================================================
-    QFile file(filename);
-    if(file.open(QIODevice::ReadOnly | QIODevice::Text))
+    atools::util::XmlStreamReader reader(&file);
+
+    // Skip header ==========
+    reader.readUntilElement(QStringLiteral("UserFeatureList"));
+
+    while(reader.readNextStartElement())
     {
-      atools::util::XmlStreamReader reader(&file);
-
-      // Skip header ==========
-      reader.readUntilElement(QStringLiteral("UserFeatureList"));
-
-      while(reader.readNextStartElement())
-      {
-        QStringView name = reader.name();
-        if(name == QStringLiteral("MeasurementLineList"))
-          readMarkerList(reader, distanceMarkers, QStringLiteral("MeasurementLine"));
-        else if(name == QStringLiteral("RangeRingList"))
-          readMarkerList(reader, rangeMarkers, QStringLiteral("RangeRing"));
-        else if(name == QStringLiteral("TrafficPatternList"))
-          readMarkerList(reader, patternMarkers, QStringLiteral("TrafficPattern"));
-        else if(name == QStringLiteral("HoldingList"))
-          readMarkerList(reader, holdingMarkers, QStringLiteral("Holding"));
-        else if(name == QStringLiteral("MsaDiagramList"))
-          readMarkerList(reader, msaMarkers, QStringLiteral("MsaDiagram"));
-        else
-          reader.skipCurrentElement(true /* warning */);
-      }
-      file.close();
+      QStringView name = reader.name();
+      if(name == QStringLiteral("MeasurementLineList"))
+        readMarkerList(this, reader, distanceMarkers, QStringLiteral("MeasurementLine"));
+      else if(name == QStringLiteral("RangeRingList"))
+        readMarkerList(this, reader, rangeMarkers, QStringLiteral("RangeRing"));
+      else if(name == QStringLiteral("TrafficPatternList"))
+        readMarkerList(this, reader, patternMarkers, QStringLiteral("TrafficPattern"));
+      else if(name == QStringLiteral("HoldingList"))
+        readMarkerList(this, reader, holdingMarkers, QStringLiteral("Holding"));
+      else if(name == QStringLiteral("MsaDiagramList"))
+        readMarkerList(this, reader, msaMarkers, QStringLiteral("MsaDiagram"));
+      else
+        reader.skipCurrentElement(true /* warning */);
     }
-    else
-      qWarning() << Q_FUNC_INFO << "Error reading" << filename << file.errorString();
+    file.close();
   }
   else
-  {
-    // Read legacy from settings file ================================================================
-    assignIdAndInsert<map::DistanceMarker>(lnm::MAP_DISTANCEMARKERS, distanceMarkers);
-    assignIdAndInsert<map::RangeMarker>(lnm::MAP_RANGEMARKERS, rangeMarkers);
-    assignIdAndInsert<map::PatternMarker>(lnm::MAP_TRAFFICPATTERNS, patternMarkers);
-    assignIdAndInsert<map::HoldingMarker>(lnm::MAP_HOLDINGS, holdingMarkers);
-    assignIdAndInsert<map::MsaMarker>(lnm::MAP_AIRPORT_MSA, msaMarkers);
-  }
+    qWarning() << Q_FUNC_INFO << "Error reading" << filename << file.errorString();
+}
+
+void MapMarkers::restoreFromSettings()
+{
+  // Read legacy from settings file ================================================================
+  assignIdAndInsert<map::DistanceMarker>(this, lnm::MAP_DISTANCEMARKERS, distanceMarkers);
+  assignIdAndInsert<map::RangeMarker>(this, lnm::MAP_RANGEMARKERS, rangeMarkers);
+  assignIdAndInsert<map::PatternMarker>(this, lnm::MAP_TRAFFICPATTERNS, patternMarkers);
+  assignIdAndInsert<map::HoldingMarker>(this, lnm::MAP_HOLDINGS, holdingMarkers);
+  assignIdAndInsert<map::MsaMarker>(this, lnm::MAP_AIRPORT_MSA, msaMarkers);
 }
 
 // PatternMarker ######################################################################################
@@ -759,7 +757,7 @@ void MapMarkers::removeMsaMark(int id)
   msaMarkers.remove(id);
 }
 
-void MapMarkers::clearAllMarkers(map::MapTypes types)
+void MapMarkers::clear(map::MapTypes types)
 {
   if(types.testFlag(map::MARK_RANGE))
     rangeMarkers.clear();
@@ -793,17 +791,18 @@ void MapMarkers::updateDistanceMarker(int id, const map::DistanceMarker& marker)
   distanceMarkers[id].id = id;
 }
 
-int MapMarkers::getNextUserFeatureId()
+int MapMarkers::getNextMapMarkerId()
 {
-  static int currentUserFeatureId = 1;
-  return currentUserFeatureId++;
-
+  return ++currentMapMarkerId;
 }
 
 bool MapMarkers::isMarkersFile(const QString& filename)
 {
-  const QStringList lines = atools::probeFile(filename, 30);
-  return lines.at(0).startsWith("<?xml version") && lines.at(1).startsWith("<littlenavmap") && lines.at(2).startsWith("<userfeatures>");
+  // Assume LNM XML files to be formatted
+  const QStringList probe = atools::probeFile(filename, 30);
+  return probe.at(0).startsWith(QStringLiteral("<?xml version")) &&
+         probe.at(1).startsWith(QStringLiteral("<littlenavmap")) &&
+         probe.at(2).startsWith(QStringLiteral("<userfeatures>"));
 }
 
 float PatternMarker::magCourse() const

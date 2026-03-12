@@ -478,7 +478,11 @@ void MapScreenIndex::saveState() const
 
 void MapScreenIndex::restoreState()
 {
-  markers->restore(atools::settings::Settings::getConfigFilename(lnm::MAP_MARKERS_FILE_SUFFIX));
+  const QString filename = atools::settings::Settings::getConfigFilename(lnm::MAP_MARKERS_FILE_SUFFIX);
+  if(atools::checkFile(Q_FUNC_INFO, filename))
+    markers->restore(filename);
+  else
+    markers->restoreFromSettings();
 }
 
 void MapScreenIndex::setSearchHighlights(const map::MapResult& newHighlights)

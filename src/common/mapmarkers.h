@@ -225,6 +225,9 @@ public:
   void save(const QString& filename, int numBackupFiles);
   void restore(const QString& filename);
 
+  /* Restore from legacy settings */
+  void restoreFromSettings();
+
   /* Add user features. Id has to be set before using getNextUserFeatureId(). */
   void addRangeMark(const map::RangeMarker& obj);
   void addPatternMark(const map::PatternMarker& obj);
@@ -240,7 +243,7 @@ public:
   void removeMsaMark(int id);
 
   /* Removes all by type */
-  void clearAllMarkers(map::MapTypes types);
+  void clear(map::MapTypes types = map::MARK_ALL);
 
   /* Update measurement lines positions for either end */
   void updateDistanceMarkerFromPos(int id, const atools::geo::Pos& pos);
@@ -285,9 +288,15 @@ public:
     return msaMarkers;
   }
 
+  bool hasAnyMarkers() const
+  {
+    return !rangeMarkers.isEmpty() || !distanceMarkers.isEmpty() || !patternMarkers.isEmpty() || !holdingMarkers.isEmpty() ||
+           !msaMarkers.isEmpty();
+  }
+
   /* Assign artificial ids to measurement and range rings which allow to identify them.
    * Not thread safe. */
-  static int getNextUserFeatureId();
+  int getNextMapMarkerId();
 
   /* true if file is detected as a user feature XML file */
   static bool isMarkersFile(const QString& filename);
@@ -302,6 +311,8 @@ private:
   QHash<int, map::PatternMarker> patternMarkers;
   QHash<int, map::HoldingMarker> holdingMarkers;
   QHash<int, map::MsaMarker> msaMarkers;
+
+  int currentMapMarkerId = 0;
 };
 
 /* Register serializable objects */

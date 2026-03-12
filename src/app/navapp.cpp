@@ -747,6 +747,11 @@ MapDetailHandler *NavApp::getMapDetailHandler()
   return mapDetailHandler;
 }
 
+map::MapMarkers *NavApp::getMapMarkers()
+{
+  return getMapWidgetGui()->getMapMarkers();
+}
+
 void NavApp::showFlightplan()
 {
   mainWindow->showFlightplan();

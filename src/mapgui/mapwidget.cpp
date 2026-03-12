@@ -808,7 +808,7 @@ bool MapWidget::mousePressCheckModifierActions(QMouseEvent *event)
     {
       // First check for not editable points if these are procedures which can be removed ======================
       int routeIndex = getScreenIndex()->getNearestRoutePointIndex(event->pos().x(), event->pos().y(),
-                                                                        screenSearchDistance, false /* editableOnly */);
+                                                                   screenSearchDistance, false /* editableOnly */);
 
       if(NavApp::getRouteConst().value(routeIndex).isAnyProcedure())
       {
@@ -818,7 +818,7 @@ bool MapWidget::mousePressCheckModifierActions(QMouseEvent *event)
 
       // No procedure found - check for editable points which can be removed or added ===============
       routeIndex = getScreenIndex()->getNearestRoutePointIndex(event->pos().x(), event->pos().y(),
-                                                                    screenSearchDistance, true /* editableOnly */);
+                                                               screenSearchDistance, true /* editableOnly */);
 
       if(routeIndex != -1)
       {
@@ -983,7 +983,7 @@ void MapWidget::mouseReleaseEvent(QMouseEvent *event)
   else if(mouseState.testFlag(mapwin::DRAG_DIST_NEW_END) || mouseState.testFlag(mapwin::DRAG_DIST_CHANGE_START) ||
           mouseState.testFlag(mapwin::DRAG_DIST_CHANGE_END))
   {
-    map::MapMarkers *markers = screenIndex->getMarkers();
+    map::MapMarkers *markers = screenIndex->getMapMarkers();
     // Either new measurement line which is fixed at origin and dragged at end or one of the ends is dragged
     if(!markers->getDistanceMarkers().isEmpty())
     {
@@ -1066,7 +1066,7 @@ void MapWidget::mouseReleaseEvent(QMouseEvent *event)
     {
       // Found an end - create a backup and start dragging
       mouseState = origin ? mapwin::DRAG_DIST_CHANGE_START : mapwin::DRAG_DIST_CHANGE_END; // Either change end or origin
-      *distanceMarkerBackup = getMarkers()->getDistanceMarkers().value(currentDistanceMarkerId);
+      *distanceMarkerBackup = getMapMarkers()->getDistanceMarkers().value(currentDistanceMarkerId);
       setContextMenuPolicy(Qt::PreventContextMenu);
     }
     else
@@ -1719,10 +1719,10 @@ void MapWidget::cancelDragDistance()
 
   if(mouseState.testFlag(mapwin::DRAG_DIST_NEW_END))
     // Remove new distance measurement line
-    getScreenIndex()->getMarkers()->removeDistanceMark(currentDistanceMarkerId);
+    getScreenIndex()->getMapMarkers()->removeDistanceMark(currentDistanceMarkerId);
   else if(mouseState.testFlag(mapwin::DRAG_DIST_CHANGE_END) || mouseState.testFlag(mapwin::DRAG_DIST_CHANGE_START))
     // Replace modified line with backup
-    getScreenIndex()->getMarkers()->updateDistanceMarker(currentDistanceMarkerId, *distanceMarkerBackup);
+    getScreenIndex()->getMapMarkers()->updateDistanceMarker(currentDistanceMarkerId, *distanceMarkerBackup);
   currentDistanceMarkerId = -1;
 }
 
@@ -1752,7 +1752,7 @@ void MapWidget::mouseMoveEvent(QMouseEvent *event)
   }
 
   const MapScreenIndex *screenIndex = getScreenIndex();
-  map::MapMarkers *markers = getMarkers();
+  map::MapMarkers *markers = getMapMarkers();
   Pos pos;
   // Change cursor and keep aircraft from centering if moving in any drag and drop mode ================
   if(mouseState & mapwin::DRAG_ALL)
@@ -1973,12 +1973,12 @@ void MapWidget::addDistanceMarker(const atools::geo::Pos& pos, const map::MapAir
 
   // Distance line
   map::DistanceMarker distanceMarker;
-  distanceMarker.id = map::MapMarkers::getNextUserFeatureId();
+  distanceMarker.id = NavApp::getMapMarkers()->getNextMapMarkerId();
   distanceMarker.position = distanceMarker.to = pos;
 
   fillDistanceMarker(distanceMarker, pos, airport, vor, ndb, waypoint, userpoint);
 
-  getScreenIndex()->getMarkers()->addDistanceMark(distanceMarker);
+  getScreenIndex()->getMapMarkers()->addDistanceMark(distanceMarker);
 
   // Start mouse dragging and disable context menu so we can catch the right button click as cancel
   mouseState = mapwin::DRAG_DIST_NEW_END;
@@ -3703,7 +3703,7 @@ void MapWidget::addPatternMark(const map::MapAirport& airport)
 
     map::PatternMarker pattern;
     dialog.fillPatternMarker(pattern);
-    getMarkers()->addPatternMark(pattern);
+    getMapMarkers()->addPatternMark(pattern);
     mainWindow->updateMarkActionStates();
     update();
     NavApp::getStatusBar()->setStatusMessage(tr("Added airport traffic pattern for %1.").arg(airport.displayIdent()));
@@ -3714,7 +3714,7 @@ void MapWidget::removePatternMark(int id)
 {
   qDebug() << Q_FUNC_INFO;
 
-  getMarkers()->removePatternMark(id);
+  getMapMarkers()->removePatternMark(id);
   mainWindow->updateMarkActionStates();
   update();
   NavApp::getStatusBar()->setStatusMessage(QString(tr("Traffic pattern removed from map.")));
@@ -3734,7 +3734,7 @@ void MapWidget::addHold(const map::MapResult& result, const atools::geo::Pos& po
     map::HoldingMarker holding;
     dialog.fillHold(holding);
 
-    getMarkers()->addHoldingMark(holding);
+    getMapMarkers()->addHoldingMark(holding);
 
     mainWindow->updateMarkActionStates();
 
@@ -3747,7 +3747,7 @@ void MapWidget::removeHoldMark(int id)
 {
   qDebug() << Q_FUNC_INFO;
 
-  getMarkers()->removeHoldingMark(id);
+  getMapMarkers()->removeHoldingMark(id);
   mainWindow->updateMarkActionStates();
   update();
   NavApp::getStatusBar()->setStatusMessage(QString(tr("Holding removed from map.")));
@@ -3763,10 +3763,10 @@ void MapWidget::addMsaMark(map::MapAirportMsa airportMsa)
     NavApp::getMapMarkHandler()->showMarkTypes(map::MARK_MSA);
 
     map::MsaMarker msa;
-    msa.id = map::MapMarkers::getNextUserFeatureId();
+    msa.id = NavApp::getMapMarkers()->getNextMapMarkerId();
     msa.msa = airportMsa;
     msa.position = msa.msa.position;
-    getMarkers()->addMsaMark(msa);
+    getMapMarkers()->addMsaMark(msa);
     mainWindow->updateMarkActionStates();
 
     update();
@@ -3778,7 +3778,7 @@ void MapWidget::removeMsaMark(int id)
 {
   qDebug() << Q_FUNC_INFO;
 
-  getMarkers()->removeMsaMark(id);
+  getMapMarkers()->removeMsaMark(id);
   mainWindow->updateMarkActionStates();
   update();
   NavApp::getStatusBar()->setStatusMessage(QString(tr("MSA sector diagram removed from map.")));
@@ -3898,7 +3898,7 @@ void MapWidget::addNavRangeMark(const atools::geo::Pos& pos, map::MapTypes type,
     NavApp::getMapMarkHandler()->showMarkTypes(map::MARK_RANGE);
 
     map::RangeMarker marker;
-    marker.id = map::MapMarkers::getNextUserFeatureId();
+    marker.id = NavApp::getMapMarkers()->getNextMapMarkerId();
     marker.navType = type;
     marker.position = pos;
 
@@ -3920,7 +3920,7 @@ void MapWidget::addNavRangeMark(const atools::geo::Pos& pos, map::MapTypes type,
       marker.color = mapcolors::rangeRingColor;
 
     marker.ranges.append(range);
-    getMarkers()->addRangeMark(marker);
+    getMapMarkers()->addRangeMark(marker);
     qDebug() << "navaid range" << marker.position;
 
     update();
@@ -4012,7 +4012,7 @@ void MapWidget::addRangeMark(const atools::geo::Pos& pos, bool showDialog)
 
   if(marker.isValid() && !marker.ranges.isEmpty())
   {
-    getMarkers()->addRangeMark(marker);
+    getMapMarkers()->addRangeMark(marker);
 
     qDebug() << "range rings" << marker.position;
     update();
@@ -4075,7 +4075,7 @@ void MapWidget::addRangeMark(const atools::geo::Pos& pos, const map::MapAirport 
 
   if(marker.isValid() && !marker.ranges.isEmpty())
   {
-    getMarkers()->addRangeMark(marker);
+    getMapMarkers()->addRangeMark(marker);
 
     qDebug() << "range rings" << marker.position;
     update();
@@ -4131,7 +4131,7 @@ void MapWidget::zoomInOut(bool directionIn, bool smooth)
 
 void MapWidget::removeRangeMark(int id)
 {
-  getMarkers()->removeRangeMark(id);
+  getMapMarkers()->removeRangeMark(id);
   mainWindow->updateMarkActionStates();
   update();
   NavApp::getStatusBar()->setStatusMessage(QString(tr("Range ring removed from map.")));
@@ -4139,7 +4139,7 @@ void MapWidget::removeRangeMark(int id)
 
 void MapWidget::removeDistanceMark(int id)
 {
-  getMarkers()->removeDistanceMark(id);
+  getMapMarkers()->removeDistanceMark(id);
   mainWindow->updateMarkActionStates();
   update();
   NavApp::getStatusBar()->setStatusMessage(QString(tr("Measurement line removed from map.")));
@@ -4174,7 +4174,7 @@ void MapWidget::clearAllMarkers(map::MapTypes types)
 {
   qDebug() << Q_FUNC_INFO;
 
-  getMarkers()->clearAllMarkers(types);
+  getMapMarkers()->clear(types);
 
   if(types.testFlag(map::MARK_DISTANCE))
     currentDistanceMarkerId = -1;

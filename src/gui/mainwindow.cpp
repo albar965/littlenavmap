@@ -1276,28 +1276,25 @@ void MainWindow::connectAllSlots()
   connect(ui->actionRouteSaveAs, &QAction::triggered, this, &MainWindow::routeSaveAsLnm);
 
   // Flight plan export actions =====================================================================
-  /* *INDENT-OFF* */
-  connect(ui->actionRouteSaveAsPln, &QAction::triggered, this, [this]() { routeExport->routeExportPlnMan(); });
-  connect(ui->actionRouteSaveAsPlnMsfs, &QAction::triggered, this, [this]() { routeExport->routeExportPlnMsfsMan(); });
-  connect(ui->actionRouteSaveAsPlnMsfs24, &QAction::triggered, this, [this]() { routeExport->routeExportPlnMsfs24Man(); });
-  connect(ui->actionRouteSaveAsFms11, &QAction::triggered, this, [this]() { routeExport->routeExportFms11Man(); });
-  connect(ui->actionRouteSaveAsFlightGear, &QAction::triggered, this, [this]() { routeExport->routeExportFlightgearMan(); });
-  connect(ui->actionRouteSaveAll, &QAction::triggered, this, [this]() { routeExport->routeMultiExport(); });
-  connect(ui->actionRouteSaveAllOptions, &QAction::triggered, this, [this]() { routeExport->routeMultiExportOptions(); });
+  connect(ui->actionRouteSaveAsPln, &QAction::triggered, this, [this]() {routeExport->routeExportPlnMan();});
+  connect(ui->actionRouteSaveAsPlnMsfs, &QAction::triggered, this, [this]() {routeExport->routeExportPlnMsfsMan();});
+  connect(ui->actionRouteSaveAsPlnMsfs24, &QAction::triggered, this, [this]() {routeExport->routeExportPlnMsfs24Man();});
+  connect(ui->actionRouteSaveAsFms11, &QAction::triggered, this, [this]() {routeExport->routeExportFms11Man();});
+  connect(ui->actionRouteSaveAsFlightGear, &QAction::triggered, this, [this]() {routeExport->routeExportFlightgearMan();});
+  connect(ui->actionRouteSaveAll, &QAction::triggered, this, [this]() {routeExport->routeMultiExport();});
+  connect(ui->actionRouteSaveAllOptions, &QAction::triggered, this, [this]() {routeExport->routeMultiExportOptions();});
 
-  connect(ui->actionRouteSaveAsHtml, &QAction::triggered, this, [this]() { routeExport->routeExportHtmlMan(); });
+  connect(ui->actionRouteSaveAsHtml, &QAction::triggered, this, [this]() {routeExport->routeExportHtmlMan();});
 
   // Online export options
-  connect(ui->actionRouteSaveAsVfp, &QAction::triggered, this, [this]() { routeExport->routeExportVfpMan(); });
-  connect(ui->actionRouteSaveAsIvap, &QAction::triggered, this, [this]() { routeExport->routeExportIvapMan(); });
-  connect(ui->actionRouteSaveAsXIvap, &QAction::triggered, this, [this]() { routeExport->routeExportXIvapMan(); });
+  connect(ui->actionRouteSaveAsVfp, &QAction::triggered, this, [this]() {routeExport->routeExportVfpMan();});
+  connect(ui->actionRouteSaveAsIvap, &QAction::triggered, this, [this]() {routeExport->routeExportIvapMan();});
+  connect(ui->actionRouteSaveAsXIvap, &QAction::triggered, this, [this]() {routeExport->routeExportXIvapMan();});
 
   // GPX export and import options
-  connect(ui->actionSaveAircraftTrailToGPX, &QAction::triggered, this, [this]() { routeExport->routeExportGpxMan(); });
+  connect(ui->actionSaveAircraftTrailToGPX, &QAction::triggered, this, [this]() {routeExport->routeExportGpxMan();});
   connect(ui->actionLoadAircraftTrailFromGPX, &QAction::triggered, this, &MainWindow::trailLoadGpx);
   connect(ui->actionAppendAircraftTrailFromGPX, &QAction::triggered, this, &MainWindow::trailAppendGpx);
-
-  /* *INDENT-ON* */
 
   connect(ui->actionRouteShowSkyVector, &QAction::triggered, this, &MainWindow::openInSkyVector);
 

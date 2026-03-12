@@ -17,6 +17,7 @@
 
 #include "gui/trafficpatterndialog.h"
 
+#include "app/navapp.h"
 #include "atools.h"
 #include "common/constants.h"
 #include "common/mapmarkers.h"
@@ -178,7 +179,7 @@ void TrafficPatternDialog::fillPatternMarker(map::PatternMarker& pattern)
   const map::MapAirport& airport = runwaySelection->getAirport();
 
   // Assign an artifical id to the hold to allow internal identification
-  pattern.id = map::MapMarkers::getNextUserFeatureId();
+  pattern.id = NavApp::getMapMarkers()->getNextMapMarkerId();
   pattern.airportIcao = airport.displayIdent();
   pattern.runwayName = primary ? rw.primaryName : rw.secondaryName;
   pattern.color = color;

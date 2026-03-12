@@ -65,6 +65,8 @@ class QAction;
 class QTimeZone;
 
 namespace map {
+
+class MapMarkers;
 struct MapAirport;
 }
 namespace atools {
@@ -420,6 +422,8 @@ public:
   static MapMarkHandler *getMapMarkHandler();
   static MapAirportHandler *getMapAirportHandler();
   static MapDetailHandler *getMapDetailHandler();
+
+  static map::MapMarkers *getMapMarkers();
 
   static void showFlightplan();
   static void showAircraftPerformance();

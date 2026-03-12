@@ -242,12 +242,12 @@ public:
   /* Get average ground speed and turn speed in degrees per second for user aircraft. Average is calculated for 2 seconds. */
   void getAverageGroundAndTurnSpeed(float& groundSpeedKts, float& turnSpeedDegPerSec) const;
 
-  map::MapMarkers *getMarkers()
+  map::MapMarkers *getMapMarkers()
   {
     return markers;
   }
 
-  const map::MapMarkers *getMarkers() const
+  const map::MapMarkers *getMapMarkers() const
   {
     return markers;
   }

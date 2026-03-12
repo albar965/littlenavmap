@@ -380,8 +380,8 @@ public:
     return screenIndex;
   }
 
-  map::MapMarkers *getMarkers();
-  const map::MapMarkers *getMarkers() const;
+  map::MapMarkers *getMapMarkers();
+  const map::MapMarkers *getMapMarkers() const;
 
   MapPaintLayer *getMapPaintLayer()
   {

@@ -247,7 +247,7 @@ void RangeMarkerDialog::fillRangeMarker(map::RangeMarker& marker, bool dialogOpe
       atools::fs::util::maybeSwapOrdinates(*position, ui->lineEditRangeMarkerLatLon->text());
   }
 
-  marker.id = map::MapMarkers::getNextUserFeatureId();
+  marker.id = NavApp::getMapMarkers()->getNextMapMarkerId();
   marker.navType = navType; // Use the stored navType instead of map::NONE
   marker.position = *position;
   marker.color = color;
