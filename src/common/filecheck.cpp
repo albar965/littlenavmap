@@ -19,67 +19,96 @@
 
 #include "atools.h"
 #include "common/constants.h"
+#include "common/mapmarkers.h"
+#include "fs/gpx/gpxio.h"
 #include "fs/pln/flightplanio.h"
 #include "gui/dockwidgethandler.h"
 #include "perf/aircraftperfcontroller.h"
 #include "util/properties.h"
-#include "fs/gpx/gpxio.h"
 
-namespace fc {
+FileCheck::FileCheck(const QString& filename)
+{
+  propertiesStartup = new atools::util::Properties;
+  checkFileType(filename);
+}
 
-void checkFileType(const QString& filename, QString *flightplan, QString *perf, QString *layout, QString *gpx)
+FileCheck::FileCheck(const atools::util::Properties& propertiesStartupParam)
+{
+  propertiesStartup = new atools::util::Properties(propertiesStartupParam);
+  fromStartupProperties();
+}
+
+FileCheck::~FileCheck()
+{
+  delete propertiesStartup;
+}
+
+void FileCheck::checkFileType(const QString& filename)
 {
   if(atools::checkFile(Q_FUNC_INFO, filename, true /* warn */))
   {
-    if(flightplan != nullptr && flightplan->isEmpty() && atools::fs::pln::FlightplanIO::isFlightplanFile(filename))
-      *flightplan = filename;
+    if(flightplan.isEmpty() && atools::fs::pln::FlightplanIO::isFlightplanFile(filename))
+      flightplan = filename;
 
-    if(perf != nullptr && perf->isEmpty() && AircraftPerfController::isPerformanceFile(filename))
-      *perf = filename;
+    if(aircraftPerf.isEmpty() && AircraftPerfController::isPerformanceFile(filename))
+      aircraftPerf = filename;
 
-    if(layout != nullptr && layout->isEmpty() && atools::gui::DockWidgetHandler::isWindowLayoutFile(filename))
-      *layout = filename;
+    if(layout.isEmpty() && atools::gui::DockWidgetHandler::isWindowLayoutFile(filename))
+      layout = filename;
 
-    if(gpx != nullptr && gpx->isEmpty() && atools::fs::gpx::GpxIO::isGpxFile(filename))
-      *gpx = filename;
+    if(gpx.isEmpty() && atools::fs::gpx::GpxIO::isGpxFile(filename))
+      gpx = filename;
+
+    if(markers.isEmpty() && map::MapMarkers::isMarkersFile(filename))
+      markers = filename;
   }
 }
 
-void fromStartupProperties(const atools::util::Properties& properties, QString *flightplan, QString *flightplanDescr, QString *perf,
-                           QString *layout, bool *flightPlanIsOther)
+void FileCheck::fromStartupProperties()
 {
-  if(flightPlanIsOther != nullptr)
-    *flightPlanIsOther = false;
+  flightPlanIsOther = false;
 
-  QString planOption = properties.getPropertyStr(lnm::STARTUP_FLIGHTPLAN);
-
-  if(perf != nullptr)
-    *perf = properties.getPropertyStr(lnm::STARTUP_AIRCRAFT_PERF);
-
-  if(layout != nullptr)
-    *layout = properties.getPropertyStr(lnm::STARTUP_LAYOUT);
-
-  if(flightplanDescr != nullptr)
-    *flightplanDescr = properties.getPropertyStr(lnm::STARTUP_FLIGHTPLAN_DESCR);
+  // Get file names from properties
+  QString planOption = propertiesStartup->getPropertyStr(lnm::STARTUP_FLIGHTPLAN);
+  aircraftPerf = propertiesStartup->getPropertyStr(lnm::STARTUP_AIRCRAFT_PERF);
+  layout = propertiesStartup->getPropertyStr(lnm::STARTUP_LAYOUT);
+  gpx = propertiesStartup->getPropertyStr(lnm::STARTUP_GPX);
+  markers = propertiesStartup->getPropertyStr(lnm::STARTUP_MARKER);
+  flightplanDescription = propertiesStartup->getPropertyStr(lnm::STARTUP_FLIGHTPLAN_DESCR);
+  forceLoading = propertiesStartup->contains(lnm::STARTUP_FORCE_LOADING);
 
   // Extract filenames from positional arguments without options ================================
-  const QStringList propertyStrList = properties.getPropertyStrList(lnm::STARTUP_OTHER_ARGUMENTS);
-  for(const QString& otherFile : propertyStrList)
+  for(const QString& otherFile : propertiesStartup->getPropertyStrList(lnm::STARTUP_OTHER_ARGUMENTS))
   {
-    QString planOther;
-    fc::checkFileType(otherFile, &planOther, perf, layout);
+    // Update filenames from detected files but do not overwrite present filenames
+    checkFileType(otherFile);
 
     // Replace plan name with other if option is not set
-    if(planOption.isEmpty() && !planOther.isEmpty())
+    if(planOption.isEmpty() && !flightplan.isEmpty())
     {
-      planOption = planOther;
-      if(flightPlanIsOther != nullptr)
-        *flightPlanIsOther = true;
+      planOption = flightplan;
+
+      // true if passed in by double click on a plan file
+      flightPlanIsOther = true;
     }
   }
 
-  if(flightplan != nullptr)
-    *flightplan = planOption;
+  flightplan = planOption;
+  cleanInvalidFiles();
 }
 
-} // namespace fc
+void FileCheck::cleanInvalidFile(QString& file, bool warn) const
+{
+  // Do not log if file is empty
+  if(!file.isEmpty() && !atools::checkFileMsg(file, warn).isEmpty())
+    file.clear();
+}
+
+void FileCheck::cleanInvalidFiles(bool warn)
+{
+  cleanInvalidFile(flightplan, warn);
+  cleanInvalidFile(aircraftPerf, warn);
+  cleanInvalidFile(layout, warn);
+  cleanInvalidFile(gpx, warn);
+  cleanInvalidFile(markers, warn);
+}

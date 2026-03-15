@@ -34,6 +34,7 @@
 #include "db/databasemanager.h"
 #include "exception.h"
 #include "fs/gpx/gpxio.h"
+#include "gui/choicedialog.h"
 #include "gui/dataexchange.h"
 #include "gui/desktopservices.h"
 #include "gui/dialog.h"
@@ -41,7 +42,6 @@
 #include "gui/errorhandler.h"
 #include "gui/filehistoryhandler.h"
 #include "gui/helphandler.h"
-#include "gui/widgetzoomhandler.h"
 #include "gui/messagebox.h"
 #include "gui/messagesettings.h"
 #include "gui/statusbar.h"
@@ -51,6 +51,7 @@
 #include "gui/tools.h"
 #include "gui/translator.h"
 #include "gui/widgetstate.h"
+#include "gui/widgetzoomhandler.h"
 #include "info/infocontroller.h"
 #include "io/tempfile.h"
 #include "logbook/logdatacontroller.h"
@@ -630,47 +631,52 @@ void MainWindow::deInit()
     qWarning() << Q_FUNC_INFO << "deInit called more than once";
 }
 
-void MainWindow::dataExchangeDataFetched(atools::util::Properties properties)
+void MainWindow::dataExchangeDataFetched(atools::util::Properties dataExchangeProperties)
 {
   // Check for message from other instance
-  if(!properties.isEmpty())
+  if(!dataExchangeProperties.isEmpty())
   {
     // Found message
-    qDebug() << Q_FUNC_INFO << properties;
+    qDebug() << Q_FUNC_INFO << dataExchangeProperties;
 
     // Extract filenames from known options ================================
-    QString flightplan, flightplanDescr, perf, layout;
-    bool flightPlanIsOther = false; // true if passed in by double click on a plan file
-
-    fc::fromStartupProperties(properties, &flightplan, &flightplanDescr, &perf, &layout, &flightPlanIsOther);
 
     // Quit without activate =====================================================
-    if(properties.contains(lnm::STARTUP_COMMAND_QUIT))
+    if(dataExchangeProperties.contains(lnm::STARTUP_COMMAND_QUIT))
       close();
     else
     {
+      // Test for available files and extract files from data exchange properties
+      const FileCheck files(dataExchangeProperties);
+
       // Load files if found and exist ===========================================
-      if(!flightplan.isEmpty() && atools::checkFile(Q_FUNC_INFO, flightplan, true /* warn */))
+      if(!files.getFlightplanFile().isEmpty())
       {
-        if(flightPlanIsOther)
+        if(files.isFlightPlanIsOther())
           // Double clicked on file - open normally with warnings
-          routeOpenFile(flightplan);
+          routeOpenFile(files.getFlightplanFile(), files.isForceLoading());
         else
           // Open silently without correction and no warnings
-          routeOpenFileFromDataExchange(flightplan);
+          routeOpenFileFromDataExchange(files.getFlightplanFile(), files.isForceLoading());
       }
 
-      if(!flightplanDescr.isEmpty())
-        routeOpenDescrFromDataExchange(flightplanDescr);
+      if(!files.getFlightplanDescription().isEmpty())
+        routeOpenDescrFromDataExchange(files.getFlightplanDescription(), files.isForceLoading());
 
-      if(!layout.isEmpty() && atools::checkFile(Q_FUNC_INFO, layout, true /* warn */))
-        loadLayoutDelayed(layout);
+      if(!files.getAircraftPerf().isEmpty())
+        NavApp::getAircraftPerfController()->loadFile(files.getAircraftPerf(), files.isForceLoading());
 
-      if(!perf.isEmpty() && atools::checkFile(Q_FUNC_INFO, perf, true /* warn */))
-        NavApp::getAircraftPerfController()->loadFile(perf);
+      if(!files.getLayoutFile().isEmpty())
+        loadLayoutDelayed(files.getLayoutFile());
+
+      if(!files.getGpxFile().isEmpty())
+        trailLoadGpxFile(files.getGpxFile(), files.isForceLoading());
+
+      if(!files.getMarkersFile().isEmpty())
+        loadMarkersFile(files.getMarkersFile(), files.isForceLoading());
 
       // Activate window - always sent by other instance =====================================================
-      if(properties.getPropertyBool(lnm::STARTUP_COMMAND_ACTIVATE))
+      if(dataExchangeProperties.contains(lnm::STARTUP_COMMAND_ACTIVATE))
       {
         activateWindow();
         raise();
@@ -1159,9 +1165,10 @@ void MainWindow::connectAllSlots()
           logdataController, &LogdataController::convertUserdata);
 
   connect(searchController->getLogdataSearch(), &SearchBaseTable::loadRouteFile,
-          this, std::bind(&MainWindow::routeOpenFile, this, std::placeholders::_1 /* filepath */));
+          std::bind(&MainWindow::routeOpenFile, this, std::placeholders::_1 /* filepath */, false /* forceLoading */));
+
   connect(searchController->getLogdataSearch(), &SearchBaseTable::loadPerfFile,
-          NavApp::getAircraftPerfController(), &AircraftPerfController::loadFile);
+          std::bind(&AircraftPerfController::loadFile, perfController, std::placeholders::_1 /* filepath */, false /* forceLoading */));
 
   // Online search ===================================================================================
   OnlineClientSearch *clientSearch = searchController->getOnlineClientSearch();
@@ -1296,6 +1303,11 @@ void MainWindow::connectAllSlots()
   connect(ui->actionLoadAircraftTrailFromGPX, &QAction::triggered, this, &MainWindow::trailLoadGpx);
   connect(ui->actionAppendAircraftTrailFromGPX, &QAction::triggered, this, &MainWindow::trailAppendGpx);
 
+  // User features / marker save and load options
+  connect(ui->actionMapLoadMarkers, &QAction::triggered, this, &MainWindow::loadMarkers);
+  connect(ui->actionMapAppendMarkers, &QAction::triggered, this, &MainWindow::appendMarkers);
+  connect(ui->actionMapSaveMarkers, &QAction::triggered, this, &MainWindow::saveMarkers);
+
   connect(ui->actionRouteShowSkyVector, &QAction::triggered, this, &MainWindow::openInSkyVector);
 
   connect(routeFileHistory, &FileHistoryHandler::fileSelected, this, &MainWindow::routeOpenRecent);
@@ -1428,6 +1440,7 @@ void MainWindow::connectAllSlots()
   /* *INDENT-ON* */
 
   // MARK_RANGE  MARK_DISTANCE MARK_HOLDING  MARK_PATTERNS MARK_MSA
+  connect(ui->actionMapHideAllMarkers, &QAction::triggered, mapMarkHandler, &MapMarkHandler::clearAllMarkers);
   connect(ui->actionMapHideAllRangeRings, &QAction::triggered, mapMarkHandler, &MapMarkHandler::clearRangeRings);
   connect(ui->actionMapHideAllDistanceMarkers, &QAction::triggered, mapMarkHandler, &MapMarkHandler::clearDistanceMarkers);
   connect(ui->actionMapHideAllHoldings, &QAction::triggered, mapMarkHandler, &MapMarkHandler::clearHoldings);
@@ -2141,9 +2154,9 @@ QString MainWindow::openFlightplanFileDialog()
                                 "Route/LnmPln", atools::documentsDir());
 }
 
-void MainWindow::routeOpenDescrFromDataExchange(const QString& routeString)
+void MainWindow::routeOpenDescrFromDataExchange(const QString& routeString, bool forceLoading)
 {
-  if(routeCheckForChanges())
+  if(forceLoading || routeCheckForChanges())
   {
     if(routeController->loadFlightplanRouteStrCmdOrDataExchange(routeString))
     {
@@ -2155,34 +2168,44 @@ void MainWindow::routeOpenDescrFromDataExchange(const QString& routeString)
   }
 }
 
-void MainWindow::routeOpenFileFromDataExchange(const QString& filepath)
+void MainWindow::routeOpenFileFromDataExchange(const QString& filepath, bool forceLoading)
 {
   qDebug() << Q_FUNC_INFO << filepath;
-  if(routeCheckForChanges() && !filepath.isEmpty())
+  if(!filepath.isEmpty())
   {
-    if(routeController->loadFlightplanCmdOrDataExchange(filepath))
+    if(forceLoading || routeCheckForChanges())
     {
-      routeFileHistory->addFile(filepath);
-      if(OptionData::instance().getFlags().testFlag(opts::GUI_CENTER_ROUTE))
-        routeCenter();
-      showFlightplan();
-      statusBar->setStatusMessage(tr("Flight plan opened."));
+      if(routeController->loadFlightplanCmdOrDataExchange(filepath))
+      {
+        routeFileHistory->addFile(filepath);
+        if(OptionData::instance().getFlags().testFlag(opts::GUI_CENTER_ROUTE))
+          routeCenter();
+        showFlightplan();
+        statusBar->setStatusMessage(tr("Flight plan opened."));
+      }
     }
   }
   saveFileHistoryStates();
 }
 
-void MainWindow::routeOpenFile(QString filepath)
+void MainWindow::routeOpenFile(QString filepath, bool forceLoading)
 {
   qDebug() << Q_FUNC_INFO << filepath;
-  if(routeCheckForChanges())
+  if(forceLoading || routeCheckForChanges())
   {
     if(filepath.isEmpty())
       filepath = openAnyFileDialog();
 
     if(!filepath.isEmpty())
     {
-      if(routeController->loadFlightplan(filepath, true /* correctAndWarn */, false /* clearUndoState */))
+      bool correctAndWarn = true, clearUndoState = false;
+      if(forceLoading)
+      {
+        correctAndWarn = false;
+        clearUndoState = true;
+      }
+
+      if(routeController->loadFlightplan(filepath, correctAndWarn, clearUndoState))
       {
         routeFileHistory->addFile(filepath);
         if(OptionData::instance().getFlags().testFlag(opts::GUI_CENTER_ROUTE))
@@ -2213,10 +2236,10 @@ void MainWindow::trailLoadGpx()
 {
   QString file = dialog->openFileDialog(tr("Open and Replace GPX Trail"), tr("GPX Files %1;;All Files (*)").arg(lnm::FILE_PATTERN_GPX),
                                         "Route/Gpx", atools::documentsDir());
-  trailLoadGpxFile(file);
+  trailLoadGpxFile(file, false /* forceLoading */);
 }
 
-void MainWindow::trailLoadGpxFile(const QString& file)
+void MainWindow::trailLoadGpxFile(const QString& file, bool forceLoading)
 {
   qDebug() << Q_FUNC_INFO << file;
 
@@ -2226,11 +2249,12 @@ void MainWindow::trailLoadGpxFile(const QString& file)
     {
       bool replace = true;
 
-      if(mapWidget->getAircraftTrailSize() > 0)
+      if(!forceLoading && mapWidget->getAircraftTrailSize() > 0)
         replace = dialog->showQuestionMsgBox(lnm::ACTIONS_SHOW_REPLACE_TRAIL,
                                              tr("Replace the current user aircraft trail?"),
                                              tr("Do not &show this dialog again and replace trail."),
-                                             QMessageBox::Yes | QMessageBox::No, QMessageBox::No, QMessageBox::Yes) == QMessageBox::Yes;
+                                             QMessageBox::Yes | QMessageBox::No, QMessageBox::No,
+                                             QMessageBox::Yes) == QMessageBox::Yes;
 
       if(replace)
       {
@@ -2241,7 +2265,7 @@ void MainWindow::trailLoadGpxFile(const QString& file)
 
         if(numLoaded == 0)
           atools::gui::Dialog::warning(this, tr("The file \"%1\" does not contain track points.").arg(file));
-        else
+        else if(!forceLoading)
           warnTrailPoints(numTruncated, false /* doNotShowAgain */);
       }
     }
@@ -2297,6 +2321,147 @@ void MainWindow::warnTrailPoints(int numTruncated, bool doNotShowAgain)
       dialog->showWarnMsgBox(lnm::ACTIONS_SHOW_TRAIL_POINTS, text, tr("Do not &show this dialog again."));
     else
       dialog->warning(text);
+  }
+}
+
+void MainWindow::copyMarkersSelection(const map::MapMarkers& markers, bool append, bool forceLoading)
+{
+  if(forceLoading)
+    // Load without dialog window if forced from command line
+    mapWidget->getMapMarkers()->copy(markers);
+  else if(markers.numMarkers() > 0)
+  {
+    // Dialog emums which are saved to state
+    enum {CHOICE_RANGE, CHOICE_DISTANCE, CHOICE_HOLDING, CHOICE_PATTERNS, CHOICE_MSA};
+
+    atools::gui::ChoiceDialog choiceDialog(this, QCoreApplication::applicationName() % tr(" - User Feature types"),
+                                           tr("Select user feature types to load from file.\n"
+                                              "Selected features will %1.").arg(append ? tr("be added") : tr("replace current features")),
+                                           lnm::MAP_MARKER_LOAD_SELECTION, "USERFEATURES.html#load");
+    choiceDialog.setHelpOnlineUrl(lnm::helpOnlineUrl);
+    choiceDialog.setHelpLanguageOnline(lnm::helpLanguageOnline());
+
+    choiceDialog.addCheckBox(CHOICE_RANGE, tr("&Range Rings"), QStringLiteral(), true, /* checked */
+                             markers.getRangeMarkers().isEmpty() /* disabled */);
+    choiceDialog.addCheckBox(CHOICE_DISTANCE, tr("&Measurement Lines"), QStringLiteral(), true, /* checked */
+                             markers.getDistanceMarkers().isEmpty() /* disabled */);
+    choiceDialog.addCheckBox(CHOICE_HOLDING, tr("&Holdings"), QStringLiteral(), true, /* checked */
+                             markers.getHoldingMarkers().isEmpty() /* disabled */);
+    choiceDialog.addCheckBox(CHOICE_PATTERNS, tr("&Traffic Patterns"), QStringLiteral(), true, /* checked */
+                             markers.getPatternMarkers().isEmpty() /* disabled */);
+    choiceDialog.addCheckBox(CHOICE_MSA, tr("&MSA Diagrams"), QStringLiteral(), true, /* checked */
+                             markers.getMsaMarkers().isEmpty() /* disabled */);
+    choiceDialog.addSpacer();
+
+    if(choiceDialog.exec() == QDialog::Accepted)
+    {
+      map::MapTypes types = map::NONE;
+
+      // Convert dialog enums to mapflags
+      if(choiceDialog.isButtonChecked(CHOICE_RANGE))
+        types.setFlag(map::MARK_RANGE);
+      if(choiceDialog.isButtonChecked(CHOICE_DISTANCE))
+        types.setFlag(map::MARK_DISTANCE);
+      if(choiceDialog.isButtonChecked(CHOICE_HOLDING))
+        types.setFlag(map::MARK_HOLDING);
+      if(choiceDialog.isButtonChecked(CHOICE_PATTERNS))
+        types.setFlag(map::MARK_PATTERNS);
+      if(choiceDialog.isButtonChecked(CHOICE_MSA))
+        types.setFlag(map::MARK_MSA);
+
+      if(append)
+        mapWidget->getMapMarkers()->append(markers, types); // Append selected types
+      else
+        mapWidget->getMapMarkers()->copy(markers, types); // Delete present and overwrite selected types
+    }
+  }
+  else
+    dialog->information(tr("File is valid but empty."));
+}
+
+void MainWindow::loadMarkers()
+{
+  QString file = dialog->openFileDialog(tr("Open and Replace User Features"),
+                                        tr("User Feature Files %1;;All Files (*)").arg(lnm::FILE_PATTERN_LNM_USERFEATURES),
+                                        "Map/Markers", atools::documentsDir());
+  loadMarkersFile(file, false /* forceLoading */);
+}
+
+void MainWindow::loadMarkersFile(const QString& file, bool forceLoading)
+{
+  qDebug() << Q_FUNC_INFO << file;
+
+  if(!file.isEmpty())
+  {
+    if(map::MapMarkers::isMarkersFile(file))
+    {
+      // Load into temporary lists
+      QGuiApplication::setOverrideCursor(Qt::WaitCursor);
+      map::MapMarkers markers;
+      markers.restore(file);
+      QGuiApplication::restoreOverrideCursor();
+
+      // Show selection dialog and overwrite and copy
+      copyMarkersSelection(markers, false /* append */, forceLoading);
+
+      updateActionStates();
+      updateMarkActionStates();
+
+      statusBar->setStatusMessage(tr("User Features loaded."));
+    }
+    else
+      atools::gui::Dialog::warning(this, tr("The file \"%1\" is no valid user feature file.").arg(file));
+  }
+}
+
+void MainWindow::appendMarkers()
+{
+  QString file = dialog->openFileDialog(tr("Open and Append user features"),
+                                        tr("User Feature Files %1;;All Files (*)").arg(lnm::FILE_PATTERN_LNM_USERFEATURES),
+                                        "Map/Markers", atools::documentsDir());
+
+  qDebug() << Q_FUNC_INFO << file;
+
+  if(!file.isEmpty())
+  {
+    if(map::MapMarkers::isMarkersFile(file))
+    {
+      // Load into temporary lists
+      QGuiApplication::setOverrideCursor(Qt::WaitCursor);
+      map::MapMarkers markers;
+      markers.restore(file);
+      QGuiApplication::restoreOverrideCursor();
+
+      // Append selected
+      copyMarkersSelection(markers, true /* append */, false /* forceLoading */);
+
+      updateActionStates();
+      updateMarkActionStates();
+
+      statusBar->setStatusMessage(tr("User Features loaded."));
+    }
+    else
+      atools::gui::Dialog::warning(this, tr("The file \"%1\" is no valid user feature file.").arg(file));
+  }
+}
+
+void MainWindow::saveMarkers()
+{
+  qDebug() << Q_FUNC_INFO;
+
+  QString filename = dialog->saveFileDialog(
+    tr("Save User Features"),
+    tr("User Feature Files %1;;All Files (*)").arg(lnm::FILE_PATTERN_LNM_USERFEATURES), "lnmuserfeat", "Map/Markers",
+    atools::documentsDir(), tr("User Features"));
+
+  if(!filename.isEmpty())
+  {
+    QGuiApplication::setOverrideCursor(Qt::WaitCursor);
+    mapWidget->getMapMarkers()->save(filename, 0);
+    QGuiApplication::restoreOverrideCursor();
+
+    updateActionStates();
+    statusBar->setStatusMessage(tr("User Features saved."));
   }
 }
 
@@ -2459,7 +2624,7 @@ QString MainWindow::routeSaveFileDialogLnm(const QString& filename)
   return dialog->saveFileDialog(
     tr("Save Flight Plan as LNMPLN Format"),
     tr("Flight Plan Files %1;;All Files (*)").arg(lnm::FILE_PATTERN_LNMPLN), "lnmpln", "Route/LnmPln", atools::documentsDir(),
-    filename.isEmpty() ? NavApp::getRouteConst().buildDefaultFilename(".lnmpln") : filename, false /* confirm overwrite */);
+    filename.isEmpty() ? NavApp::getRouteConst().buildDefaultFilename(".lnmpln") : filename);
 }
 
 bool MainWindow::routeSaveAsLnm()
@@ -2562,7 +2727,7 @@ void MainWindow::layoutSaveAs()
   QString layoutFile = dialog->saveFileDialog(
     tr("Window Layout"),
     tr("Window Layout Files %1;;All Files (*)").arg(lnm::FILE_PATTERN_LAYOUT),
-    "lnmlayout", "WindowLayout/", atools::documentsDir(), QStringLiteral(), false /* confirm overwrite */);
+    "lnmlayout", "WindowLayout/", atools::documentsDir(), QStringLiteral());
 
   if(!layoutFile.isEmpty())
   {
@@ -2601,10 +2766,7 @@ bool MainWindow::layoutOpenInternal(const QString& layoutFile)
     {
       dockHandler->currentStateToWindow();
 
-      QTimer::singleShot(200, dockHandler, &atools::gui::DockWidgetHandler::currentStateToWindow);
-
       statusBar->setStatusMessage(tr("Window layout loaded and restored."));
-
       ui->actionShowStatusbar->blockSignals(true);
       ui->actionShowStatusbar->setChecked(!ui->statusBar->isHidden());
       ui->actionShowStatusbar->blockSignals(false);
@@ -2697,8 +2859,7 @@ bool MainWindow::createMapImage(QPixmap& pixmap, const QString& dialogTitle, con
         progress.setValue(i);
         QApplication::processEvents();
 
-        if(progress.wasCanceled() || paintWidget.renderStatus() == Marble::Complete ||
-           (queuedJobs == 0 && activeJobs == 0))
+        if(progress.wasCanceled() || paintWidget.renderStatus() == Marble::Complete || (queuedJobs == 0 && activeJobs == 0))
           break;
 
         QThread::sleep(1);
@@ -2734,7 +2895,7 @@ void MainWindow::mapSaveImage()
       QStringLiteral(), "MainWindow/MapSaveImage",
       atools::fs::FsPaths::getFilesPath(NavApp::getCurrentSimulatorDb()), tr("Little Navmap Map %1.jpg").
       arg(QDateTime::currentDateTime().toString("yyyyMMdd-HHmmss")),
-      false /* confirm overwrite */,
+      false /* dontComfirmOverwrite */,
       false /* autoNumber */,
       &filterIndex);
 
@@ -2795,7 +2956,7 @@ void MainWindow::mapSaveImageAviTab()
         QString imageFile = dialog->saveFileDialog(tr("Save Map as Image for AviTab"),
                                                    tr("PNG Image Files (*.png);;JPG Image Files (*.jpg *.jpeg);;All Files (*)"),
                                                    QStringLiteral(), "MainWindow/MapSaveImageAviTab",
-                                                   path, defaultFileName, false /* confirm overwrite */, false /* autoNumber */,
+                                                   path, defaultFileName, false /* dontComfirmOverwrite */, false /* autoNumber */,
                                                    &filterIndex);
 
         if(!imageFile.isEmpty())
@@ -3161,11 +3322,12 @@ void MainWindow::mainWindowShown()
 
 void MainWindow::loadLayoutDelayed(const QString& filename)
 {
+  qDebug() << Q_FUNC_INFO << filename;
   try
   {
     // Load layout file delayed - does not apply state
-    dockHandler->loadWindowState(filename, OptionData::instance().getFlags2().testFlag(opts2::MAP_ALLOW_UNDOCK), layoutWarnText);
-    QTimer::singleShot(10, dockHandler, &atools::gui::DockWidgetHandler::currentStateToWindow);
+    if(dockHandler->loadWindowState(filename, OptionData::instance().getFlags2().testFlag(opts2::MAP_ALLOW_UNDOCK), layoutWarnText))
+      dockHandler->currentStateToWindow();
   }
   catch(atools::Exception& e)
   {
@@ -3176,10 +3338,6 @@ void MainWindow::loadLayoutDelayed(const QString& filename)
 void MainWindow::mainWindowShownDelayed()
 {
   qDebug() << Q_FUNC_INFO << "enter";
-
-  if(OptionData::instance().getFlags().testFlag(opts::STARTUP_LOAD_LAYOUT) && !layoutFileHistory->isEmpty() && !Application::isSafeMode())
-    loadLayoutDelayed(layoutFileHistory->getTopFile());
-  // else layout was already loaded from settings earlier
 
   // Apply layout again to avoid issues with formatting
   if(!dockHandler->isDelayedFullscreen())
@@ -3204,7 +3362,8 @@ void MainWindow::mainWindowShownDelayed()
   }
 
   // Center flight plan after loading - do this delayed to consider window size changes
-  if(OptionData::instance().getFlags().testFlag(opts::STARTUP_SHOW_ROUTE) && !NavApp::isRouteEmpty())
+  const OptionData& optionData = OptionData::instance();
+  if(optionData.getFlags().testFlag(opts::STARTUP_SHOW_ROUTE) && !NavApp::isRouteEmpty())
     NavApp::getMapPaintWidgetGui()->showRect(routeController->getBoundingRect(), false);
 
   // Set window flag
@@ -3385,7 +3544,7 @@ void MainWindow::mainWindowShownDelayed()
   databaseManager->checkDatabaseVersion();
 
   // Check for updates once main window is visible
-  NavApp::checkForUpdates(OptionData::instance().getUpdateChannels(), false /* manual */, true /* startup */, false /* forceDebug */);
+  NavApp::checkForUpdates(optionData.getUpdateChannels(), false /* manual */, true /* startup */, false /* forceDebug */);
 
   // Update the information display later delayed to avoid long loading times due to weather timeout
   QTimer::singleShot(100, infoController, &InfoController::restoreInformation);
@@ -3594,11 +3753,14 @@ void MainWindow::updateOnlineActionStates()
 
 void MainWindow::updateMarkActionStates()
 {
-  ui->actionMapHideAllDistanceMarkers->setEnabled(!mapWidget->getDistanceMarkers().isEmpty());
-  ui->actionMapHideAllRangeRings->setEnabled(!mapWidget->getRangeMarkers().isEmpty());
-  ui->actionMapHideAllPatterns->setEnabled(!mapWidget->getPatternsMarkers().isEmpty());
-  ui->actionMapHideAllMsa->setEnabled(!mapWidget->getMsaMarkers().isEmpty());
-  ui->actionMapHideAllHoldings->setEnabled(!mapWidget->getHoldingMarkers().isEmpty());
+  const map::MapMarkers *markers = mapWidget->getMapMarkers();
+  ui->actionMapHideAllDistanceMarkers->setEnabled(!markers->getDistanceMarkers().isEmpty());
+  ui->actionMapHideAllRangeRings->setEnabled(!markers->getRangeMarkers().isEmpty());
+  ui->actionMapHideAllPatterns->setEnabled(!markers->getPatternMarkers().isEmpty());
+  ui->actionMapHideAllMsa->setEnabled(!markers->getMsaMarkers().isEmpty());
+  ui->actionMapHideAllHoldings->setEnabled(!markers->getHoldingMarkers().isEmpty());
+  ui->actionMapHideAllMarkers->setEnabled(markers->numMarkers() > 0);
+  ui->actionMapSaveMarkers->setEnabled(markers->numMarkers() > 0);
 }
 
 void MainWindow::updateHighlightActionStates()
@@ -4041,6 +4203,23 @@ void MainWindow::restoreStateMain()
     ui->dockWidgetMap->hide();
   else
     ui->dockWidgetMap->show();
+
+  // Load layout file from either command line or recent list ===============================
+  const OptionData& optionData = OptionData::instance();
+  const FileCheck *files = NavApp::getCommandLineFiles();
+
+  if(!files->getLayoutFile().isEmpty())
+    loadLayoutDelayed(files->getLayoutFile());
+  else if(optionData.getFlags().testFlag(opts::STARTUP_LOAD_LAYOUT) && !layoutFileHistory->isEmpty() && !Application::isSafeMode())
+    loadLayoutDelayed(layoutFileHistory->getTopFile());
+  // else layout was already loaded from settings earlier
+
+  // Load files passed from the command line =============================
+  // Other command line passed files are loaded in route controller and perf controller
+  if(!files->getGpxFile().isEmpty())
+    trailLoadGpxFile(files->getGpxFile(), files->isForceLoading());
+  if(!files->getMarkersFile().isEmpty())
+    loadMarkersFile(files->getMarkersFile(), files->isForceLoading());
 
   qDebug() << Q_FUNC_INFO << "leave";
 }
@@ -4741,10 +4920,9 @@ void MainWindow::dragEnterEvent(QDragEnterEvent *event)
           // accept if file exists, is readable and matches the supported extensions or content
           QFileInfo file(url.toLocalFile());
 
-          QString flightplan, perf, layout, gpx;
-          fc::checkFileType(file.filePath(), &flightplan, &perf, &layout, &gpx);
+          const FileCheck fileCheck(file.filePath());
 
-          if(!flightplan.isEmpty() || !perf.isEmpty() || !layout.isEmpty() || !gpx.isEmpty())
+          if(fileCheck.hasAnyFile())
           {
             qDebug() << Q_FUNC_INFO << "accepting" << url;
             event->acceptProposedAction();
@@ -4769,7 +4947,7 @@ void MainWindow::dropEvent(QDropEvent *event)
       QString filepath = url.toLocalFile();
       qDebug() << Q_FUNC_INFO << "Dropped file:" << filepath;
 
-      routeOpenFile(filepath);
+      routeOpenFile(filepath, false /* forceLoading */);
       routeExport->routeMultiExport();
     }
   }
@@ -4793,13 +4971,16 @@ void MainWindow::fileOpenAny(const QString& filepath)
       layoutOpenDrag(filepath);
     else if(AircraftPerfController::isPerformanceFile(filepath))
       // Load aircraft performance file
-      NavApp::getAircraftPerfController()->loadFile(filepath);
-    else if(atools::fs::gpx::GpxIO::isGpxFile(filepath))
+      NavApp::getAircraftPerfController()->loadFile(filepath, false /* forceLoading */);
+    else if(atools::fs::gpx::GpxIO::isGpxFile(filepath), false /* forceLoading */)
       // Load GPX trail
-      trailLoadGpxFile(filepath);
+      trailLoadGpxFile(filepath, false /* forceLoading */);
+    else if(map::MapMarkers::isMarkersFile(filepath))
+      // Load GPX trail
+      loadMarkersFile(filepath, false /* forceLoading */);
     else
       // Load flight plan
-      routeOpenFile(filepath);
+      routeOpenFile(filepath, false /* forceLoading */);
   }
 }
 

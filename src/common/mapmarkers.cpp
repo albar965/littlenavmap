@@ -43,6 +43,27 @@ void assignIdAndInsert(MapMarkers *markers, const QString& settingsName, QHash<i
   }
 }
 
+template<typename TYPE>
+void assignIdAndCopy(MapMarkers *markers, const QHash<int, TYPE>& markersFrom, QHash<int, TYPE>& markersTo)
+{
+  markersTo.clear();
+  for(auto obj : markersFrom)
+  {
+    obj.id = markers->getNextMapMarkerId();
+    markersTo.insert(obj.id, obj);
+  }
+}
+
+template<typename TYPE>
+void assignIdAndAppend(MapMarkers *markers, const QHash<int, TYPE>& markersFrom, QHash<int, TYPE>& markersTo)
+{
+  for(auto obj : markersFrom)
+  {
+    obj.id = markers->getNextMapMarkerId();
+    markersTo.insert(obj.id, obj);
+  }
+}
+
 /* Write list element and all items from the list as child elements */
 template<typename TYPE>
 void writeMarkerList(atools::util::XmlStreamWriter& writer, const QHash<int, TYPE>& markers, const QString& listElementName,
@@ -775,6 +796,42 @@ void MapMarkers::clear(map::MapTypes types)
     msaMarkers.clear();
 }
 
+void MapMarkers::copy(const MapMarkers& other, MapTypes types)
+{
+  if(types.testFlag(map::MARK_RANGE))
+    assignIdAndCopy(this, other.rangeMarkers, this->rangeMarkers);
+
+  if(types.testFlag(map::MARK_DISTANCE))
+    assignIdAndCopy(this, other.distanceMarkers, this->distanceMarkers);
+
+  if(types.testFlag(map::MARK_PATTERNS))
+    assignIdAndCopy(this, other.patternMarkers, this->patternMarkers);
+
+  if(types.testFlag(map::MARK_HOLDING))
+    assignIdAndCopy(this, other.holdingMarkers, this->holdingMarkers);
+
+  if(types.testFlag(map::MARK_MSA))
+    assignIdAndCopy(this, other.msaMarkers, this->msaMarkers);
+}
+
+void MapMarkers::append(const MapMarkers& other, MapTypes types)
+{
+  if(types.testFlag(map::MARK_RANGE))
+    assignIdAndAppend(this, other.rangeMarkers, this->rangeMarkers);
+
+  if(types.testFlag(map::MARK_DISTANCE))
+    assignIdAndAppend(this, other.distanceMarkers, this->distanceMarkers);
+
+  if(types.testFlag(map::MARK_PATTERNS))
+    assignIdAndAppend(this, other.patternMarkers, this->patternMarkers);
+
+  if(types.testFlag(map::MARK_HOLDING))
+    assignIdAndAppend(this, other.holdingMarkers, this->holdingMarkers);
+
+  if(types.testFlag(map::MARK_MSA))
+    assignIdAndAppend(this, other.msaMarkers, this->msaMarkers);
+}
+
 void MapMarkers::updateDistanceMarkerFromPos(int id, const atools::geo::Pos& pos)
 {
   distanceMarkers[id].from = pos;
@@ -803,6 +860,22 @@ bool MapMarkers::isMarkersFile(const QString& filename)
   return probe.at(0).startsWith(QStringLiteral("<?xml version")) &&
          probe.at(1).startsWith(QStringLiteral("<littlenavmap")) &&
          probe.at(2).startsWith(QStringLiteral("<userfeatures>"));
+}
+
+const QList<MapAirportMsa> MapMarkers::getMsaMarksFiltered() const
+{
+  QList<map::MapAirportMsa> retval;
+  for(const map::MsaMarker& marker : msaMarkers)
+    retval.append(marker.msa);
+  return retval;
+}
+
+const QList<MapHolding> MapMarkers::getHoldingMarksFiltered() const
+{
+  QList<map::MapHolding> retval;
+  for(const map::HoldingMarker& marker : holdingMarkers)
+    retval.append(marker.holding);
+  return retval;
 }
 
 float PatternMarker::magCourse() const

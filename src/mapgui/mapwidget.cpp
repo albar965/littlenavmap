@@ -4170,20 +4170,6 @@ void MapWidget::setMapDetail(int level, int levelText)
   NavApp::getStatusBar()->setStatusMessage(tr("Map detail level changed."));
 }
 
-void MapWidget::clearAllMarkers(map::MapTypes types)
-{
-  qDebug() << Q_FUNC_INFO;
-
-  getMapMarkers()->clear(types);
-
-  if(types.testFlag(map::MARK_DISTANCE))
-    currentDistanceMarkerId = -1;
-
-  update();
-  mainWindow->updateMarkActionStates();
-  NavApp::getStatusBar()->setStatusMessage(tr("User features removed from map."));
-}
-
 void MapWidget::loadAircraftTrail(const QString& filename, int& numLoaded, int& numTruncated)
 {
   atools::fs::gpx::GpxData gpxData;

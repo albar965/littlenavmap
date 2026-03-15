@@ -86,12 +86,12 @@ void MapPainterMark::render()
     paintPatternMarks();
 
   if(context->objectTypes.testFlag(map::MARK_HOLDING))
-    paintHoldingMarks(mapPaintWidget->getHoldingMarksFiltered(), context->mapLayer, context->mapLayerText, true /* user */,
+    paintHoldingMarks(mapPaintWidget->getMapMarkers()->getHoldingMarksFiltered(), context->mapLayer, context->mapLayerText, true /* user */,
                       context->drawFast, false /* darkMap */);
 
   // Airport MSA set by user
   if(context->objectTypes.testFlag(map::MARK_MSA))
-    paintMsaMarks(mapPaintWidget->getMsaMarksFiltered(), true /* user */, context->drawFast);
+    paintMsaMarks(mapPaintWidget->getMapMarkers()->getMsaMarksFiltered(), true /* user */, context->drawFast);
 
   // All range rings
   if(context->objectTypes.testFlag(map::MARK_RANGE))
@@ -815,7 +815,7 @@ void MapPainterMark::paintAirspace(const map::MapAirspace& airspace)
 void MapPainterMark::paintRangeMarks()
 {
   atools::util::PainterContextSaver saver(context->painter);
-  const QList<map::RangeMarker>& rangeRings = mapPaintWidget->getRangeMarkers().values();
+  const QList<map::RangeMarker>& rangeRings = mapPaintWidget->getMapMarkers()->getRangeMarkers().values();
   GeoPainter *painter = context->painter;
 
   context->szFont(context->textSizeRangeUserFeature);
@@ -1379,7 +1379,7 @@ void MapPainterMark::paintDistanceMarks()
   GeoPainter *painter = context->painter;
   context->szFont(context->textSizeRangeMeasurement);
 
-  const QList<map::DistanceMarker>& distanceMarkers = mapPaintWidget->getDistanceMarkers().values();
+  const QList<map::DistanceMarker>& distanceMarkers = mapPaintWidget->getMapMarkers()->getDistanceMarkers().values();
 
   // Sort markers into a list of pointers where the last one is the one currently edited and drawn on top
   QList<const map::DistanceMarker *> markers;
@@ -1448,7 +1448,7 @@ void MapPainterMark::paintPatternMarks()
 {
   atools::util::PainterContextSaver saver(context->painter);
   GeoPainter *painter = context->painter;
-  const QList<PatternMarker>& patterns = mapPaintWidget->getPatternsMarkers().values();
+  const QList<PatternMarker>& patterns = mapPaintWidget->getMapMarkers()->getPatternMarkers().values();
   float lineWidth = context->szF(context->thicknessUserFeature, 3);
   context->szFont(context->textSizeRangeUserFeature);
 

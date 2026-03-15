@@ -101,6 +101,8 @@ struct MapProcedureRef;
 }
 
 namespace map {
+
+class MapMarkers;
 struct MapAirport;
 }
 
@@ -232,6 +234,16 @@ public:
   void trailLoadGpx();
   void trailAppendGpx();
   void warnTrailPoints(int numTruncated, bool doNotShowAgain);
+
+  /* Load or append markers (measurment line, range rings, etc.) from XML file */
+  void loadMarkers();
+  void loadMarkersFile(const QString& file, bool forceLoading);
+  void appendMarkers();
+  void saveMarkers();
+
+  /* Show selection dialog and copy or append selected user features to application features.
+   * sDialog is omitted if forced loading is on */
+  void copyMarkersSelection(const map::MapMarkers& markers, bool append, bool forceLoading);
 
   /* true if map window is maximized */
   bool isFullScreen() const;
@@ -403,7 +415,7 @@ private:
 
   /* Called from menu or toolbar by action */
   void openAnyFile(); /* actionRouteOpen */
-  void routeOpenFile(QString filepath);
+  void routeOpenFile(QString filepath, bool forceLoading);
 
   /* Called from menu or toolbar by action - append flight plan to current one */
   void routeAppend();
@@ -416,10 +428,10 @@ private:
   void routeOpenRecent(const QString& routeFile);
 
   /* From other instance by shared memory */
-  void routeOpenDescrFromDataExchange(const QString& routeString);
-  void routeOpenFileFromDataExchange(const QString& filepath);
+  void routeOpenDescrFromDataExchange(const QString& routeString, bool forceLoading);
+  void routeOpenFileFromDataExchange(const QString& filepath, bool forceLoading);
 
-  /* Checks for filetype */
+  /* Checks for filetype and loads one of the supported file types */
   void fileOpenAny(const QString& filepath);
 
   /* Flight plan save functions */
@@ -484,7 +496,7 @@ private:
   bool layoutOpenInternal(const QString& layoutFile);
   void loadLayoutDelayed(const QString& filename);
 
-  void trailLoadGpxFile(const QString& file);
+  void trailLoadGpxFile(const QString& file, bool forceLoading);
 
   void showOfflineHelp();
   void showOnlineDownloads();
@@ -549,7 +561,7 @@ private:
   void debugDumpContainerSizes() const;
 
   /* Called by DataExchangeFetcher::dataExchangeDataFetched(). Takes command line options from another instance. */
-  void dataExchangeDataFetched(atools::util::Properties properties);
+  void dataExchangeDataFetched(atools::util::Properties dataExchangeProperties);
 
   void debugActionTriggeredDumpRoute();
   void debugActionTriggeredDumpFlightplan();

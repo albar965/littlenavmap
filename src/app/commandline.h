@@ -38,7 +38,8 @@ public:
   /* Simple parser which bypasses the Qt option mechanism to get an option value without the need of an application object */
   static QString getOption(int argc, char *argv[], const QString& name, const QString& longname);
 
-  /* Read options and store values in settings or startup options or member variables */
+  /* Read options and store values in settings or startup options or member variables using
+   * Application::addStartupOptionStr() key/value pairs. */
   void process();
 
   /* "l", "log-path" */
@@ -60,12 +61,17 @@ public:
   }
 
 private:
+  /* Create option and assign to pointer reference and parser */
+  void buildOption(QCommandLineOption *& option, const QString& shortOption, const QString& longOption, const QString& description,
+                   const QString& valueName = QString(), const QString& defaultValue = QString());
+
   QCommandLineParser *parser = nullptr;
   QString logPath, cachePath, language;
 
   QCommandLineOption *settingsPathOpt = nullptr, *logPathOpt = nullptr, *cachePathOpt = nullptr,
-                     *flightplanOpt = nullptr, *flightplanDescrOpt = nullptr, *performanceOpt,
-                     *layoutOpt = nullptr, *quitOpt = nullptr, *languageOpt = nullptr;
+                     *flightplanOpt = nullptr, *flightplanDescrOpt = nullptr, *performanceOpt = nullptr,
+                     *layoutOpt = nullptr, *gpxOpt = nullptr, *markerOpt = nullptr,
+                     *forceOpt = nullptr, *quitOpt = nullptr, *languageOpt = nullptr;
 };
 
 #endif // LNM_COMMANDLINE_H

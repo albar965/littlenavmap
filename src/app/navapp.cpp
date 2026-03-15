@@ -22,6 +22,7 @@
 #include "atools.h"
 #include "common/constants.h"
 #include "common/elevationprovider.h"
+#include "common/filecheck.h"
 #include "common/updatehandler.h"
 #include "common/vehicleicons.h"
 #include "connect/connectclient.h"
@@ -90,6 +91,7 @@ StyleHandler *NavApp::styleHandler = nullptr;
 WebController *NavApp::webController = nullptr;
 atools::gui::DataExchange *NavApp::dataExchange = nullptr;
 atools::timezone::TimeZoneManager *NavApp::timeZone = nullptr;
+FileCheck *NavApp::fileCheck = nullptr;
 
 bool NavApp::closeCalled = false;
 bool NavApp::loadingDatabase = false;
@@ -226,6 +228,7 @@ void NavApp::deInit()
   ATOOLS_DELETE_LOG(moraReader);
   ATOOLS_DELETE_LOG(timeZone);
   ATOOLS_DELETE_LOG(vehicleIcons);
+  ATOOLS_DELETE_LOG(fileCheck);
 }
 
 const atools::gui::DataExchange *NavApp::getDataExchangeConst()
@@ -255,6 +258,16 @@ bool NavApp::initDataExchange()
 void NavApp::deInitDataExchange()
 {
   ATOOLS_DELETE_LOG(dataExchange);
+}
+
+void NavApp::initStartupProperties()
+{
+  fileCheck = new FileCheck(getStartupOptionsConst());
+}
+
+const FileCheck *NavApp::getCommandLineFiles()
+{
+  return fileCheck;
 }
 
 void NavApp::checkForUpdates(int channelOpts, bool manual, bool startup, bool forceDebug)

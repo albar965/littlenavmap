@@ -1042,14 +1042,9 @@ void RouteController::restoreState()
 
   try
   {
-    QString cmdLineFlightplanFile, cmdLineFlightplanDescr;
-    bool flightPlanIsOther = false; // true if passed in by double click on a plan file
-
     // Load plan from command line or last used =============================================
-    fc::fromStartupProperties(atools::gui::Application::getStartupOptionsConst(), &cmdLineFlightplanFile, &cmdLineFlightplanDescr,
-                              nullptr, nullptr, &flightPlanIsOther);
-
-    bool hasCmdLine = !cmdLineFlightplanDescr.isEmpty() || !cmdLineFlightplanFile.isEmpty();
+    const FileCheck *files = NavApp::getCommandLineFiles();
+    bool hasCmdLine = !files->getFlightplanDescription().isEmpty() || !files->getFlightplanFile().isEmpty();
     bool isDefaultLoad = atools::checkFile(Q_FUNC_INFO, routeFilenameDefault, false /* warn */);
 
     // Load default plan first to avoid data loss ================================================
@@ -1089,26 +1084,27 @@ void RouteController::restoreState()
     }
 
     // Command line options ===========================================================================
-    if(!cmdLineFlightplanFile.isEmpty())
+    if(!files->getFlightplanFile().isEmpty())
     {
       // Load from file from command line ===================================================
-      QString message = atools::checkFileMsg(cmdLineFlightplanFile);
+      QString message = atools::checkFileMsg(files->getFlightplanFile());
       if(message.isEmpty())
       {
-        if(atools::fs::pln::FlightplanIO::isFlightplanFile(cmdLineFlightplanFile))
+        if(atools::fs::pln::FlightplanIO::isFlightplanFile(files->getFlightplanFile()))
         {
-          if(mainWindow->routeCheckForChanges())
+          if(files->isForceLoading() || mainWindow->routeCheckForChanges())
           {
-            if(flightPlanIsOther)
+            // true if passed in by double click on a plan file
+            if(files->isFlightPlanIsOther())
             {
-              if(!loadFlightplan(cmdLineFlightplanFile, true /* correctAndWarn */, false /* clearUndoState */))
+              if(!loadFlightplan(files->getFlightplanFile(), true /* correctAndWarn */, false /* clearUndoState */))
                 // Cannot be loaded - clear current filename
                 clearFlightplan();
             }
             else
             {
               // Load file silently
-              if(!loadFlightplanCmdOrDataExchange(cmdLineFlightplanFile))
+              if(!loadFlightplanCmdOrDataExchange(files->getFlightplanFile()))
                 // Cannot be loaded - clear current filename
                 clearFlightplan();
             }
@@ -1116,17 +1112,18 @@ void RouteController::restoreState()
         }
         else
           // Not a flight plan file
-          dialog->warning(tr("File \"%1\" is a not supported flight plan format or not a flight plan.").arg(cmdLineFlightplanFile));
+          dialog->warning(tr("File \"%1\" is a not supported flight plan format or not a flight plan.").
+                          arg(files->getFlightplanFile()));
       }
       else
         // No file or not readable
         dialog->warning(message);
     }
-    else if(!cmdLineFlightplanDescr.isEmpty())
+    else if(!files->getFlightplanDescription().isEmpty())
     {
       // Parse route description from command line ===================================================
-      if(mainWindow->routeCheckForChanges())
-        loadFlightplanRouteStrCmdOrDataExchange(cmdLineFlightplanDescr);
+      if(files->isForceLoading() || mainWindow->routeCheckForChanges())
+        loadFlightplanRouteStrCmdOrDataExchange(files->getFlightplanDescription());
     }
   }
   catch(atools::Exception& e)

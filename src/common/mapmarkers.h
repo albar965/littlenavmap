@@ -221,12 +221,23 @@ class MapMarkers
   Q_DECLARE_TR_FUNCTIONS(MapMarkers)
 
 public:
-  /* Save and load to/from XML file */
+  /* Save all to XML file */
   void save(const QString& filename, int numBackupFiles);
+
+  /* Load all from XML file. Appends to current list of user features. */
   void restore(const QString& filename);
 
   /* Restore from legacy settings */
   void restoreFromSettings();
+
+  /* Removes all by type */
+  void clear(map::MapTypes types = map::MARK_ALL);
+
+  /* Copies from other by type. Overwrites only if type is given in flags. */
+  void copy(const map::MapMarkers& other, map::MapTypes types = map::MARK_ALL);
+
+  /* Appends from other by type */
+  void append(const map::MapMarkers& other, map::MapTypes types = map::MARK_ALL);
 
   /* Add user features. Id has to be set before using getNextUserFeatureId(). */
   void addRangeMark(const map::RangeMarker& obj);
@@ -241,9 +252,6 @@ public:
   void removeDistanceMark(int id);
   void removeHoldingMark(int id);
   void removeMsaMark(int id);
-
-  /* Removes all by type */
-  void clear(map::MapTypes types = map::MARK_ALL);
 
   /* Update measurement lines positions for either end */
   void updateDistanceMarkerFromPos(int id, const atools::geo::Pos& pos);
@@ -288,10 +296,9 @@ public:
     return msaMarkers;
   }
 
-  bool hasAnyMarkers() const
+  int numMarkers() const
   {
-    return !rangeMarkers.isEmpty() || !distanceMarkers.isEmpty() || !patternMarkers.isEmpty() || !holdingMarkers.isEmpty() ||
-           !msaMarkers.isEmpty();
+    return rangeMarkers.size() + distanceMarkers.size() + patternMarkers.size() + holdingMarkers.size() + msaMarkers.size();
   }
 
   /* Assign artificial ids to measurement and range rings which allow to identify them.
@@ -300,6 +307,10 @@ public:
 
   /* true if file is detected as a user feature XML file */
   static bool isMarkersFile(const QString& filename);
+
+  /* Get wrapped map objects from holdings and MSA for painting. */
+  const QList<map::MapHolding> getHoldingMarksFiltered() const;
+  const QList<map::MapAirportMsa> getMsaMarksFiltered() const;
 
 private:
   /* XML file version */

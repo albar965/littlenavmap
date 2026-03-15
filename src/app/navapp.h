@@ -64,6 +64,7 @@ struct MapAirportHandler;
 class QAction;
 class QTimeZone;
 
+class FileCheck;
 namespace map {
 
 class MapMarkers;
@@ -451,6 +452,12 @@ public:
   static bool initDataExchange();
   static void deInitDataExchange();
 
+  /* Check files that are passed on the command line */
+  static void initStartupProperties();
+
+  /* Get all valid files passed on the command line */
+  static const FileCheck *getCommandLineFiles();
+
 private:
   static void initApplication();
   static void readMagDecFromDatabase();
@@ -478,6 +485,8 @@ private:
 
   /* Main window is not aggregated */
   static MainWindow *mainWindow;
+
+  static FileCheck *fileCheck;
 
   static atools::fs::db::DatabaseMeta *databaseMetaSim;
   static atools::fs::db::DatabaseMeta *databaseMetaNav;

@@ -1373,12 +1373,12 @@ void LogdataController::gpxSaveAs(atools::sql::SqlRecord *record, QWidget *paren
       qDebug() << Q_FUNC_INFO << "Error reading flight plan" << e.what();
     }
 
-    QString defFilename = buildFilename(record, flightplan, ".gpx");
+    const QString defaultFilename = buildFilename(record, flightplan, ".gpx");
 
     QString filename = dialog->saveFileDialog(
       tr("Save GPX"),
       tr("GPX Files %1;;All Files (*)").arg(lnm::FILE_PATTERN_GPX),
-      "lnmpln", "Route/Gpx", atools::documentsDir(), defFilename, false /* confirm overwrite */);
+      "lnmpln", "Route/Gpx", atools::documentsDir(), defaultFilename);
 
     if(!filename.isEmpty())
     {

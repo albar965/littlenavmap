@@ -175,6 +175,9 @@ int main(int argc, char *argv[])
     // Process the actual command line arguments given by the user
     commandLine.process();
 
+    // Check files passed on the command line and save it in FileCheck
+    NavApp::initStartupProperties();
+
     // ==============================================
     // Check if LNM is already running - send message across shared memory and exit if yes, otherwise continue normally
     if(!NavApp::initDataExchange())

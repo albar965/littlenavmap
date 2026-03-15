@@ -76,6 +76,7 @@ public:
   void clearHoldings() const;
   void clearPatterns() const;
   void clearMsa() const;
+  void clearAllMarkers() const;
 
   /* Reset flight plan and other for new flight by showing a choice dialog first */
   void routeResetAll();
@@ -86,7 +87,7 @@ signals:
 
 private:
   /* Remove all measurement lines, patterns, holds, etc. depending on types */
-  void clearRangeRingsAndDistanceMarkers(bool quiet, map::MapTypes types) const;
+  void clearMarkers(bool quiet, map::MapTypes types) const;
 
   void toolbarActionTriggered(QAction *);
 

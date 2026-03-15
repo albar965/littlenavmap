@@ -16,11 +16,10 @@
 *****************************************************************************/
 
 #include "perf/aircraftperfcontroller.h"
-#include "common/filecheck.h"
-#include "perf/aircraftperfdialog.h"
 
 #include "app/navapp.h"
 #include "common/constants.h"
+#include "common/filecheck.h"
 #include "common/formatter.h"
 #include "common/fueltool.h"
 #include "common/tabindexes.h"
@@ -41,6 +40,7 @@
 #include "gui/tools.h"
 #include "gui/widgetstate.h"
 #include "gui/widgetutil.h"
+#include "perf/aircraftperfdialog.h"
 #include "perf/perfmergedialog.h"
 #include "route/route.h"
 #include "route/routealtitude.h"
@@ -79,7 +79,9 @@ AircraftPerfController::AircraftPerfController(MainWindow *parent)
                                                     ui->menuAircraftPerformanceRecent,
                                                     ui->actionAircraftPerformanceClearMenu);
 
-  connect(fileHistory, &atools::gui::FileHistoryHandler::fileSelected, this, &AircraftPerfController::loadFile);
+  connect(fileHistory, &atools::gui::FileHistoryHandler::fileSelected,
+          std::bind(&AircraftPerfController::loadFile, this, std::placeholders::_1 /* filepath */, false /* forceLoading */));
+
   connect(ui->textBrowserAircraftPerformanceReport, &QTextBrowser::anchorClicked, this, &AircraftPerfController::anchorClicked);
   connect(ui->textBrowserAircraftPerformanceCurrent, &QTextBrowser::anchorClicked, this, &AircraftPerfController::anchorClicked);
 
@@ -221,20 +223,20 @@ void AircraftPerfController::loadStr(const QString& string)
   emit aircraftPerformanceChanged(perf);
 }
 
-void AircraftPerfController::loadFile(const QString& perfFile)
+void AircraftPerfController::loadFile(const QString& filepath, bool forceLoading)
 {
-  qDebug() << Q_FUNC_INFO << perfFile;
+  qDebug() << Q_FUNC_INFO << filepath;
 
   try
   {
-    if(checkForChanges())
+    if(forceLoading || checkForChanges())
     {
-      if(!perfFile.isEmpty())
+      if(!filepath.isEmpty())
       {
-        currentFilename = perfFile;
-        perf->load(perfFile);
+        currentFilename = filepath;
+        perf->load(filepath);
         changed = false;
-        fileHistory->addFile(perfFile);
+        fileHistory->addFile(filepath);
         windChangeTimer.stop();
         mainWindow->showAircraftPerformance();
         NavApp::setStatusMessage(tr("Aircraft performance loaded."));
@@ -245,13 +247,13 @@ void AircraftPerfController::loadFile(const QString& perfFile)
   {
     atools::gui::ErrorHandler(mainWindow).handleException(e);
     noPerfLoaded();
-    fileHistory->removeFile(perfFile);
+    fileHistory->removeFile(filepath);
   }
   catch(...)
   {
     atools::gui::ErrorHandler(mainWindow).handleUnknownException();
     noPerfLoaded();
-    fileHistory->removeFile(perfFile);
+    fileHistory->removeFile(filepath);
   }
 
   updateActionStates();
@@ -478,7 +480,7 @@ QString AircraftPerfController::saveAsFileDialog(const QString& filepath, bool *
   int nameFilterIndex = 0;
   QString file = atools::gui::Dialog(mainWindow).saveFileDialog(
     tr("Save Aircraft Performance File"), nameFilter, "lnmperf", "AircraftPerformance/",
-    QStringLiteral(), filepath, false /* confirm overwrite */, false /* autoNumberFilename */, &nameFilterIndex);
+    QStringLiteral(), filepath, false /* dontComfirmOverwrite */, false /* autoNumberFilename */, &nameFilterIndex);
 
   if(oldFormat != nullptr)
     *oldFormat = nameFilterIndex == 1;
@@ -1411,9 +1413,8 @@ void AircraftPerfController::restoreState()
   // Load last used performance file or the one passed on the command line
   if(!atools::gui::Application::isSafeMode())
   {
-    QString perfFile;
-    fc::fromStartupProperties(atools::gui::Application::getStartupOptionsConst(), nullptr, nullptr, &perfFile);
-
+    const FileCheck *files = NavApp::getCommandLineFiles();
+    QString perfFile = files->getAircraftPerf();
     if(perfFile.isEmpty() && OptionData::instance().getFlags() & opts::STARTUP_LOAD_PERF)
       perfFile = settings.valueStr(lnm::AIRCRAFT_PERF_FILENAME);
 
@@ -1421,7 +1422,7 @@ void AircraftPerfController::restoreState()
     {
       QString message = atools::checkFileMsg(perfFile);
       if(message.isEmpty())
-        loadFile(perfFile);
+        loadFile(perfFile, files->isForceLoading());
       else
         // No file or not readable
         atools::gui::Dialog::warning(mainWindow, message);

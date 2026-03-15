@@ -170,16 +170,6 @@ public:
 
   const QList<int>& getRouteHighlights() const;
 
-  const QHash<int, map::RangeMarker>& getRangeMarkers() const;
-  const QHash<int, map::DistanceMarker>& getDistanceMarkers() const;
-  const QHash<int, map::PatternMarker>& getPatternsMarkers() const;
-  const QHash<int, map::HoldingMarker>& getHoldingMarkers() const;
-  const QHash<int, map::MsaMarker>& getMsaMarkers() const;
-
-  /* Get pointers to the wrapped map objects from holdings and MSA. */
-  QList<map::MapHolding> getHoldingMarksFiltered() const;
-  QList<map::MapAirportMsa> getMsaMarksFiltered() const;
-
   const atools::geo::Pos& getProfileHighlight() const;
 
   void clearSearchHighlights();

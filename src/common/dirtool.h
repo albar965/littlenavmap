@@ -68,7 +68,7 @@ private:
   QWidget *parentWidget;
   QString documentsDir /* E.g. "C:\Users\ME\Documents" */,
           applicationDir /* Localized, e.g. "Little Navmap Files" */,
-          flightplanDir, perfDir, layoutDir, airspaceDir, globeDir, airportsDir, mapThemesDir;
+          flightplanDir, perfDir, layoutDir, airspaceDir, globeDir, airportsDir, mapThemesDir, mapMarkerDir;
   QString settingsPrefix;
   QStringList errors;
 

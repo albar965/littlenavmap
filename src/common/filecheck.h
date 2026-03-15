@@ -18,26 +18,95 @@
 #ifndef LNM_FILECHECK_H
 #define LNM_FILECHECK_H
 
-class QString;
+#include <QString>
 
 namespace atools {
 namespace util {
 class Properties;
 }
 }
-namespace fc {
 
-/* Read all properties from startup or data exchange for compatible file types. Also checks non positional arguments.
- * Checks the filenames for compatible file types and fills the given strings with file names in case of matches. */
-void fromStartupProperties(const atools::util::Properties& properties, QString *flightplan, QString *flightplanDescr = nullptr,
-                           QString *perf = nullptr, QString *layout = nullptr, bool *flightPlanIsOther = nullptr);
+/* Class checks file types from a given filename, startup properties or data exchange properties.
+ * Invalid files or not accessible files are logged. */
+class FileCheck
+{
+public:
+  /* Checks the given filename for compatible file types and fills the respective filenames in case of matches.
+   * The file types are checked by content.
+   * All compatible flight plan types are checked. */
+  FileCheck(const QString& filename);
 
-/* Checks the given filename for compatible file types and fills the given strings with file names in case of matches.
- * The file types are checked by content.
- * All compatible flight plan types are checked. */
-void checkFileType(const QString& filename, QString *flightplan, QString *perf = nullptr, QString *layout = nullptr,
-                   QString *gpx = nullptr);
+  /* Read all properties from startup or data exchange for compatible file types. Also checks non-positional arguments.
+   * Checks the filenames for compatible file types and fills the respective filenames in case of matches. */
+  explicit FileCheck(const atools::util::Properties& propertiesStartupParam);
+  ~FileCheck();
 
-} // namespace fc
+  /* .lnmpln and all compatible */
+  const QString& getFlightplanFile() const
+  {
+    return flightplan;
+  }
+
+  /* Flight plan route description */
+  const QString& getFlightplanDescription() const
+  {
+    return flightplanDescription;
+  }
+
+  /* .lnmperf aircraft performance files */
+  const QString& getAircraftPerf() const
+  {
+    return aircraftPerf;
+  }
+
+  /* .lnmlayout window layout files */
+  const QString& getLayoutFile() const
+  {
+    return layout;
+  }
+
+  /* .gpx files loaded as trail */
+  const QString& getGpxFile() const
+  {
+    return gpx;
+  }
+
+  /* .lnmuserfeat files loaded as markers */
+  const QString& getMarkersFile() const
+  {
+    return markers;
+  }
+
+  /* true if passed in by double click on a plan file */
+  bool isFlightPlanIsOther() const
+  {
+    return flightPlanIsOther;
+  }
+
+  /* true if any filename is set */
+  bool hasAnyFile() const
+  {
+    return !flightplan.isEmpty() || !flightplanDescription.isEmpty() || !aircraftPerf.isEmpty() || !layout.isEmpty() ||
+           !gpx.isEmpty() || !markers.isEmpty();
+  }
+
+  /* force overwrite of files when loading */
+  bool isForceLoading() const
+  {
+    return forceLoading;
+  }
+
+private:
+  /* Update filenames from detected files but do not overwrite present filenames */
+  void checkFileType(const QString& filename);
+  void fromStartupProperties();
+
+  void cleanInvalidFiles(bool warn = true);
+  void cleanInvalidFile(QString& file, bool warn) const;
+
+  const atools::util::Properties *propertiesStartup = nullptr;
+  QString flightplan, flightplanDescription, aircraftPerf, layout, gpx, markers;
+  bool flightPlanIsOther = false, forceLoading = false;
+};
 
 #endif // LNM_FILECHECK_H

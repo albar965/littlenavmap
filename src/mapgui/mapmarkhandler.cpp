@@ -24,8 +24,8 @@
 #include "gui/dialog.h"
 #include "gui/mainwindow.h"
 #include "logbook/logdatacontroller.h"
-#include "mapgui/mapwidget.h"
 #include "app/navapp.h"
+#include "mapgui/mapwidget.h"
 #include "options/optiondata.h"
 #include "perf/aircraftperfcontroller.h"
 #include "route/routecontroller.h"
@@ -93,27 +93,32 @@ void MapMarkHandler::resetSettingsToDefault()
 
 void MapMarkHandler::clearRangeRings() const
 {
-  clearRangeRingsAndDistanceMarkers(false /* quiet */, map::MARK_RANGE);
+  clearMarkers(false /* quiet */, map::MARK_RANGE);
 }
 
 void MapMarkHandler::clearDistanceMarkers() const
 {
-  clearRangeRingsAndDistanceMarkers(false /* quiet */, map::MARK_DISTANCE);
+  clearMarkers(false /* quiet */, map::MARK_DISTANCE);
 }
 
 void MapMarkHandler::clearHoldings() const
 {
-  clearRangeRingsAndDistanceMarkers(false /* quiet */, map::MARK_HOLDING);
+  clearMarkers(false /* quiet */, map::MARK_HOLDING);
 }
 
 void MapMarkHandler::clearPatterns() const
 {
-  clearRangeRingsAndDistanceMarkers(false /* quiet */, map::MARK_PATTERNS);
+  clearMarkers(false /* quiet */, map::MARK_PATTERNS);
 }
 
 void MapMarkHandler::clearMsa() const
 {
-  clearRangeRingsAndDistanceMarkers(false /* quiet */, map::MARK_MSA);
+  clearMarkers(false /* quiet */, map::MARK_MSA);
+}
+
+void MapMarkHandler::clearAllMarkers() const
+{
+  clearMarkers(false /* quiet */, map::MARK_ALL);
 }
 
 void MapMarkHandler::addToolbarButton()
@@ -143,16 +148,16 @@ void MapMarkHandler::addToolbarButton()
   actionAll->setStatusTip(actionAll->toolTip());
   buttonMenu->addAction(actionAll);
   buttonHandler->setAllAction(actionAll);
-  ui->menuViewUserFeatures->addAction(actionAll);
+  ui->menuViewMarkers->addAction(actionAll);
 
   actionNone = new QAction(tr("&No User Features"), buttonMenu);
   actionNone->setToolTip(tr("Toggle none / current selection of user features"));
   actionNone->setStatusTip(actionNone->toolTip());
   buttonMenu->addAction(actionNone);
   buttonHandler->setNoneAction(actionNone);
-  ui->menuViewUserFeatures->addAction(actionNone);
+  ui->menuViewMarkers->addAction(actionNone);
 
-  ui->menuViewUserFeatures->addSeparator();
+  ui->menuViewMarkers->addSeparator();
   buttonMenu->addSeparator();
 
   actionRangeRings = addAction(":/littlenavmap/resources/icons/rangerings.svg", tr("&Range Rings"), tr("Show or hide range rings"));
@@ -178,7 +183,7 @@ QAction *MapMarkHandler::addAction(const QString& icon, const QString& text, con
 
   buttonHandler->addOtherAction(action);
   toolButton->menu()->addAction(action);
-  NavApp::getMainUi()->menuViewUserFeatures->addAction(action);
+  NavApp::getMainUi()->menuViewMarkers->addAction(action);
 
   return action;
 }
@@ -236,7 +241,7 @@ QStringList MapMarkHandler::mapFlagTexts(map::MapTypes types) const
   return featureStr;
 }
 
-void MapMarkHandler::clearRangeRingsAndDistanceMarkers(bool quiet, map::MapTypes types) const
+void MapMarkHandler::clearMarkers(bool quiet, map::MapTypes types) const
 {
   if(!quiet)
   {
@@ -249,11 +254,13 @@ void MapMarkHandler::clearRangeRingsAndDistanceMarkers(bool quiet, map::MapTypes
                                                                     QMessageBox::No, QMessageBox::Yes);
 
     if(result == QMessageBox::Yes)
-      NavApp::getMapWidgetGui()->clearAllMarkers(types);
+      NavApp::getMapMarkers()->clear(types);
   }
   else
     // More than one type from choice dialog
-    NavApp::getMapWidgetGui()->clearAllMarkers(types);
+    NavApp::getMapMarkers()->clear(types);
+
+  mainWindow->updateMarkActionStates();
 }
 
 void MapMarkHandler::routeResetAll()
@@ -325,6 +332,6 @@ void MapMarkHandler::routeResetAll()
     types.setFlag(map::MARK_MSA, choiceDialog.isButtonChecked(REMOVE_MARK_MSA));
 
     if(types != map::NONE)
-      clearRangeRingsAndDistanceMarkers(true /* quiet */, types);
+      clearMarkers(true /* quiet */, types);
   }
 }

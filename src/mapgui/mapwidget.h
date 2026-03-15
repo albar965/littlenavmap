@@ -183,9 +183,6 @@ public:
   /* Reset details and feature visibility on the map back to default */
   void resetSettingsToDefault();
 
-  /* Removes all range rings and distance measurement lines */
-  void clearAllMarkers(map::MapTypes types);
-
   /* Return number of truncated points */
   void loadAircraftTrail(const QString& filename, int& numLoaded, int& numTruncated);
   void appendAircraftTrail(const QString& filename, int& numLoaded, int& numTruncated);

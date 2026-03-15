@@ -719,8 +719,8 @@ void AirportSearch::randomFlightClicked(bool showDialog)
 
     // Adjust label if plan is empty or not valid
     if(!departureAirport.isValid() && !destinationAirport.isValid())
-      label +=
-        tr("\n\nAdd a departure or destination airport to your current flight plan if you wish to have that fixed instead of random.");
+      label += tr("\n\nAdd a departure or destination airport to your current flight plan "
+                  "if you wish to have that fixed instead of random.");
 
     // Build selection dialog ===========================================================
     atools::gui::ChoiceDialog choiceDialog(mainWindow, QCoreApplication::applicationName() % tr(" - Random Flight"), label,
@@ -732,7 +732,7 @@ void AirportSearch::randomFlightClicked(bool showDialog)
 
     // Departure and destination random ================================
     choiceDialog.addRadioButton(RANDOM_ALL, RANDOM_BUTTON_GROUP,
-                                tr("Let select departure and destination airport\n"
+                                tr("&Let select departure and destination airport\n"
                                    "from airport search result table at random."),
                                 QStringLiteral(), true /* checked */);
 
@@ -742,7 +742,7 @@ void AirportSearch::randomFlightClicked(bool showDialog)
     {
       // Current flight plan has only one airport - use as fixed departure or destination ================================
       choiceDialog.addRadioButton(RANDOM_FIXED_DEPARTURE, RANDOM_BUTTON_GROUP,
-                                  tr("Use current flight plan's departure airport"
+                                  tr("&Use current flight plan's departure airport"
                                      "\n%1\n"
                                      "as fixed departure airport and let select a\n"
                                      "destination airport from airport search result\n"
@@ -752,7 +752,7 @@ void AirportSearch::randomFlightClicked(bool showDialog)
       choiceDialog.addLine(QFrame::Plain, 1, lineColor);
 
       choiceDialog.addRadioButton(RANDOM_FIXED_DESTINATION, RANDOM_BUTTON_GROUP,
-                                  tr("Use current flight plan's departure airport"
+                                  tr("Use &current flight plan's departure airport"
                                      "\n%1\n"
                                      "as fixed destination airport and let select a\n"
                                      "departure airport from airport search result\n"
@@ -763,7 +763,7 @@ void AirportSearch::randomFlightClicked(bool showDialog)
     {
       // Current flight plan has valid departure and destination - use either one as fixed ================================
       choiceDialog.addRadioButton(RANDOM_FIXED_DEPARTURE, RANDOM_BUTTON_GROUP,
-                                  tr("Keep current flight plan's departure airport"
+                                  tr("&Keep current flight plan's departure airport"
                                      "\n%1\n"
                                      "as fixed departure airport and let select a\n"
                                      "destination airport from airport search result\n"
@@ -773,7 +773,7 @@ void AirportSearch::randomFlightClicked(bool showDialog)
       choiceDialog.addLine(QFrame::Plain, 1, lineColor);
 
       choiceDialog.addRadioButton(RANDOM_FIXED_DESTINATION, RANDOM_BUTTON_GROUP,
-                                  tr("Keep current flight plan's destination airport"
+                                  tr("Keep &current flight plan's destination airport"
                                      "\n%1\n"
                                      "as fixed destination airport and let select a\n"
                                      "departure airport from airport search result\n"
@@ -784,13 +784,13 @@ void AirportSearch::randomFlightClicked(bool showDialog)
     {
       // Current flight plan has neither valid departure nor destination use all random and disable radio buttons =======
       choiceDialog.addRadioButton(RANDOM_FIXED_DEPARTURE, RANDOM_BUTTON_GROUP,
-                                  tr("Let select only a destination airport from\n"
+                                  tr("&Let select only a destination airport from\n"
                                      "airport search result table at random."));
 
       choiceDialog.addLine(QFrame::Plain, 1, lineColor);
 
       choiceDialog.addRadioButton(RANDOM_FIXED_DESTINATION, RANDOM_BUTTON_GROUP,
-                                  tr("Let select only a departure airport from\n"
+                                  tr("Let &select only a departure airport from\n"
                                      "airport search result table at random."));
 
       choiceDialog.disableWidget(RANDOM_ALL);

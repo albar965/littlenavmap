@@ -1242,48 +1242,7 @@ const QList<int>& MapPaintWidget::getRouteHighlights() const
   return screenIndex->getRouteHighlights();
 }
 
-const QHash<int, map::RangeMarker>& MapPaintWidget::getRangeMarkers() const
-{
-  return getMapMarkers()->getRangeMarkers();
-}
 
-const QHash<int, map::DistanceMarker>& MapPaintWidget::getDistanceMarkers() const
-{
-  return getMapMarkers()->getDistanceMarkers();
-}
-
-const QHash<int, map::PatternMarker>& MapPaintWidget::getPatternsMarkers() const
-{
-  return getMapMarkers()->getPatternMarkers();
-}
-
-const QHash<int, map::HoldingMarker>& MapPaintWidget::getHoldingMarkers() const
-{
-  return getMapMarkers()->getHoldingMarkers();
-}
-
-const QHash<int, map::MsaMarker>& MapPaintWidget::getMsaMarkers() const
-{
-  return getMapMarkers()->getMsaMarkers();
-}
-
-QList<map::MapHolding> MapPaintWidget::getHoldingMarksFiltered() const
-{
-  QList<map::MapHolding> retval;
-  const QHash<int, map::HoldingMarker>& marks = getMapMarkers()->getHoldingMarkers();
-  for(auto it = marks.constBegin(); it != marks.constEnd(); ++it)
-    retval.append(it.value().holding);
-  return retval;
-}
-
-QList<map::MapAirportMsa> MapPaintWidget::getMsaMarksFiltered() const
-{
-  QList<map::MapAirportMsa> retval;
-  const QHash<int, map::MsaMarker>& marks = getMapMarkers()->getMsaMarkers();
-  for(auto it = marks.constBegin(); it != marks.constEnd(); ++it)
-    retval.append(it.value().msa);
-  return retval;
-}
 
 const atools::fs::sc::SimConnectUserAircraft& MapPaintWidget::getUserAircraft() const
 {

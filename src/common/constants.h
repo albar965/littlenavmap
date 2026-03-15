@@ -111,6 +111,7 @@ const QLatin1String ACTIONS_SHOW_XP12_WEATHER_FILE_INVALID("Actions/Xplane12Weat
 const QLatin1String ACTIONS_SHOW_XP11_WEATHER_FILE_NO_SIM("Actions/Xplane11WeatherFileNoSim");
 const QLatin1String ACTIONS_SHOW_XP12_WEATHER_FILE_NO_SIM("Actions/Xplane12WeatherFileNoSim");
 const QLatin1String ACTIONS_SHOW_REPLACE_TRAIL("Actions/ReplaceTrail");
+const QLatin1String ACTIONS_SHOW_REPLACE_MARKERS("Actions/ReplaceMarkers");
 const QLatin1String ACTIONS_SHOW_TRAIL_POINTS("Actions/TrailPoints");
 const QLatin1String ACTIONS_SHOW_CONNECTION_SCENERYLIBRARY("Actions/SimSceneryLibraryWarn");
 const QLatin1String ACTIONS_SHOW_CONNECTION_SCENERYLIBRARY_FSXP3D("Actions/SimSceneryLibraryFsxP3DWarn");
@@ -266,6 +267,8 @@ const QLatin1String SEARCHTAB_USERDATA_CLEANUP_PREVIEW("SearchPaneUserdata/Clean
 const QLatin1String SEARCHTAB_LOGDATA_VIEW_WIDGET("SearchPaneLogdata/WidgetView2");
 const QLatin1String SEARCHTAB_LOGDATA_CLEANUP_DIALOG("SearchPaneLogdata/CleanupDialog");
 const QLatin1String SEARCHTAB_LOGDATA_CLEANUP_PREVIEW("SearchPaneLogdata/CleanupPreview");
+
+const QLatin1String MAP_MARKER_LOAD_SELECTION("Map/MapMarkerLoadSelection");
 
 const QLatin1String ROUTE_EXPORT_DIALOG("RouteExport/RouteExportDialog");
 const QLatin1String ROUTE_EXPORT_DIALOG_ZOOM("RouteExport/RouteExportDialogZoom");
@@ -497,12 +500,16 @@ const QLatin1String STARTUP_FLIGHTPLAN("flight-plan");
 const QLatin1String STARTUP_FLIGHTPLAN_DESCR("flight-plan-descr");
 const QLatin1String STARTUP_AIRCRAFT_PERF("aircraft-perf");
 const QLatin1String STARTUP_LAYOUT("layout");
-const QLatin1String STARTUP_QUIT("quit"); /* Exit application */
+const QLatin1String STARTUP_GPX("gpx");
+const QLatin1String STARTUP_MARKER("user-feature");
+const QLatin1String STARTUP_FORCE_LOADING("force"); /* Force overwriting of files */
+
+/* Commands also through data exchange */
+const QLatin1String STARTUP_COMMAND_QUIT(atools::gui::DataExchange::STARTUP_COMMAND_QUIT); /* Exit application. Also long option. */
+const QLatin1String STARTUP_COMMAND_ACTIVATE(atools::gui::DataExchange::STARTUP_COMMAND_ACTIVATE); /* Bring window to front */
 
 /* Not used as long options */
 const QLatin1String STARTUP_OTHER_ARGUMENTS("others"); /* Positional arguments not found after option - string list */
-const QLatin1String STARTUP_COMMAND_ACTIVATE(atools::gui::DataExchange::STARTUP_COMMAND_ACTIVATE); /* Bring window to front */
-const QLatin1String STARTUP_COMMAND_QUIT(atools::gui::DataExchange::STARTUP_COMMAND_QUIT); /* Exit application */
 
 /* Suffixes for common configuration files.
  * Used for atools::settings::Settings::getConfigFilename() */

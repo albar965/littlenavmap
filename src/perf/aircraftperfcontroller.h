@@ -64,7 +64,7 @@ public:
   AircraftPerfController& operator=(const AircraftPerfController& other) = delete;
 
   /* Load a new performance file after asking to save currently unchanged */
-  void loadFile(const QString& perfFile);
+  void loadFile(const QString& filepath, bool forceLoading);
 
   /* Load into current from an XML string */
   void loadStr(const QString& string);

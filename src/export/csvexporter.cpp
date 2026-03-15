@@ -51,7 +51,7 @@ QString CsvExporter::saveCsvFileDialog()
   return dialog->saveFileDialog(tr("Export CSV Document"),
                                 tr("CSV Documents (*.csv);;All Files (*)"),
                                 "csv", lnm::EXPORT_FILEDIALOG,
-                                QStringLiteral(), QStringLiteral(), false);
+                                QStringLiteral(), QStringLiteral());
 }
 
 int CsvExporter::selectionAsCsv(QTableView *view, bool header, bool rows, QString& result,
