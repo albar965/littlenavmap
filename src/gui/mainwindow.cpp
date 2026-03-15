@@ -25,6 +25,7 @@
 #include "common/elevationprovider.h"
 #include "common/filecheck.h"
 #include "common/mapcolors.h"
+#include "common/mapmarkers.h"
 #include "common/settingsmigrate.h"
 #include "common/textpointer.h"
 #include "common/unit.h"
@@ -2324,12 +2325,12 @@ void MainWindow::warnTrailPoints(int numTruncated, bool doNotShowAgain)
   }
 }
 
-void MainWindow::copyMarkersSelection(const map::MapMarkers& markers, bool append, bool forceLoading)
+void MainWindow::copyMarkersSelection(const MapMarkers& markers, bool append, bool forceLoading)
 {
   if(forceLoading)
     // Load without dialog window if forced from command line
     mapWidget->getMapMarkers()->copy(markers);
-  else if(markers.numMarkers() > 0)
+  else if(markers.hasAnyMarkers())
   {
     // Dialog emums which are saved to state
     enum {CHOICE_RANGE, CHOICE_DISTANCE, CHOICE_HOLDING, CHOICE_PATTERNS, CHOICE_MSA};
@@ -2340,17 +2341,23 @@ void MainWindow::copyMarkersSelection(const map::MapMarkers& markers, bool appen
                                            lnm::MAP_MARKER_LOAD_SELECTION, "USERFEATURES.html#load");
     choiceDialog.setHelpOnlineUrl(lnm::helpOnlineUrl);
     choiceDialog.setHelpLanguageOnline(lnm::helpLanguageOnline());
+    choiceDialog.setRequiredAnyChecked({CHOICE_RANGE, CHOICE_DISTANCE, CHOICE_HOLDING, CHOICE_PATTERNS, CHOICE_MSA});
 
-    choiceDialog.addCheckBox(CHOICE_RANGE, tr("&Range Rings"), QStringLiteral(), true, /* checked */
-                             markers.getRangeMarkers().isEmpty() /* disabled */);
-    choiceDialog.addCheckBox(CHOICE_DISTANCE, tr("&Measurement Lines"), QStringLiteral(), true, /* checked */
-                             markers.getDistanceMarkers().isEmpty() /* disabled */);
-    choiceDialog.addCheckBox(CHOICE_HOLDING, tr("&Holdings"), QStringLiteral(), true, /* checked */
-                             markers.getHoldingMarkers().isEmpty() /* disabled */);
-    choiceDialog.addCheckBox(CHOICE_PATTERNS, tr("&Traffic Patterns"), QStringLiteral(), true, /* checked */
-                             markers.getPatternMarkers().isEmpty() /* disabled */);
-    choiceDialog.addCheckBox(CHOICE_MSA, tr("&MSA Diagrams"), QStringLiteral(), true, /* checked */
-                             markers.getMsaMarkers().isEmpty() /* disabled */);
+    choiceDialog.addCheckBox(CHOICE_RANGE, tr("&Range Rings"), QStringLiteral(),
+                             markers.hasRangeMarkers(), /* checked */
+                             !markers.hasRangeMarkers() /* disabled */);
+    choiceDialog.addCheckBox(CHOICE_DISTANCE, tr("&Measurement Lines"), QStringLiteral(),
+                             markers.hasDistanceMarkers(), /* checked */
+                             !markers.hasDistanceMarkers() /* disabled */);
+    choiceDialog.addCheckBox(CHOICE_HOLDING, tr("&Holdings"), QStringLiteral(),
+                             markers.hasHoldingMarkers(), /* checked */
+                             !markers.hasHoldingMarkers() /* disabled */);
+    choiceDialog.addCheckBox(CHOICE_PATTERNS, tr("&Traffic Patterns"), QStringLiteral(),
+                             markers.hasPatternMarkers(), /* checked */
+                             !markers.hasPatternMarkers() /* disabled */);
+    choiceDialog.addCheckBox(CHOICE_MSA, tr("&MSA Diagrams"), QStringLiteral(),
+                             markers.hasMsaMarkers(), /* checked */
+                             !markers.hasMsaMarkers() /* disabled */);
     choiceDialog.addSpacer();
 
     if(choiceDialog.exec() == QDialog::Accepted)
@@ -2393,11 +2400,11 @@ void MainWindow::loadMarkersFile(const QString& file, bool forceLoading)
 
   if(!file.isEmpty())
   {
-    if(map::MapMarkers::isMarkersFile(file))
+    if(MapMarkers::isMarkersFile(file))
     {
       // Load into temporary lists
       QGuiApplication::setOverrideCursor(Qt::WaitCursor);
-      map::MapMarkers markers;
+      MapMarkers markers;
       markers.restore(file);
       QGuiApplication::restoreOverrideCursor();
 
@@ -2424,11 +2431,11 @@ void MainWindow::appendMarkers()
 
   if(!file.isEmpty())
   {
-    if(map::MapMarkers::isMarkersFile(file))
+    if(MapMarkers::isMarkersFile(file))
     {
       // Load into temporary lists
       QGuiApplication::setOverrideCursor(Qt::WaitCursor);
-      map::MapMarkers markers;
+      MapMarkers markers;
       markers.restore(file);
       QGuiApplication::restoreOverrideCursor();
 
@@ -3753,14 +3760,14 @@ void MainWindow::updateOnlineActionStates()
 
 void MainWindow::updateMarkActionStates()
 {
-  const map::MapMarkers *markers = mapWidget->getMapMarkers();
-  ui->actionMapHideAllDistanceMarkers->setEnabled(!markers->getDistanceMarkers().isEmpty());
-  ui->actionMapHideAllRangeRings->setEnabled(!markers->getRangeMarkers().isEmpty());
-  ui->actionMapHideAllPatterns->setEnabled(!markers->getPatternMarkers().isEmpty());
-  ui->actionMapHideAllMsa->setEnabled(!markers->getMsaMarkers().isEmpty());
-  ui->actionMapHideAllHoldings->setEnabled(!markers->getHoldingMarkers().isEmpty());
-  ui->actionMapHideAllMarkers->setEnabled(markers->numMarkers() > 0);
-  ui->actionMapSaveMarkers->setEnabled(markers->numMarkers() > 0);
+  const MapMarkers *markers = mapWidget->getMapMarkers();
+  ui->actionMapHideAllDistanceMarkers->setEnabled(markers->hasDistanceMarkers());
+  ui->actionMapHideAllRangeRings->setEnabled(markers->hasRangeMarkers());
+  ui->actionMapHideAllPatterns->setEnabled(markers->hasPatternMarkers());
+  ui->actionMapHideAllMsa->setEnabled(markers->hasMsaMarkers());
+  ui->actionMapHideAllHoldings->setEnabled(markers->hasHoldingMarkers());
+  ui->actionMapHideAllMarkers->setEnabled(markers->hasAnyMarkers());
+  ui->actionMapSaveMarkers->setEnabled(markers->hasAnyMarkers());
 }
 
 void MainWindow::updateHighlightActionStates()
@@ -4975,7 +4982,7 @@ void MainWindow::fileOpenAny(const QString& filepath)
     else if(atools::fs::gpx::GpxIO::isGpxFile(filepath), false /* forceLoading */)
       // Load GPX trail
       trailLoadGpxFile(filepath, false /* forceLoading */);
-    else if(map::MapMarkers::isMarkersFile(filepath))
+    else if(MapMarkers::isMarkersFile(filepath))
       // Load GPX trail
       loadMarkersFile(filepath, false /* forceLoading */);
     else

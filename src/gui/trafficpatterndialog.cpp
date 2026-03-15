@@ -21,6 +21,7 @@
 #include "atools.h"
 #include "common/constants.h"
 #include "common/mapmarkers.h"
+#include "common/mapmarkertypes.h"
 #include "common/unit.h"
 #include "common/unitstringtool.h"
 #include "geo/calculations.h"

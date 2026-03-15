@@ -19,6 +19,7 @@
 
 #include "atools.h"
 #include "common/constants.h"
+#include "common/mapmarkers.h"
 #include "gui/actionbuttonhandler.h"
 #include "gui/choicedialog.h"
 #include "gui/dialog.h"

@@ -28,8 +28,6 @@
 class MapTheme;
 
 namespace map {
-
-class MapMarkers;
 struct MapResult;
 struct MapRef;
 struct RangeMarker;
@@ -66,6 +64,7 @@ class MapScreenIndex;
 class MapCache;
 class MapLayer;
 class AircraftTrail;
+class MapMarkers;
 
 namespace proc {
 struct MapProcedureLeg;
@@ -370,8 +369,8 @@ public:
     return screenIndex;
   }
 
-  map::MapMarkers *getMapMarkers();
-  const map::MapMarkers *getMapMarkers() const;
+  MapMarkers *getMapMarkers();
+  const MapMarkers *getMapMarkers() const;
 
   MapPaintLayer *getMapPaintLayer()
   {

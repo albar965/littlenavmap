@@ -19,7 +19,7 @@
 
 #include "app/navapp.h"
 #include "common/mapcolors.h"
-#include "common/mapmarkers.h"
+#include "common/mapmarkertypes.h"
 #include "common/proctypes.h"
 #include "common/symbolpainter.h"
 #include "common/unit.h"

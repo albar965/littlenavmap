@@ -59,7 +59,7 @@ void FileCheck::checkFileType(const QString& filename)
     if(gpx.isEmpty() && atools::fs::gpx::GpxIO::isGpxFile(filename))
       gpx = filename;
 
-    if(markers.isEmpty() && map::MapMarkers::isMarkersFile(filename))
+    if(markers.isEmpty() && MapMarkers::isMarkersFile(filename))
       markers = filename;
   }
 }

@@ -17,6 +17,7 @@
 
 #include "gui/holddialog.h"
 
+#include "common/mapmarkers.h"
 #include "ui_holddialog.h"
 
 #include "common/constants.h"

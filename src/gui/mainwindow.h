@@ -101,10 +101,10 @@ struct MapProcedureRef;
 }
 
 namespace map {
-
-class MapMarkers;
 struct MapAirport;
 }
+
+class MapMarkers;
 
 /*
  * Main window contains all instances of controllers, widgets and managment classes.
@@ -243,7 +243,7 @@ public:
 
   /* Show selection dialog and copy or append selected user features to application features.
    * sDialog is omitted if forced loading is on */
-  void copyMarkersSelection(const map::MapMarkers& markers, bool append, bool forceLoading);
+  void copyMarkersSelection(const MapMarkers& markers, bool append, bool forceLoading);
 
   /* true if map window is maximized */
   bool isFullScreen() const;

@@ -306,6 +306,7 @@ SOURCES += \
   src/common/mapcolors.cpp \
   src/common/mapflags.cpp \
   src/common/mapmarkers.cpp \
+  src/common/mapmarkertypes.cpp \
   src/common/mapresult.cpp \
   src/common/maptools.cpp \
   src/common/maptypes.cpp \
@@ -520,6 +521,7 @@ HEADERS  += \
   src/common/mapcolors.h \
   src/common/mapflags.h \
   src/common/mapmarkers.h \
+  src/common/mapmarkertypes.h \
   src/common/mapresult.h \
   src/common/maptools.h \
   src/common/maptypes.h \

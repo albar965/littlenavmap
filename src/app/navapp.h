@@ -66,8 +66,6 @@ class QTimeZone;
 
 class FileCheck;
 namespace map {
-
-class MapMarkers;
 struct MapAirport;
 }
 namespace atools {
@@ -129,6 +127,8 @@ class SqlDatabase;
 namespace Ui {
 class MainWindow;
 }
+
+class MapMarkers;
 
 /*
  * Facade that keeps most important handler, window and query classes for static access.
@@ -424,7 +424,7 @@ public:
   static MapAirportHandler *getMapAirportHandler();
   static MapDetailHandler *getMapDetailHandler();
 
-  static map::MapMarkers *getMapMarkers();
+  static MapMarkers *getMapMarkers();
 
   static void showFlightplan();
   static void showAircraftPerformance();

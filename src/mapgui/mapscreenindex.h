@@ -47,8 +47,6 @@ struct MapProcedureLegs;
 }
 
 namespace map {
-
-class MapMarkers;
 struct DistanceMarker;
 struct HoldingMarker;
 struct MapAirport;
@@ -79,6 +77,7 @@ class GeoDataLatLonBox;
 class MapPaintWidget;
 class MapPaintLayer;
 class CoordinateConverter;
+class MapMarkers;
 
 /*
  * Keeps an indes of certain map objects like flight plan lines, airway lines in screen coordinates
@@ -242,12 +241,12 @@ public:
   /* Get average ground speed and turn speed in degrees per second for user aircraft. Average is calculated for 2 seconds. */
   void getAverageGroundAndTurnSpeed(float& groundSpeedKts, float& turnSpeedDegPerSec) const;
 
-  map::MapMarkers *getMapMarkers()
+  MapMarkers *getMapMarkers()
   {
     return markers;
   }
 
-  const map::MapMarkers *getMapMarkers() const
+  const MapMarkers *getMapMarkers() const
   {
     return markers;
   }
@@ -318,7 +317,7 @@ private:
   QList<int> routeHighlights;
 
   /* Objects that will be saved */
-  map::MapMarkers *markers;
+  MapMarkers *markers;
 
   /* Cached screen coordinates for flight plan to ease mouse cursor change. */
   QList<std::pair<int, QLine> > routeLines;

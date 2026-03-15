@@ -19,6 +19,7 @@
 
 #include "app/navapp.h"
 #include "common/constants.h"
+#include "common/mapmarkers.h"
 #include "common/maptools.h"
 #include "fs/gpx/gpxtypes.h"
 #include "fs/sc/simconnectdata.h"
@@ -61,7 +62,7 @@ MapScreenIndex::MapScreenIndex(MapPaintWidget *mapPaintWidgetParam, MapPaintLaye
 {
   queries = mapWidget->getQueries();
 
-  markers = new map::MapMarkers;
+  markers = new MapMarkers;
   simData = new SimConnectData;
   lastSimData = new SimConnectData;
   lastUserAircraftForAverage = new SimConnectUserAircraft;

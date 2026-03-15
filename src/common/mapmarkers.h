@@ -22,196 +22,20 @@
 
 #include <QCoreApplication>
 
+namespace map {
+class MsaMarker;
+class HoldingMarker;
+class PatternMarker;
+class DistanceMarker;
+class RangeMarker;
+}
+
 namespace atools {
 namespace util {
-
 class XmlStreamWriter;
 class XmlStreamReader;
 }
 }
-namespace map {
-
-/* =====================================================================
- * All markers called user features in the user interface.
- * Can be converted to QVariant as well as loaded and saved from/to XML
- * ===================================================================== */
-
-// =====================================================================
-/* All information for complete traffic pattern structure */
-/* Threshold position (end of final) and runway altitude MSL */
-struct PatternMarker
-  : public MapBase
-{
-  PatternMarker() :
-    MapBase(staticType())
-  {
-  }
-
-  static map::MapType staticType()
-  {
-    return map::MARK_PATTERNS;
-  }
-
-  float magCourse() const;
-
-  void save(atools::util::XmlStreamWriter& stream) const;
-  void restore(atools::util::XmlStreamReader& stream);
-
-  QString displayText() const;
-
-  QString airportIcao, runwayName;
-  QColor color;
-  bool turnRight,
-       base45Degree /* calculate base turn from 45 deg after threshold */,
-       showEntryExit /* Entry and exit indicators */;
-  int runwayLength; /* ft Does not include displaced threshold */
-
-  float downwindParallelDistance, finalDistance, departureDistance; /* NM */
-  float courseTrue; /* degree true final course*/
-  float magvar;
-};
-
-QDataStream& operator>>(QDataStream& dataStream, map::PatternMarker& obj);
-QDataStream& operator<<(QDataStream& dataStream, const map::PatternMarker& obj);
-
-// =====================================================================
-/* Holding marker.
- * Uses its own type distinct from holdings. */
-struct HoldingMarker
-  : public MapBase
-{
-  HoldingMarker() :
-    MapBase(staticType())
-  {
-  }
-
-  static map::MapType staticType()
-  {
-    return map::MARK_HOLDING;
-  }
-
-  void save(atools::util::XmlStreamWriter& stream) const;
-  void restore(atools::util::XmlStreamReader& stream);
-
-  QString displayText() const;
-
-  /* Aggregate the database holding structure */
-  map::MapHolding holding;
-};
-
-/* Save only information for user defined holds */
-QDataStream& operator>>(QDataStream& dataStream, map::HoldingMarker& obj);
-QDataStream& operator<<(QDataStream& dataStream, const map::HoldingMarker& obj);
-
-// =====================================================================
-/* MSA marker as placed by user.
- * Uses its own type distinct from database MSA. */
-struct MsaMarker
-  : public MapBase
-{
-  MsaMarker() :
-    MapBase(staticType())
-  {
-  }
-
-  static map::MapType staticType()
-  {
-    return map::MARK_MSA;
-  }
-
-  void save(atools::util::XmlStreamWriter& stream) const;
-  void restore(atools::util::XmlStreamReader& stream);
-
-  QString displayText() const;
-
-  /*   Aggregate the database MSA structure */
-  map::MapAirportMsa msa;
-};
-
-/* Save only information for user defined holds */
-QDataStream& operator>>(QDataStream& dataStream, map::MsaMarker& obj);
-QDataStream& operator<<(QDataStream& dataStream, const map::MsaMarker& obj);
-
-// =====================================================================
-/* Range rings marker. Covers user defined rings as well as radio-navaid ranges */
-struct RangeMarker
-  : public MapBase
-{
-  RangeMarker() :
-    MapBase(staticType())
-  {
-  }
-
-  static map::MapType staticType()
-  {
-    return map::MARK_RANGE;
-  }
-
-  void save(atools::util::XmlStreamWriter& stream) const;
-  void restore(atools::util::XmlStreamReader& stream);
-
-  QString displayText() const;
-
-  QString text; /* Text to display like VOR name and frequency */
-  QList<float> ranges; /* Range ring list (NM) */
-  MapType navType; /* VOR, NDB, AIRPORT, etc. */
-  QColor color;
-};
-
-QDataStream& operator>>(QDataStream& dataStream, map::RangeMarker& obj);
-QDataStream& operator<<(QDataStream& dataStream, const map::RangeMarker& obj);
-
-// =====================================================================
-/* Distance measurement line. */
-struct DistanceMarker
-  : public MapBase
-{
-  DistanceMarker()
-    : MapBase(staticType())
-  {
-  }
-
-  static map::MapType staticType()
-  {
-    return map::MARK_DISTANCE;
-  }
-
-  bool isValid() const
-  {
-    return from.isValid();
-  }
-
-  const atools::geo::Pos& getPositionTo() const
-  {
-    return to;
-  }
-
-  const atools::geo::Pos& getPositionFrom() const
-  {
-    return from;
-  }
-
-  float getDistanceMeter() const
-  {
-    return from.distanceMeterTo(to);
-  }
-
-  float getDistanceNm() const;
-
-  void save(atools::util::XmlStreamWriter& stream) const;
-  void restore(atools::util::XmlStreamReader& stream);
-
-  QString displayText() const;
-
-  QString text; /* Text to display like VOR name and frequency */
-  QColor color; /* Line color depends on origin (airport or navaid type */
-  atools::geo::Pos from, to;
-  float magvar = 0.f; /* Declination from world or navaid */
-  map::DistanceMarkerFlags flags = map::DIST_MARK_NONE;
-};
-
-QDataStream& operator>>(QDataStream& dataStream, map::DistanceMarker& obj);
-QDataStream& operator<<(QDataStream& dataStream, const map::DistanceMarker& obj);
 
 /* ===============================================================================
  * Combines all user features and allows saving and loading from/to XML and settings.
@@ -234,10 +58,10 @@ public:
   void clear(map::MapTypes types = map::MARK_ALL);
 
   /* Copies from other by type. Overwrites only if type is given in flags. */
-  void copy(const map::MapMarkers& other, map::MapTypes types = map::MARK_ALL);
+  void copy(const MapMarkers& other, map::MapTypes types = map::MARK_ALL);
 
   /* Appends from other by type */
-  void append(const map::MapMarkers& other, map::MapTypes types = map::MARK_ALL);
+  void append(const MapMarkers& other, map::MapTypes types = map::MARK_ALL);
 
   /* Add user features. Id has to be set before using getNextUserFeatureId(). */
   void addRangeMark(const map::RangeMarker& obj);
@@ -273,10 +97,7 @@ public:
   }
 
   /* Get for editing */
-  map::DistanceMarker& getDistanceMarker(int id)
-  {
-    return distanceMarkers[id];
-  }
+  map::DistanceMarker& getDistanceMarker(int id);
 
   /* Airfield traffic patterns. */
   const QHash<int, map::PatternMarker>& getPatternMarkers() const
@@ -296,10 +117,12 @@ public:
     return msaMarkers;
   }
 
-  int numMarkers() const
-  {
-    return rangeMarkers.size() + distanceMarkers.size() + patternMarkers.size() + holdingMarkers.size() + msaMarkers.size();
-  }
+  bool hasRangeMarkers() const;
+  bool hasDistanceMarkers() const;
+  bool hasPatternMarkers() const;
+  bool hasHoldingMarkers() const;
+  bool hasMsaMarkers() const;
+  bool hasAnyMarkers() const;
 
   /* Assign artificial ids to measurement and range rings which allow to identify them.
    * Not thread safe. */
@@ -325,31 +148,5 @@ private:
 
   int currentMapMarkerId = 0;
 };
-
-/* Register serializable objects */
-void registerMarkerMetaTypes();
-
-} // namespace map
-
-/* Type information =============================================== */
-Q_DECLARE_TYPEINFO(map::RangeMarker, Q_RELOCATABLE_TYPE);
-Q_DECLARE_METATYPE(map::RangeMarker)
-Q_DECLARE_METATYPE(QList<map::RangeMarker>)
-
-Q_DECLARE_TYPEINFO(map::DistanceMarker, Q_RELOCATABLE_TYPE);
-Q_DECLARE_METATYPE(map::DistanceMarker)
-Q_DECLARE_METATYPE(QList<map::DistanceMarker>)
-
-Q_DECLARE_TYPEINFO(map::PatternMarker, Q_RELOCATABLE_TYPE);
-Q_DECLARE_METATYPE(map::PatternMarker)
-Q_DECLARE_METATYPE(QList<map::PatternMarker>)
-
-Q_DECLARE_TYPEINFO(map::HoldingMarker, Q_RELOCATABLE_TYPE);
-Q_DECLARE_METATYPE(map::HoldingMarker)
-Q_DECLARE_METATYPE(QList<map::HoldingMarker>)
-
-Q_DECLARE_TYPEINFO(map::MsaMarker, Q_RELOCATABLE_TYPE);
-Q_DECLARE_METATYPE(map::MsaMarker)
-Q_DECLARE_METATYPE(QList<map::MsaMarker>)
 
 #endif // LITTLENAVMAP_MARKERS_H

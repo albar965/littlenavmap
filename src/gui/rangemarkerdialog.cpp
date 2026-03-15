@@ -18,6 +18,7 @@
 #include "gui/rangemarkerdialog.h"
 
 #include "common/constants.h"
+#include "common/mapmarkertypes.h"
 #include "gui/widgetutil.h"
 #include "geo/calculations.h"
 #include "gui/widgetstate.h"

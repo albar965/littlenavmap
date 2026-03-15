@@ -21,6 +21,7 @@
 #include "atools.h"
 #include "common/formatter.h"
 #include "common/mapcolors.h"
+#include "common/mapmarkers.h"
 #include "common/maptools.h"
 #include "common/symbolpainter.h"
 #include "common/symbolpainter.h"

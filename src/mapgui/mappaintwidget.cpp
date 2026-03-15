@@ -1140,12 +1140,12 @@ void MapPaintWidget::updateLogEntryScreenGeometry()
   screenIndex->updateLogEntryScreenGeometry(getCurrentViewBoundingBox());
 }
 
-map::MapMarkers *MapPaintWidget::getMapMarkers()
+MapMarkers *MapPaintWidget::getMapMarkers()
 {
   return screenIndex->getMapMarkers();
 }
 
-const map::MapMarkers *MapPaintWidget::getMapMarkers() const
+const MapMarkers *MapPaintWidget::getMapMarkers() const
 {
   return screenIndex->getMapMarkers();
 }
@@ -1241,8 +1241,6 @@ const QList<int>& MapPaintWidget::getRouteHighlights() const
 {
   return screenIndex->getRouteHighlights();
 }
-
-
 
 const atools::fs::sc::SimConnectUserAircraft& MapPaintWidget::getUserAircraft() const
 {

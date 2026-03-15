@@ -22,6 +22,7 @@
 #include "common/elevationprovider.h"
 #include "common/jumpback.h"
 #include "common/mapcolors.h"
+#include "common/mapmarkers.h"
 #include "common/symbolpainter.h"
 #include "common/unit.h"
 #include "connect/connectclient.h"
@@ -983,9 +984,10 @@ void MapWidget::mouseReleaseEvent(QMouseEvent *event)
   else if(mouseState.testFlag(mapwin::DRAG_DIST_NEW_END) || mouseState.testFlag(mapwin::DRAG_DIST_CHANGE_START) ||
           mouseState.testFlag(mapwin::DRAG_DIST_CHANGE_END))
   {
-    map::MapMarkers *markers = screenIndex->getMapMarkers();
+    // Get for editing
+    MapMarkers *markers = screenIndex->getMapMarkers();
     // Either new measurement line which is fixed at origin and dragged at end or one of the ends is dragged
-    if(!markers->getDistanceMarkers().isEmpty())
+    if(markers->hasDistanceMarkers())
     {
       setCursor(Qt::ArrowCursor);
       if(mouseState.testFlag(mapwin::DRAG_POST))
@@ -1752,7 +1754,7 @@ void MapWidget::mouseMoveEvent(QMouseEvent *event)
   }
 
   const MapScreenIndex *screenIndex = getScreenIndex();
-  map::MapMarkers *markers = getMapMarkers();
+  MapMarkers *markers = getMapMarkers();
   Pos pos;
   // Change cursor and keep aircraft from centering if moving in any drag and drop mode ================
   if(mouseState & mapwin::DRAG_ALL)
@@ -1771,7 +1773,7 @@ void MapWidget::mouseMoveEvent(QMouseEvent *event)
   {
     // Changing or adding distance measurement line ==========================================
     // Position is valid update the distance mark continuously
-    if(pos.isValid() && !markers->getDistanceMarkers().isEmpty())
+    if(pos.isValid() && markers->hasDistanceMarkers())
     {
       if(mouseState.testFlag(mapwin::DRAG_DIST_CHANGE_START))
         markers->updateDistanceMarkerFromPos(currentDistanceMarkerId, pos);

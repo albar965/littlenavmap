@@ -23,6 +23,7 @@
 #include "common/constants.h"
 #include "common/elevationprovider.h"
 #include "common/filecheck.h"
+#include "common/mapmarkers.h"
 #include "common/updatehandler.h"
 #include "common/vehicleicons.h"
 #include "connect/connectclient.h"
@@ -760,7 +761,7 @@ MapDetailHandler *NavApp::getMapDetailHandler()
   return mapDetailHandler;
 }
 
-map::MapMarkers *NavApp::getMapMarkers()
+MapMarkers *NavApp::getMapMarkers()
 {
   return getMapWidgetGui()->getMapMarkers();
 }
