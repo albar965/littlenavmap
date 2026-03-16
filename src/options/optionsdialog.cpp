@@ -283,8 +283,8 @@ OptionsDialog::OptionsDialog(QMainWindow *parentWindow)
                   QStringLiteral(":/littlenavmap/resources/icons/mapdisplay2.svg"));
 
   addPageListItem(QStringLiteral("mapoptions"),
-                  tr("Map Options"),
-                  tr("Change map and elevation profile label and other display options for map objects."),
+                  tr("Map Options and Labels"),
+                  tr("Change label and other display options for map objects on the map and the elevation profile."),
                   QStringLiteral(":/littlenavmap/resources/icons/mapdisplaylabels.svg"));
 
   addPageListItem(QStringLiteral("mapkeys"),
@@ -368,7 +368,7 @@ OptionsDialog::OptionsDialog(QMainWindow *parentWindow)
                                        optsd::NAVAIDS_TOUCHSCREEN_ICONS);
 
   // Airport =====================================================
-  QTreeWidgetItem *airport = addTopItem(tr("Airports"), tr("Select airport labels to display on the map."));
+  QTreeWidgetItem *airport = addTopItem(tr("Airport Labels"), tr("Select airport labels to display on the map."));
   addItem<optsd::DisplayOptionsAirport>(airport, displayOptItemIndexAirport, tr("Name (Ident)"),
                                         tr("Airport name and ident in brackets depending on zoom factor.\n"
                                            "Ident can be internal, ICAO, FAA, IATA or local depending on availability."),
@@ -382,7 +382,7 @@ OptionsDialog::OptionsDialog(QMainWindow *parentWindow)
                                         true);
 
   // Airport details =====================================================
-  QTreeWidgetItem *airportDetails = addTopItem(tr("Airport Details"), tr("Select airport diagram elements."));
+  QTreeWidgetItem *airportDetails = addTopItem(tr("Airport Diagram Options"), tr("Select airport diagram elements."));
   addItem<optsd::DisplayOptionsAirport>(airportDetails, displayOptItemIndexAirport, tr("Runways"), tr("Show runways."),
                                         optsd::ITEM_AIRPORT_DETAIL_RUNWAY, true);
   addItem<optsd::DisplayOptionsAirport>(airportDetails, displayOptItemIndexAirport, tr("Taxiways"),
@@ -403,7 +403,7 @@ OptionsDialog::OptionsDialog(QMainWindow *parentWindow)
                                         optsd::ITEM_AIRPORT_DETAIL_BOUNDARY);
 
   // Flight plan =====================================================
-  QTreeWidgetItem *route = addTopItem(tr("Flight Plan"), tr("Select display options for the flight plan line."));
+  QTreeWidgetItem *route = addTopItem(tr("Flight Plan Labels"), tr("Select display options for the flight plan line."));
   addItem<optsd::DisplayOptionsRoute>(route, displayOptItemIndexRoute, tr("Distance"),
                                       tr("Show distance along flight plan leg.\n"
                                          "The label moves to keep it visible while scrolling."),
@@ -437,7 +437,7 @@ OptionsDialog::OptionsDialog(QMainWindow *parentWindow)
                                       optsd::ROUTE_INITIAL_FINAL_TRUE_COURSE);
 
   // Airspace =====================================================
-  QTreeWidgetItem *airspaces = addTopItem(tr("Airspaces"), QStringLiteral());
+  QTreeWidgetItem *airspaces = addTopItem(tr("Airspace Labels"), QStringLiteral());
   addItem<optsd::DisplayOptionsAirspace>(airspaces, displayOptItemIndexAirspace, tr("Name"),
                                          tr("Shows the airspace name."),
                                          optsd::AIRSPACE_NAME);
@@ -456,7 +456,7 @@ OptionsDialog::OptionsDialog(QMainWindow *parentWindow)
                                          optsd::AIRSPACE_COM, true);
 
   // User aircraft =====================================================
-  QTreeWidgetItem *userAircraft = addTopItem(tr("User Aircraft"),
+  QTreeWidgetItem *userAircraft = addTopItem(tr("User Aircraft Options and Labels"),
                                              tr("Select text labels and other options for the user aircraft."));
   addItem<optsac::DisplayOptionsUserAircraft>(userAircraft, displayOptItemIndexUser, tr("Registration"),
                                               tr("Aircraft registration like \"N1000A\" or \"D-MABC\"."),
@@ -497,8 +497,8 @@ OptionsDialog::OptionsDialog(QMainWindow *parentWindow)
                                               tr("Actual altitude above ground. Prefixed with \"AGL\" on the map."),
                                               optsac::ITEM_USER_AIRCRAFT_ALT_ABOVE_GROUND);
   addItem<optsac::DisplayOptionsUserAircraft>(userAircraft, displayOptItemIndexUser, tr("Track Line"),
-                                              tr("Show the aircraft trail as a black needle at\n"
-                                                 "the from of the user aircraft."),
+                                              tr("Show the aircraft track as a black pin\n"
+                                                 "in front of the user aircraft."),
                                               optsac::ITEM_USER_AIRCRAFT_TRACK_LINE, true);
   addItem<optsac::DisplayOptionsUserAircraft>(userAircraft, displayOptItemIndexUser, tr("Coordinates"),
                                               tr("Show aircraft coordinates using the format selected on\n"
@@ -510,7 +510,7 @@ OptionsDialog::OptionsDialog(QMainWindow *parentWindow)
                                               optsac::ITEM_USER_AIRCRAFT_ICE);
 
   // AI =====================================================
-  QTreeWidgetItem *aiAircraft = addTopItem(tr("AI, Multiplayer and Online Client Aircraft"),
+  QTreeWidgetItem *aiAircraft = addTopItem(tr("AI, Multiplayer and Online Client Aircraft Labels"),
                                            tr("Select text labels for the AI, multiplayer and online client aircraft."));
   addItem<optsac::DisplayOptionsAiAircraft>(aiAircraft, displayOptItemIndexAi, tr("Registration, Number or Callsign"),
                                             tr("Aircraft registration like \"N1000A\" or \"D-MABC\"."),
@@ -564,7 +564,7 @@ OptionsDialog::OptionsDialog(QMainWindow *parentWindow)
                                             optsac::ITEM_AI_AIRCRAFT_OBJECT_ID);
 
   // Compass rose =====================================================
-  QTreeWidgetItem *compassRose = addTopItem(tr("Compass Rose"),
+  QTreeWidgetItem *compassRose = addTopItem(tr("Compass Rose Options and Labels"),
                                             tr("Select display options for the compass rose."));
   addItem<optsd::DisplayOptionsRose>(compassRose, displayOptItemIndexRose, tr("Direction Labels"),
                                      tr("Show N, S, E and W labels."),
@@ -600,7 +600,7 @@ OptionsDialog::OptionsDialog(QMainWindow *parentWindow)
                                      optsd::ROSE_TRUE_HEADING);
 
   // Measurment lines =====================================================
-  QTreeWidgetItem *measurement = addTopItem(tr("Measurement Lines"),
+  QTreeWidgetItem *measurement = addTopItem(tr("Measurement Line Labels"),
                                             tr("Select display options for measurement lines."));
   addItem<optsd::DisplayOptionsMeasurement>(measurement, displayOptItemIndexMeasurement, tr("Distance"),
                                             tr("Great circle distance for measurement line."),
