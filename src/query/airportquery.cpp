@@ -375,7 +375,7 @@ void AirportQuery::getAirportFuzzy(map::MapAirport& airport, const map::MapAirpo
     {
       ageo::Rect rect(airportParam.position, ageo::nmToMeter(10.f), true /* fast */);
 
-      query::fetchObjectsForRect(rect, airportByPosQuery, [ =, &airports](atools::sql::SqlQuery *query) -> void {
+      query::fetchObjectsForRect(rect, airportByPosQuery, [&airports, this](atools::sql::SqlQuery *query) -> void {
         map::MapAirport airportByCoord;
         mapTypesFactory->fillAirport(query->record(), airportByCoord, true /* complete */,
                                      navdata, NavApp::isAirportDatabaseXPlane(navdata));
@@ -848,21 +848,21 @@ const map::MapResultIndex *AirportQuery::getNearestAirportObjects(const atools::
     ageo::Rect rect(pos, ageo::nmToMeter(distanceNm), true /* fast */);
 
     // Fetch nearest airports ============================================
-    query::fetchObjectsForRect(rect, airportByPosQuery, [ =, &result](atools::sql::SqlQuery *query) -> void {
+    query::fetchObjectsForRect(rect, airportByPosQuery, [this, &result](atools::sql::SqlQuery *query) -> void {
       map::MapAirport airport;
       mapTypesFactory->fillAirport(query->record(), airport, true /* complete */, navdata, NavApp::isAirportDatabaseXPlane(navdata));
       result.airports.append(airport);
     });
 
     // Fetch nearest parking ============================================
-    query::fetchObjectsForRect(rect, airportParkingQuery, [ =, &result](atools::sql::SqlQuery *query) -> void {
+    query::fetchObjectsForRect(rect, airportParkingQuery, [this, &result](atools::sql::SqlQuery *query) -> void {
       map::MapParking parking;
       mapTypesFactory->fillParking(query->record(), parking);
       result.parkings.append(parking);
     });
 
     // Fetch nearest start positions ============================================
-    query::fetchObjectsForRect(rect, airportStartQuery, [ =, &result](atools::sql::SqlQuery *query) -> void {
+    query::fetchObjectsForRect(rect, airportStartQuery, [this, &result](atools::sql::SqlQuery *query) -> void {
       map::MapStart start;
       mapTypesFactory->fillStart(query->record(), start);
       result.starts.append(start);
@@ -902,7 +902,7 @@ const map::MapResultIndex *AirportQuery::nearestProcAirportsInternal(const atool
     // Create a rectangle that roughly covers the requested region
     ageo::Rect rect(pos, ageo::nmToMeter(distanceNm), true /* fast */);
 
-    query::fetchObjectsForRect(rect, airportByRectAndProcQuery, [ =, &result](atools::sql::SqlQuery *query) -> void {
+    query::fetchObjectsForRect(rect, airportByRectAndProcQuery, [this, &result, ident](atools::sql::SqlQuery *query) -> void {
       map::MapAirport airport;
       mapTypesFactory->fillAirport(query->record(), airport, true /* complete */, navdata, NavApp::isAirportDatabaseXPlane(navdata));
       if(airport.ident != ident)

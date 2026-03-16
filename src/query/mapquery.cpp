@@ -286,7 +286,7 @@ map::MapResultIndex *MapQuery::nearestNavaidsInternal(const Pos& pos, float dist
 
     if(type & map::VOR)
     {
-      query::fetchObjectsForRect(rect, vorsByRectQuery, [ =, &res](atools::sql::SqlQuery *query) -> void {
+      query::fetchObjectsForRect(rect, vorsByRectQuery, [this, &res](atools::sql::SqlQuery *query) -> void {
         MapVor obj;
         mapTypesFactory->fillVor(query->record(), obj);
         res.vors.append(obj);
@@ -295,7 +295,7 @@ map::MapResultIndex *MapQuery::nearestNavaidsInternal(const Pos& pos, float dist
 
     if(type & map::NDB)
     {
-      query::fetchObjectsForRect(rect, ndbsByRectQuery, [ =, &res](atools::sql::SqlQuery *query) -> void {
+      query::fetchObjectsForRect(rect, ndbsByRectQuery, [this, &res](atools::sql::SqlQuery *query) -> void {
         MapNdb obj;
         mapTypesFactory->fillNdb(query->record(), obj);
         res.ndbs.append(obj);
@@ -305,14 +305,14 @@ map::MapResultIndex *MapQuery::nearestNavaidsInternal(const Pos& pos, float dist
     if(type & map::WAYPOINT)
     {
       query::fetchObjectsForRect(rect, queries->getWaypointTrackQuery()->getWaypointsByRectQueryTrack(),
-                                 [ =, &res](atools::sql::SqlQuery *query) -> void {
+                                 [this, &res](atools::sql::SqlQuery *query) -> void {
         MapWaypoint obj;
         mapTypesFactory->fillWaypoint(query->record(), obj, true /* track database */);
         res.waypoints.append(obj);
       });
 
       query::fetchObjectsForRect(rect, queries->getWaypointTrackQuery()->getWaypointsByRectQuery(),
-                                 [ =, &res](atools::sql::SqlQuery *query) -> void {
+                                 [this, &res](atools::sql::SqlQuery *query) -> void {
         MapWaypoint obj;
         mapTypesFactory->fillWaypoint(query->record(), obj, false /* track database */);
 
@@ -328,7 +328,7 @@ map::MapResultIndex *MapQuery::nearestNavaidsInternal(const Pos& pos, float dist
       {
         QList<MapIls> ilsRes;
 
-        query::fetchObjectsForRect(rect, ilsByRectQuery, [ =, &ilsRes](atools::sql::SqlQuery *query) -> void {
+        query::fetchObjectsForRect(rect, ilsByRectQuery, [this, &ilsRes](atools::sql::SqlQuery *query) -> void {
           MapIls obj;
           mapTypesFactory->fillIls(query->record(), obj);
 

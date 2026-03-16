@@ -161,4 +161,16 @@ private:
   QMultiHash<TaxiNameKey, TaxiNameValue> airportTaxiNameCache;
 };
 
+// ======= ApronKey  ===============================================================
+inline size_t qHash(const MapCache::ApronKey& key, size_t seed)
+{
+  return qHashMulti(seed, key.apronId, key.fast, key.zoomDistanceMeter);
+}
+
+// ======= TaxiNameKey  ===============================================================
+inline size_t qHash(const TaxiNameKey& key, size_t seed)
+{
+  return qHashMulti(seed, key.airportId, key.taxiName);
+}
+
 #endif // LNM_MAPCACHE_H

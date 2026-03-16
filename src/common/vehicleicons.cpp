@@ -49,7 +49,7 @@ struct PixmapKey
   int size, rotate;
 };
 
-size_t qHash(const PixmapKey& key, size_t seed)
+inline size_t qHash(const PixmapKey& key, size_t seed)
 {
   return qHashMulti(seed, key.size, key.type, key.ground, key.user, key.rotate, key.online);
 }
