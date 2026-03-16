@@ -324,9 +324,13 @@ void HtmlInfoBuilder::airportText(const MapAirport& airport, const map::WeatherC
     // Time Zone ================================================
     const QTimeZone zone = NavApp::getTimeZone(airport.getPosition());
 
+    // Use locale by UI language
+    QLocale uiLanguagelocale(OptionData::getLanguageFromConfigFile());
+
     QStringList timezoneText;
 #ifdef DEBUG_INFORMATION
     timezoneText.append("[" % QString(zone.id()) % "]");
+    timezoneText.append("[" % uiLanguagelocale.bcp47Name() % "]");
 #endif
 
     QString territory = QLocale::territoryToString(zone.territory());
@@ -334,9 +338,9 @@ void HtmlInfoBuilder::airportText(const MapAirport& airport, const map::WeatherC
       timezoneText.append(territory);
 
     if(info)
-      timezoneText.append(zone.displayName(QTimeZone::StandardTime, QTimeZone::LongName));
+      timezoneText.append(zone.displayName(QTimeZone::StandardTime, QTimeZone::LongName, uiLanguagelocale));
 
-    timezoneText.append(zone.displayName(QTimeZone::StandardTime, QTimeZone::OffsetName));
+    timezoneText.append(zone.displayName(QTimeZone::StandardTime, QTimeZone::OffsetName, uiLanguagelocale));
     timezoneText.append(tr("(no DST)"));
     html.row2(tr("Time Zone:"), atools::strJoin(timezoneText, tr(", ")));
   }
