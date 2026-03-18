@@ -21,7 +21,6 @@
 
 #include "geo/pos.h"
 
-#include <QLocale>
 #include <QStringBuilder>
 
 namespace ageo = atools::geo;
@@ -46,7 +45,8 @@ opts::UnitSpeed Unit::unitSpeed = opts::SPEED_KTS;
 opts::UnitVertSpeed Unit::unitVertSpeed = opts::VERT_SPEED_FPM;
 opts::UnitCoords Unit::unitCoords = opts::COORDS_DMS;
 opts::UnitFuelAndWeight Unit::unitFuelWeight = opts::FUEL_WEIGHT_GAL_LBS;
-bool Unit::showOtherFuel = true;
+bool Unit::showOtherFuel = false;
+bool Unit::enhancedAccuracy = false;
 
 QString Unit::unitDistStr;
 QString Unit::unitShortDistStr;
@@ -80,29 +80,6 @@ QString Unit::suffixFuelVolLiter;
 QString Unit::suffixFuelWeightKg;
 QString Unit::suffixFfWeightKgH;
 QString Unit::suffixFfVolLiterH;
-
-Unit::Unit()
-{
-
-}
-
-Unit::~Unit()
-{
-
-}
-
-QString Unit::replacePlaceholders(const QString& text, QString& origtext, bool fuelAsVolume)
-{
-  if(origtext.isEmpty())
-    origtext = text;
-
-  return replacePlaceholders(origtext, fuelAsVolume);
-}
-
-QString Unit::replacePlaceholders(const QString& text, bool fuelAsVolume)
-{
-  return replacePlaceholders(text, fuelAsVolume, unitFuelWeight);
-}
 
 QString Unit::replacePlaceholders(const QString& text, bool fuelAsVolume, opts::UnitFuelAndWeight unit)
 {
@@ -184,22 +161,22 @@ void Unit::initTranslateableTexts()
   unitFfWeightStr = suffixFfWeightPpH;
 }
 
-QString Unit::distMeter(float meter, bool addUnit, int minValPrec, bool narrow)
+QString Unit::distMeter(float meter, bool addUnit, int minValPrec, bool narrow, int precision)
 {
   float localValue = distMeterF(meter);
   if(narrow)
-    return u(clocale->toString(localValue, 'f', localValue < minValPrec ? 1 : 0), unitDistStr, addUnit, narrow);
+    return u(clocale->toString(localValue, 'f', localValue < minValPrec ? precision + 1 : precision), unitDistStr, addUnit, narrow);
   else
-    return u(locale->toString(localValue, 'f', localValue < minValPrec ? 1 : 0), unitDistStr, addUnit, narrow);
+    return u(locale->toString(localValue, 'f', localValue < minValPrec ? precision + 1 : precision), unitDistStr, addUnit, narrow);
 }
 
-QString Unit::distNm(float nm, bool addUnit, int minValPrec, bool narrow)
+QString Unit::distNm(float nm, bool addUnit, int minValPrec, bool narrow, int precision)
 {
   float localValue = distNmF(nm);
   if(narrow)
-    return u(clocale->toString(localValue, 'f', localValue < minValPrec ? 1 : 0), unitDistStr, addUnit, narrow);
+    return u(clocale->toString(localValue, 'f', localValue < minValPrec ? precision + 1 : precision), unitDistStr, addUnit, narrow);
   else
-    return u(locale->toString(localValue, 'f', localValue < minValPrec ? 1 : 0), unitDistStr, addUnit, narrow);
+    return u(locale->toString(localValue, 'f', localValue < minValPrec ? precision + 1 : precision), unitDistStr, addUnit, narrow);
 }
 
 float Unit::distMeterF(float meter)
@@ -234,22 +211,7 @@ float Unit::distNmF(float nm)
   return 0.f;
 }
 
-QString Unit::distShortMeter(float meter, bool addUnit, bool narrow)
-{
-  return u(distShortMeterF(meter), unitShortDistStr, addUnit, narrow);
-}
-
-QString Unit::distShortNm(float nm, bool addUnit, bool narrow)
-{
-  return u(distShortNmF(nm), unitShortDistStr, addUnit, narrow);
-}
-
-QString Unit::distShortFeet(float ft, bool addUnit, bool narrow)
-{
-  return u(distShortFeetF(ft), unitShortDistStr, addUnit, narrow);
-}
-
-QString Unit::distLongShortMeter(float distanceMeter, const QString& separator, bool addUnit, bool narrow)
+QString Unit::distLongShortMeter(float distanceMeter, const QString& separator, bool addUnit, bool narrow, int precision)
 {
   QString distStr;
   float localDist = Unit::distMeterF(distanceMeter);
@@ -257,18 +219,18 @@ QString Unit::distLongShortMeter(float distanceMeter, const QString& separator, 
   {
     // Use either km or meter
     if(localDist < 6.f)
-      distStr = Unit::distShortMeter(distanceMeter, addUnit, narrow);
+      distStr = Unit::distShortMeter(distanceMeter, addUnit, narrow, precision);
     else
-      distStr = Unit::distMeter(distanceMeter, addUnit, 20, narrow);
+      distStr = Unit::distMeter(distanceMeter, addUnit, 20, narrow, precision);
   }
   else
   {
     // Use NM/mi and feet
-    distStr = Unit::distMeter(distanceMeter, addUnit, 20, narrow);
+    distStr = Unit::distMeter(distanceMeter, addUnit, 20, narrow, precision);
 
     if(localDist < 3.f)
       // Add feet or meter to text for short distances below three local units
-      distStr.append(separator % Unit::distShortMeter(distanceMeter, addUnit, narrow));
+      distStr.append(separator % Unit::distShortMeter(distanceMeter, addUnit, narrow, precision));
   }
   return distStr;
 }
@@ -310,11 +272,6 @@ float Unit::distShortFeetF(float ft)
       return ageo::feetToMeter(ft);
   }
   return 0.f;
-}
-
-QString Unit::speedKts(float kts, bool addUnit, bool narrow)
-{
-  return u(speedKtsF(kts), unitSpeedStr, addUnit, narrow);
 }
 
 QStringList Unit::speedKtsOther(float kts, bool addUnit, bool narrow)
@@ -476,16 +433,6 @@ int Unit::altFeetI(int ft)
   return atools::roundToInt(altMeterF(ageo::feetToMeter(static_cast<float>(ft))));
 }
 
-QString Unit::volGallon(float gal, bool addUnit)
-{
-  return u(volGallonF(gal), unitVolStr, addUnit);
-}
-
-QString Unit::weightLbs(float lbs, bool addUnit)
-{
-  return u(weightLbsF(lbs), unitWeightStr, addUnit);
-}
-
 float Unit::volGallonF(float gal)
 {
   switch(unitFuelWeight)
@@ -528,11 +475,6 @@ float Unit::weightLbsF(float lbs)
       return lbs / 2.204622f;
   }
   return 0.f;
-}
-
-QString Unit::weightKg(float kg, bool addUnit)
-{
-  return u(weightKgF(kg), unitWeightStr, addUnit);
 }
 
 float Unit::weightKgF(float kg)
@@ -630,26 +572,6 @@ QString Unit::fuelLbsAndGalLocalOther(float lbs, float gal, bool localBold, bool
   return QStringLiteral();
 }
 
-QString Unit::ffGallon(float gal, bool addUnit)
-{
-  return u(volGallonF(gal), unitFfVolStr, addUnit);
-}
-
-float Unit::ffGallonF(float gal)
-{
-  return volGallonF(gal);
-}
-
-QString Unit::ffLbs(float lbs, bool addUnit)
-{
-  return u(weightLbsF(lbs), unitFfWeightStr, addUnit);
-}
-
-float Unit::ffLbsF(float lbs)
-{
-  return weightLbsF(lbs);
-}
-
 QString Unit::ffLbsAndGal(float lbs, float gal, bool addUnit)
 {
   return tr("%1, %2").arg(ffLbs(lbs, addUnit)).arg(ffGallon(gal, addUnit));
@@ -660,44 +582,9 @@ QString Unit::fuelLbsAndGal(float lbs, float gal, bool addUnit)
   return tr("%1, %2").arg(weightLbs(lbs, addUnit)).arg(volGallon(gal, addUnit));
 }
 
-QString Unit::fuelLbsGallon(float gal, bool addUnit, bool fuelAsVolume)
-{
-  return fuelAsVolume ? volGallon(gal, addUnit) : weightLbs(gal, addUnit);
-}
-
-float Unit::fuelLbsGallonF(float gal, bool fuelAsVolume)
-{
-  return fuelAsVolume ? volGallonF(gal) : weightLbsF(gal);
-}
-
-QString Unit::ffLbsGallon(float gal, bool addUnit, bool fuelAsVolume)
-{
-  return fuelAsVolume ? ffGallon(gal, addUnit) : ffLbs(gal, addUnit);
-}
-
-float Unit::ffLbsGallonF(float gal, bool fuelAsVolume)
-{
-  return fuelAsVolume ? ffGallonF(gal) : ffLbsF(gal);
-}
-
-QString Unit::ffLiter(float liter, bool addUnit)
-{
-  return u(volLiterF(liter), unitFfVolStr, addUnit);
-}
-
 float Unit::ffLiterF(float liter)
 {
   return volLiterF(liter);
-}
-
-QString Unit::ffKg(float kg, bool addUnit)
-{
-  return u(weightKgF(kg), unitFfWeightStr, addUnit);
-}
-
-float Unit::ffKgF(float kg)
-{
-  return weightKgF(kg);
 }
 
 QString Unit::ffKgAndLiter(float kg, float liter, bool addUnit)
@@ -708,26 +595,6 @@ QString Unit::ffKgAndLiter(float kg, float liter, bool addUnit)
 QString Unit::fuelKgAndLiter(float kg, float liter, bool addUnit)
 {
   return tr("%1, %2").arg(weightKg(kg, addUnit), volLiter(liter, addUnit));
-}
-
-QString Unit::fuelKgLiter(float kgLiter, bool addUnit, bool fuelAsVolume)
-{
-  return fuelAsVolume ? volLiter(kgLiter, addUnit) : weightKg(kgLiter, addUnit);
-}
-
-float Unit::fuelKgLiterF(float kgLiter, bool fuelAsVolume)
-{
-  return fuelAsVolume ? volLiterF(kgLiter) : weightKgF(kgLiter);
-}
-
-QString Unit::ffKgLiter(float kgLiter, bool addUnit, bool fuelAsVolume)
-{
-  return fuelAsVolume ? ffLiter(kgLiter, addUnit) : ffKg(kgLiter, addUnit);
-}
-
-float Unit::ffKgLiterF(float kgLiter, bool fuelAsVolume)
-{
-  return fuelAsVolume ? ffLiterF(kgLiter) : ffKgF(kgLiter);
 }
 
 QString Unit::adjustNum(QString num)
@@ -746,29 +613,21 @@ QString Unit::adjustNum(QString num)
   return num;
 }
 
-QString Unit::coords(const ageo::Pos& pos)
-{
-  return coords(pos, unitCoords);
-}
-
 QString Unit::coords(const ageo::Pos& pos, opts::UnitCoords coordUnit)
 {
   if(!pos.isValid())
     return QObject::tr("Invalid");
-
+  int accuracy = enhancedAccuracy ? 8 : 5;
   if(coordUnit == opts::COORDS_LATY_LONX)
-    return tr("%1 %2").arg(adjustNum(locale->toString(pos.getLatY(), 'f', 5))).arg(adjustNum(locale->toString(pos.getLonX(), 'f', 5)));
+    return tr("%1 %2").arg(adjustNum(locale->toString(pos.getLatY(), 'f', accuracy))).
+           arg(adjustNum(locale->toString(pos.getLonX(), 'f', accuracy)));
   else if(coordUnit == opts::COORDS_LONX_LATY)
-    return tr("%1 %2").arg(adjustNum(locale->toString(pos.getLonX(), 'f', 5))).arg(adjustNum(locale->toString(pos.getLatY(), 'f', 5)));
+    return tr("%1 %2").arg(adjustNum(locale->toString(pos.getLonX(), 'f', accuracy))).
+           arg(adjustNum(locale->toString(pos.getLatY(), 'f', accuracy)));
   else if(coordUnit == opts::COORDS_DECIMAL_GOOGLE)
     return tr("%1, %2").arg(coordsLatY(pos, coordUnit)).arg(coordsLonX(pos, coordUnit));
   else
     return tr("%1 %2").arg(coordsLatY(pos, coordUnit)).arg(coordsLonX(pos, coordUnit));
-}
-
-QString Unit::coordsLonX(const ageo::Pos& pos)
-{
-  return coordsLonX(pos, unitCoords);
 }
 
 QString Unit::coordsLonX(const ageo::Pos& pos, opts::UnitCoords coordUnit)
@@ -780,7 +639,7 @@ QString Unit::coordsLonX(const ageo::Pos& pos, opts::UnitCoords coordUnit)
   {
     case opts::COORDS_LATY_LONX:
     case opts::COORDS_LONX_LATY:
-      return QLocale().toString(pos.getLonX(), 'f', 5);
+      return QLocale().toString(pos.getLonX(), 'f', enhancedAccuracy ? 8 : 5);
 
     case opts::COORDS_DMS:
       return COORDS_DMS_FORMAT_LONX.
@@ -808,11 +667,6 @@ QString Unit::coordsLonX(const ageo::Pos& pos, opts::UnitCoords coordUnit)
   return QStringLiteral();
 }
 
-QString Unit::coordsLatY(const ageo::Pos& pos)
-{
-  return coordsLatY(pos, unitCoords);
-}
-
 QString Unit::coordsLatY(const ageo::Pos& pos, opts::UnitCoords coordUnit)
 {
   if(!pos.isValid())
@@ -822,7 +676,7 @@ QString Unit::coordsLatY(const ageo::Pos& pos, opts::UnitCoords coordUnit)
   {
     case opts::COORDS_LATY_LONX:
     case opts::COORDS_LONX_LATY:
-      return QLocale().toString(pos.getLatY(), 'f', 5);
+      return QLocale().toString(pos.getLatY(), 'f', enhancedAccuracy ? 8 : 5);
 
     case opts::COORDS_DMS:
       return COORDS_DMS_FORMAT_LATY.
@@ -864,12 +718,12 @@ QString Unit::u(const QString& num, const QString& un, bool addUnit, bool narrow
     return num % (addUnit ? QStringLiteral(" ") % un : QStringLiteral());
 }
 
-QString Unit::u(float num, const QString& un, bool addUnit, bool narrow)
+QString Unit::u(float num, const QString& unitStr, bool addUnit, bool narrow, int precision)
 {
   if(narrow)
-    return clocale->toString(num, 'f', 0) % (addUnit ? QStringLiteral() % un : QStringLiteral());
+    return clocale->toString(num, 'f', precision) % (addUnit ? QStringLiteral() % unitStr : QStringLiteral());
   else
-    return locale->toString(num, 'f', 0) % (addUnit ? QStringLiteral(" ") % un : QStringLiteral());
+    return locale->toString(num, 'f', precision) % (addUnit ? QStringLiteral(" ") % unitStr : QStringLiteral());
 }
 
 void Unit::optionsChanged()
@@ -881,7 +735,9 @@ void Unit::optionsChanged()
   unitVertSpeed = opts->getUnitVertSpeed();
   unitCoords = opts->getUnitCoords();
   unitFuelWeight = opts->getUnitFuelAndWeight();
-  showOtherFuel = opts->getFlags2() & opts2::UNIT_FUEL_SHOW_OTHER;
+
+  showOtherFuel = opts->getFlags2().testFlag(opts2::UNIT_FUEL_SHOW_OTHER);
+  enhancedAccuracy = opts->getFlags2().testFlag(opts2::UNIT_ENHANCED_ACCURACY);
 
   switch(unitDist)
   {
@@ -965,9 +821,4 @@ float Unit::fromUsToMetric(float value, bool fuelAsVolume)
 float Unit::fromMetricToUs(float value, bool fuelAsVolume)
 {
   return fuelAsVolume ? ageo::literToGallon(value) : ageo::kgToLbs(value);
-}
-
-float Unit::fromCopy(float value, bool)
-{
-  return value;
 }

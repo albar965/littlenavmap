@@ -864,6 +864,7 @@ OptionsDialog::OptionsDialog(QMainWindow *parentWindow)
 
      ui->checkBoxOptionsUnitFuelOther,
      ui->checkBoxOptionsUnitTrueCourse,
+     ui->checkBoxOptionsUnitEnhancedAccuracy,
 
      ui->spinBoxOptionsDisplayScaleAllWeb,
      ui->spinBoxOptionsDisplayScaleAll,
@@ -2163,6 +2164,7 @@ void OptionsDialog::widgetsToOptionData()
   toFlags(data.flags2, ui->checkBoxOptionsGuiRaiseMainWindow, opts2::RAISE_MAIN_WINDOW);
   toFlags(data.flags2, ui->checkBoxOptionsUnitFuelOther, opts2::UNIT_FUEL_SHOW_OTHER);
   toFlags(data.flags2, ui->checkBoxOptionsUnitTrueCourse, opts2::UNIT_TRUE_COURSE);
+  toFlags(data.flags2, ui->checkBoxOptionsUnitEnhancedAccuracy, opts2::UNIT_ENHANCED_ACCURACY);
   toFlags(data.flags, ui->checkBoxOptionsGuiCenterRoute, opts::GUI_CENTER_ROUTE);
   toFlags(data.flags, ui->checkBoxOptionsGuiAddDeparture, opts::GUI_ADD_DEPARTURE);
   toFlags(data.flags, ui->checkBoxOptionsGuiAvoidOverwrite, opts::GUI_AVOID_OVERWRITE_FLIGHTPLAN);
@@ -2494,6 +2496,7 @@ void OptionsDialog::optionDataToWidgets(const OptionData& data)
   fromFlags(data.flags2, ui->checkBoxOptionsGuiRaiseMainWindow, opts2::RAISE_MAIN_WINDOW);
   fromFlags(data.flags2, ui->checkBoxOptionsUnitFuelOther, opts2::UNIT_FUEL_SHOW_OTHER);
   fromFlags(data.flags2, ui->checkBoxOptionsUnitTrueCourse, opts2::UNIT_TRUE_COURSE);
+  fromFlags(data.flags2, ui->checkBoxOptionsUnitEnhancedAccuracy, opts2::UNIT_ENHANCED_ACCURACY);
   fromFlags(data.flags, ui->checkBoxOptionsGuiCenterRoute, opts::GUI_CENTER_ROUTE);
   fromFlags(data.flags, ui->checkBoxOptionsGuiAddDeparture, opts::GUI_ADD_DEPARTURE);
   fromFlags(data.flags, ui->checkBoxOptionsGuiAvoidOverwrite, opts::GUI_AVOID_OVERWRITE_FLIGHTPLAN);

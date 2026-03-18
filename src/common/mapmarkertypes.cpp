@@ -332,7 +332,7 @@ void RangeMarker::restore(atools::util::XmlStreamReader& stream)
     else if(name == QStringLiteral("Color"))
       color = stream.readElementTextColor();
     else if(name == QStringLiteral("Ranges"))
-      ranges = stream.readElementListFloat(QStringLiteral("RangeNM"));
+      ranges = stream.readElementListDouble(QStringLiteral("RangeNM"));
     else if(name == QStringLiteral("Pos"))
       position = stream.readElementPos();
     else
@@ -473,14 +473,24 @@ QDataStream& operator<<(QDataStream& dataStream, const map::MsaMarker& obj)
 
 QDataStream& operator>>(QDataStream& dataStream, map::RangeMarker& obj)
 {
-  dataStream >> obj.text >> obj.ranges >> obj.position >> obj.color;
+  QList<float> rangesFloat;
+  dataStream >> obj.text >> rangesFloat >> obj.position >> obj.color;
+
+  obj.ranges.clear();
+  for(float range : std::as_const(rangesFloat))
+    obj.ranges.append(static_cast<double>(range));
+
   obj.objType = map::MARK_RANGE;
   return dataStream;
 }
 
 QDataStream& operator<<(QDataStream& dataStream, const map::RangeMarker& obj)
 {
-  dataStream << obj.text << obj.ranges << obj.position << obj.color;
+  QList<float> rangesFloat;
+  for(double range : std::as_const(obj.ranges))
+    rangesFloat.append(static_cast<float>(range));
+
+  dataStream << obj.text << rangesFloat << obj.position << obj.color;
   return dataStream;
 }
 

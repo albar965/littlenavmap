@@ -140,8 +140,8 @@ void ProfileLabelWidgetHoriz::paintEvent(QPaintEvent *)
           int pos = x0 + legWidth / 2;
 
           // Build up text depending on space ==============================================
-          QString text = atools::elidedText(metricsBold, leg.buildLegText(distOpt, magCrsOpt, trueCrsOpt, false).join(sep), Qt::ElideRight,
-                                            legWidth - 4);
+          QString text = atools::elidedText(metricsBold, leg.buildLegText(distOpt, magCrsOpt, trueCrsOpt, false).join(sep),
+                                            Qt::ElideRight, legWidth - 4);
 
           if(!text.isEmpty())
           {

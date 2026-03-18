@@ -646,7 +646,8 @@ map::MapUserpointRoute RouteLeg::getUserpointRoute() const
   return user;
 }
 
-QStringList RouteLeg::buildLegText(bool dist, bool magCourseFlag, bool trueCourseFlag, bool narrow) const
+QStringList RouteLeg::buildLegText(bool dist, bool magCourseFlag, bool trueCourseFlag, bool narrow, int distPrecision,
+                                   int degPrecision) const
 {
   float distance = noDistanceDisplay() || !dist ? map::INVALID_DISTANCE_VALUE : getDistanceTo();
   float courseMag = map::INVALID_COURSE_VALUE, courseTrue = map::INVALID_COURSE_VALUE;
@@ -654,21 +655,21 @@ QStringList RouteLeg::buildLegText(bool dist, bool magCourseFlag, bool trueCours
 
   return buildLegText(distance,
                       magCourseFlag ? courseMag : map::INVALID_COURSE_VALUE,
-                      trueCourseFlag ? courseTrue : map::INVALID_COURSE_VALUE, narrow);
+                      trueCourseFlag ? courseTrue : map::INVALID_COURSE_VALUE, narrow, distPrecision, degPrecision);
 }
 
-QStringList RouteLeg::buildLegText(float distance, float courseMag, float courseTrue, bool narrow)
+QStringList RouteLeg::buildLegText(float distance, float courseMag, float courseTrue, bool narrow, int distPrecision, int degPrecision)
 {
   QStringList texts;
 
   if(distance < map::INVALID_DISTANCE_VALUE)
-    texts.append(Unit::distNm(distance, true /*addUnit*/, 20, narrow /*narrow*/));
+    texts.append(Unit::distNm(distance, true /*addUnit*/, 20, narrow /*narrow*/, distPrecision));
 
   bool addMagCourse = courseMag < map::INVALID_COURSE_VALUE;
   bool addTrueCourse = courseTrue < map::INVALID_COURSE_VALUE;
 
-  QString courseMagStr = QString::number(normalizeCourse(courseMag), 'f', 0);
-  QString courseTrueStr = QString::number(normalizeCourse(courseTrue), 'f', 0);
+  QString courseMagStr = QString::number(normalizeCourse(courseMag), 'f', degPrecision);
+  QString courseTrueStr = QString::number(normalizeCourse(courseTrue), 'f', degPrecision);
 
   if(addMagCourse && addTrueCourse && courseMagStr == courseTrueStr)
     // True and mag course are equal - combine

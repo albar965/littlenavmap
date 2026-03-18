@@ -52,12 +52,6 @@ const float MAX_COMPASS_ROSE_RADIUS_NM = 500.f;
 const float MIN_COMPASS_ROSE_RADIUS_NM = 0.2f;
 const double MIN_VIEW_DISTANCE_COMPASS_ROSE_KM = 6400.;
 
-#ifdef DEBUG_INFORMATION_MEASUREMENT
-const int DISTMARK_DEG_PRECISION = 3;
-#else
-const int DISTMARK_DEG_PRECISION = 0;
-#endif
-
 using namespace Marble;
 using namespace map;
 namespace ageo = atools::geo;
@@ -853,7 +847,7 @@ void MapPainterMark::paintRangeMarks()
           painter->setBrush(Qt::NoBrush);
 
           // Draw all rings
-          for(float radius : rings.ranges)
+          for(double radius : rings.ranges)
           {
             QPoint textPos;
             paintCircle(painter, rings.position, radius, context->drawFast, &textPos);
@@ -1293,13 +1287,16 @@ QStringList MapPainterMark::distanceMarkText(const map::DistanceMarker& marker, 
   float initTrue = marker.from.initialBearing(marker.to);
   float finalTrue = marker.from.finalBearing(marker.to);
   float distanceMeter = marker.getDistanceMeter();
+  float magvar = marker.magvar;
+
+  bool accuracy = context->flags2.testFlag(opts2::UNIT_ENHANCED_ACCURACY);
+  int distPrecision = accuracy ? 2 : 0, degPrecision = accuracy ? 2 : 0;
 
   QString finalMagText;
   if(marker.flags.testFlag(map::DIST_MARK_MAGVAR))
-    finalMagText = QString::number(ageo::normalizeCourse(finalTrue - marker.magvar), 'f', DISTMARK_DEG_PRECISION);
+    finalMagText = QString::number(ageo::normalizeCourse(finalTrue - magvar), 'f', degPrecision);
   else
-    finalMagText = QString::number(ageo::normalizeCourse(finalTrue -
-                                                         NavApp::getMagVar(marker.to, marker.magvar)), 'f', DISTMARK_DEG_PRECISION);
+    finalMagText = QString::number(ageo::normalizeCourse(finalTrue - NavApp::getMagVar(marker.to, magvar)), 'f', degPrecision);
 
   QString textStr, radialStr, distStr, magTrueStr, trueStr;
   // Center labels ==============================================================
@@ -1310,16 +1307,16 @@ QStringList MapPainterMark::distanceMarkText(const map::DistanceMarker& marker, 
 
   // Draw radial number always after label of separate in next line ====================================================
   if(context->dOptMeasurement(optsd::MEASUREMENT_RADIAL) && marker.flags.testFlag(map::DIST_MARK_RADIAL))
-    radialStr = proc::radialText(ageo::normalizeCourse(initTrue - marker.magvar));
+    radialStr = proc::radialText(ageo::normalizeCourse(initTrue - magvar), degPrecision);
 
   // Distance ==========================================================
   if(context->dOptMeasurement(optsd::MEASUREMENT_DIST) && distanceMeter < INVALID_DISTANCE_VALUE)
-    distStr = Unit::distLongShortMeter(distanceMeter, tr("/"), true /* addUnit */, true /* narrow */);
+    distStr = Unit::distLongShortMeter(distanceMeter, tr("/"), true /* addUnit */, true /* narrow */, distPrecision);
 
   // Mag (/ true) Course on separate line ==========================================================
-  QString initMagText = QString::number(ageo::normalizeCourse(initTrue - marker.magvar), 'f', DISTMARK_DEG_PRECISION);
-  QString initTrueText = QString::number(initTrue, 'f', DISTMARK_DEG_PRECISION);
-  QString finalTrueText = QString::number(finalTrue, 'f', DISTMARK_DEG_PRECISION);
+  QString initMagText = QString::number(ageo::normalizeCourse(initTrue - magvar), 'f', degPrecision);
+  QString initTrueText = QString::number(initTrue, 'f', degPrecision);
+  QString finalTrueText = QString::number(finalTrue, 'f', degPrecision);
   if(context->dOptMeasurement(optsd::MEASUREMENT_TRUE) && context->dOptMeasurement(optsd::MEASUREMENT_MAG) &&
      initTrueText == initMagText && finalTrueText == finalMagText)
   {

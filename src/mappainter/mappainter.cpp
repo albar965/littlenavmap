@@ -123,7 +123,7 @@ bool MapPainter::wToSBuf(const atools::geo::Pos& coords, QPointF& point, const Q
 void MapPainter::paintArc(GeoPainter *painter, const Pos& centerPos, float radiusNm, float angleDegStart, float angleDegEnd,
                           bool fast) const
 {
-  if(radiusNm > atools::geo::EARTH_CIRCUMFERENCE_METER / 4.f)
+  if(radiusNm > atools::geo::EARTH_CIRCUMFERENCE_METER / 4.)
     return;
 
   // Calculate the number of points to use depending on screen resolution
@@ -192,7 +192,7 @@ void MapPainter::paintArc(GeoPainter *painter, const Pos& centerPos, float radiu
 
 void MapPainter::paintCircle(GeoPainter *painter, const Pos& centerPos, float radiusNm, bool fast, QPoint *textPos) const
 {
-  if(radiusNm > atools::geo::EARTH_CIRCUMFERENCE_METER / 4.f)
+  if(radiusNm > atools::geo::EARTH_CIRCUMFERENCE_METER / 4.)
     return;
 
   if(radiusNm < 1.f && atools::geo::meterToNm(context->zoomDistanceMeter) < 5.f)

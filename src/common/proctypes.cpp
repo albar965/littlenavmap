@@ -1451,9 +1451,9 @@ QString aircraftCategoryText(const QString& cat)
 #endif
 }
 
-QString radialText(float radial)
+QString radialText(float radial, int precision)
 {
-  return QObject::tr("R%1", "Radial").arg(radial, 3, 'f', 0, QChar('0'));
+  return QObject::tr("R%1", "Radial").arg(radial, 3, 'f', precision, QChar('0'));
 }
 
 } // namespace proc

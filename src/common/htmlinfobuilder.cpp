@@ -2522,8 +2522,8 @@ void HtmlInfoBuilder::rangeMarkerText(const RangeMarker& marker, atools::util::H
   html.row2If(tr("Label:"), marker.text);
 
   QStringList distStr;
-  for(float dist : marker.ranges)
-    distStr.append(Unit::distNm(dist, false));
+  for(double dist : marker.ranges)
+    distStr.append(Unit::distNm(dist, false /* addUnit */, 20 /* minValPrec */, false /* narrow */, 2 /* precision */));
 
   html.row2If(marker.ranges.size() > 1 ? tr("Radii:") : tr("Radius"),
               tr("%1 %2").arg(distStr.join(tr(", "))).arg(Unit::getUnitDistStr()));

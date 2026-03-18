@@ -105,7 +105,7 @@ struct MapProcedureRef
   MapProcedureRef(int airportIdParam, int runwayEndIdParam, int procIdParam, int transIdParam, int legIdParam,
                   proc::MapProcedureTypes type)
     : airportId(airportIdParam), runwayEndId(runwayEndIdParam), procedureId(procIdParam), transitionId(transIdParam), legId(legIdParam),
-    mapType(type)
+      mapType(type)
   {
   }
 
@@ -754,7 +754,7 @@ QString speedRestrictionText(const proc::MapSpeedRestriction& speedRestriction);
 QString speedRestrictionTextShort(const proc::MapSpeedRestriction& speedRestriction);
 
 /* VOR radial text like "R090" */
-QString radialText(float radial);
+QString radialText(float radial, int precision = 0);
 
 /* Determine various route and procedure related states for the given map object.
  * Queries are omitted if the respective parameters are null */

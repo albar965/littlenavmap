@@ -156,8 +156,8 @@ private:
   void paintWindBarbAtWaypoint(float windSpeed, float windDir, float x, float y);
 
   /* Leg labels on top of line */
-  QString buildLegText(const RouteLeg& leg);
-  QString buildLegText(float distance, float courseMag, float courseTrue);
+  QString buildLegText(const RouteLeg& leg, int distPrecision, int degPrecision);
+  QString buildLegText(float distance, float courseMag, float courseTrue, int distPrecision, int degPrecision);
 
   /* Active or normal color depending on options setting */
   QColor flightplanActiveColor() const;

@@ -151,7 +151,7 @@ struct RangeMarker
   QString displayText() const;
 
   QString text; /* Text to display like VOR name and frequency */
-  QList<float> ranges; /* Range ring list (NM) */
+  QList<double> ranges; /* Range ring list (NM) */
   MapType navType; /* VOR, NDB, AIRPORT, etc. */
   QColor color;
 };

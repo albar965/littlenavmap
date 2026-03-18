@@ -425,7 +425,10 @@ enum Flag2 : quint64
   MAP_ROUTE_TRANSPARENT = 1ULL << 30,
 
   /* checkBoxOptionsWebScale */
-  MAP_WEB_USE_UI_SCALE = 1ULL << 31
+  MAP_WEB_USE_UI_SCALE = 1ULL << 31,
+
+  /* checkBoxOptionsUnitEnhancedAccuracy */
+  UNIT_ENHANCED_ACCURACY = 1ULL << 32
 
 };
 

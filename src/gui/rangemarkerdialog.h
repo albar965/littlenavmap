@@ -79,8 +79,8 @@ private:
   void coordinatesEdited(const QString&);
 
   /* Convert string to ranges. Falls back to defaults if invalid */
-  QString rangeFloatToString(const QList<float>& ranges) const;
-  const QList<float> rangeStringToFloat(const QString& rangeStr) const;
+  QString rangeDoubleToString(const QList<double>& ranges) const;
+  const QList<double> rangeStringToDouble(const QString& rangeStr) const;
 
   Ui::RangeMarkerDialog *ui;
 
@@ -96,7 +96,7 @@ private:
   // Validates the space separated list of ring sizes
   RangeRingValidator *rangeRingValidator;
 
-  const static QList<float> MAP_RANGERINGS_DEFAULT;
+  const static QList<double> MAP_RANGERINGS_DEFAULT;
 };
 
 /* Validates the space separated list of range ring sizes */

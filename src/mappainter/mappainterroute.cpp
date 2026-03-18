@@ -173,7 +173,7 @@ void MapPainterRoute::paintDirectToDeparture()
   }
 }
 
-QString MapPainterRoute::buildLegText(const RouteLeg& leg)
+QString MapPainterRoute::buildLegText(const RouteLeg& leg, int distPrecision, int degPrecision)
 {
   if(mapPaintWidget->isDistanceCutOff())
     return QStringLiteral();
@@ -183,12 +183,12 @@ QString MapPainterRoute::buildLegText(const RouteLeg& leg)
     texts.append(leg.getAirwayName());
 
   texts.append(leg.buildLegText(context->dOptRoute(optsd::ROUTE_DISTANCE), context->dOptRoute(optsd::ROUTE_MAG_COURSE),
-                                context->dOptRoute(optsd::ROUTE_TRUE_COURSE), true /* narrow */));
+                                context->dOptRoute(optsd::ROUTE_TRUE_COURSE), true /* narrow */, distPrecision, degPrecision));
 
   return texts.join(tr(" / "));
 }
 
-QString MapPainterRoute::buildLegText(float distance, float courseMag, float courseTrue)
+QString MapPainterRoute::buildLegText(float distance, float courseMag, float courseTrue, int distPrecision, int degPrecision)
 {
   if(mapPaintWidget->isDistanceCutOff())
     return QStringLiteral();
@@ -202,7 +202,7 @@ QString MapPainterRoute::buildLegText(float distance, float courseMag, float cou
   if(!context->dOptRoute(optsd::ROUTE_TRUE_COURSE))
     courseTrue = map::INVALID_DISTANCE_VALUE;
 
-  return RouteLeg::buildLegText(distance, courseMag, courseTrue, true /* narrow */).join(tr(" / "));
+  return RouteLeg::buildLegText(distance, courseMag, courseTrue, true /* narrow */, distPrecision, degPrecision).join(tr(" / "));
 }
 
 void MapPainterRoute::paintRoute()
@@ -237,6 +237,9 @@ void MapPainterRoute::paintRoute()
 
   // Collect route - only coordinates and texts ===============================
   const RouteLeg& destLeg = route->getDestinationAirportLeg();
+  bool accuracy = context->flags2.testFlag(opts2::UNIT_ENHANCED_ACCURACY);
+  int distPrecision = accuracy ? 2 : 0, degPrecision = accuracy ? 2 : 0;
+
   for(int i = 1; i < route->size(); i++)
   {
     const RouteLeg& leg = route->value(i);
@@ -246,7 +249,7 @@ void MapPainterRoute::paintRoute()
     {
       if(drawAlternate)
       {
-        routeTexts.append(buildLegText(leg));
+        routeTexts.append(buildLegText(leg, distPrecision, degPrecision));
         lines.append(Line(destLeg.getPosition(), leg.getPosition()));
       }
       else
@@ -264,7 +267,7 @@ void MapPainterRoute::paintRoute()
          (last.getProcedureLeg().isStar() && leg.getProcedureLeg().isArrival())) // empty space from STAR to transition or approach
       {
         if(i >= passedRouteLeg)
-          routeTexts.append(buildLegText(leg));
+          routeTexts.append(buildLegText(leg, distPrecision, degPrecision));
         else
           // No texts for passed legs
           routeTexts.append(QStringLiteral());
@@ -965,6 +968,8 @@ void MapPainterRoute::paintProcedure(QSet<map::MapRef>& idMap, const proc::MapPr
       QStringList approachTexts;
       QList<Line> lines;
       QList<QColor> textColors;
+      bool accuracy = context->flags2.testFlag(opts2::UNIT_ENHANCED_ACCURACY);
+      int distPrecision = accuracy ? 2 : 0, degPrecision = accuracy ? 2 : 0;
 
       for(int i = 0; i < legs.size(); i++)
       {
@@ -997,7 +1002,7 @@ void MapPainterRoute::paintProcedure(QSet<map::MapRef>& idMap, const proc::MapPr
 
             if(leg.noDistanceDisplay())
               dist = map::INVALID_DISTANCE_VALUE;
-            approachTexts.append(buildLegText(dist, courseMag, courseTrue));
+            approachTexts.append(buildLegText(dist, courseMag, courseTrue, distPrecision, degPrecision));
           }
           else
             approachTexts.append(QStringLiteral() /*legs.approachFixIdent*/);

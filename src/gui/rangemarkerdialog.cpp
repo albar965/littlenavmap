@@ -43,11 +43,11 @@
 using atools::geo::Pos;
 
 // Also adjust text in options dialog if changing these numbers
-const float MIN_RANGE_RING_SIZE = 0.01f;
-const float MAX_RANGE_RING_SIZE_METER = atools::geo::EARTH_CIRCUMFERENCE_METER / 2.f * 0.98f;
+const double MIN_RANGE_RING_SIZE = 0.01;
+const double MAX_RANGE_RING_SIZE_METER = atools::geo::EARTH_CIRCUMFERENCE_METER / 2. * 0.98;
 
 const int MAX_RANGE_RINGS = 10;
-const QList<float> RangeMarkerDialog::MAP_RANGERINGS_DEFAULT({50.f, 100.f, 200.f, 500.f});
+const QList<double> RangeMarkerDialog::MAP_RANGERINGS_DEFAULT({50., 100., 200., 500.});
 
 RangeRingValidator::RangeRingValidator()
 {
@@ -73,7 +73,7 @@ QValidator::State RangeRingValidator::validate(QString& input, int&) const
     if(!val.isEmpty())
     {
       bool ok;
-      float num = QLocale().toFloat(val, &ok);
+      double num = QLocale().toDouble(val, &ok);
       if(!ok || num > atools::roundToPrecision(Unit::distMeterF(MAX_RANGE_RING_SIZE_METER), 2))
         // No number or radius too large - keep user from adding more characters
         state = Invalid;
@@ -186,7 +186,7 @@ void RangeMarkerDialog::buttonBoxClicked(QAbstractButton *button)
     coordinatesEdited(QStringLiteral());
     color = Qt::red;
     updateButtonColor();
-    ui->lineEditRangeMarkerRadii->setText(rangeFloatToString(MAP_RANGERINGS_DEFAULT));
+    ui->lineEditRangeMarkerRadii->setText(rangeDoubleToString(MAP_RANGERINGS_DEFAULT));
     ui->lineEditRangeMarkerLabel->clear();
   }
 }
@@ -202,7 +202,7 @@ void RangeMarkerDialog::restoreState()
 
   if(settings.contains(lnm::RANGE_MARKER_DIALOG_RADII))
     ui->lineEditRangeMarkerRadii->
-    setText(rangeFloatToString(atools::strListToFloatVector(settings.valueStrList(lnm::RANGE_MARKER_DIALOG_RADII))));
+    setText(rangeDoubleToString(atools::strListToDoubleList(settings.valueStrList(lnm::RANGE_MARKER_DIALOG_RADII))));
 
   updateButtonColor();
 }
@@ -215,7 +215,8 @@ void RangeMarkerDialog::saveState() const
 
   atools::settings::Settings& settings = atools::settings::Settings::instance();
   settings.setValueVar(lnm::RANGE_MARKER_DIALOG_COLOR, color);
-  settings.setValue(lnm::RANGE_MARKER_DIALOG_RADII, atools::floatVectorToStrList(rangeStringToFloat(ui->lineEditRangeMarkerRadii->text())));
+  settings.setValue(lnm::RANGE_MARKER_DIALOG_RADII,
+                    atools::doubleListToStrList(rangeStringToDouble(ui->lineEditRangeMarkerRadii->text())));
 }
 
 void RangeMarkerDialog::colorButtonClicked()
@@ -259,7 +260,7 @@ void RangeMarkerDialog::fillRangeMarker(map::RangeMarker& marker, bool dialogOpe
   // Ignore aircraft option if dialog was not opened (i.e. Ctrl+Click into map)
   if(ui->radioButtonRangeMarkerRadii->isChecked() || !dialogOpened)
   {
-    for(float dist : rangeStringToFloat(ui->lineEditRangeMarkerRadii->text()))
+    for(double dist : rangeStringToDouble(ui->lineEditRangeMarkerRadii->text()))
       marker.ranges.append(Unit::rev(dist, Unit::distNmF));
   }
   else
@@ -285,35 +286,35 @@ bool RangeMarkerDialog::isNoShowShiftClickEnabled()
   return ui->checkBoxRangeMarkerDoNotShow->isChecked();
 }
 
-QString RangeMarkerDialog::rangeFloatToString(const QList<float>& ranges) const
+QString RangeMarkerDialog::rangeDoubleToString(const QList<double>& ranges) const
 {
   QLocale locale;
   // Do not print group separator - can cause issues if space is used
   locale.setNumberOptions(QLocale::OmitGroupSeparator);
 
   QStringList txt;
-  for(float value : ranges)
+  for(double value : ranges)
   {
     if(value >= MIN_RANGE_RING_SIZE && value <= atools::roundToPrecision(Unit::distMeterF(MAX_RANGE_RING_SIZE_METER), 2))
       txt.append(locale.toString(value, 'g', 6));
   }
 
   if(txt.isEmpty())
-    return rangeFloatToString(MAP_RANGERINGS_DEFAULT);
+    return rangeDoubleToString(MAP_RANGERINGS_DEFAULT);
   else
     return txt.join(tr(" ", "Range ring number separator"));
 }
 
-const QList<float> RangeMarkerDialog::rangeStringToFloat(const QString& rangeStr) const
+const QList<double> RangeMarkerDialog::rangeStringToDouble(const QString& rangeStr) const
 {
-  QList<float> retval;
+  QList<double> retval;
   for(const QString& str : rangeStr.simplified().split(tr(" ", "Range ring separator")))
   {
     QString val = str.trimmed();
     if(!val.isEmpty())
     {
       bool ok;
-      float num = QLocale().toFloat(val, &ok);
+      double num = QLocale().toDouble(val, &ok);
       if(ok && num >= MIN_RANGE_RING_SIZE && num <= atools::roundToPrecision(Unit::distMeterF(MAX_RANGE_RING_SIZE_METER), 2))
         retval.append(num);
     }
