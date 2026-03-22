@@ -289,10 +289,6 @@
         <file>resources/icons/startrunway.svg</file>
         <file>resources/icons/startwater.svg</file>
         <file>resources/icons/statusbar.svg</file>
-        <file>resources/icons/tab_close_button.png</file>
-        <file>resources/icons/tab_close_button_hover.png</file>
-        <file>resources/icons/tab_close_button_hover_night.png</file>
-        <file>resources/icons/tab_close_button_night.png</file>
         <file>resources/icons/tabbutton.svg</file>
         <file>resources/icons/trackline.svg</file>
         <file>resources/icons/trafficpattern.svg</file>
@@ -358,5 +354,9 @@
         <file>resources/icons/zoomin.svg</file>
         <file>resources/icons/zoomout.svg</file>
         <file>resources/config/little_navmap_fusionstyle.ini</file>
+        <file>resources/icons/close_dark_hover.svg</file>
+        <file>resources/icons/close_dark.svg</file>
+        <file>resources/icons/close_hover.svg</file>
+        <file>resources/icons/close.svg</file>
     </qresource>
 </RCC>

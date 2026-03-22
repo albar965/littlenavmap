@@ -63,15 +63,11 @@ StyleHandler::StyleHandler(QMainWindow *mainWindowParam)
   // Send void styleChanged() on palette changes
   connect(atools::gui::Application::applicationInstance(), &atools::gui::Application::paletteChanged, this, &StyleHandler::paletteChanged);
 
-  // Override fusion tab close buttons on Windows and macOS
-#if defined(Q_OS_WIN32) || defined(Q_OS_MACOS)
   QString fusionStyleSheet(
-    "QTabBar::close-button { image: url(:/littlenavmap/resources/icons/tab_close_button.png); } "
-    "QTabBar::close-button:hover { image: url(:/littlenavmap/resources/icons/tab_close_button_hover.png); }");
-
-#else
-  QString fusionStyleSheet;
-#endif
+    "QTabBar::close-button { image: url(:/littlenavmap/resources/icons/close.svg); } "
+    "QTabBar::close-button:hover { image: url(:/littlenavmap/resources/icons/close_hover.svg); }"
+    "QTabBar::tab { height: %fontheight%px; } "
+    );
 
   // Override checked menu items style with icons for windows
 #if defined(Q_OS_WIN32)
@@ -182,9 +178,9 @@ StyleHandler::StyleHandler(QMainWindow *mainWindowParam)
 
 #if !defined(Q_OS_MACOS)
     // Night mode shows bright tab bars with this change in macOS
-
-    "QTabBar::close-button { image: url(:/littlenavmap/resources/icons/tab_close_button_night.png); }"
-    "QTabBar::close-button:hover { image: url(:/littlenavmap/resources/icons/tab_close_button_hover_night.png); }"
+    "QTabBar::close-button { image: url(:/littlenavmap/resources/icons/close_dark.svg); }"
+    "QTabBar::close-button:hover { image: url(:/littlenavmap/resources/icons/close_dark_hover.svg); }"
+    "QTabBar::tab { height: %fontheight%px; } "
 #endif
     );
 
@@ -363,7 +359,10 @@ void StyleHandler::applyCurrentStyle()
   else
     qWarning() << Q_FUNC_INFO << "Style is null" << styleDescription.getStyleName();
 
-  atools::gui::Application::applicationInstance()->setStyleSheet(styleDescription.getStylesheet());
+  QString styleSheet = styleDescription.getStylesheet();
+  styleSheet.replace("%fontheight%", QString::number(atools::roundToInt(QFontMetricsF(QApplication::font()).height() * 1.6)));
+
+  atools::gui::Application::applicationInstance()->setStyleSheet(styleSheet);
 
   // Need to clear due to Qt bug
   QPixmapCache::clear();
