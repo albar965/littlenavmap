@@ -30,6 +30,7 @@ bool SearchViewEventFilter::eventFilter(QObject *object, QEvent *event)
 {
   if(event->type() == QEvent::KeyPress)
   {
+    // Get key event and do not process further
     QKeyEvent *keyEvent = dynamic_cast<QKeyEvent *>(event);
     if(keyEvent != nullptr && keyEvent->key() == Qt::Key_Return)
     {
@@ -38,21 +39,23 @@ bool SearchViewEventFilter::eventFilter(QObject *object, QEvent *event)
     }
   }
 
+  // Pass through all others
   return QObject::eventFilter(object, event);
 }
 
-SearchWidgetEventFilter::SearchWidgetEventFilter(AbstractSearch *parent)
+SearchWidgetKeyEventFilter::SearchWidgetKeyEventFilter(AbstractSearch *parent)
   : QObject(parent), searchBase(parent)
 {
 }
 
-bool SearchWidgetEventFilter::eventFilter(QObject *object, QEvent *event)
+bool SearchWidgetKeyEventFilter::eventFilter(QObject *object, QEvent *event)
 {
   if(event->type() == QEvent::KeyPress)
   {
     QKeyEvent *keyEvent = dynamic_cast<QKeyEvent *>(event);
-    if(keyEvent != nullptr)
+    if(keyEvent != nullptr && keyEvent->modifiers() == Qt::NoModifier)
     {
+      // Get key events and do not process further
       switch(keyEvent->key())
       {
         case Qt::Key_Down:
@@ -66,5 +69,6 @@ bool SearchWidgetEventFilter::eventFilter(QObject *object, QEvent *event)
     }
   }
 
+  // Pass through all others
   return QObject::eventFilter(object, event);
 }

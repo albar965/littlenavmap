@@ -31,6 +31,7 @@
 #include "gui/choicedialog.h"
 #include "gui/dialog.h"
 #include "gui/mainwindow.h"
+#include "gui/comboboxhandler.h"
 #include "gui/widgetstate.h"
 #include "gui/widgetutil.h"
 #include "query/airportquery.h"
@@ -280,10 +281,13 @@ AirportSearch::AirportSearch(MainWindow *parent, QTableView *tableView, si::TabS
   iconDelegate = new AirportIconDelegate(columns);
   view->setItemDelegateForColumn(columns->getColumn("ident")->getIndex(), iconDelegate);
 
+  comboBoxHandler = new atools::gui::ComboBoxHandler(ui->comboBoxAirportTextSearch, nullptr, lnm::SEARCHTAB_AIRPORT_IDENT_COMBOBOX_HISTORY);
+  comboBoxHandler->setMenuTooltipsVisible(NavApp::isMenuToolTipsVisible());
+
   // Assign the callback which builds a part of the where clause for the airport search ======================
   // First query builder having matching columns in the list is used
   columns->setQueryBuilder(QueryBuilder(std::bind(&SearchBaseTable::queryBuilderFunc, this, std::placeholders::_1), {
-    QueryWidget(ui->lineEditAirportTextSearch,
+    QueryWidget(ui->comboBoxAirportTextSearch,
                 {"ident", "icao", "iata", "faa", "local", "name", "city", "state", "country"},
                 false /* allowOverride */, false /* allowExclude */),
     QueryWidget(ui->lineEditAirportIcaoSearch,
@@ -298,6 +302,7 @@ AirportSearch::AirportSearch(MainWindow *parent, QTableView *tableView, si::TabS
 
 AirportSearch::~AirportSearch()
 {
+  delete comboBoxHandler;
   delete iconDelegate;
   delete unitStringTool;
 }
@@ -332,7 +337,7 @@ void AirportSearch::connectSearchSlots()
   connect(ui->spinBoxAirportFlightplanMaxSearch, QOverload<int>::of(&QSpinBox::valueChanged),
           this, &AirportSearch::keepRandomFlightRangeSane);
 
-  installEventFilterForWidget(ui->lineEditAirportTextSearch);
+  installEventFilterForWidget(ui->comboBoxAirportTextSearch);
   installEventFilterForWidget(ui->lineEditAirportIcaoSearch);
   installEventFilterForWidget(ui->lineEditAirportCitySearch);
   installEventFilterForWidget(ui->lineEditAirportCountrySearch);
@@ -405,6 +410,7 @@ void AirportSearch::saveState()
   atools::gui::WidgetState widgetState(lnm::SEARCHTAB_AIRPORT_WIDGET);
   widgetState.save(airportSearchWidgets);
   saveViewState(viewStateDistSearch);
+  comboBoxHandler->saveState();
 }
 
 void AirportSearch::restoreState()
@@ -448,6 +454,8 @@ void AirportSearch::restoreState()
 
   // Adapt min/max in spin boxes for random plan search
   keepRandomFlightRangeSane();
+
+  comboBoxHandler->restoreState();
 
   finishRestore();
 }
@@ -665,6 +673,7 @@ void AirportSearch::optionsChanged()
   // Update units in this object
   unitStringTool->update();
   SearchBaseTable::optionsChanged();
+  comboBoxHandler->setMenuTooltipsVisible(NavApp::isMenuToolTipsVisible());
 }
 
 void AirportSearch::resetSearch()

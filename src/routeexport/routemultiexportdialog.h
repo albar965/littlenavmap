@@ -22,7 +22,9 @@
 
 #include <QDialog>
 #include <QMap>
+#include <QSortFilterProxyModel>
 #include <QStyledItemDelegate>
+#include <QTableView>
 
 namespace Ui {
 class RouteMultiExportDialog;
@@ -35,14 +37,14 @@ class WidgetZoomHandler;
 }
 
 class QAbstractButton;
-class QStandardItem;
-class QStandardItemModel;
 class QCheckBox;
 class QItemSelection;
 class QStandardItem;
-class TableSortProxyModel;
-class RouteExportFormatMap;
+class QStandardItem;
+class QStandardItemModel;
 class RouteExportFormat;
+class RouteExportFormatMap;
+class TableSortProxyModel;
 
 /*
  * Dialog for multiexport. Allows to modify selection status and custom paths of export formats.
@@ -207,6 +209,29 @@ private:
   virtual void paint(QPainter *painter, const QStyleOptionViewItem& option, const QModelIndex& index) const override;
 
   const RouteExportFormatMap *formats;
+};
+
+/* Proxy is needed to allow sorting by checkbox state */
+class TableSortProxyModel
+  : public QSortFilterProxyModel
+{
+  Q_OBJECT
+
+public:
+  explicit TableSortProxyModel(QTableView *tableView)
+    : QSortFilterProxyModel(tableView)
+  {
+
+  }
+
+  virtual ~TableSortProxyModel() override
+  {
+
+  }
+
+private:
+  virtual bool lessThan(const QModelIndex& leftIndex, const QModelIndex& rightIndex) const override;
+
 };
 
 #endif // LNM_ROUTEEXPORTALLDIALOG_H

@@ -223,7 +223,7 @@ ProcedureSearch::ProcedureSearch(MainWindow *main, QTreeWidget *treeWidgetParam,
   treeEventFilter = new TreeEventFilter(this);
   treeWidget->viewport()->installEventFilter(treeEventFilter);
 
-  lineInputEventFilter = new SearchWidgetEventFilter(this);
+  lineInputEventFilter = new SearchWidgetKeyEventFilter(this);
   ui->lineEditProcedureSearchIdentFilter->installEventFilter(lineInputEventFilter);
 }
 

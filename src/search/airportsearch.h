@@ -21,19 +21,21 @@
 #include "search/searchbasetable.h"
 #include "search/randomdepartureairportpickingbycriteria.h"
 
-class Column;
 class AirportIconDelegate;
+class Column;
 class QAction;
-class UnitStringTool;
+class QProgressDialog;
 class QueryWidget;
+class UnitStringTool;
 
 namespace atools {
+namespace gui {
+class ComboBoxHandler;
+}
 namespace sql {
 class SqlDatabase;
 }
 }
-
-class QProgressDialog;
 
 /*
  * Airport search tab including all search widgets and the result table view.
@@ -71,10 +73,11 @@ private:
   virtual void saveViewState(bool distanceSearchState) override;
   virtual void restoreViewState(bool distanceSearchState) override;
   virtual void updatePushButtons() override;
-  QAction *followModeAction() override;
 
   /* Options dialog has changed some options */
   virtual void optionsChanged() override;
+
+  QAction *followModeAction() override;
 
   void setCallbacks();
   QVariant modelDataHandler(int colIndex, int rowIndex, const Column *col, const QVariant&,
@@ -129,6 +132,7 @@ private:
   /* Draw airport icon into ident table column */
   AirportIconDelegate *iconDelegate = nullptr;
   UnitStringTool *unitStringTool;
+  atools::gui::ComboBoxHandler *comboBoxHandler = nullptr;
 };
 
 #endif // LITTLENAVMAP_AIRPORTSEARCH_H

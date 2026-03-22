@@ -31,12 +31,10 @@
 #include "util/htmlbuilder.h"
 
 #include <QStandardItemModel>
-#include <QSortFilterProxyModel>
 #include <QPushButton>
 #include <QCheckBox>
 #include <QMenu>
 #include <QDir>
-#include <QStyledItemDelegate>
 #include <QPainter>
 #include <QStringBuilder>
 
@@ -110,27 +108,6 @@ void TableItemDelegate::paint(QPainter *painter, const QStyleOptionViewItem& opt
 }
 
 // TableSortProxyModel  ==================================================================================================
-
-/* Proxy is needed to allow sorting by checkbox state */
-class TableSortProxyModel
-  : public QSortFilterProxyModel
-{
-public:
-  explicit TableSortProxyModel(QTableView *tableView)
-    : QSortFilterProxyModel(tableView)
-  {
-
-  }
-
-  virtual ~TableSortProxyModel() override
-  {
-
-  }
-
-private:
-  virtual bool lessThan(const QModelIndex& leftIndex, const QModelIndex& rightIndex) const override;
-
-};
 
 bool TableSortProxyModel::lessThan(const QModelIndex& leftIndex, const QModelIndex& rightIndex) const
 {
@@ -488,8 +465,7 @@ void RouteMultiExportDialog::updateModel()
 
   QList<RouteExportFormat> values = formatMapDialog->values();
 
-  std::sort(values.begin(), values.end(), [](const RouteExportFormat& f1, const RouteExportFormat& f2) -> bool
-  {
+  std::sort(values.begin(), values.end(), [](const RouteExportFormat& f1, const RouteExportFormat& f2) -> bool {
     return QString::localeAwareCompare(f1.getComment(), f2.getComment()) < 0;
   });
 

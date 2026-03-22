@@ -142,7 +142,7 @@ SearchBaseTable::SearchBaseTable(MainWindow *parent, QTableView *tableView, Colu
     connect(ui->actionSearchDirectTo, &QAction::triggered, this, &SearchBaseTable::routeDirectToAction);
 
   viewEventFilter = new SearchViewEventFilter(this);
-  widgetEventFilter = new SearchWidgetEventFilter(this);
+  widgetKeyEventFilter = new SearchWidgetKeyEventFilter(this);
   view->installEventFilter(viewEventFilter);
   atools::gui::adjustSelectionColors(view);
 }
@@ -155,10 +155,9 @@ SearchBaseTable::~SearchBaseTable()
   delete updateTimer;
   delete columns;
   delete viewEventFilter;
-  delete widgetEventFilter;
+  delete widgetKeyEventFilter;
 }
 
-/* Copy the selected rows of the table view as CSV into clipboard */
 void SearchBaseTable::tableCopyClipboard()
 {
   if(view->isVisible())
@@ -210,7 +209,8 @@ void SearchBaseTable::buttonMenuTriggered(QLayout *layout, QWidget *otherWidget,
 
 QueryBuilderResult SearchBaseTable::queryBuilderFunc(const QueryWidget& queryWidget)
 {
-  QLineEdit *lineEdit = dynamic_cast<QLineEdit *>(queryWidget.getWidget());
+  QLineEdit *lineEdit = queryWidget.getLineEditWidget();
+
   if(lineEdit != nullptr)
   {
     // Widget list is always one line edit as registered in airport search or nav search
@@ -404,21 +404,16 @@ void SearchBaseTable::connectSearchWidgets()
     controller->setBuilder(columns->getQueryBuilder());
 
     // Connect all query builder widgets
-    for(QWidget *widget : columns->getQueryBuilder().getWidgets())
+    for(QLineEdit *lineEdit : columns->getQueryBuilder().getLineEditWidgets())
     {
-      if(widget != nullptr)
+      // Only line edit allowed for now
+      if(lineEdit != nullptr)
       {
-        QLineEdit *lineEdit = dynamic_cast<QLineEdit *>(widget);
-
-        // Only line edit allowed for now
-        if(lineEdit != nullptr)
-        {
-          connect(lineEdit, &QLineEdit::textChanged, this, [this](const QString&) {
-            controller->filterByBuilder();
-            updateButtonMenu();
-            editStartTimer();
-          });
-        }
+        connect(lineEdit, &QLineEdit::textChanged, [this](const QString&) {
+          controller->filterByBuilder();
+          updateButtonMenu();
+          editStartTimer();
+        });
       }
     }
   }
@@ -633,11 +628,9 @@ void SearchBaseTable::distanceSearchChanged(bool changeViewState)
 
 void SearchBaseTable::installEventFilterForWidget(QWidget *widget)
 {
-  widget->installEventFilter(widgetEventFilter);
+  widget->installEventFilter(widgetKeyEventFilter);
 }
 
-/* Search criteria editing has started. Start or restart the timer for a
- * delayed update if distance search is used */
 void SearchBaseTable::editStartTimer()
 {
   if(controller->isDistanceSearch())
@@ -647,7 +640,6 @@ void SearchBaseTable::editStartTimer()
   }
 }
 
-/* Delayed update timeout. Update result if distance search is active */
 void SearchBaseTable::editTimeout()
 {
   if(atools::gui::Application::isShuttingDown())
@@ -689,7 +681,6 @@ bool SearchBaseTable::hasSelection() const
   return view->selectionModel() == nullptr ? false : view->selectionModel()->hasSelection();
 }
 
-/* Connect selection model again after a SQL model reset */
 void SearchBaseTable::reconnectSelectionModel()
 {
   if(view->selectionModel() != nullptr)
@@ -701,13 +692,11 @@ void SearchBaseTable::reconnectSelectionModel()
   }
 }
 
-/* Slot for table selection changed */
 void SearchBaseTable::tableSelectionChanged(const QItemSelection&, const QItemSelection&)
 {
   tableSelectionChangedInternal(false /* noFollow */);
 }
 
-/* Update highlights if dock is hidden or shown (does not change for dock tab stacks) */
 void SearchBaseTable::dockVisibilityChanged(bool)
 {
   // Avoid spurious events that appear on shutdown and cause crashes
@@ -753,7 +742,6 @@ void SearchBaseTable::postDatabaseLoad()
   restoreViewState(columns->isDistanceCheckBoxActive());
 }
 
-/* Reset view sort order, column width and column order back to default values */
 void SearchBaseTable::resetView()
 {
   if(NavApp::getSearchController()->getCurrentSearchTabId() == tabIndex)
@@ -861,7 +849,6 @@ void SearchBaseTable::finishRestore()
     distanceSearchChanged(false /* changeViewState */);
 }
 
-/* Loads all rows into the table view */
 void SearchBaseTable::loadAllRowsIntoView()
 {
   if(NavApp::getSearchController()->getCurrentSearchTabId() == tabIndex)
@@ -901,7 +888,6 @@ void SearchBaseTable::activateView()
   view->setFocus();
 }
 
-/* Double click into table view */
 void SearchBaseTable::doubleClick(const QModelIndex& index)
 {
   if(index.isValid())
@@ -978,7 +964,6 @@ void SearchBaseTable::nothingSelectedTriggered()
   controller->selectNoRows();
 }
 
-/* Context menu in table view selected */
 void SearchBaseTable::contextMenu(const QPoint& pos)
 {
   qDebug() << Q_FUNC_INFO << "pos" << pos;
@@ -1789,7 +1774,6 @@ void SearchBaseTable::showInformationTriggered()
   }
 }
 
-/* Triggered by show approaches action in context menu. Populates map search result and emits show information */
 void SearchBaseTable::showApproachesTriggered()
 {
   showApproaches(false /* customApproach */, false /* customDeparture */);
@@ -1848,7 +1832,6 @@ void SearchBaseTable::showApproaches(bool customApproach, bool customDeparture)
   }
 }
 
-/* Show on map action in context menu */
 void SearchBaseTable::showOnMapTriggered()
 {
   if(NavApp::getSearchController()->getCurrentSearchTabId() == tabIndex)
@@ -1984,7 +1967,6 @@ void SearchBaseTable::tabDeactivated()
   emit selectionChanged(this, 0, controller->getVisibleRowCount(), controller->getTotalRowCount());
 }
 
-/* Callback for the controller. Will be called for each table cell and should return a formatted value */
 QVariant SearchBaseTable::modelDataHandler(int colIndex, int rowIndex, const Column *col, const QVariant&,
                                            const QVariant& displayRoleValue, Qt::ItemDataRole role) const
 {
@@ -2018,7 +2000,6 @@ QVariant SearchBaseTable::modelDataHandler(int colIndex, int rowIndex, const Col
   return QVariant();
 }
 
-/* Formats the QVariant to a QString depending on column name */
 QString SearchBaseTable::formatModelData(const Column *, const QVariant& displayRoleValue) const
 {
   // Called directly by the model for export functions

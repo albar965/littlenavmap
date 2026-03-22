@@ -36,11 +36,11 @@ QueryBuilderResultList QueryBuilder::build() const
   return result;
 }
 
-const QList<QWidget *> QueryBuilder::getWidgets() const
+const QList<QLineEdit *> QueryBuilder::getLineEditWidgets() const
 {
-  QList<QWidget *> widgets;
+  QList<QLineEdit *> widgets;
   for(const QueryWidget& queryWidget : queryWidgets)
-    widgets.append(queryWidget.getWidget());
+    widgets.append(queryWidget.getLineEditWidget());
   return widgets;
 }
 
@@ -54,8 +54,9 @@ const QStringList QueryBuilder::getColumns() const
 
 void QueryBuilder::resetWidgets()
 {
-  for(QWidget *widget : getWidgets())
+  for(const QueryWidget& queryWidget : std::as_const(queryWidgets))
   {
+    QWidget *widget = queryWidget.getWidget();
     if(widget != nullptr)
     {
       QLineEdit *lineEdit = dynamic_cast<QLineEdit *>(widget);
@@ -83,6 +84,15 @@ void QueryBuilder::resetWidgets()
       }
     }
   }
+}
+
+QLineEdit *QueryWidget::getLineEditWidget() const
+{
+  QComboBox *comboBox = dynamic_cast<QComboBox *>(widget);
+  if(comboBox != nullptr)
+    return comboBox->lineEdit();
+  else
+    return dynamic_cast<QLineEdit *>(widget);
 }
 
 bool QueryWidget::isWidgetEnabled() const

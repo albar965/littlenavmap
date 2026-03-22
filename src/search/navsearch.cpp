@@ -26,6 +26,7 @@
 #include "common/maptypes.h"
 #include "common/unit.h"
 #include "fs/util/fsutil.h"
+#include "gui/comboboxhandler.h"
 #include "gui/widgetstate.h"
 #include "gui/widgetutil.h"
 #include "query/mapquery.h"
@@ -190,9 +191,12 @@ NavSearch::NavSearch(MainWindow *parent, QTableView *tableView, si::TabSearchId 
   iconDelegate = new NavIconDelegate(columns);
   view->setItemDelegateForColumn(columns->getColumn("ident")->getIndex(), iconDelegate);
 
+  comboBoxHandler = new atools::gui::ComboBoxHandler(ui->comboBoxNavIcaoSearch, nullptr, lnm::SEARCHTAB_NAV_ICAO_COMBOBOX_HISTORY);
+  comboBoxHandler->setMenuTooltipsVisible(NavApp::isMenuToolTipsVisible());
+
   // Assign the callback which builds a part of the where clause for the airport search ======================
   columns->setQueryBuilder(QueryBuilder(std::bind(&SearchBaseTable::queryBuilderFunc, this, std::placeholders::_1),
-                                        {QueryWidget(ui->lineEditNavIcaoSearch, {"ident"},
+                                        {QueryWidget(ui->comboBoxNavIcaoSearch, {"ident"},
                                                      false /* allowOverride */, false /* allowExclude */)}));
 
   SearchBaseTable::initViewAndController(NavApp::getDatabaseNav());
@@ -214,7 +218,7 @@ void NavSearch::connectSearchSlots()
   connect(ui->pushButtonNavSearchClearSelection, &QPushButton::clicked, this, &SearchBaseTable::nothingSelectedTriggered);
   connect(ui->pushButtonNavSearchReset, &QPushButton::clicked, this, &SearchBaseTable::resetSearch);
 
-  installEventFilterForWidget(ui->lineEditNavIcaoSearch);
+  installEventFilterForWidget(ui->comboBoxNavTypeSearch);
   installEventFilterForWidget(ui->lineEditNavNameSearch);
   installEventFilterForWidget(ui->lineEditNavRegionSearch);
   installEventFilterForWidget(ui->lineEditNavAirportIcaoSearch);
@@ -255,6 +259,7 @@ void NavSearch::saveState()
   atools::gui::WidgetState widgetState(lnm::SEARCHTAB_NAV_WIDGET);
   widgetState.save(navSearchWidgets);
   saveViewState(viewStateDistSearch);
+  comboBoxHandler->saveState();
 }
 
 void NavSearch::restoreState()
@@ -285,6 +290,8 @@ void NavSearch::restoreState()
     ui->actionNavSearchShowDistOptions->setChecked(false);
     ui->actionNavSearchShowSceneryOptions->setChecked(false);
   }
+
+  comboBoxHandler->restoreState();
 
   finishRestore();
 }
@@ -478,6 +485,12 @@ void NavSearch::updatePushButtons()
 {
   QItemSelectionModel *sm = view->selectionModel();
   ui->pushButtonNavSearchClearSelection->setEnabled(sm != nullptr && sm->hasSelection());
+}
+
+void NavSearch::optionsChanged()
+{
+  SearchBaseTable::optionsChanged();
+  comboBoxHandler->setMenuTooltipsVisible(NavApp::isMenuToolTipsVisible());
 }
 
 QAction *NavSearch::followModeAction()

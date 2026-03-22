@@ -23,6 +23,7 @@
 
 #include <functional>
 
+class QLineEdit;
 class QWidget;
 
 /*
@@ -80,6 +81,9 @@ public:
   {
     return widget;
   }
+
+  /* Either referenced line edit or line edit from a combo box */
+  QLineEdit *getLineEditWidget() const;
 
   bool isWidgetEnabled() const;
 
@@ -146,7 +150,7 @@ public:
 
   /* Get triggering widgets. Normally used in the callback function to extract filter values.
    * Currently only line edit widgets supported. */
-  const QList<QWidget *> getWidgets() const;
+  const QList<QLineEdit *> getLineEditWidgets() const;
 
   /* Get affected or used column names for all query widgets */
   const QStringList getColumns() const;

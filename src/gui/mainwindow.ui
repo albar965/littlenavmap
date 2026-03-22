@@ -663,6 +663,9 @@
          <height>20</height>
         </size>
        </property>
+       <property name="contextMenuPolicy">
+        <enum>Qt::CustomContextMenu</enum>
+       </property>
        <property name="tabShape">
         <enum>QTabWidget::Rounded</enum>
        </property>
@@ -709,12 +712,15 @@
               <number>0</number>
              </property>
              <item>
-              <widget class="QLineEdit" name="lineEditAirportTextSearch">
+              <widget class="QComboBox" name="comboBoxAirportTextSearch">
                <property name="sizePolicy">
                 <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
                  <horstretch>1</horstretch>
                  <verstretch>0</verstretch>
                 </sizepolicy>
+               </property>
+               <property name="contextMenuPolicy">
+                <enum>Qt::CustomContextMenu</enum>
                </property>
                <property name="toolTip">
                 <string>Airport ident (ICAO, IATA, FAA or local), name, city, state, province, country or area code.
@@ -723,13 +729,22 @@ Searches for partial text in all fields. Note that not all fields are available 
                <property name="statusTip">
                 <string>Airport ident (ICAO, IATA, FAA or local), name, city, state, province, country or area code.\nSearches for partial text in all fields.</string>
                </property>
-               <property name="text">
-                <string/>
+               <property name="editable">
+                <bool>true</bool>
+               </property>
+               <property name="maxVisibleItems">
+                <number>20</number>
+               </property>
+               <property name="maxCount">
+                <number>20</number>
+               </property>
+               <property name="insertPolicy">
+                <enum>QComboBox::InsertAtTop</enum>
                </property>
                <property name="placeholderText">
                 <string>Ident, name, city, state, province, country or area code</string>
                </property>
-               <property name="clearButtonEnabled">
+               <property name="frame">
                 <bool>true</bool>
                </property>
               </widget>
@@ -1973,7 +1988,7 @@ Not available for all simulators.</string>
               <number>0</number>
              </property>
              <item>
-              <widget class="QLineEdit" name="lineEditNavIcaoSearch">
+              <widget class="QComboBox" name="comboBoxNavIcaoSearch">
                <property name="sizePolicy">
                 <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
                  <horstretch>2</horstretch>
@@ -1986,16 +2001,31 @@ Not available for all simulators.</string>
                  <height>0</height>
                 </size>
                </property>
+               <property name="contextMenuPolicy">
+                <enum>Qt::CustomContextMenu</enum>
+               </property>
                <property name="toolTip">
                 <string>Navaid ICAO ident</string>
                </property>
                <property name="statusTip">
                 <string>Navaid ICAO ident</string>
                </property>
+               <property name="editable">
+                <bool>true</bool>
+               </property>
+               <property name="maxVisibleItems">
+                <number>20</number>
+               </property>
+               <property name="maxCount">
+                <number>20</number>
+               </property>
+               <property name="insertPolicy">
+                <enum>QComboBox::InsertAtTop</enum>
+               </property>
                <property name="placeholderText">
                 <string>Ident</string>
                </property>
-               <property name="clearButtonEnabled">
+               <property name="frame">
                 <bool>true</bool>
                </property>
               </widget>
@@ -6422,6 +6452,9 @@ relation to shown airport</string>
              <height>20</height>
             </size>
            </property>
+           <property name="contextMenuPolicy">
+            <enum>Qt::CustomContextMenu</enum>
+           </property>
            <property name="readOnly">
             <bool>true</bool>
            </property>
@@ -6506,7 +6539,11 @@ relation to shown airport</string>
       <number>0</number>
      </property>
      <item>
-      <widget class="QWidget" name="widgetDummyMap" native="true"/>
+      <widget class="QWidget" name="widgetDummyMap" native="true">
+       <property name="toolTip">
+        <string>Delete the current airport search term from the list.</string>
+       </property>
+      </widget>
      </item>
     </layout>
    </widget>
@@ -12672,7 +12709,6 @@ from either the departure parking or the user aircraft while taxiing.</string>
   <tabstop>textBrowserAircraftProgressInfo</tabstop>
   <tabstop>textBrowserAircraftAiInfo</tabstop>
   <tabstop>tabWidgetSearch</tabstop>
-  <tabstop>lineEditAirportTextSearch</tabstop>
   <tabstop>pushButtonAirportSearchReset</tabstop>
   <tabstop>pushButtonAirportSearchClearSelection</tabstop>
   <tabstop>pushButtonAirportHelpSearch</tabstop>
@@ -12710,7 +12746,6 @@ from either the departure parking or the user aircraft while taxiing.</string>
   <tabstop>lineEditAirportScenerySearch</tabstop>
   <tabstop>lineEditAirportFileSearch</tabstop>
   <tabstop>tableViewAirportSearch</tabstop>
-  <tabstop>lineEditNavIcaoSearch</tabstop>
   <tabstop>lineEditNavNameSearch</tabstop>
   <tabstop>lineEditNavRegionSearch</tabstop>
   <tabstop>lineEditNavAirportIcaoSearch</tabstop>

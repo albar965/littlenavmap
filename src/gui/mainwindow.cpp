@@ -1720,8 +1720,8 @@ void MainWindow::actionShortcutAirportSearchTriggered()
   qDebug() << Q_FUNC_INFO;
   dockHandler->activateWindow(ui->dockWidgetSearch);
   searchController->setCurrentSearchTabId(si::SEARCH_AIRPORT);
-  ui->lineEditAirportTextSearch->setFocus();
-  ui->lineEditAirportTextSearch->selectAll();
+  ui->comboBoxAirportTextSearch->setFocus();
+  ui->comboBoxAirportTextSearch->lineEdit()->selectAll();
 }
 
 void MainWindow::actionShortcutNavaidSearchTriggered()
@@ -1729,8 +1729,8 @@ void MainWindow::actionShortcutNavaidSearchTriggered()
   qDebug() << Q_FUNC_INFO;
   dockHandler->activateWindow(ui->dockWidgetSearch);
   searchController->setCurrentSearchTabId(si::SEARCH_NAV);
-  ui->lineEditNavIcaoSearch->setFocus();
-  ui->lineEditNavIcaoSearch->selectAll();
+  ui->comboBoxNavIcaoSearch->setFocus();
+  ui->comboBoxNavIcaoSearch->lineEdit()->selectAll();
 }
 
 void MainWindow::actionShortcutProcedureSearchTriggered()

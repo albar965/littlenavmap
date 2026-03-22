@@ -34,7 +34,7 @@ class QTimer;
 class CsvExporter;
 class Column;
 class SearchViewEventFilter;
-class SearchWidgetEventFilter;
+class SearchWidgetKeyEventFilter;
 class QLineEdit;
 class QAction;
 class QComboBox;
@@ -137,7 +137,9 @@ public:
   QList<int> getSelectedRows() const;
 
   /* Default handler */
-  QVariant modelDataHandler(int colIndex, int rowIndex, const Column *col, const QVariant&,
+  /* Callback for the controller. Will be called for each table cell and should return a formatted value */
+  QVariant modelDataHandler(int colIndex, int rowIndex, const Column *col, /* Formats the QVariant to a QString depending on column name */
+                            const QVariant&,
                             const QVariant& displayRoleValue, Qt::ItemDataRole role) const;
   QString formatModelData(const Column *, const QVariant& displayRoleValue) const;
 
@@ -235,23 +237,46 @@ private:
   virtual void tabDeactivated() override;
 
   void tableSelectionChangedInternal(bool noFollow);
+
+  /* Reset view sort order, column width and column order back to default values */
   void resetView();
+
+  /* Search criteria editing has started. Start or restart the timer for a
+   * delayed update if distance search is used */
   void editStartTimer();
+
+  /* Double click into table view */
   void doubleClick(const QModelIndex& index);
+
+  /* Slot for table selection changed */
   void tableSelectionChanged(const QItemSelection&, const QItemSelection&);
+
+  /* Delayed update timeout. Update result if distance search is active */
+  /* Connect selection model again after a SQL model reset */
   void reconnectSelectionModel();
   void getNavTypeAndId(int row, map::MapTypes& navType, int& id);
-  void getNavTypeAndId(int row, map::MapTypes& navType, map::MapAirspaceSources& airspaceSource, int& id);
+  void getNavTypeAndId(int row, /* Loads all rows into the table view */
+                       map::MapTypes& navType, map::MapAirspaceSources& airspaceSource, int& id);
   void editTimeout();
 
   void loadAllRowsIntoView();
+
+  /* Copy the selected rows of the table view as CSV into clipboard */
   void tableCopyClipboard();
   void showInformationTriggered();
+
+  /* Triggered by show approaches action in context menu. Populates map search result and emits show information */
   void showApproachesTriggered();
   void showApproachesCustomTriggered();
   void showDeparturesCustomTriggered();
+
+  /* Show on map action in context menu */
   void showOnMapTriggered();
+
+  /* Context menu in table view selected */
   void contextMenu(const QPoint& pos);
+
+  /* Update highlights if dock is hidden or shown (does not change for dock tab stacks) */
   void dockVisibilityChanged(bool);
   void distanceSearchStateChanged(int);
   void updateDistanceSearch();
@@ -280,8 +305,7 @@ private:
   QTimer *updateTimer;
 
   SearchViewEventFilter *viewEventFilter = nullptr;
-  SearchWidgetEventFilter *widgetEventFilter = nullptr;
-
+  SearchWidgetKeyEventFilter *widgetKeyEventFilter = nullptr;
 };
 
 #endif // LITTLENAVMAP_SEARCHBASE_H

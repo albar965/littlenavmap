@@ -34,6 +34,10 @@ class QueryBuilderResult;
 
 class QueryWidget;
 namespace atools {
+
+namespace gui {
+class ComboBoxHandler;
+}
 namespace sql {
 class SqlDatabase;
 }
@@ -67,8 +71,11 @@ private:
   virtual void saveViewState(bool distanceSearchState) override;
   virtual void restoreViewState(bool distanceSearchState) override;
   virtual void updatePushButtons() override;
-  QAction *followModeAction() override;
 
+  /* Options dialog has changed some options */
+  virtual void optionsChanged() override;
+
+  QAction *followModeAction() override;
   void setCallbacks();
   QVariant modelDataHandler(int colIndex, int rowIndex, const Column *col, const QVariant&,
                             const QVariant& displayRoleValue, Qt::ItemDataRole role) const;
@@ -85,6 +92,7 @@ private:
   /* Draw navaid icon into ident table column */
   NavIconDelegate *iconDelegate = nullptr;
 
+  atools::gui::ComboBoxHandler *comboBoxHandler = nullptr;
 };
 
 #endif // LITTLENAVMAP_NAVSEARCH_H

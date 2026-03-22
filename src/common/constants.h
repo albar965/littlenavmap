@@ -254,11 +254,13 @@ const QLatin1String SEARCHTAB_WIDGET_TABS("SearchPaneAirport/WidgetTabs");
 const QLatin1String SEARCHTAB_AIRPORT_WIDGET("SearchPaneAirport/Widget");
 const QLatin1String SEARCHTAB_AIRPORT_VIEW_WIDGET("SearchPaneAirport/WidgetView");
 const QLatin1String SEARCHTAB_AIRPORT_VIEW_DIST_WIDGET("SearchPaneAirport/WidgetDistView");
-const QLatin1String SEARCHTAB_AIRPORT_RANDOM("SearchPaneLogdata/RandomPlan");
+const QLatin1String SEARCHTAB_AIRPORT_RANDOM("SearchPaneAirport/RandomPlan");
+const QLatin1String SEARCHTAB_AIRPORT_IDENT_COMBOBOX_HISTORY("SearchPaneAirport/SearchIdentComboHistory");
 
 const QLatin1String SEARCHTAB_NAV_WIDGET("SearchPaneNav/Widget");
 const QLatin1String SEARCHTAB_NAV_VIEW_WIDGET("SearchPaneNav/WidgetView");
 const QLatin1String SEARCHTAB_NAV_VIEW_DIST_WIDGET("SearchPaneNav/WidgetDistView");
+const QLatin1String SEARCHTAB_NAV_ICAO_COMBOBOX_HISTORY("SearchPaneNav/SearchIcaoComboHistory");
 
 const QLatin1String SEARCHTAB_USERDATA_VIEW_WIDGET("SearchPaneUserdata/WidgetView");
 const QLatin1String SEARCHTAB_USERDATA_CLEANUP_DIALOG("SearchPaneUserdata/CleanupDialog");

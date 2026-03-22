@@ -197,7 +197,7 @@ void SqlModel::filterBy(bool exclude, QString whereCol, QVariant whereValueDisp,
       if(queryWidget.getColumns().contains(whereCol))
       {
         // Field matches with one of the query builder columns
-        QLineEdit *lineEdit = dynamic_cast<QLineEdit *>(queryWidget.getWidget());
+        QLineEdit *lineEdit = queryWidget.getLineEditWidget();
         if(lineEdit != nullptr)
           lineEdit->setText(whereValueDisp.toString());
 

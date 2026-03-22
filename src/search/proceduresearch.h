@@ -27,7 +27,7 @@
 #include <QObject>
 #include <QList>
 
-class SearchWidgetEventFilter;
+class SearchWidgetKeyEventFilter;
 namespace atools {
 namespace gui {
 class GridDelegate;
@@ -297,7 +297,7 @@ private:
   TreeEventFilter *treeEventFilter = nullptr;
 
   /* Event filter for line input */
-  SearchWidgetEventFilter *lineInputEventFilter = nullptr;
+  SearchWidgetKeyEventFilter *lineInputEventFilter = nullptr;
   bool errors = false;
 
   bool savedDepartureFilter = false, savedArrivalFilter = false;

@@ -43,13 +43,13 @@ private:
 /*
  * Event filter for input lines. Cursor down calls AbstractSearch::activateView() and Return AbstractSearch::showFirstEntry()
  */
-class SearchWidgetEventFilter :
+class SearchWidgetKeyEventFilter :
   public QObject
 {
   Q_OBJECT
 
 public:
-  SearchWidgetEventFilter(AbstractSearch *parent);
+  SearchWidgetKeyEventFilter(AbstractSearch *parent);
 
 private:
   virtual bool eventFilter(QObject *object, QEvent *event) override;

@@ -140,7 +140,6 @@ InfoController::InfoController(QWidget *parent)
   connect(button, &QPushButton::clicked, this, &InfoController::progressConfigurationClicked);
 
   // Create context menu connections for progress text browser ===========================
-  ui->textBrowserAircraftProgressInfo->setContextMenuPolicy(Qt::CustomContextMenu);
   connect(ui->textBrowserAircraftProgressInfo, &QTextBrowser::customContextMenuRequested, this, &InfoController::showProgressContextMenu);
   connect(ui->actionInfoDisplayOptions, &QAction::triggered, this, &InfoController::progressConfigurationClicked);
 
