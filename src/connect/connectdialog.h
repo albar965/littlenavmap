@@ -20,6 +20,11 @@
 
 #include <QDialog>
 
+namespace atools {
+namespace gui {
+class ComboBoxHandler;
+}
+}
 namespace Ui {
 class ConnectDialog;
 }
@@ -91,8 +96,8 @@ private:
   void updateRateHasChanged();
   void fetchOptionsClicked();
 
+  /* A button box button was clicked */
   void buttonBoxClicked(QAbstractButton *button);
-  void deleteClicked();
   void updateButtonStates();
   void activateTab(QWidget *tabWidget);
 
@@ -101,6 +106,7 @@ private:
 
   Ui::ConnectDialog *ui;
   bool simConnect = false;
+  atools::gui::ComboBoxHandler *comboBoxHandler = nullptr;
 
 };
 

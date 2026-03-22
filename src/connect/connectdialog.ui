@@ -136,7 +136,6 @@ Lower values will result in a more fluid aircraft movement but can potentially i
         <widget class="QLabel" name="labelConnectFsx">
          <property name="font">
           <font>
-           <weight>75</weight>
            <bold>true</bold>
           </font>
          </property>
@@ -224,7 +223,6 @@ Lower values will result in a more fluid aircraft movement but can potentially i
         <widget class="QLabel" name="labelConnectXp">
          <property name="font">
           <font>
-           <weight>75</weight>
            <bold>true</bold>
           </font>
          </property>
@@ -320,6 +318,9 @@ Use your X-Plane computer name if you are running the Little Xpconnect X-Plane p
        </item>
        <item row="1" column="1" colspan="2">
         <widget class="QComboBox" name="comboBoxConnectHostname">
+         <property name="contextMenuPolicy">
+          <enum>Qt::CustomContextMenu</enum>
+         </property>
          <property name="toolTip">
           <string>Add the &lt;span style=&quot;color: #0000ff; font-weight:bold&quot;&gt;hostname&lt;/span&gt; or &lt;span style=&quot;color: #0000ff; font-weight:bold&quot;&gt;IP address&lt;/span&gt; that Little Navconnect shows on startup.
 Use your X-Plane computer name if you are running the Little Xpconnect X-Plane plugin.</string>
@@ -362,7 +363,6 @@ Use your X-Plane computer name if you are running the Little Xpconnect X-Plane p
         <widget class="QLabel" name="labelConnectRemote">
          <property name="font">
           <font>
-           <weight>75</weight>
            <bold>true</bold>
           </font>
          </property>

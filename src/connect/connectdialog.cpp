@@ -17,16 +17,16 @@
 
 #include "connect/connectdialog.h"
 
+#include "app/navapp.h"
 #include "common/constants.h"
+#include "gui/clicktooltiphandler.h"
+#include "gui/comboboxhandler.h"
 #include "gui/helphandler.h"
 #include "gui/widgetstate.h"
-#include "app/navapp.h"
 #include "settings/settings.h"
 #include "ui_connectdialog.h"
 #include "util/htmlbuilder.h"
-#include "gui/clicktooltiphandler.h"
 
-#include <QDebug>
 #include <QUrl>
 #include <QPushButton>
 #include <QRadioButton>
@@ -94,7 +94,7 @@ ConnectDialog::ConnectDialog(QWidget *parent, bool simConnectAvailable)
   connect(ui->buttonBoxConnect, &QDialogButtonBox::clicked, this, &ConnectDialog::buttonBoxClicked);
   connect(ui->checkBoxConnectOnStartup, &QRadioButton::toggled, this, &ConnectDialog::autoConnectToggled);
   connect(ui->checkBoxConnectOnStartup, &QRadioButton::toggled, this, &ConnectDialog::updateButtonStates);
-  connect(ui->pushButtonConnectDeleteHostname, &QPushButton::clicked, this, &ConnectDialog::deleteClicked);
+  connect(ui->pushButtonConnectDeleteHostname, &QPushButton::clicked, this, &ConnectDialog::updateButtonStates);
 
   connect(ui->checkBoxConnectFetchAiAircraftXp, &QCheckBox::toggled, this, &ConnectDialog::fetchOptionsClicked);
   connect(ui->checkBoxConnectFetchAiAircraftFsx, &QCheckBox::toggled, this, &ConnectDialog::fetchOptionsClicked);
@@ -103,6 +103,9 @@ ConnectDialog::ConnectDialog(QWidget *parent, bool simConnectAvailable)
 
   connect(ui->tabWidgetConnect, &QTabWidget::currentChanged, this, &ConnectDialog::updateButtonStates);
   connect(ui->tabWidgetConnect, &QTabWidget::currentChanged, this, &ConnectDialog::updateWarningMessage);
+
+  comboBoxHandler = new atools::gui::ComboBoxHandler(ui->comboBoxConnectHostname, ui->pushButtonConnectDeleteHostname,
+                                                     lnm::NAVCONNECT_REMOTEHOSTS);
 
   connect(ui->comboBoxConnectHostname, &QComboBox::editTextChanged, this, &ConnectDialog::updateButtonStates);
 
@@ -122,49 +125,19 @@ ConnectDialog::~ConnectDialog()
   delete ui;
 }
 
-/* A button box button was clicked */
 void ConnectDialog::buttonBoxClicked(QAbstractButton *button)
 {
   qDebug() << Q_FUNC_INFO << "host" << ui->comboBoxConnectHostname->currentText();
 
   if(button == ui->buttonBoxConnect->button(QDialogButtonBox::Ok))
-  {
-    bool foundEntryInComboList = false;
-    int cnt = ui->comboBoxConnectHostname->count();
-    QString curtxt = ui->comboBoxConnectHostname->currentText();
-
-    // Check if the current text from the edit is already in the combo box history
-    for(int i = 0; i < cnt; i++)
-    {
-      QString itemtxt = ui->comboBoxConnectHostname->itemText(i);
-      if(itemtxt.compare(curtxt, Qt::CaseInsensitive) == 0)
-      {
-        foundEntryInComboList = true;
-        break;
-      }
-    }
-
-    if(!foundEntryInComboList)
-      // Add to combo box
-      ui->comboBoxConnectHostname->addItem(ui->comboBoxConnectHostname->currentText());
-
     QDialog::accept();
-  }
   else if(button == ui->buttonBoxConnect->button(QDialogButtonBox::Reset))
-  {
     // Disconnect button clicked
     emit disconnectClicked();
-  }
   else if(button == ui->buttonBoxConnect->button(QDialogButtonBox::Help))
     HelpHandler::openHelpUrlWeb(this, lnm::helpOnlineUrl + "CONNECT.html", lnm::helpLanguageOnline());
   else if(button == ui->buttonBoxConnect->button(QDialogButtonBox::Close))
     QDialog::reject();
-}
-
-void ConnectDialog::deleteClicked()
-{
-  ui->comboBoxConnectHostname->removeItem(ui->comboBoxConnectHostname->currentIndex());
-  updateButtonStates();
 }
 
 void ConnectDialog::updateWarningMessage()
@@ -336,14 +309,9 @@ void ConnectDialog::saveState() const
                                            ui->checkBoxConnectFetchAiAircraftFsx, ui->checkBoxConnectFetchAiShipFsx,
                                            ui->checkBoxConnectFetchAiShipXp}));
 
-  // Save combo entries separately
-  QStringList entries;
-  for(int i = 0; i < ui->comboBoxConnectHostname->count(); i++)
-    entries.append(ui->comboBoxConnectHostname->itemText(i));
-
   atools::gui::WidgetState(lnm::NAVCONNECT_DIALOG).save(this);
 
-  Settings::instance().setValue(lnm::NAVCONNECT_REMOTEHOSTS, entries);
+  comboBoxHandler->saveState();
 }
 
 void ConnectDialog::activateTab(QWidget *tabWidget)
@@ -355,13 +323,6 @@ void ConnectDialog::activateTab(QWidget *tabWidget)
 
 void ConnectDialog::restoreState()
 {
-  QStringList entries = Settings::instance().valueStrList(lnm::NAVCONNECT_REMOTEHOSTS);
-  entries.removeDuplicates();
-
-  for(const QString& entry : std::as_const(entries))
-    if(!entry.isEmpty())
-      ui->comboBoxConnectHostname->addItem(entry);
-
   atools::gui::WidgetState widgetState(lnm::NAVCONNECT_REMOTE);
   if(!widgetState.contains(ui->tabWidgetConnect))
   {
@@ -393,6 +354,8 @@ void ConnectDialog::restoreState()
                        ui->spinBoxConnectAiFetchRadius, ui->spinBoxConnectUpdateRateXp, ui->checkBoxConnectOnStartup,
                        ui->tabWidgetConnect, ui->checkBoxConnectFetchAiAircraftXp, ui->checkBoxConnectFetchAiAircraftFsx,
                        ui->checkBoxConnectFetchAiShipFsx, ui->checkBoxConnectFetchAiShipXp});
+
+  comboBoxHandler->restoreState();
 
   updateButtonStates();
   updateWarningMessage();
