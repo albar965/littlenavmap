@@ -31,6 +31,7 @@
 #include "gui/helphandler.h"
 #include "gui/statusbar.h"
 #include "gui/tools.h"
+#include "gui/widgetzoomhandler.h"
 #include "online/onlinedatacontroller.h"
 #include "settings/settings.h"
 #include "timezone/timezonemanager.h"
@@ -1170,4 +1171,9 @@ void ConnectClient::resumeSimConnect()
     else
       connectInternal();
   }
+}
+
+void ConnectClient::fontChanged(const QFont& font)
+{
+  atools::gui::updateAllFonts(connectDialog, font, atools::gui::WidgetZoomHandler::getRegisteredWidgets());
 }

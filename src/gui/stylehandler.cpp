@@ -66,7 +66,6 @@ StyleHandler::StyleHandler(QMainWindow *mainWindowParam)
   QString fusionStyleSheet(
     "QTabBar::close-button { image: url(:/littlenavmap/resources/icons/close.svg); } "
     "QTabBar::close-button:hover { image: url(:/littlenavmap/resources/icons/close_hover.svg); }"
-    "QTabBar::tab { height: %fontheight%px; } "
     );
 
   // Override checked menu items style with icons for windows
@@ -180,7 +179,6 @@ StyleHandler::StyleHandler(QMainWindow *mainWindowParam)
     // Night mode shows bright tab bars with this change in macOS
     "QTabBar::close-button { image: url(:/littlenavmap/resources/icons/close_dark.svg); }"
     "QTabBar::close-button:hover { image: url(:/littlenavmap/resources/icons/close_dark_hover.svg); }"
-    "QTabBar::tab { height: %fontheight%px; } "
 #endif
     );
 
@@ -359,10 +357,7 @@ void StyleHandler::applyCurrentStyle()
   else
     qWarning() << Q_FUNC_INFO << "Style is null" << styleDescription.getStyleName();
 
-  QString styleSheet = styleDescription.getStylesheet();
-  styleSheet.replace("%fontheight%", QString::number(atools::roundToInt(QFontMetricsF(QApplication::font()).height() * 1.6)));
-
-  atools::gui::Application::applicationInstance()->setStyleSheet(styleSheet);
+  atools::gui::Application::applicationInstance()->setStyleSheet(styleDescription.getStylesheet());
 
   // Need to clear due to Qt bug
   QPixmapCache::clear();

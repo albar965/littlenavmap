@@ -287,6 +287,9 @@ public:
   /* Switch to simulator database */
   void setCurrentDatabase(atools::fs::FsPaths::SimulatorType type);
 
+  /* Update database dialog */
+  void fontChanged(const QFont& font);
+
 signals:
   /* Emitted before opening the scenery database dialog, loading a database or switching to a new simulator database.
    * Recipients have to close all database connections and clear all caches. The database instance itself is not changed

@@ -5403,9 +5403,6 @@ Wind speed will be interpolated between this altitude and ground level.</string>
        <property name="movable">
         <bool>true</bool>
        </property>
-       <property name="tabBarAutoHide">
-        <bool>false</bool>
-       </property>
        <widget class="QWidget" name="tabAirport">
         <property name="toolTip">
          <string/>

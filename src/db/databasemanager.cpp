@@ -37,6 +37,7 @@
 #include "gui/signalblocker.h"
 #include "gui/simplewaitdialog.h"
 #include "gui/tools.h"
+#include "gui/widgetzoomhandler.h"
 #include "io/fileroller.h"
 #include "options/optiondata.h"
 #include "settings/settings.h"
@@ -2097,4 +2098,9 @@ void DatabaseManager::checkDatabaseVersion()
         loadScenery();
     }
   }
+}
+
+void DatabaseManager::fontChanged(const QFont& font)
+{
+  atools::gui::updateAllFonts(databaseDialog, font, atools::gui::WidgetZoomHandler::getRegisteredWidgets());
 }

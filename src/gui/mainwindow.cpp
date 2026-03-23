@@ -329,13 +329,15 @@ MainWindow::MainWindow()
     // Create map widget and replace dummy widget in window
     qDebug() << Q_FUNC_INFO << "Creating MapWidget";
     mapWidget = new MapWidget(this);
-    if(OptionData::instance().getFlags2() & opts2::MAP_ALLOW_UNDOCK)
+    if(OptionData::instance().getFlags2().testFlag(opts2::MAP_ALLOW_UNDOCK))
     {
+      // Map widget is a normal dock window
       ui->verticalLayoutMap->replaceWidget(ui->widgetDummyMap, mapWidget);
       ui->dockWidgetMap->show();
     }
     else
     {
+      // Map widget is a fixed central widget
       setCentralWidget(mapWidget);
       ui->dockWidgetMap->hide();
     }
@@ -387,6 +389,9 @@ MainWindow::MainWindow()
     qDebug() << Q_FUNC_INFO << "Connecting slots";
     connectAllSlots();
     NavApp::getAircraftPerfController()->connectAllSlots();
+
+    // Emit program wide font change to update all widgets
+    emit Application::applicationInstance()->fontChanged(QGuiApplication::font());
 
     // Append toolbar buttons/widgets ===========================================================
     // Add wind dropdown button
@@ -975,13 +980,20 @@ void MainWindow::connectAllSlots()
     // Needs to be called first since it updates the font in all windows
     connect(app, &Application::fontChanged, this, &MainWindow::fontChanged);
 
-    // Rest later
+    // Update dock widget title bar
+    connect(app, &Application::fontChanged, dockHandler, &atools::gui::DockWidgetHandler::fontChanged);
+
+    // Update menu bar
+    connect(app, &Application::fontChanged, menuWidget(), &QWidget::setFont);
+
+    // Rest later to update non-modal windows and more
     connect(app, &Application::fontChanged, NavApp::getLogdataController(), &LogdataController::fontChanged);
     connect(app, &Application::fontChanged, routeController, &RouteController::fontChanged);
     connect(app, &Application::fontChanged, infoController, &InfoController::fontChanged);
     connect(app, &Application::fontChanged, optionsDialog, &OptionsDialog::fontChanged);
     connect(app, &Application::fontChanged, profileWidget, &ProfileWidget::fontChanged);
-    connect(app, &Application::fontChanged, menuWidget(), &QWidget::setFont);
+    connect(app, &Application::fontChanged, NavApp::getDatabaseManager(), &DatabaseManager::fontChanged);
+    connect(app, &Application::fontChanged, NavApp::getConnectClient(), &ConnectClient::fontChanged);
   }
 
   // Warning when selecting export options ===================================================================
@@ -3292,10 +3304,6 @@ void MainWindow::mainWindowShown()
 {
   qDebug() << Q_FUNC_INFO << "enter";
 
-  // Need to set the font again to pass it on to all menus since these are opened later
-  qDebug() << Q_FUNC_INFO << "QApplication::font()" << QApplication::font();
-  QApplication::setFont(QApplication::font());
-
   // Set empty to disable arbitrary messages from map view changes
   statusBar->setStatusMessage(QStringLiteral());
 
@@ -4253,6 +4261,18 @@ void MainWindow::optionsChanged()
 void MainWindow::fontChanged(const QFont& font)
 {
   atools::gui::updateAllFonts(font, atools::gui::WidgetZoomHandler::getRegisteredWidgets());
+  atools::gui::updateAllFonts(ui->menuBar, font, atools::gui::WidgetZoomHandler::getRegisteredWidgets());
+  atools::gui::updateAllFonts(ui->statusBar, font, atools::gui::WidgetZoomHandler::getRegisteredWidgets());
+
+  for(QDockWidget *dock : dockHandler->getDockWidgets())
+    atools::gui::updateAllFonts(dock, font, atools::gui::WidgetZoomHandler::getRegisteredWidgets());
+
+  // Update the map widget title bar
+  DockWidgetHandler::fontChangedWidget(ui->dockWidgetMap, font);
+
+  // Update tab widget height
+  atools::gui::changeTabBarSize({ui->tabWidgetSearch, ui->tabWidgetRoute, ui->tabWidgetInformation, ui->tabWidgetAirport,
+                                 ui->tabWidgetAircraft});
 }
 
 void MainWindow::styleChanged()

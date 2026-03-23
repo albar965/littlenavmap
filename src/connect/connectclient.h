@@ -131,6 +131,8 @@ public:
   void pauseSimConnect();
   void resumeSimConnect();
 
+  void fontChanged(const QFont& font);
+
 signals:
   /* Emitted when new data was received from the server (Little Navconnect), SimConnect or X-Plane.
    * can be aircraft position or weather update */
