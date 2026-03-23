@@ -34,7 +34,6 @@
 #include "gui/tools.h"
 #include "gui/translator.h"
 #include "gui/widgetstate.h"
-#include "gui/widgetutil.h"
 #include "gui/widgetzoomhandler.h"
 #include "mapgui/mapthemehandler.h"
 #include "mapgui/mapwidget.h"
@@ -1083,9 +1082,9 @@ void OptionsDialog::hintLinkActivated(const QString& link)
 void OptionsDialog::styleChanged()
 {
   // Remember text, clear label and set text again to force update after style changes
-  atools::gui::util::labelForcedUpdate(ui->labelMapApiKeysHint);
-  atools::gui::util::labelForcedUpdate(ui->labelCacheGlobePathDownload);
-  atools::gui::util::labelForcedUpdate(ui->labelOptionsWebStatus);
+  atools::gui::labelForcedUpdate(ui->labelMapApiKeysHint);
+  atools::gui::labelForcedUpdate(ui->labelCacheGlobePathDownload);
+  atools::gui::labelForcedUpdate(ui->labelOptionsWebStatus);
 
   gridDelegate->styleChanged();
 
@@ -1484,7 +1483,7 @@ void OptionsDialog::resetWindowLayout()
   state.clear(this);
   state.syncSettings();
 
-  atools::gui::util::centerWidgetOnScreen(this, defaultSize);
+  atools::gui::centerWidgetOnScreen(this, defaultSize);
 }
 
 void OptionsDialog::saveState()
@@ -1738,16 +1737,16 @@ void OptionsDialog::udpdateLanguageComboBox(const QString& lang)
 
 void OptionsDialog::updateButtonColors()
 {
-  atools::gui::util::changeWidgetColor(ui->pushButtonOptionsDisplayFlightplanColor, flightplanColor);
-  atools::gui::util::changeWidgetColor(ui->pushButtonOptionsDisplayFlightplanOutlineColor, flightplanOutlineColor);
-  atools::gui::util::changeWidgetColor(ui->pushButtonOptionsDisplayFlightplanProcedureColor, flightplanProcedureColor);
-  atools::gui::util::changeWidgetColor(ui->pushButtonOptionsDisplayFlightplanActiveColor, flightplanActiveColor);
-  atools::gui::util::changeWidgetColor(ui->pushButtonOptionsDisplayFlightplanPassedColor, flightplanPassedColor);
-  atools::gui::util::changeWidgetColor(ui->pushButtonOptionsDisplayTrailColor, trailColor);
-  atools::gui::util::changeWidgetColor(ui->pushButtonOptionsMapMeasurementColor, measurementColor);
-  atools::gui::util::changeWidgetColor(ui->pushButtonOptionsMapHighlightFlightPlanColor, highlightFlightplanColor);
-  atools::gui::util::changeWidgetColor(ui->pushButtonOptionsMapHighlightSearchColor, highlightSearchColor);
-  atools::gui::util::changeWidgetColor(ui->pushButtonOptionsMapHighlightProfileColor, highlightProfileColor);
+  atools::gui::changeWidgetColor(ui->pushButtonOptionsDisplayFlightplanColor, flightplanColor);
+  atools::gui::changeWidgetColor(ui->pushButtonOptionsDisplayFlightplanOutlineColor, flightplanOutlineColor);
+  atools::gui::changeWidgetColor(ui->pushButtonOptionsDisplayFlightplanProcedureColor, flightplanProcedureColor);
+  atools::gui::changeWidgetColor(ui->pushButtonOptionsDisplayFlightplanActiveColor, flightplanActiveColor);
+  atools::gui::changeWidgetColor(ui->pushButtonOptionsDisplayFlightplanPassedColor, flightplanPassedColor);
+  atools::gui::changeWidgetColor(ui->pushButtonOptionsDisplayTrailColor, trailColor);
+  atools::gui::changeWidgetColor(ui->pushButtonOptionsMapMeasurementColor, measurementColor);
+  atools::gui::changeWidgetColor(ui->pushButtonOptionsMapHighlightFlightPlanColor, highlightFlightplanColor);
+  atools::gui::changeWidgetColor(ui->pushButtonOptionsMapHighlightSearchColor, highlightSearchColor);
+  atools::gui::changeWidgetColor(ui->pushButtonOptionsMapHighlightProfileColor, highlightProfileColor);
 }
 
 template<typename TYPE>
@@ -3588,7 +3587,7 @@ void OptionsDialog::mapboxUserMapClicked()
 void OptionsDialog::removeSelectedDatabaseTableItems(QTableWidget *widget)
 {
   // Create list in reverse order so that deleting can start at the bottom of the list
-  for(int row : atools::gui::util::getSelectedIndexesInDeletionOrder(widget->selectionModel()))
+  for(int row : atools::gui::getSelectedIndexesInDeletionOrder(widget->selectionModel()))
     // Item removes itself from the list when deleted
     widget->removeRow(row);
 

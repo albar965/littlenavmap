@@ -17,23 +17,23 @@
 
 #include "search/logdatasearch.h"
 
+#include "app/navapp.h"
 #include "atools.h"
 #include "common/constants.h"
-#include "common/mapcolors.h"
-#include "common/maptypesfactory.h"
-#include "common/maptypes.h"
-#include "common/mapresult.h"
-#include "common/unit.h"
 #include "common/formatter.h"
+#include "common/mapcolors.h"
+#include "common/mapresult.h"
+#include "common/maptypes.h"
+#include "common/maptypesfactory.h"
+#include "common/unit.h"
+#include "gui/tools.h"
 #include "gui/widgetstate.h"
-#include "gui/widgetutil.h"
-#include "app/navapp.h"
 #include "query/airportquery.h"
 #include "search/column.h"
 #include "search/columnlist.h"
 #include "search/sqlcontroller.h"
-#include "ui_mainwindow.h"
 #include "sql/sqlrecord.h"
+#include "ui_mainwindow.h"
 
 #include <QDateTime>
 
@@ -379,10 +379,10 @@ void LogdataSearch::setCallbacks()
  * action depending on other action states */
 void LogdataSearch::updateButtonMenu()
 {
-  atools::gui::util::changeIndication(ui->actionLogdataSearchShowMoreOptions,
-                                      atools::gui::util::anyWidgetChanged({ui->verticalLayoutLogdataMore}));
-  atools::gui::util::changeIndication(ui->actionLogdataSearchShowDistOptions,
-                                      atools::gui::util::anyWidgetChanged({ui->horizontalLayoutLogdataDist}));
+  atools::gui::changeIndication(ui->actionLogdataSearchShowMoreOptions,
+                                      atools::gui::anyWidgetChanged({ui->verticalLayoutLogdataMore}));
+  atools::gui::changeIndication(ui->actionLogdataSearchShowDistOptions,
+                                      atools::gui::anyWidgetChanged({ui->horizontalLayoutLogdataDist}));
 }
 
 void LogdataSearch::updatePushButtons()

@@ -27,8 +27,8 @@
 #include "common/unit.h"
 #include "fs/util/fsutil.h"
 #include "gui/comboboxhandler.h"
+#include "gui/tools.h"
 #include "gui/widgetstate.h"
-#include "gui/widgetutil.h"
 #include "query/mapquery.h"
 #include "query/querymanager.h"
 #include "search/column.h"
@@ -456,9 +456,9 @@ void NavSearch::updateButtonMenu()
 
   // Change state of show all action
   ui->actionNavSearchShowAllOptions->blockSignals(true);
-  if(atools::gui::util::allChecked(menus))
+  if(atools::gui::allChecked(menus))
     ui->actionNavSearchShowAllOptions->setChecked(true);
-  else if(atools::gui::util::noneChecked(menus))
+  else if(atools::gui::noneChecked(menus))
     ui->actionNavSearchShowAllOptions->setChecked(false);
   else
     ui->actionNavSearchShowAllOptions->setChecked(false);
@@ -467,15 +467,15 @@ void NavSearch::updateButtonMenu()
   // Show star in action for all widgets that are not in default state
   bool distanceSearchChanged = false;
   if(columns->isDistanceCheckBoxChecked())
-    distanceSearchChanged = atools::gui::util::anyWidgetChanged({ui->horizontalLayoutNavDistanceSearch});
+    distanceSearchChanged = atools::gui::anyWidgetChanged({ui->horizontalLayoutNavDistanceSearch});
 
-  atools::gui::util::changeIndication(ui->actionNavSearchShowDistOptions, distanceSearchChanged);
+  atools::gui::changeIndication(ui->actionNavSearchShowDistOptions, distanceSearchChanged);
 
-  atools::gui::util::changeIndication(ui->actionNavSearchShowTypeOptions,
-                                      atools::gui::util::anyWidgetChanged({ui->gridLayoutNavSearchType}));
+  atools::gui::changeIndication(ui->actionNavSearchShowTypeOptions,
+                                      atools::gui::anyWidgetChanged({ui->gridLayoutNavSearchType}));
 
-  atools::gui::util::changeIndication(ui->actionNavSearchShowSceneryOptions,
-                                      atools::gui::util::anyWidgetChanged({ui->horizontalLayoutNavScenerySearch}));
+  atools::gui::changeIndication(ui->actionNavSearchShowSceneryOptions,
+                                      atools::gui::anyWidgetChanged({ui->horizontalLayoutNavScenerySearch}));
 
   if(controller->isRestoreFinished())
     controller->rebuildQuery();

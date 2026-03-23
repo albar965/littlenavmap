@@ -17,6 +17,7 @@
 
 #include "db/databasemanager.h"
 
+#include "app/navapp.h"
 #include "atools.h"
 #include "common/constants.h"
 #include "common/settingsmigrate.h"
@@ -33,8 +34,10 @@
 #include "fs/xp/scenerypacks.h"
 #include "gui/dialog.h"
 #include "gui/helphandler.h"
+#include "gui/signalblocker.h"
+#include "gui/simplewaitdialog.h"
+#include "gui/tools.h"
 #include "io/fileroller.h"
-#include "app/navapp.h"
 #include "options/optiondata.h"
 #include "settings/settings.h"
 #include "sql/sqldatabase.h"
@@ -44,8 +47,6 @@
 #include "track/trackmanager.h"
 #include "ui_mainwindow.h"
 #include "util/version.h"
-#include "gui/signalblocker.h"
-#include "gui/simplewaitdialog.h"
 
 #include <QDir>
 #include <QStringBuilder>

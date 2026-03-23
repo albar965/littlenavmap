@@ -29,8 +29,8 @@
 #include "gui/actiontool.h"
 #include "gui/dialog.h"
 #include "gui/tools.h"
+#include "gui/tools.h"
 #include "logbook/logdatacontroller.h"
-#include "gui/widgetutil.h"
 #include "mapgui/mapwidget.h"
 #include "query/airportquery.h"
 #include "query/mapquery.h"
@@ -191,7 +191,7 @@ void SearchBaseTable::tableCopyClipboard()
 void SearchBaseTable::buttonMenuTriggered(QLayout *layout, QWidget *otherWidget, bool state, bool distanceSearch)
 {
   // Show or hide all elements recursively
-  atools::gui::util::showHideLayoutElements({layout}, {otherWidget}, state, true /* disable */);
+  atools::gui::showHideLayoutElements({layout}, {otherWidget}, state, true /* disable */);
 
   // Update menu suffixes
   updateButtonMenu();

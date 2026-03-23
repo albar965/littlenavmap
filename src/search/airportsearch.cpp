@@ -29,11 +29,11 @@
 #include "common/unitstringtool.h"
 #include "fs/util/fsutil.h"
 #include "gui/choicedialog.h"
+#include "gui/comboboxhandler.h"
 #include "gui/dialog.h"
 #include "gui/mainwindow.h"
-#include "gui/comboboxhandler.h"
+#include "gui/tools.h"
 #include "gui/widgetstate.h"
-#include "gui/widgetutil.h"
 #include "query/airportquery.h"
 #include "query/mapquery.h"
 #include "query/querymanager.h"
@@ -620,38 +620,38 @@ void AirportSearch::updateButtonMenu()
 
   // Change state of show all action
   ui->actionAirportSearchShowAllOptions->blockSignals(true);
-  if(atools::gui::util::allChecked(menus))
+  if(atools::gui::allChecked(menus))
     ui->actionAirportSearchShowAllOptions->setChecked(true);
-  else if(atools::gui::util::noneChecked(menus))
+  else if(atools::gui::noneChecked(menus))
     ui->actionAirportSearchShowAllOptions->setChecked(false);
   else
     ui->actionAirportSearchShowAllOptions->setChecked(false);
   ui->actionAirportSearchShowAllOptions->blockSignals(false);
 
   // Show star in action for all widgets that are not in default state
-  atools::gui::util::changeIndication(ui->actionAirportSearchShowAdminOptions,
-                                      atools::gui::util::anyWidgetChanged({ui->verticalLayoutAirportAdminSearch}));
+  atools::gui::changeIndication(ui->actionAirportSearchShowAdminOptions,
+                                      atools::gui::anyWidgetChanged({ui->verticalLayoutAirportAdminSearch}));
 
-  atools::gui::util::changeIndication(ui->actionAirportSearchShowExtOptions,
-                                      atools::gui::util::anyWidgetChanged({ui->gridLayoutAirportExtSearch}));
+  atools::gui::changeIndication(ui->actionAirportSearchShowExtOptions,
+                                      atools::gui::anyWidgetChanged({ui->gridLayoutAirportExtSearch}));
 
-  atools::gui::util::changeIndication(ui->actionAirportSearchShowFuelParkOptions,
-                                      atools::gui::util::anyWidgetChanged({ui->gridLayoutAirportSearchParking}));
+  atools::gui::changeIndication(ui->actionAirportSearchShowFuelParkOptions,
+                                      atools::gui::anyWidgetChanged({ui->gridLayoutAirportSearchParking}));
 
-  atools::gui::util::changeIndication(ui->actionAirportSearchShowRunwayOptions,
-                                      atools::gui::util::anyWidgetChanged({ui->gridLayoutAirportSearchRunway}));
+  atools::gui::changeIndication(ui->actionAirportSearchShowRunwayOptions,
+                                      atools::gui::anyWidgetChanged({ui->gridLayoutAirportSearchRunway}));
 
-  atools::gui::util::changeIndication(ui->actionAirportSearchShowAltOptions,
-                                      atools::gui::util::anyWidgetChanged({ui->horizontalLayoutAirportAltitudeSearch}));
+  atools::gui::changeIndication(ui->actionAirportSearchShowAltOptions,
+                                      atools::gui::anyWidgetChanged({ui->horizontalLayoutAirportAltitudeSearch}));
 
   bool distSearchChanged = false;
   if(columns->isDistanceCheckBoxChecked())
-    distSearchChanged = atools::gui::util::anyWidgetChanged({ui->horizontalLayoutAirportDistanceSearch});
+    distSearchChanged = atools::gui::anyWidgetChanged({ui->horizontalLayoutAirportDistanceSearch});
 
-  atools::gui::util::changeIndication(ui->actionAirportSearchShowDistOptions, distSearchChanged);
+  atools::gui::changeIndication(ui->actionAirportSearchShowDistOptions, distSearchChanged);
 
-  atools::gui::util::changeIndication(ui->actionAirportSearchShowSceneryOptions,
-                                      atools::gui::util::anyWidgetChanged({ui->horizontalLayoutAirportScenerySearch}));
+  atools::gui::changeIndication(ui->actionAirportSearchShowSceneryOptions,
+                                      atools::gui::anyWidgetChanged({ui->horizontalLayoutAirportScenerySearch}));
 }
 
 void AirportSearch::updatePushButtons()

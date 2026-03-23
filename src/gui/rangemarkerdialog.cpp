@@ -17,24 +17,23 @@
 
 #include "gui/rangemarkerdialog.h"
 
-#include "common/constants.h"
-#include "common/mapmarkertypes.h"
-#include "gui/widgetutil.h"
-#include "geo/calculations.h"
-#include "gui/widgetstate.h"
-#include "settings/settings.h"
-#include "gui/helphandler.h"
-#include "common/unitstringtool.h"
-#include "fs/util/coordinates.h"
-#include "common/unit.h"
-#include "common/mapmarkers.h"
-#include "common/formatter.h"
-#include "atools.h"
-#include "geo/pos.h"
-#include "perf/aircraftperfcontroller.h"
-#include "fs/perf/aircraftperf.h"
 #include "app/navapp.h"
-
+#include "atools.h"
+#include "common/constants.h"
+#include "common/formatter.h"
+#include "common/mapmarkers.h"
+#include "common/mapmarkertypes.h"
+#include "common/unit.h"
+#include "common/unitstringtool.h"
+#include "fs/perf/aircraftperf.h"
+#include "fs/util/coordinates.h"
+#include "geo/calculations.h"
+#include "geo/pos.h"
+#include "gui/helphandler.h"
+#include "gui/tools.h"
+#include "gui/widgetstate.h"
+#include "perf/aircraftperfcontroller.h"
+#include "settings/settings.h"
 #include "ui_rangemarkerdialog.h"
 
 #include <QColorDialog>
@@ -231,7 +230,7 @@ void RangeMarkerDialog::colorButtonClicked()
 
 void RangeMarkerDialog::updateButtonColor()
 {
-  atools::gui::util::changeWidgetColor(ui->pushButtonRangeMarkerColor, color);
+  atools::gui::changeWidgetColor(ui->pushButtonRangeMarkerColor, color);
 }
 
 void RangeMarkerDialog::fillRangeMarker(map::RangeMarker& marker, bool dialogOpened)

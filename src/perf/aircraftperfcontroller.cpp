@@ -39,7 +39,6 @@
 #include "gui/tabwidgethandler.h"
 #include "gui/tools.h"
 #include "gui/widgetstate.h"
-#include "gui/widgetutil.h"
 #include "perf/aircraftperfdialog.h"
 #include "perf/perfmergedialog.h"
 #include "route/route.h"
@@ -744,7 +743,7 @@ void AircraftPerfController::updateActionStates()
   ui->spinBoxAircraftPerformanceWindDirection->setEnabled(manualWind);
   ui->spinBoxAircraftPerformanceWindSpeed->setEnabled(manualWind);
   ui->spinBoxAircraftPerformanceWindAlt->setEnabled(manualWind);
-  atools::gui::util::showHideLayoutElements({ui->horizontalLayoutManWind}, {}, manualWind, true /* disable */);
+  atools::gui::showHideLayoutElements({ui->horizontalLayoutManWind}, {}, manualWind, true /* disable */);
 }
 
 void AircraftPerfController::updateReport()
@@ -846,7 +845,7 @@ void AircraftPerfController::updateReport()
                   formatter::formatMinutesHours(altitudeLegs.getTravelTimeHours()) + ")");
 #endif
 
-    atools::gui::util::updateTextEdit(ui->textBrowserAircraftPerformanceReport, html.getHtml(),
+    atools::gui::updateTextEdit(ui->textBrowserAircraftPerformanceReport, html.getHtml(),
                                       false /*scrollToTop*/, true /* keep selection */);
   } // if(NavApp::getRouteTabHandler()->getCurrentTabId() == rc::AIRCRAFT && ui->dockWidgetRoute->isVisible())
 
@@ -948,7 +947,7 @@ void AircraftPerfController::updateReportCurrent()
       html.tableEnd();
     }
 
-    atools::gui::util::updateTextEdit(ui->textBrowserAircraftPerformanceCurrent, html.getHtml(),
+    atools::gui::updateTextEdit(ui->textBrowserAircraftPerformanceCurrent, html.getHtml(),
                                       false /*scrollToTop*/, true /* keep selection */);
   }
 }

@@ -17,21 +17,20 @@
 
 #include "gui/holddialog.h"
 
-#include "common/mapmarkers.h"
-#include "ui_holddialog.h"
-
-#include "common/constants.h"
-#include "common/maptypes.h"
-#include "common/formatter.h"
-#include "common/unitstringtool.h"
-#include "gui/helphandler.h"
-#include "gui/widgetstate.h"
-#include "gui/widgetutil.h"
-#include "settings/settings.h"
-#include "common/unit.h"
-#include "geo/calculations.h"
-#include "common/mapresult.h"
 #include "app/navapp.h"
+#include "common/constants.h"
+#include "common/formatter.h"
+#include "common/mapmarkers.h"
+#include "common/mapresult.h"
+#include "common/maptypes.h"
+#include "common/unit.h"
+#include "common/unitstringtool.h"
+#include "geo/calculations.h"
+#include "gui/helphandler.h"
+#include "gui/tools.h"
+#include "gui/widgetstate.h"
+#include "settings/settings.h"
+#include "ui_holddialog.h"
 
 #include <QColor>
 #include <QColorDialog>
@@ -140,7 +139,7 @@ void HoldDialog::colorButtonClicked()
 
 void HoldDialog::updateButtonColor()
 {
-  atools::gui::util::changeWidgetColor(ui->pushButtonHoldColor, color);
+  atools::gui::changeWidgetColor(ui->pushButtonHoldColor, color);
 }
 
 void HoldDialog::updateLength()

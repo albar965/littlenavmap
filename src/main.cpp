@@ -268,6 +268,8 @@ int main(int argc, char *argv[])
                 << "DPI ratio" << screen->devicePixelRatio() << "DPI x" << screen->logicalDotsPerInchX()
                 << "y" << screen->logicalDotsPerInchX();
 
+      // QCoreApplication::setAttribute(Qt::AA_UseStyleSheetPropagationInWidgetStyles, true);
+
       // Start settings and file migration
       migrate::checkAndMigrateSettings();
 

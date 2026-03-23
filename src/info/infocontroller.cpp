@@ -29,7 +29,6 @@
 #include "gui/statusbar.h"
 #include "gui/tabwidgethandler.h"
 #include "gui/tools.h"
-#include "gui/widgetutil.h"
 #include "info/aircraftprogressconfig.h"
 #include "mapgui/mapwidget.h"
 #include "online/onlinedatacontroller.h"
@@ -588,7 +587,7 @@ void InfoController::updateProgress()
   HtmlBuilder html(true /* has background color */);
   Ui::MainWindow *ui = NavApp::getMainUi();
 
-  if(atools::gui::util::canTextEditUpdate(ui->textBrowserAircraftProgressInfo))
+  if(atools::gui::canTextEditUpdate(ui->textBrowserAircraftProgressInfo))
   {
     // ok - scrollbars not pressed
     html.clear();
@@ -1234,7 +1233,7 @@ void InfoController::updateUserAircraftText()
   {
     if(NavApp::isUserAircraftValid())
     {
-      if(atools::gui::util::canTextEditUpdate(ui->textBrowserAircraftInfo))
+      if(atools::gui::canTextEditUpdate(ui->textBrowserAircraftInfo))
       {
         // ok - scrollbars not pressed
         HtmlBuilder html(true /* has background color */);
@@ -1265,7 +1264,7 @@ void InfoController::updateAircraftProgressText()
   {
     if(NavApp::isUserAircraftValid())
     {
-      if(atools::gui::util::canTextEditUpdate(ui->textBrowserAircraftProgressInfo))
+      if(atools::gui::canTextEditUpdate(ui->textBrowserAircraftProgressInfo))
       {
         // ok - scrollbars not pressed
         HtmlBuilder html(true /* has background color */);
@@ -1296,7 +1295,7 @@ void InfoController::updateAiAircraftText()
   {
     if(NavApp::isUserAircraftValid())
     {
-      if(atools::gui::util::canTextEditUpdate(ui->textBrowserAircraftAiInfo))
+      if(atools::gui::canTextEditUpdate(ui->textBrowserAircraftAiInfo))
       {
         // ok - scrollbars not pressed
         HtmlBuilder html(true /* has background color */);
@@ -1556,5 +1555,5 @@ const QBitArray& InfoController::getEnabledProgressBitsWeb() const
 void InfoController::updateTextEdit(QTextEdit *textEdit, const QString& text, bool scrollToTop, bool keepSelection)
 {
   // Clear selection if textEdit was in anchorsClicked and removed
-  atools::gui::util::updateTextEdit(textEdit, text, scrollToTop, keepSelection, anchorsClicked.remove(textEdit));
+  atools::gui::updateTextEdit(textEdit, text, scrollToTop, keepSelection, anchorsClicked.remove(textEdit));
 }

@@ -842,8 +842,7 @@ void NavApp::setToolTipsEnabledMainMenu(bool enabled)
 {
   // Enable tooltips for all menus
   // The state is set programmatically in context menus from first file menu
-  QList<QAction *> stack;
-  stack.append(NavApp::getMainUi()->menuBar->actions());
+  QList<QAction *> stack(NavApp::getMainUi()->menuBar->actions());
   while(!stack.isEmpty())
   {
     QMenu *menu = stack.takeLast()->menu();

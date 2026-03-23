@@ -27,8 +27,8 @@
 #include "geo/calculations.h"
 #include "gui/helphandler.h"
 #include "gui/runwayselection.h"
+#include "gui/tools.h"
 #include "gui/widgetstate.h"
-#include "gui/widgetutil.h"
 #include "settings/settings.h"
 
 #include "ui_trafficpatterndialog.h"
@@ -145,7 +145,7 @@ void TrafficPatternDialog::colorButtonClicked()
 
 void TrafficPatternDialog::updateButtonColor()
 {
-  atools::gui::util::changeWidgetColor(ui->pushButtonTrafficPatternColor, color);
+  atools::gui::changeWidgetColor(ui->pushButtonTrafficPatternColor, color);
 }
 
 void TrafficPatternDialog::updateRunwayLabel()

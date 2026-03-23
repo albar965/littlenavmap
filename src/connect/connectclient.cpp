@@ -30,6 +30,7 @@
 #include "gui/dialog.h"
 #include "gui/helphandler.h"
 #include "gui/statusbar.h"
+#include "gui/tools.h"
 #include "online/onlinedatacontroller.h"
 #include "settings/settings.h"
 #include "timezone/timezonemanager.h"

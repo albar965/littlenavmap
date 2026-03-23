@@ -17,6 +17,7 @@
 
 #include "search/userdatasearch.h"
 
+#include "app/navapp.h"
 #include "atools.h"
 #include "common/constants.h"
 #include "common/mapcolors.h"
@@ -25,9 +26,8 @@
 #include "common/maptypes.h"
 #include "common/maptypesfactory.h"
 #include "common/unit.h"
+#include "gui/tools.h"
 #include "gui/widgetstate.h"
-#include "gui/widgetutil.h"
-#include "app/navapp.h"
 #include "search/column.h"
 #include "search/columnlist.h"
 #include "search/sqlcontroller.h"
@@ -330,8 +330,8 @@ void UserdataSearch::setCallbacks()
  * action depending on other action states */
 void UserdataSearch::updateButtonMenu()
 {
-  atools::gui::util::changeIndication(ui->actionUserdataSearchShowMoreOptions,
-                                      atools::gui::util::anyWidgetChanged({ui->horizontalLayoutUserdataMore}));
+  atools::gui::changeIndication(ui->actionUserdataSearchShowMoreOptions,
+                                      atools::gui::anyWidgetChanged({ui->horizontalLayoutUserdataMore}));
 }
 
 void UserdataSearch::updatePushButtons()

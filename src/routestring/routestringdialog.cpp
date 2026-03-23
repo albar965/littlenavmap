@@ -17,19 +17,19 @@
 
 #include "routestring/routestringdialog.h"
 
+#include "app/navapp.h"
 #include "atools.h"
 #include "common/constants.h"
 #include "gui/helphandler.h"
-#include "gui/widgetzoomhandler.h"
+#include "gui/signalblocker.h"
+#include "gui/tools.h"
 #include "gui/tools.h"
 #include "gui/widgetstate.h"
-#include "gui/widgetutil.h"
-#include "app/navapp.h"
+#include "gui/widgetzoomhandler.h"
 #include "route/routecontroller.h"
 #include "routestring/routestringreader.h"
 #include "routestring/routestringwriter.h"
 #include "settings/settings.h"
-#include "gui/signalblocker.h"
 
 #include "ui_routestringdialog.h"
 
@@ -501,7 +501,7 @@ void RouteStringDialog::resetWindowLayout(RouteStringDialog *routeStringDialog, 
 
   // Check if instance alread open and center if needed
   if(routeStringDialog != nullptr)
-    atools::gui::util::centerWidgetOnScreen(routeStringDialog, routeStringDialog->defaultSize);
+    atools::gui::centerWidgetOnScreen(routeStringDialog, routeStringDialog->defaultSize);
 }
 
 void RouteStringDialog::restoreState()
@@ -650,14 +650,14 @@ void RouteStringDialog::textChangedInternal(bool forceUpdate)
 
         // Fill report into widget
         errorString.append(routeStringReader->getAllMessages().join("<br/>"));
-        atools::gui::util::updateTextEdit(ui->textEditRouteStringErrors, errorString, false /* scrollToTop */, true /* keepSelection */);
+        atools::gui::updateTextEdit(ui->textEditRouteStringErrors, errorString, false /* scrollToTop */, true /* keepSelection */);
       }
       else
-        atools::gui::util::updateTextEdit(ui->textEditRouteStringErrors, tr("Description is too long."), false /* scrollToTop */,
+        atools::gui::updateTextEdit(ui->textEditRouteStringErrors, tr("Description is too long."), false /* scrollToTop */,
                                           true /* keepSelection */);
     }
     else
-      atools::gui::util::updateTextEdit(ui->textEditRouteStringErrors, QStringLiteral(), false /* scrollToTop */, true /* keepSelection */);
+      atools::gui::updateTextEdit(ui->textEditRouteStringErrors, QStringLiteral(), false /* scrollToTop */, true /* keepSelection */);
   }
 
   // Avoid update issues with macOS and mac style - force repaint

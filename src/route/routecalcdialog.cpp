@@ -24,10 +24,9 @@
 #include "common/unitstringtool.h"
 #include "gui/clicktooltiphandler.h"
 #include "gui/helphandler.h"
-#include "gui/widgetzoomhandler.h"
 #include "gui/tools.h"
 #include "gui/widgetstate.h"
-#include "gui/widgetutil.h"
+#include "gui/widgetzoomhandler.h"
 #include "route/route.h"
 #include "route/routecontroller.h"
 #include "ui_routecalcdialog.h"
@@ -319,7 +318,7 @@ void RouteCalcDialog::resetWindowLayout()
   state.clear(this);
   state.syncSettings();
 
-  atools::gui::util::centerWidgetOnScreen(this, defaultSize);
+  atools::gui::centerWidgetOnScreen(this, defaultSize);
 }
 
 void RouteCalcDialog::preDatabaseLoad()

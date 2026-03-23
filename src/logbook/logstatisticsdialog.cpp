@@ -16,8 +16,6 @@
 *****************************************************************************/
 
 #include "logbook/logstatisticsdialog.h"
-#include "gui/tools.h"
-#include "ui_logstatisticsdialog.h"
 
 #include "app/navapp.h"
 #include "common/constants.h"
@@ -26,11 +24,13 @@
 #include "export/csvexporter.h"
 #include "geo/calculations.h"
 #include "gui/helphandler.h"
-#include "gui/widgetzoomhandler.h"
+#include "gui/tools.h"
+#include "gui/tools.h"
 #include "gui/widgetstate.h"
-#include "gui/widgetutil.h"
+#include "gui/widgetzoomhandler.h"
 #include "logdatacontroller.h"
 #include "sql/sqldatabase.h"
+#include "ui_logstatisticsdialog.h"
 #include "util/htmlbuilder.h"
 
 #include <QSqlError>
@@ -324,7 +324,7 @@ void LogStatisticsDialog::resetWindowLayout()
   state.clear(this);
   state.syncSettings();
 
-  atools::gui::util::centerWidgetOnScreen(this, defaultSize);
+  atools::gui::centerWidgetOnScreen(this, defaultSize);
 }
 
 void LogStatisticsDialog::groupChanged(int index)
