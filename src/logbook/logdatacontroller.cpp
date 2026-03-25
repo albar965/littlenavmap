@@ -230,6 +230,21 @@ atools::sql::SqlRecord LogdataController::getLogEntryRecordById(int id)
   return manager->getRecord(id);
 }
 
+SqlRecord LogdataController::getLogEntryRecordByIdForShowInSearch(const map::MapLogbookEntry& logEntry)
+{
+  return atools::sql::SqlRecord().
+         appendFieldAndValueIf("departure_ident", logEntry.departureIdent).
+         appendFieldAndValueIf("destination_ident", logEntry.destinationIdent).
+         appendFieldAndValueIf("simulator", logEntry.simulator).
+         appendFieldAndValueIf("aircraft_type", logEntry.aircraftType).
+         appendFieldAndValueIf("aircraft_registration", logEntry.aircraftRegistration);
+}
+
+SqlRecord LogdataController::getLogEntryRecordByIdForShowInSearch(int id)
+{
+  return getLogEntryRecordByIdForShowInSearch(getLogEntryById(id));
+}
+
 void LogdataController::getFlightStatsTime(QDateTime& earliest, QDateTime& latest, QDateTime& earliestSim,
                                            QDateTime& latestSim)
 {

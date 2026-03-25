@@ -34,6 +34,7 @@ namespace atools {
 
 namespace gui {
 class WidgetZoomHandler;
+class LinkTooltipHandler;
 }
 namespace util {
 class HtmlBuilder;
@@ -120,6 +121,8 @@ private:
   /* Used to make the table rows smaller and also used to adjust font size */
   atools::gui::WidgetZoomHandler *zoomHandler = nullptr;
 
+  /* Provide tooltips for links */
+  atools::gui::LinkTooltipHandler *linkTooltipHandler = nullptr;
 };
 
 #endif // LNM_ROUTELABEL_H

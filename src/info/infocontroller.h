@@ -18,26 +18,30 @@
 #ifndef LITTLENAVMAP_INFOCONTROLLER_H
 #define LITTLENAVMAP_INFOCONTROLLER_H
 
+#include "common/mapflags.h"
 #include "common/tabindexes.h"
 
 #include <QObject>
 #include <QSet>
 
-class MapQuery;
-class AirportQuery;
-class InfoQuery;
-class HtmlInfoBuilder;
-class QTextEdit;
 class AircraftProgressConfig;
-
+class AirportQuery;
+class HtmlInfoBuilder;
+class InfoQuery;
+class MapQuery;
 class QTextBrowser;
-
+class QTextEdit;
 class Queries;
+
 namespace map {
 struct MapAirport;
 struct MapResult;
 }
 namespace atools {
+
+namespace sql {
+class SqlRecord;
+}
 
 namespace geo {
 
@@ -51,6 +55,7 @@ class SimConnectData;
 }
 }
 namespace gui {
+class LinkTooltipHandler;
 class TabWidgetHandler;
 }
 namespace util {
@@ -143,6 +148,7 @@ signals:
   void showPos(const atools::geo::Pos& pos, float zoom, bool doubleClick);
   void showRect(const atools::geo::Rect& rect, bool doubleClick);
   void showProcedures(const map::MapAirport& airport, bool departureFilter, bool arrivalFilter);
+  void showInSearch(map::MapTypes type, const atools::sql::SqlRecord& record, bool select);
 
   /* Enable or disable actions */
   void updateHighlightActionStates();
@@ -221,6 +227,9 @@ private:
   AircraftProgressConfig *aircraftProgressConfig;
 
   atools::gui::TabWidgetHandler *tabHandlerInfo = nullptr, *tabHandlerAirportInfo = nullptr, *tabHandlerAircraft = nullptr;
+
+  /* Provide tooltips for links */
+  atools::gui::LinkTooltipHandler *linkTooltipHandler = nullptr;
 };
 
 #endif // LITTLENAVMAP_INFOCONTROLLER_H

@@ -5966,7 +5966,6 @@ QStringList RouteController::getMinorErrorStrings() const
 void RouteController::flightplanLabelLinkActivated(const QString& link)
 {
   qDebug() << Q_FUNC_INFO << link;
-  // lnm://showdeparture
 
   QUrl url(link);
   if(url.scheme() == "lnm")

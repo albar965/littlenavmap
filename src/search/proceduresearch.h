@@ -27,9 +27,9 @@
 #include <QObject>
 #include <QList>
 
-class SearchWidgetKeyEventFilter;
 namespace atools {
 namespace gui {
+class LinkTooltipHandler;
 class GridDelegate;
 }
 
@@ -46,6 +46,7 @@ namespace map {
 struct MapAirport;
 }
 
+class SearchWidgetKeyEventFilter;
 class ProcIndexEntry;
 class InfoQuery;
 class QTreeWidget;
@@ -301,6 +302,9 @@ private:
   bool errors = false;
 
   bool savedDepartureFilter = false, savedArrivalFilter = false;
+
+  /* Provide tooltips for links */
+  atools::gui::LinkTooltipHandler *linkTooltipHandler = nullptr;
 };
 
 /* Use event filter to catch mouse click in white area and deselect all entries */

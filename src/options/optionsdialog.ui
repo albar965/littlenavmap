@@ -628,7 +628,7 @@ opening files, modifying the flight plan and other operations.</string>
              <x>0</x>
              <y>0</y>
              <width>543</width>
-             <height>870</height>
+             <height>895</height>
             </rect>
            </property>
            <layout class="QVBoxLayout" name="verticalLayout_23">
@@ -782,6 +782,19 @@ This does not affect the map window which can be changed separately on the optio
                  </property>
                  <property name="text">
                   <string>Show &amp;tooltips in whole application</string>
+                 </property>
+                 <property name="checked">
+                  <bool>true</bool>
+                 </property>
+                </widget>
+               </item>
+               <item>
+                <widget class="QCheckBox" name="checkBoxOptionsGuiTooltipsLink">
+                 <property name="toolTip">
+                  <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Enables tooltips for the blue links in the flight plan header, procedure search and information window&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+                 </property>
+                 <property name="text">
+                  <string>Show tooltips for &amp;links</string>
                  </property>
                  <property name="checked">
                   <bool>true</bool>
@@ -1239,7 +1252,7 @@ This does not affect the map window which can be changed separately on the optio
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>560</width>
+             <width>569</width>
              <height>445</height>
             </rect>
            </property>
@@ -1599,8 +1612,8 @@ aircraft progress, tooltips and information window.</string>
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>557</width>
-             <height>431</height>
+             <width>512</width>
+             <height>401</height>
             </rect>
            </property>
            <layout class="QVBoxLayout" name="verticalLayout_59">
@@ -1828,8 +1841,8 @@ The &quot;Save as&quot; dialog will show up instead of overwriting the current f
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>543</width>
-             <height>432</height>
+             <width>317</width>
+             <height>492</height>
             </rect>
            </property>
            <layout class="QGridLayout" name="gridLayout">
@@ -2100,7 +2113,7 @@ Note that this function is disabled for X-Plane 12 since the 3D flag is unreliab
              <x>0</x>
              <y>0</y>
              <width>599</width>
-             <height>417</height>
+             <height>399</height>
             </rect>
            </property>
            <layout class="QGridLayout" name="gridLayout_2">
@@ -2577,8 +2590,8 @@ Smaller values will allow a finer selection.</string>
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>543</width>
-             <height>530</height>
+             <width>510</width>
+             <height>526</height>
             </rect>
            </property>
            <layout class="QVBoxLayout" name="verticalLayout_12">
@@ -2906,8 +2919,8 @@ Map views might be shown with a larger zoom distance than expected if this optio
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>543</width>
-             <height>1256</height>
+             <width>508</width>
+             <height>1245</height>
             </rect>
            </property>
            <layout class="QVBoxLayout" name="verticalLayout_20">
@@ -3953,8 +3966,8 @@ Value 0 is opaque and 90 is most transparent.</string>
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>543</width>
-             <height>485</height>
+             <width>428</width>
+             <height>493</height>
             </rect>
            </property>
            <layout class="QVBoxLayout" name="verticalLayout_35">
@@ -4387,8 +4400,8 @@ Also used in the elevation profile.</string>
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>557</width>
-             <height>431</height>
+             <width>554</width>
+             <height>365</height>
             </rect>
            </property>
            <layout class="QVBoxLayout" name="verticalLayout_57">
@@ -4680,8 +4693,8 @@ Note that this does not affect the stored trail points.</string>
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>543</width>
-             <height>701</height>
+             <width>454</width>
+             <height>748</height>
             </rect>
            </property>
            <layout class="QGridLayout" name="gridLayout_35">
@@ -5498,8 +5511,8 @@ if you hover over the elevation profile.</string>
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>543</width>
-             <height>527</height>
+             <width>328</width>
+             <height>536</height>
             </rect>
            </property>
            <layout class="QGridLayout" name="gridLayout_39">
@@ -5969,7 +5982,7 @@ airspace filename has to match the callsign of the online center.</string>
              <x>0</x>
              <y>0</y>
              <width>572</width>
-             <height>635</height>
+             <height>631</height>
             </rect>
            </property>
            <layout class="QVBoxLayout" name="verticalLayout_25">
@@ -6415,8 +6428,8 @@ put the active leg back on top after the given timeout while flying.</string>
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>557</width>
-             <height>431</height>
+             <width>318</width>
+             <height>242</height>
             </rect>
            </property>
            <layout class="QVBoxLayout" name="verticalLayout_26">
@@ -6575,8 +6588,8 @@ Note that this value does not affect flight plan calculation or saving of flight
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>543</width>
-             <height>629</height>
+             <width>272</width>
+             <height>761</height>
             </rect>
            </property>
            <layout class="QVBoxLayout" name="verticalLayout_27">
@@ -6816,8 +6829,8 @@ Note that this value does not affect flight plan calculation or saving of flight
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>543</width>
-             <height>893</height>
+             <width>360</width>
+             <height>936</height>
             </rect>
            </property>
            <layout class="QVBoxLayout" name="verticalLayout_28">
@@ -7414,8 +7427,8 @@ Entering a wrong value will cause errors when downloading weather reports.</stri
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>557</width>
-             <height>431</height>
+             <width>389</width>
+             <height>375</height>
             </rect>
            </property>
            <layout class="QVBoxLayout" name="verticalLayout_29">
@@ -7716,8 +7729,8 @@ Entering a wrong value will cause errors when downloading weather reports.</stri
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>557</width>
-             <height>431</height>
+             <width>543</width>
+             <height>402</height>
             </rect>
            </property>
            <layout class="QGridLayout" name="gridLayout_37">
@@ -8003,8 +8016,8 @@ Uncheck if you use such an add-on or see issues like a corruped map display.</st
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>543</width>
-             <height>650</height>
+             <width>437</width>
+             <height>709</height>
             </rect>
            </property>
            <layout class="QVBoxLayout" name="verticalLayout_30">
@@ -8365,8 +8378,8 @@ Source data has many errors.</string>
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>543</width>
-             <height>507</height>
+             <width>395</width>
+             <height>524</height>
             </rect>
            </property>
            <layout class="QGridLayout" name="gridLayout_38">

@@ -29,6 +29,7 @@
 #include "gui/clicktooltiphandler.h"
 #include "gui/dialog.h"
 #include "gui/griddelegate.h"
+#include "gui/linktooltiphandler.h"
 #include "gui/tools.h"
 #include "gui/widgetstate.h"
 #include "query/airportquery.h"
@@ -162,6 +163,13 @@ ProcedureSearch::ProcedureSearch(MainWindow *main, QTreeWidget *treeWidgetParam,
 
   gridDelegate = new atools::gui::GridDelegate(treeWidget, 1. /* borderPenWidth */, 1 /* heightIncrease */);
 
+  linkTooltipHandler = new atools::gui::LinkTooltipHandler(this);
+  linkTooltipHandler->setShowTooltips(OptionData::instance().getFlags().testFlag(opts::ENABLE_TOOLTIPS_LINK));
+  linkTooltipHandler->addWidget(ui->labelProcedureSearch);
+
+  // The keys have to match the query item key "tooltip" to provide a tooltip ============================
+  linkTooltipHandler->addUrlTooltip(QStringLiteral("showairport"), tr("Click here to show airport on the map and in information"));
+
   treeWidget->setItemDelegate(gridDelegate);
   atools::gui::adjustSelectionColors(treeWidget);
 
@@ -229,6 +237,8 @@ ProcedureSearch::ProcedureSearch(MainWindow *main, QTreeWidget *treeWidgetParam,
 
 ProcedureSearch::~ProcedureSearch()
 {
+  ATOOLS_DELETE_LOG(linkTooltipHandler);
+
   ui->lineEditProcedureSearchIdentFilter->removeEventFilter(lineInputEventFilter);
   ATOOLS_DELETE_LOG(lineInputEventFilter);
 
@@ -313,6 +323,7 @@ void ProcedureSearch::optionsChanged()
   fillProcedureTreeWidget();
 
   treeWidgetStateRestore(state);
+  linkTooltipHandler->setShowTooltips(OptionData::instance().getFlags().testFlag(opts::ENABLE_TOOLTIPS_LINK));
 }
 
 void ProcedureSearch::styleChanged()
@@ -524,7 +535,8 @@ void ProcedureSearch::updateHeaderLabel()
 
   if(currentAirportSim->isValid())
   {
-    html.a(map::airportTextShort(*currentAirportSim), "lnm://showairport", atools::util::html::BOLD | atools::util::html::LINK_NO_UL);
+    html.a(map::airportTextShort(*currentAirportSim), QStringLiteral("lnm://showairport?tooltip=showairport"),
+           atools::util::html::BOLD | atools::util::html::LINK_NO_UL);
     if(currentAirportNav->isValid() && currentAirportNav->procedure())
     {
       QString title, runwayText, sourceText;

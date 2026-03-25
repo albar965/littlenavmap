@@ -26,10 +26,12 @@
 #include "fs/sc/simconnectdata.h"
 #include "gui/desktopservices.h"
 #include "gui/helphandler.h"
+#include "gui/linktooltiphandler.h"
 #include "gui/statusbar.h"
 #include "gui/tabwidgethandler.h"
 #include "gui/tools.h"
 #include "info/aircraftprogressconfig.h"
+#include "logbook/logdatacontroller.h"
 #include "mapgui/mapwidget.h"
 #include "online/onlinedatacontroller.h"
 #include "options/optiondata.h"
@@ -66,6 +68,53 @@ InfoController::InfoController(QWidget *parent)
 
   // Get base font size for widgets
   Ui::MainWindow *ui = NavApp::getMainUi();
+  linkTooltipHandler = new atools::gui::LinkTooltipHandler(this);
+  linkTooltipHandler->setShowTooltips(OptionData::instance().getFlags().testFlag(opts::ENABLE_TOOLTIPS_LINK));
+  linkTooltipHandler->addWidgets({ui->textBrowserAirportInfo, ui->textBrowserRunwayInfo, ui->textBrowserComInfo,
+                                  ui->textBrowserApproachInfo, ui->textBrowserNearestInfo, ui->textBrowserWeatherInfo,
+                                  ui->textBrowserNavaidInfo, ui->textBrowserUserpointInfo, ui->textBrowserAirspaceInfo,
+                                  ui->textBrowserLogbookInfo, ui->textBrowserCenterInfo, ui->textBrowserClientInfo,
+                                  ui->textBrowserAircraftInfo, ui->textBrowserAircraftProgressInfo, ui->textBrowserAircraftAiInfo});
+
+  // The keys have to match the query item key "tooltip" to provide a tooltip ============================
+  // egrep -o 'tooltip=\w+' ../common/htmlinfobuilder.cpp | sort | uniq
+  linkTooltipHandler->addUrlTooltip(QStringLiteral("infoairport"), tr("Click to show the airport information"));
+  linkTooltipHandler->addUrlTooltip(QStringLiteral("infonavaid"), tr("Click here to show the navaid information"));
+  linkTooltipHandler->addUrlTooltip(QStringLiteral("showaircraft"), tr("Click here to show the aircraft on the map"));
+  linkTooltipHandler->addUrlTooltip(QStringLiteral("showairport"), tr("Click here to show the airport on the map"));
+  linkTooltipHandler->addUrlTooltip(QStringLiteral("showairspace"), tr("Click to show and highlight the airspace on the map"));
+  linkTooltipHandler->addUrlTooltip(QStringLiteral("showairway"), tr("Click here to show and highlight the airway on the map"));
+  linkTooltipHandler->addUrlTooltip(QStringLiteral("showhelipad"), tr("Click here to show the helipad on the map"));
+  linkTooltipHandler->addUrlTooltip(QStringLiteral("showils"), tr("Click here to show the ILS on the map"));
+  linkTooltipHandler->addUrlTooltip(QStringLiteral("showlog"), tr("Click here to show the logbook entry and similar entries on the map"));
+  linkTooltipHandler->addUrlTooltip(QStringLiteral("shownavaid"), tr("Click here to show the navaid on the map"));
+  linkTooltipHandler->addUrlTooltip(QStringLiteral("showndb"), tr("Click here to show the NDB on the map"));
+  linkTooltipHandler->addUrlTooltip(QStringLiteral("showpos"), tr("Click to show the position on the map"));
+  linkTooltipHandler->addUrlTooltip(QStringLiteral("showprocs"), tr("Click here to show all procedures of the airport"));
+  linkTooltipHandler->addUrlTooltip(QStringLiteral("showprocsarrival"), tr("Click here to show arrival procedures of the airport"));
+  linkTooltipHandler->addUrlTooltip(QStringLiteral("showprocsdepart"), tr("Click here to show departure procedures of the airport"));
+  linkTooltipHandler->addUrlTooltip(QStringLiteral("showstart"), tr("Click here to show the start position on the map"));
+  linkTooltipHandler->addUrlTooltip(QStringLiteral("showuserpoint"), tr("Click here to show the userpoint on the map"));
+  linkTooltipHandler->addUrlTooltip(QStringLiteral("showvor"), tr("Click here to show the VOR on the map"));
+  linkTooltipHandler->addUrlTooltip(QStringLiteral("showwaypoint"), tr("Click here to show the waypoint on the map"));
+
+  linkTooltipHandler->addUrlTooltip(QStringLiteral("hideonlineairspaces"),
+                                    tr("Click here to remove highlighted online airspaces from the map"));
+  linkTooltipHandler->addUrlTooltip(QStringLiteral("hideairways"), tr("Click here to remove highlighted airways and tracks from the map"));
+  linkTooltipHandler->addUrlTooltip(QStringLiteral("hideairspaces"), tr("Click here to remove highlighted airspaces from the map"));
+
+  linkTooltipHandler->setWebUrlToolTip(tr("Click here to open the link in your web browser"));
+
+#if  defined(Q_OS_WIN)
+  linkTooltipHandler->addUrlTooltip(QStringLiteral("showfilepath"), tr("Click to show the file in Windows Explorer"));
+  linkTooltipHandler->setFileUrlToolTip(tr("Click to show the file in Windows Explorer"));
+#elif defined(Q_OS_MACOS)
+  linkTooltipHandler->addUrlTooltip(QStringLiteral("showfilepath"), tr("Click to show the file in Apple Finder"));
+  linkTooltipHandler->setFileUrlToolTip(tr("Click to show the file in Apple Finder"));
+#else
+  linkTooltipHandler->addUrlTooltip(QStringLiteral("showfilepath"), tr("Click to show the file in your file manager"));
+  linkTooltipHandler->setFileUrlToolTip(tr("Click to show the file in your file manager"));
+#endif
 
   QPushButton *pushButtonInfoHelp = new QPushButton(QIcon(":/littlenavmap/resources/icons/help.svg"), QStringLiteral(),
                                                     ui->tabWidgetInformation);
@@ -92,7 +141,7 @@ InfoController::InfoController(QWidget *parent)
                                                          tr("Open or close tabs"));
   tabHandlerAircraft->init(ic::TabAircraftIds, lnm::INFOWINDOW_WIDGET_AIRCRAFT_TABS);
 
-  // Set search path to silence text browser warnings
+  // Set search path to silence text browser warnings - information window ============================
   QStringList paths({QApplication::applicationDirPath()});
   ui->textBrowserAirportInfo->setSearchPaths(paths);
   ui->textBrowserRunwayInfo->setSearchPaths(paths);
@@ -107,6 +156,7 @@ InfoController::InfoController(QWidget *parent)
   ui->textBrowserCenterInfo->setSearchPaths(paths);
   ui->textBrowserClientInfo->setSearchPaths(paths);
 
+  // Set search path to silence text browser warnings - aircraft progress window ============================
   ui->textBrowserAircraftInfo->setSearchPaths(paths);
   ui->textBrowserAircraftProgressInfo->setSearchPaths(paths);
   ui->textBrowserAircraftAiInfo->setSearchPaths(paths);
@@ -177,17 +227,19 @@ void InfoController::helpInfoClicked()
 {
   // https://www.littlenavmap.org/manuals/littlenavmap/release/latest/en/INFO.html
   atools::gui::HelpHandler::openHelpUrlWeb(
-    NavApp::getMainUi()->dockWidgetInformation, lnm::helpOnlineUrl + "INFO.html", lnm::helpLanguageOnline());
+    NavApp::getMainUi()->dockWidgetInformation, lnm::helpOnlineUrl + QStringLiteral("INFO.html"), lnm::helpLanguageOnline());
 }
 
 void InfoController::helpAircraftClicked()
 {
   atools::gui::HelpHandler::openHelpUrlWeb(
-    NavApp::getMainUi()->dockWidgetAircraft, lnm::helpOnlineUrl + "INFO.html#simulator-aircraft-dock-window", lnm::helpLanguageOnline());
+    NavApp::getMainUi()->dockWidgetAircraft, lnm::helpOnlineUrl + QStringLiteral("INFO.html#simulator-aircraft-dock-window"),
+    lnm::helpLanguageOnline());
 }
 
 InfoController::~InfoController()
 {
+  ATOOLS_DELETE_LOG(linkTooltipHandler);
   ATOOLS_DELETE_LOG(aircraftProgressConfig);
   ATOOLS_DELETE_LOG(tabHandlerInfo);
   ATOOLS_DELETE_LOG(tabHandlerAirportInfo);
@@ -324,10 +376,12 @@ void InfoController::anchorClicked(const QUrl& url)
 {
   qDebug() << Q_FUNC_INFO << url;
 
-  if(url.scheme() == "http" || url.scheme() == "https" || url.scheme() == "ftp" || url.scheme() == "file")
+  const static QStringList URL_SCHEMES({QStringLiteral("http"), QStringLiteral("https"), QStringLiteral("ftp"), QStringLiteral("file")});
+
+  if(URL_SCHEMES.contains(url.scheme()))
     // Open a normal link or file from the userpoint description
     atools::gui::DesktopServices::openUrl(parentWidget, url);
-  else if(url.scheme() == "lnm")
+  else if(url.scheme() == QStringLiteral("lnm"))
   {
     // Internal link like "show on map"
     QUrlQuery query(url);
@@ -336,28 +390,27 @@ void InfoController::anchorClicked(const QUrl& url)
 
     map::MapTypes type(map::NONE);
     int id = -1;
-    if(query.hasQueryItem("type"))
-      type = query.queryItemValue("type").toULongLong();
-    if(query.hasQueryItem("id"))
-      id = query.queryItemValue("id").toInt();
+    if(query.hasQueryItem(QStringLiteral("type")))
+      type = query.queryItemValue(QStringLiteral("type")).toULongLong();
+    if(query.hasQueryItem(QStringLiteral("id")))
+      id = query.queryItemValue(QStringLiteral("id")).toInt();
 
-    if(url.host() == "do")
+    const QString host = url.host();
+
+    // "lnm://hideairspaces"
+    if(host == QStringLiteral("hideairspaces") || host == QStringLiteral("hideonlineairspaces"))
     {
-      // "lnm://do?hideairspaces"
-      if(query.hasQueryItem("hideairspaces") || query.hasQueryItem("hideonlineairspaces"))
-      {
-        // Hide normal airspace highlights from information window =========================================
-        mapWidget->clearAirspaceHighlights();
-        emit updateHighlightActionStates();
-      }
-      else if(query.hasQueryItem("hideairways"))
-      {
-        // Hide airway highlights from information window =========================================
-        mapWidget->clearAirwayHighlights();
-        emit updateHighlightActionStates();
-      }
+      // Hide normal airspace highlights from information window =========================================
+      mapWidget->clearAirspaceHighlights();
+      emit updateHighlightActionStates();
     }
-    else if(url.host() == "info")
+    else if(host == QStringLiteral("hideairways"))
+    {
+      // Hide airway highlights from information window =========================================
+      mapWidget->clearAirwayHighlights();
+      emit updateHighlightActionStates();
+    }
+    else if(host == QStringLiteral("info"))
     {
       // "lnm://info?id=%1&type=%2"
       if(id != -1 && type != map::NONE)
@@ -367,25 +420,26 @@ void InfoController::anchorClicked(const QUrl& url)
         showInformation(result);
       }
     }
-    else if(url.host() == "show")
+    else if(host == QStringLiteral("show"))
     {
-      if(query.hasQueryItem("west") && query.hasQueryItem("north") &&
-         query.hasQueryItem("east") && query.hasQueryItem("south"))
+      if(query.hasQueryItem(QStringLiteral("west")) && query.hasQueryItem(QStringLiteral("north")) &&
+         query.hasQueryItem(QStringLiteral("east")) && query.hasQueryItem(QStringLiteral("south")))
       {
         // Zoom to rect =========================================
-        emit showRect(atools::geo::Rect(query.queryItemValue("west").toFloat(),
-                                        query.queryItemValue("north").toFloat(),
-                                        query.queryItemValue("east").toFloat(),
-                                        query.queryItemValue("south").toFloat()), false /* doubleClick */);
+        emit showRect(atools::geo::Rect(query.queryItemValue(QStringLiteral("west")).toFloat(),
+                                        query.queryItemValue(QStringLiteral("north")).toFloat(),
+                                        query.queryItemValue(QStringLiteral("east")).toFloat(),
+                                        query.queryItemValue(QStringLiteral("south")).toFloat()), false /* doubleClick */);
       }
-      else if(query.hasQueryItem("lonx") && query.hasQueryItem("laty"))
+      else if(query.hasQueryItem(QStringLiteral("lonx")) && query.hasQueryItem(QStringLiteral("laty")))
       {
         // Zoom to position =========================================
         float distanceKm = 0.f; // Default is set by user for no doubleClick
-        if(query.hasQueryItem("distance"))
-          distanceKm = query.queryItemValue("distance").toFloat();
+        if(query.hasQueryItem(QStringLiteral("distance")))
+          distanceKm = query.queryItemValue(QStringLiteral("distance")).toFloat();
 
-        emit showPos(atools::geo::Pos(query.queryItemValue("lonx"), query.queryItemValue("laty")), distanceKm, false /* doubleClick */);
+        emit showPos(atools::geo::Pos(query.queryItemValue(QStringLiteral("lonx")), query.queryItemValue(QStringLiteral("laty"))),
+                     distanceKm, false /* doubleClick */);
       }
       else if(id != -1 && type != map::NONE)
       {
@@ -396,7 +450,7 @@ void InfoController::anchorClicked(const QUrl& url)
         else if(type == map::AIRSPACE)
         {
           // Show airspaces by id and source ================================================
-          map::MapAirspaceSources src(query.queryItemValue("source").toInt());
+          map::MapAirspaceSources src(query.queryItemValue(QStringLiteral("source")).toInt());
 
           // Append airspace to current highlight list if not already present
           map::MapAirspace airspace = queries->getAirspaceQueries()->getAirspaceById({id, src});
@@ -428,18 +482,27 @@ void InfoController::anchorClicked(const QUrl& url)
         else if(type == map::ILS)
           // Show ILS by bounding rectangle ================================================
           emit showRect(queries->getMapQuery()->getIlsById(id).bounding, false);
+        else if(type == map::LOGBOOK)
+        {
+          // Show logbook track by bounding rectangle and in search ================================================
+          LogdataController *logController = NavApp::getLogdataController();
+          map::MapLogbookEntry logEntry = logController->getLogEntryById(id);
+
+          emit showRect(logEntry.bounding(), false);
+          emit showInSearch(map::LOGBOOK, logController->getLogEntryRecordByIdForShowInSearch(logEntry), true /* select */);
+        }
         else
           qWarning() << Q_FUNC_INFO << "Unknwown type" << url << type;
       }
-      else if(query.hasQueryItem("airport"))
+      else if(query.hasQueryItem(QStringLiteral("airport")))
       {
         // Airport ident from AI aircraft progress
         atools::geo::Pos pos;
 
-        if(query.hasQueryItem("aplonx") && query.hasQueryItem("aplaty"))
-          pos = atools::geo::Pos(query.queryItemValue("aplonx"), query.queryItemValue("aplaty"));
+        if(query.hasQueryItem(QStringLiteral("aplonx")) && query.hasQueryItem(QStringLiteral("aplaty")))
+          pos = atools::geo::Pos(query.queryItemValue(QStringLiteral("aplonx")), query.queryItemValue(QStringLiteral("aplaty")));
 
-        QList<map::MapAirport> airports = airportQuerySim->getAirportsByOfficialIdent(query.queryItemValue("airport"),
+        QList<map::MapAirport> airports = airportQuerySim->getAirportsByOfficialIdent(query.queryItemValue(QStringLiteral("airport")),
                                                                                       pos.isValid() ? &pos : nullptr);
 
         if(!airports.isEmpty())
@@ -447,17 +510,18 @@ void InfoController::anchorClicked(const QUrl& url)
         else
           qWarning() << Q_FUNC_INFO << "No airport found for" << query.queryItemValue("airport");
       }
-      else if(query.hasQueryItem("filepath"))
+      else if(query.hasQueryItem(QStringLiteral("filepath")))
         // Show path in any OS dependent file manager. Selects the file in Windows Explorer.
-        atools::gui::DesktopServices::openFile(parentWidget, query.queryItemValue("filepath"), true /* showInFileManager */);
+        atools::gui::DesktopServices::openFile(parentWidget, query.queryItemValue(QStringLiteral("filepath")),
+                                               true /* showInFileManager */);
       else
         qWarning() << Q_FUNC_INFO << "Unknwown URL" << url;
     }
-    else if(url.host() == "showprocsdepart" && id != -1 && type != map::NONE)
+    else if(host == QStringLiteral("showprocsdepart") && id != -1 && type != map::NONE)
       emit showProcedures(airportQuerySim->getAirportById(id), true /* departureFilter */, false /* arrivalFilter */);
-    else if(url.host() == "showprocsarrival" && id != -1 && type != map::NONE)
+    else if(host == QStringLiteral("showprocsarrival") && id != -1 && type != map::NONE)
       emit showProcedures(airportQuerySim->getAirportById(id), false /* departureFilter */, true /* arrivalFilter */);
-    else if(url.host() == "showprocs" && id != -1 && type != map::NONE)
+    else if(host == QStringLiteral("showprocs") && id != -1 && type != map::NONE)
       emit showProcedures(airportQuerySim->getAirportById(id), false /* departureFilter */, false /* arrivalFilter */);
   }
 
@@ -506,7 +570,7 @@ void InfoController::saveState() const
   QStringList refList;
   for(const map::MapRef& ref : refs)
     refList.append(QStringLiteral("%1;%2").arg(ref.id).arg(ref.objType));
-  settings.setValue(lnm::INFOWINDOW_CURRENTMAPOBJECTS, refList.join(";"));
+  settings.setValue(lnm::INFOWINDOW_CURRENTMAPOBJECTS, refList.join(QStringLiteral(";")));
 
   // Save airspaces =====================================================
   refList.clear();
@@ -516,7 +580,7 @@ void InfoController::saveState() const
     if(!airspace.isOnline())
       refList.append(QStringLiteral("%1;%2").arg(airspace.id).arg(airspace.src));
   }
-  settings.setValue(lnm::INFOWINDOW_CURRENTAIRSPACES, refList.join(";"));
+  settings.setValue(lnm::INFOWINDOW_CURRENTAIRSPACES, refList.join(QStringLiteral(";")));
 
   tabHandlerInfo->saveState();
   tabHandlerAirportInfo->saveState();
@@ -544,14 +608,14 @@ void InfoController::restoreInformation()
 
     // All objects =================================
     QString refsStr = atools::settings::Settings::instance().valueStr(lnm::INFOWINDOW_CURRENTMAPOBJECTS);
-    QStringList refsStrList = refsStr.split(";", Qt::SkipEmptyParts);
+    QStringList refsStrList = refsStr.split(QStringLiteral(";"), Qt::SkipEmptyParts);
     for(int i = 0; i < refsStrList.size(); i += 2)
       queries->getMapQuery()->getMapObjectById(res, map::MapTypes(refsStrList.value(i + 1).toULongLong()), map::AIRSPACE_SRC_NONE,
                                                refsStrList.value(i).toInt(), false /* airport from nav database */);
 
     // Airspaces =================================
     refsStr = atools::settings::Settings::instance().valueStr(lnm::INFOWINDOW_CURRENTAIRSPACES);
-    refsStrList = refsStr.split(";", Qt::SkipEmptyParts);
+    refsStrList = refsStr.split(QStringLiteral(";"), Qt::SkipEmptyParts);
     for(int i = 0; i < refsStrList.size(); i += 2)
     {
       map::MapAirspaceId id;
@@ -870,12 +934,12 @@ void InfoController::showInformationInternal(map::MapResult result, bool showWin
 
     // Remove header link ==============================
     html.tableAtts({
-      {"width", "100%"}
+      {QStringLiteral("width"), QStringLiteral("100%")}
     }).tr();
     html.tdAtts({
-      {"align", "right"}, {"valign", "top"}
+      {QStringLiteral("align"), QStringLiteral("right")}, {QStringLiteral("valign"), QStringLiteral("top")}
     });
-    html.b().a(tr("Remove Airspace Highlights"), QStringLiteral("lnm://do?hideairspaces"),
+    html.b().a(tr("Remove Airspace Highlights"), QStringLiteral("lnm://hideairspaces?tooltip=hideairspaces"),
                ahtml::LINK_NO_UL).bEnd().tdEnd().trEnd().tableEnd();
 
     for(const map::MapAirspace& airspace : result.getSimNavUserAirspaces())
@@ -907,12 +971,12 @@ void InfoController::showInformationInternal(map::MapResult result, bool showWin
     }), onlineAirspaces.end());
 
     html.tableAtts({
-      {"width", "100%"}
+      {QStringLiteral("width"), QStringLiteral("100%")}
     }).tr();
     html.tdAtts({
-      {"align", "right"}, {"valign", "top"}
+      {QStringLiteral("align"), QStringLiteral("right")}, {QStringLiteral("valign"), QStringLiteral("top")}
     });
-    html.b().a(tr("Remove Center Highlights"), QStringLiteral("lnm://do?hideonlineairspaces"),
+    html.b().a(tr("Remove Center Highlights"), QStringLiteral("lnm://hideonlineairspaces?tooltip=hideonlineairspaces"),
                ahtml::LINK_NO_UL).bEnd().tdEnd().trEnd().tableEnd();
 
     for(const map::MapAirspace& airspace : std::as_const(onlineAirspaces))
@@ -979,14 +1043,14 @@ void InfoController::showInformationInternal(map::MapResult result, bool showWin
     if(foundNavaid || foundUserpoint || foundAirport || foundAirspace || foundLogbookEntry || foundOnlineCenter ||
        foundOnlineClient || foundUserAircraftShadow)
     {
-      NavApp::getMainUi()->dockWidgetInformation->show();
-      NavApp::getMainUi()->dockWidgetInformation->raise();
+      ui->dockWidgetInformation->show();
+      ui->dockWidgetInformation->raise();
     }
 
     if(foundUserAircraft || foundAiAircraft)
     {
-      NavApp::getMainUi()->dockWidgetAircraft->show();
-      NavApp::getMainUi()->dockWidgetAircraft->raise();
+      ui->dockWidgetAircraft->show();
+      ui->dockWidgetAircraft->raise();
     }
   }
 
@@ -1090,12 +1154,12 @@ bool InfoController::updateNavaidInternal(const map::MapResult& result, bool bea
 
   // Remove header link ==============================
   html.tableAtts({
-    {"width", "100%"}
+    {QStringLiteral("width"), QStringLiteral("100%")}
   }).tr();
   html.tdAtts({
-    {"align", "right"}, {"valign", "top"}
+    {QStringLiteral("align"), QStringLiteral("right")}, {QStringLiteral("valign"), QStringLiteral("top")}
   });
-  html.b().a(tr("Remove Airway and Track Highlights"), QStringLiteral("lnm://do?hideairways"),
+  html.b().a(tr("Remove Airway and Track Highlights"), QStringLiteral("lnm://hideairways?tooltip=hideairways"),
              ahtml::LINK_NO_UL).bEnd().tdEnd().trEnd().tableEnd();
 
   buildOneNavaid(html, bearingChanged, foundNavaid, result.vors, currentSearchResult->vors, infoBuilder, &HtmlInfoBuilder::vorText);
@@ -1440,6 +1504,7 @@ void InfoController::optionsChanged()
   updateTextEditFontSizes();
   showInformationInternal(*currentSearchResult, false /* showWindows */, false /* scrollToTop */, true /* forceUpdate */);
   updateAircraftInfo();
+  linkTooltipHandler->setShowTooltips(OptionData::instance().getFlags().testFlag(opts::ENABLE_TOOLTIPS_LINK));
 }
 
 void InfoController::fontChanged(const QFont&)

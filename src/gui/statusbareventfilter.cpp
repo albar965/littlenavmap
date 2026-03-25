@@ -37,12 +37,12 @@ bool StatusBarEventFilter::eventFilter(QObject *object, QEvent *event)
 {
   if(event->type() == QEvent::ToolTip)
   {
-    QHelpEvent *mouseEvent = dynamic_cast<QHelpEvent *>(event);
-    if(mouseEvent != nullptr)
+    QHelpEvent *helpEvent = dynamic_cast<QHelpEvent *>(event);
+    if(helpEvent != nullptr)
     {
       // Allow tooltip events only on the left side of the first label widget
       QRect rect(0, 0, firstWidget->geometry().left(), statusBar->height());
-      if(!rect.contains(mouseEvent->pos()))
+      if(!rect.contains(helpEvent->pos()))
         return true;
     }
   }

@@ -26,6 +26,7 @@
 #include "fs/pln/flightplan.h"
 #include "fs/util/fsutil.h"
 #include "gui/clicktooltiphandler.h"
+#include "gui/linktooltiphandler.h"
 #include "gui/widgetzoomhandler.h"
 #include "perf/aircraftperfcontroller.h"
 #include "query/airportquery.h"
@@ -52,6 +53,18 @@ RouteLabel::RouteLabel(QWidget *parent, const Route& routeParam)
   Ui::MainWindow *ui = NavApp::getMainUi();
   connect(ui->labelRouteInfo, &QLabel::linkActivated, this, &RouteLabel::flightplanLabelLinkActivated);
 
+  linkTooltipHandler = new atools::gui::LinkTooltipHandler(this);
+  linkTooltipHandler->setShowTooltips(OptionData::instance().getFlags().testFlag(opts::ENABLE_TOOLTIPS_LINK));
+  linkTooltipHandler->addWidget(ui->labelRouteInfo);
+
+  // The keys have to match the query item key "tooltip" to provide a tooltip ============================
+  linkTooltipHandler->addUrlTooltip(QStringLiteral("showdeparture"),
+                                    tr("Click here to show the departure airport on the map and in information"));
+  linkTooltipHandler->addUrlTooltip(QStringLiteral("showdepartureparking"),
+                                    tr("Click here to show the departure position at the airport"));
+  linkTooltipHandler->addUrlTooltip(QStringLiteral("showdestination"),
+                                    tr("Click here to show the destination airport on the map and in information"));
+
   // Show error messages in tooltip on click ========================================
   ui->labelRouteError->installEventFilter(new atools::gui::ClickToolTipHandler(ui->labelRouteError));
   ui->labelRouteError->setVisible(false);
@@ -67,6 +80,7 @@ RouteLabel::RouteLabel(QWidget *parent, const Route& routeParam)
 
 RouteLabel::~RouteLabel()
 {
+  delete linkTooltipHandler;
   delete zoomHandler;
 }
 
@@ -94,6 +108,7 @@ void RouteLabel::styleChanged()
 void RouteLabel::optionsChanged()
 {
   fontChanged(QGuiApplication::font());
+  linkTooltipHandler->setShowTooltips(OptionData::instance().getFlags().testFlag(opts::ENABLE_TOOLTIPS_LINK));
 }
 
 void RouteLabel::fontChanged(const QFont&)
@@ -258,12 +273,12 @@ void RouteLabel::buildHeaderAirports(atools::util::HtmlBuilder& html, bool widge
         // No distance - add separator underline
         html.u();
 
-      html.a(departureAirport, "lnm://showdeparture", htmlFlags);
+      html.a(departureAirport, QStringLiteral("lnm://showdeparture?tooltip=showdeparture"), htmlFlags);
       if(!departureParking.isEmpty())
-        html.text(tr(" / ")).a(departureParking, "lnm://showdepartureparking", htmlFlags);
+        html.text(tr(" / ")).a(departureParking, QStringLiteral("lnm://showdepartureparking?tooltip=showdepartureparking"), htmlFlags);
 
       if(!destinationAirport.isEmpty() && route.getSizeWithoutAlternates() > 1)
-        html.text(tr(" to ")).a(destinationAirport, "lnm://showdestination", htmlFlags);
+        html.text(tr(" to ")).a(destinationAirport, QStringLiteral("lnm://showdestination?tooltip=showdestination"), htmlFlags);
 
       if(!isFlag(routelabel::HEADER_DISTTIME))
         html.uEnd();

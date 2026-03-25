@@ -638,6 +638,7 @@ OptionsDialog::OptionsDialog(QMainWindow *parentWindow)
      ui->checkBoxOptionsFreetype, // Read in main.cpp
      ui->checkBoxOptionsGuiTooltipsAll,
      ui->checkBoxOptionsGuiTooltipsMenu,
+     ui->checkBoxOptionsGuiTooltipsLink,
      ui->checkBoxOptionsGuiToolbarSize,
      // ui->comboBoxOptionsGuiLanguage, saved directly
 
@@ -2219,6 +2220,7 @@ void OptionsDialog::widgetsToOptionData()
 
   toFlags(data.flags, ui->checkBoxOptionsOnlineRemoveShadow, opts::ONLINE_REMOVE_SHADOW);
   toFlags(data.flags, ui->checkBoxOptionsGuiTooltipsAll, opts::ENABLE_TOOLTIPS_ALL);
+  toFlags(data.flags, ui->checkBoxOptionsGuiTooltipsLink, opts::ENABLE_TOOLTIPS_LINK);
   toFlags(data.flags, ui->checkBoxOptionsGuiTooltipsMenu, opts::ENABLE_TOOLTIPS_MENU);
 
   toFlags(data.displayOnlineFlags, ui->checkBoxDisplayOnlineClearanceRange, opts::DISPLAY_ONLINE_CLEARANCE);
@@ -2555,6 +2557,7 @@ void OptionsDialog::optionDataToWidgets(const OptionData& data)
   fromFlags(data.flags, ui->checkBoxOptionsOnlineRemoveShadow, opts::ONLINE_REMOVE_SHADOW);
   fromFlags(data.flags, ui->checkBoxOptionsGuiTooltipsAll, opts::ENABLE_TOOLTIPS_ALL);
   fromFlags(data.flags, ui->checkBoxOptionsGuiTooltipsMenu, opts::ENABLE_TOOLTIPS_MENU);
+  fromFlags(data.flags, ui->checkBoxOptionsGuiTooltipsLink, opts::ENABLE_TOOLTIPS_LINK);
 
   fromFlags(data.displayOnlineFlags, ui->checkBoxDisplayOnlineClearanceRange, opts::DISPLAY_ONLINE_CLEARANCE);
   fromFlags(data.displayOnlineFlags, ui->checkBoxDisplayOnlineAreaRange, opts::DISPLAY_ONLINE_AREA);

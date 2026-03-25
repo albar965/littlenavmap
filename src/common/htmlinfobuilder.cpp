@@ -152,7 +152,7 @@ void HtmlInfoBuilder::airportTitle(const MapAirport& airport, HtmlBuilder& html,
     if(!print)
     {
       // Add link to map
-      html.a(tr("Map"), QStringLiteral("lnm://show?id=%1&type=%2").arg(airport.id).arg(map::AIRPORT), LINK_FLAGS);
+      html.a(tr("Map"), QStringLiteral("lnm://show?id=%1&type=%2&tooltip=showairport").arg(airport.id).arg(map::AIRPORT), LINK_FLAGS);
 
       if(procedures)
         airportProcedureLinks(html, airport);
@@ -177,19 +177,19 @@ void HtmlInfoBuilder::airportProcedureLinkTexts(QString& text, QString& href, co
   {
     // Is destination airport and has procedures
     text = tr("Arrival/Appr. Proc.");
-    href = QStringLiteral("lnm://showprocsarrival?id=%1&type=%2").arg(airport.id).arg(map::AIRPORT);
+    href = QStringLiteral("lnm://showprocsarrival?id=%1&type=%2&tooltip=showprocsarrival").arg(airport.id).arg(map::AIRPORT);
   }
   else if(departure && departureProc)
   {
     // Is departure airport and has procedures
     text = tr("Departure Proc.");
-    href = QStringLiteral("lnm://showprocsdepart?id=%1&type=%2").arg(airport.id).arg(map::AIRPORT);
+    href = QStringLiteral("lnm://showprocsdepart?id=%1&type=%2&tooltip=showprocsdepart").arg(airport.id).arg(map::AIRPORT);
   }
   else if(arrivalProc || departureProc)
   {
     // Neiter departure nor arrival and has procedures
     text = tr("Procedures");
-    href = QStringLiteral("lnm://showprocs?id=%1&type=%2").arg(airport.id).arg(map::AIRPORT);
+    href = QStringLiteral("lnm://showprocs?id=%1&type=%2&tooltip=showprocs").arg(airport.id).arg(map::AIRPORT);
   }
 }
 
@@ -619,10 +619,10 @@ void HtmlInfoBuilder::nearestMapObjectsTextRow(const MapAirport& airport, HtmlBu
   QString url;
   if(base->objType == map::AIRPORT)
     // Show by id does only work for airport (needed for centering)
-    url = QStringLiteral("lnm://show?id=%1&type=%2").arg(base->id).arg(base->objType);
+    url = QStringLiteral("lnm://show?id=%1&type=%2&tooltip=showairport").arg(base->id).arg(base->objType);
   else
     // Show all other navaids by coordinate
-    url = QStringLiteral("lnm://show?lonx=%1&laty=%2").arg(base->position.getLonX()).arg(base->position.getLatY());
+    url = QStringLiteral("lnm://show?lonx=%1&laty=%2&tooltip=shownavaid").arg(base->position.getLonX()).arg(base->position.getLatY());
 
   // Create table row ==========================
   html.tr(QColor());
@@ -993,7 +993,8 @@ void HtmlInfoBuilder::runwayText(const MapAirport& airport, HtmlBuilder& html, b
           Pos pos(heliRec.valueFloat("lonx"), heliRec.valueFloat("laty"));
 
           if(!print)
-            html.a(tr("Map"), QStringLiteral("lnm://show?lonx=%1&laty=%2").arg(pos.getLonX()).arg(pos.getLatY()), LINK_FLAGS).br();
+            html.a(tr("Map"), QStringLiteral("lnm://show?lonx=%1&laty=%2&tooltip=showhelipad").
+                   arg(pos.getLonX()).arg(pos.getLatY()), LINK_FLAGS).br();
 
           if(closed)
             html.text(tr("Is Closed"));
@@ -1043,7 +1044,8 @@ void HtmlInfoBuilder::runwayText(const MapAirport& airport, HtmlBuilder& html, b
           if(print)
             html.text(startText);
           else
-            html.a(startText, QStringLiteral("lnm://show?lonx=%1&laty=%2").arg(pos.getLonX()).arg(pos.getLatY()), ahtml::LINK_NO_UL);
+            html.a(startText, QStringLiteral("lnm://show?lonx=%1&laty=%2&tooltip=showstart").
+                   arg(pos.getLonX()).arg(pos.getLatY()), ahtml::LINK_NO_UL);
           i++;
         }
       }
@@ -1184,7 +1186,8 @@ void HtmlInfoBuilder::ilsTextInternal(const map::MapIls& ils, atools::util::Html
     {
       // Add map link if not tooltip ==========================================
       html.nbsp().nbsp();
-      html.a(tr("Map"), QStringLiteral("lnm://show?id=%1&type=%2").arg(ils.id).arg(map::ILS), LINK_FLAGS);
+      html.a(tr("Map"), QStringLiteral("lnm://show?id=%1&type=%2&tooltip=showils").
+             arg(ils.id).arg(map::ILS), LINK_FLAGS);
     }
     html.table();
   }
@@ -1796,7 +1799,8 @@ void HtmlInfoBuilder::weatherText(const map::WeatherContext& context, const MapA
 
           // Add link to airport station
           if(info && !print && airport.isValid())
-            html.nbsp().nbsp().a(tr("Map"), QStringLiteral("lnm://show?id=%1&type=%2").arg(airport.id).arg(map::AIRPORT), LINK_FLAGS);
+            html.nbsp().nbsp().a(tr("Map"), QStringLiteral("lnm://show?id=%1&type=%2&tooltip=showairport").
+                                 arg(airport.id).arg(map::AIRPORT), LINK_FLAGS);
 
           map::MapAirport reportAirport;
           queries->getAirportQuerySim()->getAirportByIdent(reportAirport, metar.getNearestIdent());
@@ -1811,7 +1815,8 @@ void HtmlInfoBuilder::weatherText(const map::WeatherContext& context, const MapA
 
           // Add link to airport station
           if(info && !print && airport.isValid())
-            html.nbsp().nbsp().a(tr("Map"), QStringLiteral("lnm://show?id=%1&type=%2").arg(airport.id).arg(map::AIRPORT), LINK_FLAGS);
+            html.nbsp().nbsp().a(tr("Map"), QStringLiteral("lnm://show?id=%1&type=%2&tooltip=showairport").
+                                 arg(airport.id).arg(map::AIRPORT), LINK_FLAGS);
 
           decodedMetar(html, airport, map::MapAirport(), metar, false, atools::fs::weather::INTERPOLATED);
         }
@@ -1925,7 +1930,8 @@ void HtmlInfoBuilder::airportMsaTextInternal(const map::MapAirportMsa& msa, atoo
   {
     // Add map link if not tooltip
     html.nbsp().nbsp();
-    html.a(tr("Map"), QStringLiteral("lnm://show?lonx=%1&laty=%2").arg(msa.position.getLonX()).arg(msa.position.getLatY()), LINK_FLAGS);
+    html.a(tr("Map"), QStringLiteral("lnm://show?lonx=%1&laty=%2&tooltip=shownavaid").
+           arg(msa.position.getLonX()).arg(msa.position.getLatY()), LINK_FLAGS);
   }
 
   html.table();
@@ -2002,7 +2008,8 @@ void HtmlInfoBuilder::decodedMetars(HtmlBuilder& html, const atools::fs::weather
       {
         // Add link to airport
         html.nbsp().nbsp();
-        html.a(tr("Map"), QStringLiteral("lnm://show?id=%1&type=%2").arg(reportAirport.id).arg(map::AIRPORT), LINK_FLAGS);
+        html.a(tr("Map"), QStringLiteral("lnm://show?id=%1&type=%2&tooltip=showairport").
+               arg(reportAirport.id).arg(map::AIRPORT), LINK_FLAGS);
       }
 
       decodedMetar(html, airport, reportAirport, metar, mapDisplay, atools::fs::weather::NEAREST);
@@ -2020,7 +2027,8 @@ void HtmlInfoBuilder::decodedMetars(HtmlBuilder& html, const atools::fs::weather
       {
         // Add link to airport
         html.nbsp().nbsp();
-        html.a(tr("Map"), QStringLiteral("lnm://show?id=%1&type=%2").arg(reportAirport.id).arg(map::AIRPORT), LINK_FLAGS);
+        html.a(tr("Map"), QStringLiteral("lnm://show?id=%1&type=%2&tooltip=showairport").
+               arg(reportAirport.id).arg(map::AIRPORT), LINK_FLAGS);
       }
 
       decodedMetar(html, airport, reportAirport, metar, mapDisplay, atools::fs::weather::INTERPOLATED);
@@ -2046,7 +2054,8 @@ void HtmlInfoBuilder::decodedMetar(HtmlBuilder& html, const map::MapAirport& air
 
     QString airportText = tr("%1 (%2)").arg(reportAirport.name).arg(reportAirport.displayIdent());
     if(!print)
-      reportHtml.a(airportText, QStringLiteral("lnm://show?id=%1&type=%2").arg(reportAirport.id).arg(map::AIRPORT), LINK_FLAGS);
+      reportHtml.a(airportText, QStringLiteral("lnm://show?id=%1&type=%2&tooltip=showairport").
+                   arg(reportAirport.id).arg(map::AIRPORT), LINK_FLAGS);
     else
       reportHtml.text(airportText);
 
@@ -2228,7 +2237,7 @@ void HtmlInfoBuilder::decodedMetar(HtmlBuilder& html, const map::MapAirport& air
         // Add link to airport
         if(reports > 0)
           reportHtml.text(tr(", "));
-        reportHtml.a(interpolationAirport.displayIdent(), QStringLiteral("lnm://show?id=%1&type=%2").
+        reportHtml.a(interpolationAirport.displayIdent(), QStringLiteral("lnm://show?id=%1&type=%2&tooltip=showairport").
                      arg(interpolationAirport.id).arg(map::AIRPORT), LINK_FLAGS);
         reports++;
       }
@@ -2262,7 +2271,8 @@ void HtmlInfoBuilder::vorText(const MapVor& vor, HtmlBuilder& html) const
   {
     // Add map link if not tooltip
     html.nbsp().nbsp();
-    html.a(tr("Map"), QStringLiteral("lnm://show?lonx=%1&laty=%2").arg(vor.position.getLonX()).arg(vor.position.getLatY()), LINK_FLAGS);
+    html.a(tr("Map"), QStringLiteral("lnm://show?lonx=%1&laty=%2&tooltip=showvor").
+           arg(vor.position.getLonX()).arg(vor.position.getLatY()), LINK_FLAGS);
   }
 
   html.table();
@@ -2351,7 +2361,8 @@ void HtmlInfoBuilder::ndbText(const MapNdb& ndb, HtmlBuilder& html) const
   {
     // Add map link if not tooltip
     html.nbsp().nbsp();
-    html.a(tr("Map"), QStringLiteral("lnm://show?lonx=%1&laty=%2").arg(ndb.position.getLonX()).arg(ndb.position.getLatY()), LINK_FLAGS);
+    html.a(tr("Map"), QStringLiteral("lnm://show?lonx=%1&laty=%2&tooltip=showndb").
+           arg(ndb.position.getLonX()).arg(ndb.position.getLatY()), LINK_FLAGS);
   }
 
   html.table();
@@ -2637,7 +2648,7 @@ bool HtmlInfoBuilder::userpointText(MapUserpoint userpoint, HtmlBuilder& html) c
     {
       // Add map link if not tooltip
       html.nbsp().nbsp();
-      html.a(tr("Map"), QStringLiteral("lnm://show?lonx=%1&laty=%2").
+      html.a(tr("Map"), QStringLiteral("lnm://show?lonx=%1&laty=%2&tooltip=showuserpoint").
              arg(userpoint.position.getLonX()).arg(userpoint.position.getLatY()), LINK_FLAGS);
     }
 
@@ -2723,6 +2734,19 @@ bool HtmlInfoBuilder::logEntryText(MapLogbookEntry logEntry, HtmlBuilder& html) 
     navaidTitle(html, tr("Logbook Entry: %1 to %2").
                 arg(logEntry.departureIdent.isEmpty() ? tr("-") : logEntry.departureIdent).
                 arg(logEntry.destinationIdent.isEmpty() ? tr("-") : logEntry.destinationIdent));
+
+    if(info && !print)
+    {
+      // Add map link if not tooltip
+      const atools::geo::Rect rect = logEntry.bounding();
+
+      if(rect.isValid())
+      {
+        html.nbsp().nbsp();
+        html.a(tr("Map"), QStringLiteral("lnm://show?id=%1&type=%2&tooltip=showlog").
+               arg(logEntry.id).arg(map::LOGBOOK), LINK_FLAGS);
+      }
+    }
 
     // From/to ================================================================
     html.table();
@@ -2947,7 +2971,7 @@ void HtmlInfoBuilder::airportRow(const map::MapAirport& ap, HtmlBuilder& html) c
     if(apSim.isValid())
     {
       HtmlBuilder apHtml = html.cleared();
-      apHtml.a(apSim.displayIdent(), QStringLiteral("lnm://show?airport=%1").arg(apSim.ident), LINK_FLAGS);
+      apHtml.a(apSim.displayIdent(), QStringLiteral("lnm://show?airport=%1&tooltip=showairport").arg(apSim.ident), LINK_FLAGS);
       html.row2(tr("Airport:"), apHtml.getHtml(), ahtml::NO_ENTITIES);
     }
   }
@@ -2971,7 +2995,7 @@ void HtmlInfoBuilder::waypointText(const MapWaypoint& waypoint, HtmlBuilder& htm
   {
     // Add map link if not tooltip
     html.nbsp().nbsp();
-    html.a(tr("Map"), QStringLiteral("lnm://show?lonx=%1&laty=%2").
+    html.a(tr("Map"), QStringLiteral("lnm://show?lonx=%1&laty=%2&tooltip=showwaypoint").
            arg(waypoint.position.getLonX()).arg(waypoint.position.getLatY()), LINK_FLAGS);
   }
 
@@ -3194,8 +3218,8 @@ void HtmlInfoBuilder::airspaceText(const MapAirspace& airspace, const atools::sq
   {
     // Add map link if not tooltip
     html.nbsp().nbsp();
-    html.a(tr("Map"), QStringLiteral("lnm://show?id=%1&type=%2&source=%3").arg(airspace.id).arg(map::AIRSPACE).arg(airspace.src),
-           LINK_FLAGS);
+    html.a(tr("Map"), QStringLiteral("lnm://show?id=%1&type=%2&source=%3&tooltip=showairspace").
+           arg(airspace.id).arg(map::AIRSPACE).arg(airspace.src), LINK_FLAGS);
   }
 
   QStringList header;
@@ -3345,8 +3369,8 @@ void HtmlInfoBuilder::airwayText(const MapAirway& airway, HtmlBuilder& html) con
   {
     // Add map link if not tooltip
     html.nbsp().nbsp();
-    html.a(tr("Map"), QStringLiteral("lnm://show?id=%1&fragment=%2&type=%3").arg(airway.id).arg(airway.fragment).arg(map::AIRWAY),
-           LINK_FLAGS);
+    html.a(tr("Map"), QStringLiteral("lnm://show?id=%1&fragment=%2&type=%3&tooltip=showairway").
+           arg(airway.id).arg(airway.fragment).arg(map::AIRWAY), LINK_FLAGS);
   }
 
   html.table();
@@ -3376,10 +3400,10 @@ void HtmlInfoBuilder::airwayText(const MapAirway& airway, HtmlBuilder& html) con
   QString connector(airway.direction == map::DIR_BOTH ? tr(", ") : tr(" %1 ").arg(TextPointer::getPointerRight()));
   if(info)
   {
-    tempHtml.a(identRegionText(from.ident, from.region), QStringLiteral("lnm://show?lonx=%1&laty=%2").
+    tempHtml.a(identRegionText(from.ident, from.region), QStringLiteral("lnm://show?lonx=%1&laty=%2&tooltip=shownavaid").
                arg(from.position.getLonX()).arg(from.position.getLatY()), LINK_FLAGS);
     tempHtml.text(connector);
-    tempHtml.a(identRegionText(to.ident, to.region), QStringLiteral("lnm://show?lonx=%1&laty=%2").
+    tempHtml.a(identRegionText(to.ident, to.region), QStringLiteral("lnm://show?lonx=%1&laty=%2&tooltip=shownavaid").
                arg(to.position.getLonX()).arg(to.position.getLatY()), LINK_FLAGS);
   }
   else
@@ -3450,7 +3474,7 @@ void HtmlInfoBuilder::airwayText(const MapAirway& airway, HtmlBuilder& html) con
         if(!tempLinkHtml.isEmpty())
           tempLinkHtml.text(", ");
         tempLinkHtml.a(identRegionText(airwayWaypoint.waypoint.ident, airwayWaypoint.waypoint.region),
-                       QStringLiteral("lnm://show?lonx=%1&laty=%2").
+                       QStringLiteral("lnm://show?lonx=%1&laty=%2&tooltip=shownavaid").
                        arg(airwayWaypoint.waypoint.position.getLonX()).
                        arg(airwayWaypoint.waypoint.position.getLatY()), LINK_FLAGS);
       }
@@ -4387,14 +4411,17 @@ void HtmlInfoBuilder::aircraftProgressText(const atools::fs::sc::SimConnectAircr
         {
           // Map and information
           recHtml.textBr(tr(", ")).
-          a(tr("Map"), QStringLiteral("lnm://show?lonx=%1&laty=%2").arg(recPos.getLonX()).arg(recPos.getLatY()), LINK_FLAGS);
+          a(tr("Map"), QStringLiteral("lnm://show?lonx=%1&laty=%2&tooltip=shownavaid").
+            arg(recPos.getLonX()).arg(recPos.getLatY()), LINK_FLAGS);
           recHtml.text(tr(", ")).
-          a(tr("Info"), QStringLiteral("lnm://info?id=%1&type=%2").arg(id).arg(procMapType.asFlagType()), LINK_FLAGS);
+          a(tr("Info"), QStringLiteral("lnm://info?id=%1&type=%2&tooltip=shownavaid").
+            arg(id).arg(procMapType.asFlagType()), LINK_FLAGS);
         }
         else if(recPos.isValid())
           // Only map
           recHtml.textBr(tr(", ")).
-          a(tr("Map"), QStringLiteral("lnm://show?lonx=%1&laty=%2").arg(recPos.getLonX()).arg(recPos.getLatY()), LINK_FLAGS);
+          a(tr("Map"), QStringLiteral("lnm://show?lonx=%1&laty=%2&tooltip=shownavaid").
+            arg(recPos.getLonX()).arg(recPos.getLatY()), LINK_FLAGS);
 
         html.id(pid::NEXT_RELATED).row2If(tr("Related Navaid:"), proc::procedureLegRecommended(procLeg).join(tr(", ")) % recHtml.getHtml(),
                                           ahtml::NO_ENTITIES);
@@ -5035,11 +5062,11 @@ QString HtmlInfoBuilder::airportLink(const HtmlBuilder& html, const QString& ide
 
       if(atools::fs::util::fromDegMinFormat(ident).isValid())
         // Use deg min format which is inserted for off-airport logbook entries
-        link = QStringLiteral("lnm://show?lonx=%1&laty=%2").arg(pos.getLonX()).arg(pos.getLatY());
+        link = QStringLiteral("lnm://show?lonx=%1&laty=%2&tooltip=showpos").arg(pos.getLonX()).arg(pos.getLatY());
       else
       {
         // Normal airport
-        link = QStringLiteral("lnm://show?airport=%1").arg(ident);
+        link = QStringLiteral("lnm://show?airport=%1&tooltip=showairport").arg(ident);
         if(pos.isValid())
           link += QStringLiteral("&aplonx=%1&aplaty=%2").arg(pos.getLonX()).arg(pos.getLatY());
       }
@@ -5113,7 +5140,7 @@ void HtmlInfoBuilder::aircraftTitle(const atools::fs::sc::SimConnectAircraft& ai
     if(aircraft.isValid())
     {
       html.nbsp().nbsp();
-      html.a(tr("Map"), QStringLiteral("lnm://show?lonx=%1&laty=%2").
+      html.a(tr("Map"), QStringLiteral("lnm://show?lonx=%1&laty=%2&tooltip=showaircraft").
              arg(aircraft.getPosition().getLonX()).arg(aircraft.getPosition().getLatY()), LINK_FLAGS);
     }
   }
@@ -5264,7 +5291,8 @@ QString HtmlInfoBuilder::filepathTextShow(const QString& filepath, const QString
   if(fileinfo.exists())
   {
     QString filepathStr = atools::nativeCleanPath(canonical ? atools::canonicalFilePath(fileinfo) : fileinfo.absoluteFilePath());
-    link.small(prefix).a(filepathStr, QStringLiteral("lnm://show?filepath=%1").arg(filepathStr), ahtml::LINK_NO_UL | ahtml::SMALL);
+    link.small(prefix).a(filepathStr, QStringLiteral("lnm://show?filepath=%1&tooltip=showfilepath").
+                         arg(filepathStr), ahtml::LINK_NO_UL | ahtml::SMALL);
   }
   else
     link.small(prefix).small(filepath).text(tr(" (file not found)"), ahtml::SMALL | ahtml::BOLD);
@@ -5338,18 +5366,19 @@ void HtmlInfoBuilder::head(HtmlBuilder& html, const QString& text, int id, map::
       airportProcedureLinkTexts(procText, procHref, queries->getAirportQuerySim()->getAirportById(id));
 
       // Center on airport bounding rect and add info link
-      head(html, text, {tr("Map"), QStringLiteral("lnm://show?id=%1&type=%2").arg(id).arg(type),
-                        tr("Info"), QStringLiteral("lnm://info?id=%1&type=%2").arg(id).arg(type),
+      head(html, text, {tr("Map"), QStringLiteral("lnm://show?id=%1&type=%2&tooltip=showairport").arg(id).arg(type),
+                        tr("Info"), QStringLiteral("lnm://info?id=%1&type=%2&tooltip=infoairport").arg(id).arg(type),
                         procText, procHref});
 
     }
     else if(atools::contains(type, {map::VOR, map::NDB, map::WAYPOINT}))
       // Center navaid by position and add info link
-      head(html, text, {tr("Map"), QStringLiteral("lnm://show?lonx=%1&laty=%2").arg(pos.getLonX()).arg(pos.getLatY()),
-                        tr("Info"), QStringLiteral("lnm://info?id=%1&type=%2").arg(id).arg(type)});
+      head(html, text, {tr("Map"), QStringLiteral("lnm://show?lonx=%1&laty=%2&tooltip=shownavaid").arg(pos.getLonX()).arg(pos.getLatY()),
+                        tr("Info"), QStringLiteral("lnm://info?id=%1&type=%2&tooltip=infonavaid").arg(id).arg(type)});
     else if(pos.isValid())
       // Show map link for position
-      head(html, text, QStringList({tr("Map"), QStringLiteral("lnm://show?lonx=%1&laty=%2").arg(pos.getLonX()).arg(pos.getLatY())}));
+      head(html, text, QStringList({tr("Map"), QStringLiteral("lnm://show?lonx=%1&laty=%2&tooltip=showpos").
+                                    arg(pos.getLonX()).arg(pos.getLatY())}));
     else
       // No links
       head(html, text);

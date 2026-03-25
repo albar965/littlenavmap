@@ -3606,16 +3606,9 @@ void MapWidget::showResultInSearch(const map::MapBase *base)
   using atools::sql::SqlRecord;
 
   if(base->objType == map::LOGBOOK)
-  {
-    map::MapLogbookEntry logEntry = base->asObj<map::MapLogbookEntry>();
-    emit showInSearch(map::LOGBOOK, SqlRecord().
-                      appendFieldAndValueIf("departure_ident", logEntry.departureIdent).
-                      appendFieldAndValueIf("destination_ident", logEntry.destinationIdent).
-                      appendFieldAndValueIf("simulator", logEntry.simulator).
-                      appendFieldAndValueIf("aircraft_type", logEntry.aircraftType).
-                      appendFieldAndValueIf("aircraft_registration", logEntry.aircraftRegistration),
+    emit showInSearch(map::LOGBOOK,
+                      NavApp::getLogdataController()->getLogEntryRecordByIdForShowInSearch(base->asObj<map::MapLogbookEntry>()),
                       true /* select */);
-  }
   else if(base->objType == map::USERPOINT)
   {
     map::MapUserpoint userpoint = base->asObj<map::MapUserpoint>();

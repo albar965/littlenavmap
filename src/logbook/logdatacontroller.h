@@ -100,7 +100,7 @@ public:
   void importXplane();
 
   /* Show search tab and raise window */
-  void  showSearch();
+  void showSearch();
 
   void saveState() const;
   void restoreState();
@@ -122,6 +122,8 @@ public:
   /* Get record or struct from database */
   map::MapLogbookEntry getLogEntryById(int id);
   atools::sql::SqlRecord getLogEntryRecordById(int id);
+  atools::sql::SqlRecord getLogEntryRecordByIdForShowInSearch(int id);
+  atools::sql::SqlRecord getLogEntryRecordByIdForShowInSearch(const map::MapLogbookEntry& logEntry);
 
   /* Get various statistical information for departure times */
   void getFlightStatsTime(QDateTime& earliest, QDateTime& latest, QDateTime& earliestSim, QDateTime& latestSim);

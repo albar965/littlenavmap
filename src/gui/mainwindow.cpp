@@ -1398,6 +1398,8 @@ void MainWindow::connectAllSlots()
   connect(ui->actionHelpOpenLogFile, &QAction::triggered, this, &MainWindow::openLogFile);
   connect(ui->actionHelpOpenConfigFile, &QAction::triggered, this, &MainWindow::openConfigFile);
 
+  connect(infoController, &InfoController::showInSearch, searchController, &SearchController::showInSearch);
+
   // Map widget related connections
   connect(mapWidget, &MapWidget::showInSearch, searchController, &SearchController::showInSearch);
   // Connect the map widget to the position label.
