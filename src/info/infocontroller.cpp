@@ -78,42 +78,56 @@ InfoController::InfoController(QWidget *parent)
 
   // The keys have to match the query item key "tooltip" to provide a tooltip ============================
   // egrep -o 'tooltip=\w+' ../common/htmlinfobuilder.cpp | sort | uniq
-  linkTooltipHandler->addUrlTooltip(QStringLiteral("infoairport"), tr("Click to show the airport information"));
-  linkTooltipHandler->addUrlTooltip(QStringLiteral("infonavaid"), tr("Click here to show the navaid information"));
-  linkTooltipHandler->addUrlTooltip(QStringLiteral("showaircraft"), tr("Click here to show the aircraft on the map"));
-  linkTooltipHandler->addUrlTooltip(QStringLiteral("showairport"), tr("Click here to show the airport on the map"));
-  linkTooltipHandler->addUrlTooltip(QStringLiteral("showairspace"), tr("Click to show and highlight the airspace on the map"));
-  linkTooltipHandler->addUrlTooltip(QStringLiteral("showairway"), tr("Click here to show and highlight the airway on the map"));
-  linkTooltipHandler->addUrlTooltip(QStringLiteral("showhelipad"), tr("Click here to show the helipad on the map"));
-  linkTooltipHandler->addUrlTooltip(QStringLiteral("showils"), tr("Click here to show the ILS on the map"));
-  linkTooltipHandler->addUrlTooltip(QStringLiteral("showlog"), tr("Click here to show the logbook entry and similar entries on the map"));
-  linkTooltipHandler->addUrlTooltip(QStringLiteral("shownavaid"), tr("Click here to show the navaid on the map"));
-  linkTooltipHandler->addUrlTooltip(QStringLiteral("showndb"), tr("Click here to show the NDB on the map"));
-  linkTooltipHandler->addUrlTooltip(QStringLiteral("showpos"), tr("Click to show the position on the map"));
-  linkTooltipHandler->addUrlTooltip(QStringLiteral("showprocs"), tr("Click here to show all procedures of the airport"));
-  linkTooltipHandler->addUrlTooltip(QStringLiteral("showprocsarrival"), tr("Click here to show arrival procedures of the airport"));
-  linkTooltipHandler->addUrlTooltip(QStringLiteral("showprocsdepart"), tr("Click here to show departure procedures of the airport"));
-  linkTooltipHandler->addUrlTooltip(QStringLiteral("showstart"), tr("Click here to show the start position on the map"));
-  linkTooltipHandler->addUrlTooltip(QStringLiteral("showuserpoint"), tr("Click here to show the userpoint on the map"));
-  linkTooltipHandler->addUrlTooltip(QStringLiteral("showvor"), tr("Click here to show the VOR on the map"));
-  linkTooltipHandler->addUrlTooltip(QStringLiteral("showwaypoint"), tr("Click here to show the waypoint on the map"));
+  // Show in information ===========================================
+  linkTooltipHandler->addUrlTooltip(QStringLiteral("infoairport"), tr("View airport information"));
+  linkTooltipHandler->addUrlTooltip(QStringLiteral("infovor"), tr("View VOR information"));
+  linkTooltipHandler->addUrlTooltip(QStringLiteral("infondb"), tr("View NDB information"));
+  linkTooltipHandler->addUrlTooltip(QStringLiteral("infowaypoint"), tr("View waypoint information"));
+  linkTooltipHandler->addUrlTooltip(QStringLiteral("infoils"), tr("View ILS information"));
+  linkTooltipHandler->addUrlTooltip(QStringLiteral("infonavaid"), tr("View navaid information"));
 
+  // Show on map ===========================================
+  linkTooltipHandler->addUrlTooltip(QStringLiteral("showaircraft"), tr("Show the aircraft on the map"));
+  linkTooltipHandler->addUrlTooltip(QStringLiteral("showairport"), tr("Show the airport on the map"));
+  linkTooltipHandler->addUrlTooltip(QStringLiteral("showairspace"), tr("Show and highlight the airspace on the map"));
+  linkTooltipHandler->addUrlTooltip(QStringLiteral("showairway"), tr("Show and highlight the airway on the map"));
+  linkTooltipHandler->addUrlTooltip(QStringLiteral("showhelipad"), tr("Show the helipad on the map"));
+  linkTooltipHandler->addUrlTooltip(QStringLiteral("showils"), tr("Show the ILS on the map"));
+  linkTooltipHandler->addUrlTooltip(QStringLiteral("showlog"), tr("Show the logbook entry and similar entries on the map"));
+  linkTooltipHandler->addUrlTooltip(QStringLiteral("shownavaid"), tr("Show the navaid on the map"));
+  linkTooltipHandler->addUrlTooltip(QStringLiteral("showndb"), tr("Show the NDB on the map"));
+  linkTooltipHandler->addUrlTooltip(QStringLiteral("showpos"), tr("Show the position on the map"));
+  linkTooltipHandler->addUrlTooltip(QStringLiteral("showstart"), tr("Show the start position on the map"));
+  linkTooltipHandler->addUrlTooltip(QStringLiteral("showuserpoint"), tr("Show the userpoint on the map"));
+  linkTooltipHandler->addUrlTooltip(QStringLiteral("showvor"), tr("Show the VOR on the map"));
+  linkTooltipHandler->addUrlTooltip(QStringLiteral("showwaypoint"), tr("Show the waypoint on the map"));
+
+  // Show procedures ===========================================
+  linkTooltipHandler->addUrlTooltip(QStringLiteral("showprocs"),
+                                    tr("View all procedures of the airport in the procedures tab"));
+  linkTooltipHandler->addUrlTooltip(QStringLiteral("showprocsarrival"),
+                                    tr("View arrival and approach procedures of the airport in the procedures tab"));
+  linkTooltipHandler->addUrlTooltip(QStringLiteral("showprocsdepart"),
+                                    tr("View departure procedures of the airport in the procedures tab"));
+
+  // Hide features ===========================================
   linkTooltipHandler->addUrlTooltip(QStringLiteral("hideonlineairspaces"),
-                                    tr("Click here to remove highlighted online airspaces from the map"));
-  linkTooltipHandler->addUrlTooltip(QStringLiteral("hideairways"), tr("Click here to remove highlighted airways and tracks from the map"));
-  linkTooltipHandler->addUrlTooltip(QStringLiteral("hideairspaces"), tr("Click here to remove highlighted airspaces from the map"));
+                                    tr("Remove highlighted online airspaces from the map"));
+  linkTooltipHandler->addUrlTooltip(QStringLiteral("hideairways"), tr("Remove highlighted airways and tracks from the map"));
+  linkTooltipHandler->addUrlTooltip(QStringLiteral("hideairspaces"), tr("Remove highlighted airspaces from the map"));
 
-  linkTooltipHandler->setWebUrlToolTip(tr("Click here to open the link in your web browser"));
+  // Web and file manager ===========================================
+  linkTooltipHandler->setWebUrlToolTip(tr("Open the link in a web browser"));
 
 #if  defined(Q_OS_WIN)
-  linkTooltipHandler->addUrlTooltip(QStringLiteral("showfilepath"), tr("Click to show the file in Windows Explorer"));
-  linkTooltipHandler->setFileUrlToolTip(tr("Click to show the file in Windows Explorer"));
+  linkTooltipHandler->addUrlTooltip(QStringLiteral("showfilepath"), tr("Show the file in Windows Explorer"));
+  linkTooltipHandler->setFileUrlToolTip(tr("Show the file in Windows Explorer"));
 #elif defined(Q_OS_MACOS)
-  linkTooltipHandler->addUrlTooltip(QStringLiteral("showfilepath"), tr("Click to show the file in Apple Finder"));
-  linkTooltipHandler->setFileUrlToolTip(tr("Click to show the file in Apple Finder"));
+  linkTooltipHandler->addUrlTooltip(QStringLiteral("showfilepath"), tr("Show the file in Apple Finder"));
+  linkTooltipHandler->setFileUrlToolTip(tr("Show the file in Apple Finder"));
 #else
-  linkTooltipHandler->addUrlTooltip(QStringLiteral("showfilepath"), tr("Click to show the file in your file manager"));
-  linkTooltipHandler->setFileUrlToolTip(tr("Click to show the file in your file manager"));
+  linkTooltipHandler->addUrlTooltip(QStringLiteral("showfilepath"), tr("Show the file in your file manager"));
+  linkTooltipHandler->setFileUrlToolTip(tr("Show the file in your file manager"));
 #endif
 
   QPushButton *pushButtonInfoHelp = new QPushButton(QIcon(":/littlenavmap/resources/icons/help.svg"), QStringLiteral(),

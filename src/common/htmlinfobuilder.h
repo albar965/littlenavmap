@@ -444,6 +444,8 @@ private:
 
   QString sunriseSunsetText(const atools::geo::Pos& pos, const QDateTime& datetime) const;
 
+  QString mapTypeToTooltip(map::MapType type, const QString& prefix) const;
+
   /* Airport, navaid and userpoint icon size */
   QSize symbolSize = QSize(18, 18);
 

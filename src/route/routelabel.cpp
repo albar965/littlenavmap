@@ -58,12 +58,9 @@ RouteLabel::RouteLabel(QWidget *parent, const Route& routeParam)
   linkTooltipHandler->addWidget(ui->labelRouteInfo);
 
   // The keys have to match the query item key "tooltip" to provide a tooltip ============================
-  linkTooltipHandler->addUrlTooltip(QStringLiteral("showdeparture"),
-                                    tr("Click here to show the departure airport on the map and in information"));
-  linkTooltipHandler->addUrlTooltip(QStringLiteral("showdepartureparking"),
-                                    tr("Click here to show the departure position at the airport"));
-  linkTooltipHandler->addUrlTooltip(QStringLiteral("showdestination"),
-                                    tr("Click here to show the destination airport on the map and in information"));
+  linkTooltipHandler->addUrlTooltip(QStringLiteral("showdeparture"), tr("Show the departure airport on the map and in information"));
+  linkTooltipHandler->addUrlTooltip(QStringLiteral("showdepartureparking"), tr("Show the departure position at the airport"));
+  linkTooltipHandler->addUrlTooltip(QStringLiteral("showdestination"), tr("Show the destination airport on the map and in information"));
 
   // Show error messages in tooltip on click ========================================
   ui->labelRouteError->installEventFilter(new atools::gui::ClickToolTipHandler(ui->labelRouteError));

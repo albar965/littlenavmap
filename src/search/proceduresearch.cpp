@@ -168,7 +168,7 @@ ProcedureSearch::ProcedureSearch(MainWindow *main, QTreeWidget *treeWidgetParam,
   linkTooltipHandler->addWidget(ui->labelProcedureSearch);
 
   // The keys have to match the query item key "tooltip" to provide a tooltip ============================
-  linkTooltipHandler->addUrlTooltip(QStringLiteral("showairport"), tr("Click here to show airport on the map and in information"));
+  linkTooltipHandler->addUrlTooltip(QStringLiteral("showairport"), tr("Show airport on the map and in information"));
 
   treeWidget->setItemDelegate(gridDelegate);
   atools::gui::adjustSelectionColors(treeWidget);
