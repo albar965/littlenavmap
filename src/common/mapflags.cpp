@@ -25,7 +25,7 @@ namespace map {
 const QList<map::MapAirspaceSource> MAP_AIRSPACE_SRC_VALUES({AIRSPACE_SRC_SIM, AIRSPACE_SRC_NAV, AIRSPACE_SRC_ONLINE, AIRSPACE_SRC_USER});
 const QList<map::MapAirspaceSource> MAP_AIRSPACE_SRC_NO_ONLINE_VALUES({AIRSPACE_SRC_SIM, AIRSPACE_SRC_NAV, AIRSPACE_SRC_USER});
 
-QDebug operator<<(QDebug out, const map::MapAirspaceSource& type)
+QDebug operator<<(QDebug out, map::MapAirspaceSource type)
 {
   out << map::MapAirspaceSources(type);
   return out;
@@ -217,6 +217,12 @@ QStringList mapTypeToString(const map::MapTypes& flags)
   ATOOLS_FLAGS_TO_STR_END;
 }
 
+QDebug operator<<(QDebug out, map::MapType type)
+{
+  out << map::MapTypes(type);
+  return out;
+}
+
 QDebug operator<<(QDebug out, const map::MapTypes& type)
 {
   QDebugStateSaver saver(out);
@@ -241,7 +247,7 @@ QStringList mapDisplayTypeToString(const map::MapDisplayTypes& flags)
   ATOOLS_FLAGS_TO_STR_END;
 }
 
-QDebug operator<<(QDebug out, const map::MapDisplayType& type)
+QDebug operator<<(QDebug out, map::MapDisplayType type)
 {
   out << map::MapDisplayTypes(type);
   return out;
@@ -309,7 +315,7 @@ QStringList mapAirspaceTypeToString(const map::MapAirspaceTypes& flags)
   ATOOLS_FLAGS_TO_STR_END;
 }
 
-QDebug operator<<(QDebug out, const map::MapAirspaceType& type)
+QDebug operator<<(QDebug out, map::MapAirspaceType type)
 {
   out << map::MapAirspaceTypes(type);
   return out;
@@ -334,7 +340,7 @@ QStringList mapAirspaceFlagsToString(const map::MapAirspaceFlags& flags)
   ATOOLS_FLAGS_TO_STR_END;
 }
 
-QDebug operator<<(QDebug out, const map::MapAirspaceFlag& type)
+QDebug operator<<(QDebug out, map::MapAirspaceFlag type)
 {
   out << map::MapAirspaceFlags(type);
   return out;

@@ -179,7 +179,7 @@ enum MapType : quint64
 ATOOLS_DECLARE_FLAGS_64(MapTypes, MapType)
 ATOOLS_DECLARE_OPERATORS_FOR_FLAGS(map::MapTypes)
 
-QDebug operator<<(QDebug out, const map::MapType& type);
+QDebug operator<<(QDebug out, map::MapType type);
 QDebug operator<<(QDebug out, const map::MapTypes& type);
 
 /* Type that is used only for flags to determine what should be drawn.
@@ -220,7 +220,7 @@ enum MapDisplayType : quint32
 ATOOLS_DECLARE_FLAGS_32(MapDisplayTypes, map::MapDisplayType)
 ATOOLS_DECLARE_OPERATORS_FOR_FLAGS(map::MapDisplayTypes)
 
-QDebug operator<<(QDebug out, const map::MapDisplayType& type);
+QDebug operator<<(QDebug out, map::MapDisplayType type);
 QDebug operator<<(QDebug out, const map::MapDisplayTypes& type);
 
 /* Query type for all getNearest and other functions. Covers all what is not included in MapObjectTypes */
@@ -365,7 +365,7 @@ enum MapAirspaceSource : quint32
 ATOOLS_DECLARE_FLAGS_32(MapAirspaceSources, map::MapAirspaceSource)
 ATOOLS_DECLARE_OPERATORS_FOR_FLAGS(map::MapAirspaceSources)
 
-QDebug operator<<(QDebug out, const map::MapAirspaceSource& type);
+QDebug operator<<(QDebug out, map::MapAirspaceSource type);
 QDebug operator<<(QDebug out, const map::MapAirspaceSources& type);
 
 extern const QList<map::MapAirspaceSource> MAP_AIRSPACE_SRC_VALUES;
@@ -430,10 +430,10 @@ struct MapAirspaceFilter
 
 QDebug operator<<(QDebug out, const map::MapAirspaceFilter& type);
 
-QDebug operator<<(QDebug out, const map::MapAirspaceFlag& type);
+QDebug operator<<(QDebug out, map::MapAirspaceFlag type);
 QDebug operator<<(QDebug out, const map::MapAirspaceFlags& type);
 
-QDebug operator<<(QDebug out, const map::MapAirspaceType& type);
+QDebug operator<<(QDebug out, map::MapAirspaceType type);
 QDebug operator<<(QDebug out, const map::MapAirspaceTypes& type);
 
 QDataStream& operator>>(QDataStream& dataStream, map::MapAirspaceFilter& obj);
