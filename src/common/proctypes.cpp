@@ -1031,35 +1031,30 @@ QString procedureLegsText(const proc::MapProcedureLegs& legs, proc::MapProcedure
   return procText;
 }
 
+QDebug operator<<(QDebug out, const proc::MapProcedureType& type)
+{
+  out << proc::MapProcedureTypes(type);
+  return out;
+}
+
+QStringList mapProcedureTypesToString(const proc::MapProcedureTypes& flags)
+{
+  ATOOLS_FLAGS_TO_STR_BEGIN(PROCEDURE_NONE);
+  ATOOLS_FLAGS_TO_STR(PROCEDURE_APPROACH);
+  ATOOLS_FLAGS_TO_STR(PROCEDURE_MISSED);
+  ATOOLS_FLAGS_TO_STR(PROCEDURE_TRANSITION);
+  ATOOLS_FLAGS_TO_STR(PROCEDURE_SID);
+  ATOOLS_FLAGS_TO_STR(PROCEDURE_SID_TRANSITION);
+  ATOOLS_FLAGS_TO_STR(PROCEDURE_STAR);
+  ATOOLS_FLAGS_TO_STR(PROCEDURE_STAR_TRANSITION);
+  ATOOLS_FLAGS_TO_STR_END;
+}
+
 QDebug operator<<(QDebug out, const proc::MapProcedureTypes& type)
 {
   QDebugStateSaver saver(out);
-
-  QStringList flags;
-  if(type == PROCEDURE_NONE)
-    flags.append("PROC_NONE");
-  else
-  {
-    if(type & PROCEDURE_APPROACH)
-      flags.append("PROC_APPROACH");
-    if(type & PROCEDURE_MISSED)
-      flags.append("PROC_MISSED");
-    if(type & PROCEDURE_TRANSITION)
-      flags.append("PROC_TRANSITION");
-    if(type & PROCEDURE_SID)
-      flags.append("PROC_SID");
-    if(type & PROCEDURE_SID_TRANSITION)
-      flags.append("PROC_SID_TRANSITION");
-    if(type & PROCEDURE_STAR)
-      flags.append("PROC_STAR");
-    if(type & PROCEDURE_STAR_TRANSITION)
-      flags.append("PROC_STAR_TRANSITION");
-  }
-
-  out.nospace().noquote() << flags.join("|");
-
+  out.nospace().noquote() << mapProcedureTypesToString(type).join("|");
   return out;
-
 }
 
 bool procedureLegFixAtStart(ProcedureLegType type)

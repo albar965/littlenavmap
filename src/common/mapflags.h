@@ -135,6 +135,7 @@ enum MapType : quint64
 
 
   // NEXT = 0x0001'0000'0000'0000 / 1ULL << 51 after START
+  // Also update mapTypeToString()
 
   /* =============================================================================================== */
   /* Pure visibiliy flags. Nothing is shown if not at least one of these is set */
@@ -211,12 +212,15 @@ enum MapDisplayType : quint32
   AIRCRAFT_TURN_PATH = 1 << 20, /* Turn path at aircraft */
   DIRECT_TO_DEPARTURE = 1 << 22, /* Course line direct to departure runway */
 
+  /* Also update mapDisplayTypeToString() */
+
   LOGBOOK_ALL = LOGBOOK_DIRECT | LOGBOOK_ROUTE | LOGBOOK_TRACK
 };
 
 ATOOLS_DECLARE_FLAGS_32(MapDisplayTypes, map::MapDisplayType)
 ATOOLS_DECLARE_OPERATORS_FOR_FLAGS(map::MapDisplayTypes)
 
+QDebug operator<<(QDebug out, const map::MapDisplayType& type);
 QDebug operator<<(QDebug out, const map::MapDisplayTypes& type);
 
 /* Query type for all getNearest and other functions. Covers all what is not included in MapObjectTypes */
@@ -319,6 +323,7 @@ enum MapAirspaceType : quint64
   TRSA = 1ULL << 31, // Terminal Radar Service Area (TRSA)
 
   // >>> Update MAP_AIRSPACE_TYPE_BITS below too <<<
+  // Also update mapAirspaceTypeToString()
 
   AIRSPACE_CLASS_ICAO = CLASS_A | CLASS_B | CLASS_C | CLASS_D | CLASS_E,
   AIRSPACE_CLASS_FG = CLASS_F | CLASS_G,
@@ -382,6 +387,8 @@ enum MapAirspaceFlag : quint32
 
   AIRSPACE_NO_MULTIPLE_Z = 1 << 5,
 
+  /* Also update mapAirspaceFlagsToString() */
+
   AIRSPACE_FLAG_DEFAULT = AIRSPACE_ALTITUDE_ALL
 };
 
@@ -422,7 +429,11 @@ struct MapAirspaceFilter
 };
 
 QDebug operator<<(QDebug out, const map::MapAirspaceFilter& type);
+
+QDebug operator<<(QDebug out, const map::MapAirspaceFlag& type);
 QDebug operator<<(QDebug out, const map::MapAirspaceFlags& type);
+
+QDebug operator<<(QDebug out, const map::MapAirspaceType& type);
 QDebug operator<<(QDebug out, const map::MapAirspaceTypes& type);
 
 QDataStream& operator>>(QDataStream& dataStream, map::MapAirspaceFilter& obj);
@@ -519,7 +530,7 @@ enum MapWeatherSource
 QString mapWeatherSourceString(map::MapWeatherSource source);
 QString mapWeatherSourceStringShort(map::MapWeatherSource source);
 
-QStringList mapTypeToString(const map::MapTypes& type);
+QStringList mapTypeToString(const map::MapTypes& flags);
 map::MapTypes mapTypeFromString(const QStringList& flags);
 
 QDebug operator<<(QDebug out, const map::MapWeatherSource& type);

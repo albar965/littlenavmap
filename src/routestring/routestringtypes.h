@@ -70,6 +70,7 @@ enum RouteStringOption : quint32
                             * Example "GCLA/36 TFS3T TFS GCTS/TES2.I07-Y" or "GCLA/36 TFS3T TFS GCTS/07" */
 
   // Next is 25
+  // Also update routeStringOptionsToStr()
 
   /* Default on startup */
   DEFAULT_OPTIONS = START_AND_DEST | ALT_AND_SPEED | SID_STAR | ALTERNATES | READ_ALTERNATES | REPORT | WRITE_RUNWAYS,
@@ -87,6 +88,11 @@ enum RouteStringOption : quint32
 
 ATOOLS_DECLARE_FLAGS_32(RouteStringOptions, rs::RouteStringOption)
 ATOOLS_DECLARE_OPERATORS_FOR_FLAGS(rs::RouteStringOptions)
+
+QStringList routeStringOptionsToStr(rs::RouteStringOptions flags);
+
+QDebug operator<<(QDebug out, const rs::RouteStringOption& options);
+QDebug operator<<(QDebug out, const rs::RouteStringOptions& options);
 
 /* Remove all invalid characters and simplify string. Extracts all characters until the next empty line. */
 QStringList cleanRouteStringList(const QString& string);

@@ -54,4 +54,48 @@ QString cleanRouteString(const QString& string)
   return cleanRouteStringList(string).join(' ');
 }
 
+QStringList routeStringOptionsToStr(rs::RouteStringOptions flags)
+{
+  ATOOLS_FLAGS_TO_STR_BEGIN(NONE);
+  ATOOLS_FLAGS_TO_STR(DCT);
+  ATOOLS_FLAGS_TO_STR(START_AND_DEST);
+  ATOOLS_FLAGS_TO_STR(ALT_AND_SPEED);
+  ATOOLS_FLAGS_TO_STR(SID_STAR);
+  ATOOLS_FLAGS_TO_STR(SID_STAR_GENERIC);
+  ATOOLS_FLAGS_TO_STR(GFP);
+  ATOOLS_FLAGS_TO_STR(NO_AIRWAYS);
+  ATOOLS_FLAGS_TO_STR(SID_STAR_SPACE);
+  ATOOLS_FLAGS_TO_STR(CORTEIN_DEPARTURE_RUNWAY);
+  ATOOLS_FLAGS_TO_STR(CORTEIN_APPROACH);
+  ATOOLS_FLAGS_TO_STR(FLIGHTLEVEL);
+  ATOOLS_FLAGS_TO_STR(GFP_COORDS);
+  ATOOLS_FLAGS_TO_STR(USR_WPT);
+  ATOOLS_FLAGS_TO_STR(SKYVECTOR_COORDS);
+  ATOOLS_FLAGS_TO_STR(NO_FINAL_DCT);
+  ATOOLS_FLAGS_TO_STR(ALTERNATES);
+  ATOOLS_FLAGS_TO_STR(READ_ALTERNATES);
+  ATOOLS_FLAGS_TO_STR(READ_NO_AIRPORTS);
+  ATOOLS_FLAGS_TO_STR(READ_MATCH_WAYPOINTS);
+  ATOOLS_FLAGS_TO_STR(NO_TRACKS);
+  ATOOLS_FLAGS_TO_STR(SID_STAR_NONE);
+  ATOOLS_FLAGS_TO_STR(STAR_REV_TRANSITION);
+  ATOOLS_FLAGS_TO_STR(REPORT);
+  ATOOLS_FLAGS_TO_STR(ALT_AND_SPEED_METRIC);
+  ATOOLS_FLAGS_TO_STR(WRITE_RUNWAYS);
+  ATOOLS_FLAGS_TO_STR_END;
+}
+
+QDebug operator<<(QDebug out, const rs::RouteStringOption& type)
+{
+  out << rs::RouteStringOptions(type);
+  return out;
+}
+
+QDebug operator<<(QDebug out, const rs::RouteStringOptions& options)
+{
+  QDebugStateSaver saver(out);
+  out.nospace().noquote() << routeStringOptionsToStr(options).join("|");
+  return out;
+}
+
 } // namespace rs

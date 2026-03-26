@@ -72,6 +72,7 @@ enum MapProcedureType : quint32
 ATOOLS_DECLARE_FLAGS_32(MapProcedureTypes, proc::MapProcedureType)
 ATOOLS_DECLARE_OPERATORS_FOR_FLAGS(proc::MapProcedureTypes)
 
+QDebug operator<<(QDebug out, const proc::MapProcedureType& type);
 QDebug operator<<(QDebug out, const proc::MapProcedureTypes& type);
 
 // =====================================================================
