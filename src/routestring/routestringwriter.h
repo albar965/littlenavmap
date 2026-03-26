@@ -23,6 +23,7 @@
 #include <QStringList>
 
 class Route;
+class RouteLeg;
 
 /* This class implementes the conversion from flight plans to ATS route descriptions , i.e. it writes the strings
  * for a given flight plan.
@@ -57,6 +58,9 @@ private:
 
   /* Garming GFP format with procedures */
   QString createGfpStringForRouteInternalProc(const Route& route, bool userWaypointOption, bool gfpCoordinates) const;
+
+  /* Either ident or coordinates */
+  QString legToIdent(const RouteLeg& leg, rs::RouteStringOptions options) const;
 
 };
 

@@ -114,9 +114,9 @@ QString RouteStringWriter::createGfpStringForRouteInternalProc(const Route& rout
   qDebug() << Q_FUNC_INFO << string;
 
   // Remove any useless DCTs
-  if(!string.isEmpty() && string.constLast() == "DCT")
+  if(!string.isEmpty() && string.constLast() == QStringLiteral("DCT"))
     string.removeLast();
-  if(!string.isEmpty() && string.constFirst() == "DCT")
+  if(!string.isEmpty() && string.constFirst() == QStringLiteral("DCT"))
     string.removeFirst();
 
   if(!string.isEmpty())
@@ -133,15 +133,15 @@ QString RouteStringWriter::createGfpStringForRouteInternalProc(const Route& rout
         else
         {
           // Is a airway or direct
-          if(str == "DCT")
-            retval += ":F:";
+          if(str == QStringLiteral("DCT"))
+            retval += QStringLiteral(":F:");
           else
             retval += '.' % str % '.';
         }
       }
     }
     else
-      retval += ":F:";
+      retval += QStringLiteral(":F:");
 
     retval += string.constLast();
   }
@@ -161,8 +161,8 @@ QString RouteStringWriter::createGfpStringForRouteInternalProc(const Route& rout
   }
 
   // Departure ===============================
-  if(!retval.isEmpty() && !retval.startsWith(":F:"))
-    retval.prepend(":F:");
+  if(!retval.isEmpty() && !retval.startsWith(QStringLiteral(":F:")))
+    retval.prepend(QStringLiteral(":F:"));
 
   if(route.hasAnySidProcedure() && !route.hasCustomDeparture() && !userWaypointOption)
   {
@@ -170,27 +170,27 @@ QString RouteStringWriter::createGfpStringForRouteInternalProc(const Route& rout
       departureRw.append('O');
 
     // Add SID and departure airport
-    retval.prepend("FPN/RI:DA:" % route.getDepartureAirportLeg().getIdent() %
-                   ":D:" % sid % (sidTrans.isEmpty() ? QStringLiteral() : '.' % sidTrans) %
-                   (departureRw.isEmpty() ? QStringLiteral() : ":R:" % departureRw));
+    retval.prepend(QStringLiteral("FPN/RI:DA:") % route.getDepartureAirportLeg().getIdent() %
+                   QStringLiteral(":D:") % sid % (sidTrans.isEmpty() ? QStringLiteral() : '.' % sidTrans) %
+                   (departureRw.isEmpty() ? QStringLiteral() : QStringLiteral(":R:") % departureRw));
   }
   else
   {
     // Add departure airport only - no coordinates since these are not accurate
-    retval.prepend("FPN/RI:F:" % route.getDepartureAirportLeg().getIdent());
+    retval.prepend(QStringLiteral("FPN/RI:F:") % route.getDepartureAirportLeg().getIdent());
   }
 
   if((route.hasAnyApproachProcedure() || route.hasAnyStarProcedure()) && !userWaypointOption)
   {
     // Arrival airport - no coordinates
-    retval.append(":AA:" % route.getDestinationAirportLeg().getIdent());
+    retval.append(QStringLiteral(":AA:") % route.getDestinationAirportLeg().getIdent());
 
     // STAR ===============================
     if(route.hasAnyStarProcedure())
     {
       if(!starRw.isEmpty() && !(starRw.endsWith('L') || starRw.endsWith('C') || starRw.endsWith('R')))
         starRw.append('O');
-      retval.append(":A:" % star % (starTrans.isEmpty() ? QStringLiteral() : '.' % starTrans) %
+      retval.append(QStringLiteral(":A:") % star % (starTrans.isEmpty() ? QStringLiteral() : '.' % starTrans) %
                     (starRw.isEmpty() ? QStringLiteral() : '(' % starRw % ')'));
     }
 
@@ -199,13 +199,13 @@ QString RouteStringWriter::createGfpStringForRouteInternalProc(const Route& rout
     {
       QString apprArinc, apprTrans, appSuffixDummy;
       route.getApproachNames(apprArinc, apprTrans, appSuffixDummy);
-      retval.append(":AP:" % apprArinc % (apprTrans.isEmpty() ? QStringLiteral() : '.' % apprTrans));
+      retval.append(QStringLiteral(":AP:") % apprArinc % (apprTrans.isEmpty() ? QStringLiteral() : '.' % apprTrans));
     }
   }
   else
   {
-    if(!retval.endsWith(":F:"))
-      retval.append(":F:");
+    if(!retval.endsWith(QStringLiteral(":F:")))
+      retval.append(QStringLiteral(":F:"));
     // Arrival airport only - no coordinates since these are not accurate
     retval.append(route.getDestinationAirportLeg().getIdent());
   }
@@ -255,7 +255,7 @@ QString RouteStringWriter::createGfpStringForRouteInternal(const Route& route, b
 
   if(!string.isEmpty())
   {
-    retval += "FPN/RI:F:" % string.constFirst();
+    retval += QStringLiteral("FPN/RI:F:") % string.constFirst();
 
     if(string.size() > 2)
     {
@@ -267,11 +267,11 @@ QString RouteStringWriter::createGfpStringForRouteInternal(const Route& route, b
           retval += str;
         else
           // Is a airway or direct
-          retval += str == "DCT" ? ":F:" : "." + str + ".";
+          retval += str == QStringLiteral("DCT") ? QStringLiteral(":F:") : QStringLiteral(".") + str + QStringLiteral(".");
       }
     }
     else
-      retval += ":F:";
+      retval += QStringLiteral(":F:");
 
     retval += string.constLast();
   }
@@ -281,6 +281,8 @@ QString RouteStringWriter::createGfpStringForRouteInternal(const Route& route, b
 
 QStringList RouteStringWriter::createStringForRouteInternal(const Route& routeParam, float speedKts, rs::RouteStringOptions options) const
 {
+  qDebug() << Q_FUNC_INFO << options << "speedKts" << speedKts;
+
   Route route = routeParam.adjustedToOptions(rf::DEFAULT_OPTS_ROUTESTRING);
 
   QStringList items;
@@ -310,8 +312,8 @@ QStringList RouteStringWriter::createStringForRouteInternal(const Route& routePa
   if(route.hasAnyApproachProcedure() && !route.getApproachLegs().type.isEmpty() && !route.hasCustomApproach())
   {
     // FlightFactor specialities - there are probably more to guess
-    if(route.getApproachLegs().type == "RNAV")
-      approachName = "RNV" % destinationRunway;
+    if(route.getApproachLegs().type == QStringLiteral("RNAV"))
+      approachName = QStringLiteral("RNV") % destinationRunway;
     else
       approachName = route.getApproachLegs().type % destinationRunway;
   }
@@ -346,15 +348,8 @@ QStringList RouteStringWriter::createStringForRouteInternal(const Route& routePa
     QString ident = leg.getDisplayIdent();
 
     if(leg.getMapType() == map::USERPOINTROUTE)
-    {
       // CYCD DCT DUNCN V440 YYJ V495 CDGPN DCT N48194W123096 DCT WATTR V495 JAWBN DCT 0S9
-      if(options.testFlag(rs::GFP))
-        ident = coords::toGfpFormat(leg.getPosition());
-      else if(options.testFlag(rs::SKYVECTOR_COORDS))
-        ident = coords::toDegMinSecFormat(leg.getPosition());
-      else
-        ident = coords::toDegMinFormat(leg.getPosition());
-    }
+      ident = legToIdent(leg, options);
 
     if(airway.isEmpty() || leg.isAirwaySetAndInvalid(map::INVALID_ALTITUDE_VALUE) || options.testFlag(rs::NO_AIRWAYS))
     {
@@ -375,7 +370,7 @@ QStringList RouteStringWriter::createStringForRouteInternal(const Route& routePa
       {
         if(!(firstDct && hasSid))
           // Add direct if not start airport - do not add where a SID is inserted
-          items.append("DCT");
+          items.append(QStringLiteral("DCT"));
         firstDct = false;
       }
     }
@@ -393,7 +388,7 @@ QStringList RouteStringWriter::createStringForRouteInternal(const Route& routePa
         // the coordinates are in the right range
         if(leg.isTrack() && NavApp::hasNatTracks() && airway.size() == 1 && airway.at(0) >= QChar('A') && airway.at(0) <= QChar('Z') &&
            atools::inRange(-80.f, 0.f, leg.getPosition().getLonX()))
-          items.append("NAT" % airway);
+          items.append(QStringLiteral("NAT") % airway);
         else
           items.append(airway);
       }
@@ -416,11 +411,11 @@ QStringList RouteStringWriter::createStringForRouteInternal(const Route& routePa
   int insertPosition = (route.hasValidDeparture() && options.testFlag(rs::START_AND_DEST)) ? 1 : 0;
   if(!items.isEmpty())
   {
-    if(hasStar && items.constLast() == "DCT")
+    if(hasStar && items.constLast() == QStringLiteral("DCT"))
       // Remove last DCT so it does not collide with the STAR - destination airport not inserted yet
       items.removeLast();
 
-    if(options.testFlag(rs::CORTEIN_APPROACH) && items.constLast() == "DCT")
+    if(options.testFlag(rs::CORTEIN_APPROACH) && items.constLast() == QStringLiteral("DCT"))
       // Remove last DCT if approach information is desired
       items.removeLast();
 
@@ -449,7 +444,7 @@ QStringList RouteStringWriter::createStringForRouteInternal(const Route& routePa
     }
   }
   else if(options.testFlag(rs::SID_STAR_GENERIC))
-    items.insert(insertPosition, "SID");
+    items.insert(insertPosition, QStringLiteral("SID"));
 
   // Add speed and altitude
   if(!items.isEmpty() && options.testFlag(rs::ALT_AND_SPEED))
@@ -495,10 +490,10 @@ QStringList RouteStringWriter::createStringForRouteInternal(const Route& routePa
     }
   }
   else if(options.testFlag(rs::SID_STAR_GENERIC))
-    items.append("STAR");
+    items.append(QStringLiteral("STAR"));
 
   // Remove last DCT for FlightFactor export
-  if(options.testFlag(rs::NO_FINAL_DCT) && items.constLast() == "DCT")
+  if(options.testFlag(rs::NO_FINAL_DCT) && items.constLast() == QStringLiteral("DCT"))
     items.removeLast();
 
   // Add destination airport
@@ -552,4 +547,14 @@ QStringList RouteStringWriter::createStringForRouteInternal(const Route& routePa
   qDebug() << Q_FUNC_INFO << items;
 
   return items;
+}
+
+QString RouteStringWriter::legToIdent(const RouteLeg& leg, rs::RouteStringOptions options) const
+{
+  if(options.testFlag(rs::GFP))
+    return coords::toGfpFormat(leg.getPosition());
+  else if(options.testFlag(rs::SKYVECTOR_COORDS))
+    return coords::toDegMinSecFormat(leg.getPosition());
+  else
+    return coords::toDegMinFormat(leg.getPosition());
 }
