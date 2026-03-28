@@ -144,4 +144,6 @@ enum LegSpecialType
 
 } // namespace types
 
+Q_DECLARE_TYPEINFO(proc::MapProcedureTypes, Q_PRIMITIVE_TYPE);
+
 #endif // LITTLENAVMAP_PROCFLAGS_H

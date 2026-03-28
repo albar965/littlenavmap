@@ -136,4 +136,6 @@ ATOOLS_DECLARE_OPERATORS_FOR_FLAGS(rexp::RouteExportFormatFlags)
 
 } // namespace rexp
 
+Q_DECLARE_TYPEINFO(rexp::RouteExportFormatFlags, Q_PRIMITIVE_TYPE);
+
 #endif // LNM_ROUTEEXPORTFLAGS_H

@@ -85,4 +85,6 @@ extern const QList<optsp::DisplayOptionProfile> ALL_OPTIONS;
 extern const optsp::DisplayOptionsProfile DEFAULT_OPTIONS;
 }
 
+Q_DECLARE_TYPEINFO(optsp::DisplayOptionsProfile, Q_PRIMITIVE_TYPE);
+
 #endif // LNM_PROFILEOPTIONFLAGS_H

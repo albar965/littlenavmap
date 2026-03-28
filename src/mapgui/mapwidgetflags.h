@@ -49,4 +49,6 @@ ATOOLS_DECLARE_FLAGS_32(MouseStates, mapwin::MouseState)
 ATOOLS_DECLARE_OPERATORS_FOR_FLAGS(mapwin::MouseStates)
 }
 
+Q_DECLARE_TYPEINFO(mapwin::MouseStates, Q_PRIMITIVE_TYPE);
+
 #endif // LNM_MAPWIDGETFLAGS_H

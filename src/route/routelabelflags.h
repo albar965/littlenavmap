@@ -46,4 +46,6 @@ ATOOLS_DECLARE_FLAGS_32(LabelFlags, routelabel::LabelFlag)
 ATOOLS_DECLARE_OPERATORS_FOR_FLAGS(routelabel::LabelFlags)
 } // namespace label
 
+Q_DECLARE_TYPEINFO(routelabel::LabelFlags, Q_PRIMITIVE_TYPE);
+
 #endif // LNM_ROUTELABELFLAGS_H

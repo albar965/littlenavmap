@@ -103,4 +103,6 @@ QString cleanRouteStringLine(const QString& line);
 
 } // namespace rs
 
+Q_DECLARE_TYPEINFO(rs::RouteStringOptions, Q_PRIMITIVE_TYPE);
+
 #endif // LNM_ROUTESTRINGTYPES_H

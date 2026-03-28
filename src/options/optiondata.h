@@ -1822,4 +1822,19 @@ private:
   QMap<QString, QString> mapThemeKeys;
 };
 
+Q_DECLARE_TYPEINFO(opts::Flags, Q_PRIMITIVE_TYPE);
+Q_DECLARE_TYPEINFO(opts2::Flags2, Q_PRIMITIVE_TYPE);
+Q_DECLARE_TYPEINFO(opts::DisplayOnlineFlags, Q_PRIMITIVE_TYPE);
+Q_DECLARE_TYPEINFO(optsw::FlagsWeather, Q_PRIMITIVE_TYPE);
+Q_DECLARE_TYPEINFO(optsac::DisplayOptionsUserAircraft, Q_PRIMITIVE_TYPE);
+Q_DECLARE_TYPEINFO(optsac::DisplayOptionsAiAircraft, Q_PRIMITIVE_TYPE);
+Q_DECLARE_TYPEINFO(optsd::DisplayOptionsAirport, Q_PRIMITIVE_TYPE);
+Q_DECLARE_TYPEINFO(optsd::DisplayOptionsNavAid, Q_PRIMITIVE_TYPE);
+Q_DECLARE_TYPEINFO(optsd::DisplayOptionsAirspace, Q_PRIMITIVE_TYPE);
+Q_DECLARE_TYPEINFO(optsd::DisplayOptionsMeasurement, Q_PRIMITIVE_TYPE);
+Q_DECLARE_TYPEINFO(optsd::DisplayOptionsRose, Q_PRIMITIVE_TYPE);
+Q_DECLARE_TYPEINFO(optsd::DisplayOptionsRoute, Q_PRIMITIVE_TYPE);
+Q_DECLARE_TYPEINFO(optsd::DisplayTooltipOptions, Q_PRIMITIVE_TYPE);
+Q_DECLARE_TYPEINFO(optsd::DisplayClickOptions, Q_PRIMITIVE_TYPE);
+
 #endif // LITTLENAVMAP_OPTIONDATA_H

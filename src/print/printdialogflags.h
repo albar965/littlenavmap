@@ -54,4 +54,6 @@ ATOOLS_DECLARE_FLAGS_32(PrintFlightplanOpts, prt::PrintFlightplanOpt)
 ATOOLS_DECLARE_OPERATORS_FOR_FLAGS(prt::PrintFlightplanOpts)
 }
 
+Q_DECLARE_TYPEINFO(prt::PrintFlightplanOpts, Q_PRIMITIVE_TYPE);
+
 #endif // LNM_PRINTDIALOGFLAGS_H
