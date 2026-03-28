@@ -29,14 +29,6 @@
 using atools::geo::Pos;
 namespace coords = atools::fs::util;
 
-RouteStringWriter::RouteStringWriter()
-{
-}
-
-RouteStringWriter::~RouteStringWriter()
-{
-}
-
 QString RouteStringWriter::createStringForRoute(const Route& route, float speedKts, rs::RouteStringOptions options) const
 {
   if(route.isEmpty())
@@ -75,47 +67,39 @@ QStringList RouteStringWriter::createStringListForRoute(const Route& route, floa
 #endif
 }
 
-QString RouteStringWriter::createGfpStringForRoute(const Route& route, bool procedures, bool userWaypointOption, bool gfpCoordinates) const
+QString RouteStringWriter::createGfpStringForRoute(const Route& route, bool procedures, bool userWaypointOption, bool gfpCoordinates,
+                                                   bool departDestAsCoords) const
 {
   if(route.isEmpty())
     return QStringLiteral();
 
-  return procedures ?
-         createGfpStringForRouteInternalProc(route, userWaypointOption, gfpCoordinates) :
-         createGfpStringForRouteInternal(route, userWaypointOption);
+  if(procedures)
+    return createGfpStringForRouteInternalProc(route, userWaypointOption, gfpCoordinates, departDestAsCoords);
+  else
+    return createGfpStringForRouteInternal(route, userWaypointOption);
 }
 
-/*
- * Used for Reality XP GTN export
- *
- * Flight plan to depart from KPDX airport and arrive in KHIO through
- * Airway 448 and 204 using Runway 13 for final RNAV approach:
- * FPN/RI:DA:KPDX:D:LAVAA5.YKM:R:10R:F:YKM.V448.GEG.V204.HQM:F:SEA,N47261W 122186:AA:KHIO:A:HELNS5.SEA(13O):AP:R13
- *
- * Flight plan from KSLE to two user waypoints and then returning for the ILS approach to runway 31 via JAIME:
- * FPN/RI:F:KSLE:F:N45223W121419:F:N42568W122067:AA:KSLE:AP:I31.JAIME
- */
-QString RouteStringWriter::createGfpStringForRouteInternalProc(const Route& route, bool userWaypointOption, bool gfpCoordinates) const
+QString RouteStringWriter::createGfpStringForRouteInternalProc(const Route& route, bool userWaypointOption, bool gfpCoordinates,
+                                                               bool departDestAsCoords) const
 {
   QString retval;
+  rs::RouteStringOptions options = rs::GFP | rs::DCT;
 
-  rs::RouteStringOptions opts = rs::NONE;
   if(userWaypointOption)
-    opts = rs::GFP | rs::DCT | rs::USR_WPT | rs::NO_AIRWAYS;
-  else
-    opts = rs::GFP | rs::DCT;
+    options |= rs::USR_WPT | rs::NO_AIRWAYS;
 
   if(gfpCoordinates)
-    opts |= rs::GFP_COORDS;
+    options |= rs::GFP_COORDS;
 
   // Get string without start and destination
-  QStringList string = createStringForRouteInternal(route, 0, opts);
+  QStringList string = createStringForRouteInternal(route, 0, options);
 
   qDebug() << Q_FUNC_INFO << string;
 
   // Remove any useless DCTs
   if(!string.isEmpty() && string.constLast() == QStringLiteral("DCT"))
     string.removeLast();
+
   if(!string.isEmpty() && string.constFirst() == QStringLiteral("DCT"))
     string.removeFirst();
 
@@ -176,8 +160,9 @@ QString RouteStringWriter::createGfpStringForRouteInternalProc(const Route& rout
   }
   else
   {
-    // Add departure airport only - no coordinates since these are not accurate
-    retval.prepend(QStringLiteral("FPN/RI:F:") % route.getDepartureAirportLeg().getIdent());
+    // Add departure airport only - no coordinates since these are not accurate - exception "TDS GTNXi with user defined waypoints"
+    retval.prepend(QStringLiteral("FPN/RI:F:") % legIdent(route.getDepartureAirportLeg(), options,
+                                                          departDestAsCoords, true /* departure */, false /* destination */));
   }
 
   if((route.hasAnyApproachProcedure() || route.hasAnyStarProcedure()) && !userWaypointOption)
@@ -206,49 +191,22 @@ QString RouteStringWriter::createGfpStringForRouteInternalProc(const Route& rout
   {
     if(!retval.endsWith(QStringLiteral(":F:")))
       retval.append(QStringLiteral(":F:"));
-    // Arrival airport only - no coordinates since these are not accurate
-    retval.append(route.getDestinationAirportLeg().getIdent());
+
+    // Arrival airport only - no coordinates since these are not accurate - exception "TDS GTNXi with user defined waypoints"
+    retval.append(legIdent(route.getDestinationAirportLeg(), options, departDestAsCoords, false /* departure */, true /* destination */));
   }
 
   qDebug() << Q_FUNC_INFO << retval;
   return retval.toUpper();
 }
 
-/*
- * Used for Flight1 GTN export
- *
- *  Flight Plan File Guidelines
- *
- * Garmin uses a text based flight plan format that is derived from the IMI/IEI
- * messages format specified in ARINC 702A-3. But that’s just a side note.
- * Let’s take a look at the syntax of a usual Garmin flight plan:
- * FPN/RI:F:AIRPORT:F:WAYPOINT:F:WAYPOINT.AIRWAY.WAYPOINT:F:AIRPORT
- * Every flight plan always starts with the “FPN/RI” identifier. The “:F:” specifies
- * the different flight plan segments. A flight plan segment can be the departure or arrival
- * airport, a waypoint or a number of waypoints that are connected via airways.
- *
- * The entry and exit waypoint of an airway are connected to the airway via a dot “.”.
- * The flight plan must be contained in the first line of the file. Anything after the first
- * line will be discarded and may result i
- * n importing failures. Flight plans can only contain
- * upper case letters, numbers, colons, parenthesis, commas and periods. Spaces or any other
- * special characters are not allowed. When saved the flight plan name must have a “.gfp” extension.
- *
- * Here's an example, it's basically a .txt file with the extension .gfp
- *
- * FPN/RI:F:KTEB:F:LGA.J70.JFK.J79.HOFFI.J121.HTO.J150.OFTUR:F:KMVY
- *
- * FPN/RI:F:KTEB:F:LGA:F:JFK:F:HOFFI:F:HTO:F:MONTT:F:OFTUR:F:KMVY
- */
 QString RouteStringWriter::createGfpStringForRouteInternal(const Route& route, bool userWaypointOption) const
 {
   QString retval;
 
-  rs::RouteStringOptions opts = rs::NONE;
+  rs::RouteStringOptions opts = rs::GFP | rs::START_AND_DEST | rs::DCT;
   if(userWaypointOption)
-    opts = rs::GFP | rs::START_AND_DEST | rs::DCT | rs::USR_WPT | rs::NO_AIRWAYS;
-  else
-    opts = rs::GFP | rs::START_AND_DEST | rs::DCT;
+    opts |= rs::USR_WPT | rs::NO_AIRWAYS;
 
   // Get string including start and destination
   QStringList string = createStringForRouteInternal(route, 0, opts);
@@ -345,11 +303,8 @@ QStringList RouteStringWriter::createStringForRouteInternal(const Route& routePa
 
     const QString& airway = leg.getAirwayName();
     // Internal ident or ICAO
-    QString ident = leg.getDisplayIdent();
-
-    if(leg.getMapType() == map::USERPOINTROUTE)
-      // CYCD DCT DUNCN V440 YYJ V495 CDGPN DCT N48194W123096 DCT WATTR V495 JAWBN DCT 0S9
-      ident = legToIdent(leg, options);
+    // CYCD DCT DUNCN V440 YYJ V495 CDGPN DCT N48194W123096 DCT WATTR V495 JAWBN DCT 0S9
+    QString ident = legIdent(leg, options, false /* departDestAsCoords */, false /* departure */, false /* destination */);
 
     if(airway.isEmpty() || leg.isAirwaySetAndInvalid(map::INVALID_ALTITUDE_VALUE) || options.testFlag(rs::NO_AIRWAYS))
     {
@@ -549,7 +504,7 @@ QStringList RouteStringWriter::createStringForRouteInternal(const Route& routePa
   return items;
 }
 
-QString RouteStringWriter::legToIdent(const RouteLeg& leg, rs::RouteStringOptions options) const
+QString RouteStringWriter::legIdentCoords(const RouteLeg& leg, rs::RouteStringOptions options) const
 {
   if(options.testFlag(rs::GFP))
     return coords::toGfpFormat(leg.getPosition());
@@ -557,4 +512,23 @@ QString RouteStringWriter::legToIdent(const RouteLeg& leg, rs::RouteStringOption
     return coords::toDegMinSecFormat(leg.getPosition());
   else
     return coords::toDegMinFormat(leg.getPosition());
+}
+
+QString RouteStringWriter::legIdent(const RouteLeg& leg, rs::RouteStringOptions options, bool departDestAsCoords, bool departure,
+                                    bool destination) const
+{
+  if(departure || destination)
+  {
+    // Either departure or destination airport
+    if(departDestAsCoords)
+      // Store as coordinates for TDSGTNXIWP
+      return legIdentCoords(leg, options);
+    else
+      return leg.getIdent();
+  }
+  else if(leg.getMapType() == map::USERPOINTROUTE)
+    // User points are always stored as coordinate
+    return legIdentCoords(leg, options);
+  else
+    return leg.getDisplayIdent();
 }

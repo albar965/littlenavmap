@@ -1413,7 +1413,7 @@ void AircraftPerfController::restoreState()
   if(!atools::gui::Application::isSafeMode())
   {
     const FileCheck *files = NavApp::getCommandLineFiles();
-    QString perfFile = files->getAircraftPerf();
+    QString perfFile = files->getAircraftPerfFile();
     if(perfFile.isEmpty() && OptionData::instance().getFlags() & opts::STARTUP_LOAD_PERF)
       perfFile = settings.valueStr(lnm::AIRCRAFT_PERF_FILENAME);
 

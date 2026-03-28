@@ -621,7 +621,6 @@ bool RouteExport::routeExportRxpGnsMulti(const RouteExportFormat& format)
   return false;
 }
 
-/* Called from menu or toolbar by action */
 bool RouteExport::routeExportRxpGtnMulti(const RouteExportFormat& format)
 {
   qDebug() << Q_FUNC_INFO;
@@ -647,7 +646,8 @@ bool RouteExport::routeExportRxpGtnMulti(const RouteExportFormat& format)
     QString routeFile = exportFileMulti(format);
     if(!routeFile.isEmpty())
     {
-      if(exportFlighplanAsRxpGtn(routeFile, format.getFlags().testFlag(rexp::GARMIN_WP), true /* gfpCoordinates */))
+      if(exportFlighplanAsRxpGtn(routeFile, format.getFlags().testFlag(rexp::GARMIN_WP),
+                                 true /* gfpCoordinates */, false /* departDestAsCoords */))
       {
         formatExportedCallback(format, routeFile);
         return true;
@@ -657,7 +657,6 @@ bool RouteExport::routeExportRxpGtnMulti(const RouteExportFormat& format)
   return false;
 }
 
-/* Called from menu or toolbar by action */
 bool RouteExport::routeExportGfpMulti(const RouteExportFormat& format)
 {
   qDebug() << Q_FUNC_INFO;
@@ -668,7 +667,8 @@ bool RouteExport::routeExportGfpMulti(const RouteExportFormat& format)
     QString routeFile = exportFileMulti(format);
     if(!routeFile.isEmpty())
     {
-      if(exportFlighplanAsGfp(routeFile, format.getFlags().testFlag(rexp::GARMIN_WP), false /* procedures */, false /* gfpCoordinates */))
+      if(exportFlighplanAsGfp(routeFile, format.getFlags().testFlag(rexp::GARMIN_WP),
+                              false /* procedures */, false /* gfpCoordinates */, false /* departDestAsCoords */))
       {
         formatExportedCallback(format, routeFile);
         return true;
@@ -678,7 +678,6 @@ bool RouteExport::routeExportGfpMulti(const RouteExportFormat& format)
   return false;
 }
 
-/* Called from menu or toolbar by action */
 bool RouteExport::routeExportTdsGtnXiMulti(const RouteExportFormat& format)
 {
   qDebug() << Q_FUNC_INFO;
@@ -689,7 +688,9 @@ bool RouteExport::routeExportTdsGtnXiMulti(const RouteExportFormat& format)
     QString routeFile = exportFileMulti(format);
     if(!routeFile.isEmpty())
     {
-      if(exportFlighplanAsGfp(routeFile, format.getFlags().testFlag(rexp::GARMIN_WP), true /* procedures */, true /* gfpCoordinates */))
+      if(exportFlighplanAsGfp(routeFile, format.getFlags().testFlag(rexp::GARMIN_WP),
+                              true /* procedures */, true /* gfpCoordinates */,
+                              format.getType() == rexp::TDSGTNXIWP /* departDestAsCoords */))
       {
         formatExportedCallback(format, routeFile);
         return true;
@@ -699,7 +700,6 @@ bool RouteExport::routeExportTdsGtnXiMulti(const RouteExportFormat& format)
   return false;
 }
 
-/* Called from menu or toolbar by action */
 bool RouteExport::routeExportTxtMulti(const RouteExportFormat& format)
 {
   qDebug() << Q_FUNC_INFO;
@@ -1539,12 +1539,13 @@ bool RouteExport::routeValidate(const QList<RouteExportFormat>& formats, bool mu
   return save;
 }
 
-bool RouteExport::exportFlighplanAsGfp(const QString& filename, bool saveAsUserWaypoints, bool procedures, bool gfpCoordinates)
+bool RouteExport::exportFlighplanAsGfp(const QString& filename, bool saveAsUserWaypoints, bool procedures, bool gfpCoordinates,
+                                       bool departDestAsCoords)
 {
   qDebug() << Q_FUNC_INFO << filename;
   QString gfp = RouteStringWriter().createGfpStringForRoute(
     buildAdjustedRoute(procedures ? rf::DEFAULT_OPTS_GFP : rf::DEFAULT_OPTS_GFP_NO_PROC),
-    procedures, saveAsUserWaypoints, gfpCoordinates);
+    procedures, saveAsUserWaypoints, gfpCoordinates, departDestAsCoords);
 
   QFile file(filename);
   if(file.open(QFile::WriteOnly | QIODevice::Text))
@@ -1649,11 +1650,11 @@ bool RouteExport::exportFlighplanAsRxpGns(const QString& filename, bool saveAsUs
   return true;
 }
 
-bool RouteExport::exportFlighplanAsRxpGtn(const QString& filename, bool saveAsUserWaypoints, bool gfpCoordinates)
+bool RouteExport::exportFlighplanAsRxpGtn(const QString& filename, bool saveAsUserWaypoints, bool gfpCoordinates, bool departDestAsCoords)
 {
   qDebug() << Q_FUNC_INFO << filename;
   QString gfp = RouteStringWriter().createGfpStringForRoute(
-    buildAdjustedRoute(rf::DEFAULT_OPTS_GFP), true /* procedures */, saveAsUserWaypoints, gfpCoordinates);
+    buildAdjustedRoute(rf::DEFAULT_OPTS_GFP), true /* procedures */, saveAsUserWaypoints, gfpCoordinates, departDestAsCoords);
 
   QFile file(filename);
   if(file.open(QFile::WriteOnly | QIODevice::Text))

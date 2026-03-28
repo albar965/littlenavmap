@@ -653,33 +653,33 @@ void MainWindow::dataExchangeDataFetched(atools::util::Properties dataExchangePr
     else
     {
       // Test for available files and extract files from data exchange properties
-      const FileCheck files(dataExchangeProperties);
+      const FileCheck fileCheck(dataExchangeProperties);
 
       // Load files if found and exist ===========================================
-      if(!files.getFlightplanFile().isEmpty())
+      if(!fileCheck.getFlightplanFile().isEmpty())
       {
-        if(files.isFlightPlanIsOther())
+        if(fileCheck.isFlightPlanIsOther())
           // Double clicked on file - open normally with warnings
-          routeOpenFile(files.getFlightplanFile(), files.isForceLoading());
+          routeOpenFile(fileCheck.getFlightplanFile(), fileCheck.isForceLoading());
         else
           // Open silently without correction and no warnings
-          routeOpenFileFromDataExchange(files.getFlightplanFile(), files.isForceLoading());
+          routeOpenFileFromDataExchange(fileCheck.getFlightplanFile(), fileCheck.isForceLoading());
       }
 
-      if(!files.getFlightplanDescription().isEmpty())
-        routeOpenDescrFromDataExchange(files.getFlightplanDescription(), files.isForceLoading());
+      if(!fileCheck.getFlightplanDescription().isEmpty())
+        routeOpenDescrFromDataExchange(fileCheck.getFlightplanDescription(), fileCheck.isForceLoading());
 
-      if(!files.getAircraftPerf().isEmpty())
-        NavApp::getAircraftPerfController()->loadFile(files.getAircraftPerf(), files.isForceLoading());
+      if(!fileCheck.getAircraftPerfFile().isEmpty())
+        NavApp::getAircraftPerfController()->loadFile(fileCheck.getAircraftPerfFile(), fileCheck.isForceLoading());
 
-      if(!files.getLayoutFile().isEmpty())
-        loadLayoutDelayed(files.getLayoutFile());
+      if(!fileCheck.getLayoutFile().isEmpty())
+        loadLayoutDelayed(fileCheck.getLayoutFile());
 
-      if(!files.getGpxFile().isEmpty())
-        trailLoadGpxFile(files.getGpxFile(), files.isForceLoading());
+      if(!fileCheck.getGpxFile().isEmpty())
+        trailLoadGpxFile(fileCheck.getGpxFile(), fileCheck.isForceLoading());
 
-      if(!files.getMarkersFile().isEmpty())
-        loadMarkersFile(files.getMarkersFile(), files.isForceLoading());
+      if(!fileCheck.getMarkersFile().isEmpty())
+        loadMarkersFile(fileCheck.getMarkersFile(), fileCheck.isForceLoading());
 
       // Activate window - always sent by other instance =====================================================
       if(dataExchangeProperties.contains(lnm::STARTUP_COMMAND_ACTIVATE))
@@ -4235,6 +4235,7 @@ void MainWindow::restoreStateMain()
   // Other command line passed files are loaded in route controller and perf controller
   if(!files->getGpxFile().isEmpty())
     trailLoadGpxFile(files->getGpxFile(), files->isForceLoading());
+
   if(!files->getMarkersFile().isEmpty())
     loadMarkersFile(files->getMarkersFile(), files->isForceLoading());
 
@@ -4969,7 +4970,7 @@ void MainWindow::dropEvent(QDropEvent *event)
   QList<QUrl> urls = event->mimeData()->urls();
   if(debugActionExportPlans != nullptr && debugActionExportPlans->isChecked())
   {
-    // Load all plans and export them using multiexport for testing
+    // Debug function - Load all plans and export them using multiexport for testing
     std::sort(urls.begin(), urls.end());
     for(const QUrl& url : std::as_const(urls))
     {
@@ -4993,24 +4994,25 @@ void MainWindow::fileOpenAny(const QString& filepath)
 {
   qDebug() << Q_FUNC_INFO << "filepath" << filepath;
 
-  if(!filepath.isEmpty())
-  {
-    if(atools::gui::DockWidgetHandler::isWindowLayoutFile(filepath))
-      // Open window layout file
-      layoutOpenDrag(filepath);
-    else if(AircraftPerfController::isPerformanceFile(filepath))
-      // Load aircraft performance file
-      NavApp::getAircraftPerfController()->loadFile(filepath, false /* forceLoading */);
-    else if(atools::fs::gpx::GpxIO::isGpxFile(filepath), false /* forceLoading */)
-      // Load GPX trail
-      trailLoadGpxFile(filepath, false /* forceLoading */);
-    else if(MapMarkers::isMarkersFile(filepath))
-      // Load GPX trail
-      loadMarkersFile(filepath, false /* forceLoading */);
-    else
-      // Load flight plan
-      routeOpenFile(filepath, false /* forceLoading */);
-  }
+  const FileCheck fileCheck(filepath);
+
+  if(!fileCheck.getFlightplanFile().isEmpty())
+    // Load flight plan
+    routeOpenFile(filepath, fileCheck.isForceLoading());
+  else if(!fileCheck.getAircraftPerfFile().isEmpty())
+    // Load aircraft performance file
+    NavApp::getAircraftPerfController()->loadFile(filepath, fileCheck.isForceLoading());
+  else if(!fileCheck.getGpxFile().isEmpty())
+    // Load GPX trail
+    trailLoadGpxFile(filepath, fileCheck.isForceLoading());
+  else if(!fileCheck.getMarkersFile().isEmpty())
+    // Load user features / map markers
+    loadMarkersFile(filepath, fileCheck.isForceLoading());
+  else if(!fileCheck.getLayoutFile().isEmpty())
+    // Open window layout file
+    layoutOpenDrag(filepath);
+  else
+    qWarning() << Q_FUNC_INFO << "Unknown file" << filepath;
 }
 
 #ifdef DEBUG_SIZE_INFORMATION

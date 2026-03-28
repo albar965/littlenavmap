@@ -145,12 +145,15 @@ public:
   bool routeExportFlpCrjMulti(const RouteExportFormat& format);
 
   /* Flight plan export functions */
+  /* Called from menu or toolbar by action */
   bool routeExportGfpMulti(const RouteExportFormat& format);
 
   /* TDS GTNXi - GFP */
+  /* Called from menu or toolbar by action */
   bool routeExportTdsGtnXiMulti(const RouteExportFormat& format);
 
   /* Rotate MD-80 and others */
+  /* Called from menu or toolbar by action */
   bool routeExportTxtMulti(const RouteExportFormat& format);
 
   /* PMDG RTE format */
@@ -169,6 +172,7 @@ public:
   bool routeExportRxpGnsMulti(const RouteExportFormat& format);
 
   /* Reality XP GTN - GFP */
+  /* Called from menu or toolbar by action */
   bool routeExportRxpGtnMulti(const RouteExportFormat& format);
 
   /* iFly */
@@ -270,14 +274,15 @@ private:
   bool routeExportInternalFlp(const RouteExportFormat& format, bool crj, bool msfs);
 
   /* Formats that have no export method in FlightplanIO */
-  bool exportFlighplanAsGfp(const QString& filename, bool saveAsUserWaypoints, bool procedures, bool gfpCoordinates);
+  bool exportFlighplanAsGfp(const QString& filename, bool saveAsUserWaypoints, bool procedures, bool gfpCoordinates,
+                            bool departDestAsCoords);
   bool exportFlighplanAsTxt(const QString& filename);
   bool exportFlighplanAsCorteIn(const QString& filename);
   bool exportFlighplanAsProSim(const QString& filename);
   bool exportFlighplanAsUFmc(const QString& filename);
   bool exportFlightplanAsGpx(const QString& filename);
   bool exportFlighplanAsRxpGns(const QString& filename, bool saveAsUserWaypoints);
-  bool exportFlighplanAsRxpGtn(const QString& filename, bool saveAsUserWaypoints, bool gfpCoordinates);
+  bool exportFlighplanAsRxpGtn(const QString& filename, bool saveAsUserWaypoints, bool gfpCoordinates, bool departDestAsCoords);
 
   /* Generic export using callback and also doing exception handling. */
   bool exportFlighplan(const QString& filename, rf::RouteAdjustOptions options,

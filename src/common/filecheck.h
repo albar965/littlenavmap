@@ -54,7 +54,7 @@ public:
   }
 
   /* .lnmperf aircraft performance files */
-  const QString& getAircraftPerf() const
+  const QString& getAircraftPerfFile() const
   {
     return aircraftPerf;
   }
