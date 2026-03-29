@@ -550,34 +550,34 @@ void InfoController::saveState() const
   // Store currently shown map objects in a string list containing id and type
   map::MapRefList refs;
   for(const map::MapAirport& airport  : std::as_const(currentSearchResult->airports))
-    refs.append({airport.id, map::AIRPORT});
+    refs.append(map::MapRef(airport.id, map::AIRPORT));
 
   for(const map::MapAirportMsa& msa  : std::as_const(currentSearchResult->airportMsa))
-    refs.append({msa.id, map::AIRPORT_MSA});
+    refs.append(map::MapRef(msa.id, map::AIRPORT_MSA));
 
   for(const map::MapVor& vor : std::as_const(currentSearchResult->vors))
-    refs.append({vor.id, map::VOR});
+    refs.append(map::MapRef(vor.id, map::VOR));
 
   for(const map::MapNdb& ndb : std::as_const(currentSearchResult->ndbs))
-    refs.append({ndb.id, map::NDB});
+    refs.append(map::MapRef(ndb.id, map::NDB));
 
   for(const map::MapWaypoint& waypoint : std::as_const(currentSearchResult->waypoints))
-    refs.append({waypoint.id, map::WAYPOINT});
+    refs.append(map::MapRef(waypoint.id, map::WAYPOINT));
 
   for(const map::MapIls& ils : std::as_const(currentSearchResult->ils))
-    refs.append({ils.id, map::ILS});
+    refs.append(map::MapRef(ils.id, map::ILS));
 
   for(const map::MapHolding& holding : std::as_const(currentSearchResult->holdings))
-    refs.append({holding.id, map::HOLDING});
+    refs.append(map::MapRef(holding.id, map::HOLDING));
 
   for(const map::MapUserpoint& userpoint: std::as_const(currentSearchResult->userpoints))
-    refs.append({userpoint.id, map::USERPOINT});
+    refs.append(map::MapRef(userpoint.id, map::USERPOINT));
 
   for(const map::MapLogbookEntry& logEntry : std::as_const(currentSearchResult->logbookEntries))
-    refs.append({logEntry.id, map::LOGBOOK});
+    refs.append(map::MapRef(logEntry.id, map::LOGBOOK));
 
   for(const map::MapAirway& airway : std::as_const(currentSearchResult->airways))
-    refs.append({airway.id, map::AIRWAY});
+    refs.append(map::MapRef(airway.id, map::AIRWAY));
 
   // Save list =====================================================
   atools::settings::Settings& settings = atools::settings::Settings::instance();

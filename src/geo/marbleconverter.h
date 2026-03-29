@@ -18,7 +18,7 @@
 #ifndef LNM_GEO_MARBLECONVERTER_H
 #define LNM_GEO_MARBLECONVERTER_H
 
-#include "marble/GeoDataCoordinates.h"
+#include <marble/GeoDataCoordinates.h>
 
 namespace atools {
 namespace geo {

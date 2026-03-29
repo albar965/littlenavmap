@@ -102,15 +102,15 @@ struct MapSpeedRestriction
  * Hashable and compareable */
 struct MapProcedureRef
 {
-  MapProcedureRef(int airportIdParam, int runwayEndIdParam, int procIdParam, int transIdParam, int legIdParam,
-                  proc::MapProcedureTypes type)
-    : airportId(airportIdParam), runwayEndId(runwayEndIdParam), procedureId(procIdParam), transitionId(transIdParam), legId(legIdParam),
-      mapType(type)
+  MapProcedureRef()
+    : airportId(-1), runwayEndId(-1), procedureId(-1), transitionId(-1), legId(-1), mapType(PROCEDURE_NONE)
   {
   }
 
-  MapProcedureRef()
-    : airportId(-1), runwayEndId(-1), procedureId(-1), transitionId(-1), legId(-1), mapType(PROCEDURE_NONE)
+  explicit MapProcedureRef(int airportIdParam, int runwayEndIdParam, int procIdParam, int transIdParam, int legIdParam,
+                           proc::MapProcedureTypes type)
+    : airportId(airportIdParam), runwayEndId(runwayEndIdParam), procedureId(procIdParam), transitionId(transIdParam), legId(legIdParam),
+      mapType(type)
   {
   }
 
@@ -481,7 +481,7 @@ struct MapProcedureLegs
   QString displayType() const
   {
     // Correct wrong designation of GLS approaches as GNSS for display
-    return type == QLatin1String("GNSS") ? QLatin1String("GLS") : type;
+    return type == "GNSS" ? "GLS" : type;
   }
 
   /* "VOR-A" or "ILS-Z" */
@@ -493,7 +493,7 @@ struct MapProcedureLegs
   static QString displayType(const QString& type)
   {
     // Correct wrong designation of GLS approaches as GNSS for display
-    return type == QLatin1String("GNSS") ? QLatin1String("GLS") : type;
+    return type == "GNSS" ? "GLS" : type;
   }
 
   /* Anything that needs to display an ILS frequency or GNSS channel */

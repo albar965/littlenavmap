@@ -479,11 +479,11 @@ bool MapPaintLayer::render(GeoPainter *painter, ViewportParams *viewport, const 
               // Procedure navaids drawn by route code
               const map::MapResult& navaids = routeLeg.getProcedureLeg().navaids;
               if(navaids.hasWaypoints())
-                context.routeProcIdMap.insert({navaids.waypoints.constFirst().id, map::WAYPOINT});
+                context.routeProcIdMap.insert(map::MapRef(navaids.waypoints.constFirst().id, map::WAYPOINT));
               if(navaids.hasVor())
-                context.routeProcIdMap.insert({navaids.vors.constFirst().id, map::VOR});
+                context.routeProcIdMap.insert(map::MapRef(navaids.vors.constFirst().id, map::VOR));
               if(navaids.hasNdb())
-                context.routeProcIdMap.insert({navaids.ndbs.constFirst().id, map::NDB});
+                context.routeProcIdMap.insert(map::MapRef(navaids.ndbs.constFirst().id, map::NDB));
             }
           }
         } // for(int i = passedRouteLeg -1 ; i < route->size(); i++)
@@ -500,11 +500,11 @@ bool MapPaintLayer::render(GeoPainter *painter, ViewportParams *viewport, const 
               // Procedure recommended navaids drawn by route code
               const map::MapResult& recNavaids = routeLeg.getProcedureLeg().recNavaids;
               if(recNavaids.hasWaypoints())
-                context.routeProcIdMapRec.insert({recNavaids.waypoints.constFirst().id, map::WAYPOINT});
+                context.routeProcIdMapRec.insert(map::MapRef(recNavaids.waypoints.constFirst().id, map::WAYPOINT));
               if(recNavaids.hasVor())
-                context.routeProcIdMapRec.insert({recNavaids.vors.constFirst().id, map::VOR});
+                context.routeProcIdMapRec.insert(map::MapRef(recNavaids.vors.constFirst().id, map::VOR));
               if(recNavaids.hasNdb())
-                context.routeProcIdMapRec.insert({recNavaids.ndbs.constFirst().id, map::NDB});
+                context.routeProcIdMapRec.insert(map::MapRef(recNavaids.ndbs.constFirst().id, map::NDB));
             }
           }
         } // for(int i = passedRouteLeg; i < route->size(); i++)
@@ -522,11 +522,11 @@ bool MapPaintLayer::render(GeoPainter *painter, ViewportParams *viewport, const 
           {
             const map::MapResult& navaids = procedure.at(i).navaids;
             if(navaids.hasWaypoints())
-              context.routeProcIdMap.insert({navaids.waypoints.constFirst().id, map::WAYPOINT});
+              context.routeProcIdMap.insert(map::MapRef(navaids.waypoints.constFirst().id, map::WAYPOINT));
             if(navaids.hasVor())
-              context.routeProcIdMap.insert({navaids.vors.constFirst().id, map::VOR});
+              context.routeProcIdMap.insert(map::MapRef(navaids.vors.constFirst().id, map::VOR));
             if(navaids.hasNdb())
-              context.routeProcIdMap.insert({navaids.ndbs.constFirst().id, map::NDB});
+              context.routeProcIdMap.insert(map::MapRef(navaids.ndbs.constFirst().id, map::NDB));
           }
         }
 
@@ -538,11 +538,11 @@ bool MapPaintLayer::render(GeoPainter *painter, ViewportParams *viewport, const 
           {
             const map::MapResult& navaids = procedure.at(i).navaids;
             if(navaids.hasWaypoints())
-              context.routeProcIdMap.insert({navaids.waypoints.constFirst().id, map::WAYPOINT});
+              context.routeProcIdMap.insert(map::MapRef(navaids.waypoints.constFirst().id, map::WAYPOINT));
             if(navaids.hasVor())
-              context.routeProcIdMap.insert({navaids.vors.constFirst().id, map::VOR});
+              context.routeProcIdMap.insert(map::MapRef(navaids.vors.constFirst().id, map::VOR));
             if(navaids.hasNdb())
-              context.routeProcIdMap.insert({navaids.ndbs.constFirst().id, map::NDB});
+              context.routeProcIdMap.insert(map::MapRef(navaids.ndbs.constFirst().id, map::NDB));
           }
         }
       } // if(context.mapLayerRoute->isApproach())
@@ -553,9 +553,9 @@ bool MapPaintLayer::render(GeoPainter *painter, ViewportParams *viewport, const 
       for(const map::MapLogbookEntry& entry : highlightResultsSearch.logbookEntries)
       {
         if(entry.departurePos.isValid())
-          context.routeProcIdMap.insert({entry.departure.id, map::AIRPORT});
+          context.routeProcIdMap.insert(map::MapRef(entry.departure.id, map::AIRPORT));
         if(entry.destinationPos.isValid())
-          context.routeProcIdMap.insert({entry.destination.id, map::AIRPORT});
+          context.routeProcIdMap.insert(map::MapRef(entry.destination.id, map::AIRPORT));
       }
 
       // Set render hints depending on context (moving, still) =====================

@@ -84,12 +84,12 @@ struct MapRef
 
   }
 
-  MapRef(int idParam, map::MapType typeParam)
+  explicit MapRef(int idParam, map::MapType typeParam)
     : id(idParam), objType(typeParam)
   {
   }
 
-  MapRef(int idParam, map::MapTypes typeParam)
+  explicit MapRef(int idParam, map::MapTypes typeParam)
     : id(idParam), objType(typeParam.asEnum())
   {
   }
@@ -136,22 +136,22 @@ struct MapRefExt
   {
   }
 
-  MapRefExt(int idParam, map::MapType typeParam)
+  explicit MapRefExt(int idParam, map::MapType typeParam)
     : MapRef(idParam, typeParam)
   {
   }
 
-  MapRefExt(int idParam, const atools::geo::Pos posParam, map::MapType typeParam)
+  explicit MapRefExt(int idParam, const atools::geo::Pos posParam, map::MapType typeParam)
     : MapRef(idParam, typeParam), position(posParam)
   {
   }
 
-  MapRefExt(int idParam, map::MapType typeParam, const QString& nameParam)
+  explicit MapRefExt(int idParam, map::MapType typeParam, const QString& nameParam)
     : MapRef(idParam, typeParam), name(nameParam)
   {
   }
 
-  MapRefExt(int idParam, const atools::geo::Pos posParam, map::MapType typeParam, const QString& nameParam)
+  explicit MapRefExt(int idParam, const atools::geo::Pos posParam, map::MapType typeParam, const QString& nameParam)
     : MapRef(idParam, typeParam), position(posParam), name(nameParam)
   {
   }
@@ -222,14 +222,14 @@ struct MapBase
     this->operator=(other);
   }
 
-  explicit MapBase(MapBase && other)
+  explicit MapBase(MapBase && other) noexcept
   {
     id = std::move(other.id);
     position = std::move(other.position);
     objType = std::move(other.objType);
   }
 
-  MapBase& operator=(MapBase&& other)
+  MapBase& operator=(MapBase&& other) noexcept
   {
     id = std::move(other.id);
     position = std::move(other.position);
@@ -371,7 +371,7 @@ struct MapPos
   {
   }
 
-  MapPos(const atools::geo::Pos& pos) :
+  explicit MapPos(const atools::geo::Pos& pos) :
     MapBase(map::NONE, -1, pos)
   {
   }
@@ -1767,7 +1767,7 @@ void registerMapMetaTypes();
 /* Produces error static assertion failed: map::MapBase is neither copy- nor move-constructible, so cannot be Q_RELOCATABLE_TYPE
  * QTypeInfo<TYPE>::isRelocatable * std::is_copy_constructible_v<TYPE > */
 // static_assert(std::is_copy_constructible<map::MapBase>);
-Q_DECLARE_TYPEINFO(map::MapBase, Q_RELOCATABLE_TYPE);
+Q_DECLARE_TYPEINFO(map::MapBase, Q_PRIMITIVE_TYPE);
 Q_DECLARE_TYPEINFO(map::MapAirport, Q_RELOCATABLE_TYPE);
 Q_DECLARE_TYPEINFO(map::MapAirportMsa, Q_RELOCATABLE_TYPE);
 Q_DECLARE_TYPEINFO(map::MapAirspace, Q_RELOCATABLE_TYPE);
