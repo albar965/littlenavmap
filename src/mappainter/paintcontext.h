@@ -19,6 +19,7 @@
 #define LITTLENAVMAP_PAINTCONTEXT_H
 
 #include "common/mapflags.h"
+
 #include "geo/rect.h"
 #include "options/optiondata.h"
 
@@ -29,6 +30,11 @@
 #include <QDateTime>
 #include <QCoreApplication>
 
+namespace atools {
+namespace geo {
+class Line;
+}
+}
 namespace Marble {
 class GeoPainter;
 class ViewportParams;
@@ -267,6 +273,25 @@ struct PaintContext
     if(verboseDraw)
       renderTimesMs.clear();
   }
+
+  /* Does work only properly for short lines due to GC path.
+   Checks visibility by testing overlap with global viewport rect. */
+  bool visible(const atools::geo::Line& line) const;
+
+  /*  Checks visibility by testing overlap with global viewport rect. */
+  bool visible(const atools::geo::Rect& rect) const
+  {
+    return viewportRect.overlaps(rect);
+  }
+
+  /* Does work only properly for short lines due to GC path.
+   * Checks visibility by testing overlap with global viewport rect and tests if rect is large enought to show.
+   * Use for features which are not limited by zoom factor. */
+  bool visibleAndResolves(const atools::geo::Line& line) const;
+
+  /*  Checks visibility by testing overlap with global viewport rect and tests if rect is large enought to show.
+   * Use for features which are not limited by zoom factor. */
+  bool visibleAndResolves(const atools::geo::Rect& rect) const;
 
   bool verboseDraw = false;
   QMap<QString, qint64> renderTimesMs;

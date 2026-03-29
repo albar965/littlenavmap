@@ -81,8 +81,8 @@ void MapPainterMark::render()
     paintPatternMarks();
 
   if(context->objectTypes.testFlag(map::MARK_HOLDING))
-    paintHoldingMarks(mapPaintWidget->getMapMarkers()->getHoldingMarksFiltered(), context->mapLayer, context->mapLayerText, true /* user */,
-                      context->drawFast, false /* darkMap */);
+    paintHoldingMarks(mapPaintWidget->getMapMarkers()->getHoldingMarksFiltered(), context->mapLayer, context->mapLayerText,
+                      true /* user */, context->drawFast, false /* darkMap */);
 
   // Airport MSA set by user
   if(context->objectTypes.testFlag(map::MARK_MSA))
@@ -400,6 +400,7 @@ void MapPainterMark::paintHighlights()
 void MapPainterMark::paintLogEntries(const QList<map::MapLogbookEntry>& entries)
 {
   const static QMargins MARGINS(120, 10, 10, 10);
+  context->startTimer("Log Entries");
 
   GeoPainter *painter = context->painter;
   painter->setBackgroundMode(Qt::TransparentMode);
@@ -422,7 +423,7 @@ void MapPainterMark::paintLogEntries(const QList<map::MapLogbookEntry>& entries)
     allLogEntries.append(&logEntry);
 
     // All which have visible geometry
-    if(resolves(logEntry.bounding()))
+    if(context->visibleAndResolves(logEntry.bounding()))
       visibleLogEntries.append(&logEntry);
 
     // Show details only if one entry is selected - only direct connection for more than one selection
@@ -437,7 +438,7 @@ void MapPainterMark::paintLogEntries(const QList<map::MapLogbookEntry>& entries)
       {
         // Flight plan =========================================================
         if(!gpxData->getFlightplan().isEmpty() && context->objectDisplayTypes.testFlag(map::LOGBOOK_ROUTE) &&
-           resolves(gpxData->getFlightplanRect()))
+           resolves(gpxData->getFlightplanRect()) && context->visible(gpxData->getFlightplanRect()))
         {
           for(const atools::fs::pln::FlightplanEntry& entry : gpxData->getFlightplan())
           {
@@ -448,7 +449,8 @@ void MapPainterMark::paintLogEntries(const QList<map::MapLogbookEntry>& entries)
 
         // Trail =========================================================
         // Limit number of visible tracks
-        if(gpxData->hasTrails() && context->objectDisplayTypes.testFlag(map::LOGBOOK_TRACK) && resolves(gpxData->getTrailRect()))
+        if(gpxData->hasTrails() && context->objectDisplayTypes.testFlag(map::LOGBOOK_TRACK) &&
+           context->visibleAndResolves(gpxData->getTrailRect()))
         {
           maxAltitude = std::max(maxAltitude, gpxData->getMaxTrailAltitude());
           minAltitude = std::min(minAltitude, gpxData->getMinTrailAltitude());
@@ -461,14 +463,14 @@ void MapPainterMark::paintLogEntries(const QList<map::MapLogbookEntry>& entries)
               for(const atools::fs::gpx::TrailPoint& point : points)
                 lineString.append(point.pos.asPos());
 
-              if(resolves(lineString.boundingRect()))
+              if(context->visibleAndResolves(lineString.boundingRect()))
                 visibleTrailGeometries.append(lineString);
             }
           }
-        }
-      }
+        } // if(gpxData->hasTrails() && ...
+      } // if(gpxData != nullptr)
       break;
-    }
+    } // if(showRouteAndTrail)
   }
 
   // Draw route ==========================================================================
@@ -648,6 +650,7 @@ void MapPainterMark::paintLogEntries(const QList<map::MapLogbookEntry>& entries)
       }
     }
   }
+  context->endTimer("Log Entries");
 }
 
 void MapPainterMark::paintAirwayList(const QList<map::MapAirway>& airwayList)
@@ -759,7 +762,7 @@ void MapPainterMark::paintAirspace(const map::MapAirspace& airspace)
   painter->setBrush(mapcolors::colorForAirspaceFill(airspace, optionData.getDisplayTransparencyAirspace()));
   context->szFont(context->textSizeRangeUserFeature);
 
-  if(context->viewportRect.overlaps(airspace.bounding))
+  if(context->visibleAndResolves(airspace.bounding))
   {
     if(context->objCount())
       return;
@@ -768,7 +771,7 @@ void MapPainterMark::paintAirspace(const map::MapAirspace& airspace)
 
     if(lineString != nullptr)
     {
-      const QList<QPolygonF *> polygons = createPolygons(*lineString, context->screenRect);
+      QList<QPolygonF *> polygons = createPolygons(*lineString, context->screenRect);
 
       // Can be empty for online centers
       if(!polygons.isEmpty())
@@ -827,7 +830,7 @@ void MapPainterMark::paintRangeMarks()
       float maxRadiusNm = *maxRingIter;
 
       ageo::Rect rect(rings.position, ageo::nmToMeter(maxRadiusNm), true /* fast */);
-      if(context->viewportRect.overlaps(rect) || maxRadiusNm > 2000.f)
+      if(context->visible(rect) || maxRadiusNm > 2000.f)
       {
         // Ring is visible - the rest of the visibility check is done in paintCircle
 
@@ -842,7 +845,7 @@ void MapPainterMark::paintRangeMarks()
           painter->drawEllipse(center, 4., 4.);
         }
 
-        if(resolves(rect))
+        if(context->visibleAndResolves(rect))
         {
           painter->setBrush(Qt::NoBrush);
 
@@ -1422,12 +1425,12 @@ void MapPainterMark::paintDistanceMarks()
       painter->setPen(QPen(color, lineWidth, Qt::SolidLine, Qt::RoundCap, Qt::MiterJoin));
       drawLine(painter, ageo::Line(marker->from, marker->to));
 
-      // Build '\n' separated texts =============================
-      QStringList texts =
-        distanceMarkText(*marker, marker->id == context->currentDistanceMarkerId && context->viewContext == Marble::Animation);
-
       if(marker->from != marker->to)
       {
+        // Build '\n' separated texts =============================
+        const QStringList texts = distanceMarkText(*marker, marker->id == context->currentDistanceMarkerId &&
+                                                   context->viewContext == Marble::Animation);
+
         painter->setPen(mapcolors::distanceMarkerTextColor);
         TextPlacement textPlacement(context->painter, this, context->screenRect);
         textPlacement.setArrowForEmpty(true);
@@ -1496,7 +1499,7 @@ void MapPainterMark::paintPatternMarks()
       // Expand rect by approximately 2 NM
       rect.inflateMeter(ageo::nmToMeter(2.f), ageo::nmToMeter(2.f));
 
-      if(resolves(rect))
+      if(context->visibleAndResolves(rect))
       {
         // Entry at opposite runway threshold
         ageo::Pos downwindEntry = downwindToBase.endpoint(finalDist + runwayLength, pattern.courseTrue);

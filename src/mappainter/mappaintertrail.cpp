@@ -49,7 +49,7 @@ void MapPainterTrail::render()
     bounding.extend(aircraftPos); // Add aircraft since this is not neccesarily a part of the trail
 
     // Have to do separate check for single point rect which appears right after deleting the trail
-    if(!aircraftTrail.isEmpty() && (resolves(bounding) || (bounding.isPoint() && context->viewportRect.overlaps(bounding))))
+    if(!aircraftTrail.isEmpty() && (resolves(bounding) || (bounding.isPoint() && context->visible(bounding))))
     {
 #ifdef DEBUG_DRAW_TRAIL
       {

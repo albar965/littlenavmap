@@ -66,7 +66,7 @@ void MapPainterMsa::render()
 
           if(!visible)
             // Check bounding rect for visibility
-            visible = msa.bounding.overlaps(context->viewportRect);
+            visible = context->visible(msa.bounding);
 
           if(visible)
           {

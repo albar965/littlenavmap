@@ -19,8 +19,11 @@
 
 #include "common/mapcolors.h"
 #include "common/maptypes.h"
+#include "geo/marbleconverter.h"
 #include "mapgui/maplayer.h"
 #include "mapgui/mappaintwidget.h"
+
+#include <marble/ViewportParams.h>
 #include <marble/GeoPainter.h>
 
 using namespace Marble;
@@ -96,4 +99,19 @@ textflags::TextFlags PaintContext::airportTextFlagsRoute(bool drawAsRoute, bool 
     textflags |= textflags::NO_BACKGROUND;
 
   return textflags;
+}
+
+bool PaintContext::visible(const atools::geo::Line& line) const
+{
+  return viewportRect.overlaps(line.boundingRect());
+}
+
+bool PaintContext::visibleAndResolves(const atools::geo::Line& line) const
+{
+  return viewportRect.overlaps(line.boundingRect()) && viewport->resolves(mconvert::toGdc(line.getPos1()), mconvert::toGdc(line.getPos2()));
+}
+
+bool PaintContext::visibleAndResolves(const atools::geo::Rect& rect) const
+{
+  return viewportRect.overlaps(rect) && viewport->resolves(mconvert::toGdc(rect));
 }

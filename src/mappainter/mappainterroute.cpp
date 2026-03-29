@@ -209,8 +209,13 @@ void MapPainterRoute::paintRoute()
 {
   const Route *route = context->route;
 
-  // Add sufficient buffer to apoid navaids popping out
-  if(route->isEmpty() || (route->size() >= 2 && !resolves(route->getBoundingRect().inflatedMeter(15000.f, 15000.f))))
+  if(route->isEmpty())
+    return;
+
+  // Avoid idents popping out at screen border
+  float meter = scale->getMeterPerPixel() * context->painter->fontMetrics().horizontalAdvance(QStringLiteral("XXXXX"));
+  Rect rect = route->getBoundingRect().inflatedMeter(meter, meter);
+  if(route->size() >= 2 && (!context->visibleAndResolves(rect)))
     return;
 
   atools::util::PainterContextSaver saver(context->painter);
@@ -833,7 +838,7 @@ void MapPainterRoute::paintTopOfDescentAndClimb()
 void MapPainterRoute::paintProcedure(QSet<map::MapRef>& idMap, const proc::MapProcedureLegs& legs, int legsRouteOffset, const QColor& color,
                                      bool preview, bool previewAll)
 {
-  if(legs.isEmpty() || !legs.boundingWithRecommended.overlaps(context->viewportRect))
+  if(legs.isEmpty() || !context->visible(legs.boundingWithRecommended))
     return;
 
   QPainter *painter = context->painter;

@@ -267,7 +267,7 @@ void MapPainterAirport::collectVisibleAirports(QList<AirportPaintData>& visibleA
       {
         if(!visibleOnMap && context->mapLayer->isAirportOverviewRunway())
           // Check bounding rect for visibility if relevant - not for point symbols
-          visibleOnMap = airport.bounding.overlaps(context->viewportRect);
+          visibleOnMap = context->visible(airport.bounding);
 
         if(visibleOnMap)
         {

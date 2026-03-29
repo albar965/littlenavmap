@@ -164,8 +164,8 @@ void MapScreenIndex::updateAirspaceScreenGeometryInternal(QSet<map::MapAirspaceI
         const atools::geo::LineString *lines = queries->getAirspaceQueries()->getAirspaceGeometry(airspace->combinedId());
         if(lines != nullptr)
         {
-          const QList<QPolygonF *> polys = conv.createPolygons(*lines, mapWidget->rect());
-          for(const QPolygonF *poly : polys)
+          QList<QPolygonF *> polygons = conv.createPolygons(*lines, mapWidget->rect());
+          for(const QPolygonF *poly : polygons)
           {
             if(!poly->isEmpty())
             {
@@ -174,7 +174,7 @@ void MapScreenIndex::updateAirspaceScreenGeometryInternal(QSet<map::MapAirspaceI
               ids.insert(airspace->combinedId());
             }
           }
-          conv.releasePolygons(polys);
+          conv.releasePolygons(polygons);
         }
       }
     }

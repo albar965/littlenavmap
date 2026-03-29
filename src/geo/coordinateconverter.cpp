@@ -391,6 +391,28 @@ const QList<QPolygonF *> CoordinateConverter::createPolygons(const atools::geo::
   return polys;
 }
 
+double CoordinateConverter::polylinesLength(const QList<QPolygonF *>& polylines) const
+{
+  double length = 0.;
+  for(const QPolygonF *polyline : polylines)
+  {
+    for(qsizetype i = 0; i < polyline->size() - 1; i++)
+      length += QLineF(polyline->at(i), polyline->at(i + 1)).length();
+  }
+  return length;
+}
+
+double CoordinateConverter::polylinesManhattanLength(const QList<QPolygonF *>& polylines) const
+{
+  double length = 0.;
+  for(const QPolygonF *polyline : polylines)
+  {
+    for(qsizetype i = 0; i < polyline->size() - 1; i++)
+      length += (polyline->at(i) - polyline->at(i + 1)).manhattanLength();
+  }
+  return length;
+}
+
 const QList<QPolygonF *> CoordinateConverter::createPolygonsInternal(const atools::geo::LineString& linestring,
                                                                      const QRectF& screenRect) const
 {
@@ -433,28 +455,14 @@ const QList<QPolygonF *> CoordinateConverter::createPolygonsInternal(const atool
   return polygons;
 }
 
-bool CoordinateConverter::resolves(const Marble::GeoDataLatLonBox& box) const
-{
-  // boxes alsmost spanning the whole globe are always in range
-  return viewport->resolves(box) && box.width(GeoDataCoordinates::Degree) > 359. ? true : viewport->viewLatLonAltBox().intersects(box);
-}
-
-bool CoordinateConverter::resolves(const Marble::GeoDataCoordinates& coord1, const Marble::GeoDataCoordinates& coord2) const
-{
-  Marble::GeoDataLineString line;
-  line.setTessellate(true);
-  line << coord1 << coord2;
-  return resolves(line.latLonAltBox());
-}
-
 bool CoordinateConverter::resolves(const atools::geo::Rect& rect) const
 {
-  return resolves(mconvert::toGdc(rect));
+  return viewport->resolves(mconvert::toGdc(rect));
 }
 
 bool CoordinateConverter::resolves(const atools::geo::Line& line) const
 {
-  return resolves(mconvert::toGdc(line.getPos1()), mconvert::toGdc(line.getPos2()));
+  return viewport->resolves(mconvert::toGdc(line.getPos1()), mconvert::toGdc(line.getPos2()));
 }
 
 const QList<QPolygonF *> CoordinateConverter::createPolylinesInternal(const atools::geo::LineString& linestring,

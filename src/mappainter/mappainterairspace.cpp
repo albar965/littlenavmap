@@ -106,7 +106,7 @@ void MapPainterAirspace::render()
       QPen pen = airspacePen; // Modified for online airspaces
 
       // Check if coordinates overlap with viewport
-      if(context->viewportRect.overlaps(airspace->bounding))
+      if(context->visible(airspace->bounding))
       {
         if(context->objCount())
           return;
@@ -351,7 +351,7 @@ void MapPainterAirspace::render()
     } // if(context->viewContext == Marble::Still && (name || restrictiveName || type || altitude || com))
 
     // Delete airspace polygons ====================================================
-    for(const DrawAirspace& drawAirspace : std::as_const(visibleAirspaces))
+    for(DrawAirspace& drawAirspace : visibleAirspaces)
       releasePolygons(drawAirspace.polygons);
 
   } // if(!airspaces.isEmpty())

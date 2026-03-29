@@ -389,9 +389,12 @@ void MapPainter::drawCross(Marble::GeoPainter *painter, int x, int y, int size) 
 
 void MapPainter::drawPolyline(Marble::GeoPainter *painter, const atools::geo::LineString& linestring) const
 {
-  QList<QPolygonF *> polygons = createPolylines(linestring, context->screenRect, true /* splitLongLines */);
-  drawPolylines(painter, polygons);
-  releasePolylines(polygons);
+  QList<QPolygonF *> polylines = createPolylines(linestring, context->screenRect, true /* splitLongLines */);
+  if(!polylines.isEmpty())
+  {
+    drawPolylines(painter, polylines);
+    releasePolylines(polylines);
+  }
 }
 
 void MapPainter::drawPolylines(Marble::GeoPainter *painter, const QList<QPolygonF *>& polygons) const
@@ -475,11 +478,11 @@ void MapPainter::drawLine(Marble::GeoPainter *painter, const atools::geo::Line& 
   // Move latitude values slightly up and down to workaround Marble drawing straight lines
   maptools::correctLatY(linestring, false /* polygon */);
 
-  QList<QPolygonF *> polygons = createPolylines(linestring, context->screenRect, true /* splitLongLines */);
-  if(!polygons.isEmpty())
+  QList<QPolygonF *> polylines = createPolylines(linestring, context->screenRect, true /* splitLongLines */);
+  if(!polylines.isEmpty())
   {
-    drawPolylines(painter, polygons);
-    releasePolylines(polygons);
+    drawPolylines(painter, polylines);
+    releasePolylines(polylines);
   }
   else if(forceDraw)
   {
@@ -888,7 +891,7 @@ void MapPainter::paintMsaMarks(const QList<map::MapAirportMsa>& airportMsa, bool
 
     if(!msaVisible)
       // Check bounding rect for visibility
-      msaVisible = msa.bounding.overlaps(context->viewportRect);
+      msaVisible = context->visible(msa.bounding);
 
     if(msaVisible)
     {
@@ -1023,7 +1026,7 @@ void MapPainter::paintHoldingMarks(const QList<map::MapHolding>& holdings, const
       // Calculcate approximate rectangle
       Rect rect(holding.position, atools::geo::nmToMeter(dist) * 2.f, true /* fast */);
 
-      if(context->viewportRect.overlaps(rect))
+      if(context->visible(rect))
       {
         painter->setPen(QPen(color, lineWidth, Qt::SolidLine));
 

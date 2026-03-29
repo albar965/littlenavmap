@@ -85,13 +85,16 @@ void TextPlacement::calculateTextAlongLines(const QList<atools::geo::Line>& line
         continue;
 
       // Get a safe properly ordered list of points to avoid issues with Mercator projection
-      const QList<QPolygonF *> polylines = converter->createPolylines(LineString(line.getPos1(), line.getPos2()), screenRect,
-                                                                      false /* splitLongLines */);
+      // Split lines to avoid issues when crossing Anti-Meridian or wrapping > 180 deg
+      QList<QPolygonF *> polylines = converter->createPolylines(LineString(line.getPos1(), line.getPos2()), screenRect,
+                                                                true /* splitLongLines */);
 
       if(polylines.isEmpty())
         continue;
 
-      float lineLength = static_cast<float>(QLineF(polylines.constFirst()->constFirst(), polylines.constLast()->constLast()).length());
+      // Get full line lengths for all split segments
+      float lineLength = converter->polylinesLength(polylines);
+
       converter->releasePolylines(polylines);
 
       if(lineLength > minLengthForText)
@@ -332,13 +335,13 @@ bool TextPlacement::findTextPosInternal(const Line& line, float distanceMeter, f
   positions.append(line.getPos2());
 
   // Get a safe properly ordered list of points to avoid issues with Mercator projection
-  const QList<QPolygonF *> polylines = converter->createPolylines(positions, screenRect, false /* splitLongLines */);
+  QList<QPolygonF *> polylines = converter->createPolylines(positions, screenRect, false /* splitLongLines */);
   if(polylines.isEmpty())
     return false;
 
   // Collect positions which are not hidden ============================================
   QPolygonF points;
-  for(const QPolygonF *polyline : polylines)
+  for(const QPolygonF *polyline : std::as_const(polylines))
     points.append(*polyline);
   converter->releasePolylines(polylines);
 

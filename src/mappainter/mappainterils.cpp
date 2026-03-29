@@ -95,7 +95,7 @@ void MapPainterIls::render()
 
           if(!visible)
             // Check bounding rect for visibility
-            visible = ils.bounding.overlaps(context->viewportRect);
+            visible = context->visible(ils.bounding);
 
           if(visible)
           {
@@ -121,7 +121,7 @@ void MapPainterIls::render()
       bool visible = wToS(ils.position, x, y, scale->getScreeenSizeForRect(ils.bounding));
 
       if(!visible)
-        visible = ils.bounding.overlaps(context->viewportRect);
+        visible = context->visible(ils.bounding);
 
       if(visible)
         drawIlsSymbol(ils, context->drawFast);

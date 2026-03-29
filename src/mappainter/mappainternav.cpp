@@ -243,7 +243,7 @@ void MapPainterNav::paintAirways(const QList<map::MapAirway> *airways, bool fast
 
     if(!visible1 && !visible2)
       // Check bounding rect for visibility
-      visible1 = context->viewportRect.overlaps(airway.bounding);
+      visible1 = context->visible(airway.bounding);
 
     // Draw line if both points are visible or line intersects screen coordinates
     if(visible1 || visible2)
