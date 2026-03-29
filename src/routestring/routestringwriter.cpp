@@ -22,12 +22,72 @@
 #include "common/unit.h"
 #include "fs/util/coordinates.h"
 #include "fs/util/fsutil.h"
+#include "query/airportquery.h"
+#include "query/querymanager.h"
 #include "route/route.h"
 
 #include <QStringBuilder>
 
 using atools::geo::Pos;
 namespace coords = atools::fs::util;
+
+QString RouteStringWriter::createGfpStringForFlightplan(const atools::fs::pln::Flightplan& flightplan) const
+{
+  // FLP and GFP are a sort of route string
+  // New waypoints along airways have to be inserted and waypoints have to be resolved without coordinate backup
+  // KYKM/09 WENAS7.PERTT MIVSE FOGIG EAT 4741N12051W DROGA KRUZR GLASR TUNNL 4804N12114W
+  // 4805N12118W 4805N12121W 4807N12128W 4808N12121W 4807N12116W 4806N12109W
+  // ROZSE 6S9 DIABO J503 FOLDY PIGLU5.YDC CYLW/HUMEK.I16-Z CYYF CZGF
+
+  // Create a simple route string ====================================
+  QStringList routeString;
+
+  // Add departure airport, runway and SID - "KYKM/09 WENAS7.PERTT"  =========================
+  const QHash<QString, QString>& props = flightplan.getPropertiesConst();
+  routeString.append(atools::strJoin({flightplan.constFirst().getIdent(), props.value(atools::fs::pln::SID_RW)}, '/'));
+  routeString.append(atools::strJoin({props.value(atools::fs::pln::SID), props.value(atools::fs::pln::SID_TRANS)}, '.'));
+
+  // Add enroute waypoints =========================
+  for(int i = 1; i < flightplan.size() - 1; i++)
+  {
+    const atools::fs::pln::FlightplanEntry& entry = flightplan.at(i);
+    if(!entry.getAirway().isEmpty())
+      routeString.append(entry.getAirway());
+    routeString.append(entry.getIdent());
+  }
+
+  // Add STAR - "PIGLU5.YDC" =========================
+  routeString.append(atools::strJoin({props.value(atools::fs::pln::STAR), props.value(atools::fs::pln::STAR_TRANS)}, '.'));
+
+  // Add destination and approach - "CYLW/HUMEK.I16-Z" =========================
+  routeString.append(atools::strJoin({flightplan.constLast().getIdent(),
+                                      atools::strJoin({props.value(atools::fs::pln::TRANSITION),
+                                                       props.value(atools::fs::pln::APPROACH_ARINC)}, '.')}, '/'));
+
+  // Remove empty strings - allow duplicates
+  routeString.removeAll(QStringLiteral());
+
+  // Try to resolve departure and destination airport if given as coordinates by formats save as waypoints =========
+  // Get the nearest airport at the coordinate
+  AirportQuery *airportQuery = QueryManager::instance()->getQueriesGui()->getAirportQuerySim();
+  Pos departurePos = atools::fs::util::fromGfpFormat(routeString.constFirst());
+  if(departurePos.isValidRange())
+  {
+    const map::MapResultIndex *index = airportQuery->getNearestAirportObjects(departurePos, 5);
+    if(index != nullptr && !index->isEmpty())
+      routeString.first() = index->constFirst()->asObj<map::MapAirport>().ident;
+  }
+
+  Pos destinationPos = atools::fs::util::fromGfpFormat(routeString.constLast());
+  if(destinationPos.isValidRange())
+  {
+    const map::MapResultIndex *index = airportQuery->getNearestAirportObjects(destinationPos, 5);
+    if(index != nullptr && !index->isEmpty())
+      routeString.last() = index->constFirst()->asObj<map::MapAirport>().ident;
+  }
+
+  return routeString.join(QStringLiteral(" "));
+}
 
 QString RouteStringWriter::createStringForRoute(const Route& route, float speedKts, rs::RouteStringOptions options) const
 {

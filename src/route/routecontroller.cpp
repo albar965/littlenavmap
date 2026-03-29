@@ -1254,36 +1254,28 @@ void RouteController::loadFlightplanInternal(atools::fs::pln::Flightplan flightp
   // Change altitude based on airways and procedures later if true
   bool adjustAltAfterLoad = false;
 
+  // Load from FLP route string or Garmin GFP route string =====================================
   if(format == atools::fs::pln::FLP || format == atools::fs::pln::GARMIN_GFP)
   {
-    // FLP and GFP are a sort of route string
-    // New waypoints along airways have to be inserted and waypoints have to be resolved without coordinate backup
+    // Create a simple route string from the flightplan ===============================
+    const QString routeString = RouteStringWriter().createGfpStringForFlightplan(flightplan);
 
-    // Create a route string
-    QStringList routeString;
-    for(int i = 0; i < flightplan.size(); i++)
-    {
-      const FlightplanEntry& entry = flightplan.at(i);
-      if(!entry.getAirway().isEmpty())
-        routeString.append(entry.getAirway());
-      routeString.append(entry.getIdent());
-    }
     qInfo() << "FLP/GFP generated route string" << routeString;
 
     // All is valid except the waypoint entries
     flightplan.clearAll();
 
-    // Use route string to overwrite the current incomplete flight plan object
+    // Use route string to overwrite the current incomplete flight plan object back from above generated string =======================
+    // This resolves all special cases like airways ending at STARs
     RouteStringReader rs(entryBuilder);
     rs.setPlaintextMessages(true);
-    bool ok = rs.createRouteFromString(routeString.join(" "), rs::NONE, &flightplan);
+    bool ok = rs.createRouteFromString(routeString, rs::NONE, &flightplan);
     qInfo() << "createRouteFromString messages" << rs.getAllMessages();
 
     if(!ok)
     {
       dialog->warning(tr("Loading of FLP flight plan failed:<br/><br/>") % rs.getAllMessages().join("<br/>"));
       return;
-
     }
     else if(!rs.getAllMessages().isEmpty())
       dialog->showInfoMsgBox(lnm::ACTIONS_SHOW_LOAD_FLP_WARN,

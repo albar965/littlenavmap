@@ -22,6 +22,13 @@
 
 #include <QStringList>
 
+namespace atools {
+namespace fs {
+namespace pln {
+class Flightplan;
+}
+}
+}
 class Route;
 class RouteLeg;
 
@@ -31,6 +38,10 @@ class RouteLeg;
 class RouteStringWriter
 {
 public:
+  /* Create a route string from a simple incomplete flight plan taken from FlightplanIO::loadGarminGfp().
+   * Creates a string containing all procedures, airways and runways. */
+  QString createGfpStringForFlightplan(const atools::fs::pln::Flightplan& flightplan) const;
+
   /*
    * Create a route string like
    * LOWI DCT NORIN UT23 ALGOI UN871 BAMUR Z2 KUDES UN871 BERSU Z55 ROTOS
