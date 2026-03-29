@@ -22,6 +22,7 @@
 #include "common/mapcolors.h"
 #include "geo/calculations.h"
 #include "geo/marbleconverter.h"
+#include "gui/mainwindow.h"
 #include "mapgui/maplayersettings.h"
 #include "mapgui/mapscale.h"
 #include "mapgui/mapwidget.h"
@@ -60,7 +61,6 @@ MapPaintLayer::MapPaintLayer(MapPaintWidget *widget)
   : mapPaintWidget(widget)
 {
   verbose = atools::settings::Settings::instance().getAndStoreValue(lnm::OPTIONS_MAP_LAYER_DEBUG, false).toBool();
-  verboseDraw = atools::settings::Settings::instance().getAndStoreValue(lnm::OPTIONS_MAP_LAYER_DEBUG_DRAW, false).toBool();
   debugTileSize = atools::settings::Settings::instance().getAndStoreValue(lnm::OPTIONS_MAP_LAYER_DEBUG_TILE_SIZE, false).toBool();
 
   // Create the layer configuration
@@ -430,7 +430,7 @@ bool MapPaintLayer::render(GeoPainter *painter, ViewportParams *viewport, const 
       context.dispOptsRoute = od.getDisplayOptionsRoute();
       context.flags = od.getFlags();
       context.flags2 = od.getFlags2();
-      context.verboseDraw = verboseDraw;
+      context.verboseDraw = NavApp::getMainWindow()->isDebugMapPaint();
 
       context.weatherSource = weatherSource;
       context.visibleWidget = mapPaintWidget->isVisibleWidget();

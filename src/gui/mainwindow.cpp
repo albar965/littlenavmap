@@ -506,6 +506,10 @@ MainWindow::MainWindow()
     debugActionExportPlans->setCheckable(true);
     this->addAction(debugActionExportPlans);
 
+    debugActionMapPaint = new QAction("DEBUG - Show paint performance", ui->menuHelp);
+    debugActionMapPaint->setCheckable(true);
+    this->addAction(debugActionMapPaint);
+
     ui->menuHelp->addSeparator();
     ui->menuHelp->addSeparator();
     ui->menuHelp->addAction(debugActionDumpRoute);
@@ -526,6 +530,7 @@ MainWindow::MainWindow()
     ui->menuHelp->addSeparator();
     ui->menuHelp->addAction(debugActionMoveAircraft);
     ui->menuHelp->addAction(debugActionExportPlans);
+    ui->menuHelp->addAction(debugActionMapPaint);
 
     connect(debugActionDumpRoute, &QAction::triggered, this, &MainWindow::debugActionTriggeredDumpRoute);
     connect(debugActionDumpFlightplan, &QAction::triggered, this, &MainWindow::debugActionTriggeredDumpFlightplan);
@@ -540,6 +545,7 @@ MainWindow::MainWindow()
     connect(debugActionAssert, &QAction::triggered, this, &MainWindow::debugActionTriggeredAssert);
     connect(debugActionMoveAircraft, &QAction::toggled, this, &MainWindow::updateActionStates);
     connect(debugActionExportPlans, &QAction::toggled, this, &MainWindow::updateActionStates);
+    connect(debugActionMapPaint, &QAction::toggled, this, &MainWindow::updateActionStates);
   }
 
   qDebug() << Q_FUNC_INFO << "Exit";
@@ -760,6 +766,11 @@ void MainWindow::debugActionTriggeredAssert()
 bool MainWindow::isDebugMovingAircraft() const
 {
   return debugActionMoveAircraft != nullptr ? debugActionMoveAircraft->isChecked() : false;
+}
+
+bool MainWindow::isDebugMapPaint() const
+{
+  return debugActionMapPaint!= nullptr ? debugActionMapPaint->isChecked() : false;
 }
 
 void MainWindow::updateMap() const
