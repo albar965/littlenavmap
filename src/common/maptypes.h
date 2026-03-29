@@ -217,16 +217,24 @@ struct MapBase
   {
   }
 
-  MapBase(const MapBase& other)
+  explicit MapBase(const MapBase& other)
   {
     this->operator=(other);
   }
 
-  MapBase(const MapBase && other)
+  explicit MapBase(MapBase && other)
   {
     id = std::move(other.id);
     position = std::move(other.position);
     objType = std::move(other.objType);
+  }
+
+  MapBase& operator=(MapBase&& other)
+  {
+    id = std::move(other.id);
+    position = std::move(other.position);
+    objType = std::move(other.objType);
+    return *this;
   }
 
   MapBase& operator=(const MapBase& other)
