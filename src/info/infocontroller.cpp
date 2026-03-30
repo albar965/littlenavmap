@@ -189,18 +189,18 @@ InfoController::InfoController(QWidget *parent)
 
   // ==================================================================================
   // Create a configuration push button and place it into the aircraft progress info text browser
-  QPushButton *button = new QPushButton(QIcon(":/littlenavmap/resources/icons/settingsroute.svg"),
-                                        QStringLiteral(), ui->textBrowserAircraftProgressInfo->viewport());
-  button->setToolTip(tr("Select the fields to show in the aircraft progress tab."));
-  button->setSizePolicy(QSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed));
+  pushButtonConfig = new QPushButton(QIcon(":/littlenavmap/resources/icons/settingsroute.svg"),
+                                     QStringLiteral(), ui->textBrowserAircraftProgressInfo->viewport());
+  pushButtonConfig->setToolTip(tr("Select the fields to show in the aircraft progress tab."));
+  pushButtonConfig->setSizePolicy(QSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed));
 
   // Create a layout to position the button automatically
   QVBoxLayout *layout = new QVBoxLayout(ui->textBrowserAircraftProgressInfo->viewport());
   layout->setContentsMargins(5, 5, 5, 5);
   layout->setSpacing(0);
-  layout->addWidget(button, 0, Qt::AlignRight); // Add button to the right
+  layout->addWidget(pushButtonConfig, 0, Qt::AlignRight); // Add button to the right
   layout->addSpacerItem(new QSpacerItem(10, 10, QSizePolicy::Minimum, QSizePolicy::Expanding)); // Move button up with spacer
-  connect(button, &QPushButton::clicked, this, &InfoController::progressConfigurationClicked);
+  connect(pushButtonConfig, &QPushButton::clicked, this, &InfoController::progressConfigurationClicked);
 
   // Create context menu connections for progress text browser ===========================
   connect(ui->textBrowserAircraftProgressInfo, &QTextBrowser::customContextMenuRequested, this, &InfoController::showProgressContextMenu);
@@ -262,6 +262,7 @@ InfoController::~InfoController()
   ATOOLS_DELETE_LOG(lastSimData);
   ATOOLS_DELETE_LOG(currentSearchResult);
   ATOOLS_DELETE_LOG(savedSearchResult);
+  ATOOLS_DELETE_LOG(pushButtonConfig);
 }
 
 QString InfoController::getConnectionTypeText()
@@ -1521,8 +1522,18 @@ void InfoController::optionsChanged()
   linkTooltipHandler->setShowTooltips(OptionData::instance().getFlags().testFlag(opts::ENABLE_TOOLTIPS_LINK));
 }
 
-void InfoController::fontChanged(const QFont&)
+void InfoController::fontChanged(const QFont& font)
 {
+  qDebug() << Q_FUNC_INFO;
+
+  const QSize minSize = NavApp::getMinButtonSize();
+  tabHandlerInfo->fontChanged(font, minSize);
+  tabHandlerAirportInfo->fontChanged(font, minSize);
+  tabHandlerAircraft->fontChanged(font, minSize);
+
+  pushButtonConfig->setMinimumSize(minSize);
+  pushButtonConfig->setIconSize(minSize * 0.8);
+
   optionsChanged();
 }
 

@@ -1453,7 +1453,7 @@ void RouteController::loadFlightplanInternal(atools::fs::pln::Flightplan flightp
   updateActions();
   routeCalcDialog->setCruisingAltitudeFt(route.getCruiseAltitudeFt());
 
-#ifdef DEBUG_INFORMATION
+#ifdef DEBUG_INFORMATION_ROUTE
   qDebug() << Q_FUNC_INFO << route;
 #endif
 
@@ -3566,12 +3566,17 @@ void RouteController::optionsChanged()
 
 void RouteController::fontChanged(const QFont& font)
 {
+  qDebug() << Q_FUNC_INFO;
+
   routeLabel->fontChanged(font);
   routeCalcDialog->fontChanged(font);
 
   zoomHandlerTable->zoomPercent(OptionData::instance().getGuiRouteTableTextSize());
   zoomHandlerPlaceholder->zoomPercent(OptionData::instance().getGuiRouteTableTextSize());
   zoomHandlerRemarks->zoomPercent(OptionData::instance().getGuiRouteRemarksTextSize());
+
+  tabHandlerRoute->fontChanged(font, NavApp::getMinButtonSize());
+
   updateTableModelAndErrors();
 }
 

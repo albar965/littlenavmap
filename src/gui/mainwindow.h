@@ -634,8 +634,6 @@ private:
   WeatherContextHandler *weatherContextHandler;
   QAction *emptyAirportSeparator = nullptr;
 
-  QList<QToolBar *> toolbars;
-
   /* Show database dialog after cleanup of obsolete databases if true */
   bool databasesErased = false;
   QSize defaultToolbarIconSize;
@@ -661,6 +659,9 @@ private:
           *debugActionAssert = nullptr, *debugActionMoveAircraft = nullptr, *debugActionExportPlans = nullptr,
           *debugActionMapPaint = nullptr;
 
+  /* Widgets that have to adapted on font change */
+  QList<QTabWidget *> tabbarsToResize;
+  QList<QWidget *> widgetsToResize;
 };
 
 #endif // LITTLENAVMAP_MAINWINDOW_H

@@ -46,6 +46,62 @@ const static QLatin1String STYLE_COLOR_GROUP("StyleColors");
 using atools::settings::Settings;
 using atools::gui::PaletteSettings;
 
+// ============================================
+/* Immutable internal class describing a style */
+class StyleDescription
+{
+public:
+  StyleDescription(const QString& displayNameParam, const QString& styleNameParam, const QString& stylesheetParam,
+                   const QPalette& paletteParam, bool darkParam)
+    : displayName(displayNameParam), styleName(styleNameParam), stylesheet(stylesheetParam), palette(paletteParam),
+    dark(darkParam), paletteValid(true)
+  {
+  }
+
+  StyleDescription(const QString& displayNameParam, const QString& styleNameParam, const QString& stylesheetParam,
+                   bool darkParam)
+    : displayName(displayNameParam), styleName(styleNameParam), stylesheet(stylesheetParam),
+    dark(darkParam), paletteValid(false)
+  {
+  }
+
+  const QString& getDisplayName() const
+  {
+    return displayName;
+  }
+
+  const QString& getStyleName() const
+  {
+    return styleName;
+  }
+
+  const QString& getStylesheet() const
+  {
+    return stylesheet;
+  }
+
+  const QPalette& getPalette() const
+  {
+    return palette;
+  }
+
+  bool isDark() const
+  {
+    return dark;
+  }
+
+  bool isPaletteValid() const
+  {
+    return paletteValid;
+  }
+
+private:
+  QString displayName, styleName, stylesheet;
+  QPalette palette;
+  bool dark, paletteValid;
+};
+
+// =============================================================================
 StyleHandler::StyleHandler(QMainWindow *mainWindowParam)
   : QObject(mainWindowParam), mainWindow(mainWindowParam)
 {
@@ -303,7 +359,10 @@ void StyleHandler::menuItemAutoTriggered()
 {
   automaticStyle = menuItemAuto->isChecked();
   updateMenuStatus();
+
+  QGuiApplication::setOverrideCursor(Qt::WaitCursor);
   applyCurrentStyle();
+  QGuiApplication::restoreOverrideCursor();
 }
 
 void StyleHandler::menuItemTriggered()
@@ -313,14 +372,18 @@ void StyleHandler::menuItemTriggered()
   if(action != nullptr && currentStyleIndex != action->data().toInt())
   {
     currentStyleIndex = action->data().toInt();
+    QGuiApplication::setOverrideCursor(Qt::WaitCursor);
     applyCurrentStyle();
+    QGuiApplication::restoreOverrideCursor();
   }
 }
 
 void StyleHandler::colorSchemeChanged(Qt::ColorScheme colorScheme)
 {
   qDebug() << Q_FUNC_INFO << colorScheme;
+  QGuiApplication::setOverrideCursor(Qt::WaitCursor);
   applyCurrentStyle();
+  QGuiApplication::restoreOverrideCursor();
 }
 
 void StyleHandler::paletteChanged(const QPalette&)

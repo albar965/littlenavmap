@@ -28,6 +28,7 @@ class QPalette;
 class QActionGroup;
 class QAction;
 class QMainWindow;
+class StyleDescription;
 
 /*
  * Creates additonal GUI styles and provides function and menu items to switch between them.
@@ -65,61 +66,6 @@ signals:
   void styleChanged(const QString& name, bool dark);
 
 private:
-  // ============================================
-  /* Immutable internal class describing a style */
-  class StyleDescription
-  {
-public:
-    StyleDescription(const QString& displayNameParam, const QString& styleNameParam, const QString& stylesheetParam,
-                     const QPalette& paletteParam, bool darkParam)
-      : displayName(displayNameParam), styleName(styleNameParam), stylesheet(stylesheetParam), palette(paletteParam),
-      dark(darkParam), paletteValid(true)
-    {
-    }
-
-    StyleDescription(const QString& displayNameParam, const QString& styleNameParam, const QString& stylesheetParam,
-                     bool darkParam)
-      : displayName(displayNameParam), styleName(styleNameParam), stylesheet(stylesheetParam),
-      dark(darkParam), paletteValid(false)
-    {
-    }
-
-    const QString& getDisplayName() const
-    {
-      return displayName;
-    }
-
-    const QString& getStyleName() const
-    {
-      return styleName;
-    }
-
-    const QString& getStylesheet() const
-    {
-      return stylesheet;
-    }
-
-    const QPalette& getPalette() const
-    {
-      return palette;
-    }
-
-    bool isDark() const
-    {
-      return dark;
-    }
-
-    bool isPaletteValid() const
-    {
-      return paletteValid;
-    }
-
-private:
-    QString displayName, styleName, stylesheet;
-    QPalette palette;
-    bool dark, paletteValid;
-  };
-
   // ============================================
 
   const static QLatin1String STYLE_FUSION; /* Fusion */

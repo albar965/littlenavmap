@@ -33,6 +33,7 @@ class QTextBrowser;
 class QTextEdit;
 class Queries;
 
+class QPushButton;
 namespace map {
 struct MapAirport;
 struct MapResult;
@@ -124,7 +125,7 @@ public:
 
   /* Program options have changed */
   void optionsChanged();
-  void fontChanged(const QFont&);
+  void fontChanged(const QFont& font);
 
   /* Get airport information as HTML in the string list. Order is main, runway, com, procedure and weather.
    * List is empty if airport does not exist. Uses own white background color for tables. */
@@ -223,6 +224,8 @@ private:
   QWidget *parentWidget = nullptr;
   HtmlInfoBuilder *infoBuilder = nullptr;
   Queries *queries;
+
+  QPushButton *pushButtonConfig = nullptr;
 
   AircraftProgressConfig *aircraftProgressConfig;
 

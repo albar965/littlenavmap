@@ -83,6 +83,8 @@ public:
 
   int execConnectDialog(cd::ConnectSimType connectionType);
 
+  void fontChanged(const QFont& font);
+
 signals:
   void disconnectClicked();
   void autoConnectToggled(bool state);

@@ -630,19 +630,19 @@ void AirportSearch::updateButtonMenu()
 
   // Show star in action for all widgets that are not in default state
   atools::gui::changeIndication(ui->actionAirportSearchShowAdminOptions,
-                                      atools::gui::anyWidgetChanged({ui->verticalLayoutAirportAdminSearch}));
+                                atools::gui::anyWidgetChanged({ui->verticalLayoutAirportAdminSearch}));
 
   atools::gui::changeIndication(ui->actionAirportSearchShowExtOptions,
-                                      atools::gui::anyWidgetChanged({ui->gridLayoutAirportExtSearch}));
+                                atools::gui::anyWidgetChanged({ui->gridLayoutAirportExtSearch}));
 
   atools::gui::changeIndication(ui->actionAirportSearchShowFuelParkOptions,
-                                      atools::gui::anyWidgetChanged({ui->gridLayoutAirportSearchParking}));
+                                atools::gui::anyWidgetChanged({ui->gridLayoutAirportSearchParking}));
 
   atools::gui::changeIndication(ui->actionAirportSearchShowRunwayOptions,
-                                      atools::gui::anyWidgetChanged({ui->gridLayoutAirportSearchRunway}));
+                                atools::gui::anyWidgetChanged({ui->gridLayoutAirportSearchRunway}));
 
   atools::gui::changeIndication(ui->actionAirportSearchShowAltOptions,
-                                      atools::gui::anyWidgetChanged({ui->horizontalLayoutAirportAltitudeSearch}));
+                                atools::gui::anyWidgetChanged({ui->horizontalLayoutAirportAltitudeSearch}));
 
   bool distSearchChanged = false;
   if(columns->isDistanceCheckBoxChecked())
@@ -651,7 +651,7 @@ void AirportSearch::updateButtonMenu()
   atools::gui::changeIndication(ui->actionAirportSearchShowDistOptions, distSearchChanged);
 
   atools::gui::changeIndication(ui->actionAirportSearchShowSceneryOptions,
-                                      atools::gui::anyWidgetChanged({ui->horizontalLayoutAirportScenerySearch}));
+                                atools::gui::anyWidgetChanged({ui->horizontalLayoutAirportScenerySearch}));
 }
 
 void AirportSearch::updatePushButtons()
@@ -1018,4 +1018,11 @@ void AirportSearch::dataRandomAirportsReceived(bool isSuccess, int indexDepartur
     // when this enabling would occur prior
     ui->pushButtonAirportFlightplanSearch->setDisabled(false);
   }
+}
+
+void AirportSearch::fontChanged(const QFont& font)
+{
+  ui->pushButtonAirportFlightplanSearch->setMinimumHeight(NavApp::getMinButtonSize().height());
+  ui->pushButtonAirportFlightplanSearch->setIconSize(NavApp::getMinButtonSize() * 0.8);
+  AbstractSearch::fontChanged(font);
 }

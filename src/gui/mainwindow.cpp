@@ -174,6 +174,27 @@ MainWindow::MainWindow()
 
     ui->setupUi(this);
 
+    // All tabbars =======================================================================
+    tabbarsToResize.append({ui->tabWidgetSearch, ui->tabWidgetRoute, ui->tabWidgetInformation, ui->tabWidgetAirport,
+                            ui->tabWidgetAircraft});
+
+    // All buttons and labels that have to be resized on font change =================================
+    widgetsToResize.append({
+      ui->pushButtonRouteClearSelection, ui->pushButtonRouteSettings, ui->pushButtonRouteHelp, ui->pushButtonAircraftPerformanceEdit,
+      ui->pushButtonAircraftPerformanceNew, ui->pushButtonAircraftPerformanceLoad, ui->pushButtonAircraftPerformanceSave,
+      ui->pushButtonAircraftPerformanceSaveAs, ui->pushButtonAircraftPerformanceHelp, ui->pushButtonAircraftPerfCollectRestart,
+      ui->pushButtonAircraftPerfCollectMerge, ui->pushButtonAircraftPerfCollectHelp, ui->pushButtonProfileExpand, ui->pushButtonProfileHelp,
+      ui->pushButtonProfileSettings, ui->pushButtonAirportSearchReset, ui->pushButtonAirportSearchClearSelection,
+      ui->pushButtonAirportHelpSearch, ui->toolButtonAirportSearch, ui->pushButtonNavSearchReset, ui->pushButtonNavSearchClearSelection,
+      ui->pushButtonNavHelpSearch, ui->toolButtonNavSearch, ui->pushButtonProcedureShowAll, ui->pushButtonProcedureSearchReset,
+      ui->pushButtonProcedureSearchClearSelection, ui->pushButtonProcedureHelpSearch, ui->pushButtonUserdataAdd, ui->pushButtonUserdataEdit,
+      ui->pushButtonUserdataDel, ui->pushButtonUserdataReset, ui->pushButtonUserdataClearSelection, ui->pushButtonUserdataHelp,
+      ui->toolButtonUserdata, ui->pushButtonLogdataAdd, ui->pushButtonLogdataEdit, ui->pushButtonLogdataDel, ui->pushButtonLogdataReset,
+      ui->pushButtonLogdataClearSelection, ui->pushButtonLogdataHelp, ui->toolButtonLogdata, ui->pushButtonOnlineClientSearchReset,
+      ui->pushButtonOnlineClientSearchClearSelection, ui->pushButtonOnlineClientHelpSearch, ui->pushButtonOnlineCenterSearchReset,
+      ui->pushButtonOnlineCenterSearchClearSelection, ui->pushButtonOnlineCenterHelpSearch, ui->labelProfileVerticalSlider,
+      ui->labelProfileHorizontalSlider});
+
     // setAttribute(Qt::WA_DeleteOnClose);
 
     QString helpFileOffline = HelpHandler::getHelpFile(lnm::helpOfflineFile, OptionData::getLanguageFromConfigFile());
@@ -229,16 +250,15 @@ MainWindow::MainWindow()
     desktopServices = new atools::gui::DesktopServices(this);
 
     // Create dock and mainwindow handler ============================================
-    toolbars.append({ui->toolBarMain, ui->toolBarMap, ui->toolBarMapOptions, ui->toolBarMapOptionsRouteAircraft, ui->toolBarMapOptionsOther,
-                     ui->toolBarRoute, ui->toolBarView, ui->toolBarAirspaces, ui->toolBarTools});
-
     atools::settings::Settings& settings = atools::settings::Settings::instance();
     dockHandler = new atools::gui::DockWidgetHandler(this,
                                                      // Add all available dock widgets here ==========================
                                                      {ui->dockWidgetAircraft, ui->dockWidgetSearch, ui->dockWidgetProfile,
                                                       ui->dockWidgetInformation, ui->dockWidgetRoute},
                                                      // Add all available toolbars  here =============================
-                                                     toolbars,
+                                                     {ui->toolBarMain, ui->toolBarMap, ui->toolBarMapOptions,
+                                                      ui->toolBarMapOptionsRouteAircraft, ui->toolBarMapOptionsOther,
+                                                      ui->toolBarRoute, ui->toolBarView, ui->toolBarAirspaces, ui->toolBarTools},
                                                      settings.getAndStoreValue(lnm::OPTIONS_DOCKHANDLER_DEBUG, false).toBool());
 
     marbleAboutDialog = new Marble::MarbleAboutDialog(this);
@@ -391,7 +411,7 @@ MainWindow::MainWindow()
     NavApp::getAircraftPerfController()->connectAllSlots();
 
     // Emit program wide font change to update all widgets
-    emit Application::applicationInstance()->fontChanged(QGuiApplication::font());
+    // emit Application::applicationInstance()->fontChanged(QGuiApplication::font());
 
     // Append toolbar buttons/widgets ===========================================================
     // Add wind dropdown button
@@ -770,7 +790,7 @@ bool MainWindow::isDebugMovingAircraft() const
 
 bool MainWindow::isDebugMapPaint() const
 {
-  return debugActionMapPaint!= nullptr ? debugActionMapPaint->isChecked() : false;
+  return debugActionMapPaint != nullptr ? debugActionMapPaint->isChecked() : false;
 }
 
 void MainWindow::updateMap() const
@@ -998,6 +1018,7 @@ void MainWindow::connectAllSlots()
     connect(app, &Application::fontChanged, menuWidget(), &QWidget::setFont);
 
     // Rest later to update non-modal windows and more
+    connect(app, &Application::fontChanged, searchController, &SearchController::fontChanged);
     connect(app, &Application::fontChanged, NavApp::getLogdataController(), &LogdataController::fontChanged);
     connect(app, &Application::fontChanged, routeController, &RouteController::fontChanged);
     connect(app, &Application::fontChanged, infoController, &InfoController::fontChanged);
@@ -2089,6 +2110,7 @@ void MainWindow::routeFromStringCurrent()
     connect(NavApp::getTrackController(), &TrackController::postTrackLoad, routeStringDialog, &RouteStringDialog::tracksChanged);
   }
 
+  routeStringDialog->fontChanged(QApplication::font());
   routeStringDialog->show();
   routeStringDialog->activateWindow();
   routeStringDialog->raise();
@@ -3317,6 +3339,12 @@ void MainWindow::mainWindowShown()
 {
   qDebug() << Q_FUNC_INFO << "enter";
 
+  // Need to set the font again to pass it on to all menus since these are constructed later
+  QApplication::setFont(QApplication::font());
+  // atools::gui::updateAllFonts(ui->menuBar, QApplication::font(), atools::gui::WidgetZoomHandler::getRegisteredWidgets());
+  // Emit program wide font change to update all widgets
+  emit Application::applicationInstance()->fontChanged(QGuiApplication::font());
+
   // Set empty to disable arbitrary messages from map view changes
   statusBar->setStatusMessage(QStringLiteral());
 
@@ -4274,9 +4302,12 @@ void MainWindow::optionsChanged()
 
 void MainWindow::fontChanged(const QFont& font)
 {
-  atools::gui::updateAllFonts(font, atools::gui::WidgetZoomHandler::getRegisteredWidgets());
+  qDebug() << Q_FUNC_INFO;
+
+  // atools::gui::updateAllFonts(font, atools::gui::WidgetZoomHandler::getRegisteredWidgets());
   atools::gui::updateAllFonts(ui->menuBar, font, atools::gui::WidgetZoomHandler::getRegisteredWidgets());
   atools::gui::updateAllFonts(ui->statusBar, font, atools::gui::WidgetZoomHandler::getRegisteredWidgets());
+  atools::gui::updateAllFonts(ui->toolBarMain, font, atools::gui::WidgetZoomHandler::getRegisteredWidgets());
 
   for(QDockWidget *dock : dockHandler->getDockWidgets())
     atools::gui::updateAllFonts(dock, font, atools::gui::WidgetZoomHandler::getRegisteredWidgets());
@@ -4285,12 +4316,28 @@ void MainWindow::fontChanged(const QFont& font)
   DockWidgetHandler::fontChangedWidget(ui->dockWidgetMap, font);
 
   // Update tab widget height
-  atools::gui::changeTabBarSize({ui->tabWidgetSearch, ui->tabWidgetRoute, ui->tabWidgetInformation, ui->tabWidgetAirport,
-                                 ui->tabWidgetAircraft});
+  for(QTabWidget *widget : std::as_const(tabbarsToResize))
+    atools::gui::changeTabBarSize(widget);
+
+  const QSize minSize = NavApp::getMinButtonSize();
+  for(QWidget *widget : std::as_const(widgetsToResize))
+  {
+    widget->setMinimumSize(minSize);
+    QAbstractButton *button = dynamic_cast<QAbstractButton *>(widget);
+    if(button != nullptr)
+      button->setIconSize(minSize * 0.8);
+
+    widget->updateGeometry();
+  }
 }
 
 void MainWindow::styleChanged()
 {
+  qDebug() << Q_FUNC_INFO;
+
+  // Emit program wide font change to update all widgets to avoid font reset to default
+  emit Application::applicationInstance()->fontChanged(QGuiApplication::font());
+
   atools::gui::updateAllPalette(QApplication::palette());
 }
 

@@ -77,6 +77,8 @@ private:
   /* Options dialog has changed some options */
   virtual void optionsChanged() override;
 
+  virtual void fontChanged(const QFont& font) override;
+
   QAction *followModeAction() override;
 
   void setCallbacks();
@@ -133,6 +135,7 @@ private:
   AirportIconDelegate *iconDelegate = nullptr;
   UnitStringTool *unitStringTool;
   atools::gui::ComboBoxHandler *comboBoxHandler = nullptr;
+
 };
 
 #endif // LITTLENAVMAP_AIRPORTSEARCH_H

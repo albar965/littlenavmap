@@ -1129,6 +1129,17 @@ MapThemeHandler *NavApp::getMapThemeHandler()
   return mainWindow->getMapThemeHandler();
 }
 
+QSize NavApp::getMinButtonSize()
+{
+  if(mainWindow != nullptr)
+  {
+    int height = mainWindow->getUi()->comboBoxRouteType->height();
+    return QSize(height, height);
+  }
+  else
+    return QSize();
+}
+
 bool NavApp::isDarkMapTheme()
 {
   return getMapThemeHandler()->isDarkTheme(getMapPaintWidgetGui()->getCurrentThemeId());

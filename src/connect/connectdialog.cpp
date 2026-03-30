@@ -22,7 +22,9 @@
 #include "gui/clicktooltiphandler.h"
 #include "gui/comboboxhandler.h"
 #include "gui/helphandler.h"
+#include "gui/tools.h"
 #include "gui/widgetstate.h"
+#include "gui/widgetzoomhandler.h"
 #include "settings/settings.h"
 #include "ui_connectdialog.h"
 #include "util/htmlbuilder.h"
@@ -381,7 +383,15 @@ int ConnectDialog::execConnectDialog(cd::ConnectSimType connectionType)
       activateTab(ui->tabConnectXp);
       break;
   }
+
   updateButtonStates();
   updateWarningMessage();
   return QDialog::exec();
+}
+
+void ConnectDialog::fontChanged(const QFont& font)
+{
+  atools::gui::updateAllFonts(this, font, atools::gui::WidgetZoomHandler::getRegisteredWidgets());
+  ui->pushButtonConnectDeleteHostname->setMinimumSize(NavApp::getMinButtonSize());
+  ui->pushButtonConnectDeleteHostname->setIconSize(NavApp::getMinButtonSize() * 0.8);
 }

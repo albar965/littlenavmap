@@ -151,6 +151,9 @@ public:
   /* GUI style has changed */
   void styleChanged();
 
+  /* Font changed */
+  void fontChanged(const QFont& font);
+
   /* Refresh after import or changes */
   void refreshUserdata();
 

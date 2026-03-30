@@ -327,6 +327,10 @@ public:
   static QFont getTextBrowserInfoFont();
   static MapThemeHandler *getMapThemeHandler();
 
+  /* Get minimum button size by squared height of the comboBoxRouteType */
+  static QSize getMinButtonSize();
+
+
   static DatabaseManager *getDatabaseManager();
 
   /* MSFS translations from table "translation" */

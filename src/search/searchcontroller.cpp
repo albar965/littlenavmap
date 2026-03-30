@@ -104,6 +104,16 @@ void SearchController::styleChanged()
     search->styleChanged();
 }
 
+void SearchController::fontChanged(const QFont& font)
+{
+  qDebug() << Q_FUNC_INFO;
+
+  for(AbstractSearch *search : std::as_const(allSearchTabs))
+    search->fontChanged(font);
+
+  tabHandlerSearch->fontChanged(font, NavApp::getMinButtonSize());
+}
+
 void SearchController::dockVisibilityChanged(bool visible)
 {
   // Avoid spurious events that appear on shutdown and cause crashes

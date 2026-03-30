@@ -562,6 +562,15 @@ void RouteStringDialog::fontChanged(const QFont& font)
 {
   atools::gui::updateAllFonts(this, font, atools::gui::WidgetZoomHandler::getRegisteredWidgets());
   ui->textEditRouteString->document()->setDefaultFont(atools::gui::getBestFixedFont());
+
+  const QSize minSize = NavApp::getMinButtonSize();
+  ui->pushButtonRouteStringShowHelp->setMinimumSize(minSize);
+  ui->pushButtonRouteStringUndo->setMinimumSize(minSize);
+  ui->pushButtonRouteStringRedo->setMinimumSize(minSize);
+
+  ui->pushButtonRouteStringShowHelp->setIconSize(minSize * 0.8);
+  ui->pushButtonRouteStringUndo->setIconSize(minSize * 0.8);
+  ui->pushButtonRouteStringRedo->setIconSize(minSize * 0.8);
 }
 
 void RouteStringDialog::styleChanged()
@@ -654,7 +663,7 @@ void RouteStringDialog::textChangedInternal(bool forceUpdate)
       }
       else
         atools::gui::updateTextEdit(ui->textEditRouteStringErrors, tr("Description is too long."), false /* scrollToTop */,
-                                          true /* keepSelection */);
+                                    true /* keepSelection */);
     }
     else
       atools::gui::updateTextEdit(ui->textEditRouteStringErrors, QStringLiteral(), false /* scrollToTop */, true /* keepSelection */);

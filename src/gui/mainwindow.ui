@@ -1713,16 +1713,10 @@ Not available for all simulators.</string>
              <item>
               <widget class="QPushButton" name="pushButtonAirportFlightplanSearch">
                <property name="sizePolicy">
-                <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+                <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
                  <horstretch>0</horstretch>
                  <verstretch>0</verstretch>
                 </sizepolicy>
-               </property>
-               <property name="maximumSize">
-                <size>
-                 <width>16777215</width>
-                 <height>23</height>
-                </size>
                </property>
                <property name="toolTip">
                 <string>Generate a random flight plan from this search result.</string>

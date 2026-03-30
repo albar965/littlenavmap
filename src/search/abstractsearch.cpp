@@ -31,8 +31,6 @@ AbstractSearch::AbstractSearch(MainWindow *parent, QWidget *resultWidgetParam, s
 
   // Load text size from options
   zoomHandler->zoomPercent(OptionData::instance().getGuiSearchTableTextSize());
-
-  connect(atools::gui::Application::applicationInstance(), &atools::gui::Application::fontChanged, this, &AbstractSearch::fontChanged);
 }
 
 AbstractSearch::~AbstractSearch()
