@@ -36,25 +36,25 @@ void TextPointer::initPointerCharacters(const QFont& font)
 {
   // General pointers ==============================================================
   // U+25B2 Name: BLACK UP-POINTING TRIANGLE
-  ptrUp = "▲";
+  ptrUp = QStringLiteral("▲");
 
   // U+25BC Name: BLACK DOWN-POINTING TRIANGLE
-  ptrDown = "▼";
+  ptrDown = QStringLiteral("▼");
 
 #if defined(Q_OS_MACOS) || defined(Q_OS_WIN32)
   // Black and white on macOS and colored on Linux
-  ptrRight = "▶︎";
+  ptrRight = QStringLiteral("▶︎");
 #else
   // U+25BA Name: BLACK RIGHT-POINTING POINTER
-  ptrRight = "►";
+  ptrRight = QStringLiteral("►");
 #endif
 
 #if defined(Q_OS_MACOS) || defined(Q_OS_WIN32)
   // Black and white on macOS and colored on Linux
-  ptrLeft = "◀︎";
+  ptrLeft = QStringLiteral("◀︎");
 #else
   // U+25C4 Name: BLACK LEFT-POINTING POINTER
-  ptrLeft = "◄";
+  ptrLeft = QStringLiteral("◄");
 #endif
 
   // Wind pointers ==============================================================
@@ -63,27 +63,41 @@ void TextPointer::initPointerCharacters(const QFont& font)
   windPtrNorth = ptrUp;
 #else
   // U+2B9D Name: BLACK UPWARDS EQUILATERAL ARROWHEAD
-  windPtrNorth = atools::inFont(metrics, "⮝") ? "⮝" : ptrUp;
+  windPtrNorth = atools::inFont(metrics, QStringLiteral("⮝")) ? QStringLiteral("⮝") : ptrUp;
 #endif
 
 #if defined(Q_OS_MACOS)
   windPtrSouth = ptrDown;
 #else
   // U+2B9F Name: BLACK DOWNWARDS EQUILATERAL ARROWHEAD
-  windPtrSouth = atools::inFont(metrics, "⮟") ? "⮟" : ptrDown;
+  windPtrSouth = atools::inFont(metrics, QStringLiteral("⮟")) ? QStringLiteral("⮟") : ptrDown;
 #endif
 
 #if defined(Q_OS_MACOS)
   windPtrEast = ptrRight;
 #else
   // U+2B9E Name: BLACK RIGHTWARDS EQUILATERAL ARROWHEAD
-  windPtrEast = atools::inFont(metrics, "⮞") ? "⮞" : ptrRight;
+  windPtrEast = atools::inFont(metrics, QStringLiteral("⮞")) ? QStringLiteral("⮞") : ptrRight;
 #endif
 
 #if defined(Q_OS_MACOS)
   windPtrWest = ptrLeft;
 #else
   // U+2B9C Name: BLACK LEFTWARDS EQUILATERAL ARROWHEAD
-  windPtrWest = atools::inFont(metrics, "⮜") ? "⮜" : ptrLeft;
+  windPtrWest = atools::inFont(metrics, QStringLiteral("⮜")) ? QStringLiteral("⮜") : ptrLeft;
 #endif
+}
+
+void TextPointer::printDebug()
+{
+  qDebug() << Q_FUNC_INFO
+           << "windPtrNorth" << windPtrNorth
+           << "windPtrSouth" << windPtrSouth
+           << "windPtrEast" << windPtrEast
+           << "windPtrWest" << windPtrWest;
+  qDebug() << Q_FUNC_INFO
+           << "ptrUp" << ptrUp
+           << "ptrDown" << ptrDown
+           << "ptrRight" << ptrRight
+           << "ptrLeft" << ptrLeft;
 }

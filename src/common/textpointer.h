@@ -73,6 +73,8 @@ public:
     return ptrLeft;
   }
 
+  static void printDebug();
+
 private:
   static QString windPtrNorth, windPtrSouth, windPtrEast, windPtrWest, ptrUp, ptrDown, ptrRight, ptrLeft;
 };

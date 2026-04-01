@@ -266,6 +266,7 @@ MainWindow::MainWindow()
 
     // Update pointer characters on font change
     connect(NavApp::applicationInstance(), &Application::fontChanged, TextPointer::initPointerCharacters);
+    connect(NavApp::applicationInstance(), &Application::fontChanged, TextPointer::printDebug);
 
     routeExport = new RouteExport(this);
     simbriefHandler = new SimBriefHandler(this);
@@ -584,6 +585,10 @@ MainWindow::MainWindow()
     // else use default if it is already the system font
   }
   // else use default if not set
+
+  // Update manually since no fontChanged is sent on startup for unchanged application font
+  TextPointer::initPointerCharacters(QApplication::font());
+  TextPointer::printDebug();
 
   qDebug() << Q_FUNC_INFO << "Exit";
 }
