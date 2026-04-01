@@ -94,7 +94,7 @@ signals:
 
 private:
   void buildHeaderAirports(atools::util::HtmlBuilder& html, bool widget);
-  void buildHeaderDistTime(atools::util::HtmlBuilder& html, bool widget);
+  void buildHeaderDistTime(atools::util::HtmlBuilder& html, bool);
 
   void buildHeaderRunwayTakeoff(atools::util::HtmlBuilder& html, const map::MapRunway& runway, const map::MapRunwayEnd& runwayEnd);
   void buildHeaderRunwayTakeoffWind(atools::util::HtmlBuilder& html, const map::MapRunwayEnd& runwayEnd);

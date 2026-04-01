@@ -135,12 +135,14 @@ void RouteLabel::updateHeaderLabel()
     map::MapRunway takeoffRunway, landingRunway;
     map::MapRunwayEnd takeoffRunwayEnd, landingRunwayEnd;
 
+    // Fetch runways ==============================================
     if(isFlag(routelabel::HEADER_RUNWAY_TAKEOFF) || isFlag(routelabel::HEADER_RUNWAY_TAKEOFF_WIND))
       fetchTakeoffRunway(takeoffRunway, takeoffRunwayEnd);
 
     if(isFlag(routelabel::HEADER_RUNWAY_LAND) || isFlag(routelabel::HEADER_RUNWAY_LAND_WIND))
       fetchLandingRunway(landingRunway, landingRunwayEnd);
 
+    // Build header components ==============================================
     autil::HtmlBuilder htmlAirports, htmlDistTime, htmlRunwayTakeoffDepart, htmlArrival, htmlRunwayLand;
     if(isFlag(routelabel::HEADER_AIRPORTS))
       buildHeaderAirports(htmlAirports, true /* widget */);
@@ -166,9 +168,49 @@ void RouteLabel::updateHeaderLabel()
     if(isFlag(routelabel::HEADER_RUNWAY_LAND_WIND))
       buildHeaderRunwayLandWind(htmlRunwayLand, landingRunwayEnd);
 
-    // Join all texts with <br>
-    ui->labelRouteInfo->setTextFormat(Qt::RichText);
-    ui->labelRouteInfo->setText(HtmlBuilder::joinBr({htmlAirports, htmlDistTime, htmlRunwayTakeoffDepart, htmlArrival, htmlRunwayLand}));
+    // Fill text ==================================================
+    if(!htmlAirports.isEmpty() || !htmlDistTime.isEmpty() || !htmlRunwayTakeoffDepart.isEmpty() || !htmlArrival.isEmpty() ||
+       !htmlRunwayLand.isEmpty())
+    {
+      // Use table cell with line at bottom border as separator
+      const QHash<QString, QString> tdAttributesBorder({
+        {QStringLiteral("style"),
+         QStringLiteral("border-bottom-style: solid; border-bottom-width: 1px; border-bottom-color: %1").
+         arg(QGuiApplication::palette().color(QPalette::Active, NavApp::isGuiStyleDark() ? QPalette::Light : QPalette::Mid).name())}
+      });
+
+      // Build table =====================================================
+      HtmlBuilder label;
+      label.table(0, 0, 0, 100);
+
+      bool secondSection = !htmlRunwayTakeoffDepart.isEmpty() || !htmlArrival.isEmpty() || !htmlRunwayLand.isEmpty();
+
+      // First section above line ======================
+      if(!htmlAirports.isEmpty())
+        label.tr().tdAtts(htmlDistTime.isEmpty() && secondSection ? tdAttributesBorder : QHash<QString, QString>()).
+        text(htmlAirports.getHtml(), ahtml::NO_ENTITIES).tdEnd().trEnd();
+
+      if(!htmlDistTime.isEmpty())
+        label.tr().tdAtts(secondSection ? tdAttributesBorder : QHash<QString, QString>()).
+        text(htmlDistTime.getHtml(), ahtml::NO_ENTITIES).tdEnd().trEnd();
+
+      // Second section below line ======================
+      if(!htmlRunwayTakeoffDepart.isEmpty())
+        label.tr().td().text(htmlRunwayTakeoffDepart.getHtml(), ahtml::NO_ENTITIES).tdEnd().trEnd();
+
+      if(!htmlArrival.isEmpty())
+        label.tr().td().text(htmlArrival.getHtml(), ahtml::NO_ENTITIES).tdEnd().trEnd();
+
+      if(!htmlRunwayLand.isEmpty())
+        label.tr().td().text(htmlRunwayLand.getHtml(), ahtml::NO_ENTITIES).tdEnd().trEnd();
+
+      label.tableEnd();
+
+      ui->labelRouteInfo->setTextFormat(Qt::RichText);
+      ui->labelRouteInfo->setText(label.getHtml());
+    }
+    else
+      ui->labelRouteInfo->clear();
   }
   else
     ui->labelRouteInfo->clear();
@@ -597,15 +639,12 @@ void RouteLabel::buildHeaderTocTod(atools::util::HtmlBuilder& html)
   html.text(tr("."));
 }
 
-void RouteLabel::buildHeaderDistTime(atools::util::HtmlBuilder& html, bool widget)
+void RouteLabel::buildHeaderDistTime(atools::util::HtmlBuilder& html, bool)
 {
   if(!route.isEmpty())
   {
     if(route.getSizeWithoutAlternates() > 1)
     {
-      if(widget)
-        html.u();
-
       html.b(tr("Distance ")).text(Unit::distNm(route.getTotalDistance()));
 
       if(route.getAltitudeLegs().getTravelTimeHours() > 0.f)
@@ -618,9 +657,6 @@ void RouteLabel::buildHeaderDistTime(atools::util::HtmlBuilder& html, bool widge
         html.text(formatter::formatMinutesHoursLong(route.getAltitudeLegs().getTravelTimeHours()));
       }
       html.text(tr("."));
-
-      if(widget)
-        html.uEnd();
     }
   }
 }
