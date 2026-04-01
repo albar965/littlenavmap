@@ -21,8 +21,9 @@
 #include "options/optiondata.h"
 
 #include <QDialog>
-#include <QLocale>
+#include <QSize>
 
+class QLabel;
 namespace Ui {
 class OptionsDialog;
 }
@@ -44,6 +45,7 @@ class QTableWidget;
 
 namespace atools {
 namespace gui {
+class LinkTooltipHandler;
 class ListWidgetIndex;
 class GridDelegate;
 class WidgetZoomHandler;
@@ -269,6 +271,7 @@ private:
   void updateGuiWidgets();
 
   void hintLinkActivated(const QString& link);
+  void updateLinkTooltipHandler();
 
   /* Converts range ring string to vector of floats. Falls back to 100 units single ring if nothing is valid.
    * Uses current locale to convert numbers and check min and max. */
@@ -288,7 +291,16 @@ private:
 
   Ui::OptionsDialog *ui;
   QMainWindow *mainWindow;
+
+  /* All widgets having their state saved */
   QList<QObject *> widgets;
+
+  /* Labels showing a hint and having a internal link to a page */
+  QList<QLabel *> hintLabels;
+
+  /* All labels having a http link */
+  QList<QLabel *> linkLabels;
+
   QHash<QString, QListWidgetItem *> listWidgetItemIndex;
 
   // Maps options flags to items in the tree widget
@@ -312,6 +324,8 @@ private:
   atools::gui::GridDelegate *gridDelegate = nullptr;
 
   atools::gui::ListWidgetIndex *listWidgetIndex = nullptr;
+
+  atools::gui::LinkTooltipHandler *linkTooltipHandler = nullptr;
 
   /* Size as given in UI */
   QSize defaultSize;

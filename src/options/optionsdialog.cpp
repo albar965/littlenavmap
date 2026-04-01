@@ -29,6 +29,7 @@
 #include "gui/dialog.h"
 #include "gui/griddelegate.h"
 #include "gui/helphandler.h"
+#include "gui/linktooltiphandler.h"
 #include "gui/listwidgetindex.h"
 #include "gui/texteditdialog.h"
 #include "gui/tools.h"
@@ -107,45 +108,24 @@ OptionsDialog::OptionsDialog(QMainWindow *parentWindow)
   ui->spinBoxSimMaxTrailPoints->setMinimum(10);
 #endif
 
-  const static QList<QLabel *> HINT_LABELS({
-    ui->labelOptionsUpdatesHint,
-    ui->labelOptionsUnitsHint,
-    ui->labelOptionsGuiFontHint,
-    ui->labelOptionsFreetypeHint,
-    ui->labelOptionsGuiTooltipHint,
-    ui->labelOptionsUnitsTextSizeHint,
-    ui->labelOptionsFilePatternsHint,
-    ui->labelOptionsResetLayoutHint,
-    ui->labelOptionsRestartWebServer,
-    ui->labelOptionsResetEmptyHint,
-    ui->labelOptionsNavigationAidsHint,
-    ui->labelOptionsAppFontHint,
-    ui->labelOptionsAirportSettingsHint,
-    ui->labelOptionsAirspaceSettingsHint,
-    ui->labelOptionsUserAircraftSettingsHint,
-    ui->labelOptionsAiHint,
-    ui->labelOptionsLabelHint,
-    ui->labelOptionsProfileHint,
-    ui->labelOptionsFlightPlanLabelHint,
-    ui->labelOptionsMapScaleHint,
-    ui->labelOptionsTrailHintOpen,
-    ui->labelOptionsTrailHintStored,
-    ui->labelOptionsTrailWarn,
-    ui->labelOptionsCompassRoseHint,
-    ui->labelOptionsMeasurmentHint,
-    ui->labelOptionsMsaHint,
-    ui->labelMapApiKeysHint,
-    ui->labelOptionsMapThemesHint,
-    ui->labelOptionsUnitsOnlineAirspaceHint,
-    ui->labelOptionsOnlineHint,
-    ui->labelOptionsSimUpdatesHint,
-    ui->labelOptionsWeatherHint,
-    ui->labelOptionsFileXplaneHint,
-    ui->labelOptionsWeatherDefaultsHint,
-    ui->labelOptionsCacheDiskExpirationHint,
-    ui->labelOptionsMapThemeDirRestartHint
-  });
+  // Labels showing a hint and having a internal link to a page ============================================
+  hintLabels.append({ui->labelOptionsUpdatesHint, ui->labelOptionsUnitsHint, ui->labelOptionsGuiFontHint, ui->labelOptionsFreetypeHint,
+                     ui->labelOptionsGuiTooltipHint, ui->labelOptionsUnitsTextSizeHint, ui->labelOptionsFilePatternsHint,
+                     ui->labelOptionsResetLayoutHint, ui->labelOptionsRestartWebServer, ui->labelOptionsResetEmptyHint,
+                     ui->labelOptionsNavigationAidsHint, ui->labelOptionsAppFontHint, ui->labelOptionsAirportSettingsHint,
+                     ui->labelOptionsAirspaceSettingsHint, ui->labelOptionsUserAircraftSettingsHint, ui->labelOptionsAiHint,
+                     ui->labelOptionsLabelHint, ui->labelOptionsProfileHint, ui->labelOptionsFlightPlanLabelHint,
+                     ui->labelOptionsMapScaleHint, ui->labelOptionsTrailHintOpen, ui->labelOptionsTrailHintStored,
+                     ui->labelOptionsTrailWarn, ui->labelOptionsCompassRoseHint, ui->labelOptionsMeasurmentHint, ui->labelOptionsMsaHint,
+                     ui->labelMapApiKeysHint, ui->labelOptionsMapThemesHint, ui->labelOptionsUnitsOnlineAirspaceHint,
+                     ui->labelOptionsOnlineHint, ui->labelOptionsSimUpdatesHint, ui->labelOptionsWeatherHint,
+                     ui->labelOptionsFileXplaneHint, ui->labelOptionsWeatherDefaultsHint, ui->labelOptionsCacheDiskExpirationHint,
+                     ui->labelOptionsMapThemeDirRestartHint});
 
+  // All labels having a http link ============================================
+  linkLabels.append({ui->labelMapApiKeysHint, ui->labelCacheGlobePathDownload});
+
+  // Button box ==========================================================
   ui->buttonBoxOptions->button(QDialogButtonBox::Ok)->setToolTip(tr("Apply changes and close dialog."));
   ui->buttonBoxOptions->button(QDialogButtonBox::Cancel)->setToolTip(tr("Discard all changes and close dialog."));
   ui->buttonBoxOptions->button(QDialogButtonBox::RestoreDefaults)->setToolTip(tr("Reset all settings back to default.\n"
@@ -185,6 +165,7 @@ OptionsDialog::OptionsDialog(QMainWindow *parentWindow)
     ui->splitterOptions->handle(1)->setStatusTip(ui->splitterOptions->handle(1)->toolTip());
   }
 
+  // Zoom handlers for lists ==========================================================
   zoomHandlerMapThemeKeysTable = new atools::gui::WidgetZoomHandler(ui->tableWidgetOptionsMapKeys);
   zoomHandlerLabelTree = new atools::gui::WidgetZoomHandler(ui->treeWidgetOptionsDisplayTextOptions);
   zoomHandlerDatabaseInclude = new atools::gui::WidgetZoomHandler(ui->tableWidgetOptionsDatabaseInclude);
@@ -208,7 +189,7 @@ OptionsDialog::OptionsDialog(QMainWindow *parentWindow)
   // "mapflightplan" "Map Flight Plan"
   // "mapaircrafttrail" "Map Aircraft Trail"
   // "mapuser" "Map User"
-  // "mapoptions" "Map Options"
+  // "mapoptions" "Map Options and Labels"
   // "mapkeys" "Map Keys"
   // "maponline" "Map Online"
   // "simulatoraircraft" "Simulator Aircraft"
@@ -341,10 +322,10 @@ OptionsDialog::OptionsDialog(QMainWindow *parentWindow)
   QTreeWidgetItem *topOfMap = addTopItem(tr("Top of Map"), tr("Select information that is displayed on top of the map."));
   addItem<optsac::DisplayOptionsUserAircraft>(topOfMap, displayOptItemIndexUser, tr("Wind Direction and Speed"),
                                               tr("Show wind direction and speed on the top center of the map."),
-                                              optsac::ITEM_USER_AIRCRAFT_WIND, true);
+                                              optsac::ITEM_USER_AIRCRAFT_WIND, true /* checked */);
   addItem<optsac::DisplayOptionsUserAircraft>(topOfMap, displayOptItemIndexUser, tr("Wind Pointer"),
                                               tr("Show wind direction pointer on the top center of the map."),
-                                              optsac::ITEM_USER_AIRCRAFT_WIND_POINTER, true);
+                                              optsac::ITEM_USER_AIRCRAFT_WIND_POINTER, true /* checked */);
 
   // Map Navigation Aids =====================================================
   QTreeWidgetItem *navAids = addTopItem(tr("Map Navigation Aids"), QStringLiteral());
@@ -361,9 +342,10 @@ OptionsDialog::OptionsDialog(QMainWindow *parentWindow)
                                           "Helps if map areas are used for touchscreen navigation.\n"
                                           "Only shown if \"Use map areas\" on page \"Map Navigation\" is enabled as well."),
                                        optsd::NAVAIDS_TOUCHSCREEN_AREAS);
-  addItem<optsd::DisplayOptionsNavAid>(navAids, displayOptItemIndexNavAid, tr("Screen Area Icons"), tr("Shows icons for the screen areas.\n"
-                                                                                                       "Useful if map areas are used for touchscreen navigation.\n"
-                                                                                                       "Only shown if \"Use map areas\" on page \"Map Navigation\" is enabled as well."),
+  addItem<optsd::DisplayOptionsNavAid>(navAids, displayOptItemIndexNavAid, tr("Screen Area Icons"),
+                                       tr("Shows icons for the screen areas.\n"
+                                          "Useful if map areas are used for touchscreen navigation.\n"
+                                          "Only shown if \"Use map areas\" on page \"Map Navigation\" is enabled as well."),
                                        optsd::NAVAIDS_TOUCHSCREEN_ICONS);
 
   // Airport =====================================================
@@ -371,32 +353,32 @@ OptionsDialog::OptionsDialog(QMainWindow *parentWindow)
   addItem<optsd::DisplayOptionsAirport>(airport, displayOptItemIndexAirport, tr("Name (Ident)"),
                                         tr("Airport name and ident in brackets depending on zoom factor.\n"
                                            "Ident can be internal, ICAO, FAA, IATA or local depending on availability."),
-                                        optsd::ITEM_AIRPORT_NAME, true);
+                                        optsd::ITEM_AIRPORT_NAME, true /* checked */);
   addItem<optsd::DisplayOptionsAirport>(airport, displayOptItemIndexAirport, tr("Tower Frequency"), QStringLiteral(),
-                                        optsd::ITEM_AIRPORT_TOWER, true);
+                                        optsd::ITEM_AIRPORT_TOWER, true /* checked */);
   addItem<optsd::DisplayOptionsAirport>(airport, displayOptItemIndexAirport, tr("ATIS / ASOS / AWOS Frequency"), QStringLiteral(),
-                                        optsd::ITEM_AIRPORT_ATIS, true);
+                                        optsd::ITEM_AIRPORT_ATIS, true /* checked */);
   addItem<optsd::DisplayOptionsAirport>(airport, displayOptItemIndexAirport, tr("Runway Information"),
-                                        tr("Show runway elevation, light indicator \"L\" and length text."), optsd::ITEM_AIRPORT_RUNWAY,
-                                        true);
+                                        tr("Show runway elevation, light indicator \"L\" and length text."),
+                                        optsd::ITEM_AIRPORT_RUNWAY, true /* checked */);
 
   // Airport details =====================================================
   QTreeWidgetItem *airportDetails = addTopItem(tr("Airport Diagram Options"), tr("Select airport diagram elements."));
   addItem<optsd::DisplayOptionsAirport>(airportDetails, displayOptItemIndexAirport, tr("Runways"), tr("Show runways."),
-                                        optsd::ITEM_AIRPORT_DETAIL_RUNWAY, true);
+                                        optsd::ITEM_AIRPORT_DETAIL_RUNWAY, true /* checked */);
   addItem<optsd::DisplayOptionsAirport>(airportDetails, displayOptItemIndexAirport, tr("Taxiways"),
                                         tr("Show taxiways. This applies partially to MSFS and fully to FSX and P3D.\n"
                                            "X-Plane simulators have taxiways integrated into the apron geometry."),
-                                        optsd::ITEM_AIRPORT_DETAIL_TAXI, true);
+                                        optsd::ITEM_AIRPORT_DETAIL_TAXI, true /* checked */);
   addItem<optsd::DisplayOptionsAirport>(airportDetails, displayOptItemIndexAirport, tr("Taxiway Lines"), tr("Show taxiway lines."),
-                                        optsd::ITEM_AIRPORT_DETAIL_TAXI_LINE, true);
+                                        optsd::ITEM_AIRPORT_DETAIL_TAXI_LINE, true /* checked */);
   addItem<optsd::DisplayOptionsAirport>(airportDetails, displayOptItemIndexAirport, tr("Taxiway Names"), tr("Show taxiway names."),
-                                        optsd::ITEM_AIRPORT_DETAIL_TAXI_NAME, true);
+                                        optsd::ITEM_AIRPORT_DETAIL_TAXI_NAME, true /* checked */);
   addItem<optsd::DisplayOptionsAirport>(airportDetails, displayOptItemIndexAirport, tr("Aprons"), tr("Display aprons."),
-                                        optsd::ITEM_AIRPORT_DETAIL_APRON, true);
+                                        optsd::ITEM_AIRPORT_DETAIL_APRON, true /* checked */);
   addItem<optsd::DisplayOptionsAirport>(airportDetails, displayOptItemIndexAirport, tr("Parking"),
-                                        tr("Show fuel, tower, helipads, gates and ramp parking."), optsd::ITEM_AIRPORT_DETAIL_PARKING,
-                                        true);
+                                        tr("Show fuel, tower, helipads, gates and ramp parking."),
+                                        optsd::ITEM_AIRPORT_DETAIL_PARKING, true /* checked */);
   addItem<optsd::DisplayOptionsAirport>(airportDetails, displayOptItemIndexAirport, tr("Boundary"),
                                         tr("Display a white boundary around and below the airport diagram."),
                                         optsd::ITEM_AIRPORT_DETAIL_BOUNDARY);
@@ -406,7 +388,7 @@ OptionsDialog::OptionsDialog(QMainWindow *parentWindow)
   addItem<optsd::DisplayOptionsRoute>(route, displayOptItemIndexRoute, tr("Distance"),
                                       tr("Show distance along flight plan leg.\n"
                                          "The label moves to keep it visible while scrolling."),
-                                      optsd::ROUTE_DISTANCE, true);
+                                      optsd::ROUTE_DISTANCE, true /* checked */);
   addItem<optsd::DisplayOptionsRoute>(route, displayOptItemIndexRoute, tr("Airway"),
                                       tr("Show airway.\n"
                                          "The label moves to keep it visible while scrolling."),
@@ -428,7 +410,7 @@ OptionsDialog::OptionsDialog(QMainWindow *parentWindow)
                                          "VOR calibrated declination and\n"
                                          "is colored blue if related to VOR.\n"
                                          "Not shown at procedure legs."),
-                                      optsd::ROUTE_INITIAL_FINAL_MAG_COURSE, true);
+                                      optsd::ROUTE_INITIAL_FINAL_MAG_COURSE, true /* checked */);
   addItem<optsd::DisplayOptionsRoute>(route, displayOptItemIndexRoute, tr("True Start and End Course"),
                                       tr("Display great circle initial and final true course at\n"
                                          "the start and end of flight plan legs.\n"
@@ -446,13 +428,13 @@ OptionsDialog::OptionsDialog(QMainWindow *parentWindow)
                                          true);
   addItem<optsd::DisplayOptionsAirspace>(airspaces, displayOptItemIndexAirspace, tr("Type"),
                                          tr("Type of airspace like \"Prohibited\"."),
-                                         optsd::AIRSPACE_TYPE, true);
+                                         optsd::AIRSPACE_TYPE, true /* checked */);
   addItem<optsd::DisplayOptionsAirspace>(airspaces, displayOptItemIndexAirspace, tr("Altitude"),
                                          tr("Display the altitude restrictions of airspaces."),
-                                         optsd::AIRSPACE_ALTITUDE, true);
+                                         optsd::AIRSPACE_ALTITUDE, true /* checked */);
   addItem<optsd::DisplayOptionsAirspace>(airspaces, displayOptItemIndexAirspace, tr("COM Frequency"),
                                          tr("Airspace COM frequency if available."),
-                                         optsd::AIRSPACE_COM, true);
+                                         optsd::AIRSPACE_COM, true /* checked */);
 
   // User aircraft =====================================================
   QTreeWidgetItem *userAircraft = addTopItem(tr("User Aircraft Options and Labels"),
@@ -477,7 +459,7 @@ OptionsDialog::OptionsDialog(QMainWindow *parentWindow)
                                               optsac::ITEM_USER_AIRCRAFT_IAS);
   addItem<optsac::DisplayOptionsUserAircraft>(userAircraft, displayOptItemIndexUser, tr("Ground Speed"),
                                               tr("Value prefixed with \"GS\" on the map."),
-                                              optsac::ITEM_USER_AIRCRAFT_GS, true);
+                                              optsac::ITEM_USER_AIRCRAFT_GS, true /* checked */);
   addItem<optsac::DisplayOptionsUserAircraft>(userAircraft, displayOptItemIndexUser, tr("True Airspeed"),
                                               tr("Value prefixed with \"TAS\" on the map."),
                                               optsac::ITEM_USER_AIRCRAFT_TAS);
@@ -488,7 +470,7 @@ OptionsDialog::OptionsDialog(QMainWindow *parentWindow)
                                               optsac::ITEM_USER_AIRCRAFT_HEADING);
   addItem<optsac::DisplayOptionsUserAircraft>(userAircraft, displayOptItemIndexUser, tr("Actual Altitude"),
                                               tr("Real aircraft altitude prefixed with \"ALT\" on the map."),
-                                              optsac::ITEM_USER_AIRCRAFT_ALTITUDE, true);
+                                              optsac::ITEM_USER_AIRCRAFT_ALTITUDE, true /* checked */);
   addItem<optsac::DisplayOptionsUserAircraft>(userAircraft, displayOptItemIndexUser, tr("Indicated Altitude"),
                                               tr("Indicated aircraft altitude prefixed with \"IND\" on the map."),
                                               optsac::ITEM_USER_AIRCRAFT_INDICATED_ALTITUDE);
@@ -498,7 +480,7 @@ OptionsDialog::OptionsDialog(QMainWindow *parentWindow)
   addItem<optsac::DisplayOptionsUserAircraft>(userAircraft, displayOptItemIndexUser, tr("Track Line"),
                                               tr("Show the aircraft track as a black pin\n"
                                                  "in front of the user aircraft."),
-                                              optsac::ITEM_USER_AIRCRAFT_TRACK_LINE, true);
+                                              optsac::ITEM_USER_AIRCRAFT_TRACK_LINE, true /* checked */);
   addItem<optsac::DisplayOptionsUserAircraft>(userAircraft, displayOptItemIndexUser, tr("Coordinates"),
                                               tr("Show aircraft coordinates using the format selected on\n"
                                                  "options page \"Units\"."),
@@ -513,13 +495,13 @@ OptionsDialog::OptionsDialog(QMainWindow *parentWindow)
                                            tr("Select text labels for the AI, multiplayer and online client aircraft."));
   addItem<optsac::DisplayOptionsAiAircraft>(aiAircraft, displayOptItemIndexAi, tr("Registration, Number or Callsign"),
                                             tr("Aircraft registration like \"N1000A\" or \"D-MABC\"."),
-                                            optsac::ITEM_AI_AIRCRAFT_REGISTRATION, true);
+                                            optsac::ITEM_AI_AIRCRAFT_REGISTRATION, true /* checked */);
   addItem<optsac::DisplayOptionsAiAircraft>(aiAircraft, displayOptItemIndexAi, tr("Type"),
                                             tr("Show the AI aircraft type, like B738, B350 or M20T."),
-                                            optsac::ITEM_AI_AIRCRAFT_TYPE, true);
+                                            optsac::ITEM_AI_AIRCRAFT_TYPE, true /* checked */);
   addItem<optsac::DisplayOptionsAiAircraft>(aiAircraft, displayOptItemIndexAi, tr("Airline"),
                                             tr("Airline like \"Orbit Airlines\"."),
-                                            optsac::ITEM_AI_AIRCRAFT_AIRLINE, true);
+                                            optsac::ITEM_AI_AIRCRAFT_AIRLINE, true /* checked */);
   addItem<optsac::DisplayOptionsAiAircraft>(aiAircraft, displayOptItemIndexAi, tr("Flight Number"),
                                             tr("Flight number like \"123\"."),
                                             optsac::ITEM_AI_AIRCRAFT_FLIGHT_NUMBER);
@@ -531,7 +513,7 @@ OptionsDialog::OptionsDialog(QMainWindow *parentWindow)
                                             optsac::ITEM_AI_AIRCRAFT_IAS);
   addItem<optsac::DisplayOptionsAiAircraft>(aiAircraft, displayOptItemIndexAi, tr("Ground Speed"),
                                             tr("Value prefixed with \"GS\" on the map"),
-                                            optsac::ITEM_AI_AIRCRAFT_GS, true);
+                                            optsac::ITEM_AI_AIRCRAFT_GS, true /* checked */);
   addItem<optsac::DisplayOptionsAiAircraft>(aiAircraft, displayOptItemIndexAi, tr("True Airspeed"),
                                             tr("Value prefixed with \"TAS\" on the map"),
                                             optsac::ITEM_AI_AIRCRAFT_TAS);
@@ -542,7 +524,7 @@ OptionsDialog::OptionsDialog(QMainWindow *parentWindow)
                                             optsac::ITEM_AI_AIRCRAFT_HEADING);
   addItem<optsac::DisplayOptionsAiAircraft>(aiAircraft, displayOptItemIndexAi, tr("Actual Altitude"),
                                             tr("Real aircraft altitude prefixed with \"ALT\" on the map"),
-                                            optsac::ITEM_AI_AIRCRAFT_ALTITUDE, true);
+                                            optsac::ITEM_AI_AIRCRAFT_ALTITUDE, true /* checked */);
   addItem<optsac::DisplayOptionsAiAircraft>(aiAircraft, displayOptItemIndexAi, tr("Indicated Altitude"),
                                             tr("Indicated aircraft altitude prefixed with \"IND\" on the map"),
                                             optsac::ITEM_AI_AIRCRAFT_INDICATED_ALTITUDE);
@@ -567,33 +549,33 @@ OptionsDialog::OptionsDialog(QMainWindow *parentWindow)
                                             tr("Select display options for the compass rose."));
   addItem<optsd::DisplayOptionsRose>(compassRose, displayOptItemIndexRose, tr("Direction Labels"),
                                      tr("Show N, S, E and W labels."),
-                                     optsd::ROSE_DIR_LABELS, true);
+                                     optsd::ROSE_DIR_LABELS, true /* checked */);
   addItem<optsd::DisplayOptionsRose>(compassRose, displayOptItemIndexRose, tr("Degree Tick Marks"),
                                      tr("Show tick marks for degrees on ring."),
-                                     optsd::ROSE_DEGREE_MARKS, true);
+                                     optsd::ROSE_DEGREE_MARKS, true /* checked */);
   addItem<optsd::DisplayOptionsRose>(compassRose, displayOptItemIndexRose, tr("Degree Labels"),
                                      tr("Show degree labels on ring."),
-                                     optsd::ROSE_DEGREE_LABELS, true);
+                                     optsd::ROSE_DEGREE_LABELS, true /* checked */);
   addItem<optsd::DisplayOptionsRose>(compassRose, displayOptItemIndexRose, tr("Range Rings"),
                                      tr("Show range rings and distance labels inside."),
-                                     optsd::ROSE_RANGE_RINGS, true);
+                                     optsd::ROSE_RANGE_RINGS, true /* checked */);
   addItem<optsd::DisplayOptionsRose>(compassRose, displayOptItemIndexRose, tr("Heading Line"),
                                      tr("Show the dashed heading line for user aircraft."),
-                                     optsd::ROSE_HEADING_LINE, true);
+                                     optsd::ROSE_HEADING_LINE, true /* checked */);
   addItem<optsd::DisplayOptionsRose>(compassRose, displayOptItemIndexRose, tr("Track Line"),
                                      tr("Show the solid track line for user aircraft."),
-                                     optsd::ROSE_TRACK_LINE, true);
+                                     optsd::ROSE_TRACK_LINE, true /* checked */);
   addItem<optsd::DisplayOptionsRose>(compassRose, displayOptItemIndexRose, tr("Track Label"),
                                      tr("Show track label for user aircraft."),
-                                     optsd::ROSE_TRACK_LABEL, true);
+                                     optsd::ROSE_TRACK_LABEL, true /* checked */);
   addItem<optsd::DisplayOptionsRose>(compassRose, displayOptItemIndexRose, tr("Heading Indicator"),
                                      tr("Show the heading for the user aircraft as a\n"
                                         "small magenta circle."),
-                                     optsd::ROSE_CRAB_ANGLE, true);
+                                     optsd::ROSE_CRAB_ANGLE, true /* checked */);
   addItem<optsd::DisplayOptionsRose>(compassRose, displayOptItemIndexRose, tr("Course to Next Waypoint"),
                                      tr("Show the course to next waypoint for the user aircraft as\n"
                                         "a small magenta line."),
-                                     optsd::ROSE_NEXT_WAYPOINT, true);
+                                     optsd::ROSE_NEXT_WAYPOINT, true /* checked */);
   addItem<optsd::DisplayOptionsRose>(compassRose, displayOptItemIndexRose, tr("True Heading"),
                                      tr("Show the whole circle and tick marks using true heading."),
                                      optsd::ROSE_TRUE_HEADING);
@@ -603,13 +585,13 @@ OptionsDialog::OptionsDialog(QMainWindow *parentWindow)
                                             tr("Select display options for measurement lines."));
   addItem<optsd::DisplayOptionsMeasurement>(measurement, displayOptItemIndexMeasurement, tr("Distance"),
                                             tr("Great circle distance for measurement line."),
-                                            optsd::MEASUREMENT_DIST, true);
+                                            optsd::MEASUREMENT_DIST, true /* checked */);
   addItem<optsd::DisplayOptionsMeasurement>(measurement, displayOptItemIndexMeasurement, tr("Magnetic Course"),
                                             tr("Show magnetic course for start and end of line."),
-                                            optsd::MEASUREMENT_MAG, true);
+                                            optsd::MEASUREMENT_MAG, true /* checked */);
   addItem<optsd::DisplayOptionsMeasurement>(measurement, displayOptItemIndexMeasurement, tr("True Course"),
                                             tr("Show true course for start and end of line."),
-                                            optsd::MEASUREMENT_TRUE, true);
+                                            optsd::MEASUREMENT_TRUE, true /* checked */);
   addItem<optsd::DisplayOptionsMeasurement>(measurement, displayOptItemIndexMeasurement, tr("Radial Number"),
                                             tr("Shows the radial prefixed with \"R\" for VOR, VORDME,\n"
                                                "VORTAC, TACAN or NDB."),
@@ -617,261 +599,235 @@ OptionsDialog::OptionsDialog(QMainWindow *parentWindow)
   addItem<optsd::DisplayOptionsMeasurement>(measurement, displayOptItemIndexMeasurement, tr("Navaid or airport ident"),
                                             tr("Show ident if attached to navaid or airport.\n"
                                                "Also show frequency if attached to a radio navaid. "),
-                                            optsd::MEASUREMENT_LABEL, true);
+                                            optsd::MEASUREMENT_LABEL, true /* checked */);
 
   ui->treeWidgetOptionsDisplayTextOptions->resizeColumnToContents(0);
 
-  // Create widget list for state saver
+  // Create widget list for state saver ==============================================================
   // This will take over the actual saving of the settings
-  widgets.append(
-    {ui->listWidgetOptionPages,
-     ui->splitterOptions,
-     ui->checkBoxOptionsGuiCenterKml,
-     ui->checkBoxOptionsGuiWheel,
-     ui->checkBoxOptionsGuiRaiseWindows,
-     ui->checkBoxOptionsGuiRaiseDockWindows,
-     ui->checkBoxOptionsGuiRaiseMainWindow,
-     ui->checkBoxOptionsGuiCenterRoute,
-     ui->checkBoxOptionsGuiAddDeparture,
-     ui->checkBoxOptionsGuiAvoidOverwrite,
-     ui->checkBoxOptionsGuiOverrideLocale,
-     ui->checkBoxOptionsFreetype, // Read in main.cpp
-     ui->checkBoxOptionsGuiTooltipsAll,
-     ui->checkBoxOptionsGuiTooltipsMenu,
-     ui->checkBoxOptionsGuiTooltipsLink,
-     ui->checkBoxOptionsGuiToolbarSize,
-     // ui->comboBoxOptionsGuiLanguage, saved directly
-
-     ui->checkBoxDisplayOnlineNameLookup,
-     ui->checkBoxDisplayOnlineFileLookup,
-     ui->checkBoxOptionsMapEmptyAirports,
-     ui->checkBoxOptionsMapEmptyAirports3D,
-     ui->checkBoxOptionsMapTooltipVerbose,
-     ui->checkBoxOptionsMapTooltipDistBrgFlightplan,
-     ui->checkBoxOptionsMapTooltipDistBrgUser,
-     ui->checkBoxOptionsMapTooltipUserAircraft,
-     ui->checkBoxOptionsMapTooltipAiAircraft,
-     ui->checkBoxOptionsMapTooltipAirport,
-     ui->checkBoxOptionsMapTooltipNavaid,
-     ui->checkBoxOptionsMapTooltipAirspace,
-     ui->checkBoxOptionsMapTooltipWind,
-     ui->checkBoxOptionsMapTooltipUser,
-     ui->checkBoxOptionsMapTooltipTrail,
-     ui->checkBoxOptionsMapClickUserAircraft,
-     ui->checkBoxOptionsMapClickAiAircraft,
-     ui->checkBoxOptionsMapClickAirport,
-     ui->checkBoxOptionsMapClickAirportProcs,
-     ui->checkBoxOptionsMapClickNavaid,
-     ui->checkBoxOptionsMapClickAirspace,
-     ui->checkBoxOptionsMapClickFlightplan,
-     ui->checkBoxOptionsMapUndock,
-     ui->checkBoxOptionsRouteEastWestRule,
-     ui->comboBoxOptionsRouteAltitudeRuleType,
-     ui->checkBoxOptionsStartupLoadKml,
-     ui->checkBoxOptionsStartupLoadMapSettings,
-     ui->checkBoxOptionsStartupLoadRoute,
-     ui->checkBoxOptionsStartupLoadPerf,
-     ui->checkBoxOptionsStartupLoadLayout,
-     ui->checkBoxOptionsStartupShowSplash,
-     ui->checkBoxOptionsStartupLoadTrail,
-     ui->checkBoxOptionsStartupLoadSearch,
-     ui->checkBoxOptionsStartupLoadInfoContent,
-     ui->checkBoxOptionsWeatherInfoAsn,
-     ui->checkBoxOptionsWeatherInfoNoaa,
-     ui->checkBoxOptionsWeatherInfoVatsim,
-     ui->checkBoxOptionsWeatherInfoIvao,
-     ui->checkBoxOptionsWeatherInfoFs,
-     ui->checkBoxOptionsWeatherTooltipAsn,
-     ui->checkBoxOptionsWeatherTooltipNoaa,
-     ui->checkBoxOptionsWeatherTooltipVatsim,
-     ui->checkBoxOptionsWeatherTooltipIvao,
-     ui->checkBoxOptionsWeatherTooltipFs,
-     // ui->lineEditOptionsMapRangeRings, // Saved separately lnm::OPTIONS_DIALOG_RANGE_DISTANCES
-     ui->lineEditOptionsWeatherAsnPath,
-     ui->lineEditOptionsWeatherXplanePath,
-     ui->lineEditOptionsWeatherXplane12Path,
-     ui->lineEditOptionsWeatherNoaaStationsUrl,
-     ui->lineEditOptionsWeatherVatsimUrl,
-     ui->lineEditOptionsWeatherIvaoUrl,
-
-     ui->lineEditOptionsWeatherXplaneWind,
-     ui->lineEditOptionsWeatherNoaaWindUrl,
-
-     ui->tableWidgetOptionsDatabaseInclude,
-     ui->tableWidgetOptionsDatabaseExclude,
-     ui->tableWidgetOptionsDatabaseExcludeAddon,
-
-     ui->comboBoxMapScrollZoomDetails,
-     ui->radioButtonOptionsSimUpdateFast,
-     ui->radioButtonOptionsSimUpdateLow,
-     ui->radioButtonOptionsSimUpdateMedium,
-
-     ui->radioButtonOptionsMapNavDragMove,
-     ui->radioButtonOptionsMapNavClickCenter,
-     ui->radioButtonOptionsMapNavTouchscreen,
-
-     ui->checkBoxOptionsSimUpdatesConstant,
-     ui->spinBoxOptionsSimUpdateBox,
-     ui->spinBoxOptionsSimCenterLegZoom,
-     ui->spinBoxSimMaxTrailPoints,
-     ui->radioButtonOptionsStartupShowHome,
-     ui->radioButtonOptionsStartupShowLast,
-     ui->radioButtonOptionsStartupShowFlightplan,
-
-     ui->spinBoxOptionsCacheDiskSize,
-     ui->spinBoxOptionsCacheMemorySize,
-     ui->radioButtonCacheUseOffineElevation,
-     ui->radioButtonCacheUseOnlineElevation,
-     ui->lineEditCacheOfflineDataPath,
-     ui->lineEditCacheMapThemeDir,
-     ui->lineEditOptionsRouteFilename,
-
-     ui->spinBoxOptionsGuiInfoText,
-     ui->spinBoxOptionsGuiAircraftPerf,
-     ui->spinBoxOptionsGuiRouteText,
-     ui->spinBoxOptionsGuiRouteRemarksText,
-     ui->spinBoxOptionsGuiRouteInfoText,
-     ui->spinBoxOptionsGuiSearchText,
-     ui->spinBoxOptionsGuiSimInfoText,
-     ui->spinBoxOptionsGuiThemeMapDimming,
-     ui->spinBoxOptionsGuiToolbarSize,
-     ui->spinBoxOptionsMapClickRect,
-     ui->spinBoxOptionsMapTooltipRect,
-     ui->doubleSpinBoxOptionsMapZoomShowMap,
-     ui->doubleSpinBoxOptionsMapZoomShowMapMenu,
-     ui->spinBoxOptionsRouteGroundBuffer,
-
-     ui->spinBoxOptionsDisplayTextSizeAircraftAi,
-     ui->spinBoxOptionsDisplaySymbolSizeNavaid,
-     ui->spinBoxOptionsDisplaySymbolSizeUserpoint,
-     ui->spinBoxOptionsDisplaySymbolSizeHighlight,
-     ui->spinBoxOptionsDisplayTextSizeNavaid,
-     ui->spinBoxOptionsDisplayTextSizeAirspace,
-     ui->spinBoxOptionsDisplayTextSizeUserpoint,
-     ui->spinBoxOptionsDisplayThicknessFlightplan,
-     ui->spinBoxOptionsDisplayThicknessFlightplanProfile,
-     ui->spinBoxOptionsDisplaySymbolSizeAirport,
-     ui->spinBoxOptionsDisplaySymbolSizeAirportWeather,
-     ui->spinBoxOptionsDisplaySymbolSizeWindBarbs,
-     ui->spinBoxOptionsDisplaySymbolSizeAircraftAi,
-     ui->spinBoxOptionsDisplayTextSizeFlightplan,
-     ui->spinBoxOptionsDisplayTextSizeFlightplanProfile,
-     ui->spinBoxOptionsDisplayTransparencyFlightplan,
-     ui->spinBoxOptionsDisplayTextSizeAircraftUser,
-     ui->spinBoxOptionsDisplaySymbolSizeAircraftUser,
-     ui->spinBoxOptionsDisplayTextSizeAirport,
-     ui->spinBoxOptionsDisplayTextSizeAirportRunway,
-     ui->spinBoxOptionsDisplayTextSizeAirportTaxiway,
-     ui->spinBoxOptionsDisplayThicknessTrail,
-     ui->spinBoxOptionsDisplayThicknessUserFeature,
-     ui->spinBoxOptionsDisplayThicknessMeasurement,
-     ui->spinBoxOptionsDisplayThicknessCompassRose,
-     ui->spinBoxOptionsDisplaySunShadeDarkness,
-     ui->comboBoxOptionsDisplayTrailType,
-     ui->comboBoxOptionsDisplayTrailGradient,
-     ui->spinBoxOptionsDisplayTextSizeCompassRose,
-     ui->spinBoxOptionsDisplayTextSizeUserFeature,
-     ui->spinBoxOptionsDisplayTextSizeMeasurement,
-
-     ui->checkBoxOptionsMapHighlightTransparent,
-     ui->spinBoxOptionsMapHighlightTransparent,
-
-     ui->checkBoxOptionsMapAirwayText,
-     ui->checkBoxOptionsMapUserAircraftText,
-     ui->checkBoxOptionsMapAiAircraftText,
-     ui->checkBoxOptionsMapAiAircraftHideGround,
-     ui->checkBoxOptionsMapAirspaceNoMultZ,
-     ui->checkBoxOptionsDisplayTrailGradient,
-     ui->spinBoxOptionsDisplayTextSizeAirway,
-     ui->spinBoxOptionsDisplayThicknessAirway,
-     ui->spinBoxOptionsDisplayThicknessAirspace,
-
-     ui->spinBoxOptionsDisplayTextSizeMora,
-     ui->spinBoxOptionsDisplayTransparencyMora,
-
-     ui->spinBoxOptionsDisplayTextSizeAirportMsa,
-     ui->spinBoxOptionsDisplayTransparencyAirportMsa,
-     ui->spinBoxOptionsDisplayTransparencyAirspace,
-
-     ui->spinBoxOptionsMapNavTouchArea,
-
-     ui->comboBoxOptionsStartupUpdateChannels,
-     ui->comboBoxOptionsStartupUpdateRate,
-
-     ui->comboBoxOptionsUnitDistance,
-     ui->comboBoxOptionsUnitAlt,
-     ui->comboBoxOptionsUnitSpeed,
-     ui->comboBoxOptionsUnitVertSpeed,
-     ui->comboBoxOptionsUnitShortDistance,
-     ui->comboBoxOptionsUnitCoords,
-     ui->comboBoxOptionsUnitFuelWeight,
-
-     ui->checkBoxOptionsMapZoomAvoidBlurred,
-
-     ui->checkBoxOptionsMapAirportText,
-     ui->checkBoxOptionsMapAirportAddon,
-     ui->checkBoxOptionsMapNavaidText,
-     ui->checkBoxOptionsMapUserpointText,
-     ui->checkBoxOptionsMapFlightplanText,
-     ui->checkBoxOptionsSimHighlightActiveTable,
-     ui->checkBoxOptionsMapFlightplanDimPassed,
-     ui->checkBoxOptionsMapFlightplanHighlightActive,
-     ui->checkBoxOptionsMapFlightplanTransparent,
-     ui->checkBoxOptionsSimCenterLeg,
-     ui->checkBoxOptionsSimCenterLegTable,
-
-     ui->checkBoxOptionsSimDoNotFollowScroll,
-     ui->spinBoxOptionsSimDoNotFollowScrollTime,
-     ui->checkBoxOptionsSimZoomOnLanding,
-     ui->doubleSpinBoxOptionsSimZoomOnLanding,
-     ui->checkBoxOptionsSimZoomOnTakeoff,
-     ui->spinBoxOptionsSimZoomOnTakeoff,
-     ui->checkBoxOptionsSimCenterLegTable,
-     ui->spinBoxOptionsSimCleanupTableTime,
-     ui->checkBoxOptionsSimClearSelection,
-     ui->checkBoxOptionsWebScale,
-
-     ui->radioButtonOptionsOnlineNone,
-     ui->radioButtonOptionsOnlineVatsim,
-     ui->radioButtonOptionsOnlineIvao,
-     ui->radioButtonOptionsOnlinePilotEdge,
-     ui->radioButtonOptionsOnlineCustomStatus,
-     ui->radioButtonOptionsOnlineCustom,
-
-     ui->lineEditOptionsOnlineStatusUrl,
-     ui->lineEditOptionsOnlineWhazzupUrl,
-     ui->spinBoxOptionsOnlineUpdate,
-     ui->comboBoxOptionsOnlineFormat,
-
-     ui->checkBoxDisplayOnlineGroundRange,
-     ui->checkBoxDisplayOnlineApproachRange,
-     ui->checkBoxDisplayOnlineObserverRange,
-     ui->checkBoxDisplayOnlineFirRange,
-     ui->checkBoxDisplayOnlineAreaRange,
-     ui->checkBoxDisplayOnlineDepartureRange,
-     ui->checkBoxDisplayOnlineTowerRange,
-     ui->checkBoxDisplayOnlineClearanceRange,
-     ui->checkBoxOptionsOnlineRemoveShadow,
-
-     ui->spinBoxDisplayOnlineClearance,
-     ui->spinBoxDisplayOnlineArea,
-     ui->spinBoxDisplayOnlineApproach,
-     ui->spinBoxDisplayOnlineDeparture,
-     ui->spinBoxDisplayOnlineFir,
-     ui->spinBoxDisplayOnlineObserver,
-     ui->spinBoxDisplayOnlineGround,
-     ui->spinBoxDisplayOnlineTower,
-
-     ui->checkBoxOptionsUnitFuelOther,
-     ui->checkBoxOptionsUnitTrueCourse,
-     ui->checkBoxOptionsUnitEnhancedAccuracy,
-
-     ui->spinBoxOptionsDisplayScaleAllWeb,
-     ui->spinBoxOptionsDisplayScaleAll,
-
-     ui->spinBoxOptionsWebPort,
-     ui->checkBoxOptionsWebEncrypted,
-     ui->lineEditOptionsWebDocroot});
+  widgets.append({
+    ui->listWidgetOptionPages,
+    ui->splitterOptions,
+    ui->checkBoxOptionsGuiCenterKml,
+    ui->checkBoxOptionsGuiWheel,
+    ui->checkBoxOptionsGuiRaiseWindows,
+    ui->checkBoxOptionsGuiRaiseDockWindows,
+    ui->checkBoxOptionsGuiRaiseMainWindow,
+    ui->checkBoxOptionsGuiCenterRoute,
+    ui->checkBoxOptionsGuiAddDeparture,
+    ui->checkBoxOptionsGuiAvoidOverwrite,
+    ui->checkBoxOptionsGuiOverrideLocale,
+    ui->checkBoxOptionsFreetype, // Read in main.cpp
+    ui->checkBoxOptionsGuiTooltipsAll,
+    ui->checkBoxOptionsGuiTooltipsMenu,
+    ui->checkBoxOptionsGuiTooltipsLink,
+    ui->checkBoxOptionsGuiToolbarSize,
+    // ui->comboBoxOptionsGuiLanguage, saved directly
+    ui->checkBoxDisplayOnlineNameLookup,
+    ui->checkBoxDisplayOnlineFileLookup,
+    ui->checkBoxOptionsMapEmptyAirports,
+    ui->checkBoxOptionsMapEmptyAirports3D,
+    ui->checkBoxOptionsMapTooltipVerbose,
+    ui->checkBoxOptionsMapTooltipDistBrgFlightplan,
+    ui->checkBoxOptionsMapTooltipDistBrgUser,
+    ui->checkBoxOptionsMapTooltipUserAircraft,
+    ui->checkBoxOptionsMapTooltipAiAircraft,
+    ui->checkBoxOptionsMapTooltipAirport,
+    ui->checkBoxOptionsMapTooltipNavaid,
+    ui->checkBoxOptionsMapTooltipAirspace,
+    ui->checkBoxOptionsMapTooltipWind,
+    ui->checkBoxOptionsMapTooltipUser,
+    ui->checkBoxOptionsMapTooltipTrail,
+    ui->checkBoxOptionsMapClickUserAircraft,
+    ui->checkBoxOptionsMapClickAiAircraft,
+    ui->checkBoxOptionsMapClickAirport,
+    ui->checkBoxOptionsMapClickAirportProcs,
+    ui->checkBoxOptionsMapClickNavaid,
+    ui->checkBoxOptionsMapClickAirspace,
+    ui->checkBoxOptionsMapClickFlightplan,
+    ui->checkBoxOptionsMapUndock,
+    ui->checkBoxOptionsRouteEastWestRule,
+    ui->comboBoxOptionsRouteAltitudeRuleType,
+    ui->checkBoxOptionsStartupLoadKml,
+    ui->checkBoxOptionsStartupLoadMapSettings,
+    ui->checkBoxOptionsStartupLoadRoute,
+    ui->checkBoxOptionsStartupLoadPerf,
+    ui->checkBoxOptionsStartupLoadLayout,
+    ui->checkBoxOptionsStartupShowSplash,
+    ui->checkBoxOptionsStartupLoadTrail,
+    ui->checkBoxOptionsStartupLoadSearch,
+    ui->checkBoxOptionsStartupLoadInfoContent,
+    ui->checkBoxOptionsWeatherInfoAsn,
+    ui->checkBoxOptionsWeatherInfoNoaa,
+    ui->checkBoxOptionsWeatherInfoVatsim,
+    ui->checkBoxOptionsWeatherInfoIvao,
+    ui->checkBoxOptionsWeatherInfoFs,
+    ui->checkBoxOptionsWeatherTooltipAsn,
+    ui->checkBoxOptionsWeatherTooltipNoaa,
+    ui->checkBoxOptionsWeatherTooltipVatsim,
+    ui->checkBoxOptionsWeatherTooltipIvao,
+    ui->checkBoxOptionsWeatherTooltipFs,
+    // ui->lineEditOptionsMapRangeRings, // Saved separately lnm::OPTIONS_DIALOG_RANGE_DISTANCES
+    ui->lineEditOptionsWeatherAsnPath,
+    ui->lineEditOptionsWeatherXplanePath,
+    ui->lineEditOptionsWeatherXplane12Path,
+    ui->lineEditOptionsWeatherNoaaStationsUrl,
+    ui->lineEditOptionsWeatherVatsimUrl,
+    ui->lineEditOptionsWeatherIvaoUrl,
+    ui->lineEditOptionsWeatherXplaneWind,
+    ui->lineEditOptionsWeatherNoaaWindUrl,
+    ui->tableWidgetOptionsDatabaseInclude,
+    ui->tableWidgetOptionsDatabaseExclude,
+    ui->tableWidgetOptionsDatabaseExcludeAddon,
+    ui->comboBoxMapScrollZoomDetails,
+    ui->radioButtonOptionsSimUpdateFast,
+    ui->radioButtonOptionsSimUpdateLow,
+    ui->radioButtonOptionsSimUpdateMedium,
+    ui->radioButtonOptionsMapNavDragMove,
+    ui->radioButtonOptionsMapNavClickCenter,
+    ui->radioButtonOptionsMapNavTouchscreen,
+    ui->checkBoxOptionsSimUpdatesConstant,
+    ui->spinBoxOptionsSimUpdateBox,
+    ui->spinBoxOptionsSimCenterLegZoom,
+    ui->spinBoxSimMaxTrailPoints,
+    ui->radioButtonOptionsStartupShowHome,
+    ui->radioButtonOptionsStartupShowLast,
+    ui->radioButtonOptionsStartupShowFlightplan,
+    ui->spinBoxOptionsCacheDiskSize,
+    ui->spinBoxOptionsCacheMemorySize,
+    ui->radioButtonCacheUseOffineElevation,
+    ui->radioButtonCacheUseOnlineElevation,
+    ui->lineEditCacheOfflineDataPath,
+    ui->lineEditCacheMapThemeDir,
+    ui->lineEditOptionsRouteFilename,
+    ui->spinBoxOptionsGuiInfoText,
+    ui->spinBoxOptionsGuiAircraftPerf,
+    ui->spinBoxOptionsGuiRouteText,
+    ui->spinBoxOptionsGuiRouteRemarksText,
+    ui->spinBoxOptionsGuiRouteInfoText,
+    ui->spinBoxOptionsGuiSearchText,
+    ui->spinBoxOptionsGuiSimInfoText,
+    ui->spinBoxOptionsGuiThemeMapDimming,
+    ui->spinBoxOptionsGuiToolbarSize,
+    ui->spinBoxOptionsMapClickRect,
+    ui->spinBoxOptionsMapTooltipRect,
+    ui->doubleSpinBoxOptionsMapZoomShowMap,
+    ui->doubleSpinBoxOptionsMapZoomShowMapMenu,
+    ui->spinBoxOptionsRouteGroundBuffer,
+    ui->spinBoxOptionsDisplayTextSizeAircraftAi,
+    ui->spinBoxOptionsDisplaySymbolSizeNavaid,
+    ui->spinBoxOptionsDisplaySymbolSizeUserpoint,
+    ui->spinBoxOptionsDisplaySymbolSizeHighlight,
+    ui->spinBoxOptionsDisplayTextSizeNavaid,
+    ui->spinBoxOptionsDisplayTextSizeAirspace,
+    ui->spinBoxOptionsDisplayTextSizeUserpoint,
+    ui->spinBoxOptionsDisplayThicknessFlightplan,
+    ui->spinBoxOptionsDisplayThicknessFlightplanProfile,
+    ui->spinBoxOptionsDisplaySymbolSizeAirport,
+    ui->spinBoxOptionsDisplaySymbolSizeAirportWeather,
+    ui->spinBoxOptionsDisplaySymbolSizeWindBarbs,
+    ui->spinBoxOptionsDisplaySymbolSizeAircraftAi,
+    ui->spinBoxOptionsDisplayTextSizeFlightplan,
+    ui->spinBoxOptionsDisplayTextSizeFlightplanProfile,
+    ui->spinBoxOptionsDisplayTransparencyFlightplan,
+    ui->spinBoxOptionsDisplayTextSizeAircraftUser,
+    ui->spinBoxOptionsDisplaySymbolSizeAircraftUser,
+    ui->spinBoxOptionsDisplayTextSizeAirport,
+    ui->spinBoxOptionsDisplayTextSizeAirportRunway,
+    ui->spinBoxOptionsDisplayTextSizeAirportTaxiway,
+    ui->spinBoxOptionsDisplayThicknessTrail,
+    ui->spinBoxOptionsDisplayThicknessUserFeature,
+    ui->spinBoxOptionsDisplayThicknessMeasurement,
+    ui->spinBoxOptionsDisplayThicknessCompassRose,
+    ui->spinBoxOptionsDisplaySunShadeDarkness,
+    ui->comboBoxOptionsDisplayTrailType,
+    ui->comboBoxOptionsDisplayTrailGradient,
+    ui->spinBoxOptionsDisplayTextSizeCompassRose,
+    ui->spinBoxOptionsDisplayTextSizeUserFeature,
+    ui->spinBoxOptionsDisplayTextSizeMeasurement,
+    ui->checkBoxOptionsMapHighlightTransparent,
+    ui->spinBoxOptionsMapHighlightTransparent,
+    ui->checkBoxOptionsMapAirwayText,
+    ui->checkBoxOptionsMapUserAircraftText,
+    ui->checkBoxOptionsMapAiAircraftText,
+    ui->checkBoxOptionsMapAiAircraftHideGround,
+    ui->checkBoxOptionsMapAirspaceNoMultZ,
+    ui->checkBoxOptionsDisplayTrailGradient,
+    ui->spinBoxOptionsDisplayTextSizeAirway,
+    ui->spinBoxOptionsDisplayThicknessAirway,
+    ui->spinBoxOptionsDisplayThicknessAirspace,
+    ui->spinBoxOptionsDisplayTextSizeMora,
+    ui->spinBoxOptionsDisplayTransparencyMora,
+    ui->spinBoxOptionsDisplayTextSizeAirportMsa,
+    ui->spinBoxOptionsDisplayTransparencyAirportMsa,
+    ui->spinBoxOptionsDisplayTransparencyAirspace,
+    ui->spinBoxOptionsMapNavTouchArea,
+    ui->comboBoxOptionsStartupUpdateChannels,
+    ui->comboBoxOptionsStartupUpdateRate,
+    ui->comboBoxOptionsUnitDistance,
+    ui->comboBoxOptionsUnitAlt,
+    ui->comboBoxOptionsUnitSpeed,
+    ui->comboBoxOptionsUnitVertSpeed,
+    ui->comboBoxOptionsUnitShortDistance,
+    ui->comboBoxOptionsUnitCoords,
+    ui->comboBoxOptionsUnitFuelWeight,
+    ui->checkBoxOptionsMapZoomAvoidBlurred,
+    ui->checkBoxOptionsMapAirportText,
+    ui->checkBoxOptionsMapAirportAddon,
+    ui->checkBoxOptionsMapNavaidText,
+    ui->checkBoxOptionsMapUserpointText,
+    ui->checkBoxOptionsMapFlightplanText,
+    ui->checkBoxOptionsSimHighlightActiveTable,
+    ui->checkBoxOptionsMapFlightplanDimPassed,
+    ui->checkBoxOptionsMapFlightplanHighlightActive,
+    ui->checkBoxOptionsMapFlightplanTransparent,
+    ui->checkBoxOptionsSimCenterLeg,
+    ui->checkBoxOptionsSimCenterLegTable,
+    ui->checkBoxOptionsSimDoNotFollowScroll,
+    ui->spinBoxOptionsSimDoNotFollowScrollTime,
+    ui->checkBoxOptionsSimZoomOnLanding,
+    ui->doubleSpinBoxOptionsSimZoomOnLanding,
+    ui->checkBoxOptionsSimZoomOnTakeoff,
+    ui->spinBoxOptionsSimZoomOnTakeoff,
+    ui->checkBoxOptionsSimCenterLegTable,
+    ui->spinBoxOptionsSimCleanupTableTime,
+    ui->checkBoxOptionsSimClearSelection,
+    ui->checkBoxOptionsWebScale,
+    ui->radioButtonOptionsOnlineNone,
+    ui->radioButtonOptionsOnlineVatsim,
+    ui->radioButtonOptionsOnlineIvao,
+    ui->radioButtonOptionsOnlinePilotEdge,
+    ui->radioButtonOptionsOnlineCustomStatus,
+    ui->radioButtonOptionsOnlineCustom,
+    ui->lineEditOptionsOnlineStatusUrl,
+    ui->lineEditOptionsOnlineWhazzupUrl,
+    ui->spinBoxOptionsOnlineUpdate,
+    ui->comboBoxOptionsOnlineFormat,
+    ui->checkBoxDisplayOnlineGroundRange,
+    ui->checkBoxDisplayOnlineApproachRange,
+    ui->checkBoxDisplayOnlineObserverRange,
+    ui->checkBoxDisplayOnlineFirRange,
+    ui->checkBoxDisplayOnlineAreaRange,
+    ui->checkBoxDisplayOnlineDepartureRange,
+    ui->checkBoxDisplayOnlineTowerRange,
+    ui->checkBoxDisplayOnlineClearanceRange,
+    ui->checkBoxOptionsOnlineRemoveShadow,
+    ui->spinBoxDisplayOnlineClearance,
+    ui->spinBoxDisplayOnlineArea,
+    ui->spinBoxDisplayOnlineApproach,
+    ui->spinBoxDisplayOnlineDeparture,
+    ui->spinBoxDisplayOnlineFir,
+    ui->spinBoxDisplayOnlineObserver,
+    ui->spinBoxDisplayOnlineGround,
+    ui->spinBoxDisplayOnlineTower,
+    ui->checkBoxOptionsUnitFuelOther,
+    ui->checkBoxOptionsUnitTrueCourse,
+    ui->checkBoxOptionsUnitEnhancedAccuracy,
+    ui->spinBoxOptionsDisplayScaleAllWeb,
+    ui->spinBoxOptionsDisplayScaleAll,
+    ui->spinBoxOptionsWebPort,
+    ui->checkBoxOptionsWebEncrypted,
+    ui->lineEditOptionsWebDocroot});
 
   connect(ui->listWidgetOptionPages, &QListWidget::currentItemChanged, this, &OptionsDialog::changePage);
 
@@ -1039,8 +995,21 @@ OptionsDialog::OptionsDialog(QMainWindow *parentWindow)
   connect(ui->lineEditOptionSearch, &QLineEdit::textEdited, this, &OptionsDialog::searchTextEdited);
 
   // Hint widgets with anchors ===========================================================================
-  for(QLabel *label :HINT_LABELS)
+  linkTooltipHandler = new atools::gui::LinkTooltipHandler(this);
+  linkTooltipHandler->setWebUrlToolTip(tr("Open link in your web browser"));
+  linkTooltipHandler->setFileUrlToolTip(tr("Show the file in your file manager"));
+
+  // Add hint label tooltips for internal links
+  for(QLabel *label : std::as_const(hintLabels))
+  {
     connect(label, &QLabel::linkActivated, this, &OptionsDialog::hintLinkActivated);
+    linkTooltipHandler->addWidget(label); // "lnm://units"
+  }
+
+  // Add tooltip text for internal page links
+  for(auto it = listWidgetItemIndex.begin(); it != listWidgetItemIndex.end(); ++it)
+    // "lnm://units": key is "units" and tooltip is "Open options page "Units""
+    linkTooltipHandler->addUrlTooltip(it.key(), tr("Open options page \"%1\"").arg(it.value()->text()));
 }
 
 /* called at program end */
@@ -1058,6 +1027,7 @@ OptionsDialog::~OptionsDialog()
   ATOOLS_DELETE_LOG(units);
   ATOOLS_DELETE_LOG(ui);
   ATOOLS_DELETE_LOG(fontDialog);
+  ATOOLS_DELETE_LOG(linkTooltipHandler);
 }
 
 void OptionsDialog::hintLinkActivated(const QString& link)
@@ -1197,6 +1167,7 @@ void OptionsDialog::buttonBoxClicked(QAbstractButton *button)
     emit optionsChanged();
 
     // Update dialog internal stuff
+    updateLinkTooltipHandler();
     updateWidgetStates();
     updateWebOptionsFromData();
     updateWebServerStatus();
@@ -1211,11 +1182,12 @@ void OptionsDialog::buttonBoxClicked(QAbstractButton *button)
     updateWidgetUnits();
     updateWebOptionsFromData();
     updateTooltipOption();
+    updateLinkTooltipHandler();
 
     NavApp::getMapThemeHandler()->setMapThemeKeys(OptionData::instanceInternal().mapThemeKeys);
-
     NavApp::updateChannels(OptionData::instance().getUpdateChannels());
     emit optionsChanged();
+
 
     // Close dialog
     accept();
@@ -1441,6 +1413,11 @@ void OptionsDialog::updateTrailStates()
   ui->pushButtonOptionsDisplayTrailColor->setDisabled(ui->checkBoxOptionsDisplayTrailGradient->isChecked());
   ui->comboBoxOptionsDisplayTrailType->setDisabled(ui->checkBoxOptionsDisplayTrailGradient->isChecked());
   updateButtonColors();
+}
+
+void OptionsDialog::updateLinkTooltipHandler()
+{
+  linkTooltipHandler->setShowTooltips(OptionData::instance().getFlags().testFlag(opts::ENABLE_TOOLTIPS_LINK));
 }
 
 void OptionsDialog::updateWidgetStates()
