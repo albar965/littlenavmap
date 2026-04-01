@@ -392,6 +392,5 @@ int ConnectDialog::execConnectDialog(cd::ConnectSimType connectionType)
 void ConnectDialog::fontChanged(const QFont& font)
 {
   atools::gui::updateAllFonts(this, font, atools::gui::WidgetZoomHandler::getRegisteredWidgets());
-  ui->pushButtonConnectDeleteHostname->setMinimumSize(NavApp::getMinButtonSize());
-  ui->pushButtonConnectDeleteHostname->setIconSize(NavApp::getMinButtonSize() * 0.8);
+  atools::gui::setWidgetAndIconSize({ui->pushButtonConnectDeleteHostname}, NavApp::getMinButtonSize());
 }

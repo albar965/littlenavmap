@@ -1531,8 +1531,7 @@ void InfoController::fontChanged(const QFont& font)
   tabHandlerAirportInfo->fontChanged(font, minSize);
   tabHandlerAircraft->fontChanged(font, minSize);
 
-  pushButtonConfig->setMinimumSize(minSize);
-  pushButtonConfig->setIconSize(minSize * 0.8);
+  atools::gui::setWidgetAndIconSize({pushButtonConfig}, NavApp::getMinButtonSize());
 
   optionsChanged();
 }

@@ -339,8 +339,7 @@ void RouteCalcDialog::optionsChanged()
 void RouteCalcDialog::fontChanged(const QFont& font)
 {
   atools::gui::updateAllFonts(this, font, atools::gui::WidgetZoomHandler::getRegisteredWidgets());
-  ui->pushButtonRouteCalcTrackDownload->setMinimumSize(NavApp::getMinButtonSize());
-  ui->pushButtonRouteCalcTrackDownload->setIconSize(NavApp::getMinButtonSize() * 0.8);
+  atools::gui::setWidgetAndIconSize({ui->pushButtonRouteCalcTrackDownload}, NavApp::getMinButtonSize());
 }
 
 rd::RoutingType RouteCalcDialog::getRoutingType() const

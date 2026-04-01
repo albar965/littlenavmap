@@ -1483,8 +1483,9 @@ void OptionsDialog::saveState()
 
   Settings& settings = Settings::instance();
 
+  adjustGuiFont();
+  settings.setValue(lnm::OPTIONS_DIALOG_GUI_FONT, guiFont);
   settings.setValue(lnm::OPTIONS_DIALOG_LANGUAGE, guiLanguage);
-  settings.setValue(lnm::OPTIONS_DIALOG_FONT, guiFont);
   settings.setValue(lnm::OPTIONS_DIALOG_MAP_FONT, mapFont);
 
   // Save the path lists
@@ -1608,9 +1609,11 @@ void OptionsDialog::restoreState()
   highlightProfileColor = settings.valueVar(lnm::OPTIONS_DIALOG_PROFILE_HIGHLIGHT_COLOR,
                                             defaultData.highlightProfileColor).value<QColor>();
 
-  guiLanguage = settings.valueStr(lnm::OPTIONS_DIALOG_LANGUAGE, QLocale().name());
-  guiFont = settings.valueStr(lnm::OPTIONS_DIALOG_FONT, QStringLiteral());
   mapFont = settings.valueStr(lnm::OPTIONS_DIALOG_MAP_FONT, QStringLiteral());
+
+  guiLanguage = settings.valueStr(lnm::OPTIONS_DIALOG_LANGUAGE, QLocale().name());
+  guiFont = settings.valueStr(lnm::OPTIONS_DIALOG_GUI_FONT, QStringLiteral());
+  adjustGuiFont();
 
   widgetsToOptionData();
   updateWidgetUnits();
@@ -2082,9 +2085,10 @@ void OptionsDialog::widgetsToOptionData()
 {
   OptionData& data = OptionData::instanceInternal();
 
-  data.guiLanguage = guiLanguage;
-  data.guiFont = guiFont;
   data.mapFont = mapFont;
+  data.guiLanguage = guiLanguage;
+  adjustGuiFont();
+  data.guiFont = guiFont;
 
   data.flightplanColor = flightplanColor;
   data.flightplanOutlineColor = flightplanOutlineColor;
@@ -2429,6 +2433,8 @@ void OptionsDialog::optionDataToWidgets(const OptionData& data)
   udpdateLanguageComboBox(guiLanguage);
 
   guiFont = data.guiFont;
+  adjustGuiFont();
+
   mapFont = data.mapFont;
   updateGuiFontLabel();
   updateMapFontLabel();
@@ -3451,6 +3457,8 @@ void OptionsDialog::selectGuiFontClicked()
       atools::gui::Dialog::warning(this, tr("Font too large for user interface. Size was corrected. Maximum is 30 pixels/points."));
 
     guiFont = selectedFont.toString();
+    adjustGuiFont();
+
     qDebug() << Q_FUNC_INFO << selectedFont;
 
     // the user clicked OK and font is set to the font the user selected
@@ -3458,6 +3466,12 @@ void OptionsDialog::selectGuiFontClicked()
 
     updateGuiFontLabel();
   }
+}
+
+void OptionsDialog::adjustGuiFont()
+{
+  if(guiFont == QFontDatabase::systemFont(QFontDatabase::GeneralFont).toString())
+    guiFont.clear();
 }
 
 void OptionsDialog::updateFontFromData()

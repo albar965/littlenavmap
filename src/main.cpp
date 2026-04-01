@@ -283,18 +283,6 @@ int main(int argc, char *argv[])
         QPixmapCache::setCacheLimit(pixmapCache);
       }
 
-      // Load font from options settings ========================================
-      QString fontStr = settings.valueStr(lnm::OPTIONS_DIALOG_FONT, QStringLiteral());
-      QFont font;
-      if(!fontStr.isEmpty())
-      {
-        font.fromString(fontStr);
-        QApplication::setFont(font);
-      }
-
-      TextPointer::initPointerCharacters(QApplication::font());
-      qInfo() << Q_FUNC_INFO << "Loaded font" << font.toString() << "from options. Stored font info" << fontStr;
-
       // Load region override ============================================
       // Forcing the English locale if the user has chosen it this way
       if(OptionsDialog::isOverrideRegion())

@@ -652,6 +652,8 @@ private:
 
   bool deInitCalled = false; /* Avoid double call */
 
+  bool fontChangedFromDefault = false; /* Font changed from system in constructor */
+
   QAction *debugActionDumpRoute = nullptr, *debugActionDumpFlightplan = nullptr, *debugActionForceUpdates = nullptr,
           *debugActionReloadPlan = nullptr, *debugActionPlanEdit = nullptr,
           *debugActionPerfEdit = nullptr, *debugActionDumpLayers = nullptr, *debugActionResetUpdate = nullptr,

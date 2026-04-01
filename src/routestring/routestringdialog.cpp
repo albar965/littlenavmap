@@ -563,14 +563,8 @@ void RouteStringDialog::fontChanged(const QFont& font)
   atools::gui::updateAllFonts(this, font, atools::gui::WidgetZoomHandler::getRegisteredWidgets());
   ui->textEditRouteString->document()->setDefaultFont(atools::gui::getBestFixedFont());
 
-  const QSize minSize = NavApp::getMinButtonSize();
-  ui->pushButtonRouteStringShowHelp->setMinimumSize(minSize);
-  ui->pushButtonRouteStringUndo->setMinimumSize(minSize);
-  ui->pushButtonRouteStringRedo->setMinimumSize(minSize);
-
-  ui->pushButtonRouteStringShowHelp->setIconSize(minSize * 0.8);
-  ui->pushButtonRouteStringUndo->setIconSize(minSize * 0.8);
-  ui->pushButtonRouteStringRedo->setIconSize(minSize * 0.8);
+  atools::gui::setWidgetAndIconSize({ui->pushButtonRouteStringShowHelp, ui->pushButtonRouteStringUndo, ui->pushButtonRouteStringRedo},
+                                    NavApp::getMinButtonSize());
 }
 
 void RouteStringDialog::styleChanged()

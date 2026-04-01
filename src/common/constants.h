@@ -380,7 +380,7 @@ const QLatin1String OPTIONS_APPLICATION("Little Navmap");
 const QLatin1String OPTIONS_APPLICATION_ORGANIZATION("ABarthel");
 const QLatin1String OPTIONS_APPLICATION_DOMAIN("littlenavmap.org");
 const QLatin1String OPTIONS_DIALOG_LANGUAGE("OptionsDialog/Language");
-const QLatin1String OPTIONS_DIALOG_FONT("OptionsDialog/Font");
+const QLatin1String OPTIONS_DIALOG_GUI_FONT("OptionsDialog/Font");
 const QLatin1String OPTIONS_DIALOG_MAP_FONT("OptionsDialog/MapFont");
 const QLatin1String OPTIONS_PIXMAP_CACHE("Options/PixmapCache");
 const QLatin1String OPTIONS_MULTIEXPORT_DEBUG_PATH("Options/MultexporDebugPath");

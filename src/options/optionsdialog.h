@@ -262,6 +262,7 @@ private:
   void resetMapFontClicked();
   void buildFontDialog(const QFont& initialFont);
   void toolbarSizeClicked();
+  void adjustGuiFont();
 
   void flightplanPatterShortClicked();
   void flightplanPatterLongClicked();
