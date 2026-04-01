@@ -247,7 +247,7 @@ void ElevationProvider::showErrors()
     atools::gui::Dialog::warning(NavApp::getQMainWidget(),
                                  tr("GLOBE elevation data directory is not valid:<br/>\"%1\"<br/><br/>"
                                     "Go to main menu -&gt; \"Tools\" -&gt; \"Options\" and then<br/>"
-                                    "to page \"Cache and Files\". Then click \"Select GLOBE Directory\" and<br/>"
+                                    "to page \"Elevation Data\". Then click \"Select GLOBE Directory\" and<br/>"
                                     "select the correct place with the GLOBE elevation files.",
                                     "Keep instructions in sync with translated menus").arg(path));
 
@@ -258,7 +258,7 @@ void ElevationProvider::showErrors()
     QString message = tr(
       "<p>The online elevation data which is used by default for the elevation profile is limited and has some small issues.<br/>"
       "Therefore, it is recommended to download and use the offline GLOBE elevation data which provides world wide coverage.</p>"
-      "<p>Go to the main menu -&gt; \"Tools\" -&gt; \"Options\" and then to page \"Cache and files\" to add the GLOBE data.</p>"
+      "<p>Go to the main menu -&gt; \"Tools\" -&gt; \"Options\" and then to page \"Elevation Data\" to add the GLOBE data.</p>"
         "<p><a href=\"%1\">Click here for more information in the Little Navmap online manual</a></p>",
       "Keep instructions in sync with translated menus").arg(url.toString());
 

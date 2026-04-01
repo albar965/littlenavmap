@@ -1914,7 +1914,7 @@ void MainWindow::showGlobeInstallation()
   if(msg.isEmpty())
     desktopServices->openFile(globeDir);
   else
-    atools::gui::Dialog::warning(this, msg % tr("\n\nSet the path to the offline elevation data in options on page \"Cache and Files\""));
+    atools::gui::Dialog::warning(this, msg % tr("\n\nSet the path to the offline elevation data in options on page \"Elevation Data\""));
 }
 
 const ElevationModel *MainWindow::getElevationModel()

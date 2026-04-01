@@ -177,30 +177,6 @@ OptionsDialog::OptionsDialog(QMainWindow *parentWindow)
   ui->treeWidgetOptionsDisplayTextOptions->setItemDelegate(gridDelegate);
 
   // Add option pages with text, icon and tooltip ========================================
-  // "startupandupdates" "Startup and Updates"
-  // "userinterface" "User Interface"
-  // "displayandtext" "Display and Text"
-  // "units" "Units"
-  // "files" "Files"
-  // "map" "Map"
-  // "maptooltipsandclicks" "Map Tooltips and Clicks"
-  // "mapnavigation" "Map Navigation"
-  // "mapdisplay" "Map Display"
-  // "mapflightplan" "Map Flight Plan"
-  // "mapaircrafttrail" "Map Aircraft Trail"
-  // "mapuser" "Map User"
-  // "mapoptions" "Map Options and Labels"
-  // "mapkeys" "Map Keys"
-  // "maponline" "Map Online"
-  // "simulatoraircraft" "Simulator Aircraft"
-  // "flightplan" "Flight Plan"
-  // "weather" "Weather"
-  // "weatherfiles" "Weather Files"
-  // "onlineflying" "Online Flying"
-  // "webserver" "Web Server"
-  // "cacheandfiles" "Cache and Files"
-  // "scenerylibrarydatabase" "Scenery Library Database"
-
   addPageListItem(QStringLiteral("startupandupdates"),
                   tr("Startup and Updates"),
                   tr("Select what should be reloaded on startup and change update settings."),
@@ -268,7 +244,7 @@ OptionsDialog::OptionsDialog(QMainWindow *parentWindow)
                   QStringLiteral(":/littlenavmap/resources/icons/mapdisplaylabels.svg"));
 
   addPageListItem(QStringLiteral("mapkeys"),
-                  tr("Map Keys"),
+                  tr("Map Theme Keys"),
                   tr("Enter username, API keys or tokens for map services which require a login."),
                   QStringLiteral(":/littlenavmap/resources/icons/mapdisplaykeys.svg"));
 
@@ -302,15 +278,20 @@ OptionsDialog::OptionsDialog(QMainWindow *parentWindow)
                   tr("Select online flying services like VATSIM, IVAO or custom."),
                   QStringLiteral(":/littlenavmap/resources/icons/aircraft_online.svg"));
 
+  addPageListItem(QStringLiteral("elevationdata"),
+                  tr("Elevation Data"),
+                  tr("Install and select elevation data."),
+                  QStringLiteral(":/littlenavmap/resources/icons/profiledock.svg"));
+
+  addPageListItem(QStringLiteral("cacheandfiles"),
+                  tr("Cache and Files"),
+                  tr("Change map cache and the path for user airspaces."),
+                  QStringLiteral(":/littlenavmap/resources/icons/filesave.svg"));
+
   addPageListItem(QStringLiteral("webserver"),
                   tr("Web Server"),
                   tr("Change settings for the internal web server."),
                   QStringLiteral(":/littlenavmap/resources/icons/web.svg"));
-
-  addPageListItem(QStringLiteral("cacheandfiles"),
-                  tr("Cache and Files"),
-                  tr("Change map cache, select elevation data source and the path for user airspaces."),
-                  QStringLiteral(":/littlenavmap/resources/icons/filesave.svg"));
 
   addPageListItem(QStringLiteral("scenerylibrarydatabase"),
                   tr("Scenery Library Database"),
@@ -996,8 +977,8 @@ OptionsDialog::OptionsDialog(QMainWindow *parentWindow)
 
   // Hint widgets with anchors ===========================================================================
   linkTooltipHandler = new atools::gui::LinkTooltipHandler(this);
-  linkTooltipHandler->setWebUrlToolTip(tr("Open link in your web browser"));
-  linkTooltipHandler->setFileUrlToolTip(tr("Show the file in your file manager"));
+  for(QLabel *label : std::as_const(linkLabels))
+    linkTooltipHandler->addWidget(label);
 
   // Add hint label tooltips for internal links
   for(QLabel *label : std::as_const(hintLabels))
@@ -1187,7 +1168,6 @@ void OptionsDialog::buttonBoxClicked(QAbstractButton *button)
     NavApp::getMapThemeHandler()->setMapThemeKeys(OptionData::instanceInternal().mapThemeKeys);
     NavApp::updateChannels(OptionData::instance().getUpdateChannels());
     emit optionsChanged();
-
 
     // Close dialog
     accept();
