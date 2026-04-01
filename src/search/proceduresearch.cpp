@@ -536,7 +536,7 @@ void ProcedureSearch::updateHeaderLabel()
   if(currentAirportSim->isValid())
   {
     html.a(map::airportTextShort(*currentAirportSim), QStringLiteral("lnm://showairport?tooltip=showairport"),
-           atools::util::html::BOLD | atools::util::html::LINK_NO_UL);
+           atools::util::html::BOLD);
     if(currentAirportNav->isValid() && currentAirportNav->procedure())
     {
       QString title, runwayText, sourceText;

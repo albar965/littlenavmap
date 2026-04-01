@@ -124,8 +124,8 @@ A performance file can often be used for all simulators.</string>
            </property>
            <property name="text">
             <string>&lt;p&gt;Click on the links below to look up aircraft types:&lt;br/&gt;
-&lt;a style=&quot;text-decoration:none;&quot; href=&quot;https://www2023.icao.int/publications/DOC8643/Pages/Search.aspx&quot;&gt;&lt;b&gt;ICAO - Aircraft Type Designators&lt;/b&gt;&lt;/a&gt; or&lt;br/&gt;
-&lt;a style=&quot;text-decoration:none;&quot; href=&quot;https://en.wikipedia.org/wiki/List_of_aircraft_type_designators&quot;&gt;&lt;b&gt;Wikipedia - List of ICAO aircraft type designators&lt;/b&gt;&lt;/a&gt;.&lt;/p&gt;</string>
+&lt;a href=&quot;https://www2023.icao.int/publications/DOC8643/Pages/Search.aspx&quot;&gt;&lt;b&gt;ICAO - Aircraft Type Designators&lt;/b&gt;&lt;/a&gt; or&lt;br/&gt;
+&lt;a href=&quot;https://en.wikipedia.org/wiki/List_of_aircraft_type_designators&quot;&gt;&lt;b&gt;Wikipedia - List of ICAO aircraft type designators&lt;/b&gt;&lt;/a&gt;.&lt;/p&gt;</string>
            </property>
            <property name="wordWrap">
             <bool>true</bool>

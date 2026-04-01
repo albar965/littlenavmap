@@ -66,7 +66,7 @@ InfoController::InfoController(QWidget *parent)
   // Only GUI usage
   infoBuilder = new HtmlInfoBuilder(queries, true /* info */, false /* print */, true /* verbose */);
 
-  // Get base font size for widgets
+  // Add tooltips to links ==================================================================
   Ui::MainWindow *ui = NavApp::getMainUi();
   linkTooltipHandler = new atools::gui::LinkTooltipHandler(this);
   linkTooltipHandler->setShowTooltips(OptionData::instance().getFlags().testFlag(opts::ENABLE_TOOLTIPS_LINK));
@@ -117,17 +117,12 @@ InfoController::InfoController(QWidget *parent)
   linkTooltipHandler->addUrlTooltip(QStringLiteral("hideairspaces"), tr("Remove highlighted airspaces from the map"));
 
   // Web and file manager ===========================================
-  linkTooltipHandler->setWebUrlToolTip(tr("Open the link in a web browser"));
-
 #if  defined(Q_OS_WIN)
   linkTooltipHandler->addUrlTooltip(QStringLiteral("showfilepath"), tr("Show the file in Windows Explorer"));
-  linkTooltipHandler->setFileUrlToolTip(tr("Show the file in Windows Explorer"));
 #elif defined(Q_OS_MACOS)
   linkTooltipHandler->addUrlTooltip(QStringLiteral("showfilepath"), tr("Show the file in Apple Finder"));
-  linkTooltipHandler->setFileUrlToolTip(tr("Show the file in Apple Finder"));
 #else
-  linkTooltipHandler->addUrlTooltip(QStringLiteral("showfilepath"), tr("Show the file in your file manager"));
-  linkTooltipHandler->setFileUrlToolTip(tr("Show the file in your file manager"));
+  linkTooltipHandler->addUrlTooltip(QStringLiteral("showfilepath"), tr("Show the file in a file manager"));
 #endif
 
   QPushButton *pushButtonInfoHelp = new QPushButton(QIcon(":/littlenavmap/resources/icons/help.svg"), QStringLiteral(),
@@ -954,8 +949,8 @@ void InfoController::showInformationInternal(map::MapResult result, bool showWin
     html.tdAtts({
       {QStringLiteral("align"), QStringLiteral("right")}, {QStringLiteral("valign"), QStringLiteral("top")}
     });
-    html.b().a(tr("Remove Airspace Highlights"), QStringLiteral("lnm://hideairspaces?tooltip=hideairspaces"),
-               ahtml::LINK_NO_UL).bEnd().tdEnd().trEnd().tableEnd();
+    html.b().a(tr("Remove Airspace Highlights"), QStringLiteral("lnm://hideairspaces?tooltip=hideairspaces")).
+    bEnd().tdEnd().trEnd().tableEnd();
 
     for(const map::MapAirspace& airspace : result.getSimNavUserAirspaces())
     {
@@ -991,8 +986,8 @@ void InfoController::showInformationInternal(map::MapResult result, bool showWin
     html.tdAtts({
       {QStringLiteral("align"), QStringLiteral("right")}, {QStringLiteral("valign"), QStringLiteral("top")}
     });
-    html.b().a(tr("Remove Center Highlights"), QStringLiteral("lnm://hideonlineairspaces?tooltip=hideonlineairspaces"),
-               ahtml::LINK_NO_UL).bEnd().tdEnd().trEnd().tableEnd();
+    html.b().a(tr("Remove Center Highlights"), QStringLiteral("lnm://hideonlineairspaces?tooltip=hideonlineairspaces")).
+    bEnd().tdEnd().trEnd().tableEnd();
 
     for(const map::MapAirspace& airspace : std::as_const(onlineAirspaces))
     {
@@ -1174,8 +1169,8 @@ bool InfoController::updateNavaidInternal(const map::MapResult& result, bool bea
   html.tdAtts({
     {QStringLiteral("align"), QStringLiteral("right")}, {QStringLiteral("valign"), QStringLiteral("top")}
   });
-  html.b().a(tr("Remove Airway and Track Highlights"), QStringLiteral("lnm://hideairways?tooltip=hideairways"),
-             ahtml::LINK_NO_UL).bEnd().tdEnd().trEnd().tableEnd();
+  html.b().a(tr("Remove Airway and Track Highlights"), QStringLiteral("lnm://hideairways?tooltip=hideairways")).
+  bEnd().tdEnd().trEnd().tableEnd();
 
   buildOneNavaid(html, bearingChanged, foundNavaid, result.vors, currentSearchResult->vors, infoBuilder, &HtmlInfoBuilder::vorText);
   buildOneNavaid(html, bearingChanged, foundNavaid, result.ndbs, currentSearchResult->ndbs, infoBuilder, &HtmlInfoBuilder::ndbText);

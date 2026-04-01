@@ -26,6 +26,10 @@ class AircraftPerfDialog;
 }
 
 namespace atools {
+
+namespace gui {
+class LinkTooltipHandler;
+}
 namespace fs {
 namespace perf {
 class AircraftPerf;
@@ -114,6 +118,9 @@ private:
   FuelUnit fuelUnit = WEIGHT_LBS;
 
   bool saveClicked = false, newPerf = false;
+
+  /* Provide tooltips for links */
+  atools::gui::LinkTooltipHandler *linkTooltipHandler = nullptr;
 };
 
 #endif // LNM_AIRCRAFTPERFDIALOG_H

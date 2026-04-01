@@ -264,9 +264,7 @@ void RouteLabel::buildHeaderAirports(atools::util::HtmlBuilder& html, bool widge
       // Add airports with links ==============================
       ahtml::Flags htmlFlags = ahtml::BOLD;
 
-      if(isFlag(routelabel::HEADER_DISTTIME))
-        htmlFlags |= ahtml::LINK_NO_UL;
-      else
+      if(!isFlag(routelabel::HEADER_DISTTIME))
         // No distance - add separator underline
         html.u();
 

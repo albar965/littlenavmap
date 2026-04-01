@@ -35,6 +35,7 @@
 #include "gui/errorhandler.h"
 #include "gui/filehistoryhandler.h"
 #include "gui/helphandler.h"
+#include "gui/linktooltiphandler.h"
 #include "gui/mainwindow.h"
 #include "gui/tabwidgethandler.h"
 #include "gui/tools.h"
@@ -74,6 +75,9 @@ AircraftPerfController::AircraftPerfController(MainWindow *parent)
   ui->textBrowserAircraftPerformanceReport->setSearchPaths(paths);
   ui->textBrowserAircraftPerformanceCurrent->setSearchPaths(paths);
 
+  linkTooltipHandler = new atools::gui::LinkTooltipHandler(this);
+  linkTooltipHandler->setShowTooltips(OptionData::instance().getFlags().testFlag(opts::ENABLE_TOOLTIPS_LINK));
+  linkTooltipHandler->addWidgets({ui->textBrowserAircraftPerformanceReport, ui->textBrowserAircraftPerformanceCurrent});
   fileHistory = new atools::gui::FileHistoryHandler(this, lnm::AIRCRAFT_PERF_FILENAMESRECENT,
                                                     ui->menuAircraftPerformanceRecent,
                                                     ui->actionAircraftPerformanceClearMenu);
@@ -104,6 +108,7 @@ AircraftPerfController::~AircraftPerfController()
   ATOOLS_DELETE_LOG(perf);
   ATOOLS_DELETE_LOG(lastSimData);
   ATOOLS_DELETE_LOG(fuelFlowGroundspeedAverage);
+  ATOOLS_DELETE_LOG(linkTooltipHandler);
 }
 
 void AircraftPerfController::create()
@@ -846,7 +851,7 @@ void AircraftPerfController::updateReport()
 #endif
 
     atools::gui::updateTextEdit(ui->textBrowserAircraftPerformanceReport, html.getHtml(),
-                                      false /*scrollToTop*/, true /* keep selection */);
+                                false /*scrollToTop*/, true /* keep selection */);
   } // if(NavApp::getRouteTabHandler()->getCurrentTabId() == rc::AIRCRAFT && ui->dockWidgetRoute->isVisible())
 
   // Update error message label
@@ -948,7 +953,7 @@ void AircraftPerfController::updateReportCurrent()
     }
 
     atools::gui::updateTextEdit(ui->textBrowserAircraftPerformanceCurrent, html.getHtml(),
-                                      false /*scrollToTop*/, true /* keep selection */);
+                                false /*scrollToTop*/, true /* keep selection */);
   }
 }
 
@@ -1462,9 +1467,10 @@ void AircraftPerfController::restoreState()
 
 void AircraftPerfController::optionsChanged()
 {
-  Ui::MainWindow *ui = NavApp::getMainUi();
+  linkTooltipHandler->setShowTooltips(OptionData::instance().getFlags().testFlag(opts::ENABLE_TOOLTIPS_LINK));
 
   int sizePercent = OptionData::instance().getGuiPerfReportTextSize();
+  Ui::MainWindow *ui = NavApp::getMainUi();
   atools::gui::setWidgetFontSize(ui->textBrowserAircraftPerformanceReport, sizePercent);
   atools::gui::setWidgetFontSize(ui->textBrowserAircraftPerformanceCurrent, sizePercent);
 

@@ -106,7 +106,7 @@ const qint64 WEATHER_MAX_AGE_HOURS_ERR_OUTDATED = 24;
 // Maximum distance for bearing display to user aircraft
 const int MAX_DISTANCE_FOR_BEARING_METER = ageo::nmToMeter(8000);
 
-const static ahtml::Flags LINK_FLAGS = ahtml::LINK_NO_UL | ahtml::BOLD;
+const static ahtml::Flags LINK_FLAGS = ahtml::BOLD;
 
 const static Flags WEATHER_TITLE_FLAGS = ahtml::BOLD | ahtml::BIG;
 
@@ -1046,7 +1046,7 @@ void HtmlInfoBuilder::runwayText(const MapAirport& airport, HtmlBuilder& html, b
             html.text(startText);
           else
             html.a(startText, QStringLiteral("lnm://show?lonx=%1&laty=%2&tooltip=showstart").
-                   arg(pos.getLonX()).arg(pos.getLatY()), ahtml::LINK_NO_UL);
+                   arg(pos.getLonX()).arg(pos.getLatY()));
           i++;
         }
       }
@@ -5229,7 +5229,7 @@ void HtmlInfoBuilder::addAirportSceneryAndLinks(const MapAirport& airport, HtmlB
   // Check if airport is in navdata
   QStringList links;
   MapAirport airportNav = queries->getMapQuery()->getAirportNav(airport);
-  ahtml::Flags flags = ahtml::LINK_NO_UL | ahtml::NO_ENTITIES;
+  ahtml::Flags flags = ahtml::NO_ENTITIES;
 
   if(airportNav.isValid() && airportNav.navdata)
   {
@@ -5297,7 +5297,7 @@ QString HtmlInfoBuilder::filepathTextShow(const QString& filepath, const QString
   {
     QString filepathStr = atools::nativeCleanPath(canonical ? atools::canonicalFilePath(fileinfo) : fileinfo.absoluteFilePath());
     link.small(prefix).a(filepathStr, QStringLiteral("lnm://show?filepath=%1&tooltip=showfilepath").
-                         arg(filepathStr), ahtml::LINK_NO_UL | ahtml::SMALL);
+                         arg(filepathStr), ahtml::SMALL);
   }
   else
     link.small(prefix).small(filepath).text(tr(" (file not found)"), ahtml::SMALL | ahtml::BOLD);
@@ -5310,7 +5310,7 @@ QString HtmlInfoBuilder::filepathTextOpen(const QFileInfo& filepath, bool showPa
 
   if(filepath.exists())
     link.a(showPath ? filepath.filePath() : filepath.fileName(),
-           QUrl::fromLocalFile(filepath.filePath()).toString(QUrl::EncodeSpaces), ahtml::LINK_NO_UL);
+           QUrl::fromLocalFile(filepath.filePath()).toString(QUrl::EncodeSpaces));
   return link.getHtml();
 }
 
@@ -5402,7 +5402,7 @@ void HtmlInfoBuilder::head(HtmlBuilder& html, const QString& text, const QString
     for(int i = 0; i < textHref.size(); i += 2)
     {
       if(!textHref.at(i).isEmpty() && !textHref.at(i + 1).isEmpty())
-        html.text(tr(", ")).a(textHref.at(i), textHref.at(i + 1), ahtml::LINK_NO_UL);
+        html.text(tr(", ")).a(textHref.at(i), textHref.at(i + 1));
     }
     html.hEnd(4);
   }

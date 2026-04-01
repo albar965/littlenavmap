@@ -29,6 +29,8 @@ class HtmlBuilder;
 }
 
 namespace gui {
+
+class LinkTooltipHandler;
 class FileHistoryHandler;
 }
 namespace fs {
@@ -272,6 +274,9 @@ private:
 
   /* For a smooth endurance calculation - first value is fuel flow in PPH and second is groundspeed in KTS */
   atools::util::MovingAverageTime *fuelFlowGroundspeedAverage;
+
+  /* Provide tooltips for links */
+  atools::gui::LinkTooltipHandler *linkTooltipHandler = nullptr;
 
   QStringList errorTooltips;
 };

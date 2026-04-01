@@ -17,6 +17,8 @@
 
 #include "routeexport/fetchroutedialog.h"
 
+#include "gui/linktooltiphandler.h"
+#include "options/optiondata.h"
 #include "ui_fetchroutedialog.h"
 
 #include "atools.h"
@@ -77,6 +79,10 @@ FetchRouteDialog::FetchRouteDialog(QWidget *parent) :
   ui->buttonBox->button(QDialogButtonBox::YesToAll)->setToolTip(tr("Open flight plan in route description dialog for\n"
                                                                    "refinement or corrections."));
 
+  linkTooltipHandler = new atools::gui::LinkTooltipHandler(this);
+  linkTooltipHandler->setShowTooltips(OptionData::instance().getFlags().testFlag(opts::ENABLE_TOOLTIPS_LINK));
+  linkTooltipHandler->addWidget(ui->labelHeader);
+
   restoreState();
 }
 
@@ -84,8 +90,9 @@ FetchRouteDialog::~FetchRouteDialog()
 {
   saveState();
   delete downloader;
-  delete ui;
   delete flightplan;
+  delete linkTooltipHandler;
+  delete ui;
 }
 
 void FetchRouteDialog::buttonBoxClicked(QAbstractButton *button)

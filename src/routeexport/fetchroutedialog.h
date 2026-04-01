@@ -22,6 +22,10 @@
 
 namespace atools {
 
+namespace gui {
+class LinkTooltipHandler;
+}
+
 namespace fs {
 namespace pln {
 class Flightplan;
@@ -88,6 +92,8 @@ private:
 
   Ui::FetchRouteDialog *ui;
 
+  /* Provide tooltips for links */
+  atools::gui::LinkTooltipHandler *linkTooltipHandler = nullptr;
 };
 
 #endif // LNM_FETCHROUTEDIALOG_H

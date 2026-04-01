@@ -9334,10 +9334,10 @@ relation to shown airport</string>
     <string>Show Flight Plan in Sky&amp;Vector ...</string>
    </property>
    <property name="toolTip">
-    <string>Show the flight plan in SkyVector in your web browser</string>
+    <string>Show the flight plan in SkyVector in a web browser</string>
    </property>
    <property name="statusTip">
-    <string>Show the flight plan in SkyVector in your web browser</string>
+    <string>Show the flight plan in SkyVector in a web browser</string>
    </property>
   </action>
   <action name="actionRouteTableSelectAll">
@@ -11913,10 +11913,10 @@ relation to shown airport</string>
     <string>Export Flight &amp;Plan to SimBrief ...</string>
    </property>
    <property name="toolTip">
-    <string>Send the flight plan to SimBrief and open it in your web browser</string>
+    <string>Send the flight plan to SimBrief and open it in a web browser</string>
    </property>
    <property name="statusTip">
-    <string>Send the flight plan to SimBrief and open it in your web browser</string>
+    <string>Send the flight plan to SimBrief and open it in a web browser</string>
    </property>
   </action>
   <action name="actionRouteFetchFromSimBrief">

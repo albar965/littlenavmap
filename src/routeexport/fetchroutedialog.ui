@@ -40,7 +40,7 @@
       <enum>QFrame::Sunken</enum>
      </property>
      <property name="text">
-      <string>Open &lt;a style=&quot;text-decoration:none;&quot; href=&quot;https://www.simbrief.com&quot;&gt;&lt;b&gt;SimBrief&lt;/b&gt;&lt;/a&gt; in your web browser, log in and click &quot;Generate Flight&quot; before starting download.</string>
+      <string>Open &lt;a href=&quot;https://www.simbrief.com&quot;&gt;&lt;b&gt;SimBrief&lt;/b&gt;&lt;/a&gt; in a web browser, log in and click &quot;Generate Flight&quot; before starting download.</string>
      </property>
      <property name="wordWrap">
       <bool>true</bool>

@@ -16,6 +16,7 @@
 *****************************************************************************/
 
 #include "perf/aircraftperfdialog.h"
+#include "gui/linktooltiphandler.h"
 #include "ui_aircraftperfdialog.h"
 
 #include "atools.h"
@@ -52,6 +53,10 @@ AircraftPerfDialog::AircraftPerfDialog(QWidget *parent, const atools::fs::perf::
   // Copy performance object
   perf = new AircraftPerf;
   *perf = aircraftPerformance;
+
+  linkTooltipHandler = new atools::gui::LinkTooltipHandler(this);
+  linkTooltipHandler->setShowTooltips(OptionData::instance().getFlags().testFlag(opts::ENABLE_TOOLTIPS_LINK));
+  linkTooltipHandler->addWidgets({ui->labelTypeLink, ui->label});
 
   ui->doubleSpinBoxClimbVertSpeed->setSuffix(tr(" %vspeed% %1").arg(TextPointer::getPointerUp()));
   ui->doubleSpinBoxDescentVertSpeed->setSuffix(tr(" %vspeed% %1").arg(TextPointer::getPointerDown()));
@@ -149,6 +154,7 @@ AircraftPerfDialog::~AircraftPerfDialog()
   delete perfBackup;
 
   delete units;
+  delete linkTooltipHandler;
   delete ui;
 }
 
