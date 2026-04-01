@@ -188,9 +188,9 @@ RouteExportDialog::~RouteExportDialog()
   atools::gui::WidgetState(lnm::FLIGHTPLAN_ONLINE_EXPORT + getRouteTypeAsString(type)).save(this);
 
   delete units;
-  delete ui;
   delete exportDataSaved;
   delete exportData;
+  delete ui;
 }
 
 void RouteExportDialog::buttonBoxClicked(QAbstractButton *button)

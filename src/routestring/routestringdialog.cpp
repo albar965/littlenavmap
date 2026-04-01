@@ -231,9 +231,9 @@ RouteStringDialog::~RouteStringDialog()
   ATOOLS_DELETE_LOG(procActionGroup);
   ATOOLS_DELETE_LOG(advancedMenu);
   ATOOLS_DELETE_LOG(buttonMenu);
-  ATOOLS_DELETE_LOG(ui);
   ATOOLS_DELETE_LOG(flightplan);
   ATOOLS_DELETE_LOG(eventFilter);
+  ATOOLS_DELETE_LOG(ui);
 }
 
 void RouteStringDialog::buildButtonMenu()

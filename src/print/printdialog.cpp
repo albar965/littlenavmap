@@ -67,8 +67,8 @@ PrintDialog::~PrintDialog()
 {
   atools::gui::WidgetState(lnm::ROUTE_PRINT_DIALOG).save(this);
 
-  delete ui;
   delete zoomHandler;
+  delete ui;
 }
 
 void PrintDialog::updateButtonStates()

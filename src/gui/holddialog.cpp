@@ -79,9 +79,9 @@ HoldDialog::~HoldDialog()
   atools::gui::WidgetState(lnm::HOLD_DIALOG).save(this);
 
   delete units;
-  delete ui;
   delete result;
   delete position;
+  delete ui;
 }
 
 /* A button box button was clicked */

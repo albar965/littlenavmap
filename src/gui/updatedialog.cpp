@@ -59,7 +59,11 @@ UpdateDialog::UpdateDialog(QWidget *parent, bool manualCheck)
   connect(ui->textBrowserUpdate, &QTextBrowser::anchorClicked, this, &UpdateDialog::anchorClicked);
 }
 
-/* A button box button was clicked */
+UpdateDialog::~UpdateDialog()
+{
+  delete ui;
+}
+
 void UpdateDialog::buttonBoxClicked(QAbstractButton *button)
 {
   buttonClickedRole = ui->buttonBoxUpdate->buttonRole(button);
@@ -74,11 +78,6 @@ void UpdateDialog::buttonBoxClicked(QAbstractButton *button)
   }
   else
     QDialog::accept();
-}
-
-UpdateDialog::~UpdateDialog()
-{
-  delete ui;
 }
 
 void UpdateDialog::setMessage(const QString& text)

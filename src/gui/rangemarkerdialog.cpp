@@ -162,8 +162,8 @@ RangeMarkerDialog::~RangeMarkerDialog()
 
   delete rangeRingValidator;
   delete units;
-  delete ui;
   delete position;
+  delete ui;
 }
 
 /* A button box button was clicked */

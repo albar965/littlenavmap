@@ -197,9 +197,9 @@ RouteMultiExportDialog::~RouteMultiExportDialog()
 
   delete formatMapDialog;
   delete zoomHandler;
-  delete ui;
   delete itemModel;
   delete proxyModel;
+  delete ui;
 }
 
 int RouteMultiExportDialog::exec()

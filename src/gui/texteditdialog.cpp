@@ -61,6 +61,11 @@ TextEditDialog::TextEditDialog(QWidget *parent, const QString& title, const QStr
   connect(ui->buttonBox, &QDialogButtonBox::clicked, this, &TextEditDialog::buttonBoxClicked);
 }
 
+TextEditDialog::~TextEditDialog()
+{
+  delete ui;
+}
+
 void TextEditDialog::setText(const QString& text)
 {
   ui->lineEdit->setText(text);
@@ -79,11 +84,6 @@ QString TextEditDialog::getText() const
 QString TextEditDialog::getText2() const
 {
   return ui->lineEdit2->text();
-}
-
-TextEditDialog::~TextEditDialog()
-{
-  delete ui;
 }
 
 void TextEditDialog::buttonBoxClicked(QAbstractButton *button)

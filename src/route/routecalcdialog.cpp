@@ -103,6 +103,7 @@ RouteCalcDialog::RouteCalcDialog(QWidget *parent)
 RouteCalcDialog::~RouteCalcDialog()
 {
   delete units;
+  delete ui;
 }
 
 void RouteCalcDialog::buttonBoxClicked(QAbstractButton *button)

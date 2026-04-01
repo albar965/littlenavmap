@@ -139,8 +139,8 @@ UserdataDialog::~UserdataDialog()
   atools::gui::WidgetState(lnm::USERDATA_EDIT_ADD_DIALOG).save(this);
 
   delete units;
-  delete ui;
   delete record;
+  delete ui;
 }
 
 void UserdataDialog::coordsEdited(const QString& text)

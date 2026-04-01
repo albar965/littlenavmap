@@ -57,6 +57,7 @@ public:
 
 private:
   void anchorClicked(const QUrl& url);
+  /* A button box button was clicked */
   void buttonBoxClicked(QAbstractButton *button);
 
   QDialogButtonBox::ButtonRole buttonClickedRole = QDialogButtonBox::InvalidRole;

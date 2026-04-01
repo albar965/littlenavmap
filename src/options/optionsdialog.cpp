@@ -1006,9 +1006,9 @@ OptionsDialog::~OptionsDialog()
   ATOOLS_DELETE_LOG(zoomHandlerDatabaseAddonExclude);
   ATOOLS_DELETE_LOG(zoomHandlerMapThemeKeysTable);
   ATOOLS_DELETE_LOG(units);
-  ATOOLS_DELETE_LOG(ui);
   ATOOLS_DELETE_LOG(fontDialog);
   ATOOLS_DELETE_LOG(linkTooltipHandler);
+  ATOOLS_DELETE_LOG(ui);
 }
 
 void OptionsDialog::hintLinkActivated(const QString& link)
