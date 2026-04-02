@@ -177,6 +177,9 @@ OptionsDialog::OptionsDialog(QMainWindow *parentWindow)
   ui->treeWidgetOptionsDisplayTextOptions->setItemDelegate(gridDelegate);
 
   // Add option pages with text, icon and tooltip ========================================
+  // The title has to match all text references in the program
+  // The id must match all "lnm://pagename" links and is also used to refer to the options help page like
+  // "https://www.littlenavmap.org/manuals/littlenavmap/release/3.0/en/OPTIONS.html#options-page-pagename"
   addPageListItem(QStringLiteral("startupandupdates"),
                   tr("Startup and Updates"),
                   tr("Select what should be reloaded on startup and change update settings."),
@@ -243,14 +246,24 @@ OptionsDialog::OptionsDialog(QMainWindow *parentWindow)
                   tr("Change label and other display options for map objects on the map and the elevation profile."),
                   QStringLiteral(":/littlenavmap/resources/icons/mapdisplaylabels.svg"));
 
+  addPageListItem(QStringLiteral("mapthemes"),
+                  tr("Map Themes"),
+                  tr("Change path to additional background map themes."),
+                  QStringLiteral(":/littlenavmap/resources/icons/map.svg"));
+
   addPageListItem(QStringLiteral("mapkeys"),
                   tr("Map Theme Keys"),
                   tr("Enter username, API keys or tokens for map services which require a login."),
                   QStringLiteral(":/littlenavmap/resources/icons/mapdisplaykeys.svg"));
 
+  addPageListItem(QStringLiteral("mapcache"),
+                  tr("Map Cache"),
+                  tr("Change map cache and the path for user airspaces."),
+                  QStringLiteral(":/littlenavmap/resources/icons/filesave.svg"));
+
   addPageListItem(QStringLiteral("maponline"),
                   tr("Map Online"),
-                  tr("Map display online center options."),
+                  tr("Map display online center and airspace options."),
                   QStringLiteral(":/littlenavmap/resources/icons/airspaceonline.svg"));
 
   addPageListItem(QStringLiteral("simulatoraircraft"),
@@ -282,11 +295,6 @@ OptionsDialog::OptionsDialog(QMainWindow *parentWindow)
                   tr("Elevation Data"),
                   tr("Install and select elevation data."),
                   QStringLiteral(":/littlenavmap/resources/icons/profiledock.svg"));
-
-  addPageListItem(QStringLiteral("cacheandfiles"),
-                  tr("Cache and Files"),
-                  tr("Change map cache and the path for user airspaces."),
-                  QStringLiteral(":/littlenavmap/resources/icons/filesave.svg"));
 
   addPageListItem(QStringLiteral("webserver"),
                   tr("Web Server"),

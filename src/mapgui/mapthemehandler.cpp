@@ -987,7 +987,7 @@ void MapThemeHandler::validateMapThemeDirectories(QWidget *parent)
 
   if(!msg.isEmpty())
     atools::gui::Dialog::warning(parent, tr("Base path(s) for map themes not found.\n%1\n\n"
-                                            "Go to menu \"Tools\" -> \"Options\" and then to page \"Cache and Files\". "
+                                            "Go to menu \"Tools\" -> \"Options\" and then to page \"Map Themes\". "
                                             "Clear the input field \"Directory for additional map themes\" "
                                             "with the wrong path to disable themes or "
                                             "click \"Select Themes Directory\" and select the correct folder.",

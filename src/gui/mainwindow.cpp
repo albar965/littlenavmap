@@ -1909,7 +1909,7 @@ void MainWindow::showMapInstallation()
   if(msg.isEmpty())
     desktopServices->openFile(cacheMapThemeDir);
   else
-    atools::gui::Dialog::warning(this, msg % tr("\n\nSet the path to additional map themes in options on page \"Cache and Files\""));
+    atools::gui::Dialog::warning(this, msg % tr("\n\nSet the path to additional map themes in options on page \"Map Themes\""));
 }
 
 void MainWindow::showGlobeInstallation()
