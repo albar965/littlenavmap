@@ -74,7 +74,6 @@ private:
   const static QLatin1String STYLE_WINDOWS; /* Old Windows */
 
   void applyCurrentStyle();
-  void createDarkPalette(QPalette& palette);
   void menuItemTriggered();
   void menuItemAutoTriggered();
   void updateMenuStatus();

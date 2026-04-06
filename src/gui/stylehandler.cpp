@@ -186,11 +186,27 @@ StyleHandler::StyleHandler(QMainWindow *mainWindowParam)
       qWarning() << Q_FUNC_INFO << "Style is null" << styleName;
   }
 
-  qDebug() << Q_FUNC_INFO << "colorScheme" << QGuiApplication::styleHints()->colorScheme();
-
   // Create dark style ==================================================================
+  // This is not a Qt style but a copy of Fusion
+
+  // Try to load fusion palette settings from a ini file in settings
+  const QString paletteFile = Settings::getConfigFilename(lnm::DARKSTYLE_INI_SUFFIX);
   QPalette darkPalette;
-  createDarkPalette(darkPalette);
+
+  if(atools::checkFile(Q_FUNC_INFO, paletteFile, false /* warn */))
+  {
+    qDebug() << Q_FUNC_INFO << "Loading Dark palette from" << paletteFile;
+
+    // Palette file already exists - sync and assign it to dark
+    PaletteSettings(paletteFile, STYLE_COLOR_GROUP).syncPalette(darkPalette);
+  }
+  else
+  {
+    qDebug() << Q_FUNC_INFO << "Loading Dark palette from resources";
+
+    // Palette missing - load dark default from resources
+    PaletteSettings(lnm::DARKSTYLE_INI, STYLE_COLOR_GROUP).loadPalette(darkPalette);
+  }
 
   // Add stylesheet for better checkbox radio button and toolbutton visibility
   QString darkStyleSheet(
@@ -237,11 +253,6 @@ StyleHandler::StyleHandler(QMainWindow *mainWindowParam)
     "QTabBar::close-button:hover { image: url(:/littlenavmap/resources/icons/close_dark_hover.svg); }"
 #endif
     );
-
-  // Store dark palette settings a in a separate ini file
-  QString filename = Settings::getConfigFilename(lnm::DARKSTYLE_INI_SUFFIX);
-  PaletteSettings paletteSettings(filename, STYLE_COLOR_GROUP);
-  paletteSettings.syncPalette(darkPalette);
 
   styleDescriptions.append(StyleDescription(STYLE_DARK, STYLE_FUSION, darkStyleSheet, darkPalette, true /* dark */));
   darkStyleIndex = styleDescriptions.size() - 1;
@@ -506,43 +517,4 @@ void StyleHandler::restoreState()
 
   applyCurrentStyle();
   updateMenuStatus();
-}
-
-void StyleHandler::createDarkPalette(QPalette& palette)
-{
-  // Create dark palette colors for all groups
-  palette = QGuiApplication::palette();
-  palette.setColor(QPalette::Window, QColor(15, 15, 15));
-  palette.setColor(QPalette::WindowText, QColor(200, 200, 200));
-  palette.setColor(QPalette::Shadow, QColor(0, 0, 0));
-  palette.setColor(QPalette::Base, QColor(20, 20, 20));
-  palette.setColor(QPalette::AlternateBase, QColor(35, 35, 35));
-  palette.setColor(QPalette::ToolTipBase, QColor(35, 35, 35));
-  palette.setColor(QPalette::ToolTipText, QColor(200, 200, 200));
-  palette.setColor(QPalette::Text, QColor(200, 200, 200));
-  palette.setColor(QPalette::Button, QColor(35, 35, 35));
-  palette.setColor(QPalette::ButtonText, QColor(200, 200, 200));
-  palette.setColor(QPalette::BrightText, QColor(250, 250, 250));
-  palette.setColor(QPalette::Link, QColor(42, 130, 218));
-  palette.setColor(QPalette::LinkVisited, QColor(62, 160, 248));
-
-  palette.setColor(QPalette::Light, QColor(85, 85, 85));
-  palette.setColor(QPalette::Midlight, QColor(65, 65, 65));
-  palette.setColor(QPalette::Mid, QColor(20, 20, 20));
-  palette.setColor(QPalette::Dark, QColor(5, 5, 5));
-
-  palette.setColor(QPalette::Highlight, QColor(42, 130, 218));
-  palette.setColor(QPalette::HighlightedText, Qt::black);
-
-  // Create dark palette colors for disabled group
-  // Active, //Disabled, //Inactive,
-  palette.setColor(QPalette::Disabled, QPalette::Text, QColor(100, 100, 100));
-  palette.setColor(QPalette::Disabled, QPalette::Button, QColor(65, 65, 65));
-  palette.setColor(QPalette::Disabled, QPalette::ButtonText, QColor(100, 100, 100));
-  palette.setColor(QPalette::Disabled, QPalette::WindowText, QColor(100, 100, 100));
-
-  // darkPalette.setColor(QPalette::Active, QPalette::Text, QColor(100, 100, 100));
-  // darkPalette.setColor(QPalette::Active, QPalette::ButtonText, QColor(100, 100, 100));
-  // darkPalette.setColor(QPalette::Inactive, QPalette::Text, QColor(100, 100, 100));
-  // darkPalette.setColor(QPalette::Inactive, QPalette::ButtonText, QColor(100, 100, 100));
 }

@@ -535,8 +535,8 @@ const QLatin1String STARTUP_COMMAND_ACTIVATE(atools::gui::DataExchange::STARTUP_
 const QLatin1String STARTUP_OTHER_ARGUMENTS("others"); /* Positional arguments not found after option - string list */
 
 /* Style suffixes and resource names ========================================================================= */
-const QLatin1String DARKSTYLE_INI_SUFFIX("_nightstyle.ini");
-const QLatin1String DARKSTYLE_INI(":/littlenavmap/resources/config/little_navmap_nightstyle.ini");
+const QLatin1String DARKSTYLE_INI_SUFFIX("_darkstyle.ini");
+const QLatin1String DARKSTYLE_INI(":/littlenavmap/resources/config/little_navmap_darkstyle.ini");
 const QLatin1String FUSIONSTYLE_INI_SUFFIX("_fusionstyle.ini");
 const QLatin1String FUSIONSTYLE_INI(":/littlenavmap/resources/config/little_navmap_fusionstyle.ini");
 

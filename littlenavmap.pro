@@ -811,6 +811,10 @@ unix:!macx {
   copydata.commands += cp -avfu $$PWD/help $$OUT_PWD &&
   copydata.commands += cp -avfu $$PWD/web $$OUT_PWD &&
   copydata.commands += cp -avfu $$PWD/customize $$OUT_PWD &&
+  copydata.commands += cp -vf $$PWD/resources/config/little_navmap_darkstyle.ini $$OUT_PWD/customize &&
+  copydata.commands += cp -vf $$PWD/resources/config/little_navmap_fusionstyle.ini $$OUT_PWD/customize &&
+  copydata.commands += cp -vf $$PWD/resources/config/little_navmap_mapstyle.ini $$OUT_PWD/customize &&
+  copydata.commands += cp -vf $$PWD/resources/config/maplayers.xml $$OUT_PWD/customize &&
   copydata.commands += cp -avfu $$PWD/timezone $$OUT_PWD &&
   copydata.commands += cp -avfu $$PWD/marble/data $$OUT_PWD &&
   copydata.commands += cp -vf $$PWD/desktop/littlenavmap*.sh $$OUT_PWD &&
@@ -822,6 +826,10 @@ macx {
   copydata.commands += cp -Rv $$PWD/help $$OUT_PWD/littlenavmap.app/Contents/MacOS &&
   copydata.commands += cp -Rv $$PWD/web $$OUT_PWD/littlenavmap.app/Contents/MacOS &&
   copydata.commands += cp -Rv $$PWD/customize $$OUT_PWD/littlenavmap.app/Contents/MacOS &&
+  copydata.commands += cp -vf $$PWD/resources/config/little_navmap_darkstyle.ini $$OUT_PWD/littlenavmap.app/Contents/MacOS/customize &&
+  copydata.commands += cp -vf $$PWD/resources/config/little_navmap_fusionstyle.ini $$OUT_PWD/littlenavmap.app/Contents/MacOS/customize &&
+  copydata.commands += cp -vf $$PWD/resources/config/little_navmap_mapstyle.ini $$OUT_PWD/littlenavmap.app/Contents/MacOS/customize &&
+  copydata.commands += cp -vf $$PWD/resources/config/maplayers.xml $$OUT_PWD/littlenavmap.app/Contents/MacOS/customize &&
   copydata.commands += cp -Rv $$PWD/timezone $$OUT_PWD/littlenavmap.app/Contents/MacOS &&
   copydata.commands += cp -Rv $$PWD/marble/data $$OUT_PWD/littlenavmap.app/Contents/MacOS &&
   copydata.commands += cp -vf $$PWD/*.qm $$OUT_PWD/littlenavmap.app/Contents/MacOS &&
@@ -1004,6 +1012,10 @@ win32 {
   deploy.commands += xcopy /I /S /E /F /Y $$p($$PWD/help/*) $$p($$DEPLOY_BASE/$$WIN_TARGET_NAME/help/) &&
   deploy.commands += xcopy /I /S /E /F /Y $$p($$PWD/web) $$p($$DEPLOY_BASE/$$WIN_TARGET_NAME/web) &&
   deploy.commands += xcopy /I /S /E /F /Y $$p($$PWD/customize) $$p($$DEPLOY_BASE/$$WIN_TARGET_NAME/customize) &&
+  deploy.commands += xcopy /F $$p($$PWD/resources/config/little_navmap_darkstyle.ini) $$p($$DEPLOY_BASE/$$WIN_TARGET_NAME/customize) &&
+  deploy.commands += xcopy /F $$p($$PWD/resources/config/little_navmap_fusionstyle.ini) $$p($$DEPLOY_BASE/$$WIN_TARGET_NAME/customize) &&
+  deploy.commands += xcopy /F $$p($$PWD/resources/config/little_navmap_mapstyle.ini) $$p($$DEPLOY_BASE/$$WIN_TARGET_NAME/customize) &&
+  deploy.commands += xcopy /F $$p($$PWD/resources/config/maplayers.xml) $$p($$DEPLOY_BASE/$$WIN_TARGET_NAME/customize) &&
   deploy.commands += xcopy /I /S /E /F /Y $$p($$PWD/timezone) $$p($$DEPLOY_BASE/$$WIN_TARGET_NAME/timezone) &&
   deploy.commands += xcopy /I /S /E /F /Y $$p($$PWD/marble/data) $$p($$DEPLOY_BASE/$$WIN_TARGET_NAME/data) &&
   deploy.commands += xcopy /I /S /E /F /Y $$p($$PWD/etc) $$p($$DEPLOY_BASE/$$WIN_TARGET_NAME/etc) &&

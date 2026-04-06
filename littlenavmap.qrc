@@ -358,5 +358,6 @@
         <file>resources/icons/close_dark.svg</file>
         <file>resources/icons/close_hover.svg</file>
         <file>resources/icons/close.svg</file>
+        <file>resources/config/little_navmap_darkstyle.ini</file>
     </qresource>
 </RCC>
