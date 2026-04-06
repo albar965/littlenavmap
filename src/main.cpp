@@ -188,7 +188,7 @@ int main(int argc, char *argv[])
       // ==============================================
       // Initialize logging and force logfiles into the system or user temp directory
       // This will prefix all log files with orgranization and application name and append ".log"
-      QString logCfg = Settings::getOverloadedPath(":/littlenavmap/resources/config/logging.cfg");
+      QString logCfg = Settings::getOverloadedPath(lnm::LOGGING_CONFIG);
       if(commandLine.getLogPath().isEmpty())
         LoggingHandler::initializeForTemp(logCfg);
       else

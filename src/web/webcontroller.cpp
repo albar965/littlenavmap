@@ -59,8 +59,7 @@ WebController::WebController(QWidget *parent) :
   qDebug() << Q_FUNC_INFO;
 
   // Find the configuration file and create settings
-  QString confPath = ":/littlenavmap/resources/config/webserver.cfg";
-  configFileName = atools::settings::Settings::getOverloadedPath(confPath);
+  configFileName = atools::settings::Settings::getOverloadedPath(lnm::WEBSERVER_CONFIG);
 
   verbose = atools::settings::Settings::instance().getAndStoreValue(lnm::OPTIONS_WEBSERVER_DEBUG, false).toBool();
 
@@ -128,8 +127,8 @@ void WebController::startServer()
 
   if(encrypted)
   {
-    listenerSettings.insert("sslKeyFile", sslKeyFile.isEmpty() ? ":/littlenavmap/resources/config/ssl/lnm.key" : sslKeyFile);
-    listenerSettings.insert("sslCertFile", sslCertFile.isEmpty() ? ":/littlenavmap/resources/config/ssl/lnm.cert" : sslCertFile);
+    listenerSettings.insert("sslKeyFile", sslKeyFile.isEmpty() ? lnm::WEBSERVER_SSL_KEY : sslKeyFile);
+    listenerSettings.insert("sslCertFile", sslCertFile.isEmpty() ? lnm::WEBSERVER_SSL_CERT : sslCertFile);
   }
   else
   {

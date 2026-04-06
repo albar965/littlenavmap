@@ -172,7 +172,7 @@ void DatabaseLoader::loadScenery()
   }
 
   // Get configuration file path from resources or overloaded path
-  QString config = Settings::getOverloadedPath(lnm::DATABASE_NAVDATAREADER_CONFIG);
+  QString config = Settings::getOverloadedPath(lnm::NAVDATAREADER_CONFIG);
   qInfo() << Q_FUNC_INFO << "Config file" << config << "Database" << compileDb->databaseName();
 
   dbtools::openDatabaseFile(compileDb, dbFilename, false /* readonly */, true /* createSchema */);

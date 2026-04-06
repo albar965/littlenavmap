@@ -4117,8 +4117,7 @@ void MainWindow::resetWindowLayout()
 
   bool allowUndockMap = OptionData::instance().getFlags2().testFlag(opts2::MAP_ALLOW_UNDOCK);
   dockHandler->resetWindowState(lnm::DEFAULT_MAINWINDOW_SIZE,
-                                QStringLiteral(":/littlenavmap/resources/config/mainwindow_state_%1.bin").
-                                arg(allowUndockMap ? "dock" : "nodock"));
+                                lnm::MAINWINDOW_STATE_BIN.arg(allowUndockMap ? lnm::MAINWINDOW_STATE_DOCK : lnm::MAINWINDOW_STATE_NODOCK));
 
   ui->dockWidgetMap->setVisible(allowUndockMap);
 

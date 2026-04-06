@@ -61,7 +61,7 @@ MapThemeHandler::MapThemeHandler(QWidget *mainWindowParam)
   : QObject(mainWindowParam), mainWindow(mainWindowParam)
 {
   // Load list of themes to reject from configuration file
-  QSettings settings(atools::settings::Settings::getOverloadedPath(":/littlenavmap/resources/config/mapthemes.cfg"), QSettings::IniFormat);
+  QSettings settings(atools::settings::Settings::getOverloadedPath(lnm::MAPTHEMES_CONFIG), QSettings::IniFormat);
   settings.beginGroup("RejectDownloadUrl");
   const QStringList keys = settings.childKeys();
   for(const QString& key : keys)

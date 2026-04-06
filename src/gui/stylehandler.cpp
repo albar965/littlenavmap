@@ -148,8 +148,8 @@ StyleHandler::StyleHandler(QMainWindow *mainWindowParam)
     {
       if(styleName == STYLE_FUSION)
       {
-        // Store fusion palette settings a in a separate ini file
-        const QString paletteFile = Settings::getConfigFilename(QStringLiteral("_fusionstyle.ini"));
+        // Try to load fusion palette settings from a ini file in settings
+        const QString paletteFile = Settings::getConfigFilename(lnm::FUSIONSTYLE_INI_SUFFIX);
         QPalette stylePalette;
 
         if(atools::checkFile(Q_FUNC_INFO, paletteFile, false /* warn */))
@@ -167,7 +167,7 @@ StyleHandler::StyleHandler(QMainWindow *mainWindowParam)
 
           // Palette missing - load bright default from resources
           // Load fusion palette which is always bright, also with dark system settings
-          PaletteSettings(QStringLiteral(":littlenavmap/resources/config/little_navmap_fusionstyle.ini"), STYLE_COLOR_GROUP).
+          PaletteSettings(lnm::FUSIONSTYLE_INI, STYLE_COLOR_GROUP).
           loadPalette(brightFusionPalette);
           stylePalette = brightFusionPalette;
         }

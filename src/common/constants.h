@@ -148,7 +148,7 @@ const QLatin1String ACTIONS_SHOW_ZOOM_WARNING("Actions/ShowZoomsWarning");
 const QLatin1String ACTIONS_SHOW_INSTALL_XPCONNECT_WARN_XPL("Actions/ShowInstallXpconnectXplWarning");
 const QLatin1String ACTIONS_SHOW_INSTALL_XPCONNECT_INFO("Actions/ShowInstallXpconnectInfo");
 
-/* Other setting key names */
+/* Other setting key names =============================================================== */
 const QLatin1String DATABASE_BASEPATH("Database/BasePath");
 const QLatin1String DATABASE_LOADINGSIMULATOR("Database/LoadingSimulator");
 const QLatin1String DATABASE_PATHS("Database/Paths2");
@@ -439,7 +439,7 @@ const QLatin1String OPTIONS_UPDATE_RATE("OptionsDialog/Widget_comboBoxOptionsSta
 /* These have to be loaded before the options dialog instantiation */
 const QLatin1String OPTIONS_GUI_OVERRIDE_LOCALE("OptionsDialog/Widget_checkBoxOptionsGuiOverrideLocale");
 
-/* File dialog patterns */
+/* File dialog patterns ======================================================================== */
 const QLatin1String FILE_PATTERN_SCENERYCONFIG("(*.cfg)");
 const QLatin1String FILE_PATTERN_LOAD_ANY("(*.lnmpln *.pln *.flp *.fms *.fgfp *.fpl *.fpl.bin *.gfp *.gpx *.lnmperf *.lnmlayout)");
 const QLatin1String FILE_PATTERN_LOAD_FLIGHTPLAN("(*.lnmpln *.pln *.flp *.fms *.fgfp *.fpl *.fpl.bin *.gfp)");
@@ -475,27 +475,49 @@ const QLatin1String PERF_COLLECTED_SUFFIX("_collected.lnmperf");
 
 const QLatin1String ROUTE_LNMPLN_EXPORTDIR("Route/LnmPlnFileDialogDir");
 
+/* Configuration files ================================================================================= */
 /* This is the default configuration file for reading the scenery library.
  * It can be overridden by placing a  file with the same name into
  * the configuration directory. */
-const QLatin1String DATABASE_NAVDATAREADER_CONFIG(":/littlenavmap/resources/config/navdatareader.cfg");
+const QLatin1String NAVDATAREADER_CONFIG(":/littlenavmap/resources/config/navdatareader.cfg");
 
 /* Configuration for online networks */
 const QLatin1String NETWORKS_CONFIG(":/littlenavmap/resources/config/networks.cfg");
 
-/* Configuration for online networks */
+/* Configuration for help and other web URLs */
 const QLatin1String URLS_CONFIG(":/littlenavmap/resources/config/urls.cfg");
 
+/* Configuration for logging files and channels */
+const QLatin1String LOGGING_CONFIG(":/littlenavmap/resources/config/logging.cfg");
+
+/* Window state binary for undockable map window and dockable map window. %1 = "dock" or "nodock" */
+const QLatin1String MAINWINDOW_STATE_BIN(":/littlenavmap/resources/config/mainwindow_state_%1.bin");
+const QLatin1String MAINWINDOW_STATE_DOCK("dock");
+const QLatin1String MAINWINDOW_STATE_NODOCK("nodock");
+
+/* Oceanic track configuration */
 const QLatin1String TRACK_CONFIG(":/littlenavmap/resources/config/track.cfg");
+
+/* Themes reject list */
+const QLatin1String MAPTHEMES_CONFIG(":/littlenavmap/resources/config/mapthemes.cfg");
+
+/* Configuration for web server */
+const QLatin1String WEBSERVER_CONFIG(":/littlenavmap/resources/config/webserver.cfg");
+
+/* Web server default self signed keys */
+const QLatin1String WEBSERVER_SSL_CERT(":/littlenavmap/resources/config/ssl/lnm.cert");
+const QLatin1String WEBSERVER_SSL_KEY(":/littlenavmap/resources/config/ssl/lnm.key");
 
 /* Map display configuration */
 const QLatin1String MAP_LAYER_CONFIG(":/littlenavmap/resources/config/maplayers.xml");
 
+/* Timezones */
 const QLatin1String TIMEZONE_DATABASE("timezone/timezone21");
 
 /* Main window state for first startup. Generated in MainWindow::writeSettings() */
 extern const QSize DEFAULT_MAINWINDOW_SIZE;
 
+/* Commands and startup options ========================================================================= */
 /* Startup options from command line. Used as long option names and keys in NavApp::startupOptions. */
 const QLatin1String STARTUP_FLIGHTPLAN("flight-plan");
 const QLatin1String STARTUP_FLIGHTPLAN_DESCR("flight-plan-descr");
@@ -512,14 +534,19 @@ const QLatin1String STARTUP_COMMAND_ACTIVATE(atools::gui::DataExchange::STARTUP_
 /* Not used as long options */
 const QLatin1String STARTUP_OTHER_ARGUMENTS("others"); /* Positional arguments not found after option - string list */
 
-/* Suffixes for common configuration files.
+/* Style suffixes and resource names ========================================================================= */
+const QLatin1String DARKSTYLE_INI_SUFFIX("_nightstyle.ini");
+const QLatin1String DARKSTYLE_INI(":/littlenavmap/resources/config/little_navmap_nightstyle.ini");
+const QLatin1String FUSIONSTYLE_INI_SUFFIX("_fusionstyle.ini");
+const QLatin1String FUSIONSTYLE_INI(":/littlenavmap/resources/config/little_navmap_fusionstyle.ini");
+
+/* Suffixes for common configuration files. =========================================================================
  * Used for atools::settings::Settings::getConfigFilename() */
 const QLatin1String AIRCRAFT_TRACK_SUFFIX(".track");
 const QLatin1String PROFILE_TRACK_SUFFIX("_profile.track");
 const QLatin1String LOGBOOK_TRACK_SUFFIX(".logbooktrack");
-const QLatin1String DARKSTYLE_INI_SUFFIX("_nightstyle.ini");
 
-/* Crash/issue report paths and file suffixes */
+/* Crash/issue report paths and file suffixes ========================================================================= */
 const QLatin1String STACKTRACE_SUFFIX("_stacktrace.txt");
 const QLatin1String CRASHREPORTS_DIR("crashreports");
 const QLatin1String CRASHREPORT_SUFFIX("_crashreport.zip");
