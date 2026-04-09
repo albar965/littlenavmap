@@ -831,9 +831,15 @@ public:
   }
 
   /* RAM cache size for OSM, OTM and elevation map data */
-  unsigned int getCacheSizeMemoryMb() const
+  int getCacheSizeMemoryMapMb() const
   {
-    return static_cast<unsigned int>(cacheSizeMemory);
+    return cacheSizeMemoryMap;
+  }
+
+  /* GLOBE elevation tiles cache */
+  int getCacheSizeMemoryProfileMb() const
+  {
+    return cacheSizeMemoryProfile;
   }
 
   /* Info panel text size in percent */
@@ -1499,7 +1505,10 @@ private:
   int cacheSizeDisk = 2000;
 
   // ui->spinBoxOptionsCacheMemorySize
-  int cacheSizeMemory = 1000;
+  int cacheSizeMemoryMap = 1000;
+
+  // ui->spinBoxOptionsCacheMemoryProfile
+  int cacheSizeMemoryProfile = 1000;
 
   // ui->spinBoxOptionsGuiInfoText
   int guiInfoTextSize = 100;

@@ -56,6 +56,12 @@ ElevationProvider::~ElevationProvider()
   delete globeReader;
 }
 
+void ElevationProvider::clearCache()
+{
+  if(isGlobeOfflineProvider())
+    globeReader->clearCache();
+}
+
 void ElevationProvider::marbleUpdateAvailable()
 {
   if(!isGlobeOfflineProvider())
@@ -174,6 +180,9 @@ bool ElevationProvider::isGlobeDirectoryValid(const QString& path)
 void ElevationProvider::optionsChanged()
 {
   updateReader(false /* startup */);
+
+  if(isGlobeOfflineProvider())
+    globeReader->setCacheMaxBytes(OptionData::instance().getCacheSizeMemoryProfileMb() * 1000000L);
 }
 
 void ElevationProvider::init(const Marble::ElevationModel *model)
@@ -210,6 +219,7 @@ void ElevationProvider::updateReader(bool startupParam)
       {
         delete globeReader;
         globeReader = new GlobeReader(path);
+        globeReader->setCacheMaxBytes(OptionData::instance().getCacheSizeMemoryProfileMb() * 1000000L);
 
         qDebug() << Q_FUNC_INFO << "Opening GLOBE files";
 

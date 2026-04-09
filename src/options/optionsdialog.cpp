@@ -682,8 +682,9 @@ OptionsDialog::OptionsDialog(QMainWindow *parentWindow)
     ui->radioButtonOptionsStartupShowHome,
     ui->radioButtonOptionsStartupShowLast,
     ui->radioButtonOptionsStartupShowFlightplan,
-    ui->spinBoxOptionsCacheDiskSize,
-    ui->spinBoxOptionsCacheMemorySize,
+    ui->spinBoxOptionsCacheDiskMap,
+    ui->spinBoxOptionsCacheMemoryMap,
+    ui->spinBoxOptionsCacheMemoryProfile,
     ui->radioButtonCacheUseOffineElevation,
     ui->radioButtonCacheUseOnlineElevation,
     ui->lineEditCacheOfflineDataPath,
@@ -907,10 +908,14 @@ OptionsDialog::OptionsDialog(QMainWindow *parentWindow)
 
   // ===========================================================================
   // Cache
-  connect(ui->pushButtonOptionsCacheClearMemory, &QPushButton::clicked, this, &OptionsDialog::clearMemCachedClicked);
+  connect(ui->pushButtonOptionsCacheClearMemory, &QPushButton::clicked, this, &OptionsDialog::clearMemCacheMapClicked);
   connect(ui->pushButtonOptionsCacheShow, &QPushButton::clicked, this, &OptionsDialog::showDiskCacheClicked);
 
   connect(ui->checkBoxOptionsSimUpdatesConstant, &QCheckBox::toggled, this, &OptionsDialog::updateWhileFlyingWidgets);
+
+  // ===========================================================================
+  // Cache
+  connect(ui->pushButtonOptionsCacheClearProfile, &QPushButton::clicked, this, &OptionsDialog::clearMemCacheProfileClicked);
 
   // ===========================================================================
   // Map settings
@@ -2277,8 +2282,9 @@ void OptionsDialog::widgetsToOptionData()
   data.simUpdateBoxCenterLegZoom = ui->spinBoxOptionsSimCenterLegZoom->value();
   data.aircraftTrailMaxPoints = ui->spinBoxSimMaxTrailPoints->value();
 
-  data.cacheSizeDisk = ui->spinBoxOptionsCacheDiskSize->value();
-  data.cacheSizeMemory = ui->spinBoxOptionsCacheMemorySize->value();
+  data.cacheSizeDisk = ui->spinBoxOptionsCacheDiskMap->value();
+  data.cacheSizeMemoryMap = ui->spinBoxOptionsCacheMemoryMap->value();
+  data.cacheSizeMemoryProfile = ui->spinBoxOptionsCacheMemoryProfile->value();
   data.guiInfoTextSize = ui->spinBoxOptionsGuiInfoText->value();
   data.guiPerfReportTextSize = ui->spinBoxOptionsGuiAircraftPerf->value();
   data.guiRouteTableTextSize = ui->spinBoxOptionsGuiRouteText->value();
@@ -2614,8 +2620,9 @@ void OptionsDialog::optionDataToWidgets(const OptionData& data)
   ui->spinBoxOptionsSimUpdateBox->setValue(data.simUpdateBox);
   ui->spinBoxOptionsSimCenterLegZoom->setValue(data.simUpdateBoxCenterLegZoom);
   ui->spinBoxSimMaxTrailPoints->setValue(data.aircraftTrailMaxPoints);
-  ui->spinBoxOptionsCacheDiskSize->setValue(data.cacheSizeDisk);
-  ui->spinBoxOptionsCacheMemorySize->setValue(data.cacheSizeMemory);
+  ui->spinBoxOptionsCacheDiskMap->setValue(data.cacheSizeDisk);
+  ui->spinBoxOptionsCacheMemoryMap->setValue(data.cacheSizeMemoryMap);
+  ui->spinBoxOptionsCacheMemoryProfile->setValue(data.cacheSizeMemoryProfile);
   ui->spinBoxOptionsGuiInfoText->setValue(data.guiInfoTextSize);
   ui->spinBoxOptionsGuiAircraftPerf->setValue(data.guiPerfReportTextSize);
   ui->spinBoxOptionsGuiRouteText->setValue(data.guiRouteTableTextSize);
@@ -3101,11 +3108,19 @@ void OptionsDialog::updateNavOptions()
   ui->labelOptionsMapNavTouchscreenArea->setEnabled(ui->radioButtonOptionsMapNavTouchscreen->isChecked());
 }
 
-void OptionsDialog::clearMemCachedClicked()
+void OptionsDialog::clearMemCacheMapClicked()
 {
   qDebug() << Q_FUNC_INFO;
 
   NavApp::getMapWidgetGui()->clearVolatileTileCache();
+  NavApp::setStatusMessage(tr("Memory cache cleared."));
+}
+
+void OptionsDialog::clearMemCacheProfileClicked()
+{
+  qDebug() << Q_FUNC_INFO;
+
+  NavApp::getElevationProvider()->clearCache();
   NavApp::setStatusMessage(tr("Memory cache cleared."));
 }
 

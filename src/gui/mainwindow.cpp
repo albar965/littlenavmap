@@ -4178,7 +4178,7 @@ void MainWindow::restoreStateMain()
   // optionsDialog->restoreState();
 
   // Initalize early to allow altitude adaption when loading flight plans
-  // Errors are show later in MainWindow::mainWindowShown()
+  // Errors are shown later in MainWindow::mainWindowShown()
   NavApp::initElevationProvider();
 
   qDebug() << Q_FUNC_INFO << "statusBar";

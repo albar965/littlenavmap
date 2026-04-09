@@ -321,7 +321,7 @@ void MapPaintWidget::styleChanged()
 
 void MapPaintWidget::updateCacheSizes()
 {
-  quint64 volCacheKb = OptionData::instance().getCacheSizeMemoryMb() * 1000L;
+  quint64 volCacheKb = OptionData::instance().getCacheSizeMemoryMapMb() * 1000L;
   if(volCacheKb != volatileTileCacheLimit())
   {
     qDebug() << "Volatile cache to" << volCacheKb << "kb";

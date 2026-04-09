@@ -434,8 +434,8 @@ This is the file on top of the list &quot;Recent Window Layouts&quot;.</string>
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>514</width>
-             <height>373</height>
+             <width>557</width>
+             <height>411</height>
             </rect>
            </property>
            <layout class="QVBoxLayout" name="verticalLayout_22">
@@ -627,8 +627,8 @@ opening files, modifying the flight plan and other operations.</string>
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>419</width>
-             <height>896</height>
+             <width>543</width>
+             <height>895</height>
             </rect>
            </property>
            <layout class="QVBoxLayout" name="verticalLayout_23">
@@ -1237,7 +1237,7 @@ This does not affect the map window which can be changed separately on the optio
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>569</width>
+             <width>560</width>
              <height>445</height>
             </rect>
            </property>
@@ -1597,8 +1597,8 @@ aircraft progress, tooltips and information window.</string>
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>512</width>
-             <height>401</height>
+             <width>557</width>
+             <height>411</height>
             </rect>
            </property>
            <layout class="QVBoxLayout" name="verticalLayout_59">
@@ -1826,8 +1826,8 @@ The &quot;Save as&quot; dialog will show up instead of overwriting the current f
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>317</width>
-             <height>492</height>
+             <width>543</width>
+             <height>432</height>
             </rect>
            </property>
            <layout class="QGridLayout" name="gridLayout">
@@ -2549,8 +2549,8 @@ Smaller values will allow a finer selection.</string>
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>510</width>
-             <height>526</height>
+             <width>543</width>
+             <height>530</height>
             </rect>
            </property>
            <layout class="QVBoxLayout" name="verticalLayout_12">
@@ -2878,8 +2878,8 @@ Map views might be shown with a larger zoom distance than expected if this optio
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>508</width>
-             <height>1261</height>
+             <width>543</width>
+             <height>1272</height>
             </rect>
            </property>
            <layout class="QVBoxLayout" name="verticalLayout_20">
@@ -3910,8 +3910,8 @@ Value 0 is opaque and 90 is most transparent.</string>
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>428</width>
-             <height>493</height>
+             <width>543</width>
+             <height>501</height>
             </rect>
            </property>
            <layout class="QVBoxLayout" name="verticalLayout_35">
@@ -4344,8 +4344,8 @@ Also used in the elevation profile.</string>
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>554</width>
-             <height>365</height>
+             <width>557</width>
+             <height>411</height>
             </rect>
            </property>
            <layout class="QVBoxLayout" name="verticalLayout_57">
@@ -4637,8 +4637,8 @@ Note that this does not affect the stored trail points.</string>
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>454</width>
-             <height>748</height>
+             <width>543</width>
+             <height>701</height>
             </rect>
            </property>
            <layout class="QGridLayout" name="gridLayout_35">
@@ -5282,8 +5282,8 @@ if you hover over the elevation profile.</string>
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>183</width>
-             <height>132</height>
+             <width>557</width>
+             <height>411</height>
             </rect>
            </property>
            <layout class="QVBoxLayout" name="verticalLayout_61">
@@ -5355,8 +5355,8 @@ if you hover over the elevation profile.</string>
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>437</width>
-             <height>250</height>
+             <width>557</width>
+             <height>411</height>
             </rect>
            </property>
            <layout class="QVBoxLayout" name="verticalLayout_62">
@@ -5471,8 +5471,8 @@ if you hover over the elevation profile.</string>
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>319</width>
-             <height>731</height>
+             <width>543</width>
+             <height>616</height>
             </rect>
            </property>
            <layout class="QVBoxLayout" name="verticalLayout_63">
@@ -5594,15 +5594,15 @@ if you hover over the elevation profile.</string>
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>362</width>
-             <height>307</height>
+             <width>557</width>
+             <height>411</height>
             </rect>
            </property>
            <layout class="QVBoxLayout" name="verticalLayout_30">
             <item>
              <widget class="QGroupBox" name="groupBox_2">
               <property name="title">
-               <string>Map Display Cache</string>
+               <string>Map Display Cache for Background Map Tiles</string>
               </property>
               <layout class="QGridLayout" name="gridLayout_15">
                <property name="leftMargin">
@@ -5628,7 +5628,7 @@ if you hover over the elevation profile.</string>
                 </widget>
                </item>
                <item row="0" column="1">
-                <widget class="QSpinBox" name="spinBoxOptionsCacheMemorySize">
+                <widget class="QSpinBox" name="spinBoxOptionsCacheMemoryMap">
                  <property name="showGroupSeparator" stdset="0">
                   <bool>true</bool>
                  </property>
@@ -5658,12 +5658,12 @@ if you hover over the elevation profile.</string>
                   <bool>true</bool>
                  </property>
                  <property name="buddy">
-                  <cstring>spinBoxOptionsCacheDiskSize</cstring>
+                  <cstring>spinBoxOptionsCacheDiskMap</cstring>
                  </property>
                 </widget>
                </item>
                <item row="1" column="1">
-                <widget class="QSpinBox" name="spinBoxOptionsCacheDiskSize">
+                <widget class="QSpinBox" name="spinBoxOptionsCacheDiskMap">
                  <property name="showGroupSeparator" stdset="0">
                   <bool>true</bool>
                  </property>
@@ -5693,7 +5693,7 @@ if you hover over the elevation profile.</string>
                   <bool>true</bool>
                  </property>
                  <property name="buddy">
-                  <cstring>spinBoxOptionsCacheMemorySize</cstring>
+                  <cstring>spinBoxOptionsCacheMemoryMap</cstring>
                  </property>
                 </widget>
                </item>
@@ -5756,9 +5756,9 @@ if you hover over the elevation profile.</string>
            <property name="geometry">
             <rect>
              <x>0</x>
-             <y>0</y>
-             <width>328</width>
-             <height>536</height>
+             <y>-116</y>
+             <width>543</width>
+             <height>527</height>
             </rect>
            </property>
            <layout class="QGridLayout" name="gridLayout_39">
@@ -6226,9 +6226,9 @@ airspace filename has to match the callsign of the online center.</string>
            <property name="geometry">
             <rect>
              <x>0</x>
-             <y>0</y>
+             <y>-238</y>
              <width>572</width>
-             <height>631</height>
+             <height>635</height>
             </rect>
            </property>
            <layout class="QVBoxLayout" name="verticalLayout_25">
@@ -6674,8 +6674,8 @@ put the active leg back on top after the given timeout while flying.</string>
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>318</width>
-             <height>242</height>
+             <width>557</width>
+             <height>411</height>
             </rect>
            </property>
            <layout class="QVBoxLayout" name="verticalLayout_26">
@@ -6834,8 +6834,8 @@ Note that this value does not affect flight plan calculation or saving of flight
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>272</width>
-             <height>761</height>
+             <width>543</width>
+             <height>629</height>
             </rect>
            </property>
            <layout class="QVBoxLayout" name="verticalLayout_27">
@@ -7075,8 +7075,8 @@ Note that this value does not affect flight plan calculation or saving of flight
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>360</width>
-             <height>936</height>
+             <width>543</width>
+             <height>893</height>
             </rect>
            </property>
            <layout class="QVBoxLayout" name="verticalLayout_28">
@@ -7673,8 +7673,8 @@ Entering a wrong value will cause errors when downloading weather reports.</stri
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>389</width>
-             <height>375</height>
+             <width>557</width>
+             <height>411</height>
             </rect>
            </property>
            <layout class="QVBoxLayout" name="verticalLayout_29">
@@ -7975,8 +7975,8 @@ Entering a wrong value will cause errors when downloading weather reports.</stri
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>436</width>
-             <height>319</height>
+             <width>557</width>
+             <height>411</height>
             </rect>
            </property>
            <layout class="QVBoxLayout" name="verticalLayout_60">
@@ -8085,6 +8085,72 @@ Download the file &lt;b&gt;&lt;i&gt;All Tiles in One .zip (all10g.zip)&lt;/i&gt;
              </widget>
             </item>
             <item>
+             <widget class="QGroupBox" name="groupBox_41">
+              <property name="title">
+               <string>Cache for offline GLOBE elevation data</string>
+              </property>
+              <layout class="QGridLayout" name="gridLayout_26">
+               <property name="leftMargin">
+                <number>2</number>
+               </property>
+               <property name="topMargin">
+                <number>2</number>
+               </property>
+               <property name="rightMargin">
+                <number>2</number>
+               </property>
+               <property name="bottomMargin">
+                <number>2</number>
+               </property>
+               <property name="spacing">
+                <number>2</number>
+               </property>
+               <item row="0" column="1">
+                <widget class="QSpinBox" name="spinBoxOptionsCacheMemoryProfile">
+                 <property name="showGroupSeparator" stdset="0">
+                  <bool>true</bool>
+                 </property>
+                 <property name="suffix">
+                  <string> MB</string>
+                 </property>
+                 <property name="minimum">
+                  <number>500</number>
+                 </property>
+                 <property name="maximum">
+                  <number>2000</number>
+                 </property>
+                 <property name="singleStep">
+                  <number>100</number>
+                 </property>
+                 <property name="value">
+                  <number>1000</number>
+                 </property>
+                </widget>
+               </item>
+               <item row="0" column="2">
+                <widget class="QPushButton" name="pushButtonOptionsCacheClearProfile">
+                 <property name="text">
+                  <string>&amp;Clear Memory Cache</string>
+                 </property>
+                </widget>
+               </item>
+               <item row="0" column="0" alignment="Qt::AlignVCenter">
+                <widget class="QLabel" name="labelOptionsCacheMemoryProfile">
+                 <property name="text">
+                  <string>&amp;Maximum size of elevation memory cache:</string>
+                 </property>
+                 <property name="wordWrap">
+                  <bool>true</bool>
+                 </property>
+                 <property name="buddy">
+                  <cstring>spinBoxOptionsCacheMemoryProfile</cstring>
+                 </property>
+                </widget>
+               </item>
+              </layout>
+             </widget>
+            </item>
+            <item>
              <spacer name="verticalSpacer_27">
               <property name="orientation">
                <enum>Qt::Vertical</enum>
@@ -8115,8 +8181,8 @@ Download the file &lt;b&gt;&lt;i&gt;All Tiles in One .zip (all10g.zip)&lt;/i&gt;
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>543</width>
-             <height>402</height>
+             <width>557</width>
+             <height>411</height>
             </rect>
            </property>
            <layout class="QGridLayout" name="gridLayout_37">
@@ -8402,8 +8468,8 @@ Uncheck if you use such an add-on or see issues like a corruped map display.</st
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>395</width>
-             <height>524</height>
+             <width>543</width>
+             <height>507</height>
             </rect>
            </property>
            <layout class="QGridLayout" name="gridLayout_38">
@@ -9022,9 +9088,9 @@ You have to reload the scenery library so that the changes take effect.</string>
   <tabstop>spinBoxOptionsDisplayScaleAllWeb</tabstop>
   <tabstop>checkBoxOptionsWebScale</tabstop>
   <tabstop>scrollArea_15</tabstop>
-  <tabstop>spinBoxOptionsCacheMemorySize</tabstop>
+  <tabstop>spinBoxOptionsCacheMemoryMap</tabstop>
   <tabstop>pushButtonOptionsCacheClearMemory</tabstop>
-  <tabstop>spinBoxOptionsCacheDiskSize</tabstop>
+  <tabstop>spinBoxOptionsCacheDiskMap</tabstop>
   <tabstop>pushButtonOptionsCacheShow</tabstop>
   <tabstop>lineEditCacheMapThemeDir</tabstop>
   <tabstop>pushButtonCacheMapThemeDir</tabstop>

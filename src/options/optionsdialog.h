@@ -139,7 +139,8 @@ private:
   void selectXplane11PathClicked();
   void selectXplane12PathClicked();
   void weatherXplane11WindPathSelectClicked();
-  void clearMemCachedClicked();
+  void clearMemCacheMapClicked();
+  void clearMemCacheProfileClicked();
   void updateWeatherButtonState();
   void updateActiveSkyPathStatus();
   void updateXplane11PathStatus();

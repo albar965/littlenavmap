@@ -90,6 +90,9 @@ public:
     return isGlobeOfflineProvider() || marbleModel != nullptr;
   }
 
+  /* Clear GLOBE memory cache */
+  void clearCache();
+
 signals:
   /*  Elevation tiles loaded. You will get more accurate results when querying height
    * for at least one that was queried before. Only sent for online data. */
