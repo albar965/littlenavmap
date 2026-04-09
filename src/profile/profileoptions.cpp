@@ -19,6 +19,7 @@
 
 #include "common/constants.h"
 #include "common/textpointer.h"
+#include "common/unit.h"
 #include "gui/treedialog.h"
 #include "settings/settings.h"
 
@@ -43,51 +44,76 @@ bool ProfileOptions::showOptions()
   treeDialog.setHeader({tr("Option"), tr("Description")});
 
   // Profile =====================================================
-  /* *INDENT-OFF* */
-  QTreeWidgetItem* rootItem = treeDialog.getRootItem();
-  treeDialog.addItem2(rootItem, optsp::PROFILE_TOOLTIP, tr("Show Tooltip"), tr("Display a tooltip with elevation and more information when hovering the mouse over the profile."));
-  treeDialog.addItem2(rootItem, optsp::PROFILE_HIGHLIGHT, tr("Highlight Position on Map"), tr("Highlight the flight plan position on the map while hovering the mouse over the profile."));
+  QTreeWidgetItem *rootItem = treeDialog.getRootItem();
+  treeDialog.addItem2(rootItem, optsp::PROFILE_TOOLTIP, tr("Show Tooltip"),
+                      tr("Display a tooltip with elevation and more information when hovering the mouse over the profile."));
+  treeDialog.addItem2(rootItem, optsp::PROFILE_HIGHLIGHT, tr("Highlight Position on Map"),
+                      tr("Highlight the flight plan position on the map while hovering the mouse over the profile."));
 
   QTreeWidgetItem *headerItem = treeDialog.addTopItem1(tr("Header Line"));
-  treeDialog.addItem2(headerItem, optsp::PROFILE_HEADER_DIST_TIME_TO_DEST, tr("Destination"), tr("Distance and time to destination."));
-  treeDialog.addItem2(headerItem, optsp::PROFILE_HEADER_DIST_TIME_TO_TOD, tr("Top of Descent"), tr("Distance and time to top of descent.\n"
-                                                                                                   "Not shown if passed."));
-  treeDialog.addItem2(headerItem, optsp::PROFILE_HEADER_DESCENT_PATH_DEVIATION, tr("Deviation"), tr("Vertical altitude deviation from descent path.\n"
-                                                                                                    "%1 means above (increase sink rate) and %2 means below (decrease sink rate).").
-                                                                                                    arg(TextPointer::getPointerDown()).arg(TextPointer::getPointerUp()));
-  treeDialog.addItem2(headerItem, optsp::PROFILE_HEADER_DESCENT_PATH_ANGLE, tr("Angle and Speed"), tr("Vertical flight path angle needed to keep the vertical path angle.\n"
-                                                                                                      "Changes to \"Required angle\" if mandatory in approach procedures."));
-
+  treeDialog.addItem2(headerItem, optsp::PROFILE_HEADER_DIST_TIME_TO_DEST, tr("Destination"),
+                      tr("Distance and time to destination."));
+  treeDialog.addItem2(headerItem, optsp::PROFILE_HEADER_DIST_TIME_TO_TOD, tr("Top of Descent"),
+                      tr("Distance and time to top of descent.\n"
+                         "Not shown if passed."));
+  treeDialog.addItem2(headerItem, optsp::PROFILE_HEADER_DESCENT_PATH_DEVIATION, tr("Deviation"),
+                      tr("Vertical altitude deviation from descent path.\n"
+                         "%1 means above (increase sink rate) and %2 means below (decrease sink rate).").
+                      arg(TextPointer::getPointerDown()).arg(TextPointer::getPointerUp()));
+  treeDialog.addItem2(headerItem, optsp::PROFILE_HEADER_DESCENT_PATH_ANGLE, tr("Angle and Speed"),
+                      tr("Vertical flight path angle needed to keep the vertical path angle.\n"
+                         "Changes to \"Required angle\" if mandatory in approach procedures."));
 
   QTreeWidgetItem *aircraftItem = treeDialog.addTopItem1(tr("User Aircraft Labels"));
-  treeDialog.addItem2(aircraftItem, optsp::PROFILE_AIRCRAFT_ACTUAL_ALTITUDE, tr("Actual Altitude"), tr("Actual user aircraft altitude at symbol prefixed with \"ALT\"."));
-  treeDialog.addItem2(aircraftItem, optsp::PROFILE_AIRCRAFT_INDICATED_ALTITUDE, tr("Indicated Altitude"), tr("Indicated user aircraft altitude at symbol prefixed with \"IND\"."));
-  treeDialog.addItem2(aircraftItem, optsp::PROFILE_AIRCRAFT_VERT_SPEED, tr("Vertical Speed"), tr("Show vertical speed of at user aircraft symbol."));
+  treeDialog.addItem2(aircraftItem, optsp::PROFILE_AIRCRAFT_ACTUAL_ALTITUDE, tr("Actual Altitude"),
+                      tr("Actual user aircraft altitude at symbol prefixed with \"ALT\"."));
+  treeDialog.addItem2(aircraftItem, optsp::PROFILE_AIRCRAFT_INDICATED_ALTITUDE, tr("Indicated Altitude"),
+                      tr("Indicated user aircraft altitude at symbol prefixed with \"IND\"."));
+  treeDialog.addItem2(aircraftItem, optsp::PROFILE_AIRCRAFT_VERT_SPEED, tr("Vertical Speed"),
+                      tr("Show vertical speed of at user aircraft symbol."));
   treeDialog.addItem2(aircraftItem, optsp::PROFILE_AIRCRAFT_VERT_ANGLE_NEXT, tr("Vertical Speed to Next"),
                       tr("Vertical speed needed to arrive at the calculated altitude at the next waypoint.\n"
                          "Shown on descent only at user aircraft symbol suffixed with \"N\"."));
 
   QTreeWidgetItem *labelItem = treeDialog.addTopItem1(tr("Labels"));
-  treeDialog.addItem2(labelItem, optsp::PROFILE_LABELS_ALT, tr("Show Altitude"), tr("Show or hide the altitude labels at the left side of the elevation profile."));
-  treeDialog.addItem2(labelItem, optsp::PROFILE_LABELS_DISTANCE, tr("Distance"), tr("Distance of flight plan leg in the elevation profile header."));
-  treeDialog.addItem2(labelItem, optsp::PROFILE_LABELS_MAG_COURSE, tr("Magnetic Course"), tr( "Show magnetic great circle start course for flight plan leg in the header."));
-  treeDialog.addItem2(labelItem, optsp::PROFILE_LABELS_TRUE_COURSE, tr("True Course"), tr( "Show true great circle start course for flight plan leg in the header."));
-  treeDialog.addItem2(labelItem, optsp::PROFILE_LABELS_RELATED, tr("Related Navaid"), tr( "Related navaid for a procedure fix including bearing and distance in the header."));
+  treeDialog.addItem2(labelItem, optsp::PROFILE_LABELS_ALT, tr("Show Altitude"),
+                      tr("Show or hide the altitude labels at the left side of the elevation profile."));
+  treeDialog.addItem2(labelItem, optsp::PROFILE_LABELS_DISTANCE, tr("Distance"),
+                      tr("Distance of flight plan leg in the elevation profile header."));
+  treeDialog.addItem2(labelItem, optsp::PROFILE_LABELS_MAG_COURSE, tr("Magnetic Course"),
+                      tr("Show magnetic great circle start course for flight plan leg in the header."));
+  treeDialog.addItem2(labelItem, optsp::PROFILE_LABELS_TRUE_COURSE, tr("True Course"),
+                      tr("Show true great circle start course for flight plan leg in the header."));
+  treeDialog.addItem2(labelItem, optsp::PROFILE_LABELS_RELATED, tr("Related Navaid"),
+                      tr("Related navaid for a procedure fix including bearing and distance in the header."));
 
   QTreeWidgetItem *profileItem = treeDialog.addTopItem1(tr("Elevation Profile"));
-  treeDialog.addItem2(profileItem, optsp::PROFILE_GROUND, tr("Ground"), tr("Green ground display."));
-  treeDialog.addItem2(profileItem, optsp::PROFILE_SAFE_ALTITUDE, tr("Safe Altitude Line"), tr("Red safe altitude line for whole flight plan."));
-  treeDialog.addItem2(profileItem, optsp::PROFILE_LEG_SAFE_ALTITUDE, tr("Leg Safe Altitude Lines"), tr("Orange safe altitude lines for each flight plan leg."));
+  treeDialog.addItem2(profileItem, optsp::PROFILE_GROUND, tr("Ground"),
+                      tr("Green ground display."));
+  treeDialog.addItem2(profileItem, optsp::PROFILE_GROUND_AROUND, tr("Ground maximum"),
+                      tr("Light green ground display showing the maximum elevation within a radius of %1.\n"
+                         "Only shown when using GLOBE offline elevation data.").
+                      arg(Unit::distNm(optsp::ELEVATION_SAMPLE_RADIUS_OUTER_NM)));
+  treeDialog.addItem2(profileItem, optsp::PROFILE_SAFE_ALTITUDE, tr("Safe Altitude Line"),
+                      tr("Red safe altitude line for whole flight plan."));
+  treeDialog.addItem2(profileItem, optsp::PROFILE_LEG_SAFE_ALTITUDE, tr("Leg Safe Altitude Lines"),
+                      tr("Orange safe altitude lines for each flight plan leg."));
 
   QTreeWidgetItem *lineItem = treeDialog.addTopItem1(tr("Flight Plan Line"));
-  treeDialog.addItem2(lineItem, optsp::PROFILE_FP_DIST, tr("Distance"), tr("Distance of flight plan leg."));
-  treeDialog.addItem2(lineItem, optsp::PROFILE_FP_MAG_COURSE, tr("Magnetic Course"), tr( "Show magnetic great circle start course."));
-  treeDialog.addItem2(lineItem, optsp::PROFILE_FP_TRUE_COURSE, tr("True Course"), tr("Show true great circle start course."));
-  treeDialog.addItem2(lineItem, optsp::PROFILE_FP_VERTICAL_ANGLE, tr("Descent Flight Path Angle"), tr("Vertical descent path angle only in the descent phase."));
-  treeDialog.addItem2(lineItem, optsp::PROFILE_FP_ALT_RESTRICTION, tr("Altitude Restriction"), tr( "Display procedure altitude restrictions at the navaid label."));
-  treeDialog.addItem2(lineItem, optsp::PROFILE_FP_ALT_RESTRICTION_BLOCK, tr("Altitude Restriction Indicator"), tr("Altitude restrictions shown as blocks in diagram."));
-  treeDialog.addItem2(lineItem, optsp::PROFILE_FP_SPEED_RESTRICTION, tr("Speed Restriction"), tr("Show procedure speed restrictions at the navaid label."));
-  /* *INDENT-ON* */
+  treeDialog.addItem2(lineItem, optsp::PROFILE_FP_DIST, tr("Distance"),
+                      tr("Distance of flight plan leg."));
+  treeDialog.addItem2(lineItem, optsp::PROFILE_FP_MAG_COURSE, tr("Magnetic Course"),
+                      tr("Show magnetic great circle start course."));
+  treeDialog.addItem2(lineItem, optsp::PROFILE_FP_TRUE_COURSE, tr("True Course"),
+                      tr("Show true great circle start course."));
+  treeDialog.addItem2(lineItem, optsp::PROFILE_FP_VERTICAL_ANGLE, tr("Descent Flight Path Angle"),
+                      tr("Vertical descent path angle only in the descent phase."));
+  treeDialog.addItem2(lineItem, optsp::PROFILE_FP_ALT_RESTRICTION, tr("Altitude Restriction"),
+                      tr("Display procedure altitude restrictions at the navaid label."));
+  treeDialog.addItem2(lineItem, optsp::PROFILE_FP_ALT_RESTRICTION_BLOCK, tr("Altitude Restriction Indicator"),
+                      tr("Altitude restrictions shown as blocks in diagram."));
+  treeDialog.addItem2(lineItem, optsp::PROFILE_FP_SPEED_RESTRICTION, tr("Speed Restriction"),
+                      tr("Show procedure speed restrictions at the navaid label."));
 
   treeDialog.restoreState(false /* restoreCheckState */, true /* restoreExpandState */);
 

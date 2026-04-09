@@ -36,14 +36,9 @@ ProfileLabelWidgetVert::ProfileLabelWidgetVert(ProfileWidget *parent, ProfileScr
   setFocusPolicy(Qt::StrongFocus);
 }
 
-ProfileLabelWidgetVert::~ProfileLabelWidgetVert()
-{
-
-}
-
 void ProfileLabelWidgetVert::routeChanged()
 {
-  setVisible(profileWidget->getProfileOptions()->getDisplayOptions() & optsp::PROFILE_LABELS_ALT);
+  setVisible(profileWidget->getProfileOptions()->getDisplayOptions().testFlag(optsp::PROFILE_LABELS_ALT));
   update();
 }
 

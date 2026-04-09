@@ -111,7 +111,8 @@ extern QColor minimumAltitudeNumberColorDark;
 
 /* Elevation profile colors and pens */
 extern QColor profileSkyColor;
-extern QColor profileLandColor;
+extern QColor profileLandColorInner;
+extern QColor profileLandColorOuter;
 extern QColor profileLabelColor;
 extern QColor profileVasiAboveColor;
 extern QColor profileVasiBelowColor;

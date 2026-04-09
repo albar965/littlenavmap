@@ -151,7 +151,7 @@ static const QList<std::pair<float, float> > ALT_TO_MIN_ZOOM_FT_NM =
 const int PLAN_SIM_UPDATE_BOX = 85;
 
 // Get elevation when mouse is still
-const int ALTITUDE_UPDATE_TIMEOUT_MS = 200;
+const int ALTITUDE_UPDATE_TIMEOUT_MS = 100;
 
 // Delay recognition to avoid detection of bumps
 const int LANDING_TIMEOUT_MS = 4000;

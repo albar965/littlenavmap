@@ -63,9 +63,10 @@ public:
   float getElevationFt(const atools::geo::Pos& pos, float sampleRadiusMeter = 0.f);
 
   /* Get elevations along a great circle line. Will create a point every 500 meters and delete
-   * consecutive ones with same elevation. Elevation given in meter
+   * consecutive ones with same elevation. Elevation returned in meter
    * "sampleRadiusMeter" defines a rectangle where five points are sampled for each pos and the maximum is used.*/
-  void getElevations(atools::geo::LineString& elevations, const atools::geo::Line& line, float sampleRadiusMeter = 0.f);
+  void getElevationsMeter(atools::geo::LineString& elevations, const atools::geo::Pos& pos1, const atools::geo::Pos& pos2,
+                          float sampleRadiusMeter = 0.f, bool precision = false);
 
   /* true if the data is provided from the fast offline source */
   bool isGlobeOfflineProvider() const;

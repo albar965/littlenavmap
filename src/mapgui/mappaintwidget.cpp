@@ -813,7 +813,7 @@ void MapPaintWidget::showPos(const atools::geo::Pos& pos, float distanceKm, bool
 
 void MapPaintWidget::showPosInternal(const atools::geo::Pos& pos, float distanceKm, bool doubleClick, bool allowAdjust)
 {
-#if DEBUG_INFORMATION
+#if DEBUG_INFORMATION_POS
   qDebug() << Q_FUNC_INFO << pos << distanceKm << doubleClick;
 #endif
 

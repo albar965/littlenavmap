@@ -68,7 +68,7 @@ float ElevationProvider::getElevationMeter(const atools::geo::Pos& pos, float sa
   {
     QMutexLocker locker(&mutex);
     float elevation = globeReader->getElevation(pos, sampleRadiusMeter);
-    if(!(elevation > atools::fs::common::OCEAN && elevation < atools::fs::common::INVALID))
+    if(!(elevation > atools::fs::common::ELEVATION_OCEAN && elevation < atools::fs::common::ELEVATION_INVALID))
       return 0.f;
     else
       return elevation;
@@ -82,20 +82,21 @@ float ElevationProvider::getElevationFt(const atools::geo::Pos& pos, float sampl
   return atools::geo::meterToFeet(getElevationMeter(pos, sampleRadiusMeter));
 }
 
-void ElevationProvider::getElevations(atools::geo::LineString& elevations, const atools::geo::Line& line, float sampleRadiusMeter)
+void ElevationProvider::getElevationsMeter(atools::geo::LineString& elevations, const atools::geo::Pos& pos1, const atools::geo::Pos& pos2,
+                                           float sampleRadiusMeter, bool precision)
 {
-  if(!line.isValid())
+  if(!pos1.isValid() || !pos2.isValid())
     return;
 
   QMutexLocker locker(&mutex);
 
   if(isGlobeOfflineProvider())
   {
-    globeReader->getElevations(elevations, LineString(line.getPos1(), line.getPos2()), sampleRadiusMeter);
+    globeReader->getElevations(elevations, LineString(pos1, pos2), sampleRadiusMeter, precision);
     for(Pos& pos : elevations)
     {
       float alt = pos.getAltitude();
-      if(!(alt > atools::fs::common::OCEAN && alt < atools::fs::common::INVALID))
+      if(!(alt > atools::fs::common::ELEVATION_OCEAN && alt < atools::fs::common::ELEVATION_INVALID))
         // Reset all invalid and ocean indicators to 0
         pos.setAltitude(0.f);
     }
@@ -105,8 +106,7 @@ void ElevationProvider::getElevations(atools::geo::LineString& elevations, const
     // Get altitude points for the line segment
     // The might not be complete and will be more complete on further iterations when we get a signal
     // from the elevation model
-    const QList<GeoDataCoordinates> temp = marbleModel->heightProfile(line.getPos1().getLonX(), line.getPos1().getLatY(),
-                                                                      line.getPos2().getLonX(), line.getPos2().getLatY());
+    const QList<GeoDataCoordinates> temp = marbleModel->heightProfile(pos1.getLonX(), pos1.getLatY(), pos2.getLonX(), pos2.getLatY());
 
     // Limit long legs to a maximum of 2000 points - minimum of 1000 points
     int divisor = 1;
@@ -144,14 +144,15 @@ void ElevationProvider::getElevations(atools::geo::LineString& elevations, const
     if(elevations.isEmpty())
     {
       // Workaround for invalid geometry data - add void
-      elevations.append(line.getPos1());
-      elevations.append(line.getPos2());
+      elevations.append(pos1);
+      elevations.append(pos2);
     }
   }
 
   for(Pos& pos : elevations)
     // Limit ground altitude
     pos.setAltitude(std::min(pos.getAltitude(), ALTITUDE_LIMIT_METER));
+
 }
 
 bool ElevationProvider::isGlobeOfflineProvider() const

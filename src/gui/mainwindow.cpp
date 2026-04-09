@@ -3376,7 +3376,6 @@ void MainWindow::mainWindowShown()
 
   // Postpone loading of KML etc. until now when everything is set up
   mapWidget->mainWindowShown();
-  profileWidget->mainWindowShown();
 
   NavApp::logDatabaseMeta();
 
@@ -3415,6 +3414,9 @@ void MainWindow::loadLayoutDelayed(const QString& filename)
 void MainWindow::mainWindowShownDelayed()
 {
   qDebug() << Q_FUNC_INFO << "enter";
+
+  // Initialize late to avoid multiple updates
+  profileWidget->mainWindowShown();
 
   // Apply layout again to avoid issues with formatting
   if(!dockHandler->isDelayedFullscreen())
@@ -4116,8 +4118,8 @@ void MainWindow::resetWindowLayout()
   mapWidget->removeFullScreenExitButton();
 
   bool allowUndockMap = OptionData::instance().getFlags2().testFlag(opts2::MAP_ALLOW_UNDOCK);
-  dockHandler->resetWindowState(lnm::DEFAULT_MAINWINDOW_SIZE,
-                                lnm::MAINWINDOW_STATE_BIN.arg(allowUndockMap ? lnm::MAINWINDOW_STATE_DOCK : lnm::MAINWINDOW_STATE_NODOCK));
+  dockHandler->resetWindowState(lnm::DEFAULT_MAINWINDOW_SIZE, lnm::MAINWINDOW_STATE_BIN.
+                                arg(allowUndockMap ? lnm::MAINWINDOW_STATE_DOCK : lnm::MAINWINDOW_STATE_NODOCK));
 
   ui->dockWidgetMap->setVisible(allowUndockMap);
 

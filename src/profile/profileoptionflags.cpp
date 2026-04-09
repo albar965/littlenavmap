@@ -25,7 +25,8 @@ const QList<optsp::DisplayOptionProfile> ALL_OPTIONS({optsp::PROFILE_LABELS_DIST
                                                       optsp::PROFILE_FP_DIST, optsp::PROFILE_FP_MAG_COURSE,
                                                       optsp::PROFILE_FP_TRUE_COURSE, optsp::PROFILE_FP_VERTICAL_ANGLE,
                                                       optsp::PROFILE_FP_ALT_RESTRICTION, optsp::PROFILE_FP_SPEED_RESTRICTION,
-                                                      optsp::PROFILE_FP_ALT_RESTRICTION_BLOCK, optsp::PROFILE_GROUND,
+                                                      optsp::PROFILE_FP_ALT_RESTRICTION_BLOCK,
+                                                      optsp::PROFILE_GROUND, optsp::PROFILE_GROUND_AROUND,
                                                       optsp::PROFILE_SAFE_ALTITUDE, optsp::PROFILE_LEG_SAFE_ALTITUDE,
                                                       optsp::PROFILE_LABELS_ALT, optsp::PROFILE_TOOLTIP,
                                                       optsp::PROFILE_HIGHLIGHT, optsp::PROFILE_AIRCRAFT_ACTUAL_ALTITUDE,
@@ -41,7 +42,8 @@ const QList<optsp::DisplayOptionProfile> ALL_OPTIONS({optsp::PROFILE_LABELS_DIST
 const optsp::DisplayOptionsProfile DEFAULT_OPTIONS = optsp::PROFILE_LABELS_DISTANCE | optsp::PROFILE_LABELS_RELATED |
                                                      optsp::PROFILE_FP_MAG_COURSE | optsp::PROFILE_FP_VERTICAL_ANGLE |
                                                      optsp::PROFILE_FP_ALT_RESTRICTION | optsp::PROFILE_FP_SPEED_RESTRICTION |
-                                                     optsp::PROFILE_FP_ALT_RESTRICTION_BLOCK | optsp::PROFILE_GROUND |
+                                                     optsp::PROFILE_FP_ALT_RESTRICTION_BLOCK |
+                                                     optsp::PROFILE_GROUND | optsp::PROFILE_GROUND_AROUND |
                                                      optsp::PROFILE_SAFE_ALTITUDE | optsp::PROFILE_LEG_SAFE_ALTITUDE |
                                                      optsp::PROFILE_LABELS_ALT | optsp::PROFILE_TOOLTIP | optsp::PROFILE_HIGHLIGHT |
                                                      optsp::PROFILE_AIRCRAFT_ACTUAL_ALTITUDE | optsp::PROFILE_AIRCRAFT_VERT_SPEED |

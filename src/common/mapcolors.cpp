@@ -110,7 +110,8 @@ QColor compassRoseTextColor(Qt::black);
 
 /* Elevation profile colors and pens */
 QColor profileSkyColor(QColor(204, 204, 255));
-QColor profileLandColor(QColor(0, 128, 0));
+QColor profileLandColorInner(QColor(0, 128, 0));
+QColor profileLandColorOuter(QColor(80, 160, 80));
 QColor profileLabelColor(QColor(0, 0, 0));
 
 QColor profileVasiAboveColor(QColor(QStringLiteral("#70ffffff")));
@@ -120,7 +121,7 @@ QColor profileAltRestrictionFill(QColor(255, 255, 90));
 QColor profileAltRestrictionOutline(Qt::black);
 
 QPen profileVasiCenterPen(Qt::darkGray, 1.5, Qt::DashLine);
-QPen profileLandOutlinePen(Qt::black, 1., Qt::SolidLine);
+QPen profileLandOutlinePen(Qt::darkGreen, 1., Qt::SolidLine);
 QPen profileWaypointLinePen(Qt::gray, 1., Qt::SolidLine, Qt::FlatCap);
 QPen profileElevationScalePen(Qt::darkGray, 1., Qt::SolidLine, Qt::FlatCap);
 QPen profileSafeAltLinePen(Qt::red, 4., Qt::SolidLine, Qt::FlatCap);
@@ -794,7 +795,8 @@ void loadColors()
   loadColorArgb(colorSettings, QStringLiteral("AltitudeGrid/MinimumAltitudeNumberColorDark"), minimumAltitudeNumberColorDark);
 
   loadColor(colorSettings, QStringLiteral("Profile/SkyColor"), profileSkyColor);
-  loadColor(colorSettings, QStringLiteral("Profile/LandColor"), profileLandColor);
+  loadColor(colorSettings, QStringLiteral("Profile/LandColorInner"), profileLandColorInner);
+  loadColor(colorSettings, QStringLiteral("Profile/LandColorOuter"), profileLandColorOuter);
   loadColor(colorSettings, QStringLiteral("Profile/LabelColor"), profileLabelColor);
   loadColorArgb(colorSettings, QStringLiteral("Profile/VasiAboveColor"), profileVasiAboveColor);
   loadColorArgb(colorSettings, QStringLiteral("Profile/VasiBelowColor"), profileVasiBelowColor);

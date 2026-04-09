@@ -40,6 +40,7 @@ enum DisplayOptionProfile : quint32
 
   /* Elevation Profile */
   PROFILE_GROUND = 1 << 8,
+  PROFILE_GROUND_AROUND = 1 << 26,
   PROFILE_SAFE_ALTITUDE = 1 << 9,
   PROFILE_LEG_SAFE_ALTITUDE = 1 << 10,
 
@@ -64,7 +65,8 @@ enum DisplayOptionProfile : quint32
   PROFILE_HEADER_DESCENT_PATH_DEVIATION = 1 << 23, /* Descent Path: Deviation: 1,153 ft, above */
   PROFILE_HEADER_DESCENT_PATH_ANGLE = 1 << 24, /* ... Angle and Speed: -3.4°, -2,102 fpm */
 
-  // Next is 1 << 26
+  // Next is 1 << 27
+  // Also change ALL_OPTIONS and DEFAULT_OPTIONS in profileoptionflags.cpp
 
   /* All drawn in the top label */
   PROFILE_TOP_ANY = PROFILE_LABELS_DISTANCE | PROFILE_LABELS_MAG_COURSE | PROFILE_LABELS_TRUE_COURSE | PROFILE_LABELS_RELATED,
@@ -83,6 +85,12 @@ ATOOLS_DECLARE_OPERATORS_FOR_FLAGS(optsp::DisplayOptionsProfile)
 /* All available options for loops */
 extern const QList<optsp::DisplayOptionProfile> ALL_OPTIONS;
 extern const optsp::DisplayOptionsProfile DEFAULT_OPTIONS;
+
+/* Defines a rectangle where five points are sampled and the maximum altitude is used.
+ * Results in a sample rectangle with ELEVATION_SAMPLE_RADIUS_NM * ELEVATION_SAMPLE_RADIUS_NM size */
+const float ELEVATION_SAMPLE_RADIUS_INNER_NM = 0.f;
+const float ELEVATION_SAMPLE_RADIUS_OUTER_NM = 5.f;
+
 }
 
 Q_DECLARE_TYPEINFO(optsp::DisplayOptionsProfile, Q_PRIMITIVE_TYPE);
