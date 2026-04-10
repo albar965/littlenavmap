@@ -2307,7 +2307,9 @@ void MainWindow::trailLoadGpx()
 {
   QString file = dialog->openFileDialog(tr("Open and Replace GPX Trail"), tr("GPX Files %1;;All Files (*)").arg(lnm::FILE_PATTERN_GPX),
                                         "Route/Gpx", atools::documentsDir());
-  trailLoadGpxFile(file, false /* forceLoading */);
+
+  if(!file.isEmpty())
+    trailLoadGpxFile(file, false /* forceLoading */);
 }
 
 void MainWindow::trailLoadGpxFile(const QString& file, bool forceLoading)
@@ -2461,7 +2463,9 @@ void MainWindow::loadMarkers()
   QString file = dialog->openFileDialog(tr("Open and Replace User Features"),
                                         tr("User Feature Files %1;;All Files (*)").arg(lnm::FILE_PATTERN_LNM_USERFEATURES),
                                         "Map/Markers", atools::documentsDir());
-  loadMarkersFile(file, false /* forceLoading */);
+
+  if(!file.isEmpty())
+    loadMarkersFile(file, false /* forceLoading */);
 }
 
 void MainWindow::loadMarkersFile(const QString& file, bool forceLoading)
@@ -2580,8 +2584,8 @@ void MainWindow::routeAppend()
       showFlightplan();
       statusBar->setStatusMessage(tr("Flight plan appended."));
     }
+    saveFileHistoryStates();
   }
-  saveFileHistoryStates();
 }
 
 void MainWindow::routeInsert(int insertBefore)
@@ -2599,8 +2603,8 @@ void MainWindow::routeInsert(int insertBefore)
         routeCenter();
       statusBar->setStatusMessage(tr("Flight plan inserted."));
     }
+    saveFileHistoryStates();
   }
-  saveFileHistoryStates();
 }
 
 void MainWindow::routeOpenRecent(const QString& routeFile)
@@ -2623,8 +2627,8 @@ void MainWindow::routeOpenRecent(const QString& routeFile)
       atools::gui::Dialog::warning(this, tr("File \"%1\" does not exist").arg(routeFile));
       routeFileHistory->removeFile(routeFile);
     }
+    saveFileHistoryStates();
   }
-  saveFileHistoryStates();
 }
 
 void MainWindow::routeSaveLnmExported(const QString& filename)
@@ -2743,26 +2747,27 @@ void MainWindow::kmlClear()
 
 void MainWindow::kmlOpen()
 {
-  QString kmlFile = dialog->openFileDialog(
-    tr("Google Earth KML"),
-    tr("Google Earth KML %1;;All Files (*)").arg(lnm::FILE_PATTERN_KML),
-    "Kml/", QStringLiteral());
+  QString kmlFile = dialog->openFileDialog(tr("Google Earth KML"), tr("Google Earth KML %1;;All Files (*)").arg(lnm::FILE_PATTERN_KML),
+                                           "Kml/", QStringLiteral());
 
-  QString errors = atools::checkFileMsg(kmlFile);
-  if(errors.isEmpty())
+  if(!kmlFile.isEmpty())
   {
-    if(mapWidget->addKmlFile(kmlFile))
+    QString errors = atools::checkFileMsg(kmlFile);
+    if(errors.isEmpty())
     {
-      kmlFileHistory->addFile(kmlFile);
-      updateActionStates();
-      statusBar->setStatusMessage(tr("Google Earth KML file opened."));
+      if(mapWidget->addKmlFile(kmlFile))
+      {
+        kmlFileHistory->addFile(kmlFile);
+        updateActionStates();
+        statusBar->setStatusMessage(tr("Google Earth KML file opened."));
+      }
+      else
+        statusBar->setStatusMessage(tr("Opening Google Earth KML file failed."));
+      saveFileHistoryStates();
     }
     else
-      statusBar->setStatusMessage(tr("Opening Google Earth KML file failed."));
-
+      atools::gui::Dialog::warning(this, tr("Cannot load file. Reason:\n\n%1").arg(kmlFile));
   }
-  else
-    atools::gui::Dialog::warning(this, tr("Cannot load file. Reason:\n\n%1").arg(kmlFile));
 }
 
 void MainWindow::kmlOpenRecent(const QString& kmlFile)
