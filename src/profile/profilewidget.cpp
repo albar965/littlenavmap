@@ -918,7 +918,7 @@ void ProfileWidget::paintEvent(QPaintEvent *)
   const Route& route = legList->route;
 
 #ifdef DEBUG_INFORMATION
-  qDebug() << Q_FUNC_INFO << "active" << active;
+  qDebug() << Q_FUNC_INFO << "active" << active << "fetchRouteElevationsFinished" << fetchRouteElevationsFinished;
   qDebug() << Q_FUNC_INFO << "isCalculating()" << isCalculating();
   qDebug() << Q_FUNC_INFO << "legList->hasLegs()" << legList->hasLegs();
   qDebug() << Q_FUNC_INFO << "route.getSizeWithoutAlternates() >= 2" << (route.getSizeWithoutAlternates() >= 2);
@@ -2007,11 +2007,9 @@ void ProfileWidget::elevationUpdateAvailable()
     return;
 
   // Do not terminate thread here since this can lead to starving updates
-
   // Start thread after long delay to calculate new data
   // Calls ProfileWidget::updateTimeout()
-  updateTimer->start(NavApp::isGlobeOfflineProvider() ?
-                     ELEVATION_CHANGE_OFFLINE_UPDATE_TIMEOUT_MS : ELEVATION_CHANGE_ONLINE_UPDATE_TIMEOUT_MS);
+  startUpdateTimer();
 }
 
 void ProfileWidget::routeAltitudeChanged(int altitudeFeet)
@@ -2051,11 +2049,7 @@ void ProfileWidget::routeChanged(bool geometryChanged, bool newFlightplan)
     scrollArea->expandWidget();
 
   if(geometryChanged)
-  {
-    // Start thread after short delay to calculate new data
-    // Calls ProfileWidget::updateTimeout()
-    updateTimer->start(NavApp::isGlobeOfflineProvider() ? ROUTE_CHANGE_OFFLINE_UPDATE_TIMEOUT_MS : ROUTE_CHANGE_UPDATE_TIMEOUT_MS);
-  }
+    startUpdateTimer();
   else
     update();
 
@@ -2063,15 +2057,31 @@ void ProfileWidget::routeChanged(bool geometryChanged, bool newFlightplan)
   updateHeaderLabel();
 }
 
+void ProfileWidget::startUpdateTimer()
+{
+  // Start thread after short delay to calculate new data
+  // Calls ProfileWidget::updateTimeout()
+  int timeout = 0;
+  if(fetchRouteElevationsFinished)
+    timeout = NavApp::isGlobeOfflineProvider() ? ELEVATION_CHANGE_OFFLINE_UPDATE_TIMEOUT_MS : ELEVATION_CHANGE_ONLINE_UPDATE_TIMEOUT_MS;
+  updateTimer->start(timeout);
+
+#ifdef DEBUG_INFORMATION
+  qDebug() << Q_FUNC_INFO << "Starting thread timer" << timeout;
+#endif
+}
+
 void ProfileWidget::updateTimeout()
 {
   if(atools::gui::Application::isShuttingDown())
     return;
 
+#ifdef DEBUG_INFORMATION
+  qDebug() << Q_FUNC_INFO << "Thread started" << "databaseLoadStatus" << databaseLoadStatus << "active" << active;
+#endif
+
   if(databaseLoadStatus || !active)
     return;
-
-  qDebug() << Q_FUNC_INFO << "Starting thread";
 
   // Terminate and wait for thread
   futurePrivate->terminateThread();

@@ -327,6 +327,9 @@ private:
   /* true if fetchRouteElevationsThread() is running */
   bool isCalculating() const;
 
+  /* Start thread after short delay to calculate new data. Calls ProfileWidget::updateTimeout() */
+  void startUpdateTimer();
+
   /* User aircraft data */
   atools::fs::sc::SimConnectData simData, lastSimData;
 

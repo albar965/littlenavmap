@@ -227,7 +227,7 @@ void WindReporter::restoreState()
   valuesToAction();
 
   // Download wind data with a delay after startup
-  QTimer::singleShot(2000, this, &WindReporter::updateDataSource);
+  QTimer::singleShot(500, this, &WindReporter::updateDataSource);
   updateToolButtonState();
   updateSliderLabel();
 }
