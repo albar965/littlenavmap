@@ -35,8 +35,7 @@ UserIconDelegate::~UserIconDelegate()
   delete symbolPainter;
 }
 
-void UserIconDelegate::paint(QPainter *painter, const QStyleOptionViewItem& option,
-                             const QModelIndex& index) const
+void UserIconDelegate::paint(QPainter *painter, const QStyleOptionViewItem& option, const QModelIndex& index) const
 {
   QModelIndex idx(index);
   const SqlModel *sqlModel = dynamic_cast<const SqlModel *>(index.model());

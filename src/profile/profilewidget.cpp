@@ -881,27 +881,31 @@ void ProfileWidget::paintVasi(QPainter& painter, const Route& route)
 
 void ProfileWidget::calculateProfileMargin()
 {
-  // Add extra buffer for margin
-  const static QLatin1String EXTRA_CHAR("0");
+  // Add font dependent extra buffer for margin
+  const static QLatin1String EXTRA_CHAR("00");
+
   paintMargin = 30;
 
   if(!legList->route.isEmpty())
   {
-    QFont font = OptionData::instance().getMapFont();
+    const OptionData& optionData = OptionData::instance();
+    QFont font = optionData.getMapFont();
+    mapcolors::scaleFont(font, optionData.getDisplayTextSizeFlightplanProfile() / 100.f, &font);
     font.setBold(true);
-    QFontMetrics metrics(font);
+    QFontMetricsF metrics(font);
 
     // Calculate departure altitude text size
+    double margin = 30.;
     float departAlt = legList->route.getDepartureAirportLeg().getAltitude();
     if(departAlt < map::INVALID_ALTITUDE_VALUE / 2.f)
-      paintMargin = std::max(metrics.horizontalAdvance(Unit::altFeet(departAlt) % EXTRA_CHAR), paintMargin);
+      margin = std::max(metrics.horizontalAdvance(Unit::altFeet(departAlt) % EXTRA_CHAR), margin);
 
     // Calculate destination altitude text size
     float destAlt = legList->route.getDestinationAirportLeg().getAltitude();
     if(destAlt < map::INVALID_ALTITUDE_VALUE / 2.f)
-      paintMargin = std::max(metrics.horizontalAdvance(Unit::altFeet(destAlt) % EXTRA_CHAR), paintMargin);
+      margin = std::max(metrics.horizontalAdvance(Unit::altFeet(destAlt) % EXTRA_CHAR), margin);
 
-    paintMargin = std::max(paintMargin, 30);
+    paintMargin = std::max(atools::ceilToInt(margin), 30);
   }
 }
 

@@ -898,29 +898,29 @@ void adjustPenForAlternate(QPainter *painter)
   painter->setBackgroundMode(Qt::OpaqueMode);
 }
 
-void scaleFont(QPainter *painter, float scale, const QFont *defaultFont)
+void scaleFont(QFont& font, float scale, const QFont *defaultFont)
 {
-  QFont font = painter->font();
   const QFont *defFont = defaultFont == nullptr ? &font : defaultFont;
   if(font.pixelSize() == -1)
   {
     // Use point size if pixel is not available
     double size = scale * defFont->pointSizeF();
     if(atools::almostNotEqual(size, font.pointSizeF()))
-    {
       font.setPointSizeF(size);
-      painter->setFont(font);
-    }
   }
   else
   {
     int size = atools::roundToInt(scale * defFont->pixelSize());
     if(size != defFont->pixelSize())
-    {
       font.setPixelSize(size);
-      painter->setFont(font);
-    }
   }
+}
+
+void scaleFont(QPainter *painter, float scale, const QFont *defaultFont)
+{
+  QFont font = painter->font();
+  scaleFont(font, scale, defaultFont);
+  painter->setFont(font);
 }
 
 void darkenPainterRect(QPainter& painter)

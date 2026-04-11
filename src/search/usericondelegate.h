@@ -43,8 +43,7 @@ private:
   const ColumnList *cols;
   SymbolPainter *symbolPainter;
 
-  virtual void paint(QPainter *painter, const QStyleOptionViewItem& option,
-                     const QModelIndex& index) const override;
+  virtual void paint(QPainter *painter, const QStyleOptionViewItem& option, const QModelIndex& index) const override;
 
   UserdataIcons *icons;
 };
