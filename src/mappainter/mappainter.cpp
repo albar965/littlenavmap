@@ -190,7 +190,7 @@ void MapPainter::paintArc(GeoPainter *painter, const Pos& centerPos, float radiu
   }
 }
 
-void MapPainter::paintCircle(GeoPainter *painter, const Pos& centerPos, float radiusNm, bool fast, QPoint *textPos) const
+void MapPainter::paintCircle(GeoPainter *painter, const Pos& centerPos, float radiusNm, bool fast, QPointF *textPos) const
 {
   if(radiusNm > atools::geo::EARTH_CIRCUMFERENCE_METER / 4.)
     return;
@@ -204,22 +204,25 @@ void MapPainter::paintCircle(GeoPainter *painter, const Pos& centerPos, float ra
     paintCircleLargeInternal(painter, centerPos, radiusNm, fast, textPos);
 }
 
-void MapPainter::paintCircleSmallInternal(GeoPainter *painter, const Pos& centerPos, float radiusNm, bool fast, QPoint *textPos) const
+void MapPainter::paintCircleSmallInternal(GeoPainter *painter, const Pos& centerPos, float radiusNm, bool fast, QPointF *textPos) const
 {
   Q_UNUSED(fast)
 
   // Get pixel size for line from center to north
-  int pixel = scale->getPixelIntForMeter(nmToMeter(radiusNm), 0.f);
+  float pixel = scale->getPixelForMeter(nmToMeter(radiusNm), 0.f);
 
   bool visible, hidden;
-  QPoint pt = wToS(centerPos, QSize(pixel * 3, pixel * 3), &visible, &hidden);
+  QPointF pt = wToSF(centerPos, QSize(pixel * 3, pixel * 3), &visible, &hidden);
+
+  if(textPos != nullptr)
+    *textPos = QPointF();
 
   if(!hidden)
   {
     // Rectangle for the circle
-    QRect rect(pt.x() - pixel, pt.y() - pixel, pixel * 2, pixel * 2);
+    QRectF rect(pt.x() - pixel, pt.y() - pixel, pixel * 2, pixel * 2);
 
-    if(context->screenRect.intersects(rect))
+    if(context->screenRect.intersects(rect.toRect()))
     {
       // Draw simple circle
       painter->drawEllipse(pt, pixel, pixel);
@@ -232,15 +235,15 @@ void MapPainter::paintCircleSmallInternal(GeoPainter *painter, const Pos& center
           QLineF line(pt.x(), pt.y(), pt.x(), pt.y() - pixel);
           line.setAngle(atools::geo::angleToQt(angle));
 
-          if(context->screenRect.contains(atools::roundToInt(line.p2().x()), atools::roundToInt(line.p2().y())))
-            *textPos = line.p2().toPoint();
+          if(context->screenRect.contains(line.p2().toPoint()))
+            *textPos = line.p2();
         }
       }
     }
   }
 }
 
-void MapPainter::paintCircleLargeInternal(GeoPainter *painter, const Pos& centerPos, float radiusNm, bool fast, QPoint *textPos) const
+void MapPainter::paintCircleLargeInternal(GeoPainter *painter, const Pos& centerPos, float radiusNm, bool fast, QPointF *textPos) const
 {
   // float PIXEL_PER_SEGMENT = 10;
   // float circumferenceNm = 2.f * radiusNm * 3.1415926f;
@@ -260,7 +263,7 @@ void MapPainter::paintCircleLargeInternal(GeoPainter *painter, const Pos& center
   int step = 360 / numPoints;
   int x1, y1, x2 = -1, y2 = -1;
   if(textPos != nullptr)
-    *textPos = QPoint(0, 0);
+    *textPos = QPointF();
 
   QList<int> xtexts;
   QList<int> ytexts;
@@ -381,10 +384,10 @@ void MapPainter::drawText(Marble::GeoPainter *painter, const Pos& pos, const QSt
   }
 }
 
-void MapPainter::drawCross(Marble::GeoPainter *painter, int x, int y, int size) const
+void MapPainter::drawCross(Marble::GeoPainter *painter, float x, float y, float size) const
 {
-  painter->drawLine(x, y - size, x, y + size);
-  painter->drawLine(x - size, y, x + size, y);
+  painter->drawLine(QPointF(x, y - size), QPointF(x, y + size));
+  painter->drawLine(QPointF(x - size, y), QPointF(x + size, y));
 }
 
 void MapPainter::drawPolyline(Marble::GeoPainter *painter, const atools::geo::LineString& linestring) const

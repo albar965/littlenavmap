@@ -53,8 +53,8 @@ void MapPainterTop::render()
   optsd::DisplayOptionsNavAid opts = OptionData::instance().getDisplayOptionsNavAid();
   opts::MapNavigation nav = OptionData::instance().getMapNavigation();
 
-  int size = context->sz(context->symbolSizeAirport, 10);
-  int size2 = context->sz(context->symbolSizeAirport, 9);
+  float size = context->szF(context->symbolSizeAirport, 10.f);
+  float size2 = context->szF(context->symbolSizeAirport, 9.f);
 
   if(!context->webMap)
   {

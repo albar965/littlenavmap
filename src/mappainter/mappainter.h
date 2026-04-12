@@ -128,7 +128,7 @@ protected:
 
   /* Draw a circle and return text placement hints (xtext and ytext). Number of points used
    * for the circle depends on the zoom distance. Optimized for large circles. */
-  void paintCircle(Marble::GeoPainter *painter, const atools::geo::Pos& centerPos, float radiusNm, bool fast, QPoint *textPos) const;
+  void paintCircle(Marble::GeoPainter *painter, const atools::geo::Pos& centerPos, float radiusNm, bool fast, QPointF *textPos) const;
 
   void paintArc(Marble::GeoPainter *painter, const atools::geo::Pos& centerPos, float radiusNm, float angleDegStart, float angleDegEnd,
                 bool fast) const;
@@ -148,7 +148,7 @@ protected:
 
   /* Drawing functions for simple geometry */
   void drawCircle(Marble::GeoPainter *painter, const atools::geo::Pos& center, float radius) const;
-  void drawCross(Marble::GeoPainter *painter, int x, int y, int size) const;
+  void drawCross(Marble::GeoPainter *painter, float x, float y, float size) const;
 
   /* No GC and no rhumb */
   void drawLineStraight(Marble::GeoPainter *painter, const atools::geo::Line& line) const;
@@ -206,11 +206,11 @@ protected:
 
   /* Draw small flat circle for small radii or close zoom distances */
   void paintCircleSmallInternal(Marble::GeoPainter *painter, const atools::geo::Pos& centerPos, float radiusNm, bool fast,
-                                QPoint *textPos) const;
+                                QPointF *textPos) const;
 
   /* Draw a large spherical correct projected circle */
   void paintCircleLargeInternal(Marble::GeoPainter *painter, const atools::geo::Pos& centerPos, float radiusNm, bool fast,
-                                QPoint *textPos) const;
+                                QPointF *textPos) const;
 
   PaintContext *context = nullptr;
   SymbolPainter *symbolPainter = nullptr;

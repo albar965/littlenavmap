@@ -798,14 +798,14 @@ void SymbolPainter::drawAirportMsa(QPainter *painter, const map::MapAirportMsa& 
   }
 }
 
-void SymbolPainter::drawTrackLine(QPainter *painter, float x, float y, int size, float dir)
+void SymbolPainter::drawTrackLine(QPainter *painter, float x, float y, float size, float dir)
 {
   atools::util::PainterContextSaver saver(painter);
   painter->setBackgroundMode(Qt::TransparentMode);
 
   painter->translate(x, y);
   painter->rotate(atools::geo::normalizeCourse(dir));
-  painter->drawPixmap(-size / 2, -size / 2, *trackLineFromCache(size));
+  painter->drawPixmap(QPointF(-size / 2.f, -size / 2.f), *trackLineFromCache(size));
   painter->resetTransform();
 }
 

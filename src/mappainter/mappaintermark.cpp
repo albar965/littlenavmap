@@ -118,14 +118,14 @@ void MapPainterMark::paintMark()
 {
   GeoPainter *painter = context->painter;
 
-  int x, y;
+  float x, y;
   if(wToS(mapPaintWidget->getSearchMarkPos(), x, y))
   {
     context->painter->setPen(mapcolors::searchCenterBackPen);
-    drawCross(painter, x, y, context->sz(context->symbolSizeAirport, 10));
+    drawCross(painter, x, y, context->szF(context->symbolSizeAirport, 10.f));
 
     context->painter->setPen(mapcolors::searchCenterFillPen);
-    drawCross(painter, x, y, context->sz(context->symbolSizeAirport, 8));
+    drawCross(painter, x, y, context->szF(context->symbolSizeAirport, 8.f));
   }
 }
 
@@ -218,8 +218,8 @@ void MapPainterMark::paintHighlights()
 
   for(const map::MapOnlineAircraft& aircraft: highlightResultsSearch.onlineAircraft)
   {
-    float size = std::max(context->sz(context->symbolSizeAircraftAi, mapLayer->getAiAircraftSize()),
-                          scale->getPixelIntForFeet(aircraft.getAircraft().getModelSize()));
+    float size = std::max(context->szF(context->symbolSizeAircraftAi, mapLayer->getAiAircraftSize()),
+                          scale->getPixelForFeet(aircraft.getAircraft().getModelSize()));
     positionSizeList.append(std::make_pair(aircraft.getPosition(), size * 0.75f));
   }
 
@@ -406,7 +406,7 @@ void MapPainterMark::paintLogEntries(const QList<map::MapLogbookEntry>& entries)
   painter->setBackgroundMode(Qt::TransparentMode);
   painter->setBackground(Qt::black);
   painter->setBrush(Qt::NoBrush);
-  context->szFont(context->textSizeFlightplan);
+  context->szFont(context->textSizeRoute);
 
   float minAltitude = std::numeric_limits<float>::max(), maxAltitude = std::numeric_limits<float>::min();
   // Collect visible feature parts ==========================================================================
@@ -533,7 +533,7 @@ void MapPainterMark::paintLogEntries(const QList<map::MapLogbookEntry>& entries)
     if(context->objectDisplayTypes.testFlag(map::LOGBOOK_TRACK) && !visibleTrailGeometries.isEmpty())
     {
       // Use a darker pen for the trail but same style as normal trail ======================================
-      QPen trackPen = mapcolors::aircraftTrailPen(context->sz(context->thicknessTrail, 2));
+      QPen trackPen = mapcolors::aircraftTrailPen(context->szF(context->thicknessTrail, 2.f));
       trackPen.setColor(mapcolors::routeLogEntryColor.darker(200));
       painter->setPen(trackPen);
 
@@ -615,7 +615,7 @@ void MapPainterMark::paintLogEntries(const QList<map::MapLogbookEntry>& entries)
     float x, y;
     textflags::TextFlags flags = context->airportTextFlagsRoute(false /* draw as route */, true /* draw as log */);
     float size = context->szF(context->symbolSizeAirport, context->mapLayer->getAirportSymbolSize());
-    context->szFont(context->textSizeFlightplan);
+    context->szFont(context->textSizeRoute);
 
     QSet<int> airportIds;
     for(const MapLogbookEntry *entry : allLogEntries)
@@ -852,7 +852,7 @@ void MapPainterMark::paintRangeMarks()
           // Draw all rings
           for(double radius : rings.ranges)
           {
-            QPoint textPos;
+            QPointF textPos;
             paintCircle(painter, rings.position, radius, context->drawFast, &textPos);
             if(!textPos.isNull())
             {
@@ -869,7 +869,7 @@ void MapPainterMark::paintRangeMarks()
                 texts.append(tr("%1%2").arg(QLocale(QLocale::C).toString(Unit::distNmF(radius), 'g', 6)).arg(Unit::getUnitDistStr()));
 
               textPos.ry() += painter->fontMetrics().height() / 2 - painter->fontMetrics().descent();
-              symbolPainter->textBox(painter, texts, painter->pen(), textPos.x(), textPos.y(), textatt::CENTER);
+              symbolPainter->textBoxF(painter, texts, painter->pen(), textPos.x(), textPos.y(), textatt::CENTER);
 
               painter->setPen(QPen(QBrush(rings.color), lineWidth, Qt::SolidLine, Qt::RoundCap, Qt::MiterJoin));
             }
@@ -929,7 +929,7 @@ void MapPainterMark::paintEnduranceRing(float enduranceHours, float enduranceNm,
     const atools::fs::sc::SimConnectUserAircraft& userAircraft = mapPaintWidget->getUserAircraft();
     ageo::Pos pos = userAircraft.getPosition();
     bool labelAtCenter = false, visibleCenter = false;
-    QPoint textPos;
+    QPointF textPos;
     QPen pen = critical ? mapcolors::markEnduranceCritPen : mapcolors::markEndurancePen;
 
     if(enduranceNm > 1.f)
@@ -983,13 +983,13 @@ void MapPainterMark::paintEnduranceRing(float enduranceHours, float enduranceNm,
 
       if(labelAtCenter)
       {
-        int size = std::max(context->sz(context->symbolSizeAircraftUser, 32), scale->getPixelIntForFeet(userAircraft.getModelSize()));
-        textPos.ry() -= size * 2;
+        float size = std::max(context->szF(context->symbolSizeAircraftUser, 32.f), scale->getPixelForFeet(userAircraft.getModelSize()));
+        textPos.ry() -= size * 2.f;
       }
       else
         textPos.ry() += painter->fontMetrics().height() / 2 - painter->fontMetrics().descent();
 
-      symbolPainter->textBox(painter, texts, painter->pen(), textPos.x(), textPos.y(), atts);
+      symbolPainter->textBoxF(painter, texts, painter->pen(), textPos.x(), textPos.y(), atts);
     }
   }
 }
@@ -1251,11 +1251,11 @@ void MapPainterMark::paintCompassRose()
             // Draw small line to show course to next waypoint ========================
             ageo::Pos endPt = pos.endpoint(radiusMeter, courseToWptTrue);
             ageo::Line crsLine(pos.interpolate(endPt, radiusMeter, 0.92f), endPt);
-            painter->setPen(QPen(od.getFlightplanOutlineColor(), context->sz(context->thicknessFlightplan, 7),
+            painter->setPen(QPen(od.getFlightplanOutlineColor(), context->szF(context->thicknessFlightplan, 7.f),
                                  Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin));
             drawLineStraight(painter, crsLine);
 
-            painter->setPen(QPen(OptionData::instance().getFlightplanActiveSegmentColor(), context->sz(context->thicknessFlightplan, 4),
+            painter->setPen(QPen(OptionData::instance().getFlightplanActiveSegmentColor(), context->szF(context->thicknessFlightplan, 4.f),
                                  Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin));
             drawLineStraight(painter, crsLine);
           }

@@ -218,22 +218,7 @@ struct PaintContext
     return dispOptsRoute & opts;
   }
 
-  /* Calculate real symbol size */
-  int sz(float scale, int size) const
-  {
-    return static_cast<int>(std::round(scale * size * sizeAll));
-  }
-
-  int sz(float scale, float size) const
-  {
-    return static_cast<int>(std::round(scale * size * sizeAll));
-  }
-
-  int sz(float scale, double size) const
-  {
-    return static_cast<int>(std::round(scale * size * sizeAll));
-  }
-
+  /* Calculate real symbol sizes */
   float szF(float scale, int size) const
   {
     return scale * size * sizeAll;

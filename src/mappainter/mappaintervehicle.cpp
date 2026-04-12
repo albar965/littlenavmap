@@ -103,10 +103,10 @@ void MapPainterVehicle::paintAiVehicle(const SimConnectAircraft& vehicle, float 
 
 void MapPainterVehicle::paintUserAircraft(const SimConnectUserAircraft& userAircraft, float x, float y) const
 {
-  int size = std::max(context->sz(context->symbolSizeAircraftUser, 32), scale->getPixelIntForFeet(userAircraft.getModelSize()));
+  float size = std::max(context->szF(context->symbolSizeAircraftUser, 32.f), scale->getPixelForFeet(userAircraft.getModelSize()));
 
   context->szFont(context->textSizeAircraftUser);
-  int offset = -(size / 2);
+  float offset = -(size / 2.f);
 
   if(context->dOptUserAc(optsac::ITEM_USER_AIRCRAFT_TRACK_LINE) && userAircraft.getGroundSpeedKts() > 30 &&
      userAircraft.getTrackDegTrue() < atools::fs::sc::SC_INVALID_FLOAT)
@@ -115,7 +115,7 @@ void MapPainterVehicle::paintUserAircraft(const SimConnectUserAircraft& userAirc
     float rotate = scale->getScreenRotation(userAircraft.getTrackDegTrue(), userAircraft.getPosition(), context->zoomDistanceMeter);
 
     if(rotate < map::INVALID_COURSE_VALUE)
-      symbolPainter->drawTrackLine(context->painter, x, y, size * 2, rotate);
+      symbolPainter->drawTrackLine(context->painter, x, y, size * 2.f, rotate);
   }
 
   // Position is visible
@@ -128,7 +128,7 @@ void MapPainterVehicle::paintUserAircraft(const SimConnectUserAircraft& userAirc
     context->painter->rotate(atools::geo::normalizeCourse(rotate));
 
     // Draw symbol
-    context->painter->drawPixmap(offset, offset, *NavApp::getVehicleIcons()->pixmapFromCache(userAircraft, size, 0));
+    context->painter->drawPixmap(QPointF(offset, offset), *NavApp::getVehicleIcons()->pixmapFromCache(userAircraft, size, 0));
     context->painter->resetTransform();
 
     // Build text label

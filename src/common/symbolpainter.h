@@ -106,7 +106,7 @@ public:
                       bool transparency, bool fast);
 
   /* Aircraft track */
-  void drawTrackLine(QPainter *painter, float x, float y, int size, float dir);
+  void drawTrackLine(QPainter *painter, float x, float y, float size, float dir);
 
   /* Waypoint texts have no background excepts for flight plan */
   void drawWaypointText(QPainter *painter, const map::MapWaypoint& wp, float x, float y,

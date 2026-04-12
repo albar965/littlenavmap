@@ -87,24 +87,24 @@ void MapPainterMsa::drawMsaSymbol(const map::MapAirportMsa& airportMsa, float x,
 
   Marble::GeoPainter *painter = context->painter;
 
-  int size = 0;
+  float size = 0.f;
   float scale = 0.f;
   if(!context->mapLayer->isAirportMsaDetails())
   {
     if(airportMsa.navType == map::AIRPORT)
-      size = context->sz(context->symbolSizeAirport, context->mapLayer->getAirportSymbolSize());
+      size = context->szF(context->symbolSizeAirport, context->mapLayer->getAirportSymbolSize());
     else if(airportMsa.navType == map::VOR)
-      size = context->sz(context->symbolSizeNavaid, context->mapLayer->getVorSymbolSize());
+      size = context->szF(context->symbolSizeNavaid, context->mapLayer->getVorSymbolSize());
     else if(airportMsa.navType == map::NDB)
-      size = context->sz(context->symbolSizeNavaid, context->mapLayer->getNdbSymbolSize());
+      size = context->szF(context->symbolSizeNavaid, context->mapLayer->getNdbSymbolSize());
     else if(airportMsa.navType == map::WAYPOINT || airportMsa.navType == map::ILS)
-      size = context->sz(context->symbolSizeNavaid, context->mapLayer->getWaypointSymbolSize());
-    size = std::max(size, 6);
+      size = context->szF(context->symbolSizeNavaid, context->mapLayer->getWaypointSymbolSize());
+    size = std::max(size, 6.f);
   }
   else
     scale = context->mapLayer->getAirportMsaSymbolScale();
 
   // Draw the full symbol with all sectors
-  symbolPainter->drawAirportMsa(painter, airportMsa, x, y, size * 2, scale, context->mapLayerText->isAirportMsaDetails() /* header */,
+  symbolPainter->drawAirportMsa(painter, airportMsa, x, y, size * 2.f, scale, context->mapLayerText->isAirportMsaDetails() /* header */,
                                 true /* transparency */, fast);
 }
