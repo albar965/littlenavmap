@@ -63,6 +63,7 @@ void MapPainterWeather::render()
   const QList<MapAirport> *airportCache =
     queries->getMapQuery()->getAirports(curBox, context->mapLayer, context->lazyUpdate, context->objectTypes, overflow);
   context->setQueryOverflow(overflow);
+  float size = context->szF(context->symbolSizeAirportWeather, context->mapLayer->getAirportSymbolSize());
 
   // Collect all airports that are visible from cache ======================================
   QList<AirportPaintData> visibleAirportWeather;
@@ -72,7 +73,7 @@ void MapPainterWeather::render()
   {
     for(const MapAirport& airport : *airportCache)
     {
-      visibleOnMap = wToS(airport.position, x, y, scale->getScreeenSizeForRect(airport.bounding), &hidden);
+      visibleOnMap = wToS(airport.position, x, y, scale->getScreeenSizeForRect(airport.bounding, size), &hidden);
 
       if(!hidden && visibleOnMap)
         visibleAirportWeather.append(AirportPaintData(airport, x, y));
@@ -85,7 +86,7 @@ void MapPainterWeather::render()
     if(context->route->getDepartureAirportLeg().isAirport())
     {
       const MapAirport& airport = context->route->getDepartureAirportLeg().getAirport();
-      visibleOnMap = wToS(airport.position, x, y, scale->getScreeenSizeForRect(airport.bounding), &hidden);
+      visibleOnMap = wToS(airport.position, x, y, scale->getScreeenSizeForRect(airport.bounding, size), &hidden);
       if(!hidden && visibleOnMap)
         visibleAirportWeather.append(AirportPaintData(airport, x, y));
     }
@@ -93,7 +94,7 @@ void MapPainterWeather::render()
     if(context->route->getDestinationAirportLeg().isAirport())
     {
       const MapAirport& airport = context->route->getDestinationAirportLeg().getAirport();
-      visibleOnMap = wToS(airport.position, x, y, scale->getScreeenSizeForRect(airport.bounding), &hidden);
+      visibleOnMap = wToS(airport.position, x, y, scale->getScreeenSizeForRect(airport.bounding, size), &hidden);
       if(!hidden && visibleOnMap)
         visibleAirportWeather.append(AirportPaintData(airport, x, y));
     }
@@ -101,7 +102,7 @@ void MapPainterWeather::render()
     QList<MapAirport> alternates = context->route->getAlternateAirports();
     for(const map::MapAirport& airport : std::as_const(alternates))
     {
-      visibleOnMap = wToS(airport.position, x, y, scale->getScreeenSizeForRect(airport.bounding), &hidden);
+      visibleOnMap = wToS(airport.position, x, y, scale->getScreeenSizeForRect(airport.bounding, size), &hidden);
       if(!hidden && visibleOnMap)
         visibleAirportWeather.append(AirportPaintData(airport, x, y));
     }
@@ -135,13 +136,12 @@ void MapPainterWeather::render()
     const atools::fs::weather::Metar& metar = reporter->getAirportWeather(airportPaintData.getAirport(), true /* stationOnly */);
 
     if(metar.hasStationMetar())
-      drawAirportWeather(metar.getStation(), airportPaintData.getPoint());
+      drawAirportWeather(metar.getStation(), airportPaintData.getPoint(), size);
   }
 }
 
-void MapPainterWeather::drawAirportWeather(const atools::fs::weather::MetarParser& metar, const QPointF& point)
+void MapPainterWeather::drawAirportWeather(const atools::fs::weather::MetarParser& metar, const QPointF& point, float size)
 {
-  float size = context->szF(context->symbolSizeAirportWeather, context->mapLayer->getAirportSymbolSize());
   bool windBarbs = context->mapLayer->isAirportWeatherDetails();
 
   symbolPainter->drawAirportWeather(context->painter, metar,

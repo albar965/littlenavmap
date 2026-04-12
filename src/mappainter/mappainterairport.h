@@ -52,7 +52,7 @@ public:
 private:
   /* Pre-calculates visible airports for render() and fills visibleAirports.
    * visibleAirportIds gets all idents of shown airports */
-  void collectVisibleAirports(QList<AirportPaintData>& visibleAirports);
+  void collectVisibleAirports(QList<AirportPaintData>& visibleAirports, int airportSymbolSize);
 
   void drawAirportSymbol(const map::MapAirport& airport, float x, float y, float size);
 

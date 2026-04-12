@@ -46,7 +46,7 @@ public:
   virtual void render() override;
 
 private:
-  void drawAirportWeather(const atools::fs::weather::MetarParser& metar, const QPointF& point);
+  void drawAirportWeather(const atools::fs::weather::MetarParser& metar, const QPointF& point, float size);
 
 };
 

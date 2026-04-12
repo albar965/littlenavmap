@@ -101,11 +101,6 @@ textflags::TextFlags PaintContext::airportTextFlagsRoute(bool drawAsRoute, bool 
   return textflags;
 }
 
-bool PaintContext::visible(const atools::geo::Line& line) const
-{
-  return viewportRect.overlaps(line.boundingRect());
-}
-
 bool PaintContext::visibleAndResolves(const atools::geo::Line& line) const
 {
   return viewportRect.overlaps(line.boundingRect()) && viewport->resolves(mconvert::toGdc(line.getPos1()), mconvert::toGdc(line.getPos2()));

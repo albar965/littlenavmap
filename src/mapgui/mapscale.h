@@ -90,8 +90,8 @@ public:
     return 1.f / getPixelForNm(1.f, directionDeg);
   }
 
-  /*Get an approximation in screen pixes for the given coordinate rectangle */
-  QSize getScreeenSizeForRect(const atools::geo::Rect& rect) const;
+  /* Get an approximation in screen pixels for the given coordinate rectangle */
+  QSize getScreeenSizeForRect(const atools::geo::Rect& rect, int minSize = 0) const;
 
   /* @return true if initialized */
   bool isValid() const

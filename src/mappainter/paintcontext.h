@@ -260,10 +260,6 @@ struct PaintContext
       renderTimesMs.clear();
   }
 
-  /* Does work only properly for short lines due to GC path.
-   Checks visibility by testing overlap with global viewport rect. */
-  bool visible(const atools::geo::Line& line) const;
-
   /*  Checks visibility by testing overlap with global viewport rect. */
   bool visible(const atools::geo::Rect& rect) const
   {
