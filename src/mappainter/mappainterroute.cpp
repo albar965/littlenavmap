@@ -526,7 +526,7 @@ void MapPainterRoute::paintRouteInternal(QStringList routeTexts, QList<Line> lin
       drawLine(painter, lines.at(activeRouteLeg - 1));
     }
   }
-  context->szFont(context->textSizeFlightplan * context->mapLayerRouteText->getRouteFontScale());
+  context->szFont(context->textSizeRoute * context->mapLayerRouteText->getRouteFontScale());
 
   // Collect coordinates for text placement and lines first ============================
   LineString positions;
@@ -633,11 +633,12 @@ float MapPainterRoute::sizeForRouteType(const MapLayer *layer, const RouteLeg& l
   }
 
   if(type == map::AIRPORT)
-    return context->szF(context->symbolSizeAirport, layer->getAirportSymbolSize());
+    return context->szF(context->symbolSizeAirport * context->symbolSizeRoute, layer->getAirportSymbolSize());
   else if(type == map::NDB)
-    return context->szF(context->symbolSizeNavaid, layer->getNdbSymbolSize()) * 1.2f;
+    return context->szF(context->symbolSizeNavaid * context->symbolSizeRoute, layer->getNdbSymbolSize()) * 1.2f;
   else if(type == map::VOR)
-    return context->szF(context->symbolSizeNavaid, std::max(layer->getVorSymbolSizeRoute(), layer->getVorSymbolSizeLarge()));
+    return context->szF(context->symbolSizeNavaid * context->symbolSizeRoute,
+                        std::max(layer->getVorSymbolSizeRoute(), layer->getVorSymbolSizeLarge()));
 
   // Use waypoint as fallback
   return context->szF(context->symbolSizeNavaid, layer->getWaypointSymbolSize());
@@ -658,9 +659,9 @@ void MapPainterRoute::paintInboundOutboundTexts(const TextPlacement& textPlaceme
     return;
 
   // Make text a bit smaller
-  context->szFont(context->textSizeFlightplan * 0.85f * context->mapLayerRouteText->getRouteFontScale());
+  context->szFont(context->textSizeRoute * 0.85f * context->mapLayerRouteText->getRouteFontScale());
 
-  QFontMetricsF metrics = painter->fontMetrics();
+  QFontMetricsF metrics(painter->font());
   float arrowWidth = textPlacement.getArrowWidth(); // Arrows added in text placement
 
   int lastDepartureLeg = route->getLastIndexOfDepartureProcedure();
@@ -776,12 +777,12 @@ void MapPainterRoute::paintTopOfDescentAndClimb()
     atools::util::PainterContextSaver saver(context->painter);
     context->startTimer("Route TOC TOD");
 
-    float width = context->szF(context->symbolSizeNavaid, 3.f);
-    float radius = context->szF(context->symbolSizeNavaid, 6.f);
+    float width = context->szF(context->symbolSizeNavaid * context->symbolSizeRoute, 3.f);
+    float radius = context->szF(context->symbolSizeNavaid * context->symbolSizeRoute, 6.f);
 
     context->painter->setPen(QPen(Qt::black, width, Qt::SolidLine, Qt::FlatCap));
     context->painter->setBrush(Qt::transparent);
-    context->szFont(context->textSizeFlightplan * context->mapLayerRouteText->getRouteFontScale());
+    context->szFont(context->textSizeRoute * context->mapLayerRouteText->getRouteFontScale());
 
     int activeLegIndex = route->getActiveLegIndex();
 
@@ -904,7 +905,7 @@ void MapPainterRoute::paintProcedure(QSet<map::MapRef>& idMap, const proc::MapPr
 
   // Draw segments and collect text placement information in drawTextLines ========================================
   // Need to set font since it is used by drawHold
-  context->szFont(context->textSizeFlightplan * context->mapLayerRouteText->getRouteFontScale());
+  context->szFont(context->textSizeRoute * context->mapLayerRouteText->getRouteFontScale());
 
   // Paint legs ====================================================
   bool noText = context->drawFast;
@@ -1026,7 +1027,7 @@ void MapPainterRoute::paintProcedure(QSet<map::MapRef>& idMap, const proc::MapPr
       painter->setBackground(previewAll ? QColor(Qt::transparent) : mapcolors::routeTextBackgroundColor);
       if(previewAll)
         // Make the font larger for better arrow visibility in multi preview
-        context->szFont(context->textSizeFlightplan * 1.5f * context->mapLayerRouteText->getRouteFontScale());
+        context->szFont(context->textSizeRoute * 1.5f * context->mapLayerRouteText->getRouteFontScale());
 
       QList<Line> textLines;
       LineString positions;
@@ -1054,7 +1055,7 @@ void MapPainterRoute::paintProcedure(QSet<map::MapRef>& idMap, const proc::MapPr
       textPlacement.drawTextAlongLines();
     }
 
-    context->szFont(context->textSizeFlightplan * context->mapLayerRouteText->getRouteFontScale());
+    context->szFont(context->textSizeRoute * context->mapLayerRouteText->getRouteFontScale());
   }
 
   // Texts and navaid icons ====================================================
@@ -1749,7 +1750,8 @@ void MapPainterRoute::paintProcedurePoint(QSet<map::MapRef>& idMap, const proc::
   float x = 0, y = 0;
 
   // Margins for text at left (VOR), right (waypoints) and below (NDB)
-  float defaultOverflySize = context->szF(context->symbolSizeNavaid, context->mapLayerRoute->getWaypointSymbolSize());
+  float defaultOverflySize = context->szF(context->symbolSizeNavaid * context->symbolSizeRoute,
+                                          context->mapLayerRoute->getWaypointSymbolSize());
   if(leg.mapType == proc::PROCEDURE_SID && index == 0)
   {
     // All legs with a calculated end point - runway =====================
@@ -1955,7 +1957,8 @@ void MapPainterRoute::paintProcedurePoint(QSet<map::MapRef>& idMap, const proc::
   texts.removeDuplicates();
 
   const map::MapResult& navaids = leg.navaids;
-  float symbolSizeWaypoint = context->szF(context->symbolSizeNavaid, context->mapLayerRoute->getWaypointSymbolSize());
+  float symbolSizeWaypoint = context->szF(context->symbolSizeNavaid * context->symbolSizeRoute,
+                                          context->mapLayerRoute->getWaypointSymbolSize());
 
   if(!navaids.waypoints.isEmpty() && wToSBuf(navaids.waypoints.constFirst().position, x, y, MARGINS))
   {
@@ -1976,7 +1979,8 @@ void MapPainterRoute::paintProcedurePoint(QSet<map::MapRef>& idMap, const proc::
     if(!idMap.contains(vor.getRef()))
     {
       idMap.insert(vor.getRef());
-      float symbolSizeVor = context->sz(context->symbolSizeNavaid, context->mapLayerRoute->getVorSymbolSize());
+      float symbolSizeVor = context->szF(context->symbolSizeNavaid * context->symbolSizeRoute,
+                                         context->mapLayerRoute->getVorSymbolSize());
       if(drawUnderlay)
         paintProcedureUnderlay(leg, x, y, symbolSizeVor);
       paintVor(x, y, vor, false);
@@ -1990,7 +1994,8 @@ void MapPainterRoute::paintProcedurePoint(QSet<map::MapRef>& idMap, const proc::
     if(!idMap.contains(ndb.getRef()))
     {
       idMap.insert(ndb.getRef());
-      float symbolSizeNdb = context->sz(context->symbolSizeNavaid, context->mapLayerRoute->getNdbSymbolSize());
+      float symbolSizeNdb = context->szF(context->symbolSizeNavaid * context->symbolSizeRoute,
+                                         context->mapLayerRoute->getNdbSymbolSize());
       if(drawUnderlay)
         paintProcedureUnderlay(leg, x, y, symbolSizeNdb);
       paintNdb(x, y, ndb, false);
@@ -2059,14 +2064,19 @@ void MapPainterRoute::paintProcedurePoint(QSet<map::MapRef>& idMap, const proc::
 void MapPainterRoute::paintAirport(float x, float y, const map::MapAirport& airport)
 {
   context->routeDrawnNavaids->append(airport.getRef());
-  float size = context->szF(context->symbolSizeAirport, context->mapLayerRoute->getAirportSymbolSize());
+  float size = context->szF(context->symbolSizeAirport * context->symbolSizeRoute,
+                            context->mapLayerRoute->getAirportSymbolSize());
+
   symbolPainter->drawAirportSymbol(context->painter, airport, x, y, size, false, false,
                                    context->flags2.testFlag(opts2::MAP_AIRPORT_HIGHLIGHT_ADDON));
 }
 
 void MapPainterRoute::paintAirportText(float x, float y, const map::MapAirport& airport, textatt::TextAttributes atts)
 {
-  float size = context->szF(context->symbolSizeAirport, context->mapLayerRoute->getAirportSymbolSize());
+  context->szFont(context->textSizeRoute * context->textSizeAirport * context->mapLayerRouteText->getRouteFontScale());
+  float size = context->szF(context->symbolSizeAirport * context->symbolSizeRoute,
+                            context->mapLayerRoute->getAirportSymbolSize());
+
   symbolPainter->drawAirportText(context->painter, airport, x, y, context->dispOptsAirport,
                                  context->airportTextFlagsRoute(true /* drawAsRoute */, false /* draw as log */), size,
                                  context->mapLayerRoute->isAirportDiagram(),
@@ -2081,7 +2091,7 @@ void MapPainterRoute::paintWaypoint(float x, float y, const map::MapWaypoint& wa
 
 void MapPainterRoute::paintWaypoint(const QColor& col, float x, float y, bool preview)
 {
-  float size = context->szF(context->symbolSizeNavaid, context->mapLayerRoute->getWaypointSymbolSize());
+  float size = context->szF(context->symbolSizeNavaid * context->symbolSizeRoute, context->mapLayerRoute->getWaypointSymbolSize());
   size = std::max(size, 8.f);
 
   symbolPainter->drawWaypointSymbol(context->painter, col, x, y, size, !preview);
@@ -2090,7 +2100,9 @@ void MapPainterRoute::paintWaypoint(const QColor& col, float x, float y, bool pr
 void MapPainterRoute::paintWaypointText(float x, float y, const map::MapWaypoint& waypoint, bool drawTextDetails,
                                         textatt::TextAttributes atts, const QStringList *additionalText)
 {
-  float size = context->szF(context->symbolSizeNavaid, context->mapLayerRoute->getWaypointSymbolSize());
+  context->szFont(context->textSizeRoute * context->textSizeNavaid * context->mapLayerRouteText->getRouteFontScale());
+  float size = context->szF(context->symbolSizeNavaid * context->symbolSizeRoute, context->mapLayerRoute->getWaypointSymbolSize());
+
   textflags::TextFlags flags = textflags::ROUTE_TEXT;
 
   if(!drawTextDetails && additionalText != nullptr && !additionalText->isEmpty())
@@ -2113,15 +2125,16 @@ void MapPainterRoute::paintWaypointText(float x, float y, const map::MapWaypoint
 void MapPainterRoute::paintVor(float x, float y, const map::MapVor& vor, bool preview)
 {
   context->routeDrawnNavaids->append(vor.getRef());
-  float size = context->szF(context->symbolSizeNavaid, context->mapLayerRoute->getVorSymbolSizeRoute());
-  float sizeLarge = context->szF(context->symbolSizeNavaid, context->mapLayerRoute->getVorSymbolSizeLarge());
+  float size = context->szF(context->symbolSizeNavaid * context->symbolSizeRoute, context->mapLayerRoute->getVorSymbolSizeRoute());
+  float sizeLarge = context->szF(context->symbolSizeNavaid * context->symbolSizeRoute, context->mapLayerRoute->getVorSymbolSizeLarge());
   symbolPainter->drawVorSymbol(context->painter, vor, x, y, size, sizeLarge, !preview, false /* fast */, context->darkMap);
 }
 
 void MapPainterRoute::paintVorText(float x, float y, const map::MapVor& vor, bool drawTextDetails, textatt::TextAttributes atts,
                                    const QStringList *additionalText)
 {
-  float size = context->szF(context->symbolSizeNavaid, context->mapLayerRoute->getVorSymbolSize());
+  context->szFont(context->textSizeRoute * context->textSizeNavaid * context->mapLayerRouteText->getRouteFontScale());
+  float size = context->szF(context->symbolSizeNavaid * context->symbolSizeRoute, context->mapLayerRoute->getVorSymbolSize());
   textflags::TextFlags flags = textflags::ROUTE_TEXT;
 
   if(!drawTextDetails && additionalText != nullptr && !additionalText->isEmpty())
@@ -2148,7 +2161,7 @@ void MapPainterRoute::paintVorText(float x, float y, const map::MapVor& vor, boo
 void MapPainterRoute::paintNdb(float x, float y, const map::MapNdb& ndb, bool preview)
 {
   context->routeDrawnNavaids->append(ndb.getRef());
-  float size = context->szF(context->symbolSizeNavaid, context->mapLayerRoute->getNdbSymbolSize());
+  float size = context->szF(context->symbolSizeNavaid * context->symbolSizeRoute, context->mapLayerRoute->getNdbSymbolSize());
   size = std::max(size, 8.f);
   symbolPainter->drawNdbSymbol(context->painter, x, y, size, !preview, false /* fast */, context->darkMap);
 }
@@ -2156,7 +2169,8 @@ void MapPainterRoute::paintNdb(float x, float y, const map::MapNdb& ndb, bool pr
 void MapPainterRoute::paintNdbText(float x, float y, const map::MapNdb& ndb, bool drawTextDetails, textatt::TextAttributes atts,
                                    const QStringList *additionalText)
 {
-  float size = context->szF(context->symbolSizeNavaid, context->mapLayerRoute->getNdbSymbolSize());
+  context->szFont(context->textSizeRoute * context->textSizeNavaid * context->mapLayerRouteText->getRouteFontScale());
+  float size = context->szF(context->symbolSizeNavaid * context->symbolSizeRoute, context->mapLayerRoute->getNdbSymbolSize());
   textflags::TextFlags flags = textflags::ROUTE_TEXT;
 
   if(!drawTextDetails && additionalText != nullptr && !additionalText->isEmpty())
@@ -2183,14 +2197,14 @@ void MapPainterRoute::paintNdbText(float x, float y, const map::MapNdb& ndb, boo
 /* paint intermediate approach point */
 void MapPainterRoute::paintProcedurePoint(float x, float y, bool preview)
 {
-  float size = context->szF(context->symbolSizeNavaid, context->mapLayerRoute->getProcedurePointSymbolSize());
+  float size = context->szF(context->symbolSizeNavaid * context->symbolSizeRoute, context->mapLayerRoute->getProcedurePointSymbolSize());
   symbolPainter->drawProcedureSymbol(context->painter, x, y, size, !preview);
 }
 
 void MapPainterRoute::paintProcedurePointText(float x, float y, bool drawTextDetails, textatt::TextAttributes atts,
                                               const QStringList& texts)
 {
-  float size = context->szF(context->symbolSizeNavaid, context->mapLayerRoute->getProcedurePointSymbolSize());
+  float size = context->szF(context->symbolSizeNavaid * context->symbolSizeRoute, context->mapLayerRoute->getProcedurePointSymbolSize());
   float lineWidth = std::max(size / 5.f, 2.0f);
   paintText(mapcolors::routeProcedurePointColor, x + lineWidth + 2.f, y, size * 1.5f, drawTextDetails, texts, atts);
 }
@@ -2205,7 +2219,7 @@ void MapPainterRoute::paintProcedureUnderlay(const proc::MapProcedureLeg& leg, f
 void MapPainterRoute::paintUserpoint(float x, float y, const map::MapUserpointRoute& userpoint, bool preview)
 {
   context->routeDrawnNavaids->append(userpoint.getRef());
-  float size = context->szF(context->symbolSizeNavaid, context->mapLayerRoute->getWaypointSymbolSize());
+  float size = context->szF(context->symbolSizeNavaid * context->symbolSizeRoute, context->mapLayerRoute->getWaypointSymbolSize());
   size = std::max(size, 8.f);
   symbolPainter->drawUserpointSymbol(context->painter, x, y, size, !preview);
 }
@@ -2213,6 +2227,8 @@ void MapPainterRoute::paintUserpoint(float x, float y, const map::MapUserpointRo
 void MapPainterRoute::paintText(const QColor& color, float x, float y, float size, bool drawTextDetails, QStringList texts,
                                 textatt::TextAttributes atts)
 {
+  context->szFont(context->textSizeRoute * context->textSizeNavaid * context->mapLayerRouteText->getRouteFontScale());
+
   texts.removeDuplicates();
   texts.removeAll(QStringLiteral());
 
@@ -2447,7 +2463,7 @@ void MapPainterRoute::drawRouteSymbolText(const QBitArray& visibleStartPoints, c
                << "diff" << diff << "textAngle" << textAngle << (diff > 0.f ? "right" : "left");
 #endif
 
-      float size = context->szF(context->symbolSizeNavaid, context->mapLayerRoute->getWaypointSymbolSize());
+      float size = context->szF(context->symbolSizeNavaid * context->symbolSizeRoute, context->mapLayerRoute->getWaypointSymbolSize());
 
 #pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-Wswitch-enum"
@@ -2498,7 +2514,8 @@ void MapPainterRoute::paintStartParking()
   if(departureLeg.isValid() && departureLeg.getMapType() == map::AIRPORT)
   {
     // Use airport symbol as base size for default
-    float radius = context->szF(context->symbolSizeAirport, context->mapLayerRoute->getAirportSymbolSize()) * 0.75f;
+    float radius = context->szF(context->symbolSizeAirport * context->symbolSizeRoute,
+                                context->mapLayerRoute->getAirportSymbolSize()) * 0.75f;
     float wradius = radius, hradius = radius;
     Pos startPos;
     if(route->hasDepartureParking())
@@ -2553,7 +2570,7 @@ void MapPainterRoute::paintWindBarbAtWaypoint(float windSpeed, float windDir, fl
 {
   if(context->route->hasAltitudeLegs() && context->route->isValidProfile())
   {
-    float size = context->szF(context->symbolSizeAirport, context->mapLayerRoute->getWindBarbsSymbolSize());
+    float size = context->szF(context->symbolSizeAirport * context->symbolSizeRoute, context->mapLayerRoute->getWindBarbsSymbolSize());
     symbolPainter->drawWindBarbs(context->painter, windSpeed, 0.f /* gust */, windDir, x - 5, y - 5, size,
                                  true /* barbs */, true /* alt wind */, true /* route */, context->drawFast);
   }

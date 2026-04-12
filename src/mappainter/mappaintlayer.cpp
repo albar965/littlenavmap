@@ -391,6 +391,7 @@ bool MapPaintLayer::render(GeoPainter *painter, ViewportParams *viewport, const 
       context.symbolSizeAircraftAi = od.getDisplaySymbolSizeAircraftAi() / 100.f;
       context.symbolSizeAircraftUser = od.getDisplaySymbolSizeAircraftUser() / 100.f;
       context.symbolSizeAirport = od.getDisplaySymbolSizeAirport() / 100.f;
+      context.symbolSizeRoute = od.getDisplaySymbolSizeFlightplan() / 100.f;
       context.symbolSizeAirportWeather = od.getDisplaySymbolSizeAirportWeather() / 100.f;
       context.symbolSizeWindBarbs = od.getDisplaySymbolSizeWindBarbs() / 100.f;
       context.symbolSizeNavaid = od.getDisplaySymbolSizeNavaid() / 100.f;
@@ -401,7 +402,7 @@ bool MapPaintLayer::render(GeoPainter *painter, ViewportParams *viewport, const 
       context.textSizeAirport = od.getDisplayTextSizeAirport() / 100.f;
       context.textSizeAirportRunway = od.getDisplayTextSizeAirportRunway() / 100.f;
       context.textSizeAirportTaxiway = od.getDisplayTextSizeAirportTaxiway() / 100.f;
-      context.textSizeFlightplan = od.getDisplayTextSizeFlightplan() / 100.f;
+      context.textSizeRoute = od.getDisplayTextSizeFlightplan() / 100.f;
       context.textSizeNavaid = od.getDisplayTextSizeNavaid() / 100.f;
       context.textSizeAirspace = od.getDisplayTextSizeAirspace() / 100.f;
       context.textSizeUserpoint = od.getDisplayTextSizeUserpoint() / 100.f;

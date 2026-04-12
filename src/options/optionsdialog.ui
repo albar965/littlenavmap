@@ -3911,7 +3911,7 @@ Value 0 is opaque and 90 is most transparent.</string>
              <x>0</x>
              <y>0</y>
              <width>543</width>
-             <height>501</height>
+             <height>591</height>
             </rect>
            </property>
            <layout class="QVBoxLayout" name="verticalLayout_35">
@@ -3961,10 +3961,10 @@ Value 0 is opaque and 90 is most transparent.</string>
                  </property>
                 </widget>
                </item>
-               <item row="0" column="2">
+               <item row="1" column="2">
                 <widget class="QSpinBox" name="spinBoxOptionsDisplayTextSizeFlightplan">
                  <property name="toolTip">
-                  <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Label size for flight plan navaids as well as labels along flight plan lines.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+                  <string>Label size for flight plan navaids as well as labels along flight plan lines</string>
                  </property>
                  <property name="suffix">
                   <string> %</string>
@@ -3986,7 +3986,45 @@ Value 0 is opaque and 90 is most transparent.</string>
                  </property>
                 </widget>
                </item>
-               <item row="1" column="2">
+               <item row="0" column="0" alignment="Qt::AlignVCenter">
+                <widget class="QLabel" name="labelOptionsMapSizeFlightplan">
+                 <property name="text">
+                  <string>&amp;Flight plan:</string>
+                 </property>
+                 <property name="alignment">
+                  <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignTop</set>
+                 </property>
+                 <property name="buddy">
+                  <cstring>spinBoxOptionsDisplayThicknessFlightplan</cstring>
+                 </property>
+                </widget>
+               </item>
+               <item row="1" column="1">
+                <widget class="QSpinBox" name="spinBoxOptionsDisplaySymbolSizeFlightplan">
+                 <property name="toolTip">
+                  <string>Symbol size for flight plan navaids and airports</string>
+                 </property>
+                 <property name="suffix">
+                  <string> %</string>
+                 </property>
+                 <property name="prefix">
+                  <string>Symbol </string>
+                 </property>
+                 <property name="minimum">
+                  <number>50</number>
+                 </property>
+                 <property name="maximum">
+                  <number>200</number>
+                 </property>
+                 <property name="singleStep">
+                  <number>10</number>
+                 </property>
+                 <property name="value">
+                  <number>100</number>
+                 </property>
+                </widget>
+               </item>
+               <item row="2" column="2">
                 <widget class="QCheckBox" name="checkBoxOptionsMapFlightplanText">
                  <property name="toolTip">
                   <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Draw bright yellow background for flight plan labels.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
@@ -3999,16 +4037,19 @@ Value 0 is opaque and 90 is most transparent.</string>
                  </property>
                 </widget>
                </item>
-               <item row="0" column="0" alignment="Qt::AlignVCenter">
-                <widget class="QLabel" name="labelOptionsMapSizeFlightplan">
+               <item row="3" column="0" colspan="3">
+                <widget class="QLabel" name="labelOptionsAppFontRouteHint">
                  <property name="text">
-                  <string>&amp;Flight plan:</string>
+                  <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;img src=&quot;:/littlenavmap/resources/icons/bulb.svg&quot;/&gt;&lt;span style=&quot; font-style:italic;&quot;&gt;The symbol and text sizes are combined with the settings for airports and navaids on page &lt;/span&gt;&lt;a href=&quot;lnm://mapdisplay&quot;&gt;&lt;span style=&quot; font-style:italic; text-decoration: underline;&quot;&gt;Map Display&lt;/span&gt;&lt;/a&gt;&lt;span style=&quot; font-style:italic;&quot;&gt;.&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
                  </property>
-                 <property name="alignment">
-                  <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignTop</set>
+                 <property name="wordWrap">
+                  <bool>true</bool>
                  </property>
-                 <property name="buddy">
-                  <cstring>spinBoxOptionsDisplayThicknessFlightplan</cstring>
+                 <property name="margin">
+                  <number>10</number>
+                 </property>
+                 <property name="textInteractionFlags">
+                  <set>Qt::LinksAccessibleByMouse|Qt::TextSelectableByMouse</set>
                  </property>
                 </widget>
                </item>
@@ -4043,6 +4084,22 @@ Value 0 is opaque and 90 is most transparent.</string>
                  </property>
                  <property name="buddy">
                   <cstring>spinBoxOptionsDisplayThicknessFlightplanProfile</cstring>
+                 </property>
+                </widget>
+               </item>
+               <item row="1" column="0" colspan="4">
+                <widget class="QLabel" name="labelOptionsProfileHint">
+                 <property name="text">
+                  <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;img src=&quot;:/littlenavmap/resources/icons/bulb.svg&quot;/&gt;&lt;span style=&quot; font-style:italic;&quot;&gt;Label options for the elevation profile can be found in menu &amp;quot;Tools&amp;quot; -&amp;gt; &amp;quot;Elevation Profile Display Options&amp;quot;.&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+                 </property>
+                 <property name="wordWrap">
+                  <bool>true</bool>
+                 </property>
+                 <property name="margin">
+                  <number>10</number>
+                 </property>
+                 <property name="textInteractionFlags">
+                  <set>Qt::LinksAccessibleByMouse|Qt::TextSelectableByMouse</set>
                  </property>
                 </widget>
                </item>
@@ -4093,22 +4150,6 @@ Value 0 is opaque and 90 is most transparent.</string>
                  </property>
                  <property name="value">
                   <number>100</number>
-                 </property>
-                </widget>
-               </item>
-               <item row="1" column="0" colspan="4">
-                <widget class="QLabel" name="labelOptionsProfileHint">
-                 <property name="text">
-                  <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;img src=&quot;:/littlenavmap/resources/icons/bulb.svg&quot;/&gt;&lt;span style=&quot; font-style:italic;&quot;&gt;Label options for the elevation profile can be found in menu &amp;quot;Tools&amp;quot; -&amp;gt; &amp;quot;Elevation Profile Display Options&amp;quot;.&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-                 </property>
-                 <property name="wordWrap">
-                  <bool>true</bool>
-                 </property>
-                 <property name="margin">
-                  <number>10</number>
-                 </property>
-                 <property name="textInteractionFlags">
-                  <set>Qt::LinksAccessibleByMouse|Qt::TextSelectableByMouse</set>
                  </property>
                 </widget>
                </item>
@@ -5756,7 +5797,7 @@ if you hover over the elevation profile.</string>
            <property name="geometry">
             <rect>
              <x>0</x>
-             <y>-116</y>
+             <y>0</y>
              <width>543</width>
              <height>527</height>
             </rect>
@@ -6226,7 +6267,7 @@ airspace filename has to match the callsign of the online center.</string>
            <property name="geometry">
             <rect>
              <x>0</x>
-             <y>-238</y>
+             <y>0</y>
              <width>572</width>
              <height>635</height>
             </rect>
@@ -8958,8 +8999,6 @@ You have to reload the scenery library so that the changes take effect.</string>
   <tabstop>checkBoxOptionsMapAiAircraftHideGround</tabstop>
   <tabstop>scrollArea_17</tabstop>
   <tabstop>spinBoxOptionsDisplayThicknessFlightplan</tabstop>
-  <tabstop>spinBoxOptionsDisplayTextSizeFlightplan</tabstop>
-  <tabstop>checkBoxOptionsMapFlightplanText</tabstop>
   <tabstop>spinBoxOptionsDisplayThicknessFlightplanProfile</tabstop>
   <tabstop>spinBoxOptionsDisplayTextSizeFlightplanProfile</tabstop>
   <tabstop>pushButtonOptionsDisplayFlightplanColor</tabstop>

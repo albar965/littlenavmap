@@ -120,7 +120,7 @@ OptionsDialog::OptionsDialog(QMainWindow *parentWindow)
                      ui->labelMapApiKeysHint, ui->labelOptionsMapThemesHint, ui->labelOptionsUnitsOnlineAirspaceHint,
                      ui->labelOptionsOnlineHint, ui->labelOptionsSimUpdatesHint, ui->labelOptionsWeatherHint,
                      ui->labelOptionsFileXplaneHint, ui->labelOptionsWeatherDefaultsHint, ui->labelOptionsCacheDiskExpirationHint,
-                     ui->labelOptionsMapThemeDirRestartHint});
+                     ui->labelOptionsMapThemeDirRestartHint, ui->labelOptionsAppFontRouteHint});
 
   // All labels having a http link ============================================
   linkLabels.append({ui->labelMapApiKeysHint, ui->labelCacheGlobePathDownload});
@@ -718,6 +718,7 @@ OptionsDialog::OptionsDialog(QMainWindow *parentWindow)
     ui->spinBoxOptionsDisplaySymbolSizeWindBarbs,
     ui->spinBoxOptionsDisplaySymbolSizeAircraftAi,
     ui->spinBoxOptionsDisplayTextSizeFlightplan,
+    ui->spinBoxOptionsDisplaySymbolSizeFlightplan,
     ui->spinBoxOptionsDisplayTextSizeFlightplanProfile,
     ui->spinBoxOptionsDisplayTransparencyFlightplan,
     ui->spinBoxOptionsDisplayTextSizeAircraftUser,
@@ -2321,6 +2322,7 @@ void OptionsDialog::widgetsToOptionData()
   data.displaySymbolSizeWindBarbs = ui->spinBoxOptionsDisplaySymbolSizeWindBarbs->value();
   data.displaySymbolSizeAircraftAi = ui->spinBoxOptionsDisplaySymbolSizeAircraftAi->value();
   data.displayTextSizeFlightplan = ui->spinBoxOptionsDisplayTextSizeFlightplan->value();
+  data.displaySymbolSizeFlightplan = ui->spinBoxOptionsDisplaySymbolSizeFlightplan->value();
   data.displayTextSizeFlightplanProfile = ui->spinBoxOptionsDisplayTextSizeFlightplanProfile->value();
   data.displayTransparencyFlightplan = ui->spinBoxOptionsDisplayTransparencyFlightplan->value();
   data.displayTextSizeAircraftUser = ui->spinBoxOptionsDisplayTextSizeAircraftUser->value();
@@ -2654,6 +2656,7 @@ void OptionsDialog::optionDataToWidgets(const OptionData& data)
   ui->spinBoxOptionsDisplaySymbolSizeWindBarbs->setValue(data.displaySymbolSizeWindBarbs);
   ui->spinBoxOptionsDisplaySymbolSizeAircraftAi->setValue(data.displaySymbolSizeAircraftAi);
   ui->spinBoxOptionsDisplayTextSizeFlightplan->setValue(data.displayTextSizeFlightplan);
+  ui->spinBoxOptionsDisplaySymbolSizeFlightplan->setValue(data.displaySymbolSizeFlightplan);
   ui->spinBoxOptionsDisplayTextSizeFlightplanProfile->setValue(data.displayTextSizeFlightplanProfile);
   ui->spinBoxOptionsDisplayTransparencyFlightplan->setValue(data.displayTransparencyFlightplan);
   ui->spinBoxOptionsDisplayTextSizeAircraftUser->setValue(data.displayTextSizeAircraftUser);

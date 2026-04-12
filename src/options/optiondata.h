@@ -967,6 +967,11 @@ public:
     return displayTextSizeFlightplan;
   }
 
+  int getDisplaySymbolSizeFlightplan() const
+  {
+    return displaySymbolSizeFlightplan;
+  }
+
   int getDisplayTextSizeAircraftUser() const
   {
     return displayTextSizeAircraftUser;
@@ -1628,6 +1633,9 @@ private:
 
   // spinBoxOptionsDisplayTextSizeFlightplan
   int displayTextSizeFlightplan = 100;
+
+  // spinBoxOptionsDisplaySymbolSizeFlightplan
+  int displaySymbolSizeFlightplan = 100;
 
   // spinBoxOptionsDisplayTextSizeFlightplanProfile
   int displayTextSizeFlightplanProfile = 100;
