@@ -28,6 +28,7 @@
 #include "common/unit.h"
 #include "gui/tools.h"
 #include "gui/widgetstate.h"
+#include "options/optiondata.h"
 #include "search/column.h"
 #include "search/columnlist.h"
 #include "search/sqlcontroller.h"
@@ -181,7 +182,7 @@ void UserdataSearch::saveState()
 void UserdataSearch::restoreState()
 {
   atools::gui::WidgetState widgetState(lnm::SEARCHTAB_USERDATA_VIEW_WIDGET);
-  if(OptionData::instance().getFlags() & opts::STARTUP_LOAD_SEARCH && !atools::gui::Application::isSafeMode())
+  if(OptionData::instance().getFlags().testFlag(opts::STARTUP_LOAD_SEARCH) && !atools::gui::Application::isSafeMode())
   {
     widgetState.restore(userdataSearchWidgets);
 
@@ -331,7 +332,7 @@ void UserdataSearch::setCallbacks()
 void UserdataSearch::updateButtonMenu()
 {
   atools::gui::changeIndication(ui->actionUserdataSearchShowMoreOptions,
-                                      atools::gui::anyWidgetChanged({ui->horizontalLayoutUserdataMore}));
+                                atools::gui::anyWidgetChanged({ui->horizontalLayoutUserdataMore}));
 }
 
 void UserdataSearch::updatePushButtons()

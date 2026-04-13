@@ -23,6 +23,7 @@
 #include "fs/util/fsutil.h"
 #include "geo/calculations.h"
 #include "geo/pos.h"
+#include "options/optiondata.h"
 #include "textpointer.h"
 #include "unit.h"
 #include "util/htmlbuilder.h"

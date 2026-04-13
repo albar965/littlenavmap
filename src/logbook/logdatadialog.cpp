@@ -16,6 +16,7 @@
 *****************************************************************************/
 
 #include "logbook/logdatadialog.h"
+#include "options/optiondata.h"
 #include "ui_logdatadialog.h"
 
 #include "app/navapp.h"

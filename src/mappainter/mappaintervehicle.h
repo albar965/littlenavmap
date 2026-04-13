@@ -20,6 +20,8 @@
 
 #include "mappainter/mappainter.h"
 
+#include "options/optionflags.h"
+
 #include <QCache>
 
 namespace Marble {

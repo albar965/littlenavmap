@@ -23,7 +23,6 @@
 #include "fs/util/fsutil.h"
 #include "fs/weather/metarparser.h"
 #include "geo/calculations.h"
-#include "options/optiondata.h"
 #include "textpointer.h"
 #include "util/paintercontextsaver.h"
 

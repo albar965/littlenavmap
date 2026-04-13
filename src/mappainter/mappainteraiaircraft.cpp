@@ -24,6 +24,7 @@
 #include "mapgui/mappaintwidget.h"
 #include "mappainter/paintcontext.h"
 #include "online/onlinedatacontroller.h"
+#include "options/optiondata.h"
 #include "settings/settings.h"
 #include "util/paintercontextsaver.h"
 

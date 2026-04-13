@@ -65,6 +65,7 @@
 #include "mapgui/mapthemehandler.h"
 #include "mapgui/mapwidget.h"
 #include "online/onlinedatacontroller.h"
+#include "options/optiondata.h"
 #include "options/optionsdialog.h"
 #include "perf/aircraftperfcontroller.h"
 #include "print/printsupport.h"
@@ -1766,7 +1767,7 @@ void MainWindow::connectAllSlots()
 void MainWindow::actionShortcutMapTriggered()
 {
   qDebug() << Q_FUNC_INFO;
-  if(OptionData::instance().getFlags2() & opts2::MAP_ALLOW_UNDOCK)
+  if(OptionData::instance().getFlags2().testFlag(opts2::MAP_ALLOW_UNDOCK))
   {
     ui->dockWidgetMap->show();
     ui->dockWidgetMap->activateWindow();
@@ -2176,7 +2177,7 @@ void MainWindow::routeFromFlightplan(const atools::fs::pln::Flightplan& flightpl
     routeController->loadFlightplan(flightplan, atools::fs::pln::LNM_PLN, QStringLiteral(), changed, adjustAltitude, undo, correctProfile,
                                     false /* clearUndoState */);
     routeController->getRoute().getFlightplan().setLnmFormat(lnmpln);
-    if(OptionData::instance().getFlags() & opts::GUI_CENTER_ROUTE)
+    if(OptionData::instance().getFlags().testFlag(opts::GUI_CENTER_ROUTE))
       routeCenter();
     showFlightplan();
     statusBar->setStatusMessage(tr("Created new flight plan."));
@@ -2579,7 +2580,7 @@ void MainWindow::routeAppend()
                                          routeController->getRouteConst().getDestinationAirportLegIndex() + 1 /* append */))
     {
       routeFileHistory->addFile(routeFile);
-      if(OptionData::instance().getFlags() & opts::GUI_CENTER_ROUTE)
+      if(OptionData::instance().getFlags().testFlag(opts::GUI_CENTER_ROUTE))
         routeCenter();
       showFlightplan();
       statusBar->setStatusMessage(tr("Flight plan appended."));
@@ -2599,7 +2600,7 @@ void MainWindow::routeInsert(int insertBefore)
     if(routeController->insertFlightplan(routeFile, insertBefore))
     {
       routeFileHistory->addFile(routeFile);
-      if(OptionData::instance().getFlags() & opts::GUI_CENTER_ROUTE)
+      if(OptionData::instance().getFlags().testFlag(opts::GUI_CENTER_ROUTE))
         routeCenter();
       statusBar->setStatusMessage(tr("Flight plan inserted."));
     }
@@ -2615,7 +2616,7 @@ void MainWindow::routeOpenRecent(const QString& routeFile)
     {
       if(routeController->loadFlightplan(routeFile, true /* correctAndWarn */, false /* clearUndoState */))
       {
-        if(OptionData::instance().getFlags() & opts::GUI_CENTER_ROUTE)
+        if(OptionData::instance().getFlags().testFlag(opts::GUI_CENTER_ROUTE))
           routeCenter();
         showFlightplan();
         statusBar->setStatusMessage(tr("Flight plan opened."));
@@ -4282,7 +4283,7 @@ void MainWindow::restoreStateMain()
   // Already loaded in constructor early to allow database creations
   // databaseLoader->restoreState();
 
-  if(!(OptionData::instance().getFlags2() & opts2::MAP_ALLOW_UNDOCK))
+  if(!(OptionData::instance().getFlags2().testFlag(opts2::MAP_ALLOW_UNDOCK)))
     ui->dockWidgetMap->hide();
   else
     ui->dockWidgetMap->show();
@@ -5107,25 +5108,25 @@ void MainWindow::resizeEvent(QResizeEvent *event)
 
 void MainWindow::showFlightplan()
 {
-  if(NavApp::isMainWindowVisible() && OptionData::instance().getFlags2() & opts2::RAISE_WINDOWS)
+  if(NavApp::isMainWindowVisible() && OptionData::instance().getFlags2().testFlag(opts2::RAISE_WINDOWS))
     actionShortcutFlightplanTriggered();
 }
 
 void MainWindow::showAircraftPerformance()
 {
-  if(NavApp::isMainWindowVisible() && OptionData::instance().getFlags2() & opts2::RAISE_WINDOWS)
+  if(NavApp::isMainWindowVisible() && OptionData::instance().getFlags2().testFlag(opts2::RAISE_WINDOWS))
     actionShortcutAircraftPerformanceTriggered();
 }
 
 void MainWindow::showLogbookSearch()
 {
-  if(NavApp::isMainWindowVisible() && OptionData::instance().getFlags2() & opts2::RAISE_WINDOWS)
+  if(NavApp::isMainWindowVisible() && OptionData::instance().getFlags2().testFlag(opts2::RAISE_WINDOWS))
     actionShortcutLogbookSearchTriggered();
 }
 
 void MainWindow::showUserpointSearch()
 {
-  if(NavApp::isMainWindowVisible() && OptionData::instance().getFlags2() & opts2::RAISE_WINDOWS)
+  if(NavApp::isMainWindowVisible() && OptionData::instance().getFlags2().testFlag(opts2::RAISE_WINDOWS))
     actionShortcutUserpointSearchTriggered();
 }
 

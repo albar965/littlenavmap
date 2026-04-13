@@ -34,6 +34,7 @@
 #include "mapgui/mapscale.h"
 #include "mappainter/mappaintlayer.h"
 #include "online/onlinedatacontroller.h"
+#include "options/optiondata.h"
 #include "query/airportquery.h"
 #include "query/airspacequeries.h"
 #include "query/airwaytrackquery.h"

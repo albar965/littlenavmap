@@ -56,6 +56,7 @@
 #include "mapgui/mapvisible.h"
 #include "mappainter/mappaintlayer.h"
 #include "online/onlinedatacontroller.h"
+#include "options/optiondata.h"
 #include "query/airportquery.h"
 #include "query/airspacequeries.h"
 #include "query/procedurequery.h"
@@ -3029,7 +3030,7 @@ void MapWidget::showSavedPosOnStartup()
 
   const atools::gui::MapPosHistoryEntry& currentPos = history.current();
 
-  if(OptionData::instance().getFlags() & opts::STARTUP_SHOW_ROUTE)
+  if(OptionData::instance().getFlags().testFlag(opts::STARTUP_SHOW_ROUTE))
   {
     qDebug() << "Show Route" << NavApp::getRouteConst().getBoundingRect();
     if(!NavApp::getRouteConst().isFlightplanEmpty())
@@ -3037,9 +3038,9 @@ void MapWidget::showSavedPosOnStartup()
     else
       showHome();
   }
-  else if(OptionData::instance().getFlags() & opts::STARTUP_SHOW_HOME)
+  else if(OptionData::instance().getFlags().testFlag(opts::STARTUP_SHOW_HOME))
     showHome();
-  else if(OptionData::instance().getFlags() & opts::STARTUP_SHOW_LAST)
+  else if(OptionData::instance().getFlags().testFlag(opts::STARTUP_SHOW_LAST))
   {
     if(currentPos.isValid())
     {

@@ -18,7 +18,7 @@
 #ifndef LNM_FUELTOOL_H
 #define LNM_FUELTOOL_H
 
-#include "options/optiondata.h"
+#include "options/optionflags.h"
 #include <QCoreApplication>
 
 namespace atools {

@@ -29,6 +29,7 @@
 #include "mapgui/mappaintwidget.h"
 #include "mapgui/mapscale.h"
 #include "mappainter/paintcontext.h"
+#include "options/optiondata.h"
 #include "util/paintercontextsaver.h"
 
 #include <marble/GeoPainter.h>

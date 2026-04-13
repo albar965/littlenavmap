@@ -19,10 +19,6 @@
 #define LITTLENAVMAP_MAPPAINTER_H
 
 #include "geo/coordinateconverter.h"
-#include "geo/rect.h"
-#include "options/optiondata.h"
-
-#include <marble/MarbleGlobal.h>
 
 #include <QPen>
 #include <QFont>

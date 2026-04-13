@@ -20,7 +20,7 @@
 
 #include <QHash>
 
-#include "options/optiondata.h"
+#include "options/optionflags.h"
 
 class QWidget;
 class QString;

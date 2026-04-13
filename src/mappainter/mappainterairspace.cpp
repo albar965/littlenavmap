@@ -24,6 +24,7 @@
 #include "mapgui/maplayer.h"
 #include "mapgui/mapscale.h"
 #include "mappainter/paintcontext.h"
+#include "options/optiondata.h"
 #include "query/airspacequeries.h"
 #include "query/querymanager.h"
 #include "route/route.h"

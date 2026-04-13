@@ -738,7 +738,7 @@ void ProfileWidget::paintIls(QPainter& painter, const Route& route)
 
         // Calculate text ==================
         painter.setPen(textColor);
-        if(OptionData::instance().getFlags2() & opts2::MAP_NAVAID_TEXT_BACKGROUND)
+        if(OptionData::instance().getFlags2().testFlag(opts2::MAP_NAVAID_TEXT_BACKGROUND))
         {
           painter.setBackground(Qt::white);
           painter.setBackgroundMode(Qt::OpaqueMode);
@@ -853,7 +853,7 @@ void ProfileWidget::paintVasi(QPainter& painter, const Route& route)
           painter.drawLine(center);
 
           painter.setPen(Qt::black);
-          if(OptionData::instance().getFlags2() & opts2::MAP_NAVAID_TEXT_BACKGROUND)
+          if(OptionData::instance().getFlags2().testFlag(opts2::MAP_NAVAID_TEXT_BACKGROUND))
           {
             painter.setBackground(Qt::white);
             painter.setBackgroundMode(Qt::OpaqueMode);
@@ -3029,7 +3029,7 @@ void ProfileWidget::jumpBackToAircraftTimeout()
 
   Ui::MainWindow *ui = NavApp::getMainUi();
   if(ui->actionProfileCenterAircraft->isChecked() && NavApp::isConnectedAndAircraft() &&
-     OptionData::instance().getFlags2() & opts2::ROUTE_NO_FOLLOW_ON_MOVE && aircraftDistanceFromStart < map::INVALID_DISTANCE_VALUE)
+     OptionData::instance().getFlags2().testFlag(opts2::ROUTE_NO_FOLLOW_ON_MOVE) && aircraftDistanceFromStart < map::INVALID_DISTANCE_VALUE)
   {
     if(QApplication::mouseButtons() & Qt::LeftButton || contextMenuActive)
       // Restart as long as menu is active or user is dragging around

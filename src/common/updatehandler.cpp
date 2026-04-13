@@ -17,16 +17,18 @@
 
 #include "common/updatehandler.h"
 
+#include "app/navapp.h"
 #include "common/constants.h"
 #include "gui/dialog.h"
 #include "gui/updatedialog.h"
-#include "app/navapp.h"
+#include "options/optiondata.h"
 #include "settings/settings.h"
 #include "util/htmlbuilder.h"
 #include "util/updatecheck.h"
 #include "util/updatecheck.h"
 
 #include <QDialogButtonBox>
+
 
 using atools::util::UpdateCheck;
 using atools::settings::Settings;

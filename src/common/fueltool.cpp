@@ -19,6 +19,7 @@
 #include "common/unit.h"
 #include "geo/calculations.h"
 #include "fs/perf/aircraftperf.h"
+#include "options/optiondata.h"
 
 FuelTool::FuelTool(const atools::fs::perf::AircraftPerf *aircraftPerf)
   : jetfuel(aircraftPerf->isJetFuel()), fuelAsVolume(aircraftPerf->useFuelAsVolume())

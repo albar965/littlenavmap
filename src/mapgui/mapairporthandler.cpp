@@ -261,7 +261,7 @@ void MapAirportHandler::restoreState()
     airportTypes = atools::settings::Settings::instance().valueVar(lnm::MAP_AIRPORT, map::AIRPORT_DEFAULT).value<map::MapTypes::FlagType>();
     sliderActionRunwayLength->restoreState();
   }
-  actionEmpty->setEnabled(OptionData::instance().getFlags() & opts::MAP_EMPTY_AIRPORTS);
+  actionEmpty->setEnabled(OptionData::instance().getFlags().testFlag(opts::MAP_EMPTY_AIRPORTS));
 
   runwaySliderValueChanged();
   flagsToActions();
@@ -286,7 +286,7 @@ void MapAirportHandler::resetSettingsToDefault()
 
 void MapAirportHandler::optionsChanged()
 {
-  actionEmpty->setEnabled(OptionData::instance().getFlags() & opts::MAP_EMPTY_AIRPORTS);
+  actionEmpty->setEnabled(OptionData::instance().getFlags().testFlag(opts::MAP_EMPTY_AIRPORTS));
   sliderActionRunwayLength->optionsChanged();
   runwaySliderValueChanged();
 }

@@ -20,6 +20,7 @@
 #include "geo/calculations.h"
 
 #include "geo/pos.h"
+#include "options/optiondata.h"
 
 #include <QStringBuilder>
 

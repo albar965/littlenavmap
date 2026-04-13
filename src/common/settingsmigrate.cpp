@@ -19,7 +19,7 @@
 
 #include "common/constants.h"
 #include "gui/messagesettings.h"
-#include "options/optiondata.h"
+#include "options/optionflags.h"
 #include "settings/settings.h"
 #include "util/version.h"
 #include "io/fileroller.h"

@@ -18,12 +18,13 @@
 #ifndef LITTLENAVMAP_UNIT_H
 #define LITTLENAVMAP_UNIT_H
 
-#include "options/optiondata.h"
+#include "options/optionflags.h"
 
 #include <QCoreApplication>
 #include <QLocale>
 #include <functional>
 
+class OptionData;
 namespace atools {
 namespace geo {
 class Pos;

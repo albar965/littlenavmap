@@ -40,6 +40,7 @@
 #include "gui/tabwidgethandler.h"
 #include "gui/tools.h"
 #include "gui/widgetstate.h"
+#include "options/optiondata.h"
 #include "perf/aircraftperfdialog.h"
 #include "perf/perfmergedialog.h"
 #include "route/route.h"
@@ -1419,7 +1420,7 @@ void AircraftPerfController::restoreState()
   {
     const FileCheck *files = NavApp::getCommandLineFiles();
     QString perfFile = files->getAircraftPerfFile();
-    if(perfFile.isEmpty() && OptionData::instance().getFlags() & opts::STARTUP_LOAD_PERF)
+    if(perfFile.isEmpty() && OptionData::instance().getFlags().testFlag(opts::STARTUP_LOAD_PERF))
       perfFile = settings.valueStr(lnm::AIRCRAFT_PERF_FILENAME);
 
     if(!perfFile.isEmpty())

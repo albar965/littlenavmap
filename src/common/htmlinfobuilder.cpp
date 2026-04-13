@@ -18,6 +18,7 @@
 #include "common/htmlinfobuilder.h"
 
 #include "atools.h"
+#include "options/optiondata.h"
 #include "query/airspacequeries.h"
 #include "query/querymanager.h"
 #include "textpointer.h"

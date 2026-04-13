@@ -29,6 +29,7 @@
 #include "mapgui/mapthemehandler.h"
 #include "mappainter/mappaintlayer.h"
 #include "marble/ViewportParams.h"
+#include "options/optiondata.h"
 #include "query/airwayquery.h"
 #include "query/airwaytrackquery.h"
 #include "query/mapquery.h"
@@ -90,7 +91,7 @@ MapPaintWidget::MapPaintWidget(QWidget *parent, Queries *queriesParam, bool visi
   const OptionData& options = OptionData::instance();
 
   setSunShadingDimFactor(static_cast<double>(options.getDisplaySunShadingDimFactor()) / 100.);
-  avoidBlurredMap = options.getFlags2() & opts2::MAP_AVOID_BLURRED_MAP;
+  avoidBlurredMap = options.getFlags2().testFlag(opts2::MAP_AVOID_BLURRED_MAP);
 
   setFont(options.getMapFont());
 
@@ -307,7 +308,7 @@ void MapPaintWidget::optionsChanged()
   // Updated sun shadow and force a tile refresh by changing the show status again
   setSunShadingDimFactor(static_cast<double>(options.getDisplaySunShadingDimFactor()) / 100.);
   setShowSunShading(showSunShading());
-  avoidBlurredMap = options.getFlags2() & opts2::MAP_AVOID_BLURRED_MAP;
+  avoidBlurredMap = options.getFlags2().testFlag(opts2::MAP_AVOID_BLURRED_MAP);
 
   // reloadMap();
   updateCacheSizes();
@@ -927,7 +928,7 @@ void MapPaintWidget::showAircraft(bool centerAircraftChecked)
   if(verbose)
     qDebug() << Q_FUNC_INFO;
 
-  if(!(OptionData::instance().getFlags2() & opts2::ROUTE_NO_FOLLOW_ON_MOVE) || centerAircraftChecked)
+  if(!(OptionData::instance().getFlags2().testFlag(opts2::ROUTE_NO_FOLLOW_ON_MOVE)) || centerAircraftChecked)
   {
     // Keep old behavior if jump back to aircraft is disabled
 
@@ -1379,7 +1380,7 @@ bool MapPaintWidget::loadKml(const QString& filename, bool center)
 {
   if(QFile::exists(filename))
   {
-    model()->addGeoDataFile(filename, 0, center && OptionData::instance().getFlags() & opts::GUI_CENTER_KML);
+    model()->addGeoDataFile(filename, 0, center && OptionData::instance().getFlags().testFlag(opts::GUI_CENTER_KML));
 
     if(center)
       showAircraft(false);

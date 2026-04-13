@@ -24,6 +24,7 @@
 #include "mapgui/mappaintwidget.h"
 #include "mapgui/mapthemehandler.h"
 #include "mappainter/paintcontext.h"
+#include "options/optiondata.h"
 #include "util/paintercontextsaver.h"
 
 #ifdef DEBUG_APPROACH_PAINT
@@ -31,6 +32,7 @@
 #endif
 
 #include <marble/GeoPainter.h>
+
 
 MapPainterTop::MapPainterTop(MapPaintWidget *mapWidgetParam, MapScale *mapScale, PaintContext *paintContext)
   : MapPainter(mapWidgetParam, mapScale, paintContext)

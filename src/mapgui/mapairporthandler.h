@@ -19,7 +19,7 @@
 #define LNM_MAPAIRPORTHANDLER_H
 
 #include "common/mapflags.h"
-#include "options/optiondata.h"
+#include "options/optionflags.h"
 
 #include <QObject>
 #include <QWidgetAction>
@@ -43,7 +43,7 @@ struct MapAirportHandler :
   Q_OBJECT
 
 public:
-  explicit MapAirportHandler(QWidget *parent);
+  explicit MapAirportHandler(QWidget * parent);
   virtual ~MapAirportHandler() override;
 
   MapAirportHandler(const MapAirportHandler& other) = delete;

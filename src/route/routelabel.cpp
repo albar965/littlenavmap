@@ -28,6 +28,7 @@
 #include "gui/clicktooltiphandler.h"
 #include "gui/linktooltiphandler.h"
 #include "gui/widgetzoomhandler.h"
+#include "options/optiondata.h"
 #include "perf/aircraftperfcontroller.h"
 #include "query/airportquery.h"
 #include "query/mapquery.h"

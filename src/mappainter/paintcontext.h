@@ -21,7 +21,7 @@
 #include "common/mapflags.h"
 
 #include "geo/rect.h"
-#include "options/optiondata.h"
+#include "options/optionflags.h"
 
 #include <marble/MarbleGlobal.h>
 

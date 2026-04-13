@@ -29,6 +29,7 @@
 #include "gui/comboboxhandler.h"
 #include "gui/tools.h"
 #include "gui/widgetstate.h"
+#include "options/optiondata.h"
 #include "query/mapquery.h"
 #include "query/querymanager.h"
 #include "search/column.h"

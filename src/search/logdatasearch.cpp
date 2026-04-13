@@ -28,6 +28,7 @@
 #include "common/unit.h"
 #include "gui/tools.h"
 #include "gui/widgetstate.h"
+#include "options/optiondata.h"
 #include "query/airportquery.h"
 #include "search/column.h"
 #include "search/columnlist.h"

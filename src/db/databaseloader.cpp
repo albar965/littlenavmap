@@ -29,6 +29,7 @@
 #include "fs/navdatabaseprogress.h"
 #include "gui/errorhandler.h"
 #include "gui/textdialog.h"
+#include "options/optiondata.h"
 #include "options/optionsdialog.h"
 #include "settings/settings.h"
 #include "sql/sqldatabase.h"

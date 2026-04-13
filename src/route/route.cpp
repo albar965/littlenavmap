@@ -25,6 +25,7 @@
 #include "fs/util/coordinates.h"
 #include "fs/util/fsutil.h"
 #include "geo/calculations.h"
+#include "options/optiondata.h"
 #include "query/airportquery.h"
 #include "query/airwaytrackquery.h"
 #include "query/infoquery.h"

@@ -34,6 +34,7 @@
 #include "gui/mainwindow.h"
 #include "gui/tools.h"
 #include "gui/widgetstate.h"
+#include "options/optiondata.h"
 #include "query/airportquery.h"
 #include "query/mapquery.h"
 #include "query/querymanager.h"

@@ -32,6 +32,7 @@
 #include "mapgui/mappaintwidget.h"
 #include "mapgui/mapscale.h"
 #include "mappainter/paintcontext.h"
+#include "options/optiondata.h"
 #include "route/route.h"
 #include "route/routealtitudeleg.h"
 #include "util/paintercontextsaver.h"

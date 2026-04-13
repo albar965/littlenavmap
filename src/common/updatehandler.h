@@ -18,7 +18,7 @@
 #ifndef LITTLENAVMAP_UPDATEHANDLER_H
 #define LITTLENAVMAP_UPDATEHANDLER_H
 
-#include "options/optiondata.h"
+#include "options/optionflags.h"
 
 #include <QObject>
 #include <QTimer>

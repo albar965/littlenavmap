@@ -17,6 +17,7 @@
 
 #include "perf/aircraftperfdialog.h"
 #include "gui/linktooltiphandler.h"
+#include "options/optiondata.h"
 #include "ui_aircraftperfdialog.h"
 
 #include "atools.h"

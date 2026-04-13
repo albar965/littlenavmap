@@ -17,6 +17,7 @@
 
 #include "common/unitstringtool.h"
 #include "common/unit.h"
+#include "options/optiondata.h"
 
 #include <QAction>
 #include <QCheckBox>

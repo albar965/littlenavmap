@@ -26,6 +26,7 @@
 #include "fs/online/onlinetypes.h"
 #include "gui/widgetstate.h"
 #include "app/navapp.h"
+#include "options/optiondata.h"
 #include "search/column.h"
 #include "search/columnlist.h"
 #include "search/sqlcontroller.h"
@@ -133,7 +134,7 @@ void OnlineCenterSearch::saveState()
 
 void OnlineCenterSearch::restoreState()
 {
-  if(OptionData::instance().getFlags() & opts::STARTUP_LOAD_SEARCH)
+  if(OptionData::instance().getFlags().testFlag(opts::STARTUP_LOAD_SEARCH))
   {
     atools::gui::WidgetState widgetState(lnm::SEARCHTAB_ONLINE_CENTER_VIEW_WIDGET);
     widgetState.restore(onlineCenterSearchWidgets);

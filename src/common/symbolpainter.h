@@ -18,9 +18,8 @@
 #ifndef LITTLENAVMAP_SYMBOLPAINTER_H
 #define LITTLENAVMAP_SYMBOLPAINTER_H
 
-#include "options/optiondata.h"
-
 #include "common/mapflags.h"
+#include "options/optionflags.h"
 
 #include <QColor>
 #include <QIcon>

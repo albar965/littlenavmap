@@ -21,6 +21,7 @@
 #include "common/mapcolors.h"
 #include "common/symbolpainter.h"
 #include "common/unit.h"
+#include "options/optiondata.h"
 #include "profile/profileoptions.h"
 #include "profile/profilescrollarea.h"
 #include "profile/profilewidget.h"

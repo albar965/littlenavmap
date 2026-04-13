@@ -36,6 +36,7 @@
 #include "gui/translator.h"
 #include "logging/logginghandler.h"
 #include "logging/loggingutil.h"
+#include "options/optiondata.h"
 #include "options/optionsdialog.h"
 #include "routeexport/routeexportformat.h"
 #include "settings/settings.h"

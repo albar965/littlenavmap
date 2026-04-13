@@ -611,7 +611,9 @@ HEADERS  += \
   src/mappainter/mappaintlayer.h \
   src/mappainter/paintcontext.h \
   src/online/onlinedatacontroller.h \
+  src/options/optionchangeflags.h \
   src/options/optiondata.h \
+  src/options/optionflags.h \
   src/options/optionsdialog.h \
   src/perf/aircraftperfcontroller.h \
   src/perf/aircraftperfdialog.h \
