@@ -777,7 +777,7 @@ void RouteStringDialog::updateButtonState()
   // Copy option flags to dropdown menu items
   updatingActions = true;
   for(QAction *action : std::as_const(actions))
-    action->setChecked(rs::RouteStringOptions(static_cast<quint32>(action->data().toInt())) & options);
+    action->setChecked(rs::RouteStringOptions(static_cast<quint32>(action->data().toInt())).testAnyFlag(options));
 
   updatingActions = false;
 }

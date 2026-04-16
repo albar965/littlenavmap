@@ -142,7 +142,7 @@ const QList<map::MapAirspace> *AirspaceQuery::getAirspaces(const GeoDataLatLonBo
         for(int i = 0; i <= map::MAP_AIRSPACE_TYPE_BITS; i++)
         {
           map::MapAirspaceTypes type(1 << i);
-          if(filter.types & type)
+          if(filter.types.testAnyFlag(type))
             typeStrings.append(map::airspaceTypeToDatabase(type.asEnum()));
         }
       }

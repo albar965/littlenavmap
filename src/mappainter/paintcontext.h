@@ -190,32 +190,32 @@ struct PaintContext
 
   bool  dOptUserAc(optsac::DisplayOptionsUserAircraft opts) const
   {
-    return dispOptsUser & opts;
+    return dispOptsUser.testAnyFlag(opts);
   }
 
   bool  dOptAiAc(optsac::DisplayOptionsAiAircraft opts) const
   {
-    return dispOptsAi & opts;
+    return dispOptsAi.testAnyFlag(opts);
   }
 
   bool  dOptAp(optsd::DisplayOptionsAirport opts) const
   {
-    return dispOptsAirport & opts;
+    return dispOptsAirport.testAnyFlag(opts);
   }
 
   bool  dOptRose(optsd::DisplayOptionsRose opts) const
   {
-    return dispOptsRose & opts;
+    return dispOptsRose.testAnyFlag(opts);
   }
 
   bool  dOptMeasurement(optsd::DisplayOptionsMeasurement opts) const
   {
-    return dispOptsMeasurement & opts;
+    return dispOptsMeasurement.testAnyFlag(opts);
   }
 
   bool  dOptRoute(optsd::DisplayOptionsRoute opts) const
   {
-    return dispOptsRoute & opts;
+    return dispOptsRoute.testAnyFlag(opts);
   }
 
   /* Calculate real symbol sizes */

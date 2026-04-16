@@ -1894,7 +1894,7 @@ void Route::clearProcedureLegs(proc::MapProcedureTypes type, bool clearRoute, bo
   for(int i = size() - 1; i >= 0; i--)
   {
     const RouteLeg& routeLeg = value(i);
-    if(type & routeLeg.getProcedureLeg().mapType) // Check if any bits/flags overlap
+    if(type.testAnyFlag(routeLeg.getProcedureLeg().mapType)) // Check if any bits/flags overlap
       indexes.append(i);
   }
 

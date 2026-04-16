@@ -141,7 +141,7 @@ void AirspaceQueries::getAirspacesInternal(AirspaceList& airspaceVector, const M
     return;
 
   // Check if requested source and enabled sources overlap
-  if(src & sources)
+  if(src.testAnyFlag(sources))
   {
     AirspaceQuery *airspaceQuery = airspaceQueries.value(src);
     if(airspaceQuery != nullptr)

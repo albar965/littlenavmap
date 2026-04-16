@@ -197,8 +197,8 @@ void AirspaceToolBarHandler::updateToolButtons()
   {
     if(airspaceToolGroups.at(i) == nullptr)
       // Depress the button if the state is not default
-      airspaceToolButtons.at(i)->setChecked(airspaceToolButtonFilters.at(i).types & shown.types ||
-                                            airspaceToolButtonFilters.at(i).flags & shown.flags);
+      airspaceToolButtons.at(i)->setChecked(airspaceToolButtonFilters.at(i).types.testAnyFlag(shown.types) ||
+                                            airspaceToolButtonFilters.at(i).flags.testAnyFlag(shown.flags));
     else
       // Depress button if the first is not selected in groups
       airspaceToolButtons.at(i)->setChecked(!airspaceToolGroups.at(i)->actions().constFirst()->isChecked());
@@ -258,10 +258,10 @@ void AirspaceToolBarHandler::filterTypesToActions(const map::MapAirspaceFilter& 
       map::MapAirspaceFilter filter = action->data().value<map::MapAirspaceFilter>();
       if(filter.flags == map::AIRSPACE_ALTITUDE_FLAG_NONE)
         // Is a normal type filter
-        action->setChecked(filter.types & currentFilter.types);
+        action->setChecked(filter.types.testAnyFlag(currentFilter.types));
       else
         // Grouped altitude checkbox - check depending on flags
-        action->setChecked(filter.flags & currentFilter.flags);
+        action->setChecked(filter.flags.testAnyFlag(currentFilter.flags));
       action->blockSignals(false);
     }
   }
