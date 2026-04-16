@@ -174,6 +174,7 @@ int main(int argc, char *argv[])
     CommandLine commandLine;
 
     // Process the actual command line arguments given by the user
+    // Option values passed to Application::addStartupOptionStr()
     commandLine.process();
 
     // Check files passed on the command line and save it in FileCheck

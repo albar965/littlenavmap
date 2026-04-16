@@ -52,6 +52,7 @@
 #include <QDir>
 #include <QStringBuilder>
 #include <QActionGroup>
+#include <QTimer>
 
 using atools::sql::SqlUtil;
 using atools::fs::NavDatabase;

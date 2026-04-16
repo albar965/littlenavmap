@@ -440,6 +440,9 @@ public:
    * Always creates a crash report in case of previous unsafe exit. */
   static void recordStartNavApp();
 
+  /* Restart the application if the flag restartApplication is set */
+  static void restartApplication();
+
   /* Create manual issue report */
   static void createIssueReport(const QStringList& additionalFiles);
 

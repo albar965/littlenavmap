@@ -68,6 +68,7 @@
 #include <marble/MarbleModel.h>
 
 #include <QIcon>
+#include <QProcess>
 
 ConnectClient *NavApp::connectClient = nullptr;
 DatabaseManager *NavApp::databaseManager = nullptr;
@@ -245,8 +246,9 @@ atools::gui::DataExchange *NavApp::getDataExchange()
 bool NavApp::initDataExchange()
 {
   if(dataExchange == nullptr)
-    dataExchange = new atools::gui::DataExchange(
-      Settings::instance().getAndStoreValue(lnm::OPTIONS_DATAEXCHANGE_DEBUG, false).toBool(), lnm::PROGRAM_GUID);
+    dataExchange = new atools::gui::DataExchange(lnm::PROGRAM_GUID,
+                                                 getStartupOptions().contains(lnm::STARTUP_NO_DATA_EXCHANGE),
+                                                 Settings::instance().getAndStoreValue(lnm::OPTIONS_DATAEXCHANGE_DEBUG, false).toBool());
 
   // Check for commands from other instances in shared memory segment
   // Not connected to main window yet - so messages will be ignored
@@ -263,7 +265,7 @@ void NavApp::deInitDataExchange()
 
 void NavApp::initStartupProperties()
 {
-  fileCheck = new FileCheck(getStartupOptionsConst());
+  fileCheck = new FileCheck(getStartupOptions());
 }
 
 const FileCheck *NavApp::getCommandLineFiles()
@@ -823,6 +825,32 @@ void NavApp::recordStartNavApp()
                                          lnm::helpOnlineUrl, "CRASHREPORT.html", lnm::helpLanguageOnline());
 #endif
   // Keep command line options to avoid using the wrong configuration folder
+}
+
+void NavApp::restartApplication()
+{
+  qDebug() << Q_FUNC_INFO << QCoreApplication::applicationFilePath();
+
+  dataExchange->disable();
+  atools::gui::Application::processEventsExtended();
+
+  setRestartApplication(false /* restart */, false /* reset */);
+
+  QStringList arguments = QCoreApplication::arguments();
+  if(!arguments.isEmpty())
+    arguments.removeFirst();
+  arguments.append(QStringLiteral("--") % lnm::STARTUP_NO_DATA_EXCHANGE);
+
+  QProcess process;
+  process.setArguments(arguments);
+  process.setProgram(QCoreApplication::applicationFilePath());
+  process.setWorkingDirectory(QCoreApplication::applicationDirPath());
+  bool result = process.startDetached();
+
+  if(result)
+    qInfo() << Q_FUNC_INFO << "Success.";
+  else
+    qWarning() << Q_FUNC_INFO << "FAILED.";
 }
 
 void NavApp::createIssueReport(const QStringList& additionalFiles)

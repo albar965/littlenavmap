@@ -18,9 +18,8 @@
 #ifndef LITTLENAVMAP_CONSTANTS_H
 #define LITTLENAVMAP_CONSTANTS_H
 
-#include "gui/dataexchange.h"
+#include "gui/dataexchangeflags.h"
 
-#include <QLatin1String>
 #include <QSize>
 
 /* Define to skip caching of approaches when loading */
@@ -526,10 +525,11 @@ const QLatin1String STARTUP_LAYOUT("layout");
 const QLatin1String STARTUP_GPX("gpx");
 const QLatin1String STARTUP_MARKER("user-feature");
 const QLatin1String STARTUP_FORCE_LOADING("force"); /* Force overwriting of files */
+const QLatin1String STARTUP_NO_DATA_EXCHANGE("no-data-exchange"); /* Do not start other instance through data exchange */
 
 /* Commands also through data exchange */
-const QLatin1String STARTUP_COMMAND_QUIT(atools::gui::DataExchange::STARTUP_COMMAND_QUIT); /* Exit application. Also long option. */
-const QLatin1String STARTUP_COMMAND_ACTIVATE(atools::gui::DataExchange::STARTUP_COMMAND_ACTIVATE); /* Bring window to front */
+const QLatin1String STARTUP_COMMAND_QUIT(atools::gui::dataexchange::STARTUP_COMMAND_QUIT); /* Exit application. Also long option. */
+const QLatin1String STARTUP_COMMAND_ACTIVATE(atools::gui::dataexchange::STARTUP_COMMAND_ACTIVATE); /* Bring window to front */
 
 /* Not used as long options */
 const QLatin1String STARTUP_OTHER_ARGUMENTS("others"); /* Positional arguments not found after option - string list */

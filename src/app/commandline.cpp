@@ -97,6 +97,12 @@ CommandLine::CommandLine()
               tr("Quit an already running instance. "
                  "The running instance might still ask about exiting or saving files."));
 
+  // Disable data exchange - do not send a message to a running application =============================
+  buildOption(noDataExchangeOpt, QStringLiteral(), lnm::STARTUP_NO_DATA_EXCHANGE,
+              tr("Do not activate another instance. "
+                 "This is used only internally. Using this the wrong way might result in data loss."), QStringLiteral(), QStringLiteral(),
+              true /* hiddenFromHelp */);
+
   // Language =============================
   buildOption(languageOpt, "g", "language",
               tr("Use language code <language> like \"de\" or \"en_US\" for the user interface. "
@@ -119,14 +125,18 @@ CommandLine::~CommandLine()
   delete languageOpt;
   delete forceOpt;
   delete quitOpt;
+  delete noDataExchangeOpt;
 }
 
 void CommandLine::buildOption(QCommandLineOption *& option, const QString& shortOption, const QString& longOption,
-                              const QString& description, const QString& valueName, const QString& defaultValue)
+                              const QString& description, const QString& valueName, const QString& defaultValue, bool hiddenFromHelp)
 {
   QStringList opts({shortOption, longOption});
   opts.removeAll(QStringLiteral());
   option = new QCommandLineOption(opts, description, valueName, defaultValue);
+  if(hiddenFromHelp)
+    option->setFlags(QCommandLineOption::HiddenFromHelp);
+
   parser->addOption(*option);
 }
 
@@ -198,6 +208,9 @@ void CommandLine::process()
 
   if(parser->isSet(*quitOpt))
     Application::addStartupOptionStr(lnm::STARTUP_COMMAND_QUIT, QStringLiteral());
+
+  if(parser->isSet(*noDataExchangeOpt))
+    Application::addStartupOptionStr(lnm::STARTUP_NO_DATA_EXCHANGE, QStringLiteral());
 
   // Other arguments without option
   if(!parser->positionalArguments().isEmpty())

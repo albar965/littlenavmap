@@ -120,7 +120,6 @@ void AirspaceController::saveState() const
                                                                                           ui->actionViewAirspaceSrcNavigraph,
                                                                                           ui->actionViewAirspaceSrcUser,
                                                                                           ui->actionViewAirspaceSrcOnline}));
-
 }
 
 void AirspaceController::optionsChanged()

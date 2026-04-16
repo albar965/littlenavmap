@@ -666,7 +666,7 @@ void MainWindow::deInit()
     ATOOLS_DELETE_LOG(ui);
     ATOOLS_DELETE_LOG(dockHandler);
 
-    if(NavApp::isRestartProcess())
+    if(NavApp::isRestartApplicationResetSettings())
       Settings::clearAndShutdown();
     else
       Settings::shutdown();
@@ -3563,7 +3563,11 @@ void MainWindow::mainWindowShownDelayed()
   // First installation actions ====================================================
 
   Settings& settings = Settings::instance();
+#ifdef DEBUG_INFORMATION_NO_STARTUP_MESSAGES
+  if(false)
+#else
   if(settings.valueBool(lnm::MAINWINDOW_FIRSTAPPLICATIONSTART, true))
+#endif
   {
     settings.setValue(lnm::MAINWINDOW_FIRSTAPPLICATIONSTART, false);
 
@@ -4110,7 +4114,7 @@ void MainWindow::resetAllSettings()
 
   if(retval == QDialogButtonBox::Yes)
   {
-    NavApp::setRestartProcess(true);
+    NavApp::setRestartApplication(true /* restart */, true /* reset */);
     close();
   }
   else if(retval == QMessageBox::Help)
@@ -4407,7 +4411,7 @@ void MainWindow::saveStateMain()
 #endif
 
     // About to reset all settings and restart application
-    if(NavApp::isRestartProcess())
+    if(NavApp::isRestartApplicationResetSettings())
     {
       deleteAircraftTrail(true /* quiet */);
       mapWidget->clearHistory();
@@ -4823,7 +4827,7 @@ void MainWindow::closeEvent(QCloseEvent *event)
         event->ignore();
 
         // Do not restart process after settings reset
-        NavApp::setRestartProcess(false);
+        NavApp::setRestartApplication(false /* restart */, false /* reset */);
         return;
       }
     }
@@ -4836,14 +4840,17 @@ void MainWindow::closeEvent(QCloseEvent *event)
         event->ignore();
 
         // Do not restart process after settings reset
-        NavApp::setRestartProcess(false);
+        NavApp::setRestartApplication(false /* restart */, false /* reset */);
         return;
       }
     }
 
-    // Do not ask if user did a reset settings
-    if(!NavApp::isRestartProcess())
+    if(NavApp::isRestartApplicationResetSettings())
+      // Do not ask if user did a reset settings. No question dialog needed - quit right away
+      quit = true;
+    else
     {
+      // Normal exit. Check for changes. =========================================
       if(NavApp::getDatabaseManager()->isLoadingProgress())
       {
         // Database compiling in background ==========================
@@ -4864,6 +4871,7 @@ void MainWindow::closeEvent(QCloseEvent *event)
       }
       else
       {
+#ifndef DEBUG_INFORMATION_NO_STARTUP_MESSAGES
         // Normal as quit dialog ======================================
         int result = dialog->showQuestionMsgBox(lnm::ACTIONS_SHOW_QUIT, tr("Really quit?"),
                                                 tr("Do not &show this dialog again and quit."),
@@ -4873,7 +4881,8 @@ void MainWindow::closeEvent(QCloseEvent *event)
           // Do not exit
           event->ignore();
         else
-          quit = true;
+#endif
+        quit = true;
       }
     }
 
@@ -4886,7 +4895,8 @@ void MainWindow::closeEvent(QCloseEvent *event)
       dockHandler->closeAllDialogs();
     }
 
-    saveStateMain();
+    if(!NavApp::isRestartApplicationResetSettings())
+      saveStateMain();
 
     /* Have to delete early before deleting main map widget */
     if(quit)
@@ -4897,6 +4907,10 @@ void MainWindow::closeEvent(QCloseEvent *event)
   }
   else
     qWarning() << Q_FUNC_INFO << "close called after deInit";
+
+  // All databases and settings file should be closed by now
+  if(Application::isRestartApplication())
+    NavApp::restartApplication();
 
   qDebug() << Q_FUNC_INFO << "Exit quit is" << quit;
 }

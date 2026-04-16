@@ -63,7 +63,7 @@ public:
 private:
   /* Create option and assign to pointer reference and parser */
   void buildOption(QCommandLineOption *& option, const QString& shortOption, const QString& longOption, const QString& description,
-                   const QString& valueName = QString(), const QString& defaultValue = QString());
+                   const QString& valueName = QString(), const QString& defaultValue = QString(), bool hiddenFromHelp = false);
 
   QCommandLineParser *parser = nullptr;
   QString logPath, cachePath, language;
@@ -71,7 +71,7 @@ private:
   QCommandLineOption *settingsPathOpt = nullptr, *logPathOpt = nullptr, *cachePathOpt = nullptr,
                      *flightplanOpt = nullptr, *flightplanDescrOpt = nullptr, *performanceOpt = nullptr,
                      *layoutOpt = nullptr, *gpxOpt = nullptr, *markerOpt = nullptr,
-                     *forceOpt = nullptr, *quitOpt = nullptr, *languageOpt = nullptr;
+                     *forceOpt = nullptr, *noDataExchangeOpt = nullptr, *quitOpt = nullptr, *languageOpt = nullptr;
 };
 
 #endif // LNM_COMMANDLINE_H
