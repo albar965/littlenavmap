@@ -836,10 +836,16 @@ void NavApp::restartApplication()
 
   setRestartApplication(false /* restart */, false /* reset */);
 
+  const QString noDataExchangeOpt = QStringLiteral("--") % lnm::STARTUP_NO_DATA_EXCHANGE;
   QStringList arguments = QCoreApplication::arguments();
+
+  // Remove program name
   if(!arguments.isEmpty())
     arguments.removeFirst();
-  arguments.append(QStringLiteral("--") % lnm::STARTUP_NO_DATA_EXCHANGE);
+
+  // Ensure only one DDE option
+  arguments.removeAll(noDataExchangeOpt);
+  arguments.append(noDataExchangeOpt);
 
   QProcess process;
   process.setArguments(arguments);
