@@ -448,7 +448,12 @@ private:
 
   /* Reset all "do not show this again" message box status values */
   void resetMessages();
+
+  /* Restart and reset settings */
   void resetAllSettings();
+
+  /* Restart only */
+  void restartApplication(bool resetWindowLayout);
 
   /* Save all and create an issue report */
   void createIssueReport();

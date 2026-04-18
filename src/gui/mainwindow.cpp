@@ -666,7 +666,7 @@ void MainWindow::deInit()
     ATOOLS_DELETE_LOG(ui);
     ATOOLS_DELETE_LOG(dockHandler);
 
-    if(NavApp::isRestartApplicationResetSettings())
+    if(Application::isRestartApplication() && Application::isResetSettings())
       Settings::clearAndShutdown();
     else
       Settings::shutdown();
@@ -3454,6 +3454,12 @@ void MainWindow::mainWindowShownDelayed()
   // Set window flag
   stayOnTop();
 
+  if(Application::getStartupOptions().contains(lnm::STARTUP_RESET_LAYOUT))
+  {
+    qDebug() << Q_FUNC_INFO << "resetWindowLayout";
+    resetWindowLayout();
+  }
+
   // Raise all floating docks and focus map widget
   raiseFloatingWindows();
 
@@ -4086,6 +4092,14 @@ void MainWindow::createIssueReport()
     QFile::remove(file);
 }
 
+void MainWindow::restartApplication(bool resetWindowLayout)
+{
+  qDebug() << Q_FUNC_INFO;
+
+  NavApp::setRestartApplication(true /* restartApplicationParam */, false /* resetSettingsParam */, resetWindowLayout);
+  close();
+}
+
 void MainWindow::resetAllSettings()
 {
   qDebug() << Q_FUNC_INFO;
@@ -4114,7 +4128,8 @@ void MainWindow::resetAllSettings()
 
   if(retval == QDialogButtonBox::Yes)
   {
-    NavApp::setRestartApplication(true /* restart */, true /* reset */);
+    // Window layout is reset by clearing settings
+    NavApp::setRestartApplication(true /* restartApplicationParam */, true /* resetSettingsParam */, false /* resetWindowLayoutParam */);
     close();
   }
   else if(retval == QMessageBox::Help)
@@ -4411,7 +4426,7 @@ void MainWindow::saveStateMain()
 #endif
 
     // About to reset all settings and restart application
-    if(NavApp::isRestartApplicationResetSettings())
+    if(Application::isRestartApplication() && Application::isResetSettings())
     {
       deleteAircraftTrail(true /* quiet */);
       mapWidget->clearHistory();
@@ -4827,7 +4842,8 @@ void MainWindow::closeEvent(QCloseEvent *event)
         event->ignore();
 
         // Do not restart process after settings reset
-        NavApp::setRestartApplication(false /* restart */, false /* reset */);
+        NavApp::setRestartApplication(false /* restartApplicationParam */, false /* resetSettingsParam */,
+                                      false /* resetWindowLayoutParam */);
         return;
       }
     }
@@ -4840,12 +4856,13 @@ void MainWindow::closeEvent(QCloseEvent *event)
         event->ignore();
 
         // Do not restart process after settings reset
-        NavApp::setRestartApplication(false /* restart */, false /* reset */);
+        Application::setRestartApplication(false /* restartApplicationParam */, false /* resetSettingsParam */,
+                                           false /* resetWindowLayoutParam */);
         return;
       }
     }
 
-    if(NavApp::isRestartApplicationResetSettings())
+    if(Application::isRestartApplication() && Application::isResetSettings())
       // Do not ask if user did a reset settings. No question dialog needed - quit right away
       quit = true;
     else
@@ -4895,7 +4912,7 @@ void MainWindow::closeEvent(QCloseEvent *event)
       dockHandler->closeAllDialogs();
     }
 
-    if(!NavApp::isRestartApplicationResetSettings())
+    if(!Application::isResetSettings())
       saveStateMain();
 
     /* Have to delete early before deleting main map widget */
@@ -4910,7 +4927,7 @@ void MainWindow::closeEvent(QCloseEvent *event)
 
   // All databases and settings file should be closed by now
   if(Application::isRestartApplication())
-    NavApp::restartApplication();
+    NavApp::restartApplication(true /* noDataExchange */, Application::isResetWindowLayout());
 
   qDebug() << Q_FUNC_INFO << "Exit quit is" << quit;
 }

@@ -69,7 +69,8 @@ void loadHelpUrls();
 // ======== Options ================================================================
 // Some options are versioned using a numeric suffix to ignore old settings on update
 
-/* State of "do not show again" dialog buttons */
+/* State of "do not show again" dialog buttons.
+ * Also register in messages::resetAllMessages() */
 const QLatin1String ACTIONS_SHOW_DISCONNECT_INFO("Actions/ShowDisconnectInfo");
 const QLatin1String ACTIONS_SHOW_LOAD_FLP_WARN("Actions/ShowLoadFlpWarn");
 const QLatin1String ACTIONS_SHOW_LOAD_ALT_WARN("Actions/ShowLoadAltitudeWarn2");
@@ -525,7 +526,10 @@ const QLatin1String STARTUP_LAYOUT("layout");
 const QLatin1String STARTUP_GPX("gpx");
 const QLatin1String STARTUP_MARKER("user-feature");
 const QLatin1String STARTUP_FORCE_LOADING("force"); /* Force overwriting of files */
+
+/* Restart options - not visible for user */
 const QLatin1String STARTUP_NO_DATA_EXCHANGE("no-data-exchange"); /* Do not start other instance through data exchange */
+const QLatin1String STARTUP_RESET_LAYOUT("reset-layout"); /* Reset window layout after restart */
 
 /* Commands also through data exchange */
 const QLatin1String STARTUP_COMMAND_QUIT(atools::gui::dataexchange::STARTUP_COMMAND_QUIT); /* Exit application. Also long option. */

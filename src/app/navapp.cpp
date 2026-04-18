@@ -827,25 +827,35 @@ void NavApp::recordStartNavApp()
   // Keep command line options to avoid using the wrong configuration folder
 }
 
-void NavApp::restartApplication()
+void NavApp::restartApplication(bool noDataExchange, bool resetLayout)
 {
   qDebug() << Q_FUNC_INFO << QCoreApplication::applicationFilePath();
 
   dataExchange->disable();
   atools::gui::Application::processEventsExtended();
 
-  setRestartApplication(false /* restart */, false /* reset */);
+  setRestartApplication(false /* restartApplicationParam */, false /* resetSettingsParam */, false /* resetWindowLayoutParam */);
 
-  const QString noDataExchangeOpt = QStringLiteral("--") % lnm::STARTUP_NO_DATA_EXCHANGE;
   QStringList arguments = QCoreApplication::arguments();
 
   // Remove program name
   if(!arguments.isEmpty())
     arguments.removeFirst();
 
-  // Ensure only one DDE option
-  arguments.removeAll(noDataExchangeOpt);
-  arguments.append(noDataExchangeOpt);
+  // Ensure only one option
+  if(noDataExchange)
+  {
+    const QString noDataExchangeOpt = QStringLiteral("--") % lnm::STARTUP_NO_DATA_EXCHANGE;
+    arguments.removeAll(noDataExchangeOpt);
+    arguments.append(noDataExchangeOpt);
+  }
+
+  if(resetLayout)
+  {
+    const QString resetLayoutOpt = QStringLiteral("--") % lnm::STARTUP_RESET_LAYOUT;
+    arguments.removeAll(resetLayoutOpt);
+    arguments.append(resetLayoutOpt);
+  }
 
   QProcess process;
   process.setArguments(arguments);

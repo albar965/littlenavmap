@@ -441,7 +441,7 @@ public:
   static void recordStartNavApp();
 
   /* Restart the application if the flag restartApplication is set */
-  static void restartApplication();
+  static void restartApplication(bool noDataExchange, bool resetLayout);
 
   /* Create manual issue report */
   static void createIssueReport(const QStringList& additionalFiles);

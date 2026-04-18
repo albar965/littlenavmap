@@ -265,6 +265,7 @@ void ElevationProvider::showErrors()
   // Show this only on startup
   if(!useOffline && startup)
   {
+#ifndef DEBUG_INFORMATION_NO_STARTUP_MESSAGES
     QUrl url = atools::gui::HelpHandler::getHelpUrlWeb(lnm::helpOnlineInstallGlobeUrl, lnm::helpLanguageOnline());
     QString message = tr(
       "<p>The online elevation data which is used by default for the elevation profile is limited and has some small issues.<br/>"
@@ -275,5 +276,6 @@ void ElevationProvider::showErrors()
 
     atools::gui::Dialog(NavApp::getQMainWidget()).showInfoMsgBox(lnm::ACTIONS_SHOW_INSTALL_GLOBE, message,
                                                                  tr("Do not &show this dialog again."));
+#endif
   }
 }

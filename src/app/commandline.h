@@ -70,8 +70,8 @@ private:
 
   QCommandLineOption *settingsPathOpt = nullptr, *logPathOpt = nullptr, *cachePathOpt = nullptr,
                      *flightplanOpt = nullptr, *flightplanDescrOpt = nullptr, *performanceOpt = nullptr,
-                     *layoutOpt = nullptr, *gpxOpt = nullptr, *markerOpt = nullptr,
-                     *forceOpt = nullptr, *noDataExchangeOpt = nullptr, *quitOpt = nullptr, *languageOpt = nullptr;
+                     *layoutOpt = nullptr, *gpxOpt = nullptr, *markerOpt = nullptr, *forceOpt = nullptr, *noDataExchangeOpt = nullptr,
+                     *resetLayoutOpt = nullptr, *quitOpt = nullptr, *languageOpt = nullptr;
 };
 
 #endif // LNM_COMMANDLINE_H

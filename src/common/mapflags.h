@@ -611,7 +611,7 @@ enum TextAttribute : quint32
 
 ATOOLS_DECLARE_FLAGS_32(TextAttributes, textatt::TextAttribute)
 ATOOLS_DECLARE_OPERATORS_FOR_FLAGS(textatt::TextAttributes)
-}
+} // namespace textatt
 
 Q_DECLARE_TYPEINFO(map::MapAirspaceFilter, Q_PRIMITIVE_TYPE);
 Q_DECLARE_METATYPE(map::MapAirspaceFilter)

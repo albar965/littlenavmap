@@ -103,6 +103,12 @@ CommandLine::CommandLine()
                  "This is used only internally. Using this the wrong way might result in data loss."), QStringLiteral(), QStringLiteral(),
               true /* hiddenFromHelp */);
 
+  // Reset window layout after restart =============================
+  buildOption(resetLayoutOpt, QStringLiteral(), lnm::STARTUP_RESET_LAYOUT,
+              tr("Reset window layout back to default. "
+                 "This is used only internally. Using this the wrong way might result in data loss."), QStringLiteral(), QStringLiteral(),
+              true /* hiddenFromHelp */);
+
   // Language =============================
   buildOption(languageOpt, "g", "language",
               tr("Use language code <language> like \"de\" or \"en_US\" for the user interface. "
@@ -211,6 +217,9 @@ void CommandLine::process()
 
   if(parser->isSet(*noDataExchangeOpt))
     Application::addStartupOptionStr(lnm::STARTUP_NO_DATA_EXCHANGE, QStringLiteral());
+
+  if(parser->isSet(*resetLayoutOpt))
+    Application::addStartupOptionStr(lnm::STARTUP_RESET_LAYOUT, QStringLiteral());
 
   // Other arguments without option
   if(!parser->positionalArguments().isEmpty())
