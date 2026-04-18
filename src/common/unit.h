@@ -18,6 +18,7 @@
 #ifndef LITTLENAVMAP_UNIT_H
 #define LITTLENAVMAP_UNIT_H
 
+#include "options/optionchangeflags.h"
 #include "options/optionflags.h"
 
 #include <QCoreApplication>
@@ -297,7 +298,7 @@ public:
   static QString coordsLonX(const atools::geo::Pos& pos, opts::UnitCoords coordUnit);
 
   /* Program options changed - update units */
-  static void optionsChanged();
+  static void optionsChanged(const optc::OptionChangeFlags& changeFlags);
 
   /* ==================================================================
    * Getters for current units strings / suffixes from options */

@@ -19,6 +19,7 @@
 #define LNM_MAPAIRPORTHANDLER_H
 
 #include "common/mapflags.h"
+#include "options/optionchangeflags.h"
 #include "options/optionflags.h"
 
 #include <QObject>
@@ -69,7 +70,7 @@ public:
   void resetSettingsToDefault();
 
   /* Update units, labels and more */
-  void optionsChanged();
+  void optionsChanged(const optc::OptionChangeFlags& changeFlags);
 
 signals:
   /* Redraw map */
@@ -132,7 +133,7 @@ public:
   void saveState() const;
   void restoreState();
 
-  void optionsChanged();
+  void optionsChanged(const optc::OptionChangeFlags& changeFlags);
 
   void setValue(int value);
   void reset();

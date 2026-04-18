@@ -294,16 +294,18 @@ void MapPaintWidget::unitsUpdated()
   }
 }
 
-void MapPaintWidget::optionsChanged()
+void MapPaintWidget::optionsChanged(const optc::OptionChangeFlags& changeFlags)
 {
   const OptionData& options = OptionData::instance();
 
-  // Pass API keys or tokens to map
-  setKeys(NavApp::getMapThemeHandler()->getMapThemeKeysHash());
+  if(changeFlags.testFlag(optc::OPTION_CHANGE_MAPTHEMES))
+    // Pass API keys or tokens to map
+    setKeys(NavApp::getMapThemeHandler()->getMapThemeKeysHash());
 
   setFont(options.getMapFont());
 
-  unitsUpdated();
+  if(changeFlags.testFlag(optc::OPTION_CHANGE_UNITS))
+    unitsUpdated();
 
   // Updated sun shadow and force a tile refresh by changing the show status again
   setSunShadingDimFactor(static_cast<double>(options.getDisplaySunShadingDimFactor()) / 100.);

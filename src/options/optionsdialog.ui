@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>840</width>
-    <height>480</height>
+    <height>640</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -18,6 +18,9 @@
     <widget class="QSplitter" name="splitterOptions">
      <property name="orientation">
       <enum>Qt::Horizontal</enum>
+     </property>
+     <property name="childrenCollapsible">
+      <bool>false</bool>
      </property>
      <widget class="QWidget" name="verticalLayoutWidget">
       <layout class="QVBoxLayout" name="verticalLayout_68">
@@ -77,8 +80,8 @@
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>543</width>
-             <height>503</height>
+             <width>557</width>
+             <height>571</height>
             </rect>
            </property>
            <layout class="QVBoxLayout" name="verticalLayout_21">
@@ -435,7 +438,7 @@ This is the file on top of the list &quot;Recent Window Layouts&quot;.</string>
              <x>0</x>
              <y>0</y>
              <width>557</width>
-             <height>411</height>
+             <height>571</height>
             </rect>
            </property>
            <layout class="QVBoxLayout" name="verticalLayout_22">
@@ -628,7 +631,7 @@ opening files, modifying the flight plan and other operations.</string>
              <x>0</x>
              <y>0</y>
              <width>543</width>
-             <height>895</height>
+             <height>893</height>
             </rect>
            </property>
            <layout class="QVBoxLayout" name="verticalLayout_23">
@@ -653,10 +656,60 @@ opening files, modifying the flight plan and other operations.</string>
                <property name="spacing">
                 <number>2</number>
                </property>
-               <item row="3" column="0" colspan="3">
+               <item row="5" column="0" colspan="4">
+                <widget class="QCheckBox" name="checkBoxOptionsFreetype">
+                 <property name="toolTip">
+                  <string>Enable this if you use scaled fonts in you system settings and/or a monitor with high resolution.
+This will scale the Little Navmap map graphics and icons for better visibility if checked.</string>
+                 </property>
+                 <property name="text">
+                  <string>&amp;Use FreeType font engine on Windows</string>
+                 </property>
+                 <property name="checked">
+                  <bool>true</bool>
+                 </property>
+                </widget>
+               </item>
+               <item row="3" column="0" colspan="4">
                 <widget class="QLabel" name="labelOptionsGuiFontHint">
                  <property name="text">
                   <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Note that not all fonts are suitable for the user interface.&lt;br/&gt;&lt;img src=&quot;:/littlenavmap/resources/icons/bulb.svg&quot;/&gt;&lt;span style=&quot; font-style:italic;&quot;&gt;The map font can be changed on the page &lt;/span&gt;&lt;a href=&quot;lnm://mapdisplay&quot;&gt;&lt;span style=&quot; font-style:italic; text-decoration: underline;&quot;&gt;Map Display&lt;/span&gt;&lt;/a&gt;&lt;span style=&quot; font-style:italic;&quot;&gt;.&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+                 </property>
+                 <property name="wordWrap">
+                  <bool>true</bool>
+                 </property>
+                 <property name="margin">
+                  <number>10</number>
+                 </property>
+                 <property name="textInteractionFlags">
+                  <set>Qt::LinksAccessibleByMouse|Qt::TextSelectableByMouse</set>
+                 </property>
+                </widget>
+               </item>
+               <item row="1" column="0">
+                <widget class="QPushButton" name="pushButtonOptionsGuiSelectFont">
+                 <property name="toolTip">
+                  <string>Select a font for the user interface.
+Changes are applied immediately. 
+Cancel the dialog to revert back to the old font.
+Font size is limited to 30 points/pixels.</string>
+                 </property>
+                 <property name="text">
+                  <string>Select &amp;Font ...</string>
+                 </property>
+                </widget>
+               </item>
+               <item row="4" column="0" colspan="4">
+                <widget class="Line" name="lineOptionsGuiFreetype">
+                 <property name="orientation">
+                  <enum>Qt::Horizontal</enum>
+                 </property>
+                </widget>
+               </item>
+               <item row="6" column="0" colspan="4">
+                <widget class="QLabel" name="labelOptionsFreetypeHint">
+                 <property name="text">
+                  <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;A restart is required after changing the font engine.&lt;/span&gt;&lt;br/&gt;&lt;img src=&quot;:/littlenavmap/resources/icons/bulb.svg&quot;/&gt;&lt;span style=&quot; font-style:italic;&quot;&gt;Enabling this option results in better and faster text display on the map, especially for rotated labels. &lt;br/&gt;As a result, the text will appear slightly blurred throughout the whole application. Deselect this to avoid the slightly blurred text in menus and application windows.&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
                  </property>
                  <property name="wordWrap">
                   <bool>true</bool>
@@ -680,72 +733,10 @@ Changes are applied immediately. </string>
                  </property>
                 </widget>
                </item>
-               <item row="1" column="0">
-                <widget class="QPushButton" name="pushButtonOptionsGuiSelectFont">
-                 <property name="toolTip">
-                  <string>Select a font for the user interface.
-Changes are applied immediately. 
-Cancel the dialog to revert back to the old font.
-Font size is limited to 30 points/pixels.</string>
-                 </property>
-                 <property name="text">
-                  <string>Select &amp;Font ...</string>
-                 </property>
-                </widget>
-               </item>
-               <item row="5" column="0" colspan="3">
-                <widget class="QCheckBox" name="checkBoxOptionsFreetype">
-                 <property name="toolTip">
-                  <string>Enable this if you use scaled fonts in you system settings and/or a monitor with high resolution.
-This will scale the Little Navmap map graphics and icons for better visibility if checked.</string>
-                 </property>
-                 <property name="text">
-                  <string>&amp;Use FreeType font engine on Windows</string>
-                 </property>
-                 <property name="checked">
-                  <bool>true</bool>
-                 </property>
-                </widget>
-               </item>
-               <item row="6" column="0" colspan="3">
-                <widget class="QLabel" name="labelOptionsFreetypeHint">
-                 <property name="text">
-                  <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;A restart is required after changing the font engine.&lt;/span&gt;&lt;br/&gt;&lt;img src=&quot;:/littlenavmap/resources/icons/bulb.svg&quot;/&gt;&lt;span style=&quot; font-style:italic;&quot;&gt;Enabling this option results in better and faster text display on the map, especially for rotated labels. &lt;br/&gt;As a result, the text will appear slightly blurred throughout the whole application. Deselect this to avoid the slightly blurred text in menus and application windows.&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-                 </property>
-                 <property name="wordWrap">
-                  <bool>true</bool>
-                 </property>
-                 <property name="margin">
-                  <number>10</number>
-                 </property>
-                 <property name="textInteractionFlags">
-                  <set>Qt::LinksAccessibleByMouse|Qt::TextSelectableByMouse</set>
-                 </property>
-                </widget>
-               </item>
                <item row="1" column="2">
-                <widget class="QLabel" name="labelOptionsGuiFont">
-                 <property name="sizePolicy">
-                  <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
-                   <horstretch>2</horstretch>
-                   <verstretch>0</verstretch>
-                  </sizepolicy>
-                 </property>
-                 <property name="text">
-                  <string/>
-                 </property>
-                 <property name="wordWrap">
+                <widget class="QLineEdit" name="lineEditOptionsGuiFont">
+                 <property name="readOnly">
                   <bool>true</bool>
-                 </property>
-                 <property name="margin">
-                  <number>5</number>
-                 </property>
-                </widget>
-               </item>
-               <item row="4" column="0" colspan="3">
-                <widget class="Line" name="lineOptionsGuiFreetype">
-                 <property name="orientation">
-                  <enum>Qt::Horizontal</enum>
                  </property>
                 </widget>
                </item>
@@ -1238,7 +1229,7 @@ This does not affect the map window which can be changed separately on the optio
              <x>0</x>
              <y>0</y>
              <width>560</width>
-             <height>445</height>
+             <height>557</height>
             </rect>
            </property>
            <layout class="QGridLayout" name="gridLayout_36">
@@ -1598,7 +1589,7 @@ aircraft progress, tooltips and information window.</string>
              <x>0</x>
              <y>0</y>
              <width>557</width>
-             <height>411</height>
+             <height>571</height>
             </rect>
            </property>
            <layout class="QVBoxLayout" name="verticalLayout_59">
@@ -1716,6 +1707,9 @@ CRUISEALT: Cruise altitude</string>
                  <property name="text">
                   <string notr="true">PLANTYPE DEPARTNAME (DEPARTIDENT) to DESTNAME (DESTIDENT)</string>
                  </property>
+                 <property name="clearButtonEnabled">
+                  <bool>true</bool>
+                 </property>
                 </widget>
                </item>
                <item row="2" column="0" colspan="3">
@@ -1826,8 +1820,8 @@ The &quot;Save as&quot; dialog will show up instead of overwriting the current f
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>543</width>
-             <height>432</height>
+             <width>557</width>
+             <height>571</height>
             </rect>
            </property>
            <layout class="QGridLayout" name="gridLayout">
@@ -2085,7 +2079,7 @@ Note that this function is disabled for X-Plane 12 since the 3D flag is unreliab
              <x>0</x>
              <y>0</y>
              <width>599</width>
-             <height>399</height>
+             <height>557</height>
             </rect>
            </property>
            <layout class="QGridLayout" name="gridLayout_2">
@@ -2549,8 +2543,8 @@ Smaller values will allow a finer selection.</string>
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>543</width>
-             <height>530</height>
+             <width>557</width>
+             <height>571</height>
             </rect>
            </property>
            <layout class="QVBoxLayout" name="verticalLayout_12">
@@ -2879,7 +2873,7 @@ Map views might be shown with a larger zoom distance than expected if this optio
              <x>0</x>
              <y>0</y>
              <width>543</width>
-             <height>1272</height>
+             <height>1270</height>
             </rect>
            </property>
            <layout class="QVBoxLayout" name="verticalLayout_20">
@@ -2901,25 +2895,6 @@ Map views might be shown with a larger zoom distance than expected if this optio
                <property name="bottomMargin">
                 <number>2</number>
                </property>
-               <item row="0" column="3">
-                <widget class="QLabel" name="labelOptionsDisplayFont">
-                 <property name="sizePolicy">
-                  <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
-                   <horstretch>2</horstretch>
-                   <verstretch>0</verstretch>
-                  </sizepolicy>
-                 </property>
-                 <property name="text">
-                  <string/>
-                 </property>
-                 <property name="wordWrap">
-                  <bool>true</bool>
-                 </property>
-                 <property name="margin">
-                  <number>5</number>
-                 </property>
-                </widget>
-               </item>
                <item row="0" column="0">
                 <widget class="QPushButton" name="pushButtonOptionsDisplaySelectFont">
                  <property name="toolTip">
@@ -2954,6 +2929,13 @@ Note that some fonts, especially large fonts, can result in display errors on th
                  </property>
                  <property name="textInteractionFlags">
                   <set>Qt::LinksAccessibleByMouse|Qt::TextSelectableByMouse</set>
+                 </property>
+                </widget>
+               </item>
+               <item row="0" column="2">
+                <widget class="QLineEdit" name="lineEditOptionsDisplayFont">
+                 <property name="readOnly">
+                  <bool>true</bool>
                  </property>
                 </widget>
                </item>
@@ -4386,7 +4368,7 @@ Also used in the elevation profile.</string>
              <x>0</x>
              <y>0</y>
              <width>557</width>
-             <height>411</height>
+             <height>571</height>
             </rect>
            </property>
            <layout class="QVBoxLayout" name="verticalLayout_57">
@@ -5324,7 +5306,7 @@ if you hover over the elevation profile.</string>
              <x>0</x>
              <y>0</y>
              <width>557</width>
-             <height>411</height>
+             <height>571</height>
             </rect>
            </property>
            <layout class="QVBoxLayout" name="verticalLayout_61">
@@ -5397,7 +5379,7 @@ if you hover over the elevation profile.</string>
              <x>0</x>
              <y>0</y>
              <width>557</width>
-             <height>411</height>
+             <height>571</height>
             </rect>
            </property>
            <layout class="QVBoxLayout" name="verticalLayout_62">
@@ -5429,6 +5411,9 @@ if you hover over the elevation profile.</string>
                  </property>
                  <property name="placeholderText">
                   <string>No map theme directory selected.</string>
+                 </property>
+                 <property name="clearButtonEnabled">
+                  <bool>true</bool>
                  </property>
                 </widget>
                </item>
@@ -5636,7 +5621,7 @@ if you hover over the elevation profile.</string>
              <x>0</x>
              <y>0</y>
              <width>557</width>
-             <height>411</height>
+             <height>571</height>
             </rect>
            </property>
            <layout class="QVBoxLayout" name="verticalLayout_30">
@@ -5798,8 +5783,8 @@ if you hover over the elevation profile.</string>
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>543</width>
-             <height>527</height>
+             <width>557</width>
+             <height>571</height>
             </rect>
            </property>
            <layout class="QGridLayout" name="gridLayout_39">
@@ -6716,7 +6701,7 @@ put the active leg back on top after the given timeout while flying.</string>
              <x>0</x>
              <y>0</y>
              <width>557</width>
-             <height>411</height>
+             <height>571</height>
             </rect>
            </property>
            <layout class="QVBoxLayout" name="verticalLayout_26">
@@ -7152,7 +7137,7 @@ The default X-Plane wind file in the X-Plane base path will be used if this fiel
                   <string>No &quot;global_winds.grib&quot; selected. Using default.</string>
                  </property>
                  <property name="clearButtonEnabled">
-                  <bool>false</bool>
+                  <bool>true</bool>
                  </property>
                 </widget>
                </item>
@@ -7201,7 +7186,7 @@ The default X-Plane weather file in the X-Plane base path will be used if this f
                   <string>No &quot;METAR.rwx&quot; selected. Using default.</string>
                  </property>
                  <property name="clearButtonEnabled">
-                  <bool>false</bool>
+                  <bool>true</bool>
                  </property>
                 </widget>
                </item>
@@ -7304,7 +7289,7 @@ The default X-Plane 12 weather directory in the X-Plane base path will be used i
                   <string>No &quot;Output/real weather&quot; selected. Using default.</string>
                  </property>
                  <property name="clearButtonEnabled">
-                  <bool>false</bool>
+                  <bool>true</bool>
                  </property>
                 </widget>
                </item>
@@ -7418,7 +7403,7 @@ If this field is empty, the default Active Sky weather file path will be used wh
                   <string>No &quot;current_wx_snapshot.txt&quot; selected. Using default.</string>
                  </property>
                  <property name="clearButtonEnabled">
-                  <bool>false</bool>
+                  <bool>true</bool>
                  </property>
                 </widget>
                </item>
@@ -7486,7 +7471,7 @@ Entering a wrong value will cause errors when downloading weather reports.</stri
                   <string>No URL set. VATSIM weather reports are disabled.</string>
                  </property>
                  <property name="clearButtonEnabled">
-                  <bool>false</bool>
+                  <bool>true</bool>
                  </property>
                 </widget>
                </item>
@@ -7507,7 +7492,7 @@ Entering a wrong value will cause errors when downloading wind reports.</string>
                   <string>No URL set. NOAA weather reports are disabled.</string>
                  </property>
                  <property name="clearButtonEnabled">
-                  <bool>false</bool>
+                  <bool>true</bool>
                  </property>
                 </widget>
                </item>
@@ -7559,7 +7544,7 @@ Entering a wrong value will cause errors when downloading weather reports.</stri
                   <string>No URL set. NOAA weather reports are disabled.</string>
                  </property>
                  <property name="clearButtonEnabled">
-                  <bool>false</bool>
+                  <bool>true</bool>
                  </property>
                 </widget>
                </item>
@@ -7650,7 +7635,7 @@ Entering a wrong value will cause errors when downloading weather reports.</stri
                   <string>No URL set. IVAO weather reports are disabled.</string>
                  </property>
                  <property name="clearButtonEnabled">
-                  <bool>false</bool>
+                  <bool>true</bool>
                  </property>
                 </widget>
                </item>
@@ -7715,7 +7700,7 @@ Entering a wrong value will cause errors when downloading weather reports.</stri
              <x>0</x>
              <y>0</y>
              <width>557</width>
-             <height>411</height>
+             <height>571</height>
             </rect>
            </property>
            <layout class="QVBoxLayout" name="verticalLayout_29">
@@ -7855,6 +7840,9 @@ Entering a wrong value will cause errors when downloading weather reports.</stri
                  <property name="placeholderText">
                   <string>No web address for &quot;whazzup.txt&quot; entered.</string>
                  </property>
+                 <property name="clearButtonEnabled">
+                  <bool>true</bool>
+                 </property>
                 </widget>
                </item>
                <item row="3" column="3">
@@ -7884,6 +7872,9 @@ Entering a wrong value will cause errors when downloading weather reports.</stri
                  </property>
                  <property name="placeholderText">
                   <string>No web address for &quot;status.txt&quot; entered.</string>
+                 </property>
+                 <property name="clearButtonEnabled">
+                  <bool>true</bool>
                  </property>
                 </widget>
                </item>
@@ -8017,7 +8008,7 @@ Entering a wrong value will cause errors when downloading weather reports.</stri
              <x>0</x>
              <y>0</y>
              <width>557</width>
-             <height>411</height>
+             <height>571</height>
             </rect>
            </property>
            <layout class="QVBoxLayout" name="verticalLayout_60">
@@ -8119,6 +8110,9 @@ Download the file &lt;b&gt;&lt;i&gt;All Tiles in One .zip (all10g.zip)&lt;/i&gt;
                  </property>
                  <property name="placeholderText">
                   <string>No elevation data directory selected.</string>
+                 </property>
+                 <property name="clearButtonEnabled">
+                  <bool>true</bool>
                  </property>
                 </widget>
                </item>
@@ -8223,7 +8217,7 @@ Download the file &lt;b&gt;&lt;i&gt;All Tiles in One .zip (all10g.zip)&lt;/i&gt;
              <x>0</x>
              <y>0</y>
              <width>557</width>
-             <height>411</height>
+             <height>571</height>
             </rect>
            </property>
            <layout class="QGridLayout" name="gridLayout_37">
@@ -8320,6 +8314,9 @@ Change this if you get an error message like &quot;Bound address already in use&
                   <string>Base directory of the web server. This is the directory containing the &quot;index.html&quot; file.
 There is usually no need to change this value.
 Use this to serve your own modified Little Navmap web page.</string>
+                 </property>
+                 <property name="clearButtonEnabled">
+                  <bool>true</bool>
                  </property>
                 </widget>
                </item>
@@ -8509,8 +8506,8 @@ Uncheck if you use such an add-on or see issues like a corruped map display.</st
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>543</width>
-             <height>507</height>
+             <width>557</width>
+             <height>571</height>
             </rect>
            </property>
            <layout class="QGridLayout" name="gridLayout_38">
@@ -8869,7 +8866,7 @@ You have to reload the scenery library so that the changes take effect.</string>
       <enum>Qt::Horizontal</enum>
      </property>
      <property name="standardButtons">
-      <set>QDialogButtonBox::Apply|QDialogButtonBox::Cancel|QDialogButtonBox::Help|QDialogButtonBox::Ok|QDialogButtonBox::RestoreDefaults</set>
+      <set>QDialogButtonBox::Apply|QDialogButtonBox::Close|QDialogButtonBox::Help|QDialogButtonBox::Reset|QDialogButtonBox::RestoreDefaults</set>
      </property>
     </widget>
    </item>

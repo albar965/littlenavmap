@@ -68,35 +68,38 @@ void AirportSliderAction::restoreState()
   sliderDistUnit = Unit::getUnitShortDist();
 }
 
-void AirportSliderAction::optionsChanged()
+void AirportSliderAction::optionsChanged(const optc::OptionChangeFlags& changeFlags)
 {
   // Set all sliders to new range for given unit and reset to unlimited
   // Block signals to avoid recursion
 
-  if(Unit::getUnitShortDist() != sliderDistUnit)
+  if(changeFlags.testFlag(optc::OPTION_CHANGE_UNITS))
   {
-    // Units have changed
-    switch(sliderDistUnit)
+    if(Unit::getUnitShortDist() != sliderDistUnit)
     {
-      case opts::DIST_SHORT_FT:
-        // Old was ft. Convert to new local unit.
-        sliderValue = atools::roundToInt(Unit::distShortFeetF(sliderValue));
-        break;
-      case opts::DIST_SHORT_METER:
-        // Old was meter. Convert to new local unit.
-        sliderValue = atools::roundToInt(Unit::distShortMeterF(sliderValue));
-        break;
+      // Units have changed
+      switch(sliderDistUnit)
+      {
+        case opts::DIST_SHORT_FT:
+          // Old was ft. Convert to new local unit.
+          sliderValue = atools::roundToInt(Unit::distShortFeetF(sliderValue));
+          break;
+        case opts::DIST_SHORT_METER:
+          // Old was meter. Convert to new local unit.
+          sliderValue = atools::roundToInt(Unit::distShortMeterF(sliderValue));
+          break;
+      }
+      sliderDistUnit = Unit::getUnitShortDist();
+      sliderValue = atools::minmax(minValue(), maxValue(), sliderValue);
     }
-    sliderDistUnit = Unit::getUnitShortDist();
-    sliderValue = atools::minmax(minValue(), maxValue(), sliderValue);
-  }
 
-  atools::gui::SignalBlocker blocker(sliders);
-  for(QSlider *slider : std::as_const(sliders))
-  {
-    slider->setValue(sliderValue);
-    slider->setMinimum(minValue());
-    slider->setMaximum(maxValue());
+    atools::gui::SignalBlocker blocker(sliders);
+    for(QSlider *slider : std::as_const(sliders))
+    {
+      slider->setValue(sliderValue);
+      slider->setMinimum(minValue());
+      slider->setMaximum(maxValue());
+    }
   }
 }
 
@@ -284,10 +287,10 @@ void MapAirportHandler::resetSettingsToDefault()
   runwaySliderValueChanged();
 }
 
-void MapAirportHandler::optionsChanged()
+void MapAirportHandler::optionsChanged(const optc::OptionChangeFlags& changeFlags)
 {
   actionEmpty->setEnabled(OptionData::instance().getFlags().testFlag(opts::MAP_EMPTY_AIRPORTS));
-  sliderActionRunwayLength->optionsChanged();
+  sliderActionRunwayLength->optionsChanged(changeFlags);
   runwaySliderValueChanged();
 }
 

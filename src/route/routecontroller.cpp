@@ -3542,23 +3542,29 @@ void RouteController::updateRemarksFont()
   zoomHandlerRemarks->zoomPercent(OptionData::instance().getGuiRouteRemarksTextSize());
 }
 
-void RouteController::optionsChanged()
+void RouteController::optionsChanged(const optc::OptionChangeFlags& changeFlags)
 {
-  zoomHandlerTable->zoomPercent(OptionData::instance().getGuiRouteTableTextSize());
-  zoomHandlerPlaceholder->zoomPercent(OptionData::instance().getGuiRouteTableTextSize());
-  zoomHandlerRemarks->zoomPercent(OptionData::instance().getGuiRouteRemarksTextSize());
-  routeLabel->fontChanged(QGuiApplication::font());
+  if(changeFlags.testFlag(optc::OPTION_CHANGE_TEXT_SIZES) || changeFlags.testFlag(optc::OPTION_CHANGE_UI_FONT) ||
+     changeFlags.testFlag(optc::OPTION_CHANGE_UNITS))
+  {
+    zoomHandlerTable->zoomPercent(OptionData::instance().getGuiRouteTableTextSize());
+    zoomHandlerPlaceholder->zoomPercent(OptionData::instance().getGuiRouteTableTextSize());
+    zoomHandlerRemarks->zoomPercent(OptionData::instance().getGuiRouteRemarksTextSize());
+    routeLabel->fontChanged(QGuiApplication::font());
 
-  updateRemarksFont();
+    updateRemarksFont();
+  }
 
-  routeCalcDialog->optionsChanged();
+  routeCalcDialog->optionsChanged(changeFlags);
 
   tableCleanupTimer.setInterval(OptionData::instance().getSimCleanupTableTime() * 1000);
 
   updateTableHeaders();
   updateTableModelAndErrors();
 
-  updateUnits();
+  if(changeFlags.testFlag(optc::OPTION_CHANGE_UNITS))
+    updateUnits();
+
   tableViewRoute->update();
 
   updateCleanupTimer();

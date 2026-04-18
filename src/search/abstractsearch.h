@@ -21,6 +21,7 @@
 #include <QObject>
 
 #include "common/tabindexes.h"
+#include "options/optionchangeflags.h"
 
 namespace Ui {
 class MainWindow;
@@ -60,7 +61,7 @@ public:
   virtual void getSelectedMapObjects(map::MapResult& result) const = 0;
 
   /* Options dialog has changed some options */
-  virtual void optionsChanged() = 0;
+  virtual void optionsChanged(const optc::OptionChangeFlags& changeFlags) = 0;
 
   /* GUI style has changed */
   virtual void styleChanged() = 0;

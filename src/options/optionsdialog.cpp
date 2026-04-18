@@ -69,6 +69,7 @@ const Qt::ItemDataRole PAGE_LIST_ITEM_DATA_ID = static_cast<Qt::ItemDataRole>(Qt
 using atools::settings::Settings;
 using atools::gui::HelpHandler;
 using atools::util::HtmlBuilder;
+using atools::gui::Dialog;
 
 template<typename FIELD, typename FLAG>
 inline void toFlags(FIELD& field, const QAbstractButton *button, FLAG flag)
@@ -113,11 +114,12 @@ OptionsDialog::OptionsDialog(QMainWindow *parentWindow)
 {
   qDebug() << Q_FUNC_INFO;
   setWindowFlag(Qt::WindowContextHelpButtonHint, false);
-
   setWindowModality(Qt::NonModal);
 
   p = new OptionsPrivate();
   ui->setupUi(this);
+
+  savedOptionData = new OptionData;
 
   defaultSize = size();
 
@@ -143,13 +145,18 @@ OptionsDialog::OptionsDialog(QMainWindow *parentWindow)
   linkLabels.append({ui->labelMapApiKeysHint, ui->labelCacheGlobePathDownload});
 
   // Button box ==========================================================
-  ui->buttonBoxOptions->button(QDialogButtonBox::Ok)->setToolTip(tr("Apply changes and close dialog."));
-  ui->buttonBoxOptions->button(QDialogButtonBox::Cancel)->setToolTip(tr("Discard all changes and close dialog."));
-  ui->buttonBoxOptions->button(QDialogButtonBox::RestoreDefaults)->setToolTip(tr("Reset all settings back to default.\n"
-                                                                                 "Changes only settings that can be done with this dialog."));
+  ui->buttonBoxOptions->button(QDialogButtonBox::Close)->setToolTip(tr("Close dialog. You will likely be prompted to apply the changes.."));
+  ui->buttonBoxOptions->button(QDialogButtonBox::Apply)->setToolTip(tr("Apply changes immediately.\n"
+                                                                       "Move the dialog window aside to see changes in "
+                                                                       "the main window or the map."));
 
-  ui->buttonBoxOptions->button(QDialogButtonBox::Apply)->setToolTip(tr("Apply changes.\n"
-                                                                       "Move the dialog aside to see changes in main window or map."));
+  ui->buttonBoxOptions->button(QDialogButtonBox::Reset)->setToolTip(tr("Reset all changes done since opening the options dialog."));
+  ui->buttonBoxOptions->button(QDialogButtonBox::Reset)->setText(tr("Reset Changes"));
+
+  ui->buttonBoxOptions->button(QDialogButtonBox::RestoreDefaults)->setToolTip(tr("Reset all settings back to default.\n"
+                                                                                 "Changes only settings that can be "
+                                                                                 "done with this dialog."));
+  ui->buttonBoxOptions->button(QDialogButtonBox::RestoreDefaults)->setText(tr("Restore Defaults"));
 
   // Styles cascade to children and mess up UI themes on linux - even if widget is selected by name
 #if !defined(Q_OS_LINUX) || defined(DEBUG_INFORMATION)
@@ -958,8 +965,8 @@ OptionsDialog::OptionsDialog(QMainWindow *parentWindow)
   connect(ui->checkBoxOptionsMapHighlightTransparent, &QCheckBox::toggled, this, &OptionsDialog::updateHighlightWidgets);
 
   connect(ui->lineEditOptionsRouteFilename, &QLineEdit::textEdited, this, &OptionsDialog::updateFlightplanExample);
-  connect(ui->pushButtonOptionsRouteFilenameShort, &QPushButton::clicked, this, &OptionsDialog::flightplanPatterShortClicked);
-  connect(ui->pushButtonOptionsRouteFilenameLong, &QPushButton::clicked, this, &OptionsDialog::flightplanPatterLongClicked);
+  connect(ui->pushButtonOptionsRouteFilenameShort, &QPushButton::clicked, this, &OptionsDialog::flightplanPatternShortClicked);
+  connect(ui->pushButtonOptionsRouteFilenameLong, &QPushButton::clicked, this, &OptionsDialog::flightplanPatternLongClicked);
 
   connect(ui->radioButtonCacheUseOffineElevation, &QRadioButton::clicked, this, &OptionsDialog::updateCacheElevationStates);
   connect(ui->radioButtonCacheUseOnlineElevation, &QRadioButton::clicked, this, &OptionsDialog::updateCacheElevationStates);
@@ -1039,6 +1046,7 @@ OptionsDialog::~OptionsDialog()
   ATOOLS_DELETE_LOG(units);
   ATOOLS_DELETE_LOG(fontDialog);
   ATOOLS_DELETE_LOG(linkTooltipHandler);
+  ATOOLS_DELETE_LOG(savedOptionData);
   ATOOLS_DELETE_LOG(p);
   ATOOLS_DELETE_LOG(ui);
 }
@@ -1134,6 +1142,8 @@ void OptionsDialog::showEvent(QShowEvent *)
   OptionData::instanceInternal().mapThemeKeys = NavApp::getMapThemeHandler()->getMapThemeKeys();
 
   optionDataToWidgets(OptionData::instanceInternal());
+  *savedOptionData = OptionData::instance();
+
   updateCacheElevationStates();
   updateCacheMapThemeDir();
   updateDatabaseButtonState();
@@ -1164,64 +1174,102 @@ void OptionsDialog::hideEvent(QHideEvent *)
 void OptionsDialog::buttonBoxClicked(QAbstractButton *button)
 {
   qDebug() << "Clicked" << button->text();
-  if(button == ui->buttonBoxOptions->button(QDialogButtonBox::Apply))
+  buttonBoxHandler(ui->buttonBoxOptions->standardButton(button), false /* fromReject */);
+}
+
+void OptionsDialog::buttonBoxHandler(QDialogButtonBox::StandardButton button, bool fromReject)
+{
+  qDebug() << "Clicked" << button;
+
+  buttonBoxHandlerActive = true;
+  OptionData& optionDataRef = OptionData::instanceInternal();
+
+  if(button == QDialogButtonBox::Apply)
   {
+    // Apply changes without closing ==================================================================================
+    qDebug() << Q_FUNC_INFO << "Apply";
+
     // Test if user uses a too low update rate for well known URLs of official networks
     checkOfficialOnlineUrls();
-
-    widgetsToOptionData();
-    saveState();
-
-    updateTooltipOption();
-
-    NavApp::getMapThemeHandler()->setMapThemeKeys(OptionData::instanceInternal().mapThemeKeys);
-
-    NavApp::updateChannels(OptionData::instance().getUpdateChannels());
-    emit optionsChanged();
-
-    // Update dialog internal stuff
-    updateLinkTooltipHandler();
-    updateWidgetStates();
-    updateWebOptionsFromData();
-    updateWebServerStatus();
+    widgetsToOptionData(optionDataRef);
+    emitOptionsChanged();
   }
-  else if(button == ui->buttonBoxOptions->button(QDialogButtonBox::Ok))
+  else if(button == QDialogButtonBox::Close)
   {
-    // Test if user uses a too low update rate for well known URLs of official networks
-    checkOfficialOnlineUrls();
+    // Ask for changes and close ==================================================================================
+    qDebug() << Q_FUNC_INFO << "Close";
 
-    widgetsToOptionData();
-    saveState();
-    updateWidgetUnits();
-    updateWebOptionsFromData();
-    updateTooltipOption();
-    updateLinkTooltipHandler();
+    // Get data from widgets and compare to last saved when opening
+    OptionData currentOptionData;
+    widgetsToOptionData(currentOptionData);
+    restoreNetworkSettings(currentOptionData);
 
-    NavApp::getMapThemeHandler()->setMapThemeKeys(OptionData::instanceInternal().mapThemeKeys);
-    NavApp::updateChannels(OptionData::instance().getUpdateChannels());
-    emit optionsChanged();
+    if(currentOptionData != *savedOptionData)
+    {
+      // User has changed data ========================================
+      const QString text = tr("Apply option changes?");
 
-    // Close dialog
-    accept();
+      const QMessageBox::StandardButton defaultButton = fromReject ? QMessageBox::Yes : QMessageBox::Cancel;
+      const QMessageBox::StandardButtons buttons = fromReject ?
+                                                   QMessageBox::No | QMessageBox::Yes :
+                                                   QMessageBox::No | QMessageBox::Yes | QMessageBox::Cancel;
+
+      int result = Dialog::question(this, text, buttons, defaultButton);
+      if(result == QMessageBox::Yes)
+      {
+        // Test if user uses a too low update rate for well known URLs of official networks
+        checkOfficialOnlineUrls();
+        widgetsToOptionData(optionDataRef);
+        emitOptionsChanged();
+        accept();
+      }
+      else if(result == QMessageBox::No)
+      {
+        // Widgets and others are updated in showEvent() when opening next time
+        optionDataRef = *savedOptionData;
+        optionDataToWidgets(optionDataRef);
+        updateTooltipOption();
+        updateWebOptionsFromData();
+        reject();
+      }
+      // else if(result == QMessageBox::Cancel)
+    }
+    else
+      // Nothing changed simply close ========================================
+      accept();
   }
-  else if(button == ui->buttonBoxOptions->button(QDialogButtonBox::Help))
-    HelpHandler::openHelpUrlWeb(this,
-                                lnm::helpOnlineUrl +
-                                QStringLiteral("OPTIONS.html#options-page-%1").
-                                arg(ui->listWidgetOptionPages->currentItem()->data(PAGE_LIST_ITEM_DATA_ID).toString()),
-                                lnm::helpLanguageOnline());
-  else if(button == ui->buttonBoxOptions->button(QDialogButtonBox::Cancel))
-    reject();
-  else if(button == ui->buttonBoxOptions->button(QDialogButtonBox::RestoreDefaults))
+  else if(button == QDialogButtonBox::Reset)
   {
-    qDebug() << "OptionsDialog::resetDefaultClicked";
+    // Reset to the state when the dialog was opened =================================================================
+    qDebug() << Q_FUNC_INFO << "Reset";
 
-    int result = atools::gui::Dialog::question(this, tr("Reset all options to default?"),
-                                               QMessageBox::No | QMessageBox::Yes, QMessageBox::No);
+    int result = Dialog::question(this, tr("Reset all option changes?"), QMessageBox::No | QMessageBox::Yes, QMessageBox::No);
 
     if(result == QMessageBox::Yes)
     {
-      // Do reset - this can be undone with cancel
+      optionDataRef = *savedOptionData;
+      optionDataToWidgets(optionDataRef);
+
+      // Update dialog internals
+      updateWidgetUnits();
+      updateTooltipOption();
+      updateLinkTooltipHandler();
+      updateWidgetStates();
+      updateWebOptionsFromData();
+      updateWebServerStatus();
+    }
+  }
+  else if(button == QDialogButtonBox::RestoreDefaults)
+  {
+    // Restore all back to defauls =================================================================
+    qDebug() << Q_FUNC_INFO << "RestoreDefaults";
+
+    int result = Dialog::question(this, tr("Reset all options back to default?"),
+                                  QMessageBox::No | QMessageBox::Yes, QMessageBox::No);
+
+    if(result == QMessageBox::Yes)
+    {
+      // Do reset - this can be undone with close and answering no
 
       // Create data object with default options
       OptionData defaultOpts;
@@ -1232,33 +1280,178 @@ void OptionsDialog::buttonBoxClicked(QAbstractButton *button)
         it.value().clear();
 
       // Keep the undock map window state to avoid a messed up layout after restart
-      defaultOpts.flags2.setFlag(opts2::MAP_ALLOW_UNDOCK, OptionData::instanceInternal().getFlags2().testFlag(opts2::MAP_ALLOW_UNDOCK));
+      defaultOpts.flags2.setFlag(opts2::MAP_ALLOW_UNDOCK, optionDataRef.getFlags2().testFlag(opts2::MAP_ALLOW_UNDOCK));
 
       optionDataToWidgets(defaultOpts);
       updateWidgetStates();
-
       updateWebOptionsFromData();
-      updateFontFromData();
+      updateGuiFontFromData();
       updateWebServerStatus();
-
       updateTooltipOption();
       resetGuiFontClicked();
       resetMapFontClicked();
-      flightplanPatterLongClicked();
-      NavApp::updateChannels(OptionData::instance().getUpdateChannels());
+      flightplanPatternLongClicked();
     }
   }
+  else if(button == QDialogButtonBox::Help)
+  {
+    // Help button =================================================================
+    qDebug() << Q_FUNC_INFO << "Help";
+
+    HelpHandler::openHelpUrlWeb(this,
+                                lnm::helpOnlineUrl %
+                                QStringLiteral("OPTIONS.html#options-page-%1").
+                                arg(ui->listWidgetOptionPages->currentItem()->data(PAGE_LIST_ITEM_DATA_ID).toString()),
+                                lnm::helpLanguageOnline());
+  }
+
+  buttonBoxHandlerActive = false;
 }
 
 void OptionsDialog::reject()
 {
   qDebug() << Q_FUNC_INFO;
 
+  if(!buttonBoxHandlerActive)
+    buttonBoxHandler(QDialogButtonBox::Close, true /* fromReject */);
+
   // Need to catch this here since dialog is owned by main window and kept alive
-  updateFontFromData();
+  updateGuiFontFromData();
   updateWebOptionsFromData();
 
   QDialog::reject();
+}
+
+optc::OptionChangeFlags OptionsDialog::buildFlagsFromChange(const OptionData& saved, const OptionData& changed)
+{
+  optc::OptionChangeFlags changeFlags = optc::OPTION_CHANGE_NONE;
+
+  // OPTION_CHANGE_OTHER = 1 << 1,
+  // OPTION_CHANGE_UI_FONT = 1 << 2, /* User interface font */
+  // OPTION_CHANGE_LANGUAGE = 1 << 3, /* User interface language */
+  // OPTION_CHANGE_UNITS = 1 << 4, /* Units */
+  // OPTION_CHANGE_UNDOCKMAP = 1 << 5, /* Map window undock status */
+  // OPTION_CHANGE_MAPTHEMES = 1 << 6, /* Map theme directory or keys changed */
+  // OPTION_CHANGE_SCENERY = 1 << 7, /* Scenery library includes or excludes */
+  // OPTION_CHANGE_WEBSERVER = 1 << 8, /* Webserver root directory */
+  // OPTION_CHANGE_TEXT_SIZES = 1 << 9, /* Info or table text sizes */
+  // OPTION_CHANGE_ELEVATION = 1 << 10, /* Elevation source or path change */
+
+  changeFlags.setFlag(optc::OPTION_CHANGE_OTHER, saved != changed);
+  changeFlags.setFlag(optc::OPTION_CHANGE_UI_FONT, saved.guiFont != changed.guiFont);
+  changeFlags.setFlag(optc::OPTION_CHANGE_LANGUAGE, saved.guiLanguage != changed.guiLanguage);
+
+  changeFlags.setFlag(optc::OPTION_CHANGE_UNITS,
+                      saved.unitDist != changed.unitDist ||
+                      saved.unitShortDist != changed.unitShortDist ||
+                      saved.unitAlt != changed.unitAlt ||
+                      saved.unitSpeed != changed.unitSpeed ||
+                      saved.unitVertSpeed != changed.unitVertSpeed ||
+                      saved.unitCoords != changed.unitCoords ||
+                      saved.unitFuelWeight != changed.unitFuelWeight);
+
+  changeFlags.setFlag(optc::OPTION_CHANGE_UNDOCKMAP,
+                      saved.flags2.testFlag(opts2::MAP_ALLOW_UNDOCK) != changed.flags2.testFlag(opts2::MAP_ALLOW_UNDOCK));
+
+  changeFlags.setFlag(optc::OPTION_CHANGE_MAPTHEMES,
+                      saved.cacheMapThemeDir != changed.cacheMapThemeDir ||
+                      saved.mapThemeKeys != changed.mapThemeKeys);
+
+  changeFlags.setFlag(optc::OPTION_CHANGE_SCENERY,
+                      saved.databaseExclude != changed.databaseExclude ||
+                      saved.databaseExcludeAddon != changed.databaseExcludeAddon ||
+                      saved.databaseInclude != changed.databaseInclude);
+
+  changeFlags.setFlag(optc::OPTION_CHANGE_TEXT_SIZES,
+                      saved.guiInfoTextSize != changed.guiInfoTextSize ||
+                      saved.guiPerfReportTextSize != changed.guiPerfReportTextSize ||
+                      saved.guiRouteTableTextSize != changed.guiRouteTableTextSize ||
+                      saved.guiRouteRemarksTextSize != changed.guiRouteRemarksTextSize ||
+                      saved.guiRouteInfoTextSize != changed.guiRouteInfoTextSize ||
+                      saved.guiSearchTableTextSize != changed.guiSearchTableTextSize ||
+                      saved.guiInfoSimSize != changed.guiInfoSimSize);
+
+  changeFlags.setFlag(optc::OPTION_CHANGE_ELEVATION,
+                      saved.flags.testFlag(opts::CACHE_USE_ONLINE_ELEVATION) != changed.flags.testFlag(opts::CACHE_USE_ONLINE_ELEVATION) ||
+                      saved.cacheOfflineElevationPath != changed.cacheOfflineElevationPath ||
+                      saved.cacheSizeMemoryProfile != changed.cacheSizeMemoryProfile);
+
+  changeFlags.setFlag(optc::OPTION_CHANGE_WEBSERVER, saved.webDocumentRoot != changed.webDocumentRoot);
+
+  return changeFlags;
+}
+
+void OptionsDialog::emitOptionsChanged()
+{
+  saveState();
+  updateWidgetUnits();
+  updateTooltipOption();
+
+  optc::OptionChangeFlags changeFlags = buildFlagsFromChange(*savedOptionData, OptionData::instance());
+  qDebug() << Q_FUNC_INFO << changeFlags;
+
+  Dialog dialog(this);
+  if(changeFlags != optc::OPTION_CHANGE_NONE)
+  {
+    bool load = false, restart = false, resetLayout = false;
+
+    if(changeFlags.testFlag(optc::OPTION_CHANGE_UNDOCKMAP))
+    {
+      int retval = dialog.question(tr("You changed the option \"Allow to undock the map window\".\n\n"
+                                      "This will reset the window layout back to default after a restart.\n"
+                                      "You window layout might break if you do not restart now."
+                                      "Restart %1 now?").arg(QCoreApplication::applicationName()),
+                                   QMessageBox::Yes | QMessageBox::No, QMessageBox::No);
+      resetLayout = restart = retval == QDialogButtonBox::Yes;
+    }
+
+    if(!restart && changeFlags.testAnyFlag(optc::OPTION_CHANGE_RESTART_NEEDED))
+    {
+      int retval = dialog.question(tr("You changed options that require a restart.\n"
+                                      "Restart %1 now?").arg(QCoreApplication::applicationName()),
+                                   QMessageBox::Yes | QMessageBox::No, QMessageBox::No);
+
+      restart = retval == QDialogButtonBox::Yes;
+    }
+
+    if(changeFlags.testFlag(optc::OPTION_CHANGE_SCENERY))
+    {
+      int retval = 0;
+      if(restart)
+        dialog.showInfoMsgBox(lnm::ACTIONS_SHOW_OPTIONS_RELOAD_SCENERY_LIBRARY,
+                              tr("You changed options that need to reload the scenery library.\n\n"
+                                 "Reload the scenery library later after restarting."),
+                              tr("Do not &show this dialog again."));
+      else
+      {
+        retval = dialog.showQuestionMsgBox(lnm::ACTIONS_SHOW_OPTIONS_RELOAD_SCENERY_LIBRARY,
+                                           tr("You changed options that need to reload the scenery library.\n\n"
+                                              "Open the dialog window \"Load Scenery Library\" now?"),
+                                           tr("Do not &show this dialog again."),
+                                           QMessageBox::Yes | QMessageBox::No, QMessageBox::No, QMessageBox::No);
+
+        load = retval == QDialogButtonBox::Yes;
+      }
+    }
+
+    QGuiApplication::setOverrideCursor(Qt::WaitCursor);
+    emit optionsChanged(changeFlags);
+    QGuiApplication::restoreOverrideCursor();
+
+    // Update dialog internals
+    updateLinkTooltipHandler();
+    updateWidgetStates();
+    updateWebOptionsFromData();
+    updateWebServerStatus();
+
+    *savedOptionData = OptionData::instance();
+
+    if(load)
+      emit loadSceneryLibrary();
+
+    if(restart)
+      emit restartApplication(resetLayout);
+  }
 }
 
 void OptionsDialog::eastWestRuleClicked()
@@ -1286,9 +1479,9 @@ void OptionsDialog::checkOfficialOnlineUrls()
       {
         qWarning() << Q_FUNC_INFO << "Update of" << ui->spinBoxOptionsOnlineUpdate->value()
                    << "s for url" << url << "host" << host;
-        atools::gui::Dialog::warning(this, tr("Do not use an update period smaller than %1 seconds "
-                                              "for official networks like VATSIM, IVAO or PilotEdge.\n\n"
-                                              "Resetting update period back to %1 seconds.").arg(MIN_ONLINE_UPDATE_SECONDS));
+        Dialog::warning(this, tr("Do not use an update period smaller than %1 seconds "
+                                 "for official networks like VATSIM, IVAO or PilotEdge.\n\n"
+                                 "Resetting update period back to %1 seconds.").arg(MIN_ONLINE_UPDATE_SECONDS));
 
         // Reset both widget and data
         ui->spinBoxOptionsOnlineUpdate->setValue(MIN_ONLINE_UPDATE_SECONDS);
@@ -1325,24 +1518,24 @@ void OptionsDialog::onlineTestUrl(const QString& url, bool statusFile)
     }
 
     if(ok)
-      atools::gui::Dialog::information(this, tr("<p>Success. First lines in file:</p><hr/><code>%1</code><hr/><br/>").
-                                       arg(result.mid(0, 6).join(QStringLiteral("<br/>"))));
+      Dialog::information(this, tr("<p>Success. First lines in file:</p><hr/><code>%1</code><hr/><br/>").
+                          arg(result.mid(0, 6).join(QStringLiteral("<br/>"))));
     else
     {
       if(statusFile)
-        atools::gui::Dialog::warning(this, tr("<p>Downloaded successfully but the file does not look like a status.txt file.</p>"
-                                                "<p><b>One of the keys <i>url0</i> and/or <i>url1</i> is missing.</b></p>"
-                                                  "<p>First lines in file:</p><hr/><code>%1</code><hr/><br/>").
-                                     arg(result.mid(0, 6).join(QStringLiteral("<br/>"))));
+        Dialog::warning(this, tr("<p>Downloaded successfully but the file does not look like a status.txt file.</p>"
+                                   "<p><b>One of the keys <i>url0</i> and/or <i>url1</i> is missing.</b></p>"
+                                     "<p>First lines in file:</p><hr/><code>%1</code><hr/><br/>").
+                        arg(result.mid(0, 6).join(QStringLiteral("<br/>"))));
       else
-        atools::gui::Dialog::warning(this, tr("<p>Downloaded successfully but the file does not look like a whazzup.txt file.</p>"
-                                                "<p><b>One of the sections <i>!GENERAL</i> and/or <i>!CLIENTS</i> is missing.</b></p>"
-                                                  "<p>First lines in file:</p><hr/><code>%1</code><hr/><br/>").
-                                     arg(result.mid(0, 6).join(QStringLiteral("<br/>"))));
+        Dialog::warning(this, tr("<p>Downloaded successfully but the file does not look like a whazzup.txt file.</p>"
+                                   "<p><b>One of the sections <i>!GENERAL</i> and/or <i>!CLIENTS</i> is missing.</b></p>"
+                                     "<p>First lines in file:</p><hr/><code>%1</code><hr/><br/>").
+                        arg(result.mid(0, 6).join(QStringLiteral("<br/>"))));
     }
   }
   else
-    atools::gui::Dialog::warning(this, tr("Failed. Reason:\n%1").arg(result.join(QStringLiteral("\n"))));
+    Dialog::warning(this, tr("Failed. Reason:\n%1").arg(result.join(QStringLiteral("\n"))));
 }
 
 void OptionsDialog::updateOnlineWidgetStatus()
@@ -1496,9 +1689,11 @@ void OptionsDialog::saveState()
 
   Settings& settings = Settings::instance();
 
-  adjustGuiFont();
+  adjustFont(guiFont);
   settings.setValue(lnm::OPTIONS_DIALOG_GUI_FONT, guiFont);
   settings.setValue(lnm::OPTIONS_DIALOG_LANGUAGE, guiLanguage);
+
+  adjustFont(mapFont);
   settings.setValue(lnm::OPTIONS_DIALOG_MAP_FONT, mapFont);
 
   // Save the path lists
@@ -1531,32 +1726,35 @@ void OptionsDialog::saveState()
   Settings::syncSettings();
 }
 
-void OptionsDialog::restoreState()
+void OptionsDialog::restoreNetworkSettings(OptionData& od)
 {
-  Settings& settings = Settings::instance();
-
   // Reload online network settings from configuration file which can be overloaded by placing a copy
   // in the settings file
   QString networksPath = Settings::getOverloadedPath(lnm::NETWORKS_CONFIG);
   qInfo() << Q_FUNC_INFO << "Loading networks.cfg from" << networksPath;
 
   QSettings networkSettings(networksPath, QSettings::IniFormat);
+  od.onlineVatsimStatusUrl = networkSettings.value(QStringLiteral("vatsim/statusurl")).toString();
+  od.onlineVatsimTransceiverUrl = networkSettings.value(QStringLiteral("vatsim/transceiverurl")).toString();
+  od.onlineVatsimReload = networkSettings.value(QStringLiteral("vatsim/update")) == QStringLiteral("auto") ? -1 :
+                          networkSettings.value(QStringLiteral("vatsim/update")).toInt();
+  od.onlineVatsimTransceiverReload = networkSettings.value(QStringLiteral("vatsim/updatetransceiver")) == QStringLiteral("auto") ? -1 :
+                                     networkSettings.value(QStringLiteral("vatsim/updatetransceiver")).toInt();
+
+  od.onlineIvaoWhazzupUrl = networkSettings.value(QStringLiteral("ivao/whazzupurl")).toString();
+  od.onlineIvaoReload = networkSettings.value(QStringLiteral("ivao/update")) == QStringLiteral("auto") ? -1 :
+                        networkSettings.value(QStringLiteral("ivao/update")).toInt();
+
+  od.onlinePilotEdgeStatusUrl = networkSettings.value(QStringLiteral("pilotedge/statusurl")).toString();
+  od.onlinePilotEdgeReload = networkSettings.value(QStringLiteral("pilotedge/update")) == QStringLiteral("auto") ? -1 :
+                             networkSettings.value(QStringLiteral("pilotedge/update")).toInt();
+
+}
+
+void OptionsDialog::restoreState()
+{
   OptionData& od = OptionData::instanceInternal();
-
-  od.onlineVatsimStatusUrl = networkSettings.value("vatsim/statusurl").toString();
-  od.onlineVatsimTransceiverUrl = networkSettings.value("vatsim/transceiverurl").toString();
-  od.onlineVatsimReload = networkSettings.value("vatsim/update") == "auto" ? -1 :
-                          networkSettings.value("vatsim/update").toInt();
-  od.onlineVatsimTransceiverReload = networkSettings.value("vatsim/updatetransceiver") == "auto" ? -1 :
-                                     networkSettings.value("vatsim/updatetransceiver").toInt();
-
-  od.onlineIvaoWhazzupUrl = networkSettings.value("ivao/whazzupurl").toString();
-  od.onlineIvaoReload = networkSettings.value("ivao/update") == "auto" ? -1 :
-                        networkSettings.value("ivao/update").toInt();
-
-  od.onlinePilotEdgeStatusUrl = networkSettings.value("pilotedge/statusurl").toString();
-  od.onlinePilotEdgeReload = networkSettings.value("pilotedge/update") == "auto" ? -1 :
-                             networkSettings.value("pilotedge/update").toInt();
+  restoreNetworkSettings(od);
 
   // Disable selection based on what was found in the file
   ui->radioButtonOptionsOnlineIvao->setVisible(!od.onlineIvaoWhazzupUrl.isEmpty());
@@ -1573,7 +1771,7 @@ void OptionsDialog::restoreState()
     int maxWidth = 0;
     for(int i = 0; i < ui->listWidgetOptionPages->count(); i++)
     {
-      QListWidgetItem *item = ui->listWidgetOptionPages->item(i);
+      const QListWidgetItem *item = ui->listWidgetOptionPages->item(i);
       maxWidth = std::max(QFontMetrics(item->font()).horizontalAdvance(item->text()), maxWidth);
     }
 
@@ -1625,12 +1823,14 @@ void OptionsDialog::restoreState()
                                             defaultData.highlightProfileColor).value<QColor>();
 
   mapFont = settings.valueStr(lnm::OPTIONS_DIALOG_MAP_FONT, QStringLiteral());
+  adjustFont(mapFont);
+
+  guiFont = settings.valueStr(lnm::OPTIONS_DIALOG_GUI_FONT, QStringLiteral());
+  adjustFont(guiFont);
 
   guiLanguage = settings.valueStr(lnm::OPTIONS_DIALOG_LANGUAGE, QLocale().name());
-  guiFont = settings.valueStr(lnm::OPTIONS_DIALOG_GUI_FONT, QStringLiteral());
-  adjustGuiFont();
 
-  widgetsToOptionData();
+  widgetsToOptionData(OptionData::instanceInternal());
   updateWidgetUnits();
   mapEmptyAirportsClicked(false);
   updateWhileFlyingWidgets(false);
@@ -1758,8 +1958,7 @@ void OptionsDialog::restoreOptionItemStates(const QHash<TYPE, QTreeWidgetItem *>
 }
 
 template<typename TYPE>
-void OptionsDialog::saveDisplayOptItemStates(const QHash<TYPE, QTreeWidgetItem *>& index,
-                                             const QString& optionPrefix) const
+void OptionsDialog::saveDisplayOptItemStates(const QHash<TYPE, QTreeWidgetItem *>& index, const QString& optionPrefix) const
 {
   Settings& settings = Settings::instance();
 
@@ -1914,10 +2113,10 @@ void OptionsDialog::testWeatherNoaaUrlClicked()
   QGuiApplication::restoreOverrideCursor();
 
   if(result)
-    atools::gui::Dialog::information(this, tr("<p>Success. First lines in file:</p><hr/><code>%1</code><hr/><br/>").
-                                     arg(resultStr.join(QStringLiteral("<br/>"))));
+    Dialog::information(this, tr("<p>Success. First lines in file:</p><hr/><code>%1</code><hr/><br/>").
+                        arg(resultStr.join(QStringLiteral("<br/>"))));
   else
-    atools::gui::Dialog::warning(this, tr("Failed. Reason:\n%1").arg(resultStr.join(QStringLiteral("\n"))));
+    Dialog::warning(this, tr("Failed. Reason:\n%1").arg(resultStr.join(QStringLiteral("\n"))));
 }
 
 /* Test Vatsim weather URL and show a dialog with the result */
@@ -1931,10 +2130,10 @@ void OptionsDialog::testWeatherVatsimUrlClicked()
   QGuiApplication::restoreOverrideCursor();
 
   if(result)
-    atools::gui::Dialog::information(this, tr("<p>Success. First lines in file:</p><hr/><code>%1</code><hr/><br/>").
-                                     arg(resultStr.join(QStringLiteral("<br/>"))));
+    Dialog::information(this, tr("<p>Success. First lines in file:</p><hr/><code>%1</code><hr/><br/>").
+                        arg(resultStr.join(QStringLiteral("<br/>"))));
   else
-    atools::gui::Dialog::warning(this, tr("Failed. Reason:\n%1").arg(resultStr.join(QStringLiteral("\n"))));
+    Dialog::warning(this, tr("Failed. Reason:\n%1").arg(resultStr.join(QStringLiteral("\n"))));
 }
 
 /* Test IVAO weather download URL and show a dialog of the first line */
@@ -1953,10 +2152,10 @@ void OptionsDialog::testWeatherIvaoUrlClicked()
   QGuiApplication::restoreOverrideCursor();
 
   if(result)
-    atools::gui::Dialog::information(this, tr("<p>Success. First lines in file:</p><hr/><code>%1</code><hr/><br/>").
-                                     arg(resultStr.join(QStringLiteral("<br/>"))));
+    Dialog::information(this, tr("<p>Success. First lines in file:</p><hr/><code>%1</code><hr/><br/>").
+                        arg(resultStr.join(QStringLiteral("<br/>"))));
   else
-    atools::gui::Dialog::warning(this, tr("Failed. Reason:\n%1").arg(resultStr.join(QStringLiteral("\n"))));
+    Dialog::warning(this, tr("Failed. Reason:\n%1").arg(resultStr.join(QStringLiteral("\n"))));
 }
 
 /* Test NOAA GRIB download URL and show a dialog of the first line */
@@ -1968,9 +2167,9 @@ void OptionsDialog::testWeatherNoaaWindUrlClicked()
   bool result = WeatherReporter::testUrl(resultStr, ui->lineEditOptionsWeatherNoaaWindUrl->text().trimmed(), QStringLiteral());
   QGuiApplication::restoreOverrideCursor();
   if(result)
-    atools::gui::Dialog::information(this, tr("Success."));
+    Dialog::information(this, tr("Success."));
   else
-    atools::gui::Dialog::warning(this, tr("Failed. Reason:\n%1").arg(resultStr.join(QStringLiteral("\n"))));
+    Dialog::warning(this, tr("Failed. Reason:\n%1").arg(resultStr.join(QStringLiteral("\n"))));
 }
 
 void OptionsDialog::resetWeatherNoaaUrlClicked()
@@ -1997,8 +2196,8 @@ void OptionsDialog::resetWeatherNoaaWindUrlClicked()
 void OptionsDialog::addDatabaseIncludeDirClicked()
 {
   qDebug() << Q_FUNC_INFO;
-  QString path = atools::gui::Dialog(this).openDirectoryDialog(tr("Open Directory to include"), lnm::OPTIONS_DIALOG_DB_DIR_DLG,
-                                                               NavApp::getCurrentSimulatorBasePath());
+  QString path = Dialog(this).openDirectoryDialog(tr("Open Directory to include"), lnm::OPTIONS_DIALOG_DB_DIR_DLG,
+                                                  NavApp::getCurrentSimulatorBasePath());
 
   addDatabaseTableItem(ui->tableWidgetOptionsDatabaseInclude, path);
   updateDatabaseButtonState();
@@ -2015,8 +2214,8 @@ void OptionsDialog::removeDatabaseIncludePathClicked()
 void OptionsDialog::addDatabaseExcludeDirClicked()
 {
   qDebug() << Q_FUNC_INFO;
-  QString path = atools::gui::Dialog(this).openDirectoryDialog(tr("Open Directory to exclude from Scenery Loading"),
-                                                               lnm::OPTIONS_DIALOG_DB_DIR_DLG, NavApp::getCurrentSimulatorBasePath());
+  QString path = Dialog(this).openDirectoryDialog(tr("Open Directory to exclude from Scenery Loading"),
+                                                  lnm::OPTIONS_DIALOG_DB_DIR_DLG, NavApp::getCurrentSimulatorBasePath());
 
   addDatabaseTableItem(ui->tableWidgetOptionsDatabaseExclude, path);
   updateDatabaseButtonState();
@@ -2027,9 +2226,9 @@ void OptionsDialog::addDatabaseExcludeFileClicked()
 {
   qDebug() << Q_FUNC_INFO;
 
-  const QStringList paths = atools::gui::Dialog(this).openFileDialogMulti(tr("Open Files to exclude from Scenery Loading"),
-                                                                          QStringLiteral(), // filter lnm::OPTIONS_DIALOG_DB_FILE_DLG,
-                                                                          NavApp::getCurrentSimulatorBasePath());
+  const QStringList paths = Dialog(this).openFileDialogMulti(tr("Open Files to exclude from Scenery Loading"),
+                                                             QStringLiteral(), // filter lnm::OPTIONS_DIALOG_DB_FILE_DLG,
+                                                             NavApp::getCurrentSimulatorBasePath());
 
   for(const QString& path : paths)
     addDatabaseTableItem(ui->tableWidgetOptionsDatabaseExclude, path);
@@ -2048,8 +2247,8 @@ void OptionsDialog::addDatabaseAddOnExcludePathClicked()
 {
   qDebug() << Q_FUNC_INFO;
 
-  QString path = atools::gui::Dialog(this).openDirectoryDialog(tr("Open Directory to exclude from Add-On Recognition"),
-                                                               lnm::OPTIONS_DIALOG_DB_DIR_DLG, NavApp::getCurrentSimulatorBasePath());
+  QString path = Dialog(this).openDirectoryDialog(tr("Open Directory to exclude from Add-On Recognition"),
+                                                  lnm::OPTIONS_DIALOG_DB_DIR_DLG, NavApp::getCurrentSimulatorBasePath());
 
   addDatabaseTableItem(ui->tableWidgetOptionsDatabaseExcludeAddon, path);
   updateDatabaseButtonState();
@@ -2095,14 +2294,15 @@ void OptionsDialog::updateWhileFlyingWidgets(bool)
                                                     ui->checkBoxOptionsSimClearSelection->isChecked());
 }
 
-void OptionsDialog::widgetsToOptionData()
+void OptionsDialog::widgetsToOptionData(OptionData& data)
 {
-  OptionData& data = OptionData::instanceInternal();
-
+  adjustFont(mapFont);
   data.mapFont = mapFont;
-  data.guiLanguage = guiLanguage;
-  adjustGuiFont();
+
+  adjustFont(guiFont);
   data.guiFont = guiFont;
+
+  data.guiLanguage = guiLanguage;
 
   data.flightplanColor = flightplanColor;
   data.flightplanOutlineColor = flightplanOutlineColor;
@@ -2272,9 +2472,9 @@ void OptionsDialog::widgetsToOptionData()
   for(int row = 0; row < ui->tableWidgetOptionsDatabaseExclude->rowCount(); row++)
     data.databaseExclude.append(ui->tableWidgetOptionsDatabaseExclude->item(row, 0)->text());
 
-  data.databaseAddonExclude.clear();
+  data.databaseExcludeAddon.clear();
   for(int row = 0; row < ui->tableWidgetOptionsDatabaseExcludeAddon->rowCount(); row++)
-    data.databaseAddonExclude.append(ui->tableWidgetOptionsDatabaseExcludeAddon->item(row, 0)->text());
+    data.databaseExcludeAddon.append(ui->tableWidgetOptionsDatabaseExcludeAddon->item(row, 0)->text());
 
   data.mapScrollDetail = static_cast<opts::MapScrollDetail>(ui->comboBoxMapScrollZoomDetails->currentIndex());
 
@@ -2449,10 +2649,11 @@ void OptionsDialog::optionDataToWidgets(const OptionData& data)
   udpdateLanguageComboBox(guiLanguage);
 
   guiFont = data.guiFont;
-  adjustGuiFont();
+  adjustFont(guiFont);
+  updateGuiFontLabel();
 
   mapFont = data.mapFont;
-  updateGuiFontLabel();
+  adjustFont(mapFont);
   updateMapFontLabel();
 
   flightplanColor = data.flightplanColor;
@@ -2600,7 +2801,7 @@ void OptionsDialog::optionDataToWidgets(const OptionData& data)
 
   addDatabaseTableItems(ui->tableWidgetOptionsDatabaseInclude, data.databaseInclude);
   addDatabaseTableItems(ui->tableWidgetOptionsDatabaseExclude, data.databaseExclude);
-  addDatabaseTableItems(ui->tableWidgetOptionsDatabaseExcludeAddon, data.databaseAddonExclude);
+  addDatabaseTableItems(ui->tableWidgetOptionsDatabaseExcludeAddon, data.databaseExcludeAddon);
 
   ui->comboBoxMapScrollZoomDetails->setCurrentIndex(data.mapScrollDetail);
 
@@ -2828,7 +3029,7 @@ void OptionsDialog::mapThemeDirSelectClicked()
 {
   qDebug() << Q_FUNC_INFO;
 
-  QString path = atools::gui::Dialog(this).
+  QString path = Dialog(this).
                  openDirectoryDialog(tr("Select directory for map themes"), QStringLiteral(), ui->lineEditCacheMapThemeDir->text());
 
   if(!path.isEmpty())
@@ -2857,7 +3058,7 @@ void OptionsDialog::offlineDataSelectClicked()
 {
   qDebug() << Q_FUNC_INFO;
 
-  QString path = atools::gui::Dialog(this).
+  QString path = Dialog(this).
                  openDirectoryDialog(tr("Open GLOBE data directory"), QStringLiteral(), ui->lineEditCacheOfflineDataPath->text());
 
   if(!path.isEmpty())
@@ -3051,7 +3252,7 @@ void OptionsDialog::selectActiveSkyPathClicked()
 {
   qDebug() << Q_FUNC_INFO;
 
-  QString path = atools::gui::Dialog(this).openFileDialog(
+  QString path = Dialog(this).openFileDialog(
     tr("Select Active Sky Weather Snapshot File"),
     tr("Active Sky Weather Snapshot Files %1;;All Files (*)").arg(lnm::FILE_PATTERN_AS_SNAPSHOT),
     lnm::OPTIONS_DIALOG_AS_FILE_DLG, ui->lineEditOptionsWeatherAsnPath->text());
@@ -3071,9 +3272,9 @@ void OptionsDialog::selectXplane11PathClicked()
   if(path.isEmpty() || QFileInfo(path).isRelative())
     path = NavApp::getSimulatorBasePath(atools::fs::FsPaths::XPLANE_11) % path;
 
-  path = atools::gui::Dialog(this).openFileDialog(tr("Select X-Plane 11 METAR File"),
-                                                  tr("X-Plane METAR Files %1;;All Files (*)").arg(lnm::FILE_PATTERN_XPLANE_METAR),
-                                                  lnm::OPTIONS_DIALOG_XPLANE_DLG, path);
+  path = Dialog(this).openFileDialog(tr("Select X-Plane 11 METAR File"),
+                                     tr("X-Plane METAR Files %1;;All Files (*)").arg(lnm::FILE_PATTERN_XPLANE_METAR),
+                                     lnm::OPTIONS_DIALOG_XPLANE_DLG, path);
 
   if(!path.isEmpty())
     ui->lineEditOptionsWeatherXplanePath->setText(atools::nativeCleanPath(path));
@@ -3093,7 +3294,7 @@ void OptionsDialog::selectXplane12PathClicked()
   if(QFileInfo(path).isRelative())
     path = NavApp::getSimulatorBasePath(atools::fs::FsPaths::XPLANE_12) % path;
 
-  path = atools::gui::Dialog(this).openDirectoryDialog(tr("Select X-Plane 12 Weather Directory"), lnm::OPTIONS_DIALOG_XPLANE12_DLG, path);
+  path = Dialog(this).openDirectoryDialog(tr("Select X-Plane 12 Weather Directory"), lnm::OPTIONS_DIALOG_XPLANE12_DLG, path);
 
   if(!path.isEmpty())
     ui->lineEditOptionsWeatherXplane12Path->setText(atools::nativeCleanPath(path));
@@ -3110,9 +3311,9 @@ void OptionsDialog::weatherXplane11WindPathSelectClicked()
     path = NavApp::getSimulatorBasePath(atools::fs::FsPaths::XPLANE_11) % path;
 
   // global_winds.grib
-  path = atools::gui::Dialog(this).openFileDialog(tr("Select X-Plane 11 Wind File"),
-                                                  tr("X-Plane 11 Wind Files %1;;All Files (*)").arg(lnm::FILE_PATTERN_GRIB),
-                                                  lnm::OPTIONS_DIALOG_XPLANE_WIND_FILE_DLG, path);
+  path = Dialog(this).openFileDialog(tr("Select X-Plane 11 Wind File"),
+                                     tr("X-Plane 11 Wind Files %1;;All Files (*)").arg(lnm::FILE_PATTERN_GRIB),
+                                     lnm::OPTIONS_DIALOG_XPLANE_WIND_FILE_DLG, path);
 
   if(!path.isEmpty())
     ui->lineEditOptionsWeatherXplaneWind->setText(atools::nativeCleanPath(path));
@@ -3269,7 +3470,7 @@ void OptionsDialog::updateWebDocrootStatus()
 void OptionsDialog::selectWebDocrootClicked()
 {
   qDebug() << Q_FUNC_INFO;
-  QString path = atools::gui::Dialog(this).openDirectoryDialog(
+  QString path = Dialog(this).openDirectoryDialog(
     tr("Open Document Root Directory"), lnm::OPTIONS_DIALOG_WEB_DOCROOT_DLG, ui->lineEditOptionsWebDocroot->text());
 
   if(!path.isEmpty())
@@ -3333,13 +3534,13 @@ void OptionsDialog::updateWebOptionsFromGui()
   }
 }
 
-void OptionsDialog::flightplanPatterShortClicked()
+void OptionsDialog::flightplanPatternShortClicked()
 {
   ui->lineEditOptionsRouteFilename->setText(atools::fs::pln::pattern::SHORT);
   updateFlightplanExample();
 }
 
-void OptionsDialog::flightplanPatterLongClicked()
+void OptionsDialog::flightplanPatternLongClicked()
 {
   ui->lineEditOptionsRouteFilename->setText(atools::fs::pln::pattern::LONG);
   updateFlightplanExample();
@@ -3378,6 +3579,11 @@ void OptionsDialog::updateFlightplanExample()
       atools::util::HtmlBuilder::warningMessage(tr("Pattern is empty. Using default \"%1\".").arg(atools::fs::pln::pattern::SHORT)));
 }
 
+void OptionsDialog::toolbarSizeClicked()
+{
+  ui->spinBoxOptionsGuiToolbarSize->setEnabled(ui->checkBoxOptionsGuiToolbarSize->isChecked());
+}
+
 void OptionsDialog::updateMapFontLabel()
 {
   QFont font;
@@ -3389,40 +3595,44 @@ void OptionsDialog::updateMapFontLabel()
     font.fromString(guiFont);
   else
     // Fall back to application font
-    font = QGuiApplication::font();
+    font = QApplication::font();
 
-  atools::gui::fontDescription(font, ui->labelOptionsDisplayFont);
-}
+  if(QApplication::font().bold())
+    font.setBold(true);
 
-void OptionsDialog::toolbarSizeClicked()
-{
-  ui->spinBoxOptionsGuiToolbarSize->setEnabled(ui->checkBoxOptionsGuiToolbarSize->isChecked());
+  if(QApplication::font().italic())
+    font.setItalic(true);
+
+#ifdef DEBUG_INFORMATION
+  qDebug() << Q_FUNC_INFO << font;
+#endif
+
+  atools::gui::fontDescription(font, ui->lineEditOptionsDisplayFont, tr("Selected font: "));
 }
 
 void OptionsDialog::updateGuiFontLabel()
 {
-  ui->labelOptionsGuiFont->setText(atools::gui::fontDescription(QApplication::font()));
-}
+  QFont font;
+  if(guiFont.isEmpty())
+    font = QFontDatabase::systemFont(QFontDatabase::GeneralFont);
+  else
+    font.fromString(guiFont);
 
-void OptionsDialog::resetMapFontClicked()
-{
-  // Set to GUI font and add bold - no matter if this defaults to system or not
-  QFont font(QGuiApplication::font());
-  font.setBold(true);
-  mapFont = font.toString();
+  atools::gui::fontDescription(font, ui->lineEditOptionsGuiFont, tr("Selected font: "));
+
+#ifdef DEBUG_INFORMATION
+  qDebug() << Q_FUNC_INFO << font;
+#endif
 
   updateMapFontLabel();
 }
 
-void OptionsDialog::buildFontDialog(const QFont& initialFont)
+void OptionsDialog::resetMapFontClicked()
 {
-  if(fontDialog == nullptr)
-  {
-    fontDialog = new QFontDialog(initialFont, this);
-    fontDialog->setWindowTitle(tr("%1 - Select font").arg(QCoreApplication::applicationName()));
-  }
+  // Empty description means system font
+  mapFont.clear();
 
-  fontDialog->setCurrentFont(initialFont);
+  updateMapFontLabel();
 }
 
 void OptionsDialog::selectMapFontClicked()
@@ -3443,6 +3653,7 @@ void OptionsDialog::selectMapFontClicked()
   if(fontDialog->exec())
   {
     mapFont = fontDialog->selectedFont().toString();
+    adjustFont(mapFont);
     updateMapFontLabel();
   }
 }
@@ -3451,9 +3662,6 @@ void OptionsDialog::resetGuiFontClicked()
 {
   // Empty description means system font
   guiFont.clear();
-
-  // Set GUI back to system font
-  QApplication::setFont(QFontDatabase::systemFont(QFontDatabase::GeneralFont));
 
   updateGuiFontLabel();
 }
@@ -3481,29 +3689,26 @@ void OptionsDialog::selectGuiFontClicked()
     }
 
     if(corrected)
-      atools::gui::Dialog::warning(this, tr("Font too large for user interface. Size was corrected. Maximum is 30 pixels/points."));
+      Dialog::warning(this, tr("Font too large for user interface. Size was corrected. Maximum is 30 pixels/points."));
 
     guiFont = selectedFont.toString();
-    adjustGuiFont();
+    adjustFont(guiFont);
 
     qDebug() << Q_FUNC_INFO << selectedFont;
-
-    // the user clicked OK and font is set to the font the user selected
-    QApplication::setFont(selectedFont);
 
     updateGuiFontLabel();
   }
 }
 
-void OptionsDialog::adjustGuiFont()
+void OptionsDialog::adjustFont(QString& font)
 {
-  if(guiFont == QFontDatabase::systemFont(QFontDatabase::GeneralFont).toString())
-    guiFont.clear();
+  if(font == QFontDatabase::systemFont(QFontDatabase::GeneralFont).toString())
+    font.clear();
 }
 
-void OptionsDialog::updateFontFromData()
+void OptionsDialog::updateGuiFontFromData()
 {
-  OptionData& data = OptionData::instanceInternal();
+  const OptionData& data = OptionData::instanceInternal();
   QFont font;
 
   if(data.guiFont.isEmpty())
@@ -3511,8 +3716,17 @@ void OptionsDialog::updateFontFromData()
     font = QFontDatabase::systemFont(QFontDatabase::GeneralFont);
   else
     font.fromString(data.guiFont);
+}
 
-  QApplication::setFont(font);
+void OptionsDialog::buildFontDialog(const QFont& initialFont)
+{
+  if(fontDialog == nullptr)
+  {
+    fontDialog = new QFontDialog(initialFont, this);
+    fontDialog->setWindowTitle(tr("%1 - Select font").arg(QCoreApplication::applicationName()));
+  }
+
+  fontDialog->setCurrentFont(initialFont);
 }
 
 void OptionsDialog::mapboxUserMapClicked()
@@ -3588,21 +3802,21 @@ void OptionsDialog::mapboxUserMapClicked()
               tokenItem->setText(dialog.getText2().trimmed());
             }
             else
-              atools::gui::Dialog::warning(this, tr("Mapbox Token is empty."));
+              Dialog::warning(this, tr("Mapbox Token is empty."));
           }
           else
-            atools::gui::Dialog::warning(this, tr("Mapbox User Style not found in URL."));
+            Dialog::warning(this, tr("Mapbox User Style not found in URL."));
         }
         else
-          atools::gui::Dialog::warning(this, tr("Mapbox Username not found in URL."));
+          Dialog::warning(this, tr("Mapbox Username not found in URL."));
       }
       else
-        atools::gui::Dialog::warning(this, tr("Style URL has to start with \"mapbox://styles/\"."));
+        Dialog::warning(this, tr("Style URL has to start with \"mapbox://styles/\"."));
     }
   }
   else
-    atools::gui::Dialog::warning(this, tr("One or more Mapbox keys are missing. "
-                                          "Installation might be incomplete since map themes are missing."));
+    Dialog::warning(this, tr("One or more Mapbox keys are missing. "
+                             "Installation might be incomplete since map themes are missing."));
 }
 
 void OptionsDialog::removeSelectedDatabaseTableItems(QTableWidget *widget)

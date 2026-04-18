@@ -19,6 +19,7 @@
 #define LITTLENAVMAP_PROFILEWIDGET_H
 
 #include "fs/sc/simconnectdata.h"
+#include "options/optionchangeflags.h"
 
 #include <QWidget>
 
@@ -105,7 +106,7 @@ public:
     float altitudeDelta;
   };
 
-  void optionsChanged();
+  void optionsChanged(const optc::OptionChangeFlags& changeFlags);
   void styleChanged();
   void fontChanged(const QFont& font);
 

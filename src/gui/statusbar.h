@@ -18,6 +18,7 @@
 #ifndef LNM_GUI_STATUSBAR_H
 #define LNM_GUI_STATUSBAR_H
 
+#include "options/optionchangeflags.h"
 #include <QDateTime>
 #include <QLabel>
 #include <QObject>
@@ -60,7 +61,7 @@ public:
   void styleChanged();
 
   /* Update distance in case of unit changes */
-  void optionsChanged();
+  void optionsChanged(const optc::OptionChangeFlags& changeFlags);
 
   /* Print label sizes to log */
   void printDebugInformation();

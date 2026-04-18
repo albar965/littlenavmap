@@ -488,9 +488,9 @@ void NavSearch::updatePushButtons()
   ui->pushButtonNavSearchClearSelection->setEnabled(sm != nullptr && sm->hasSelection());
 }
 
-void NavSearch::optionsChanged()
+void NavSearch::optionsChanged(const optc::OptionChangeFlags& changeFlags)
 {
-  SearchBaseTable::optionsChanged();
+  SearchBaseTable::optionsChanged(changeFlags);
   comboBoxHandler->setMenuTooltipsVisible(NavApp::isMenuToolTipsVisible());
 }
 

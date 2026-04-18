@@ -177,12 +177,15 @@ bool ElevationProvider::isGlobeDirectoryValid(const QString& path)
   return GlobeReader::isDirValid(path);
 }
 
-void ElevationProvider::optionsChanged()
+void ElevationProvider::optionsChanged(const optc::OptionChangeFlags& changeFlags)
 {
-  updateReader(false /* startup */);
+  if(changeFlags.testFlag(optc::OPTION_CHANGE_ELEVATION))
+  {
+    updateReader(false /* startup */);
 
-  if(isGlobeOfflineProvider())
-    globeReader->setCacheMaxBytes(OptionData::instance().getCacheSizeMemoryProfileMb() * 1000000L);
+    if(isGlobeOfflineProvider())
+      globeReader->setCacheMaxBytes(OptionData::instance().getCacheSizeMemoryProfileMb() * 1000000L);
+  }
 }
 
 void ElevationProvider::init(const Marble::ElevationModel *model)

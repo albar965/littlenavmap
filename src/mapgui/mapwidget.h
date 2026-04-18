@@ -227,6 +227,9 @@ public:
   /* Logs map display settings */
   void printMapTypesToLog();
 
+  /* MapPaintWidget overrides for UI updates mostly ============================================================ */
+  virtual void optionsChanged(const optc::OptionChangeFlags& changeFlags) override;
+
 signals:
   /* Emitted when connection is established and user aircraft turned from invalid to valid */
   void userAircraftValidChanged();
@@ -395,7 +398,6 @@ private:
   void copyCoordinatesPos(const atools::geo::Pos& pos);
 
   /* MapPaintWidget overrides for UI updates mostly ============================================================ */
-  virtual void optionsChanged() override;
   virtual void overlayStateFromMenu() override;
   virtual void overlayStateToMenu() const override;
 

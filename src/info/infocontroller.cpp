@@ -605,7 +605,7 @@ void InfoController::restoreState()
   tabHandlerAircraft->restoreState();
   aircraftProgressConfig->restoreState();
 
-  updateTextEditFontSizes();
+  updateTextBrowserFontSizes();
   updateAircraftInfo();
 }
 
@@ -1509,11 +1509,17 @@ void InfoController::updateAircraftInfo()
   updateAiAircraftText();
 }
 
-void InfoController::optionsChanged()
+void InfoController::optionsChanged(const optc::OptionChangeFlags& changeFlags)
 {
-  updateTextEditFontSizes();
-  showInformationInternal(*currentSearchResult, false /* showWindows */, false /* scrollToTop */, true /* forceUpdate */);
-  updateAircraftInfo();
+  if(changeFlags.testFlag(optc::OPTION_CHANGE_TEXT_SIZES) || changeFlags.testFlag(optc::OPTION_CHANGE_UI_FONT) ||
+     changeFlags.testFlag(optc::OPTION_CHANGE_UNITS))
+  {
+    if(changeFlags.testFlag(optc::OPTION_CHANGE_TEXT_SIZES) || changeFlags.testFlag(optc::OPTION_CHANGE_UI_FONT))
+      updateTextBrowserFontSizes();
+
+    showInformationInternal(*currentSearchResult, false /* showWindows */, false /* scrollToTop */, true /* forceUpdate */);
+    updateAircraftInfo();
+  }
   linkTooltipHandler->setShowTooltips(OptionData::instance().getFlags().testFlag(opts::ENABLE_TOOLTIPS_LINK));
 }
 
@@ -1528,11 +1534,10 @@ void InfoController::fontChanged(const QFont& font)
 
   atools::gui::setWidgetAndIconSize({pushButtonConfig}, NavApp::getMinButtonSize());
 
-  optionsChanged();
+  optionsChanged(optc::OPTION_CHANGE_ALL);
 }
 
-/* Update font size in text browsers if options have changed */
-void InfoController::updateTextEditFontSizes()
+void InfoController::updateTextBrowserFontSizes()
 {
   Ui::MainWindow *ui = NavApp::getMainUi();
 

@@ -19,6 +19,7 @@
 #define LNM_AIRCRAFTPERFCONTROLLER_H
 
 #include "fs/perf/aircraftperfconstants.h"
+#include "options/optionchangeflags.h"
 
 #include <QTimer>
 
@@ -102,7 +103,9 @@ public:
   void restoreState();
 
   /* Update background colors in report */
-  void optionsChanged();
+  void optionsChanged(const optc::OptionChangeFlags& changeFlags);
+
+  void styleChanged();
 
   /* Connection was established */
   void connectedToSimulator();

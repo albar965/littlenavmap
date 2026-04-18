@@ -334,16 +334,20 @@ void SearchBaseTable::showInSearch(const atools::sql::SqlRecord& record, bool ig
   controller->showInSearch(record, ignoreQueryBuilder);
 }
 
-void SearchBaseTable::optionsChanged()
+void SearchBaseTable::optionsChanged(const optc::OptionChangeFlags& changeFlags)
 {
   // Adapt table view text size
-  fontChanged(QApplication::font());
+  if(changeFlags.testFlag(optc::OPTION_CHANGE_TEXT_SIZES) || changeFlags.testFlag(optc::OPTION_CHANGE_UI_FONT))
+    fontChanged(QApplication::font());
 
   // Update the unit strings in the table header
-  updateUnits();
+  if(changeFlags.testFlag(optc::OPTION_CHANGE_UNITS))
+  {
+    updateUnits();
 
-  // Run searches again to reflect unit changes
-  updateDistanceSearch();
+    // Run searches again to reflect unit changes
+    updateDistanceSearch();
+  }
 
   for(const Column *col : columns->getColumns())
   {

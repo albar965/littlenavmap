@@ -306,24 +306,28 @@ void ProcedureSearch::filterChanged(const QString&)
 void ProcedureSearch::fontChanged(const QFont&)
 {
   // Need to rebuild the whole tree to get the correct bold and other fonts
-  optionsChanged();
+  optionsChanged(optc::OPTION_CHANGE_UI_FONT);
 }
 
-void ProcedureSearch::optionsChanged()
+void ProcedureSearch::optionsChanged(const optc::OptionChangeFlags& changeFlags)
 {
-  // Save state for restore later
-  QSet<int> state = treeWidgetStateSave();
+  if(changeFlags.testFlag(optc::OPTION_CHANGE_TEXT_SIZES) || changeFlags.testFlag(optc::OPTION_CHANGE_UI_FONT) ||
+     changeFlags.testFlag(optc::OPTION_CHANGE_UNITS))
+  {
+    // Save state for restore later
+    QSet<int> state = treeWidgetStateSave();
 
-  // Adapt table view text size
-  gridDelegate->styleChanged();
-  atools::gui::adjustSelectionColors(treeWidget);
-  AbstractSearch::fontChanged(QApplication::font());
-  createFontsFromTreeWidget();
-  updateHeaderLabel();
-  updateTreeHeader();
-  fillProcedureTreeWidget();
+    // Adapt table view text size
+    gridDelegate->styleChanged();
+    atools::gui::adjustSelectionColors(treeWidget);
+    AbstractSearch::fontChanged(QApplication::font());
+    createFontsFromTreeWidget();
+    updateHeaderLabel();
+    updateTreeHeader();
+    fillProcedureTreeWidget();
 
-  treeWidgetStateRestore(state);
+    treeWidgetStateRestore(state);
+  }
   linkTooltipHandler->setShowTooltips(OptionData::instance().getFlags().testFlag(opts::ENABLE_TOOLTIPS_LINK));
 }
 
@@ -332,7 +336,7 @@ void ProcedureSearch::styleChanged()
   // Need to clear the labels to force style update - otherwise link colors remain the same
   NavApp::getMainUi()->labelRouteInfo->clear();
 
-  optionsChanged();
+  optionsChanged(optc::OPTION_CHANGE_UI_FONT);
 }
 
 void ProcedureSearch::preDatabaseLoad()

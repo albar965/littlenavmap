@@ -280,7 +280,6 @@ MainWindow::MainWindow()
 
     // Has to load the state now so options are available for all controller and manager classes
     optionsDialog->restoreState();
-    optionsChanged();
 
     // Dialog is opened with asynchronous open()
     connect(optionsDialog, &QDialog::finished, this, [this](int result) {
@@ -306,6 +305,7 @@ MainWindow::MainWindow()
     mapcolors::loadColors();
 
     Unit::init();
+    optionsChangedInitial();
 
     // Remember original title
     mainWindowTitle = windowTitle();
@@ -996,36 +996,10 @@ void MainWindow::clearProcedureCache()
 void MainWindow::connectAllSlots()
 {
   // Options dialog ===================================================================
+  // Restart next time in main loop
+  connect(optionsDialog, &OptionsDialog::restartApplication, this, &MainWindow::restartApplication, Qt::QueuedConnection);
+
   // Notify others of options change
-  // The units need to be called before all others
-  connect(optionsDialog, &OptionsDialog::optionsChanged, &Unit::optionsChanged);
-
-  // Need to clean cache to regenerate some text if units have changed
-  connect(optionsDialog, &OptionsDialog::optionsChanged, this, &MainWindow::clearProcedureCache);
-
-  // Reset weather context first
-  connect(optionsDialog, &OptionsDialog::optionsChanged, weatherContextHandler, &WeatherContextHandler::clearWeatherContext);
-
-  connect(optionsDialog, &OptionsDialog::optionsChanged, NavApp::getAirspaceController(), &AirspaceController::optionsChanged);
-
-  connect(optionsDialog, &OptionsDialog::optionsChanged, this, &MainWindow::updateMapObjectsShown);
-  connect(optionsDialog, &OptionsDialog::optionsChanged, this, &MainWindow::updateActionStates);
-  connect(optionsDialog, &OptionsDialog::optionsChanged, statusBar, &StatusBar::optionsChanged);
-
-  connect(optionsDialog, &OptionsDialog::optionsChanged, NavApp::getMapAirportHandler(), &MapAirportHandler::optionsChanged);
-  connect(optionsDialog, &OptionsDialog::optionsChanged, weatherReporter, &WeatherReporter::optionsChanged);
-  connect(optionsDialog, &OptionsDialog::optionsChanged, windReporter, &WindReporter::optionsChanged);
-  connect(optionsDialog, &OptionsDialog::optionsChanged, searchController, &SearchController::optionsChanged);
-  connect(optionsDialog, &OptionsDialog::optionsChanged, routeController, &RouteController::optionsChanged);
-  connect(optionsDialog, &OptionsDialog::optionsChanged, infoController, &InfoController::optionsChanged);
-  connect(optionsDialog, &OptionsDialog::optionsChanged, mapWidget, &MapPaintWidget::optionsChanged);
-  connect(optionsDialog, &OptionsDialog::optionsChanged, profileWidget, &ProfileWidget::optionsChanged);
-  connect(optionsDialog, &OptionsDialog::optionsChanged, NavApp::getOnlinedataController(), &OnlinedataController::optionsChanged);
-  connect(optionsDialog, &OptionsDialog::optionsChanged, NavApp::getLogdataController(), &LogdataController::optionsChanged);
-  connect(optionsDialog, &OptionsDialog::optionsChanged, NavApp::getElevationProvider(), &ElevationProvider::optionsChanged);
-  connect(optionsDialog, &OptionsDialog::optionsChanged, NavApp::getAircraftPerfController(), &AircraftPerfController::optionsChanged);
-  connect(optionsDialog, &OptionsDialog::optionsChanged, NavApp::getTrackController(), &TrackController::optionsChanged);
-  connect(optionsDialog, &OptionsDialog::optionsChanged, this, &MainWindow::saveStateNow);
   connect(optionsDialog, &OptionsDialog::optionsChanged, this, &MainWindow::optionsChanged);
 
   // Options dialog font ===================================================================
@@ -1067,12 +1041,12 @@ void MainWindow::connectAllSlots()
   connect(styleHandler, &StyleHandler::preStyleChange, this, &MainWindow::saveStateNow);
   connect(styleHandler, &StyleHandler::styleChanged, this, &MainWindow::styleChanged);
   connect(styleHandler, &StyleHandler::styleChanged, mapcolors::styleChanged);
-  connect(styleHandler, &StyleHandler::styleChanged, infoController, &InfoController::optionsChanged);
+  connect(styleHandler, &StyleHandler::styleChanged, infoController, &InfoController::styleChanged);
   connect(styleHandler, &StyleHandler::styleChanged, routeController, &RouteController::styleChanged);
   connect(styleHandler, &StyleHandler::styleChanged, searchController, &SearchController::styleChanged);
   connect(styleHandler, &StyleHandler::styleChanged, mapWidget, &MapPaintWidget::styleChanged);
   connect(styleHandler, &StyleHandler::styleChanged, profileWidget, &ProfileWidget::styleChanged);
-  connect(styleHandler, &StyleHandler::styleChanged, perfController, &AircraftPerfController::optionsChanged);
+  connect(styleHandler, &StyleHandler::styleChanged, perfController, &AircraftPerfController::styleChanged);
   connect(styleHandler, &StyleHandler::styleChanged, infoController, &InfoController::styleChanged);
   connect(styleHandler, &StyleHandler::styleChanged, optionsDialog, &OptionsDialog::styleChanged);
   connect(styleHandler, &StyleHandler::styleChanged, statusBar, &StatusBar::styleChanged);
@@ -1312,6 +1286,7 @@ void MainWindow::connectAllSlots()
 
   // Scenery library menu ============================================================
   DatabaseManager *databaseManager = NavApp::getDatabaseManager();
+  connect(optionsDialog, &OptionsDialog::loadSceneryLibrary, databaseManager, &DatabaseManager::loadScenery, Qt::QueuedConnection);
   connect(ui->actionLoadAirspaces, &QAction::triggered, NavApp::getAirspaceController(), &AirspaceController::loadAirspaces);
   connect(ui->actionReloadScenery, &QAction::triggered, databaseManager, &DatabaseManager::loadScenery);
   connect(ui->actionValidateSceneryLibrarySettings, &QAction::triggered, databaseManager, &DatabaseManager::checkSceneryOptionsManual);
@@ -4327,15 +4302,64 @@ void MainWindow::applyToolBarSize()
     setIconSize(defaultToolbarIconSize);
 }
 
-void MainWindow::optionsChanged()
+void MainWindow::optionsChangedInitial()
 {
+  dockHandler->setAutoRaiseWindows(OptionData::instance().getFlags2().testFlag(opts2::RAISE_DOCK_WINDOWS));
+  dockHandler->setAutoRaiseMainWindow(OptionData::instance().getFlags2().testFlag(opts2::RAISE_MAIN_WINDOW));
+}
+
+void MainWindow::optionsChanged(const optc::OptionChangeFlags& changeFlags)
+{
+  // The units need to be called before all others
+  Unit::optionsChanged(changeFlags);
+
+  if(changeFlags.testFlags(optc::OPTION_CHANGE_UI_FONT))
+  {
+    // Set font and let application objec t emit change signal
+    const OptionData& optionData = OptionData::instance();
+    QFont font = optionData.getGuiFont();
+    if(font != QApplication::font())
+      QApplication::setFont(font);
+  }
+
+  // Need to clean cache to regenerate some text if units have changed
+  clearProcedureCache();
+
+  // Reset weather context first
+  weatherContextHandler->clearWeatherContext();
+
+  mapThemeHandler->optionsChanged(changeFlags);
+
+  NavApp::getUpdateHandler()->optionsChanged();
+  NavApp::getAirspaceController()->optionsChanged();
+
+  updateMapObjectsShown();
+  updateActionStates();
+
+  statusBar->optionsChanged(changeFlags);
+
+  NavApp::getMapAirportHandler()->optionsChanged(changeFlags);
+  weatherReporter->optionsChanged();
+  windReporter->optionsChanged();
+
+  searchController->optionsChanged(changeFlags);
+
+  routeController->optionsChanged(changeFlags);
+  infoController->optionsChanged(changeFlags);
+  mapWidget->optionsChanged(changeFlags);
+  profileWidget->optionsChanged(changeFlags);
+
+  NavApp::getOnlinedataController()->optionsChanged();
+  NavApp::getLogdataController()->optionsChanged();
+
+  NavApp::getElevationProvider()->optionsChanged(changeFlags);
+  NavApp::getAircraftPerfController()->optionsChanged(changeFlags);
+  saveStateNow();
+
   applyToolBarSize();
 
   dockHandler->setAutoRaiseWindows(OptionData::instance().getFlags2().testFlag(opts2::RAISE_DOCK_WINDOWS));
   dockHandler->setAutoRaiseMainWindow(OptionData::instance().getFlags2().testFlag(opts2::RAISE_MAIN_WINDOW));
-
-  if(mapThemeHandler != nullptr)
-    mapThemeHandler->optionsChanged();
 }
 
 void MainWindow::fontChanged(const QFont& font)

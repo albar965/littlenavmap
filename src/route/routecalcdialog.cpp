@@ -332,9 +332,10 @@ void RouteCalcDialog::postDatabaseLoad()
   updateWidgets();
 }
 
-void RouteCalcDialog::optionsChanged()
+void RouteCalcDialog::optionsChanged(const optc::OptionChangeFlags& changeFlags)
 {
-  units->init({ui->spinBoxRouteCalcCruiseAltitude});
+  if(changeFlags.testFlag(optc::OPTION_CHANGE_UNITS))
+    units->init({ui->spinBoxRouteCalcCruiseAltitude});
 }
 
 void RouteCalcDialog::fontChanged(const QFont& font)

@@ -3171,17 +3171,16 @@ bool MapWidget::isCenterLegAndAircraftActive()
          route.getDistanceToFlightplan() < MAX_FLIGHTPLAN_DIST_FOR_CENTER_NM; // not too far away from flight plan
 }
 
-void MapWidget::optionsChanged()
+void MapWidget::optionsChanged(const optc::OptionChangeFlags& changeFlags)
 {
   const OptionData& optiondata = OptionData::instance();
   screenSearchDistance = optiondata.getMapClickSensitivity();
   screenSearchDistanceTooltip = optiondata.getMapTooltipSensitivity();
-
   aircraftTrail->setMaxNumShownEntries(optiondata.getAircraftTrailMaxPoints());
 
   // aircraftTrailLogbook uses AircraftTrail::MAX_TRACK_ENTRIES which is the maximum
 
-  MapPaintWidget::optionsChanged();
+  MapPaintWidget::optionsChanged(changeFlags);
 }
 
 void MapWidget::saveState() const

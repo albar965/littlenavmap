@@ -18,6 +18,7 @@
 #ifndef LITTLENAVMAP_ROUTECONTROLLER_H
 #define LITTLENAVMAP_ROUTECONTROLLER_H
 
+#include "options/optionchangeflags.h"
 #include "routing/routenetworktypes.h"
 #include "route/route.h"
 
@@ -229,7 +230,7 @@ public:
   void reverseRoute();
 
   /* Change in options dialog */
-  void optionsChanged();
+  void optionsChanged(const optc::OptionChangeFlags& changeFlags);
   void fontChanged(const QFont& font);
 
   /* Tracks downloaded or deleted */

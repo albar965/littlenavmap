@@ -94,7 +94,7 @@ public:
   void showInSearch(const atools::sql::SqlRecord& record, bool ignoreQueryBuilder = false);
 
   /* Options dialog has changed some options */
-  virtual void optionsChanged() override;
+  virtual void optionsChanged(const optc::OptionChangeFlags& changeFlags) override;
 
   /* GUI style has changed */
   virtual void styleChanged() override;

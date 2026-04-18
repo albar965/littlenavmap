@@ -60,7 +60,7 @@ public:
 
   bool isShown(map::MapTypes type) const
   {
-    return markTypes & type;
+    return markTypes.testAnyFlag(type);
   }
 
   /* Adds new types to current ones */

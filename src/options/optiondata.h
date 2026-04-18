@@ -40,12 +40,13 @@ class QFont;
 class OptionData
 {
 public:
+  /* Define default operators for comparison */
+  bool operator==(const OptionData&) const = default;
+  bool operator!=(const OptionData&) const = default;
+
   /* Get a the global options instance. Not thread safe.
    * OptionsDialog.restoreState() has to be called before getting an instance */
   static const OptionData& instance();
-
-  OptionData(const OptionData& other) = delete;
-  OptionData& operator=(const OptionData& other) = delete;
 
   /* Get locale name like "en_US" or "de" for user interface language. Empty on first start.
    * This uses the settings directly and does not need an OptionData instance.
@@ -149,7 +150,7 @@ public:
   /* List of directories that excludes paths from being recognized as add-ons. Only for scenery database loading. */
   const QStringList& getDatabaseAddonExclude() const
   {
-    return databaseAddonExclude;
+    return databaseExcludeAddon;
   }
 
   opts::MapScrollDetail getMapScrollDetail() const
@@ -662,6 +663,7 @@ public:
 
   /* Get selected font for map. Falls back to GUI font and then back to system font. */
   const QFont getMapFont() const;
+  const QFont getGuiFont() const;
 
   /* User set online refresh rate in seconds for custom configurations or stock networks in seconds
    * or -1 for auto value fetched from whazzup or JSON */
@@ -770,6 +772,11 @@ public:
     return displayScaleAllWeb;
   }
 
+  const QMap<QString, QString>& getMapThemeKeys() const
+  {
+    return mapThemeKeys;
+  }
+
 private:
   friend class OptionsDialog;
 
@@ -832,8 +839,8 @@ private:
   // ui->tableWidgetOptionsDatabaseExclude
   QStringList databaseExclude;
 
-  // ui->tableWidgetOptionsDatabaseAddon
-  QStringList databaseAddonExclude;
+  // ui->tableWidgetOptionsDatabaseExcludeAddon
+  QStringList databaseExcludeAddon;
 
   opts::MapScrollDetail mapScrollDetail = opts::DETAIL_NORMAL;
   opts::MapNavigation mapNavigation = opts::MAP_NAV_CLICK_DRAG_MOVE;

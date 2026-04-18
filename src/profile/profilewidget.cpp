@@ -2932,15 +2932,20 @@ void ProfileWidget::postDatabaseLoad()
   routeChanged(true /* geometry changed */, true /* new flight plan */);
 }
 
-void ProfileWidget::optionsChanged()
+void ProfileWidget::optionsChanged(const optc::OptionChangeFlags& changeFlags)
 {
   jumpBack->cancel();
-  scrollArea->optionsChanged();
 
-  updateScreenCoords();
-  updateErrorLabel();
-  updateHeaderLabel();
-  update();
+  if(changeFlags.testFlag(optc::OPTION_CHANGE_TEXT_SIZES) || changeFlags.testFlag(optc::OPTION_CHANGE_UI_FONT) ||
+     changeFlags.testFlag(optc::OPTION_CHANGE_UNITS))
+  {
+    scrollArea->optionsChanged();
+
+    updateScreenCoords();
+    updateErrorLabel();
+    updateHeaderLabel();
+    update();
+  }
 }
 
 void ProfileWidget::styleChanged()
@@ -3106,5 +3111,5 @@ void ProfileWidget::loadAircraftTrail()
 void ProfileWidget::showDisplayOptions()
 {
   if(profileOptions->showOptions())
-    optionsChanged();
+    optionsChanged(optc::OPTION_CHANGE_ALL);
 }

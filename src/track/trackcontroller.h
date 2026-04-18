@@ -55,9 +55,6 @@ public:
   void saveState() const;
   void restoreState();
 
-  /* Update on option change */
-  void optionsChanged();
-
   /* Clears and deletes all queries */
   void preDatabaseLoad();
 

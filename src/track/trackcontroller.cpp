@@ -89,11 +89,6 @@ void TrackController::saveState() const
   atools::gui::WidgetState(lnm::AIRSPACE_CONTROLLER_WIDGETS).save(QList<const QObject *>({ui->actionRouteDownloadTracks}));
 }
 
-void TrackController::optionsChanged()
-{
-
-}
-
 void TrackController::preDatabaseLoad()
 {
   downloader->cancelAllDownloads();

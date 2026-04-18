@@ -91,10 +91,10 @@ void SearchController::getSelectedMapObjects(map::MapResult& result) const
     allSearchTabs.at(id)->getSelectedMapObjects(result);
 }
 
-void SearchController::optionsChanged()
+void SearchController::optionsChanged(const optc::OptionChangeFlags& changeFlags)
 {
   for(AbstractSearch *search : std::as_const(allSearchTabs))
-    search->optionsChanged();
+    search->optionsChanged(changeFlags);
 }
 
 void SearchController::styleChanged()

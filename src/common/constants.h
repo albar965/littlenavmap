@@ -117,7 +117,6 @@ const QLatin1String ACTIONS_SHOW_CONNECTION_SCENERYLIBRARY("Actions/SimSceneryLi
 const QLatin1String ACTIONS_SHOW_CONNECTION_SCENERYLIBRARY_FSXP3D("Actions/SimSceneryLibraryFsxP3DWarn");
 const QLatin1String ACTIONS_SHOW_CONNECTION_SCENERYLIBRARY_HINT("Actions/SimSceneryLibraryWarnHint");
 const QLatin1String ACTIONS_SHOW_CONNECTION_SCENERYLIBRARY_HINT_NO_DB("Actions/SimSceneryLibraryWarnHintNoDb");
-
 const QLatin1String ACTIONS_SHOW_DATABASE_HINTS("Actions/DatabaseLoadShowHints");
 const QLatin1String ACTIONS_SHOW_DATABASE_OLD("Actions/DatabaseOld");
 const QLatin1String ACTIONS_SHOW_DATABASE_SIMCONNECT("Actions/DatabaseSimConnect");
@@ -131,22 +130,19 @@ const QLatin1String ACTIONS_SHOW_DATABASE_BACKGROUND_HINT("Actions/DatabaseBackg
 const QLatin1String ACTIONS_SHOW_DATABASE_MSFS2024_HINT("Actions/DatabaseMsfs2024Hint");
 const QLatin1String ACTIONS_SHOW_DATABASE_MSFS_NAVIGRAPH_ALL("Actions/DatabaseMsfsNavigraphAll");
 const QLatin1String ACTIONS_SHOW_EXPORT_WRONG_DATABASE("Actions/ExportWrongDatabase");
-
 const QLatin1String ACTIONS_SHOW_SSL_WARNING_ONLINE("Actions/SslWarningOnline");
 const QLatin1String ACTIONS_SHOW_SSL_WARNING_WIND("Actions/SslWarningWind");
 const QLatin1String ACTIONS_SHOW_SSL_WARNING_TRACK("Actions/SslWarningTrack");
 const QLatin1String ACTIONS_SHOW_SSL_WARNING_WEATHER("Actions/SslWarningWeather");
 const QLatin1String ACTIONS_SHOW_SSL_WARNING_SIMBRIEF("Actions/SslWarningSimBrief");
-
 const QLatin1String ACTIONS_SHOW_NAVDATA_WARNING("Actions/ShowNavdataWarning");
 const QLatin1String ACTIONS_SHOW_CRUISE_ZERO_WARNING("Actions/ShowCruiseZeroWarning");
-
 const QLatin1String ACTIONS_SHOW_SAVE_LNMPLN_WARNING("Actions/ShowSaveLnmplnWarning");
 const QLatin1String ACTIONS_SHOW_SAVE_WARNING("Actions/ShowSaveWarning");
 const QLatin1String ACTIONS_SHOW_ZOOM_WARNING("Actions/ShowZoomsWarning");
-
 const QLatin1String ACTIONS_SHOW_INSTALL_XPCONNECT_WARN_XPL("Actions/ShowInstallXpconnectXplWarning");
 const QLatin1String ACTIONS_SHOW_INSTALL_XPCONNECT_INFO("Actions/ShowInstallXpconnectInfo");
+const QLatin1String ACTIONS_SHOW_OPTIONS_RELOAD_SCENERY_LIBRARY("Actions/ShowOptionsReloadSceneryLibrary");
 
 /* Other setting key names =============================================================== */
 const QLatin1String DATABASE_BASEPATH("Database/BasePath");

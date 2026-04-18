@@ -96,9 +96,10 @@ void StatusBar::deInit()
   shrinkStatusBarTimer.stop();
 }
 
-void StatusBar::optionsChanged()
+void StatusBar::optionsChanged(const optc::OptionChangeFlags& changeFlags)
 {
-  distanceChanged();
+  if(changeFlags.testFlag(optc::OPTION_CHANGE_UNITS))
+    distanceChanged();
 }
 
 void StatusBar::updateClock() const

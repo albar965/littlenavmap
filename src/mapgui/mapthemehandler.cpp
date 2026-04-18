@@ -903,37 +903,42 @@ void MapThemeHandler::changeMapProjection()
   NavApp::setStatusMessage(tr("Map projection changed to %1.").arg(projectionText));
 }
 
-void MapThemeHandler::optionsChanged()
+void MapThemeHandler::optionsChanged(const optc::OptionChangeFlags& changeFlags)
 {
   qDebug() << Q_FUNC_INFO;
 
-  // Remember current theme id like "openstreetmap"
-  QString curThemeId = currentThemeId();
-
-  // Save key to avoid deletion
-  saveKeyfile();
-
-  // Now load all themes from all available folders
-  loadThemes();
-
-  // Reload keys and apply them to the themes
-  restoreKeyfile();
-
-  // Rebuild menu
-  setupMapThemesUi();
-
-  if(!getTheme(curThemeId).isValid())
+  if(changeFlags.testFlag(optc::OPTION_CHANGE_MAPTHEMES))
   {
-    // Assign the default theme if the current one was removed
-    curThemeId = defaultTheme.getThemeId();
-    NavApp::getMapWidgetGui()->setTheme(defaultTheme);
+    mapThemeKeys = OptionData::instance().getMapThemeKeys();
 
-    if(NavApp::getMapPaintWidgetWeb() != nullptr)
-      NavApp::getMapPaintWidgetWeb()->setTheme(defaultTheme);
+    // Remember current theme id like "openstreetmap"
+    QString curThemeId = currentThemeId();
+
+    // Save key to avoid deletion
+    saveKeyfile();
+
+    // Now load all themes from all available folders
+    loadThemes();
+
+    // Reload keys and apply them to the themes
+    restoreKeyfile();
+
+    // Rebuild menu
+    setupMapThemesUi();
+
+    if(!getTheme(curThemeId).isValid())
+    {
+      // Assign the default theme if the current one was removed
+      curThemeId = defaultTheme.getThemeId();
+      NavApp::getMapWidgetGui()->setTheme(defaultTheme);
+
+      if(NavApp::getMapPaintWidgetWeb() != nullptr)
+        NavApp::getMapPaintWidgetWeb()->setTheme(defaultTheme);
+    }
+
+    // Check the theme action
+    changeMapThemeActions(curThemeId);
   }
-
-  // Check the theme action
-  changeMapThemeActions(curThemeId);
 }
 
 QString MapThemeHandler::getStatusTextForDir(const QString& path, bool& error)

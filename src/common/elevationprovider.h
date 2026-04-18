@@ -18,6 +18,7 @@
 #ifndef LITTLENAVMAP_ELEVATIONPROVIDER_H
 #define LITTLENAVMAP_ELEVATIONPROVIDER_H
 
+#include "options/optionchangeflags.h"
 #include <QMutex>
 #include <QObject>
 
@@ -77,7 +78,7 @@ public:
   /* As above but uses the default path from settings */
   static bool isGlobeDirValid();
 
-  void optionsChanged();
+  void optionsChanged(const optc::OptionChangeFlags& changeFlags);
 
   /* Connect marble model or initializes GLOBE reader */
   void init(const Marble::ElevationModel *model);

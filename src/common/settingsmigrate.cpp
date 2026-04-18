@@ -377,17 +377,6 @@ void checkAndMigrateSettings()
     settings.setValue(lnm::OPTIONS_VERSION, programVersion.getVersionString());
     Settings::syncSettings();
   }
-
-  // Always correct map font if missing
-  if(!settings.contains(lnm::OPTIONS_DIALOG_MAP_FONT))
-  {
-    qInfo() << Q_FUNC_INFO << "Adjusting map font";
-    // Make map font a bold copy of system font if no setting present
-    QFont font(QGuiApplication::font());
-    font.setBold(true);
-    settings.setValueVar(lnm::OPTIONS_DIALOG_MAP_FONT, font);
-    Settings::syncSettings();
-  }
 }
 
 const Version& getOptionsVersion()

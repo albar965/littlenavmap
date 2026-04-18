@@ -103,9 +103,11 @@ void RouteLabel::styleChanged()
   QTimer::singleShot(0, this, &RouteLabel::updateAll);
 }
 
-void RouteLabel::optionsChanged()
+void RouteLabel::optionsChanged(const optc::OptionChangeFlags& changeFlags)
 {
-  fontChanged(QGuiApplication::font());
+  if(changeFlags.testFlag(optc::OPTION_CHANGE_TEXT_SIZES) || changeFlags.testFlag(optc::OPTION_CHANGE_UI_FONT))
+    fontChanged(QGuiApplication::font());
+
   linkTooltipHandler->setShowTooltips(OptionData::instance().getFlags().testFlag(opts::ENABLE_TOOLTIPS_LINK));
 }
 

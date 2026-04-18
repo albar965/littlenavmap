@@ -303,10 +303,13 @@ QStringList WebController::getUrlStr()
   return retval;
 }
 
-void WebController::optionsChanged()
+void WebController::optionsChanged(const optc::OptionChangeFlags& changeFlags)
 {
-  if(updateSettings())
-    restartServer(true);
+  if(changeFlags.testFlag(optc::OPTION_CHANGE_WEBSERVER))
+  {
+    if(updateSettings())
+      restartServer(true);
+  }
 }
 
 bool WebController::updateSettings()

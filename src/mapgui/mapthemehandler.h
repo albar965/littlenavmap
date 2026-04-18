@@ -18,6 +18,7 @@
 #ifndef LNM_MAPTHEMEHANDLER_H
 #define LNM_MAPTHEMEHANDLER_H
 
+#include "options/optionchangeflags.h"
 #include <QStringList>
 #include <QMap>
 #include <QCoreApplication>
@@ -255,7 +256,7 @@ public:
   void changeMapProjection();
 
   /* Reload themes and rebuild menu */
-  void optionsChanged();
+  void optionsChanged(const optc::OptionChangeFlags& changeFlags);
 
   /* Check path if it is a directory and counts map themes in it */
   static QString getStatusTextForDir(const QString& path, bool& error);

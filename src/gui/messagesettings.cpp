@@ -164,4 +164,5 @@ void messages::resetEssentialMessages()
   settings.setValue(lnm::ACTIONS_SHOW_CONNECTION_SCENERYLIBRARY_HINT, true);
   settings.setValue(lnm::ACTIONS_SHOW_CONNECTION_SCENERYLIBRARY_HINT_NO_DB, true);
   settings.setValue(lnm::ACTIONS_SHOW_APPLE_TRANSLOCATION, true);
+  settings.setValue(lnm::ACTIONS_SHOW_OPTIONS_RELOAD_SCENERY_LIBRARY, true);
 }

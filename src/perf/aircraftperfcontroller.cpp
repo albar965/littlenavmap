@@ -1463,19 +1463,27 @@ void AircraftPerfController::restoreState()
     }
   }
 
-  optionsChanged();
+  optionsChanged(optc::OPTION_CHANGE_ALL);
 }
 
-void AircraftPerfController::optionsChanged()
+void AircraftPerfController::styleChanged()
+{
+  optionsChanged(optc::OPTION_CHANGE_ALL);
+}
+
+void AircraftPerfController::optionsChanged(const optc::OptionChangeFlags& changeFlags)
 {
   linkTooltipHandler->setShowTooltips(OptionData::instance().getFlags().testFlag(opts::ENABLE_TOOLTIPS_LINK));
 
-  int sizePercent = OptionData::instance().getGuiPerfReportTextSize();
-  Ui::MainWindow *ui = NavApp::getMainUi();
-  atools::gui::setWidgetFontSize(ui->textBrowserAircraftPerformanceReport, sizePercent);
-  atools::gui::setWidgetFontSize(ui->textBrowserAircraftPerformanceCurrent, sizePercent);
+  if(changeFlags.testFlag(optc::OPTION_CHANGE_TEXT_SIZES) || changeFlags.testFlag(optc::OPTION_CHANGE_UI_FONT))
+  {
+    int sizePercent = OptionData::instance().getGuiPerfReportTextSize();
+    Ui::MainWindow *ui = NavApp::getMainUi();
+    atools::gui::setWidgetFontSize(ui->textBrowserAircraftPerformanceReport, sizePercent);
+    atools::gui::setWidgetFontSize(ui->textBrowserAircraftPerformanceCurrent, sizePercent);
 
-  symbolSize = ui->textBrowserAircraftPerformanceReport->fontMetrics().height() * 4 / 3;
+    symbolSize = ui->textBrowserAircraftPerformanceReport->fontMetrics().height() * 4 / 3;
+  }
 
   updateActionStates();
   updateReport();

@@ -29,7 +29,6 @@
 
 #include <QDialogButtonBox>
 
-
 using atools::util::UpdateCheck;
 using atools::settings::Settings;
 namespace html = atools::util::html;
@@ -144,6 +143,11 @@ void UpdateHandler::checkForUpdates(UpdateReason reason)
 
   if(reason == UPDATE_REASON_TIMER || reason == UPDATE_REASON_STARTUP)
     updateTimer.start();
+}
+
+void UpdateHandler::optionsChanged()
+{
+  channelOpts = static_cast<opts::UpdateChannels>(OptionData::instance().getUpdateChannels());
 }
 
 /* Called by update checker */

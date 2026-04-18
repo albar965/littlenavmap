@@ -75,7 +75,7 @@ private:
   virtual void updatePushButtons() override;
 
   /* Options dialog has changed some options */
-  virtual void optionsChanged() override;
+  virtual void optionsChanged(const optc::OptionChangeFlags& changeFlags) override;
 
   virtual void fontChanged(const QFont& font) override;
 

@@ -18,6 +18,7 @@
 #ifndef LNM_WEBCONTROLLER_H
 #define LNM_WEBCONTROLLER_H
 
+#include "options/optionchangeflags.h"
 #include <QHash>
 #include <QObject>
 #include <QList>
@@ -74,7 +75,7 @@ public:
   QStringList getUrlStr();
 
   /* Update settings and probably restart server. */
-  void optionsChanged();
+  void optionsChanged(const optc::OptionChangeFlags& changeFlags);
 
   /* Update settings from option data but do not restart. Returns true if any changes. */
   bool updateSettings();

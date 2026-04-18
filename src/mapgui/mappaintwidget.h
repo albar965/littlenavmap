@@ -20,6 +20,7 @@
 
 #include "common/mapflags.h"
 #include "geo/pos.h"
+#include "options/optionchangeflags.h"
 #include "query/querymanager.h"
 
 #include <marble/GeoDataLatLonAltBox.h>
@@ -197,7 +198,7 @@ public:
   void preDatabaseLoad();
 
   /* Changes in options dialog */
-  virtual void optionsChanged();
+  virtual void optionsChanged(const optc::OptionChangeFlags& changeFlags);
 
   /* GUI style has changed */
   void styleChanged();

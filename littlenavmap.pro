@@ -397,6 +397,7 @@ SOURCES += \
   src/mappainter/mappaintlayer.cpp \
   src/mappainter/paintcontext.cpp \
   src/online/onlinedatacontroller.cpp \
+  src/options/optionchangeflags.cpp \
   src/options/optiondata.cpp \
   src/options/optionsdialog.cpp \
   src/perf/aircraftperfcontroller.cpp \

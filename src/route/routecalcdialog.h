@@ -18,6 +18,7 @@
 #ifndef LNM_ROUTECALCWIN_H
 #define LNM_ROUTECALCWIN_H
 
+#include "options/optionchangeflags.h"
 #include <QDialog>
 #include <QObject>
 
@@ -92,7 +93,7 @@ public:
   void preDatabaseLoad();
   void postDatabaseLoad();
 
-  void optionsChanged();
+  void optionsChanged(const optc::OptionChangeFlags& changeFlags);
 
   void fontChanged(const QFont& font);
 

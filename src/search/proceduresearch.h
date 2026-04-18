@@ -79,7 +79,7 @@ public:
   virtual void restoreState() override;
 
   /* Update fonts units, etc. */
-  virtual void optionsChanged() override;
+  virtual void optionsChanged(const optc::OptionChangeFlags& changeFlags) override;
 
   /* GUI style has changed */
   virtual void styleChanged() override;

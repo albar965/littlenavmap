@@ -20,6 +20,7 @@
 
 #include "fs/fspaths.h"
 #include "common/mapflags.h"
+#include "options/optionchangeflags.h"
 
 #include <QMainWindow>
 #include <QFileInfoList>
@@ -553,7 +554,8 @@ private:
   void webserverStatusChanged(bool running);
   void openWebserver();
   void saveStateNow();
-  void optionsChanged();
+  void optionsChanged(const optc::OptionChangeFlags& changeFlags);
+  void optionsChangedInitial();
   void updateXpconnectInstallOptions();
 
   /* Update API keys or tokens in GUI map widget and web API map widget */

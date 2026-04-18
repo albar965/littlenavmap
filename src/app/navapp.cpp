@@ -283,13 +283,8 @@ void NavApp::checkForUpdates(int channelOpts, bool manual, bool startup, bool fo
   else if(forceDebug)
     reason = UpdateHandler::UPDATE_REASON_FORCE;
 
-  updateChannels(channelOpts);
-  updateHandler->checkForUpdates(reason);
-}
-
-void NavApp::updateChannels(int channelOpts)
-{
   updateHandler->setChannelOpts(static_cast<opts::UpdateChannels>(channelOpts));
+  updateHandler->checkForUpdates(reason);
 }
 
 void NavApp::readMagDecFromDatabase()

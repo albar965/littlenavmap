@@ -20,6 +20,7 @@
 
 #include "common/mapflags.h"
 #include "common/tabindexes.h"
+#include "options/optionchangeflags.h"
 
 #include <QObject>
 #include <QSet>
@@ -124,7 +125,7 @@ public:
   void disconnectedFromSimulator();
 
   /* Program options have changed */
-  void optionsChanged();
+  void optionsChanged(const optc::OptionChangeFlags& changeFlags);
   void fontChanged(const QFont& font);
 
   /* Get airport information as HTML in the string list. Order is main, runway, com, procedure and weather.
@@ -165,7 +166,8 @@ private:
   bool updateNavaidInternal(const map::MapResult& result, bool bearingChanged, bool scrollToTop, bool forceUpdate);
   bool updateUserpointInternal(const map::MapResult& result, bool bearingChanged, bool scrollToTop);
 
-  void updateTextEditFontSizes();
+  /* Update font size in text browsers if options have changed */
+  void updateTextBrowserFontSizes();
 
   /* User clicked on "Map" link in text browsers */
   void anchorClicked(const QUrl& url);

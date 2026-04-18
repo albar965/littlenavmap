@@ -18,6 +18,7 @@
 #include "common/mapflags.h"
 
 #include "common/tabindexes.h"
+#include "options/optionchangeflags.h"
 
 #include <QObject>
 
@@ -146,7 +147,7 @@ public:
   void getSelectedMapObjects(map::MapResult& result) const;
 
   /* Options have changed. Update table font, empty airport handling etc. */
-  void optionsChanged();
+  void optionsChanged(const optc::OptionChangeFlags& changeFlags);
 
   /* GUI style has changed */
   void styleChanged();

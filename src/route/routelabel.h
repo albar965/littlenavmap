@@ -20,6 +20,8 @@
 
 #include "route/routelabelflags.h"
 
+#include "options/optionchangeflags.h"
+
 #include <QObject>
 
 class QString;
@@ -73,7 +75,7 @@ public:
   void restoreState();
 
   void styleChanged();
-  void optionsChanged();
+  void optionsChanged(const optc::OptionChangeFlags& changeFlags);
 
   void fontChanged(const QFont&);
 

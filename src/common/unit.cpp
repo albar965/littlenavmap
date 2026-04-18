@@ -117,7 +117,7 @@ void Unit::init()
     locale = new QLocale();
     clocale = new QLocale(QLocale::C);
     opts = &OptionData::instance();
-    optionsChanged();
+    optionsChanged(optc::OPTION_CHANGE_ALL);
   }
 }
 
@@ -727,90 +727,93 @@ QString Unit::u(float num, const QString& unitStr, bool addUnit, bool narrow, in
     return locale->toString(num, 'f', precision) % (addUnit ? QStringLiteral(" ") % unitStr : QStringLiteral());
 }
 
-void Unit::optionsChanged()
+void Unit::optionsChanged(const optc::OptionChangeFlags& changeFlags)
 {
-  unitDist = opts->getUnitDist();
-  unitShortDist = opts->getUnitShortDist();
-  unitAlt = opts->getUnitAlt();
-  unitSpeed = opts->getUnitSpeed();
-  unitVertSpeed = opts->getUnitVertSpeed();
-  unitCoords = opts->getUnitCoords();
-  unitFuelWeight = opts->getUnitFuelAndWeight();
-
-  showOtherFuel = opts->getFlags2().testFlag(opts2::UNIT_FUEL_SHOW_OTHER);
-  enhancedAccuracy = opts->getFlags2().testFlag(opts2::UNIT_ENHANCED_ACCURACY);
-
-  switch(unitDist)
+  if(changeFlags.testFlag(optc::OPTION_CHANGE_UNITS))
   {
-    case opts::DIST_NM:
-      unitDistStr = suffixDistNm; // Unit::tr("NM");
-      break;
-    case opts::DIST_KM:
-      unitDistStr = suffixDistKm; // Unit::tr("km");
-      break;
-    case opts::DIST_MILES:
-      unitDistStr = suffixDistMi; // Unit::tr("mi");
-      break;
-  }
+    unitDist = opts->getUnitDist();
+    unitShortDist = opts->getUnitShortDist();
+    unitAlt = opts->getUnitAlt();
+    unitSpeed = opts->getUnitSpeed();
+    unitVertSpeed = opts->getUnitVertSpeed();
+    unitCoords = opts->getUnitCoords();
+    unitFuelWeight = opts->getUnitFuelAndWeight();
 
-  switch(unitShortDist)
-  {
-    case opts::DIST_SHORT_FT:
-      unitShortDistStr = suffixDistShortFt; // Unit::tr("ft");
-      break;
-    case opts::DIST_SHORT_METER:
-      unitShortDistStr = suffixDistShortMeter; // Unit::tr("m");
-      break;
-  }
+    showOtherFuel = opts->getFlags2().testFlag(opts2::UNIT_FUEL_SHOW_OTHER);
+    enhancedAccuracy = opts->getFlags2().testFlag(opts2::UNIT_ENHANCED_ACCURACY);
 
-  switch(unitAlt)
-  {
-    case opts::ALT_FT:
-      unitAltStr = suffixAltFt; // Unit::tr("ft");
-      break;
-    case opts::ALT_METER:
-      unitAltStr = suffixAltMeter; // Unit::tr("m");
-      break;
-  }
+    switch(unitDist)
+    {
+      case opts::DIST_NM:
+        unitDistStr = suffixDistNm; // Unit::tr("NM");
+        break;
+      case opts::DIST_KM:
+        unitDistStr = suffixDistKm; // Unit::tr("km");
+        break;
+      case opts::DIST_MILES:
+        unitDistStr = suffixDistMi; // Unit::tr("mi");
+        break;
+    }
 
-  switch(unitSpeed)
-  {
-    case opts::SPEED_KTS:
-      unitSpeedStr = suffixSpeedKts; // Unit::tr("kts");
-      break;
-    case opts::SPEED_KMH:
-      unitSpeedStr = suffixSpeedKmH; // Unit::tr("km/h");
-      break;
-    case opts::SPEED_MPH:
-      unitSpeedStr = suffixSpeedMph; // Unit::tr("mph");
-      break;
-  }
+    switch(unitShortDist)
+    {
+      case opts::DIST_SHORT_FT:
+        unitShortDistStr = suffixDistShortFt; // Unit::tr("ft");
+        break;
+      case opts::DIST_SHORT_METER:
+        unitShortDistStr = suffixDistShortMeter; // Unit::tr("m");
+        break;
+    }
 
-  switch(unitVertSpeed)
-  {
-    case opts::VERT_SPEED_FPM:
-      unitVertSpeedStr = suffixVertSpeedFpm; // Unit::tr("fpm");
-      break;
-    case opts::VERT_SPEED_MS:
-      unitVertSpeedStr = suffixVertSpeedMs; // Unit::tr("m/s");
-      break;
-  }
+    switch(unitAlt)
+    {
+      case opts::ALT_FT:
+        unitAltStr = suffixAltFt; // Unit::tr("ft");
+        break;
+      case opts::ALT_METER:
+        unitAltStr = suffixAltMeter; // Unit::tr("m");
+        break;
+    }
 
-  switch(unitFuelWeight)
-  {
-    case opts::FUEL_WEIGHT_GAL_LBS:
-      unitVolStr = suffixFuelVolGal; // Unit::tr("gal");
-      unitWeightStr = suffixFuelWeightLbs; // Unit::tr("lbs");
-      unitFfWeightStr = suffixFfWeightPpH; // Unit::tr("pph");
-      unitFfVolStr = suffixFfGalGpH; // Unit::tr("gph");
-      break;
+    switch(unitSpeed)
+    {
+      case opts::SPEED_KTS:
+        unitSpeedStr = suffixSpeedKts; // Unit::tr("kts");
+        break;
+      case opts::SPEED_KMH:
+        unitSpeedStr = suffixSpeedKmH; // Unit::tr("km/h");
+        break;
+      case opts::SPEED_MPH:
+        unitSpeedStr = suffixSpeedMph; // Unit::tr("mph");
+        break;
+    }
 
-    case opts::FUEL_WEIGHT_LITER_KG:
-      unitVolStr = suffixFuelVolLiter; // Unit::tr("l");
-      unitWeightStr = suffixFuelWeightKg; // Unit::tr("kg");
-      unitFfWeightStr = suffixFfWeightKgH; // Unit::tr("kg/h");
-      unitFfVolStr = suffixFfVolLiterH; // Unit::tr("l/h");
-      break;
+    switch(unitVertSpeed)
+    {
+      case opts::VERT_SPEED_FPM:
+        unitVertSpeedStr = suffixVertSpeedFpm; // Unit::tr("fpm");
+        break;
+      case opts::VERT_SPEED_MS:
+        unitVertSpeedStr = suffixVertSpeedMs; // Unit::tr("m/s");
+        break;
+    }
+
+    switch(unitFuelWeight)
+    {
+      case opts::FUEL_WEIGHT_GAL_LBS:
+        unitVolStr = suffixFuelVolGal; // Unit::tr("gal");
+        unitWeightStr = suffixFuelWeightLbs; // Unit::tr("lbs");
+        unitFfWeightStr = suffixFfWeightPpH; // Unit::tr("pph");
+        unitFfVolStr = suffixFfGalGpH; // Unit::tr("gph");
+        break;
+
+      case opts::FUEL_WEIGHT_LITER_KG:
+        unitVolStr = suffixFuelVolLiter; // Unit::tr("l");
+        unitWeightStr = suffixFuelWeightKg; // Unit::tr("kg");
+        unitFfWeightStr = suffixFfWeightKgH; // Unit::tr("kg/h");
+        unitFfVolStr = suffixFfVolLiterH; // Unit::tr("l/h");
+        break;
+    }
   }
 }
 

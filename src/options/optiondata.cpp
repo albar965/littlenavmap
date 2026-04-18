@@ -21,6 +21,7 @@
 #include "exception.h"
 #include "settings/settings.h"
 
+#include <QApplication>
 #include <QCoreApplication>
 #include <QDebug>
 #include <QFont>
@@ -136,6 +137,23 @@ const QFont OptionData::getMapFont() const
   if(!mapFont.isEmpty())
     font.fromString(mapFont);
   else if(!guiFont.isEmpty())
+    font.fromString(guiFont);
+  else
+    font = QFontDatabase::systemFont(QFontDatabase::GeneralFont);
+
+  if(QApplication::font().bold())
+    font.setBold(true);
+
+  if(QApplication::font().italic())
+    font.setItalic(true);
+
+  return font;
+}
+
+const QFont OptionData::getGuiFont() const
+{
+  QFont font;
+  if(!guiFont.isEmpty())
     font.fromString(guiFont);
   else
     font = QFontDatabase::systemFont(QFontDatabase::GeneralFont);

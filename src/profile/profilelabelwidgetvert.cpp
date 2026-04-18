@@ -91,9 +91,8 @@ void ProfileLabelWidgetVert::paintEvent(QPaintEvent *)
       float routeAlt = NavApp::getRouteConst().getCruiseAltitudeFt();
 
       const OptionData& optionData = OptionData::instance();
-      QFont mapFont = optionData.getMapFont();
-      mapFont.setBold(true);
-      mapcolors::scaleFont(&painter, optionData.getDisplayTextSizeFlightplanProfile() / 100.f, &mapFont);
+      QFont defaultFont = optionData.getMapFont();
+      mapcolors::scaleFont(&painter, optionData.getDisplayTextSizeFlightplanProfile() / 100.f, &defaultFont);
       QFontMetrics metrics = painter.fontMetrics();
 
       // Draw labels on left side widget ========================================================

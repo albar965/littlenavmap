@@ -669,11 +669,13 @@ QAction *AirportSearch::followModeAction()
   return ui->actionSearchAirportFollowSelection;
 }
 
-void AirportSearch::optionsChanged()
+void AirportSearch::optionsChanged(const optc::OptionChangeFlags& changeFlags)
 {
   // Update units in this object
-  unitStringTool->update();
-  SearchBaseTable::optionsChanged();
+  if(changeFlags.testFlag(optc::OPTION_CHANGE_UNITS))
+    unitStringTool->update();
+
+  SearchBaseTable::optionsChanged(changeFlags);
   comboBoxHandler->setMenuTooltipsVisible(NavApp::isMenuToolTipsVisible());
 }
 

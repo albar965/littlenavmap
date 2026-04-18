@@ -18,9 +18,10 @@
 #ifndef LITTLENAVMAP_OPTIONSDIALOG_H
 #define LITTLENAVMAP_OPTIONSDIALOG_H
 
-#include "options/optiondata.h"
+#include "options/optionchangeflags.h"
 
 #include <QDialog>
+#include <QDialogButtonBox>
 #include <QSize>
 
 class QLabel;
@@ -42,6 +43,7 @@ class QListWidget;
 class QFontDialog;
 class QTableWidgetItem;
 class QTableWidget;
+struct OptionsPrivate;
 
 namespace atools {
 namespace gui {
@@ -88,10 +90,10 @@ public:
   /* Get override region settings options directly from settings file*/
   static bool isOverrideRegion();
 
-  /* Test if a public network is used with a too low update rate */
+  /* Test if a public network is used with a too low update rate - checks widgets */
   void checkOfficialOnlineUrls();
 
-  /* Enable or disable tooltips changed */
+  /* Enable or disable tooltips changed in NavApp */
   void updateTooltipOption();
 
   void styleChanged();
@@ -107,9 +109,15 @@ public:
 
 signals:
   /* Emitted whenever OK or Apply is pressed on the dialog window */
-  void optionsChanged();
+  void optionsChanged(const optc::OptionChangeFlags& change);
 
-  /* QGuiApplication::fontChanged is emitted for font changes */
+  /* Open load scenery library dialog. Connect queued to allow the options to close before. */
+  void loadSceneryLibrary();
+
+  /* Restart. Connect queued to allow the options to close before. */
+  void restartApplication(bool resetLayout);
+
+  /* QGuiApplication::fontChanged is additionally emitted for font changes */
 
 private:
   /* Catch close button too since dialog is kept alive */
@@ -125,9 +133,10 @@ private:
   void updateTrailStates();
 
   void buttonBoxClicked(QAbstractButton *button);
+  void buttonBoxHandler(QDialogButtonBox::StandardButton button, bool fromReject = false);
 
   /* Copy widget states to OptionData object */
-  void widgetsToOptionData();
+  void widgetsToOptionData(OptionData& data);
 
   /* Copy OptionData object to widget */
   void optionDataToWidgets(const OptionData& data);
@@ -178,6 +187,7 @@ private:
   void resetWeatherIvaoUrlClicked();
   void resetWeatherNoaaWindUrlClicked();
 
+/* Update all widget units in this dialog */
   void updateWidgetUnits();
 
   void flightplanColorClicked();
@@ -214,7 +224,7 @@ private:
   template<typename TYPE>
   void displayOptWidgetToOptionData(TYPE& type, const QHash<TYPE, QTreeWidgetItem *>& index) const;
 
-  void updateFontFromData();
+  void updateGuiFontFromData();
   void updateMapFontLabel();
   void updateGuiFontLabel();
   void updateButtonColors();
@@ -242,6 +252,8 @@ private:
 
   /* Show listening address(es)*/
   void updateWebServerStatus();
+
+  /* Activated by button */
   void startStopWebServerClicked();
 
   /* copy values from widgets to server for instant check of parameters */
@@ -263,10 +275,10 @@ private:
   void resetMapFontClicked();
   void buildFontDialog(const QFont& initialFont);
   void toolbarSizeClicked();
-  void adjustGuiFont();
+  void adjustFont(QString& font);
 
-  void flightplanPatterShortClicked();
-  void flightplanPatterLongClicked();
+  void flightplanPatternShortClicked();
+  void flightplanPatternLongClicked();
   void updateFlightplanExample();
   void updateLinks();
   void colorButtonClicked(QColor& color);
@@ -274,6 +286,7 @@ private:
 
   void hintLinkActivated(const QString& link);
   void updateLinkTooltipHandler();
+  void restoreNetworkSettings(OptionData& od);
 
   /* Converts range ring string to vector of floats. Falls back to 100 units single ring if nothing is valid.
    * Uses current locale to convert numbers and check min and max. */
@@ -286,6 +299,12 @@ private:
   /* Save and reload window position and size */
   void restoreDialogState();
   void saveDialogState();
+
+  void emitOptionsChanged();
+
+  optc::OptionChangeFlags buildFlagsFromChange(const OptionData& saved, const OptionData& changed);
+
+  bool buttonBoxHandlerActive = false;
 
   QString guiLanguage, guiFont, mapFont;
   QColor flightplanColor, flightplanOutlineColor, flightplanProcedureColor, flightplanActiveColor, trailColor, measurementColor,
@@ -306,14 +325,7 @@ private:
   QHash<QString, QListWidgetItem *> listWidgetItemIndex;
 
   // Maps options flags to items in the tree widget
-  QHash<optsac::DisplayOptionsUserAircraft, QTreeWidgetItem *> displayOptItemIndexUser;
-  QHash<optsac::DisplayOptionsAiAircraft, QTreeWidgetItem *> displayOptItemIndexAi;
-  QHash<optsd::DisplayOptionsAirport, QTreeWidgetItem *> displayOptItemIndexAirport;
-  QHash<optsd::DisplayOptionsNavAid, QTreeWidgetItem *> displayOptItemIndexNavAid;
-  QHash<optsd::DisplayOptionsAirspace, QTreeWidgetItem *> displayOptItemIndexAirspace;
-  QHash<optsd::DisplayOptionsRose, QTreeWidgetItem *> displayOptItemIndexRose;
-  QHash<optsd::DisplayOptionsMeasurement, QTreeWidgetItem *> displayOptItemIndexMeasurement;
-  QHash<optsd::DisplayOptionsRoute, QTreeWidgetItem *> displayOptItemIndexRoute;
+  OptionsPrivate *p;
 
   UnitStringTool *units = nullptr;
 
@@ -331,6 +343,9 @@ private:
 
   /* Size as given in UI */
   QSize defaultSize;
+
+  /* Saved when opening dialog. Can be restored when closing if user answers yes to question */
+  OptionData *savedOptionData;
 };
 
 #endif // LITTLENAVMAP_OPTIONSDIALOG_H

@@ -84,6 +84,8 @@ public:
     channelOpts = value;
   }
 
+  void optionsChanged();
+
 private:
   void updateFound(atools::util::UpdateList updates);
   void updateFailed(QString errorString);
