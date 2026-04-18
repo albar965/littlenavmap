@@ -644,9 +644,6 @@ private:
   QSize defaultToolbarIconSize;
   QString aboutMessage, layoutWarnText;
 
-  /* Show hint dialog only once per session */
-  bool backgroundHintRouteStringShown = false;
-
   bool delayedShutdownInProgress = false; // Ingnore other close calls while delaying shutdown
 
   /* Delay shutdown to avoid deadlock in MarbleWidget while it is still loading files */

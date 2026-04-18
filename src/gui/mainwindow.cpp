@@ -2108,15 +2108,6 @@ void MainWindow::routeFromStringCurrent()
   // Create dialog on demand the first call
   if(routeStringDialog == nullptr)
   {
-    if(!backgroundHintRouteStringShown)
-    {
-      dialog->showInfoMsgBox(lnm::ACTIONS_SHOW_ROUTESTRING_BACKGROUND_HINT,
-                             tr("Note that you can put the flight plan route description window in the background and "
-                                "modify the flight plan on the map or flight plan table in parallel."),
-                             tr("Do not &show this dialog again."));
-      backgroundHintRouteStringShown = true;
-    }
-
     // No parent to create non-modal dialog
     routeStringDialog = new RouteStringDialog(nullptr, QStringLiteral());
 
