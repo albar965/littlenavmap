@@ -244,8 +244,13 @@ OptionsDialog::OptionsDialog(QMainWindow *parentWindow)
                   tr("Zoom, click, screen navigation and mouse wheel settings."),
                   QStringLiteral(":/littlenavmap/resources/icons/mapnavigation.svg"));
 
-  addPageListItem(QStringLiteral("mapdisplay"),
-                  tr("Map Display"),
+  addPageListItem(QStringLiteral("mapdisplayfont"),
+                  tr("Map Font and Scale"),
+                  tr("Change the map display font and overall scale for symbols and labels."),
+                  QStringLiteral(":/littlenavmap/resources/icons/mapfont.svg"));
+
+  addPageListItem(QStringLiteral("mapdisplayfeatures"),
+                  tr("Map Display Features"),
                   tr("Change colors, symbols, texts and font for map display and elevation profile objects."),
                   QStringLiteral(":/littlenavmap/resources/icons/mapdisplay.svg"));
 
@@ -290,6 +295,16 @@ OptionsDialog::OptionsDialog(QMainWindow *parentWindow)
                   tr("Map display online center and airspace options."),
                   QStringLiteral(":/littlenavmap/resources/icons/airspaceonline.svg"));
 
+  addPageListItem(QStringLiteral("elevationprofile"),
+                  tr("Elevation Profile"),
+                  tr("Change font and other settings for the elevation profile."),
+                  QStringLiteral(":/littlenavmap/resources/icons/profiledock.svg"));
+
+  addPageListItem(QStringLiteral("elevationdata"),
+                  tr("Elevation Data"),
+                  tr("Install and select elevation data."),
+                  QStringLiteral(":/littlenavmap/resources/icons/profiledata.svg"));
+
   addPageListItem(QStringLiteral("simulatoraircraft"),
                   tr("Simulator Aircraft"),
                   tr("Update and movement options for the user aircraft."),
@@ -314,11 +329,6 @@ OptionsDialog::OptionsDialog(QMainWindow *parentWindow)
                   tr("Online Flying"),
                   tr("Select online flying services like VATSIM, IVAO or custom."),
                   QStringLiteral(":/littlenavmap/resources/icons/aircraft_online.svg"));
-
-  addPageListItem(QStringLiteral("elevationdata"),
-                  tr("Elevation Data"),
-                  tr("Install and select elevation data."),
-                  QStringLiteral(":/littlenavmap/resources/icons/profiledata.svg"));
 
   addPageListItem(QStringLiteral("webserver"),
                   tr("Web Server"),
