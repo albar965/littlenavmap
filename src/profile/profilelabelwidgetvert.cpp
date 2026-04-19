@@ -91,7 +91,7 @@ void ProfileLabelWidgetVert::paintEvent(QPaintEvent *)
       float routeAlt = NavApp::getRouteConst().getCruiseAltitudeFt();
 
       const OptionData& optionData = OptionData::instance();
-      QFont defaultFont = optionData.getMapFont();
+      QFont defaultFont = optionData.getProfileFont();
       mapcolors::scaleFont(&painter, optionData.getDisplayTextSizeFlightplanProfile() / 100.f, &defaultFont);
       QFontMetrics metrics = painter.fontMetrics();
 

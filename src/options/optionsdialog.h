@@ -187,7 +187,7 @@ private:
   void resetWeatherIvaoUrlClicked();
   void resetWeatherNoaaWindUrlClicked();
 
-/* Update all widget units in this dialog */
+  /* Update all widget units in this dialog */
   void updateWidgetUnits();
 
   void flightplanColorClicked();
@@ -226,6 +226,7 @@ private:
 
   void updateGuiFontFromData();
   void updateMapFontLabel();
+  void updateProfileFontLabel();
   void updateGuiFontLabel();
   void updateButtonColors();
   void updateCacheElevationStates();
@@ -273,6 +274,8 @@ private:
   void resetGuiFontClicked();
   void selectMapFontClicked();
   void resetMapFontClicked();
+  void selectProfileFontClicked();
+  void resetProfileFontClicked();
   void buildFontDialog(const QFont& initialFont);
   void toolbarSizeClicked();
   void adjustFont(QString& font);
@@ -306,7 +309,7 @@ private:
 
   bool buttonBoxHandlerActive = false;
 
-  QString guiLanguage, guiFont, mapFont;
+  QString guiLanguage, guiFont, mapFont, profileFont;
   QColor flightplanColor, flightplanOutlineColor, flightplanProcedureColor, flightplanActiveColor, trailColor, measurementColor,
          flightplanPassedColor, highlightFlightplanColor, highlightSearchColor, highlightProfileColor;
 

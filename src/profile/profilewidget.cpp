@@ -892,7 +892,7 @@ void ProfileWidget::calculateProfileMargin()
   if(!legList->route.isEmpty())
   {
     const OptionData& optionData = OptionData::instance();
-    QFont font = optionData.getMapFont();
+    QFont font = optionData.getProfileFont();
     mapcolors::scaleFont(font, optionData.getDisplayTextSizeFlightplanProfile() / 100.f, &font);
     font.setBold(true);
     QFontMetricsF metrics(font);
@@ -988,8 +988,8 @@ void ProfileWidget::paintEvent(QPaintEvent *)
     return;
   }
 
-  setFont(optionData.getMapFont());
-  painter.setFont(optionData.getMapFont());
+  setFont(optionData.getProfileFont());
+  painter.setFont(optionData.getProfileFont());
 
   optsp::DisplayOptionsProfile displayOptions = profileOptions->getDisplayOptions();
   map::MapDisplayTypes mapFeaturesDisplay = NavApp::getMapWidgetGui()->getShownMapDisplayTypes();
@@ -1189,7 +1189,7 @@ void ProfileWidget::paintEvent(QPaintEvent *)
   }
 
   // Draw flight plan =============================================================================
-  painter.setFont(optionData.getMapFont());
+  painter.setFont(optionData.getProfileFont());
   mapcolors::scaleFont(&painter, optionData.getDisplayTextSizeFlightplanProfile() / 100.f, &painter.font());
 
   if(mapFeaturesDisplay.testFlag(map::FLIGHTPLAN))
@@ -1391,7 +1391,7 @@ void ProfileWidget::paintEvent(QPaintEvent *)
     int airportSize = roundToInt((optionData.getDisplayTextSizeFlightplanProfile() * sizeScaleSymbol / 100.) * 10.);
 
     painter.setBackgroundMode(Qt::TransparentMode);
-    painter.setFont(optionData.getMapFont());
+    painter.setFont(optionData.getProfileFont());
     mapcolors::scaleFont(&painter, optionData.getDisplayTextSizeFlightplanProfile() / 100.f, &painter.font());
 
     // Draw symbols and texts =====================================================================================

@@ -359,5 +359,7 @@
         <file>resources/icons/close_hover.svg</file>
         <file>resources/icons/close.svg</file>
         <file>resources/config/little_navmap_darkstyle.ini</file>
+        <file>resources/icons/profiledata.svg</file>
+        <file>resources/icons/mapcache.svg</file>
     </qresource>
 </RCC>

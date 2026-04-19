@@ -133,21 +133,12 @@ QString OptionData::getOnlineWhazzupUrl() const
 
 const QFont OptionData::getMapFont() const
 {
-  QFont font;
-  if(!mapFont.isEmpty())
-    font.fromString(mapFont);
-  else if(!guiFont.isEmpty())
-    font.fromString(guiFont);
-  else
-    font = QFontDatabase::systemFont(QFontDatabase::GeneralFont);
+  return bestFont(mapFont, guiFont, QFontDatabase::systemFont(QFontDatabase::GeneralFont));
+}
 
-  if(QApplication::font().bold())
-    font.setBold(true);
-
-  if(QApplication::font().italic())
-    font.setItalic(true);
-
-  return font;
+const QFont OptionData::getProfileFont() const
+{
+  return bestFont(profileFont, guiFont, QFontDatabase::systemFont(QFontDatabase::GeneralFont));
 }
 
 const QFont OptionData::getGuiFont() const
@@ -186,6 +177,28 @@ int OptionData::getOnlineReload(opts::OnlineNetwork network) const
 const QSize OptionData::getGuiToolbarSize() const
 {
   return QSize(guiToolbarSize, guiToolbarSize);
+}
+
+QFont OptionData::bestFont(const QString& fontStr, const QString& guiFontStr, const QFont& fallback)
+{
+  QFont font;
+  if(!fontStr.isEmpty())
+    // Use set font
+    font.fromString(fontStr);
+  else if(!guiFontStr.isEmpty())
+    // Fall back to GUI font
+    font.fromString(guiFontStr);
+  else
+    // Fall back to system font
+    font = fallback;
+
+  if(fallback.bold())
+    font.setBold(true);
+
+  if(fallback.italic())
+    font.setItalic(true);
+
+  return font;
 }
 
 const OptionData& OptionData::instance()

@@ -669,6 +669,7 @@ public:
 
   /* Get selected font for map. Falls back to GUI font and then back to system font. */
   const QFont getMapFont() const;
+  const QFont getProfileFont() const;
   const QFont getGuiFont() const;
 
   /* User set online refresh rate in seconds for custom configurations or stock networks in seconds
@@ -782,6 +783,9 @@ public:
   {
     return mapThemeKeys;
   }
+
+  /* Get best font for strings using fallback if both font strings are empty */
+  static QFont bestFont(const QString& fontStr, const QString& guiFontStr, const QFont& fallback);
 
 private:
   friend class OptionsDialog;
@@ -1192,7 +1196,7 @@ private:
   /* true for HTTPS / SSL */
   bool webEncrypted = false;
 
-  QString guiFont, mapFont;
+  QString guiFont, mapFont, profileFont;
 
   /* API keys or tokens extracted from DGML files. Saved and loaded in MapThemeHandler class. */
   QMap<QString, QString> mapThemeKeys;
