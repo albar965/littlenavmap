@@ -41,6 +41,7 @@
 #include "util/htmlbuilder.h"
 
 #include <QFileInfo>
+#include <QTimeZone>
 
 LogdataDialog::LogdataDialog(QWidget *parent, ld::LogdataDialogMode mode)
   : QDialog(parent), ui(new Ui::LogdataDialog), editMode(mode)
@@ -50,6 +51,10 @@ LogdataDialog::LogdataDialog(QWidget *parent, ld::LogdataDialogMode mode)
   setWindowModality(Qt::ApplicationModal);
 
   ui->setupUi(this);
+  ui->dateTimeEditDepartureDateTimeReal->setTimeZone(QTimeZone::systemTimeZone());
+  ui->dateTimeEditDepartureDateTimeSim->setTimeZone(QTimeZone::UTC);
+  ui->dateTimeEditDestinationDateTimeReal->setTimeZone(QTimeZone::systemTimeZone());
+  ui->dateTimeEditDestinationDateTimeSim->setTimeZone(QTimeZone::UTC);
 
   record = new atools::sql::SqlRecord();
 
@@ -628,9 +633,9 @@ void LogdataDialog::clearAttached()
 void LogdataDialog::clearWidgets()
 {
   ui->dateTimeEditDepartureDateTimeReal->setDateTime(QDateTime::currentDateTime());
-  ui->dateTimeEditDepartureDateTimeSim->setDateTime(QDateTime::currentDateTime());
+  ui->dateTimeEditDepartureDateTimeSim->setDateTime(QDateTime::currentDateTimeUtc());
   ui->dateTimeEditDestinationDateTimeReal->setDateTime(QDateTime::currentDateTime());
-  ui->dateTimeEditDestinationDateTimeSim->setDateTime(QDateTime::currentDateTime());
+  ui->dateTimeEditDestinationDateTimeSim->setDateTime(QDateTime::currentDateTimeUtc());
   ui->lineEditAircraftName->clear();
   ui->lineEditAircraftRegistration->clear();
   ui->lineEditAircraftType->clear();

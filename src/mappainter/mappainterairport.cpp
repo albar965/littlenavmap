@@ -40,6 +40,8 @@
 #include <QStringBuilder>
 #include <QRegularExpression>
 
+#include <marble/GeoDataLatLonAltBox.h>
+#include <marble/GeoDataLatLonBox.h>
 #include <marble/GeoPainter.h>
 #include <marble/ViewportParams.h>
 
@@ -200,7 +202,8 @@ void MapPainterAirport::collectVisibleAirports(QList<AirportPaintData>& visibleA
   atools::util::PainterContextSaver saver(context->painter);
 
   // Get airports from cache/database for the bounding rectangle and add them to the map
-  const GeoDataLatLonAltBox& curBox = context->viewport->viewLatLonAltBox();
+  const GeoDataLatLonAltBox& curAltBox = context->viewport->viewLatLonAltBox();
+  const GeoDataLatLonBox curBox(curAltBox.north(), curAltBox.south(), curAltBox.east(), curAltBox.west());
 
   bool overflow = false;
   const QList<MapAirport> *airportCache = nullptr;

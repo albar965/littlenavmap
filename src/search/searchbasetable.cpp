@@ -465,8 +465,8 @@ void SearchBaseTable::connectSearchWidgets()
     }
     else if(col->getCheckBoxWidget() != nullptr)
     {
-      connect(col->getCheckBoxWidget(), &QCheckBox::stateChanged, this, [col, this](int state) {
-        controller->filterByCheckbox(col, state, col->getCheckBoxWidget()->isTristate());
+      connect(col->getCheckBoxWidget(), &QCheckBox::checkStateChanged, this, [col, this](Qt::CheckState state) {
+        controller->filterByCheckbox(col, static_cast<int>(state), col->getCheckBoxWidget()->isTristate());
         updateButtonMenu();
         editStartTimer();
       });
@@ -503,7 +503,9 @@ void SearchBaseTable::connectSearchWidgets()
   if(minDistanceWidget != nullptr && maxDistanceWidget != nullptr && distanceDirWidget != nullptr && distanceCheckBox != nullptr)
   {
     // If all distance widgets are present connect them
-    connect(distanceCheckBox, &QCheckBox::stateChanged, this, &SearchBaseTable::distanceSearchStateChanged);
+    connect(distanceCheckBox, &QCheckBox::checkStateChanged, this, [this](Qt::CheckState state) {
+      distanceSearchStateChanged(static_cast<int>(state));
+    });
 
     connect(minDistanceWidget, QOverload<int>::of(&QSpinBox::valueChanged), this, [this, distanceDirWidget, maxDistanceWidget](int value) {
       controller->filterByDistanceUpdate(

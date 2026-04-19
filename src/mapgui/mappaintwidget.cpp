@@ -42,6 +42,7 @@
 #include <QResizeEvent>
 #include <QPaintEvent>
 #include <QFile>
+#include <QDebug>
 
 #include <marble/MarbleLocale.h>
 #include <marble/MarbleModel.h>
@@ -68,6 +69,21 @@ using namespace Marble;
 using atools::geo::Rect;
 using atools::geo::Pos;
 
+namespace {
+
+constexpr int MARBLE_ZOOM_STEP = 40;
+
+QString latLonBoxDebugString(const Marble::GeoDataLatLonBox& box)
+{
+  return QStringLiteral("N:%1 S:%2 E:%3 W:%4")
+         .arg(box.north(GeoDataCoordinates::Degree), 0, 'f', 6)
+         .arg(box.south(GeoDataCoordinates::Degree), 0, 'f', 6)
+         .arg(box.east(GeoDataCoordinates::Degree), 0, 'f', 6)
+         .arg(box.west(GeoDataCoordinates::Degree), 0, 'f', 6);
+}
+
+}
+
 MapPaintWidget::MapPaintWidget(QWidget *parent, Queries *queriesParam, bool visibleWidgetParam, bool webParam)
   : Marble::MarbleWidget(parent), visibleWidget(visibleWidgetParam), queries(queriesParam), web(webParam)
 {
@@ -90,7 +106,6 @@ MapPaintWidget::MapPaintWidget(QWidget *parent, Queries *queriesParam, bool visi
 
   const OptionData& options = OptionData::instance();
 
-  setSunShadingDimFactor(static_cast<double>(options.getDisplaySunShadingDimFactor()) / 100.);
   avoidBlurredMap = options.getFlags2().testFlag(opts2::MAP_AVOID_BLURRED_MAP);
 
   setFont(options.getMapFont());
@@ -173,8 +188,6 @@ void MapPaintWidget::copySettings(const MapPaintWidget& other, bool deep)
     model()->setPersistentTileCacheLimit(other.model()->persistentTileCacheLimit());
   if(volatileTileCacheLimit() != other.volatileTileCacheLimit())
     setVolatileTileCacheLimit(other.volatileTileCacheLimit());
-
-  setSunShadingDimFactor(static_cast<double>(OptionData::instance().getDisplaySunShadingDimFactor()) / 100.);
 
   // Copy own/internal settings
   if(deep)
@@ -298,17 +311,12 @@ void MapPaintWidget::optionsChanged(const optc::OptionChangeFlags& changeFlags)
 {
   const OptionData& options = OptionData::instance();
 
-  if(changeFlags.testFlag(optc::OPTION_CHANGE_MAPTHEMES))
-    // Pass API keys or tokens to map
-    setKeys(NavApp::getMapThemeHandler()->getMapThemeKeysHash());
-
   setFont(options.getMapFont());
 
   if(changeFlags.testFlag(optc::OPTION_CHANGE_UNITS))
     unitsUpdated();
 
   // Updated sun shadow and force a tile refresh by changing the show status again
-  setSunShadingDimFactor(static_cast<double>(options.getDisplaySunShadingDimFactor()) / 100.);
   setShowSunShading(showSunShading());
   avoidBlurredMap = options.getFlags2().testFlag(opts2::MAP_AVOID_BLURRED_MAP);
 
@@ -615,7 +623,7 @@ void MapPaintWidget::centerRectOnMapPrecise(const Marble::GeoDataLatLonBox& rect
          east = rect.east(mconvert::DEG), west = rect.west(mconvert::DEG);
 
   if(verbose)
-    qDebug() << Q_FUNC_INFO << "initial zoom" << zoom() << "zoom step" << zoomStep();
+    qDebug() << Q_FUNC_INFO << "initial zoom" << zoom() << "zoom step" << MARBLE_ZOOM_STEP;
 
   // Zoom in deeper
   zoomIn(Marble::Instant);
@@ -630,7 +638,7 @@ void MapPaintWidget::centerRectOnMapPrecise(const Marble::GeoDataLatLonBox& rect
   {
     if(verbose)
       qDebug() << Q_FUNC_INFO << "zoom" << zoom()
-               << "Viewport" << viewport()->viewLatLonAltBox().toString(GeoDataCoordinates::Degree);
+               << "Viewport" << latLonBoxDebugString(viewport()->viewLatLonAltBox());
 
     zoomViewBy(-step);
     zoomIterations++;
@@ -772,7 +780,7 @@ void MapPaintWidget::adjustMapDistance()
 {
 #ifdef DEBUG_INFORMATION
   qDebug() << Q_FUNC_INFO << "Adjusted view zoom FROM" << zoom() << "distance"
-           << atools::geo::kmToNm(distance()) << "NM" << distance() << "KM" << "step" << zoomStep();
+           << atools::geo::kmToNm(distance()) << "NM" << distance() << "KM" << "step" << MARBLE_ZOOM_STEP;
 #endif
 
   // Zoom out to next step to get a sharper map display
@@ -780,7 +788,7 @@ void MapPaintWidget::adjustMapDistance()
 
 #ifdef DEBUG_INFORMATION
   qDebug() << Q_FUNC_INFO << "Adjusted view zoom TO" << zoom() << "distance"
-           << atools::geo::kmToNm(distance()) << "NM" << distance() << "KM" << "step" << zoomStep();
+           << atools::geo::kmToNm(distance()) << "NM" << distance() << "KM" << "step" << MARBLE_ZOOM_STEP;
 #endif
 }
 
@@ -1265,8 +1273,8 @@ void MapPaintWidget::resizeEvent(QResizeEvent *event)
   if(verbose)
   {
     // Avoid excessive logging on visible widget
-    qDebug() << Q_FUNC_INFO << "Viewport" << viewport()->viewLatLonAltBox().toString(GeoDataCoordinates::Degree);
-    qDebug() << Q_FUNC_INFO << "currentViewBoundingBox" << currentViewBoundingBox.toString(GeoDataCoordinates::Degree);
+    qDebug() << Q_FUNC_INFO << "Viewport" << latLonBoxDebugString(viewport()->viewLatLonAltBox());
+    qDebug() << Q_FUNC_INFO << "currentViewBoundingBox" << latLonBoxDebugString(currentViewBoundingBox);
     qDebug() << Q_FUNC_INFO << event->oldSize() << event->size();
   }
 
@@ -1279,8 +1287,8 @@ void MapPaintWidget::paintEvent(QPaintEvent *paintEvent)
   if(verbose)
   {
     // Avoid excessive logging on visible widget
-    qDebug() << Q_FUNC_INFO << "Viewport" << getCurrentViewBoundingBox().toString(GeoDataCoordinates::Degree);
-    qDebug() << Q_FUNC_INFO << "currentViewBoundingBox" << currentViewBoundingBox.toString(GeoDataCoordinates::Degree);
+    qDebug() << Q_FUNC_INFO << "Viewport" << latLonBoxDebugString(getCurrentViewBoundingBox());
+    qDebug() << Q_FUNC_INFO << "currentViewBoundingBox" << latLonBoxDebugString(currentViewBoundingBox);
     qDebug() << Q_FUNC_INFO << "visibleWidget" << visibleWidget << "painting" << painting << "noRender" << noRender()
              << "isActive" << isActive() << "mapCoversViewport" << viewport()->mapCoversViewport();
   }
@@ -1319,7 +1327,7 @@ void MapPaintWidget::paintEvent(QPaintEvent *paintEvent)
 #ifdef DEBUG_INFORMATION_PAINT
       qDebug() << Q_FUNC_INFO << "distance"
                << atools::geo::kmToNm(distance()) << "NM" << distance() << "KM zoom" << zoom()
-               << "step" << zoomStep();
+               << "step" << MARBLE_ZOOM_STEP;
 #endif
 
       if(viewContext() == Marble::Still && (zoom() != currentZoom || visibleLatLonBox != currentViewBoundingBox))
@@ -1382,7 +1390,7 @@ bool MapPaintWidget::loadKml(const QString& filename, bool center)
 {
   if(QFile::exists(filename))
   {
-    model()->addGeoDataFile(filename, 0, center && OptionData::instance().getFlags().testFlag(opts::GUI_CENTER_KML));
+    model()->addGeoDataFile(filename);
 
     if(center)
       showAircraft(false);

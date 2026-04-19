@@ -76,6 +76,7 @@
 #include <QStringBuilder>
 
 #include <marble/AbstractFloatItem.h>
+#include <marble/DialogConfigurationInterface.h>
 #include <marble/MarbleWidgetInputHandler.h>
 #include <marble/MarbleModel.h>
 #include <marble/MapThemeManager.h>
@@ -2567,7 +2568,8 @@ void MapWidget::showGridConfiguration()
     if(plugin->nameId() == "coordinate-grid")
     {
       // Get configuration dialog - settings will be saved by the plugin
-      QDialog *configDialog = plugin->configDialog();
+      auto *configInterface = dynamic_cast<Marble::DialogConfigurationInterface *>(plugin);
+      QDialog *configDialog = configInterface != nullptr ? configInterface->configDialog() : nullptr;
       if(configDialog != nullptr)
         configDialog->exec();
       break;
@@ -4086,6 +4088,8 @@ void MapWidget::addRangeMark(const atools::geo::Pos& pos, const map::MapAirport 
 
 void MapWidget::zoomInOut(bool directionIn, bool smooth)
 {
+  constexpr int marbleZoomStep = 40;
+
   if(!directionIn && distance() > MAP_ZOOM_OUT_LIMIT_KM)
     return;
 
@@ -4096,9 +4100,9 @@ void MapWidget::zoomInOut(bool directionIn, bool smooth)
   {
     // Smooth zoom
     if(directionIn)
-      zoomViewBy(zoomStep() / 4);
+      zoomViewBy(marbleZoomStep / 4);
     else
-      zoomViewBy(-zoomStep() / 4);
+      zoomViewBy(-marbleZoomStep / 4);
   }
   else
   {
@@ -4106,9 +4110,9 @@ void MapWidget::zoomInOut(bool directionIn, bool smooth)
     if(NavApp::getMapThemeHandler()->hasDiscreteZoom(currentThemeId))
     {
       if(directionIn)
-        zoomViewBy(zoomStep() * 3);
+        zoomViewBy(marbleZoomStep * 3);
       else
-        zoomViewBy(-zoomStep() * 3);
+        zoomViewBy(-marbleZoomStep * 3);
     }
     else
     {

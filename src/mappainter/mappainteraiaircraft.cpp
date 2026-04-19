@@ -28,6 +28,8 @@
 #include "settings/settings.h"
 #include "util/paintercontextsaver.h"
 
+#include <marble/GeoDataLatLonAltBox.h>
+#include <marble/GeoDataLatLonBox.h>
 #include <marble/GeoPainter.h>
 #include <marble/ViewportParams.h>
 
@@ -70,9 +72,11 @@ void MapPainterAiAircraft::render()
       // Get all pure (slowly updated) online aircraft ======================================
       if(onlineEnabled)
       {
+        const Marble::GeoDataLatLonAltBox& curAltBox = context->viewport->viewLatLonAltBox();
+        const Marble::GeoDataLatLonBox curBox(curAltBox.north(), curAltBox.south(), curAltBox.east(), curAltBox.west());
         // Filters duplicates from simulator and user aircraft out - remove shadow aircraft
         const QList<SimConnectAircraft> *onlineAircraft =
-          NavApp::getOnlinedataController()->getAircraft(context->viewport->viewLatLonAltBox(),
+          NavApp::getOnlinedataController()->getAircraft(curBox,
                                                          context->mapLayer, context->lazyUpdate, overflow);
 
         context->setQueryOverflow(overflow);

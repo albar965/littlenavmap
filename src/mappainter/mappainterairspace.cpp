@@ -31,6 +31,8 @@
 #include "util/polygontools.h"
 
 #include <marble/GeoDataLineString.h>
+#include <marble/GeoDataLatLonAltBox.h>
+#include <marble/GeoDataLatLonBox.h>
 #include <marble/GeoPainter.h>
 #include <marble/GeoDataLinearRing.h>
 #include <marble/ViewportParams.h>
@@ -74,7 +76,8 @@ void MapPainterAirspace::render()
   context->startTimer("Airspace");
 
   // Get online and offline airspace and merge then into one list =============
-  const GeoDataLatLonAltBox& curBox = context->viewport->viewLatLonAltBox();
+  const GeoDataLatLonAltBox& curAltBox = context->viewport->viewLatLonAltBox();
+  const GeoDataLatLonBox curBox(curAltBox.north(), curAltBox.south(), curAltBox.east(), curAltBox.west());
   AirspaceList airspaces;
 
   bool overflow = false;

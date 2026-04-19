@@ -27,6 +27,7 @@
 
 #include <QAbstractButton>
 #include <QPushButton>
+#include <QTimeZone>
 
 TimeDialog::TimeDialog(QWidget *parent, const QDateTime& datetime) :
   QDialog(parent), ui(new Ui::TimeDialog)
@@ -36,8 +37,9 @@ TimeDialog::TimeDialog(QWidget *parent, const QDateTime& datetime) :
   setWindowModality(Qt::ApplicationModal);
   ui->setupUi(this);
 
-  ui->calendarWidget->setSelectedDate(datetime.date());
-  ui->timeEdit->setTime(datetime.time());
+  const QDateTime utcDateTime = datetime.toUTC();
+  ui->calendarWidget->setSelectedDate(utcDateTime.date());
+  ui->timeEdit->setTime(utcDateTime.time());
 
   connect(ui->buttonBox, &QDialogButtonBox::clicked, this, &TimeDialog::buttonBoxClicked);
   atools::gui::WidgetState(lnm::TIME_DIALOG).restore(this);
@@ -51,7 +53,7 @@ TimeDialog::~TimeDialog()
 
 QDateTime TimeDialog::getDateTime() const
 {
-  return QDateTime(ui->calendarWidget->selectedDate(), ui->timeEdit->time());
+  return QDateTime(ui->calendarWidget->selectedDate(), ui->timeEdit->time(), QTimeZone::UTC);
 }
 
 /* A button box button was clicked */

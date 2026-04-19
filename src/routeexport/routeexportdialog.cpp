@@ -26,6 +26,7 @@
 
 #include <QAbstractButton>
 #include <QPushButton>
+#include <QTimeZone>
 
 RouteExportDialog::RouteExportDialog(QWidget *parent, re::RouteExportType routeType)
   : QDialog(parent), ui(new Ui::RouteExportDialog), type(routeType)
@@ -34,6 +35,8 @@ RouteExportDialog::RouteExportDialog(QWidget *parent, re::RouteExportType routeT
 
   setWindowModality(Qt::ApplicationModal);
   ui->setupUi(this);
+  ui->timeEditDeparture->setTimeZone(QTimeZone::UTC);
+  ui->timeEditDepartureActual->setTimeZone(QTimeZone::UTC);
 
   widgets.append(ui->checkBoxHeavy);
   widgets.append(ui->lineEditAircraftType);
