@@ -18,8 +18,8 @@
 #ifndef LITTLENAVMAP_COLUMN_H
 #define LITTLENAVMAP_COLUMN_H
 
+#include "common/unit.h"
 #include <QStringList>
-#include <functional>
 
 class QAction;
 class QWidget;
@@ -96,10 +96,10 @@ public:
   Column& condition(const QString& cond);
 
   /* Unit conversion function */
-  Column& convertFunc(std::function<float(float value)> unitConvertFunc);
+  Column& convertFunction(UnitRevFloatFunc unitConvertFunction);
 
   /* Sql function to build column like "strftime('%s', destination_time) - strftime('%s', departure_time)" */
-  Column& sqlFunc(const QString& sqlFunctionParam);
+  Column& sqlFunction(const QString& sqlFunctionParam);
 
   /* true if either column or min/max widgets are set and enabled */
   bool isWidgetEnabled() const;
@@ -240,14 +240,14 @@ public:
     return colMinWidgetSuffix;
   }
 
-  std::function<float(float value)> getUnitConvert() const
+  UnitRevFloatFunc getUnitConvert() const
   {
-    return unitConvert;
+    return unitConvertFunc;
   }
 
-  const QString& getSqlFunc() const
+  const QString& getSqlFunction() const
   {
-    return sqlFunction;
+    return sqlFunc;
   }
 
   /* Action which is used to show the potentially hidden related option for this column */
@@ -276,7 +276,7 @@ private:
   QString colCondition;
 
   /* SQL function to build column */
-  QString sqlFunction;
+  QString sqlFunc;
 
   /* Condition list used for combo boxes */
   QStringList colIndexConditionMap;
@@ -284,7 +284,7 @@ private:
   int index = -1;
 
   /* Function to convert from default units to widget units */
-  std::function<float(float value)> unitConvert = nullptr;
+  UnitRevFloatFunc unitConvertFunc = nullptr;
 
   bool colCanBeFiltered = false;
   bool colCanBeFilteredBuilder = false;

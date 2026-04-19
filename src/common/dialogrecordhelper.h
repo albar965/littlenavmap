@@ -18,7 +18,7 @@
 #ifndef LNM_DIALOGRECORDHELPER_H
 #define LNM_DIALOGRECORDHELPER_H
 
-#include <functional>
+#include "common/unit.h"
 
 namespace atools {
 namespace sql {
@@ -46,11 +46,9 @@ public:
   void dialogToRecordStr(QLineEdit *widget, const QString& name, QCheckBox *checkBox = nullptr, bool toUpper = false);
 
   /* Needs function like Unit::fuelLbsGallonF to convert fuel from GUI to internal value */
-  void dialogToRecordFuel(QSpinBox *widget, const QString& name, QCheckBox *checkBox,
-                          std::function<float(float value, bool fuelAsVolume)> func, bool fuelAsVolume);
+  void dialogToRecordFuel(QSpinBox *widget, const QString& name, QCheckBox *checkBox, UnitRevFloatFuelFunc func, bool fuelAsVolume);
   void dialogToRecordInt(QSpinBox *widget, const QString& name, QCheckBox *checkBox);
-  void dialogToRecordInt(QSpinBox *widget, const QString& name, QCheckBox *checkBox,
-                         std::function<float(float value)> func);
+  void dialogToRecordInt(QSpinBox *widget, const QString& name, QCheckBox *checkBox, UnitRevFloatFunc func);
 
   void dialogToRecordInt(QComboBox *widget, const QString& name, QCheckBox *checkBox);
 

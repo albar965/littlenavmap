@@ -212,7 +212,7 @@ AirportSearch::AirportSearch(MainWindow *parent, QTableView *tableView, si::TabS
 
   append(Column("rating", ui->comboBoxAirportRatingSearch, tr("Rating")).includesName().indexCondMap(ratingCondMap)).
 
-  append(Column("altitude", tr("Elev.\n%alt%")).convertFunc(Unit::altFeetF)).
+  append(Column("altitude", tr("Elev.\n%alt%")).convertFunction(Unit::altFeetF)).
   append(Column("mag_var", tr("Mag.\nDecl.°"))).
   append(Column("has_avgas", ui->checkBoxAirportAvgasSearch, tr("Avgas")).hidden()).
   append(Column("has_jetfuel", ui->checkBoxAirportJetASearch, tr("Jetfuel")).hidden()).
@@ -248,7 +248,7 @@ AirportSearch::AirportSearch(MainWindow *parent, QTableView *tableView, si::TabS
   append(Column("num_parking_mil_cargo", tr("Ramps\nMil Cargo")).hidden()).
   append(Column("num_parking_mil_combat", tr("Ramps\nMil Combat")).hidden()).
 
-  append(Column("longest_runway_length", tr("Longest\nRunway Length %distshort%")).convertFunc(Unit::distShortFeetF)).
+  append(Column("longest_runway_length", tr("Longest\nRunway Length %distshort%")).convertFunction(Unit::distShortFeetF)).
   append(Column("longest_runway_width", tr("Longest\nRunway Width %distshort%")).hidden()).
   append(Column("longest_runway_surface", tr("Longest\nRunway Surface")).hidden()).
   append(Column("longest_runway_heading").hidden()).

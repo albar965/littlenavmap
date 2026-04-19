@@ -90,10 +90,10 @@ UserdataSearch::UserdataSearch(MainWindow *parent, QTableView *tableView, si::Ta
   append(Column("tags", ui->lineEditUserdataTags, tr("Tags")).filter(true, ui->actionUserdataSearchShowMoreOptions)).
   append(Column("description", ui->lineEditUserdataDescription, tr("Remarks")).filter(true, ui->actionUserdataSearchShowMoreOptions)).
   append(Column("temp").hidden()).
-  append(Column("visible_from", tr("Visible from\n%dist%")).convertFunc(Unit::distNmF)).
+  append(Column("visible_from", tr("Visible from\n%dist%")).convertFunction(Unit::distNmF)).
   append(Column("lonx", tr("Longitude"))).
   append(Column("laty", tr("Latitude"))).
-  append(Column("altitude", tr("Elevation\n%alt%")).convertFunc(Unit::altFeetF)).
+  append(Column("altitude", tr("Elevation\n%alt%")).convertFunction(Unit::altFeetF)).
   append(Column("import_file_path", ui->lineEditUserdataFilepath,
                 tr("Imported\nfrom File")).filter(true, ui->actionUserdataSearchShowMoreOptions))
   ;

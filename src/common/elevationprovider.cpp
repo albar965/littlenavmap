@@ -17,17 +17,15 @@
 
 #include "common/elevationprovider.h"
 
-#include "common/constants.h"
-#include "geo/calculations.h"
 #include "app/navapp.h"
+#include "atools.h"
 #include "fs/common/globereader.h"
-#include "gui/helphandler.h"
-#include "options/optiondata.h"
+#include "geo/calculations.h"
 #include "geo/line.h"
 #include "geo/linestring.h"
 #include "geo/pos.h"
 #include "gui/dialog.h"
-#include "atools.h"
+#include "options/optiondata.h"
 
 #include <marble/GeoDataCoordinates.h>
 #include <marble/ElevationModel.h>

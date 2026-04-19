@@ -23,7 +23,6 @@
 
 #include <QCoreApplication>
 #include <QLocale>
-#include <functional>
 
 class OptionData;
 namespace atools {
@@ -31,6 +30,9 @@ namespace geo {
 class Pos;
 }
 }
+
+typedef float (*UnitRevFloatFunc)(float);
+typedef float (*UnitRevFloatFuelFunc)(float, bool);
 
 /*
  * Converts arbitrary values and units into local user selected units.
@@ -60,14 +62,14 @@ public:
   /* Reverse functions. Convert local unit to known unit
    * Example: Unit::rev(OptionData::instance().getSimZoomOnLandingDistance(), Unit::distMeterF);
    * Converts the getSimZoomOnLandingDistance in user selected units to meter */
-  static inline float rev(float value, std::function<float(float value)> func)
+  static inline float rev(float value, UnitRevFloatFunc function)
   {
-    return value / func(1.f);
+    return value / function(1.f);
   }
 
-  static inline float rev(float value, std::function<float(float value, bool fuelAsVolume)> func, bool fuelAsVolume)
+  static inline float rev(float value, UnitRevFloatFuelFunc function, bool fuelAsVolume)
   {
-    return value / func(1.f, fuelAsVolume);
+    return value / function(1.f, fuelAsVolume);
   }
 
   /* Replace values in text like "%dist%" or "%fuel% and returns new string. Saves original test in origtext. */
