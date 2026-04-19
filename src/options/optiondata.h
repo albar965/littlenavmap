@@ -186,6 +186,12 @@ public:
     return cacheSizeMemoryProfile;
   }
 
+  /* Buffer radius for secondary elevation polygon showing surrounding. In local user units (NM, mi, KM) */
+  float getProfileBuffer() const
+  {
+    return profileBuffer;
+  }
+
   /* Info panel text size in percent */
   int getGuiInfoTextSize() const
   {
@@ -864,6 +870,9 @@ private:
 
   // ui->spinBoxOptionsCacheMemoryProfile
   int cacheSizeMemoryProfile = 1000;
+
+  // ui->doubleSpinBoxOptionsProfileBuffer
+  float profileBuffer = 5.f;
 
   // ui->spinBoxOptionsGuiInfoText
   int guiInfoTextSize = 100;

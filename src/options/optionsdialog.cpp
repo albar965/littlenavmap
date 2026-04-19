@@ -709,6 +709,7 @@ OptionsDialog::OptionsDialog(QMainWindow *parentWindow)
     ui->spinBoxOptionsCacheDiskMap,
     ui->spinBoxOptionsCacheMemoryMap,
     ui->spinBoxOptionsCacheMemoryProfile,
+    ui->doubleSpinBoxOptionsProfileBuffer,
     ui->radioButtonCacheUseOffineElevation,
     ui->radioButtonCacheUseOnlineElevation,
     ui->lineEditCacheOfflineDataPath,
@@ -1374,7 +1375,8 @@ optc::OptionChangeFlags OptionsDialog::buildFlagsFromChange(const OptionData& sa
   changeFlags.setFlag(optc::OPTION_CHANGE_ELEVATION,
                       saved.flags.testFlag(opts::CACHE_USE_ONLINE_ELEVATION) != changed.flags.testFlag(opts::CACHE_USE_ONLINE_ELEVATION) ||
                       saved.cacheOfflineElevationPath != changed.cacheOfflineElevationPath ||
-                      saved.cacheSizeMemoryProfile != changed.cacheSizeMemoryProfile);
+                      saved.cacheSizeMemoryProfile != changed.cacheSizeMemoryProfile ||
+                      saved.profileBuffer != changed.profileBuffer);
 
   changeFlags.setFlag(optc::OPTION_CHANGE_WEBSERVER, saved.webDocumentRoot != changed.webDocumentRoot);
 
@@ -1588,21 +1590,11 @@ void OptionsDialog::updateWidgetUnits()
   if(units == nullptr)
   {
     units = new UnitStringTool();
-    units->init({
-      ui->doubleSpinBoxOptionsMapZoomShowMap,
-      ui->doubleSpinBoxOptionsMapZoomShowMapMenu,
-      ui->spinBoxOptionsRouteGroundBuffer,
-      ui->spinBoxDisplayOnlineClearance,
-      ui->spinBoxDisplayOnlineArea,
-      ui->spinBoxDisplayOnlineApproach,
-      ui->spinBoxDisplayOnlineDeparture,
-      ui->spinBoxDisplayOnlineFir,
-      ui->spinBoxDisplayOnlineObserver,
-      ui->spinBoxDisplayOnlineGround,
-      ui->spinBoxDisplayOnlineTower,
-      ui->doubleSpinBoxOptionsSimZoomOnLanding,
-      ui->spinBoxOptionsSimZoomOnTakeoff
-    });
+    units->init({ui->doubleSpinBoxOptionsMapZoomShowMap, ui->doubleSpinBoxOptionsMapZoomShowMapMenu, ui->spinBoxOptionsRouteGroundBuffer,
+                 ui->spinBoxDisplayOnlineClearance, ui->spinBoxDisplayOnlineArea, ui->spinBoxDisplayOnlineApproach,
+                 ui->spinBoxDisplayOnlineDeparture, ui->spinBoxDisplayOnlineFir, ui->spinBoxDisplayOnlineObserver,
+                 ui->spinBoxDisplayOnlineGround, ui->spinBoxDisplayOnlineTower, ui->doubleSpinBoxOptionsSimZoomOnLanding,
+                 ui->spinBoxOptionsSimZoomOnTakeoff, ui->doubleSpinBoxOptionsProfileBuffer});
   }
   else
     units->update();
@@ -2506,6 +2498,7 @@ void OptionsDialog::widgetsToOptionData(OptionData& data)
   data.cacheSizeDisk = ui->spinBoxOptionsCacheDiskMap->value();
   data.cacheSizeMemoryMap = ui->spinBoxOptionsCacheMemoryMap->value();
   data.cacheSizeMemoryProfile = ui->spinBoxOptionsCacheMemoryProfile->value();
+  data.profileBuffer = static_cast<float>(ui->doubleSpinBoxOptionsProfileBuffer->value());
   data.guiInfoTextSize = ui->spinBoxOptionsGuiInfoText->value();
   data.guiPerfReportTextSize = ui->spinBoxOptionsGuiAircraftPerf->value();
   data.guiRouteTableTextSize = ui->spinBoxOptionsGuiRouteText->value();
@@ -2846,6 +2839,7 @@ void OptionsDialog::optionDataToWidgets(const OptionData& data)
   ui->spinBoxOptionsCacheDiskMap->setValue(data.cacheSizeDisk);
   ui->spinBoxOptionsCacheMemoryMap->setValue(data.cacheSizeMemoryMap);
   ui->spinBoxOptionsCacheMemoryProfile->setValue(data.cacheSizeMemoryProfile);
+  ui->doubleSpinBoxOptionsProfileBuffer->setValue(data.profileBuffer);
   ui->spinBoxOptionsGuiInfoText->setValue(data.guiInfoTextSize);
   ui->spinBoxOptionsGuiAircraftPerf->setValue(data.guiPerfReportTextSize);
   ui->spinBoxOptionsGuiRouteText->setValue(data.guiRouteTableTextSize);

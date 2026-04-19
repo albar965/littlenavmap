@@ -8186,6 +8186,69 @@ Download the file &lt;b&gt;&lt;i&gt;All Tiles in One .zip (all10g.zip)&lt;/i&gt;
              </widget>
             </item>
             <item>
+             <widget class="QGroupBox" name="groupBox_42">
+              <property name="title">
+               <string>Elevation buffer for Surrounding shown when using GLOBE elevation data</string>
+              </property>
+              <layout class="QGridLayout" name="gridLayout_27">
+               <property name="leftMargin">
+                <number>2</number>
+               </property>
+               <property name="topMargin">
+                <number>2</number>
+               </property>
+               <property name="rightMargin">
+                <number>2</number>
+               </property>
+               <property name="bottomMargin">
+                <number>2</number>
+               </property>
+               <property name="spacing">
+                <number>2</number>
+               </property>
+               <item row="0" column="0" alignment="Qt::AlignVCenter">
+                <widget class="QLabel" name="labelOptionsProfileBuffer">
+                 <property name="text">
+                  <string>&amp;Buffer radius:</string>
+                 </property>
+                 <property name="wordWrap">
+                  <bool>true</bool>
+                 </property>
+                 <property name="buddy">
+                  <cstring>doubleSpinBoxOptionsProfileBuffer</cstring>
+                 </property>
+                </widget>
+               </item>
+               <item row="0" column="1">
+                <widget class="QDoubleSpinBox" name="doubleSpinBoxOptionsProfileBuffer">
+                 <property name="toolTip">
+                  <string>The elevation profile shows light green ground which displays the surrounding maximum elevation around the flight plan.
+The buffer radius defines the surrounding from where the maximum elevation is calculated.</string>
+                 </property>
+                 <property name="showGroupSeparator" stdset="0">
+                  <bool>true</bool>
+                 </property>
+                 <property name="suffix">
+                  <string> %dist%</string>
+                 </property>
+                 <property name="decimals">
+                  <number>1</number>
+                 </property>
+                 <property name="minimum">
+                  <double>1.000000000000000</double>
+                 </property>
+                 <property name="maximum">
+                  <double>10.000000000000000</double>
+                 </property>
+                 <property name="value">
+                  <double>5.000000000000000</double>
+                 </property>
+                </widget>
+               </item>
+              </layout>
+             </widget>
+            </item>
+            <item>
              <spacer name="verticalSpacer_27">
               <property name="orientation">
                <enum>Qt::Vertical</enum>

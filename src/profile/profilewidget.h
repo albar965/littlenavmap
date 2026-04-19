@@ -394,6 +394,8 @@ private:
   /* Numbers for aircraft track */
   const static quint32 FILE_MAGIC_NUMBER = 0x6B7C2A3C;
   const static quint16 FILE_VERSION = 1;
+
+  float elevationSampleRadiusOuterNm = 5.f;
 };
 
 Q_DECLARE_TYPEINFO(ProfileWidget::SimUpdateDelta, Q_PRIMITIVE_TYPE);
