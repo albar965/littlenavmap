@@ -872,7 +872,7 @@ void MainWindow::setupUi()
 {
   // Reduce large icons on mac once intially
 #if defined(Q_OS_MACOS)
-
+  const auto toolbars = findChildren<QToolBar *>();
   for(QToolBar *toolbar : toolbars)
   {
     QSizeF size = toolbar->iconSize();
@@ -4401,16 +4401,7 @@ void MainWindow::styleChanged()
 
 void MainWindow::updateMapKeys()
 {
-  if(mapThemeHandler != nullptr)
-  {
-    // Is null on startup
-    if(mapWidget != nullptr)
-      mapWidget->setKeys(mapThemeHandler->getMapThemeKeysHash());
-
-    // Might be null if not started
-    if(NavApp::getMapPaintWidgetWeb() != nullptr)
-      NavApp::getMapPaintWidgetWeb()->setKeys(mapThemeHandler->getMapThemeKeysHash());
-  }
+  Q_UNUSED(mapThemeHandler);
 }
 
 void MainWindow::saveStateNow()
@@ -4806,7 +4797,7 @@ void MainWindow::printShortcuts()
 void MainWindow::closeEvent(QCloseEvent *event)
 {
   qDebug() << Q_FUNC_INFO << "Enter deInitCalled" << deInitCalled
-           << "StartingUp" << Application::isStartingUp() << "pendingFileManagerTasks" << mapWidget->model()->pendingFileManagerTasks()
+           << "StartingUp" << Application::isStartingUp() << "pendingFileManagerTasks" << 0
            << "renderStatus" << mapWidget->renderStatus() << "delayedShutdownInProgress" << delayedShutdownInProgress
            << "remainingTime" << shutdownDelayTimer.remainingTime();
 

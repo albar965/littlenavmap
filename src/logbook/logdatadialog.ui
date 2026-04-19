@@ -222,13 +222,10 @@
             <property name="toolTip">
              <string>Departure time in simulator (takeoff)</string>
             </property>
-            <property name="calendarPopup">
-             <bool>true</bool>
-            </property>
-            <property name="timeSpec">
-             <enum>Qt::UTC</enum>
-            </property>
-           </widget>
+           <property name="calendarPopup">
+            <bool>true</bool>
+           </property>
+          </widget>
           </item>
           <item row="2" column="0">
            <widget class="QLabel" name="labelDepartureRunway">
@@ -293,10 +290,7 @@
             <property name="calendarPopup">
              <bool>true</bool>
             </property>
-            <property name="timeSpec">
-             <enum>Qt::LocalTime</enum>
-            </property>
-           </widget>
+          </widget>
           </item>
           <item row="0" column="1">
            <widget class="QLineEdit" name="lineEditDeparture">
@@ -408,10 +402,7 @@
             <property name="calendarPopup">
              <bool>true</bool>
             </property>
-            <property name="timeSpec">
-             <enum>Qt::UTC</enum>
-            </property>
-           </widget>
+          </widget>
           </item>
           <item row="2" column="0">
            <widget class="QLabel" name="labelDestinationRunway">
@@ -441,10 +432,7 @@
             <property name="calendarPopup">
              <bool>true</bool>
             </property>
-            <property name="timeSpec">
-             <enum>Qt::LocalTime</enum>
-            </property>
-           </widget>
+          </widget>
           </item>
           <item row="0" column="1">
            <widget class="QLineEdit" name="lineEditDestination">

@@ -54,9 +54,6 @@
          <verstretch>0</verstretch>
         </sizepolicy>
        </property>
-       <property name="timeSpec">
-        <enum>Qt::UTC</enum>
-       </property>
       </widget>
      </item>
      <item row="20" column="3">
@@ -200,9 +197,6 @@
        </property>
        <property name="currentSectionIndex">
         <number>0</number>
-       </property>
-       <property name="timeSpec">
-        <enum>Qt::UTC</enum>
        </property>
       </widget>
      </item>

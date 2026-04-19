@@ -1767,7 +1767,7 @@ void registerMapMetaTypes();
 /* Produces error static assertion failed: map::MapBase is neither copy- nor move-constructible, so cannot be Q_RELOCATABLE_TYPE
  * QTypeInfo<TYPE>::isRelocatable * std::is_copy_constructible_v<TYPE > */
 // static_assert(std::is_copy_constructible<map::MapBase>);
-Q_DECLARE_TYPEINFO(map::MapBase, Q_PRIMITIVE_TYPE);
+Q_DECLARE_TYPEINFO(map::MapBase, Q_COMPLEX_TYPE);
 Q_DECLARE_TYPEINFO(map::MapAirport, Q_RELOCATABLE_TYPE);
 Q_DECLARE_TYPEINFO(map::MapAirportMsa, Q_RELOCATABLE_TYPE);
 Q_DECLARE_TYPEINFO(map::MapAirspace, Q_RELOCATABLE_TYPE);
