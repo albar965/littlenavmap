@@ -131,9 +131,9 @@ OptionsDialog::OptionsDialog(QMainWindow *parentWindow)
   hintLabels.append({ui->labelOptionsUpdatesHint, ui->labelOptionsUnitsHint, ui->labelOptionsGuiFontHint, ui->labelOptionsFreetypeHint,
                      ui->labelOptionsGuiTooltipHint, ui->labelOptionsUnitsTextSizeHint, ui->labelOptionsFilePatternsHint,
                      ui->labelOptionsResetLayoutHint, ui->labelOptionsRestartWebServer, ui->labelOptionsResetEmptyHint,
-                     ui->labelOptionsNavigationAidsHint, ui->labelOptionsAppFontHint, ui->labelOptionsAirportSettingsHint,
-                     ui->labelOptionsAirspaceSettingsHint, ui->labelOptionsUserAircraftSettingsHint, ui->labelOptionsAiHint,
-                     ui->labelOptionsLabelHint, ui->labelOptionsProfileHint, ui->labelOptionsFlightPlanLabelHint,
+                     ui->labelOptionsNavigationAidsHint, ui->labelOptionsAppFontHint, ui->labelOptionsAppFontHintProfile,
+                     ui->labelOptionsAirportSettingsHint, ui->labelOptionsAirspaceSettingsHint, ui->labelOptionsUserAircraftSettingsHint,
+                     ui->labelOptionsAiHint, ui->labelOptionsLabelHint, ui->labelOptionsProfileHint, ui->labelOptionsFlightPlanLabelHint,
                      ui->labelOptionsMapScaleHint, ui->labelOptionsTrailHintOpen, ui->labelOptionsTrailHintStored,
                      ui->labelOptionsTrailWarn, ui->labelOptionsCompassRoseHint, ui->labelOptionsMeasurmentHint, ui->labelOptionsMsaHint,
                      ui->labelMapApiKeysHint, ui->labelOptionsMapThemesHint, ui->labelOptionsUnitsOnlineAirspaceHint,
@@ -270,6 +270,11 @@ OptionsDialog::OptionsDialog(QMainWindow *parentWindow)
                   tr("Change label and other display options for map objects on the map and the elevation profile."),
                   QStringLiteral(":/littlenavmap/resources/icons/mapdisplaylabels.svg"));
 
+  addPageListItem(QStringLiteral("mapcache"),
+                  tr("Map Cache"),
+                  tr("Change map cache and the path for user airspaces."),
+                  QStringLiteral(":/littlenavmap/resources/icons/mapcache.svg"));
+
   addPageListItem(QStringLiteral("mapthemes"),
                   tr("Map Themes"),
                   tr("Change path to additional background map themes."),
@@ -279,11 +284,6 @@ OptionsDialog::OptionsDialog(QMainWindow *parentWindow)
                   tr("Map Theme Keys"),
                   tr("Enter username, API keys or tokens for map services which require a login."),
                   QStringLiteral(":/littlenavmap/resources/icons/mapdisplaykeys.svg"));
-
-  addPageListItem(QStringLiteral("mapcache"),
-                  tr("Map Cache"),
-                  tr("Change map cache and the path for user airspaces."),
-                  QStringLiteral(":/littlenavmap/resources/icons/filesave.svg"));
 
   addPageListItem(QStringLiteral("maponline"),
                   tr("Map Online"),
@@ -318,7 +318,7 @@ OptionsDialog::OptionsDialog(QMainWindow *parentWindow)
   addPageListItem(QStringLiteral("elevationdata"),
                   tr("Elevation Data"),
                   tr("Install and select elevation data."),
-                  QStringLiteral(":/littlenavmap/resources/icons/profiledock.svg"));
+                  QStringLiteral(":/littlenavmap/resources/icons/profiledata.svg"));
 
   addPageListItem(QStringLiteral("webserver"),
                   tr("Web Server"),
@@ -709,6 +709,7 @@ OptionsDialog::OptionsDialog(QMainWindow *parentWindow)
     ui->spinBoxOptionsCacheDiskMap,
     ui->spinBoxOptionsCacheMemoryMap,
     ui->spinBoxOptionsCacheMemoryProfile,
+    ui->doubleSpinBoxOptionsProfileBuffer,
     ui->radioButtonCacheUseOffineElevation,
     ui->radioButtonCacheUseOnlineElevation,
     ui->lineEditCacheOfflineDataPath,
@@ -911,6 +912,9 @@ OptionsDialog::OptionsDialog(QMainWindow *parentWindow)
 
   connect(ui->pushButtonOptionsDisplaySelectFont, &QPushButton::clicked, this, &OptionsDialog::selectMapFontClicked);
   connect(ui->pushButtonOptionsDisplayResetFont, &QPushButton::clicked, this, &OptionsDialog::resetMapFontClicked);
+
+  connect(ui->pushButtonOptionsProfileSelectFont, &QPushButton::clicked, this, &OptionsDialog::selectProfileFontClicked);
+  connect(ui->pushButtonOptionsProfileResetFont, &QPushButton::clicked, this, &OptionsDialog::resetProfileFontClicked);
 
   connect(ui->pushButtonOptionsMapboxUser, &QPushButton::clicked, this, &OptionsDialog::mapboxUserMapClicked);
 
@@ -1374,7 +1378,8 @@ optc::OptionChangeFlags OptionsDialog::buildFlagsFromChange(const OptionData& sa
   changeFlags.setFlag(optc::OPTION_CHANGE_ELEVATION,
                       saved.flags.testFlag(opts::CACHE_USE_ONLINE_ELEVATION) != changed.flags.testFlag(opts::CACHE_USE_ONLINE_ELEVATION) ||
                       saved.cacheOfflineElevationPath != changed.cacheOfflineElevationPath ||
-                      saved.cacheSizeMemoryProfile != changed.cacheSizeMemoryProfile);
+                      saved.cacheSizeMemoryProfile != changed.cacheSizeMemoryProfile ||
+                      saved.profileBuffer != changed.profileBuffer);
 
   changeFlags.setFlag(optc::OPTION_CHANGE_WEBSERVER, saved.webDocumentRoot != changed.webDocumentRoot);
 
@@ -1588,21 +1593,11 @@ void OptionsDialog::updateWidgetUnits()
   if(units == nullptr)
   {
     units = new UnitStringTool();
-    units->init({
-      ui->doubleSpinBoxOptionsMapZoomShowMap,
-      ui->doubleSpinBoxOptionsMapZoomShowMapMenu,
-      ui->spinBoxOptionsRouteGroundBuffer,
-      ui->spinBoxDisplayOnlineClearance,
-      ui->spinBoxDisplayOnlineArea,
-      ui->spinBoxDisplayOnlineApproach,
-      ui->spinBoxDisplayOnlineDeparture,
-      ui->spinBoxDisplayOnlineFir,
-      ui->spinBoxDisplayOnlineObserver,
-      ui->spinBoxDisplayOnlineGround,
-      ui->spinBoxDisplayOnlineTower,
-      ui->doubleSpinBoxOptionsSimZoomOnLanding,
-      ui->spinBoxOptionsSimZoomOnTakeoff
-    });
+    units->init({ui->doubleSpinBoxOptionsMapZoomShowMap, ui->doubleSpinBoxOptionsMapZoomShowMapMenu, ui->spinBoxOptionsRouteGroundBuffer,
+                 ui->spinBoxDisplayOnlineClearance, ui->spinBoxDisplayOnlineArea, ui->spinBoxDisplayOnlineApproach,
+                 ui->spinBoxDisplayOnlineDeparture, ui->spinBoxDisplayOnlineFir, ui->spinBoxDisplayOnlineObserver,
+                 ui->spinBoxDisplayOnlineGround, ui->spinBoxDisplayOnlineTower, ui->doubleSpinBoxOptionsSimZoomOnLanding,
+                 ui->spinBoxOptionsSimZoomOnTakeoff, ui->doubleSpinBoxOptionsProfileBuffer});
   }
   else
     units->update();
@@ -1632,6 +1627,7 @@ void OptionsDialog::updateWidgetStates()
   updateButtonColors();
   updateGuiFontLabel();
   updateMapFontLabel();
+  updateProfileFontLabel();
   eastWestRuleClicked();
   mapEmptyAirportsClicked(false);
   updateCacheElevationStates();
@@ -1695,6 +1691,9 @@ void OptionsDialog::saveState()
 
   adjustFont(mapFont);
   settings.setValue(lnm::OPTIONS_DIALOG_MAP_FONT, mapFont);
+
+  adjustFont(profileFont);
+  settings.setValue(lnm::OPTIONS_DIALOG_PROFILE_FONT, profileFont);
 
   // Save the path lists
   QStringList paths;
@@ -1764,6 +1763,9 @@ void OptionsDialog::restoreState()
   atools::gui::WidgetState state(lnm::OPTIONS_DIALOG_WIDGET, false /* visibility */, true /* blockSignals */);
   state.restore(widgets);
 
+  if(!state.contains(ui->listWidgetOptionPages))
+    ui->listWidgetOptionPages->setCurrentRow(0);
+
   if(!state.contains(ui->splitterOptions))
   {
     // First start - splitter not saved yet
@@ -1825,6 +1827,9 @@ void OptionsDialog::restoreState()
   mapFont = settings.valueStr(lnm::OPTIONS_DIALOG_MAP_FONT, QStringLiteral());
   adjustFont(mapFont);
 
+  profileFont = settings.valueStr(lnm::OPTIONS_DIALOG_PROFILE_FONT, QStringLiteral());
+  adjustFont(profileFont);
+
   guiFont = settings.valueStr(lnm::OPTIONS_DIALOG_GUI_FONT, QStringLiteral());
   adjustFont(guiFont);
 
@@ -1837,6 +1842,7 @@ void OptionsDialog::restoreState()
   updateButtonColors();
   updateGuiFontLabel();
   updateMapFontLabel();
+  updateProfileFontLabel();
   eastWestRuleClicked();
   updateTrailStates();
 
@@ -2299,6 +2305,9 @@ void OptionsDialog::widgetsToOptionData(OptionData& data)
   adjustFont(mapFont);
   data.mapFont = mapFont;
 
+  adjustFont(profileFont);
+  data.profileFont = profileFont;
+
   adjustFont(guiFont);
   data.guiFont = guiFont;
 
@@ -2506,6 +2515,7 @@ void OptionsDialog::widgetsToOptionData(OptionData& data)
   data.cacheSizeDisk = ui->spinBoxOptionsCacheDiskMap->value();
   data.cacheSizeMemoryMap = ui->spinBoxOptionsCacheMemoryMap->value();
   data.cacheSizeMemoryProfile = ui->spinBoxOptionsCacheMemoryProfile->value();
+  data.profileBuffer = static_cast<float>(ui->doubleSpinBoxOptionsProfileBuffer->value());
   data.guiInfoTextSize = ui->spinBoxOptionsGuiInfoText->value();
   data.guiPerfReportTextSize = ui->spinBoxOptionsGuiAircraftPerf->value();
   data.guiRouteTableTextSize = ui->spinBoxOptionsGuiRouteText->value();
@@ -2655,6 +2665,10 @@ void OptionsDialog::optionDataToWidgets(const OptionData& data)
   mapFont = data.mapFont;
   adjustFont(mapFont);
   updateMapFontLabel();
+
+  profileFont = data.profileFont;
+  adjustFont(profileFont);
+  updateProfileFontLabel();
 
   flightplanColor = data.flightplanColor;
   flightplanOutlineColor = data.flightplanOutlineColor;
@@ -2846,6 +2860,7 @@ void OptionsDialog::optionDataToWidgets(const OptionData& data)
   ui->spinBoxOptionsCacheDiskMap->setValue(data.cacheSizeDisk);
   ui->spinBoxOptionsCacheMemoryMap->setValue(data.cacheSizeMemoryMap);
   ui->spinBoxOptionsCacheMemoryProfile->setValue(data.cacheSizeMemoryProfile);
+  ui->doubleSpinBoxOptionsProfileBuffer->setValue(data.profileBuffer);
   ui->spinBoxOptionsGuiInfoText->setValue(data.guiInfoTextSize);
   ui->spinBoxOptionsGuiAircraftPerf->setValue(data.guiPerfReportTextSize);
   ui->spinBoxOptionsGuiRouteText->setValue(data.guiRouteTableTextSize);
@@ -3586,28 +3601,24 @@ void OptionsDialog::toolbarSizeClicked()
 
 void OptionsDialog::updateMapFontLabel()
 {
-  QFont font;
-  if(!mapFont.isEmpty())
-    // Use set font
-    font.fromString(mapFont);
-  else if(!guiFont.isEmpty())
-    // Fall back to GUI font
-    font.fromString(guiFont);
-  else
-    // Fall back to application font
-    font = QApplication::font();
-
-  if(QApplication::font().bold())
-    font.setBold(true);
-
-  if(QApplication::font().italic())
-    font.setItalic(true);
+  QFont font = OptionData::bestFont(mapFont, guiFont, QApplication::font());
 
 #ifdef DEBUG_INFORMATION
   qDebug() << Q_FUNC_INFO << font;
 #endif
 
   atools::gui::fontDescription(font, ui->lineEditOptionsDisplayFont, tr("Selected font: "));
+}
+
+void OptionsDialog::updateProfileFontLabel()
+{
+  QFont font = OptionData::bestFont(profileFont, guiFont, QApplication::font());
+
+#ifdef DEBUG_INFORMATION
+  qDebug() << Q_FUNC_INFO << font;
+#endif
+
+  atools::gui::fontDescription(font, ui->lineEditOptionsProfileFont, tr("Selected font: "));
 }
 
 void OptionsDialog::updateGuiFontLabel()
@@ -3625,6 +3636,7 @@ void OptionsDialog::updateGuiFontLabel()
 #endif
 
   updateMapFontLabel();
+  updateProfileFontLabel();
 }
 
 void OptionsDialog::resetMapFontClicked()
@@ -3637,16 +3649,7 @@ void OptionsDialog::resetMapFontClicked()
 
 void OptionsDialog::selectMapFontClicked()
 {
-  QFont font;
-  if(!mapFont.isEmpty())
-    // Use set font
-    font.fromString(mapFont);
-  else if(!guiFont.isEmpty())
-    // Fall back to GUI font
-    font.fromString(guiFont);
-  else
-    // Fall back to system font
-    font = QFontDatabase::systemFont(QFontDatabase::GeneralFont);
+  QFont font = OptionData::bestFont(mapFont, guiFont, QFontDatabase::systemFont(QFontDatabase::GeneralFont));
 
   buildFontDialog(font);
   NavApp::setStayOnTop(fontDialog);
@@ -3655,6 +3658,28 @@ void OptionsDialog::selectMapFontClicked()
     mapFont = fontDialog->selectedFont().toString();
     adjustFont(mapFont);
     updateMapFontLabel();
+  }
+}
+
+void OptionsDialog::resetProfileFontClicked()
+{
+  // Empty description means system font
+  profileFont.clear();
+
+  updateProfileFontLabel();
+}
+
+void OptionsDialog::selectProfileFontClicked()
+{
+  QFont font = OptionData::bestFont(profileFont, guiFont, QFontDatabase::systemFont(QFontDatabase::GeneralFont));
+
+  buildFontDialog(font);
+  NavApp::setStayOnTop(fontDialog);
+  if(fontDialog->exec())
+  {
+    profileFont = fontDialog->selectedFont().toString();
+    adjustFont(profileFont);
+    updateProfileFontLabel();
   }
 }
 

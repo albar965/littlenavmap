@@ -88,7 +88,7 @@ void ProfileLabelWidgetHoriz::paintEvent(QPaintEvent *)
 
     // Prepare bold font sligthly smaller ============
     const OptionData& optionData = OptionData::instance();
-    QFont mapFont = optionData.getMapFont();
+    QFont mapFont = optionData.getProfileFont();
     mapcolors::scaleFont(&painter, optionData.getDisplayTextSizeFlightplanProfile() / 100.f * 0.85, &mapFont);
     mapFont = painter.font();
 

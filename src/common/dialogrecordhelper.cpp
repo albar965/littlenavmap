@@ -19,7 +19,6 @@
 
 #include "atools.h"
 #include "sql/sqlrecord.h"
-#include "common/unit.h"
 
 #include <QCheckBox>
 #include <QLineEdit>
@@ -90,8 +89,7 @@ void DialogRecordHelper::dialogToRecordStr(QPlainTextEdit *widget, const QString
 }
 
 void DialogRecordHelper::dialogToRecordFuel(QSpinBox *widget, const QString& name, QCheckBox *checkBox,
-                                            std::function<float(float value, bool fuelAsVolume)> func,
-                                            bool fuelAsVolume)
+                                            UnitRevFloatFuelFunc func, bool fuelAsVolume)
 {
   if(isSetValue(checkBox))
   {
@@ -105,8 +103,7 @@ void DialogRecordHelper::dialogToRecordFuel(QSpinBox *widget, const QString& nam
     record->remove(name);
 }
 
-void DialogRecordHelper::dialogToRecordInt(QSpinBox *widget, const QString& name, QCheckBox *checkBox,
-                                           std::function<float(float value)> func)
+void DialogRecordHelper::dialogToRecordInt(QSpinBox *widget, const QString& name, QCheckBox *checkBox, UnitRevFloatFunc func)
 {
   if(isSetValue(checkBox))
   {

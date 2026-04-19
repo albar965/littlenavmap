@@ -503,9 +503,9 @@ QString SqlModel::buildColumnList(const atools::sql::SqlRecord& tableCols)
   QList<QString> colNames;
   for(const Column *col : columns->getColumns())
   {
-    if(!col->getSqlFunc().isEmpty())
+    if(!col->getSqlFunction().isEmpty())
       // Use SQL function as column if defined
-      colNames.append(QStringLiteral("(%1) as %2").arg(col->getSqlFunc()).arg(col->getColumnName()));
+      colNames.append(QStringLiteral("(%1) as %2").arg(col->getSqlFunction()).arg(col->getColumnName()));
     else if(col->isDistance() || !tableCols.contains(col->getColumnName()))
       // Add null for special distance columns
       // Null for columns which do not exist in the database
@@ -550,8 +550,8 @@ void SqlModel::buildQuery()
   {
     Q_ASSERT(col != nullptr);
 
-    if(!col->getSqlFunc().isEmpty())
-      queryOrder += "order by (" % col->getSqlFunc() % ") " % orderByOrder;
+    if(!col->getSqlFunction().isEmpty())
+      queryOrder += "order by (" % col->getSqlFunction() % ") " % orderByOrder;
     else if(!tableCols.contains(orderByCol))
     {
       // Skip not existing columns for backwards compatibility

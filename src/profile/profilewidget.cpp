@@ -236,6 +236,9 @@ ProfileWidget::ProfileWidget(QWidget *parent)
 
   // Want mouse events even when no button is pressed
   setMouseTracking(true);
+
+  // Convert local unit to NM
+  elevationSampleRadiusOuterNm = Unit::rev(OptionData::instance().getProfileBuffer(), Unit::distNmF);
 }
 
 ProfileWidget::~ProfileWidget()
@@ -889,7 +892,7 @@ void ProfileWidget::calculateProfileMargin()
   if(!legList->route.isEmpty())
   {
     const OptionData& optionData = OptionData::instance();
-    QFont font = optionData.getMapFont();
+    QFont font = optionData.getProfileFont();
     mapcolors::scaleFont(font, optionData.getDisplayTextSizeFlightplanProfile() / 100.f, &font);
     font.setBold(true);
     QFontMetricsF metrics(font);
@@ -985,8 +988,8 @@ void ProfileWidget::paintEvent(QPaintEvent *)
     return;
   }
 
-  setFont(optionData.getMapFont());
-  painter.setFont(optionData.getMapFont());
+  setFont(optionData.getProfileFont());
+  painter.setFont(optionData.getProfileFont());
 
   optsp::DisplayOptionsProfile displayOptions = profileOptions->getDisplayOptions();
   map::MapDisplayTypes mapFeaturesDisplay = NavApp::getMapWidgetGui()->getShownMapDisplayTypes();
@@ -1186,7 +1189,7 @@ void ProfileWidget::paintEvent(QPaintEvent *)
   }
 
   // Draw flight plan =============================================================================
-  painter.setFont(optionData.getMapFont());
+  painter.setFont(optionData.getProfileFont());
   mapcolors::scaleFont(&painter, optionData.getDisplayTextSizeFlightplanProfile() / 100.f, &painter.font());
 
   if(mapFeaturesDisplay.testFlag(map::FLIGHTPLAN))
@@ -1388,7 +1391,7 @@ void ProfileWidget::paintEvent(QPaintEvent *)
     int airportSize = roundToInt((optionData.getDisplayTextSizeFlightplanProfile() * sizeScaleSymbol / 100.) * 10.);
 
     painter.setBackgroundMode(Qt::TransparentMode);
-    painter.setFont(optionData.getMapFont());
+    painter.setFont(optionData.getProfileFont());
     mapcolors::scaleFont(&painter, optionData.getDisplayTextSizeFlightplanProfile() / 100.f, &painter.font());
 
     // Draw symbols and texts =====================================================================================
@@ -2019,12 +2022,12 @@ void ProfileWidget::routeAltitudeChanged(int altitudeFeet)
   if(databaseLoadStatus)
     return;
 
-  routeChanged(true, false);
+  routeChanged(true /* geometryChanged */, false /* newFlightplan */);
 }
 
 void ProfileWidget::aircraftPerformanceChanged(const atools::fs::perf::AircraftPerf *)
 {
-  routeChanged(true, false);
+  routeChanged(true /* geometryChanged */, false /* newFlightplan */);
 }
 
 const Route& ProfileWidget::getRoute() const
@@ -2034,7 +2037,7 @@ const Route& ProfileWidget::getRoute() const
 
 void ProfileWidget::windUpdated()
 {
-  routeChanged(true, false);
+  routeChanged(true /* geometryChanged */, false /* newFlightplan */);
 }
 
 void ProfileWidget::routeChanged(bool geometryChanged, bool newFlightplan)
@@ -2230,7 +2233,7 @@ ElevationLegList ProfileWidget::fetchRouteElevationsThread(ElevationLegList legs
         return ElevationLegList();
 
       LineString elevationsOuter;
-      if(!fetchRouteElevations(elevationsOuter, geometry, optsp::ELEVATION_SAMPLE_RADIUS_OUTER_NM, false /* precision */))
+      if(!fetchRouteElevations(elevationsOuter, geometry, elevationSampleRadiusOuterNm, false /* precision */))
         return ElevationLegList();
 
       if(elevationsInner.isEmpty() || elevationsOuter.isEmpty())
@@ -2619,7 +2622,7 @@ void ProfileWidget::buildTooltipText(int x, bool force)
     groundTextOuter.append(tr("%1 above").arg(Unit::altFeet(std::max(0.f, altitude - groundElevationOuter))));
 
   if(!groundTextOuter.isEmpty())
-    html.br().b(tr("Ground max. in %1 radius: ").arg(Unit::distNm(optsp::ELEVATION_SAMPLE_RADIUS_OUTER_NM))).
+    html.br().b(tr("Ground max. in %1 radius: ").arg(Unit::distNm(elevationSampleRadiusOuterNm, true /* addUnit */, 0))).
     text(atools::strJoin(groundTextOuter, tr(", ")));
 
   // Safe altitude ===============================================================
@@ -2939,12 +2942,20 @@ void ProfileWidget::optionsChanged(const optc::OptionChangeFlags& changeFlags)
   if(changeFlags.testFlag(optc::OPTION_CHANGE_TEXT_SIZES) || changeFlags.testFlag(optc::OPTION_CHANGE_UI_FONT) ||
      changeFlags.testFlag(optc::OPTION_CHANGE_UNITS))
   {
+
     scrollArea->optionsChanged();
 
     updateScreenCoords();
     updateErrorLabel();
     updateHeaderLabel();
     update();
+  }
+
+  if(changeFlags.testFlag(optc::OPTION_CHANGE_ELEVATION))
+  {
+    // Convert local unit to NM
+    elevationSampleRadiusOuterNm = Unit::rev(OptionData::instance().getProfileBuffer(), Unit::distNmF);
+    routeChanged(true /* geometryChanged */, false /* newFlightplan */);
   }
 }
 

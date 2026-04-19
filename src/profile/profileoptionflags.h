@@ -89,8 +89,6 @@ extern const optsp::DisplayOptionsProfile DEFAULT_OPTIONS;
 /* Defines a rectangle where five points are sampled and the maximum altitude is used.
  * Results in a sample rectangle with ELEVATION_SAMPLE_RADIUS_NM * ELEVATION_SAMPLE_RADIUS_NM size */
 const float ELEVATION_SAMPLE_RADIUS_INNER_NM = 0.f;
-const float ELEVATION_SAMPLE_RADIUS_OUTER_NM = 5.f;
-
 }
 
 Q_DECLARE_TYPEINFO(optsp::DisplayOptionsProfile, Q_PRIMITIVE_TYPE);

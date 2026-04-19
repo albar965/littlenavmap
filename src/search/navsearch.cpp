@@ -169,9 +169,9 @@ NavSearch::NavSearch(MainWindow *parent, QTableView *tableView, si::TabSearchId 
   append(Column("frequency", tr("Frequency\nkHz/MHz"))).
   append(Column("channel", tr("Channel"))).
   append(Column("range", ui->spinBoxNavMaxRangeSearch, tr("Range\n%dist%")).
-         filter().condition(">").convertFunc(Unit::distNmF)).
+         filter().condition(">").convertFunction(Unit::distNmF)).
   append(Column("mag_var", tr("Mag.\nDecl.°"))).
-  append(Column("altitude", tr("Elev.\n%alt%")).convertFunc(Unit::altFeetF)).
+  append(Column("altitude", tr("Elev.\n%alt%")).convertFunction(Unit::altFeetF)).
   append(Column("scenery_local_path", ui->lineEditNavScenerySearch,
                 tr("Scenery Path")).filter(true, ui->actionNavSearchShowSceneryOptions)).
   append(Column("bgl_filename", ui->lineEditNavFileSearch,

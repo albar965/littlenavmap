@@ -19,7 +19,6 @@
 
 #include "common/constants.h"
 #include "common/textpointer.h"
-#include "common/unit.h"
 #include "gui/treedialog.h"
 #include "settings/settings.h"
 
@@ -91,9 +90,9 @@ bool ProfileOptions::showOptions()
   treeDialog.addItem2(profileItem, optsp::PROFILE_GROUND, tr("Ground"),
                       tr("Green ground display."));
   treeDialog.addItem2(profileItem, optsp::PROFILE_GROUND_AROUND, tr("Ground maximum"),
-                      tr("Light green ground display showing the maximum elevation within a radius of %1.\n"
-                         "Only shown when using GLOBE offline elevation data.").
-                      arg(Unit::distNm(optsp::ELEVATION_SAMPLE_RADIUS_OUTER_NM)));
+                      tr("Light green ground display showing the maximum elevation within the buffer radius given in options "
+                         "page \"Elevation Data\".\n"
+                         "Only shown when using GLOBE offline elevation data."));
   treeDialog.addItem2(profileItem, optsp::PROFILE_SAFE_ALTITUDE, tr("Safe Altitude Line"),
                       tr("Red safe altitude line for whole flight plan."));
   treeDialog.addItem2(profileItem, optsp::PROFILE_LEG_SAFE_ALTITUDE, tr("Leg Safe Altitude Lines"),

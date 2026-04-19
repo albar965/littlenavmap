@@ -109,15 +109,15 @@ Column& Column::condition(const QString& cond)
   return *this;
 }
 
-Column& Column::convertFunc(std::function<float(float)> unitConvertFunc)
+Column& Column::convertFunction(UnitRevFloatFunc unitConvertFunction)
 {
-  unitConvert = unitConvertFunc;
+  unitConvertFunc = unitConvertFunction;
   return *this;
 }
 
-Column& Column::sqlFunc(const QString& sqlFunctionParam)
+Column& Column::sqlFunction(const QString& sqlFunctionParam)
 {
-  sqlFunction = sqlFunctionParam;
+  sqlFunc = sqlFunctionParam;
   return *this;
 }
 
