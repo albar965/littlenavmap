@@ -1,0 +1,166 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>SimBriefExportDialog</class>
+ <widget class="QDialog" name="SimBriefExportDialog">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>660</width>
+    <height>430</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>Little Navmap - Export Flight Plan to SimBrief</string>
+  </property>
+  <layout class="QVBoxLayout" name="verticalLayout">
+   <item>
+    <widget class="QLabel" name="labelHeader">
+     <property name="frameShape">
+      <enum>QFrame::Box</enum>
+     </property>
+     <property name="frameShadow">
+      <enum>QFrame::Sunken</enum>
+     </property>
+     <property name="text">
+      <string>Review the information below, enter the optional airline and flight number, then open &lt;a href=&quot;https://www.simbrief.com&quot;&gt;&lt;b&gt;SimBrief&lt;/b&gt;&lt;/a&gt; in a web browser before exporting the flight plan.</string>
+     </property>
+     <property name="wordWrap">
+      <bool>true</bool>
+     </property>
+     <property name="margin">
+      <number>5</number>
+     </property>
+     <property name="openExternalLinks">
+      <bool>true</bool>
+     </property>
+     <property name="textInteractionFlags">
+      <set>Qt::LinksAccessibleByMouse|Qt::TextSelectableByMouse</set>
+     </property>
+    </widget>
+   </item>
+   <item>
+    <layout class="QFormLayout" name="formLayoutSummary">
+     <item row="0" column="0">
+      <widget class="QLabel" name="labelAircraftType">
+       <property name="text">
+        <string>Aircraft type:</string>
+       </property>
+       <property name="buddy">
+        <cstring>lineEditAircraftType</cstring>
+       </property>
+      </widget>
+     </item>
+     <item row="0" column="1">
+      <widget class="QLineEdit" name="lineEditAircraftType">
+       <property name="readOnly">
+        <bool>true</bool>
+       </property>
+      </widget>
+     </item>
+     <item row="1" column="0">
+      <widget class="QLabel" name="labelCruiseAltitude">
+       <property name="text">
+        <string>Cruise altitude:</string>
+       </property>
+       <property name="buddy">
+        <cstring>lineEditCruiseAltitude</cstring>
+       </property>
+      </widget>
+     </item>
+     <item row="1" column="1">
+      <widget class="QLineEdit" name="lineEditCruiseAltitude">
+       <property name="readOnly">
+        <bool>true</bool>
+       </property>
+      </widget>
+     </item>
+     <item row="2" column="0">
+      <widget class="QLabel" name="labelRouteDescription">
+       <property name="text">
+        <string>Route description:</string>
+       </property>
+       <property name="buddy">
+        <cstring>textEditRouteDescription</cstring>
+       </property>
+      </widget>
+     </item>
+     <item row="2" column="1">
+      <widget class="QTextEdit" name="textEditRouteDescription">
+       <property name="minimumSize">
+        <size>
+         <width>0</width>
+         <height>120</height>
+        </size>
+       </property>
+       <property name="readOnly">
+        <bool>true</bool>
+       </property>
+       <property name="acceptRichText">
+        <bool>false</bool>
+       </property>
+       <property name="textInteractionFlags">
+        <set>Qt::TextSelectableByKeyboard|Qt::TextSelectableByMouse</set>
+       </property>
+      </widget>
+     </item>
+    </layout>
+   </item>
+   <item>
+    <layout class="QFormLayout" name="formLayoutOptions">
+     <item row="0" column="0">
+      <widget class="QLabel" name="labelAirline">
+       <property name="text">
+        <string>&amp;Airline:</string>
+       </property>
+       <property name="buddy">
+        <cstring>lineEditAirline</cstring>
+       </property>
+      </widget>
+     </item>
+     <item row="0" column="1">
+      <widget class="QLineEdit" name="lineEditAirline">
+       <property name="placeholderText">
+        <string>Optional airline code, e.g. KFY</string>
+       </property>
+      </widget>
+     </item>
+     <item row="1" column="0">
+      <widget class="QLabel" name="labelFlightNumber">
+       <property name="text">
+        <string>&amp;Flight number:</string>
+       </property>
+       <property name="buddy">
+        <cstring>lineEditFlightNumber</cstring>
+       </property>
+      </widget>
+     </item>
+     <item row="1" column="1">
+      <widget class="QLineEdit" name="lineEditFlightNumber">
+       <property name="placeholderText">
+        <string>Optional flight number, e.g. 1052</string>
+       </property>
+      </widget>
+     </item>
+    </layout>
+   </item>
+   <item>
+    <widget class="QDialogButtonBox" name="buttonBox">
+     <property name="orientation">
+      <enum>Qt::Horizontal</enum>
+     </property>
+     <property name="standardButtons">
+      <set>QDialogButtonBox::Cancel|QDialogButtonBox::Help|QDialogButtonBox::Ok|QDialogButtonBox::YesToAll</set>
+     </property>
+    </widget>
+   </item>
+  </layout>
+ </widget>
+ <tabstops>
+  <tabstop>lineEditAirline</tabstop>
+  <tabstop>lineEditFlightNumber</tabstop>
+  <tabstop>textEditRouteDescription</tabstop>
+ </tabstops>
+ <resources/>
+ <connections/>
+</ui>

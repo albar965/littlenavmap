@@ -271,6 +271,7 @@ const QLatin1String MAP_MARKER_LOAD_SELECTION("Map/MapMarkerLoadSelection");
 const QLatin1String ROUTE_EXPORT_DIALOG("RouteExport/RouteExportDialog");
 const QLatin1String ROUTE_EXPORT_DIALOG_ZOOM("RouteExport/RouteExportDialogZoom");
 const QLatin1String ROUTE_EXPORT_FORMATS("RouteExport/RouteExportFormats");
+const QLatin1String ROUTE_EXPORT_SIMBRIEF_DIALOG("RouteExport/RouteExportSimBriefDialog");
 const QLatin1String ROUTE_EXPORT_SIMBRIEF_DISPATCH_URL("RouteExport/RouteExportSimBriefDispatchUrl");
 const QLatin1String ROUTE_EXPORT_SIMBRIEF_FETCHER_URL("RouteExport/RouteExportSimBriefFetcherUrl");
 
