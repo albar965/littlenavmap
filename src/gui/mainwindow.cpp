@@ -273,6 +273,7 @@ MainWindow::MainWindow()
     simbriefHandler = new SimBriefHandler(this);
 
     qDebug() << Q_FUNC_INFO << "Creating non-modal OptionsDialog";
+    Application::showSplashScreenMessage(tr("Loading options ... "));
     optionsDialog = new OptionsDialog(nullptr);
 
     // get best language and fill options combo box
@@ -302,8 +303,10 @@ MainWindow::MainWindow()
     setupUi();
 
     // Load all map feature colors
+    Application::showSplashScreenMessage(tr("Loading colors ... "));
     mapcolors::loadColors();
 
+    Application::showSplashScreenMessage(tr("Initializing units ... "));
     Unit::init();
     optionsChangedInitial();
 
@@ -313,11 +316,13 @@ MainWindow::MainWindow()
     // Prepare database and queries
     qDebug() << Q_FUNC_INFO << "Creating DatabaseManager";
 
+    Application::showSplashScreenMessage(tr("Opening databases ... "));
     NavApp::init(this);
 
     // Initialize and connect the data exchange which sends properties from other started instances
     connect(NavApp::getDataExchangeConst(), &atools::gui::DataExchange::dataFetched, this, &MainWindow::dataExchangeDataFetched);
 
+    Application::showSplashScreenMessage(tr("Loading style ... "));
     NavApp::getStyleHandler()->insertMenuItems(ui->menuWindowStyle);
     NavApp::getStyleHandler()->restoreState();
     mapcolors::init();
@@ -325,13 +330,16 @@ MainWindow::MainWindow()
     // Add actions for flight simulator database switch in main menu
     NavApp::getDatabaseManager()->insertSimSwitchActions();
 
+    // Weather =====================================
     qDebug() << Q_FUNC_INFO << "Creating WeatherReporter";
+    Application::showSplashScreenMessage(tr("Initalizing weather ... "));
     weatherReporter = new WeatherReporter(this, NavApp::getCurrentSimulatorDb());
     weatherContextHandler = new WeatherContextHandler(weatherReporter, NavApp::getConnectClient());
 
     qDebug() << Q_FUNC_INFO << "Creating WindReporter";
     windReporter = new WindReporter(this, NavApp::getCurrentSimulatorDb());
 
+    // File histories =====================================
     qDebug() << Q_FUNC_INFO << "Creating FileHistoryHandler for flight plans";
     routeFileHistory = new FileHistoryHandler(this, lnm::ROUTE_FILENAMES_RECENT, ui->menuRecentRoutes, ui->actionRecentRoutesClear);
 
@@ -345,10 +353,12 @@ MainWindow::MainWindow()
     layoutFileHistory = new FileHistoryHandler(this, lnm::LAYOUT_RECENT, ui->menuWindowLayoutRecent, ui->actionWindowLayoutClearRecent);
     layoutFileHistory->setFirstItemShortcut("Ctrl+Shift+W");
 
+    Application::showSplashScreenMessage(tr("Loading map themes ... "));
     mapThemeHandler = new MapThemeHandler(this);
     mapThemeHandler->loadThemes();
 
     // Create map widget and replace dummy widget in window
+    Application::showSplashScreenMessage(tr("Creating map ... "));
     qDebug() << Q_FUNC_INFO << "Creating MapWidget";
     mapWidget = new MapWidget(this);
     if(OptionData::instance().getFlags2().testFlag(opts2::MAP_ALLOW_UNDOCK))
@@ -377,9 +387,11 @@ MainWindow::MainWindow()
     mapThemeHandler->setupMapThemesUi();
 
     // Init a few late objects since these depend on the map widget instance
+    Application::showSplashScreenMessage(tr("Initializing database queries ... "));
     NavApp::initQueries();
 
     // Create elevation profile widget and replace dummy widget in window
+    Application::showSplashScreenMessage(tr("Creating elevation profile ... "));
     qDebug() << Q_FUNC_INFO << "Creating ProfileWidget";
     profileWidget = new ProfileWidget(ui->scrollAreaProfile->viewport());
     ui->scrollAreaProfile->setWidget(profileWidget);
@@ -387,26 +399,23 @@ MainWindow::MainWindow()
 
     // Have to create searches in the same order as the tabs
     qDebug() << Q_FUNC_INFO << "Creating SearchController";
+    Application::showSplashScreenMessage(tr("Creating search ... "));
     searchController = new SearchController(this, ui->tabWidgetSearch);
     searchController->createAirportSearch(ui->tableViewAirportSearch);
     searchController->createNavSearch(ui->tableViewNavSearch);
-
     searchController->createProcedureSearch(ui->treeWidgetApproachSearch);
-
     searchController->createUserdataSearch(ui->tableViewUserdata);
     searchController->createLogdataSearch(ui->tableViewLogdata);
-
     searchController->createOnlineClientSearch(ui->tableViewOnlineClientSearch);
     searchController->createOnlineCenterSearch(ui->tableViewOnlineCenterSearch);
     searchController->createOnlineServerSearch(ui->tableViewOnlineServerSearch);
 
     qDebug() << Q_FUNC_INFO << "Creating InfoController";
+    Application::showSplashScreenMessage(tr("Creating information ... "));
     infoController = new InfoController(this);
 
     qDebug() << Q_FUNC_INFO << "Creating PrintSupport";
     printSupport = new PrintSupport(this);
-
-    statusBar->setStatusMessage(tr("Started."));
 
     qDebug() << Q_FUNC_INFO << "Connecting slots";
     connectAllSlots();
@@ -432,6 +441,7 @@ MainWindow::MainWindow()
     NavApp::getMapDetailHandler()->insertToolbarButton();
 
     qDebug() << Q_FUNC_INFO << "Reading settings";
+    Application::showSplashScreenMessage(tr("Reading settings ... "));
     restoreStateMain();
 
     // Update window states based on actions
@@ -572,6 +582,7 @@ MainWindow::MainWindow()
 
   // Set font for user interface ====================================================
   // Signal font change is sent again manually later in mainWindowShown()
+  Application::showSplashScreenMessage(tr("Setting user interface font ... "));
   QString fontString = settings.valueStr(lnm::OPTIONS_DIALOG_GUI_FONT, QStringLiteral());
   QFont font;
   if(!fontString.isEmpty())
@@ -3334,6 +3345,8 @@ void MainWindow::mainWindowShown()
 {
   qDebug() << Q_FUNC_INFO << "enter";
 
+  Application::showSplashScreenMessage(tr("Showing main window ... "));
+
   // Emit program wide font change signal again to update all widgets
   if(fontChangedFromDefault)
     emit Application::applicationInstance()->fontChanged(QGuiApplication::font());
@@ -3371,6 +3384,8 @@ void MainWindow::mainWindowShown()
 void MainWindow::loadLayoutDelayed(const QString& filename)
 {
   qDebug() << Q_FUNC_INFO << filename;
+  Application::showSplashScreenMessage(tr("Loading layout ... "));
+
   try
   {
     // Load layout file delayed - does not apply state
@@ -3386,6 +3401,9 @@ void MainWindow::loadLayoutDelayed(const QString& filename)
 void MainWindow::mainWindowShownDelayed()
 {
   qDebug() << Q_FUNC_INFO << "enter";
+
+  Application::showSplashScreenMessage(tr("Main window shown ... "));
+  statusBar->setStatusMessage(tr("Started."));
 
   // Initialize late to avoid multiple updates
   profileWidget->mainWindowShown();

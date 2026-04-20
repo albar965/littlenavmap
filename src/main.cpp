@@ -50,6 +50,7 @@
 #include <QPixmapCache>
 #include <QScreen>
 #include <QProcessEnvironment>
+#include <QFontDatabase>
 
 #include <marble/MarbleGlobal.h>
 #include <marble/MarbleDirs.h>
@@ -237,7 +238,17 @@ int main(int argc, char *argv[])
       // ==============================================
       // Start splash screen
       if(settings.valueBool(lnm::OPTIONS_DIALOG_SHOW_SPLASH, true))
-        Application::initSplashScreen(":/littlenavmap/resources/icons/splash.png", GIT_REVISION_LITTLENAVMAP);
+      {
+        QString fontStr = settings.valueStr(lnm::OPTIONS_DIALOG_GUI_FONT, QStringLiteral());
+        QFont font;
+        if(fontStr.isEmpty())
+          font = QFontDatabase::systemFont(QFontDatabase::GeneralFont);
+        else
+          font.fromString(fontStr);
+
+        Application::initSplashScreen(":/littlenavmap/resources/icons/splash.png", GIT_REVISION_LITTLENAVMAP, font);
+        Application::showSplashScreenMessage(QObject::tr("Initializing ... "));
+      }
 
       // Log system information ========================================
       qInfo().noquote().nospace() << "atools revision " << atools::gitRevision() << " "
@@ -333,7 +344,7 @@ int main(int argc, char *argv[])
         // "/home/USER/.local/share" ("/home/USER/.local/share/marble/maps/earth/openstreetmap")
         // "C:/Users/USER/AppData/Local" ("C:\Users\USER\AppData\Local\.marble\data\maps\earth\openstreetmap")
 
-        /// home/USER/.local/share/marble
+        // . /home/USER/.local/share/marble
         QFileInfo cacheFileinfo(commandLine.getCachePath());
 
         QString marbleCache;
@@ -386,6 +397,7 @@ int main(int argc, char *argv[])
       /* Copy from application directory to settings directory if newer and create indexes if missing */
       dbManager->checkCopyAndPrepareDatabases();
 
+      Application::showSplashScreenMessage(QObject::tr("Checking databases ... "));
       if(dbManager->checkIncompatibleDatabases(&databasesErased))
       {
         ATOOLS_DELETE_LOG(dbManager);
