@@ -4088,8 +4088,6 @@ void MapWidget::addRangeMark(const atools::geo::Pos& pos, const map::MapAirport 
 
 void MapWidget::zoomInOut(bool directionIn, bool smooth)
 {
-  constexpr int marbleZoomStep = 40;
-
   if(!directionIn && distance() > MAP_ZOOM_OUT_LIMIT_KM)
     return;
 
@@ -4100,9 +4098,9 @@ void MapWidget::zoomInOut(bool directionIn, bool smooth)
   {
     // Smooth zoom
     if(directionIn)
-      zoomViewBy(marbleZoomStep / 4);
+      zoomViewBy(zoomStep() / 4);
     else
-      zoomViewBy(-marbleZoomStep / 4);
+      zoomViewBy(-zoomStep() / 4);
   }
   else
   {
@@ -4110,9 +4108,9 @@ void MapWidget::zoomInOut(bool directionIn, bool smooth)
     if(NavApp::getMapThemeHandler()->hasDiscreteZoom(currentThemeId))
     {
       if(directionIn)
-        zoomViewBy(marbleZoomStep * 3);
+        zoomViewBy(zoomStep() * 3);
       else
-        zoomViewBy(-marbleZoomStep * 3);
+        zoomViewBy(-zoomStep() * 3);
     }
     else
     {

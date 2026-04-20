@@ -1383,7 +1383,7 @@ bool MapPaintWidget::loadKml(const QString& filename, bool center)
 {
   if(QFile::exists(filename))
   {
-    model()->addGeoDataFile(filename);
+    model()->addGeoDataFile(filename, 0, center && OptionData::instance().getFlags().testFlag(opts::GUI_CENTER_KML));
 
     if(center)
       showAircraft(false);
