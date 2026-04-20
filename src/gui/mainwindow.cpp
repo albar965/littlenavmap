@@ -4365,12 +4365,13 @@ void MainWindow::optionsChanged(const optc::OptionChangeFlags& changeFlags)
   routeController->optionsChanged(changeFlags);
   infoController->optionsChanged(changeFlags);
   mapWidget->optionsChanged(changeFlags);
+
+  NavApp::getElevationProvider()->optionsChanged(changeFlags);
   profileWidget->optionsChanged(changeFlags);
 
   NavApp::getOnlinedataController()->optionsChanged();
   NavApp::getLogdataController()->optionsChanged();
 
-  NavApp::getElevationProvider()->optionsChanged(changeFlags);
   NavApp::getAircraftPerfController()->optionsChanged(changeFlags);
   saveStateNow();
 
