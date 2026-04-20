@@ -261,7 +261,7 @@ void LogStatisticsDialog::buttonBoxClicked(QAbstractButton *button)
       data->setHtml(ui->textBrowserLogStatsOverview->toHtml());
       data->setText(ui->textBrowserLogStatsOverview->toPlainText());
       QGuiApplication::clipboard()->setMimeData(data);
-      NavApp::setStatusMessage(QString(tr("Copied text to clipboard.")));
+      NavApp::setStatusMessage(tr("Copied text to clipboard."));
     }
     else
     {
@@ -274,7 +274,7 @@ void LogStatisticsDialog::buttonBoxClicked(QAbstractButton *button)
       int exported = CsvExporter::tableAsCsv(ui->tableViewLogStatsGrouped, true /* header */, csv);
       if(!csv.isEmpty())
         QApplication::clipboard()->setText(csv);
-      NavApp::setStatusMessage(QString(tr("Copied %1 rows from table as CSV to clipboard.").arg(exported)));
+      NavApp::setStatusMessage(tr("Copied %1 rows from table as CSV to clipboard.").arg(exported));
     }
   }
   else if(buttonType == QDialogButtonBox::Help)

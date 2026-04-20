@@ -482,12 +482,12 @@ void RouteController::connectMapWidget()
 
 void RouteController::undoTriggered()
 {
-  NavApp::setStatusMessage(QString(tr("Undo flight plan change.")));
+  NavApp::setStatusMessage(tr("Undo flight plan change."));
 }
 
 void RouteController::redoTriggered()
 {
-  NavApp::setStatusMessage(QString(tr("Redo flight plan change.")));
+  NavApp::setStatusMessage(tr("Redo flight plan change."));
 }
 
 /* Ctrl-C - copy selected table contents in CSV format to clipboard */
@@ -514,7 +514,7 @@ void RouteController::tableCopyClipboardTriggered()
   if(!csv.isEmpty())
   {
     QApplication::clipboard()->setText(csv);
-    NavApp::setStatusMessage(QString(tr("Copied %1 entries as CSV to clipboard.")).arg(exported));
+    NavApp::setStatusMessage(tr("Copied %1 entries as CSV to clipboard.")).arg(exported);
   }
 }
 
@@ -827,7 +827,7 @@ void RouteController::routeStringToClipboard() const
   if(!str.isEmpty())
     QApplication::clipboard()->setText(str);
 
-  NavApp::setStatusMessage(QString(tr("Flight plan string to clipboard.")));
+  NavApp::setStatusMessage(tr("Flight plan string to clipboard."));
 }
 
 void RouteController::aircraftPerformanceChanged()

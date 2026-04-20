@@ -184,7 +184,7 @@ void SearchBaseTable::tableCopyClipboard()
     if(!csv.isEmpty())
       QApplication::clipboard()->setText(csv);
 
-    NavApp::setStatusMessage(QString(tr("Copied %1 entries to clipboard.")).arg(exported));
+    NavApp::setStatusMessage(tr("Copied %1 entries to clipboard.").arg(exported));
   }
 }
 

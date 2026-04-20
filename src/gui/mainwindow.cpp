@@ -2034,7 +2034,7 @@ void MainWindow::deleteAircraftTrail(bool quiet)
     mapWidget->deleteAircraftTrail();
     profileWidget->deleteAircraftTrailPoints();
     updateActionStates();
-    statusBar->setStatusMessage(QString(tr("Aircraft trail removed from map.")));
+    statusBar->setStatusMessage(tr("Aircraft trail removed from map."));
   }
 }
 

@@ -1243,22 +1243,22 @@ void MapWidget::mouseDoubleClickEvent(QMouseEvent *event)
   if(mapSearchResult.userAircraft.isValid())
   {
     showPos(mapSearchResult.userAircraft.getPosition(), 0.f, true);
-    NavApp::getStatusBar()->setStatusMessage(QString(tr("Showing user aircraft on map.")));
+    NavApp::getStatusBar()->setStatusMessage(tr("Showing user aircraft on map."));
   }
   else if(!mapSearchResult.aiAircraft.isEmpty())
   {
     showPos(mapSearchResult.aiAircraft.constFirst().getPosition(), 0.f, true);
-    NavApp::getStatusBar()->setStatusMessage(QString(tr("Showing AI / multiplayer aircraft on map.")));
+    NavApp::getStatusBar()->setStatusMessage(tr("Showing AI / multiplayer aircraft on map."));
   }
   else if(!mapSearchResult.onlineAircraft.isEmpty())
   {
     showPos(mapSearchResult.onlineAircraft.constFirst().getPosition(), 0.f, true);
-    NavApp::getStatusBar()->setStatusMessage(QString(tr("Showing online client aircraft on map.")));
+    NavApp::getStatusBar()->setStatusMessage(tr("Showing online client aircraft on map."));
   }
   else if(!mapSearchResult.airports.isEmpty())
   {
     showRect(mapSearchResult.airports.constFirst().bounding, true);
-    NavApp::getStatusBar()->setStatusMessage(QString(tr("Showing airport on map.")));
+    NavApp::getStatusBar()->setStatusMessage(tr("Showing airport on map."));
   }
   else
   {
@@ -1280,7 +1280,7 @@ void MapWidget::mouseDoubleClickEvent(QMouseEvent *event)
       showPos(mapSearchResult.rangeMarks.constFirst().position, 0.f, true);
     else if(!mapSearchResult.holdings.isEmpty())
       showPos(mapSearchResult.holdings.constFirst().position, 0.f, true);
-    NavApp::getStatusBar()->setStatusMessage(QString(tr("Showing on map.")));
+    NavApp::getStatusBar()->setStatusMessage(tr("Showing on map."));
   }
 }
 
@@ -3712,7 +3712,7 @@ void MapWidget::removePatternMark(int id)
   getMapMarkers()->removePatternMark(id);
   mainWindow->updateMarkActionStates();
   update();
-  NavApp::getStatusBar()->setStatusMessage(QString(tr("Traffic pattern removed from map.")));
+  NavApp::getStatusBar()->setStatusMessage(tr("Traffic pattern removed from map."));
 }
 
 void MapWidget::addHold(const map::MapResult& result, const atools::geo::Pos& position)
@@ -3745,7 +3745,7 @@ void MapWidget::removeHoldMark(int id)
   getMapMarkers()->removeHoldingMark(id);
   mainWindow->updateMarkActionStates();
   update();
-  NavApp::getStatusBar()->setStatusMessage(QString(tr("Holding removed from map.")));
+  NavApp::getStatusBar()->setStatusMessage(tr("Holding removed from map."));
 }
 
 void MapWidget::addMsaMark(map::MapAirportMsa airportMsa)
@@ -3776,7 +3776,7 @@ void MapWidget::removeMsaMark(int id)
   getMapMarkers()->removeMsaMark(id);
   mainWindow->updateMarkActionStates();
   update();
-  NavApp::getStatusBar()->setStatusMessage(QString(tr("MSA sector diagram removed from map.")));
+  NavApp::getStatusBar()->setStatusMessage(tr("MSA sector diagram removed from map."));
 }
 
 void MapWidget::resetSettingsToDefault()
@@ -3833,7 +3833,7 @@ void MapWidget::copyCoordinatesPos(const atools::geo::Pos& pos)
   if(pos.isValid())
   {
     QGuiApplication::clipboard()->setText(Unit::coords(pos));
-    NavApp::getStatusBar()->setStatusMessage(QString(tr("Coordinates copied to clipboard.")));
+    NavApp::getStatusBar()->setStatusMessage(tr("Coordinates copied to clipboard."));
   }
 }
 
@@ -3881,7 +3881,7 @@ void MapWidget::changeHome()
   homePos = getCenterPos();
   homeDistance = distance();
   update();
-  NavApp::getStatusBar()->setStatusMessage(QString(tr("Changed home position.")));
+  NavApp::getStatusBar()->setStatusMessage(tr("Changed home position."));
 }
 
 void MapWidget::addNavRangeMark(const atools::geo::Pos& pos, map::MapTypes type,
@@ -4129,7 +4129,7 @@ void MapWidget::removeRangeMark(int id)
   getMapMarkers()->removeRangeMark(id);
   mainWindow->updateMarkActionStates();
   update();
-  NavApp::getStatusBar()->setStatusMessage(QString(tr("Range ring removed from map.")));
+  NavApp::getStatusBar()->setStatusMessage(tr("Range ring removed from map."));
 }
 
 void MapWidget::removeDistanceMark(int id)
@@ -4137,7 +4137,7 @@ void MapWidget::removeDistanceMark(int id)
   getMapMarkers()->removeDistanceMark(id);
   mainWindow->updateMarkActionStates();
   update();
-  NavApp::getStatusBar()->setStatusMessage(QString(tr("Measurement line removed from map.")));
+  NavApp::getStatusBar()->setStatusMessage(tr("Measurement line removed from map."));
 }
 
 void MapWidget::setMapDetail(int level, int levelText)

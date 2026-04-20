@@ -87,12 +87,12 @@ void SimBriefHandler::sendRouteToSimBrief()
   if(result == QMessageBox::Yes)
   {
     atools::gui::DesktopServices::openUrl(mainWindow, url);
-    NavApp::setStatusMessage(QString(tr("SimBrief flight plan sent to web browser.")));
+    NavApp::setStatusMessage(tr("SimBrief flight plan sent to web browser."));
   }
   else if(result == QMessageBox::YesToAll)
   {
     QApplication::clipboard()->setText(url.toEncoded());
-    NavApp::setStatusMessage(QString(tr("SimBrief address copied to clipboard.")));
+    NavApp::setStatusMessage(tr("SimBrief address copied to clipboard.")));
   }
   else if(result == QMessageBox::Help)
     atools::gui::HelpHandler::openHelpUrlWeb(mainWindow, lnm::helpOnlineUrl + "LOADSIMBRIEF.html", lnm::helpLanguageOnline());
