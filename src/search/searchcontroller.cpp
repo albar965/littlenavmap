@@ -270,7 +270,12 @@ void SearchController::preDatabaseLoad()
 void SearchController::postDatabaseLoad()
 {
   for(AbstractSearch *search : std::as_const(allSearchTabs))
+  {
+#ifdef DEBUG_INFORMATION
+    qDebug() << Q_FUNC_INFO << search->objectName();
+#endif
     search->postDatabaseLoad();
+  }
 }
 
 void SearchController::refreshUserdata()

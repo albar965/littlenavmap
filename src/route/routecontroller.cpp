@@ -514,7 +514,7 @@ void RouteController::tableCopyClipboardTriggered()
   if(!csv.isEmpty())
   {
     QApplication::clipboard()->setText(csv);
-    NavApp::setStatusMessage(tr("Copied %1 entries as CSV to clipboard.")).arg(exported);
+    NavApp::setStatusMessage(tr("Copied %1 entries as CSV to clipboard.").arg(exported));
   }
 }
 

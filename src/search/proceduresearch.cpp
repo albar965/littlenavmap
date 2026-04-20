@@ -152,6 +152,8 @@ bool TreeEventFilter::eventFilter(QObject *object, QEvent *event)
 ProcedureSearch::ProcedureSearch(MainWindow *main, QTreeWidget *treeWidgetParam, si::TabSearchId tabWidgetIndex)
   : AbstractSearch(main, treeWidgetParam, tabWidgetIndex), treeWidget(treeWidgetParam)
 {
+  setObjectName("ProcedureSearch");
+
   const Queries *queries = QueryManager::instance()->getQueriesGui();
   infoQuery = queries->getInfoQuery();
   airportQueryNav = queries->getAirportQueryNav();

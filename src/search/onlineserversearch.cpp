@@ -29,6 +29,8 @@
 OnlineServerSearch::OnlineServerSearch(MainWindow *parent, QTableView *tableView, si::TabSearchId tabWidgetIndex)
   : SearchBaseTable(parent, tableView, new ColumnList("server", "server_id"), tabWidgetIndex)
 {
+  setObjectName("OnlineServerSearch");
+
   // Default view column descriptors
   // Hidden columns are part of the query and can be used as search criteria but are not shown in the table
   // Columns that are hidden are also needed to fill MapAirport object and for the icon delegate

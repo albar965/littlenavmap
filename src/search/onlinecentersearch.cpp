@@ -38,6 +38,8 @@
 OnlineCenterSearch::OnlineCenterSearch(MainWindow *parent, QTableView *tableView, si::TabSearchId tabWidgetIndex)
   : SearchBaseTable(parent, tableView, new ColumnList("atc", "atc_id"), tabWidgetIndex)
 {
+  setObjectName("OnlineCenterSearch");
+
   /* *INDENT-OFF* */
   ui->pushButtonOnlineCenterHelpSearch->setToolTip(
     tr("<p>All set search conditions have to match.</p>"

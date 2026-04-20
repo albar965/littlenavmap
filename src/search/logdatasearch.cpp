@@ -41,6 +41,8 @@
 LogdataSearch::LogdataSearch(MainWindow *parent, QTableView *tableView, si::TabSearchId tabWidgetIndex)
   : SearchBaseTable(parent, tableView, new ColumnList("logbook", "logbook_id"), tabWidgetIndex)
 {
+  setObjectName("LogdataSearch");
+
   /* *INDENT-OFF* */
   ui->pushButtonLogdataHelp->setToolTip(
     "<p>All set search conditions have to match.</p>"
@@ -381,9 +383,9 @@ void LogdataSearch::setCallbacks()
 void LogdataSearch::updateButtonMenu()
 {
   atools::gui::changeIndication(ui->actionLogdataSearchShowMoreOptions,
-                                      atools::gui::anyWidgetChanged({ui->verticalLayoutLogdataMore}));
+                                atools::gui::anyWidgetChanged({ui->verticalLayoutLogdataMore}));
   atools::gui::changeIndication(ui->actionLogdataSearchShowDistOptions,
-                                      atools::gui::anyWidgetChanged({ui->horizontalLayoutLogdataDist}));
+                                atools::gui::anyWidgetChanged({ui->horizontalLayoutLogdataDist}));
 }
 
 void LogdataSearch::updatePushButtons()

@@ -92,7 +92,7 @@ void SimBriefHandler::sendRouteToSimBrief()
   else if(result == QMessageBox::YesToAll)
   {
     QApplication::clipboard()->setText(url.toEncoded());
-    NavApp::setStatusMessage(tr("SimBrief address copied to clipboard.")));
+    NavApp::setStatusMessage(tr("SimBrief address copied to clipboard."));
   }
   else if(result == QMessageBox::Help)
     atools::gui::HelpHandler::openHelpUrlWeb(mainWindow, lnm::helpOnlineUrl + "LOADSIMBRIEF.html", lnm::helpLanguageOnline());

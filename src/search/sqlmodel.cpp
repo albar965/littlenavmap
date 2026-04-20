@@ -17,13 +17,14 @@
 
 #include "search/sqlmodel.h"
 
+#include "exception.h"
 #include "gui/application.h"
 #include "gui/errorhandler.h"
-#include "sql/sqldatabase.h"
-#include "sql/sqlquery.h"
-#include "exception.h"
+#include "gui/signalblocker.h"
 #include "search/column.h"
 #include "search/columnlist.h"
+#include "sql/sqldatabase.h"
+#include "sql/sqlquery.h"
 #include "sql/sqlrecord.h"
 
 #include <QLineEdit>
@@ -110,7 +111,6 @@ SqlModel::~SqlModel()
 
 void SqlModel::filterByBuilder()
 {
-  qDebug() << Q_FUNC_INFO;
   buildQuery();
 }
 
@@ -161,10 +161,10 @@ void SqlModel::filterBy(bool exclude, QString whereCol, QVariant whereValueDisp,
   buildSqlWhereValue(whereValueSql, exact);
 
   if(whereValueDisp.isNull())
-    whereOp = exclude ? "is not null" : "is null";
+    whereOp = exclude ? QStringLiteral("is not null") : QStringLiteral("is null");
   else
   {
-    whereOp = exclude ? " not like " : " like ";
+    whereOp = exclude ? QStringLiteral(" not like ") : QStringLiteral(" like ");
     escape = ESCAPE;
   }
 
@@ -209,7 +209,7 @@ void SqlModel::filterBy(bool exclude, QString whereCol, QVariant whereValueDisp,
   else if(QLineEdit *edit = columns->getColumn(whereCol)->getLineEditWidget())
   {
     // Set the search text into the corresponding line edit
-    edit->setText((exclude ? "-" : QStringLiteral()) % whereValueDisp.toString());
+    edit->setText((exclude ? QStringLiteral("-") : QStringLiteral()) % whereValueDisp.toString());
   }
   else if(QComboBox *combo = columns->getColumn(whereCol)->getComboBoxWidget())
   {
@@ -225,7 +225,7 @@ void SqlModel::filterBy(bool exclude, QString whereCol, QVariant whereValueDisp,
         dispStr.chop(1);
 
       // Set the search text into the corresponding line edit
-      combo->setCurrentText((exclude ? "-" : QStringLiteral()) % dispStr);
+      combo->setCurrentText((exclude ? QStringLiteral("-") : QStringLiteral()) % dispStr);
     }
   }
   else if(QCheckBox *checkBox = columns->getColumn(whereCol)->getCheckBoxWidget())
@@ -328,19 +328,19 @@ void SqlModel::filter(const Column *col, const QVariant& variantDisp, const QVar
           if(newVal == '-')
           {
             // A single '-' translates to not nulls
-            oper = "is not null";
+            oper = QStringLiteral("is not null");
             newVal.clear();
           }
           else
           {
-            oper = "not like";
+            oper = QStringLiteral("not like");
             escape = ESCAPE;
             newVal.remove(0, 1);
           }
         }
         else
         {
-          oper = "like";
+          oper = QStringLiteral("like");
           escape = ESCAPE;
         }
 
@@ -379,7 +379,8 @@ void SqlModel::buildSqlWhereValue(QString& whereValue, bool exact) const
   if(!whereValue.isEmpty())
   {
     // Escape characters and replace '*' with '%' for SQL
-    whereValue = whereValue.replace("%", "\\%").replace("_", "\\_").replace('*', '%');
+    whereValue = whereValue.replace(QStringLiteral("%"), QStringLiteral("\\%")).replace(QStringLiteral("_"),
+                                                                                        QStringLiteral("\\_")).replace('*', '%');
 
     if(whereValue.startsWith('"') && whereValue.endsWith('"'))
       // Remove quotes from exact searches
@@ -449,9 +450,11 @@ void SqlModel::clearWhereConditions()
 /* Set header captions */
 void SqlModel::fillHeaderData()
 {
-  SqlRecord sqlRecord = getSqlRecord();
-  int cnt = sqlRecord.count();
-  for(int i = 0; i < cnt; i++)
+  // Need to block excessive signals to avoid slow down when switching databases
+  atools::gui::SignalBlocker blocker(this);
+
+  const SqlRecord sqlRecord = getSqlRecord();
+  for(int i = 0; i < sqlRecord.count(); i++)
   {
     const Column *cd = columns->getColumn(sqlRecord.fieldName(i));
     if(!cd->isHidden() && !(!isDistanceSearchActive() && cd->isDistance()))
@@ -474,10 +477,10 @@ QString SqlModel::sortOrderToSql(Qt::SortOrder order)
   switch(order)
   {
     case Qt::AscendingOrder:
-      return "asc";
+      return QStringLiteral("asc");
 
     case Qt::DescendingOrder:
-      return "desc";
+      return QStringLiteral("desc");
   }
   return QStringLiteral();
 }
@@ -509,7 +512,7 @@ QString SqlModel::buildColumnList(const atools::sql::SqlRecord& tableCols)
     else if(col->isDistance() || !tableCols.contains(col->getColumnName()))
       // Add null for special distance columns
       // Null for columns which do not exist in the database
-      colNames.append("null as " % col->getColumnName());
+      colNames.append(QStringLiteral("null as ") % col->getColumnName());
     else
       colNames.append(col->getColumnName());
   }
@@ -520,7 +523,7 @@ QString SqlModel::buildColumnList(const atools::sql::SqlRecord& tableCols)
   for(const QString& cname : std::as_const(colNames))
   {
     if(!first)
-      queryCols += ", ";
+      queryCols += QStringLiteral(", ");
     queryCols += cname;
 
     first = false;
@@ -551,7 +554,7 @@ void SqlModel::buildQuery()
     Q_ASSERT(col != nullptr);
 
     if(!col->getSqlFunction().isEmpty())
-      queryOrder += "order by (" % col->getSqlFunction() % ") " % orderByOrder;
+      queryOrder += QStringLiteral("order by (") % col->getSqlFunction() % QStringLiteral(") ") % orderByOrder;
     else if(!tableCols.contains(orderByCol))
     {
       // Skip not existing columns for backwards compatibility
@@ -560,22 +563,22 @@ void SqlModel::buildQuery()
     else if(!(col->getSortFuncAsc().isEmpty() && col->getSortFuncDesc().isEmpty()))
     {
       // Use sort functions to have null values at end of the list - will avoid indexes
-      if(orderByOrder == "asc")
-        queryOrder += "order by " % col->getSortFuncAsc().arg(orderByCol) % ' ' % orderByOrder;
-      else if(orderByOrder == "desc")
-        queryOrder += "order by " % col->getSortFuncDesc().arg(orderByCol) % ' ' % orderByOrder;
+      if(orderByOrder == QStringLiteral("asc"))
+        queryOrder += QStringLiteral("order by ") % col->getSortFuncAsc().arg(orderByCol) % ' ' % orderByOrder;
+      else if(orderByOrder == QStringLiteral("desc"))
+        queryOrder += QStringLiteral("order by ") % col->getSortFuncDesc().arg(orderByCol) % ' ' % orderByOrder;
       else
-        Q_ASSERT(orderByOrder != "asc" && orderByOrder != "desc");
+        Q_ASSERT(orderByOrder != QStringLiteral("asc") && orderByOrder != QStringLiteral("desc"));
     }
     else
-      queryOrder += "order by " % orderByCol % ' ' % orderByOrder;
+      queryOrder += QStringLiteral("order by ") % orderByCol % ' ' % orderByOrder;
   }
 
-  currentSqlQuery = "select " % queryCols % " from " % tablename % ' ' % queryWhere % ' ' % queryOrder;
+  currentSqlQuery = QStringLiteral("select ") % queryCols % QStringLiteral(" from ") % tablename % ' ' % queryWhere % ' ' % queryOrder;
 
   // Build a query to find the total row count of the result ==================
   totalRowCount = 0;
-  currentSqlCountQuery = "select count(1) from " % tablename % ' ' % queryWhere;
+  currentSqlCountQuery = QStringLiteral("select count(1) from ") % tablename % ' ' % queryWhere;
 
   // Build a query to fetch the whole result set in getFullResultSet() ==================
   if(!isDistanceSearchActive())
@@ -583,19 +586,20 @@ void SqlModel::buildQuery()
     QStringList colList(columns->getIdColumnName());
 
     // Add coordinates if available
-    if(columns->hasColumn("lonx") && columns->hasColumn("laty"))
+    if(columns->hasColumn(QStringLiteral("lonx")) && columns->hasColumn(QStringLiteral("laty")))
     {
-      colList.append("lonx");
-      colList.append("laty");
+      colList.append(QStringLiteral("lonx"));
+      colList.append(QStringLiteral("laty"));
     }
 
-    currentSqlFetchQuery = "select " % colList.join(", ") % " from " % tablename % ' ' % queryWhere;
+    currentSqlFetchQuery = QStringLiteral("select ") % colList.join(QStringLiteral(", ")) % QStringLiteral(" from ") % tablename % ' ' %
+                           queryWhere;
   }
   else
     // No result set for distance searches since the result is not filtered by precise distance
     currentSqlFetchQuery.clear();
 
-#ifdef DEBUG_INFORMATION
+#ifdef DEBUG_INFORMATION_SQLQUERY
   qDebug().noquote().nospace() << Q_FUNC_INFO << " " << currentSqlQuery;
 #endif
 
@@ -681,7 +685,7 @@ QString SqlModel::buildWhere(const atools::sql::SqlRecord& tableCols, QList<cons
 
   QString queryWhere;
   if(!queryWhereBuilder.isEmpty())
-    queryWhere = '(' % queryWhereBuilder.join(" and ") % ')';
+    queryWhere = '(' % queryWhereBuilder.join(QStringLiteral(" and ")) % ')';
 
   // Build SQL from where condition objects ================================================
   for(const WhereCondition& cond : tempWhereConditionMap)
@@ -720,7 +724,7 @@ QString SqlModel::buildWhere(const atools::sql::SqlRecord& tableCols, QList<cons
 
   if(isDistanceSearchActive() && !overrideModeActive)
   {
-#ifdef DEBUG_INFORMATION
+#ifdef DEBUG_INFORMATION_SQLQUERY
     qDebug() << Q_FUNC_INFO << boundingRect;
 #endif
 
@@ -747,7 +751,7 @@ QString SqlModel::buildWhere(const atools::sql::SqlRecord& tableCols, QList<cons
   }
 
   if(!queryWhere.isEmpty())
-    queryWhere = "where (" % queryWhere % ')';
+    queryWhere = QStringLiteral("where (") % queryWhere % ')';
 
   return queryWhere;
 }
@@ -764,7 +768,7 @@ QString SqlModel::buildWhereValue(const WhereCondition& cond)
   QString val;
   if(type == QMetaType::fromType<QString>() || type == QMetaType::fromType<QChar>())
     // Use semicolons for string and escape single quotes
-    val = " '" % cond.getValueSql().toString().replace("'", "''") % "'";
+    val = QStringLiteral(" '") % cond.getValueSql().toString().replace(QStringLiteral("'"), QStringLiteral("''")) % QStringLiteral("'");
   else if(type == QMetaType::fromType<bool>() ||
           type == QMetaType::fromType<int>() ||
           type == QMetaType::fromType<unsigned int>() ||
@@ -795,7 +799,7 @@ void SqlModel::resetSqlQuery(bool force)
 
 Qt::SortOrder SqlModel::getSortOrder() const
 {
-  return orderByOrder == "desc" ? Qt::DescendingOrder : Qt::AscendingOrder;
+  return orderByOrder == QStringLiteral("desc") ? Qt::DescendingOrder : Qt::AscendingOrder;
 }
 
 /* Default data handler - simply returns the value */
@@ -888,8 +892,8 @@ void SqlModel::getFullResultSet(QList<std::pair<int, atools::geo::Pos> >& result
       while(stmt.next())
       {
         // Use invalid coordinate if columns are not available
-        atools::geo::Pos pos(stmt.valueFloat("lonx", atools::geo::Pos::INVALID_VALUE),
-                             stmt.valueFloat("laty", atools::geo::Pos::INVALID_VALUE));
+        atools::geo::Pos pos(stmt.valueFloat(QStringLiteral("lonx"), atools::geo::Pos::INVALID_VALUE),
+                             stmt.valueFloat(QStringLiteral("laty"), atools::geo::Pos::INVALID_VALUE));
         result.append(std::make_pair(stmt.valueInt(idColumnName), pos));
       }
     }
