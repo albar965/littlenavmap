@@ -640,8 +640,7 @@ void DatabaseManager::insertSimSwitchActions()
   freeActions();
 
   // Create group to get radio button like behavior
-  simDbGroup = new QActionGroup(ui->menuDatabase);
-  simDbGroup->setExclusive(true);
+  simDbActionGroup = new QActionGroup(ui->menuDatabase);
 
   // Sort keys to avoid random order
   QList<FsPaths::SimulatorType> keys = simulators.keys();
@@ -650,7 +649,7 @@ void DatabaseManager::insertSimSwitchActions()
     return FsPaths::typeToShortName(t1) < FsPaths::typeToShortName(t2);
   });
 
-  // Add real simulators first
+  // Add real simulators first ===============================================
   for(atools::fs::FsPaths::SimulatorType type : std::as_const(keys))
   {
     const FsPathType pathType = simulators.value(type);
@@ -660,6 +659,7 @@ void DatabaseManager::insertSimSwitchActions()
       sims.append(type);
   }
 
+  // Insert actions to group and menu ======================
   int index = 1;
   bool foundSim = false, foundDb = false;
   for(atools::fs::FsPaths::SimulatorType type : sims)
@@ -668,6 +668,10 @@ void DatabaseManager::insertSimSwitchActions()
     foundSim |= simulators.value(type).isInstalled;
     foundDb |= simulators.value(type).hasDatabase;
   }
+
+  // Connect now to avoid signals during creation ======================
+  for(QAction *action : std::as_const(simDbActions))
+    connect(action, &QAction::triggered, this, &DatabaseManager::switchSimFromMainMenu);
 
   // Insert disabled action if nothing was found at all ===============================
   if(!foundDb && !foundSim)
@@ -710,34 +714,34 @@ void DatabaseManager::insertSimSwitchActions()
     QString dbname = FsPaths::typeToDisplayName(FsPaths::NAVIGRAPH);
     navDbSubMenu = new QMenu(tr("&%1%2").arg(dbname).arg(suffix));
     navDbSubMenu->setToolTipsVisible(NavApp::isMenuToolTipsVisible());
-    navDbGroup = new QActionGroup(navDbSubMenu);
+    navDbActionGroup = new QActionGroup(navDbSubMenu);
 
-    navDbActionAuto = new QAction(tr("&Select Automatically"), navDbSubMenu);
+    navDbActionAuto = new QAction(tr("&Select Automatically"), navDbActionGroup);
     navDbActionAuto->setCheckable(true);
     navDbActionAuto->setChecked(navDatabaseAuto);
     navDbActionAuto->setStatusTip(tr("Select best navdata mode for simulator"));
     navDbSubMenu->addAction(navDbActionAuto);
     navDbSubMenu->addSeparator();
 
-    navDbActionAll = new QAction(tr("Use %1 for &all Features").arg(dbname), navDbSubMenu);
+    navDbActionAll = new QAction(tr("Use %1 for &all Features").arg(dbname), navDbActionGroup);
     navDbActionAll->setCheckable(true);
     navDbActionAll->setChecked(navDatabaseStatus == navdb::ALL);
     navDbActionAll->setStatusTip(tr("Use all of %1 database features").arg(dbname));
-    navDbActionAll->setActionGroup(navDbGroup);
+    navDbActionAll->setActionGroup(navDbActionGroup);
     navDbSubMenu->addAction(navDbActionAll);
 
-    navDbActionMixed = new QAction(tr("Use %1 for &Navaids and Procedures").arg(dbname), navDbSubMenu);
+    navDbActionMixed = new QAction(tr("Use %1 for &Navaids and Procedures").arg(dbname), navDbActionGroup);
     navDbActionMixed->setCheckable(true);
     navDbActionMixed->setChecked(navDatabaseStatus == navdb::MIXED);
     navDbActionMixed->setStatusTip(tr("Use only navaids, airways, airspaces and procedures from %1 database").arg(dbname));
-    navDbActionMixed->setActionGroup(navDbGroup);
+    navDbActionMixed->setActionGroup(navDbActionGroup);
     navDbSubMenu->addAction(navDbActionMixed);
 
-    navDbActionOff = new QAction(tr("Do &not use %1 database").arg(dbname), navDbSubMenu);
+    navDbActionOff = new QAction(tr("Do &not use %1 database").arg(dbname), navDbActionGroup);
     navDbActionOff->setCheckable(true);
     navDbActionOff->setChecked(navDatabaseStatus == navdb::OFF);
     navDbActionOff->setStatusTip(tr("Do not use %1 database").arg(dbname));
-    navDbActionOff->setActionGroup(navDbGroup);
+    navDbActionOff->setActionGroup(navDbActionGroup);
     navDbSubMenu->addAction(navDbActionOff);
 
     ui->menuDatabase->insertMenu(ui->menuViewAirspaceSource->menuAction(), navDbSubMenu);
@@ -758,11 +762,11 @@ void DatabaseManager::insertSimSwitchAction(atools::fs::FsPaths::SimulatorType t
 {
   if(type == atools::fs::FsPaths::NONE)
   {
-    QAction *action = new QAction(tr("No Scenery Library and no Simulator found"), menu);
+    QAction *action = new QAction(tr("No Scenery Library and no Simulator found"), simDbActionGroup);
     action->setToolTip(tr("No scenery library database and no simulator found"));
     action->setStatusTip(action->toolTip());
     action->setData(QVariant::fromValue<atools::fs::FsPaths::SimulatorType>(type));
-    action->setActionGroup(simDbGroup);
+    action->setActionGroup(simDbActionGroup);
 
     menu->insertAction(before, action);
     simDbActions.append(action);
@@ -799,23 +803,15 @@ void DatabaseManager::insertSimSwitchAction(atools::fs::FsPaths::SimulatorType t
     if(!atts.isEmpty())
       suffix.append(tr(" (%1)").arg(atts.join(tr(", "))));
 
-    QAction *action = new QAction(tr("&%1 %2%3").arg(index).arg(FsPaths::typeToDisplayName(type)).arg(suffix), menu);
+    QAction *action = new QAction(tr("&%1 %2%3").arg(index).arg(FsPaths::typeToDisplayName(type)).arg(suffix), simDbActionGroup);
     action->setToolTip(tr("Switch to %1 database").arg(FsPaths::typeToDisplayName(type)));
     action->setStatusTip(action->toolTip());
     action->setData(QVariant::fromValue<atools::fs::FsPaths::SimulatorType>(type));
     action->setCheckable(true);
-    action->setActionGroup(simDbGroup);
-
-    if(type == currentFsType)
-    {
-      QSignalBlocker blocker(action);
-      Q_UNUSED(blocker)
-      action->setChecked(true);
-    }
+    action->setActionGroup(simDbActionGroup);
+    action->setChecked(type == currentFsType);
 
     menu->insertAction(before, action);
-
-    connect(action, &QAction::triggered, this, &DatabaseManager::switchSimFromMainMenu);
     simDbActions.append(action);
   }
 }
@@ -967,13 +963,6 @@ void DatabaseManager::switchSimInternal(atools::fs::FsPaths::SimulatorType type)
 
   saveState();
   checkDatabaseVersion();
-
-  {
-    // Check and uncheck manually since the QActionGroup is unreliable
-    SignalBlocker blocker(simDbActions);
-    for(QAction *action : std::as_const(simDbActions))
-      action->setChecked(action->data().value<atools::fs::FsPaths::SimulatorType>() == currentFsType);
-  }
 }
 
 void DatabaseManager::openWriteableDatabase(atools::sql::SqlDatabase *database, const QString& name, bool backup)
@@ -2005,12 +1994,12 @@ void DatabaseManager::freeActions()
 {
   ATOOLS_DELETE_LATER_LOG(menuDbSeparator);
   ATOOLS_DELETE_LATER_LOG(menuNavDbSeparator);
-  ATOOLS_DELETE_LATER_LOG(simDbGroup);
+  ATOOLS_DELETE_LATER_LOG(simDbActionGroup);
   ATOOLS_DELETE_LATER_LOG(navDbActionAll);
   ATOOLS_DELETE_LATER_LOG(navDbActionMixed);
   ATOOLS_DELETE_LATER_LOG(navDbActionOff);
   ATOOLS_DELETE_LATER_LOG(navDbSubMenu);
-  ATOOLS_DELETE_LATER_LOG(navDbGroup);
+  ATOOLS_DELETE_LATER_LOG(navDbActionGroup);
 
   for(QAction *action : std::as_const(simDbActions))
     ATOOLS_DELETE_LATER_LOG(action);

@@ -399,7 +399,7 @@ private:
   QWidget *parentWidget = nullptr;
 
   /* Switch simulator actions */
-  QActionGroup *simDbGroup = nullptr, *navDbGroup = nullptr;
+  QActionGroup *simDbActionGroup = nullptr, *navDbActionGroup = nullptr;
   QList<QAction *> simDbActions;
 
   QMenu *navDbSubMenu = nullptr;
