@@ -351,7 +351,7 @@ int main(int argc, char *argv[])
         QDir().mkpath(marbleCachePath);
 
         qDebug() << Q_FUNC_INFO << "Setting Marble cache to" << marbleCache;
-        qputenv("XDG_DATA_HOME", QFileInfo(marbleCache).absolutePath().toUtf8());
+        MarbleDirs::setMarbleLocalPath(marbleCache);
       }
 
 #if defined(Q_OS_MACOS)

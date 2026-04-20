@@ -4401,7 +4401,16 @@ void MainWindow::styleChanged()
 
 void MainWindow::updateMapKeys()
 {
-  Q_UNUSED(mapThemeHandler);
+  if(mapThemeHandler != nullptr)
+  {
+    // Is null on startup
+    if(mapWidget != nullptr)
+      mapWidget->setKeys(mapThemeHandler->getMapThemeKeysHash());
+
+    // Might be null if not started
+    if(NavApp::getMapPaintWidgetWeb() != nullptr)
+      NavApp::getMapPaintWidgetWeb()->setKeys(mapThemeHandler->getMapThemeKeysHash());
+  }
 }
 
 void MainWindow::saveStateNow()
@@ -4797,7 +4806,7 @@ void MainWindow::printShortcuts()
 void MainWindow::closeEvent(QCloseEvent *event)
 {
   qDebug() << Q_FUNC_INFO << "Enter deInitCalled" << deInitCalled
-           << "StartingUp" << Application::isStartingUp() << "pendingFileManagerTasks" << 0
+           << "StartingUp" << Application::isStartingUp() << "pendingFileManagerTasks" << mapWidget->model()->pendingFileManagerTasks()
            << "renderStatus" << mapWidget->renderStatus() << "delayedShutdownInProgress" << delayedShutdownInProgress
            << "remainingTime" << shutdownDelayTimer.remainingTime();
 

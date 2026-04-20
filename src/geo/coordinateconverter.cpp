@@ -23,7 +23,6 @@
 #include "geo/line.h"
 #include "geo/linestring.h"
 
-#include <marble/GeoDataLatLonAltBox.h>
 #include <marble/GeoDataLatLonBox.h>
 #include <marble/GeoDataLineString.h>
 #include <marble/GeoDataLinearRing.h>
