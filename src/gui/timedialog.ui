@@ -25,9 +25,12 @@
     </widget>
    </item>
    <item>
-   <widget class="QTimeEdit" name="timeEdit">
+    <widget class="QTimeEdit" name="timeEdit">
      <property name="displayFormat">
       <string>HH:mm UTC</string>
+     </property>
+     <property name="timeSpec">
+      <enum>Qt::UTC</enum>
      </property>
     </widget>
    </item>

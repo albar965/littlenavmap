@@ -37,9 +37,8 @@ TimeDialog::TimeDialog(QWidget *parent, const QDateTime& datetime) :
   setWindowModality(Qt::ApplicationModal);
   ui->setupUi(this);
 
-  const QDateTime utcDateTime = datetime.toUTC();
-  ui->calendarWidget->setSelectedDate(utcDateTime.date());
-  ui->timeEdit->setTime(utcDateTime.time());
+  ui->calendarWidget->setSelectedDate(datetime.date());
+  ui->timeEdit->setTime(datetime.time());
 
   connect(ui->buttonBox, &QDialogButtonBox::clicked, this, &TimeDialog::buttonBoxClicked);
   atools::gui::WidgetState(lnm::TIME_DIALOG).restore(this);
