@@ -884,7 +884,7 @@ void MainWindow::setupUi()
   // Reduce large icons on mac once intially
 #if defined(Q_OS_MACOS)
 
-  for(QToolBar *toolbar : toolbars)
+  for(QToolBar *toolbar : dockHandler->getToolBars())
   {
     QSizeF size = toolbar->iconSize();
     size *= 0.72f;
@@ -1051,17 +1051,6 @@ void MainWindow::connectAllSlots()
   const StyleHandler *styleHandler = NavApp::getStyleHandler();
   connect(styleHandler, &StyleHandler::preStyleChange, this, &MainWindow::saveStateNow);
   connect(styleHandler, &StyleHandler::styleChanged, this, &MainWindow::styleChanged);
-  connect(styleHandler, &StyleHandler::styleChanged, mapcolors::styleChanged);
-  connect(styleHandler, &StyleHandler::styleChanged, infoController, &InfoController::styleChanged);
-  connect(styleHandler, &StyleHandler::styleChanged, routeController, &RouteController::styleChanged);
-  connect(styleHandler, &StyleHandler::styleChanged, searchController, &SearchController::styleChanged);
-  connect(styleHandler, &StyleHandler::styleChanged, mapWidget, &MapPaintWidget::styleChanged);
-  connect(styleHandler, &StyleHandler::styleChanged, profileWidget, &ProfileWidget::styleChanged);
-  connect(styleHandler, &StyleHandler::styleChanged, perfController, &AircraftPerfController::styleChanged);
-  connect(styleHandler, &StyleHandler::styleChanged, infoController, &InfoController::styleChanged);
-  connect(styleHandler, &StyleHandler::styleChanged, optionsDialog, &OptionsDialog::styleChanged);
-  connect(styleHandler, &StyleHandler::styleChanged, statusBar, &StatusBar::styleChanged);
-  connect(styleHandler, &StyleHandler::styleChanged, NavApp::getLogdataController(), &LogdataController::styleChanged);
 
   // WindReporter ===================================================================================
   // Wind has to be calculated first - receive routeChanged signal first
@@ -4416,6 +4405,24 @@ void MainWindow::styleChanged()
   emit Application::applicationInstance()->fontChanged(QGuiApplication::font());
 
   atools::gui::updateAllPalette(QApplication::palette());
+
+  // Menu bar is not updated and needs an extra update
+  atools::gui::updateAllPalette(ui->menuBar, QApplication::palette());
+
+  // Update dock windows and toolbar palette
+  dockHandler->styleChanged();
+
+  mapcolors::styleChanged();
+  infoController->styleChanged();
+  routeController->styleChanged();
+  searchController->styleChanged();
+  mapWidget->styleChanged();
+  profileWidget->styleChanged();
+  NavApp::getAircraftPerfController()->styleChanged();
+  infoController->styleChanged();
+  optionsDialog->styleChanged();
+  statusBar->styleChanged();
+  NavApp::getLogdataController()->styleChanged();
 }
 
 void MainWindow::updateMapKeys()
