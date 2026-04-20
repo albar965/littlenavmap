@@ -413,8 +413,6 @@ void StyleHandler::applyCurrentStyle()
   const StyleDescription& styleDescription = styleDescriptions.at(styleIndex());
   emit preStyleChange();
 
-  QGuiApplication::setOverrideCursor(Qt::WaitCursor);
-
   // Ownership of the style object is transferred to QApplication
   QStyle *style = QStyleFactory::create(styleDescription.getStyleName());
 
@@ -444,8 +442,6 @@ void StyleHandler::applyCurrentStyle()
   applyingStyle = false;
 
   emit styleChanged();
-
-  QGuiApplication::restoreOverrideCursor();
 }
 
 void StyleHandler::saveState() const

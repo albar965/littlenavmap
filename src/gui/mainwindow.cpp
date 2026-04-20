@@ -3335,6 +3335,7 @@ void MainWindow::mainWindowShown()
   qDebug() << Q_FUNC_INFO << "enter";
 
   Application::showSplashScreenMessage(tr("Showing main window ... "));
+  dockHandler->normalStateToWindow();
 
   // Emit program wide font change signal again to update all widgets
   if(fontChangedFromDefault)
@@ -3387,16 +3388,8 @@ void MainWindow::loadLayoutDelayed(const QString& filename)
   }
 }
 
-void MainWindow::mainWindowShownDelayed()
+void MainWindow::loadWindowState()
 {
-  qDebug() << Q_FUNC_INFO << "enter";
-
-  Application::showSplashScreenMessage(tr("Main window shown ... "));
-  statusBar->setStatusMessage(tr("Started."));
-
-  // Initialize late to avoid multiple updates
-  profileWidget->mainWindowShown();
-
   // Apply layout again to avoid issues with formatting
   if(!dockHandler->isDelayedFullscreen())
     dockHandler->normalStateToWindow();
@@ -3418,6 +3411,16 @@ void MainWindow::mainWindowShownDelayed()
     mapWidget->addFullScreenExitButton();
     mapWidget->setFocus();
   }
+}
+
+void MainWindow::mainWindowShownDelayed()
+{
+  qDebug() << Q_FUNC_INFO << "enter";
+
+  Application::showSplashScreenMessage(tr("Main window shown ... "));
+  statusBar->setStatusMessage(tr("Started."));
+
+  loadWindowState();
 
   // Center flight plan after loading - do this delayed to consider window size changes
   const OptionData& optionData = OptionData::instance();
@@ -3435,6 +3438,9 @@ void MainWindow::mainWindowShownDelayed()
 
   // Raise all floating docks and focus map widget
   raiseFloatingWindows();
+
+  // Initialize late to avoid multiple updates
+  profileWidget->mainWindowShown();
 
   // Set theme later to avoid window jumping when loading offline themes - no theme results in blank window
   mapThemeHandler->changeMapTheme();
@@ -4159,7 +4165,8 @@ void MainWindow::restoreStateMain()
     dockHandler->restoreState(settings.valueVar(lnm::MAINWINDOW_WIDGET_DOCKHANDLER).toByteArray());
 
     // Start with normal state - apply fullscreen later to avoid layout mess up
-    dockHandler->normalStateToWindow();
+    // This does not set or change fullscreen flags
+    dockHandler->normalStateToWindowInitial();
     ui->actionShowFullscreenMap->blockSignals(true);
     ui->actionShowFullscreenMap->setChecked(dockHandler->isFullScreen());
     ui->actionShowFullscreenMap->blockSignals(false);
