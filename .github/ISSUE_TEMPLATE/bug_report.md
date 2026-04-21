@@ -9,6 +9,8 @@ assignees: albar965
 
 **Do not submit AI generated bug reports!**
 
+**Look at the [Little Navmap FAQ](https://albar965.github.io/littlenavmap-faq.html) first to see if your problem is already listed.**
+
 **Describe the bug**
 A clear and concise description of what the bug is.
 
@@ -27,9 +29,7 @@ If applicable, add screenshots of files to help explain your problem.
 In case of crashes add an crash or issue report from LNM menu `Tools`.
 
 **Desktop (please complete the following information):**
- - OS: [e.g. iOS]
- - Browser [e.g. chrome, safari]
- - Version [e.g. 22]
+ - Operating system: [e.g. Windows 11, Ubuntu Linux 24.04, macOS Big Sur]
 
 **Flight Simulator:**
  - MSFS 2024
