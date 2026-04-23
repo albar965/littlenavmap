@@ -1680,7 +1680,7 @@ void HtmlInfoBuilder::addRadionavFixType(HtmlBuilder& html, const SqlRecord& rec
 
       if(vor.tacan)
       {
-        html.row2(tr("TACAN Channel:"), QString(tr("%1 (%2 MHz)")).
+        html.row2(tr("TACAN Channel:"), tr("%1 (%2 MHz)").
                   arg(vor.channel).
                   arg(locale.toString(frequencyForTacanChannel(vor.channel) / 100.f, 'f', 2)));
         if(vor.range > 0)
@@ -1926,7 +1926,7 @@ void HtmlInfoBuilder::airportMsaTextInternal(const map::MapAirportMsa& msa, atoo
       title.append(tr(" (%1 %2)").arg(tr("Airport")).arg(msa.airportIdent));
   }
 
-  navaidTitle(html, tr("%1 %2at %3").arg(user ? tr("User MSA Diagram") : QString(tr("MSA"))).arg(msa.multipleCode % tr(" ")).arg(title));
+  navaidTitle(html, tr("%1 %2at %3").arg(user ? tr("User MSA Diagram") : tr("MSA")).arg(msa.multipleCode % tr(" ")).arg(title));
 
   if(info && !print)
   {
@@ -2306,7 +2306,7 @@ void HtmlInfoBuilder::vorText(const MapVor& vor, HtmlBuilder& html) const
   if(vor.vortac && !vor.channel.isEmpty())
     html.row2(tr("Channel:"), vor.channel);
   else if(vor.tacan)
-    html.row2(tr("Channel:"), QString(tr("%1 (%2 MHz)")).
+    html.row2(tr("Channel:"), tr("%1 (%2 MHz)").
               arg(vor.channel).
               arg(locale.toString(frequencyForTacanChannel(vor.channel) / 100.f, 'f', 2)));
 

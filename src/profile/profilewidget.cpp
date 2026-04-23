@@ -2932,15 +2932,22 @@ void ProfileWidget::postDatabaseLoad()
 {
   databaseLoadStatus = false;
   scrollArea->hideTooltip();
-  routeChanged(true /* geometry changed */, true /* new flight plan */);
+  routeChanged(true /* geometryChanged */, true /* newFlightplan */);
 }
 
 void ProfileWidget::optionsChanged(const optc::OptionChangeFlags& changeFlags)
 {
   jumpBack->cancel();
 
+  if(changeFlags.testFlag(optc::OPTION_CHANGE_ELEVATION))
+  {
+    // Convert local unit to NM
+    elevationSampleRadiusOuterNm = Unit::rev(OptionData::instance().getProfileBuffer(), Unit::distNmF);
+    routeChanged(true /* geometryChanged */, true /* newFlightplan */);
+  }
+
   if(changeFlags.testFlag(optc::OPTION_CHANGE_TEXT_SIZES) || changeFlags.testFlag(optc::OPTION_CHANGE_UI_FONT) ||
-     changeFlags.testFlag(optc::OPTION_CHANGE_UNITS))
+     changeFlags.testFlag(optc::OPTION_CHANGE_UNITS) || changeFlags.testFlag(optc::OPTION_CHANGE_ELEVATION))
   {
 
     scrollArea->optionsChanged();
@@ -2949,13 +2956,6 @@ void ProfileWidget::optionsChanged(const optc::OptionChangeFlags& changeFlags)
     updateErrorLabel();
     updateHeaderLabel();
     update();
-  }
-
-  if(changeFlags.testFlag(optc::OPTION_CHANGE_ELEVATION))
-  {
-    // Convert local unit to NM
-    elevationSampleRadiusOuterNm = Unit::rev(OptionData::instance().getProfileBuffer(), Unit::distNmF);
-    routeChanged(true /* geometryChanged */, false /* newFlightplan */);
   }
 }
 
@@ -3000,11 +3000,8 @@ void ProfileWidget::preRouteCalc()
 
 void ProfileWidget::mainWindowShown()
 {
-  updateScreenCoords();
-  scrollArea->routeChanged(true);
-  scrollArea->expandWidget();
   active = true;
-  update();
+  routeChanged(true /* geometryChanged */, true /* newFlightplan */);
 }
 
 void ProfileWidget::updateProfileShowFeatures()

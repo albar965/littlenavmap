@@ -70,12 +70,12 @@ void SimBriefHandler::sendRouteToSimBrief()
   if(dialog.getAction() == SimBriefExportDialog::Export)
   {
     atools::gui::DesktopServices::openUrl(mainWindow, url);
-    NavApp::setStatusMessage(QString(tr("SimBrief flight plan sent to web browser.")));
+    NavApp::setStatusMessage(tr("SimBrief flight plan sent to web browser."));
   }
   else if(dialog.getAction() == SimBriefExportDialog::CopyToClipboard)
   {
-    QApplication::clipboard()->setText(QString::fromUtf8(url.toEncoded()));
-    NavApp::setStatusMessage(QString(tr("SimBrief address copied to clipboard.")));
+    QApplication::clipboard()->setText(url.toEncoded());
+    NavApp::setStatusMessage(tr("SimBrief address copied to clipboard."));
   }
 }
 

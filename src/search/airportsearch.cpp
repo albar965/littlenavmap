@@ -63,6 +63,8 @@ const static QSet<QString> AIRPORT_NUMBER_COLUMNS({"num_approach", "num_runway_h
 AirportSearch::AirportSearch(MainWindow *parent, QTableView *tableView, si::TabSearchId tabWidgetIndex)
   : SearchBaseTable(parent, tableView, new ColumnList("airport", "airport_id"), tabWidgetIndex)
 {
+  setObjectName("AirportSearch");
+
   // Have to convert units for these two spin boxes here since they are not registered in the base
   unitStringTool = new UnitStringTool;
   unitStringTool->init({ui->spinBoxAirportFlightplanMinSearch, ui->spinBoxAirportFlightplanMaxSearch});

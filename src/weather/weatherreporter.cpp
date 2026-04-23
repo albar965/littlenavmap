@@ -64,19 +64,19 @@ WeatherReporter::WeatherReporter(QWidget *parent, atools::fs::FsPaths::Simulator
 {
   queries = QueryManager::instance()->getQueriesGui();
 
-  xplaneFileWarningMsg = QString(tr("\n\nMake sure that your X-Plane base path is correct and\n"
-                                    "weather files as well as directories exist.\n\n"
-                                    "Click \"Reset paths\" in the Little Navmap dialog \"Load scenery library\"\n"
-                                    "to fix the base path after moving a X-Plane installation.\n\n"
-                                    "Also check the paths in the Little Navmap options on page \"Weather Files\".\n"
-                                    "These paths should be empty to use the default.\n\n"
-                                    "Restart Little Navmap after correcting the weather paths."));
+  xplaneFileWarningMsg = tr("\n\nMake sure that your X-Plane base path is correct and\n"
+                            "weather files as well as directories exist.\n\n"
+                            "Click \"Reset paths\" in the Little Navmap dialog \"Load scenery library\"\n"
+                            "to fix the base path after moving a X-Plane installation.\n\n"
+                            "Also check the paths in the Little Navmap options on page \"Weather Files\".\n"
+                            "These paths should be empty to use the default.\n\n"
+                            "Restart Little Navmap after correcting the weather paths.");
 
-  xplaneMissingWarningMsg = QString(tr("Cannot access weather files.\n"
-                                       "X-Plane is not installed on this computer.\n\n"
-                                       "If you use this as a remote installation:\n"
-                                       "Share the weather files on the flying computer and\n"
-                                       "adapt the X-Plane weather path in options on page \"Weather Files\" to point to the network share."));
+  xplaneMissingWarningMsg = tr("Cannot access weather files.\n"
+                               "X-Plane is not installed on this computer.\n\n"
+                               "If you use this as a remote installation:\n"
+                               "Share the weather files on the flying computer and\n"
+                               "adapt the X-Plane weather path in options on page \"Weather Files\" to point to the network share.");
 
   // Init file checkers to avoid expensive file access while trying to load weather while painting
   asSnapshotPathChecker = new atools::util::FileChecker;

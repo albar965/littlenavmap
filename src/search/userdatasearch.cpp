@@ -40,6 +40,8 @@
 UserdataSearch::UserdataSearch(MainWindow *parent, QTableView *tableView, si::TabSearchId tabWidgetIndex)
   : SearchBaseTable(parent, tableView, new ColumnList("userdata", "userdata_id"), tabWidgetIndex)
 {
+  setObjectName("UserdataSearch");
+
   /* *INDENT-OFF* */
   ui->pushButtonUserdataHelp->setToolTip(
     tr("<p>All set search conditions have to match.</p>"

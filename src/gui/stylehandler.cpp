@@ -399,16 +399,19 @@ void StyleHandler::colorSchemeChanged(Qt::ColorScheme colorScheme)
 
 void StyleHandler::paletteChanged(const QPalette&)
 {
-  const StyleDescription& styleDescription = styleDescriptions.at(styleIndex());
-  emit styleChanged(styleDescription.getDisplayName(), styleDescription.isDark());
+  if(!applyingStyle)
+    emit styleChanged();
 }
 
 void StyleHandler::applyCurrentStyle()
 {
   qDebug() << Q_FUNC_INFO << "index" << currentStyleIndex;
 
+  // Avoid recursion through palette signal when applying style
+  applyingStyle = true;
+
   const StyleDescription& styleDescription = styleDescriptions.at(styleIndex());
-  emit preStyleChange(styleDescription.getDisplayName(), styleDescription.isDark());
+  emit preStyleChange();
 
   // Ownership of the style object is transferred to QApplication
   QStyle *style = QStyleFactory::create(styleDescription.getStyleName());
@@ -417,6 +420,7 @@ void StyleHandler::applyCurrentStyle()
   {
     QApplication::setStyle(style);
 
+    // Set palette sends a signal which is blocked above in paletteChanged()
     if(automaticStyle)
       // Unchanged system palette
       QApplication::setPalette(systemPalette);
@@ -435,8 +439,9 @@ void StyleHandler::applyCurrentStyle()
 
   // Need to clear due to Qt bug
   QPixmapCache::clear();
+  applyingStyle = false;
 
-  emit styleChanged(styleDescription.getDisplayName(), styleDescription.isDark());
+  emit styleChanged();
 }
 
 void StyleHandler::saveState() const

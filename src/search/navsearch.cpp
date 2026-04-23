@@ -44,6 +44,8 @@
 NavSearch::NavSearch(MainWindow *parent, QTableView *tableView, si::TabSearchId tabWidgetIndex)
   : SearchBaseTable(parent, tableView, new ColumnList("nav_search", "nav_search_id"), tabWidgetIndex)
 {
+  setObjectName("NavSearch");
+
   /* *INDENT-OFF* */
   ui->pushButtonNavHelpSearch->setToolTip(
     tr("<p>All set search conditions have to match.</p>"
@@ -473,10 +475,10 @@ void NavSearch::updateButtonMenu()
   atools::gui::changeIndication(ui->actionNavSearchShowDistOptions, distanceSearchChanged);
 
   atools::gui::changeIndication(ui->actionNavSearchShowTypeOptions,
-                                      atools::gui::anyWidgetChanged({ui->gridLayoutNavSearchType}));
+                                atools::gui::anyWidgetChanged({ui->gridLayoutNavSearchType}));
 
   atools::gui::changeIndication(ui->actionNavSearchShowSceneryOptions,
-                                      atools::gui::anyWidgetChanged({ui->horizontalLayoutNavScenerySearch}));
+                                atools::gui::anyWidgetChanged({ui->horizontalLayoutNavScenerySearch}));
 
   if(controller->isRestoreFinished())
     controller->rebuildQuery();

@@ -34,6 +34,8 @@
 OnlineClientSearch::OnlineClientSearch(MainWindow *parent, QTableView *tableView, si::TabSearchId tabWidgetIndex)
   : SearchBaseTable(parent, tableView, new ColumnList("client", "client_id"), tabWidgetIndex)
 {
+  setObjectName("OnlineClientSearch");
+
   /* *INDENT-OFF* */
   ui->pushButtonOnlineClientHelpSearch->setToolTip(
     tr("<p>All set search conditions have to match.</p>"

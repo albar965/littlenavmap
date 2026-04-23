@@ -332,6 +332,8 @@ private:
   void mainWindowShown();
   void mainWindowShownDelayed();
 
+  void loadWindowState();
+
   /* Dock window functions */
   void raiseFloatingWindows();
   void hideTitleBar();

@@ -361,5 +361,6 @@
         <file>resources/config/little_navmap_darkstyle.ini</file>
         <file>resources/icons/profiledata.svg</file>
         <file>resources/icons/mapcache.svg</file>
+        <file>resources/icons/mapfont.svg</file>
     </qresource>
 </RCC>

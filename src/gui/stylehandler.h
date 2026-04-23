@@ -62,8 +62,8 @@ public:
 
 signals:
   /* Sent on change */
-  void preStyleChange(const QString& name, bool dark);
-  void styleChanged(const QString& name, bool dark);
+  void preStyleChange();
+  void styleChanged();
 
 private:
   // ============================================
@@ -110,6 +110,9 @@ private:
 
   /* Switch between dark and light (Fusion) depending on os */
   bool automaticStyle = true;
+
+  /* Avoid recursion through palette signal when applying style */
+  bool applyingStyle = false;
 };
 
 #endif // LNM_STYLEHANDLER_H
