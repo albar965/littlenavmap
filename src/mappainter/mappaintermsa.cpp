@@ -28,8 +28,6 @@
 #include <QElapsedTimer>
 
 #include <marble/GeoPainter.h>
-#include <marble/GeoDataLatLonAltBox.h>
-#include <marble/GeoDataLatLonBox.h>
 
 using namespace Marble;
 using namespace atools::geo;
@@ -48,8 +46,7 @@ void MapPainterMsa::render()
 {
   if(context->mapLayer->isAirportMsa()) // Enabled by layer / zoom factor
   {
-    const GeoDataLatLonAltBox& curAltBox = context->viewport->viewLatLonAltBox();
-    const GeoDataLatLonBox curBox(curAltBox.north(), curAltBox.south(), curAltBox.east(), curAltBox.west());
+    const GeoDataLatLonBox& curBox = context->viewport->viewLatLonAltBox();
 
     float x, y;
     if(context->objectTypes.testFlag(map::AIRPORT_MSA)) // Enabled by checkbox in view

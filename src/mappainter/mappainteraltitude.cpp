@@ -31,8 +31,6 @@
 #include <QElapsedTimer>
 
 #include <marble/GeoDataLineString.h>
-#include <marble/GeoDataLatLonAltBox.h>
-#include <marble/GeoDataLatLonBox.h>
 #include <marble/GeoPainter.h>
 
 using namespace Marble;
@@ -69,8 +67,7 @@ void MapPainterAltitude::render()
       context->painter->setPen(pen);
 
       // Get covered one degree coordinate rectangles
-      const GeoDataLatLonAltBox& curAltBox = context->viewport->viewLatLonAltBox();
-      const GeoDataLatLonBox curBox(curAltBox.north(), curAltBox.south(), curAltBox.east(), curAltBox.west());
+      const GeoDataLatLonBox& curBox = context->viewport->viewLatLonAltBox();
       int west = static_cast<int>(curBox.west(mconvert::DEG));
       int east = static_cast<int>(curBox.east(mconvert::DEG));
       int north = static_cast<int>(curBox.north(mconvert::DEG));

@@ -25,8 +25,6 @@
 #include "util/paintercontextsaver.h"
 #include "weather/windreporter.h"
 
-#include <marble/GeoDataLatLonAltBox.h>
-#include <marble/GeoDataLatLonBox.h>
 #include <marble/GeoPainter.h>
 #include <marble/ViewportParams.h>
 
@@ -47,11 +45,9 @@ void MapPainterWind::render()
     return;
 
   atools::util::PainterContextSaver saver(context->painter);
-  const Marble::GeoDataLatLonAltBox& curAltBox = context->viewport->viewLatLonAltBox();
-  const Marble::GeoDataLatLonBox curBox(curAltBox.north(), curAltBox.south(), curAltBox.east(), curAltBox.west());
 
   const atools::grib::WindPosList *windForRect =
-    NavApp::getWindReporter()->getWindForRect(curBox, context->mapLayer, context->lazyUpdate,
+    NavApp::getWindReporter()->getWindForRect(context->viewport->viewLatLonAltBox(), context->mapLayer, context->lazyUpdate,
                                               context->mapLayer->getWindBarbs());
 
   if(windForRect != nullptr)
