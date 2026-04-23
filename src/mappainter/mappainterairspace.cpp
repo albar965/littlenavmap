@@ -74,11 +74,10 @@ void MapPainterAirspace::render()
   context->startTimer("Airspace");
 
   // Get online and offline airspace and merge then into one list =============
-  const GeoDataLatLonAltBox& curBox = context->viewport->viewLatLonAltBox();
   AirspaceList airspaces;
 
   bool overflow = false;
-  queries->getAirspaceQueries()->getAirspaces(airspaces, curBox, context->mapLayer, context->airspaceFilterByLayer,
+  queries->getAirspaceQueries()->getAirspaces(airspaces, context->viewportBox, context->mapLayer, context->airspaceFilterByLayer,
                                               context->route->getCruiseAltitudeFt(),
                                               context->viewContext == Marble::Animation, map::AIRSPACE_SRC_ALL, overflow);
   context->setQueryOverflow(overflow);

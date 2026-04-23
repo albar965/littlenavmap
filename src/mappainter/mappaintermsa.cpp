@@ -46,14 +46,13 @@ void MapPainterMsa::render()
 {
   if(context->mapLayer->isAirportMsa()) // Enabled by layer / zoom factor
   {
-    const GeoDataLatLonBox& curBox = context->viewport->viewLatLonAltBox();
-
     float x, y;
     if(context->objectTypes.testFlag(map::AIRPORT_MSA)) // Enabled by checkbox in view
     {
       // Get drawing objects and cache them
       bool overflow = false;
-      const QList<MapAirportMsa> *msaList = queries->getMapQuery()->getAirportMsa(curBox, context->mapLayer, context->lazyUpdate, overflow);
+      const QList<MapAirportMsa> *msaList = queries->getMapQuery()->getAirportMsa(context->viewportBox, context->mapLayer,
+                                                                                  context->lazyUpdate, overflow);
       context->setQueryOverflow(overflow);
 
       if(msaList != nullptr)

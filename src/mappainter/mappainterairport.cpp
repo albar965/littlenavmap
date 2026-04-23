@@ -200,14 +200,14 @@ void MapPainterAirport::collectVisibleAirports(QList<AirportPaintData>& visibleA
   atools::util::PainterContextSaver saver(context->painter);
 
   // Get airports from cache/database for the bounding rectangle and add them to the map
-  const GeoDataLatLonAltBox& curBox = context->viewport->viewLatLonAltBox();
 
   bool overflow = false;
   const QList<MapAirport> *airportCache = nullptr;
 
   // Get airports from map display cache if enabled in toolbar/menu and layer
   if(context->objectTypes.testFlag(map::AIRPORT) && context->mapLayer->isAirport())
-    airportCache = queries->getMapQuery()->getAirports(curBox, context->mapLayer, context->lazyUpdate, context->objectTypes, overflow);
+    airportCache = queries->getMapQuery()->getAirports(context->viewportBox, context->mapLayer, context->lazyUpdate, context->objectTypes,
+                                                       overflow);
   context->setQueryOverflow(overflow);
 
   // Collect departure, destination and alternate airports from flight plan for potential diagram painting ================

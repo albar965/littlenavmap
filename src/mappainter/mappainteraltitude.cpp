@@ -30,7 +30,7 @@
 
 #include <QElapsedTimer>
 
-#include <marble/GeoDataLineString.h>
+// #include <marble/GeoDataLineString.h>
 #include <marble/GeoPainter.h>
 
 using namespace Marble;
@@ -67,11 +67,10 @@ void MapPainterAltitude::render()
       context->painter->setPen(pen);
 
       // Get covered one degree coordinate rectangles
-      const GeoDataLatLonBox& curBox = context->viewport->viewLatLonAltBox();
-      int west = static_cast<int>(curBox.west(mconvert::DEG));
-      int east = static_cast<int>(curBox.east(mconvert::DEG));
-      int north = static_cast<int>(curBox.north(mconvert::DEG));
-      int south = static_cast<int>(curBox.south(mconvert::DEG));
+      int west = static_cast<int>(context->viewportRect.getWest());
+      int east = static_cast<int>(context->viewportRect.getEast());
+      int north = static_cast<int>(context->viewportRect.getNorth());
+      int south = static_cast<int>(context->viewportRect.getSouth());
 
       // Split at anit-meridian if needed
       QList<std::pair<int, int> > ranges;
@@ -88,7 +87,7 @@ void MapPainterAltitude::render()
       // Minimum rectangle width on screen in pixel
       float minWidth = std::numeric_limits<float>::max();
       // Center points for rectangles for text placement
-      QList<GeoDataCoordinates> centers;
+      QList<Pos> centers;
 
       // Draw rectangles and collect other values for text placement ================================
       for(int laty = south; laty <= north + 1; laty++)
@@ -119,7 +118,7 @@ void MapPainterAltitude::render()
 
                 minWidth = std::min(static_cast<float>(QLineF(leftPt, rightPt).length()), minWidth);
 
-                centers.append(mconvert::toGdc(lonx + .5f, laty - .5f));
+                centers.append(Pos(lonx + .5f, laty - .5f));
                 altitudes.append(moraFt100);
               }
             }

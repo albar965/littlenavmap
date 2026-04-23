@@ -62,7 +62,6 @@ void MapPainterIls::render()
         routeIlsIds.insert(ils.id);
     }
 
-    const GeoDataLatLonBox& curBox = context->viewport->viewLatLonAltBox();
     Marble::GeoPainter *painter = context->painter;
     map::MapAirport airport;
 
@@ -71,7 +70,7 @@ void MapPainterIls::render()
        context->objectTypes.testFlag(map::AIRPORT))
     {
       bool overflow = false;
-      const QList<MapIls> *ilsList = queries->getMapQuery()->getIls(curBox, context->mapLayer, context->lazyUpdate, overflow);
+      const QList<MapIls> *ilsList = queries->getMapQuery()->getIls(context->viewportBox, context->mapLayer, context->lazyUpdate, overflow);
       context->setQueryOverflow(overflow);
 
       if(ilsList != nullptr)

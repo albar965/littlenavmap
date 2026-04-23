@@ -352,6 +352,7 @@ bool MapPaintLayer::render(GeoPainter *painter, ViewportParams *viewport, const 
       context.mapLayerEffective = mapLayerEffective;
       context.painter = painter;
       context.viewport = viewport;
+      context.viewportBox = viewport->viewLatLonAltBox();
       context.objectTypes = objectTypes;
       context.objectDisplayTypes = objectDisplayTypes;
       context.airspaceFilterByLayer = getShownAirspacesTypesForLayer();

@@ -59,9 +59,8 @@ void MapPainterWeather::render()
   // Get airports from cache/database for the bounding rectangle and add them to the map
   bool overflow = false;
 
-  const GeoDataLatLonAltBox& curBox = context->viewport->viewLatLonAltBox();
   const QList<MapAirport> *airportCache =
-    queries->getMapQuery()->getAirports(curBox, context->mapLayer, context->lazyUpdate, context->objectTypes, overflow);
+    queries->getMapQuery()->getAirports(context->viewportBox, context->mapLayer, context->lazyUpdate, context->objectTypes, overflow);
   context->setQueryOverflow(overflow);
   float size = context->szF(context->symbolSizeAirportWeather, context->mapLayer->getAirportSymbolSize());
 

@@ -52,8 +52,6 @@ MapPainterNav::~MapPainterNav()
 
 void MapPainterNav::render()
 {
-  const GeoDataLatLonAltBox& curBox = context->viewport->viewLatLonAltBox();
-
   atools::util::PainterContextSaver saver(context->painter);
 
   // Airways -------------------------------------------------
@@ -67,7 +65,7 @@ void MapPainterNav::render()
     // Draw airway lines
     context->startTimer("Airway fetch");
     QList<MapAirway> airways;
-    queries->getAirwayTrackQuery()->getAirways(airways, curBox, context->mapLayer, context->lazyUpdate);
+    queries->getAirwayTrackQuery()->getAirways(airways, context->viewportBox, context->mapLayer, context->lazyUpdate);
     context->endTimer("Airway fetch");
 
     paintAirways(&airways, context->drawFast, false /* track */);
@@ -80,7 +78,7 @@ void MapPainterNav::render()
     // Draw track lines
     context->startTimer("Track fetch");
     QList<MapAirway> tracks;
-    queries->getAirwayTrackQuery()->getTracks(tracks, curBox, context->mapLayer, context->lazyUpdate);
+    queries->getAirwayTrackQuery()->getTracks(tracks, context->viewportBox, context->mapLayer, context->lazyUpdate);
     context->endTimer("Track fetch");
 
     paintAirways(&tracks, context->drawFast, true /* track */);
@@ -107,7 +105,7 @@ void MapPainterNav::render()
     context->startTimer("Waypoint fetch");
     // If airways are drawn we also have to go through waypoints
     QList<MapWaypoint> waypoints;
-    waypointQuery->getWaypointsAirway(waypoints, curBox, context->mapLayer, context->lazyUpdate, overflow);
+    waypointQuery->getWaypointsAirway(waypoints, context->viewportBox, context->mapLayer, context->lazyUpdate, overflow);
     context->setQueryOverflow(overflow);
     context->endTimer("Waypoint fetch");
 
@@ -124,7 +122,7 @@ void MapPainterNav::render()
   if(drawNormalWp && !context->isObjectOverflow())
   {
     QList<MapWaypoint> waypoints;
-    waypointQuery->getWaypoints(waypoints, curBox, context->mapLayer, context->lazyUpdate, overflow);
+    waypointQuery->getWaypoints(waypoints, context->viewportBox, context->mapLayer, context->lazyUpdate, overflow);
     context->setQueryOverflow(overflow);
     maptools::insert(allWaypoints, waypoints);
   }
@@ -135,7 +133,7 @@ void MapPainterNav::render()
   context->startTimer("VOR");
   if(context->mapLayer->isVor() && context->objectTypes.testFlag(map::VOR) && !context->isObjectOverflow())
   {
-    const QList<MapVor> *vors = mapQuery->getVors(curBox, context->mapLayer, context->lazyUpdate, overflow);
+    const QList<MapVor> *vors = mapQuery->getVors(context->viewportBox, context->mapLayer, context->lazyUpdate, overflow);
     context->setQueryOverflow(overflow);
     if(vors != nullptr)
       maptools::insert(allVor, *vors);
@@ -147,7 +145,7 @@ void MapPainterNav::render()
   context->startTimer("NDB");
   if(context->mapLayer->isNdb() && context->objectTypes.testFlag(map::NDB) && !context->isObjectOverflow())
   {
-    const QList<MapNdb> *ndbs = mapQuery->getNdbs(curBox, context->mapLayer, context->lazyUpdate, overflow);
+    const QList<MapNdb> *ndbs = mapQuery->getNdbs(context->viewportBox, context->mapLayer, context->lazyUpdate, overflow);
     context->setQueryOverflow(overflow);
     if(ndbs != nullptr)
       maptools::insert(allNdb, *ndbs);
@@ -162,7 +160,7 @@ void MapPainterNav::render()
      context->mapLayer->isMarker() && context->objectTypes.testFlag(map::MARKER) &&
      !context->isObjectOverflow())
   {
-    const QList<MapMarker> *markers = mapQuery->getMarkers(curBox, context->mapLayer, context->lazyUpdate, overflow);
+    const QList<MapMarker> *markers = mapQuery->getMarkers(context->viewportBox, context->mapLayer, context->lazyUpdate, overflow);
     context->setQueryOverflow(overflow);
 
     if(markers != nullptr)
@@ -174,7 +172,7 @@ void MapPainterNav::render()
   context->startTimer("Hold");
   if(context->mapLayer->isHolding() && context->objectTypes.testFlag(map::HOLDING) && !context->isObjectOverflow())
   {
-    const QList<MapHolding> *holds = mapQuery->getHoldings(curBox, context->mapLayer, context->lazyUpdate, overflow);
+    const QList<MapHolding> *holds = mapQuery->getHoldings(context->viewportBox, context->mapLayer, context->lazyUpdate, overflow);
     context->setQueryOverflow(overflow);
 
     if(holds != nullptr)

@@ -23,6 +23,7 @@
 #include "geo/rect.h"
 #include "options/optionflags.h"
 
+#include <marble/GeoDataLatLonBox.h>
 #include <marble/MarbleGlobal.h>
 
 #include <QPen>
@@ -61,6 +62,7 @@ struct PaintContext
 
   Marble::GeoPainter *painter;
   Marble::ViewportParams *viewport;
+  Marble::GeoDataLatLonBox viewportBox;
   Marble::ViewContext viewContext; /* Either Animation or Still */
   float zoomDistanceMeter;
 
