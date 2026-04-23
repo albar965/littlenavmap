@@ -23,7 +23,7 @@
       <enum>QFrame::Sunken</enum>
      </property>
      <property name="text">
-      <string>Review the information below, enter the optional airline and flight number, then open &lt;a href=&quot;https://www.simbrief.com&quot;&gt;&lt;b&gt;SimBrief&lt;/b&gt;&lt;/a&gt; in a web browser before exporting the flight plan.</string>
+      <string>Review the information below, enter the optional airline and flight number. This will open &lt;a href=&quot;https://www.simbrief.com&quot;&gt;&lt;b&gt;SimBrief&lt;/b&gt;&lt;/a&gt; in a web browser when exporting the flight plan.</string>
      </property>
      <property name="wordWrap">
       <bool>true</bool>
@@ -41,6 +41,18 @@
    </item>
    <item>
     <layout class="QFormLayout" name="formLayoutSummary">
+     <property name="leftMargin">
+      <number>2</number>
+     </property>
+     <property name="topMargin">
+      <number>2</number>
+     </property>
+     <property name="rightMargin">
+      <number>2</number>
+     </property>
+     <property name="bottomMargin">
+      <number>2</number>
+     </property>
      <item row="0" column="0">
       <widget class="QLabel" name="labelAircraftType">
        <property name="text">
@@ -108,6 +120,18 @@
    </item>
    <item>
     <layout class="QFormLayout" name="formLayoutOptions">
+     <property name="leftMargin">
+      <number>2</number>
+     </property>
+     <property name="topMargin">
+      <number>2</number>
+     </property>
+     <property name="rightMargin">
+      <number>2</number>
+     </property>
+     <property name="bottomMargin">
+      <number>2</number>
+     </property>
      <item row="0" column="0">
       <widget class="QLabel" name="labelAirline">
        <property name="text">
