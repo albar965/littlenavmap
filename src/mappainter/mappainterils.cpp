@@ -32,6 +32,8 @@
 #include <QStringBuilder>
 
 #include <marble/GeoPainter.h>
+#include <marble/GeoDataLatLonAltBox.h>
+#include <marble/GeoDataLatLonBox.h>
 
 using namespace Marble;
 using namespace atools::geo;
@@ -62,7 +64,8 @@ void MapPainterIls::render()
         routeIlsIds.insert(ils.id);
     }
 
-    const GeoDataLatLonBox& curBox = context->viewport->viewLatLonAltBox();
+    const GeoDataLatLonAltBox& curAltBox = context->viewport->viewLatLonAltBox();
+    const GeoDataLatLonBox curBox(curAltBox.north(), curAltBox.south(), curAltBox.east(), curAltBox.west());
     Marble::GeoPainter *painter = context->painter;
     map::MapAirport airport;
 

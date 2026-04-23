@@ -76,6 +76,7 @@
 #include <QStringBuilder>
 
 #include <marble/AbstractFloatItem.h>
+#include <marble/DialogConfigurationInterface.h>
 #include <marble/MarbleWidgetInputHandler.h>
 #include <marble/MarbleModel.h>
 #include <marble/MapThemeManager.h>
@@ -2567,7 +2568,8 @@ void MapWidget::showGridConfiguration()
     if(plugin->nameId() == "coordinate-grid")
     {
       // Get configuration dialog - settings will be saved by the plugin
-      QDialog *configDialog = plugin->configDialog();
+      auto *configInterface = dynamic_cast<Marble::DialogConfigurationInterface *>(plugin);
+      QDialog *configDialog = configInterface != nullptr ? configInterface->configDialog() : nullptr;
       if(configDialog != nullptr)
         configDialog->exec();
       break;

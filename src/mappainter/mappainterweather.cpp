@@ -30,6 +30,8 @@
 #include "util/paintercontextsaver.h"
 #include "weather/weatherreporter.h"
 
+#include <marble/GeoDataLatLonAltBox.h>
+#include <marble/GeoDataLatLonBox.h>
 #include <marble/GeoPainter.h>
 #include <marble/ViewportParams.h>
 
@@ -59,7 +61,8 @@ void MapPainterWeather::render()
   // Get airports from cache/database for the bounding rectangle and add them to the map
   bool overflow = false;
 
-  const GeoDataLatLonAltBox& curBox = context->viewport->viewLatLonAltBox();
+  const GeoDataLatLonAltBox& curAltBox = context->viewport->viewLatLonAltBox();
+  const GeoDataLatLonBox curBox(curAltBox.north(), curAltBox.south(), curAltBox.east(), curAltBox.west());
   const QList<MapAirport> *airportCache =
     queries->getMapQuery()->getAirports(curBox, context->mapLayer, context->lazyUpdate, context->objectTypes, overflow);
   context->setQueryOverflow(overflow);

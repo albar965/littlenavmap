@@ -447,6 +447,7 @@ SOURCES += \
   src/routeexport/routeexportflags.cpp \
   src/routeexport/routeexportformat.cpp \
   src/routeexport/routemultiexportdialog.cpp \
+  src/routeexport/simbriefexportdialog.cpp \
   src/routeexport/simbriefhandler.cpp \
   src/routestring/routestringdialog.cpp \
   src/routestring/routestringreader.cpp \
@@ -663,6 +664,7 @@ HEADERS  += \
   src/routeexport/routeexportflags.h \
   src/routeexport/routeexportformat.h \
   src/routeexport/routemultiexportdialog.h \
+  src/routeexport/simbriefexportdialog.h \
   src/routeexport/simbriefhandler.h \
   src/routestring/routestringdialog.h \
   src/routestring/routestringreader.h \
@@ -747,6 +749,7 @@ FORMS += \
   src/routeexport/fetchroutedialog.ui \
   src/routeexport/routeexportdialog.ui \
   src/routeexport/routemultiexportdialog.ui \
+  src/routeexport/simbriefexportdialog.ui \
   src/routestring/routestringdialog.ui \
   src/userdata/userdatadialog.ui
 

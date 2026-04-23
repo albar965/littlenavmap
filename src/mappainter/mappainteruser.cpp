@@ -30,6 +30,8 @@
 #include <QElapsedTimer>
 
 #include <marble/GeoDataLineString.h>
+#include <marble/GeoDataLatLonAltBox.h>
+#include <marble/GeoDataLatLonBox.h>
 #include <marble/GeoPainter.h>
 #include <marble/ViewportParams.h>
 
@@ -48,7 +50,8 @@ MapPainterUser::~MapPainterUser()
 
 void MapPainterUser::render()
 {
-  const GeoDataLatLonAltBox& curBox = context->viewport->viewLatLonAltBox();
+  const GeoDataLatLonAltBox& curAltBox = context->viewport->viewLatLonAltBox();
+  const GeoDataLatLonBox curBox(curAltBox.north(), curAltBox.south(), curAltBox.east(), curAltBox.west());
 
   atools::util::PainterContextSaver saver(context->painter);
 

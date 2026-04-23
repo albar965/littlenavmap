@@ -43,7 +43,7 @@ public:
 
 private:
   QUrl sendRouteUrl(const QString& departure, const QString& destination, const QString& alternate, const QString& route,
-                    const QString& aircraftType, float cruisingAltitudeFeet);
+                    const QString& aircraftType, float cruisingAltitudeFeet, const QString& airline, const QString& flightNumber);
 
   MainWindow *mainWindow;
   QString dispatchUrl; /* URL can be overridden in settings */

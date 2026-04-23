@@ -42,6 +42,7 @@
 #include <QResizeEvent>
 #include <QPaintEvent>
 #include <QFile>
+#include <QDebug>
 
 #include <marble/MarbleLocale.h>
 #include <marble/MarbleModel.h>
