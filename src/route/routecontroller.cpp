@@ -3211,6 +3211,10 @@ void RouteController::tableContextMenu(const QPoint& pos)
         header->moveSection(header->visualIndex(i), i);
 
       tableViewRoute->resizeColumnsToContents();
+
+      // Remove from settings
+      atools::gui::WidgetState(lnm::ROUTE_VIEW_TABLE).clear(tableViewRoute);
+
       NavApp::setStatusMessage(tr("Table view reset to defaults."));
     }
     else if(action == ui->actionRouteSetMark && routeLeg != nullptr)

@@ -1549,17 +1549,7 @@ void ProcedureSearch::contextMenu(const QPoint& pos)
   else if(action == ui->actionInfoApproachCollapseAll)
     treeWidget->collapseAll();
   else if(action == ui->actionSearchResetView)
-  {
-    resetSearch();
-    // Reorder columns to match model order
-    QHeaderView *header = treeWidget->header();
-    for(int i = 0; i < header->count(); i++)
-      header->moveSection(header->visualIndex(i), i);
-    treeWidget->collapseAll();
-    for(int i = 0; i < treeWidget->columnCount(); i++)
-      treeWidget->resizeColumnToContents(i);
-    NavApp::setStatusMessage(tr("Tree view reset to defaults."));
-  }
+    resetView();
   // else if(action == ui->actionSearchProcedureShowAll) // Already connected to showAllToggledAction()
   //// Button signal triggers procedure display
   // ui->pushButtonProcedureShowAll->setChecked(ui->actionSearchProcedureShowAll->isChecked());
@@ -2214,4 +2204,21 @@ QStringList ProcedureSearch::firstLastWaypoint(const atools::sql::SqlRecord& rec
   fromToString.removeAll(QStringLiteral());
 
   return fromToString;
+}
+
+void ProcedureSearch::resetView()
+{
+  resetSearch();
+  // Reorder columns to match model order
+  QHeaderView *header = treeWidget->header();
+  for(int i = 0; i < header->count(); i++)
+    header->moveSection(header->visualIndex(i), i);
+  treeWidget->collapseAll();
+  for(int i = 0; i < treeWidget->columnCount(); i++)
+    treeWidget->resizeColumnToContents(i);
+
+  // Remove from settings
+  atools::gui::WidgetState(lnm::APPROACHTREE_WIDGET).clear(treeWidget);
+
+  NavApp::setStatusMessage(tr("Tree view reset to defaults."));
 }

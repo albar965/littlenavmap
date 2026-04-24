@@ -228,7 +228,7 @@ const QLatin1String ROUTE_HEADER_FOOTER_FLAGS("Route/HeaderFooterFlags2");
 const QLatin1String ROUTE_FILENAMES_RECENT("Route/FilenamesRecent");
 const QLatin1String ROUTE_FILENAMESKML_RECENT("Route/FilenamesKmlRecent");
 const QLatin1String ROUTE_VIEW("Route/View");
-const QLatin1String ROUTE_VIEW_TABLE("Route/ViewTable");
+const QLatin1String ROUTE_VIEW_TABLE("Route/ViewTable2");
 const QLatin1String ROUTE_PRINT_DIALOG("Route/PrintWidget");
 const QLatin1String ROUTE_STRING_DIALOG("Route/RouteStringDialogSplitter2");
 const QLatin1String ROUTE_STRING_DIALOG_OPTIONS("Route/StringDialogOptions");
@@ -248,21 +248,21 @@ const QLatin1String ROUTE_CALC_DIALOG("Route/RouteCalcDialog");
 const QLatin1String SEARCHTAB_WIDGET_TABS("SearchPaneAirport/WidgetTabs");
 
 const QLatin1String SEARCHTAB_AIRPORT_WIDGET("SearchPaneAirport/Widget");
-const QLatin1String SEARCHTAB_AIRPORT_VIEW_WIDGET("SearchPaneAirport/WidgetView");
+const QLatin1String SEARCHTAB_AIRPORT_VIEW_WIDGET("SearchPaneAirport/WidgetView2");
 const QLatin1String SEARCHTAB_AIRPORT_VIEW_DIST_WIDGET("SearchPaneAirport/WidgetDistView");
 const QLatin1String SEARCHTAB_AIRPORT_RANDOM("SearchPaneAirport/RandomPlan");
 const QLatin1String SEARCHTAB_AIRPORT_IDENT_COMBOBOX_HISTORY("SearchPaneAirport/SearchIdentComboHistory");
 
 const QLatin1String SEARCHTAB_NAV_WIDGET("SearchPaneNav/Widget");
-const QLatin1String SEARCHTAB_NAV_VIEW_WIDGET("SearchPaneNav/WidgetView");
+const QLatin1String SEARCHTAB_NAV_VIEW_WIDGET("SearchPaneNav/WidgetView2");
 const QLatin1String SEARCHTAB_NAV_VIEW_DIST_WIDGET("SearchPaneNav/WidgetDistView");
 const QLatin1String SEARCHTAB_NAV_ICAO_COMBOBOX_HISTORY("SearchPaneNav/SearchIcaoComboHistory");
 
-const QLatin1String SEARCHTAB_USERDATA_VIEW_WIDGET("SearchPaneUserdata/WidgetView");
+const QLatin1String SEARCHTAB_USERDATA_VIEW_WIDGET("SearchPaneUserdata/WidgetView2");
 const QLatin1String SEARCHTAB_USERDATA_CLEANUP_DIALOG("SearchPaneUserdata/CleanupDialog");
 const QLatin1String SEARCHTAB_USERDATA_CLEANUP_PREVIEW("SearchPaneUserdata/CleanupPreview");
 
-const QLatin1String SEARCHTAB_LOGDATA_VIEW_WIDGET("SearchPaneLogdata/WidgetView2");
+const QLatin1String SEARCHTAB_LOGDATA_VIEW_WIDGET("SearchPaneLogdata/WidgetView3");
 const QLatin1String SEARCHTAB_LOGDATA_CLEANUP_DIALOG("SearchPaneLogdata/CleanupDialog");
 const QLatin1String SEARCHTAB_LOGDATA_CLEANUP_PREVIEW("SearchPaneLogdata/CleanupPreview");
 
@@ -287,9 +287,9 @@ const QLatin1String PROFILE_WINDOW_OPTIONS("Profile/Options");
 const QLatin1String PROFILE_DISPLAY_OPTIONS("Profile/DisplayOptions4");
 const QLatin1String PROFILE_DISPLAY_OPTIONS_DIALOG("Profile/DisplayOptionsDlg3");
 
-const QLatin1String SEARCHTAB_ONLINE_CLIENT_VIEW_WIDGET("SearchPaneOnlineClient/WidgetView");
-const QLatin1String SEARCHTAB_ONLINE_CENTER_VIEW_WIDGET("SearchPaneOnlineCenter/WidgetView");
-const QLatin1String SEARCHTAB_ONLINE_SERVER_VIEW_WIDGET("SearchPaneOnlineServer/WidgetView");
+const QLatin1String SEARCHTAB_ONLINE_CLIENT_VIEW_WIDGET("SearchPaneOnlineClient/WidgetView2");
+const QLatin1String SEARCHTAB_ONLINE_CENTER_VIEW_WIDGET("SearchPaneOnlineCenter/WidgetView2");
+const QLatin1String SEARCHTAB_ONLINE_SERVER_VIEW_WIDGET("SearchPaneOnlineServer/WidgetView2");
 
 const QLatin1String AIRCRAFT_PERF_FILENAME("AircraftPerformance/Filename");
 const QLatin1String AIRCRAFT_PERF_WIDGETS("AircraftPerformance/Widget");
@@ -329,7 +329,7 @@ const QLatin1String FLIGHTPLAN_ONLINE_EXPORT("Route/FlightplanOnlineExport");
 const QLatin1String ROUTE_PARKING_DIALOG("Route/ParkingDialog");
 
 const QLatin1String LOGDATA_EDIT_ADD_DIALOG("LogdataDialog/Widget");
-const QLatin1String LOGDATA_STATS_DIALOG("LogdataStatsDialog/Widget");
+const QLatin1String LOGDATA_STATS_DIALOG("LogdataStatsDialog/Widget2");
 const QLatin1String LOGDATA_EXPORT_CSV("Logdata/CsvExport");
 const QLatin1String LOGDATA_ENTRY_ID("Logdata/LogEntryIdTakeoff");
 const QLatin1String LOGDATA_TAKEOFF_LANDING_DISTANCE("Logdata/TakeoffLandingDistance");

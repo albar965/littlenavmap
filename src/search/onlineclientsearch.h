@@ -58,6 +58,7 @@ private:
   virtual void saveViewState(bool) override;
   virtual void restoreViewState(bool) override;
   virtual void updatePushButtons() override;
+  virtual void resetView() override;
   QAction *followModeAction() override;
 
   void setCallbacks();

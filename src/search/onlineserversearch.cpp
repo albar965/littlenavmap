@@ -112,6 +112,13 @@ void OnlineServerSearch::updatePushButtons()
 {
 }
 
+void OnlineServerSearch::resetView()
+{
+  // Remove from settings
+  atools::gui::WidgetState(lnm::SEARCHTAB_ONLINE_SERVER_VIEW_WIDGET).clear(ui->tableViewOnlineServerSearch);
+  SearchBaseTable::resetView();
+}
+
 QAction *OnlineServerSearch::followModeAction()
 {
   return nullptr;

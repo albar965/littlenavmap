@@ -269,6 +269,13 @@ void OnlineClientSearch::updatePushButtons()
   ui->pushButtonOnlineClientSearchClearSelection->setEnabled(sm != nullptr && sm->hasSelection());
 }
 
+void OnlineClientSearch::resetView()
+{
+  // Remove from settings
+  atools::gui::WidgetState(lnm::SEARCHTAB_ONLINE_CLIENT_VIEW_WIDGET).clear(ui->tableViewOnlineClientSearch);
+  SearchBaseTable::resetView();
+}
+
 QAction *OnlineClientSearch::followModeAction()
 {
   return ui->actionSearchOnlineClientFollowSelection;

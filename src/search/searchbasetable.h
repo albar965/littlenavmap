@@ -197,6 +197,9 @@ protected:
   virtual void updateButtonMenu() = 0;
   virtual void updatePushButtons() = 0;
 
+  /* Reset view sort order, column width and column order back to default values */
+  virtual void resetView() override;
+
   /* Return the action that defines follow mode */
   virtual QAction *followModeAction() = 0;
 
@@ -237,9 +240,6 @@ private:
   virtual void tabDeactivated() override;
 
   void tableSelectionChangedInternal(bool noFollow);
-
-  /* Reset view sort order, column width and column order back to default values */
-  void resetView();
 
   /* Search criteria editing has started. Start or restart the timer for a
    * delayed update if distance search is used */

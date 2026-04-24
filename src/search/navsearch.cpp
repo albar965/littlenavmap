@@ -500,3 +500,10 @@ QAction *NavSearch::followModeAction()
 {
   return ui->actionSearchNavaidFollowSelection;
 }
+
+void NavSearch::resetView()
+{
+  // Remove from settings
+  atools::gui::WidgetState(lnm::SEARCHTAB_NAV_VIEW_WIDGET).clear(ui->tableViewNavSearch);
+  SearchBaseTable::resetView();
+}

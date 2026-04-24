@@ -273,6 +273,13 @@ void OnlineCenterSearch::updatePushButtons()
   ui->pushButtonOnlineCenterSearchClearSelection->setEnabled(sm != nullptr && sm->hasSelection());
 }
 
+void OnlineCenterSearch::resetView()
+{
+  // Remove from settings
+  atools::gui::WidgetState(lnm::SEARCHTAB_ONLINE_CENTER_VIEW_WIDGET).clear(ui->tableViewOnlineCenterSearch);
+  SearchBaseTable::resetView();
+}
+
 QAction *OnlineCenterSearch::followModeAction()
 {
   return ui->actionSearchOnlineCenterFollowSelection;

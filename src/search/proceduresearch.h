@@ -152,6 +152,8 @@ private:
 
   virtual void fontChanged(const QFont&) override;
 
+  virtual void resetView() override;
+
   void itemSelectionChanged();
   void itemSelectionChangedInternal(bool noFollow);
   void itemDoubleClicked(QTreeWidgetItem *item, int);

@@ -404,3 +404,10 @@ QAction *LogdataSearch::followModeAction()
 {
   return ui->actionSearchLogdataFollowSelection;
 }
+
+void LogdataSearch::resetView()
+{
+  // Remove from settings
+  atools::gui::WidgetState(lnm::SEARCHTAB_LOGDATA_VIEW_WIDGET).clear(ui->tableViewLogdata);
+  SearchBaseTable::resetView();
+}

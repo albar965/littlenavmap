@@ -73,6 +73,7 @@ private:
   virtual void saveViewState(bool distanceSearchState) override;
   virtual void restoreViewState(bool distanceSearchState) override;
   virtual void updatePushButtons() override;
+  virtual void resetView() override;
 
   /* Options dialog has changed some options */
   virtual void optionsChanged(const optc::OptionChangeFlags& changeFlags) override;
@@ -135,7 +136,6 @@ private:
   AirportIconDelegate *iconDelegate = nullptr;
   UnitStringTool *unitStringTool;
   atools::gui::ComboBoxHandler *comboBoxHandler = nullptr;
-
 };
 
 #endif // LITTLENAVMAP_AIRPORTSEARCH_H

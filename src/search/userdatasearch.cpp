@@ -349,6 +349,13 @@ void UserdataSearch::updatePushButtons()
   ui->actionUserdataDelete->setEnabled(sm != nullptr && sm->hasSelection());
 }
 
+void UserdataSearch::resetView()
+{
+  // Remove from settings
+  atools::gui::WidgetState(lnm::SEARCHTAB_USERDATA_VIEW_WIDGET).clear(ui->tableViewUserdata);
+  SearchBaseTable::resetView();
+}
+
 QAction *UserdataSearch::followModeAction()
 {
   return ui->actionSearchUserdataFollowSelection;

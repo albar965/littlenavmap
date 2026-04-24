@@ -87,6 +87,9 @@ public:
   /* Zoom to first in the list */
   virtual void showFirstEntry() = 0;
 
+  /* Reset view sort order, column width and column order back to default values */
+  virtual void resetView() = 0;
+
   si::TabSearchId getTabIndex() const
   {
     return tabIndex;

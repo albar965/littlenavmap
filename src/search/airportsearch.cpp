@@ -1031,3 +1031,10 @@ void AirportSearch::fontChanged(const QFont& font)
   ui->pushButtonAirportFlightplanSearch->setIconSize(NavApp::getMinButtonSize() * 0.8);
   AbstractSearch::fontChanged(font);
 }
+
+void AirportSearch::resetView()
+{
+  // Remove from settings
+  atools::gui::WidgetState(lnm::SEARCHTAB_AIRPORT_VIEW_WIDGET).clear(ui->tableViewAirportSearch);
+  SearchBaseTable::resetView();
+}
