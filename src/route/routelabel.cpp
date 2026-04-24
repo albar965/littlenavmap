@@ -184,7 +184,7 @@ void RouteLabel::updateHeaderLabel()
 
       // Build table =====================================================
       HtmlBuilder label;
-      label.table(0, 0, 0, 100);
+      label.table(0 /* border */, 0 /* padding */, 0 /* spacing */, 100 /* widthPercent */);
 
       bool secondSection = !htmlRunwayTakeoffDepart.isEmpty() || !htmlArrival.isEmpty() || !htmlRunwayLand.isEmpty();
 
@@ -363,7 +363,7 @@ void RouteLabel::buildHeaderDepart(atools::util::HtmlBuilder& html, bool widget)
 
       QString sid(sidLegs.procedureFixIdent);
       if(!sidLegs.transitionFixIdent.isEmpty())
-        sid += "." % sidLegs.transitionFixIdent;
+        sid += QStringLiteral(".") % sidLegs.transitionFixIdent;
 
       departHtml.b(sid);
       departHtml.text(tr(". "));
@@ -395,7 +395,7 @@ void RouteLabel::buildHeaderArrival(atools::util::HtmlBuilder& html, bool widget
 
       QString star(starLegs.procedureFixIdent);
       if(!starLegs.transitionFixIdent.isEmpty())
-        star += "." % starLegs.transitionFixIdent;
+        star += QStringLiteral(".") % starLegs.transitionFixIdent;
       arrHtml.b(star);
 
       starRunway = starLegs.runway;
@@ -723,10 +723,10 @@ void RouteLabel::buildErrorLabel(QString& toolTipText, QStringList errors, const
     }
 
     toolTipText.append(header);
-    toolTipText.append("<ul>");
+    toolTipText.append(QStringLiteral("<ul>"));
     for(const QString& str : std::as_const(errors))
-      toolTipText.append("<li>" % str % "</li>");
-    toolTipText.append("</ul>");
+      toolTipText.append(QStringLiteral("<li>") % str % QStringLiteral("</li>"));
+    toolTipText.append(QStringLiteral("</ul>"));
   }
 }
 

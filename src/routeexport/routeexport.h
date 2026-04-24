@@ -124,6 +124,11 @@ public:
   void routeExportHtmlMan(); /* Called by action */
   bool routeExportHtml(const RouteExportFormat& format);
 
+  /* Export as CSV */
+  /* Also used for manual export */
+  void routeExportCsvMan(); /* Called by action */
+  bool routeExportCsv(const RouteExportFormat& format);
+
   /* Methods for multiexport ========================================================= */
 
   /* Save as above but with annotations for proceduresas used by LNM before 2.4.5 */

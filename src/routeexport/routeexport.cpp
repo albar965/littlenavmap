@@ -1348,6 +1348,34 @@ bool RouteExport::routeExportHtml(const RouteExportFormat& format)
   return false;
 }
 
+void RouteExport::routeExportCsvMan()
+{
+  routeExportCsv(exportFormatMap->getForManualSave(rexp::CSV));
+}
+
+bool RouteExport::routeExportCsv(const RouteExportFormat& format)
+{
+  qDebug() << Q_FUNC_INFO;
+
+  QString routeFile = exportFile(format, "Route/Csv", atools::documentsDir(), buildDefaultFilename(format),
+                                 false /* dontComfirmOverwrite */);
+
+  if(!routeFile.isEmpty())
+  {
+    QFile file(routeFile);
+    if(file.open(QIODevice::WriteOnly | QIODevice::Text))
+    {
+      QTextStream stream(&file);
+      stream << NavApp::getRouteController()->getFlightplanTableAsCsv();
+      NavApp::setStatusMessage(tr("Flight plan saved as CSV."));
+      return true;
+    }
+    else
+      atools::gui::ErrorHandler(parentWidget).handleIOError(file);
+  }
+  return false;
+}
+
 bool RouteExport::routeValidateMulti(const RouteExportFormat& format)
 {
   if(format.getType() != rexp::LNMPLN)

@@ -61,6 +61,7 @@
      <addaction name="actionRouteShowSkyVector"/>
      <addaction name="separator"/>
      <addaction name="actionRouteSaveAsHtml"/>
+     <addaction name="actionRouteSaveAsCsv"/>
      <addaction name="separator"/>
      <addaction name="actionRouteSaveAsVfp"/>
      <addaction name="actionRouteSaveAsIvap"/>
@@ -4405,6 +4406,9 @@ Matches any visited airport.</string>
            </property>
            <property name="alternatingRowColors">
             <bool>true</bool>
+           </property>
+           <property name="selectionBehavior">
+            <enum>QAbstractItemView::SelectRows</enum>
            </property>
            <property name="horizontalScrollMode">
             <enum>QAbstractItemView::ScrollPerPixel</enum>
@@ -12652,6 +12656,20 @@ from either the departure parking or the user aircraft while taxiing.</string>
    </property>
    <property name="statusTip">
     <string>Remove all User Features from the map</string>
+   </property>
+  </action>
+  <action name="actionRouteSaveAsCsv">
+   <property name="text">
+    <string>Export Flight Plan as &amp;CSV ...</string>
+   </property>
+   <property name="iconText">
+    <string>Export Flight Plan as CSV file</string>
+   </property>
+   <property name="toolTip">
+    <string>Export Flight Plan as CSV file</string>
+   </property>
+   <property name="statusTip">
+    <string>Export Flight Plan as CSV file</string>
    </property>
   </action>
  </widget>

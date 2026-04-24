@@ -102,8 +102,15 @@ enum RouteExportFormatType : quint16
   EFBR = 27, /* AivlaSoft EFB */
   GPX = 28, /* Garmin exchange format. Not a flight plan format.  */
   HTML = 29, /* Export as HTML page */
+  CSV = 52, /* Export as CSV file */
 
-  // Next = 52
+  // Next = 53
+
+  /* Also update in
+   * RouteExportFormatMap::initCallbacks()
+   * RouteExportFormatMap::init()
+   * RouteExportFormatMap::updateDefaultPaths()
+   */
 };
 
 /* Flags for export format. Some flags are saved to the configuration,

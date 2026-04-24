@@ -241,6 +241,7 @@ void RouteExportFormatMap::initCallbacks(RouteExport *routeExport)
   (*this)[RTEMSFS      ].CB(bind(&RouteExport::routeExportRteMulti,           routeExport, _1));
   (*this)[GPX          ].CB(bind(&RouteExport::routeExportGpx,                routeExport, _1));
   (*this)[HTML         ].CB(bind(&RouteExport::routeExportHtml,               routeExport, _1));
+  (*this)[CSV          ].CB(bind(&RouteExport::routeExportCsv,                routeExport, _1));
   (*this)[FPR          ].CB(bind(&RouteExport::routeExportFprMulti,           routeExport, _1));
   (*this)[FPL          ].CB(bind(&RouteExport::routeExportFplMulti,           routeExport, _1));
   (*this)[CORTEIN      ].CB(bind(&RouteExport::routeExportCorteInMulti,       routeExport, _1));
@@ -344,6 +345,7 @@ void RouteExportFormatMap::init()
   FMT(RTEMSFS,       AIRPORTS,             S0P % "rte",     tr("Aircraft"),  tr("PMDG aircraft for MSFS")                                  );
   FMT(GPX,           NONE,                 D % "gpx",       tr("Garmin"),    tr("Garmin GPX exchange format for Google Earth and others") % gpxTooltip % mainMenu );
   FMT(HTML,          NONE,                 D % "html",      tr("Other"),     tr("HTML flight plan web page") % mainMenu                    );
+  FMT(CSV,           NONE,                 D % "csv",       tr("Other"),     tr("CSV format") % mainMenu                                   );
   FMT(FPR,           AIRPORTS,             S0P % "fpr",     tr("Aircraft"),  tr("Majestic Dash MJC8 Q400")                                 );
   FMT(FPL,           AIRPORTS,             S0P % "fpl",     tr("Aircraft"),  tr("IXEG Boeing 737")                                         );
   FMT(CORTEIN,       AIRPORTS|FILEAPP,     "corte.in",      tr("Aircraft"),  tr("FlightFactor Airbus")                                    );
@@ -527,6 +529,7 @@ void RouteExportFormatMap::updateDefaultPaths()
   (*this)[RTEMSFS      ].DP(msfsLocalStatePath % SEP % "packages" % SEP % "pmdg-aircraft-737" % SEP % "work" % SEP % "Flightplans");
   (*this)[GPX          ].DP(documents);
   (*this)[HTML         ].DP(documents);
+  (*this)[CSV          ].DP(documents);
   (*this)[FPR          ].DP(fsxP3dBasePath % SEP % "SimObjects" % SEP % "Airplanes" % SEP % "mjc8q400" % SEP % "nav" % SEP % "routes");
   (*this)[FPL          ].DP(xpBasePath12Or11 % SEP % "Aircraft" % SEP % "X-Aviation" % SEP % "IXEG 737 Classic" % SEP % "coroutes");
   (*this)[CORTEIN      ].DP(xpBasePath12Or11 % SEP % "Aircraft");

@@ -333,8 +333,6 @@ SOURCES += \
   src/db/dbtools.cpp \
   src/db/dbtypes.cpp \
   src/db/undoredoprogress.cpp \
-  src/export/csvexporter.cpp \
-  src/export/exporter.cpp \
   src/geo/aircrafttrail.cpp \
   src/geo/coordinateconverter.cpp \
   src/geo/marbleconverter.cpp \
@@ -550,8 +548,6 @@ HEADERS  += \
   src/db/dbtools.h \
   src/db/dbtypes.h \
   src/db/undoredoprogress.h \
-  src/export/csvexporter.h \
-  src/export/exporter.h \
   src/geo/aircrafttrail.h \
   src/geo/coordinateconverter.h \
   src/geo/marbleconverter.h \

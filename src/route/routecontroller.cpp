@@ -30,7 +30,7 @@
 #include "common/unit.h"
 #include "common/unitstringtool.h"
 #include "exception.h"
-#include "export/csvexporter.h"
+#include "util/csvexporter.h"
 #include "fs/perf/aircraftperf.h"
 #include "fs/pln/flightplanio.h"
 #include "fs/sc/simconnectdata.h"
@@ -267,7 +267,7 @@ RouteController::RouteController(MainWindow *parentWindow, QTableView *tableView
   flightplanIO = new atools::fs::pln::FlightplanIO();
 
   Ui::MainWindow *ui = NavApp::getMainUi();
-  atools::gui::adjustSelectionColors(ui->tableViewRoute);
+  atools::gui::adjustSelectionColors(tableViewRoute);
   tabHandlerRoute = new atools::gui::TabWidgetHandler(ui->tabWidgetRoute, {}, QIcon(":/littlenavmap/resources/icons/tabbutton.svg"),
                                                       tr("Open or close tabs"));
   tabHandlerRoute->init(rc::TabRouteIds, lnm::ROUTEWINDOW_WIDGET_TABS);
@@ -490,31 +490,24 @@ void RouteController::redoTriggered()
   NavApp::setStatusMessage(tr("Redo flight plan change."));
 }
 
-/* Ctrl-C - copy selected table contents in CSV format to clipboard */
 void RouteController::tableCopyClipboardTriggered()
 {
   qDebug() << "RouteController::tableCopyClipboard";
 
-  const Route& rt = route;
-  const QStandardItemModel *mdl = model;
+  atools::util::CsvExporter csvExporter(tableViewRoute);
 
   // Use callback to get data to avoid truncated remarks
-  auto dataFunc = [&rt, &mdl](int row, int column) -> QVariant {
-                    if(column == rcol::REMARKS)
-                      // Full remarks
-                      return rt.value(row).getComment();
-                    else
-                      // Formatted view content
-                      return mdl->data(mdl->index(row, column));
-                  };
+  csvExporter.setDataFunction([this](int row, int column) -> QVariant {
+    // Full remarks or formatted view content
+    return column == rcol::REMARKS ? route.value(row).getComment() : model->data(model->index(row, column));
+  });
 
-  QString csv;
-  int exported = CsvExporter::selectionAsCsv(tableViewRoute, true /* rows */, true /* header */, csv, {}, nullptr, dataFunc);
+  csvExporter.exportTableSelection();
 
-  if(!csv.isEmpty())
+  if(csvExporter.hasCsv())
   {
-    QApplication::clipboard()->setText(csv);
-    NavApp::setStatusMessage(tr("Copied %1 entries as CSV to clipboard.").arg(exported));
+    QApplication::clipboard()->setText(csvExporter.getCsv());
+    NavApp::setStatusMessage(tr("Copied %1 entries as CSV to clipboard.").arg(csvExporter.getNumRowsExported()));
   }
 }
 
@@ -671,6 +664,32 @@ void RouteController::flightplanHeaderPrint(atools::util::HtmlBuilder& html, boo
                         atools::util::html::SMALL).tdEnd().trEnd();
     html.tableEnd().br();
   }
+}
+
+QString RouteController::getFlightplanTableAsCsv() const
+{
+  // Export all columns, hidden or not. Use original order and not what user changed in table view
+  atools::util::CsvExporter csvExporter(tableViewRoute);
+  csvExporter.setIncludeFolded(true);
+  csvExporter.setIncludeHidden(true);
+  csvExporter.setUseLogicalIndex(false);
+
+  // Use callback to get data to avoid truncated remarks
+  QLocale locale;
+  csvExporter.setDataFunction([this, &locale](int row, int column) -> QVariant {
+    if(column == rcol::REMARKS)
+      return route.value(row).getComment(); // Full remarks from route object
+    else if(column == rcol::LATITUDE)
+      // Avoid user defined lat/lon formatting but use locale - Latitude and Longitude as in userpoint CSV
+      return locale.toString(route.value(row).getPosition().getLatY(), 'f', 8);
+    else if(column == rcol::LONGITUDE)
+      return locale.toString(route.value(row).getPosition().getLonX(), 'f', 8);
+    else
+      return model->data(model->index(row, column));
+  });
+
+  csvExporter.exportTable();
+  return csvExporter.getCsv();
 }
 
 QString RouteController::getFlightplanTableAsHtmlDoc(float iconSizePixel) const

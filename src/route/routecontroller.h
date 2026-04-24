@@ -246,6 +246,9 @@ public:
   /* Same as above but full HTML document for export to file. */
   QString getFlightplanTableAsHtmlDoc(float iconSizePixel) const;
 
+  /* Full CSV document independent of hidden columns */
+  QString getFlightplanTableAsCsv() const;
+
   /* Get flight plan extracted from table selection */
   Route getRouteForSelection() const;
 
@@ -501,6 +504,7 @@ private:
   /* Used by undo/redo */
   void changeRouteUndoRedo(const atools::fs::pln::Flightplan& newFlightplan);
 
+  /* Ctrl-C - copy selected table contents in CSV format to clipboard */
   void tableCopyClipboardTriggered();
 
   /* From context menu */

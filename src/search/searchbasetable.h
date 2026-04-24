@@ -298,9 +298,6 @@ private:
 
   QString joinQuery(const QStringList& texts, bool concatAnd);
 
-  /* CSV export to clipboard */
-  CsvExporter *csvExporter = nullptr;
-
   /* Used to delay search when using the time intensive distance search */
   QTimer *updateTimer;
 

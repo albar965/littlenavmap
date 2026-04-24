@@ -21,16 +21,15 @@
 #include "common/constants.h"
 #include "common/formatter.h"
 #include "common/unit.h"
-#include "export/csvexporter.h"
 #include "geo/calculations.h"
 #include "gui/helphandler.h"
-#include "gui/tools.h"
 #include "gui/tools.h"
 #include "gui/widgetstate.h"
 #include "gui/widgetzoomhandler.h"
 #include "logdatacontroller.h"
 #include "sql/sqldatabase.h"
 #include "ui_logstatisticsdialog.h"
+#include "util/csvexporter.h"
 #include "util/htmlbuilder.h"
 
 #include <QSqlError>
@@ -270,11 +269,12 @@ void LogStatisticsDialog::buttonBoxClicked(QAbstractButton *button)
         model->fetchMore(QModelIndex());
 
       // Copy CSV from table to clipboard
-      QString csv;
-      int exported = CsvExporter::tableAsCsv(ui->tableViewLogStatsGrouped, true /* header */, csv);
-      if(!csv.isEmpty())
-        QApplication::clipboard()->setText(csv);
-      NavApp::setStatusMessage(tr("Copied %1 rows from table as CSV to clipboard.").arg(exported));
+      atools::util::CsvExporter csvExporter(ui->tableViewLogStatsGrouped);
+      csvExporter.exportTable();
+
+      if(csvExporter.hasCsv())
+        QApplication::clipboard()->setText(csvExporter.getCsv());
+      NavApp::setStatusMessage(tr("Copied %1 rows from table as CSV to clipboard.").arg(csvExporter.getNumRowsExported()));
     }
   }
   else if(buttonType == QDialogButtonBox::Help)

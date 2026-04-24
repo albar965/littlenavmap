@@ -22,7 +22,6 @@
 #include "common/constants.h"
 #include "common/mapcolors.h"
 #include "common/unit.h"
-#include "export/csvexporter.h"
 #include "fs/userdata/logdatamanager.h"
 #include "fs/userdata/userdatamanager.h"
 #include "geo/calculations.h"
@@ -43,6 +42,7 @@
 #include "search/sqlmodel.h"
 #include "sql/sqlrecord.h"
 #include "ui_mainwindow.h"
+#include "util/csvexporter.h"
 
 #include <QTimer>
 #include <QClipboard>
@@ -151,7 +151,6 @@ SearchBaseTable::~SearchBaseTable()
 {
   view->removeEventFilter(viewEventFilter);
   delete controller;
-  delete csvExporter;
   delete updateTimer;
   delete columns;
   delete viewEventFilter;
@@ -163,28 +162,25 @@ void SearchBaseTable::tableCopyClipboard()
   if(view->isVisible())
   {
     qDebug() << Q_FUNC_INFO;
-    QString csv;
-    SqlController *c = controller;
+    atools::util::CsvExporter csvExporter(view);
 
-    int exported = 0;
     if(controller->hasColumn("lonx") && controller->hasColumn("laty"))
     {
+      QLocale locale;
       // Full CSV export including coordinates and full rows
-      exported = CsvExporter::selectionAsCsv(view, true /* header */, true /* rows */, csv,
-                                             {tr("Longitude"), tr("Latitude")},
-                                             [c](int index) -> QStringList {
-        return {QLocale().toString(c->getRawData(index, "lonx").toFloat(), 'f', 8),
-                QLocale().toString(c->getRawData(index, "laty").toFloat(), 'f', 8)};
+      csvExporter.setAdditionalHeaders({tr("Longitude"), tr("Latitude")});
+      csvExporter.setAdditionalFieldFunction([this, &locale](int index) -> QStringList {
+        return {locale.toString(controller->getRawData(index, "lonx").toFloat(), 'f', 8),
+                locale.toString(controller->getRawData(index, "laty").toFloat(), 'f', 8)};
       });
     }
-    else
-      // Copy only selected cells
-      exported = CsvExporter::selectionAsCsv(view, false /* header */, false /* rows */, csv);
 
-    if(!csv.isEmpty())
-      QApplication::clipboard()->setText(csv);
+    csvExporter.exportTableSelection();
 
-    NavApp::setStatusMessage(tr("Copied %1 entries to clipboard.").arg(exported));
+    if(csvExporter.hasCsv())
+      QApplication::clipboard()->setText(csvExporter.getCsv());
+
+    NavApp::setStatusMessage(tr("Copied %1 entries to clipboard.").arg(csvExporter.getNumRowsExported()));
   }
 }
 
@@ -325,8 +321,6 @@ void SearchBaseTable::initViewAndController(atools::sql::SqlDatabase *db)
   delete controller;
   controller = new SqlController(db, columns, view);
   controller->prepareModel();
-
-  csvExporter = new CsvExporter(parentWidget, controller);
 }
 
 void SearchBaseTable::showInSearch(const atools::sql::SqlRecord& record, bool ignoreQueryBuilder)

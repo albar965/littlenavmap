@@ -1335,7 +1335,9 @@ void MainWindow::connectAllSlots()
   connect(ui->actionRouteSaveAll, &QAction::triggered, this, [this]() {routeExport->routeMultiExport();});
   connect(ui->actionRouteSaveAllOptions, &QAction::triggered, this, [this]() {routeExport->routeMultiExportOptions();});
 
+  // Other exports
   connect(ui->actionRouteSaveAsHtml, &QAction::triggered, this, [this]() {routeExport->routeExportHtmlMan();});
+  connect(ui->actionRouteSaveAsCsv, &QAction::triggered, this, [this]() {routeExport->routeExportCsvMan();});
 
   // Online export options
   connect(ui->actionRouteSaveAsVfp, &QAction::triggered, this, [this]() {routeExport->routeExportVfpMan();});
@@ -3875,6 +3877,7 @@ void MainWindow::updateActionStates()
   ui->actionRouteSaveAsPlnMsfs24->setEnabled(hasFlightplan);
   ui->actionSaveAircraftTrailToGPX->setEnabled(hasFlightplan || hasTrack);
   ui->actionRouteSaveAsHtml->setEnabled(hasFlightplan);
+  ui->actionRouteSaveAsCsv->setEnabled(hasFlightplan);
   ui->actionRouteSaveAll->setEnabled(hasFlightplan && routeExport->hasSelected());
   ui->actionRouteSendToSimBrief->setEnabled(hasFlightplan);
 
