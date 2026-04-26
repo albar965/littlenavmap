@@ -84,15 +84,15 @@ void SqlController::rebuildQuery()
 
 void SqlController::refreshData(bool loadAll, bool keepSelection, bool force)
 {
-  QItemSelectionModel *sm = view->selectionModel();
+  QItemSelectionModel *selectionModel = view->selectionModel();
 
   // Get all selected rows and highest selected row number
   int maxRow = 0;
   QSet<int> rows;
-  if(sm != nullptr && keepSelection)
+  if(selectionModel != nullptr && keepSelection)
   {
-    const QModelIndexList selectedRows = sm->selectedRows(0);
-    for(const QModelIndex& index : selectedRows)
+    const QModelIndexList selectedIndexes = selectionModel->selectedRows();
+    for(const QModelIndex& index : selectedIndexes)
     {
       if(index.row() > maxRow)
         maxRow = index.row();
@@ -110,9 +110,9 @@ void SqlController::refreshData(bool loadAll, bool keepSelection, bool force)
   }
 
   // Selection changes when updating model
-  sm = view->selectionModel();
+  selectionModel = view->selectionModel();
 
-  if(sm != nullptr && keepSelection)
+  if(selectionModel != nullptr && keepSelection)
   {
     int visibleRowCount = getVisibleRowCount();
 
@@ -126,13 +126,13 @@ void SqlController::refreshData(bool loadAll, bool keepSelection, bool force)
 
     // Update selection in new data result set
     int totalRowCount = getTotalRowCount();
-    sm->blockSignals(true);
+    selectionModel->blockSignals(true);
     for(int row : rows)
     {
       if(row < totalRowCount)
-        sm->select(model->index(row, 0), QItemSelectionModel::Select | QItemSelectionModel::Rows);
+        selectionModel->select(model->index(row, 0), QItemSelectionModel::Select | QItemSelectionModel::Rows);
     }
-    sm->blockSignals(false);
+    selectionModel->blockSignals(false);
   }
 }
 
@@ -504,11 +504,6 @@ void SqlController::resetSearch()
     model->resetSearch();
 }
 
-QString SqlController::getCurrentSqlQuery() const
-{
-  return model->getCurrentSqlQuery();
-}
-
 QModelIndex SqlController::getModelIndexAt(const QPoint& pos) const
 {
   return view->indexAt(pos);
@@ -559,7 +554,7 @@ void SqlController::processViewColumns()
     QString field = rec.fieldName(i);
     const Column *colDescr = columns->getColumn(field);
 
-    if(!isDistanceSearch() && colDescr->isDistance())
+    if(!isDistanceSearch() && colDescr->isDistanceHeading())
       // Hide special distance search columns "distance" and "heading"
       view->hideColumn(i);
     else if(colDescr->isHidden())
@@ -598,7 +593,7 @@ void SqlController::processViewColumns()
       if(colDescrCurSort->isHidden())
         view->sortByColumn(idx, colDescrDefSort->getDefaultSortOrder());
       else if(!isDistanceSearch())
-        if(colDescrCurSort->isDistance())
+        if(colDescrCurSort->isDistanceHeading())
           view->sortByColumn(idx, colDescrDefSort->getDefaultSortOrder());
     }
   }

@@ -676,7 +676,7 @@ void UserdataController::importCsv()
   try
   {
     QStringList files = dialog->openFileDialogMulti(tr("Open Userpoint CSV File(s)"),
-                                                    tr("CSV Files %1;;All Files (*)").arg(lnm::FILE_PATTERN_USERDATA_CSV), "Userdata/Csv");
+                                                    tr("CSV Files %1;;All Files (*)").arg(lnm::FILE_PATTERN_CSV), "Userdata/Csv");
     files.removeAll(QStringLiteral());
 
     if(!files.isEmpty())
@@ -790,8 +790,8 @@ void UserdataController::exportCsv()
     {
       QString file = dialog->saveFileDialog(
         tr("Export Userpoint CSV File"),
-        tr("CSV Files %1;;All Files (*)").arg(lnm::FILE_PATTERN_USERDATA_CSV),
-        ".csv", "Userdata/Csv", QStringLiteral(), QStringLiteral(), append /* dont confirm overwrite */);
+        tr("CSV Files %1;;All Files (*)").arg(lnm::FILE_PATTERN_CSV),
+        ".csv", "Userdata/Csv", QStringLiteral(), tr("Userpoints.csv"), append /* dontComfirmOverwrite */);
 
       if(!file.isEmpty())
       {
@@ -828,7 +828,7 @@ void UserdataController::exportXplaneUserFixDat()
       QString file = dialog->saveFileDialog(
         tr("Export X-Plane user_fix.dat File"),
         tr("X-Plane User Fix Files %1;;X-Plane Dat Files %2;;All Files (*)").arg(lnm::FILE_PATTERN_USER_FIX_DAT).arg(lnm::FILE_PATTERN_DAT),
-        ".dat", "Userdata/UserFixDat", xplaneUserWptDatPath(), "user_fix.dat", append /* dont confirm overwrite */);
+        ".dat", "Userdata/UserFixDat", xplaneUserWptDatPath(), "user_fix.dat", append /* dontComfirmOverwrite */);
 
       if(!file.isEmpty())
       {
@@ -864,7 +864,7 @@ void UserdataController::exportGarmin()
         tr("Garmin User Waypoint Files %1;;All Files (*)").arg(lnm::FILE_PATTERN_USER_WPT),
         ".dat",
         "Userdata/UserWptDat",
-        xplaneUserWptDatPath(), "user.wpt", append /* dont confirm overwrite */);
+        xplaneUserWptDatPath(), "user.wpt", append /* dontComfirmOverwrite */);
 
       if(!file.isEmpty())
       {
@@ -971,7 +971,7 @@ bool UserdataController::exportSelectedQuestion(bool& selected, bool& append, bo
   choiceDialog.setHelpLanguageOnline(lnm::helpLanguageOnline());
 
   if(appendAllowed)
-    choiceDialog.addCheckBox(APPEND, tr("&Append to an already present file"),
+    choiceDialog.addCheckBox(APPEND, tr("&Append to an existing file"),
                              tr("File header will be ignored if this is enabled."), false);
   else
     // Add a hidden dummy which still allows to save the settings to the same key/variable
@@ -981,7 +981,7 @@ bool UserdataController::exportSelectedQuestion(bool& selected, bool& append, bo
                            numSelected == 0 /* disabled */);
 
   if(headerAllowed)
-    choiceDialog.addCheckBox(HEADER, tr("Add a &header to the first line"), QStringLiteral(), false);
+    choiceDialog.addCheckBox(HEADER, tr("Add a &header to the first line"), QStringLiteral(), true);
   else
     choiceDialog.addCheckBoxHidden(HEADER);
 
@@ -1154,4 +1154,9 @@ void UserdataController::cleanupUserdata()
       emit userdataChanged();
     }
   }
+}
+
+bool UserdataController::hasUserdata() const
+{
+  return manager->hasData();
 }

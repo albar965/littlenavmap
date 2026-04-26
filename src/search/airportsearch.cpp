@@ -198,8 +198,8 @@ AirportSearch::AirportSearch(MainWindow *parent, QTableView *tableView, si::TabS
   // Columns that are hidden are also needed to fill MapAirport object and for the icon delegate
   columns->
   append(Column("airport_id").hidden()).
-  append(Column("distance", tr("Distance\n%dist%")).distanceCol()).
-  append(Column("heading", tr("Heading\n°T")).distanceCol()).
+  append(Column("distance", tr("Distance\n%dist%")).distanceHeadingCol()).
+  append(Column("heading", tr("Heading\n°T")).distanceHeadingCol()).
 
   append(Column("ident", tr("Ident")).defaultSort().filterByBuilder()).
   append(Column("icao", tr("ICAO")).filterByBuilder()).

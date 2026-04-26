@@ -173,7 +173,7 @@ LogStatisticsDialog::LogStatisticsDialog(QWidget *parent, LogdataController *log
   addActions(NavApp::getMainWindowActions());
 
   // Copy to clipboard button in button bar ============================
-  QPushButton *button = ui->buttonBoxLogStats->addButton(tr("&Copy to Clipboard"), QDialogButtonBox::NoRole);
+  QPushButton *button = ui->buttonBoxLogStats->addButton(tr("&Copy as CSV to Clipboard"), QDialogButtonBox::NoRole);
   button->setToolTip(tr("Copies overview as formatted text or table as CSV to clipboard"));
 
   // Fill query labels into combo box ==============================
@@ -270,10 +270,10 @@ void LogStatisticsDialog::buttonBoxClicked(QAbstractButton *button)
 
       // Copy CSV from table to clipboard
       atools::util::CsvExporter csvExporter(ui->tableViewLogStatsGrouped);
-      csvExporter.exportTable();
+      const QString csvString = csvExporter.exportTable();
 
-      if(csvExporter.hasCsv())
-        QApplication::clipboard()->setText(csvExporter.getCsv());
+      if(!csvString.isEmpty())
+        QApplication::clipboard()->setText(csvString);
       NavApp::setStatusMessage(tr("Copied %1 rows from table as CSV to clipboard.").arg(csvExporter.getNumRowsExported()));
     }
   }

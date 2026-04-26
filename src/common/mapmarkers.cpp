@@ -172,7 +172,7 @@ void MapMarkers::save(const QString& filename, int numBackupFiles)
     file.close();
   }
   else
-    qWarning() << Q_FUNC_INFO << "Error reading" << filename << file.errorString();
+    qWarning() << Q_FUNC_INFO << "Error writing" << filename << file.errorString();
 }
 
 void MapMarkers::restore(const QString& filename)

@@ -153,6 +153,9 @@ public:
   /* Show choice dialog with options to remove empty or duplicate userpoints */
   void cleanupUserdata();
 
+  /* true if any entries are present */
+  bool hasUserdata() const;
+
 signals:
   /* Sent after database modification to update the search result table */
   void refreshUserdataSearch(bool loadAll, bool keepSelection, bool force);

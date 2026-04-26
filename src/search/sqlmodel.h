@@ -108,9 +108,9 @@ public:
     return totalRowCount;
   }
 
-  QString getCurrentSqlQuery() const
+  const QStringList& getCurrentSqlQueryColumns() const
   {
-    return currentSqlQuery;
+    return currentSqlQueryColumns;
   }
 
   /* Fetch more data and emit signal fetchedMore */
@@ -202,7 +202,7 @@ private:
   virtual void sort(int column, Qt::SortOrder order) override;
 
   void filterBy(bool exclude, QString whereCol, QVariant whereValue, bool forceQueryBuilder, bool ignoreQueryBuilder, bool exact);
-  QString buildColumnList(const atools::sql::SqlRecord& tableCols);
+  QStringList buildColumnList(const atools::sql::SqlRecord& tableCols);
   QString buildWhere(const atools::sql::SqlRecord& tableCols, QList<const Column *>& overridingColumns);
   QString buildWhereValue(const WhereCondition& cond);
   void buildQuery();
@@ -222,6 +222,7 @@ private:
   int orderByColIndex = 0;
 
   QString currentSqlQuery, currentSqlCountQuery, currentSqlFetchQuery;
+  QStringList currentSqlQueryColumns;
 
   /* Data callback */
   sqlmodeltypes::DataFunctionType dataFunction = nullptr;

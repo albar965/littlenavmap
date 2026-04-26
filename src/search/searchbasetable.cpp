@@ -26,6 +26,7 @@
 #include "fs/userdata/userdatamanager.h"
 #include "geo/calculations.h"
 #include "gui/actiontool.h"
+#include "gui/choicedialog.h"
 #include "gui/dialog.h"
 #include "gui/tools.h"
 #include "gui/tools.h"
@@ -98,6 +99,7 @@ SearchBaseTable::SearchBaseTable(MainWindow *parent, QTableView *tableView, Colu
 
   // Need extra action connected to catch the default Ctrl-C in the table view
   connect(ui->actionSearchTableCopy, &QAction::triggered, this, &SearchBaseTable::tableCopyClipboard);
+  connect(ui->actionSearchExportCsv, &QAction::triggered, this, &SearchBaseTable::tableExportCsv);
 
   // Actions that cover the whole dock window
   ui->dockWidgetSearch->addActions({ui->actionSearchResetSearch, ui->actionSearchShowAll});
@@ -157,6 +159,116 @@ SearchBaseTable::~SearchBaseTable()
   delete widgetKeyEventFilter;
 }
 
+bool SearchBaseTable::exportSelectedQuestion(bool& selected, bool& append, bool& header, const QString& feature)
+{
+  int numSelected = view->selectionModel() != nullptr && view->selectionModel()->hasSelection();
+
+  // Dialog options
+  // Keep ids stable since they are used to save state
+  enum {SELECTED, APPEND, HEADER};
+
+  atools::gui::ChoiceDialog choiceDialog(parentWidget, QCoreApplication::applicationName() + tr(" - Export Options for %1").arg(feature),
+                                         tr("Select export options for %1.").arg(feature),
+                                         lnm::SEARCHTAB_EXPORT_CHOICE_DIALOG, "SEARCH.html#csvexport");
+  choiceDialog.setHelpOnlineUrl(lnm::helpOnlineUrl);
+  choiceDialog.setHelpLanguageOnline(lnm::helpLanguageOnline());
+  choiceDialog.addCheckBox(APPEND, tr("&Append to an existing file"),
+                           tr("File header will be ignored if this is enabled."), false);
+  choiceDialog.addCheckBox(SELECTED, tr("Export &selected entries only"), QStringLiteral(), true,
+                           numSelected == 0 /* disabled */);
+  choiceDialog.addCheckBox(HEADER, tr("Add a &header to the first line"), QStringLiteral(), true);
+  choiceDialog.addSpacer();
+
+  choiceDialog.restoreState();
+
+  choiceDialog.disableWidget(HEADER, choiceDialog.isButtonChecked(APPEND));
+  // Append excludes header
+  connect(&choiceDialog, &atools::gui::ChoiceDialog::buttonToggled, this, [&choiceDialog](int id, bool checked) {
+    if(id == APPEND)
+      choiceDialog.disableWidget(HEADER, checked);
+  });
+
+  if(choiceDialog.exec() == QDialog::Accepted)
+  {
+    selected = choiceDialog.isButtonChecked(SELECTED); // Only true if enabled too
+    append = choiceDialog.isButtonChecked(APPEND);
+    header = choiceDialog.isButtonChecked(HEADER) && !choiceDialog.isButtonChecked(APPEND);
+    return true;
+  }
+  else
+    return false;
+}
+
+void SearchBaseTable::tableExportCsv()
+{
+  if(controller->getTotalRowCount() > 0 && view->isVisible() && NavApp::getSearchController()->getCurrentSearchTabId() == tabIndex)
+  {
+    qDebug() << Q_FUNC_INFO;
+
+    const QString featureName = NavApp::getSearchController()->getCurrentSearchTabText();
+    bool selected, append, header;
+    if(exportSelectedQuestion(selected, append, header, featureName))
+    {
+      QString filename = atools::gui::Dialog(parentWidget).saveFileDialog(
+        tr("Export %1 to a CSV File").arg(featureName),
+        tr("CSV Files %1;;All Files (*)").arg(lnm::FILE_PATTERN_CSV), ".csv", "SearchPane/CsvExport",
+        QStringLiteral(), featureName % ".csv", append /* dontComfirmOverwrite */);
+
+      if(!filename.isEmpty())
+      {
+        QIODeviceBase::OpenMode openMode = QIODevice::WriteOnly | QIODevice::Text;
+        if(append)
+          openMode.setFlag(QIODevice::Append);
+
+        QFile file(filename);
+        if(file.open(openMode))
+        {
+          QGuiApplication::setOverrideCursor(Qt::WaitCursor);
+
+          // Reload full table if all should be exported
+          if(!selected)
+            controller->refreshData(true /* loadAll */, true /* keepSelection */, true /* force */);
+
+          // Remove hidden, function and "null as" colums
+          QSet<int> skipColumIndexes;
+
+          for(int i = 0; i < controller->getSqlModel()->getCurrentSqlQueryColumns().size(); i++)
+          {
+            const Column *column = columns->getColumn(i);
+            if(column == nullptr || column->isHidden() || !column->getSqlFunction().isEmpty() || column->isDistanceHeading())
+              skipColumIndexes.insert(i);
+          }
+
+          atools::util::CsvExporter csvExporter(view);
+          csvExporter.setHeader(header);
+          csvExporter.setIncludeFolded(true);
+          csvExporter.setIncludeHidden(true);
+          csvExporter.setUseLogicalIndex(false);
+          csvExporter.setSkipColumIndexes(skipColumIndexes);
+
+          QTextStream stream(&file);
+          if(selected)
+            csvExporter.exportTableSelection(stream);
+          else
+            csvExporter.exportTable(stream);
+          file.close();
+
+          // Reload data limited
+          if(!selected)
+            controller->refreshData(false /* loadAll */, true /* keepSelection */, true /* force */);
+
+          updatePushButtons();
+          QGuiApplication::restoreOverrideCursor();
+
+          NavApp::setStatusMessage(tr("Saved %1 %2 to CSV file.").arg(csvExporter.getNumRowsExported()).arg(featureName));
+        }
+        else
+          qWarning() << Q_FUNC_INFO << "Error writing" << filename << file.errorString();
+      }
+    }
+  }
+}
+
 void SearchBaseTable::tableCopyClipboard()
 {
   if(view->isVisible())
@@ -175,10 +287,10 @@ void SearchBaseTable::tableCopyClipboard()
       });
     }
 
-    csvExporter.exportTableSelection();
+    const QString csvString = csvExporter.exportTableSelection();
 
-    if(csvExporter.hasCsv())
-      QApplication::clipboard()->setText(csvExporter.getCsv());
+    if(!csvString.isEmpty())
+      QApplication::clipboard()->setText(csvString);
 
     NavApp::setStatusMessage(tr("Copied %1 entries to clipboard.").arg(csvExporter.getNumRowsExported()));
   }
@@ -724,7 +836,7 @@ void SearchBaseTable::tableSelectionChangedInternal(bool noFollow)
   {
     if(sm != nullptr && sm->currentIndex().isValid() && sm->isSelected(sm->currentIndex()) && followModeAction() != nullptr &&
        followModeAction()->isChecked())
-      showRow(sm->currentIndex().row(), false /* show info */);
+      showRow(sm->currentIndex().row(), false /* showInfo */);
   }
 }
 
@@ -851,8 +963,6 @@ void SearchBaseTable::loadAllRowsIntoView()
 {
   if(NavApp::getSearchController()->getCurrentSearchTabId() == tabIndex)
   {
-    // bool allSelected = getSelectedRowCount() == getVisibleRowCount();
-
     // Clear selection since it can get invalid
     view->clearSelection();
 
@@ -868,7 +978,7 @@ void SearchBaseTable::loadAllRowsIntoView()
 
 void SearchBaseTable::showFirstEntry()
 {
-  showRow(0, true /* show info */);
+  showRow(0, true /* showInfo */);
 }
 
 void SearchBaseTable::showSelectedEntry()
@@ -876,7 +986,7 @@ void SearchBaseTable::showSelectedEntry()
   QModelIndex idx = view->currentIndex();
 
   if(idx.isValid())
-    showRow(idx.row(), true /* show info */);
+    showRow(idx.row(), true /* showInfo */);
 }
 
 void SearchBaseTable::activateView()
@@ -889,7 +999,7 @@ void SearchBaseTable::activateView()
 void SearchBaseTable::doubleClick(const QModelIndex& index)
 {
   if(index.isValid())
-    showRow(index.row(), true /* show info */);
+    showRow(index.row(), true /* showInfo */);
 }
 
 void SearchBaseTable::showRow(int row, bool showInfo)
@@ -990,9 +1100,10 @@ void SearchBaseTable::contextMenu(const QPoint& pos)
                          ui->actionSearchRouteAirportAlternate, ui->actionSearchRouteAirportDest, ui->actionMapAirportMsa,
                          ui->actionSearchRouteAirportStart, ui->actionSearchSetMark, ui->actionSearchShowAll,
                          ui->actionSearchShowApproaches, ui->actionSearchShowApproachCustom, ui->actionSearchShowDepartureCustom,
-                         ui->actionSearchShowInformation, ui->actionSearchShowOnMap, ui->actionSearchTableCopy,
-                         ui->actionSearchTableSelectAll, ui->actionSearchTableSelectNothing, ui->actionUserdataAdd,
-                         ui->actionUserdataDelete, ui->actionUserdataEdit, ui->actionSearchMarkAddon});
+                         ui->actionSearchShowInformation, ui->actionSearchShowOnMap, ui->actionSearchTableCopy, ui->actionUserdataExportCsv,
+                         ui->actionLogdataExportCsv, ui->actionSearchExportCsv, ui->actionSearchTableSelectAll,
+                         ui->actionSearchTableSelectNothing, ui->actionUserdataAdd, ui->actionUserdataDelete, ui->actionUserdataEdit,
+                         ui->actionSearchMarkAddon});
 
   bool columnCanFilter = false, columnCanFilterBuilder = false;
   atools::geo::Pos position;
@@ -1548,7 +1659,6 @@ void SearchBaseTable::contextMenu(const QPoint& pos)
     menu.addSeparator();
 
     menu.addAction(ui->actionSearchResetSearch);
-    menu.addAction(ui->actionSearchShowAll);
     menu.addSeparator();
   }
 
@@ -1559,16 +1669,50 @@ void SearchBaseTable::contextMenu(const QPoint& pos)
     menu.addSeparator();
   }
 
-  menu.addAction(ui->actionSearchTableCopy);
   menu.addAction(ui->actionSearchTableSelectAll);
   menu.addAction(ui->actionSearchTableSelectNothing);
-  menu.addSeparator();
 
-  menu.addAction(ui->actionSearchResetView);
-  menu.addSeparator();
+  ui->actionSearchShowAll->setEnabled(controller->getTotalRowCount() > 0);
+  ui->actionSearchExportCsv->setEnabled(controller->getTotalRowCount() > 0);
+  ui->actionSearchTableCopy->setEnabled(controller->getTotalRowCount() > 0);
 
-  if(atools::contains(tabIndex, {si::SEARCH_AIRPORT, si::SEARCH_NAV, si::SEARCH_USER, si::SEARCH_ONLINE_CENTER, si::SEARCH_ONLINE_CLIENT}))
-    menu.addAction(ui->actionSearchSetMark);
+  // More menu ======================================================================
+  QMenu menuMore(tr("&More"));
+  menuMore.setToolTipsVisible(NavApp::isMenuToolTipsVisible());
+  if(atools::contains(tabIndex, {si::SEARCH_AIRPORT, si::SEARCH_NAV, si::SEARCH_USER, si::SEARCH_LOG, si::SEARCH_ONLINE_CENTER,
+                                 si::SEARCH_ONLINE_CLIENT}))
+  {
+    menu.addSeparator();
+
+    menuMore.addAction(ui->actionSearchShowAll);
+    menuMore.addAction(ui->actionSearchResetView);
+
+    menuMore.addSeparator();
+    menuMore.addAction(ui->actionSearchTableCopy);
+
+    if(tabIndex == si::SEARCH_USER)
+    {
+      ui->actionUserdataExportCsv->setText(tr("Export Search Result as &CSV ..."));
+      menuMore.addAction(ui->actionUserdataExportCsv);
+    }
+    else if(tabIndex == si::SEARCH_LOG)
+    {
+      ui->actionLogdataExportCsv->setText(tr("Export Search Result as &CSV ..."));
+      menuMore.addAction(ui->actionLogdataExportCsv);
+    }
+    else if(atools::contains(tabIndex, {si::SEARCH_AIRPORT, si::SEARCH_NAV, si::SEARCH_ONLINE_CENTER, si::SEARCH_ONLINE_CLIENT}))
+    {
+      menuMore.addSeparator();
+      menuMore.addAction(ui->actionSearchExportCsv);
+    }
+
+    if(tabIndex != si::SEARCH_LOG)
+    {
+      menuMore.addSeparator();
+      menuMore.addAction(ui->actionSearchSetMark);
+    }
+    menu.addMenu(&menuMore);
+  }
 
   // Open menu ========================================================
   QAction *action = menu.exec(menuPos);

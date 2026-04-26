@@ -149,7 +149,7 @@ Column& Column::includesName(bool value)
   return *this;
 }
 
-Column& Column::distanceCol(bool value)
+Column& Column::distanceHeadingCol(bool value)
 {
   colIsDistance = value;
   return *this;

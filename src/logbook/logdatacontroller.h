@@ -196,6 +196,9 @@ public:
     return aircraftPassedTakeoffPoint;
   }
 
+  /* true if any entries are present */
+  bool hasLogdata() const;
+
 signals:
   /* Sent after database modification to update the search result table */
   void refreshLogSearch(bool loadAll, bool keepSelection, bool force);

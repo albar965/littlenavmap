@@ -1015,7 +1015,7 @@ void LogdataController::importCsv()
   {
     QString file = dialog->openFileDialog(
       tr("Open Logbook CSV File"),
-      tr("CSV Files %1;;All Files (*)").arg(lnm::FILE_PATTERN_USERDATA_CSV), "Logdata/Csv");
+      tr("CSV Files %1;;All Files (*)").arg(lnm::FILE_PATTERN_CSV), "Logdata/Csv");
 
     int numImported = 0;
     if(!file.isEmpty())
@@ -1064,11 +1064,11 @@ void LogdataController::exportCsv()
                                    "Columns will be empty on export if disabled.");
 
     int numSelected = NavApp::getLogdataSearch()->getSelectedRowCount();
-    choiceDialog.addCheckBox(APPEND, tr("&Append to an already present file"),
+    choiceDialog.addCheckBox(APPEND, tr("&Append to an existing file"),
                              tr("File header will be ignored if this is enabled."), false);
     choiceDialog.addCheckBox(SELECTED, tr("Export &selected entries only"), QStringLiteral(), true,
                              numSelected == 0 /* disabled */);
-    choiceDialog.addCheckBox(HEADER, tr("Add a &header to the first line"), QStringLiteral(), false);
+    choiceDialog.addCheckBox(HEADER, tr("Add a &header to the first line"), QStringLiteral(), true);
     choiceDialog.addLine();
     choiceDialog.addCheckBox(EXPORTPLAN, tr("&Flight plan in LNMPLN format"), attachmentToolTip, false);
     choiceDialog.addCheckBox(EXPORTPERF, tr("&Aircraft performance"), attachmentToolTip, false);
@@ -1088,8 +1088,8 @@ void LogdataController::exportCsv()
     {
       QString file = dialog->saveFileDialog(
         tr("Export Logbook Entry CSV File"),
-        tr("CSV Files %1;;All Files (*)").arg(lnm::FILE_PATTERN_USERDATA_CSV), ".csv", "Logdata/Csv",
-        QStringLiteral(), QStringLiteral(), choiceDialog.isButtonChecked(APPEND));
+        tr("CSV Files %1;;All Files (*)").arg(lnm::FILE_PATTERN_CSV), ".csv", "Logdata/Csv",
+        QStringLiteral(), tr("Logbook.csv"), choiceDialog.isButtonChecked(APPEND));
 
       if(!file.isEmpty())
       {
@@ -1484,4 +1484,9 @@ void LogdataController::perfSaveAs(atools::sql::SqlRecord *record, QWidget *pare
   {
     atools::gui::ErrorHandler(mainWindow).handleUnknownException();
   }
+}
+
+bool LogdataController::hasLogdata() const
+{
+  return manager->hasData();
 }

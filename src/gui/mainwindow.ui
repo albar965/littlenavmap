@@ -389,11 +389,11 @@
     <addaction name="separator"/>
     <addaction name="actionUserdataCleanup"/>
     <addaction name="separator"/>
-    <addaction name="actionUserdataImportCSV"/>
+    <addaction name="actionUserdataImportCsv"/>
     <addaction name="actionUserdataImportUserfixDat"/>
     <addaction name="actionUserdataImportGarminGTN"/>
     <addaction name="separator"/>
-    <addaction name="actionUserdataExportCSV"/>
+    <addaction name="actionUserdataExportCsv"/>
     <addaction name="actionUserdataExportUserfixDat"/>
     <addaction name="actionUserdataExportGarminGTN"/>
     <addaction name="actionUserdataExportXmlBgl"/>
@@ -561,11 +561,9 @@
     <addaction name="separator"/>
     <addaction name="actionLogdataShowStatistics"/>
     <addaction name="separator"/>
-    <addaction name="actionLogdataImportCSV"/>
-    <addaction name="actionLogdataExportCSV"/>
+    <addaction name="actionLogdataImportCsv"/>
+    <addaction name="actionLogdataExportCsv"/>
     <addaction name="actionLogdataImportXplane"/>
-    <addaction name="separator"/>
-    <addaction name="actionLogdataConvertUserdata"/>
     <addaction name="separator"/>
     <addaction name="actionLogdataCreateLogbook"/>
    </widget>
@@ -6780,7 +6778,7 @@ relation to shown airport</string>
      <normaloff>:/littlenavmap/resources/icons/copy.svg</normaloff>:/littlenavmap/resources/icons/copy.svg</iconset>
    </property>
    <property name="text">
-    <string>&amp;Copy</string>
+    <string>&amp;Copy Selection as CSV</string>
    </property>
    <property name="toolTip">
     <string>Copy selected entries in CSV format into the clipboard</string>
@@ -8210,7 +8208,7 @@ relation to shown airport</string>
      <normaloff>:/littlenavmap/resources/icons/copy.svg</normaloff>:/littlenavmap/resources/icons/copy.svg</iconset>
    </property>
    <property name="text">
-    <string>&amp;Copy</string>
+    <string>&amp;Copy Selection as CSV</string>
    </property>
    <property name="toolTip">
     <string>Copy selected entries in CSV format into the clipboard</string>
@@ -8962,11 +8960,6 @@ relation to shown airport</string>
     <string>Show the online tutorials</string>
    </property>
   </action>
-  <action name="actionExport">
-   <property name="text">
-    <string>&amp;Export</string>
-   </property>
-  </action>
   <action name="actionHelpCheckUpdates">
    <property name="icon">
     <iconset resource="../../littlenavmap.qrc">
@@ -9132,7 +9125,7 @@ relation to shown airport</string>
     <string>Show more search options</string>
    </property>
   </action>
-  <action name="actionUserdataImportCSV">
+  <action name="actionUserdataImportCsv">
    <property name="text">
     <string>Import &amp;CSV ...</string>
    </property>
@@ -9165,7 +9158,7 @@ relation to shown airport</string>
     <string>Import Userpoints from Garmin GTN &quot;user.wpt&quot; file</string>
    </property>
   </action>
-  <action name="actionUserdataExportCSV">
+  <action name="actionUserdataExportCsv">
    <property name="text">
     <string>Export &amp;CSV ...</string>
    </property>
@@ -10457,7 +10450,7 @@ relation to shown airport</string>
     <string>Centers the selected userpoint on the map</string>
    </property>
   </action>
-  <action name="actionLogdataImportCSV">
+  <action name="actionLogdataImportCsv">
    <property name="text">
     <string>Import &amp;CSV ...</string>
    </property>
@@ -10468,7 +10461,7 @@ relation to shown airport</string>
     <string>Import Logbook Entries from CSV File</string>
    </property>
   </action>
-  <action name="actionLogdataExportCSV">
+  <action name="actionLogdataExportCsv">
    <property name="text">
     <string>Export &amp;CSV ...</string>
    </property>
@@ -12670,6 +12663,17 @@ from either the departure parking or the user aircraft while taxiing.</string>
    </property>
    <property name="statusTip">
     <string>Export Flight Plan as CSV file</string>
+   </property>
+  </action>
+  <action name="actionSearchExportCsv">
+   <property name="text">
+    <string>Export Search Result as &amp;CSV ...</string>
+   </property>
+   <property name="toolTip">
+    <string>Export the search result table as CSV</string>
+   </property>
+   <property name="statusTip">
+    <string>Export Logbook Entries to CSV File</string>
    </property>
   </action>
  </widget>

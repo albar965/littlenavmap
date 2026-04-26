@@ -1164,12 +1164,12 @@ void MainWindow::connectAllSlots()
   // User data ===================================================================================
   UserdataController *userdataController = NavApp::getUserdataController();
   // Import ================
-  connect(ui->actionUserdataImportCSV, &QAction::triggered, userdataController, &UserdataController::importCsv);
+  connect(ui->actionUserdataImportCsv, &QAction::triggered, userdataController, &UserdataController::importCsv);
   connect(ui->actionUserdataImportGarminGTN, &QAction::triggered, userdataController, &UserdataController::importGarmin);
   connect(ui->actionUserdataImportUserfixDat, &QAction::triggered, userdataController, &UserdataController::importXplaneUserFixDat);
 
   // Export ================
-  connect(ui->actionUserdataExportCSV, &QAction::triggered, userdataController, &UserdataController::exportCsv);
+  connect(ui->actionUserdataExportCsv, &QAction::triggered, userdataController, &UserdataController::exportCsv);
   connect(ui->actionUserdataExportGarminGTN, &QAction::triggered, userdataController, &UserdataController::exportGarmin);
   connect(ui->actionUserdataExportUserfixDat, &QAction::triggered, userdataController, &UserdataController::exportXplaneUserFixDat);
   connect(ui->actionUserdataExportXmlBgl, &QAction::triggered, userdataController, &UserdataController::exportBglXml);
@@ -1201,8 +1201,8 @@ void MainWindow::connectAllSlots()
   connect(logdataController, &LogdataController::showInSearch, searchController, &SearchController::showInSearch);
 
   connect(ui->actionLogdataShowStatistics, &QAction::triggered, logdataController, &LogdataController::statisticsLogbookShow);
-  connect(ui->actionLogdataImportCSV, &QAction::triggered, logdataController, &LogdataController::importCsv);
-  connect(ui->actionLogdataExportCSV, &QAction::triggered, logdataController, &LogdataController::exportCsv);
+  connect(ui->actionLogdataImportCsv, &QAction::triggered, logdataController, &LogdataController::importCsv);
+  connect(ui->actionLogdataExportCsv, &QAction::triggered, logdataController, &LogdataController::exportCsv);
   connect(ui->actionLogdataImportXplane, &QAction::triggered, logdataController, &LogdataController::importXplane);
   connect(ui->actionLogdataConvertUserdata, &QAction::triggered,
           logdataController, &LogdataController::convertUserdata);
@@ -2502,7 +2502,7 @@ void MainWindow::saveMarkers()
   QString filename = dialog->saveFileDialog(
     tr("Save User Features"),
     tr("User Feature Files %1;;All Files (*)").arg(lnm::FILE_PATTERN_LNM_USERFEATURES), "lnmuserfeat", "Map/Markers",
-    atools::documentsDir(), tr("User Features"));
+    atools::documentsDir(), tr("User Features.lnmuserfeat"));
 
   if(!filename.isEmpty())
   {
@@ -2778,7 +2778,7 @@ void MainWindow::layoutSaveAs()
   QString layoutFile = dialog->saveFileDialog(
     tr("Window Layout"),
     tr("Window Layout Files %1;;All Files (*)").arg(lnm::FILE_PATTERN_LAYOUT),
-    "lnmlayout", "WindowLayout/", atools::documentsDir(), QStringLiteral());
+    "lnmlayout", "WindowLayout/", atools::documentsDir(), "Layout.lnmlayout");
 
   if(!layoutFile.isEmpty())
   {
@@ -3853,6 +3853,17 @@ void MainWindow::updateActionStates()
 
   if(Application::isShuttingDown())
     return;
+
+  bool hasUserdata = NavApp::getUserdataController()->hasUserdata();
+  ui->actionUserdataCleanup->setEnabled(hasUserdata);
+  ui->actionUserdataExportCsv->setEnabled(hasUserdata);
+  ui->actionUserdataExportUserfixDat->setEnabled(hasUserdata);
+  ui->actionUserdataExportGarminGTN->setEnabled(hasUserdata);
+  ui->actionUserdataExportXmlBgl->setEnabled(hasUserdata);
+
+  bool hasLogdata = NavApp::getLogdataController()->hasLogdata();
+  ui->actionLogdataCleanup->setEnabled(hasLogdata);
+  ui->actionLogdataExportCsv->setEnabled(hasLogdata);
 
   ui->actionClearKml->setEnabled(!mapWidget->getKmlFiles().isEmpty());
 

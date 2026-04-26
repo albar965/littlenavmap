@@ -457,7 +457,7 @@ void SqlModel::fillHeaderData()
   for(int i = 0; i < sqlRecord.count(); i++)
   {
     const Column *cd = columns->getColumn(sqlRecord.fieldName(i));
-    if(!cd->isHidden() && !(!isDistanceSearchActive() && cd->isDistance()))
+    if(!cd->isHidden() && !(!isDistanceSearchActive() && cd->isDistanceHeading()))
       setHeaderData(i, Qt::Horizontal, cd->getDisplayName());
   }
 }
@@ -501,15 +501,15 @@ void SqlModel::sort(int column, Qt::SortOrder order)
 }
 
 /* Build full list of columns to query */
-QString SqlModel::buildColumnList(const atools::sql::SqlRecord& tableCols)
+QStringList SqlModel::buildColumnList(const atools::sql::SqlRecord& tableCols)
 {
-  QList<QString> colNames;
+  QStringList colNames;
   for(const Column *col : columns->getColumns())
   {
     if(!col->getSqlFunction().isEmpty())
       // Use SQL function as column if defined
       colNames.append(QStringLiteral("(%1) as %2").arg(col->getSqlFunction()).arg(col->getColumnName()));
-    else if(col->isDistance() || !tableCols.contains(col->getColumnName()))
+    else if(col->isDistanceHeading() || !tableCols.contains(col->getColumnName()))
       // Add null for special distance columns
       // Null for columns which do not exist in the database
       colNames.append(QStringLiteral("null as ") % col->getColumnName());
@@ -517,18 +517,7 @@ QString SqlModel::buildColumnList(const atools::sql::SqlRecord& tableCols)
       colNames.append(col->getColumnName());
   }
 
-  // Concatenate to one string
-  QString queryCols;
-  bool first = true;
-  for(const QString& cname : std::as_const(colNames))
-  {
-    if(!first)
-      queryCols += QStringLiteral(", ");
-    queryCols += cname;
-
-    first = false;
-  }
-  return queryCols;
+  return colNames;
 }
 
 /* Create SQL query and set it into the model */
@@ -541,7 +530,7 @@ void SqlModel::buildQuery()
   QString tablename = columns->getTablename();
 
   atools::sql::SqlRecord tableCols = db->record(tablename);
-  QString queryCols = buildColumnList(tableCols);
+  currentSqlQueryColumns = buildColumnList(tableCols);
 
   QList<const Column *> overrideColumns;
   QString queryWhere = buildWhere(tableCols, overrideColumns);
@@ -549,7 +538,7 @@ void SqlModel::buildQuery()
   QString queryOrder;
   const Column *col = columns->getColumn(orderByCol);
   // Distance columns are no search criteria
-  if(!orderByCol.isEmpty() && !orderByOrder.isEmpty() && !col->isDistance())
+  if(!orderByCol.isEmpty() && !orderByOrder.isEmpty() && !col->isDistanceHeading())
   {
     Q_ASSERT(col != nullptr);
 
@@ -574,7 +563,8 @@ void SqlModel::buildQuery()
       queryOrder += QStringLiteral("order by ") % orderByCol % ' ' % orderByOrder;
   }
 
-  currentSqlQuery = QStringLiteral("select ") % queryCols % QStringLiteral(" from ") % tablename % ' ' % queryWhere % ' ' % queryOrder;
+  currentSqlQuery = QStringLiteral("select ") % currentSqlQueryColumns.join(',') %
+                    QStringLiteral(" from ") % tablename % ' ' % queryWhere % ' ' % queryOrder;
 
   // Build a query to find the total row count of the result ==================
   totalRowCount = 0;

@@ -174,6 +174,7 @@ public:
   void showRandomRouteCalc();
 
   si::TabSearchId getCurrentSearchTabId();
+  QString getCurrentSearchTabText();
 
   /* Reset tab bar */
   void resetTabLayout();

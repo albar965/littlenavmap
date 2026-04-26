@@ -114,9 +114,6 @@ public:
   /* Current active row. Not necessarily selected */
   QModelIndex getCurrentIndex() const;
 
-  /* Get the SQL query that was used to populate the table */
-  QString getCurrentSqlQuery() const;
-
   /* Get all descriptors for currently displayed columns */
   QList<const Column *> getCurrentColumns() const;
 

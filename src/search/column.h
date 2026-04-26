@@ -89,8 +89,8 @@ public:
   /* Set to true if a condition map includes the column name */
   Column& includesName(bool value = true);
 
-  /* Can be set to indicate that this is one of the tow distance search special columns "distance" and "heading". */
-  Column& distanceCol(bool value = true);
+  /* Can be set to indicate that this is one of the two distance search special columns "distance" and "heading". */
+  Column& distanceHeadingCol(bool value = true);
 
   /* Indicates a condition that should be use for a spin box value, i.e. ">", "<" etc. */
   Column& condition(const QString& cond);
@@ -122,6 +122,12 @@ public:
   const QString& getColumnName() const
   {
     return colName;
+  }
+
+  const QString getCleanDisplayName() const
+  {
+    QString dispName = getDisplayName();
+    return dispName.replace(QStringLiteral("-\n"), QStringLiteral()).replace('\n', ' ');
   }
 
   const QString& getDisplayName() const
@@ -170,7 +176,7 @@ public:
     return colIsHiddenColumn;
   }
 
-  bool isDistance() const
+  bool isDistanceHeading() const
   {
     return colIsDistance;
   }

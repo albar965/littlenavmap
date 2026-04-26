@@ -502,13 +502,11 @@ void RouteController::tableCopyClipboardTriggered()
     return column == rcol::REMARKS ? route.value(row).getComment() : model->data(model->index(row, column));
   });
 
-  csvExporter.exportTableSelection();
+  const QString csvString = csvExporter.exportTableSelection();
 
-  if(csvExporter.hasCsv())
-  {
-    QApplication::clipboard()->setText(csvExporter.getCsv());
-    NavApp::setStatusMessage(tr("Copied %1 entries as CSV to clipboard.").arg(csvExporter.getNumRowsExported()));
-  }
+  if(!csvString.isEmpty())
+    QApplication::clipboard()->setText(csvString);
+  NavApp::setStatusMessage(tr("Copied %1 entries as CSV to clipboard.").arg(csvExporter.getNumRowsExported()));
 }
 
 void RouteController::flightplanTableAsTextTable(QTextCursor& cursor, const QBitArray& selectedCols, float fontPointSize) const
@@ -688,8 +686,7 @@ QString RouteController::getFlightplanTableAsCsv() const
       return model->data(model->index(row, column));
   });
 
-  csvExporter.exportTable();
-  return csvExporter.getCsv();
+  return csvExporter.exportTable();
 }
 
 QString RouteController::getFlightplanTableAsHtmlDoc(float iconSizePixel) const

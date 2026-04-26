@@ -265,6 +265,12 @@ private:
   void tableCopyClipboard();
   void showInformationTriggered();
 
+  /* Question dialog for CSV export features */
+  bool exportSelectedQuestion(bool& selected, bool& append, bool& header, const QString& feature);
+
+  /* Export selection or all results from table view to CSV */
+  void tableExportCsv();
+
   /* Triggered by show approaches action in context menu. Populates map search result and emits show information */
   void showApproachesTriggered();
   void showApproachesCustomTriggered();

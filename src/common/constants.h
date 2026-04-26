@@ -266,6 +266,8 @@ const QLatin1String SEARCHTAB_LOGDATA_VIEW_WIDGET("SearchPaneLogdata/WidgetView3
 const QLatin1String SEARCHTAB_LOGDATA_CLEANUP_DIALOG("SearchPaneLogdata/CleanupDialog");
 const QLatin1String SEARCHTAB_LOGDATA_CLEANUP_PREVIEW("SearchPaneLogdata/CleanupPreview");
 
+const QLatin1String SEARCHTAB_EXPORT_CHOICE_DIALOG("SearchPane/CsvChoiceDialog");
+
 const QLatin1String MAP_MARKER_LOAD_SELECTION("Map/MapMarkerLoadSelection");
 
 const QLatin1String ROUTE_EXPORT_DIALOG("RouteExport/RouteExportDialog");
@@ -446,7 +448,7 @@ const QLatin1String FILE_PATTERN_KML("(*.kml *.kmz)");
 const QLatin1String FILE_PATTERN_GPX("(*.gpx)");
 const QLatin1String FILE_PATTERN_LNM_USERFEATURES("(*.lnmuserfeat)");
 
-const QLatin1String FILE_PATTERN_USERDATA_CSV("(*.csv)");
+const QLatin1String FILE_PATTERN_CSV("(*.csv)");
 const QLatin1String FILE_PATTERN_USER_FIX_DAT("(user_fix.dat)");
 const QLatin1String FILE_PATTERN_DAT("(*.dat)");
 const QLatin1String FILE_PATTERN_USER_WPT("(user.wpt)");
