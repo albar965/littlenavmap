@@ -7585,7 +7585,7 @@ relation to shown airport</string>
      <normaloff>:/littlenavmap/resources/icons/rangerings.svg</normaloff>:/littlenavmap/resources/icons/rangerings.svg</iconset>
    </property>
    <property name="text">
-    <string>Add Range &amp;Rings ...</string>
+    <string>Add Range &amp;Rings at %1 ...</string>
    </property>
    <property name="toolTip">
     <string>Add range rings at this position to map</string>
@@ -12671,6 +12671,17 @@ from either the departure parking or the user aircraft while taxiing.</string>
    </property>
    <property name="toolTip">
     <string>Export the search result table as CSV</string>
+   </property>
+   <property name="statusTip">
+    <string>Export Logbook Entries to CSV File</string>
+   </property>
+  </action>
+  <action name="actionRouteExportCsv">
+   <property name="text">
+    <string>Export Flight Plan as &amp;CSV ...</string>
+   </property>
+   <property name="toolTip">
+    <string>Export the flight plan as CSV</string>
    </property>
    <property name="statusTip">
     <string>Export Logbook Entries to CSV File</string>

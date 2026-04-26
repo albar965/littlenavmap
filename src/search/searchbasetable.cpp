@@ -1385,7 +1385,7 @@ void SearchBaseTable::contextMenu(const QPoint& point)
   ui->actionSearchSetMark->setEnabled(index.isValid() && position.isValid());
 
   ActionTool::setText(ui->actionMapRangeRings, result.hasTypes(map::AIRPORT | map::VOR | map::NDB | map::WAYPOINT | map::USERPOINT),
-                      navaidRangeText);
+                      objectText);
 
   ActionTool::setText(ui->actionMapHold, result.hasTypes(map::AIRPORT | map::VOR | map::NDB | map::WAYPOINT | map::USERPOINT),
                       objectText);
@@ -1596,6 +1596,9 @@ void SearchBaseTable::contextMenu(const QPoint& point)
     }
   }
 
+  // Airport menu ======================================================================
+  QMenu airportMenu(tr("&Airport")), filesMenu(tr("&Files"));
+  airportMenu.setToolTipsVisible(NavApp::isMenuToolTipsVisible());
   if(tabIndex == si::SEARCH_LOG)
   {
     ui->actionLogdataEdit->setDisabled(selectedRows == 0);
@@ -1612,46 +1615,49 @@ void SearchBaseTable::contextMenu(const QPoint& point)
 
     // Logbook airport menu if clicked on departure or destination =======================
     // menu takes ownership
-    QMenu *airportSub = menu.addMenu(tr("&Airport"));
-    airportSub->setToolTipsVisible(NavApp::isMenuToolTipsVisible());
-    airportSub->addAction(ui->actionSearchLogShowInformationAirport);
-    airportSub->addAction(ui->actionSearchLogShowOnMapAirport);
-    airportSub->addSeparator();
-    airportSub->addAction(ui->actionSearchLogRouteAirportStart);
-    airportSub->addAction(ui->actionSearchLogRouteAirportDest);
-    airportSub->addAction(ui->actionSearchLogRouteAirportAlternate);
+    airportMenu.setToolTipsVisible(NavApp::isMenuToolTipsVisible());
+    airportMenu.addAction(ui->actionSearchLogShowInformationAirport);
+    airportMenu.addAction(ui->actionSearchLogShowOnMapAirport);
+    airportMenu.addSeparator();
+    airportMenu.addAction(ui->actionSearchLogRouteAirportStart);
+    airportMenu.addAction(ui->actionSearchLogRouteAirportDest);
+    airportMenu.addAction(ui->actionSearchLogRouteAirportAlternate);
     menu.addSeparator();
+    menu.addMenu(&airportMenu);
 
     // menu takes ownership of sub
-    QMenu *filesSub = menu.addMenu(tr("&Files"));
-    filesSub->setToolTipsVisible(NavApp::isMenuToolTipsVisible());
-    filesSub->addAction(ui->actionLogdataRouteOpen);
-    filesSub->addAction(ui->actionLogdataPerfLoad);
-    filesSub->addSeparator();
-    filesSub->addAction(ui->actionSearchLogdataOpenPlan);
-    filesSub->addAction(ui->actionSearchLogdataSavePlanAs);
-    filesSub->addSeparator();
-    filesSub->addAction(ui->actionSearchLogdataOpenPerf);
-    filesSub->addAction(ui->actionSearchLogdataSavePerfAs);
-    filesSub->addSeparator();
-    filesSub->addAction(ui->actionSearchLogdataSaveGpxAs);
+    filesMenu.setToolTipsVisible(NavApp::isMenuToolTipsVisible());
+    filesMenu.addAction(ui->actionLogdataRouteOpen);
+    filesMenu.addAction(ui->actionLogdataPerfLoad);
+    filesMenu.addSeparator();
+    filesMenu.addAction(ui->actionSearchLogdataOpenPlan);
+    filesMenu.addAction(ui->actionSearchLogdataSavePlanAs);
+    filesMenu.addSeparator();
+    filesMenu.addAction(ui->actionSearchLogdataOpenPerf);
+    filesMenu.addAction(ui->actionSearchLogdataSavePerfAs);
+    filesMenu.addSeparator();
+    filesMenu.addAction(ui->actionSearchLogdataSaveGpxAs);
     menu.addSeparator();
+    menu.addMenu(&filesMenu);
 
     ui->actionSearchShowAll->setEnabled(NavApp::getLogdataManager()->hasData());
   } // if(tabIndex == si::SEARCH_LOG)
 
+  // View options menu ======================================================================
+  QMenu viewOptionsMenu(tr("&View Options"));
+  viewOptionsMenu.setToolTipsVisible(NavApp::isMenuToolTipsVisible());
   if(atools::contains(tabIndex, {si::SEARCH_AIRPORT, si::SEARCH_NAV, si::SEARCH_USER, si::SEARCH_LOG, si::SEARCH_ONLINE_CENTER,
                                  si::SEARCH_ONLINE_CLIENT}))
   {
     if(tabIndex == si::SEARCH_LOG)
     {
       // Logbook display options menu =======================
-      QMenu *sub = menu.addMenu(tr("&View Options"));
-      sub->setToolTipsVisible(NavApp::isMenuToolTipsVisible());
-      sub->addAction(ui->actionSearchLogdataShowDirect);
-      sub->addAction(ui->actionSearchLogdataShowRoute);
-      sub->addAction(ui->actionSearchLogdataShowTrack);
+      viewOptionsMenu.setToolTipsVisible(NavApp::isMenuToolTipsVisible());
+      viewOptionsMenu.addAction(ui->actionSearchLogdataShowDirect);
+      viewOptionsMenu.addAction(ui->actionSearchLogdataShowRoute);
+      viewOptionsMenu.addAction(ui->actionSearchLogdataShowTrack);
       menu.addSeparator();
+      menu.addMenu(&viewOptionsMenu);
     }
 
     menu.addAction(ui->actionSearchFilterIncluding);
@@ -1692,19 +1698,16 @@ void SearchBaseTable::contextMenu(const QPoint& point)
 
     if(tabIndex == si::SEARCH_USER)
     {
-      ui->actionUserdataExportCsv->setText(tr("Export Search Result as &CSV ..."));
+      ui->actionUserdataExportCsv->setText(tr("Export Userpoints as &CSV ..."));
       menuMore.addAction(ui->actionUserdataExportCsv);
     }
     else if(tabIndex == si::SEARCH_LOG)
     {
-      ui->actionLogdataExportCsv->setText(tr("Export Search Result as &CSV ..."));
+      ui->actionLogdataExportCsv->setText(tr("Export Logbook Entries as &CSV ..."));
       menuMore.addAction(ui->actionLogdataExportCsv);
     }
     else if(atools::contains(tabIndex, {si::SEARCH_AIRPORT, si::SEARCH_NAV, si::SEARCH_ONLINE_CENTER, si::SEARCH_ONLINE_CLIENT}))
-    {
-      menuMore.addSeparator();
       menuMore.addAction(ui->actionSearchExportCsv);
-    }
 
     if(tabIndex != si::SEARCH_LOG)
     {

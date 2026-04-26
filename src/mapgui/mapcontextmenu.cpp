@@ -292,7 +292,7 @@ QAction *MapContextMenu::insertAction(QMenu& menu, mc::MenuActionType actionType
     {
       if(allowNoMapObject)
         // No position is allowed - use pre-defined text instead of map feature text
-        actionText = actionText.arg(tr("here"));
+        actionText = actionText.arg(tr("this position"));
       else
         // Replace %1 since menu item will be disabled anyway
         actionText = actionText.arg(QStringLiteral());
@@ -652,7 +652,7 @@ void MapContextMenu::insertDirectToMenu(QMenu& menu)
       {
         if(base == nullptr)
           // Any position
-          text = text.arg(tr("here"));
+          text = text.arg(tr("this position"));
         else
           text.append(proc::procedureTextSuffixDirectTo(route, map::routeIndex(base), base->asPtr<map::MapAirport>(), &disable));
       }
@@ -672,7 +672,7 @@ void MapContextMenu::insertMeasureMenu(QMenu& menu)
       disable = !visibleOnMap;
       if(base == nullptr)
         // Any position
-        text = text.arg(tr("here"));
+        text = text.arg(tr("this position"));
     };
 
   insertMenuOrAction(menu, mc::MEASURE, MapResultIndex().
@@ -689,13 +689,13 @@ void MapContextMenu::insertRangeRingsMenu(QMenu& menu)
       disable = !visibleOnMap;
       if(base == nullptr)
         // Any position
-        text = text.arg(tr("here"));
+        text = text.arg(tr("this position"));
     };
 
   insertMenuOrAction(menu, mc::RANGERINGS, MapResultIndex().
                      addRef(*result, map::AIRPORT | map::VOR | map::NDB | map::WAYPOINT | map::USERPOINT).
                      sort(DEFAULT_TYPE_SORT, alphaSort),
-                     tr("Add Range &Rings from %1"), tr("Add range rings at this position to map"),
+                     tr("Add Range &Rings at %1"), tr("Add range rings at this position to map"),
                      tr("Shift+Click"), QIcon(":/littlenavmap/resources/icons/rangerings.svg"), true /* allowNoMapObject */, callback);
 }
 
@@ -763,7 +763,7 @@ void MapContextMenu::insertHoldMenu(QMenu& menu)
     [this](const map::MapBase *base, QString& text, QIcon&, bool& disable, bool) -> void {
       disable = !visibleOnMap;
       if(base == nullptr)
-        text = tr("Add &Holding here ...");
+        text = tr("Add &Holding at this position ...");
     };
 
   insertMenuOrAction(menu, mc::HOLDING, MapResultIndex().
@@ -1090,7 +1090,7 @@ void MapContextMenu::insertUserpointAddMenu(QMenu& menu)
     [this](const map::MapBase *base, QString& text, QIcon&, bool& disable, bool) -> void {
       if(base == nullptr)
         // Modify text only
-        text = tr("Add &Userpoint here ...");
+        text = tr("Add &Userpoint this position ...");
       disable = !visibleOnMap;
     };
 

@@ -310,6 +310,9 @@ public:
   bool isDebugMovingAircraft() const;
   bool isDebugMapPaint() const;
 
+  /* Called from route context menu */
+  void routeSaveCsv();
+
 signals:
   /* Emitted when window is shown the first time */
   void windowShown();

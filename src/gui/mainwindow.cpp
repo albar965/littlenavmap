@@ -2696,6 +2696,11 @@ bool MainWindow::routeSaveAsLnm()
   return false;
 }
 
+void MainWindow::routeSaveCsv()
+{
+  routeExport->routeExportCsvMan();
+}
+
 bool MainWindow::openInSkyVector()
 {
   // https://skyvector.com/?fpl=%20EDDH%20AMLU7C%20AMLUH%20M852%20POVEL%20GALMA%20UM736%20DOSEL%20DETSA%20NIKMA%20T369%20RITEB%20RITE4B%20LIRF

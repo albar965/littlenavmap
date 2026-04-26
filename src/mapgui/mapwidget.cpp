@@ -3978,9 +3978,7 @@ void MapWidget::fillRangeMarker(map::RangeMarker& rangeMarker, const atools::geo
     rangeMarker.navType = map::WAYPOINT;
   }
   else
-  {
     rangeMarker.position = pos;
-  }
 }
 
 void MapWidget::addRangeMark(const atools::geo::Pos& pos, bool showDialog)

@@ -423,6 +423,7 @@ RouteController::RouteController(MainWindow *parentWindow, QTableView *tableView
   connect(ui->actionRouteShowDepartureCustom, &QAction::triggered, this, &RouteController::showCustomDepartureRouteTriggered);
   connect(ui->actionRouteShowOnMap, &QAction::triggered, this, &RouteController::showOnMapTriggered);
   connect(ui->actionRouteDirectTo, &QAction::triggered, this, &RouteController::directToTriggered);
+  connect(ui->actionRouteExportCsv, &QAction::triggered, mainWindow, &MainWindow::routeSaveCsv);
 
   connect(ui->dockWidgetRoute, &QDockWidget::visibilityChanged, this, &RouteController::dockVisibilityChanged);
   connect(ui->actionRouteTableSelectNothing, &QAction::triggered, this, &RouteController::clearTableSelection);
@@ -3066,6 +3067,7 @@ void RouteController::tableContextMenu(const QPoint& pos)
     ui->actionRouteSetMark->setEnabled(false);
   }
 
+  ui->actionRouteExportCsv->setEnabled(!route.isEmpty());
   ui->actionRouteSaveSelection->setEnabled(canSaveSelection());
   ui->actionRouteTableAppend->setEnabled(!route.isEmpty());
   ui->actionRouteInsert->setEnabled(canInsert);
@@ -3130,6 +3132,7 @@ void RouteController::tableContextMenu(const QPoint& pos)
     ActionTool::setText(ui->actionMapNavaidRange, routeLeg != nullptr, tr("selected navaids"));
 
   ActionTool::setText(ui->actionMapHold, routeLeg != nullptr, objectText);
+  ActionTool::setText(ui->actionMapRangeRings, routeLeg != nullptr, objectText);
 
   ui->actionMapAirportMsa->setEnabled(msaResult.hasAirportMsa());
 
@@ -3167,15 +3170,14 @@ void RouteController::tableContextMenu(const QPoint& pos)
   menu.addAction(ui->actionRouteEditUserWaypoint);
   menu.addSeparator();
 
-  menu.addAction(ui->actionRouteConvertProcedure);
-  menu.addSeparator();
-
   menu.addAction(ui->actionRouteDirectTo);
   menu.addSeparator();
 
-  menu.addAction(ui->actionRouteInsert);
-  menu.addAction(ui->actionRouteTableAppend);
-  menu.addAction(ui->actionRouteSaveSelection);
+  QMenu menuFiles(tr("&Files"));
+  menuFiles.addAction(ui->actionRouteInsert);
+  menuFiles.addAction(ui->actionRouteTableAppend);
+  menuFiles.addAction(ui->actionRouteSaveSelection);
+  menu.addMenu(&menuFiles);
   menu.addSeparator();
 
   menu.addAction(ui->actionRouteCalcSelected);
@@ -3194,18 +3196,25 @@ void RouteController::tableContextMenu(const QPoint& pos)
   menu.addAction(ui->actionRouteFollowSelection);
   menu.addSeparator();
 
-  menu.addAction(ui->actionRouteTableCopy);
   menu.addAction(ui->actionRouteTableSelectAll);
   menu.addAction(ui->actionRouteTableSelectNothing);
   menu.addSeparator();
 
-  menu.addAction(ui->actionRouteResetView);
-  menu.addSeparator();
-
-  menu.addAction(ui->actionRouteSetMark);
-  menu.addSeparator();
-
   menu.addAction(ui->actionRouteDisplayOptions);
+  menu.addSeparator();
+
+  // More =====================================================
+  QMenu menuMore(tr("&More"));
+  menuMore.setToolTipsVisible(NavApp::isMenuToolTipsVisible());
+  menuMore.addAction(ui->actionRouteConvertProcedure);
+  menuMore.addSeparator();
+  menuMore.addAction(ui->actionRouteResetView);
+  menuMore.addSeparator();
+  menuMore.addAction(ui->actionRouteTableCopy);
+  menuMore.addAction(ui->actionRouteExportCsv);
+  menuMore.addSeparator();
+  menuMore.addAction(ui->actionRouteSetMark);
+  menu.addMenu(&menuMore);
 
   // Execute menu =========================================================================================
   QAction *action = menu.exec(menuPos);
@@ -3216,6 +3225,36 @@ void RouteController::tableContextMenu(const QPoint& pos)
 
   if(action != nullptr)
   {
+    map::MapResult result;
+
+    if(routeLeg->isUser())
+    {
+      // Add userpoint for user defined waypoint
+      map::MapUserpoint userpoint;
+      userpoint.position = routeLeg->getPosition();
+      userpoint.ident = routeLeg->getDisplayIdent();
+      userpoint.name = routeLeg->getName();
+      result.userpoints.append(userpoint);
+    }
+    else
+    {
+      map::MapTypes type;
+      int id;
+      if(routeLeg->isAnyProcedure())
+        // Get type and id from procedure fix
+        routeLeg->getProcedureLeg().navaids.getIdAndType(id, type, {map::AIRPORT, map::VOR, map::NDB, map::WAYPOINT});
+      else
+      {
+        // Normal route leg navaid
+        type = routeLeg->getMapType();
+        id = routeLeg->getId();
+      }
+
+      // Fetch navaid into result
+      QueryManager::instance()->getQueriesGui()->getMapQuery()->getMapObjectById(result, type, map::AIRSPACE_SRC_NONE, id,
+                                                                                 false /* airport from nav*/);
+    }
+
     if(action == ui->actionRouteResetView)
     {
       for(int col = rcol::FIRST_COLUMN; col <= rcol::LAST_COLUMN; col++)
@@ -3236,20 +3275,11 @@ void RouteController::tableContextMenu(const QPoint& pos)
     else if(action == ui->actionRouteSetMark && routeLeg != nullptr)
       emit changeMark(routeLeg->getPosition());
     else if(action == ui->actionMapRangeRings && routeLeg != nullptr)
-      NavApp::getMapWidgetGui()->addRangeMark(routeLeg->getPosition(), true /* showDialog */);
+      NavApp::getMapWidgetGui()->addRangeMark(routeLeg->getPosition(), result, true /* showDialog */);
     else if(action == ui->actionMapTrafficPattern && routeLeg != nullptr)
       NavApp::getMapWidgetGui()->addPatternMark(routeLeg->getAirport());
     else if(action == ui->actionMapHold && routeLeg != nullptr)
-    {
-      map::MapResult result;
-      QueryManager::instance()->getQueriesGui()->getMapQuery()->getMapObjectById(result, routeLeg->getMapType(), map::AIRSPACE_SRC_NONE,
-                                                                                 routeLeg->getId(), false /* airport from nav*/);
-
-      if(!result.isEmpty(map::AIRPORT | map::VOR | map::NDB | map::WAYPOINT))
-        NavApp::getMapWidgetGui()->addHold(result, atools::geo::EMPTY_POS);
-      else
-        NavApp::getMapWidgetGui()->addHold(result, routeLeg->getPosition());
-    }
+      NavApp::getMapWidgetGui()->addHold(result, routeLeg->getPosition());
     else if(action == ui->actionMapNavaidRange)
     {
       // Show range rings for all radio navaids
