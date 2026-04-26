@@ -1072,9 +1072,9 @@ void SearchBaseTable::nothingSelectedTriggered()
   controller->selectNoRows();
 }
 
-void SearchBaseTable::contextMenu(const QPoint& pos)
+void SearchBaseTable::contextMenu(const QPoint& point)
 {
-  qDebug() << Q_FUNC_INFO << "pos" << pos;
+  qDebug() << Q_FUNC_INFO << "pos" << point;
 
   static const int NAVAID_NAMES_ELIDE = 15;
 
@@ -1110,7 +1110,7 @@ void SearchBaseTable::contextMenu(const QPoint& pos)
 
   // Get index from current, selection or cursor position ====================================================
   // Get field at cursor position
-  QModelIndex index = controller->getModelIndexAt(pos);
+  QModelIndex index = controller->getModelIndexAt(point);
 
   if(!index.isValid())
   {
@@ -1212,7 +1212,7 @@ void SearchBaseTable::contextMenu(const QPoint& pos)
       result.airports.first().routeIndex = routeIndex;
   }
   else
-    qDebug() << "Invalid index at" << pos;
+    qDebug() << "Invalid index at" << point;
 
   // Add data to menu item text ======================================================================
   QString filterText = fieldData.isEmpty() ? QStringLiteral() : tr("\"%1\"").arg(fieldData);
@@ -1750,7 +1750,7 @@ void SearchBaseTable::contextMenu(const QPoint& pos)
     else if(action == ui->actionSearchSetMark)
       emit changeSearchMark(position);
     else if(action == ui->actionMapRangeRings)
-      mapWidget->addRangeMark(position, true /* showDialog */);
+      mapWidget->addRangeMark(position, result, true /* showDialog */);
     else if(action == ui->actionMapTrafficPattern)
       mapWidget->addPatternMark(airport);
     else if(action == ui->actionMapHold)

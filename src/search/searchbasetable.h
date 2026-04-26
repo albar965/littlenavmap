@@ -280,7 +280,7 @@ private:
   void showOnMapTriggered();
 
   /* Context menu in table view selected */
-  void contextMenu(const QPoint& pos);
+  void contextMenu(const QPoint& point);
 
   /* Update highlights if dock is hidden or shown (does not change for dock tab stacks) */
   void dockVisibilityChanged(bool);
