@@ -41,6 +41,7 @@ QDateTime readDateTime(QString str);
 /* Checks if the lat long coordinate string is valid and returns an error message or a message for validity checking
  * Position is returned in pos if not null. */
 bool checkCoordinates(QString& message, const QString& text, atools::geo::Pos *pos = nullptr);
+bool checkCoordinates(const QString& text, atools::geo::Pos *pos = nullptr);
 
 /* All formatters are locale aware */
 

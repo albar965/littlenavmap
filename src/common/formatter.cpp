@@ -130,7 +130,7 @@ QString formatElapsed(const QElapsedTimer& timer)
   }
 }
 
-bool checkCoordinates(QString& message, const QString& text, atools::geo::Pos *pos)
+bool checkCoords(QString *message, const QString& text, atools::geo::Pos *pos)
 {
   bool hemisphere = false;
   atools::geo::Pos readPos = atools::fs::util::fromAnyFormat(text, &hemisphere);
@@ -144,23 +144,38 @@ bool checkCoordinates(QString& message, const QString& text, atools::geo::Pos *p
 
   if(readPos.isValidRange())
   {
-    QString coords = Unit::coords(readPos);
-    if(coords.simplified() != text.simplified())
+    if(message != nullptr)
     {
-      if(Unit::getUnitCoords() == opts::COORDS_LATY_LONX || Unit::getUnitCoords() == opts::COORDS_LONX_LATY)
-        message = QObject::tr("Coordinates are valid: %1 (%2)").arg(coords).arg(Unit::coords(readPos, opts::COORDS_DMS));
+      QString coords = Unit::coords(readPos);
+      if(coords.simplified() != text.simplified())
+      {
+        if(Unit::getUnitCoords() == opts::COORDS_LATY_LONX || Unit::getUnitCoords() == opts::COORDS_LONX_LATY)
+          *message = QObject::tr("Coordinates are valid: %1 (%2)").arg(coords).arg(Unit::coords(readPos, opts::COORDS_DMS));
+        else
+          *message = QObject::tr("Coordinates are valid: %1").arg(coords);
+      }
       else
-        message = QObject::tr("Coordinates are valid: %1").arg(coords);
+        // Same as in line edit. No need to show again
+        *message = QObject::tr("Coordinates are valid.");
     }
-    else
-      // Same as in line edit. No need to show again
-      message = QObject::tr("Coordinates are valid.");
+
     return true;
   }
-  else
+  else if(message != nullptr)
     // Show red warning
-    message = atools::util::HtmlBuilder::errorMessage(QObject::tr("Coordinates are not valid."));
+    *message = atools::util::HtmlBuilder::errorMessage(QObject::tr("Coordinates are not valid."));
+
   return false;
+}
+
+bool checkCoordinates(const QString& text, atools::geo::Pos *pos)
+{
+  return checkCoords(nullptr, text, pos);
+}
+
+bool checkCoordinates(QString& message, const QString& text, atools::geo::Pos *pos)
+{
+  return checkCoords(&message, text, pos);
 }
 
 QString yearVariant(QString dateTimeFormat)
