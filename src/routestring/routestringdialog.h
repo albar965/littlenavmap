@@ -45,7 +45,7 @@ class RouteController;
 class RouteStringWriter;
 class RouteStringReader;
 class SyntaxHighlighter;
-class TextEditEventFilter;
+class RouteStringTextEditEventFilter;
 
 class RouteStringDialog :
   public QDialog
@@ -172,7 +172,7 @@ private:
   /* Makes first section bold and other (scratchpad) gray */
   SyntaxHighlighter *sytaxHighlighter;
 
-  TextEditEventFilter *eventFilter = nullptr;
+  RouteStringTextEditEventFilter *eventFilter = nullptr;
 
   /* Size as given in UI */
   QSize defaultSize;
@@ -188,7 +188,10 @@ class SyntaxHighlighter :
 public:
   SyntaxHighlighter(QObject *parent);
 
-  virtual ~SyntaxHighlighter() override;
+  virtual ~SyntaxHighlighter() override
+  {
+
+  }
 
   void styleChanged();
 
@@ -207,18 +210,21 @@ private:
 };
 
 // =================================================================================================
-class TextEditEventFilter :
+class RouteStringTextEditEventFilter :
   public QObject
 {
   Q_OBJECT
 
 public:
-  TextEditEventFilter(RouteStringDialog *parent)
+  RouteStringTextEditEventFilter(RouteStringDialog *parent)
     : QObject(parent), dialog(parent)
   {
   }
 
-  virtual ~TextEditEventFilter() override;
+  virtual ~RouteStringTextEditEventFilter() override
+  {
+
+  }
 
 private:
   virtual bool eventFilter(QObject *object, QEvent *event) override;

@@ -1216,31 +1216,6 @@ void RouteController::newFlightplan()
   emit routeChanged(true /* geometryChanged */, true /* newFlightPlan */);
 }
 
-void RouteController::routeNewFromAirports(const map::MapAirport& departure, const map::MapAirport& destination)
-{
-  RouteCommand *undoCommand = preChange(tr("Set Departure and Destination"));
-  NavApp::showFlightplan();
-
-  routeSetDepartureInternal(departure);
-  routeSetDestinationInternal(destination);
-
-  route.updateAll();
-  route.updateAirwaysAndAltitude(false /* adjustRouteAltitude */);
-  route.calculateLegAltitudes();
-  route.updateDepartureAndDestination(false /* clearInvalidStart */);
-
-  // Get type and cruise altitude from widgets
-  updateFlightplanFromWidgets();
-
-  updateActiveLeg();
-  updateTableModelAndErrors();
-  updateActions();
-
-  postChange(undoCommand);
-  emit routeChanged(true /* geometryChanged */);
-  NavApp::setStatusMessage(tr("New flight plan set."));
-}
-
 void RouteController::loadFlightplanInternal(atools::fs::pln::Flightplan flightplan, atools::fs::pln::FileFormat format,
                                              const QString& filename, bool changed, bool adjustAltitude, bool undo, bool warnAltitude,
                                              bool correctProfile, bool clearUndoState)
@@ -2482,7 +2457,6 @@ void RouteController::preDatabaseLoad()
 #ifdef DEBUG_INFORMATION
   atools::strToFile(atools::settings::Settings::getConfigFilename("_debug.lnmpln"), tempFlightplanStr);
 #endif
-  routeCalcDialog->preDatabaseLoad();
 }
 
 void RouteController::postDatabaseLoad()
@@ -2527,12 +2501,17 @@ void RouteController::postDatabaseLoad()
   loadingDatabaseState = false;
 }
 
-/* Double click into table view */
 void RouteController::doubleClick(const QModelIndex& index)
 {
-  qDebug() << Q_FUNC_INFO << index;
   if(index.isValid())
     showAtIndex(index.row(), true /* info */, true /* map */, true /* doubleClick */);
+}
+
+void RouteController::showLeg()
+{
+  QModelIndexList indexes = tableViewRoute->selectionModel()->selectedRows();
+  if(!indexes.isEmpty())
+    showAtIndex(indexes.constFirst().row(), true /* info */, true /* map */, true /* doubleClick */);
 }
 
 void RouteController::showAtIndex(int index, bool info, bool map, bool doubleClick)

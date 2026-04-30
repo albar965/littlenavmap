@@ -52,10 +52,7 @@ SyntaxHighlighter::SyntaxHighlighter(QObject *parent)
 {
 }
 
-SyntaxHighlighter::~SyntaxHighlighter()
-{
 
-}
 
 void SyntaxHighlighter::styleChanged()
 {
@@ -76,12 +73,9 @@ void SyntaxHighlighter::highlightBlock(const QString& text)
   setFormat(0, text.size(), currentBlockState() == IN_HIGHLIGHT_BLOCK ? formatHighlight : formatNormal);
 }
 
-TextEditEventFilter::~TextEditEventFilter()
-{
 
-}
 
-bool TextEditEventFilter::eventFilter(QObject *object, QEvent *event)
+bool RouteStringTextEditEventFilter::eventFilter(QObject *object, QEvent *event)
 {
   if(event->type() == QEvent::KeyPress)
   {
@@ -212,7 +206,7 @@ RouteStringDialog::RouteStringDialog(QWidget *parent, const QString& settingsSuf
   connect(&textUpdateTimer, &QTimer::timeout, this, &RouteStringDialog::textChangedDelayed);
   textUpdateTimer.setSingleShot(true);
 
-  eventFilter = new TextEditEventFilter(this);
+  eventFilter = new RouteStringTextEditEventFilter(this);
   ui->textEditRouteString->installEventFilter(eventFilter);
 
   // Apply splitter and text formats

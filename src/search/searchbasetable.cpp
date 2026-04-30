@@ -1045,17 +1045,17 @@ void SearchBaseTable::showRow(int row, bool showInfo)
       atools::geo::Pos dest(controller->getRawData(row, "destination_lonx"), controller->getRawData(row, "destination_laty"));
 
       if(depart.isValid() && dest.isValid())
-        emit showRect(atools::geo::bounding(depart, dest), true);
+        emit showRect(atools::geo::bounding(depart, dest), true /* doubleClick */);
       else if(depart.isValid())
-        emit showPos(depart, 0.f, true);
+        emit showPos(depart, 0.f, true /* doubleClick */);
       else if(dest.isValid())
-        emit showPos(dest, 0.f, true);
+        emit showPos(dest, 0.f, true /* doubleClick */);
     }
     else
     {
       atools::geo::Pos p(controller->getRawData(row, "lonx"), controller->getRawData(row, "laty"));
       if(p.isValid())
-        emit showPos(p, 0.f, true);
+        emit showPos(p, 0.f, true /* doubleClick */);
     }
 
     if(showInfo)

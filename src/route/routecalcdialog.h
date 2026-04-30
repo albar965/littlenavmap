@@ -90,7 +90,6 @@ public:
   void resetWindowLayout();
 
   /* Clear routing network cache and disconnect all queries */
-  void preDatabaseLoad();
   void postDatabaseLoad();
 
   void optionsChanged(const optc::OptionChangeFlags& changeFlags);

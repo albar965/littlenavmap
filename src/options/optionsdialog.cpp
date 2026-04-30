@@ -145,7 +145,7 @@ OptionsDialog::OptionsDialog(QMainWindow *parentWindow)
   linkLabels.append({ui->labelMapApiKeysHint, ui->labelCacheGlobePathDownload});
 
   // Button box ==========================================================
-  ui->buttonBoxOptions->button(QDialogButtonBox::Close)->setToolTip(tr("Close dialog. You will likely be prompted to apply the changes.."));
+  ui->buttonBoxOptions->button(QDialogButtonBox::Close)->setToolTip(tr("Close dialog. You will likely be prompted to apply the changes."));
   ui->buttonBoxOptions->button(QDialogButtonBox::Apply)->setToolTip(tr("Apply changes immediately.\n"
                                                                        "Move the dialog window aside to see changes in "
                                                                        "the main window or the map."));
@@ -1150,7 +1150,7 @@ void OptionsDialog::showEvent(QShowEvent *)
 {
   qDebug() << Q_FUNC_INFO;
 
-  QTimer::singleShot(100L, this, &OptionsDialog::restoreDialogState);
+  QTimer::singleShot(50, this, &OptionsDialog::restoreDialogState);
 
   // Fetch keys from handler
   OptionData::instanceInternal().mapThemeKeys = NavApp::getMapThemeHandler()->getMapThemeKeys();
@@ -1181,7 +1181,6 @@ void OptionsDialog::showEvent(QShowEvent *)
 
 void OptionsDialog::hideEvent(QHideEvent *)
 {
-  qDebug() << Q_FUNC_INFO;
   saveDialogState();
 }
 

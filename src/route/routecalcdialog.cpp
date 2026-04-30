@@ -44,7 +44,6 @@ RouteCalcDialog::RouteCalcDialog(QWidget *parent)
   : QDialog(parent), ui(new Ui::RouteCalcDialog)
 {
   setWindowFlag(Qt::WindowContextHelpButtonHint, false);
-
   setWindowModality(Qt::NonModal);
 
   ui->setupUi(this);
@@ -320,11 +319,6 @@ void RouteCalcDialog::resetWindowLayout()
   state.syncSettings();
 
   atools::gui::centerWidgetOnScreen(this, defaultSize);
-}
-
-void RouteCalcDialog::preDatabaseLoad()
-{
-
 }
 
 void RouteCalcDialog::postDatabaseLoad()
