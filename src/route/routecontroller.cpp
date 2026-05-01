@@ -2060,6 +2060,7 @@ void RouteController::calculateRouteWindowShow()
   qDebug() << Q_FUNC_INFO;
 
   // Always show - do not toggle
+  routeCalcDialog->setWindowState((routeCalcDialog->windowState() & ~Qt::WindowMinimized) | Qt::WindowActive);
   routeCalcDialog->show();
   routeCalcDialog->raise();
   routeCalcDialog->activateWindow();
@@ -3423,10 +3424,8 @@ void RouteController::shownMapFeaturesChanged(map::MapTypes types)
 }
 
 /* Hide or show map highlights if dock visibility changes */
-void RouteController::dockVisibilityChanged(bool visible)
+void RouteController::dockVisibilityChanged(bool)
 {
-  Q_UNUSED(visible)
-
   // Avoid spurious events that appear on shutdown and cause crashes
   if(!atools::gui::Application::isShuttingDown())
     // Visible - send update to show map highlights

@@ -120,6 +120,7 @@ void DatabaseProgressDialog::setFinishedState()
   cancelButton->setDefault(false);
   cancelButton->setAutoDefault(false);
 
+  setWindowState((windowState() & ~Qt::WindowMinimized) | Qt::WindowActive);
   raise();
   activateWindow();
 }

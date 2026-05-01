@@ -279,6 +279,7 @@ void LogdataController::getFlightStatsSimulator(QList<std::pair<int, QString> >&
 
 void LogdataController::statisticsLogbookShow()
 {
+  statsDialog->setWindowState((statsDialog->windowState() & ~Qt::WindowMinimized) | Qt::WindowActive);
   statsDialog->show();
   statsDialog->raise();
   statsDialog->activateWindow();

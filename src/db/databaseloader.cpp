@@ -310,9 +310,11 @@ void DatabaseLoader::compileDatabasePost()
       resultFlagsShared.setFlag(atools::fs::COMPILE_CANCELED);
     else if(result == QDialog::Accepted)
     {
+      QWidget *mainwindow = NavApp::getQMainWidget();
       // Use database clicked - raise main window
-      NavApp::getQMainWidget()->activateWindow();
-      NavApp::getQMainWidget()->raise();
+      mainwindow->setWindowState((mainwindow->windowState() & ~Qt::WindowMinimized) | Qt::WindowActive);
+      mainwindow->activateWindow();
+      mainwindow->raise();
     }
 
   }

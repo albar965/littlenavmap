@@ -537,7 +537,7 @@ private:
   void redoTriggered();
   void helpClicked();
 
-  void dockVisibilityChanged(bool visible);
+  void dockVisibilityChanged(bool);
 
   void updateTableHeaders();
   void highlightNextWaypoint(int activeLegIdx);

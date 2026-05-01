@@ -745,6 +745,7 @@ void MainWindow::dataExchangeDataFetched(atools::util::Properties dataExchangePr
       // Activate window - always sent by other instance =====================================================
       if(dataExchangeProperties.contains(lnm::STARTUP_COMMAND_ACTIVATE))
       {
+        setWindowState((windowState() & ~Qt::WindowMinimized) | Qt::WindowActive);
         activateWindow();
         raise();
       }
@@ -2103,6 +2104,7 @@ void MainWindow::routeFromStringCurrent()
   }
 
   routeStringDialog->fontChanged(QApplication::font());
+  routeStringDialog->setWindowState((routeStringDialog->windowState() & ~Qt::WindowMinimized) | Qt::WindowActive);
   routeStringDialog->show();
   routeStringDialog->activateWindow();
   routeStringDialog->raise();
