@@ -27,7 +27,6 @@
 #include "common/tabindexes.h"
 #include "common/textpointer.h"
 #include "common/unit.h"
-#include "common/unit.h"
 #include "common/unitstringtool.h"
 #include "exception.h"
 #include "util/csvexporter.h"
@@ -60,7 +59,7 @@
 #include "route/routecommand.h"
 #include "route/routelabel.h"
 #include "route/runwayselectiondialog.h"
-#include "route/userwaypointdialog.h"
+#include "route/routewaypointeditdialog.h"
 #include "routeextractor.h"
 #include "routestring/routestringdialog.h"
 #include "routestring/routestringreader.h"
@@ -300,6 +299,7 @@ RouteController::RouteController(MainWindow *parentWindow, QTableView *tableView
 
   // Do not use a parent to allow the window moving to back
   routeCalcDialog = new RouteCalcDialog(nullptr);
+  waypointEditDialog = new RouteWaypointEditDialog(nullptr);
 
   // Set up undo/redo framework ========================================
   undoStack = new QUndoStack(mainWindow);
@@ -395,9 +395,11 @@ RouteController::RouteController(MainWindow *parentWindow, QTableView *tableView
   ui->actionRouteResetView->setShortcutContext(Qt::WidgetWithChildrenShortcut);
   ui->actionRouteTableCopy->setShortcutContext(Qt::WidgetWithChildrenShortcut);
   ui->actionRouteEditUserWaypoint->setShortcutContext(Qt::WidgetWithChildrenShortcut);
+  ui->actionRouteShowLeg->setShortcutContext(Qt::WidgetWithChildrenShortcut); // Not shown in context menu
 
   // Add to dock handler to enable auto raise and closing on exit
   mainWindow->registerDialogInDockHandler(routeCalcDialog);
+  mainWindow->registerDialogInDockHandler(waypointEditDialog);
 
   // Add action/shortcuts to table view
   tableViewRoute->addActions({ui->actionRouteLegDown, ui->actionRouteLegUp, ui->actionRouteDeleteLeg,
@@ -405,7 +407,7 @@ RouteController::RouteController(MainWindow *parentWindow, QTableView *tableView
                               ui->actionRouteShowApproaches, ui->actionRouteDirectTo, ui->actionRouteShowApproachCustom,
                               ui->actionRouteShowDepartureCustom, ui->actionRouteShowOnMap, ui->actionRouteTableSelectNothing,
                               ui->actionRouteTableSelectAll, ui->actionRouteActivateLeg, ui->actionRouteResetView, ui->actionRouteSetMark,
-                              ui->actionRouteEditUserWaypoint});
+                              ui->actionRouteEditUserWaypoint, ui->actionRouteShowLeg});
 
   if(tableViewRoute->selectionModel() != nullptr)
     connect(tableViewRoute->selectionModel(), &QItemSelectionModel::selectionChanged, this, &RouteController::tableSelectionChanged);
@@ -416,6 +418,7 @@ RouteController::RouteController(MainWindow *parentWindow, QTableView *tableView
   connect(ui->actionRouteLegUp, &QAction::triggered, this, &RouteController::moveSelectedLegsUpTriggered);
   connect(ui->actionRouteDeleteLeg, &QAction::triggered, this, &RouteController::deleteSelectedLegsTriggered);
   connect(ui->actionRouteEditUserWaypoint, &QAction::triggered, this, &RouteController::editUserWaypointTriggered);
+  connect(ui->actionRouteShowLeg, &QAction::triggered, this, &RouteController::showLeg);
 
   connect(ui->actionRouteShowInformation, &QAction::triggered, this, &RouteController::showInformationTriggered);
   connect(ui->actionRouteShowApproaches, &QAction::triggered, this, &RouteController::showProceduresTriggered);
@@ -440,6 +443,8 @@ RouteController::RouteController(MainWindow *parentWindow, QTableView *tableView
   connect(routeCalcDialog, &RouteCalcDialog::calculateReverseClicked, this, &RouteController::reverseRoute);
   connect(routeCalcDialog, &RouteCalcDialog::downloadTrackClicked, NavApp::getTrackController(), &TrackController::startDownload);
 
+  connect(waypointEditDialog, &RouteWaypointEditDialog::waypointEdited, this, &RouteController::waypointEdited);
+
   connect(routeLabel, &RouteLabel::flightplanLabelLinkActivated, this, &RouteController::flightplanLabelLinkActivated);
 
   connect(this, &RouteController::routeChanged, this, &RouteController::updateFooterErrorLabel);
@@ -455,9 +460,11 @@ RouteController::RouteController(MainWindow *parentWindow, QTableView *tableView
 
 RouteController::~RouteController()
 {
+  NavApp::unregisterDialogInDockHandler(waypointEditDialog);
   NavApp::unregisterDialogInDockHandler(routeCalcDialog);
   routeAltDelayTimer.stop();
 
+  ATOOLS_DELETE_LOG(waypointEditDialog);
   ATOOLS_DELETE_LOG(routeCalcDialog);
   ATOOLS_DELETE_LOG(tabHandlerRoute);
   ATOOLS_DELETE_LOG(units);
@@ -1031,12 +1038,14 @@ void RouteController::saveState() const
   routeLabel->saveState();
   tabHandlerRoute->saveState();
   routeCalcDialog->saveState();
+  waypointEditDialog->saveState();
 }
 
 void RouteController::restoreState()
 {
   tabHandlerRoute->restoreState();
   routeCalcDialog->restoreState();
+  waypointEditDialog->restoreState();
   updateTableHeaders();
 
   Ui::MainWindow *ui = NavApp::getMainUi();
@@ -1165,6 +1174,7 @@ void RouteController::restoreState()
 void RouteController::resetWindowLayout()
 {
   routeCalcDialog->resetWindowLayout();
+  waypointEditDialog->resetWindowLayout();
 }
 
 void RouteController::clearFlightplan()
@@ -1192,7 +1202,6 @@ void RouteController::getSelectedRouteLegs(QList<int>& selLegIndexes) const
 void RouteController::newFlightplan()
 {
   qDebug() << "newFlightplan";
-
   clearRouteAndUndo();
   clearAllErrors();
   clearTableSelection();
@@ -1208,6 +1217,7 @@ void RouteController::newFlightplan()
   route.calculateLegAltitudes();
   route.updateRouteCycleMetadata();
   route.updateAircraftPerfMetadata();
+  waypointEditDialog->clearAndSave();
 
   updateTableModelAndErrors();
   updateActions();
@@ -1235,6 +1245,7 @@ void RouteController::loadFlightplanInternal(atools::fs::pln::Flightplan flightp
 
   clearAllErrors();
   clearTableSelection();
+  waypointEditDialog->clearAndSave();
 
   RouteCommand *undoCommand = nullptr;
   if(undo && !clearUndoState)
@@ -1453,6 +1464,8 @@ void RouteController::loadFlightplanInternal(atools::fs::pln::Flightplan flightp
 
   qDebug() << Q_FUNC_INFO << "routeFilename" << routeFilename << "undoIndex" << undoIndex << "undoIndexClean" << undoIndexClean;
 
+  waypointEditDialog->updateFromRoute(route);
+
   emit routeChanged(true /* geometryChanged */, true /* newFlightPlan */);
 }
 
@@ -1596,6 +1609,8 @@ bool RouteController::insertFlightplan(const QString& filename, int insertBefore
 
   try
   {
+    waypointEditDialog->clearAndSave();
+
     Flightplan flightplan;
     pln::Flightplan& routePlan = route.getFlightplan();
 
@@ -1729,6 +1744,8 @@ bool RouteController::insertFlightplan(const QString& filename, int insertBefore
     updateActions();
 
     emit routeChanged(true /* geometryChanged */);
+
+    waypointEditDialog->updateFromRoute(route);
   }
   catch(atools::Exception& e)
   {
@@ -1992,6 +2009,8 @@ void RouteController::calculateDirect()
 {
   qDebug() << Q_FUNC_INFO;
 
+  waypointEditDialog->clearAndSave();
+
   // Stop any background tasks
   beforeRouteCalc();
 
@@ -2008,6 +2027,9 @@ void RouteController::calculateDirect()
   updateActions();
   postChange(undoCommand);
   emit routeChanged(true /* geometryChanged */);
+
+  waypointEditDialog->updateFromRoute(route);
+
   NavApp::setStatusMessage(tr("Calculated direct flight plan."));
 }
 
@@ -2235,6 +2257,8 @@ bool RouteController::calculateRouteInternal(atools::routing::RouteFinder *route
 
   if(found && !canceled)
   {
+    waypointEditDialog->clearAndSave();
+
     // Compare to direct connection and check if route is too long
     float directDistance = departurePos.distanceMeterTo(destinationPos);
     float ratio = distance / directDistance;
@@ -2324,6 +2348,8 @@ bool RouteController::calculateRouteInternal(atools::routing::RouteFinder *route
     else
       // Too long
       found = false;
+
+    waypointEditDialog->updateFromRoute(route);
   }
 
   QGuiApplication::restoreOverrideCursor();
@@ -2396,6 +2422,8 @@ void RouteController::reverseRoute()
 {
   qDebug() << Q_FUNC_INFO;
 
+  waypointEditDialog->clearAndSave();
+
   RouteCommand *undoCommand = preChange(tr("Reverse"));
 
   // Destination will be departure - check if valid
@@ -2436,6 +2464,9 @@ void RouteController::reverseRoute()
   updateActions();
 
   postChange(undoCommand);
+
+  waypointEditDialog->updateFromRoute(route);
+
   emit routeChanged(true /* geometryChanged */);
   NavApp::setStatusMessage(tr("Reversed flight plan."));
 }
@@ -3344,37 +3375,46 @@ void RouteController::editUserWaypointTriggered()
     editUserWaypointName(tableViewRoute->currentIndex().row());
 }
 
+void RouteController::waypointEdited()
+{
+  RouteCommand *undoCommand = nullptr;
+
+  // Ignore events triggering follow due to selection changes
+  atools::util::ContextSaverBool saver(ignoreFollowSelection);
+
+  // if(route.getFlightplan().canSaveUserWaypointName())
+  undoCommand = preChange(tr("Waypoint Change"));
+
+  FlightplanEntry& entryRef = route.getFlightplan()[waypointEditDialog->getEntryIndex()];
+  bool positionChanged = entryRef.getPosition().almostEqual(waypointEditDialog->getEntry().getPosition());
+  entryRef = waypointEditDialog->getEntry();
+
+  if(positionChanged)
+  {
+    route.updateAll();
+    route.calculateLegAltitudes();
+
+    updateActiveLeg();
+    updateTableModelAndErrors();
+    updateActions();
+  }
+  else
+    updateTableModelAndErrors();
+
+  postChange(undoCommand);
+  emit routeChanged(positionChanged /* geometryChanged */);
+
+  // Restore previous selection at new moved position
+  tableViewRoute->setCurrentIndex(model->index(waypointEditDialog->getEntryIndex(), 0));
+  selectList({waypointEditDialog->getEntryIndex()}, 0);
+
+  NavApp::setStatusMessage(tr("Changed waypoint in flight plan."));
+}
+
 void RouteController::editUserWaypointName(int index)
 {
-  qDebug() << Q_FUNC_INFO << "index" << index;
-
   if(index >= 0 && route.canEditComment(index))
-  {
-    UserWaypointDialog waypointDialog(mainWindow, route.value(index).getFlightplanEntry());
-    if(waypointDialog.exec() == QDialog::Accepted)
-    {
-      RouteCommand *undoCommand = nullptr;
-
-      // Ignore events triggering follow due to selection changes
-      atools::util::ContextSaverBool saver(ignoreFollowSelection);
-
-      // if(route.getFlightplan().canSaveUserWaypointName())
-      undoCommand = preChange(tr("Waypoint Change"));
-
-      route.getFlightplan()[index] = waypointDialog.getEntry();
-
-      route.updateAll();
-      route.calculateLegAltitudes();
-
-      updateActiveLeg();
-      updateTableModelAndErrors();
-      updateActions();
-
-      postChange(undoCommand);
-      emit routeChanged(true /* geometryChanged */);
-      NavApp::setStatusMessage(tr("Changed waypoint in flight plan."));
-    }
-  }
+    waypointEditDialog->setEntryAndShow(index, route.value(index).getFlightplanEntry());
 }
 
 void RouteController::shownMapFeaturesChanged(map::MapTypes types)
@@ -3529,6 +3569,8 @@ void RouteController::changeRouteUndoRedo(const atools::fs::pln::Flightplan& new
   int currentRow = tableViewRoute->currentIndex().isValid() ? tableViewRoute->currentIndex().row() : -1;
   bool currentRowSelected = tableViewRoute->selectionModel()->isRowSelected(currentRow);
 
+  waypointEditDialog->clearAndSave();
+
   // Ignore events triggering follow due to selection changes
   atools::util::ContextSaverBool saver(ignoreFollowSelection);
 
@@ -3555,6 +3597,8 @@ void RouteController::changeRouteUndoRedo(const atools::fs::pln::Flightplan& new
   setCurrentRow(currentRow, currentRowSelected);
 
   emit routeChanged(true /* geometryChanged */);
+
+  waypointEditDialog->updateFromRoute(route);
 }
 
 void RouteController::styleChanged()
@@ -3585,6 +3629,7 @@ void RouteController::optionsChanged(const optc::OptionChangeFlags& changeFlags)
   }
 
   routeCalcDialog->optionsChanged(changeFlags);
+  waypointEditDialog->optionsChanged(changeFlags);
 
   tableCleanupTimer.setInterval(OptionData::instance().getSimCleanupTableTime() * 1000);
 
@@ -3605,6 +3650,7 @@ void RouteController::fontChanged(const QFont& font)
 
   routeLabel->fontChanged(font);
   routeCalcDialog->fontChanged(font);
+  waypointEditDialog->fontChanged(font);
 
   zoomHandlerTable->zoomPercent(OptionData::instance().getGuiRouteTableTextSize());
   zoomHandlerPlaceholder->zoomPercent(OptionData::instance().getGuiRouteTableTextSize());
@@ -3704,6 +3750,8 @@ void RouteController::moveSelectedLegsInternal(MoveDirection direction)
 
   if(!rows.isEmpty())
   {
+    waypointEditDialog->clearAndSave();
+
     RouteCommand *undoCommand = preChange(tr("Move Waypoints"));
 
     QModelIndex curIdx = tableViewRoute->currentIndex();
@@ -3773,6 +3821,8 @@ void RouteController::moveSelectedLegsInternal(MoveDirection direction)
 
     postChange(undoCommand);
     emit routeChanged(true /* geometryChanged */);
+
+    waypointEditDialog->updateFromRoute(route);
     NavApp::setStatusMessage(tr("Moved flight plan legs."));
   }
 }
@@ -3791,6 +3841,8 @@ void RouteController::deleteSelectedLegs(const QList<int>& rows, bool selectCurr
 {
   if(!rows.isEmpty())
   {
+    waypointEditDialog->clearAndSave();
+
     // Ignore events triggering follow due to selection changes
     atools::util::ContextSaverBool saver(ignoreFollowSelection);
 
@@ -3809,6 +3861,9 @@ void RouteController::deleteSelectedLegs(const QList<int>& rows, bool selectCurr
 
     postChange(undoCommand);
     emit routeChanged(true /* geometryChanged */);
+
+    waypointEditDialog->updateFromRoute(route);
+
     NavApp::setStatusMessage(tr("Removed flight plan legs."));
   }
 }
@@ -4168,6 +4223,8 @@ void RouteController::routeSetDepartureInternal(const map::MapAirport& airport)
 {
   Flightplan& flightplan = route.getFlightplan();
 
+  waypointEditDialog->clearAndSave();
+
   bool replaced = false;
   if(route.getSizeWithoutAlternates() > 1)
   {
@@ -4198,6 +4255,7 @@ void RouteController::routeSetDepartureInternal(const map::MapAirport& airport)
     routeLeg.createFromAirport(0, airport, nullptr);
     route.insert(0, routeLeg);
   }
+  waypointEditDialog->updateFromRoute(route);
 }
 
 void RouteController::routeSetDestination(map::MapAirport airport)
@@ -4308,6 +4366,8 @@ void RouteController::routeSetDestinationInternal(const map::MapAirport& airport
 {
   Flightplan& flightplan = route.getFlightplan();
 
+  waypointEditDialog->clearAndSave();
+
   bool replaced = false;
   if(route.getSizeWithoutAlternates() > 1)
   {
@@ -4348,6 +4408,7 @@ void RouteController::routeSetDestinationInternal(const map::MapAirport& airport
     routeLeg.createFromAirport(insertPos, airport, lastLeg);
     route.insert(insertPos, routeLeg);
   }
+  waypointEditDialog->updateFromRoute(route);
 }
 
 void RouteController::showCustomApproachMainMenu()
@@ -4545,6 +4606,8 @@ void RouteController::routeAddProcedure(proc::MapProcedureLegs legs)
            << legs.type << legs.procedureFixIdent << legs.suffix << legs.arincName
            << legs.transitionType << legs.transitionFixIdent;
 
+  waypointEditDialog->clearAndSave();
+
   if(legs.isEmpty())
   {
     qWarning() << Q_FUNC_INFO << "empty procedure";
@@ -4732,6 +4795,8 @@ void RouteController::routeAddProcedure(proc::MapProcedureLegs legs)
 
   qDebug() << Q_FUNC_INFO << route.getFlightplanConst().getProperties();
 
+  waypointEditDialog->updateFromRoute(route);
+
   emit routeChanged(true /* geometryChanged */);
 
   NavApp::setStatusMessage(tr("Added procedure to flight plan."));
@@ -4754,6 +4819,8 @@ void RouteController::routeDirectTo(int id, const atools::geo::Pos& userPos, map
   const Pos& userAicraftPos = NavApp::getUserAircraftPos();
   if(!disable)
   {
+    waypointEditDialog->clearAndSave();
+
     // Ignore events triggering follow due to selection changes
     atools::util::ContextSaverBool saver(ignoreFollowSelection);
 
@@ -4880,6 +4947,9 @@ void RouteController::routeDirectTo(int id, const atools::geo::Pos& userPos, map
 
     postChange(undoCommand);
     emit routeChanged(true /* geometryChanged */);
+
+    waypointEditDialog->updateFromRoute(route);
+
     NavApp::setStatusMessage(tr("Changed flight plan for direct to."));
   }
 }
@@ -4887,6 +4957,8 @@ void RouteController::routeDirectTo(int id, const atools::geo::Pos& userPos, map
 void RouteController::routeAdd(int id, atools::geo::Pos userPos, map::MapTypes type, int legIndex)
 {
   qDebug() << Q_FUNC_INFO << "user pos" << userPos << "id" << id << "type" << type << "leg index" << legIndex;
+
+  waypointEditDialog->clearAndSave();
 
   // Ignore events triggering follow due to selection changes
   atools::util::ContextSaverBool saver(ignoreFollowSelection);
@@ -4904,6 +4976,9 @@ void RouteController::routeAdd(int id, atools::geo::Pos userPos, map::MapTypes t
 
   postChange(undoCommand);
   emit routeChanged(true /* geometryChanged */);
+
+  waypointEditDialog->updateFromRoute(route);
+
   NavApp::setStatusMessage(tr("Added waypoint to flight plan."));
 }
 
@@ -4981,6 +5056,8 @@ void RouteController::routeReplace(int id, atools::geo::Pos userPos, map::MapTyp
   if(alternate && !(type & map::AIRPORT))
     return;
 
+  waypointEditDialog->clearAndSave();
+
   // Ignore events triggering follow due to selection changes
   atools::util::ContextSaverBool saver(ignoreFollowSelection);
 
@@ -5040,6 +5117,9 @@ void RouteController::routeReplace(int id, atools::geo::Pos userPos, map::MapTyp
 
   postChange(undoCommand);
   emit routeChanged(true /* geometryChanged */);
+
+  waypointEditDialog->updateFromRoute(route);
+
   NavApp::setStatusMessage(tr("Replaced waypoint in flight plan."));
 }
 

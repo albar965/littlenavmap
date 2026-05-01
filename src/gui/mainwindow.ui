@@ -9217,7 +9217,7 @@ relation to shown airport</string>
     <string>Edit one or more userpoints</string>
    </property>
    <property name="shortcut">
-    <string>Return</string>
+    <string>Ctrl+E</string>
    </property>
   </action>
   <action name="actionUserdataAdd">
@@ -10397,7 +10397,7 @@ relation to shown airport</string>
     <string>Edit one or more logbook entries</string>
    </property>
    <property name="shortcut">
-    <string>Return</string>
+    <string>Ctrl+E</string>
    </property>
   </action>
   <action name="actionLogdataAdd">
@@ -10732,7 +10732,7 @@ relation to shown airport</string>
     <string>Edit name and coordinates of user defined flight plan position</string>
    </property>
    <property name="shortcut">
-    <string>Return</string>
+    <string>Ctrl+E</string>
    </property>
   </action>
   <action name="actionRouteDisplayOptions">
@@ -12685,6 +12685,24 @@ from either the departure parking or the user aircraft while taxiing.</string>
    </property>
    <property name="statusTip">
     <string>Export Logbook Entries to CSV File</string>
+   </property>
+  </action>
+  <action name="actionRouteShowLeg">
+   <property name="icon">
+    <iconset resource="../../littlenavmap.qrc">
+     <normaloff>:/littlenavmap/resources/icons/routestring.svg</normaloff>:/littlenavmap/resources/icons/routestring.svg</iconset>
+   </property>
+   <property name="text">
+    <string>Show Flight Plan Leg on map and in Information</string>
+   </property>
+   <property name="toolTip">
+    <string>HIDDEN IN MENU</string>
+   </property>
+   <property name="statusTip">
+    <string>Edit name and coordinates of user defined flight plan position</string>
+   </property>
+   <property name="shortcut">
+    <string>Return</string>
    </property>
   </action>
  </widget>

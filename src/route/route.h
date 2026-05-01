@@ -734,6 +734,9 @@ public:
   /* Clear route index for all flight plan related objects in result */
   void clearAirportRouteIndex(map::MapResult& result) const;
 
+  /* true for "WP1" to "WP999". Automatically managed waypoint numbers. */
+  static bool isStandardWaypointIdent(const QString& ident);
+
 private:
   /* Get a list of approach ILS (not localizer) and the used runway end. Only for approaches. */
   void updateApproachRunwayEndAndIls(QList<map::MapIls>& ilsVector, map::MapRunwayEnd *runwayEnd,

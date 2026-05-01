@@ -871,6 +871,11 @@ void Route::clearAirportRouteIndex(map::MapResult& result) const
   result.clearRouteIndex();
 }
 
+bool Route::isStandardWaypointIdent(const QString& ident)
+{
+  return USER_WP_ID.match(ident).hasMatch();
+}
+
 void Route::updateApproachIls()
 {
   if(isEmpty())

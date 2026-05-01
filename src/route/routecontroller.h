@@ -62,6 +62,7 @@ class QStandardItemModel;
 class QTableView;
 class QTextCursor;
 class RouteCalcDialog;
+class RouteWaypointEditDialog;
 class RouteCommand;
 class RouteLabel;
 class SymbolPainter;
@@ -434,8 +435,12 @@ private:
 
   void routeSetStartPosition(map::MapStart start);
 
+  /* Double click into table view */
   void doubleClick(const QModelIndex& index);
   void showAtIndex(int index, bool info, bool map, bool doubleClick);
+
+  /* Return pressed which triggered actionRouteShowLeg */
+  void showLeg();
 
   void tableContextMenu(const QPoint& pos);
 
@@ -599,6 +604,9 @@ private:
 
   void updateRemarksFont();
 
+  /* Signal from waypoint edit dialog */
+  void waypointEdited();
+
   /* Selected rows in table. Updated on selection change. */
   QList<int> selectedRows;
 
@@ -649,6 +657,7 @@ private:
 
   /* Route calculation dock window controller */
   RouteCalcDialog *routeCalcDialog = nullptr;
+  RouteWaypointEditDialog *waypointEditDialog = nullptr;
 
   bool loadingDatabaseState = false;
   qint64 lastSimUpdate = 0;

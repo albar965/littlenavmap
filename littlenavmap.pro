@@ -436,8 +436,8 @@ SOURCES += \
   src/route/routelabel.cpp \
   src/route/routelabelflags.cpp \
   src/route/routeleg.cpp \
+  src/route/routewaypointeditdialog.cpp \
   src/route/runwayselectiondialog.cpp \
-  src/route/userwaypointdialog.cpp \
   src/routeexport/fetchroutedialog.cpp \
   src/routeexport/routeexport.cpp \
   src/routeexport/routeexportdata.cpp \
@@ -651,8 +651,8 @@ HEADERS  += \
   src/route/routelabel.h \
   src/route/routelabelflags.h \
   src/route/routeleg.h \
+  src/route/routewaypointeditdialog.h \
   src/route/runwayselectiondialog.h \
-  src/route/userwaypointdialog.h \
   src/routeexport/fetchroutedialog.h \
   src/routeexport/routeexport.h \
   src/routeexport/routeexportdata.h \
@@ -740,8 +740,8 @@ FORMS += \
   src/route/customproceduredialog.ui \
   src/route/parkingdialog.ui \
   src/route/routecalcdialog.ui \
+  src/route/routewaypointeditdialog.ui \
   src/route/runwayselectiondialog.ui \
-  src/route/userwaypointdialog.ui \
   src/routeexport/fetchroutedialog.ui \
   src/routeexport/routeexportdialog.ui \
   src/routeexport/routemultiexportdialog.ui \
