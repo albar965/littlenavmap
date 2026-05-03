@@ -2849,7 +2849,7 @@ void MapWidget::simDataChanged(const atools::fs::sc::SimConnectData& simulatorDa
                 // Get zoom distance from table
                 auto zoomDist = std::lower_bound(ALT_TO_MIN_ZOOM_FT_NM.constBegin(), ALT_TO_MIN_ZOOM_FT_NM.constEnd(),
                                                  aircraft.getAltitudeAboveGroundFt(),
-                                                 [](const std::pair<float, float>& pair, float value)->bool {
+                                                 [](const std::pair<float, float>& pair, float value) -> bool {
                   return pair.first < value;
                 });
 

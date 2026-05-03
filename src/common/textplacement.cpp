@@ -211,7 +211,7 @@ void TextPlacement::drawTextAlongOneLine(QString text, float bearing, const QPoi
       txts[mid] = arrow % txts.at(mid);
 
     // Remove all too short texts which contain only "..." but keep arrows
-    txts.erase(std::remove_if(txts.begin(), txts.end(), [&arrow](const QString& txt)->bool {
+    txts.erase(std::remove_if(txts.begin(), txts.end(), [&arrow](const QString& txt) -> bool {
       return txt.trimmed().size() <= 1 && txt != arrow;
     }), txts.end());
 

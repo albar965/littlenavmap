@@ -1379,44 +1379,44 @@ void MainWindow::connectAllSlots()
   connect(ui->actionRouteAdjustAltitude, &QAction::triggered, routeController, &RouteController::adjustFlightplanAltitude);
 
   // Help menu ========================================================================
-  connect(ui->actionHelpUserManualContents, &QAction::triggered, this, [this](bool)->void {
+  connect(ui->actionHelpUserManualContents, &QAction::triggered, this, [this](bool) -> void {
     helpHandler->openHelpUrlWeb(lnm::helpOnlineMainUrl, lnm::helpLanguageOnline());
   });
 
-  connect(ui->actionHelpUserManualStart, &QAction::triggered, this, [this](bool)->void {
+  connect(ui->actionHelpUserManualStart, &QAction::triggered, this, [this](bool) -> void {
     helpHandler->openHelpUrlWeb(lnm::helpOnlineStartUrl, lnm::helpLanguageOnline());
   });
 
-  connect(ui->actionHelpUserManualTutorials, &QAction::triggered, this, [this](bool)->void {
+  connect(ui->actionHelpUserManualTutorials, &QAction::triggered, this, [this](bool) -> void {
     helpHandler->openHelpUrlWeb(lnm::helpOnlineTutorialsUrl, lnm::helpLanguageOnline());
   });
 
-  connect(ui->actionHelpUserManualMainMenu, &QAction::triggered, this, [this](bool)->void {
+  connect(ui->actionHelpUserManualMainMenu, &QAction::triggered, this, [this](bool) -> void {
     helpHandler->openHelpUrlWeb(lnm::helpOnlineMainMenuUrl, lnm::helpLanguageOnline());
   });
 
-  connect(ui->actionHelpUserManualShortcuts, &QAction::triggered, this, [this](bool)->void {
+  connect(ui->actionHelpUserManualShortcuts, &QAction::triggered, this, [this](bool) -> void {
     helpHandler->openHelpUrlWeb(lnm::helpOnlineShortcutsUrl, lnm::helpLanguageOnline());
   });
 
-  connect(ui->actionHelpUserManualMapDisplay, &QAction::triggered, this, [this](bool)->void {
+  connect(ui->actionHelpUserManualMapDisplay, &QAction::triggered, this, [this](bool) -> void {
     helpHandler->openHelpUrlWeb(lnm::helpOnlineMapDisplayUrl, lnm::helpLanguageOnline());
   });
 
-  connect(ui->actionHelpUserManualAircraftPerf, &QAction::triggered, this, [this](bool)->void {
+  connect(ui->actionHelpUserManualAircraftPerf, &QAction::triggered, this, [this](bool) -> void {
     helpHandler->openHelpUrlWeb(lnm::helpOnlineAircraftPerfUrl, lnm::helpLanguageOnline());
   });
 
-  connect(ui->actionHelpUserManualFlightPlanning, &QAction::triggered, this, [this](bool)->void {
+  connect(ui->actionHelpUserManualFlightPlanning, &QAction::triggered, this, [this](bool) -> void {
     helpHandler->openHelpUrlWeb(lnm::helpOnlineFlightPlanningUrl, lnm::helpLanguageOnline());
   });
 
-  connect(ui->actionHelpUserManualUserInterface, &QAction::triggered, this, [this](bool)->void {
+  connect(ui->actionHelpUserManualUserInterface, &QAction::triggered, this, [this](bool) -> void {
     helpHandler->openHelpUrlWeb(lnm::helpOnlineUserInterfaceUrl, lnm::helpLanguageOnline());
   });
 
   // Legend ===============================================
-  connect(ui->actionHelpUserManualLegend, &QAction::triggered, this, [this](bool)->void {
+  connect(ui->actionHelpUserManualLegend, &QAction::triggered, this, [this](bool) -> void {
     helpHandler->openHelpUrlWeb(lnm::helpOnlineLegendUrl, lnm::helpLanguageOnline());
   });
 
@@ -4881,7 +4881,7 @@ void MainWindow::closeEvent(QCloseEvent *event)
     statusBar->setStatusMessage(tr("Closing ..."));
 
     // Send a close again once the remaining time is over
-    QTimer::singleShot(remaining, [this]()->void {
+    QTimer::singleShot(remaining, [this]() -> void {
       delayedShutdownInProgress = false;
       close();
     });

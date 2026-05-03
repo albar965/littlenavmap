@@ -385,7 +385,7 @@ RouteController::RouteController(MainWindow *parentWindow, QTableView *tableView
   tableViewRoute->setItemDelegate(tableEditDelegate);
 
   // Editing only for remarks column
-  tableEditDelegate->setCanEditFunction([this](int col, int row)->bool {
+  tableEditDelegate->setCanEditFunction([this](int col, int row) -> bool {
     return col == rcol::REMARKS && route.value(row).canEditComment();
   });
 
@@ -520,7 +520,7 @@ void RouteController::tableCopyClipboardTriggered()
   atools::util::CsvExporter csvExporter(tableViewRoute);
 
   // Use callback to get data to avoid truncated remarks
-  csvExporter.setDataFunction([this](int row, int column)->QVariant {
+  csvExporter.setDataFunction([this](int row, int column) -> QVariant {
     // Full remarks or formatted view content
     return column == rcol::REMARKS ? route.value(row).getComment() : model->data(model->index(row, column));
   });
@@ -697,7 +697,7 @@ QString RouteController::getFlightplanTableAsCsv() const
 
   // Use callback to get data to avoid truncated remarks
   QLocale locale;
-  csvExporter.setDataFunction([this, &locale](int row, int column)->QVariant {
+  csvExporter.setDataFunction([this, &locale](int row, int column) -> QVariant {
     if(column == rcol::REMARKS)
       return route.value(row).getComment(); // Full remarks from route object
     else if(column == rcol::LATITUDE)
@@ -2225,7 +2225,7 @@ bool RouteController::calculateRouteInternal(atools::routing::RouteFinder *route
   progress.setMinimumDuration(500);
 
   bool dialogShown = false, canceled = false;
-  routeFinder->setProgressCallback([&progress, &canceled, &dialogShown](int distToDest, int currentDistToDest)->bool {
+  routeFinder->setProgressCallback([&progress, &canceled, &dialogShown](int distToDest, int currentDistToDest) -> bool {
     QApplication::processEvents();
     progress.setMaximum(distToDest);
     progress.setValue(distToDest - currentDistToDest);

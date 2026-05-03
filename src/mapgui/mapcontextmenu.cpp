@@ -494,7 +494,7 @@ void MapContextMenu::insertProcedureAddMenu(QMenu& menu)
   });
 
   // Erase duplicates by compound id ignoring the leg id
-  index.erase(std::unique(index.begin(), index.end(), [](const map::MapBase *base1, const map::MapBase *base2)-> bool {
+  index.erase(std::unique(index.begin(), index.end(), [](const map::MapBase *base1, const map::MapBase *base2) -> bool {
     // The index contains only one type of PROCEDURE_POINT
     return base1->asPtr<map::MapProcedurePoint>()->compoundId() == base2->asPtr<map::MapProcedurePoint>()->compoundId();
   }), index.end());

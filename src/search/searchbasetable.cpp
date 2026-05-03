@@ -281,7 +281,7 @@ void SearchBaseTable::tableCopyClipboard()
       QLocale locale;
       // Full CSV export including coordinates and full rows
       csvExporter.setAdditionalHeaders({tr("Longitude"), tr("Latitude")});
-      csvExporter.setAdditionalFieldFunction([this, &locale](int index)->QStringList {
+      csvExporter.setAdditionalFieldFunction([this, &locale](int index) -> QStringList {
         return {locale.toString(controller->getRawData(index, "lonx").toFloat(), 'f', 8),
                 locale.toString(controller->getRawData(index, "laty").toFloat(), 'f', 8)};
       });
