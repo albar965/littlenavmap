@@ -101,7 +101,6 @@ private:
   void resetPath(rexp::RouteExportFormatType type, int row);
 
   /* Reset from action */
-  void actionResetExportPatternTriggered();
   void resetPattern(rexp::RouteExportFormatType type, int row);
 
   /* Save now in list clicked */
@@ -139,11 +138,12 @@ private:
   /* Called from context menu method */
   void resetPathsAndSelection();
 
+  /* Called by connected actions affecting selected item only */
+  void actionEditTriggered();
+  void actionResetTriggered();
+
   /* Called by connected actions */
-  void actionEditPathTriggered();
-  void actionEditPatternTriggered();
   void actionExportFileNowTriggered();
-  void actionResetExportPathTriggered();
   void actionSelectExportPathTriggered();
   void actionSelectTriggered();
 
@@ -158,6 +158,7 @@ private:
   /* Get elements, indexes and row for current selection or -1 if nothing selected */
   QModelIndex selectedIndex();
   int selectedRow();
+  int selectedColumn();
   QStandardItem *selectedItem(int col);
   rexp::RouteExportFormatType selectedType();
 

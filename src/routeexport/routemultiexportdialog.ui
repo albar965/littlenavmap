@@ -79,7 +79,7 @@
         <enum>QAbstractItemView::SingleSelection</enum>
        </property>
        <property name="selectionBehavior">
-        <enum>QAbstractItemView::SelectRows</enum>
+        <enum>QAbstractItemView::SelectItems</enum>
        </property>
        <property name="horizontalScrollMode">
         <enum>QAbstractItemView::ScrollPerPixel</enum>
@@ -161,16 +161,19 @@
     <string>&amp;Select Export Path ...</string>
    </property>
    <property name="shortcut">
-    <string>Ctrl+E</string>
+    <string>Ctrl+O</string>
    </property>
   </action>
-  <action name="actionResetExportPath">
+  <action name="actionResetField">
    <property name="icon">
     <iconset resource="../../littlenavmap.qrc">
      <normaloff>:/littlenavmap/resources/icons/reset.svg</normaloff>:/littlenavmap/resources/icons/reset.svg</iconset>
    </property>
    <property name="text">
-    <string>&amp;Reset Export Path</string>
+    <string>&amp;Reset</string>
+   </property>
+   <property name="toolTip">
+    <string>Reset Field to defaults</string>
    </property>
   </action>
   <action name="actionExportFileNow">
@@ -210,12 +213,15 @@
     <string>Ctrl+-</string>
    </property>
   </action>
-  <action name="actionEditPath">
+  <action name="actionEditField">
    <property name="text">
-    <string>&amp;Edit Path</string>
+    <string>&amp;Edit</string>
+   </property>
+   <property name="toolTip">
+    <string>Edit field contents</string>
    </property>
    <property name="shortcut">
-    <string>F3</string>
+    <string>Ctrl+E</string>
    </property>
   </action>
   <action name="actionDefaultTextSize">
@@ -239,29 +245,13 @@
     <bool>true</bool>
    </property>
    <property name="text">
-    <string>&amp;Enable %1 for Export</string>
+    <string>&amp;Enable for Export</string>
    </property>
    <property name="toolTip">
     <string>Select for multiexport</string>
    </property>
    <property name="shortcut">
     <string>Space</string>
-   </property>
-  </action>
-  <action name="actionEditPattern">
-   <property name="text">
-    <string>&amp;Edit Filename Pattern</string>
-   </property>
-   <property name="shortcut">
-    <string>F2</string>
-   </property>
-  </action>
-  <action name="actionResetFilePattern">
-   <property name="text">
-    <string>&amp;Reset Filename Pattern</string>
-   </property>
-   <property name="toolTip">
-    <string>Reset export filename pattern to default</string>
    </property>
   </action>
  </widget>

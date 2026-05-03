@@ -16,13 +16,13 @@
 *****************************************************************************/
 
 #include "routeexport/routeexportdialog.h"
-#include "atools.h"
-#include "routeexport/routeexportdata.h"
-#include "ui_routeexportdialog.h"
+
 #include "common/constants.h"
+#include "common/unitstringtool.h"
 #include "gui/helphandler.h"
 #include "gui/widgetstate.h"
-#include "common/unitstringtool.h"
+#include "routeexport/routeexportdata.h"
+#include "ui_routeexportdialog.h"
 
 #include <QAbstractButton>
 #include <QPushButton>
