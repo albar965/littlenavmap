@@ -25,16 +25,13 @@
 #include <QItemSelection>
 #include <QTimer>
 
-class QUndoStack;
-
-class QAction;
 namespace atools {
 namespace routing {
 class RouteFinder;
 class RouteNetwork;
 }
 namespace gui {
-
+class TableEditDelegate;
 class Dialog;
 class WidgetZoomHandler;
 class TabWidgetHandler;
@@ -56,15 +53,18 @@ class FlightplanEntry;
 }
 
 class FlightplanEntryBuilder;
-class QItemSelection;
 class MainWindow;
+class QAction;
+class QPlainTextEdit;
+class QStandardItem;
 class QStandardItemModel;
 class QTableView;
 class QTextCursor;
+class QUndoStack;
 class RouteCalcDialog;
-class RouteWaypointEditDialog;
 class RouteCommand;
 class RouteLabel;
+class RouteWaypointEditDialog;
 class SymbolPainter;
 class UnitStringTool;
 
@@ -395,6 +395,7 @@ signals:
 
 private:
   friend class RouteCommand;
+  friend class TableEditDelegate;
 
   /* Move selected rows */
   enum MoveDirection
@@ -565,6 +566,7 @@ private:
 
   void updateUnits();
 
+  /* ui->actionRouteEditUserWaypoint */
   void editUserWaypointTriggered();
 
   bool canCalcSelection();
@@ -595,17 +597,19 @@ private:
 
   void updateComboBoxFromFlightplanType();
 
-  /* Do not send model updates while modifying it */
-  void blockModel();
-  void unBlockModel();
-
   /* Set and select current row */
   void setCurrentRow(int row, bool select);
 
   void updateRemarksFont();
 
   /* Signal from waypoint edit dialog */
-  void waypointEdited();
+  void waypointEditedDialog();
+
+  /* From itemChanged() */
+  void waypointEditedInline(int, int row, const QString& comment);
+
+  /* Signal from table model after inline change or model update */
+  void itemChanged(QStandardItem *item);
 
   /* Selected rows in table. Updated on selection change. */
   QList<int> selectedRows;
@@ -671,6 +675,8 @@ private:
   SymbolPainter *symbolPainter = nullptr;
 
   atools::gui::TabWidgetHandler *tabHandlerRoute = nullptr;
+
+  atools::gui::TableEditDelegate *tableEditDelegate = nullptr;
 
   /* Timers for updating altitude delayer, clear selection while flying and moving active to top */
   QTimer routeAltDelayTimer, tableCleanupTimer;

@@ -154,6 +154,9 @@ Examples: &quot;WP1&quot;, &quot;WP2&quot; or &quot;WP10&quot;.</string>
      <property name="margin">
       <number>5</number>
      </property>
+     <property name="textInteractionFlags">
+      <set>Qt::LinksAccessibleByMouse|Qt::TextSelectableByMouse</set>
+     </property>
     </widget>
    </item>
    <item row="6" column="0">
@@ -175,13 +178,16 @@ Examples: &quot;WP1&quot;, &quot;WP2&quot; or &quot;WP10&quot;.</string>
       <enum>QFrame::Sunken</enum>
      </property>
      <property name="text">
-      <string>Click on a flight plan leg and select &quot;Edit Remarks&quot; or &quot;Edit Userpoint&quot; from the context menu or press &quot;Ctrl+E&quot; to edit.</string>
+      <string>Click on a leg in the flight plan table and select &quot;Edit Remarks&quot; or &quot;Edit Userpoint&quot; from the context menu or press &quot;Ctrl+E&quot; to edit.</string>
      </property>
      <property name="wordWrap">
       <bool>true</bool>
      </property>
      <property name="margin">
       <number>5</number>
+     </property>
+     <property name="textInteractionFlags">
+      <set>Qt::LinksAccessibleByMouse|Qt::TextSelectableByMouse</set>
      </property>
     </widget>
    </item>

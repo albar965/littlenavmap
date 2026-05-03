@@ -282,6 +282,11 @@ public:
     return !isAnyProcedure() && !isAlternate();
   }
 
+  bool canEditComment() const
+  {
+    return isRoute();
+  }
+
   /* Alterante airport */
   bool isAlternate() const
   {

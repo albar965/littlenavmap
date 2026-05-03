@@ -29,6 +29,7 @@
 #include "common/unit.h"
 #include "common/unitstringtool.h"
 #include "exception.h"
+#include "gui/tableeditdelegate.h"
 #include "util/csvexporter.h"
 #include "fs/perf/aircraftperf.h"
 #include "fs/pln/flightplanio.h"
@@ -260,7 +261,8 @@ RouteController::RouteController(MainWindow *parentWindow, QTableView *tableView
     tr("Related or recommended navaid for procedure legs.\n"
        "Shown with navaid ident, navaid frequency, distance and bearing defining a fix."),
     tr("Turn instructions, flyover, related navaid for procedure legs or\n"
-       "or remarks entered by user.")
+       "or remarks entered by user.\n"
+       "Double click to edit remarks in table. Press \"Ctrl+E\" to open edit dialog.")
   });
 
   flightplanIO = new atools::fs::pln::FlightplanIO();
@@ -378,7 +380,16 @@ RouteController::RouteController(MainWindow *parentWindow, QTableView *tableView
   tableViewRoute->setModel(model);
   delete m;
 
-  // Avoid stealing of keys from other default menus
+  // Table inline editing ===========================================
+  tableEditDelegate = new atools::gui::TableEditDelegate(tableView, model);
+  tableViewRoute->setItemDelegate(tableEditDelegate);
+
+  // Editing only for remarks column
+  tableEditDelegate->setCanEditFunction([this](int col, int row)->bool {
+    return col == rcol::REMARKS && route.value(row).canEditComment();
+  });
+
+  // Avoid stealing of keys from other default menus =====================
   ui->actionRouteLegDown->setShortcutContext(Qt::WidgetWithChildrenShortcut);
   ui->actionRouteLegUp->setShortcutContext(Qt::WidgetWithChildrenShortcut);
   ui->actionRouteDeleteLeg->setShortcutContext(Qt::WidgetWithChildrenShortcut);
@@ -401,7 +412,7 @@ RouteController::RouteController(MainWindow *parentWindow, QTableView *tableView
   mainWindow->registerDialogInDockHandler(routeCalcDialog);
   mainWindow->registerDialogInDockHandler(waypointEditDialog);
 
-  // Add action/shortcuts to table view
+  // Add action/shortcuts to table view ==========================================
   tableViewRoute->addActions({ui->actionRouteLegDown, ui->actionRouteLegUp, ui->actionRouteDeleteLeg,
                               ui->actionRouteTableCopy, ui->actionRouteShowInformation,
                               ui->actionRouteShowApproaches, ui->actionRouteDirectTo, ui->actionRouteShowApproachCustom,
@@ -411,6 +422,9 @@ RouteController::RouteController(MainWindow *parentWindow, QTableView *tableView
 
   if(tableViewRoute->selectionModel() != nullptr)
     connect(tableViewRoute->selectionModel(), &QItemSelectionModel::selectionChanged, this, &RouteController::tableSelectionChanged);
+
+  // Send by inline editing but also for all other changes. Therefore checks modelUpdatesBlocked
+  connect(model, &QStandardItemModel::itemChanged, this, &RouteController::itemChanged);
 
   // Connect actions - actions without shortcut key are used in the context menu method directly
   connect(ui->actionRouteTableCopy, &QAction::triggered, this, &RouteController::tableCopyClipboardTriggered);
@@ -443,7 +457,7 @@ RouteController::RouteController(MainWindow *parentWindow, QTableView *tableView
   connect(routeCalcDialog, &RouteCalcDialog::calculateReverseClicked, this, &RouteController::reverseRoute);
   connect(routeCalcDialog, &RouteCalcDialog::downloadTrackClicked, NavApp::getTrackController(), &TrackController::startDownload);
 
-  connect(waypointEditDialog, &RouteWaypointEditDialog::waypointEdited, this, &RouteController::waypointEdited);
+  connect(waypointEditDialog, &RouteWaypointEditDialog::waypointEdited, this, &RouteController::waypointEditedDialog);
 
   connect(routeLabel, &RouteLabel::flightplanLabelLinkActivated, this, &RouteController::flightplanLabelLinkActivated);
 
@@ -464,6 +478,7 @@ RouteController::~RouteController()
   NavApp::unregisterDialogInDockHandler(routeCalcDialog);
   routeAltDelayTimer.stop();
 
+  ATOOLS_DELETE_LOG(tableEditDelegate);
   ATOOLS_DELETE_LOG(waypointEditDialog);
   ATOOLS_DELETE_LOG(routeCalcDialog);
   ATOOLS_DELETE_LOG(tabHandlerRoute);
@@ -505,7 +520,7 @@ void RouteController::tableCopyClipboardTriggered()
   atools::util::CsvExporter csvExporter(tableViewRoute);
 
   // Use callback to get data to avoid truncated remarks
-  csvExporter.setDataFunction([this](int row, int column) -> QVariant {
+  csvExporter.setDataFunction([this](int row, int column)->QVariant {
     // Full remarks or formatted view content
     return column == rcol::REMARKS ? route.value(row).getComment() : model->data(model->index(row, column));
   });
@@ -682,7 +697,7 @@ QString RouteController::getFlightplanTableAsCsv() const
 
   // Use callback to get data to avoid truncated remarks
   QLocale locale;
-  csvExporter.setDataFunction([this, &locale](int row, int column) -> QVariant {
+  csvExporter.setDataFunction([this, &locale](int row, int column)->QVariant {
     if(column == rcol::REMARKS)
       return route.value(row).getComment(); // Full remarks from route object
     else if(column == rcol::LATITUDE)
@@ -2210,8 +2225,7 @@ bool RouteController::calculateRouteInternal(atools::routing::RouteFinder *route
   progress.setMinimumDuration(500);
 
   bool dialogShown = false, canceled = false;
-  routeFinder->setProgressCallback([&progress, &canceled, &dialogShown](int distToDest, int currentDistToDest) -> bool
-  {
+  routeFinder->setProgressCallback([&progress, &canceled, &dialogShown](int distToDest, int currentDistToDest)->bool {
     QApplication::processEvents();
     progress.setMaximum(distToDest);
     progress.setValue(distToDest - currentDistToDest);
@@ -3369,6 +3383,13 @@ void RouteController::updateActiveLeg()
   route.updateActiveLegAndPos(true /* force update */, aircraft.isFlying());
 }
 
+void RouteController::itemChanged(QStandardItem *item)
+{
+  // Check if table is currently filled or bulk updated
+  if(!modelUpdatesBlocked)
+    waypointEditedInline(item->index().column(), item->index().row(), item->text());
+}
+
 void RouteController::editUserWaypointTriggered()
 {
   QModelIndex index = tableViewRoute->currentIndex();
@@ -3376,8 +3397,39 @@ void RouteController::editUserWaypointTriggered()
     editUserWaypointName(tableViewRoute->currentIndex().row());
 }
 
-void RouteController::waypointEdited()
+void RouteController::waypointEditedInline(int, int row, const QString& comment)
 {
+#ifdef DEBUG_INFORMATION
+  qDebug() << Q_FUNC_INFO << comment;
+#endif
+  RouteCommand *undoCommand = nullptr;
+
+  // Ignore events triggering follow due to selection changes
+  atools::util::ContextSaverBool saver(ignoreFollowSelection);
+
+  // if(route.getFlightplan().canSaveUserWaypointName())
+  undoCommand = preChange(tr("Waypoint Change"));
+
+  route.getFlightplan()[row].setComment(comment);
+
+  updateTableModelAndErrors();
+
+  postChange(undoCommand);
+  emit routeChanged(false /* geometryChanged */);
+
+  // Restore previous selection at new moved position
+  tableViewRoute->setCurrentIndex(model->index(waypointEditDialog->getEntryIndex(), 0));
+  selectList({waypointEditDialog->getEntryIndex()}, 0);
+
+  NavApp::setStatusMessage(tr("Changed waypoint in flight plan."));
+}
+
+void RouteController::waypointEditedDialog()
+{
+#ifdef DEBUG_INFORMATION
+  qDebug() << Q_FUNC_INFO;
+#endif
+
   RouteCommand *undoCommand = nullptr;
 
   // Ignore events triggering follow due to selection changes
@@ -3463,8 +3515,8 @@ void RouteController::cleanupTableTimeout()
           atools::util::ContextSaverBool saver(ignoreFollowSelection);
 
           // Clear selection and move cursor to current row and first column
-          QModelIndex idx = tableViewRoute->model()->index(tableViewRoute->currentIndex().row(),
-                                                           tableViewRoute->horizontalHeader()->logicalIndex(0));
+          QModelIndex idx = model->index(tableViewRoute->currentIndex().row(),
+                                         tableViewRoute->horizontalHeader()->logicalIndex(0));
 
           if(tableViewRoute->selectionModel() != nullptr)
             tableViewRoute->selectionModel()->setCurrentIndex(idx, QItemSelectionModel::Clear);
@@ -3758,18 +3810,20 @@ void RouteController::moveSelectedLegsInternal(MoveDirection direction)
     if(tableViewRoute->selectionModel() != nullptr)
       tableViewRoute->selectionModel()->clear();
 
-    // Avoid callback selection changed which can result in crashes due to inconsistent route
-    blockModel();
-    for(int row : std::as_const(rows))
     {
-      // Change flight plan
-      route.getFlightplan().move(row, row + direction);
-      route.move(row, row + direction);
+      // Avoid callback selection changed which can result in crashes due to inconsistent route
+      atools::util::ContextSaverBool saver(modelUpdatesBlocked);
 
-      // Move row
-      model->insertRow(row + direction, model->takeRow(row)); // Can send tableSelectionChanged() which has to be blocked
+      for(int row : std::as_const(rows))
+      {
+        // Change flight plan
+        route.getFlightplan().move(row, row + direction);
+        route.move(row, row + direction);
+
+        // Move row
+        model->insertRow(row + direction, model->takeRow(row)); // Can send tableSelectionChanged() which has to be blocked
+      }
     }
-    unBlockModel();
 
     int firstRow = rows.constFirst();
     int lastRow = rows.constLast();
@@ -3875,19 +3929,20 @@ void RouteController::deleteSelectedLegsInternal(const QList<int>& rows)
   {
     proc::MapProcedureTypes procs = affectedProcedures(rows);
 
-    // Avoid callback selection changed which can result in crashes due to inconsistent route
-    blockModel();
-    for(int row : rows)
     {
-      if(row == 0)
-        route.clearDepartureStartAndParking();
+      // Avoid callback selection changed which can result in crashes due to inconsistent route
+      atools::util::ContextSaverBool saver(modelUpdatesBlocked);
+      for(int row : rows)
+      {
+        if(row == 0)
+          route.clearDepartureStartAndParking();
 
-      route.getFlightplan().removeAt(row);
-      route.eraseAirwayFlightplan(row);
-      route.removeLegAt(row);
-      model->removeRow(row); // Can send tableSelectionChanged() which has to be blocked
+        route.getFlightplan().removeAt(row);
+        route.eraseAirwayFlightplan(row);
+        route.removeLegAt(row);
+        model->removeRow(row); // Can send tableSelectionChanged() which has to be blocked
+      }
     }
-    unBlockModel();
 
     if(procs & proc::PROCEDURE_ALL)
     {
@@ -4032,7 +4087,7 @@ void RouteController::selectRange(int from, int to)
 
   QItemSelection newSel;
 
-  int maxRows = tableViewRoute->model()->rowCount();
+  int maxRows = model->rowCount();
 
   if(from < 0 || to < 0 || from > maxRows - 1 || to > maxRows - 1)
     qWarning() << Q_FUNC_INFO << "not in range from" << from << "to" << to << ", min 0 max" << maxRows;
@@ -5237,224 +5292,229 @@ void RouteController::updateTableModelAndErrors()
 {
   Ui::MainWindow *ui = NavApp::getMainUi();
 
-  // Avoid callback selection changed which can result in crashes due to inconsistent route
-  blockModel();
-  model->removeRows(0, model->rowCount());
-
-  float totalDistance = route.getTotalDistance();
-
-  int row = 0;
-  float cumulatedDistance = 0.f;
-
-  // Create null pointer filled list for all items ==============
-  QList<QStandardItem *> itemRow;
-  for(int i = rcol::FIRST_COLUMN; i <= rcol::LAST_COLUMN; i++)
-    itemRow.append(nullptr);
-
-  for(int i = 0; i < route.size(); i++)
   {
-    const RouteLeg& leg = route.value(i);
-    const proc::MapProcedureLeg& procedureLeg = leg.getProcedureLeg();
+    // Avoid callback selection changed which can result in crashes due to inconsistent route
+    atools::util::ContextSaverBool saver(modelUpdatesBlocked);
+    model->removeRows(0, model->rowCount());
 
-    // Ident ===========================================
-    QString identStr;
-    if(leg.isAnyProcedure())
-      // Get ident with IAF, FAF or other indication
-      identStr = proc::procedureLegFixStr(procedureLeg);
-    else
-      identStr = leg.getDisplayIdent();
+    float totalDistance = route.getTotalDistance();
 
-    QStandardItem *ident = new QStandardItem(iconForLeg(leg, tableViewRoute->verticalHeader()->defaultSectionSize() - 2), identStr);
-    QFont f = ident->font();
-    f.setBold(true);
-    ident->setFont(f);
-    ident->setTextAlignment(Qt::AlignRight);
+    int row = 0;
+    float cumulatedDistance = 0.f;
 
-    itemRow[rcol::IDENT] = ident;
-    // highlightProcedureItems() does error checking for IDENT
+    // Create null pointer filled list for all items ==============
+    QList<QStandardItem *> itemRow;
+    for(int i = rcol::FIRST_COLUMN; i <= rcol::LAST_COLUMN; i++)
+      itemRow.append(nullptr);
 
-    // Region, navaid name, procedure type ===========================================
-    itemRow[rcol::REGION] = new QStandardItem(leg.getRegion());
-    itemRow[rcol::NAME] = new QStandardItem(leg.getName());
-
-    if(route.getSizeWithoutAlternates() > 1)
+    for(int i = 0; i < route.size(); i++)
     {
-      if(row == route.getDestinationAirportLegIndex() && !route.getDestinationAirportLeg().isAnyProcedure())
-        itemRow[rcol::PROCEDURE] = new QStandardItem(tr("Destination"));
-      else if(row == route.getDepartureAirportLegIndex() && !route.getDepartureAirportLeg().isAnyProcedure())
-        itemRow[rcol::PROCEDURE] = new QStandardItem(tr("Departure"));
-      else if(leg.isAlternate())
-        itemRow[rcol::PROCEDURE] = new QStandardItem(tr("Alternate"));
-      else if(leg.isAnyProcedure())
-        itemRow[rcol::PROCEDURE] = new QStandardItem(route.getProcedureLegText(leg.getProcedureType(),
-                                                                               false /* includeRunway */, false /* missedAsApproach */,
-                                                                               true /* transitionAsProcedure */));
-    }
+      const RouteLeg& leg = route.value(i);
+      const proc::MapProcedureLeg& procedureLeg = leg.getProcedureLeg();
 
-    // Airway or leg type and restriction ===========================================
-    if(leg.isRoute())
-    {
-      // Airway ========================
-      const map::MapAirway& airway = leg.getAirway();
+      // Ident ===========================================
+      QString identStr;
+      if(leg.isAnyProcedure())
+        // Get ident with IAF, FAF or other indication
+        identStr = proc::procedureLegFixStr(procedureLeg);
+      else
+        identStr = leg.getDisplayIdent();
 
-      QStringList awname(airway.isValid() && airway.isTrack() ? tr("Track %1").arg(leg.getAirwayName()) : leg.getAirwayName());
+      QStandardItem *ident = new QStandardItem(iconForLeg(leg, tableViewRoute->verticalHeader()->defaultSectionSize() - 2), identStr);
+      QFont f = ident->font();
+      f.setBold(true);
+      ident->setFont(f);
+      ident->setTextAlignment(Qt::AlignRight);
 
-      if(airway.isValid())
+      itemRow[rcol::IDENT] = ident;
+      // highlightProcedureItems() does error checking for IDENT
+
+      // Region, navaid name, procedure type ===========================================
+      itemRow[rcol::REGION] = new QStandardItem(leg.getRegion());
+      itemRow[rcol::NAME] = new QStandardItem(leg.getName());
+
+      if(route.getSizeWithoutAlternates() > 1)
       {
-        awname.append(map::airwayTrackTypeToShortString(airway.type));
+        if(row == route.getDestinationAirportLegIndex() && !route.getDestinationAirportLeg().isAnyProcedure())
+          itemRow[rcol::PROCEDURE] = new QStandardItem(tr("Destination"));
+        else if(row == route.getDepartureAirportLegIndex() && !route.getDepartureAirportLeg().isAnyProcedure())
+          itemRow[rcol::PROCEDURE] = new QStandardItem(tr("Departure"));
+        else if(leg.isAlternate())
+          itemRow[rcol::PROCEDURE] = new QStandardItem(tr("Alternate"));
+        else if(leg.isAnyProcedure())
+          itemRow[rcol::PROCEDURE] = new QStandardItem(route.getProcedureLegText(leg.getProcedureType(),
+                                                                                 false /* includeRunway */, false /* missedAsApproach */,
+                                                                                 true /* transitionAsProcedure */));
+      }
+
+      // Airway or leg type and restriction ===========================================
+      if(leg.isRoute())
+      {
+        // Airway ========================
+        const map::MapAirway& airway = leg.getAirway();
+
+        QStringList awname(airway.isValid() && airway.isTrack() ? tr("Track %1").arg(leg.getAirwayName()) : leg.getAirwayName());
+
+        if(airway.isValid())
+        {
+          awname.append(map::airwayTrackTypeToShortString(airway.type));
 
 #ifdef DEBUG_INFORMATION
-        awname.append("[" + map::airwayRouteTypeToStringShort(airway.routeType) + "]");
+          awname.append("[" + map::airwayRouteTypeToStringShort(airway.routeType) + "]");
 #endif
 
-        awname.removeAll(QStringLiteral());
-        itemRow[rcol::RESTRICTION] = new QStandardItem(map::airwayAltTextShort(airway, false /* addUnit */, false /* narrow */));
+          awname.removeAll(QStringLiteral());
+          itemRow[rcol::RESTRICTION] = new QStandardItem(map::airwayAltTextShort(airway, false /* addUnit */, false /* narrow */));
+        }
+
+        itemRow[rcol::AIRWAY_OR_LEGTYPE] = new QStandardItem(awname.join(tr(" / ")));
+        // highlightProcedureItems() does error checking
       }
-
-      itemRow[rcol::AIRWAY_OR_LEGTYPE] = new QStandardItem(awname.join(tr(" / ")));
-      // highlightProcedureItems() does error checking
-    }
-    else
-    {
-      // Procedure ========================
-      itemRow[rcol::AIRWAY_OR_LEGTYPE] =
-        new QStandardItem(atools::strJoin({leg.getFlightplanEntry().getAirway(), proc::procedureLegTypeStr(procedureLeg.type)}, tr(", ")));
-      itemRow[rcol::RESTRICTION] = new QStandardItem(proc::restrictionText(procedureLeg).join(tr(", ")));
-    }
-
-    // Get ILS for approach runway if it marks the end of an ILS or localizer approach procedure
-    QStringList ilsTypeTexts, ilsFreqTexts;
-    if(procedureLeg.isApproach() && leg.getRunwayEnd().isValid())
-    {
-      // Build string for ILS type - use recommended ILS which can also apply to non ILS approaches
-      for(const map::MapIls& ils : route.getDestRunwayIlsFlightplanTable())
-      {
-        ilsTypeTexts.append(map::ilsType(ils, true /* gs */, true /* dme */, tr(", ")));
-
-        if(!ils.isAnyGlsRnp())
-          ilsFreqTexts.append(ils.freqMHzLocale());
-      }
-    }
-
-    // VOR/NDB type ===========================
-    if(leg.getVor().isValid())
-      itemRow[rcol::TYPE] = new QStandardItem(map::vorFullShortText(leg.getVor()));
-    else if(leg.getNdb().isValid())
-      itemRow[rcol::TYPE] = new QStandardItem(map::ndbFullShortText(leg.getNdb()));
-    else if(!ilsTypeTexts.isEmpty())
-      itemRow[rcol::TYPE] = new QStandardItem(ilsTypeTexts.join(", "));
-
-    // VOR/NDB frequency =====================
-    if(leg.getVor().isValid())
-    {
-      if(leg.getVor().tacan)
-        itemRow[rcol::FREQ] = new QStandardItem(leg.getVor().channel);
       else
-        itemRow[rcol::FREQ] = new QStandardItem(QLocale().toString(leg.getFrequency() / 1000.f, 'f', 2));
-    }
-    else if(leg.getNdb().isValid())
-      itemRow[rcol::FREQ] = new QStandardItem(QLocale().toString(leg.getFrequency() / 100.f, 'f', 1));
-    else if(!ilsFreqTexts.isEmpty())
-      itemRow[rcol::FREQ] = new QStandardItem(ilsFreqTexts.join(", "));
-
-    // VOR/NDB range =====================
-    if(leg.getRange() > 0 && (leg.getVor().isValid() || leg.getNdb().isValid()))
-      itemRow[rcol::RANGE] = new QStandardItem(Unit::distNm(leg.getRange(), false));
-
-    // Course =====================
-    bool afterArrivalAirport = route.isAirportAfterArrival(i);
-    bool parkingToDeparture = route.hasAnySidProcedure() && i == 0;
-
-    if(row > 0 && !afterArrivalAirport && !parkingToDeparture)
-    {
-      float courseMag = map::INVALID_COURSE_VALUE, courseTrue = map::INVALID_COURSE_VALUE;
-      leg.getMagTrueRealCourse(courseMag, courseTrue);
-
-      if(courseMag < map::INVALID_COURSE_VALUE)
-        itemRow[rcol::COURSE] = new QStandardItem(QLocale().toString(courseMag, 'f', 0));
-      if(courseTrue < map::INVALID_COURSE_VALUE)
-        itemRow[rcol::COURSETRUE] = new QStandardItem(QLocale().toString(courseTrue, 'f', 0));
-    }
-
-    // Distance =====================
-    if(!afterArrivalAirport)
-    {
-      if(leg.getDistanceTo() < map::INVALID_DISTANCE_VALUE /*&& !leg.noDistanceDisplay()*/)
       {
-        cumulatedDistance += leg.getDistanceTo();
-        itemRow[rcol::DIST] = new QStandardItem(Unit::distNm(leg.getDistanceTo(), false));
+        // Procedure ========================
+        itemRow[rcol::AIRWAY_OR_LEGTYPE] =
+          new QStandardItem(atools::strJoin({leg.getFlightplanEntry().getAirway(), proc::procedureLegTypeStr(procedureLeg.type)},
+                                            tr(", ")));
+        itemRow[rcol::RESTRICTION] = new QStandardItem(proc::restrictionText(procedureLeg).join(tr(", ")));
+      }
 
-        if(!procedureLeg.isMissed() && !leg.isAlternate())
+      // Get ILS for approach runway if it marks the end of an ILS or localizer approach procedure
+      QStringList ilsTypeTexts, ilsFreqTexts;
+      if(procedureLeg.isApproach() && leg.getRunwayEnd().isValid())
+      {
+        // Build string for ILS type - use recommended ILS which can also apply to non ILS approaches
+        for(const map::MapIls& ils : route.getDestRunwayIlsFlightplanTable())
         {
-          float remaining = totalDistance - cumulatedDistance;
-          if(remaining < 0.f)
-            remaining = 0.f; // Catch the -0 case due to rounding errors
-          itemRow[rcol::REMAINING_DISTANCE] = new QStandardItem(Unit::distNm(remaining, false));
+          ilsTypeTexts.append(map::ilsType(ils, true /* gs */, true /* dme */, tr(", ")));
+
+          if(!ils.isAnyGlsRnp())
+            ilsFreqTexts.append(ils.freqMHzLocale());
         }
       }
-    }
 
-    itemRow[rcol::LATITUDE] = new QStandardItem(Unit::coordsLatY(leg.getPosition()));
-    itemRow[rcol::LONGITUDE] = new QStandardItem(Unit::coordsLonX(leg.getPosition()));
-    itemRow[rcol::MAGVAR] = new QStandardItem(map::magvarText(leg.getMagvarEndOrCalibrated(), true /* shortText */, false /* degSign */));
+      // VOR/NDB type ===========================
+      if(leg.getVor().isValid())
+        itemRow[rcol::TYPE] = new QStandardItem(map::vorFullShortText(leg.getVor()));
+      else if(leg.getNdb().isValid())
+        itemRow[rcol::TYPE] = new QStandardItem(map::ndbFullShortText(leg.getNdb()));
+      else if(!ilsTypeTexts.isEmpty())
+        itemRow[rcol::TYPE] = new QStandardItem(ilsTypeTexts.join(", "));
 
-    itemRow[rcol::RECOMMENDED] = new QStandardItem(atools::elideTextShort(proc::procedureLegRecommended(procedureLeg).join(tr(", ")), 80));
+      // VOR/NDB frequency =====================
+      if(leg.getVor().isValid())
+      {
+        if(leg.getVor().tacan)
+          itemRow[rcol::FREQ] = new QStandardItem(leg.getVor().channel);
+        else
+          itemRow[rcol::FREQ] = new QStandardItem(QLocale().toString(leg.getFrequency() / 1000.f, 'f', 2));
+      }
+      else if(leg.getNdb().isValid())
+        itemRow[rcol::FREQ] = new QStandardItem(QLocale().toString(leg.getFrequency() / 100.f, 'f', 1));
+      else if(!ilsFreqTexts.isEmpty())
+        itemRow[rcol::FREQ] = new QStandardItem(ilsFreqTexts.join(", "));
 
-    QString comment;
-    if(leg.isAnyProcedure())
-      // Show procedure remarks like turn and flyover
-      comment = proc::procedureLegRemark(procedureLeg).join(tr(" / "));
-    else
-      // Show user comment on normal leg
-      comment = leg.getFlightplanEntry().getComment();
-    if(!comment.isEmpty())
-    {
+      // VOR/NDB range =====================
+      if(leg.getRange() > 0 && (leg.getVor().isValid() || leg.getNdb().isValid()))
+        itemRow[rcol::RANGE] = new QStandardItem(Unit::distNm(leg.getRange(), false));
+
+      // Course =====================
+      bool afterArrivalAirport = route.isAirportAfterArrival(i);
+      bool parkingToDeparture = route.hasAnySidProcedure() && i == 0;
+
+      if(row > 0 && !afterArrivalAirport && !parkingToDeparture)
+      {
+        float courseMag = map::INVALID_COURSE_VALUE, courseTrue = map::INVALID_COURSE_VALUE;
+        leg.getMagTrueRealCourse(courseMag, courseTrue);
+
+        if(courseMag < map::INVALID_COURSE_VALUE)
+          itemRow[rcol::COURSE] = new QStandardItem(QLocale().toString(courseMag, 'f', 0));
+        if(courseTrue < map::INVALID_COURSE_VALUE)
+          itemRow[rcol::COURSETRUE] = new QStandardItem(QLocale().toString(courseTrue, 'f', 0));
+      }
+
+      // Distance =====================
+      if(!afterArrivalAirport)
+      {
+        if(leg.getDistanceTo() < map::INVALID_DISTANCE_VALUE /*&& !leg.noDistanceDisplay()*/)
+        {
+          cumulatedDistance += leg.getDistanceTo();
+          itemRow[rcol::DIST] = new QStandardItem(Unit::distNm(leg.getDistanceTo(), false));
+
+          if(!procedureLeg.isMissed() && !leg.isAlternate())
+          {
+            float remaining = totalDistance - cumulatedDistance;
+            if(remaining < 0.f)
+              remaining = 0.f; // Catch the -0 case due to rounding errors
+            itemRow[rcol::REMAINING_DISTANCE] = new QStandardItem(Unit::distNm(remaining, false));
+          }
+        }
+      }
+
+      itemRow[rcol::LATITUDE] = new QStandardItem(Unit::coordsLatY(leg.getPosition()));
+      itemRow[rcol::LONGITUDE] = new QStandardItem(Unit::coordsLonX(leg.getPosition()));
+      itemRow[rcol::MAGVAR] = new QStandardItem(map::magvarText(leg.getMagvarEndOrCalibrated(), true /* shortText */, false /* degSign */));
+
+      itemRow[rcol::RECOMMENDED] = new QStandardItem(atools::elideTextShort(proc::procedureLegRecommended(procedureLeg).join(tr(", ")),
+                                                                            80));
+
+      // Remarks ===================
+      QString hint;
+      if(route.value(row).canEditComment())
+        hint = tr("Press \"Ctrl+E\" or double click to edit remarks.");
+
+      QString comment;
+      if(leg.isAnyProcedure())
+        // Show procedure remarks like turn and flyover
+        comment = proc::procedureLegRemark(procedureLeg).join(tr(" / "));
+      else
+        // Show user comment on normal leg
+        comment = leg.getFlightplanEntry().getComment();
+
+      comment = atools::elideTextLinesShort(comment, 20, 80);
       itemRow[rcol::REMARKS] = new QStandardItem(atools::elideTextShort(comment, 80));
-      itemRow[rcol::REMARKS]->setToolTip(atools::elideTextLinesShort(comment, 20, 80));
-    }
+      itemRow[rcol::REMARKS]->setToolTip(atools::strJoin({hint, atools::elideTextLinesShort(comment, 20, 80)}, QStringLiteral("\n—\n")));
 
-    // Travel time, remaining fuel and ETA are updated in updateModelRouteTime
+      // Travel time, remaining fuel and ETA are updated in updateModelRouteTime
 
-    // Create empty items for missing fields ===================
-    for(int col = rcol::FIRST_COLUMN; col <= rcol::LAST_COLUMN; col++)
-    {
-      if(itemRow[col] == nullptr)
-        itemRow[col] = new QStandardItem();
+      // Create empty items for missing fields ===================
+      for(int col = rcol::FIRST_COLUMN; col <= rcol::LAST_COLUMN; col++)
+      {
+        if(itemRow[col] == nullptr)
+          itemRow[col] = new QStandardItem();
 
-      // Do not allow editing and drag and drop
-      itemRow[col]->setFlags(itemRow[col]->flags() & ~(Qt::ItemIsEditable | Qt::ItemIsDragEnabled | Qt::ItemIsDropEnabled));
-    }
+        // Do not allow editing and drag and drop
+        itemRow[col]->setFlags(itemRow[col]->flags() & ~(Qt::ItemIsEditable | Qt::ItemIsDragEnabled | Qt::ItemIsDropEnabled));
+      }
 
-    // Align cells to the right - rest is aligned in updateModelRouteTimeFuel ===============
-    itemRow[rcol::REGION]->setTextAlignment(Qt::AlignRight);
-    itemRow[rcol::REMAINING_DISTANCE]->setTextAlignment(Qt::AlignRight);
-    itemRow[rcol::DIST]->setTextAlignment(Qt::AlignRight);
-    itemRow[rcol::COURSE]->setTextAlignment(Qt::AlignRight);
-    itemRow[rcol::COURSETRUE]->setTextAlignment(Qt::AlignRight);
-    itemRow[rcol::RANGE]->setTextAlignment(Qt::AlignRight);
-    itemRow[rcol::FREQ]->setTextAlignment(Qt::AlignRight);
-    itemRow[rcol::RESTRICTION]->setTextAlignment(Qt::AlignRight);
-    itemRow[rcol::LEG_TIME]->setTextAlignment(Qt::AlignRight);
-    itemRow[rcol::ETA]->setTextAlignment(Qt::AlignRight);
-    itemRow[rcol::FUEL_WEIGHT]->setTextAlignment(Qt::AlignRight);
-    itemRow[rcol::FUEL_VOLUME]->setTextAlignment(Qt::AlignRight);
-    itemRow[rcol::WIND]->setTextAlignment(Qt::AlignRight);
-    itemRow[rcol::WIND_HEAD_TAIL]->setTextAlignment(Qt::AlignRight);
-    itemRow[rcol::ALTITUDE]->setTextAlignment(Qt::AlignRight);
-    itemRow[rcol::SAFE_ALTITUDE]->setTextAlignment(Qt::AlignRight);
-    itemRow[rcol::LATITUDE]->setTextAlignment(Qt::AlignRight);
-    itemRow[rcol::LONGITUDE]->setTextAlignment(Qt::AlignRight);
-    itemRow[rcol::MAGVAR]->setTextAlignment(Qt::AlignRight);
+      // Align cells to the right - rest is aligned in updateModelRouteTimeFuel ===============
+      itemRow[rcol::REGION]->setTextAlignment(Qt::AlignRight);
+      itemRow[rcol::REMAINING_DISTANCE]->setTextAlignment(Qt::AlignRight);
+      itemRow[rcol::DIST]->setTextAlignment(Qt::AlignRight);
+      itemRow[rcol::COURSE]->setTextAlignment(Qt::AlignRight);
+      itemRow[rcol::COURSETRUE]->setTextAlignment(Qt::AlignRight);
+      itemRow[rcol::RANGE]->setTextAlignment(Qt::AlignRight);
+      itemRow[rcol::FREQ]->setTextAlignment(Qt::AlignRight);
+      itemRow[rcol::RESTRICTION]->setTextAlignment(Qt::AlignRight);
+      itemRow[rcol::LEG_TIME]->setTextAlignment(Qt::AlignRight);
+      itemRow[rcol::ETA]->setTextAlignment(Qt::AlignRight);
+      itemRow[rcol::FUEL_WEIGHT]->setTextAlignment(Qt::AlignRight);
+      itemRow[rcol::FUEL_VOLUME]->setTextAlignment(Qt::AlignRight);
+      itemRow[rcol::WIND]->setTextAlignment(Qt::AlignRight);
+      itemRow[rcol::WIND_HEAD_TAIL]->setTextAlignment(Qt::AlignRight);
+      itemRow[rcol::ALTITUDE]->setTextAlignment(Qt::AlignRight);
+      itemRow[rcol::SAFE_ALTITUDE]->setTextAlignment(Qt::AlignRight);
+      itemRow[rcol::LATITUDE]->setTextAlignment(Qt::AlignRight);
+      itemRow[rcol::LONGITUDE]->setTextAlignment(Qt::AlignRight);
+      itemRow[rcol::MAGVAR]->setTextAlignment(Qt::AlignRight);
 
-    model->appendRow(itemRow);
+      model->appendRow(itemRow);
 
-    for(int col = rcol::FIRST_COLUMN; col <= rcol::LAST_COLUMN; col++)
-      itemRow[col] = nullptr;
-    row++;
-  }
-
-  // No need to update selection
-  unBlockModel();
+      for(int col = rcol::FIRST_COLUMN; col <= rcol::LAST_COLUMN; col++)
+        itemRow[col] = nullptr;
+      row++;
+    } // for(int i = 0; i < route.size(); i++)
+  } // atools::util::ContextSaverBool saver(modelUpdatesBlocked);
 
   updateModelTimeFuelWindAlt();
 
@@ -5544,6 +5604,7 @@ void RouteController::updateModelTimeFuelWindAlt()
   int widthAlt = header->isSectionHidden(rcol::ALTITUDE) ? -1 : tableViewRoute->columnWidth(rcol::ALTITUDE);
   int widthSafeAlt = header->isSectionHidden(rcol::SAFE_ALTITUDE) ? -1 : tableViewRoute->columnWidth(rcol::SAFE_ALTITUDE);
 
+  atools::util::ContextSaverBool saver(modelUpdatesBlocked);
   for(int i = 0; i < route.size(); i++)
   {
     if(i >= model->rowCount())
@@ -5825,6 +5886,7 @@ void RouteController::highlightNextWaypoint(int activeLegIdx)
   if(model->rowCount() == 0)
     return;
 
+  atools::util::ContextSaverBool saver(modelUpdatesBlocked);
   activeLegIndex = activeLegIdx;
   for(int row = 0; row < model->rowCount(); ++row)
   {
@@ -5834,6 +5896,7 @@ void RouteController::highlightNextWaypoint(int activeLegIdx)
       if(item != nullptr)
       {
         item->setBackground(Qt::NoBrush);
+
         // Keep first column bold
         if(item->font().bold() && col != 0)
         {
@@ -5929,6 +5992,7 @@ void RouteController::updateModelHighlightsAndErrors()
   const QColor defaultColor = QApplication::palette().color(QPalette::Normal, QPalette::Text);
   const QColor invalidColor = dark ? mapcolors::routeInvalidTableColorDark : mapcolors::routeInvalidTableColor;
 
+  atools::util::ContextSaverBool saver(modelUpdatesBlocked);
   for(int row = 0; row < model->rowCount(); row++)
   {
     const RouteLeg& leg = route.value(row);
@@ -6021,9 +6085,9 @@ void RouteController::updateModelHighlightsAndErrors()
 
           trackErrors |= trackError;
         }
-      }
-    }
-  }
+      } // if(item != nullptr)
+    } // for(int col = 0; col < model->columnCount(); col++)
+  } // for(int row = 0; row < model->rowCount(); row++)
 }
 
 QStringList RouteController::getErrorStrings() const
@@ -6362,18 +6426,6 @@ void RouteController::clearAllErrors()
   flightplanErrors.clear();
   parkingErrors.clear();
   trackErrors = false;
-}
-
-void RouteController::blockModel()
-{
-  // model->blockSignals(true);
-  modelUpdatesBlocked = true;
-}
-
-void RouteController::unBlockModel()
-{
-  // model->blockSignals(false);
-  modelUpdatesBlocked = false;
 }
 
 #ifdef DEBUG_NETWORK_INFORMATION
