@@ -714,15 +714,17 @@ void DatabaseManager::insertSimSwitchActions()
     QString dbname = FsPaths::typeToDisplayName(FsPaths::NAVIGRAPH);
     navDbSubMenu = new QMenu(tr("&%1%2").arg(dbname).arg(suffix));
     navDbSubMenu->setToolTipsVisible(NavApp::isMenuToolTipsVisible());
-    navDbActionGroup = new QActionGroup(navDbSubMenu);
 
-    navDbActionAuto = new QAction(tr("&Select Automatically"), navDbActionGroup);
+    // Automatic =============================================================================
+    navDbActionAuto = new QAction(tr("&Select Automatically"), navDbSubMenu);
     navDbActionAuto->setCheckable(true);
     navDbActionAuto->setChecked(navDatabaseAuto);
     navDbActionAuto->setStatusTip(tr("Select best navdata mode for simulator"));
     navDbSubMenu->addAction(navDbActionAuto);
     navDbSubMenu->addSeparator();
 
+    // Navigraph selections ==================================================================
+    navDbActionGroup = new QActionGroup(navDbSubMenu);
     navDbActionAll = new QAction(tr("Use %1 for &all Features").arg(dbname), navDbActionGroup);
     navDbActionAll->setCheckable(true);
     navDbActionAll->setChecked(navDatabaseStatus == navdb::ALL);
