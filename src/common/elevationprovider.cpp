@@ -27,6 +27,12 @@
 #include "gui/dialog.h"
 #include "options/optiondata.h"
 
+#ifndef DEBUG_INFORMATION_NO_STARTUP_MESSAGES
+#include "gui/helphandler.h"
+#include "common/constants.h"
+#endif
+
+
 #include <marble/GeoDataCoordinates.h>
 #include <marble/ElevationModel.h>
 
