@@ -3007,7 +3007,7 @@ void HtmlInfoBuilder::waypointText(const MapWaypoint& waypoint, HtmlBuilder& htm
   if(info && !print)
     bearingToUserText(waypoint.position, waypoint.magvar, html);
 
-  html.row2If(tr("Name:"), atools::fs::util::capWaypointNameString(waypoint.ident, waypoint.name, true /* emptyIfEqual */));
+  html.row2If(tr("Name:"), waypoint.name);
 
   if(info)
     html.row2If(tr("Region:"), waypoint.region);

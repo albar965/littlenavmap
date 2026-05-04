@@ -412,13 +412,17 @@ void MapPainterNav::paintWaypoints(const QHash<int, map::MapWaypoint>& waypoints
 
       symbolPainter->drawWaypointSymbol(context->painter, QColor(), x, y, size, false);
 
+      textflags::TextFlags flags = textflags::NONE;
+      flags.setFlag(textflags::IDENT, context->mapLayerText->isWaypointIdent());
+      flags.setFlag(textflags::NAME, context->mapLayerText->isWaypointName());
+
       // If airways are drawn force display of the respecive waypoints
-      if(context->mapLayerText->isWaypointName() || // Draw all waypoint names or ...
+      if(context->mapLayerText->isWaypointIdent() || context->mapLayerText->isWaypointName() || // Draw all waypoint names or ...
          (context->mapLayerText->isAirwayIdent() && // Draw names for specific airway waypoints
           ((drawAirwayV && waypoint.hasVictorAirways) || (drawAirwayJ && waypoint.hasJetAirways))) ||
          (context->mapLayerText->isTrackInfo() && // Draw names for specific airway waypoints
           (drawTrack && waypoint.hasTracks)))
-        symbolPainter->drawWaypointText(context->painter, waypoint, x, y, textflags::IDENT, size, fill);
+        symbolPainter->drawWaypointText(context->painter, waypoint, x, y, flags, size, fill);
     }
   }
 }

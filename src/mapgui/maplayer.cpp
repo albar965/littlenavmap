@@ -303,6 +303,10 @@ void MapLayer::loadFromXml(atools::util::XmlStreamReader& xmlStream)
       vorSymbolSize = xmlStream.readElementTextInt();
     else if(xmlStream.name() == QStringLiteral("Waypoint"))
       waypoint = xmlStream.readElementTextBool();
+    else if(xmlStream.name() == QStringLiteral("WaypointIdent"))
+      waypointIdent = xmlStream.readElementTextBool();
+    else if(xmlStream.name() == QStringLiteral("WaypointRouteIdent"))
+      waypointRouteIdent = xmlStream.readElementTextBool();
     else if(xmlStream.name() == QStringLiteral("WaypointName"))
       waypointName = xmlStream.readElementTextBool();
     else if(xmlStream.name() == QStringLiteral("WaypointRouteName"))
@@ -438,6 +442,8 @@ QDebug operator<<(QDebug out, const MapLayer& record)
   out << "<VorRouteInfo>" << record.vorRouteInfo << "</VorRouteInfo>" << Qt::endl;
   out << "<VorSymbolSize>" << record.vorSymbolSize << "</VorSymbolSize>" << Qt::endl;
   out << "<Waypoint>" << record.waypoint << "</Waypoint>" << Qt::endl;
+  out << "<WaypointIdent>" << record.waypointIdent << "</WaypointIdent>" << Qt::endl;
+  out << "<WaypointRouteIdent>" << record.waypointRouteIdent << "</WaypointRouteIdent>" << Qt::endl;
   out << "<WaypointName>" << record.waypointName << "</WaypointName>" << Qt::endl;
   out << "<WaypointRouteName>" << record.waypointRouteName << "</WaypointRouteName>" << Qt::endl;
   out << "<WaypointSymbolSize>" << record.waypointSymbolSize << "</WaypointSymbolSize>" << Qt::endl;

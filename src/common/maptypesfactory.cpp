@@ -435,7 +435,8 @@ void MapTypesFactory::fillWaypoint(const SqlRecord& record, map::MapWaypoint& wa
   waypoint.id = record.valueInt(track ? QStringLiteral("trackpoint_id") : QStringLiteral("waypoint_id"));
   waypoint.ident = record.valueStr(QStringLiteral("ident"));
   waypoint.region = record.valueStr(QStringLiteral("region"));
-  waypoint.name = record.valueStr(QStringLiteral("name"), QStringLiteral());
+  waypoint.name = atools::fs::util::capWaypointNameString(waypoint.ident, record.valueStr(QStringLiteral("name"), QStringLiteral()),
+                                                          true /* emptyIfEqual */);
   waypoint.type = record.valueStr(QStringLiteral("type"));
   waypoint.arincType = record.valueStr(QStringLiteral("arinc_type"), QStringLiteral());
   waypoint.magvar = record.valueFloat(QStringLiteral("mag_var"));
@@ -452,7 +453,8 @@ void MapTypesFactory::fillWaypointFromNav(const SqlRecord& record, map::MapWaypo
   waypoint.id = record.valueInt(QStringLiteral("waypoint_id"));
   waypoint.ident = record.valueStr(QStringLiteral("ident"));
   waypoint.region = record.valueStr(QStringLiteral("region"));
-  waypoint.name = record.valueStr(QStringLiteral("name"), QStringLiteral());
+  waypoint.name = atools::fs::util::capWaypointNameString(waypoint.ident, record.valueStr(QStringLiteral("name"), QStringLiteral()),
+                                                          true /* emptyIfEqual */);
   waypoint.type = record.valueStr(QStringLiteral("type"));
   waypoint.arincType = record.valueStr(QStringLiteral("arinc_type"), QStringLiteral());
   waypoint.magvar = record.valueFloat(QStringLiteral("mag_var"));

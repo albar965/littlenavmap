@@ -177,6 +177,16 @@ public:
     return waypoint;
   }
 
+  bool isWaypointIdent() const
+  {
+    return waypointIdent;
+  }
+
+  bool isWaypointRouteIdent() const
+  {
+    return waypointRouteIdent;
+  }
+
   bool isWaypointName() const
   {
     return waypointName;
@@ -670,15 +680,15 @@ private:
   float airportMsaSymbolScale = 6.f;
   float airportMinorFontScale = 1.f, airportFontScale = 1.f, routeFontScale = 1.f, airspaceFontScale = 1.f;
 
-  bool waypoint = true, waypointName = true, vor = true, vorIdent = true, vorInfo = true, vorLarge = true, ndb = true, ndbIdent = true,
-       ndbInfo = true, marker = true, markerInfo = true, userpointInfo = true, ils = true, ilsIdent = true, ilsInfo = true,
+  bool waypoint = true, waypointIdent = true, waypointName = true,
+       vor = true, vorIdent = true, vorInfo = true, vorLarge = true,
+       ndb = true, ndbIdent = true, ndbInfo = true,
+       marker = true, markerInfo = true, userpointInfo = true, ils = true, ilsIdent = true, ilsInfo = true,
        ilsDetail = true, airway = true, airwayDetails = true, airwayWaypoint = true, airwayIdent = true, airwayInfo = true, track = true,
        trackWaypoint = true, trackIdent = true, trackInfo = true, mora = true, holding = true, holdingInfo = true, holdingInfo2 = true;
 
-  bool airportRouteInfo = true;
-  bool vorRouteIdent = true, vorRouteInfo = true;
-  bool ndbRouteIdent = true, ndbRouteInfo = true;
-  bool waypointRouteName = true;
+  bool airportRouteInfo = true, vorRouteIdent = true, vorRouteInfo = true, ndbRouteIdent = true, ndbRouteInfo = true,
+       waypointRouteIdent = true, waypointRouteName = true;
 
   int waypointSymbolSize = 3, vorSymbolSize = 3, ndbSymbolSize = 4,
       markerSymbolSize = 8, userpointSymbolSize = 12;

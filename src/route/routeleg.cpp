@@ -936,7 +936,7 @@ QString RouteLeg::getName() const
   else if(ndb.isValid())
     return ndb.name;
   else if(waypoint.isValid())
-    return atools::fs::util::capWaypointNameString(waypoint.ident, waypoint.name, true /* emptyIfEqual */);
+    return waypoint.name;
   else if(ils.isValid())
     return ils.name;
   else if(type == map::INVALID)

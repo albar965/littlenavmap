@@ -2106,15 +2106,13 @@ void MapPainterRoute::paintWaypointText(float x, float y, const map::MapWaypoint
 
   textflags::TextFlags flags = textflags::ROUTE_TEXT;
 
-  if(!drawTextDetails && additionalText != nullptr && !additionalText->isEmpty())
-    // Show ellipsis instead of additional texts if these are not empty
-    flags |= textflags::ELLIPSE_IDENT;
-
-  if(context->mapLayerRouteText->isWaypointRouteName())
-    flags |= textflags::IDENT;
+  // Show ellipsis instead of additional texts if these are not empty
+  flags.setFlag(textflags::ELLIPSE_IDENT, !drawTextDetails && additionalText != nullptr && !additionalText->isEmpty());
+  flags.setFlag(textflags::IDENT, context->mapLayerRouteText->isWaypointRouteIdent());
+  flags.setFlag(textflags::NAME, context->mapLayerRouteText->isWaypointRouteName());
 
   bool fill = true;
-  if(!(context->flags2 & opts2::MAP_ROUTE_TEXT_BACKGROUND))
+  if(!(context->flags2.testFlag(opts2::MAP_ROUTE_TEXT_BACKGROUND)))
   {
     flags |= textflags::NO_BACKGROUND;
     fill = false;
@@ -2138,21 +2136,18 @@ void MapPainterRoute::paintVorText(float x, float y, const map::MapVor& vor, boo
   float size = context->szF(context->symbolSizeNavaid * context->symbolSizeRoute, context->mapLayerRoute->getVorSymbolSize());
   textflags::TextFlags flags = textflags::ROUTE_TEXT;
 
-  if(!drawTextDetails && additionalText != nullptr && !additionalText->isEmpty())
-    // Show ellipsis instead of additional texts if these are not empty
-    flags |= textflags::ELLIPSE_IDENT;
+  // Show ellipsis instead of additional texts if these are not empty
+  flags.setFlag(textflags::ELLIPSE_IDENT, !drawTextDetails && additionalText != nullptr && !additionalText->isEmpty());
 
   // Use more more detailed VOR text for flight plan
-  if(context->mapLayerRouteText->isVorRouteIdent())
-    flags |= textflags::IDENT;
+  flags.setFlag(textflags::IDENT, context->mapLayerRouteText->isVorRouteIdent());
 
-  if(context->mapLayerRouteText->isVorRouteInfo())
-    flags |= textflags::FREQ | textflags::INFO | textflags::TYPE;
+  flags.setFlag(textflags::FREQ | textflags::INFO | textflags::TYPE, context->mapLayerRouteText->isVorRouteInfo());
 
   bool fill = true;
   if(!(context->flags2 & opts2::MAP_ROUTE_TEXT_BACKGROUND))
   {
-    flags |= textflags::NO_BACKGROUND;
+    flags.setFlag(textflags::NO_BACKGROUND);
     fill = false;
   }
 
@@ -2253,7 +2248,7 @@ void MapPainterRoute::paintText(const QColor& color, float x, float y, float siz
   if(!(context->flags2 & opts2::MAP_ROUTE_TEXT_BACKGROUND))
     transparency = 0;
 
-  if(!texts.isEmpty() && context->mapLayerRouteText->isWaypointRouteName())
+  if(!texts.isEmpty() && context->mapLayerRouteText->isWaypointRouteIdent())
     symbolPainter->textBoxF(context->painter, texts, color, x, y, atts, transparency);
 }
 

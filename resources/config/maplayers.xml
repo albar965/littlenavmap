@@ -157,6 +157,8 @@
 
         <!-- Waypoints ================= -->
         <Waypoint>true</Waypoint>
+        <WaypointIdent>true</WaypointIdent>
+        <WaypointRouteIdent>true</WaypointRouteIdent>
         <WaypointName>true</WaypointName>
         <WaypointRouteName>true</WaypointRouteName>
         <WaypointSymbolSize>3</WaypointSymbolSize>
@@ -235,7 +237,9 @@
         <AirportMsaDetails>false</AirportMsaDetails>
         <NdbSymbolSize>22</NdbSymbolSize>
         <UserpointSymbolSize>24</UserpointSymbolSize>
+        <WaypointName>false</WaypointName>
         <VorSymbolSize>22</VorSymbolSize>
+        <WaypointRouteName>false</WaypointRouteName>
       </Layer>
       <!-- =================================================================================== -->
       <Layer MaximumRangeKm="50">
@@ -257,7 +261,7 @@
         <MaximumTextLengthUserpoint>10</MaximumTextLengthUserpoint>
         <NdbSymbolSize>20</NdbSymbolSize>
         <VorSymbolSize>18</VorSymbolSize>
-        <WaypointName>false</WaypointName>
+        <WaypointIdent>false</WaypointIdent>
         <WaypointSymbolSize>6</WaypointSymbolSize>
       </Layer>
       <!-- =================================================================================== -->
@@ -323,7 +327,7 @@
         <NdbSymbolSize>4</NdbSymbolSize>
         <UserpointInfo>false</UserpointInfo>
         <VorSymbolSize>6</VorSymbolSize>
-        <WaypointRouteName>false</WaypointRouteName>
+        <WaypointRouteIdent>false</WaypointRouteIdent>
         <WindBarbsSymbolSize>10</WindBarbsSymbolSize>
       </Layer>
       <!-- =================================================================================== -->

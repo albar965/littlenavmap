@@ -1242,6 +1242,9 @@ void SymbolPainter::drawWaypointText(QPainter *painter, const map::MapWaypoint& 
   if(flags.testFlag(textflags::IDENT))
     texts.append(wp.ident);
 
+  if(flags.testFlag(textflags::NAME))
+    texts.append(wp.name);
+
   if(flags.testFlag(textflags::ROUTE_TEXT))
     atts |= textatt::ROUTE_BG_COLOR;
 

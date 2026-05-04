@@ -504,14 +504,15 @@ void MapPainterMark::paintLogEntries(const QList<map::MapLogbookEntry>& entries)
       for(int i = 0; i < visibleRouteGeometries.size(); i++)
       {
         // Draw waypoint symbols and text for route preview =========
-        const QString& name = visibleRouteTexts.at(i);
+        const QString& ident = visibleRouteTexts.at(i);
         float x, y;
         if(wToS(visibleRouteGeometries.at(i), x, y))
         {
           symbolPainter->drawLogbookPreviewSymbol(context->painter, x, y, symbolSize);
 
-          if(context->mapLayerText->isWaypointRouteName())
-            symbolPainter->textBoxF(context->painter, {name}, routeLogEntryOutlineColor, x + symbolSize / 2 + 2, y, textatt::LOG_BG_COLOR);
+          if(context->mapLayerText->isWaypointRouteIdent())
+            symbolPainter->textBoxF(context->painter, {ident}, routeLogEntryOutlineColor, x + symbolSize / 2 + 2, y,
+                                    textatt::LOG_BG_COLOR);
         }
       }
     }
