@@ -191,11 +191,6 @@ private:
   /* Push button in progress clicked */
   void progressConfigurationClicked();
 
-  template<typename TYPE>
-  void buildOneNavaid(atools::util::HtmlBuilder& html, bool& bearingChanged, bool& foundNavaid, const QList<TYPE>& list,
-                      QList<TYPE>& currentList, const HtmlInfoBuilder * info,
-                      void (HtmlInfoBuilder::*func)(const TYPE&, atools::util::HtmlBuilder&) const) const;
-
   void showProgressContextMenu(const QPoint& point);
 
   /* MSFS, X-Plane, etc. */

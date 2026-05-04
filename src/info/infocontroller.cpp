@@ -111,8 +111,7 @@ InfoController::InfoController(QWidget *parent)
                                     tr("View departure procedures of the airport in the procedures tab"));
 
   // Hide features ===========================================
-  linkTooltipHandler->addUrlTooltip(QStringLiteral("hideonlineairspaces"),
-                                    tr("Remove highlighted online airspaces from the map"));
+  linkTooltipHandler->addUrlTooltip(QStringLiteral("hideonlineairspaces"), tr("Remove highlighted online airspaces from the map"));
   linkTooltipHandler->addUrlTooltip(QStringLiteral("hideairways"), tr("Remove highlighted airways and tracks from the map"));
   linkTooltipHandler->addUrlTooltip(QStringLiteral("hideairspaces"), tr("Remove highlighted airspaces from the map"));
 
@@ -408,16 +407,25 @@ void InfoController::anchorClicked(const QUrl& url)
     const QString host = url.host();
 
     // "lnm://hideairspaces"
-    if(host == QStringLiteral("hideairspaces") || host == QStringLiteral("hideonlineairspaces"))
+    if(host == QStringLiteral("hideairspaces"))
     {
       // Hide normal airspace highlights from information window =========================================
-      mapWidget->clearAirspaceHighlights();
+      mapWidget->clearAirspaceHighlightsNormal();
+      updateAllInformation();
+      emit updateHighlightActionStates();
+    }
+    if(host == QStringLiteral("hideonlineairspaces"))
+    {
+      // Hide online airspace highlights from information window =========================================
+      mapWidget->clearAirspaceHighlightsOnline();
+      updateAllInformation();
       emit updateHighlightActionStates();
     }
     else if(host == QStringLiteral("hideairways"))
     {
       // Hide airway highlights from information window =========================================
       mapWidget->clearAirwayHighlights();
+      updateAllInformation();
       emit updateHighlightActionStates();
     }
     else if(host == QStringLiteral("info"))
@@ -470,6 +478,7 @@ void InfoController::anchorClicked(const QUrl& url)
             airspaceHighlights.append(airspace);
           mapWidget->changeAirspaceHighlights(airspaceHighlights);
 
+          updateAllInformation();
           emit updateHighlightActionStates();
           emit showRect(airspace.bounding, false);
         }
@@ -486,6 +495,8 @@ void InfoController::anchorClicked(const QUrl& url)
           QList<QList<map::MapAirway> > airwayHighlights = mapWidget->getAirwayHighlights();
           airwayHighlights.append(airways);
           mapWidget->changeAirwayHighlights(airwayHighlights);
+
+          updateAllInformation();
           emit updateHighlightActionStates();
           emit showRect(bounding, false);
         }
@@ -779,6 +790,7 @@ void InfoController::showInformationInternal(map::MapResult result, bool showWin
   HtmlBuilder html(true);
 
   Ui::MainWindow *ui = NavApp::getMainUi();
+  MapWidget *mapWidget = NavApp::getMapWidgetGui();
   OnlinedataController *onlineDataController = NavApp::getOnlinedataController();
 
   // Check for shadowed user aircraft ======================================
@@ -935,6 +947,13 @@ void InfoController::showInformationInternal(map::MapResult result, bool showWin
   // Airspaces ================================================================
   if(!result.airspaces.isEmpty())
   {
+    bool hasNormalAirspaces = false, hasOnlineAirspaces = false;
+    for(const map::MapAirspace& airspace : mapWidget->getAirspaceHighlights())
+    {
+      hasNormalAirspaces |= !airspace.isOnline();
+      hasOnlineAirspaces |= airspace.isOnline();
+    }
+
     atools::sql::SqlRecord onlineRec;
 
     if(result.hasSimNavUserAirspaces())
@@ -949,7 +968,9 @@ void InfoController::showInformationInternal(map::MapResult result, bool showWin
     html.tdAtts({
       {QStringLiteral("align"), QStringLiteral("right")}, {QStringLiteral("valign"), QStringLiteral("top")}
     });
-    html.b().a(tr("Remove Airspace Highlights"), QStringLiteral("lnm://hideairspaces?tooltip=hideairspaces")).
+
+    html.b().a(tr("Remove Airspace Highlights"), QStringLiteral("lnm://hideairspaces?tooltip=hideairspaces"),
+               hasNormalAirspaces ? ahtml::NONE : ahtml::LINK_DISABLED).
     bEnd().tdEnd().trEnd().tableEnd();
 
     for(const map::MapAirspace& airspace : result.getSimNavUserAirspaces())
@@ -986,7 +1007,9 @@ void InfoController::showInformationInternal(map::MapResult result, bool showWin
     html.tdAtts({
       {QStringLiteral("align"), QStringLiteral("right")}, {QStringLiteral("valign"), QStringLiteral("top")}
     });
-    html.b().a(tr("Remove Center Highlights"), QStringLiteral("lnm://hideonlineairspaces?tooltip=hideonlineairspaces")).
+
+    html.b().a(tr("Remove Center Highlights"), QStringLiteral("lnm://hideonlineairspaces?tooltip=hideonlineairspaces"),
+               hasOnlineAirspaces ? ahtml::NONE : ahtml::LINK_DISABLED).
     bEnd().tdEnd().trEnd().tableEnd();
 
     for(const map::MapAirspace& airspace : std::as_const(onlineAirspaces))
@@ -1138,9 +1161,9 @@ void InfoController::showInformationInternal(map::MapResult result, bool showWin
 }
 
 template<typename TYPE>
-void InfoController::buildOneNavaid(atools::util::HtmlBuilder& html, bool& bearingChanged, bool& foundNavaid, const QList<TYPE>& list,
-                                    QList<TYPE>& currentList, const HtmlInfoBuilder *info,
-                                    void (HtmlInfoBuilder::*func)(const TYPE&, atools::util::HtmlBuilder&) const) const
+void buildOneNavaid(atools::util::HtmlBuilder& html, bool& foundNavaid, bool bearingChanged, const QList<TYPE>& list,
+                    QList<TYPE>& currentList, const HtmlInfoBuilder *info,
+                    void (HtmlInfoBuilder::*func)(const TYPE&, atools::util::HtmlBuilder&) const)
 {
   for(const TYPE& type : list)
   {
@@ -1160,6 +1183,7 @@ bool InfoController::updateNavaidInternal(const map::MapResult& result, bool bea
 {
   HtmlBuilder html(true);
   Ui::MainWindow *ui = NavApp::getMainUi();
+  MapWidget *mapWidget = NavApp::getMapWidgetGui();
   bool foundNavaid = false;
 
   // Remove header link ==============================
@@ -1169,19 +1193,23 @@ bool InfoController::updateNavaidInternal(const map::MapResult& result, bool bea
   html.tdAtts({
     {QStringLiteral("align"), QStringLiteral("right")}, {QStringLiteral("valign"), QStringLiteral("top")}
   });
-  html.b().a(tr("Remove Airway and Track Highlights"), QStringLiteral("lnm://hideairways?tooltip=hideairways")).
+  html.b().a(tr("Remove Airway and Track Highlights"), QStringLiteral("lnm://hideairways?tooltip=hideairways"),
+             mapWidget->getAirwayHighlights().isEmpty() ? ahtml::LINK_DISABLED : ahtml::NONE).
   bEnd().tdEnd().trEnd().tableEnd();
 
-  buildOneNavaid(html, bearingChanged, foundNavaid, result.vors, currentSearchResult->vors, infoBuilder, &HtmlInfoBuilder::vorText);
-  buildOneNavaid(html, bearingChanged, foundNavaid, result.ndbs, currentSearchResult->ndbs, infoBuilder, &HtmlInfoBuilder::ndbText);
-  buildOneNavaid(html, bearingChanged, foundNavaid, result.waypoints, currentSearchResult->waypoints, infoBuilder,
+  buildOneNavaid(html, foundNavaid, bearingChanged, result.vors, currentSearchResult->vors, infoBuilder,
+                 &HtmlInfoBuilder::vorText);
+  buildOneNavaid(html, foundNavaid, bearingChanged, result.ndbs, currentSearchResult->ndbs, infoBuilder,
+                 &HtmlInfoBuilder::ndbText);
+  buildOneNavaid(html, foundNavaid, bearingChanged, result.waypoints, currentSearchResult->waypoints, infoBuilder,
                  &HtmlInfoBuilder::waypointText);
-  buildOneNavaid(html, bearingChanged, foundNavaid, result.ils, currentSearchResult->ils, infoBuilder, &HtmlInfoBuilder::ilsTextInfo);
-  buildOneNavaid(html, bearingChanged, foundNavaid, result.holdings, currentSearchResult->holdings, infoBuilder,
+  buildOneNavaid(html, foundNavaid, bearingChanged, result.ils, currentSearchResult->ils, infoBuilder,
+                 &HtmlInfoBuilder::ilsTextInfo);
+  buildOneNavaid(html, foundNavaid, bearingChanged, result.holdings, currentSearchResult->holdings, infoBuilder,
                  &HtmlInfoBuilder::holdingText);
-  buildOneNavaid(html, bearingChanged, foundNavaid, result.airportMsa, currentSearchResult->airportMsa, infoBuilder,
+  buildOneNavaid(html, foundNavaid, bearingChanged, result.airportMsa, currentSearchResult->airportMsa, infoBuilder,
                  &HtmlInfoBuilder::airportMsaText);
-  buildOneNavaid(html, bearingChanged, foundNavaid, result.airways, currentSearchResult->airways, infoBuilder,
+  buildOneNavaid(html, foundNavaid, bearingChanged, result.airways, currentSearchResult->airways, infoBuilder,
                  &HtmlInfoBuilder::airwayText);
 
   if(!foundNavaid)

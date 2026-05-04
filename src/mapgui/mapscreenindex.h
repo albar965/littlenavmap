@@ -207,6 +207,11 @@ public:
     return airspaceHighlights;
   }
 
+  QList<map::MapAirspace>& getAirspaceHighlights()
+  {
+    return airspaceHighlights;
+  }
+
   const QList<QList<map::MapAirway> >& getAirwayHighlights() const
   {
     return airwayHighlights;

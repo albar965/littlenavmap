@@ -263,8 +263,12 @@ public:
   const QList<map::MapAirspace>& getAirspaceHighlights() const;
   const QList<QList<map::MapAirway> >& getAirwayHighlights() const;
 
-  /* Highlights from info window */
+  /* Airspace highlights from info window */
   void clearAirspaceHighlights();
+  void clearAirspaceHighlightsNormal();
+  void clearAirspaceHighlightsOnline();
+
+  /* Airway highlights from info window */
   void clearAirwayHighlights();
 
   /* Avoids dark background when printing in night mode */

@@ -1515,6 +1515,7 @@ void MainWindow::connectAllSlots()
   connect(ui->actionMapClearAllHighlights, &QAction::triggered, mapWidget, &MapPaintWidget::clearAirspaceHighlights);
   connect(ui->actionMapClearAllHighlights, &QAction::triggered, mapWidget, &MapPaintWidget::clearAirwayHighlights);
   connect(ui->actionMapClearAllHighlights, &QAction::triggered, this, &MainWindow::updateHighlightActionStates);
+  connect(ui->actionMapClearAllHighlights, &QAction::triggered, infoController, &InfoController::updateAllInformation);
 
   connect(ui->actionInfoApproachShowMissedAppr, &QAction::toggled, this, &MainWindow::updateMapObjectsShown);
 
@@ -3677,8 +3678,8 @@ void MainWindow::runDirTool(bool manual)
     box.setIcon(QMessageBox::Information);
     QString displayPath(atools::nativeCleanPath(dirTool.getApplicationDir()));
     box.setMessage(tr("<p>Directory structure for Little Navmap files is already complete.</p>"
-                        "The base directory is"
-                        "%1&nbsp;(click to open)<br/>").
+                        "The base directory is<br/>"
+                        "%1<br/>(click to open)<br/>").
                    arg(atools::util::HtmlBuilder::aFilePath(displayPath, atools::util::html::NOBR_WHITESPACE)));
     box.exec();
   }

@@ -1039,6 +1039,30 @@ void MapPaintWidget::clearAirspaceHighlights()
   update();
 }
 
+void MapPaintWidget::clearAirspaceHighlightsNormal()
+{
+  QList<map::MapAirspace>& airspaces = screenIndex->getAirspaceHighlights();
+  airspaces.erase(std::remove_if(airspaces.begin(), airspaces.end(),
+                                 [](const map::MapAirspace& airspace) -> bool {
+    return !airspace.isOnline();
+  }), airspaces.end());
+
+  screenIndex->updateAirspaceScreenGeometry(getCurrentViewBoundingBox());
+  update();
+}
+
+void MapPaintWidget::clearAirspaceHighlightsOnline()
+{
+  QList<map::MapAirspace>& airspaces = screenIndex->getAirspaceHighlights();
+  airspaces.erase(std::remove_if(airspaces.begin(), airspaces.end(),
+                                 [](const map::MapAirspace& airspace) -> bool {
+    return airspace.isOnline();
+  }), airspaces.end());
+
+  screenIndex->updateAirspaceScreenGeometry(getCurrentViewBoundingBox());
+  update();
+}
+
 void MapPaintWidget::clearAirwayHighlights()
 {
   screenIndex->setAirwayHighlights(QList<QList<map::MapAirway> >());
