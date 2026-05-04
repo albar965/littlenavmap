@@ -1,7 +1,7 @@
 #!/bin/bash
 
-set -e
-set -x
+# Echo all commands and exit on failure
+set -euxo pipefail
 
 bash pull_all.sh
 

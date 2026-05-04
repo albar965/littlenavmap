@@ -1,8 +1,7 @@
 #!/bin/bash
 
 # Echo all commands and exit on failure
-set -e
-set -x
+set -euxo pipefail
 
 # Error checking for required variable APROJECTS
 if [ -z "${APROJECTS}" ] ; then echo APROJECTS environment variable not set ; exit 1 ; fi
