@@ -3679,6 +3679,7 @@ void RouteController::optionsChanged(const optc::OptionChangeFlags& changeFlags)
     updateRemarksFont();
   }
 
+  routeLabel->optionsChanged(changeFlags);
   routeCalcDialog->optionsChanged(changeFlags);
   waypointEditDialog->optionsChanged(changeFlags);
 

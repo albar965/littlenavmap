@@ -22,7 +22,6 @@
 #include "common/maptypes.h"
 #include "gui/mainwindow.h"
 #include "mapgui/mappaintwidget.h"
-#include "options/optiondata.h"
 #include "query/airspacequeries.h"
 #include "route/route.h"
 #include "sql/sqlrecord.h"
@@ -107,17 +106,23 @@ void MapTooltip::buildOneTooltipRt(atools::util::HtmlBuilder& html, bool& overfl
 }
 
 QString MapTooltip::buildTooltip(const map::MapResult& mapSearchResult, const atools::geo::Pos& pos, const Route& route,
-                                 bool airportDiagram)
+                                 bool airportDiagram, optsd::DisplayTooltipOptions options, const QString& prefix, int symbolSize)
 {
-  optsd::DisplayTooltipOptions opts = OptionData::instance().getDisplayTooltipOptions();
-
 #ifdef DEBUG_INFORMATION
   qDebug() << Q_FUNC_INFO << mapSearchResult;
 #endif
 
   HtmlBuilder html(false);
+
+  if(!prefix.isEmpty())
+    html.textBr(prefix);
+
   HtmlInfoBuilder info(QueryManager::instance()->getQueriesGui(), false /* info */, false /* print */,
-                       opts.testFlag(optsd::TOOLTIP_VERBOSE));
+                       options.testFlag(optsd::TOOLTIP_VERBOSE));
+
+  if(symbolSize > 0)
+    info.setSymbolSizeTitle(QSize(symbolSize, symbolSize));
+
   int numEntries = 0;
   bool bearing = true, // Suppress bearing for user aircraft
        distance = true, // No distance to last flight plan leg for route legs
@@ -128,7 +133,7 @@ QString MapTooltip::buildTooltip(const map::MapResult& mapSearchResult, const at
   // If max number of entries or lines is exceeded return the html
 
   // User Aircraft ===========================================================================
-  if(!overflow && opts.testFlag(optsd::TOOLTIP_AIRCRAFT_USER))
+  if(!overflow && options.testFlag(optsd::TOOLTIP_AIRCRAFT_USER))
   {
     if(mapSearchResult.userAircraft.isValid())
     {
@@ -147,7 +152,7 @@ QString MapTooltip::buildTooltip(const map::MapResult& mapSearchResult, const at
     }
   }
 
-  if(opts.testFlag(optsd::TOOLTIP_AIRCRAFT_AI))
+  if(options.testFlag(optsd::TOOLTIP_AIRCRAFT_AI))
   {
     // Online Aircraft ===========================================================================
     if(!overflow)
@@ -195,7 +200,7 @@ QString MapTooltip::buildTooltip(const map::MapResult& mapSearchResult, const at
   // Navaids from procedure points ===========================================================================
   if(!overflow)
   {
-    if(opts.testFlag(optsd::TOOLTIP_NAVAID))
+    if(options.testFlag(optsd::TOOLTIP_NAVAID))
     {
       for(const map::MapProcedurePoint& pt : mapSearchResult.procPoints)
       {
@@ -218,7 +223,7 @@ QString MapTooltip::buildTooltip(const map::MapResult& mapSearchResult, const at
   }
 
   // User features / marks ===================================================================
-  if(opts.testFlag(optsd::TOOLTIP_MARKS))
+  if(options.testFlag(optsd::TOOLTIP_MARKS))
   {
     // Traffic pattern
     buildOneTooltip(html, overflow, numEntries, mapSearchResult.patternMarks, info, &HtmlInfoBuilder::patternMarkerText);
@@ -236,7 +241,7 @@ QString MapTooltip::buildTooltip(const map::MapResult& mapSearchResult, const at
     buildOneTooltip(html, overflow, numEntries, mapSearchResult.distanceMarks, info, &HtmlInfoBuilder::distanceMarkerText);
   }
 
-  if(opts.testFlag(optsd::TOOLTIP_NAVAID))
+  if(options.testFlag(optsd::TOOLTIP_NAVAID))
   {
     // Logbook entries
     buildOneTooltip(html, overflow, numEntries, mapSearchResult.logbookEntries, info, &HtmlInfoBuilder::logEntryTextInfo);
@@ -248,7 +253,7 @@ QString MapTooltip::buildTooltip(const map::MapResult& mapSearchResult, const at
   // Airports ===========================================================================
   if(!overflow)
   {
-    if(opts.testFlag(optsd::TOOLTIP_AIRPORT))
+    if(options.testFlag(optsd::TOOLTIP_AIRPORT))
     {
       for(const MapAirport& airport : mapSearchResult.airports)
       {
@@ -262,7 +267,6 @@ QString MapTooltip::buildTooltip(const map::MapResult& mapSearchResult, const at
           html.textBar(TEXT_BAR_LENGTH);
 
         map::WeatherContext currentWeatherContext;
-
         mainWindow->getWeatherContextHandler()->buildWeatherContextTooltip(currentWeatherContext, airport);
         info.airportText(airport, currentWeatherContext, html, &route);
 
@@ -275,7 +279,7 @@ QString MapTooltip::buildTooltip(const map::MapResult& mapSearchResult, const at
   }
 
   // Departure parking ===========================================================================
-  if(!overflow && opts.testFlag(optsd::TOOLTIP_AIRPORT) && mapSearchResult.parkings.size() == 1 && !route.isEmpty())
+  if(!overflow && options.testFlag(optsd::TOOLTIP_AIRPORT) && mapSearchResult.parkings.size() == 1 && !route.isEmpty())
   {
     // Do not show distance if departure parking is the only one in the list
     if(mapSearchResult.parkings.constFirst().id == route.getDepartureParking().id)
@@ -283,7 +287,7 @@ QString MapTooltip::buildTooltip(const map::MapResult& mapSearchResult, const at
   }
 
   // Aircraft trail point ===========================================================================
-  if(opts.testFlag(optsd::TOOLTIP_AIRCRAFT_TRAIL))
+  if(options.testFlag(optsd::TOOLTIP_AIRCRAFT_TRAIL))
   {
     if(!overflow && mapSearchResult.trailSegment.isValid())
     {
@@ -318,7 +322,7 @@ QString MapTooltip::buildTooltip(const map::MapResult& mapSearchResult, const at
   }
 
   // Navaids ===========================================================================
-  if(opts.testFlag(optsd::TOOLTIP_NAVAID))
+  if(options.testFlag(optsd::TOOLTIP_NAVAID))
   {
     buildOneTooltipRt(html, overflow, distance, numEntries, mapSearchResult.vors, info, &HtmlInfoBuilder::vorText);
     buildOneTooltipRt(html, overflow, distance, numEntries, mapSearchResult.ndbs, info, &HtmlInfoBuilder::ndbText);
@@ -334,14 +338,14 @@ QString MapTooltip::buildTooltip(const map::MapResult& mapSearchResult, const at
   }
 
   // Airport stuff ===========================================================================
-  if(airportDiagram && opts.testFlag(optsd::TOOLTIP_AIRPORT))
+  if(airportDiagram && options.testFlag(optsd::TOOLTIP_AIRPORT))
   {
     buildOneTooltip(html, overflow, numEntries, mapSearchResult.towers, info, &HtmlInfoBuilder::towerText);
     buildOneTooltip(html, overflow, numEntries, mapSearchResult.parkings, info, &HtmlInfoBuilder::parkingText);
     buildOneTooltip(html, overflow, numEntries, mapSearchResult.helipads, info, &HtmlInfoBuilder::helipadText);
   }
 
-  if(opts.testFlag(optsd::TOOLTIP_NAVAID))
+  if(options.testFlag(optsd::TOOLTIP_NAVAID))
   {
     buildOneTooltipRt(html, overflow, distance, numEntries, mapSearchResult.userpointsRoute, info, &HtmlInfoBuilder::userpointTextRoute);
     buildOneTooltip(html, overflow, numEntries, mapSearchResult.airways, info, &HtmlInfoBuilder::airwayText);
@@ -350,7 +354,7 @@ QString MapTooltip::buildTooltip(const map::MapResult& mapSearchResult, const at
   // High altitude wind barbs - not flight plan ===========================================================================
   if(!overflow)
   {
-    if(opts.testFlag(optsd::TOOLTIP_WIND) && mapSearchResult.windPos.isValid())
+    if(options.testFlag(optsd::TOOLTIP_WIND) && mapSearchResult.windPos.isValid())
     {
       WindReporter *windReporter = NavApp::getWindReporter();
       atools::grib::WindPosList winds = windReporter->getWindStackForPos(mapSearchResult.windPos);
@@ -382,7 +386,7 @@ QString MapTooltip::buildTooltip(const map::MapResult& mapSearchResult, const at
   // Airspaces ===========================================================================
   if(!overflow)
   {
-    if(opts.testFlag(optsd::TOOLTIP_AIRSPACE))
+    if(options.testFlag(optsd::TOOLTIP_AIRSPACE))
     {
       // Put all online airspace on top of the list to have consistent ordering with menus and info windows
       const MapResult res = mapSearchResult.moveOnlineAirspacesToFront();

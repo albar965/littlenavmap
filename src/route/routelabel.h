@@ -117,6 +117,9 @@ private:
   void fetchTakeoffRunway(map::MapRunway& runway, map::MapRunwayEnd& runwayEnd);
   void fetchLandingRunway(map::MapRunway& runway, map::MapRunwayEnd& runwayEnd);
 
+  /* Callback to show tooltips for airport links */
+  QString tooltipFunction(const QString& key);
+
   const Route& route;
   routelabel::LabelFlags flags = routelabel::LABEL_ALL;
 

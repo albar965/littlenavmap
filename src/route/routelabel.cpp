@@ -28,6 +28,7 @@
 #include "gui/clicktooltiphandler.h"
 #include "gui/linktooltiphandler.h"
 #include "gui/widgetzoomhandler.h"
+#include "mapgui/maptooltip.h"
 #include "options/optiondata.h"
 #include "perf/aircraftperfcontroller.h"
 #include "query/airportquery.h"
@@ -59,9 +60,11 @@ RouteLabel::RouteLabel(QWidget *parent, const Route& routeParam)
   linkTooltipHandler->addWidget(ui->labelRouteInfo);
 
   // The keys have to match the query item key "tooltip" to provide a tooltip ============================
-  linkTooltipHandler->addUrlTooltip(QStringLiteral("showdeparture"), tr("Show the departure airport on the map and in information"));
   linkTooltipHandler->addUrlTooltip(QStringLiteral("showdepartureparking"), tr("Show the departure position at the airport"));
-  linkTooltipHandler->addUrlTooltip(QStringLiteral("showdestination"), tr("Show the destination airport on the map and in information"));
+
+  // Use callback function to get airport information tooltip
+  linkTooltipHandler->addUrlTooltipFunction({QStringLiteral("showdeparture"), QStringLiteral("showdestination")},
+                                            std::bind(&RouteLabel::tooltipFunction, this, std::placeholders::_1));
 
   // Show error messages in tooltip on click ========================================
   ui->labelRouteError->installEventFilter(new atools::gui::ClickToolTipHandler(ui->labelRouteError));
@@ -114,6 +117,28 @@ void RouteLabel::optionsChanged(const optc::OptionChangeFlags& changeFlags)
 void RouteLabel::fontChanged(const QFont&)
 {
   zoomHandler->zoomPercent(OptionData::instance().getGuiRouteInfoTextSize());
+}
+
+QString RouteLabel::tooltipFunction(const QString& key)
+{
+  map::MapAirport airport;
+  QString text;
+
+  if(key == QStringLiteral("showdeparture"))
+  {
+    airport = route.getDepartureAirportLeg().getAirport();
+    text = tr("Click here to show the departure airport on the map and in information.");
+  }
+  else if(key == QStringLiteral("showdestination"))
+  {
+    airport = route.getDestinationAirportLeg().getAirport();
+    text = tr("Click here to show the destination airport on the map and in information.");
+  }
+
+  MapTooltip mapTooltip(NavApp::getMainWindow());
+  return mapTooltip.buildTooltip(map::MapResult::createFromMapBase(&airport), atools::geo::EMPTY_POS, route, false /* airportDiagram */,
+                                 optsd::TOOLTIP_AIRPORT, text,
+                                 atools::roundToInt(QFontMetricsF(NavApp::getMainUi()->labelRouteInfo->font()).height() * 0.9));
 }
 
 void RouteLabel::updateAll()

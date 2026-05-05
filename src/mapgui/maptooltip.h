@@ -18,14 +18,14 @@
 #ifndef LITTLENAVMAP_MAPTOOLTIP_H
 #define LITTLENAVMAP_MAPTOOLTIP_H
 
+#include "options/optionflags.h"
+
 #include <QColor>
 #include <QCoreApplication>
 
 namespace map {
-
 struct AircraftTrailSegment;
 struct MapResult;
-
 }
 
 class WeatherReporter;
@@ -44,7 +44,6 @@ class HtmlBuilder;
 
 namespace proc {
 struct MapProcedurePoint;
-
 }
 
 /*
@@ -67,8 +66,8 @@ public:
    * displayed in airport diagrams.
    * @return HTML code of the tooltip
    */
-  QString buildTooltip(const map::MapResult& mapSearchResult, const atools::geo::Pos& pos,
-                       const Route& route, bool airportDiagram);
+  QString buildTooltip(const map::MapResult& mapSearchResult, const atools::geo::Pos& pos, const Route& route, bool airportDiagram,
+                       optsd::DisplayTooltipOptions options, const QString& prefix = QString(), int symbolSize = -1);
 
 private:
   bool checkText(atools::util::HtmlBuilder& html) const;

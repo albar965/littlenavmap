@@ -259,10 +259,13 @@ private:
   /* Get first and last waypoint from record */
   QStringList firstLastWaypoint(const atools::sql::SqlRecord& record) const;
 
-  inline const proc::MapProcedureRef& refFromItem(const QTreeWidgetItem *item) const;
+  const proc::MapProcedureRef& refFromItem(const QTreeWidgetItem *item) const;
 
   /* Emit showRect with leg bounding plus airport */
   void showLegs(const proc::MapProcedureLegs *legs, bool doubleClick);
+
+  /* Callback to show tooltip for airport link */
+  QString tooltipFunction(const QString&);
 
   QString transitionIndicator, transitionIndicatorOne;
 

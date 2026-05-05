@@ -32,6 +32,7 @@
 #include "gui/linktooltiphandler.h"
 #include "gui/tools.h"
 #include "gui/widgetstate.h"
+#include "mapgui/maptooltip.h"
 #include "options/optiondata.h"
 #include "query/airportquery.h"
 #include "query/infoquery.h"
@@ -171,7 +172,8 @@ ProcedureSearch::ProcedureSearch(MainWindow *main, QTreeWidget *treeWidgetParam,
   linkTooltipHandler->addWidget(ui->labelProcedureSearch);
 
   // The keys have to match the query item key "tooltip" to provide a tooltip ============================
-  linkTooltipHandler->addUrlTooltip(QStringLiteral("showairport"), tr("Show airport on the map and in information"));
+  linkTooltipHandler->addUrlTooltipFunction(QStringLiteral("showairport"),
+                                            std::bind(&ProcedureSearch::tooltipFunction, this, std::placeholders::_1));
 
   treeWidget->setItemDelegate(gridDelegate);
   atools::gui::adjustSelectionColors(treeWidget);
@@ -252,6 +254,15 @@ ProcedureSearch::~ProcedureSearch()
   ATOOLS_DELETE_LOG(currentAirportNav);
   ATOOLS_DELETE_LOG(currentAirportSim);
   ATOOLS_DELETE_LOG(savedAirportSim);
+}
+
+QString ProcedureSearch::tooltipFunction(const QString&)
+{
+  MapTooltip mapTooltip(mainWindow);
+  return mapTooltip.buildTooltip(map::MapResult::createFromMapBase(currentAirportSim), atools::geo::EMPTY_POS, NavApp::getRoute(),
+                                 false /* airportDiagram */, optsd::TOOLTIP_AIRPORT,
+                                 tr("Click her to show airport on the map and in information."),
+                                 atools::roundToInt(QFontMetricsF(NavApp::getMainUi()->labelRouteInfo->font()).height() * 0.9));
 }
 
 void ProcedureSearch::airportLabelLinkActivated(const QString& link)
