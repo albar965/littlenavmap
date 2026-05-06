@@ -303,7 +303,7 @@ public:
   void showCustomApproach(map::MapAirport airport, QString dialogHeader);
   void showCustomDeparture(map::MapAirport airport, QString dialogHeader);
 
-  /* Add custom proc for departure or destination airport. Called from main menu. */
+  /* Add custom proc for departure or destination airport. Called from main menu actions. */
   void showCustomApproachMainMenu();
   void showCustomDepartureMainMenu();
 
@@ -443,7 +443,11 @@ private:
   /* Return pressed which triggered actionRouteShowLeg */
   void showLeg();
 
+  /* Open and execute context menu */
   void tableContextMenu(const QPoint& pos);
+
+  /* Build route leg. Legs can get invalid if actions call their own handlers and reorganize the route */
+  map::MapResult buildMenuResult(const QModelIndex& index);
 
   void tableSelectionChanged(const QItemSelection& = QItemSelection(), const QItemSelection& = QItemSelection());
 

@@ -3250,36 +3250,6 @@ void RouteController::tableContextMenu(const QPoint& pos)
 
   if(action != nullptr)
   {
-    map::MapResult result;
-
-    if(routeLeg->isUser())
-    {
-      // Add userpoint for user defined waypoint
-      map::MapUserpoint userpoint;
-      userpoint.position = routeLeg->getPosition();
-      userpoint.ident = routeLeg->getDisplayIdent();
-      userpoint.name = routeLeg->getName();
-      result.userpoints.append(userpoint);
-    }
-    else
-    {
-      map::MapTypes type;
-      int id;
-      if(routeLeg->isAnyProcedure())
-        // Get type and id from procedure fix
-        routeLeg->getProcedureLeg().navaids.getIdAndType(id, type, {map::AIRPORT, map::VOR, map::NDB, map::WAYPOINT});
-      else
-      {
-        // Normal route leg navaid
-        type = routeLeg->getMapType();
-        id = routeLeg->getId();
-      }
-
-      // Fetch navaid into result
-      QueryManager::instance()->getQueriesGui()->getMapQuery()->getMapObjectById(result, type, map::AIRSPACE_SRC_NONE, id,
-                                                                                 false /* airport from nav*/);
-    }
-
     if(action == ui->actionRouteResetView)
     {
       for(int col = rcol::FIRST_COLUMN; col <= rcol::LAST_COLUMN; col++)
@@ -3300,11 +3270,13 @@ void RouteController::tableContextMenu(const QPoint& pos)
     else if(action == ui->actionRouteSetMark && routeLeg != nullptr)
       emit changeMark(routeLeg->getPosition());
     else if(action == ui->actionMapRangeRings && routeLeg != nullptr)
-      NavApp::getMapWidgetGui()->addRangeMark(routeLeg->getPosition(), result, true /* showDialog */);
+    {
+      NavApp::getMapWidgetGui()->addRangeMark(routeLeg->getPosition(), buildMenuResult(index), true /* showDialog */);
+    }
     else if(action == ui->actionMapTrafficPattern && routeLeg != nullptr)
       NavApp::getMapWidgetGui()->addPatternMark(routeLeg->getAirport());
     else if(action == ui->actionMapHold && routeLeg != nullptr)
-      NavApp::getMapWidgetGui()->addHold(result, routeLeg->getPosition());
+      NavApp::getMapWidgetGui()->addHold(buildMenuResult(index), routeLeg->getPosition());
     else if(action == ui->actionMapNavaidRange)
     {
       // Show range rings for all radio navaids
@@ -3358,6 +3330,47 @@ void RouteController::tableContextMenu(const QPoint& pos)
 
   // Restart the timers for clearing the selection or moving the active to top
   updateCleanupTimer();
+}
+
+map::MapResult RouteController::buildMenuResult(const QModelIndex& index)
+{
+  map::MapResult result;
+  if(index.isValid())
+  {
+    const RouteLeg *routeLeg = &route.value(index.row());
+
+    if(routeLeg != nullptr && routeLeg->isValid())
+    {
+      if(routeLeg->isUser())
+      {
+        // Add userpoint for user defined waypoint
+        map::MapUserpoint userpoint;
+        userpoint.position = routeLeg->getPosition();
+        userpoint.ident = routeLeg->getDisplayIdent();
+        userpoint.name = routeLeg->getName();
+        result.userpoints.append(userpoint);
+      }
+      else
+      {
+        map::MapTypes type;
+        int id;
+        if(routeLeg->isAnyProcedure())
+          // Get type and id from procedure fix
+          routeLeg->getProcedureLeg().navaids.getIdAndType(id, type, {map::AIRPORT, map::VOR, map::NDB, map::WAYPOINT});
+        else
+        {
+          // Normal route leg navaid
+          type = routeLeg->getMapType();
+          id = routeLeg->getId();
+        }
+
+        // Fetch navaid into result
+        QueryManager::instance()->getQueriesGui()->getMapQuery()->getMapObjectById(result, type, map::AIRSPACE_SRC_NONE, id,
+                                                                                   false /* airport from nav*/);
+      }
+    }
+  }
+  return result;
 }
 
 void RouteController::activateLegManually(int index)
