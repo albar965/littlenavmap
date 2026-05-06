@@ -307,6 +307,12 @@ bool StyleHandler::isGuiStyleDark() const
     return styleDescriptions.at(styleIndex()).isDark();
 }
 
+bool StyleHandler::isGuiStyleAnyFusion() const
+{
+  const QString& name = styleDescriptions.at(styleIndex()).getStyleName();
+  return name == STYLE_FUSION || name == STYLE_DARK;
+}
+
 int StyleHandler::styleIndex() const
 {
   int index = -1;

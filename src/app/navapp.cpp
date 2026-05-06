@@ -982,6 +982,11 @@ bool NavApp::isGuiStyleDark()
   return styleHandler->isGuiStyleDark();
 }
 
+bool NavApp::isGuiStyleAnyFusion()
+{
+  return styleHandler->isGuiStyleAnyFusion();
+}
+
 StyleHandler *NavApp::getStyleHandler()
 {
   return styleHandler;

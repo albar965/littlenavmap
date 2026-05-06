@@ -377,6 +377,8 @@ MainWindow::MainWindow()
     statusBar = new StatusBar(ui->statusBar);
     statusBar->init();
 
+    applyButtonStylesheet();
+
     // Connect route controlle to newly created map widget
     routeController->connectMapWidget();
 
@@ -4426,9 +4428,54 @@ void MainWindow::fontChanged(const QFont& font)
   atools::gui::setWidgetAndIconSize(widgetsToResize, NavApp::getMinButtonSize());
 }
 
+void MainWindow::applyButtonStylesheet()
+{
+#ifdef DEBUG_INFORMATION
+  qDebug() << Q_FUNC_INFO << NavApp::isGuiStyleAnyFusion();
+#endif
+  QString stylesheet;
+  if(NavApp::isGuiStyleAnyFusion())
+  {
+    // Build stylesheet with colors
+    QPalette palette = QGuiApplication::palette();
+    stylesheet = QStringLiteral(
+      "QWidget { border: 1px solid transparent; padding: 1px; margin: 1px; }"
+      "QWidget:checked { border: 1px solid %1; padding: 1px; background: %2; margin: 1px; }"
+      "QWidget:hover { border: 1px solid %3; padding: 1px; margin: 1px; }").
+                 arg(palette.color(QPalette::Active, QPalette::Mid).name()).
+                 arg(palette.color(QPalette::Active, QPalette::Mid).lighter(NavApp::isGuiStyleDark() ? 400 : 160).name()).
+                 arg(palette.color(QPalette::Active, QPalette::Highlight).name());
+
+  }
+
+  // Get all toolbars and widgets to the respective actions
+  for(QToolBar *toolBar : findChildren<QToolBar *>())
+  {
+    for(QAction *action : toolBar->actions())
+    {
+      QWidget *widget = toolBar->widgetForAction(action);
+      if(widget != nullptr)
+        widget->setStyleSheet(stylesheet);
+    }
+  }
+
+  // Get all other toolbar-like buttons
+  for(QWidget *widget : std::as_const(widgetsToResize))
+  {
+    QPushButton *button = dynamic_cast<QPushButton *>(widget);
+    if(button != nullptr && !button->icon().isNull())
+      button->setStyleSheet(stylesheet);
+  }
+#ifdef DEBUG_INFORMATION
+  qDebug() << Q_FUNC_INFO << "done";
+#endif
+}
+
 void MainWindow::styleChanged()
 {
+#ifdef DEBUG_INFORMATION
   qDebug() << Q_FUNC_INFO;
+#endif
 
   // Emit program wide font change to update all widgets to avoid font reset to default
   emit Application::applicationInstance()->fontChanged(QGuiApplication::font());
@@ -4452,6 +4499,12 @@ void MainWindow::styleChanged()
   optionsDialog->styleChanged();
   statusBar->styleChanged();
   NavApp::getLogdataController()->styleChanged();
+
+  applyButtonStylesheet();
+
+#ifdef DEBUG_INFORMATION
+  qDebug() << Q_FUNC_INFO << "Done";
+#endif
 }
 
 void MainWindow::updateMapKeys()

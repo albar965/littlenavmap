@@ -405,6 +405,7 @@ public:
 
   static QString getCurrentGuiStyleDisplayName();
   static bool isGuiStyleDark();
+  static bool isGuiStyleAnyFusion();
 
   static bool isDarkMapTheme();
 

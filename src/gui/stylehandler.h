@@ -60,6 +60,9 @@ public:
   /* true if style requires darkening the map */
   bool isGuiStyleDark() const;
 
+  /* true if any fusion based style like Dark or Fusion */
+  bool isGuiStyleAnyFusion() const;
+
 signals:
   /* Sent on change */
   void preStyleChange();
