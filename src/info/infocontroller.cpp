@@ -287,7 +287,7 @@ void InfoController::showProgressContextMenu(const QPoint& point)
   QMenu *menu = ui->textBrowserAircraftProgressInfo->createStandardContextMenu();
   menu->setToolTipsVisible(NavApp::isMenuToolTipsVisible());
   menu->addAction(ui->actionInfoDisplayOptions);
-  menu->exec(ui->textBrowserAircraftProgressInfo->mapToGlobal(point));
+  menu->exec(ui->textBrowserAircraftProgressInfo->mapToGlobal(point) + QPoint(3, 3));
   delete menu;
 }
 

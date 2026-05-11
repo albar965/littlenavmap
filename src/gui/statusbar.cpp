@@ -314,7 +314,7 @@ void StatusBar::customContextMenuRequested(const QPoint& point)
   menu.addAction(actionLocalSim);
 
   // Show menu =======================================================
-  menu.exec(statusBar->mapToGlobal(point));
+  menu.exec(statusBar->mapToGlobal(point + QPoint(3, 3)));
 
   // Load values from menu =======================================================
   for(const QAction *action : std::as_const(labelActions))

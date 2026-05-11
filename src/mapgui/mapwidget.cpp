@@ -2452,7 +2452,7 @@ bool MapWidget::showFeatureSelectionMenu(int& id, map::MapTypes& type, const map
   menu.addAction(new QAction(QIcon(":/littlenavmap/resources/icons/cancel.svg"), tr("Cancel"), this));
 
   // Execute the menu
-  QAction *action = menu.exec(QCursor::pos());
+  QAction *action = menu.exec(QCursor::pos() + QPoint(3, 3));
 
   if(action != nullptr && !action->data().isNull())
   {
