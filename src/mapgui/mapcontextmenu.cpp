@@ -687,13 +687,14 @@ void MapContextMenu::insertDestinationMenu(QMenu& menu)
 
         if(destination)
         {
-          // Airport is destination
           if(noRunways)
           {
+            // Airport is destination and has no runways
             text = submenu ? tr("%1") : tr("Select %1 as Destination");
             disable = true;
           }
           else
+            // Airport is destination and has runways
             text = tr("Select Destination Runway for %1");
         }
         else if(!departure)

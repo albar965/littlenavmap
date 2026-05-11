@@ -95,6 +95,9 @@ MapQuery::~MapQuery()
 
 bool MapQuery::hasProcedures(const map::MapAirport& airport) const
 {
+  if(airport.noRunways() || airport.closed())
+    return false;
+
   MapAirport airportNav = getAirportNav(airport);
   if(airportNav.isValid())
     return queries->getAirportQueryNav()->hasProcedures(airportNav);
@@ -104,6 +107,9 @@ bool MapQuery::hasProcedures(const map::MapAirport& airport) const
 
 bool MapQuery::hasArrivalProcedures(const map::MapAirport& airport) const
 {
+  if(airport.noRunways() || airport.closed())
+    return false;
+
   MapAirport airportNav = getAirportNav(airport);
   if(airportNav.isValid())
     return queries->getAirportQueryNav()->hasArrivalProcedures(airportNav);
@@ -113,6 +119,9 @@ bool MapQuery::hasArrivalProcedures(const map::MapAirport& airport) const
 
 bool MapQuery::hasDepartureProcedures(const map::MapAirport& airport) const
 {
+  if(airport.noRunways() || airport.closed())
+    return false;
+
   MapAirport airportNav = getAirportNav(airport);
   if(airportNav.isValid())
     return queries->getAirportQueryNav()->hasDepartureProcedures(airportNav);
