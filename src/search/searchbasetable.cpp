@@ -27,6 +27,7 @@
 #include "geo/calculations.h"
 #include "gui/actiontool.h"
 #include "gui/choicedialog.h"
+#include "gui/contextmenutool.h"
 #include "gui/dialog.h"
 #include "gui/tools.h"
 #include "gui/tools.h"
@@ -79,8 +80,6 @@ SearchBaseTable::SearchBaseTable(MainWindow *parent, QTableView *tableView, Colu
   if(tabIndex == si::SEARCH_AIRPORT)
   {
     // Add departure/destination/alternate actions for airport search tab
-    ui->actionSearchRouteAirportStart->setShortcutContext(Qt::WidgetWithChildrenShortcut);
-    ui->actionSearchRouteAirportDest->setShortcutContext(Qt::WidgetWithChildrenShortcut);
     ui->actionSearchRouteAirportAlternate->setShortcutContext(Qt::WidgetWithChildrenShortcut);
     ui->actionSearchDirectTo->setShortcutContext(Qt::WidgetWithChildrenShortcut);
   }
@@ -112,8 +111,7 @@ SearchBaseTable::SearchBaseTable(MainWindow *parent, QTableView *tableView, Colu
                           ui->actionSearchShowDepartureCustom, ui->actionSearchShowOnMap});
 
   if(tabIndex == si::SEARCH_AIRPORT)
-    currentTab->addActions({ui->actionSearchRouteAirportStart, ui->actionSearchRouteAirportDest, ui->actionSearchRouteAirportAlternate,
-                            ui->actionSearchDirectTo});
+    currentTab->addActions({ui->actionSearchRouteAirportAlternate, ui->actionSearchDirectTo});
 
   if(tabIndex == si::SEARCH_USER)
     currentTab->addActions({ui->actionSearchUserpointUndo, ui->actionSearchUserpointRedo});
@@ -134,14 +132,10 @@ SearchBaseTable::SearchBaseTable(MainWindow *parent, QTableView *tableView, Colu
 
   if(tabIndex == si::SEARCH_AIRPORT)
   {
-    // Connecti airport search actions directly since they can be called by shortcuts
-    connect(ui->actionSearchRouteAirportStart, &QAction::triggered, this, &SearchBaseTable::routeSetDepartureAction);
-    connect(ui->actionSearchRouteAirportDest, &QAction::triggered, this, &SearchBaseTable::routeSetDestinationAction);
+    // Connect airport search action directly since they can be called by shortcuts
     connect(ui->actionSearchRouteAirportAlternate, &QAction::triggered, this, &SearchBaseTable::routeAddAlternateAction);
-  }
-
-  if(tabIndex == si::SEARCH_AIRPORT)
     connect(ui->actionSearchDirectTo, &QAction::triggered, this, &SearchBaseTable::routeDirectToAction);
+  }
 
   viewEventFilter = new SearchViewEventFilter(this);
   widgetKeyEventFilter = new SearchWidgetKeyEventFilter(this);
@@ -1097,8 +1091,7 @@ void SearchBaseTable::contextMenu(const QPoint& point)
                          ui->actionSearchLogdataSavePlanAs, ui->actionSearchLogRouteAirportAlternate, ui->actionSearchLogRouteAirportDest,
                          ui->actionSearchLogRouteAirportStart, ui->actionSearchLogShowInformationAirport,
                          ui->actionSearchLogShowOnMapAirport, ui->actionSearchResetSearch, ui->actionSearchResetView,
-                         ui->actionSearchRouteAirportAlternate, ui->actionSearchRouteAirportDest, ui->actionMapAirportMsa,
-                         ui->actionSearchRouteAirportStart, ui->actionSearchSetMark, ui->actionSearchShowAll,
+                         ui->actionSearchRouteAirportAlternate, ui->actionMapAirportMsa, ui->actionSearchSetMark, ui->actionSearchShowAll,
                          ui->actionSearchShowApproaches, ui->actionSearchShowApproachCustom, ui->actionSearchShowDepartureCustom,
                          ui->actionSearchShowInformation, ui->actionSearchShowOnMap, ui->actionSearchTableCopy, ui->actionUserdataExportCsv,
                          ui->actionLogdataExportCsv, ui->actionSearchExportCsv, ui->actionSearchTableSelectAll,
@@ -1199,7 +1192,7 @@ void SearchBaseTable::contextMenu(const QPoint& point)
 
     // Get text for menu items ===========================
     if(mapObjType == map::AIRPORT && airport.isValid())
-      objectText = map::airportTextShort(airport, NAVAID_NAMES_ELIDE, true /* includeIdent */);
+      objectText = map::airportTextShort(airport, NAVAID_NAMES_ELIDE, false /* includeIdent */);
     else
       objectText = result.objectText(mapObjType, NAVAID_NAMES_ELIDE);
 
@@ -1241,18 +1234,21 @@ void SearchBaseTable::contextMenu(const QPoint& point)
   QString directToSuffix = proc::procedureTextSuffixDirectTo(route, routeIndex, &airport, &disableDirectTo);
 
   // Need at least one airport or destination to add an alternate
-  QString alternateSuffix;
+  QStringList alternateSuffixList;
   if(route.getSizeWithoutAlternates() < 1)
   {
     disableAlternate = true;
-    alternateSuffix = tr(" (no destination)");
+    alternateSuffixList.append(tr("no destination"));
   }
   else
-    alternateSuffix = proc::procedureTextSuffixAlternate(route, airport, &disableAlternate);
+    proc::procedureAlternateFlags(route, airport, disableAlternate);
+
+  bool departure, destination, alternate, roundtrip, noRunways = airport.noRunways();
+  proc::procedureFlags(route, &airport, &departure, &destination, &alternate, &roundtrip);
+  QString alternateSuffix = ContextMenuTool::airportItemSuffix(departure, destination, alternate, roundtrip, noRunways,
+                                                               alternateSuffixList);
 
   // Airport search
-  ui->actionSearchRouteAirportStart->setDisabled(disableDepartDest);
-  ui->actionSearchRouteAirportDest->setDisabled(disableDepartDest);
   ui->actionSearchRouteAirportAlternate->setDisabled(disableAlternate);
 
   ui->actionSearchDirectTo->setDisabled(disableDirectTo);
@@ -1289,72 +1285,9 @@ void SearchBaseTable::contextMenu(const QPoint& point)
     ui->actionSearchMarkAddon->setEnabled(true);
     ActionTool::setText(ui->actionSearchMarkAddon, true, objectText);
 
-    bool departureFilter, arrivalFilter, hasDeparture, hasAnyArrival, airportDeparture, airportDestination, airportRoundTrip;
-    route.getAirportProcedureFlags(airport, -1, departureFilter, arrivalFilter, hasDeparture, hasAnyArrival, airportDeparture,
-                                   airportDestination, airportRoundTrip);
-
-    if(hasAnyArrival || hasDeparture)
-    {
-      if(airportDeparture && !airportRoundTrip)
-      {
-        if(hasDeparture)
-        {
-          ui->actionSearchShowApproaches->setText(tr("Show Departure &Procedures for %1"));
-          ActionTool::setText(ui->actionSearchShowApproaches, true, objectText);
-        }
-        else
-          ui->actionSearchShowApproaches->setText(tr("Show procedures (no departure procedure)"));
-      }
-      else if(airportDestination && !airportRoundTrip)
-      {
-        if(hasAnyArrival)
-        {
-          ui->actionSearchShowApproaches->setText(tr("Show Arrival/Approach &Procedures for %1"));
-          ActionTool::setText(ui->actionSearchShowApproaches, true, objectText);
-        }
-        else
-          ui->actionSearchShowApproaches->setText(tr("Show procedures (no arrival/approach procedure)"));
-      }
-      else
-        ui->actionSearchShowApproaches->setEnabled(true);
-    }
-    else
-      ui->actionSearchShowApproaches->setText(tr("Show Procedures (no procedure)"));
-
-    if(airportDestination)
-    {
-      ui->actionSearchShowApproachCustom->setText(tr("Select Destination &Runway for %1 ..."));
-      ui->actionSearchShowApproachCustom->setEnabled(true);
-    }
-    else if(!airportDeparture)
-    {
-      ui->actionSearchShowApproachCustom->setText(tr("Select &Runway and use %1 as Destination ..."));
-      ui->actionSearchShowApproachCustom->setEnabled(true);
-    }
-
-    if(airportDeparture)
-    {
-      ui->actionSearchShowDepartureCustom->setText(tr("Select &Departure Runway for %1 ..."));
-      ui->actionSearchShowDepartureCustom->setEnabled(true);
-    }
-    else if(!airportDestination)
-    {
-      ui->actionSearchShowDepartureCustom->setText(tr("Select Runway and use %1 as &Departure ..."));
-      ui->actionSearchShowDepartureCustom->setEnabled(true);
-    }
-  }
-  else
-    ui->actionSearchShowApproaches->setText(tr("Show &Procedures"));
-
-  if(airport.noRunways())
-  {
-    ActionTool::setText(ui->actionSearchShowApproachCustom, false, QStringLiteral(), tr(" (no runway)"));
-    ActionTool::setText(ui->actionSearchShowDepartureCustom, false, QStringLiteral(), tr(" (no runway)"));
-  }
-  else
-  {
-    ActionTool::setText(ui->actionSearchShowApproachCustom, objectText);
-    ActionTool::setText(ui->actionSearchShowDepartureCustom, objectText);
+    ContextMenuTool menuTool;
+    menuTool.setActions(ui->actionSearchShowDepartureCustom, ui->actionSearchShowApproachCustom, ui->actionSearchShowApproaches);
+    menuTool.initAirportActions(airport, route, -1, objectText);
   }
 
   if(tabIndex == si::SEARCH_LOG)
@@ -1384,11 +1317,11 @@ void SearchBaseTable::contextMenu(const QPoint& point)
   ui->actionMapRangeRings->setEnabled(index.isValid() && position.isValid());
   ui->actionSearchSetMark->setEnabled(index.isValid() && position.isValid());
 
-  ActionTool::setText(ui->actionMapRangeRings, result.hasTypes(map::AIRPORT | map::VOR | map::NDB | map::WAYPOINT | map::USERPOINT),
-                      objectText);
+  ActionTool::setText(ui->actionMapRangeRings,
+                      result.hasTypes(map::AIRPORT | map::VOR | map::NDB | map::WAYPOINT | map::USERPOINT), objectText);
 
-  ActionTool::setText(ui->actionMapHold, result.hasTypes(map::AIRPORT | map::VOR | map::NDB | map::WAYPOINT | map::USERPOINT),
-                      objectText);
+  ActionTool::setText(ui->actionMapHold,
+                      result.hasTypes(map::AIRPORT | map::VOR | map::NDB | map::WAYPOINT | map::USERPOINT), objectText);
 
   ui->actionMapAirportMsa->setEnabled(msaResult.hasAirportMsa());
 
@@ -1404,8 +1337,6 @@ void SearchBaseTable::contextMenu(const QPoint& point)
   ActionTool::setText(ui->actionMapNavaidRange, navaidRangeText);
 
   // Airport search
-  ui->actionSearchRouteAirportStart->setText(ui->actionSearchRouteAirportStart->text().arg(objectText) % departDestSuffix);
-  ui->actionSearchRouteAirportDest->setText(ui->actionSearchRouteAirportDest->text().arg(objectText) % departDestSuffix);
   ui->actionSearchRouteAirportAlternate->setText(ui->actionSearchRouteAirportAlternate->text().arg(objectText) % alternateSuffix);
 
   int selectedRows = getSelectedRowCount();
@@ -1459,8 +1390,7 @@ void SearchBaseTable::contextMenu(const QPoint& point)
         qDebug() << Q_FUNC_INFO << ui->actionLogdataRouteOpen->text();
         ui->actionLogdataRouteOpen->setEnabled(true);
         ui->actionLogdataRouteOpen->setText(ui->actionLogdataRouteOpen->text().
-                                            arg(atools::elideTextShort(QFileInfo(logEntry.routeFile).fileName(),
-                                                                       NAVAID_NAMES_ELIDE)));
+                                            arg(atools::elideTextShort(QFileInfo(logEntry.routeFile).fileName(), NAVAID_NAMES_ELIDE)));
       }
       else
         ui->actionLogdataRouteOpen->setText(ui->actionLogdataRouteOpen->text().arg(tr("(file not found)")));
@@ -1475,8 +1405,7 @@ void SearchBaseTable::contextMenu(const QPoint& point)
       {
         ui->actionLogdataPerfLoad->setEnabled(true);
         ui->actionLogdataPerfLoad->setText(ui->actionLogdataPerfLoad->text().
-                                           arg(atools::elideTextShort(QFileInfo(logEntry.performanceFile).fileName(),
-                                                                      NAVAID_NAMES_ELIDE)));
+                                           arg(atools::elideTextShort(QFileInfo(logEntry.performanceFile).fileName(), NAVAID_NAMES_ELIDE)));
       }
       else
         ui->actionLogdataPerfLoad->setText(ui->actionLogdataPerfLoad->text().arg(tr("(file not found)")));
@@ -1544,13 +1473,9 @@ void SearchBaseTable::contextMenu(const QPoint& point)
 
   if(atools::contains(tabIndex, {si::SEARCH_AIRPORT}))
   {
-    menu.addAction(ui->actionSearchRouteAirportStart);
-    menu.addAction(ui->actionSearchRouteAirportDest);
-    menu.addAction(ui->actionSearchRouteAirportAlternate);
-    menu.addSeparator();
-
     menu.addAction(ui->actionSearchShowDepartureCustom);
     menu.addAction(ui->actionSearchShowApproachCustom);
+    menu.addAction(ui->actionSearchRouteAirportAlternate);
     menu.addSeparator();
 
     menu.addAction(ui->actionSearchShowApproaches);

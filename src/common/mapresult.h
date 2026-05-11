@@ -328,6 +328,11 @@ struct MapResultIndex
   /* Sorting callback */
   typedef std::function<bool (const MapBase *, const MapBase *)> SortFunction;
 
+  const map::MapBase *ptrOrNull(int index) const
+  {
+    return atools::inRange(*this, index) ? at(index) : nullptr;
+  }
+
   /* Add all result object pointers to list. Result and all objects are copied. */
   MapResultIndex& add(const map::MapResult& resultParam, const map::MapTypes& types = map::ALL);
 

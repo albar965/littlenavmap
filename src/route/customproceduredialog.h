@@ -30,14 +30,14 @@ namespace Ui {
 class CustomProcedureDialog;
 }
 
-class RunwaySelection;
+class RunwayTable;
 class QAbstractButton;
 class UnitStringTool;
 
 /*
  * Shows airport and runway information and allows to configure a custom approach procedure for a selected runway.
  *
- * Reads state on intiantiation and saves it on destruction
+ * Reads state on intantiation and saves it on destruction
  */
 class CustomProcedureDialog :
   public QDialog
@@ -53,7 +53,7 @@ public:
   CustomProcedureDialog& operator=(const CustomProcedureDialog& other) = delete;
 
   /* Selected runway and end or invalid if none */
-  void getSelected(map::MapRunway& runway, map::MapRunwayEnd& end) const;
+  void getSelected(map::MapRunway& runway, map::MapRunwayEnd& end, bool& airportSelected) const;
 
   /* Distance to runway threshold in NM */
   float getLegDistance() const;
@@ -78,7 +78,7 @@ private:
   void doubleClicked();
 
   Ui::CustomProcedureDialog *ui;
-  RunwaySelection *runwaySelection = nullptr;
+  RunwayTable *runwayTable = nullptr;
 
   UnitStringTool *units = nullptr;
   bool departure = false, showProceduresSelected = false;

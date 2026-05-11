@@ -1099,7 +1099,7 @@ void ProcedureQuery::processArtificialLegs(proc::MapProcedureLegs& legs, const m
 
     // ====================================================================================
     // Add legs that connect airport center or runway to departure runway
-    if(legs.mapType & proc::PROCEDURE_DEPARTURE)
+    if(legs.mapType & proc::PROCEDURE_SID_ALL)
     {
       // Get right departure runway point
       map::MapRunway runwaySim;
@@ -1144,7 +1144,7 @@ void ProcedureQuery::processArtificialLegs(proc::MapProcedureLegs& legs, const m
           legVector.prepend(runwayLeg);
         }
       }
-    } // if(legs.mapType & proc::PROCEDURE_DEPARTURE)
+    } // if(legs.mapType & proc::PROCEDURE_SID_ALL)
     else
     {
       // ====================================================================================
@@ -1177,7 +1177,7 @@ void ProcedureQuery::processArtificialLegs(proc::MapProcedureLegs& legs, const m
           legs.procedureLegs.prepend(startLeg);
         }
       }
-    } // if(legs.mapType & proc::PROCEDURE_DEPARTURE) else
+    } // if(legs.mapType & proc::PROCEDURE_SID_ALL) else
 
     // ====================================================================================
     // Add circle to land or straight in leg
@@ -1510,7 +1510,7 @@ void ProcedureQuery::processApproachRunway(proc::MapProcedureLegs& legs, const m
 void ProcedureQuery::processDepartureRunway(proc::MapProcedureLegs& legs, const map::MapAirport& airport) const
 {
   // Custom departure don't need alignment to runway and are built in createCustomDeparture() and are  not processed here
-  if(legs.mapType & proc::PROCEDURE_DEPARTURE && !legs.isEmpty())
+  if(legs.mapType & proc::PROCEDURE_SID_ALL && !legs.isEmpty())
   {
     // First leg is always "proceed to runway" containing the runway
     // Runway name is empty in case of circle-to-land or straight-in or SID for multiple runways (ALL, BXX, etc.)
@@ -1577,7 +1577,7 @@ void ProcedureQuery::processLegsDistanceAndCourse(proc::MapProcedureLegs& legs) 
     }
     else if(type == proc::START_OF_PROCEDURE)
     {
-      if(leg.mapType & proc::PROCEDURE_DEPARTURE)
+      if(leg.mapType & proc::PROCEDURE_SID_ALL)
       {
         // START_OF_PROCEDURE is an actual leg for departure where it connects runway and initial fix
         leg.calculatedDistance = meterToNm(leg.line.lengthMeter());
@@ -1768,7 +1768,7 @@ void ProcedureQuery::processLegs(proc::MapProcedureLegs& legs, const map::MapAir
   // From airport to last fix for SID
   for(int i = 0; i < legs.size(); ++i)
   {
-    if(legs.mapType & proc::PROCEDURE_DEPARTURE && i == 0)
+    if(legs.mapType & proc::PROCEDURE_SID_ALL && i == 0)
       lastPos = legs.runwayEnd.position;
 
     Pos curPos;
@@ -1950,7 +1950,7 @@ void ProcedureQuery::processLegs(proc::MapProcedureLegs& legs, const map::MapAir
       // Use fixed distance value
       Pos start = lastPos.isValid() ? lastPos : leg.fixPos;
 
-      if(!start.isValid() && legs.mapType & proc::PROCEDURE_DEPARTURE && legs.runwayEnd.isValid())
+      if(!start.isValid() && legs.mapType & proc::PROCEDURE_SID_ALL && legs.runwayEnd.isValid())
         start = legs.runwayEnd.position;
 
       // Get runway position considering offset threshold
@@ -1958,7 +1958,7 @@ void ProcedureQuery::processLegs(proc::MapProcedureLegs& legs, const map::MapAir
       float altDiffFt = map::INVALID_ALTITUDE_VALUE;
 
       // Only for first SID legs - "proceed to runway" is not added yet
-      if(!leg.isMissed() && legs.mapType & proc::PROCEDURE_DEPARTURE && i == 0)
+      if(!leg.isMissed() && legs.mapType & proc::PROCEDURE_SID_ALL && i == 0)
       {
         // Get opposite runway end
         map::MapRunway runway = queries->getAirportQuery(legs.runwayEnd.navdata)->getRunwayByEndId(airport.id, legs.runwayEnd.id);
@@ -2146,7 +2146,7 @@ void ProcedureQuery::processLegs(proc::MapProcedureLegs& legs, const map::MapAir
 
     // Processed later: COURSE_TO_INTERCEPT
 
-    if(legs.mapType & proc::PROCEDURE_DEPARTURE && i == 0)
+    if(legs.mapType & proc::PROCEDURE_SID_ALL && i == 0)
       // First leg of a SID start at runway end
       leg.line = Line(legs.runwayEnd.position, curPos);
     else

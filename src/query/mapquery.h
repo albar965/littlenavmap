@@ -122,7 +122,7 @@ public:
   /* Get runway end and try lower and higher numbers if nothing was found - adds a dummy entry with airport
    * position if no runway ends were found */
   void getRunwayEndByNameFuzzy(QList<map::MapRunwayEnd>& runwayEnds, const QString& name,
-                               const map::MapAirport& airport, bool navData) const;
+                               const map::MapAirport& airport, bool navdata) const;
 
   /*
    * Get a map object by type, ident and region. Results are appended.
@@ -271,7 +271,7 @@ private:
   QList<map::MapIls> ilsByAirportAndRunway(const QString& airportIdent, const QString& runway) const;
 
   void runwayEndByNameFuzzy(QList<map::MapRunwayEnd>& runwayEnds, const QString& name, const map::MapAirport& airport,
-                            bool navData) const;
+                            bool navdata) const;
   QString airportIdentFromQuery(const QString& queryStr, const QString& ident, const QString& region,
                                 const atools::geo::Pos& pos, bool& found) const;
 

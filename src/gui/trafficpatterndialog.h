@@ -31,7 +31,7 @@ struct PatternMarker;
 
 class QAbstractButton;
 class UnitStringTool;
-class RunwaySelection;
+class RunwayTable;
 
 /*
  * Shows airport and runway information and allows to configure a traffic pattern for a selected runway.
@@ -69,8 +69,7 @@ private:
 
   UnitStringTool *units = nullptr;
 
-  RunwaySelection *runwaySelection = nullptr;
-
+  RunwayTable *runwayTable = nullptr;
 };
 
 #endif // LNM_TRAFFICPATTERN_H

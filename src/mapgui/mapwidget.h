@@ -284,8 +284,8 @@ signals:
 
   /* Show approaches from context menu */
   void showProcedures(const map::MapAirport& airport, bool departureFilter, bool arrivalFilter);
-  void showCustomApproach(const map::MapAirport& airport, const QString& suffix);
-  void showCustomDeparture(const map::MapAirport& airport, const QString& suffix);
+  void showCustomApproach(const map::MapAirport& airport);
+  void showCustomDeparture(const map::MapAirport& airport);
 
   /* Emitted when the user presses the on-screen button */
   void exitFullScreenPressed();
@@ -365,6 +365,9 @@ private:
   void fillDistanceMarker(map::DistanceMarker& distanceMarker, const atools::geo::Pos& pos, const map::MapAirport *airport,
                           const map::MapVor *vor, const map::MapNdb *ndb, const map::MapWaypoint *waypoint,
                           const map::MapUserpoint *userpoint);
+
+  /* Add departure airport, parking or helipad probably showing the departure runway dialog */
+  void addDeparture(const map::MapBase *base);
 
   /* Show the given object in the search search window with filters and selection set */
   void showResultInSearch(const map::MapBase *base);

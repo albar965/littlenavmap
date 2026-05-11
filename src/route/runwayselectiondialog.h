@@ -30,7 +30,7 @@ namespace Ui {
 class RunwaySelectionDialog;
 }
 
-class RunwaySelection;
+class RunwayTable;
 class QAbstractButton;
 
 /*
@@ -63,7 +63,7 @@ private:
   void doubleClicked();
 
   Ui::RunwaySelectionDialog *ui;
-  RunwaySelection *runwaySelection = nullptr;
+  RunwayTable *runwayTable = nullptr;
 };
 
 #endif // LNM_RUNWAY_SELECTION_DIALOG_H

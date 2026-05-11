@@ -29,6 +29,7 @@
 #include "common/unit.h"
 #include "common/unitstringtool.h"
 #include "exception.h"
+#include "gui/contextmenutool.h"
 #include "gui/tableeditdelegate.h"
 #include "util/csvexporter.h"
 #include "fs/perf/aircraftperf.h"
@@ -1675,7 +1676,7 @@ bool RouteController::insertFlightplan(const QString& filename, int insertBefore
         beforeDepartPrepend = true;
 
         // Remove departure legs and properties
-        route.removeProcedureLegs(proc::PROCEDURE_DEPARTURE);
+        route.removeProcedureLegs(proc::PROCEDURE_SID_ALL);
 
         // Added before departure airport
         routePlan.setDepartureName(flightplan.getDepartureName());
@@ -2899,6 +2900,8 @@ void RouteController::tableContextMenu(const QPoint& pos)
     }
   }
 
+  // Build route leg ====================================================================
+  // Route legs can get invalid if actions call their own handlers and reorganize the route ==============
   const RouteLeg *routeLeg = nullptr, *prevRouteLeg = nullptr;
   int row = -1;
   if(index.isValid())
@@ -2983,7 +2986,7 @@ void RouteController::tableContextMenu(const QPoint& pos)
       else if(prevRouteLeg->isRoute() && routeLeg->isAnyProcedure() && routeLeg->getProcedureType() & proc::PROCEDURE_ARRIVAL_ALL)
         // Insert between enroute waypoint and approach or STAR
         canInsert = true;
-      else if(routeLeg->isRoute() && prevRouteLeg->isAnyProcedure() && prevRouteLeg->getProcedureType() & proc::PROCEDURE_DEPARTURE)
+      else if(routeLeg->isRoute() && prevRouteLeg->isAnyProcedure() && prevRouteLeg->getProcedureType() & proc::PROCEDURE_SID_ALL)
         // Insert between SID and waypoint
         canInsert = true;
       else
@@ -2997,82 +3000,12 @@ void RouteController::tableContextMenu(const QPoint& pos)
       ui->actionRouteMarkAddon->setEnabled(true);
       ActionTool::setText(ui->actionRouteMarkAddon, true, objectText);
 
-      bool departureFilter, arrivalFilter, hasDeparture, hasAnyArrival, airportDeparture, airportDestination, airportRoundTrip;
-      route.getAirportProcedureFlags(routeLeg->getAirport(), row, departureFilter, arrivalFilter, hasDeparture, hasAnyArrival,
-                                     airportDeparture, airportDestination, airportRoundTrip);
-
-      if(hasAnyArrival || hasDeparture)
-      {
-        if(airportDeparture && !airportRoundTrip)
-        {
-          if(hasDeparture)
-          {
-            ui->actionRouteShowApproaches->setText(tr("Show Departure &Procedures for %1"));
-            ActionTool::setText(ui->actionRouteShowApproaches, true, objectText);
-          }
-          else
-            ui->actionRouteShowApproaches->setText(tr("Show procedures (no departure procedure)"));
-        }
-        else if(airportDestination && !airportRoundTrip)
-        {
-          if(hasAnyArrival)
-          {
-            ui->actionRouteShowApproaches->setText(tr("Show Arrival/Approach &Procedures for %1"));
-            ActionTool::setText(ui->actionRouteShowApproaches, true, objectText);
-          }
-          else
-            ui->actionRouteShowApproaches->setText(tr("Show &Procedures (no arrival/approch procedure)"));
-        }
-        else
-        {
-          ui->actionRouteShowApproaches->setText(tr("Show Procedures for %1"));
-          ActionTool::setText(ui->actionRouteShowApproaches, true, objectText);
-        }
-      }
-      else
-        ui->actionRouteShowApproaches->setText(tr("Show Procedures (no procedure)"));
-
-      if(airportDestination)
-      {
-        ui->actionRouteShowApproachCustom->setText(tr("Select Destination &Runway for %1 ..."));
-        ui->actionRouteShowApproachCustom->setEnabled(true);
-      }
-      else if(!airportDeparture)
-      {
-        ui->actionRouteShowApproachCustom->setText(tr("Select &Runway and use %1 as Destination ..."));
-        ui->actionRouteShowApproachCustom->setEnabled(true);
-      }
-
-      if(airportDeparture)
-      {
-        ui->actionRouteShowDepartureCustom->setText(tr("Select &Departure Runway for %1 ..."));
-        ui->actionRouteShowDepartureCustom->setEnabled(true);
-      }
-      else if(!airportDestination)
-      {
-        ui->actionRouteShowDepartureCustom->setText(tr("Select Runway and use %1 as &Departure ..."));
-        ui->actionRouteShowDepartureCustom->setEnabled(true);
-      }
-    }
-    else
-    {
-      ui->actionRouteShowApproaches->setText(tr("Show &Procedures"));
-      ui->actionRouteShowApproachCustom->setText(tr("Select Destination &Runway for %1 ..."));
-      ui->actionRouteShowDepartureCustom->setText(tr("Select &Departure Runway for %1 ..."));
+      ContextMenuTool menuTool;
+      menuTool.setActions(ui->actionRouteShowDepartureCustom, ui->actionRouteShowApproachCustom, ui->actionRouteShowApproaches);
+      menuTool.initAirportActions(routeLeg->getAirport(), route, row, objectText);
     }
 
-    if(routeLeg->getAirport().noRunways())
-    {
-      QString norw = routeLeg->isAirport() ? tr(" (no runway)") : QStringLiteral();
-      ActionTool::setText(ui->actionRouteShowApproachCustom, false, QStringLiteral(), norw);
-      ActionTool::setText(ui->actionRouteShowDepartureCustom, false, QStringLiteral(), norw);
-    }
-    else
-    {
-      ActionTool::setText(ui->actionRouteShowApproachCustom, objectText);
-      ActionTool::setText(ui->actionRouteShowDepartureCustom, objectText);
-    }
-
+    // Other actions =========================================================
     ui->actionRouteShowOnMap->setEnabled(true);
     ui->actionMapRangeRings->setEnabled(true);
     ui->actionRouteSetMark->setEnabled(true);
@@ -3081,7 +3014,7 @@ void RouteController::tableContextMenu(const QPoint& pos)
       ui->actionRouteActivateLeg->setEnabled(routeLeg->isValidWaypoint());
     else
       ui->actionRouteActivateLeg->setEnabled(routeLeg->isValid() && NavApp::isConnected());
-  }
+  } // if(routeLeg != nullptr)
   else
   {
     ui->actionRouteShowInformation->setEnabled(false);
@@ -3242,6 +3175,7 @@ void RouteController::tableContextMenu(const QPoint& pos)
   menu.addMenu(&menuMore);
 
   // Execute menu =========================================================================================
+  // Route legs can get invalid if actions call their own handlers and reorganize the route ==============
   QAction *action = menu.exec(menuPos);
   if(action != nullptr)
     qDebug() << Q_FUNC_INFO << "selected" << action->text();
@@ -3904,8 +3838,10 @@ void RouteController::deleteSelectedLegsTriggered()
   deleteSelectedLegs(getSelectedRows(true /* reverse */), true /* selectCurrent */);
 }
 
-void RouteController::deleteSelectedLegs(const QList<int>& rows, bool selectCurrent)
+void RouteController::deleteSelectedLegs(QList<int> rows, bool selectCurrent)
 {
+  rows.removeAll(map::INVALID_INDEX_VALUE);
+
   if(!rows.isEmpty())
   {
     waypointEditDialog->clearAndSave();
@@ -4171,10 +4107,10 @@ void RouteController::routeSetParking(const map::MapParking& parking)
      route.getDepartureAirportLeg().getId() != parking.airportId)
   {
     // No route, no start airport or different airport
-    map::MapAirport ap;
-    QueryManager::instance()->getQueriesGui()->getAirportQuerySim()->getAirportById(ap, parking.airportId);
-    routeSetDepartureInternal(ap);
-    route.removeProcedureLegs(proc::PROCEDURE_DEPARTURE);
+    map::MapAirport airport;
+    QueryManager::instance()->getQueriesGui()->getAirportQuerySim()->getAirportById(airport, parking.airportId);
+    routeSetDepartureInternal(airport);
+    route.removeProcedureLegs(proc::PROCEDURE_SID_ALL);
   }
 
   // Update the current airport which is new or the same as the one used by the parking spot
@@ -4217,7 +4153,7 @@ void RouteController::routeSetStartPosition(map::MapStart start)
     map::MapAirport airport;
     QueryManager::instance()->getQueriesGui()->getAirportQuerySim()->getAirportById(airport, start.airportId);
     routeSetDepartureInternal(airport);
-    route.removeProcedureLegs(proc::PROCEDURE_DEPARTURE);
+    route.removeProcedureLegs(proc::PROCEDURE_SID_ALL);
   }
 
   // Update the current airport which is new or the same as the one used by the parking spot
@@ -4267,7 +4203,7 @@ void RouteController::routeSetDeparture(map::MapAirport airport)
 
   routeSetDepartureInternal(airport);
 
-  route.removeProcedureLegs(proc::PROCEDURE_DEPARTURE);
+  route.removeProcedureLegs(proc::PROCEDURE_SID_ALL);
 
   route.updateAll();
   route.updateAirwaysAndAltitude(false /* adjustRouteAltitude */);
@@ -4483,14 +4419,14 @@ void RouteController::showCustomApproachMainMenu()
 {
   // Called from main menu for current destination
   if(route.hasValidDestinationAndRunways())
-    showCustomApproach(route.getDestinationAirportLeg().getAirport(), tr("Select runway for destination:"));
+    showCustomApproach(route.getDestinationAirportLeg().getAirport());
 }
 
 void RouteController::showCustomDepartureMainMenu()
 {
   // Called from main menu for current departure
   if(route.hasValidDepartureAndRunways())
-    showCustomDeparture(route.getDepartureAirportLeg().getAirport(), tr("Select runway for departure:"));
+    showCustomDeparture(route.getDepartureAirportLeg().getAirport());
 }
 
 void RouteController::showCustomApproachRouteTriggered()
@@ -4499,139 +4435,174 @@ void RouteController::showCustomApproachRouteTriggered()
 
   // Allow for departure airport only or single airport plan where airport can be used both as departure and destination
   if(index.isValid() && (route.getDepartureAirportLegIndex() != index.row() || route.getSizeWithoutAlternates() == 1))
-    showCustomApproach(route.value(index.row()).getAirport(), QStringLiteral());
+    showCustomApproach(route.value(index.row()).getAirport());
 }
 
 void RouteController::showCustomDepartureRouteTriggered()
 {
   QModelIndex index = tableViewRoute->currentIndex();
+
   // Allow for destination airport only or single airport plan where airport can be used both as departure and destination
   if(index.isValid() && (route.getDestinationAirportLegIndex() != index.row() || route.getSizeWithoutAlternates() == 1))
-    showCustomDeparture(route.value(index.row()).getAirport(), QStringLiteral());
+    showCustomDeparture(route.value(index.row()).getAirport());
 }
 
-void RouteController::showCustomApproach(map::MapAirport airport, QString dialogHeader)
+void RouteController::showCustomApproach(map::MapAirport airport)
 {
   // Also called from search menu
   qDebug() << Q_FUNC_INFO << airport.id << airport.ident;
 
-  if(!airport.isValid() || airport.noRunways())
+  if(!airport.isValid())
     return;
 
-  if(dialogHeader.isEmpty())
+  bool airportChange = airport != route.getDestinationAirportLeg().getAirport();
+
+  if(airport.noRunways() && airportChange)
+    // Airport has no runways and changes - set destination directly
+    routeSetDestination(airport);
+  else
   {
-    // No header given. Build one based on airport relation to route (is destination, etc.)
+    // Build header based on airport relation to route (is destination, etc.)
     bool destination;
     proc::procedureFlags(route, &airport, nullptr, &destination);
-    if(destination)
-      dialogHeader = tr("Select runway for destination:");
-    else
-      dialogHeader = tr("Select runway and use airport as destination:");
-  }
+    QString dialogHeader = destination ? tr("Select destination runway.") : tr("Select destination airport and runway.");
+    dialogHeader.append(tr("\nSelect the airport to clear approach procedures or runway assignments."));
 
-  // Get the simulator runway end id to pre-select runway end row in dialog =================================
-  // Check if there is already a STAR or an approach to fetch current runway selection
-  QList<map::MapRunwayEnd> runwayEnds;
-  const MapQuery *mapQuery = QueryManager::instance()->getQueriesGui()->getMapQuery();
-  if(!route.getApproachLegs().isEmpty())
-  {
-    if(route.hasCustomApproach())
-      // Custom departure is already sim id
-      runwayEnds.append(route.getApproachLegs().runwayEnd);
-    else
-      // Fetch sim id from procedure which uses nav id
-      mapQuery->getRunwayEndByNameFuzzy(runwayEnds, route.getApproachRunwayName(), airport, false /* navData */);
-  }
-  else if(!route.getStarLegs().isEmpty())
-    // Fetch sim id from procedure which uses nav id
-    mapQuery->getRunwayEndByNameFuzzy(runwayEnds, route.getStarRunwayName(), airport, false /* navData */);
-
-  int runwayEndId = -1;
-  if(!runwayEnds.isEmpty())
-    runwayEndId = runwayEnds.constFirst().id;
-
-  // Show runway selection dialog to user
-  CustomProcedureDialog procedureDialog(mainWindow, airport, false /* departureParam */, dialogHeader, runwayEndId);
-  int result = procedureDialog.exec();
-
-  if(result == QDialog::Accepted)
-  {
-    if(procedureDialog.isShowProceduresSelected())
-      emit showProcedures(airport, false /* departureFilter */, true /* arrivalFilter */);
-    else
+    // Get the simulator runway end id to pre-select runway end row in dialog =================================
+    // Check if there is already a STAR or an approach to fetch current runway selection
+    QList<map::MapRunwayEnd> runwayEnds;
+    const MapQuery *mapQuery = QueryManager::instance()->getQueriesGui()->getMapQuery();
+    if(!route.getApproachLegs().isEmpty())
     {
-      map::MapRunway runway;
-      map::MapRunwayEnd end;
-      procedureDialog.getSelected(runway, end);
-      qDebug() << Q_FUNC_INFO << runway.primaryName << runway.secondaryName << end.id << end.name;
+      if(route.hasCustomApproach())
+        // Custom departure is already sim id
+        runwayEnds.append(route.getApproachLegs().runwayEnd);
+      else
+        // Fetch sim id from procedure which uses nav id
+        mapQuery->getRunwayEndByNameFuzzy(runwayEnds, route.getApproachRunwayName(), airport, false /* navData */);
+    }
+    else if(!route.getStarLegs().isEmpty())
+      // Fetch sim id from procedure which uses nav id
+      mapQuery->getRunwayEndByNameFuzzy(runwayEnds, route.getStarRunwayName(), airport, false /* navData */);
 
-      proc::MapProcedureLegs procedure;
-      QueryManager::instance()->getQueriesGui()->getProcedureQuery()->createCustomApproach(procedure, airport, end,
-                                                                                           procedureDialog.getLegDistance(),
-                                                                                           procedureDialog.getEntryAltitude(),
-                                                                                           procedureDialog.getLegOffsetAngle());
-      routeAddProcedure(procedure);
+    int runwayEndId = -1;
+    if(!runwayEnds.isEmpty())
+      runwayEndId = runwayEnds.constFirst().id;
+
+    // Show runway selection dialog to user
+    CustomProcedureDialog procedureDialog(mainWindow, airport, false /* departureParam */, dialogHeader, runwayEndId);
+    int result = procedureDialog.exec();
+
+    if(result == QDialog::Accepted)
+    {
+      if(procedureDialog.isShowProceduresSelected())
+        // User clicked show procedures button - delegate
+        emit showProcedures(airport, false /* departureFilter */, true /* arrivalFilter */);
+      else
+      {
+        map::MapRunway runway;
+        map::MapRunwayEnd end;
+        bool airportSelected;
+        procedureDialog.getSelected(runway, end, airportSelected);
+
+        if(airportSelected)
+        {
+          // User clicked on airport on top of table
+          if(airportChange)
+            // Select new airport
+            routeSetDestination(airport);
+          else
+            // Delete approach procedures
+            deleteSelectedLegs(route.hasAnyApproachProcedure() ? QList<int>({route.getDestinationAirportLegIndex() - 1}) : QList<int>(),
+                               false /* selectCurrent */);
+        }
+        else
+        {
+          // User selected a runway
+          proc::MapProcedureLegs procedure;
+          QueryManager::instance()->getQueriesGui()->getProcedureQuery()->createCustomApproach(procedure, airport, end,
+                                                                                               procedureDialog.getLegDistance(),
+                                                                                               procedureDialog.getEntryAltitude(),
+                                                                                               procedureDialog.getLegOffsetAngle());
+          routeAddProcedure(procedure);
+        }
+      }
     }
   }
 }
 
-void RouteController::showCustomDeparture(map::MapAirport airport, QString dialogHeader)
+void RouteController::showCustomDeparture(map::MapAirport airport)
 {
   // Also called from search menu
   qDebug() << Q_FUNC_INFO << airport.id << airport.ident;
 
-  if(!airport.isValid() || airport.noRunways())
+  if(!airport.isValid())
     return;
 
-  if(dialogHeader.isEmpty())
+  bool airportChange = airport != route.getDepartureAirportLeg().getAirport();
+
+  if(airport.noRunways() && airportChange)
+    // Airport has no runways and changes - set departure directly
+    routeSetDeparture(airport);
+  else
   {
     // No header given. Build one based on airport relation to route (is departure, etc.)
     bool departure;
     proc::procedureFlags(route, &airport, &departure);
-    if(departure)
-      dialogHeader = tr("Select runway for departure:");
-    else
-      dialogHeader = tr("Select runway and use airport as departure:");
-  }
+    QString dialogHeader = departure ? tr("Select departure runway.") : tr("Select departure airport and runway.");
+    dialogHeader.append(tr("\nSelect the airport to clear departure procedures or runway assignments."));
 
-  // Get the simulator runway end id to pre-select runway end row in dialog =================================
-  // Check if there is already a SID to fetch current runway selection
-  int runwayEndId = -1;
-  const Queries *queries = QueryManager::instance()->getQueriesGui();
+    // Get the simulator runway end id to pre-select runway end row in dialog =================================
+    // Check if there is already a SID to fetch current runway selection
+    int runwayEndId = -1;
+    const Queries *queries = QueryManager::instance()->getQueriesGui();
 
-  if(!route.getSidLegs().isEmpty())
-  {
-    QList<map::MapRunwayEnd> runwayEnds;
-    if(route.hasCustomDeparture())
-      // Custom departure is already sim id
-      runwayEnds.append(route.getSidLegs().runwayEnd);
-    else
-      // Fetch sim id from procedure which uses nav id
-      queries->getMapQuery()->getRunwayEndByNameFuzzy(runwayEnds, route.getSidRunwayName(), airport, false /* navData */);
-
-    if(!runwayEnds.isEmpty())
-      runwayEndId = runwayEnds.constFirst().id;
-  }
-
-  // Show runway selection dialog to user
-  CustomProcedureDialog procedureDialog(mainWindow, airport, true /* departureParam */, dialogHeader, runwayEndId);
-  int result = procedureDialog.exec();
-
-  if(result == QDialog::Accepted)
-  {
-    if(procedureDialog.isShowProceduresSelected())
-      emit showProcedures(airport, true /* departureFilter */, false /* arrivalFilter */);
-    else
+    if(!route.getSidLegs().isEmpty())
     {
-      map::MapRunway runway;
-      map::MapRunwayEnd end;
-      procedureDialog.getSelected(runway, end);
+      QList<map::MapRunwayEnd> runwayEnds;
+      if(route.hasCustomDeparture())
+        // Custom departure is already sim id
+        runwayEnds.append(route.getSidLegs().runwayEnd);
+      else
+        // Fetch sim id from procedure which uses nav id
+        queries->getMapQuery()->getRunwayEndByNameFuzzy(runwayEnds, route.getSidRunwayName(), airport, false /* navData */);
 
-      qDebug() << Q_FUNC_INFO << runway.primaryName << runway.secondaryName << end.id << end.name;
+      if(!runwayEnds.isEmpty())
+        runwayEndId = runwayEnds.constFirst().id;
+    }
 
-      proc::MapProcedureLegs procedure;
-      queries->getProcedureQuery()->createCustomDeparture(procedure, airport, end, procedureDialog.getLegDistance());
-      routeAddProcedure(procedure);
+    // Show runway selection dialog to user
+    CustomProcedureDialog procedureDialog(mainWindow, airport, true /* departureParam */, dialogHeader, runwayEndId);
+    int result = procedureDialog.exec();
+
+    if(result == QDialog::Accepted)
+    {
+      if(procedureDialog.isShowProceduresSelected())
+        // User clicked show procedures button - delegate
+        emit showProcedures(airport, true /* departureFilter */, false /* arrivalFilter */);
+      else
+      {
+        map::MapRunway runway;
+        map::MapRunwayEnd end;
+        bool airportSelected;
+        procedureDialog.getSelected(runway, end, airportSelected);
+
+        if(airportSelected)
+        {
+          // User clicked on airport on top of table
+          if(airportChange)
+            routeSetDeparture(airport);
+          else if(route.getSidLegIndex() > 0)
+            deleteSelectedLegs({route.getSidLegIndex()}, false /* selectCurrent */);
+        }
+        else
+        {
+          // User selected a runway
+          proc::MapProcedureLegs procedure;
+          queries->getProcedureQuery()->createCustomDeparture(procedure, airport, end, procedureDialog.getLegDistance());
+          routeAddProcedure(procedure);
+        }
+      }
     }
   }
 }
@@ -4825,13 +4796,13 @@ void RouteController::routeAddProcedure(proc::MapProcedureLegs legs)
 
     route.updateProcedureLegs(entryBuilder, true /* clearOldProcedureProperties */, true /* cleanup route */);
   }
-  else if(legs.mapType & proc::PROCEDURE_DEPARTURE)
+  else if(legs.mapType & proc::PROCEDURE_SID_ALL)
   {
     if(route.isEmpty() || route.getDepartureAirportLeg().getMapType() != map::AIRPORT ||
        route.getDepartureAirportLeg().getId() != airportSim.id)
     {
       // No route, no departure airport or different airport
-      route.removeProcedureLegs(proc::PROCEDURE_DEPARTURE);
+      route.removeProcedureLegs(proc::PROCEDURE_SID_ALL);
       routeSetDepartureInternal(airportSim);
       route.clearDepartureStartAndParking();
     }
@@ -5168,7 +5139,7 @@ void RouteController::routeReplace(int id, atools::geo::Pos userPos, map::MapTyp
     route.removeProcedureLegs(proc::PROCEDURE_ARRIVAL_ALL);
 
   if(legIndex == 0)
-    route.removeProcedureLegs(proc::PROCEDURE_DEPARTURE);
+    route.removeProcedureLegs(proc::PROCEDURE_SID_ALL);
 
   route.updateAll();
   route.updateAirwaysAndAltitude(false /* adjustRouteAltitude */);
@@ -6262,7 +6233,7 @@ proc::MapProcedureTypes RouteController::affectedProcedures(const QList<int>& in
   {
     if(index == 0)
       // Delete SID if departure airport is affected
-      types |= proc::PROCEDURE_DEPARTURE;
+      types |= proc::PROCEDURE_SID_ALL;
 
     if(index >= route.getDestinationAirportLegIndex())
     {
@@ -6282,7 +6253,7 @@ proc::MapProcedureTypes RouteController::affectedProcedures(const QList<int>& in
 
       if(leg.isSid())
         // Delete SID and transition
-        types |= proc::PROCEDURE_DEPARTURE;
+        types |= proc::PROCEDURE_SID_ALL;
 
       if(leg.isStarTransition())
         types |= proc::PROCEDURE_STAR_TRANSITION;

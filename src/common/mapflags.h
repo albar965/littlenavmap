@@ -204,7 +204,7 @@ enum MapDisplayType : quint32
   FLIGHTPLAN_TOC_TOD = 1 << 10, /* Top of climb and top of descent */
   FLIGHTPLAN_ALTERNATE = 1 << 21, /* Alternate airport and lines in flightplan */
 
-  GLS = 1 << 13, /* RNV approach, GLS approache or GBAS path - only display flag. Object is stored with type ILS. */
+  GLS = 1 << 13, /* RNV approach, GLS approach or GBAS path - only display flag. Object is stored with type ILS. */
 
   AIRCRAFT_ENDURANCE = 1 << 18, /* Range ring for current aircraft endurance. */
 

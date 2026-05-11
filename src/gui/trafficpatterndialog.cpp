@@ -26,7 +26,7 @@
 #include "common/unitstringtool.h"
 #include "geo/calculations.h"
 #include "gui/helphandler.h"
-#include "gui/runwayselection.h"
+#include "gui/runwaytable.h"
 #include "gui/tools.h"
 #include "gui/widgetstate.h"
 #include "settings/settings.h"
@@ -49,12 +49,14 @@ TrafficPatternDialog::TrafficPatternDialog(QWidget *parent, const map::MapAirpor
   ui->buttonBoxTrafficPattern->button(QDialogButtonBox::Ok)->setDefault(true);
   ui->tableWidgetTrafficPatternRunway->setFocus();
 
-  runwaySelection = new RunwaySelection(parent, mapAirport, ui->tableWidgetTrafficPatternRunway, false /* navdata */);
-  runwaySelection->setAirportLabel(ui->labelTrafficPatternAirport);
-  runwaySelection->setShowPattern(true);
+  runwayTable = new RunwayTable(parent, mapAirport, ui->tableWidgetTrafficPatternRunway,
+                                        false /* navdata */, false /* addAirportParam */);
 
-  connect(runwaySelection, &RunwaySelection::itemSelectionChanged, this, &TrafficPatternDialog::updateRunwayLabel);
-  connect(runwaySelection, &RunwaySelection::doubleClicked, this, &TrafficPatternDialog::doubleClicked);
+  runwayTable->setAirportLabel(ui->labelTrafficPatternAirport);
+  runwayTable->setShowPattern(true);
+
+  connect(runwayTable, &RunwayTable::itemSelectionChanged, this, &TrafficPatternDialog::updateRunwayLabel);
+  connect(runwayTable, &RunwayTable::doubleClicked, this, &TrafficPatternDialog::doubleClicked);
 
   connect(ui->checkBoxTrafficPattern45Degree, &QCheckBox::toggled, this, &TrafficPatternDialog::updateWidgets);
   connect(ui->buttonBoxTrafficPattern, &QDialogButtonBox::clicked, this, &TrafficPatternDialog::buttonBoxClicked);
@@ -72,7 +74,7 @@ TrafficPatternDialog::~TrafficPatternDialog()
 {
   atools::gui::WidgetState(lnm::TRAFFIC_PATTERN_DIALOG).save(this);
 
-  delete runwaySelection;
+  delete runwayTable;
   delete units;
   delete ui;
 }
@@ -114,7 +116,7 @@ void TrafficPatternDialog::restoreState()
 
   updateWidgets();
   updateButtonColor();
-  runwaySelection->restoreState();
+  runwayTable->init();
 }
 
 void TrafficPatternDialog::saveState() const
@@ -152,7 +154,7 @@ void TrafficPatternDialog::updateRunwayLabel()
 {
   map::MapRunway rw;
   map::MapRunwayEnd end;
-  runwaySelection->getCurrentSelected(rw, end);
+  runwayTable->getCurrentSelected(rw, end);
 
   if(rw.patternAlt > 100.f)
     ui->spinBoxTrafficPatternAltitude->setValue(atools::roundToInt(Unit::rev(rw.patternAlt, Unit::altFeetF)));
@@ -174,10 +176,10 @@ void TrafficPatternDialog::fillPatternMarker(map::PatternMarker& pattern)
 {
   map::MapRunway rw;
   map::MapRunwayEnd end;
-  runwaySelection->getCurrentSelected(rw, end);
+  runwayTable->getCurrentSelected(rw, end);
 
   bool primary = !end.secondary;
-  const map::MapAirport& airport = runwaySelection->getAirport();
+  const map::MapAirport& airport = runwayTable->getAirport();
 
   // Assign an artifical id to the hold to allow internal identification
   pattern.id = NavApp::getMapMarkers()->getNextMapMarkerId();

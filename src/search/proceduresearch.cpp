@@ -261,7 +261,7 @@ QString ProcedureSearch::tooltipFunction(const QString&)
   MapTooltip mapTooltip(mainWindow);
   return mapTooltip.buildTooltip(map::MapResult::createFromMapBase(currentAirportSim), atools::geo::EMPTY_POS, NavApp::getRoute(),
                                  false /* airportDiagram */, optsd::TOOLTIP_AIRPORT,
-                                 tr("Click her to show airport on the map and in information."),
+                                 tr("Click here to show airport on the map and in information."),
                                  atools::roundToInt(QFontMetricsF(NavApp::getMainUi()->labelRouteInfo->font()).height() * 0.9));
 }
 
@@ -1028,7 +1028,7 @@ void ProcedureSearch::fillProcedureTreeWidget()
           {
             // Also add runway from parent approach to transition - also creates transition_id in type()
             QTreeWidgetItem *transItem = buildTransitionItem(procItem, transitionRecFiltered,
-                                                             type & proc::PROCEDURE_DEPARTURE || type & proc::PROCEDURE_STAR_ALL);
+                                                             type & proc::PROCEDURE_SID_ALL || type & proc::PROCEDURE_STAR_ALL);
             itemIndex.insert(transItem->type(), ProcIndexEntry(transItem, currentAirportNav->id, runwayEndId, procedureId,
                                                                transitionRecFiltered.valueInt("transition_id"), -1, type));
           }
@@ -1293,7 +1293,7 @@ void ProcedureSearch::itemExpanded(QTreeWidgetItem *item)
           QList<QTreeWidgetItem *> items = buildProcedureLegItems(legs, -1);
           itemExpandedIndex.insert(type);
 
-          if(legs->mapType & proc::PROCEDURE_DEPARTURE)
+          if(legs->mapType & proc::PROCEDURE_SID_ALL)
             item->insertChildren(0, items);
           else
             item->addChildren(items);
@@ -1462,17 +1462,17 @@ void ProcedureSearch::contextMenu(const QPoint& pos)
       ui->actionInfoApproachShow->setText(ui->actionInfoApproachShow->text().arg(showText));
 
       if((route.hasValidDeparture() &&
-          route.getDepartureAirportLeg().getId() == currentAirportSim->id && ref.mapType & proc::PROCEDURE_DEPARTURE) ||
+          route.getDepartureAirportLeg().getId() == currentAirportSim->id && ref.mapType & proc::PROCEDURE_SID_ALL) ||
          (route.hasValidDestination() && route.getDestinationAirportLeg().getId() == currentAirportSim->id &&
           ref.mapType & proc::PROCEDURE_ARRIVAL_ALL))
         ui->actionInfoApproachAttach->setText(tr("&Insert %1 into Flight Plan").arg(text));
       else
       {
         if(ref.mapType & proc::PROCEDURE_ARRIVAL_ALL)
-          ui->actionInfoApproachAttach->setText(tr("&Use %1 and %2 as Destination").arg(currentAirportSim->displayIdent()).arg(text));
+          ui->actionInfoApproachAttach->setText(tr("&Select %1 and %2 as Destination").arg(currentAirportSim->displayIdent()).arg(text));
 
-        else if(ref.mapType & proc::PROCEDURE_DEPARTURE)
-          ui->actionInfoApproachAttach->setText(tr("&Use %1 and %2 as Departure").arg(currentAirportSim->displayIdent()).arg(text));
+        else if(ref.mapType & proc::PROCEDURE_SID_ALL)
+          ui->actionInfoApproachAttach->setText(tr("&Select %1 and %2 as Departure").arg(currentAirportSim->displayIdent()).arg(text));
       }
     }
   }

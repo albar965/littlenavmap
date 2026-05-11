@@ -1201,7 +1201,7 @@ bool procedureLegFrom(ProcedureLegType type)
     });
 }
 
-QString  procedureTextSuffixDepartDest(const Route& route, const map::MapAirport& airport, bool *disable)
+QString procedureTextSuffixDepartDest(const Route& route, const map::MapAirport& airport, bool *disable)
 {
   QString text;
   if(airport.isValid())
@@ -1224,32 +1224,20 @@ QString  procedureTextSuffixDepartDest(const Route& route, const map::MapAirport
   return text;
 }
 
-QString  procedureTextSuffixAlternate(const Route& route, const map::MapAirport& airport, bool *disable)
+void procedureAlternateFlags(const Route& route, const map::MapAirport& airport, bool& disable)
 {
   bool departure = false, destination = false, alternate = false;
   proc::procedureFlags(route, &airport, &departure, &destination, &alternate);
 
-  QString text;
   if(airport.isValid())
   {
     if(destination)
-    {
-      if(disable != nullptr)
-        *disable = true;
-      text = QObject::tr(" (is destination)");
-    }
-    else if(departure)
-      text = QObject::tr(" (is departure)");
+      disable = true;
     else if(alternate)
-    {
-      if(disable != nullptr)
-        *disable = true;
-      text = QObject::tr(" (is alternate)");
-    }
+      disable = true;
   }
-  else if(disable != nullptr)
-    *disable = true;
-  return text;
+  else
+    disable = true;
 }
 
 QString  procedureTextSuffixDirectTo(const Route& route, int legIndex, const map::MapAirport *airport, bool *disable)
@@ -1278,7 +1266,7 @@ QString  procedureTextSuffixDirectTo(const Route& route, int legIndex, const map
     // Do not allow to direct to back if leg index is given
     // Or circling with single airport - allow only another airport or navaid
     disableItem = true;
-    text = QObject::tr(" (past active)");
+    text = QObject::tr(" (behind active)");
   }
   else if(legIndex != -1 && legIndex < map::INVALID_INDEX_VALUE)
   {
@@ -1335,7 +1323,6 @@ void procedureFlags(const Route& route, const map::MapBase *base, bool *departur
   if(base != nullptr && base->getType() == map::AIRPORT)
   {
     const map::MapAirport *airport = base->asPtr<map::MapAirport>();
-    MapQuery *mapQueryGui = QueryManager::instance()->getQueriesGui()->getMapQuery();
 
     if(departure != nullptr)
       *departure = route.isAirportDeparture(airport->ident);
@@ -1349,11 +1336,15 @@ void procedureFlags(const Route& route, const map::MapBase *base, bool *departur
     if(roundtrip != nullptr)
       *roundtrip = route.isAirportRoundTrip(airport->ident);
 
-    if(arrivalProc != nullptr)
-      *arrivalProc = mapQueryGui->hasArrivalProcedures(*airport);
+    if(arrivalProc != nullptr || departureProc != nullptr)
+    {
+      MapQuery *mapQueryGui = QueryManager::instance()->getQueriesGui()->getMapQuery();
+      if(arrivalProc != nullptr)
+        *arrivalProc = mapQueryGui->hasArrivalProcedures(*airport);
 
-    if(departureProc != nullptr)
-      *departureProc = mapQueryGui->hasDepartureProcedures(*airport);
+      if(departureProc != nullptr)
+        *departureProc = mapQueryGui->hasDepartureProcedures(*airport);
+    }
   }
 }
 

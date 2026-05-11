@@ -15,8 +15,8 @@
 * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 *****************************************************************************/
 
-#ifndef LITTLENAVMAP_JUMPCOORDDIALOG_H
-#define LITTLENAVMAP_JUMPCOORDDIALOG_H
+#ifndef LITTLENAVMAP_COORDDIALOG_H
+#define LITTLENAVMAP_COORDDIALOG_H
 
 #include <QDialog>
 
@@ -64,4 +64,4 @@ private:
   UnitStringTool *units = nullptr;
 };
 
-#endif // LITTLENAVMAP_JUMPCOORDDIALOG_H
+#endif // LITTLENAVMAP_COORDDIALOG_H

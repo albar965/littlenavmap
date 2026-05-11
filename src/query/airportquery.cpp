@@ -46,7 +46,10 @@ const static float MAX_HEADING_RUNWAY_DEVIATION_DEG_2 = 45.f;
 const static float MAX_RUNWAY_DISTANCE_METER = 150.f; // First iteration
 const static float MAX_RUNWAY_DISTANCE_METER_2 = 2000.f; // Second iteration if first failed
 
+// Allow far away airport replacements in navdata
 const static float MAX_FUZZY_AIRPORT_DISTANCE_METER = 5000.f;
+
+// Allow more far away airports for same ids
 const static float MAX_FUZZY_AIRPORT_DISTANCE_METER_UNIQUE = 10000.f;
 
 inline size_t qHash(const NearestCacheKeyPosIdentDist& key, size_t seed)

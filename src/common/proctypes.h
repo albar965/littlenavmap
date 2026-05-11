@@ -278,7 +278,7 @@ struct MapProcedureLeg
 
   bool isAnyDeparture() const
   {
-    return mapType & proc::PROCEDURE_DEPARTURE;
+    return mapType & proc::PROCEDURE_SID_ALL;
   }
 
   bool isAnyTransition() const
@@ -673,7 +673,7 @@ private:
 
   bool isDeparture() const
   {
-    return mapType & proc::PROCEDURE_DEPARTURE;
+    return mapType & proc::PROCEDURE_SID_ALL;
   }
 
 };
@@ -767,7 +767,7 @@ void procedureFlags(const Route& route, const map::MapBase *base, bool *departur
  * information if menu items should be disabled. disable is set to true if needed but left alone otherwise.
  * Returns suffix string for menu items. */
 QString  procedureTextSuffixDepartDest(const Route& route, const map::MapAirport& airport, bool *disable = nullptr);
-QString  procedureTextSuffixAlternate(const Route& route, const map::MapAirport& airport, bool *disable = nullptr);
+void procedureAlternateFlags(const Route& route, const map::MapAirport& airport, bool& disable);
 QString  procedureTextSuffixDirectTo(const Route& route, int legIndex, const map::MapAirport *airport, bool *disable = nullptr);
 
 QString aircraftCategoryText(const QString& cat);

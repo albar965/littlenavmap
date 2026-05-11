@@ -337,11 +337,12 @@ SOURCES += \
   src/geo/aircrafttrail.cpp \
   src/geo/coordinateconverter.cpp \
   src/geo/marbleconverter.cpp \
+  src/gui/contextmenutool.cpp \
   src/gui/holddialog.cpp \
   src/gui/coordinatedialog.cpp \
   src/gui/mainwindow.cpp \
   src/gui/messagesettings.cpp \
-  src/gui/runwayselection.cpp \
+  src/gui/runwaytable.cpp \
   src/gui/statusbar.cpp \
   src/gui/statusbareventfilter.cpp \
   src/gui/stylehandler.cpp \
@@ -552,11 +553,12 @@ HEADERS  += \
   src/geo/aircrafttrail.h \
   src/geo/coordinateconverter.h \
   src/geo/marbleconverter.h \
+  src/gui/contextmenutool.h \
   src/gui/holddialog.h \
   src/gui/coordinatedialog.h \
   src/gui/mainwindow.h \
   src/gui/messagesettings.h \
-  src/gui/runwayselection.h \
+  src/gui/runwaytable.h \
   src/gui/statusbar.h \
   src/gui/statusbareventfilter.h \
   src/gui/stylehandler.h \

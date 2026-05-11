@@ -19,7 +19,7 @@
 
 #include "ui_runwayselectiondialog.h"
 #include "common/constants.h"
-#include "gui/runwayselection.h"
+#include "gui/runwaytable.h"
 #include "gui/helphandler.h"
 #include "gui/widgetstate.h"
 
@@ -40,13 +40,13 @@ RunwaySelectionDialog::RunwaySelectionDialog(QWidget *parent, const map::MapAirp
   ui->labelRunwaySelectionHeader->setText(header);
 
   // Create runway table handler
-  runwaySelection = new RunwaySelection(parent, mapAirport, ui->tableWidgetRunwaySelection, navdata);
-  runwaySelection->setAirportLabel(ui->labelRunwaySelectionAirport);
-  runwaySelection->setRunwayNameFilter(runwayNameFilter);
-  runwaySelection->setPreSelectedRunwayEnd(preselectRunwayEndNav);
+  runwayTable = new RunwayTable(parent, mapAirport, ui->tableWidgetRunwaySelection, navdata, false /* addAirportParam */);
+  runwayTable->setAirportLabel(ui->labelRunwaySelectionAirport);
+  runwayTable->setRunwayNameFilter(runwayNameFilter);
+  runwayTable->setPreSelectedRunwayEnd(preselectRunwayEndNav);
 
-  connect(runwaySelection, &RunwaySelection::doubleClicked, this, &RunwaySelectionDialog::doubleClicked);
-  connect(runwaySelection, &RunwaySelection::itemSelectionChanged, this, &RunwaySelectionDialog::updateWidgets);
+  connect(runwayTable, &RunwayTable::doubleClicked, this, &RunwaySelectionDialog::doubleClicked);
+  connect(runwayTable, &RunwayTable::itemSelectionChanged, this, &RunwaySelectionDialog::updateWidgets);
   connect(ui->buttonBoxRunwaySelection, &QDialogButtonBox::clicked, this, &RunwaySelectionDialog::buttonBoxClicked);
 
   restoreState();
@@ -58,7 +58,7 @@ RunwaySelectionDialog::~RunwaySelectionDialog()
 {
   atools::gui::WidgetState(lnm::RUNWAY_SELECTION_DIALOG).save(this);
 
-  delete runwaySelection;
+  delete runwayTable;
   delete ui;
 }
 
@@ -74,7 +74,7 @@ void RunwaySelectionDialog::restoreState()
   // Angle not saved on purpose
   widgetState.restore(this);
 
-  runwaySelection->restoreState();
+  runwayTable->init();
   updateWidgets();
 
   ui->tableWidgetRunwaySelection->setFocus();
@@ -88,7 +88,7 @@ void RunwaySelectionDialog::saveState() const
 
 QString RunwaySelectionDialog::getSelectedName() const
 {
-  return runwaySelection->getCurrentSelectedName();
+  return runwayTable->getCurrentSelectedName();
 }
 
 /* A button box button was clicked */
@@ -107,5 +107,5 @@ void RunwaySelectionDialog::buttonBoxClicked(QAbstractButton *button)
 
 void RunwaySelectionDialog::updateWidgets()
 {
-  ui->buttonBoxRunwaySelection->button(QDialogButtonBox::Ok)->setEnabled(runwaySelection->hasRunways());
+  ui->buttonBoxRunwaySelection->button(QDialogButtonBox::Ok)->setEnabled(runwayTable->hasRunways());
 }

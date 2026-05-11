@@ -2048,7 +2048,7 @@ void MapWidget::contextMenuEvent(QContextMenuEvent *event)
 
     // Selected map object
     const map::MapBase *base = contextMenu.getSelectedBase();
-    map::MapAirport airport = base != nullptr ? base->asObj<map::MapAirport>() : map::MapAirport();
+    const map::MapAirport airport = base != nullptr ? base->asObj<map::MapAirport>() : map::MapAirport();
 
     qDebug() << Q_FUNC_INFO << airport;
 
@@ -2133,14 +2133,14 @@ void MapWidget::contextMenuEvent(QContextMenuEvent *event)
           }
           break;
 
-        case mc::CUSTOMAPPROACH:
+        case mc::DESTINATION:
           if(airport.isValid())
-            emit showCustomApproach(airport, QStringLiteral());
+            emit showCustomApproach(airport);
           break;
 
-        case mc::CUSTOMDEPARTURE:
-          if(airport.isValid())
-            emit showCustomDeparture(airport, QStringLiteral());
+        case mc::DEPARTURE:
+          // Departure parking, helipad or airport
+          addDeparture(base);
           break;
 
         case mc::MEASURE:
@@ -2169,20 +2169,6 @@ void MapWidget::contextMenuEvent(QContextMenuEvent *event)
 
         case mc::AIRPORT_MSA:
           addMsaMark(result.airportMsa.value(0));
-          break;
-
-        case mc::DEPARTURE:
-          // Departure parking, helipad or airport
-          if(type == map::PARKING)
-            emit routeSetParkingStart(base->asObj<map::MapParking>());
-          else if(type == map::HELIPAD)
-            emit routeSetHelipadStart(base->asObj<map::MapHelipad>());
-          else
-            emit routeSetStart(airport);
-          break;
-
-        case mc::DESTINATION:
-          emit routeSetDest(airport);
           break;
 
         case mc::ALTERNATE:
@@ -2269,6 +2255,42 @@ void MapWidget::contextMenuEvent(QContextMenuEvent *event)
 
   // Enable map updates again
   contextMenuActive = false;
+}
+
+void MapWidget::addDeparture(const map::MapBase *base)
+{
+  map::MapAirport airport = base != nullptr ? base->asObj<map::MapAirport>() : map::MapAirport();
+
+  const map::MapParking parking = base->asObj<map::MapParking>();
+  const map::MapHelipad helipad = base->asObj<map::MapHelipad>();
+  AirportQuery *airportQuery = QueryManager::instance()->getQueriesGui()->getAirportQuerySim();
+
+  // Get copy since it is changed in routeSetParkingStart() and routeSetHelipadStart()
+  const map::MapAirport departureAirport = NavApp::getRouteConst().getDepartureAirportLeg().getAirport();
+
+  if(parking.isValid())
+  {
+    // Get airport for parking
+    airportQuery->getAirportById(airport, parking.airportId);
+    emit routeSetParkingStart(parking);
+
+    // Show dialog for runway/airport selection if airport has runways and has changed
+    if(airport != departureAirport && !airport.noRunways())
+      emit showCustomDeparture(airport);
+  }
+  else if(helipad.isValid())
+  {
+    // Get airport for helipad
+    airportQuery->getAirportById(airport, helipad.airportId);
+    emit routeSetHelipadStart(helipad);
+
+    // Show dialog for runway/airport selection if airport has runways and has changed
+    if(airport != departureAirport && !airport.noRunways())
+      emit showCustomDeparture(airport);
+  }
+  else
+    // Select runway if departure airport has changed
+    emit showCustomDeparture(airport);
 }
 
 void MapWidget::updateRoute(const QPoint& point, int leg, int pointIndex, bool fromClickAdd, bool fromClickAppend)

@@ -39,23 +39,24 @@ class WidgetZoomHandler;
 struct RunwayIdxEntry;
 
 /*
- * Provides methods to fill a table widget with runway information from an airport and to select a runway.
+ * Provides methods to fill a table widget with runway information from an airport and to select a runway or the airport.
  */
-class RunwaySelection :
-  public QObject
+class RunwayTable
+  : public QObject
 {
   Q_OBJECT
 
 public:
   /* The table should allow only single row selection */
-  explicit RunwaySelection(QObject *parent, const map::MapAirport& mapAirport, QTableWidget *runwayTableWidgetParam, bool navdataParam);
-  virtual ~RunwaySelection() override;
+  explicit RunwayTable(QObject *parent, const map::MapAirport& mapAirport, QTableWidget *runwayTableWidgetParam, bool navdataParam,
+                       bool addAirportParam);
+  virtual ~RunwayTable() override;
 
-  RunwaySelection(const RunwaySelection& other) = delete;
-  RunwaySelection& operator=(const RunwaySelection& other) = delete;
+  RunwayTable(const RunwayTable& other) = delete;
+  RunwayTable& operator=(const RunwayTable& other) = delete;
 
-  /* Call to restore settings and to load runway information into the widget */
-  void restoreState();
+  /* Load runway information into the table and select rows for setPreSelected() */
+  void init();
 
   /* Optional label widget for airport information */
   void setAirportLabel(QLabel *value)
@@ -63,16 +64,18 @@ public:
     airportLabel = value;
   }
 
-  /* Runway end id to be selected. Has to match navdataParam. Ignored if -1. Selected in restoreState(). */
-  void setPreSelectedRunwayEnd(int runwayEndId)
+  /* Runway end id to be selected. Has to match navdataParam. Ignored if -1. Selected in restoreState().
+   Defaults to first row which is airport */
+  void setPreSelectedRunwayEnd(int runwayEndIdSelectedParam)
   {
-    preselectRunwayEndId = runwayEndId;
+    runwayEndIdPreSelected = runwayEndIdSelectedParam;
   }
 
-  /* Get currently selected runway and runway end */
-  void getCurrentSelected(map::MapRunway& runway, map::MapRunwayEnd& end) const;
+  /* Get currently selected runway and runway end and optionally airport selection */
+  void getCurrentSelected(map::MapRunway& runway, map::MapRunwayEnd& end, bool *airportSelected = nullptr) const;
 
-  QString getCurrentSelectedName() const;
+  /* Get currently selected runway name and optionally airport selection */
+  QString getCurrentSelectedName(bool *airportSelected = nullptr) const;
 
   /* Get airport as passed in into the constructor */
   const map::MapAirport& getAirport() const;
@@ -83,6 +86,7 @@ public:
     showPattern = value;
   }
 
+  /* true if given airport has runways, i.e. is no heliport or other */
   bool hasRunways() const;
 
   /* Set a list of runways to use as filter. Can uase RW prefix or not. All are shown if empty. No wildcards. */
@@ -101,7 +105,12 @@ signals:
 private:
   void fillAirportLabel();
   void fillRunwayList();
-  void addItem(const RunwayIdxEntry& entry, const QString& windText, int index);
+
+  // Add airport on top of list
+  void addAirportItem(const map::MapAirport& airport, int tableIndex);
+
+  // Add runway
+  void addRunwayItem(const RunwayIdxEntry& entry, const QString& windText, int tableIndex, int runwayListIndex);
 
   /* Apply exact match runway filter. Prefix RW can be used */
   bool includeRunway(const QString& runwayName);
@@ -117,8 +126,9 @@ private:
   atools::gui::WidgetZoomHandler *zoomHandler = nullptr;
 
   MapQuery *mapQuery;
-  bool navdata;
-  int preselectRunwayEndId = -1;
+  bool navdata, addAirport;
+
+  int runwayEndIdPreSelected = -1;
 };
 
 #endif // LNM_RUNWAYSELECTION_H

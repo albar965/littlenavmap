@@ -2440,16 +2440,16 @@ bool Route::isAirportRoundTrip(const QString& ident) const
 
 void Route::getAirportProcedureFlags(const map::MapAirport& airport, int index, bool& departureFilter, bool& arrivalFilter) const
 {
-  bool hasDeparture, hasAnyArrival, airportDeparture, airportDestination, airportRoundTrip;
+  bool hasDeparture, hasAnyArrival, airportDeparture, airportDestination, airportAlternate, airportRoundTrip;
   getAirportProcedureFlags(airport, index, departureFilter, arrivalFilter, hasDeparture,
-                           hasAnyArrival, airportDeparture, airportDestination, airportRoundTrip);
+                           hasAnyArrival, airportDeparture, airportDestination, airportAlternate, airportRoundTrip);
 }
 
 void Route::getAirportProcedureFlags(const map::MapAirport& airport, int index, bool& departureFilter,
                                      bool& arrivalFilter, bool& hasDeparture, bool& hasAnyArrival,
-                                     bool& airportDeparture, bool& airportDestination, bool& airportRoundTrip) const
+                                     bool& airportDeparture, bool& airportDestination, bool& airportAlternate, bool& airportRoundTrip) const
 {
-  departureFilter = arrivalFilter = hasDeparture = hasAnyArrival = airportDeparture = airportDestination =
+  departureFilter = arrivalFilter = hasDeparture = hasAnyArrival = airportDeparture = airportDestination = airportAlternate =
     airportRoundTrip = false;
 
   if(airport.isValid())
@@ -2457,6 +2457,8 @@ void Route::getAirportProcedureFlags(const map::MapAirport& airport, int index, 
     MapQuery *mapQuery = QueryManager::instance()->getQueriesGui()->getMapQuery();
     hasDeparture = mapQuery->hasDepartureProcedures(airport);
     hasAnyArrival = mapQuery->hasArrivalProcedures(airport);
+
+    airportAlternate = isAirportAlternate(airport.ident);
 
     if(index == -1)
     {

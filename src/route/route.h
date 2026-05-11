@@ -194,7 +194,7 @@ public:
   /* Get flight plan dependent flags for airport procedures and the given airport. Used to select procedure filter */
   void getAirportProcedureFlags(const map::MapAirport& airport, int index, bool& departureFilter,
                                 bool& arrivalFilter, bool& hasDeparture, bool& hasAnyArrival,
-                                bool& airportDeparture, bool& airportDestination, bool& airportRoundTrip) const;
+                                bool& airportDeparture, bool& airportDestination, bool& airportAlternate, bool& airportRoundTrip) const;
   void getAirportProcedureFlags(const map::MapAirport& airport, int index, bool& departureFilter,
                                 bool& arrivalFilter) const;
 

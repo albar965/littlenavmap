@@ -80,8 +80,8 @@ enum MenuActionType
   INFORMATION, /* Show Information */
   PROCEDURE, /* Show airport procedures */
   PROCEDUREADD, /* Add airport procedures into plan */
-  CUSTOMAPPROACH, /* Create custom procedure */
-  CUSTOMDEPARTURE, /* Create custom procedure */
+  DESTINATION, /* Destination or custom procedure */
+  DEPARTURE, /* Departure or custom procedure */
   DIRECT, /* Direct to waypoint or position */
   MEASURE, /* GC measmurement line */
   RANGERINGS, /* User defined range rings */
@@ -89,8 +89,6 @@ enum MenuActionType
   PATTERN, /* Airport traffic pattern */
   HOLDING, /* Holding */
   AIRPORT_MSA, /* Airport MSA sector diagram */
-  DEPARTURE, /* Set departure in flight plan */
-  DESTINATION, /* Set destination in flight plan */
   ALTERNATE, /* Add alternate airport to flight plan */
   ADDROUTE, /* Add airport, navid or position to next flight plan leg */
   APPENDROUTE, /* Append airport, navid or position to end of flight plan */
@@ -180,8 +178,6 @@ private:
   void insertInformationMenu(QMenu& menu);
   void insertProcedureMenu(QMenu& menu);
   void insertProcedureAddMenu(QMenu& menu);
-  void insertCustomApproachMenu(QMenu& menu);
-  void insertCustomDepartureMenu(QMenu& menu);
   void insertDirectToMenu(QMenu& menu);
 
   // ----
@@ -207,8 +203,8 @@ private:
   // ui->actionMapHideHold
 
   // ----
-  void insertDepartureMenu(QMenu& menu);
   void insertDestinationMenu(QMenu& menu);
+  void insertDepartureMenu(QMenu& menu);
   void insertAlternateMenu(QMenu& menu);
 
   // ----
@@ -248,19 +244,18 @@ private:
    * @param disable Has to be set when passing a callback to insertMenuOrAction. Disables/enables the menu item
    * @param submenu true if the current item is added to a generated sub-menu
    */
-  typedef  std::function<void (const map::MapBase *base, QString& text, QIcon& icon, bool& disable,
-                               bool submenu)> ActionCallback;
+  typedef std::function<void (int index, const map::MapResultIndex& resultIndex, QString& text, QIcon& icon, bool& disable)> ActionCallback;
 
   /* Insert menu for given action and given map objects from index. Adds a sub-menu if needed.
    * tip is added as status tip and as tooltip if menu tooltips are enabled.
    * allowNoMapObject Enables the menu for an empty index (click without map object) and also inserts a coordinates menu.  */
-  void insertMenuOrAction(QMenu& menu, mc::MenuActionType actionType, const map::MapResultIndex& index,
+  void insertMenuOrAction(QMenu& menu, mc::MenuActionType actionType, const map::MapResultIndex& resultIndex,
                           const QString& text, const QString& tip, const QString& key, const QIcon& icon,
                           bool allowNoMapObject = false, const ActionCallback& callback = nullptr);
 
   /* Insert a single action. */
   QAction *insertAction(QMenu& menu, mc::MenuActionType actionType, const QString& text, const QString& tip,
-                        const QString& key, const QIcon& icon, const map::MapBase *base, bool submenu,
+                        const QString& key, const QIcon& icon, int index, const map::MapResultIndex& resultIndex,
                         bool allowNoMapObject, const ActionCallback& callback);
 
   /* Sort callback comparator for a locale-aware sorting of menu items*/

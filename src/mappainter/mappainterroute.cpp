@@ -1132,7 +1132,7 @@ void MapPainterRoute::paintProcedureSegment(const proc::MapProcedureLegs& legs, 
 
   if(leg.type == proc::START_OF_PROCEDURE &&
      // START_OF_PROCEDURE is an actual leg for departure where it connects runway and initial fix
-     !(leg.mapType & proc::PROCEDURE_DEPARTURE))
+     !(leg.mapType & proc::PROCEDURE_SID_ALL))
   {
     // Nothing to do here
     lastLines.append(line);

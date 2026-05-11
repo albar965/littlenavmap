@@ -1335,28 +1335,28 @@ const QList<map::MapRunway> *MapQuery::getRunwaysForOverview(int airportId)
 /* Get runway end and try lower and higher numbers if nothing was found - adds a dummy entry with airport
  * position if no runway ends were found */
 void MapQuery::getRunwayEndByNameFuzzy(QList<map::MapRunwayEnd>& runwayEnds, const QString& name,
-                                       const map::MapAirport& airport, bool navData) const
+                                       const map::MapAirport& airport, bool navdata) const
 {
   for(const QString& rname : atools::fs::util::runwayNameZeroPrefixVariants(name))
   {
-    runwayEndByNameFuzzy(runwayEnds, rname, airport, navData);
+    runwayEndByNameFuzzy(runwayEnds, rname, airport, navdata);
     if(!runwayEnds.isEmpty())
       return;
   }
 }
 
 void MapQuery::runwayEndByNameFuzzy(QList<map::MapRunwayEnd>& runwayEnds, const QString& name,
-                                    const map::MapAirport& airport, bool navData) const
+                                    const map::MapAirport& airport, bool navdata) const
 {
   map::MapResult result;
 
   if(!name.isEmpty())
   {
-    QString bestRunway = atools::fs::util::runwayBestFit(name, queries->getAirportQuery(navData)->getRunwayNames(airport.id));
+    QString bestRunway = atools::fs::util::runwayBestFit(name, queries->getAirportQuery(navdata)->getRunwayNames(airport.id));
 
     if(!bestRunway.isEmpty())
       getMapObjectByIdent(result, map::RUNWAYEND, bestRunway, QStringLiteral(), airport.ident,
-                          navData /* airport or runway from nav database */);
+                          navdata /* airport or runway from nav database */);
   }
 
   if(result.runwayEnds.isEmpty())

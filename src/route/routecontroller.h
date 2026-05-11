@@ -300,8 +300,8 @@ public:
   QStringList getAllRouteColumns() const;
 
   /* Add custom procedure and probably set new destination airport */
-  void showCustomApproach(map::MapAirport airport, QString dialogHeader);
-  void showCustomDeparture(map::MapAirport airport, QString dialogHeader);
+  void showCustomApproach(map::MapAirport airport);
+  void showCustomDeparture(map::MapAirport airport);
 
   /* Add custom proc for departure or destination airport. Called from main menu actions. */
   void showCustomApproachMainMenu();
@@ -457,7 +457,7 @@ private:
   void moveSelectedLegsDownTriggered();
   void moveSelectedLegsUpTriggered();
   void moveSelectedLegsInternal(MoveDirection direction);
-  void deleteSelectedLegs(const QList<int>& rows, bool selectCurrent);
+  void deleteSelectedLegs(QList<int> rows, bool selectCurrent);
   void deleteSelectedLegsInternal(const QList<int>& rows);
 
   QList<int> getSelectedRows(bool reverseRoute) const;
