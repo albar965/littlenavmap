@@ -181,6 +181,8 @@ void MapLayer::loadFromXml(atools::util::XmlStreamReader& xmlStream)
       airportMinorSymbolSize = xmlStream.readElementTextInt();
     else if(xmlStream.name() == QStringLiteral("AirportSymbolSize"))
       airportSymbolSize = xmlStream.readElementTextInt();
+    else if(xmlStream.name() == QStringLiteral("AirportWeatherSymbolSize"))
+      airportWeatherSymbolSize = xmlStream.readElementTextInt();
     else if(xmlStream.name() == QStringLiteral("AirportWeather"))
       airportWeather = xmlStream.readElementTextBool();
     else if(xmlStream.name() == QStringLiteral("AirportWeatherDetails"))
@@ -376,6 +378,7 @@ QDebug operator<<(QDebug out, const MapLayer& record)
   out << "<AirportOverviewRunway>" << record.airportOverviewRunway << "</AirportOverviewRunway>" << Qt::endl;
   out << "<AirportRouteInfo>" << record.airportRouteInfo << "</AirportRouteInfo>" << Qt::endl;
   out << "<AirportSymbolSize>" << record.airportSymbolSize << "</AirportSymbolSize>" << Qt::endl;
+  out << "<AirportWeatherSymbolSize>" << record.airportWeatherSymbolSize << "</AirportWeatherSymbolSize>" << Qt::endl;
   out << "<AirportWeather>" << record.airportWeather << "</AirportWeather>" << Qt::endl;
   out << "<AirportWeatherDetails>" << record.airportWeatherDetails << "</AirportWeatherDetails>" << Qt::endl;
   out << "<AirspaceCenter>" << record.airspaceCenter << "</AirspaceCenter>" << Qt::endl;

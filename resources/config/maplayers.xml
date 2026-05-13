@@ -56,6 +56,7 @@
         <AirportOverviewRunway>true</AirportOverviewRunway>
         <AirportRouteInfo>true</AirportRouteInfo>
         <AirportSymbolSize>3</AirportSymbolSize>
+        <AirportWeatherSymbolSize>3</AirportWeatherSymbolSize>
 
         <!-- Airport weather icons ================= -->
         <AirportWeather>true</AirportWeather>
@@ -177,6 +178,7 @@
         <AirportMinorSymbolSize>20</AirportMinorSymbolSize>
         <AirportMsaSymbolScale>8</AirportMsaSymbolScale>
         <AirportSymbolSize>20</AirportSymbolSize>
+        <AirportWeatherSymbolSize>14</AirportWeatherSymbolSize>
         <MarkerSymbolSize>24</MarkerSymbolSize>
         <MaximumTextLengthAirport>30</MaximumTextLengthAirport>
         <MaximumTextLengthAirportMinor>30</MaximumTextLengthAirportMinor>
@@ -222,6 +224,7 @@
         <AirportMinorSymbolSize>14</AirportMinorSymbolSize>
         <AirportMsaSymbolScale>4</AirportMsaSymbolScale>
         <AirportSymbolSize>18</AirportSymbolSize>
+        <AirportWeatherSymbolSize>12</AirportWeatherSymbolSize>
         <MarkerInfo>false</MarkerInfo>
         <MaximumTextLengthAirport>20</MaximumTextLengthAirport>
         <MaximumTextLengthAirportMinor>15</MaximumTextLengthAirportMinor>
@@ -250,6 +253,7 @@
         <AirportMinorInfo>false</AirportMinorInfo>
         <AirportMinorSymbolSize>12</AirportMinorSymbolSize>
         <AirportSymbolSize>16</AirportSymbolSize>
+        <AirportWeatherSymbolSize>10</AirportWeatherSymbolSize>
         <AirwayInfo>false</AirwayInfo>
         <ApproachTextDetail>false</ApproachTextDetail>
         <HoldingInfo2>false</HoldingInfo2>
@@ -271,6 +275,7 @@
         <AirportMinorName>false</AirportMinorName>
         <AirportMinorSymbolSize>10</AirportMinorSymbolSize>
         <AirportSymbolSize>14</AirportSymbolSize>
+        <AirportWeatherSymbolSize>8</AirportWeatherSymbolSize>
         <HoldingInfo>false</HoldingInfo>
         <NdbInfo>false</NdbInfo>
         <NdbSymbolSize>16</NdbSymbolSize>
@@ -287,6 +292,7 @@
         <AirportOverviewRunway>false</AirportOverviewRunway>
         <AirportMinorSymbolSize>9</AirportMinorSymbolSize>
         <AirportSymbolSize>10</AirportSymbolSize>
+        <AirportWeatherSymbolSize>6</AirportWeatherSymbolSize>
         <AirwayIdent>false</AirwayIdent>
         <ApproachText>false</ApproachText>
         <IlsDetail>false</IlsDetail>
@@ -305,6 +311,7 @@
         <AirportMinorIdent>false</AirportMinorIdent>
         <AirportMinorSymbolSize>7</AirportMinorSymbolSize>
         <AirportSymbolSize>8</AirportSymbolSize>
+        <AirportWeatherSymbolSize>6</AirportWeatherSymbolSize>
         <AirspaceFontScale>0.95</AirspaceFontScale>
         <MinRunwayLength>2000</MinRunwayLength>
         <NdbSymbolSize>8</NdbSymbolSize>
@@ -358,6 +365,7 @@
         <AirportFontScale>0.8</AirportFontScale>
         <AirportMinorSymbolSize>6</AirportMinorSymbolSize>
         <AirportSymbolSize>6</AirportSymbolSize>
+        <AirportWeatherSymbolSize>4</AirportWeatherSymbolSize>
         <AirspaceFg>false</AirspaceFg>
         <AirspaceIcao>false</AirspaceIcao>
         <AirspaceCenterText>false</AirspaceCenterText>

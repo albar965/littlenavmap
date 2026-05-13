@@ -62,7 +62,7 @@ void MapPainterWeather::render()
   const QList<MapAirport> *airportCache =
     queries->getMapQuery()->getAirports(context->viewportBox, context->mapLayer, context->lazyUpdate, context->objectTypes, overflow);
   context->setQueryOverflow(overflow);
-  float size = context->szF(context->symbolSizeAirportWeather, context->mapLayer->getAirportSymbolSize());
+  float size = context->szF(context->symbolSizeAirportWeather, context->mapLayer->getAirportWeatherSymbolSize());
 
   // Collect all airports that are visible from cache ======================================
   QList<AirportPaintData> visibleAirportWeather;

@@ -147,6 +147,11 @@ public:
     return airportSymbolSize;
   }
 
+  int getAirportWeatherSymbolSize() const
+  {
+    return airportWeatherSymbolSize;
+  }
+
   bool isAirportIdent() const
   {
     return airportIdent;
@@ -672,7 +677,7 @@ private:
 
   bool airportMsa = true, airportMsaDetails = true;
 
-  int airportSymbolSize = 3, airportMinorSymbolSize = 3, minRunwayLength = 0;
+  int airportSymbolSize = 3, airportWeatherSymbolSize = 3, airportMinorSymbolSize = 3, minRunwayLength = 0;
 
   int windBarbs = 1;
   int windBarbsSymbolSize = 6;
