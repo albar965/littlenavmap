@@ -1742,7 +1742,7 @@ The &quot;Save as&quot; dialog will show up instead of overwriting the current f
                   <string>Add departure parking, runway or airport to an empty flight plan after connecting to simulator.</string>
                  </property>
                  <property name="text">
-                  <string>Add &amp;departure position to flight plan after connecting to simulator</string>
+                  <string>Add &amp;departure and start position to flight plan after connecting to simulator</string>
                  </property>
                  <property name="checked">
                   <bool>true</bool>

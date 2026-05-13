@@ -210,8 +210,10 @@ void ParkingDialog::updateTable()
     else if(startPos.start.isValid())
     {
       // Other start position - runway or helipad ===============================================
+      QString name = startPos.start.isHelipad() ? QString::number(startPos.start.helipadNumber) : startPos.start.runwayName;
+
       items[internal::NAME] = new QTableWidgetItem(mapcolors::iconForStart(startPos.start),
-                                                   tr("%1 %2").arg(map::startType(startPos.start)).arg(startPos.start.runwayName));
+                                                   tr("%1 %2").arg(map::startType(startPos.start)).arg(name));
 
       if(!startPos.start.runwayName.isEmpty())
       {
@@ -235,7 +237,7 @@ void ParkingDialog::updateTable()
 
             // Fill runway attribute list
             QStringList atts;
-            if(runway.isLighted())
+            if(runway.hasEdgeLight())
               atts.append(tr("Lighted"));
             if(!end.secondary && runway.primaryClosed)
               atts.append(tr("Closed"));

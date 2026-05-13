@@ -849,7 +849,7 @@ void MapPainterAirport::drawAirportDiagram(const map::MapAirport& airport, const
 
     // Draw helipads ==================================================
     const QList<MapHelipad> *helipads = queries->getAirportQuerySim()->getHelipads(airport.id);
-    if(!helipads->isEmpty())
+    if(helipads != nullptr && !helipads->isEmpty())
     {
       for(const MapHelipad& helipad : *helipads)
       {

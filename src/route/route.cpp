@@ -1399,7 +1399,7 @@ bool Route::hasDepartureParking() const
 bool Route::hasDepartureRunway() const
 {
   if(hasDepartureStart())
-    return !constFirst().getDepartureStart().runwayName.isEmpty();
+    return constFirst().getDepartureStart().isRunway();
 
   return false;
 }
@@ -1407,7 +1407,7 @@ bool Route::hasDepartureRunway() const
 bool Route::hasDepartureHelipad() const
 {
   if(hasDepartureStart())
-    return constFirst().getDepartureStart().helipadNumber > 0;
+    return constFirst().getDepartureStart().isHelipad();
 
   return false;
 }

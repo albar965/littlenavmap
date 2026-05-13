@@ -338,7 +338,7 @@ void RunwayTable::addRunwayItem(const RunwayIdxEntry& entry, const QString& wind
   QStringList atts;
   const map::MapRunway& runway = entry.runway;
 
-  if(runway.isLighted())
+  if(runway.hasEdgeLight())
     atts.append(tr("Lighted"));
 
   if(entry.isPrimary() && runway.primaryClosed)

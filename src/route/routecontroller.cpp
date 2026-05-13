@@ -1010,7 +1010,7 @@ bool RouteController::selectDepartureParking()
       map::MapParking parking = parkingDialog.getSelectedParking();
       if(parking.isValid())
       {
-        routeSetParking(parking);
+        routeSetParkingPosition(parking);
         return true;
       }
       else
@@ -4095,7 +4095,7 @@ void RouteController::routeClearParkingAndStart()
   NavApp::setStatusMessage(tr("Start postition set to airport."));
 }
 
-void RouteController::routeSetParking(const map::MapParking& parking)
+void RouteController::routeSetParkingPosition(const map::MapParking& parking)
 {
   qDebug() << Q_FUNC_INFO << parking.id;
 
@@ -4139,7 +4139,6 @@ void RouteController::routeSetParking(const map::MapParking& parking)
                            arg(map::parkingNameOrNumber(parking)));
 }
 
-/* Set start position (runway, helipad) for departure */
 void RouteController::routeSetStartPosition(map::MapStart start)
 {
   qDebug() << "route set start id" << start.id;
@@ -4550,7 +4549,8 @@ void RouteController::showCustomDeparture(map::MapAirport airport)
     bool departure;
     proc::procedureFlags(route, &airport, &departure);
     QString dialogHeader = departure ? tr("Select departure runway.") : tr("Select departure airport and runway.");
-    dialogHeader.append(tr("\nSelect the airport to clear departure procedures or runway assignments."));
+    dialogHeader.append(tr("\nSelect the airport to clear departure procedures or runway assignments.\n"
+                           "Selecting a runway from the list will insert additional waypoints for guidance in the flight plan."));
 
     // Get the simulator runway end id to pre-select runway end row in dialog =================================
     // Check if there is already a SID to fetch current runway selection
@@ -5795,7 +5795,7 @@ void RouteController::validAircraftReceived(const atools::fs::sc::SimConnectUser
 
       // Add nearest object to plan as  departure positionF
       if(first->objType == map::PARKING)
-        routeSetParking(first->asObj<map::MapParking>());
+        routeSetParkingPosition(first->asObj<map::MapParking>());
       else if(first->objType == map::START)
         routeSetStartPosition(first->asObj<map::MapStart>());
       else if(first->objType == map::AIRPORT)

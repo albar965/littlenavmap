@@ -171,6 +171,9 @@
      <property name="text">
       <string>&amp;Runways:</string>
      </property>
+     <property name="textInteractionFlags">
+      <set>Qt::LinksAccessibleByMouse|Qt::TextSelectableByMouse</set>
+     </property>
      <property name="buddy">
       <cstring>tableWidgetCustomProcRunway</cstring>
      </property>

@@ -63,6 +63,7 @@ void MapTypesFactory::fillRunway(const atools::sql::SqlRecord& record, map::MapR
     runway.primaryName = record.valueStr(QStringLiteral("primary_name"));
     runway.secondaryName = record.valueStr(QStringLiteral("secondary_name"));
     runway.edgeLight = record.valueStr(QStringLiteral("edge_light"));
+    runway.centerLight = record.valueStr(QStringLiteral("center_light"));
     runway.width = record.valueFloat(QStringLiteral("width"));
     runway.primaryOffset = record.valueFloat(QStringLiteral("primary_offset_threshold"));
     runway.secondaryOffset = record.valueFloat(QStringLiteral("secondary_offset_threshold"));
@@ -413,21 +414,21 @@ void MapTypesFactory::fillNdb(const SqlRecord& record, map::MapNdb& ndb)
 
 void MapTypesFactory::fillHelipad(const SqlRecord& record, map::MapHelipad& helipad)
 {
-  helipad.position = Pos(record.value(QStringLiteral("lonx")).toFloat(), record.value(QStringLiteral("laty")).toFloat());
-
-  helipad.start = record.isNull(QStringLiteral("start_number")) ? -1 : record.value(QStringLiteral("start_number")).toInt();
-
   helipad.id = record.valueInt(QStringLiteral("helipad_id"));
-  helipad.startId = record.isNull(QStringLiteral("start_id")) ? -1 : record.valueInt(QStringLiteral("start_id"));
   helipad.airportId = record.valueInt(QStringLiteral("airport_id"));
-  helipad.runwayName = record.value(QStringLiteral("runway_name")).toString();
-  helipad.width = record.value(QStringLiteral("width")).toInt();
-  helipad.length = record.value(QStringLiteral("length")).toInt();
-  helipad.heading = static_cast<int>(std::roundf(record.value(QStringLiteral("heading")).toFloat()));
-  helipad.surface = record.value(QStringLiteral("surface")).toString();
-  helipad.type = record.value(QStringLiteral("type")).toString();
-  helipad.transparent = record.value(QStringLiteral("is_transparent")).toInt() > 0;
-  helipad.closed = record.value(QStringLiteral("is_closed")).toInt() > 0;
+  helipad.startId = record.isNull(QStringLiteral("start_id")) ? -1 : record.valueInt(QStringLiteral("start_id"));
+  helipad.surface = record.valueStr(QStringLiteral("surface"));
+  helipad.type = record.valueStr(QStringLiteral("type"));
+  helipad.length = record.valueInt(QStringLiteral("length"));
+  helipad.width = record.valueInt(QStringLiteral("width"));
+  helipad.heading = atools::roundToInt(record.valueFloat(QStringLiteral("heading")));
+  helipad.transparent = record.valueInt(QStringLiteral("is_transparent")) > 0;
+  helipad.closed = record.valueInt(QStringLiteral("is_closed")) > 0;
+  helipad.position = Pos(record.valueFloat(QStringLiteral("lonx")), record.valueFloat(QStringLiteral("laty")));
+
+  // From outer join with start
+  helipad.startNumber = record.isNull(QStringLiteral("start_number")) ? -1 : record.valueInt(QStringLiteral("start_number"));
+  helipad.startName = record.valueStr(QStringLiteral("start_name"));
 }
 
 void MapTypesFactory::fillWaypoint(const SqlRecord& record, map::MapWaypoint& waypoint, bool track)
@@ -810,10 +811,25 @@ void MapTypesFactory::fillStart(const SqlRecord& record, map::MapStart& start)
   start.airportId = record.valueInt(QStringLiteral("airport_id"));
   start.type = atools::charAt(record.valueStr(QStringLiteral("type")), 0);
   start.runwayName = record.valueStr(QStringLiteral("runway_name"));
+  start.runwayEndId = record.valueInt(QStringLiteral("runway_end_id"), 0);
   start.helipadNumber = record.isNull(QStringLiteral("number")) ? -1 : record.valueInt(QStringLiteral("number"), -1);
   start.position = Pos(record.valueFloat(QStringLiteral("lonx")), record.valueFloat(QStringLiteral("laty")),
                        record.valueFloat(QStringLiteral("altitude")));
   start.heading = record.valueFloat(QStringLiteral("heading"));
+
+  // Fix wrong helipad numbers in runwayName from MSFS 2024
+  if(start.isHelipad())
+  {
+    if(start.runwayName.isEmpty() && start.helipadNumber >= 0)
+      start.runwayName = QStringLiteral("%1").arg(start.helipadNumber, 2, 10, QChar('0'));
+    else if(!start.runwayName.isEmpty() && start.helipadNumber < 0)
+    {
+      bool ok;
+      start.helipadNumber = start.runwayName.toInt(&ok);
+      if(!ok)
+        start.helipadNumber = -1;
+    }
+  }
 }
 
 void MapTypesFactory::fillAirspace(const SqlRecord& record, map::MapAirspace& airspace, map::MapAirspaceSource src)

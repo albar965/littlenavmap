@@ -60,10 +60,9 @@ RouteLabel::RouteLabel(QWidget *parent, const Route& routeParam)
   linkTooltipHandler->addWidget(ui->labelRouteInfo);
 
   // The keys have to match the query item key "tooltip" to provide a tooltip ============================
-  linkTooltipHandler->addUrlTooltip(QStringLiteral("showdepartureparking"), tr("Show the departure position at the airport"));
-
   // Use callback function to get airport information tooltip
-  linkTooltipHandler->addUrlTooltipFunction({QStringLiteral("showdeparture"), QStringLiteral("showdestination")},
+  linkTooltipHandler->addUrlTooltipFunction({QStringLiteral("showdeparture"), QStringLiteral("showdestination"),
+                                             QStringLiteral("showdepartureparking")},
                                             std::bind(&RouteLabel::tooltipFunction, this, std::placeholders::_1));
 
   // Show error messages in tooltip on click ========================================
@@ -121,24 +120,34 @@ void RouteLabel::fontChanged(const QFont&)
 
 QString RouteLabel::tooltipFunction(const QString& key)
 {
-  map::MapAirport airport;
-  QString text;
+  QString prefix;
+
+  map::MapResult result;
 
   if(key == QStringLiteral("showdeparture"))
   {
-    airport = route.getDepartureAirportLeg().getAirport();
-    text = tr("Click here to show the departure airport on the map and in information.");
+    result.airports.append(route.getDepartureAirportLeg().getAirport());
+    prefix = tr("Click here to show the departure airport on the map and in information.");
   }
   else if(key == QStringLiteral("showdestination"))
   {
-    airport = route.getDestinationAirportLeg().getAirport();
-    text = tr("Click here to show the destination airport on the map and in information.");
+    result.airports.append(route.getDestinationAirportLeg().getAirport());
+    prefix = tr("Click here to show the destination airport on the map and in information.");
+  }
+  else if(key == QStringLiteral("showdepartureparking"))
+  {
+    if(route.hasDepartureStart())
+      result.starts.append(route.getDepartureStart());
+
+    if(route.hasDepartureParking())
+      result.parkings.append(route.getDepartureParking());
+
+    prefix = tr("Click here to show the start position on the map.");
   }
 
   MapTooltip mapTooltip(NavApp::getMainWindow());
-  return mapTooltip.buildTooltip(map::MapResult::createFromMapBase(&airport), atools::geo::EMPTY_POS, route, false /* airportDiagram */,
-                                 optsd::TOOLTIP_AIRPORT, text,
-                                 atools::roundToInt(QFontMetricsF(NavApp::getMainUi()->labelRouteInfo->font()).height() * 0.9));
+  return mapTooltip.buildTooltip(result, atools::geo::EMPTY_POS, nullptr, true /* airportDiagram */,
+                                 optsd::TOOLTIP_AIRPORT, prefix);
 }
 
 void RouteLabel::updateAll()
@@ -303,7 +312,7 @@ void RouteLabel::buildHeaderAirports(atools::util::HtmlBuilder& html, bool widge
     {
       const map::MapStart& start = route.getDepartureAirportLeg().getDepartureStart();
       if(route.hasDepartureHelipad())
-        departureParking += tr("Helipad %1").arg(start.runwayName);
+        departureParking += tr("Helipad %1").arg(start.helipadNumber);
       else if(route.hasDepartureRunway())
         departureParking += tr("Runway %1").arg(start.runwayName);
       else

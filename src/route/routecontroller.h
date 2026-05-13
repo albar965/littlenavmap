@@ -207,7 +207,7 @@ public:
 
   /* Set departure parking position. If the airport of the parking spot is different to
    * the current departure it will be replaced too. */
-  void routeSetParking(const map::MapParking& parking); /* From map context menu */
+  void routeSetParkingPosition(const map::MapParking& parking); /* From map context menu */
   void routeSetHelipad(const map::MapHelipad& helipad); /* From map context menu */
   void routeClearParkingAndStart(); /* Main menu and parking dialog - set airport as start */
 
@@ -434,6 +434,7 @@ private:
   /* Call this after doing a change to the flight plan that should be undoable */
   void postChange(RouteCommand *undoCommand);
 
+  /* Set start position (runway, helipad) for departure */
   void routeSetStartPosition(map::MapStart start);
 
   /* Double click into table view */

@@ -665,7 +665,7 @@ void MapWidget::showTooltip(bool update)
       // Build a new tooltip HTML for weather changes or aircraft updates
       QString text;
       if(paintLayer->getMapLayer() != nullptr)
-        text = mapTooltip->buildTooltip(*mapResultTooltip, pos, NavApp::getRouteConst(), paintLayer->getMapLayer()->isAirportDiagram(),
+        text = mapTooltip->buildTooltip(*mapResultTooltip, pos, &NavApp::getRouteConst(), paintLayer->getMapLayer()->isAirportDiagram(),
                                         OptionData::instance().getDisplayTooltipOptions());
 
       if(!text.isEmpty())

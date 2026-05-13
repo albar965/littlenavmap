@@ -583,15 +583,13 @@ void MapContextMenu::insertDepartureMenu(QMenu& menu)
         {
           // User clicked on helipad ================================
           const map::MapHelipad *helipad = base->asPtr<map::MapHelipad>();
-          map::MapStart start;
-          airportQuery->getStartById(start, helipad->startId);
 
           // Get related airport
           airport = airportQuery->getAirportById(helipad->airportId);
-          parkingText = tr("%1 at ").arg(atools::elideTextShortMiddle(map::helipadText(*helipad), TEXT_ELIDE));
+          parkingText = atools::elideTextShortMiddle(map::helipadText(*helipad), TEXT_ELIDE);
 
           map::MapStart currentStart = route.getDepartureStart();
-          if(currentStart.isHelipad() && start.isHelipad() && currentStart.id == start.id)
+          if(currentStart.isHelipad() && currentStart.id == helipad->startId)
           {
             // Same helipad already selected
             disable = true;
@@ -605,7 +603,7 @@ void MapContextMenu::insertDepartureMenu(QMenu& menu)
 
           // Get related airport
           airport = airportQuery->getAirportById(parking->airportId);
-          parkingText = tr("%1 at ").arg(atools::elideTextShortMiddle(map::parkingText(*parking), TEXT_ELIDE));
+          parkingText = atools::elideTextShortMiddle(map::parkingText(*parking), TEXT_ELIDE);
 
           map::MapParking currentParking = route.getDepartureParking();
           if(currentParking.id == parking->id)
@@ -624,6 +622,8 @@ void MapContextMenu::insertDepartureMenu(QMenu& menu)
 
         if(departure)
         {
+          if(!parkingText.isEmpty())
+            parkingText = tr("%1 ").arg(parkingText);
           if(noRunways && base->getType() == map::AIRPORT)
           {
             // Airport is already departure and has no runways - disable
@@ -638,8 +638,12 @@ void MapContextMenu::insertDepartureMenu(QMenu& menu)
             text = tr("Select {parking}for %1");
         }
         else if(!destination)
+        {
+          if(!parkingText.isEmpty())
+            parkingText = tr("%1 at ").arg(parkingText);
           // Normal airport in flight plan or outside - can select airport or parking/helipad
           text = submenu ? tr("{parking}%1") : tr("Select {parking}%1 as Departure");
+        }
         else
           disable = true;
 

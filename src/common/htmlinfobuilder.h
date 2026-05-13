@@ -143,7 +143,8 @@ public:
    * @param html Result containing HTML snippet
    * @param background Background color for icons
    */
-  void runwayText(const map::MapAirport& airport, atools::util::HtmlBuilder& html, bool details = true, bool soft = true) const;
+  void runwayText(const map::MapAirport& airport, atools::util::HtmlBuilder& html, const Route *route, bool details = true,
+                  bool soft = true) const;
 
   /* Adds text for preferred runways */
   void bestRunwaysText(const map::MapAirport& airport, atools::util::HtmlBuilder& html, const atools::fs::weather::MetarParser& parsed,
@@ -155,7 +156,7 @@ public:
    * @param html Result containing HTML snippet
    * @param background Background color for icons
    */
-  void comText(const map::MapAirport& airport, atools::util::HtmlBuilder& html) const;
+  void comText(const map::MapAirport& airport, atools::util::HtmlBuilder& html, const Route *route) const;
 
   /*
    * Creates a HTML description for all approaches of an airport.
@@ -163,17 +164,18 @@ public:
    * @param html Result containing HTML snippet
    * @param background Background color for icons
    */
-  void procedureText(const map::MapAirport& airport, atools::util::HtmlBuilder& html) const;
+  void procedureText(const map::MapAirport& airport, atools::util::HtmlBuilder& html, const Route *route) const;
 
   /* Get information for navaids and airports near the currently displayed airport */
-  void nearestText(const map::MapAirport& airport, atools::util::HtmlBuilder& html) const;
+  void nearestText(const map::MapAirport& airport, atools::util::HtmlBuilder& html, const Route *route) const;
 
   /* Create HTML for decoded weather report for current airport */
-  void weatherText(const map::WeatherContext& context, const map::MapAirport& airport, atools::util::HtmlBuilder& html) const;
+  void weatherText(const map::WeatherContext& context, const map::MapAirport& airport, atools::util::HtmlBuilder& html,
+                   const Route *route) const;
 
   /* Database nav features */
-  void airportMsaText(const map::MapAirportMsa& msa, atools::util::HtmlBuilder& html) const;
-  void holdingText(const map::MapHolding& holding, atools::util::HtmlBuilder& html) const;
+  void airportMsaText(const map::MapAirportMsa& msa, atools::util::HtmlBuilder& html, const Route *) const;
+  void holdingText(const map::MapHolding& holding, atools::util::HtmlBuilder& html, const Route *) const;
 
   /*
    * Creates a HTML description for a VOR station.
@@ -181,7 +183,7 @@ public:
    * @param html Result containing HTML snippet
    * @param background Background color for icons
    */
-  void vorText(const map::MapVor& vor, atools::util::HtmlBuilder& html) const;
+  void vorText(const map::MapVor& vor, atools::util::HtmlBuilder& html, const Route *route) const;
 
   /*
    * Creates a HTML description for a NDB station.
@@ -189,12 +191,15 @@ public:
    * @param html Result containing HTML snippet
    * @param background Background color for icons
    */
-  void ndbText(const map::MapNdb& ndb, atools::util::HtmlBuilder& html) const;
+  void ndbText(const map::MapNdb& ndb, atools::util::HtmlBuilder& html, const Route *route) const;
 
   /*
    * Creates a HTML description for ILS.
    */
-  void ilsTextInfo(const map::MapIls& ils, atools::util::HtmlBuilder& html) const;
+  void ilsTextInfo(const map::MapIls& ils, atools::util::HtmlBuilder& html, const Route *) const
+  {
+    ilsTextInternal(ils, html, false /* procInfo */, true /* infoOrTooltip */);
+  }
 
   /*
    * Creates a HTML description for a waypoint including all attached airways.
@@ -202,22 +207,22 @@ public:
    * @param html Result containing HTML snippet
    * @param background Background color for icons
    */
-  void waypointText(const map::MapWaypoint& waypoint, atools::util::HtmlBuilder& html) const;
+  void waypointText(const map::MapWaypoint& waypoint, atools::util::HtmlBuilder& html, const Route *route) const;
 
   /* Description for user defined points */
   bool userpointText(map::MapUserpoint userpoint, atools::util::HtmlBuilder& html) const;
-  void userpointTextInfo(const map::MapUserpoint& userpoint, atools::util::HtmlBuilder& html) const;
+  void userpointTextInfo(const map::MapUserpoint& userpoint, atools::util::HtmlBuilder& html, const Route *) const;
 
   /* Description for logbook entries */
   bool logEntryText(map::MapLogbookEntry logEntry, atools::util::HtmlBuilder& html) const;
-  void logEntryTextInfo(const map::MapLogbookEntry& logEntry, atools::util::HtmlBuilder& html) const;
+  void logEntryTextInfo(const map::MapLogbookEntry& logEntry, atools::util::HtmlBuilder& html, const Route *) const;
 
   /*
    * Creates a HTML description of an airway. For info this includes all waypoints.
    * @param airway
    * @param html Result containing HTML snippet
    */
-  void airwayText(const map::MapAirway& airway, atools::util::HtmlBuilder& html) const;
+  void airwayText(const map::MapAirway& airway, atools::util::HtmlBuilder& html, const Route *) const;
   void airspaceText(const map::MapAirspace& airspace, const atools::sql::SqlRecord& onlineRec,
                     atools::util::HtmlBuilder& html) const;
 
@@ -226,41 +231,49 @@ public:
    * @param marker
    * @param html Result containing HTML snippet
    */
-  void markerText(const map::MapMarker& marker, atools::util::HtmlBuilder& html) const;
+  void markerText(const map::MapMarker& marker, atools::util::HtmlBuilder& html, const Route *) const;
 
   /*
    * Creates a HTML description for an airport's tower including frequency if available.
    * @param airport
    * @param html Result containing HTML snippet
    */
-  void towerText(const map::MapAirport& airport, atools::util::HtmlBuilder& html) const;
+  void towerText(const map::MapAirport& airport, atools::util::HtmlBuilder& html, const Route *) const;
 
   /*
    * Creates a HTML description for a parking spot (ramp GA, gate, etc.).
    * @param parking
    * @param html Result containing HTML snippet
    */
-  void parkingText(const map::MapParking& parking, atools::util::HtmlBuilder& html) const;
+  void parkingText(const map::MapParking& parking, atools::util::HtmlBuilder& html, const Route *route) const;
 
   /*
    * Creates a HTML description for a helipad. Only called for tooltip
    * @param helipad
    * @param html Result containing HTML snippet
    */
-  void helipadText(const map::MapHelipad& helipad, atools::util::HtmlBuilder& html) const;
+  void helipadText(const map::MapHelipad& helipad, atools::util::HtmlBuilder& html, const Route *) const;
+
+  /*
+   * Creates a HTML description for a start. Only called for tooltip. Start can be helipad or runway end.
+   * @param start
+   * @param html Result containing HTML snippet
+   */
+  void startText(const map::MapStart& start, atools::util::HtmlBuilder& html, const Route *) const;
 
   /*
    * Creates a HTML description for a all upper layer winds at position
    * @param html Result containing HTML snippet
    */
-  void windText(const atools::grib::WindPosList& windStack, atools::util::HtmlBuilder& html, float waypointAltitude, bool table) const;
+  void windText(const atools::grib::WindPosList& windStack, atools::util::HtmlBuilder& html, float waypointAltitude, bool table,
+                const Route *route) const;
 
   /*
    * Creates a HTML description for a user defined flight plan point.
    * @param userpoint
    * @param html Result containing HTML snippet
    */
-  void userpointTextRoute(const map::MapUserpointRoute& userpoint, atools::util::HtmlBuilder& html) const;
+  void userpointTextRoute(const map::MapUserpointRoute& userpoint, atools::util::HtmlBuilder& html, const Route *route) const;
 
   void procedurePointText(const map::MapProcedurePoint& procPoint, atools::util::HtmlBuilder& html, const Route *route) const;
 
@@ -277,7 +290,7 @@ public:
    * @param html
    * @param html Result containing HTML snippet
    */
-  void aircraftProgressText(const atools::fs::sc::SimConnectAircraft& data, atools::util::HtmlBuilder& html, const Route& route);
+  void aircraftProgressText(const atools::fs::sc::SimConnectAircraft& data, atools::util::HtmlBuilder& html, const Route *route);
 
   /*
    * Create HTML for online aircraft also showing position.
@@ -288,11 +301,11 @@ public:
   void aircraftTrailText(const map::AircraftTrailSegment& trailSegment, atools::util::HtmlBuilder& html, bool logbook) const;
 
   /* User features / marks */
-  void msaMarkerText(const map::MsaMarker& msa, atools::util::HtmlBuilder& html) const;
-  void holdingMarkerText(const map::HoldingMarker& holding, atools::util::HtmlBuilder& html) const;
-  void patternMarkerText(const map::PatternMarker& pattern, atools::util::HtmlBuilder& html) const;
-  void rangeMarkerText(const map::RangeMarker& marker, atools::util::HtmlBuilder& html) const;
-  void distanceMarkerText(const map::DistanceMarker& marker, atools::util::HtmlBuilder& html) const;
+  void msaMarkerText(const map::MsaMarker& msa, atools::util::HtmlBuilder& html, const Route *) const;
+  void holdingMarkerText(const map::HoldingMarker& holding, atools::util::HtmlBuilder& html, const Route *) const;
+  void patternMarkerText(const map::PatternMarker& pattern, atools::util::HtmlBuilder& html, const Route *) const;
+  void rangeMarkerText(const map::RangeMarker& marker, atools::util::HtmlBuilder& html, const Route *) const;
+  void distanceMarkerText(const map::DistanceMarker& marker, atools::util::HtmlBuilder& html, const Route *) const;
 
   void setSymbolSize(const QSize& value)
   {
@@ -309,8 +322,9 @@ public:
     symbolSizeTitle = value;
   }
 
-  /* Add bearing and distance to user and last flight plan leg in a table if pos is valid */
-  void bearingAndDistanceTexts(const atools::geo::Pos& pos, float magvar, atools::util::HtmlBuilder& html, bool bearing, bool distance);
+  /* Add bearing and distance to user and last flight plan leg in a table if pos is valid. Only tooltip. */
+  void bearingAndDistanceTexts(const atools::geo::Pos& pos, float magvar, atools::util::HtmlBuilder& html, bool bearing, bool distance,
+                               const Route *route);
 
   /* Lock and unlock internal query class for threaded access */
   void lock();
@@ -321,11 +335,12 @@ private:
   void head(atools::util::HtmlBuilder& html, const QString& text, const QStringList& textHref = QStringList()) const;
 
   /* Header with map and information link depending on type */
-  void head(atools::util::HtmlBuilder& html, const QString& text, const RouteLeg& leg);
-  void head(atools::util::HtmlBuilder& html, const QString& text, int id, map::MapType type, const atools::geo::Pos& pos);
+  void head(atools::util::HtmlBuilder& html, const QString& text, const RouteLeg& leg, const Route *route);
+  void head(atools::util::HtmlBuilder& html, const QString& text, int id, map::MapType type, const atools::geo::Pos& pos,
+            const Route *route);
 
   /* Header with map link to position */
-  void head(atools::util::HtmlBuilder& html, const QString& text, const atools::geo::Pos& pos);
+  void head(atools::util::HtmlBuilder& html, const QString& text, const atools::geo::Pos& pos, const Route *route);
 
   bool nearestMapObjectsText(const map::MapAirport& airport, atools::util::HtmlBuilder& html,
                              const map::MapResultIndex *nearestNav, const QString& header, bool frequencyCol,
@@ -354,11 +369,11 @@ private:
   bool bearingToUserText(const atools::geo::Pos& pos, float magVar, atools::util::HtmlBuilder& html) const;
 
   /* Distance to last flight plan waypoint. Returns true if text was addded. */
-  bool distanceToRouteText(const atools::geo::Pos& pos, atools::util::HtmlBuilder& html) const;
+  bool distanceToRouteText(const atools::geo::Pos& pos, atools::util::HtmlBuilder& html, const Route *route) const;
 
   void navaidTitle(atools::util::HtmlBuilder& html, const QString& text, bool noEntities = false) const;
 
-  void airportTitle(const map::MapAirport& airport, atools::util::HtmlBuilder& html, int rating, bool procedures) const;
+  void airportTitle(const map::MapAirport& airport, atools::util::HtmlBuilder& html, int rating, bool procedures, const Route *route) const;
 
   void airportMsaTextInternal(const map::MapAirportMsa& msa, atools::util::HtmlBuilder& html, bool user) const;
   void holdingTextInternal(const map::MapHolding& holding, atools::util::HtmlBuilder& html, bool user) const;
@@ -369,8 +384,8 @@ private:
   void rowForBool(atools::util::HtmlBuilder& html, const atools::sql::SqlRecord *rec, const QString& colName,
                   const QString& msg, bool expected = false) const;
 
-  void runwayEndText(atools::util::HtmlBuilder& html, const map::MapAirport& airport, const atools::sql::SqlRecord *rec,
-                     float headingPrimaryTrue, float length, bool secondary) const;
+  void runwayEndText(const map::MapAirport& airport, atools::util::HtmlBuilder& html, const atools::sql::SqlRecord *rec,
+                     float runwayEndHeadingTrue, float length, bool secondary) const;
 
   void rowForStr(atools::util::HtmlBuilder& html, const atools::sql::SqlRecord *rec, const QString& colName,
                  const QString& msg, const QString& val) const;
@@ -407,7 +422,7 @@ private:
 
   void airportRow(const map::MapAirport& ap, atools::util::HtmlBuilder& html) const;
 
-  void addFlightRulesSuffix(atools::util::HtmlBuilder& html, const atools::fs::weather::MetarParser& metar, bool mapDisplay) const;
+  void addFlightRulesSuffix(atools::util::HtmlBuilder& html, const atools::fs::weather::MetarParser& metar) const;
 
   /* Insert airport link using ident and/or name */
   QString airportLink(const atools::util::HtmlBuilder& html, const QString& ident,
@@ -419,28 +434,36 @@ private:
   /* Add morse code row2line */
   void addMorse(atools::util::HtmlBuilder& html, const QString& name, const QString& code) const;
 
-  void ilsTextProcInfo(const map::MapIls& ils, atools::util::HtmlBuilder& html) const;
-  void ilsTextRunwayInfo(const map::MapIls& ils, atools::util::HtmlBuilder& html) const;
+  void ilsTextProcInfo(const map::MapIls& ils, atools::util::HtmlBuilder& html) const
+  {
+    ilsTextInternal(ils, html, true /* procInfo */, false /* infoOrTooltip */);
+  }
+
+  void ilsTextRunwayInfo(const map::MapIls& ils, atools::util::HtmlBuilder& html) const
+  {
+    ilsTextInternal(ils, html, false /* procInfo */, false /* infoOrTooltip */);
+  }
+
   void ilsTextInternal(const map::MapIls& ils, atools::util::HtmlBuilder& html, bool procInfo, bool infoOrTooltip) const;
 
   /* Add wind text for flight plan waypoints */
-  void routeWindText(atools::util::HtmlBuilder& html, const Route& route, int index) const;
+  void routeWindText(atools::util::HtmlBuilder& html, const Route *route, int index) const;
 
   QString identRegionText(const QString& ident, const QString& region) const;
 
   /* Add remarks from a routeleg at the given index to a table */
-  void flightplanWaypointRemarks(atools::util::HtmlBuilder& html, int index) const;
+  void flightplanWaypointRemarks(atools::util::HtmlBuilder& html, int index, const Route *route) const;
 
   /* Join values and header with default values */
   QString strJoinVal(const QStringList& list) const;
   QString strJoinHdr(const QStringList& list) const;
 
   QString highlightText(const QString& text) const;
-  void routeInfoText(atools::util::HtmlBuilder& html, int routeIndex, bool recommended) const;
+  void routeInfoText(atools::util::HtmlBuilder& html, int routeIndex, bool recommended, const Route *route) const;
 
   void waypointAirwayText(const map::MapWaypoint& waypoint, atools::util::HtmlBuilder& html) const;
-  void airportProcedureLinkTexts(QString& text, QString& href, const map::MapAirport& airport) const;
-  void airportProcedureLinks(atools::util::HtmlBuilder& html, const map::MapAirport& airport) const;
+  void airportProcedureLinkTexts(QString& text, QString& href, const map::MapAirport& airport, const Route *route) const;
+  void airportProcedureLinks(atools::util::HtmlBuilder& html, const map::MapAirport& airport, const Route *route) const;
 
   QString sunriseSunsetText(const atools::geo::Pos& pos, const QDateTime& datetime) const;
 

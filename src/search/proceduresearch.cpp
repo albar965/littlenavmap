@@ -259,10 +259,9 @@ ProcedureSearch::~ProcedureSearch()
 QString ProcedureSearch::tooltipFunction(const QString&)
 {
   MapTooltip mapTooltip(mainWindow);
-  return mapTooltip.buildTooltip(map::MapResult::createFromMapBase(currentAirportSim), atools::geo::EMPTY_POS, NavApp::getRoute(),
+  return mapTooltip.buildTooltip(map::MapResult::createFromMapBase(currentAirportSim), atools::geo::EMPTY_POS, &NavApp::getRouteConst(),
                                  false /* airportDiagram */, optsd::TOOLTIP_AIRPORT,
-                                 tr("Click here to show airport on the map and in information."),
-                                 atools::roundToInt(QFontMetricsF(NavApp::getMainUi()->labelRouteInfo->font()).height() * 0.9));
+                                 tr("Click here to show airport on the map and in information."));
 }
 
 void ProcedureSearch::airportLabelLinkActivated(const QString& link)

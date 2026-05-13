@@ -437,7 +437,7 @@ inline void RequestHandler::handleHtmlFileRequest(HttpRequest& request, HttpResp
 
       {
         HtmlInfoBuilderLocker locker(htmlInfoBuilder);
-        htmlInfoBuilder->aircraftProgressText(userAircraft, html, route);
+        htmlInfoBuilder->aircraftProgressText(userAircraft, html, &route);
       }
       t.setVariable(QStringLiteral(u"aircraftProgressText"), html.getHtml());
     }

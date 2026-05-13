@@ -136,7 +136,7 @@ const SqlRecordList *InfoQuery::getRunwayInformation(int airportId)
   return query::cachedRecordList(runwayCache, runwayQuery, airportId);
 }
 
-void InfoQuery::getRunwayEnds(maptools::RwVector& ends, int airportId)
+void InfoQuery::getRunwayEnds(maptools::RunwayList& ends, int airportId)
 {
   const SqlRecordList *recVector = getRunwayInformation(airportId);
   if(recVector != nullptr)

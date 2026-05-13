@@ -260,13 +260,14 @@ void PrintSupport::addAirport(QTextCursor& cursor, const map::MapAirport& airpor
       cursor.insertBlock(pageBreakBlock);
   }
 
+  const Route *route = &NavApp::getRouteConst();
   if(departure ? (opts& prt::DEPARTURE_RUNWAYS) : (opts & prt::DESTINATION_RUNWAYS))
   {
     html.clear();
     if(!newPage)
       html.hr();
     html.h3(tr("%1 Airport Runways").arg(prefix));
-    builder.runwayText(airport, html,
+    builder.runwayText(airport, html, route,
                        departure ? (opts& prt::DEPARTURE_RUNWAYS_DETAIL) : (opts & prt::DESTINATION_RUNWAYS_DETAIL),
                        departure ? (opts& prt::DEPARTURE_RUNWAYS_SOFT) : (opts & prt::DESTINATION_RUNWAYS_SOFT));
     cursor.insertHtml(html.getHtml());
@@ -280,7 +281,7 @@ void PrintSupport::addAirport(QTextCursor& cursor, const map::MapAirport& airpor
     if(!newPage)
       html.hr();
     html.h3(tr("%1 Airport COM Frequencies").arg(prefix));
-    builder.comText(airport, html);
+    builder.comText(airport, html, route);
     cursor.insertHtml(html.getHtml());
     if(newPage)
       cursor.insertBlock(pageBreakBlock);
@@ -292,7 +293,7 @@ void PrintSupport::addAirport(QTextCursor& cursor, const map::MapAirport& airpor
     if(!newPage)
       html.hr();
     html.h3(tr("%1 Airport Weather").arg(prefix));
-    builder.weatherText(weatherContext, airport, html);
+    builder.weatherText(weatherContext, airport, html, route);
     cursor.insertHtml(html.getHtml());
     if(newPage)
       cursor.insertBlock(pageBreakBlock);
@@ -304,7 +305,7 @@ void PrintSupport::addAirport(QTextCursor& cursor, const map::MapAirport& airpor
     if(!newPage)
       html.hr();
     html.h3(tr("%1 Airport Procedures").arg(prefix));
-    builder.procedureText(airport, html);
+    builder.procedureText(airport, html, route);
     cursor.insertHtml(html.getHtml());
     if(newPage)
       cursor.insertBlock(pageBreakBlock);

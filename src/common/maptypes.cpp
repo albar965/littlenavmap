@@ -892,6 +892,22 @@ const QString& surfaceName(const QString& surface)
   return atools::hashValue(surfaceMap, surface);
 }
 
+QString helipadTypeToStr(const QString& type)
+{
+  // if(type.startsWith(QStringLiteral("N")))
+  // return QObject::tr("None");
+  if(type.startsWith(QStringLiteral("H")))
+    return QObject::tr("H", "Helipad type");
+  else if(type.startsWith(QStringLiteral("S")))
+    return QObject::tr("Square", "Helipad type");
+  else if(type.startsWith(QStringLiteral("C")))
+    return QObject::tr("Circle", "Helipad type");
+  else if(type.startsWith(QStringLiteral("M")))
+    return QObject::tr("Medical", "Helipad type");
+
+  return QStringLiteral();
+}
+
 QString smoothnessName(QVariant smoothnessVar)
 {
   QString smoothnessStr;
@@ -2173,7 +2189,7 @@ QString aircraftTextShort(const atools::fs::sc::SimConnectAircraft& aircraft)
 
 QString helipadText(const MapHelipad& helipad)
 {
-  return QObject::tr("Helipad %1").arg(helipad.runwayName);
+  return QObject::tr("Helipad %1").arg(helipad.startNumber);
 }
 
 int routeIndex(const map::MapBase *base)

@@ -185,6 +185,7 @@ public:
   const QList<map::MapStart> *getStartPositionsForAirport(int airportId);
 
   const QList<map::MapHelipad> *getHelipads(int airportId);
+  const map::MapHelipad getHelipadForStart(const map::MapStart& start);
 
   /* Get nearest airports that have a procedure and are sorted by distance to pos with a maximum distance distanceNm.
    * Uses distance * 4 and searches again if nothing was found.*/

@@ -39,7 +39,9 @@
    <item>
     <widget class="QLabel" name="labelParkingSelectionHeader">
      <property name="text">
-      <string>Select departure start position:</string>
+      <string>Select departure start position.
+This is the position where your aircraft is placed before startup.
+Aircraft is automatically placed in MSFS simulators. You have to select the start position manually in X-Plane.</string>
      </property>
      <property name="textInteractionFlags">
       <set>Qt::LinksAccessibleByMouse|Qt::TextSelectableByMouse</set>

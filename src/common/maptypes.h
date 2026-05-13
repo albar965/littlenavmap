@@ -504,7 +504,7 @@ struct MapRunway
     return map::RUNWAY;
   }
 
-  QString surface, shoulder, primaryName, secondaryName, edgeLight;
+  QString surface, shoulder, primaryName, secondaryName, edgeLight, centerLight;
   float length /* ft */;
   int primaryEndId, secondaryEndId;
   float heading, /* true degrees of primary */
@@ -540,9 +540,14 @@ struct MapRunway
     return isSoftSurface(surface);
   }
 
-  bool isLighted() const
+  bool hasEdgeLight() const
   {
     return !edgeLight.isEmpty();
+  }
+
+  bool hasCenterLight() const
+  {
+    return !centerLight.isEmpty();
   }
 
   const atools::geo::Pos& getPosition() const
@@ -737,7 +742,8 @@ struct MapStart
   }
 
   QChar type = '\0' /* R(UNWAY), H(ELIPAD) or W(ATER) */;
-  QString runwayName /* not empty if this is a runway start */;
+  QString runwayName /* Runway name. Also contains helipad number as string like "01" if type is helipad */;
+  int runwayEndId = 0;
   int airportId = 0 /* database id airport.airport_id */;
   int helipadNumber /* -1 if not a helipad otherwise sequence number as it appeared in the BGL */;
   float heading = 0.f;
@@ -758,8 +764,15 @@ struct MapHelipad
     return map::HELIPAD;
   }
 
-  QString surface, type, runwayName;
-  int startId, airportId, length, width, heading, start;
+  bool hasStart() const
+  {
+    return startId >= 0;
+  }
+
+  QString surface, type,
+          startName /* From outer join with start */;
+  int startId, airportId, length, width, heading,
+      startNumber /* From outer join with start */;
   bool closed, transparent;
 };
 
@@ -1657,6 +1670,7 @@ QString startType(const map::MapStart& start);
 const QList<std::pair<QRegularExpression, QString> >& parkingKeywords();
 
 QString helipadText(const map::MapHelipad& helipad);
+QString helipadTypeToStr(const QString& type);
 
 /* Route index from base type */
 int routeIndex(const map::MapBase *base);

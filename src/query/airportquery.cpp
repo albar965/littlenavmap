@@ -697,13 +697,13 @@ void AirportQuery::startByNameAndPos(map::MapStart& start, int airportId, const 
   // No need to create a permanent query here since it is called rarely
   SqlQuery query(db);
   query.prepare(
-    "select start_id, airport_id, type, heading, number, runway_name, altitude, lonx, laty from ("
+    "select start_id, airport_id, runway_end_id, type, heading, number, runway_name, altitude, lonx, laty from ("
     // Get start positions by number
-    "select s.start_id, s.airport_id, s.type, s.heading, s.number, s.runway_name, s.altitude, s.lonx, s.laty "
+    "select s.start_id, s.airport_id, s.runway_end_id, s.type, s.heading, s.number, s.runway_name, s.altitude, s.lonx, s.laty "
     "from start s where s.airport_id = :airportId and s.number = :number "
     "union "
     // Get runway start positions by runway name
-    "select s.start_id, s.airport_id, s.type, s.heading, s.number, s.runway_name, s.altitude, s.lonx, s.laty "
+    "select s.start_id, s.airport_id, s.runway_end_id, s.type, s.heading, s.number, s.runway_name, s.altitude, s.lonx, s.laty "
     "from start s "
     "where s.airport_id = :airportId and s.runway_name = :runwayName)");
 
@@ -836,6 +836,20 @@ const QList<map::MapHelipad> *AirportQuery::getHelipads(int airportId)
     helipadCache.insert(airportId, hs);
     return hs;
   }
+}
+
+const map::MapHelipad AirportQuery::getHelipadForStart(const map::MapStart& start)
+{
+  const QList<map::MapHelipad> *helipads = getHelipads(start.airportId);
+  if(helipads != nullptr)
+  {
+    for(const map::MapHelipad& helipad : *helipads)
+    {
+      if(helipad.startId == start.id)
+        return helipad;
+    }
+  }
+  return map::MapHelipad();
 }
 
 const map::MapResultIndex *AirportQuery::getNearestAirportObjects(const atools::geo::Pos& pos, float distanceNm)
@@ -1415,11 +1429,12 @@ void AirportQuery::initQueries()
 
   // Start positions ordered by type (runway, helipad) and name
   startQuery = new SqlQuery(db);
-  startQuery->prepare("select s.start_id, s.airport_id, s.type, s.heading, s.number, s.runway_name, s.altitude, s.lonx, s.laty "
+  startQuery->prepare("select s.start_id, s.airport_id, s.runway_end_id, s.type, s.heading, s.number, s.runway_name, "
+                      "s.altitude, s.lonx, s.laty "
                       "from start s where s.airport_id = :airportId order by s.type desc, s.runway_name");
 
   startByIdQuery = new SqlQuery(db);
-  startByIdQuery->prepare("select start_id, airport_id, type, heading, number, runway_name, altitude, lonx, laty "
+  startByIdQuery->prepare("select start_id, airport_id, s.runway_end_id, type, heading, number, runway_name, altitude, lonx, laty "
                           "from start s where start_id = :id");
 
   parkingTypeNumberQuery = new SqlQuery(db);
@@ -1442,7 +1457,7 @@ void AirportQuery::initQueries()
   helipadQuery = new SqlQuery(db);
   helipadQuery->prepare(
     "select h.helipad_id, h.start_id, h.surface, h.type, h.length, h.width, h.airport_id, "
-    " h.heading, h.is_transparent, h.is_closed, h.lonx, h.laty, s.number as start_number, s.runway_name as runway_name "
+    " h.heading, h.is_transparent, h.is_closed, h.lonx, h.laty, s.number as start_number, s.runway_name as start_name "
     " from helipad h "
     " left outer join start s on s.start_id = h.start_id "
     " where h.airport_id = :airportId");
@@ -1459,7 +1474,7 @@ void AirportQuery::initQueries()
     "select r.*, p.name as primary_name, s.name as secondary_name, "
     "p.name as primary_name, s.name as secondary_name, "
     "r.primary_end_id, r.secondary_end_id, "
-    "r.edge_light, "
+    "r.edge_light, r.center_light, "
     "p.offset_threshold as primary_offset_threshold,  p.has_closed_markings as primary_closed_markings, "
     "s.offset_threshold as secondary_offset_threshold,  s.has_closed_markings as secondary_closed_markings,"
     "p.blast_pad as primary_blast_pad,  p.overrun as primary_overrun, "

@@ -910,7 +910,7 @@ void WeatherReporter::getBestRunwaysTextShort(QString& title, QString& runwayNum
     if(windDirectionDeg < map::INVALID_METAR_VALUE && windSpeedKts < map::INVALID_METAR_VALUE)
     {
       // Sorted by wind and merged for same direction
-      maptools::RwVector ends(windSpeedKts, windDirectionDeg);
+      maptools::RunwayList ends(windSpeedKts, windDirectionDeg);
       queries->getInfoQuery()->getRunwayEnds(ends, airport.id);
 
       if(!ends.isEmpty())

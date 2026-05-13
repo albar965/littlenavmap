@@ -60,7 +60,7 @@ RwEnd::RwEnd(const QString& name, const QString& surface, int lengthParam, float
   crossWind = atools::roundToInt(std::abs(crossWindParam));
 }
 
-void RwVector::appendRwEnd(const QString& name, const QString& surface, int length, float heading)
+void RunwayList::appendRwEnd(const QString& name, const QString& surface, int length, float heading)
 {
   if(speed >= minSpeed)
   {
@@ -72,7 +72,7 @@ void RwVector::appendRwEnd(const QString& name, const QString& surface, int leng
   }
 }
 
-void RwVector::sortRunwayEnds()
+void RunwayList::sortRunwayEnds()
 {
   totalNumber = 0;
 
@@ -108,7 +108,7 @@ void RwVector::sortRunwayEnds()
     totalNumber = constFirst().names.size();
 }
 
-QStringList RwVector::getSortedRunways(int minHeadWind) const
+QStringList RunwayList::getSortedRunways(int minHeadWind) const
 {
   QStringList runways;
   for(const maptools::RwEnd& end : std::as_const(*this))

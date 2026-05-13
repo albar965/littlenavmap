@@ -284,11 +284,11 @@ struct RwEnd
 };
 
 /* List of runway ends */
-class RwVector
+class RunwayList
   : public QList<maptools::RwEnd>
 {
 public:
-  RwVector(float windSpeed, float windDirectionDeg)
+  RunwayList(float windSpeed, float windDirectionDeg)
     : speed(windSpeed), direction(windDirectionDeg)
   {
 
