@@ -356,11 +356,12 @@ void LogStatisticsDialog::groupChanged(int index)
 
 void LogStatisticsDialog::updateStatisticsText()
 {
-  atools::util::HtmlBuilder html(true);
+  atools::util::HtmlBuilder html(true /* backgroundColorUsed */, NavApp::isGuiStyleDark());
 
   QLocale locale;
   atools::util::html::Flags header = atools::util::html::BOLD | atools::util::html::BIG;
-  atools::util::html::Flags right = atools::util::html::ALIGN_RIGHT;
+
+  html.row2AlignFlags(atools::util::html::ALIGN_RIGHT);
 
   // ======================================================
   float timeMaximum, timeAverage, timeTotal, timeMaximumSim, timeAverageSim, timeTotalSim;
@@ -370,16 +371,16 @@ void LogStatisticsDialog::updateStatisticsText()
   // Workaround to avoid translation changes
   html.p(tr("Flight Time Real"), header);
   html.table();
-  html.row2(tr("Total:"), formatter::formatMinutesHoursLong(timeTotal), right);
-  html.row2(tr("Average:"), formatter::formatMinutesHoursLong(timeAverage), right);
-  html.row2(tr("Maximum:"), formatter::formatMinutesHoursLong(timeMaximum), right);
+  html.row2(tr("Total:"), formatter::formatMinutesHoursLong(timeTotal));
+  html.row2(tr("Average:"), formatter::formatMinutesHoursLong(timeAverage));
+  html.row2(tr("Maximum:"), formatter::formatMinutesHoursLong(timeMaximum));
   html.tableEnd();
 
   html.p(tr("Flight Time Simulator"), header);
   html.table();
-  html.row2(tr("Total:"), formatter::formatMinutesHoursLong(timeTotalSim), right);
-  html.row2(tr("Average:"), formatter::formatMinutesHoursLong(timeAverageSim), right);
-  html.row2(tr("Maximum:"), formatter::formatMinutesHoursLong(timeMaximumSim), right);
+  html.row2(tr("Total:"), formatter::formatMinutesHoursLong(timeTotalSim));
+  html.row2(tr("Average:"), formatter::formatMinutesHoursLong(timeAverageSim));
+  html.row2(tr("Maximum:"), formatter::formatMinutesHoursLong(timeMaximumSim));
   html.tableEnd();
 
   // ======================================================
@@ -387,9 +388,9 @@ void LogStatisticsDialog::updateStatisticsText()
   float distTotal, distMax, distAverage;
   logdataController->getFlightStatsDistance(distTotal, distMax, distAverage);
   html.table();
-  html.row2(tr("Total:"), Unit::distNm(distTotal), right);
-  html.row2(tr("Maximum:"), Unit::distNm(distMax), right);
-  html.row2(tr("Average:"), Unit::distNm(distAverage), right);
+  html.row2(tr("Total:"), Unit::distNm(distTotal));
+  html.row2(tr("Maximum:"), Unit::distNm(distMax));
+  html.row2(tr("Average:"), Unit::distNm(distAverage));
   html.tableEnd();
 
   html.p(tr("Simulators"), header);
@@ -398,7 +399,7 @@ void LogStatisticsDialog::updateStatisticsText()
   html.table();
   for(const std::pair<int, QString>& sim : std::as_const(simulators))
     html.row2(tr("%1:").arg(sim.second.isEmpty() ? tr("Unknown") : sim.second),
-              tr("%1 flights").arg(locale.toString(sim.first)), right);
+              tr("%1 flights").arg(locale.toString(sim.first)));
   html.tableEnd();
 
   // ======================================================
@@ -406,9 +407,9 @@ void LogStatisticsDialog::updateStatisticsText()
   int numTypes, numRegistrations, numNames, numSimulators;
   logdataController->getFlightStatsAircraft(numTypes, numRegistrations, numNames, numSimulators);
   html.table();
-  html.row2(tr("Number of distinct types:"), locale.toString(numTypes), right);
-  html.row2(tr("Number of distinct registrations:"), locale.toString(numRegistrations), right);
-  html.row2(tr("Number of distinct names:"), locale.toString(numNames), right);
+  html.row2(tr("Number of distinct types:"), locale.toString(numTypes));
+  html.row2(tr("Number of distinct registrations:"), locale.toString(numRegistrations));
+  html.row2(tr("Number of distinct names:"), locale.toString(numNames));
   html.tableEnd();
 
   // ======================================================
@@ -416,8 +417,8 @@ void LogStatisticsDialog::updateStatisticsText()
   int numDepartAirports, numDestAirports;
   logdataController->getFlightStatsAirports(numDepartAirports, numDestAirports);
   html.table();
-  html.row2(tr("Distinct departures:"), locale.toString(numDepartAirports), right);
-  html.row2(tr("Distinct destinations:"), locale.toString(numDestAirports), right);
+  html.row2(tr("Distinct departures:"), locale.toString(numDepartAirports));
+  html.row2(tr("Distinct destinations:"), locale.toString(numDestAirports));
   html.tableEnd();
 
   // ======================================================
@@ -427,17 +428,18 @@ void LogStatisticsDialog::updateStatisticsText()
   html.table();
   html.row2If(tr("Earliest:"), tr("%1 %2").
               arg(locale.toString(earliest, QLocale::ShortFormat)).
-              arg(earliest.timeZoneAbbreviation()), right);
+              arg(earliest.timeZoneAbbreviation()));
   html.row2If(tr("Earliest in Simulator:"), tr("%1 %2").
               arg(locale.toString(earliestSim, QLocale::ShortFormat)).
-              arg(earliestSim.timeZoneAbbreviation()), right);
+              arg(earliestSim.timeZoneAbbreviation()));
   html.row2If(tr("Latest:"), tr("%1 %2").
               arg(locale.toString(latest, QLocale::ShortFormat)).
-              arg(latest.timeZoneAbbreviation()), right);
+              arg(latest.timeZoneAbbreviation()));
   html.row2If(tr("Latest in Simulator:"), tr("%1 %2").
               arg(locale.toString(latestSim, QLocale::ShortFormat)).
-              arg(latestSim.timeZoneAbbreviation()), right);
+              arg(latestSim.timeZoneAbbreviation()));
   html.tableEnd();
+  html.row2AlignClear();
 
   ui->textBrowserLogStatsOverview->setHtml(html.getHtml());
 }

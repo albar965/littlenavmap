@@ -109,7 +109,7 @@ QString MapTooltip::buildTooltip(const map::MapResult& mapSearchResult, const at
   qDebug() << Q_FUNC_INFO << mapSearchResult;
 #endif
 
-  HtmlBuilder html(false);
+  HtmlBuilder html(false /* backgroundColorUsed */, NavApp::isGuiStyleDark());
 
   if(!prefix.isEmpty())
     html.small(prefix);

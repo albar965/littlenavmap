@@ -1152,7 +1152,7 @@ void LogdataController::convertUserdata()
     if(!converter.getErrors().isEmpty())
     {
       // Show errors and warnings ======================
-      atools::util::HtmlBuilder html(true);
+      atools::util::HtmlBuilder html(true /* backgroundColorUsed */, NavApp::isGuiStyleDark());
 
       html.p(tr("Logbook Conversion"), atools::util::html::BOLD | atools::util::html::BIG);
 

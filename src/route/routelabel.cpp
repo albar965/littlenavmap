@@ -180,7 +180,8 @@ void RouteLabel::updateHeaderLabel()
       fetchLandingRunway(landingRunway, landingRunwayEnd);
 
     // Build header components ==============================================
-    autil::HtmlBuilder htmlAirports, htmlDistTime, htmlRunwayTakeoffDepart, htmlArrival, htmlRunwayLand;
+    autil::HtmlBuilder html(false /* backgroundColorUsed */, NavApp::isGuiStyleDark());
+    autil::HtmlBuilder htmlAirports(html), htmlDistTime(html), htmlRunwayTakeoffDepart(html), htmlArrival(html), htmlRunwayLand(html);
     if(isFlag(routelabel::HEADER_AIRPORTS))
       buildHeaderAirports(htmlAirports, true /* widget */);
 
@@ -217,7 +218,7 @@ void RouteLabel::updateHeaderLabel()
       });
 
       // Build table =====================================================
-      HtmlBuilder label;
+      HtmlBuilder label(false /* backgroundColorUsed */, NavApp::isGuiStyleDark());
       label.table(0 /* border */, 0 /* padding */, 0 /* spacing */, 100 /* widthPercent */);
 
       bool secondSection = !htmlRunwayTakeoffDepart.isEmpty() || !htmlArrival.isEmpty() || !htmlRunwayLand.isEmpty();
@@ -260,7 +261,9 @@ void RouteLabel::buildHtmlText(atools::util::HtmlBuilder& html)
 
 void RouteLabel::buildPrintText(atools::util::HtmlBuilder& html, bool titleOnly)
 {
-  autil::HtmlBuilder htmlAirports, htmlTodTod, htmlDistTime, htmlRunwayTakeoff, htmlDepart, htmlArrival, htmlRunwayLand;
+  autil::HtmlBuilder htmlTemp(false /* backgroundColorUsed */, NavApp::isGuiStyleDark());
+  autil::HtmlBuilder htmlAirports(htmlTemp), htmlTodTod(htmlTemp), htmlDistTime(htmlTemp), htmlRunwayTakeoff(htmlTemp),
+  htmlDepart(htmlTemp), htmlArrival(htmlTemp), htmlRunwayLand(htmlTemp);
 
   // Header h1
   buildHeaderAirports(htmlAirports, false /* widget */);

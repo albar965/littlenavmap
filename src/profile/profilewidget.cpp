@@ -2549,7 +2549,7 @@ void ProfileWidget::buildTooltipText(int x, bool force)
   QString toWaypoint = atools::elideTextShort(routeLeg.getDisplayIdent(), 20);
 
   // Create text for tooltip ==========================
-  atools::util::HtmlBuilder html;
+  atools::util::HtmlBuilder html(false /* backgroundColorUsed */, NavApp::isGuiStyleDark());
 
   // Header from and to distance, altitude and next waypoint ============
   float altitude = legList->route.getAltitudeForDistance(distanceToGo);

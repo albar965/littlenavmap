@@ -670,7 +670,7 @@ void InfoController::routeChanged(bool, bool)
 
 void InfoController::updateProgress()
 {
-  HtmlBuilder html(true /* has background color */);
+  HtmlBuilder html(true /* backgroundColorUsed */, NavApp::isGuiStyleDark());
   Ui::MainWindow *ui = NavApp::getMainUi();
 
   if(atools::gui::canTextEditUpdate(ui->textBrowserAircraftProgressInfo))
@@ -698,7 +698,7 @@ void InfoController::updateAirportInternal(bool newAirport, bool bearingChange, 
     {
       const Route *route = &NavApp::getRouteConst();
       // Update airport overview ==============================================
-      HtmlBuilder html(true);
+      HtmlBuilder html(true /* backgroundColorUsed */, NavApp::isGuiStyleDark());
       Ui::MainWindow *ui = NavApp::getMainUi();
       map::MapAirport airport;
       queries->getAirportQuerySim()->getAirportById(airport, currentSearchResult->airports.constFirst().id);
@@ -789,7 +789,7 @@ void InfoController::showInformationInternal(map::MapResult result, bool showWin
   bool foundAirport = false, foundNavaid = false, foundUserpoint = false, foundUserAircraft = false, foundUserAircraftShadow = false,
        foundAiAircraft = false, foundOnlineClient = false, foundAirspace = false, foundLogbookEntry = false, foundOnlineCenter = false;
 
-  HtmlBuilder html(true);
+  HtmlBuilder html(true /* backgroundColorUsed */, NavApp::isGuiStyleDark());
 
   Ui::MainWindow *ui = NavApp::getMainUi();
   MapWidget *mapWidget = NavApp::getMapWidgetGui();
@@ -1186,7 +1186,7 @@ void buildOneNavaid(atools::util::HtmlBuilder& html, bool& foundNavaid, bool bea
 
 bool InfoController::updateNavaidInternal(const map::MapResult& result, bool bearingChanged, bool scrollToTop, bool forceUpdate)
 {
-  HtmlBuilder html(true);
+  HtmlBuilder html(true /* backgroundColorUsed */, NavApp::isGuiStyleDark());
   Ui::MainWindow *ui = NavApp::getMainUi();
   MapWidget *mapWidget = NavApp::getMapWidgetGui();
   bool foundNavaid = false;
@@ -1229,7 +1229,7 @@ bool InfoController::updateNavaidInternal(const map::MapResult& result, bool bea
 
 bool InfoController::updateUserpointInternal(const map::MapResult& result, bool bearingChanged, bool scrollToTop)
 {
-  HtmlBuilder html(true);
+  HtmlBuilder html(true /* backgroundColorUsed */, NavApp::isGuiStyleDark());
   Ui::MainWindow *ui = NavApp::getMainUi();
   bool foundUserpoint = false;
 
@@ -1344,7 +1344,7 @@ void InfoController::updateUserAircraftText()
       if(atools::gui::canTextEditUpdate(ui->textBrowserAircraftInfo))
       {
         // ok - scrollbars not pressed
-        HtmlBuilder html(true /* has background color */);
+        HtmlBuilder html(true /* backgroundColorUsed */, NavApp::isGuiStyleDark());
         infoBuilder->aircraftText(lastSimData->getUserAircraftConst(), html);
         infoBuilder->aircraftTextWeightAndFuel(lastSimData->getUserAircraftConst(), html);
         updateTextEdit(ui->textBrowserAircraftInfo, html.getHtml(), false /* scrollToTop*/, true /* keepSelection */);
@@ -1375,7 +1375,7 @@ void InfoController::updateAircraftProgressText()
       if(atools::gui::canTextEditUpdate(ui->textBrowserAircraftProgressInfo))
       {
         // ok - scrollbars not pressed
-        HtmlBuilder html(true /* has background color */);
+        HtmlBuilder html(true /* backgroundColorUsed */, NavApp::isGuiStyleDark());
         html.setIdBits(aircraftProgressConfig->getEnabledBits());
         infoBuilder->aircraftProgressText(lastSimData->getUserAircraftConst(), html, &NavApp::getRouteConst());
         updateTextEdit(ui->textBrowserAircraftProgressInfo, html.getHtml(), false /* scrollToTop*/, true /* keepSelection */);
@@ -1406,7 +1406,7 @@ void InfoController::updateAiAircraftText()
       if(atools::gui::canTextEditUpdate(ui->textBrowserAircraftAiInfo))
       {
         // ok - scrollbars not pressed
-        HtmlBuilder html(true /* has background color */);
+        HtmlBuilder html(true /* backgroundColorUsed */, NavApp::isGuiStyleDark());
         html.clear();
         if(!currentSearchResult->aiAircraft.isEmpty())
         {

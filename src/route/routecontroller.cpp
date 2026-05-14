@@ -725,7 +725,7 @@ QString RouteController::getFlightplanTableAsHtmlDoc(float iconSizePixel) const
   QStringList headerLines({"<meta http-equiv=\"content-type\" content=\"text/html; charset=utf-8\" />",
                            "<meta name=\"viewport\" content=\"width=device-width, initial-scale=1\" />"});
 
-  atools::util::HtmlBuilder html(true);
+  atools::util::HtmlBuilder html(true /* backgroundColorUsed */, NavApp::isGuiStyleDark());
   html.doc(tr("%1 - %2").arg(QCoreApplication::applicationName()).arg(QFileInfo(routeFilename).fileName()),
            css, QStringLiteral() /* bodyStyle */, headerLines);
   html.text(NavApp::getRouteController()->getFlightplanTableAsHtml(iconSizePixel, true /* print */),
@@ -6345,7 +6345,7 @@ void RouteController::updateRemarkHeader()
 
     const QHash<QString, QString>& props = route.getFlightplanConst().getProperties();
 
-    atools::util::HtmlBuilder html;
+    atools::util::HtmlBuilder html(false /* backgroundColorUsed */, NavApp::isGuiStyleDark());
 
     // Aircraft peformance name and type =============================================================
     QString perf = atools::strJoin({props.value(atools::fs::pln::AIRCRAFT_PERF_NAME),

@@ -548,7 +548,7 @@ void ProcedureSearch::updateHeaderLabel()
     procs.append(procedureAndTransitionText(item, true /* header */));
 
   QString tooltip, statusTip;
-  HtmlBuilder html;
+  HtmlBuilder html(false /* backgroundColorUsed */, NavApp::isGuiStyleDark());
 
   if(currentAirportSim->isValid())
   {

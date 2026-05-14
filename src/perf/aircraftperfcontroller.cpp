@@ -757,7 +757,7 @@ void AircraftPerfController::updateReport()
   errorTooltips.clear();
 
   Ui::MainWindow *ui = NavApp::getMainUi();
-  HtmlBuilder html(true /* background color */);
+  HtmlBuilder html(true /* backgroundColorUsed */, NavApp::isGuiStyleDark());
 
   bool visible = NavApp::getRouteTabHandler()->getCurrentTabId() == rc::AIRCRAFT && ui->dockWidgetRoute->isVisible();
   if(visible)
@@ -866,7 +866,7 @@ void AircraftPerfController::updateReportCurrent()
   if(NavApp::getRouteTabHandler()->getCurrentTabId() == rc::COLLECTION && ui->dockWidgetRoute->isVisible())
   {
     // Write HTML report ================================================================
-    HtmlBuilder html(true /* background color */);
+    HtmlBuilder html(true /* backgroundColorUsed */, NavApp::isGuiStyleDark());
 
     const atools::fs::perf::AircraftPerf& curPerfLbs = perfHandler->getAircraftPerformanceLbs();
     atools::fs::perf::FlightSegment segment = perfHandler->getCurrentFlightSegment();
@@ -884,7 +884,6 @@ void AircraftPerfController::updateReportCurrent()
     else
       html.text(tr("Unknown Aircraft"), ahtml::BOLD | ahtml::BIG);
 
-    ahtml::Flags flags = ahtml::ALIGN_RIGHT;
     FuelTool ft(curPerfLbs);
 
     // Display performance collection progress ==========================================================
@@ -909,13 +908,15 @@ void AircraftPerfController::updateReportCurrent()
       html.pEnd();
     }
 
+    html.row2AlignFlags(atools::util::html::ALIGN_RIGHT);
+
     if(segment >= atools::fs::perf::DEPARTURE_TAXI)
     {
       html.p().b(tr("Fuel")).pEnd();
       html.table();
-      html.row2(tr("Fuel Type:"), curPerfLbs.isAvgas() ? tr("Avgas") : tr("Jetfuel"), flags);
-      html.row2(tr("Total Fuel Consumed:"), ft.weightVolLocal(perfHandler->getTotalFuelConsumedLbs()), flags);
-      html.row2(tr("Taxi Fuel:"), ft.weightVolLocal(curPerfLbs.getTaxiFuel()), flags);
+      html.row2(tr("Fuel Type:"), curPerfLbs.isAvgas() ? tr("Avgas") : tr("Jetfuel"));
+      html.row2(tr("Total Fuel Consumed:"), ft.weightVolLocal(perfHandler->getTotalFuelConsumedLbs()));
+      html.row2(tr("Taxi Fuel:"), ft.weightVolLocal(curPerfLbs.getTaxiFuel()));
       html.tableEnd();
     }
 
@@ -924,11 +925,10 @@ void AircraftPerfController::updateReportCurrent()
       html.p().b(tr("Average Performance")).br().b(tr("Climb")).pEnd();
 
       html.table();
-      html.row2(tr("True Airspeed:"), Unit::speedKts(curPerfLbs.getClimbSpeed()), flags);
+      html.row2(tr("True Airspeed:"), Unit::speedKts(curPerfLbs.getClimbSpeed()));
       html.row2(tr("Vertical Speed:"),
-                Unit::speedVertFpm(curPerfLbs.getClimbVertSpeed()) % tr(" <b>%1</b>").arg(TextPointer::getPointerUp()),
-                ahtml::NO_ENTITIES | flags);
-      html.row2(tr("Fuel Flow:"), ft.flowWeightVolLocal(curPerfLbs.getClimbFuelFlow()), flags);
+                Unit::speedVertFpm(curPerfLbs.getClimbVertSpeed()) % tr(" <b>%1</b>").arg(TextPointer::getPointerUp()), ahtml::NO_ENTITIES);
+      html.row2(tr("Fuel Flow:"), ft.flowWeightVolLocal(curPerfLbs.getClimbFuelFlow()));
       html.tableEnd();
     }
 
@@ -936,22 +936,24 @@ void AircraftPerfController::updateReportCurrent()
     {
       html.p().b(tr("Cruise")).pEnd();
       html.table();
-      html.row2(tr("True Airspeed:"), Unit::speedKts(curPerfLbs.getCruiseSpeed()), flags);
-      html.row2(tr("Fuel Flow:"), ft.flowWeightVolLocal(curPerfLbs.getCruiseFuelFlow()), flags);
+      html.row2(tr("True Airspeed:"), Unit::speedKts(curPerfLbs.getCruiseSpeed()));
+      html.row2(tr("Fuel Flow:"), ft.flowWeightVolLocal(curPerfLbs.getCruiseFuelFlow()));
       html.tableEnd();
     }
+
     if(segment >= atools::fs::perf::DESCENT)
     {
       html.p().b(tr("Descent")).pEnd();
       html.table();
-      html.row2(tr("True Airspeed:"), Unit::speedKts(curPerfLbs.getDescentSpeed()), flags);
+      html.row2(tr("True Airspeed:"), Unit::speedKts(curPerfLbs.getDescentSpeed()));
       // Descent speed is always positive
       html.row2(tr("Vertical Speed:"),
                 Unit::speedVertFpm(-curPerfLbs.getDescentVertSpeed()) % tr(" <b>%1</b>").arg(TextPointer::getPointerDown()),
-                ahtml::NO_ENTITIES | flags);
-      html.row2(tr("Fuel Flow:"), ft.flowWeightVolLocal(curPerfLbs.getDescentFuelFlow()), flags);
+                ahtml::NO_ENTITIES);
+      html.row2(tr("Fuel Flow:"), ft.flowWeightVolLocal(curPerfLbs.getDescentFuelFlow()));
       html.tableEnd();
     }
+    html.row2AlignClear();
 
     atools::gui::updateTextEdit(ui->textBrowserAircraftPerformanceCurrent, html.getHtml(),
                                 false /*scrollToTop*/, true /* keep selection */);

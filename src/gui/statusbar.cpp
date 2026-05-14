@@ -156,7 +156,7 @@ void StatusBar::updateClock() const
     // Tooltip text ===========================
     if(timeLabel->isVisible())
     {
-      atools::util::HtmlBuilder html;
+      atools::util::HtmlBuilder html(false /* backgroundColorUsed */, NavApp::isGuiStyleDark());
       html.p(atools::util::html::NOBR_WHITESPACE);
       if(datetimeText.isNull())
       {

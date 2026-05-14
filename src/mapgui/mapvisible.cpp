@@ -70,7 +70,7 @@ void MapVisible::updateVisibleObjectsStatusBar()
       map::MapDisplayTypes shownDispTypes = paintLayer->getShownMapDisplayTypes();
 
       QStringList airportShortLabel;
-      atools::util::HtmlBuilder tooltip(false);
+      atools::util::HtmlBuilder tooltip(false /* backgroundColorUsed */, NavApp::isGuiStyleDark());
       tooltip.b(tr("Currently shown on map:"));
       tooltip.table();
 

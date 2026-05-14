@@ -161,7 +161,7 @@ void UpdateHandler::updateFound(atools::util::UpdateList updates)
   if(!updates.isEmpty())
   {
     // Found updates - fill the HTML text for the dialog =============================
-    atools::util::HtmlBuilder html(false);
+    atools::util::HtmlBuilder html(false /* backgroundColorUsed */, NavApp::isGuiStyleDark());
 
     // Show only the newest one
     const atools::util::Update& update = updates.constFirst();

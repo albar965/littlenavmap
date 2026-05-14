@@ -344,7 +344,7 @@ void AirspaceController::loadAirspaces()
           errors.append(tr("More ..."));
         }
 
-        atools::util::HtmlBuilder html(true);
+        atools::util::HtmlBuilder html(true /* backgroundColorUsed */, NavApp::isGuiStyleDark());
         html.p(tr("User Airspaces"), atools::util::html::BOLD | atools::util::html::BIG);
         html.p(message);
 

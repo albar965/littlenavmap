@@ -473,6 +473,15 @@ void HtmlInfoBuilder::airportText(const MapAirport& airport, const map::WeatherC
   {
     if(info)
       head(html, tr("Weather"));
+
+    if(info || verbose)
+    {
+      html.table(0, 2, 0, 0, QApplication::palette().color(QPalette::Active, QPalette::Base));
+      html.row2(tr("Source for airport weather symbols on the map: "), map::mapWeatherSourceString(NavApp::getMapWeatherSource()),
+                ahtml::NONE, QColor(), QApplication::palette().color(QPalette::Active, QPalette::Base));
+      html.tableEnd();
+    }
+
     html.table();
 
     // Source for map icon display
@@ -842,7 +851,7 @@ void HtmlInfoBuilder::bestRunwaysText(const MapAirport& airport, HtmlBuilder& ht
 
       if(!runways.isEmpty())
       {
-        html.br().b((ends.getTotalNumber() == 1 ? tr(" Wind prefers runway: ") : tr(" Wind prefers runways: "))).
+        html.text((ends.getTotalNumber() == 1 ? tr(", Wind prefers runway: ") : tr(", Wind prefers runways: "))).
         text(atools::strJoin(runways.mid(0, 4), tr(", "), tr(" and ")));
       }
     }
@@ -1771,25 +1780,28 @@ void HtmlInfoBuilder::weatherText(const map::WeatherContext& context, const MapA
     float transitionAltitude = 0.f, transitionLevel = 0.f;
     queries->getMapQuery()->getAirportTransitionAltiudeAndLevel(airport, transitionAltitude, transitionLevel);
 
-    QStringList transitionStr;
+    QColor baseColor = QApplication::palette().color(QPalette::Active, QPalette::Base);
+    // Weather symbols =====================
+    html.table();
+    html.row2(tr("Source for airport weather symbols on the map: "), map::mapWeatherSourceString(NavApp::getMapWeatherSource()),
+              ahtml::NONE, QColor(), baseColor);
+    html.tableEnd();
+
+    // Transition =====================
+    html.table();
     if(transitionAltitude > 0.f)
-      transitionStr.append(tr("Altitude %1").arg(Unit::altFeet(transitionAltitude)));
+      html.row2(tr("Transition Altitude:"), Unit::altFeet(transitionAltitude), ahtml::NONE, QColor(), baseColor);
 
     if(transitionLevel > 0.f)
-      transitionStr.append(tr("Level %1 (FL%2)").
-                           arg(Unit::altFeet(transitionLevel)).arg(transitionLevel / 100.f, 3, 'f', 0, QChar('0')));
-
-    if(!transitionStr.isEmpty())
-      html.br().br().b(tr("Transition: ")).text(transitionStr.join(tr(", ")));
+      html.row2(tr("Transition Level:"),
+                tr("%1 (FL%2)").arg(Unit::altFeet(transitionLevel)).arg(transitionLevel / 100.f, 3, 'f', 0, QChar('0')),
+                ahtml::NONE, QColor(), baseColor);
 
     // Sunrise and sunset ===========================
     QDateTime datetime = NavApp::getUtcDateTimeSimOrCurrent();
     if(datetime.isValid())
-    {
-      if(transitionStr.isEmpty())
-        html.br();
-      html.br().b(tr("Sunrise and sunset: ")).text(sunriseSunsetText(airport.position, datetime));
-    }
+      html.row2(tr("Sunrise and sunset:"), sunriseSunsetText(airport.position, datetime), ahtml::NONE, QColor(), baseColor);
+    html.tableEnd();
 
     optsw::FlagsWeather weatherFlags = OptionData::instance().getFlagsWeather();
 
@@ -2070,10 +2082,8 @@ void HtmlInfoBuilder::decodedMetar(HtmlBuilder& html, const map::MapAirport& air
   bool hasClouds = !clouds.isEmpty() && clouds.constFirst().getCoverage() != atools::fs::weather::MetarCloud::COVERAGE_CLEAR &&
                    !parsed.isIncompleteInterpolation();
 
-  if(mapDisplay)
-    html.br().b(tr("Source for map weather symbols."));
-
   html.table();
+  html.row2AlignFlags(atools::util::html::ALIGN_RIGHT);
 
   if(reportAirport.isValid())
   {
@@ -2276,6 +2286,8 @@ void HtmlInfoBuilder::decodedMetar(HtmlBuilder& html, const map::MapAirport& air
     if(reports > 0)
       html.p().text(tr("Interpolated from:"), ahtml::BOLD).br().textHtml(reportHtml).pEnd();
   }
+
+  html.row2AlignClear();
 
 #ifdef DEBUG_INFORMATION_INFO
   if(info)
@@ -3983,8 +3995,9 @@ void HtmlInfoBuilder::aircraftTextWeightAndFuel(const atools::fs::sc::SimConnect
   if(info)
   {
     head(html, tr("Weight and Fuel"));
-    html.table().row2AlignRight();
+    html.row2AlignFlags(atools::util::html::ALIGN_RIGHT);
 
+    html.table();
     float maxGrossWeight = userAircraft.getAirplaneMaxGrossWeightLbs();
     float grossWeight = userAircraft.getAirplaneTotalWeightLbs();
 
@@ -3999,8 +4012,10 @@ void HtmlInfoBuilder::aircraftTextWeightAndFuel(const atools::fs::sc::SimConnect
 
       html.row2(tr("Gross Weight:"), weight % percent, ahtml::NO_ENTITIES);
     }
+    html.tableEnd();
 
-    html.row2(QStringLiteral());
+    html.br();
+    html.table();
     html.row2(tr("Empty Weight:"), Unit::weightLbsLocalOther(userAircraft.getAirplaneEmptyWeightLbs()),
               ahtml::NO_ENTITIES);
     html.row2(tr("Zero Fuel Weight:"), Unit::weightLbsLocalOther(userAircraft.getAirplaneTotalWeightLbs() -
@@ -4012,7 +4027,8 @@ void HtmlInfoBuilder::aircraftTextWeightAndFuel(const atools::fs::sc::SimConnect
 
     html.row2(tr("Fuel:"), Unit::fuelLbsAndGalLocalOther(userAircraft.getFuelTotalWeightLbs(),
                                                          userAircraft.getFuelTotalQuantityGallons(), true /* bold */), ahtml::NO_ENTITIES);
-    html.tableEnd().row2AlignRight(false);
+    html.tableEnd();
+    html.row2AlignClear();
   }
 }
 
@@ -4152,7 +4168,7 @@ void HtmlInfoBuilder::aircraftProgressText(const atools::fs::sc::SimConnectAircr
 
   float distFromStartNm = 0.f, distToDestNm = 0.f, nextLegDistance = 0.f, crossTrackDistance = 0.f;
 
-  html.row2AlignRight();
+  html.row2AlignFlags(atools::util::html::ALIGN_RIGHT);
 
   // Flight plan legs =========================================================================
   float distanceToTod = map::INVALID_DISTANCE_VALUE, distanceToToc = map::INVALID_DISTANCE_VALUE;
@@ -5049,10 +5065,10 @@ void HtmlInfoBuilder::aircraftProgressText(const atools::fs::sc::SimConnectAircr
     html.tableEnd();
   }
 
-  html.row2AlignRight(false);
+  html.row2AlignClear();
   html.clearId();
 
-#ifdef DEBUG_INFORMATION_INFO
+#ifdef DEBUG_INFORMATION_INFO_PROGRESS
   if(info)
   {
     html.hr().pre(
@@ -5322,7 +5338,7 @@ void HtmlInfoBuilder::addAirportSceneryAndLinks(const MapAirport& airport, HtmlB
 
 QString HtmlInfoBuilder::filepathTextShow(const QString& filepath, const QString& prefix, bool canonical) const
 {
-  HtmlBuilder link(true /* backgroundColorUsed */);
+  HtmlBuilder link(true /* backgroundColorUsed */, NavApp::isGuiStyleDark());
 
   if(filepath.isEmpty())
     return QStringLiteral();
@@ -5342,7 +5358,7 @@ QString HtmlInfoBuilder::filepathTextShow(const QString& filepath, const QString
 
 QString HtmlInfoBuilder::filepathTextOpen(const QFileInfo& filepath, bool showPath) const
 {
-  HtmlBuilder link(true);
+  HtmlBuilder link(true /* backgroundColorUsed */, NavApp::isGuiStyleDark());
 
   if(filepath.exists())
     link.a(showPath ? filepath.filePath() : filepath.fileName(),
@@ -5564,25 +5580,12 @@ void HtmlInfoBuilder::addMetarLine(atools::util::HtmlBuilder& html, const QStrin
       }
 
       weatherHtml.nbsp().nbsp();
-      if(mapDisplay)
-        weatherHtml.b();
-      else
-        weatherHtml.small();
-
       weatherHtml.br();
       addFlightRulesSuffix(weatherHtml, metar);
-
-      if(mapDisplay)
-        weatherHtml.bEnd();
-      else
-        weatherHtml.smallEnd();
 
       // Add METAR suffix for tooltip
       bestRunwaysText(airport, weatherHtml, metar, 4 /* max entries */, false /* details */);
     }
-
-    if(mapDisplay)
-      weatherHtml.brText(tr("Source for Map Weather Symbols."), info ? ahtml::NONE : ahtml::SMALL);
 
     html.row2(header % (info ? tr(":") : tr(" METAR:")), weatherHtml);
   }
