@@ -245,13 +245,9 @@ signals:
   void aircraftTakeoff(const atools::fs::sc::SimConnectUserAircraft& aircraft);
   void aircraftLanding(const atools::fs::sc::SimConnectUserAircraft& aircraft, float flownDistanceNm);
 
-  /* Set parking position, departure, destination for flight plan from context menu */
-  void routeSetParkingStart(const map::MapParking& parking);
-  void routeSetHelipadStart(const map::MapHelipad& helipad);
-
   /* Set route departure or destination from context menu */
-  void routeSetStart(const map::MapAirport& ap);
-  void routeSetDest(const map::MapAirport& ap);
+  void routeSetDeparture(const map::MapAirport& ap, bool undo = true);
+  void routeSetDestination(const map::MapAirport& ap, bool undo = true);
   void routeAddAlternate(const map::MapAirport& ap);
 
   /* Add, replace or delete object from flight plan from context menu or drag and drop.
@@ -285,13 +281,13 @@ signals:
   /* Show approaches from context menu */
   void showProcedures(const map::MapAirport& airport, bool departureFilter, bool arrivalFilter);
   void showCustomApproach(const map::MapAirport& airport);
-  void showCustomDeparture(const map::MapAirport& airport);
+  void showCustomDeparture(const map::MapAirport& airport, const map::MapParking& parking, const map::MapHelipad& helipad);
 
   /* Emitted when the user presses the on-screen button */
   void exitFullScreenPressed();
 
   /* Add the complete procedure to the route */
-  void routeInsertProcedure(const proc::MapProcedureLegs& legs);
+  void routeInsertProcedure(const proc::MapProcedureLegs& legs, bool undo = true);
 
 private:
   /* For touchscreen mode. Grid of 3x3 rectangles numbered from lef to right and top to bottom */

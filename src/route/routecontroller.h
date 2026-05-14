@@ -173,10 +173,10 @@ public:
   void postDatabaseLoad();
 
   /* Replaces departure airport or adds departure if not valid. Adds best start position (runway). */
-  void routeSetDeparture(map::MapAirport airport);
+  void routeSetDeparture(map::MapAirport airport, bool undo = true);
 
   /* Replaces destination airport or adds destination if not valid */
-  void routeSetDestination(map::MapAirport airport);
+  void routeSetDestination(map::MapAirport airport, bool undo = true);
 
   /* Add an alternate airport */
   void routeAddAlternate(map::MapAirport airport);
@@ -191,7 +191,7 @@ public:
   void routeAdd(int id, atools::geo::Pos userPos, map::MapTypes type, int legIndex);
 
   /* Add an approach and/or a transition */
-  void routeAddProcedure(proc::MapProcedureLegs legs);
+  void routeAddProcedure(proc::MapProcedureLegs legs, bool undo);
 
   /* Same as above but replaces waypoint at legIndex */
   void routeReplace(int id, atools::geo::Pos userPos, map::MapTypes type, int legIndex);
@@ -207,8 +207,8 @@ public:
 
   /* Set departure parking position. If the airport of the parking spot is different to
    * the current departure it will be replaced too. */
-  void routeSetParkingPosition(const map::MapParking& parking); /* From map context menu */
-  void routeSetHelipad(const map::MapHelipad& helipad); /* From map context menu */
+  void routeSetParkingPosition(const map::MapParking& parking, bool undo = true); /* From map context menu */
+  void routeSetHelipad(const map::MapHelipad& helipad, bool undo = true); /* From map context menu */
   void routeClearParkingAndStart(); /* Main menu and parking dialog - set airport as start */
 
   /* Shows the dialog to select departure parking or start position.
@@ -301,7 +301,7 @@ public:
 
   /* Add custom procedure and probably set new destination airport */
   void showCustomApproach(map::MapAirport airport);
-  void showCustomDeparture(map::MapAirport airport);
+  void showCustomDeparture(map::MapAirport airport, const map::MapParking& parking, const map::MapHelipad& helipad);
 
   /* Add custom proc for departure or destination airport. Called from main menu actions. */
   void showCustomApproachMainMenu();
@@ -429,13 +429,13 @@ private:
 
   /* Save undo state before and after change */
   /* Call this before doing any change to the flight plan that should be undoable */
-  RouteCommand *preChange(const QString& text = QString());
+  RouteCommand *preChange(const QString& text, bool enable = true);
 
   /* Call this after doing a change to the flight plan that should be undoable */
   void postChange(RouteCommand *undoCommand);
 
   /* Set start position (runway, helipad) for departure */
-  void routeSetStartPosition(map::MapStart start);
+  void routeSetStartPosition(map::MapStart start, bool undo = true);
 
   /* Double click into table view */
   void doubleClick(const QModelIndex& index);
@@ -458,7 +458,7 @@ private:
   void moveSelectedLegsDownTriggered();
   void moveSelectedLegsUpTriggered();
   void moveSelectedLegsInternal(MoveDirection direction);
-  void deleteSelectedLegs(QList<int> rows, bool selectCurrent);
+  void deleteSelectedLegs(QList<int> rows, bool selectCurrent, bool undo = true);
   void deleteSelectedLegsInternal(const QList<int>& rows);
 
   QList<int> getSelectedRows(bool reverseRoute) const;

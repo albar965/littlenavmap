@@ -32,8 +32,7 @@ class RouteCommand :
   public QUndoCommand
 {
 public:
-  RouteCommand(RouteController *routeController, const atools::fs::pln::Flightplan& flightplanBefore,
-               const QString& text = QString());
+  RouteCommand(RouteController *routeController, const atools::fs::pln::Flightplan& flightplanBefore, const QString& text);
   virtual ~RouteCommand() override;
 
   virtual void undo() override;

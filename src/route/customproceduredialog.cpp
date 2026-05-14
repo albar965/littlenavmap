@@ -29,14 +29,15 @@
 #include "gui/widgettool.h"
 #include "query/mapquery.h"
 #include "query/querymanager.h"
+#include "settings/settings.h"
 #include "ui_customproceduredialog.h"
 
 #include <QPushButton>
 #include <QStringBuilder>
 
 CustomProcedureDialog::CustomProcedureDialog(QWidget *parent, const map::MapAirport& mapAirport, bool departureParam,
-                                             const QString& dialogHeader, int preselectRunwayEndSim)
-  : QDialog(parent), ui(new Ui::CustomProcedureDialog), departure(departureParam)
+                                             const QString& dialogHeader, int preselectRunwayEndSim, bool forceShowParam)
+  : QDialog(parent), ui(new Ui::CustomProcedureDialog), departure(departureParam), forceShow(forceShowParam)
 {
   setWindowFlag(Qt::WindowContextHelpButtonHint, false);
 
@@ -135,7 +136,15 @@ void CustomProcedureDialog::saveState() const
 
 void CustomProcedureDialog::getSelected(map::MapRunway& runway, map::MapRunwayEnd& end, bool& airportSelected) const
 {
-  runwayTable->getCurrentSelected(runway, end, &airportSelected);
+  if(airportAutoSelected)
+  {
+    // Use clicked do not show again
+    runway = map::MapRunway();
+    end = map::MapRunwayEnd();
+    airportSelected = true;
+  }
+  else
+    runwayTable->getCurrentSelected(runway, end, &airportSelected);
 }
 
 float CustomProcedureDialog::getLegDistance() const
@@ -153,7 +162,31 @@ float CustomProcedureDialog::getEntryAltitude() const
   return Unit::rev(static_cast<float>(ui->spinBoxCustomProcAlt->value()), Unit::altFeetF);
 }
 
-/* A button box button was clicked */
+int CustomProcedureDialog::exec()
+{
+  atools::settings::Settings& settings = atools::settings::Settings::instance();
+
+  // show only if the key is true (also default)
+  bool showDialog = settings.valueBool(lnm::ACTIONS_SHOW_CUSTOM_PROCEDURE_DIALOG, true);
+  if(forceShow || showDialog)
+  {
+    // Open dialog window ==================
+    ui->checkBoxDoNotShowAgain->setChecked(!showDialog);
+    int retval = QDialog::exec();
+
+    settings.setValue(lnm::ACTIONS_SHOW_CUSTOM_PROCEDURE_DIALOG, !ui->checkBoxDoNotShowAgain->isChecked());
+    atools::settings::Settings::syncSettings();
+    return retval;
+  }
+  else
+  {
+    // Do not open ==================
+    airportAutoSelected = true;
+    QDialog::accept();
+  }
+  return QDialog::Accepted;
+}
+
 void CustomProcedureDialog::buttonBoxClicked(QAbstractButton *button)
 {
   if(button == ui->buttonBoxCustomProc->button(QDialogButtonBox::Ok))

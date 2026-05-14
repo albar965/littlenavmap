@@ -2265,32 +2265,15 @@ void MapWidget::addDeparture(const map::MapBase *base)
   const map::MapHelipad helipad = base->asObj<map::MapHelipad>();
   AirportQuery *airportQuery = QueryManager::instance()->getQueriesGui()->getAirportQuerySim();
 
-  // Get copy since it is changed in routeSetParkingStart() and routeSetHelipadStart()
-  const map::MapAirport departureAirport = NavApp::getRouteConst().getDepartureAirportLeg().getAirport();
-
   if(parking.isValid())
-  {
-    // Get airport for parking
-    airportQuery->getAirportById(airport, parking.airportId);
-    emit routeSetParkingStart(parking);
-
     // Show dialog for runway/airport selection if airport has runways and has changed
-    if(airport != departureAirport && !airport.noRunways())
-      emit showCustomDeparture(airport);
-  }
+    emit showCustomDeparture(airportQuery->getAirportById(parking.airportId), parking, helipad);
   else if(helipad.isValid())
-  {
-    // Get airport for helipad
-    airportQuery->getAirportById(airport, helipad.airportId);
-    emit routeSetHelipadStart(helipad);
-
     // Show dialog for runway/airport selection if airport has runways and has changed
-    if(airport != departureAirport && !airport.noRunways())
-      emit showCustomDeparture(airport);
-  }
+    emit showCustomDeparture(airportQuery->getAirportById(helipad.airportId), parking, helipad);
   else
     // Select runway if departure airport has changed
-    emit showCustomDeparture(airport);
+    emit showCustomDeparture(airport, parking, helipad);
 }
 
 void MapWidget::updateRoute(const QPoint& point, int leg, int pointIndex, bool fromClickAdd, bool fromClickAppend)

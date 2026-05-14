@@ -1884,12 +1884,12 @@ void SearchBaseTable::showApproaches(bool customApproach, bool customDeparture)
         if(customApproach)
         {
           if(!departure || route.getSizeWithoutAlternates() == 1)
-            emit showCustomApproach(airport, QStringLiteral());
+            emit showCustomApproach(airport);
         }
         else if(customDeparture)
         {
           if(!destination || route.getSizeWithoutAlternates() == 1)
-            emit showCustomDeparture(airport, QStringLiteral());
+            emit showCustomDeparture(airport, map::MapParking(), map::MapHelipad());
         }
         else
         {

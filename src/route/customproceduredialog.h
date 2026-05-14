@@ -46,7 +46,7 @@ class CustomProcedureDialog :
 
 public:
   explicit CustomProcedureDialog(QWidget *parent, const map::MapAirport& mapAirport, bool departureParam, const QString& dialogHeader,
-                                 int preselectRunwayEndSim);
+                                 int preselectRunwayEndSim, bool forceShowParam);
   virtual ~CustomProcedureDialog() override;
 
   CustomProcedureDialog(const CustomProcedureDialog& other) = delete;
@@ -69,10 +69,13 @@ public:
     return showProceduresSelected;
   }
 
+  virtual int exec() override;
+
 private:
   void restoreState();
   void saveState() const;
 
+  /* A button box button was clicked */
   void buttonBoxClicked(QAbstractButton *button);
   void updateWidgets();
   void doubleClicked();
@@ -81,7 +84,8 @@ private:
   RunwayTable *runwayTable = nullptr;
 
   UnitStringTool *units = nullptr;
-  bool departure = false, showProceduresSelected = false;
+  bool departure = false, showProceduresSelected = false, airportAutoSelected = false, forceShow = false;
+
 };
 
 #endif // LNM_CUSTOMPROCEDUREDIALOG_H

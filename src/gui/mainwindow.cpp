@@ -1630,10 +1630,8 @@ void MainWindow::connectAllSlots()
   connect(routeController, &RouteController::routeSelectionChanged, this, &MainWindow::routeSelectionChanged);
   connect(ui->actionRouteSelectParking, &QAction::triggered, routeController, &RouteController::selectDepartureParking);
 
-  connect(mapWidget, &MapWidget::routeSetStart, routeController, &RouteController::routeSetDeparture);
-  connect(mapWidget, &MapWidget::routeSetParkingStart, routeController, &RouteController::routeSetParkingPosition);
-  connect(mapWidget, &MapWidget::routeSetHelipadStart, routeController, &RouteController::routeSetHelipad);
-  connect(mapWidget, &MapWidget::routeSetDest, routeController, &RouteController::routeSetDestination);
+  connect(mapWidget, &MapWidget::routeSetDeparture, routeController, &RouteController::routeSetDeparture);
+  connect(mapWidget, &MapWidget::routeSetDestination, routeController, &RouteController::routeSetDestination);
   connect(mapWidget, &MapWidget::routeAddAlternate, routeController, &RouteController::routeAddAlternate);
   connect(mapWidget, &MapWidget::routeAdd, routeController, &RouteController::routeAdd);
   connect(mapWidget, &MapWidget::directTo, routeController, &RouteController::routeDirectTo);

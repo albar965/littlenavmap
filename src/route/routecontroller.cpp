@@ -922,10 +922,7 @@ void RouteController::weatherUpdated()
 /* Spin box altitude has changed value */
 void RouteController::routeAltChanged()
 {
-  RouteCommand *undoCommand = nullptr;
-
-  if(!route.isEmpty() /*&& route.getFlightplan().canSaveAltitude()*/)
-    undoCommand = preChange(tr("Change Altitude"));
+  RouteCommand *undoCommand = preChange(tr("Change Altitude"), !route.isEmpty());
 
   // Get type, speed and cruise altitude from widgets
   updateFlightplanFromWidgets();
@@ -966,10 +963,7 @@ void RouteController::routeAltChangedDelayed()
 /* Combo box route type has value changed */
 void RouteController::routeTypeChanged()
 {
-  RouteCommand *undoCommand = nullptr;
-
-  if(!route.isEmpty() /*&& route.getFlightplan().canSaveFlightplanType()*/)
-    undoCommand = preChange(tr("Change Type"));
+  RouteCommand *undoCommand = preChange(tr("Change Type"), !route.isEmpty());
 
   // Get type and cruise altitude from widgets
   updateFlightplanFromWidgets();
@@ -1263,9 +1257,7 @@ void RouteController::loadFlightplanInternal(atools::fs::pln::Flightplan flightp
   clearTableSelection();
   waypointEditDialog->clearAndSave();
 
-  RouteCommand *undoCommand = nullptr;
-  if(undo && !clearUndoState)
-    undoCommand = preChange(tr("Flight Plan Changed"));
+  RouteCommand *undoCommand = preChange(tr("Flight Plan Changed"), undo && !clearUndoState);
 
   // Keep this since it is overwritten by widgets later
   pln::FlightplanType loadedFlightplanType = flightplan.getFlightplanType();
@@ -1430,8 +1422,7 @@ void RouteController::loadFlightplanInternal(atools::fs::pln::Flightplan flightp
         // Set the old altitude for the undo command to store
         route.setCruiseAltitudeFt(origCruiseAlt);
 
-        if(!clearUndoState)
-          undoCommand = preChange(tr("Flight Plan Changed"));
+        undoCommand = preChange(tr("Flight Plan Changed"), !clearUndoState);
 
         // Assign new cruise altitude again
         route.setCruiseAltitudeFt(newCruise);
@@ -3838,7 +3829,7 @@ void RouteController::deleteSelectedLegsTriggered()
   deleteSelectedLegs(getSelectedRows(true /* reverse */), true /* selectCurrent */);
 }
 
-void RouteController::deleteSelectedLegs(QList<int> rows, bool selectCurrent)
+void RouteController::deleteSelectedLegs(QList<int> rows, bool selectCurrent, bool undo)
 {
   rows.removeAll(map::INVALID_INDEX_VALUE);
 
@@ -3853,7 +3844,7 @@ void RouteController::deleteSelectedLegs(QList<int> rows, bool selectCurrent)
 
     // Do not merge for procedure deletes
     proc::MapProcedureTypes procs = affectedProcedures(rows);
-    RouteCommand *undoCommand = preChange(procs & proc::PROCEDURE_ALL ? tr("Delete Procedure") : tr("Delete Waypoints"));
+    RouteCommand *undoCommand = preChange(procs & proc::PROCEDURE_ALL ? tr("Delete Procedure") : tr("Delete Waypoints"), undo);
 
     deleteSelectedLegsInternal(rows);
     updateActiveLeg();
@@ -4051,23 +4042,21 @@ void RouteController::selectRange(int from, int to)
     tableViewRoute->selectionModel()->select(newSel, QItemSelectionModel::ClearAndSelect);
 }
 
-void RouteController::routeSetHelipad(const map::MapHelipad& helipad)
+void RouteController::routeSetHelipad(const map::MapHelipad& helipad, bool undo)
 {
   qDebug() << Q_FUNC_INFO << helipad.id;
 
   map::MapStart start;
   QueryManager::instance()->getQueriesGui()->getAirportQuerySim()->getStartById(start, helipad.startId);
 
-  routeSetStartPosition(start);
+  routeSetStartPosition(start, undo);
 }
 
 void RouteController::routeClearParkingAndStart()
 {
   qDebug() << Q_FUNC_INFO;
 
-  RouteCommand *undoCommand = nullptr;
-
-  undoCommand = preChange(tr("Set Start Position to Airport"));
+  RouteCommand *undoCommand = preChange(tr("Set Start Position to Airport"));
 
   // Update the current airport which is new or the same as the one used by the parking spot
   route.setDepartureParking(map::MapParking());
@@ -4095,13 +4084,11 @@ void RouteController::routeClearParkingAndStart()
   NavApp::setStatusMessage(tr("Start postition set to airport."));
 }
 
-void RouteController::routeSetParkingPosition(const map::MapParking& parking)
+void RouteController::routeSetParkingPosition(const map::MapParking& parking, bool undo)
 {
   qDebug() << Q_FUNC_INFO << parking.id;
 
-  RouteCommand *undoCommand = nullptr;
-
-  undoCommand = preChange(tr("Set Start Position"));
+  RouteCommand *undoCommand = preChange(tr("Set Start Position"), undo);
 
   if(route.isEmpty() || route.getDepartureAirportLeg().getMapType() != map::AIRPORT ||
      route.getDepartureAirportLeg().getId() != parking.airportId)
@@ -4139,11 +4126,11 @@ void RouteController::routeSetParkingPosition(const map::MapParking& parking)
                            arg(map::parkingNameOrNumber(parking)));
 }
 
-void RouteController::routeSetStartPosition(map::MapStart start)
+void RouteController::routeSetStartPosition(map::MapStart start, bool undo)
 {
   qDebug() << "route set start id" << start.id;
 
-  RouteCommand *undoCommand = preChange(tr("Set Start Position"));
+  RouteCommand *undoCommand = preChange(tr("Set Start Position"), undo);
   NavApp::showFlightplan();
 
   if(route.isEmpty() || route.getDepartureAirportLeg().getMapType() != map::AIRPORT ||
@@ -4187,7 +4174,7 @@ void RouteController::routeSetStartPosition(map::MapStart start)
                            arg(start.runwayName));
 }
 
-void RouteController::routeSetDeparture(map::MapAirport airport)
+void RouteController::routeSetDeparture(map::MapAirport airport, bool undo)
 {
   qDebug() << Q_FUNC_INFO << airport.id << airport.ident;
 
@@ -4197,7 +4184,7 @@ void RouteController::routeSetDeparture(map::MapAirport airport)
   // Ignore events triggering follow due to selection changes
   atools::util::ContextSaverBool saver(ignoreFollowSelection);
 
-  RouteCommand *undoCommand = preChange(tr("Set Departure"));
+  RouteCommand *undoCommand = preChange(tr("Set Departure"), undo);
   NavApp::showFlightplan();
 
   routeSetDepartureInternal(airport);
@@ -4261,7 +4248,7 @@ void RouteController::routeSetDepartureInternal(const map::MapAirport& airport)
   waypointEditDialog->updateFromRoute(route);
 }
 
-void RouteController::routeSetDestination(map::MapAirport airport)
+void RouteController::routeSetDestination(map::MapAirport airport, bool undo)
 {
   qDebug() << Q_FUNC_INFO << airport.id << airport.ident;
 
@@ -4271,7 +4258,7 @@ void RouteController::routeSetDestination(map::MapAirport airport)
   // Ignore events triggering follow due to selection changes
   atools::util::ContextSaverBool saver(ignoreFollowSelection);
 
-  RouteCommand *undoCommand = preChange(tr("Set Destination"));
+  RouteCommand *undoCommand = preChange(tr("Set Destination"), undo);
   NavApp::showFlightplan();
 
   routeSetDestinationInternal(airport);
@@ -4425,7 +4412,7 @@ void RouteController::showCustomDepartureMainMenu()
 {
   // Called from main menu for current departure
   if(route.hasValidDepartureAndRunways())
-    showCustomDeparture(route.getDepartureAirportLeg().getAirport());
+    showCustomDeparture(route.getDepartureAirportLeg().getAirport(), map::MapParking(), map::MapHelipad());
 }
 
 void RouteController::showCustomApproachRouteTriggered()
@@ -4443,7 +4430,7 @@ void RouteController::showCustomDepartureRouteTriggered()
 
   // Allow for destination airport only or single airport plan where airport can be used both as departure and destination
   if(index.isValid() && (route.getDestinationAirportLegIndex() != index.row() || route.getSizeWithoutAlternates() == 1))
-    showCustomDeparture(route.value(index.row()).getAirport());
+    showCustomDeparture(route.value(index.row()).getAirport(), map::MapParking(), map::MapHelipad());
 }
 
 void RouteController::showCustomApproach(map::MapAirport airport)
@@ -4489,7 +4476,8 @@ void RouteController::showCustomApproach(map::MapAirport airport)
       runwayEndId = runwayEnds.constFirst().id;
 
     // Show runway selection dialog to user
-    CustomProcedureDialog procedureDialog(mainWindow, airport, false /* departureParam */, dialogHeader, runwayEndId);
+    CustomProcedureDialog procedureDialog(mainWindow, airport, false /* departureParam */, dialogHeader, runwayEndId,
+                                          !airportChange /* forceShowParam */);
     int result = procedureDialog.exec();
 
     if(result == QDialog::Accepted)
@@ -4504,16 +4492,18 @@ void RouteController::showCustomApproach(map::MapAirport airport)
         bool airportSelected;
         procedureDialog.getSelected(runway, end, airportSelected);
 
+        RouteCommand *undoCommand = preChange(tr("Destination changed"));
+
         if(airportSelected)
         {
           // User clicked on airport on top of table
           if(airportChange)
             // Select new airport
-            routeSetDestination(airport);
+            routeSetDestination(airport, false /* undo */);
           else
             // Delete approach procedures
             deleteSelectedLegs(route.hasAnyApproachProcedure() ? QList<int>({route.getDestinationAirportLegIndex() - 1}) : QList<int>(),
-                               false /* selectCurrent */);
+                               false /* selectCurrent */, false /* undo */);
         }
         else
         {
@@ -4523,14 +4513,15 @@ void RouteController::showCustomApproach(map::MapAirport airport)
                                                                                                procedureDialog.getLegDistance(),
                                                                                                procedureDialog.getEntryAltitude(),
                                                                                                procedureDialog.getLegOffsetAngle());
-          routeAddProcedure(procedure);
+          routeAddProcedure(procedure, false /* undo */);
         }
+        postChange(undoCommand);
       }
     }
   }
 }
 
-void RouteController::showCustomDeparture(map::MapAirport airport)
+void RouteController::showCustomDeparture(map::MapAirport airport, const map::MapParking& parking, const map::MapHelipad& helipad)
 {
   // Also called from search menu
   qDebug() << Q_FUNC_INFO << airport.id << airport.ident;
@@ -4538,7 +4529,11 @@ void RouteController::showCustomDeparture(map::MapAirport airport)
   if(!airport.isValid())
     return;
 
+  // New airport
   bool airportChange = airport != route.getDepartureAirportLeg().getAirport();
+
+  // Start position change requested
+  bool startChange = parking.isValid() || helipad.isValid();
 
   if(airport.noRunways() && airportChange)
     // Airport has no runways and changes - set departure directly
@@ -4571,14 +4566,19 @@ void RouteController::showCustomDeparture(map::MapAirport airport)
         runwayEndId = runwayEnds.constFirst().id;
     }
 
-    // Show runway selection dialog to user
-    CustomProcedureDialog procedureDialog(mainWindow, airport, true /* departureParam */, dialogHeader, runwayEndId);
-    int result = procedureDialog.exec();
+    int result = QDialog::Accepted;
+    CustomProcedureDialog procedureDialog(mainWindow, airport, true /* departureParam */, dialogHeader, runwayEndId, !airportChange);
+
+    // Show the dialog only if either the airport has changed or no start position change
+    // Changing start for an already departure should not show the runway dialog
+    if(airportChange || !startChange)
+      // Show runway selection dialog to user
+      result = procedureDialog.exec();
 
     if(result == QDialog::Accepted)
     {
       if(procedureDialog.isShowProceduresSelected())
-        // User clicked show procedures button - delegate
+        // User clicked show procedures button - delegate to procedure search
         emit showProcedures(airport, true /* departureFilter */, false /* arrivalFilter */);
       else
       {
@@ -4587,21 +4587,31 @@ void RouteController::showCustomDeparture(map::MapAirport airport)
         bool airportSelected;
         procedureDialog.getSelected(runway, end, airportSelected);
 
+        RouteCommand *undoCommand = preChange(tr("Departure changed"));
+
         if(airportSelected)
         {
           // User clicked on airport on top of table
           if(airportChange)
-            routeSetDeparture(airport);
+            routeSetDeparture(airport, false /* undo */);
           else if(route.getSidLegIndex() > 0)
-            deleteSelectedLegs({route.getSidLegIndex()}, false /* selectCurrent */);
+            deleteSelectedLegs({route.getSidLegIndex()}, false /* selectCurrent */, false /* undo */);
         }
         else
         {
           // User selected a runway
           proc::MapProcedureLegs procedure;
           queries->getProcedureQuery()->createCustomDeparture(procedure, airport, end, procedureDialog.getLegDistance());
-          routeAddProcedure(procedure);
+          routeAddProcedure(procedure, false /* undo */);
         }
+
+        if(parking.isValid())
+          routeSetParkingPosition(parking, false /* undo */);
+
+        if(helipad.isValid())
+          routeSetHelipad(helipad, false /* undo */);
+
+        postChange(undoCommand);
       }
     }
   }
@@ -4639,7 +4649,7 @@ void RouteController::updateRouteTabChangedStatus()
   }
 }
 
-void RouteController::routeAddProcedure(proc::MapProcedureLegs legs)
+void RouteController::routeAddProcedure(proc::MapProcedureLegs legs, bool undo)
 {
   qDebug() << Q_FUNC_INFO
            << legs.type << legs.procedureFixIdent << legs.suffix << legs.arincName
@@ -4763,12 +4773,10 @@ void RouteController::routeAddProcedure(proc::MapProcedureLegs legs)
   if(route.isEmpty())
     NavApp::showFlightplan();
 
-  RouteCommand *undoCommand = nullptr;
-
   // Ignore events triggering follow due to selection changes
   atools::util::ContextSaverBool saver(ignoreFollowSelection);
 
-  undoCommand = preChange(tr("Add Procedure"));
+  RouteCommand *undoCommand = preChange(tr("Add Procedure"), undo);
 
   // Inserting new ones does not produce errors - only loading
   procedureErrors.clear();
@@ -6196,12 +6204,17 @@ void RouteController::clearRoute()
   updateFlightplanFromWidgets();
 }
 
-RouteCommand *RouteController::preChange(const QString& text)
+RouteCommand *RouteController::preChange(const QString& text, bool enable)
 {
-  // Clean the flight plan from any procedure entries
-  Flightplan flightplan = route.getFlightplanConst();
-  flightplan.removeProcedureEntries();
-  return new RouteCommand(this, flightplan, text);
+  if(enable)
+  {
+    // Clean the flight plan from any procedure entries
+    Flightplan flightplan = route.getFlightplanConst();
+    flightplan.removeProcedureEntries();
+    return new RouteCommand(this, flightplan, text);
+  }
+  else
+    return nullptr;
 }
 
 void RouteController::postChange(RouteCommand *undoCommand)

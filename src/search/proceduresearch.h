@@ -106,7 +106,7 @@ signals:
   void showRect(const atools::geo::Rect& rect, bool doubleClick);
 
   /* Add the complete procedure to the route */
-  void routeInsertProcedure(const proc::MapProcedureLegs& legs);
+  void routeInsertProcedure(const proc::MapProcedureLegs& legs, bool undo = true);
 
   /* Show information info window on navaid on double click */
   void showInformation(const map::MapResult& result);
