@@ -627,22 +627,22 @@ void MapContextMenu::insertDepartureMenu(QMenu& menu)
           if(noRunways && base->getType() == map::AIRPORT)
           {
             // Airport is already departure and has no runways - disable
-            text = submenu ? tr("{parking}%1") : tr("Select {parking}%1 as Departure");
+            text = submenu ? tr("{parking}%1") : tr("&Select {parking}%1 as Departure");
             disable = true;
           }
           else if(base->getType() == map::AIRPORT)
             // Airport is departure and has runways - allow user to select a runway
-            text = tr("Select Departure Runway for %1");
+            text = tr("&Select Departure Runway for %1");
           else
             // Select parking or helipad
-            text = tr("Select {parking}for %1");
+            text = tr("&Select {parking}for %1");
         }
         else if(!destination)
         {
           if(!parkingText.isEmpty())
             parkingText = tr("%1 at ").arg(parkingText);
           // Normal airport in flight plan or outside - can select airport or parking/helipad
-          text = submenu ? tr("{parking}%1") : tr("Select {parking}%1 as Departure");
+          text = submenu ? tr("{parking}%1") : tr("&Select {parking}%1 as Departure");
         }
         else
           disable = true;
@@ -671,7 +671,7 @@ void MapContextMenu::insertDepartureMenu(QMenu& menu)
 
   insertMenuOrAction(menu, mc::DEPARTURE,
                      MapResultIndex().addRef(*result, map::AIRPORT | map::HELIPAD | map::START | map::PARKING).sort(alphaSort),
-                     tr("Select %1 as Departure"), tr("Select departure for airport"),
+                     tr("&Select %1 as Departure"), tr("Select departure for airport"),
                      QStringLiteral(), QIcon(":/littlenavmap/resources/icons/airportroutestart.svg"), false /* allowNoMapObject */,
                      callback);
 }
@@ -694,16 +694,16 @@ void MapContextMenu::insertDestinationMenu(QMenu& menu)
           if(noRunways)
           {
             // Airport is destination and has no runways
-            text = submenu ? tr("%1") : tr("Select %1 as Destination");
+            text = submenu ? tr("%1") : tr("Select %1 as &Destination");
             disable = true;
           }
           else
             // Airport is destination and has runways
-            text = tr("Select Destination Runway for %1");
+            text = tr("Select &Destination Runway for %1");
         }
         else if(!departure)
           // Normal airport in flight plan or outside
-          text = submenu ? tr("%1") : tr("Select %1 as Destination");
+          text = submenu ? tr("%1") : tr("Select %1 as &Destination");
         else
           disable = true;
 
@@ -726,7 +726,7 @@ void MapContextMenu::insertDestinationMenu(QMenu& menu)
 
   insertMenuOrAction(menu, mc::DESTINATION,
                      MapResultIndex().addRef(*result, map::AIRPORT).sort(alphaSort),
-                     tr("Select %1 as Destination"), tr("Select destination for airport"),
+                     tr("Select %1 as &Destination"), tr("Select destination for airport"),
                      QStringLiteral(), QIcon(":/littlenavmap/resources/icons/airportroutedest.svg"), false /* allowNoMapObject */,
                      callback);
 }
@@ -761,7 +761,7 @@ void MapContextMenu::insertAlternateMenu(QMenu& menu)
     };
 
   insertMenuOrAction(menu, mc::ALTERNATE, MapResultIndex().addRef(*result, map::AIRPORT).sort(alphaSort),
-                     tr("&Select %1 as Alternate"), tr("Add airport as alternate to the flight plan"),
+                     tr("Select %1 as &Alternate"), tr("Add airport as alternate to the flight plan"),
                      QStringLiteral(), QIcon(":/littlenavmap/resources/icons/airportroutealt.svg"), false /* allowNoMapObject */, callback);
 }
 

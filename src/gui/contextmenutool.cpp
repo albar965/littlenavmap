@@ -30,7 +30,7 @@ void ContextMenuTool::initAirportActions(const map::MapAirport& airport, const R
   actionShowDeparture->setDisabled(true);
 
   actionShowApproach->setText(tr("Select as &Destination{hint}"));
-  actionShowDeparture->setText(tr("Select as &Departure{hint}"));
+  actionShowDeparture->setText(tr("&Select as Departure{hint}"));
 
   if(airport.isValid())
   {
@@ -51,7 +51,7 @@ void ContextMenuTool::initAirportActions(const map::MapAirport& airport, const R
           ActionTool::setText(actionShowProcedures, true, objectText);
         }
         else
-          actionShowProcedures->setText(tr("Show procedures (no departure procedure)"));
+          actionShowProcedures->setText(tr("Show Procedures (no departure procedure)"));
       }
       else if(airportDestination && !airportRoundTrip)
       {
@@ -65,7 +65,7 @@ void ContextMenuTool::initAirportActions(const map::MapAirport& airport, const R
       }
       else
       {
-        actionShowProcedures->setText(tr("Show Procedures for %1"));
+        actionShowProcedures->setText(tr("Show &Procedures for %1"));
         ActionTool::setText(actionShowProcedures, true, objectText);
       }
     }
@@ -77,49 +77,49 @@ void ContextMenuTool::initAirportActions(const map::MapAirport& airport, const R
     {
       if(!airportDestination && !airportDeparture)
       {
+        actionShowDeparture->setText(tr("&Select %1 as Departure{hint}"));
+        actionShowDeparture->setEnabled(true);
         actionShowApproach->setText(tr("Select %1 as &Destination{hint}"));
         actionShowApproach->setEnabled(true);
-        actionShowDeparture->setText(tr("Select %1 as &Departure{hint}"));
-        actionShowDeparture->setEnabled(true);
       }
     }
     else
     {
       if(airportDeparture)
       {
-        actionShowDeparture->setText(tr("Select &Departure Runway for %1{hint}"));
+        actionShowDeparture->setText(tr("&Select Departure Runway for %1{hint}"));
         actionShowDeparture->setEnabled(true);
       }
       else if(!airportDestination)
       {
-        actionShowDeparture->setText(tr("Select %1 as &Departure{hint}"));
+        actionShowDeparture->setText(tr("&Select %1 as Departure{hint}"));
         actionShowDeparture->setEnabled(true);
       }
 
       if(airportDestination)
       {
-        actionShowApproach->setText(tr("Select Destination &Runway for %1{hint}"));
+        actionShowApproach->setText(tr("Select &Destination Runway for %1{hint}"));
         actionShowApproach->setEnabled(true);
       }
       else if(!airportDeparture)
       {
-        actionShowApproach->setText(tr("Select %1 as Destination{hint}"));
+        actionShowApproach->setText(tr("Select %1 as &Destination{hint}"));
         actionShowApproach->setEnabled(true);
       }
 
-      ActionTool::setText(actionShowApproach, objectText);
       ActionTool::setText(actionShowDeparture, objectText);
+      ActionTool::setText(actionShowApproach, objectText);
     }
 
     QString hintStr = airportItemSuffix(airportDeparture, airportDestination, airportAlternate, airportRoundTrip, noRunways);
-    actionShowApproach->setText(actionShowApproach->text().replace("{hint}", hintStr));
     actionShowDeparture->setText(actionShowDeparture->text().replace("{hint}", hintStr));
+    actionShowApproach->setText(actionShowApproach->text().replace("{hint}", hintStr));
   }
   else
   {
     actionShowProcedures->setText(tr("Show &Procedures"));
+    actionShowDeparture->setText(tr("&Select Departure %1"));
     actionShowApproach->setText(tr("Select &Destination %1"));
-    actionShowDeparture->setText(tr("Select &Departure %1"));
   }
 }
 
