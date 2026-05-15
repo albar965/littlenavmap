@@ -161,12 +161,7 @@ public:
   /* Add general (red) range ring */
   void addRangeMark(const atools::geo::Pos& pos, bool showDialog);
   void addRangeMark(const atools::geo::Pos& pos, const map::MapResult& result, bool showDialog);
-  void addRangeMark(const atools::geo::Pos& pos, const map::MapAirport *airport, const map::MapVor *vor,
-                    const map::MapNdb *ndb, const map::MapWaypoint *waypoint, const map::MapUserpoint *userpoint, bool showDialog);
   void fillRangeMarker(map::RangeMarker& rangeMarker, const atools::geo::Pos& pos, const map::MapResult& result);
-  void fillRangeMarker(map::RangeMarker& rangeMarker, const atools::geo::Pos& pos, const map::MapAirport *airport,
-                       const map::MapVor *vor, const map::MapNdb *ndb, const map::MapWaypoint *waypoint,
-                       const map::MapUserpoint *userpoint);
 
   /* Add radio navaid range ring. Falls back to normal range rings if range is 0. */
   void addNavRangeMark(const atools::geo::Pos& pos, map::MapTypes type, const QString& displayIdent, const QString& frequency, float range);
@@ -355,12 +350,7 @@ private:
 
   /* Start a line measurement after context menu selection or click+modifier */
   void addDistanceMarker(const atools::geo::Pos& pos, const map::MapResult& result);
-  void addDistanceMarker(const atools::geo::Pos& pos, const map::MapAirport *airport, const map::MapVor *vor,
-                         const map::MapNdb *ndb, const map::MapWaypoint *waypoint, const map::MapUserpoint *userpoint);
   void fillDistanceMarker(map::DistanceMarker& distanceMarker, const atools::geo::Pos& pos, const map::MapResult& result);
-  void fillDistanceMarker(map::DistanceMarker& distanceMarker, const atools::geo::Pos& pos, const map::MapAirport *airport,
-                          const map::MapVor *vor, const map::MapNdb *ndb, const map::MapWaypoint *waypoint,
-                          const map::MapUserpoint *userpoint);
 
   /* Add departure airport, parking or helipad probably showing the departure runway dialog */
   void addDeparture(const map::MapBase *base);

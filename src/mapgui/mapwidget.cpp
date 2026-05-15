@@ -1890,65 +1890,57 @@ void MapWidget::resetPaintForDrag()
 
 void MapWidget::fillDistanceMarker(map::DistanceMarker& distanceMarker, const atools::geo::Pos& pos, const map::MapResult& result)
 {
-  fillDistanceMarker(distanceMarker, pos,
-                     atools::constFirstPtrOrNull(result.airports),
-                     atools::constFirstPtrOrNull(result.vors),
-                     atools::constFirstPtrOrNull(result.ndbs),
-                     atools::constFirstPtrOrNull(result.waypoints),
-                     atools::constFirstPtrOrNull(result.userpoints));
-}
-
-void MapWidget::fillDistanceMarker(map::DistanceMarker& distanceMarker, const atools::geo::Pos& pos, const map::MapAirport *airport,
-                                   const map::MapVor *vor, const map::MapNdb *ndb, const map::MapWaypoint *waypoint,
-                                   const map::MapUserpoint *userpoint)
-{
   distanceMarker.flags = map::DIST_MARK_NONE;
   distanceMarker.color = QColor();
   distanceMarker.text.clear();
 
   // Build distance line depending on selected airport or navaid (color, magvar, etc.)
-  if(userpoint != nullptr && userpoint->isValid())
+  if(result.hasUserpoints())
   {
-    distanceMarker.text = map::userpointShortText(*userpoint, 20);
-    distanceMarker.from = userpoint->position;
-    distanceMarker.magvar = NavApp::getMagVar(userpoint->position, 0.f);
+    distanceMarker.text = map::userpointShortText(result.userpoints.constFirst(), 20);
+    distanceMarker.from = result.userpoints.constFirst().position;
+    distanceMarker.magvar = NavApp::getMagVar(result.userpoints.constFirst().position, 0.f);
   }
-  else if(airport != nullptr && airport->isValid())
+  else if(result.hasAirports())
   {
-    distanceMarker.text = airport->displayIdent();
-    distanceMarker.from = airport->position;
-    distanceMarker.magvar = airport->magvar;
-    distanceMarker.color = mapcolors::colorForAirport(*airport);
+    const map::MapAirport& airport = result.airports.constFirst();
+    distanceMarker.text = airport.displayIdent();
+    distanceMarker.from = airport.position;
+    distanceMarker.magvar = airport.magvar;
+    distanceMarker.color = mapcolors::colorForAirport(airport);
   }
-  else if(vor != nullptr && vor->isValid())
+  else if(result.hasVor())
   {
-    if(vor->tacan)
-      distanceMarker.text = tr("%1 %2").arg(vor->ident).arg(vor->channel);
+    const map::MapVor& vor = result.vors.constFirst();
+    if(vor.tacan)
+      distanceMarker.text = tr("%1 %2").arg(vor.ident).arg(vor.channel);
     else
-      distanceMarker.text = tr("%1 %2").arg(vor->ident).arg(QLocale().toString(vor->frequency / 1000., 'f', 2));
-    distanceMarker.from = vor->position;
-    distanceMarker.magvar = vor->magvar;
+      distanceMarker.text = tr("%1 %2").arg(vor.ident).arg(QLocale().toString(vor.frequency / 1000., 'f', 2));
+    distanceMarker.from = vor.position;
+    distanceMarker.magvar = vor.magvar;
     distanceMarker.color = mapcolors::vorSymbolColor;
 
-    if(!vor->dmeOnly)
+    if(!vor.dmeOnly)
       distanceMarker.flags |= map::DIST_MARK_RADIAL; // Also TACAN
 
-    if(vor->isCalibratedVor())
+    if(vor.isCalibratedVor())
       distanceMarker.flags |= map::DIST_MARK_MAGVAR; // Only VOR, VORDME and VORTAC
   }
-  else if(ndb != nullptr && ndb->isValid())
+  else if(result.hasNdb())
   {
-    distanceMarker.text = tr("%1 %2").arg(ndb->ident).arg(QLocale().toString(ndb->frequency / 100., 'f', 2));
-    distanceMarker.from = ndb->position;
-    distanceMarker.magvar = ndb->magvar;
+    const map::MapNdb& ndb = result.ndbs.constFirst();
+    distanceMarker.text = tr("%1 %2").arg(ndb.ident).arg(QLocale().toString(ndb.frequency / 100., 'f', 2));
+    distanceMarker.from = ndb.position;
+    distanceMarker.magvar = ndb.magvar;
     distanceMarker.color = mapcolors::ndbSymbolColor;
     distanceMarker.flags = map::DIST_MARK_RADIAL;
   }
-  else if(waypoint != nullptr && waypoint->isValid())
+  else if(result.hasWaypoints())
   {
-    distanceMarker.text = waypoint->ident;
-    distanceMarker.from = waypoint->position;
-    distanceMarker.magvar = waypoint->magvar;
+    const map::MapWaypoint& waypoint = result.waypoints.constFirst();
+    distanceMarker.text = waypoint.ident;
+    distanceMarker.from = waypoint.position;
+    distanceMarker.magvar = waypoint.magvar;
     distanceMarker.color = mapcolors::waypointSymbolColor;
   }
   else
@@ -1960,18 +1952,6 @@ void MapWidget::fillDistanceMarker(map::DistanceMarker& distanceMarker, const at
 
 void MapWidget::addDistanceMarker(const atools::geo::Pos& pos, const map::MapResult& result)
 {
-  addDistanceMarker(pos,
-                    atools::constFirstPtrOrNull(result.airports),
-                    atools::constFirstPtrOrNull(result.vors),
-                    atools::constFirstPtrOrNull(result.ndbs),
-                    atools::constFirstPtrOrNull(result.waypoints),
-                    atools::constFirstPtrOrNull(result.userpoints));
-}
-
-void MapWidget::addDistanceMarker(const atools::geo::Pos& pos, const map::MapAirport *airport,
-                                  const map::MapVor *vor, const map::MapNdb *ndb, const map::MapWaypoint *waypoint,
-                                  const map::MapUserpoint *userpoint)
-{
   // Enable display of user feature
   NavApp::getMapMarkHandler()->showMarkTypes(map::MARK_DISTANCE);
 
@@ -1980,7 +1960,7 @@ void MapWidget::addDistanceMarker(const atools::geo::Pos& pos, const map::MapAir
   distanceMarker.id = NavApp::getMapMarkers()->getNextMapMarkerId();
   distanceMarker.position = distanceMarker.to = pos;
 
-  fillDistanceMarker(distanceMarker, pos, airport, vor, ndb, waypoint, userpoint);
+  fillDistanceMarker(distanceMarker, pos, result);
 
   getScreenIndex()->getMapMarkers()->addDistanceMark(distanceMarker);
 
@@ -2144,11 +2124,11 @@ void MapWidget::contextMenuEvent(QContextMenuEvent *event)
           break;
 
         case mc::MEASURE:
-          addDistanceMarker(pos, &airport, &vor, &ndb, &waypoint, &userpoint);
+          addDistanceMarker(pos, result);
           break;
 
         case mc::RANGERINGS:
-          addRangeMark(pos, &airport, &vor, &ndb, &waypoint, &userpoint, true /* showDialog */);
+          addRangeMark(pos, result, true /* showDialog */);
           break;
 
         case mc::NAVAIDRANGE:
@@ -3935,52 +3915,44 @@ void MapWidget::addNavRangeMark(const atools::geo::Pos& pos, map::MapTypes type,
 
 void MapWidget::fillRangeMarker(map::RangeMarker& rangeMarker, const atools::geo::Pos& pos, const map::MapResult& result)
 {
-  fillRangeMarker(rangeMarker, pos,
-                  atools::constFirstPtrOrNull(result.airports),
-                  atools::constFirstPtrOrNull(result.vors),
-                  atools::constFirstPtrOrNull(result.ndbs),
-                  atools::constFirstPtrOrNull(result.waypoints),
-                  atools::constFirstPtrOrNull(result.userpoints));
-}
-
-void MapWidget::fillRangeMarker(map::RangeMarker& rangeMarker, const atools::geo::Pos& pos, const map::MapAirport *airport,
-                                const map::MapVor *vor, const map::MapNdb *ndb, const map::MapWaypoint *waypoint,
-                                const map::MapUserpoint *userpoint)
-{
   rangeMarker.navType = map::NONE;
   rangeMarker.text.clear();
 
   // Build range ring center and text depending on selected airport or navaid
-  if(userpoint != nullptr && userpoint->isValid())
+  if(result.hasUserpoints())
   {
-    rangeMarker.text = map::userpointShortText(*userpoint, 20);
-    rangeMarker.position = userpoint->position;
+    rangeMarker.text = map::userpointShortText(result.userpoints.constFirst(), 20);
+    rangeMarker.position = result.userpoints.constFirst().position;
   }
-  else if(airport != nullptr && airport->isValid())
+  else if(result.hasAirports())
   {
-    rangeMarker.text = airport->displayIdent();
-    rangeMarker.position = airport->position;
+    rangeMarker.text = result.airports.constFirst().displayIdent();
+    rangeMarker.position = result.airports.constFirst().position;
     rangeMarker.navType = map::AIRPORT;
   }
-  else if(vor != nullptr && vor->isValid())
+  else if(result.hasVor())
   {
-    if(vor->tacan)
-      rangeMarker.text = tr("%1 %2").arg(vor->ident).arg(vor->channel);
+    const map::MapVor& vor = result.vors.constFirst();
+
+    if(vor.tacan)
+      rangeMarker.text = tr("%1 %2").arg(vor.ident).arg(vor.channel);
     else
-      rangeMarker.text = tr("%1 %2").arg(vor->ident).arg(QLocale().toString(vor->frequency / 1000., 'f', 2));
-    rangeMarker.position = vor->position;
+      rangeMarker.text = tr("%1 %2").arg(vor.ident).arg(QLocale().toString(vor.frequency / 1000., 'f', 2));
+    rangeMarker.position = vor.position;
     rangeMarker.navType = map::VOR;
   }
-  else if(ndb != nullptr && ndb->isValid())
+  else if(result.hasNdb())
   {
-    rangeMarker.text = tr("%1 %2").arg(ndb->ident).arg(QLocale().toString(ndb->frequency / 100., 'f', 2));
-    rangeMarker.position = ndb->position;
+    const map::MapNdb& ndb = result.ndbs.constFirst();
+    rangeMarker.text = tr("%1 %2").arg(ndb.ident).arg(QLocale().toString(ndb.frequency / 100., 'f', 2));
+    rangeMarker.position = ndb.position;
     rangeMarker.navType = map::NDB;
   }
-  else if(waypoint != nullptr && waypoint->isValid())
+  else if(result.hasWaypoints())
   {
-    rangeMarker.text = waypoint->ident;
-    rangeMarker.position = waypoint->position;
+    const map::MapWaypoint& waypoint = result.waypoints.constFirst();
+    rangeMarker.text = waypoint.ident;
+    rangeMarker.position = waypoint.position;
     rangeMarker.navType = map::WAYPOINT;
   }
   else
@@ -4022,22 +3994,9 @@ void MapWidget::addRangeMark(const atools::geo::Pos& pos, bool showDialog)
 
 void MapWidget::addRangeMark(const atools::geo::Pos& pos, const map::MapResult& result, bool showDialog)
 {
-  addRangeMark(pos,
-               atools::constFirstPtrOrNull(result.airports),
-               atools::constFirstPtrOrNull(result.vors),
-               atools::constFirstPtrOrNull(result.ndbs),
-               atools::constFirstPtrOrNull(result.waypoints),
-               atools::constFirstPtrOrNull(result.userpoints),
-               showDialog);
-}
-
-void MapWidget::addRangeMark(const atools::geo::Pos& pos, const map::MapAirport *airport,
-                             const map::MapVor *vor, const map::MapNdb *ndb, const map::MapWaypoint *waypoint,
-                             const map::MapUserpoint *userpoint, bool showDialog)
-{
   // Pre-fill the marker object with waypoint information before opening dialog
   map::RangeMarker marker;
-  fillRangeMarker(marker, pos, airport, vor, ndb, waypoint, userpoint);
+  fillRangeMarker(marker, pos, result);
 
   // Create dialog which also loads the defaults from settings
   // Use the determined position (may have been snapped to waypoint/navaid)
