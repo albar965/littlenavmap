@@ -364,8 +364,8 @@ void DistanceMarker::save(atools::util::XmlStreamWriter& stream) const
   stream.writeTextElement(QStringLiteral("MagvarDeg"), magvar);
   stream.writeTextElement(QStringLiteral("Radial"), flags.testFlag(DIST_MARK_RADIAL));
   stream.writeTextElement(QStringLiteral("Magvar"), flags.testFlag(DIST_MARK_MAGVAR));
-  stream.writeTextElement(QStringLiteral("PosFrom"), to);
-  stream.writeTextElement(QStringLiteral("PosTo"), from);
+  stream.writeTextElement(QStringLiteral("PosFrom"), from);
+  stream.writeTextElement(QStringLiteral("PosTo"), to);
 }
 
 void DistanceMarker::restore(atools::util::XmlStreamReader& stream)

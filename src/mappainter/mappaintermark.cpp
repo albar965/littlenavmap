@@ -1402,7 +1402,7 @@ void MapPainterMark::paintDistanceMarks()
   for(const map::DistanceMarker *marker : markers)
   {
     // Get color from marker or default
-    QColor color = marker->color.isValid() ? marker->color : measurementColor;
+    const QColor color = marker->color.isValid() ? marker->color : measurementColor;
     painter->setPen(QPen(color, lineWidth * 0.5, Qt::SolidLine, Qt::FlatCap, Qt::MiterJoin));
 
     float symbolSize = lineWidth * 1.7f;
@@ -1421,13 +1421,14 @@ void MapPainterMark::paintDistanceMarks()
       painter->drawLine(QPointF(x, y - symbolSize), QPointF(x, y + symbolSize));
     }
 
-    if(resolves(ageo::Line(marker->from, marker->to)))
+    const ageo::Line line(marker->from, marker->to);
+    if(resolves(line))
     {
       // Draw great circle line ========================================================
       painter->setPen(QPen(color, lineWidth, Qt::SolidLine, Qt::RoundCap, Qt::MiterJoin));
-      drawLine(painter, ageo::Line(marker->from, marker->to));
+      drawLine(painter, line);
 
-      if(marker->from != marker->to)
+      if(!line.isPoint())
       {
         // Build '\n' separated texts =============================
         const QStringList texts = distanceMarkText(*marker, marker->id == context->currentDistanceMarkerId &&
@@ -1440,10 +1441,11 @@ void MapPainterMark::paintDistanceMarks()
         textPlacement.setDrawFast(context->drawFast);
         textPlacement.setLineWidth(lineWidth);
         textPlacement.setTextOnLineCenter(true);
-        textPlacement.calculateTextAlongLine(ageo::Line(marker->from, marker->to), texts.join('\n'));
+        textPlacement.calculateTextAlongLine(line, texts.join('\n'));
         textPlacement.drawTextAlongLines();
       }
     }
+
   } // for(const map::DistanceMarker& marker : distanceMarkers)
 }
 

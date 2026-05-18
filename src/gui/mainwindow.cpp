@@ -4349,7 +4349,7 @@ void MainWindow::optionsChanged(const optc::OptionChangeFlags& changeFlags)
   // The units need to be called before all others
   Unit::optionsChanged(changeFlags);
 
-  if(changeFlags.testFlags(optc::OPTION_CHANGE_UI_FONT))
+  if(changeFlags.testFlag(optc::OPTION_CHANGE_UI_FONT))
   {
     // Set font and let application objec t emit change signal
     const OptionData& optionData = OptionData::instance();
