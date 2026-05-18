@@ -33,7 +33,6 @@
 
 #include <marble/GeoPainter.h>
 
-
 MapPainterTop::MapPainterTop(MapPaintWidget *mapWidgetParam, MapScale *mapScale, PaintContext *paintContext)
   : MapPainter(mapWidgetParam, mapScale, paintContext)
 {
@@ -83,15 +82,6 @@ void MapPainterTop::render()
       int areaSize = OptionData::instance().getMapNavTouchArea();
       if(opts & optsd::NAVAIDS_TOUCHSCREEN_REGIONS)
         drawTouchRegions(areaSize);
-
-      if(opts & optsd::NAVAIDS_TOUCHSCREEN_AREAS)
-      {
-        painter->setPen(mapcolors::touchMarkBackPen);
-        drawTouchMarks(size, areaSize);
-
-        painter->setPen(mapcolors::touchMarkFillPen);
-        drawTouchMarks(size2, areaSize);
-      }
 
       // Navigation icons in the corners
       if(opts & optsd::NAVAIDS_TOUCHSCREEN_ICONS)
@@ -244,55 +234,47 @@ void MapPainterTop::drawTouchRegions(int areaSize)
   atools::util::PainterContextSaver saver(painter);
 
   QRect vp = context->painter->viewport();
-  QPolygon poly;
-  poly << vp.topLeft() << vp.topRight() << vp.bottomRight() << vp.bottomLeft();
 
   int w = vp.width() * areaSize / 100;
   int h = vp.height() * areaSize / 100;
-  QPolygon hole;
-  hole << QPoint(vp.left() + w, vp.top() + h)
-       << QPoint(vp.right() - w, vp.top() + h)
-       << QPoint(vp.right() - w, vp.bottom() - h)
-       << QPoint(vp.left() + w, vp.bottom() - h);
-
-  poly = poly.subtracted(hole);
 
   painter->setBrush(mapcolors::touchRegionFillColor);
+  painter->setBackground(mapcolors::touchRegionFillColor);
   painter->setPen(Qt::transparent);
-  painter->setBackground(painter->brush().color());
   painter->setBackgroundMode(Qt::OpaqueMode);
-  painter->drawPolygon(poly);
-}
 
-void MapPainterTop::drawTouchMarks(int lineSize, int areaSize)
-{
-  QRect vp = context->painter->viewport();
-  int w = vp.width() * areaSize / 100;
-  int h = vp.height() * areaSize / 100;
+  // Top (up)
+  painter->drawPolygon(QPolygon({QPoint(vp.left() + w, vp.top()), QPoint(vp.right() - w, vp.top()),
+                                 QPoint(vp.right() - w, vp.top() + h), QPoint(vp.left() + w, vp.top() + h)}));
 
-  Marble::GeoPainter *painter = context->painter;
-  // Top
-  painter->drawLine(w, 0, w, lineSize);
-  painter->drawLine(vp.width() - w, 0, vp.width() - w, lineSize);
-
-  // Bottom
-  painter->drawLine(w, vp.height() - lineSize, w, vp.height());
-  painter->drawLine(vp.width() - w, vp.height() - lineSize, vp.width() - w, vp.height());
+  // Bottom (down)
+  painter->drawPolygon(QPolygon({QPoint(vp.left() + w, vp.bottom() - h), QPoint(vp.right() - w, vp.bottom() - h),
+                                 QPoint(vp.right() - w, vp.bottom()), QPoint(vp.left() + w, vp.bottom())}));
 
   // Left
-  painter->drawLine(0, h, lineSize, h);
-  painter->drawLine(0, vp.height() - h, lineSize, vp.height() - h);
+  painter->drawPolygon(QPolygon({QPoint(vp.left(), vp.top() + h), QPoint(vp.left() + w, vp.top() + h),
+                                 QPoint(vp.left() + w, vp.bottom() - h), QPoint(vp.left(), vp.bottom() - h)}));
 
   // Right
-  painter->drawLine(vp.width() - lineSize, h, vp.width(), h);
-  painter->drawLine(vp.width() - lineSize, vp.height() - h, vp.width(), vp.height() - h);
+  painter->drawPolygon(QPolygon({QPoint(vp.right() - w, vp.top() + h), QPoint(vp.right(), vp.top() + h),
+                                 QPoint(vp.right(), vp.bottom() - h), QPoint(vp.right() - w, vp.bottom() - h)}));
 
-  // Top-left
-  drawCross(painter, w, h, lineSize);
-  // Top-right
-  drawCross(painter, vp.width() - w, h, lineSize);
-  // Bottom-right
-  drawCross(painter, vp.width() - w, vp.height() - h, lineSize);
-  // Bottom-left
-  drawCross(painter, w, vp.height() - h, lineSize);
+  painter->setBrush(mapcolors::touchRegionCornerFillColor);
+  painter->setBackground(mapcolors::touchRegionCornerFillColor);
+
+  // Top left (zoom in)
+  painter->drawPolygon(QPolygon({QPoint(vp.left(), vp.top()), QPoint(vp.left() + w, vp.top()),
+                                 QPoint(vp.left() + w, vp.top() + h), QPoint(vp.left(), vp.top() + h)}));
+
+  // Top right (zoom out)
+  painter->drawPolygon(QPolygon({QPoint(vp.right() - w, vp.top()), QPoint(vp.right(), vp.top()),
+                                 QPoint(vp.right(), vp.top() + h), QPoint(vp.right() - w, vp.top() + h)}));
+
+  // Bottom left (history back)
+  painter->drawPolygon(QPolygon({QPoint(vp.left(), vp.bottom() - h), QPoint(vp.left() + w, vp.bottom() - h),
+                                 QPoint(vp.left() + w, vp.bottom()), QPoint(vp.left(), vp.bottom())}));
+
+  // Bottom right (history forward)
+  painter->drawPolygon(QPolygon({QPoint(vp.right() - w, vp.bottom() - h), QPoint(vp.right(), vp.bottom() - h),
+                                 QPoint(vp.right(), vp.bottom()), QPoint(vp.right() - w, vp.bottom())}));
 }

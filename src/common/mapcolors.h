@@ -156,6 +156,7 @@ extern QPen searchCenterFillPen;
 extern QPen touchMarkBackPen;
 extern QPen touchMarkFillPen;
 extern QColor touchRegionFillColor;
+extern QColor touchRegionCornerFillColor;
 
 extern QColor aircraftUserLabelColor;
 extern QColor aircraftUserLabelColorBg;

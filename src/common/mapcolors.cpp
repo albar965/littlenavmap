@@ -154,6 +154,7 @@ QPen searchCenterFillPen(QColor(255, 255, 0), 2., Qt::SolidLine, Qt::FlatCap);
 QPen touchMarkBackPen(QColor(0, 0, 0), 4., Qt::SolidLine, Qt::FlatCap);
 QPen touchMarkFillPen(QColor(255, 255, 255), 2., Qt::SolidLine, Qt::FlatCap);
 QColor touchRegionFillColor(QStringLiteral("#40888888"));
+QColor touchRegionCornerFillColor(QStringLiteral("#80888888"));
 
 QColor aircraftUserLabelColor(0, 0, 0);
 QColor aircraftUserLabelColorBg(255, 255, 150);
@@ -770,6 +771,7 @@ void loadColors()
   loadPen(colorSettings, QStringLiteral("Marker/SelectedAltitudeRangePen"), markSelectedAltitudeRangePen);
   loadPen(colorSettings, QStringLiteral("Marker/TurnPathPen"), markTurnPathPen);
   loadColorArgb(colorSettings, QStringLiteral("Marker/TouchRegionFillColor"), touchRegionFillColor);
+  loadColorArgb(colorSettings, QStringLiteral("Marker/TouchRegionCornerFillColor"), touchRegionCornerFillColor);
   loadColor(colorSettings, QStringLiteral("Marker/DistanceMarkerTextColor"), distanceMarkerTextColor);
   loadColorArgb(colorSettings, QStringLiteral("Marker/DistanceMarkerTextBackgroundColor"), distanceMarkerTextBackgroundColor);
 

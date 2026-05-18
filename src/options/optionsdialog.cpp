@@ -360,11 +360,6 @@ OptionsDialog::OptionsDialog(QMainWindow *parentWindow)
                                        tr("Highlight click- or touchable areas on screen.\nOnly shown if \"Use map areas\"\n"
                                           "on page \"Map Navigation\" is enabled as well."),
                                        optsd::NAVAIDS_TOUCHSCREEN_REGIONS);
-  addItem<optsd::DisplayOptionsNavAid>(navAids, p->displayOptItemIndexNavAid, tr("Screen Areas Marks"),
-                                       tr("Shows corner marks to highlight the screen areas.\n"
-                                          "Helps if map areas are used for touchscreen navigation.\n"
-                                          "Only shown if \"Use map areas\" on page \"Map Navigation\" is enabled as well."),
-                                       optsd::NAVAIDS_TOUCHSCREEN_AREAS);
   addItem<optsd::DisplayOptionsNavAid>(navAids, p->displayOptItemIndexNavAid, tr("Screen Area Icons"),
                                        tr("Shows icons for the screen areas.\n"
                                           "Useful if map areas are used for touchscreen navigation.\n"

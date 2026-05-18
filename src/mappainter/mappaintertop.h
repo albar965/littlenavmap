@@ -34,7 +34,6 @@ public:
 
 private:
   /* Highlight click/touch areas */
-  void drawTouchMarks(int lineSize, int areaSize);
   void drawTouchRegions(int areaSize);
 
   /* Draw navigation icons into the corners */
