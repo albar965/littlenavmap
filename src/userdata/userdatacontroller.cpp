@@ -478,6 +478,7 @@ void UserdataController::moveUserpointFromMap(const map::MapUserpoint& userpoint
   SqlRecord rec;
   rec.appendFieldAndValue("lonx", userpoint.position.getLonX());
   rec.appendFieldAndValue("laty", userpoint.position.getLatY());
+  rec.appendFieldAndValue("last_edit_timestamp", atools::convertToIsoWithOffset(QDateTime::currentDateTime()));
 
   SqlTransaction transaction(manager->getDatabase());
 
@@ -485,7 +486,7 @@ void UserdataController::moveUserpointFromMap(const map::MapUserpoint& userpoint
   manager->updateRecords(rec, {userpoint.id});
   transaction.commit();
 
-  // No need to update search
+  emit refreshUserdataSearch(false /* loadAll */, false /* keepSelection */, true /* force */);
   emit userdataChanged();
   NavApp::setStatusMessage(tr("Userpoint moved."));
 }
