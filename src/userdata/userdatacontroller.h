@@ -169,6 +169,8 @@ signals:
 private:
   /* Called by any action */
   void toolbarActionTriggered(QAction *);
+  void toolbarActionAllTriggered(QAction *);
+  void toolbarActionNoneTriggered(QAction *);
 
   /* Copy class state to actions and vice versa */
   void typesToActions();

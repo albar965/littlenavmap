@@ -90,6 +90,8 @@ private:
   void clearMarkers(bool quiet, map::MapTypes types) const;
 
   void toolbarActionTriggered(QAction *);
+  void toolbarActionAllTriggered(QAction *);
+  void toolbarActionNoneTriggered(QAction *);
 
   void flagsToActions();
   void actionsToFlags();

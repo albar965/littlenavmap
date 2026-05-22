@@ -170,8 +170,8 @@ void MapMarkHandler::addToolbarButton()
   actionAirportMsa = addAction(":/littlenavmap/resources/icons/msa.svg", tr("&MSA Diagrams"), tr("Show or hide MSA sector diagrams"));
 
   // Connect all action signals to same handler method
-  connect(buttonHandler, &atools::gui::ActionButtonHandler::actionAllTriggered, this, &MapMarkHandler::toolbarActionTriggered);
-  connect(buttonHandler, &atools::gui::ActionButtonHandler::actionNoneTriggered, this, &MapMarkHandler::toolbarActionTriggered);
+  connect(buttonHandler, &atools::gui::ActionButtonHandler::actionAllTriggered, this, &MapMarkHandler::toolbarActionAllTriggered);
+  connect(buttonHandler, &atools::gui::ActionButtonHandler::actionNoneTriggered, this, &MapMarkHandler::toolbarActionNoneTriggered);
   connect(buttonHandler, &atools::gui::ActionButtonHandler::actionOtherTriggered, this, &MapMarkHandler::toolbarActionTriggered);
 }
 
@@ -193,6 +193,22 @@ void MapMarkHandler::toolbarActionTriggered(QAction *)
 {
   actionsToFlags();
   toolButton->setChecked(markTypes & map::MARK_ALL);
+  emit updateMarkTypes(markTypes);
+}
+
+void MapMarkHandler::toolbarActionAllTriggered(QAction *)
+{
+  markTypes = map::MARK_ALL;
+  flagsToActions();
+  toolButton->setChecked(true);
+  emit updateMarkTypes(markTypes);
+}
+
+void MapMarkHandler::toolbarActionNoneTriggered(QAction *)
+{
+  markTypes = map::NONE;
+  flagsToActions();
+  toolButton->setChecked(false);
   emit updateMarkTypes(markTypes);
 }
 

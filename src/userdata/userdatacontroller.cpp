@@ -258,15 +258,13 @@ void UserdataController::addToolbarButton()
   }
 
   // Add all signals from actions to the same handler method
-  connect(buttonHandler, &atools::gui::ActionButtonHandler::actionAllTriggered, this, &UserdataController::toolbarActionTriggered);
-  connect(buttonHandler, &atools::gui::ActionButtonHandler::actionNoneTriggered, this, &UserdataController::toolbarActionTriggered);
+  connect(buttonHandler, &atools::gui::ActionButtonHandler::actionAllTriggered, this, &UserdataController::toolbarActionAllTriggered);
+  connect(buttonHandler, &atools::gui::ActionButtonHandler::actionNoneTriggered, this, &UserdataController::toolbarActionNoneTriggered);
   connect(buttonHandler, &atools::gui::ActionButtonHandler::actionOtherTriggered, this, &UserdataController::toolbarActionTriggered);
 }
 
 void UserdataController::toolbarActionTriggered(QAction *)
 {
-  qDebug() << Q_FUNC_INFO;
-
   // Copy action state to class data
   actionsToTypes();
 
@@ -274,9 +272,26 @@ void UserdataController::toolbarActionTriggered(QAction *)
   emit userdataChanged();
 }
 
+void UserdataController::toolbarActionAllTriggered(QAction *)
+{
+  selectedTypes = allLastFoundTypes;
+  selectedUnknownType = true;
+  typesToActions();
+  userdataToolButton->setChecked(true);
+  emit userdataChanged();
+}
+
+void UserdataController::toolbarActionNoneTriggered(QAction *)
+{
+  selectedTypes.clear();
+  selectedUnknownType = false;
+  typesToActions();
+  userdataToolButton->setChecked(false);
+  emit userdataChanged();
+}
+
 void UserdataController::actionsToTypes()
 {
-  // Copy state for known types
   selectedTypes.clear();
   for(QAction *action : std::as_const(actions))
   {
