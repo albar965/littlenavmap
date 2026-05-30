@@ -52,6 +52,18 @@ using proc::MapProcedureLeg;
 using proc::MapProcedureLegs;
 namespace ageo = atools::geo;
 
+static QLineF lastProcedureBearingLine(const QList<QLineF>& lastLines, const QPointF& startPoint)
+{
+  for(int i = lastLines.size() - 1; i >= 0; --i)
+  {
+    const QLineF& lastLine = lastLines.at(i);
+    if(!lastLine.isNull() && QLineF(lastLine.p2(), startPoint).length() <= 2.)
+      return lastLine;
+  }
+
+  return QLineF();
+}
+
 MapPainterRoute::MapPainterRoute(MapPaintWidget *mapWidget, MapScale *mapScale, PaintContext *paintContext)
   : MapPainter(mapWidget, mapScale, paintContext)
 {
@@ -1559,7 +1571,23 @@ QLineF MapPainterRoute::paintProcedureTurn(QList<QLineF>& lastLines, QLineF line
   if(leg.interceptPos.isValid())
     endPos = intersectPoint;
 
-  const QLineF& lastLine = lastLines.constLast();
+  QLineF lastLine = lastProcedureBearingLine(lastLines, line.p1());
+
+  if(lastLine.isNull())
+  {
+    // A zero length marker leg can provide the endpoint but not the inbound course.
+    // Without an inbound course, avoid drawing an arbitrary turn arc.
+    if(draw)
+    {
+      drawLine(painter, line.p1(), endPos);
+
+      if(leg.interceptPos.isValid())
+        drawLine(painter, endPos, line.p2());
+    }
+
+    lastLines.append(line);
+    return QLineF(line.p1(), endPos);
+  }
 
   // The returned value represents the number of degrees you need to add to this
   // line to make it have the same angle as the given line, going counter-clockwise.
