@@ -15,7 +15,7 @@
 * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 *****************************************************************************/
 
-#include "gui/holddialog.h"
+#include "marker/holdingmarkerdialog.h"
 
 #include "app/navapp.h"
 #include "common/constants.h"
@@ -27,14 +27,14 @@
 #include "gui/helphandler.h"
 #include "gui/widgetstate.h"
 #include "settings/settings.h"
-#include "ui_holddialog.h"
+#include "ui_holdingmarkerdialog.h"
 
 #include <QColor>
 
-const QString HoldDialog::DEFAULT_COLOR_STR = QColor(Qt::darkBlue).name(QColor::HexArgb);
+const QString HoldingMarkerDialog::DEFAULT_COLOR_STR = QColor(Qt::darkBlue).name(QColor::HexArgb);
 
-HoldDialog::HoldDialog(QWidget *parent, const map::HoldingMarker& markerParam, const map::MapResult& result, bool editMode)
-  : MarkerDialog(parent, tr("Holding"), markerParam, result, editMode), ui(new Ui::HoldDialog)
+HoldingMarkerDialog::HoldingMarkerDialog(QWidget *parent, const map::HoldingMarker& markerParam, const map::MapResult& result, bool editMode)
+  : MarkerDialog(parent, tr("Holding"), markerParam, result, editMode), ui(new Ui::HoldingMarkerDialog)
 {
   setWindowFlag(Qt::WindowContextHelpButtonHint, false);
   setWindowModality(Qt::ApplicationModal);
@@ -48,10 +48,10 @@ HoldDialog::HoldDialog(QWidget *parent, const map::HoldingMarker& markerParam, c
   ui->buttonBoxHold->button(QDialogButtonBox::Ok)->setDefault(true);
   ui->comboBoxHoldTurnDirection->setFocus();
 
-  connect(ui->buttonBoxHold, &QDialogButtonBox::clicked, this, &HoldDialog::buttonBoxClicked);
+  connect(ui->buttonBoxHold, &QDialogButtonBox::clicked, this, &HoldingMarkerDialog::buttonBoxClicked);
   connect(ui->pushButtonHoldColor, &QPushButton::clicked, this, &MarkerDialog::colorButtonClicked);
-  connect(ui->spinBoxHoldSpeed, QOverload<int>::of(&QSpinBox::valueChanged), this, &HoldDialog::updateLengthLabel);
-  connect(ui->doubleSpinBoxHoldTime, QOverload<double>::of(&QDoubleSpinBox::valueChanged), this, &HoldDialog::updateLengthLabel);
+  connect(ui->spinBoxHoldSpeed, QOverload<int>::of(&QSpinBox::valueChanged), this, &HoldingMarkerDialog::updateLengthLabel);
+  connect(ui->doubleSpinBoxHoldTime, QOverload<double>::of(&QDoubleSpinBox::valueChanged), this, &HoldingMarkerDialog::updateLengthLabel);
 
   // Saves original texts and restores them on deletion
   units = new UnitStringTool();
@@ -60,7 +60,7 @@ HoldDialog::HoldDialog(QWidget *parent, const map::HoldingMarker& markerParam, c
   restoreState();
 }
 
-HoldDialog::~HoldDialog()
+HoldingMarkerDialog::~HoldingMarkerDialog()
 {
   // Save dialog position and size
   atools::gui::WidgetState(lnm::HOLDING_MARKER_DIALOG).save(this);
@@ -70,7 +70,7 @@ HoldDialog::~HoldDialog()
 }
 
 /* A button box button was clicked */
-void HoldDialog::buttonBoxClicked(QAbstractButton *button)
+void HoldingMarkerDialog::buttonBoxClicked(QAbstractButton *button)
 {
   if(button == ui->buttonBoxHold->button(QDialogButtonBox::Ok))
   {
@@ -84,7 +84,7 @@ void HoldDialog::buttonBoxClicked(QAbstractButton *button)
     QDialog::reject();
 }
 
-void HoldDialog::restoreState()
+void HoldingMarkerDialog::restoreState()
 {
   atools::gui::WidgetState widgetState(lnm::HOLDING_MARKER_DIALOG);
 
@@ -106,7 +106,7 @@ void HoldDialog::restoreState()
   updateButtonColor();
 }
 
-void HoldDialog::saveState() const
+void HoldingMarkerDialog::saveState() const
 {
   atools::gui::WidgetState widgetState(lnm::HOLDING_MARKER_DIALOG);
   widgetState.save({this, ui->spinBoxHoldCourse, ui->spinBoxHoldSpeed, ui->spinBoxHoldAltitude, ui->doubleSpinBoxHoldTime,
@@ -114,7 +114,7 @@ void HoldDialog::saveState() const
   atools::settings::Settings::instance().setValue(lnm::HOLDING_MARKER_DIALOG_COLOR, marker->holding.color.name(QColor::HexArgb));
 }
 
-void HoldDialog::updateLengthLabel()
+void HoldingMarkerDialog::updateLengthLabel()
 {
   float minutes = static_cast<float>(ui->doubleSpinBoxHoldTime->value());
   float distance = static_cast<float>(Unit::rev(ui->spinBoxHoldSpeed->value(), Unit::speedKtsF) * minutes / 60.);
@@ -125,7 +125,7 @@ void HoldDialog::updateLengthLabel()
                                arg(QLocale().toString(minutes * 2.f + 2.f, 'f', 1)));
 }
 
-void HoldDialog::fillMarkerFromResultAndWidgets()
+void HoldingMarkerDialog::fillMarkerFromResultAndWidgets()
 {
   marker->text.clear();
 
@@ -161,7 +161,7 @@ void HoldDialog::fillMarkerFromResultAndWidgets()
   widgetsToMarker();
 }
 
-void HoldDialog::markerToWidgets()
+void HoldingMarkerDialog::markerToWidgets()
 {
   map::MapHolding& holding = marker->holding;
   ui->spinBoxHoldAltitude->setValue(Unit::altFeetF(holding.position.getAltitude()));
@@ -171,7 +171,7 @@ void HoldDialog::markerToWidgets()
   ui->spinBoxHoldCourse->setValue(atools::geo::normalizeCourse(holding.courseTrue - holding.nav.magvar));
 }
 
-void HoldDialog::widgetsToMarker()
+void HoldingMarkerDialog::widgetsToMarker()
 {
   map::MapHolding& holding = marker->holding;
   marker->position.setAltitude(Unit::rev(ui->spinBoxHoldAltitude->value(), Unit::altFeetF));

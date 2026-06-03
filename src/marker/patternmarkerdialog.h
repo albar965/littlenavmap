@@ -15,43 +15,38 @@
 * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 *****************************************************************************/
 
-#ifndef LNM_HOLDDIALOG_H
-#define LNM_HOLDDIALOG_H
+#ifndef LNM_TRAFFICPATTERN_H
+#define LNM_TRAFFICPATTERN_H
 
-#include "gui/markerdialog.h"
+#include "marker/markerdialog.h"
 
 namespace Ui {
-class HoldDialog;
-}
-
-namespace atools {
-namespace geo {
-class Pos;
-}
+class PatternMarkerDialog;
 }
 
 namespace map {
-struct MapResult;
-struct HoldingMarker;
+struct MapAirport;
+struct PatternMarker;
 }
 
-class UnitStringTool;
 class QAbstractButton;
+class UnitStringTool;
+class RunwayTable;
 
 /*
- * Allows user to customize hold parameters before adding it to the map. Similar to traffic pattern.
- * Can be used for adding or editing marker.
- * Order of usage from result is (same as in map context menu) airport, vor, ndb, waypoint, pos
+ * Shows airport and runway information and allows to configure a traffic pattern for a selected runway.
+ *
+ * Reads state on intiantiation and saves it on destruction
  */
-class HoldDialog :
-  public MarkerDialog<map::HoldingMarker>
+class PatternMarkerDialog :
+  public MarkerDialog<map::PatternMarker>
 {
   Q_OBJECT
 
 public:
   /* Marker is copied to internal. Result is used to assign navaid. editMode false configures dialog for adding. */
-  explicit HoldDialog(QWidget *parent, const map::HoldingMarker& markerParam, const map::MapResult& result, bool editMode);
-  virtual ~HoldDialog() override;
+  explicit PatternMarkerDialog(QWidget *parent, const map::PatternMarker& markerParam, const map::MapResult& result, bool editMode);
+  virtual ~PatternMarkerDialog() override;
 
 private:
   virtual void restoreState() override;
@@ -59,14 +54,17 @@ private:
   virtual void markerToWidgets() override;
   virtual void widgetsToMarker() override;
 
-  void fillMarkerFromResultAndWidgets();
+  void updateWidgets();
+  void updateRunwayLabel();
   void buttonBoxClicked(QAbstractButton *button);
-  void updateLengthLabel();
+  void runwayTableDoubleClicked();
 
   UnitStringTool *units = nullptr;
+  RunwayTable *runwayTable = nullptr;
+
   const static QString DEFAULT_COLOR_STR;
 
-  Ui::HoldDialog *ui;
+  Ui::PatternMarkerDialog *ui;
 };
 
-#endif // LNM_HOLDDIALOG_H
+#endif // LNM_TRAFFICPATTERN_H

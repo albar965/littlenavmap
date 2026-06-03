@@ -15,56 +15,59 @@
 * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 *****************************************************************************/
 
-#ifndef LNM_TRAFFICPATTERN_H
-#define LNM_TRAFFICPATTERN_H
+#ifndef LNM_DISTANCEMARKER_DIALOG_H
+#define LNM_DISTANCEMARKER_DIALOG_H
 
-#include "gui/markerdialog.h"
+#include "marker/markerdialog.h"
+
+#include <QValidator>
 
 namespace Ui {
-class TrafficPatternDialog;
+class DistanceMarkerDialog;
 }
 
 namespace map {
-struct MapAirport;
-struct PatternMarker;
+struct DistanceMarker;
 }
 
 class QAbstractButton;
-class UnitStringTool;
-class RunwayTable;
 
 /*
- * Shows airport and runway information and allows to configure a traffic pattern for a selected runway.
+ * Shows a dialog where user can set color and label for measurment lines.
+ * Can be used for adding or editing marker.
+ * Label can be set automaticall from navaid or changed by user.
  *
- * Reads state on intiantiation and saves it on destruction
+ * Reads state and defaults on intiantiation and saves it when calling getMarker().
  */
-class TrafficPatternDialog :
-  public MarkerDialog<map::PatternMarker>
+class DistanceMarkerDialog :
+  public MarkerDialog<map::DistanceMarker>
 {
   Q_OBJECT
 
 public:
   /* Marker is copied to internal. Result is used to assign navaid. editMode false configures dialog for adding. */
-  explicit TrafficPatternDialog(QWidget *parent, const map::PatternMarker& markerParam, const map::MapResult& result, bool editMode);
-  virtual ~TrafficPatternDialog() override;
+  explicit DistanceMarkerDialog(QWidget *parent, const map::DistanceMarker& markerParam, const map::MapResult& result, bool editMode);
+  virtual ~DistanceMarkerDialog() override;
+
+  /* Get color from settings before drag and drop action starts */
+  static QColor getSavedColor();
 
 private:
+  /* A button box button was clicked. Always saves state. */
+  void buttonBoxClicked(QAbstractButton *button);
+
   virtual void restoreState() override;
   virtual void saveState() const override;
-  virtual void markerToWidgets() override;
   virtual void widgetsToMarker() override;
+  virtual void markerToWidgets() override;
 
-  void updateWidgets();
-  void updateRunwayLabel();
-  void buttonBoxClicked(QAbstractButton *button);
-  void runwayTableDoubleClicked();
+  /* Text already given by navaid when editMode is false */
+  bool textPreFilled = false;
 
-  UnitStringTool *units = nullptr;
-  RunwayTable *runwayTable = nullptr;
-
+  /* Color is set when clicking on button */
   const static QString DEFAULT_COLOR_STR;
 
-  Ui::TrafficPatternDialog *ui;
+  Ui::DistanceMarkerDialog *ui;
 };
 
-#endif // LNM_TRAFFICPATTERN_H
+#endif // LNM_DISTANCEMARKER_DIALOG_H

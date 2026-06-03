@@ -15,7 +15,7 @@
 * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 *****************************************************************************/
 
-#include "gui/rangemarkerdialog.h"
+#include "marker/rangemarkerdialog.h"
 
 #include "app/navapp.h"
 #include "common/constants.h"

@@ -35,14 +35,10 @@
 #include "geo/marbleconverter.h"
 #include "gui/coordinatedialog.h"
 #include "gui/dialog.h"
-#include "gui/distancemarkerdialog.h"
-#include "gui/holddialog.h"
 #include "gui/mainwindow.h"
-#include "gui/rangemarkerdialog.h"
 #include "gui/signalblocker.h"
 #include "gui/statusbar.h"
 #include "gui/tools.h"
-#include "gui/trafficpatterndialog.h"
 #include "gui/widgetstate.h"
 #include "logbook/logdatacontroller.h"
 #include "mapgui/mapairporthandler.h"
@@ -56,6 +52,10 @@
 #include "mapgui/maptooltip.h"
 #include "mapgui/mapvisible.h"
 #include "mappainter/mappaintlayer.h"
+#include "marker/distancemarkerdialog.h"
+#include "marker/holdingmarkerdialog.h"
+#include "marker/patternmarkerdialog.h"
+#include "marker/rangemarkerdialog.h"
 #include "online/onlinedatacontroller.h"
 #include "options/optiondata.h"
 #include "query/airportquery.h"
@@ -2367,7 +2367,7 @@ void MapWidget::editHoldingMark(int id)
   map::MapResult result;
   queries->getMapQuery()->getMapObjectByIdent(result, markerRef.holding.nav.type, markerRef.holding.nav.ident,
                                               QStringLiteral(), QStringLiteral(), markerRef.position, 2000);
-  HoldDialog dialog(this, markerRef, result, true /* editMode */);
+  HoldingMarkerDialog dialog(this, markerRef, result, true /* editMode */);
 
   // Disable focus loss messages using contextMenuActive canceling dragging
   int retval = dialog.execMarkerDialog(true /* forceShow */, &contextMenuActive);
@@ -2388,7 +2388,7 @@ void MapWidget::editPatternMark(int id)
 
   if(result.hasAirports())
   {
-    TrafficPatternDialog dialog(this, markerRef, result, true /* editMode */);
+    PatternMarkerDialog dialog(this, markerRef, result, true /* editMode */);
 
     // Disable focus loss messages using contextMenuActive canceling dragging
     int retval = dialog.execMarkerDialog(true /* forceShow */, &contextMenuActive);
@@ -3878,7 +3878,7 @@ void MapWidget::addPatternMarker(const map::MapAirport& airport)
   marker.id = NavApp::getMapMarkers()->getNextMapMarkerId();
   marker.position = airport.position;
 
-  TrafficPatternDialog dialog(this, marker, map::MapResult::createFromMapBase(&airport), false /* editMode */);
+  PatternMarkerDialog dialog(this, marker, map::MapResult::createFromMapBase(&airport), false /* editMode */);
   if(dialog.execMarkerDialog(true /* forceShow */, &contextMenuActive) == QDialog::Accepted)
   {
     // Enable display of user feature
@@ -3909,7 +3909,7 @@ void MapWidget::addHoldingMarker(const map::MapResult& result, const atools::geo
   map::HoldingMarker marker;
   marker.id = NavApp::getMapMarkers()->getNextMapMarkerId();
   marker.position = marker.holding.position = position;
-  HoldDialog dialog(this, marker, result, false /* editMode */);
+  HoldingMarkerDialog dialog(this, marker, result, false /* editMode */);
   if(dialog.execMarkerDialog(true /* forceShow */, &contextMenuActive) == QDialog::Accepted)
   {
     // Enable display of user feature

@@ -338,11 +338,8 @@ SOURCES += \
   src/geo/coordinateconverter.cpp \
   src/geo/marbleconverter.cpp \
   src/gui/contextmenutool.cpp \
-  src/gui/distancemarkerdialog.cpp \
-  src/gui/holddialog.cpp \
   src/gui/coordinatedialog.cpp \
   src/gui/mainwindow.cpp \
-  src/gui/markerdialog.cpp \
   src/gui/messagesettings.cpp \
   src/gui/runwaytable.cpp \
   src/gui/statusbar.cpp \
@@ -351,8 +348,6 @@ SOURCES += \
   src/gui/textdialog.cpp \
   src/gui/texteditdialog.cpp \
   src/gui/timedialog.cpp \
-  src/gui/trafficpatterndialog.cpp \
-  src/gui/rangemarkerdialog.cpp \
   src/gui/updatedialog.cpp \
   src/info/aircraftprogressconfig.cpp \
   src/info/infocontroller.cpp \
@@ -398,6 +393,11 @@ SOURCES += \
   src/mappainter/mappainterwind.cpp \
   src/mappainter/mappaintlayer.cpp \
   src/mappainter/paintcontext.cpp \
+  src/marker/distancemarkerdialog.cpp \
+  src/marker/holdingmarkerdialog.cpp \
+  src/marker/markerdialog.cpp \
+  src/marker/patternmarkerdialog.cpp \
+  src/marker/rangemarkerdialog.cpp \
   src/online/onlinedatacontroller.cpp \
   src/options/optionchangeflags.cpp \
   src/options/optiondata.cpp \
@@ -556,11 +556,8 @@ HEADERS  += \
   src/geo/coordinateconverter.h \
   src/geo/marbleconverter.h \
   src/gui/contextmenutool.h \
-  src/gui/distancemarkerdialog.h \
-  src/gui/holddialog.h \
   src/gui/coordinatedialog.h \
   src/gui/mainwindow.h \
-  src/gui/markerdialog.h \
   src/gui/messagesettings.h \
   src/gui/runwaytable.h \
   src/gui/statusbar.h \
@@ -569,8 +566,6 @@ HEADERS  += \
   src/gui/textdialog.h \
   src/gui/texteditdialog.h \
   src/gui/timedialog.h \
-  src/gui/trafficpatterndialog.h \
-  src/gui/rangemarkerdialog.h \
   src/gui/updatedialog.h \
   src/info/aircraftprogressconfig.h \
   src/info/infocontroller.h \
@@ -615,6 +610,11 @@ HEADERS  += \
   src/mappainter/mappainterwind.h \
   src/mappainter/mappaintlayer.h \
   src/mappainter/paintcontext.h \
+  src/marker/distancemarkerdialog.h \
+  src/marker/holdingmarkerdialog.h \
+  src/marker/markerdialog.h \
+  src/marker/patternmarkerdialog.h \
+  src/marker/rangemarkerdialog.h \
   src/online/onlinedatacontroller.h \
   src/options/optionchangeflags.h \
   src/options/optiondata.h \
@@ -729,18 +729,18 @@ FORMS += \
   src/db/databasedialog.ui \
   src/db/databaseprogressdialog.ui \
   src/gui/coordinatedialog.ui \
-  src/gui/distancemarkerdialog.ui \
-  src/gui/holddialog.ui \
   src/gui/mainwindow.ui \
-  src/gui/rangemarkerdialog.ui \
   src/gui/textdialog.ui \
   src/gui/texteditdialog.ui \
   src/gui/timedialog.ui \
-  src/gui/trafficpatterndialog.ui \
   src/gui/updatedialog.ui \
   src/logbook/logdatadialog.ui \
   src/logbook/logstatisticsdialog.ui \
   src/mapgui/imageexportdialog.ui \
+  src/marker/distancemarkerdialog.ui \
+  src/marker/holdingmarkerdialog.ui \
+  src/marker/patternmarkerdialog.ui \
+  src/marker/rangemarkerdialog.ui \
   src/options/optionsdialog.ui \
   src/perf/aircraftperfdialog.ui \
   src/perf/perfmergedialog.ui \

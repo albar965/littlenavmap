@@ -15,7 +15,7 @@
 * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 *****************************************************************************/
 
-#include "gui/trafficpatterndialog.h"
+#include "marker/patternmarkerdialog.h"
 
 #include "app/navapp.h"
 #include "common/constants.h"
@@ -29,15 +29,15 @@
 #include "gui/widgetstate.h"
 #include "settings/settings.h"
 
-#include "ui_trafficpatterndialog.h"
+#include "ui_patternmarkerdialog.h"
 
 using atools::geo::Pos;
 
-const QString TrafficPatternDialog::DEFAULT_COLOR_STR = QColor(Qt::darkRed).name(QColor::HexArgb);
+const QString PatternMarkerDialog::DEFAULT_COLOR_STR = QColor(Qt::darkRed).name(QColor::HexArgb);
 
-TrafficPatternDialog::TrafficPatternDialog(QWidget *parent, const map::PatternMarker& markerParam, const map::MapResult& result,
+PatternMarkerDialog::PatternMarkerDialog(QWidget *parent, const map::PatternMarker& markerParam, const map::MapResult& result,
                                            bool editMode)
-  : MarkerDialog(parent, tr("Traffic Pattern"), markerParam, result, editMode), ui(new Ui::TrafficPatternDialog)
+  : MarkerDialog(parent, tr("Traffic Pattern"), markerParam, result, editMode), ui(new Ui::PatternMarkerDialog)
 {
   setWindowFlag(Qt::WindowContextHelpButtonHint, false);
   setWindowModality(Qt::ApplicationModal);
@@ -63,11 +63,11 @@ TrafficPatternDialog::TrafficPatternDialog(QWidget *parent, const map::PatternMa
   runwayTable->setAirportLabel(ui->labelTrafficPatternAirport);
   runwayTable->setShowPattern(true);
 
-  connect(runwayTable, &RunwayTable::itemSelectionChanged, this, &TrafficPatternDialog::updateRunwayLabel);
-  connect(runwayTable, &RunwayTable::doubleClicked, this, &TrafficPatternDialog::runwayTableDoubleClicked);
+  connect(runwayTable, &RunwayTable::itemSelectionChanged, this, &PatternMarkerDialog::updateRunwayLabel);
+  connect(runwayTable, &RunwayTable::doubleClicked, this, &PatternMarkerDialog::runwayTableDoubleClicked);
 
-  connect(ui->checkBoxTrafficPattern45Degree, &QCheckBox::toggled, this, &TrafficPatternDialog::updateWidgets);
-  connect(ui->buttonBoxTrafficPattern, &QDialogButtonBox::clicked, this, &TrafficPatternDialog::buttonBoxClicked);
+  connect(ui->checkBoxTrafficPattern45Degree, &QCheckBox::toggled, this, &PatternMarkerDialog::updateWidgets);
+  connect(ui->buttonBoxTrafficPattern, &QDialogButtonBox::clicked, this, &PatternMarkerDialog::buttonBoxClicked);
   connect(ui->pushButtonTrafficPatternColor, &QPushButton::clicked, this, &MarkerDialog::colorButtonClicked);
 
   // Saves original texts and restores them on deletion
@@ -78,7 +78,7 @@ TrafficPatternDialog::TrafficPatternDialog(QWidget *parent, const map::PatternMa
   restoreState();
 }
 
-TrafficPatternDialog::~TrafficPatternDialog()
+PatternMarkerDialog::~PatternMarkerDialog()
 {
   // Save dialog position and size
   atools::gui::WidgetState(lnm::PATTERN_MARKER_DIALOG).save(this);
@@ -89,7 +89,7 @@ TrafficPatternDialog::~TrafficPatternDialog()
 }
 
 /* A button box button was clicked */
-void TrafficPatternDialog::buttonBoxClicked(QAbstractButton *button)
+void PatternMarkerDialog::buttonBoxClicked(QAbstractButton *button)
 {
   if(button == ui->buttonBoxTrafficPattern->button(QDialogButtonBox::Ok))
   {
@@ -103,13 +103,13 @@ void TrafficPatternDialog::buttonBoxClicked(QAbstractButton *button)
     QDialog::reject();
 }
 
-void TrafficPatternDialog::runwayTableDoubleClicked()
+void PatternMarkerDialog::runwayTableDoubleClicked()
 {
   saveState();
   QDialog::accept();
 }
 
-void TrafficPatternDialog::restoreState()
+void PatternMarkerDialog::restoreState()
 {
   atools::gui::WidgetState widgetState(lnm::PATTERN_MARKER_DIALOG);
 
@@ -132,7 +132,7 @@ void TrafficPatternDialog::restoreState()
   runwayTable->init();
 }
 
-void TrafficPatternDialog::saveState() const
+void PatternMarkerDialog::saveState() const
 {
   atools::gui::WidgetState widgetState(lnm::PATTERN_MARKER_DIALOG);
   widgetState.save({this, ui->doubleSpinBoxDownwindDistance, ui->spinBoxTrafficPatternAltitude, ui->doubleSpinBoxTrafficPatternBaseDistance,
@@ -141,7 +141,7 @@ void TrafficPatternDialog::saveState() const
   atools::settings::Settings::instance().setValue(lnm::PATTERN_MARKER_DIALOG_COLOR, marker->color.name(QColor::HexArgb));
 }
 
-void TrafficPatternDialog::updateRunwayLabel()
+void PatternMarkerDialog::updateRunwayLabel()
 {
   map::MapRunway rw;
   map::MapRunwayEnd end;
@@ -154,7 +154,7 @@ void TrafficPatternDialog::updateRunwayLabel()
     ui->comboBoxTrafficPatternTurnDirection->setCurrentIndex(end.pattern == "L" ? 0 : 1);
 }
 
-void TrafficPatternDialog::updateWidgets()
+void PatternMarkerDialog::updateWidgets()
 {
   bool enabled = !ui->checkBoxTrafficPattern45Degree->isChecked();
   ui->doubleSpinBoxTrafficPatternBaseDistance->setEnabled(enabled);
@@ -163,7 +163,7 @@ void TrafficPatternDialog::updateWidgets()
   ui->labelTrafficPatternDepartureDistance->setEnabled(enabled);
 }
 
-void TrafficPatternDialog::markerToWidgets()
+void PatternMarkerDialog::markerToWidgets()
 {
   ui->comboBoxTrafficPatternTurnDirection->setCurrentIndex(marker->turnRight ? 1 : 0);
   ui->checkBoxTrafficPattern45Degree->setChecked(marker->base45Degree);
@@ -180,7 +180,7 @@ void TrafficPatternDialog::markerToWidgets()
     atools::gui::Dialog::warning(this, error);
 }
 
-void TrafficPatternDialog::widgetsToMarker()
+void PatternMarkerDialog::widgetsToMarker()
 {
   map::MapRunway rw;
   map::MapRunwayEnd end;

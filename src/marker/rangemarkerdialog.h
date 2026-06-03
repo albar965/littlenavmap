@@ -18,7 +18,7 @@
 #ifndef LNM_RANGEMARKER_DIALOG_H
 #define LNM_RANGEMARKER_DIALOG_H
 
-#include "gui/markerdialog.h"
+#include "marker/markerdialog.h"
 
 #include <QValidator>
 

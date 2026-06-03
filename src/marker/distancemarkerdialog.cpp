@@ -15,7 +15,7 @@
 * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 *****************************************************************************/
 
-#include "gui/distancemarkerdialog.h"
+#include "marker/distancemarkerdialog.h"
 
 #include "common/constants.h"
 #include "common/mapmarkers.h"
