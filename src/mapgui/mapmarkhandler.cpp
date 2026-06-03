@@ -258,14 +258,29 @@ QStringList MapMarkHandler::mapFlagTexts(map::MapTypes types) const
   return featureStr;
 }
 
-void MapMarkHandler::clearMarkers(bool quiet, map::MapTypes types) const
+void MapMarkHandler::clearMarkers(bool quiet, map::MapType types) const
 {
   if(!quiet)
   {
-    // Only one type ========================
+    QString settingsKey;
+
+    if(types == map::MARK_ALL)
+      settingsKey = lnm::ACTIONS_SHOW_DELETE_MARKS;
+    else if(types == map::MARK_RANGE)
+      settingsKey = lnm::ACTIONS_SHOW_DELETE_RANGEMARKS;
+    else if(types == map::MARK_DISTANCE)
+      settingsKey = lnm::ACTIONS_SHOW_DELETE_DISTANCEMARKS;
+    else if(types == map::MARK_HOLDING)
+      settingsKey = lnm::ACTIONS_SHOW_DELETE_HOLDINGMARKS;
+    else if(types == map::MARK_PATTERNS)
+      settingsKey = lnm::ACTIONS_SHOW_DELETE_PATTERNMARKS;
+    else if(types == map::MARK_MSA)
+      settingsKey = lnm::ACTIONS_SHOW_DELETE_MSAMARKS;
+
     QString text = atools::strJoin(mapFlagTexts(types), tr(", "), tr(" and "));
-    int result = atools::gui::Dialog(mainWindow).showQuestionMsgBox(lnm::ACTIONS_SHOW_DELETE_MARKS + QString::number(types),
-                                                                    tr("Delete all %1 from map?").arg(text),
+    int result = atools::gui::Dialog(mainWindow).showQuestionMsgBox(settingsKey,
+                                                                    tr("Delete all %1 from map?\n\n"
+                                                                       "Note that this cannot be undone.").arg(text),
                                                                     tr("Do not &show this dialog again."),
                                                                     QMessageBox::Yes | QMessageBox::No,
                                                                     QMessageBox::No, QMessageBox::Yes);

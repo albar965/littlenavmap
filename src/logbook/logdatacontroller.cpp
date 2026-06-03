@@ -944,14 +944,24 @@ void LogdataController::deleteLogEntries(const QSet<int>& ids)
 {
   qDebug() << Q_FUNC_INFO;
 
-  QString txt = ids.size() == 1 ? tr("entry") : tr("entries");
-  SqlTransaction transaction(manager->getDatabase());
-  manager->deleteRows(ids);
-  transaction.commit();
+  int result = dialog->showQuestionMsgBox(lnm::ACTIONS_SHOW_DELETE_LOGBOOKENTRY,
+                                          tr("Delete %1 %2?\n\n"
+                                             "Note that you can undo this action in menu \"Logbook\".").
+                                          arg(ids.size()).arg(ids.size() == 1 ? tr("logbook entry") : tr("logbook entries")),
+                                          tr("Do not &show this dialog again."),
+                                          QMessageBox::Yes | QMessageBox::No, QMessageBox::No, QMessageBox::Yes);
 
-  logChanged(false /* load all */, false /* keep selection */);
+  if(result == QMessageBox::Yes)
+  {
+    QString txt = ids.size() == 1 ? tr("entry") : tr("entries");
+    SqlTransaction transaction(manager->getDatabase());
+    manager->deleteRows(ids);
+    transaction.commit();
 
-  NavApp::setStatusMessage(tr("%1 logbook %2 deleted.").arg(ids.size()).arg(txt));
+    logChanged(false /* load all */, false /* keep selection */);
+
+    NavApp::setStatusMessage(tr("%1 logbook %2 deleted.").arg(ids.size()).arg(txt));
+  }
 }
 
 void LogdataController::importXplane()

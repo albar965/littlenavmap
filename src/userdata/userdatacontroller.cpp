@@ -681,14 +681,23 @@ void UserdataController::editUserpoints(const QList<int>& ids)
 void UserdataController::deleteUserpoints(const QList<int>& ids)
 {
   qDebug() << Q_FUNC_INFO;
+  int result = dialog->showQuestionMsgBox(lnm::ACTIONS_SHOW_DELETE_USERPOINT,
+                                          tr("Delete %1 %2?\n\n"
+                                             "Note that you can undo this action in menu \"Userpoints\".")
+                                          .arg(ids.size()).arg(ids.size() == 1 ? tr("userpoint") : tr("userpoints")),
+                                          tr("Do not &show this dialog again."),
+                                          QMessageBox::Yes | QMessageBox::No, QMessageBox::No, QMessageBox::Yes);
 
-  SqlTransaction transaction(manager->getDatabase());
-  manager->deleteRows(QSet<int>(ids.constBegin(), ids.constEnd()));
-  transaction.commit();
+  if(result == QMessageBox::Yes)
+  {
+    SqlTransaction transaction(manager->getDatabase());
+    manager->deleteRows(QSet<int>(ids.constBegin(), ids.constEnd()));
+    transaction.commit();
 
-  emit refreshUserdataSearch(false /* loadAll */, false /* keepSelection */, true /* force */);
-  emit userdataChanged();
-  NavApp::setStatusMessage(tr("%n userpoint(s) deleted.", "", ids.size()));
+    emit refreshUserdataSearch(false /* loadAll */, false /* keepSelection */, true /* force */);
+    emit userdataChanged();
+    NavApp::setStatusMessage(tr("%n userpoint(s) deleted.", "", ids.size()));
+  }
 }
 
 void UserdataController::importCsv()

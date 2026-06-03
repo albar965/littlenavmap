@@ -86,6 +86,12 @@ void messages::resetAllMessages()
   // Show all message dialogs again
   settings.setValue(lnm::ACTIONS_SHOW_CRUISE_ZERO_WARNING, true);
   settings.setValue(lnm::ACTIONS_SHOW_DELETE_MARKS, true);
+  settings.setValue(lnm::ACTIONS_SHOW_DELETE_MARKS, true);
+  settings.setValue(lnm::ACTIONS_SHOW_DELETE_RANGEMARKS, true);
+  settings.setValue(lnm::ACTIONS_SHOW_DELETE_DISTANCEMARKS, true);
+  settings.setValue(lnm::ACTIONS_SHOW_DELETE_HOLDINGMARKS, true);
+  settings.setValue(lnm::ACTIONS_SHOW_DELETE_PATTERNMARKS, true);
+  settings.setValue(lnm::ACTIONS_SHOW_DELETE_MSAMARKS, true);
   settings.setValue(lnm::ACTIONS_SHOW_DELETE_TRAIL, true);
   settings.setValue(lnm::ACTIONS_SHOW_DISCONNECT_INFO, true);
   settings.setValue(lnm::ACTIONS_SHOW_INSTALL_DIRS, true);
@@ -128,6 +134,9 @@ void messages::resetAllMessages()
 
   settings.setValue(lnm::ACTIONS_SHOW_INSTALL_XPCONNECT_WARN_XPL, true);
   settings.setValue(lnm::ACTIONS_SHOW_INSTALL_XPCONNECT_INFO, true);
+
+  settings.setValue(lnm::ACTIONS_SHOW_DELETE_USERPOINT, true);
+  settings.setValue(lnm::ACTIONS_SHOW_DELETE_LOGBOOKENTRY, true);
 }
 
 void messages::resetEssentialMessages()

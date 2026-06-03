@@ -87,7 +87,7 @@ signals:
 
 private:
   /* Remove all measurement lines, patterns, holds, etc. depending on types */
-  void clearMarkers(bool quiet, map::MapTypes types) const;
+  void clearMarkers(bool quiet, map::MapType types) const;
 
   void toolbarActionTriggered(QAction *);
   void toolbarActionAllTriggered(QAction *);

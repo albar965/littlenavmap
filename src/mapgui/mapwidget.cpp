@@ -2273,8 +2273,6 @@ void MapWidget::editAny(const map::MapBase *base)
 {
   if(base != nullptr)
   {
-    qDebug() << Q_FUNC_INFO << *base;
-
     int routeIndex = map::routeIndex(base);
     if(routeIndex != -1)
       emit editUserWaypointName(routeIndex);
@@ -2299,8 +2297,6 @@ void MapWidget::removeAny(const map::MapBase *base)
 {
   if(base != nullptr)
   {
-    qDebug() << Q_FUNC_INFO << *base;
-
     int routeIndex = map::routeIndex(base);
     if(routeIndex != -1)
       emit routeDelete(routeIndex, true /* selectCurrent */);

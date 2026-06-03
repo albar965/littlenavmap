@@ -95,7 +95,15 @@ const QLatin1String ACTIONS_SHOW_APPLE_TRANSLOCATION("Actions/ShowAppleTransloca
 const QLatin1String ACTIONS_SHOW_INSTALL_DIRS("Actions/ShowInstallDirs");
 const QLatin1String ACTIONS_SHOW_OVERWRITE_DATABASE("Actions/ShowOverwriteDatabase");
 const QLatin1String ACTIONS_SHOW_DELETE_TRAIL("Actions/DeleteTrail");
-const QLatin1String ACTIONS_SHOW_DELETE_MARKS("Actions/DeleteMarks");
+const QLatin1String ACTIONS_SHOW_DELETE_USERPOINT("Actions/DeleteUserpoint");
+const QLatin1String ACTIONS_SHOW_DELETE_LOGBOOKENTRY("Actions/LogbookEntry");
+const QLatin1String ACTIONS_SHOW_DELETE_MARKS("Actions/DeleteMarkers");
+const QLatin1String ACTIONS_SHOW_DELETE_RANGEMARKS("Actions/DeleteRangeMarkers");
+const QLatin1String ACTIONS_SHOW_DELETE_DISTANCEMARKS("Actions/DeleteDistanceMarkers");
+const QLatin1String ACTIONS_SHOW_DELETE_HOLDINGMARKS("Actions/DeleteHoldingMarkers");
+const QLatin1String ACTIONS_SHOW_DELETE_PATTERNMARKS("Actions/DeletePatternMarkers");
+const QLatin1String ACTIONS_SHOW_DELETE_MSAMARKS("Actions/DeleteMsaMarkers");
+
 const QLatin1String ACTIONS_SHOW_RESET_PERF("Actions/ResetPerformanceColl");
 const QLatin1String ACTIONS_SHOW_SEARCH_CENTER_NULL("Actions/SearchCenterNull");
 const QLatin1String ACTIONS_SHOW_WEATHER_DOWNLOAD_FAIL("Actions/DownloadFailed");
