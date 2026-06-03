@@ -57,7 +57,7 @@ void MapPainterTop::render()
   float size = context->szF(context->symbolSizeAirport, 10.f);
   float size2 = context->szF(context->symbolSizeAirport, 9.f);
 
-  if(!context->webMap)
+  if(!context->webMap && context->paintNavigation)
   {
     // Draw center cross =====================================
     // Usable in all modes

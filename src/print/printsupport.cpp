@@ -63,15 +63,19 @@ void PrintSupport::printMap()
   qDebug() << Q_FUNC_INFO;
 
   buildPrinter();
+  MapWidget *mapWidget = NavApp::getMapWidgetGui();
 
-  NavApp::getMapWidgetGui()->showOverlays(false, true /* show scale */);
+  mapWidget->showOverlays(false, true /* show scale */);
+  mapWidget->setPaintNavigation(false);
+
   QPrintPreviewDialog *print = buildPreviewDialog();
   connect(print, &QPrintPreviewDialog::paintRequested, this, &PrintSupport::paintRequestedMap);
   NavApp::setStayOnTop(print);
   print->exec();
   disconnect(print, &QPrintPreviewDialog::paintRequested, this, &PrintSupport::paintRequestedMap);
 
-  NavApp::getMapWidgetGui()->showOverlays(true, true /* show scale */);
+  mapWidget->showOverlays(true, true /* show scale */);
+  mapWidget->setPaintNavigation(true);
   deletePreviewDialog(print);
 }
 

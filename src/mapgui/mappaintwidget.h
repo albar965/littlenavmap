@@ -335,6 +335,7 @@ public:
     return noNavPaint;
   }
 
+  /* Dummy paint cycle without any navigation stuff. Just used to initialize Marble */
   void setNoNavPaint(bool value)
   {
     noNavPaint = value;
@@ -345,9 +346,21 @@ public:
     return paintCopyright;
   }
 
+  /* Paint copyright note into image */
   void setPaintCopyright(bool value)
   {
     paintCopyright = value;
+  }
+
+  bool isPaintNavigation() const
+  {
+    return paintNavigation;
+  }
+
+  /* Draw navigations aids like touch regions or not */
+  void setPaintNavigation(bool newPaintNavigation)
+  {
+    paintNavigation = newPaintNavigation;
   }
 
   bool isPaintWindHeader() const
@@ -355,6 +368,7 @@ public:
     return paintWindHeader;
   }
 
+  /* Paint wind header arrow and label */
   void setPaintWindHeader(bool value)
   {
     paintWindHeader = value;
@@ -561,6 +575,9 @@ protected:
 
   /* Paint copyright note into image */
   bool paintCopyright = true;
+
+  /* Paint navigation marks */
+  bool paintNavigation = true;
 
   /* Paint wind header arrow and label */
   bool paintWindHeader = true;

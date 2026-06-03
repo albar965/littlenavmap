@@ -2879,10 +2879,12 @@ bool MainWindow::createMapImage(QPixmap& pixmap, const QString& dialogTitle, con
     {
       // Copy image as is from current view ===================================================
       mapWidget->showOverlays(false /* show */, false /* show scale */);
+      mapWidget->setPaintNavigation(false);
       if(isFullScreen())
         mapWidget->removeFullScreenExitButton();
       pixmap = mapWidget->getPixmap(exportDialog.getSize());
       mapWidget->showOverlays(true /* show */, false /* show scale */);
+      mapWidget->setPaintNavigation(true);
       if(isFullScreen())
         mapWidget->addFullScreenExitButton();
 

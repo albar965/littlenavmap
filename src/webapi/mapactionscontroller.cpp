@@ -377,6 +377,7 @@ MapPixmap MapActionsController::getPixmapRect(int width, int height, atools::geo
       // Disable copyright note and wind
       mapPaintWidget->setPaintCopyright(false);
       mapPaintWidget->setPaintWindHeader(false);
+      mapPaintWidget->setPaintNavigation(false);
 
       MapPixmap mapPixmap;
 

@@ -372,6 +372,7 @@ bool MapPaintLayer::render(GeoPainter *painter, ViewportParams *viewport, const 
       context.zoomDistanceMeter = static_cast<float>(mapPaintWidget->distance() * 1000.);
       context.darkMap = NavApp::isDarkMapTheme();
       context.paintCopyright = mapPaintWidget->isPaintCopyright();
+      context.paintNavigation = mapPaintWidget->isPaintNavigation();
       context.paintWindHeader = mapPaintWidget->isPaintWindHeader();
       context.webMap = mapPaintWidget->isWeb();
 
