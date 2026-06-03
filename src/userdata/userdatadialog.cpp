@@ -372,8 +372,9 @@ void UserdataDialog::fillTypeComboBox(const QString& type)
   // Fill default types and icons
   ui->comboBoxUserdataType->clear();
   int size = ui->comboBoxUserdataType->iconSize().height();
-  for(const QString& t : icons->getAllTypes())
-    ui->comboBoxUserdataType->addItem(QIcon(*icons->getIconPixmap(t, size)), t);
+
+  for(auto it = icons->getAllTypesMap().constBegin(); it != icons->getAllTypesMap().constEnd(); ++it)
+    ui->comboBoxUserdataType->addItem(QIcon(*icons->getIconPixmap(it.key(), size)), it.key());
 
   int index = ui->comboBoxUserdataType->findText(type);
   if(index != -1)

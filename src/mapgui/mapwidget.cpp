@@ -746,7 +746,7 @@ const map::MapResult MapWidget::resultAtPoint(const QPoint& point, map::MapObjec
   if(!includeHiddenUserpoints)
   {
     const UserdataController *userdataController = NavApp::getUserdataController();
-    result.clearHiddenUserpoints(userdataController->getSelectedTypes(), userdataController->getAllTypes(),
+    result.clearHiddenUserpoints(userdataController->getSelectedTypesMap(), userdataController->getAllTypesMap(),
                                  userdataController->isSelectedUnknownType());
   }
   return result;
@@ -4353,7 +4353,7 @@ void MapWidget::printMapTypesToLog()
            << " - getAirspaceSources" << queries->getAirspaceQueries()->getAirspaceSources() << Qt::endl
            << " - getMapWeatherSource" << getMapWeatherSource() << Qt::endl
            << " - getShownMinimumRunwayFt" << getShownMinimumRunwayFt() << Qt::endl
-           << " - Userdata getSelectedTypes" << NavApp::getUserdataController()->getSelectedTypes() << Qt::endl
+           << " - Userdata getSelectedTypes" << NavApp::getUserdataController()->getSelectedTypesMap().keys() << Qt::endl
            << " - getMarkTypes" << NavApp::getMapMarkHandler()->getMarkTypes() << Qt::endl
            << " - projection" << projection() << "getCurrentThemeId" << getCurrentThemeId() << Qt::endl
            << " - getDetailLevel" << NavApp::getMapDetailHandler()->getDetailLevel()

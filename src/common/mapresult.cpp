@@ -359,7 +359,8 @@ MapResult& MapResult::clearRouteIndex(const MapTypes& types)
   return *this;
 }
 
-MapResult& MapResult::clearHiddenUserpoints(const QStringList& selectedTypes, const QStringList& allTypes, bool showUnknownType)
+MapResult& MapResult::clearHiddenUserpoints(const QMap<QString, QString>& selectedTypes, const QMap<QString, QString>& allTypes,
+                                            bool showUnknownType)
 {
   if(!userpoints.isEmpty())
     userpoints.erase(std::remove_if(userpoints.begin(), userpoints.end(),

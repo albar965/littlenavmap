@@ -74,8 +74,11 @@ UserdataSearch::UserdataSearch(MainWindow *parent, QTableView *tableView, si::Ta
   UserdataIcons *icons = NavApp::getUserdataIcons();
 
   int size = ui->comboBoxUserdataType->fontMetrics().height();
-  for(const QString& type : icons->getAllTypes())
-    ui->comboBoxUserdataType->addItem(QIcon(*icons->getIconPixmap(type, size - 2)), type);
+
+  const QMap<QString, QString>& allTypesMap = icons->getAllTypesMap();
+  for(auto it = allTypesMap.constBegin(); it != allTypesMap.constEnd(); ++it)
+    ui->comboBoxUserdataType->addItem(QIcon(*icons->getIconPixmap(it.key(), size - 2)), it.key());
+
   ui->comboBoxUserdataType->lineEdit()->setPlaceholderText(tr("Type"));
   ui->comboBoxUserdataType->lineEdit()->setClearButtonEnabled(true);
 

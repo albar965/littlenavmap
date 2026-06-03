@@ -20,6 +20,7 @@
 
 #include <QObject>
 #include <QList>
+#include <QMap>
 
 namespace atools {
 namespace sql {
@@ -120,14 +121,15 @@ public:
   /* Reset display settings to show all */
   void resetSettingsToDefault();
 
-  /* Get currently in menu selected types for display */
-  const QStringList& getSelectedTypes() const
+  /* Get currently in menu selected types for display.   Key is type like "Add-on" as value is empty. */
+  const QMap<QString, QString>& getSelectedTypesMap() const
   {
-    return selectedTypes;
+    return selectedTypesMap;
   }
 
-  /* Get all registered types as found by icon manager */
-  QStringList getAllTypes() const;
+  /* Get all registered types as found by icon manager
+   * Key is type like "Add-on" as value is empty. */
+  const QMap<QString, QString>& getAllTypesMap() const;
 
   /* Show unknown types*/
   bool isSelectedUnknownType() const
@@ -192,8 +194,8 @@ private:
   void enableCategoryOnMap(const QString& category);
 
   /* Currently in actions selected types */
-  QStringList selectedTypes,
-              allLastFoundTypes; /* All types found when saving last time */
+  QMap<QString, QString> selectedTypesMap,
+                         allLastFoundTypesMap; /* All types found when saving last time */
   bool selectedUnknownType = false;
 
   atools::fs::userdata::UserdataManager *manager;

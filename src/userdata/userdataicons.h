@@ -61,10 +61,13 @@ public:
   /* Resolve icon names, overloads and extract types*/
   void loadIcons();
 
-  const QStringList getAllTypes() const
+  /* get map with type like "Add-on" as key and icon path as value */
+  const QMap<QString, QString>& getAllTypesMap() const
   {
-    return typeMap.keys();
+    return typeMap;
   }
+
+  const QList<QIcon> getAllIcons(float size);
 
   bool hasType(const QString& type) const
   {

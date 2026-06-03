@@ -364,9 +364,11 @@ bool MapPaintLayer::render(GeoPainter *painter, ViewportParams *viewport, const 
       context.distanceKm = static_cast<float>(mapPaintWidget->distance());
       context.distanceNm = atools::geo::meterToNm(context.distanceKm * 1000.f);
 
-      context.userPointTypes = NavApp::getUserdataController()->getSelectedTypes();
-      context.userPointTypesAll = NavApp::getUserdataController()->getAllTypes();
-      context.userPointTypeUnknown = NavApp::getUserdataController()->isSelectedUnknownType();
+      const UserdataController *userdataController = NavApp::getUserdataController();
+      context.userPointTypes = &userdataController->getSelectedTypesMap();
+      context.userPointTypesAll = &userdataController->getAllTypesMap();
+      context.userPointTypeUnknown = userdataController->isSelectedUnknownType();
+
       context.zoomDistanceMeter = static_cast<float>(mapPaintWidget->distance() * 1000.);
       context.darkMap = NavApp::isDarkMapTheme();
       context.paintCopyright = mapPaintWidget->isPaintCopyright();

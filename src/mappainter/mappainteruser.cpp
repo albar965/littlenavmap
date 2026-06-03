@@ -53,7 +53,7 @@ void MapPainterUser::render()
   context->szFont(context->textSizeUserpoint);
 
   // Always call paint to fill cache
-  paintUserpoints(queries->getMapQuery()->getUserdataPoints(context->viewportBox, context->userPointTypes, context->userPointTypesAll,
+  paintUserpoints(queries->getMapQuery()->getUserdataPoints(context->viewportBox, *context->userPointTypes, *context->userPointTypesAll,
                                                             context->userPointTypeUnknown, context->distanceNm), context->drawFast);
 }
 

@@ -151,7 +151,7 @@ struct MapResult
   MapResult& clearRouteIndex(const map::MapTypes& types = map::ALL);
 
   /* Removes all userpoints which are currently not visible on the map */
-  MapResult& clearHiddenUserpoints(const QStringList& selectedTypes, const QStringList& allTypes, bool showUnknownType);
+  MapResult& clearHiddenUserpoints(const QMap<QString, QString>& selectedTypes, const QMap<QString, QString>& allTypes, bool showUnknownType);
 
   /* Build label with frequency (if applicable) for marker types. */
   QString markerLabel() const;

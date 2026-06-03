@@ -414,9 +414,9 @@ void MapVisible::updateVisibleObjectsStatusBar()
 
       if(layer->isUserpoint())
       {
-        QStringList types = NavApp::getUserdataController()->getSelectedTypes();
+        const QMap<QString, QString>& types = NavApp::getUserdataController()->getSelectedTypesMap();
         if(!types.isEmpty())
-          tooltip.tr().td().b(tr("Userpoints: ")).text(atools::elideTextShort(types.join(tr(", ")), 160)).tdEnd().trEnd();
+          tooltip.tr().td().b(tr("Userpoints: ")).text(atools::elideTextShort(types.keys().join(tr(", ")), 160)).tdEnd().trEnd();
       }
 
       QStringList markTypes = NavApp::getMapMarkHandler()->getMarkTypesText();

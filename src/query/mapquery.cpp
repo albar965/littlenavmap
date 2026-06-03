@@ -993,8 +993,8 @@ const QList<map::MapNdb> *MapQuery::getNdbsByRect(const atools::geo::Rect& rect,
   return getNdbs(latLonBox, mapLayer, lazy, overflow);
 }
 
-const QList<map::MapUserpoint>& MapQuery::getUserdataPoints(const GeoDataLatLonBox& rect, const QStringList& types,
-                                                            const QStringList& typesAll, bool unknownType, float distanceNm)
+const QList<map::MapUserpoint>& MapQuery::getUserdataPoints(const GeoDataLatLonBox& rect, const QMap<QString, QString>& types,
+                                                            const QMap<QString, QString>& typesAll, bool unknownType, float distanceNm)
 {
   if(!query::valid(Q_FUNC_INFO, userdataPointByRectQuery) || !query::valid(Q_FUNC_INFO, userdataPointByRectQueryNullType))
     return userpointCache.list;
@@ -1010,11 +1010,11 @@ const QList<map::MapUserpoint>& MapQuery::getUserdataPoints(const GeoDataLatLonB
     for(const GeoDataLatLonBox& box : query::splitAtAntiMeridian(rect, queryRectInflationFactor, queryRectInflationIncrement))
     {
       QList<SqlQuery *> sqlQueries;
-      QStringList queryTypes;
+      QMap<QString, QString> queryTypes;
       if(unknownType || (allTypesSelected && unknownType))
       {
         // Either query all unknowns too and filter later or all and unknown are selected
-        queryTypes.append(QStringLiteral("%")); // Only one query type "%"
+        queryTypes.insert(QStringLiteral("%"), QStringLiteral()); // Only one query type "%"
         sqlQueries.append(userdataPointByRectQueryNullType); // Extra for null types
       }
       else
@@ -1028,8 +1028,9 @@ const QList<map::MapUserpoint>& MapQuery::getUserdataPoints(const GeoDataLatLonB
         query::bindRect(box, query);
         query->bindValue(QStringLiteral(":dist"), distanceNm);
 
-        for(const QString& queryType : std::as_const(queryTypes))
+        for(auto it = queryTypes.constBegin(); it != queryTypes.constEnd(); ++it)
         {
+          const QString& queryType = it.key();
           if(query->hasPlaceholder(QStringLiteral(":type")))
             query->bindValue(QStringLiteral(":type"), queryType);
 

@@ -82,8 +82,8 @@ struct PaintContext
   QFont defaultFont /* Default widget font */;
   float distanceNm; /* Zoom distance in NM */
   float distanceKm; /* Zoom distance in KM as in map widget */
-  QStringList userPointTypes, /* In menu selected types */
-              userPointTypesAll; /* All available tyes */
+  const QMap<QString, QString> *userPointTypes, /* In menu selected types */
+                               *userPointTypesAll; /* All available tyes */
   bool userPointTypeUnknown; /* Show unknown types */
 
   const Route *route;

@@ -226,8 +226,8 @@ public:
   const QList<map::MapRunway> *getRunwaysForOverview(int airportId);
 
   /* Similar to getAirports but no caching since user points can change */
-  const QList<map::MapUserpoint>& getUserdataPoints(const Marble::GeoDataLatLonBox& rect, const QStringList& types,
-                                                    const QStringList& typesAll, bool unknownType, float distanceNm);
+  const QList<map::MapUserpoint>& getUserdataPoints(const Marble::GeoDataLatLonBox& rect, const QMap<QString, QString>& types,
+                                                    const QMap<QString, QString>& typesAll, bool unknownType, float distanceNm);
 
   /* Get related airport for navaids from current nav database.
    * found is true if navaid search was successful and max distance to pos is not exceeded. */

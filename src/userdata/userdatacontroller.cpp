@@ -160,8 +160,8 @@ void UserdataController::enableCategoryOnMap(const QString& category)
 
   if(icons->hasType(category))
   {
-    if(!selectedTypes.contains(category))
-      selectedTypes.append(category);
+    if(!selectedTypesMap.contains(category))
+      selectedTypesMap.insert(category, QStringLiteral());
   }
   else
     selectedUnknownType = true;
@@ -225,8 +225,9 @@ void UserdataController::addToolbarButton()
 
   // Create and add select an action for each registered type =====================================
   int screenHeight = parentWidget->screen()->geometry().height();
-  for(const QString& type : icons->getAllTypes())
+  for(auto it = icons->getAllTypesMap().begin(); it != icons->getAllTypesMap().end(); ++it)
   {
+    const QString& type = it.key();
     // Create an overflow menu item for the button if the menu exceeds the screen height
     if(buttonMenu->sizeHint().height() > screenHeight * 8 / 10)
     {
@@ -274,7 +275,7 @@ void UserdataController::toolbarActionTriggered(QAction *)
 
 void UserdataController::toolbarActionAllTriggered(QAction *)
 {
-  selectedTypes = allLastFoundTypes;
+  selectedTypesMap = allLastFoundTypesMap;
   selectedUnknownType = true;
   typesToActions();
   userdataToolButton->setChecked(true);
@@ -283,7 +284,7 @@ void UserdataController::toolbarActionAllTriggered(QAction *)
 
 void UserdataController::toolbarActionNoneTriggered(QAction *)
 {
-  selectedTypes.clear();
+  selectedTypesMap.clear();
   selectedUnknownType = false;
   typesToActions();
   userdataToolButton->setChecked(false);
@@ -292,67 +293,71 @@ void UserdataController::toolbarActionNoneTriggered(QAction *)
 
 void UserdataController::actionsToTypes()
 {
-  selectedTypes.clear();
+  selectedTypesMap.clear();
   for(QAction *action : std::as_const(actions))
   {
     if(action->isChecked())
-      selectedTypes.append(action->data().toString());
+      selectedTypesMap.insert(action->data().toString(), QStringLiteral());
   }
 
   selectedUnknownType = actionUnknown->isChecked();
-  userdataToolButton->setChecked(!selectedTypes.isEmpty() || selectedUnknownType);
-  qDebug() << Q_FUNC_INFO << selectedTypes;
+  userdataToolButton->setChecked(!selectedTypesMap.isEmpty() || selectedUnknownType);
+  qDebug() << Q_FUNC_INFO << selectedTypesMap;
 }
 
 void UserdataController::typesToActions()
 {
   // Copy state for known types
   for(QAction *action : std::as_const(actions))
-    action->setChecked(selectedTypes.contains(action->data().toString()));
+    action->setChecked(selectedTypesMap.contains(action->data().toString()));
   actionUnknown->setChecked(selectedUnknownType);
-  userdataToolButton->setChecked(!selectedTypes.isEmpty() || selectedUnknownType);
+  userdataToolButton->setChecked(!selectedTypesMap.isEmpty() || selectedUnknownType);
 }
 
 void UserdataController::saveState() const
 {
-  atools::settings::Settings::instance().setValue(lnm::MAP_USERDATA, selectedTypes);
-  atools::settings::Settings::instance().setValue(lnm::MAP_USERDATA_ALL, allLastFoundTypes);
+  atools::settings::Settings::instance().setValue(lnm::MAP_USERDATA, selectedTypesMap.keys());
+  atools::settings::Settings::instance().setValue(lnm::MAP_USERDATA_ALL, allLastFoundTypesMap.keys());
   atools::settings::Settings::instance().setValue(lnm::MAP_USERDATA_UNKNOWN, selectedUnknownType);
 }
 
 void UserdataController::restoreState()
 {
-  const QStringList allTypes = getAllTypes();
+  const QMap<QString, QString>& allTypesMap = getAllTypesMap();
   atools::settings::Settings& settings = atools::settings::Settings::instance();
 
   // Get the list of icons found the last time which allows to identify new types and enable them per default
-  allLastFoundTypes = settings.valueStrList(lnm::MAP_USERDATA_ALL);
-  if(allLastFoundTypes.isEmpty())
-    allLastFoundTypes = allTypes;
+
+  for(const QString& key : settings.valueStrList(lnm::MAP_USERDATA_ALL))
+    allLastFoundTypesMap.insert(key, QStringLiteral());
+
+  if(allLastFoundTypesMap.isEmpty())
+    allLastFoundTypesMap = allTypesMap;
 
   if(OptionData::instance().getFlags().testFlag(opts::STARTUP_LOAD_MAP_SETTINGS))
   {
     // Get list of enabled. Enable all as default
-    const QStringList list = settings.valueStrList(lnm::MAP_USERDATA, allTypes);
+    const QStringList list = settings.valueStrList(lnm::MAP_USERDATA, allTypesMap.keys());
     selectedUnknownType = settings.valueBool(lnm::MAP_USERDATA_UNKNOWN, true);
 
     // Remove all types from the restored list of enabled which were not found in the new list of registered types
     // in case some were removed
-    selectedTypes.clear();
+    selectedTypesMap.clear();
     for(const QString& type : list)
     {
-      if(allTypes.contains(type))
-        selectedTypes.append(type);
+      if(allTypesMap.contains(type))
+        selectedTypesMap.insert(type, QStringLiteral());
     }
 
     // Now check for types that are new and not included in the last saved list and enable them
-    for(const QString& type : allTypes)
+    for(auto it = allTypesMap.constBegin(); it != allTypesMap.constEnd(); ++it)
     {
-      if(!allLastFoundTypes.contains(type))
-        selectedTypes.append(type);
+      const QString& type = it.key();
+      if(!allLastFoundTypesMap.contains(type))
+        selectedTypesMap.insert(type, QStringLiteral());
     }
 
-    allLastFoundTypes = allTypes;
+    allLastFoundTypesMap = allTypesMap;
   }
   else
     // Enable all
@@ -364,15 +369,15 @@ void UserdataController::restoreState()
 
 void UserdataController::resetSettingsToDefault()
 {
-  selectedTypes.clear();
-  selectedTypes.append(icons->getAllTypes());
+  selectedTypesMap.clear();
+  selectedTypesMap.insert(icons->getAllTypesMap());
   selectedUnknownType = true;
   typesToActions();
 }
 
-QStringList UserdataController::getAllTypes() const
+const QMap<QString, QString>& UserdataController::getAllTypesMap() const
 {
-  return icons->getAllTypes();
+  return icons->getAllTypesMap();
 }
 
 void UserdataController::addUserpointFromMap(const map::MapResult& result, atools::geo::Pos pos, bool airportAddon)
