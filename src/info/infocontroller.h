@@ -96,6 +96,9 @@ public:
   /* Update all and do not raise or scroll windows */
   void updateAllInformation();
 
+  /* Update all forced in case userpoints or logbook entries have been changed */
+  void updateAllInformationDataChanged();
+
   /* Update all and do not raise or scroll windows */
   void onlineClientAndAtcUpdated();
 
@@ -164,7 +167,8 @@ private:
 
   void updateAirportInternal(bool newAirport, bool bearingChange, bool scrollToTop, bool forceWeatherUpdate);
   bool updateNavaidInternal(const map::MapResult& result, bool bearingChanged, bool scrollToTop, bool forceUpdate);
-  bool updateUserpointInternal(const map::MapResult& result, bool bearingChanged, bool scrollToTop);
+  bool updateUserpointInternal(const map::MapResult& result, bool bearingChanged, bool scrollToTop, bool forceUpdate);
+  bool updateLogEntryInternal(const map::MapResult& result, bool bearingChanged, bool scrollToTop, bool forceUpdate);
 
   /* Update font size in text browsers if options have changed */
   void updateTextBrowserFontSizes();

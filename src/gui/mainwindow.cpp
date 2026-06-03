@@ -1197,7 +1197,7 @@ void MainWindow::connectAllSlots()
   connect(ui->actionUserdataExportUserfixDat, &QAction::triggered, userdataController, &UserdataController::exportXplaneUserFixDat);
   connect(ui->actionUserdataExportXmlBgl, &QAction::triggered, userdataController, &UserdataController::exportBglXml);
 
-  connect(userdataController, &UserdataController::userdataChanged, infoController, &InfoController::updateAllInformation);
+  connect(userdataController, &UserdataController::userdataChanged, infoController, &InfoController::updateAllInformationDataChanged);
   connect(userdataController, &UserdataController::userdataChanged, this, &MainWindow::updateMapObjectsShown);
   connect(userdataController, &UserdataController::refreshUserdataSearch, userSearch, &UserdataSearch::refreshData);
   connect(userdataController, &UserdataController::showUserpointSearch, this, &MainWindow::showUserpointSearch);
@@ -1215,7 +1215,7 @@ void MainWindow::connectAllSlots()
   connect(logdataController, &LogdataController::refreshLogSearch, logSearch, &LogdataSearch::refreshData);
   connect(logdataController, &LogdataController::logDataChanged, mapWidget, &MapWidget::updateLogEntryScreenGeometry);
   connect(logdataController, &LogdataController::logDataChanged, this, &MainWindow::updateMapObjectsShown);
-  connect(logdataController, &LogdataController::logDataChanged, infoController, &InfoController::updateAllInformation);
+  connect(logdataController, &LogdataController::logDataChanged, infoController, &InfoController::updateAllInformationDataChanged);
 
   connect(mapWidget, &MapWidget::aircraftHasPassedTakeoffPoint, logdataController, &LogdataController::aircraftHasPassedTakeoffPoint);
   connect(mapWidget, &MapWidget::aircraftTakeoff, logdataController, &LogdataController::aircraftTakeoff);

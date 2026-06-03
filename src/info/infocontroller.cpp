@@ -42,6 +42,7 @@
 #include "route/route.h"
 #include "settings/settings.h"
 #include "ui_mainwindow.h"
+#include "userdata/userdatacontroller.h"
 #include "util/htmlbuilder.h"
 #include "weather/weathercontext.h"
 #include "weather/weathercontexthandler.h"
@@ -345,11 +346,14 @@ void InfoController::currentInfoTabChanged(int id)
       break;
 
     case ic::INFO_USERPOINT:
-      updateUserpointInternal(*currentSearchResult, true /* bearing changed */, false /* scrollToTop */);
+      updateUserpointInternal(*currentSearchResult, true /* bearing changed */, false /* scrollToTop */, false /* forceUpdate */);
+      break;
+
+    case ic::INFO_LOGBOOK:
+      updateLogEntryInternal(*currentSearchResult, true /* bearing changed */, false /* scrollToTop */, false /* forceUpdate */);
       break;
 
     case ic::INFO_AIRSPACE:
-    case ic::INFO_LOGBOOK:
     case ic::INFO_ONLINE_CLIENT:
     case ic::INFO_ONLINE_CENTER:
       break;
@@ -756,6 +760,11 @@ void InfoController::updateAllInformation()
   showInformationInternal(*currentSearchResult, false /* showWindows */, false /* scrollToTop */, false /* forceUpdate */);
 }
 
+void InfoController::updateAllInformationDataChanged()
+{
+  showInformationInternal(*currentSearchResult, false /* showWindows */, false /* scrollToTop */, true /* forceUpdate */);
+}
+
 void InfoController::onlineNetworkChanged()
 {
   // Clear display
@@ -786,8 +795,9 @@ void InfoController::showInformationInternal(map::MapResult result, bool showWin
 #endif
 
   // Flags used to decide which tab and window to raise
-  bool foundAirport = false, foundNavaid = false, foundUserpoint = false, foundUserAircraft = false, foundUserAircraftShadow = false,
-       foundAiAircraft = false, foundOnlineClient = false, foundAirspace = false, foundLogbookEntry = false, foundOnlineCenter = false;
+  bool foundAirport = false, foundNavaid = false, foundUserpoint = false, foundUserAircraft = false,
+       foundUserAircraftShadow = false, foundAiAircraft = false, foundOnlineClient = false, foundAirspace = false,
+       foundLogbookEntry = false, foundOnlineCenter = false;
 
   HtmlBuilder html(true /* backgroundColorUsed */, NavApp::isGuiStyleDark());
 
@@ -1038,42 +1048,23 @@ void InfoController::showInformationInternal(map::MapResult result, bool showWin
       updateTextEdit(ui->textBrowserCenterInfo, html.getHtml(), false /* scrollToTop*/, true /* keepSelection */);
   }
 
-  // Logbook Entries ================================================================
-  if(!result.logbookEntries.isEmpty())
-  {
-    html.clear();
-
-    currentSearchResult->logbookEntries.clear();
-
-    for(const map::MapLogbookEntry& logEntry : std::as_const(result.logbookEntries))
-    {
-      qDebug() << "Found log entry" << logEntry.id;
-
-      currentSearchResult->logbookEntries.append(logEntry);
-      foundLogbookEntry |= infoBuilder->logEntryText(logEntry, html);
-      html.br();
-    }
-
-    if(foundLogbookEntry)
-      // Update and keep scroll position
-      updateTextEdit(ui->textBrowserLogbookInfo, html.getHtml(), false /* scrollToTop*/, true /* keepSelection */);
-    else
-      ui->textBrowserLogbookInfo->clear();
-
-  }
-
   // Navaids tab ================================================================
   if(result.hasVor() || result.hasNdb() || result.hasWaypoints() || result.hasIls() || result.hasHoldings() || result.hasAirportMsa() ||
      result.hasAirways())
     // if any navaids are to be shown clear search result before
     currentSearchResult->clear(map::NAV_ALL | map::ILS | map::AIRWAY | map::RUNWAYEND | map::HOLDING | map::AIRPORT_MSA);
 
-  if(!result.userpoints.isEmpty())
-    // if any userpoints are to be shown clear search result before
-    currentSearchResult->clear(map::USERPOINT);
-
   foundNavaid = updateNavaidInternal(result, false /* bearing changed */, scrollToTop, forceUpdate);
-  foundUserpoint = updateUserpointInternal(result, false /* bearing changed */, scrollToTop);
+
+  // if any userpoints are to be shown clear search result before
+  if(!result.userpoints.isEmpty())
+    currentSearchResult->clear(map::USERPOINT);
+  foundUserpoint = updateUserpointInternal(result, false /* bearing changed */, scrollToTop, forceUpdate);
+
+  // if any userpoints are to be shown clear search result before
+  if(!result.logbookEntries.isEmpty())
+    currentSearchResult->clear(map::LOGBOOK);
+  foundLogbookEntry = updateLogEntryInternal(result, false /* bearing changed */, scrollToTop, forceUpdate);
 
   // Show dock windows if needed
   if(showWindows)
@@ -1107,6 +1098,8 @@ void InfoController::showInformationInternal(map::MapResult result, bool showWin
       newId = ic::INFO_LOGBOOK;
     else if(foundUserpoint)
       newId = ic::INFO_USERPOINT;
+    else if(foundLogbookEntry)
+      newId = ic::INFO_LOGBOOK;
     else if(foundAirport)
       newId = ic::INFO_AIRPORT;
     else if(foundNavaid)
@@ -1227,7 +1220,7 @@ bool InfoController::updateNavaidInternal(const map::MapResult& result, bool bea
   return foundNavaid;
 }
 
-bool InfoController::updateUserpointInternal(const map::MapResult& result, bool bearingChanged, bool scrollToTop)
+bool InfoController::updateUserpointInternal(const map::MapResult& result, bool bearingChanged, bool scrollToTop, bool forceUpdate)
 {
   HtmlBuilder html(true /* backgroundColorUsed */, NavApp::isGuiStyleDark());
   Ui::MainWindow *ui = NavApp::getMainUi();
@@ -1237,20 +1230,58 @@ bool InfoController::updateUserpointInternal(const map::MapResult& result, bool 
   for(const map::MapUserpoint& userpoint : std::as_const(result.userpoints))
   {
 #ifdef DEBUG_INFORMATION
-    qDebug() << "Found waypoint" << userpoint.ident;
+    qDebug() << "Found userpoint" << userpoint.ident;
 #endif
-    if(!bearingChanged)
-      currentSearchResult->userpoints.append(userpoint);
-    foundUserpoint |= infoBuilder->userpointText(userpoint, html);
-    html.br();
+    map::MapUserpoint userpointDatabase = NavApp::getUserdataController()->getUserpointById(userpoint.id);
+    if(userpointDatabase.isValid())
+    {
+      if(!bearingChanged)
+        currentSearchResult->userpoints.append(userpointDatabase);
+
+      foundUserpoint |= infoBuilder->userpointText(userpointDatabase, html);
+      html.br();
+    }
   }
 
-  if(foundUserpoint)
+  if(!foundUserpoint)
+    html.clear();
+
+  if(foundUserpoint || forceUpdate)
     updateTextEdit(ui->textBrowserUserpointInfo, html.getHtml(), scrollToTop, !scrollToTop /* keepSelection */);
-  else
-    ui->textBrowserUserpointInfo->clear();
 
   return foundUserpoint;
+}
+
+bool InfoController::updateLogEntryInternal(const map::MapResult& result, bool bearingChanged, bool scrollToTop, bool forceUpdate)
+{
+  HtmlBuilder html(true /* backgroundColorUsed */, NavApp::isGuiStyleDark());
+  Ui::MainWindow *ui = NavApp::getMainUi();
+  bool foundLogEntry = false;
+
+  // Logbook entries on top of the list
+  for(const map::MapLogbookEntry& logEntry : std::as_const(result.logbookEntries))
+  {
+#ifdef DEBUG_INFORMATION
+    qDebug() << "Found log entry" << logEntry.getIdent();
+#endif
+    map::MapLogbookEntry logEntryDatabase = NavApp::getLogdataController()->getLogEntryById(logEntry.id);
+    if(logEntryDatabase.isValid())
+    {
+      if(!bearingChanged)
+        currentSearchResult->logbookEntries.append(logEntryDatabase);
+
+      foundLogEntry |= infoBuilder->logEntryText(logEntryDatabase, html);
+      html.br();
+    }
+  }
+
+  if(!foundLogEntry)
+    html.clear();
+
+  if(foundLogEntry || forceUpdate)
+    updateTextEdit(ui->textBrowserLogbookInfo, html.getHtml(), scrollToTop, !scrollToTop /* keepSelection */);
+
+  return foundLogEntry;
 }
 
 void InfoController::preDatabaseLoad()
@@ -1492,7 +1523,10 @@ void InfoController::simDataChanged(const atools::fs::sc::SimConnectData& data)
         updateNavaidInternal(*currentSearchResult, true /* bearing changed */, false /* scrollToTop */, false /* forceUpdate */);
 
       if(tabHandlerInfo->getCurrentTabId() == ic::INFO_USERPOINT)
-        updateUserpointInternal(*currentSearchResult, true /* bearing changed */, false /* scrollToTop */);
+        updateUserpointInternal(*currentSearchResult, true /* bearing changed */, false /* scrollToTop */, false /* forceUpdate */);
+
+      if(tabHandlerInfo->getCurrentTabId() == ic::INFO_LOGBOOK)
+        updateLogEntryInternal(*currentSearchResult, true /* bearing changed */, false /* scrollToTop */, false /* forceUpdate */);
     }
     lastSimBearingUpdate = QDateTime::currentMSecsSinceEpoch();
   }
