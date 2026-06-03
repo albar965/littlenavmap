@@ -291,23 +291,6 @@
     <property name="title">
      <string>&amp;Map</string>
     </property>
-    <widget class="QMenu" name="menuUserFeatures">
-     <property name="title">
-      <string>&amp;User Features</string>
-     </property>
-     <addaction name="actionMapLoadMarkers"/>
-     <addaction name="actionMapAppendMarkers"/>
-     <addaction name="separator"/>
-     <addaction name="actionMapSaveMarkers"/>
-     <addaction name="separator"/>
-     <addaction name="actionMapHideAllMarkers"/>
-     <addaction name="separator"/>
-     <addaction name="actionMapHideAllRangeRings"/>
-     <addaction name="actionMapHideAllDistanceMarkers"/>
-     <addaction name="actionMapHideAllPatterns"/>
-     <addaction name="actionMapHideAllHoldings"/>
-     <addaction name="actionMapHideAllMsa"/>
-    </widget>
     <addaction name="actionMapShowHome"/>
     <addaction name="actionMapAircraftCenterNow"/>
     <addaction name="actionRouteCenter"/>
@@ -321,8 +304,6 @@
     <addaction name="separator"/>
     <addaction name="actionMapBack"/>
     <addaction name="actionMapNext"/>
-    <addaction name="separator"/>
-    <addaction name="menuUserFeatures"/>
     <addaction name="separator"/>
     <addaction name="actionMapClearAllHighlights"/>
     <addaction name="separator"/>
@@ -471,7 +452,7 @@
     </widget>
     <widget class="QMenu" name="menuViewMarkers">
      <property name="title">
-      <string>User &amp;Features</string>
+      <string>Map &amp;Markers</string>
      </property>
     </widget>
     <widget class="QMenu" name="menuAircraft">
@@ -605,10 +586,27 @@
     <addaction name="actionShortcutUserpointSearch"/>
     <addaction name="actionShortcutLogbookSearch"/>
    </widget>
+   <widget class="QMenu" name="menuMarkers">
+    <property name="title">
+     <string>M&amp;arkers</string>
+    </property>
+    <addaction name="actionMapLoadMarkers"/>
+    <addaction name="actionMapAppendMarkers"/>
+    <addaction name="actionMapSaveMarkers"/>
+    <addaction name="separator"/>
+    <addaction name="actionMapHideAllMarkers"/>
+    <addaction name="separator"/>
+    <addaction name="actionMapHideAllRangeRings"/>
+    <addaction name="actionMapHideAllDistanceMarkers"/>
+    <addaction name="actionMapHideAllPatterns"/>
+    <addaction name="actionMapHideAllHoldings"/>
+    <addaction name="actionMapHideAllMsa"/>
+   </widget>
    <addaction name="menuFile"/>
    <addaction name="menuRoute"/>
    <addaction name="menuSearch"/>
    <addaction name="menuMap"/>
+   <addaction name="menuMarkers"/>
    <addaction name="menuMapView"/>
    <addaction name="menuWeather"/>
    <addaction name="menuUserdata"/>
@@ -12558,38 +12556,38 @@ from either the departure parking or the user aircraft while taxiing.</string>
   </action>
   <action name="actionMapSaveMarkers">
    <property name="text">
-    <string>&amp;Save User Features ...</string>
+    <string>&amp;Save Map Markers ...</string>
    </property>
    <property name="toolTip">
-    <string>Save User Features to file</string>
+    <string>Save Map Markers to file</string>
    </property>
    <property name="statusTip">
-    <string>Save User Features to file</string>
+    <string>Save Map Markers to file</string>
    </property>
   </action>
   <action name="actionMapLoadMarkers">
    <property name="text">
-    <string>&amp;Load User Features ...</string>
+    <string>&amp;Load Map Markers ...</string>
    </property>
    <property name="toolTip">
-    <string>Load User Features from file</string>
+    <string>Load Map Markers from file</string>
    </property>
    <property name="statusTip">
-    <string>Load User Features from file</string>
+    <string>Load Map Markers from file</string>
    </property>
   </action>
   <action name="actionMapAppendMarkers">
    <property name="text">
-    <string>Load and &amp;Append User Features ...</string>
+    <string>Load and &amp;Append Map Markers ...</string>
    </property>
    <property name="iconText">
-    <string>Load and Append User Features from file</string>
+    <string>Load and Append Map Markers from file</string>
    </property>
    <property name="toolTip">
-    <string>Load and Append User Features from file</string>
+    <string>Load and Append Map Markers from file</string>
    </property>
    <property name="statusTip">
-    <string>Load and Append User Features from file</string>
+    <string>Load and Append Map Markers from file</string>
    </property>
   </action>
   <action name="actionMapHideAllMarkers">
@@ -12598,13 +12596,13 @@ from either the departure parking or the user aircraft while taxiing.</string>
      <normaloff>:/littlenavmap/resources/icons/routedeleteleg.svg</normaloff>:/littlenavmap/resources/icons/routedeleteleg.svg</iconset>
    </property>
    <property name="text">
-    <string>Remove &amp;all User Features</string>
+    <string>Remove &amp;all Map Markers</string>
    </property>
    <property name="toolTip">
-    <string>Remove all User Features from the map</string>
+    <string>Remove all Map Markers from the map</string>
    </property>
    <property name="statusTip">
-    <string>Remove all User Features from the map</string>
+    <string>Remove all Map Markers from the map</string>
    </property>
   </action>
   <action name="actionRouteSaveAsCsv">

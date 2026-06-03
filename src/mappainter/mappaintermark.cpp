@@ -163,7 +163,7 @@ void MapPainterMark::paintHome()
   int x, y;
   if(wToS(mapPaintWidget->getHomePos(), x, y))
   {
-    int size = atools::roundToInt(context->szF(context->textSizeRangeUserFeature, 24));
+    int size = atools::roundToInt(context->szF(context->textSizeRangeMarker, 24));
 
     if(x < ageo::INVALID_INT / 2 && y < ageo::INVALID_INT / 2)
     {
@@ -573,8 +573,8 @@ void MapPainterMark::paintLogEntries(const QList<map::MapLogbookEntry>& entries)
   if(context->objectDisplayTypes.testFlag(map::LOGBOOK_DIRECT))
   {
     // Use smaller measurement line thickness for this direct connection
-    float outerlinewidth = context->szF(context->thicknessUserFeature, 7) * 0.6f;
-    float innerlinewidth = context->szF(context->thicknessUserFeature, 4) * 0.6f;
+    float outerlinewidth = context->szF(context->thicknessMapMarker, 7) * 0.6f;
+    float innerlinewidth = context->szF(context->thicknessMapMarker, 4) * 0.6f;
     QPen directPen(mapcolors::routeLogEntryColor, innerlinewidth, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin);
     QPen directOutlinePen(mapcolors::routeLogEntryOutlineColor, outerlinewidth, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin);
     float size = context->szF(context->symbolSizeAirport, context->mapLayer->getAirportSymbolSize());
@@ -607,7 +607,7 @@ void MapPainterMark::paintLogEntries(const QList<map::MapLogbookEntry>& entries)
     // Draw line text ==========================================================================
     if(!mapPaintWidget->isDistanceCutOff())
     {
-      context->szFont(context->textSizeRangeUserFeature);
+      context->szFont(context->textSizeRangeMarker);
       painter->setBackground(mapcolors::routeTextBackgroundColor);
       painter->setPen(mapcolors::routeTextColor);
       for(const MapLogbookEntry *entry : visibleLogEntries)
@@ -699,7 +699,7 @@ void MapPainterMark::paintAirwayList(const QList<map::MapAirway>& airwayList)
   maptools::correctLatY(linestring, false /* polygon */);
 
   // Outline =================
-  float lineWidth = context->szF(context->thicknessUserFeature, 5.f);
+  float lineWidth = context->szF(context->thicknessMapMarker, 5.f);
   QPen outerPen(mapcolors::highlightBackColor, lineWidth, Qt::SolidLine, Qt::RoundCap);
   painter->setPen(outerPen);
   drawPolyline(painter, linestring);
@@ -743,7 +743,7 @@ void MapPainterMark::paintAirwayList(const QList<map::MapAirway>& airwayList)
 
 void MapPainterMark::paintAirwayTextList(const QList<map::MapAirway>& airwayList)
 {
-  context->szFont(context->textSizeRangeUserFeature);
+  context->szFont(context->textSizeRangeMarker);
 
   for(const map::MapAirway& airway : airwayList)
   {
@@ -776,7 +776,7 @@ void MapPainterMark::paintAirspace(const map::MapAirspace& airspace)
   Marble::GeoPainter *painter = context->painter;
   const OptionData& optionData = OptionData::instance();
 
-  float lineWidth = context->szF(context->thicknessUserFeature, 5);
+  float lineWidth = context->szF(context->thicknessMapMarker, 5);
 
   QPen outerPen(mapcolors::highlightBackColor, lineWidth, Qt::SolidLine, Qt::FlatCap);
 
@@ -788,7 +788,7 @@ void MapPainterMark::paintAirspace(const map::MapAirspace& airspace)
   innerPen.setColor(c);
 
   painter->setBrush(mapcolors::colorForAirspaceFill(airspace, optionData.getDisplayTransparencyAirspace()));
-  context->szFont(context->textSizeRangeUserFeature);
+  context->szFont(context->textSizeRangeMarker);
 
   if(context->visibleAndResolves(airspace.bounding))
   {
@@ -822,7 +822,7 @@ void MapPainterMark::paintAirspace(const map::MapAirspace& airspace)
       }
 
 #ifdef DEBUG_COLOR_AIRSPACE_POLY_POINTS_MARK
-      context->szFont(context->textSizeRangeUserFeature * 1.5f);
+      context->szFont(context->textSizeRangeMapMarker * 1.5f);
       painter->setPen(QPen(QColor(0, 0, 0, 255), 2.));
       for(int i = 0; i < lineString->size(); i++)
       {
@@ -830,7 +830,7 @@ void MapPainterMark::paintAirspace(const map::MapAirspace& airspace)
         drawCircle(painter, pos, 4.f);
         drawText(painter, pos, QString::number(i), true /* topCorner */, true /* leftCorner */);
       }
-      context->szFont(context->textSizeRangeUserFeature);
+      context->szFont(context->textSizeRangeMapMarker);
 #endif
 
       releasePolygons(polygons);
@@ -845,8 +845,8 @@ void MapPainterMark::paintRangeMarkers()
 
   GeoPainter *painter = context->painter;
 
-  context->szFont(context->textSizeRangeUserFeature);
-  float lineWidth = context->szF(context->thicknessUserFeature, 2.5f);
+  context->szFont(context->textSizeRangeMarker);
+  float lineWidth = context->szF(context->thicknessMapMarker, 2.5f);
 
   for(const map::RangeMarker *marker : rangeMarkers)
   {
@@ -933,10 +933,10 @@ void MapPainterMark::paintSelectedAltitudeRange()
         {
           if(scale->getPixelForNm(rangeDistanceNm, userAircraft.getTrackDegTrue()) > 16)
           {
-            float lineWidth = context->szF(context->thicknessUserFeature, mapcolors::markSelectedAltitudeRangePen.width());
+            float lineWidth = context->szF(context->thicknessMapMarker, mapcolors::markSelectedAltitudeRangePen.width());
             painter->setPen(mapcolors::adjustWidth(mapcolors::markSelectedAltitudeRangePen, lineWidth));
             painter->setBrush(Qt::NoBrush);
-            context->szFont(context->textSizeRangeUserFeature);
+            context->szFont(context->textSizeRangeMarker);
 
             // Draw arc
             float arcAngleStart = ageo::normalizeCourse(userAircraft.getTrackDegTrue() - 45.f);
@@ -962,10 +962,10 @@ void MapPainterMark::paintEnduranceRing(float enduranceHours, float enduranceNm,
 
     if(enduranceNm > 1.f)
     {
-      float lineWidth = context->szF(context->thicknessUserFeature, pen.width());
+      float lineWidth = context->szF(context->thicknessMapMarker, pen.width());
       painter->setPen(mapcolors::adjustWidth(pen, lineWidth));
       painter->setBrush(Qt::NoBrush);
-      context->szFont(context->textSizeRangeUserFeature);
+      context->szFont(context->textSizeRangeMarker);
 
       // Draw circle and get a text placement position
       paintCircle(painter, pos, enduranceNm, context->drawFast, &textPos);
@@ -1483,8 +1483,8 @@ void MapPainterMark::paintPatternMarkers()
   atools::util::PainterContextSaver saver(context->painter);
   GeoPainter *painter = context->painter;
   const QList<PatternMarker>& patternMarkers = mapPaintWidget->getMapMarkers()->getPatternMarkers().values();
-  float lineWidth = context->szF(context->thicknessUserFeature, (context->mapLayerText->isAirportDiagramRunway() ? 2.5f : 1.5f));
-  context->szFont(context->textSizeRangeUserFeature);
+  float lineWidth = context->szF(context->thicknessMapMarker, (context->mapLayerText->isAirportDiagramRunway() ? 2.5f : 1.5f));
+  context->szFont(context->textSizeRangeMarker);
 
   TextPlacement textPlacement(painter, this, context->screenRect);
   textPlacement.setLineWidth(lineWidth);
@@ -1574,7 +1574,7 @@ void MapPainterMark::paintPatternMarkers()
         {
           // Draw a line below to fill the gap because of round edges
           painter->setBrush(Qt::white);
-          painter->setPen(QPen(marker.color, context->szF(context->thicknessUserFeature, 2.f), Qt::DashLine));
+          painter->setPen(QPen(marker.color, context->szF(context->thicknessMapMarker, 2.f), Qt::DashLine));
           drawLine(painter, upwind);
 
           // Straight out exit for pattern =======================
@@ -1596,7 +1596,7 @@ void MapPainterMark::paintPatternMarkers()
           if(drawDetails)
           {
             // Draw arrows to all the entry and exit indicators ========================
-            painter->setPen(QPen(marker.color, context->szF(context->thicknessUserFeature, 2), Qt::SolidLine));
+            painter->setPen(QPen(marker.color, context->szF(context->thicknessMapMarker, 2), Qt::SolidLine));
             paintArrowAlongLine(painter, QLineF(upwind.p2(), exitStraight), arrow, 0.95f);
             paintArrowAlongLine(painter, QLineF(upwind.p2(), exit45Deg), arrow, 0.95f);
             paintArrowAlongLine(painter, QLineF(entry, downwindEntryPoint), arrow, 0.05f);

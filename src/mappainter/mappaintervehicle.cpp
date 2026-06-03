@@ -158,7 +158,7 @@ void MapPainterVehicle::paintTurnPath(const atools::fs::sc::SimConnectUserAircra
         double curDistance = 0.f;
         double curHeading = userAircraft.getTrackDegTrue() + turnStep;
 
-        double lineWidth = context->szF(context->thicknessUserFeature, mapcolors::markTurnPathPen.width());
+        double lineWidth = context->szF(context->thicknessMapMarker, mapcolors::markTurnPathPen.width());
         context->painter->setPen(mapcolors::adjustWidth(mapcolors::markTurnPathPen, static_cast<float>(lineWidth)));
         context->painter->setBrush(QBrush(mapcolors::markTurnPathPen.color()));
 

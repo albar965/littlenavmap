@@ -242,7 +242,7 @@ public:
   void appendMarkers();
   void saveMarkers();
 
-  /* Show selection dialog and copy or append selected user features to application features.
+  /* Show selection dialog and copy or append selected map markers to application features.
    * sDialog is omitted if forced loading is on */
   void copyMarkersSelection(const MapMarkers& markers, bool append, bool forceLoading);
 

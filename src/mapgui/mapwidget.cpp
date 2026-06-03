@@ -2026,7 +2026,7 @@ void MapWidget::startDistanceMarkerDrag()
 
 int MapWidget::addDistanceMarker(const atools::geo::Pos& pos, const map::MapResult& result)
 {
-  // Enable display of user feature
+  // Enable display of Map Markers
   NavApp::getMapMarkHandler()->showMarkTypes(map::MARK_DISTANCE);
 
   // Distance line
@@ -3881,7 +3881,7 @@ void MapWidget::addPatternMarker(const map::MapAirport& airport)
   PatternMarkerDialog dialog(this, marker, map::MapResult::createFromMapBase(&airport), false /* editMode */);
   if(dialog.execMarkerDialog(true /* forceShow */, &contextMenuActive) == QDialog::Accepted)
   {
-    // Enable display of user feature
+    // Enable display of Map Markers
     NavApp::getMapMarkHandler()->showMarkTypes(map::MARK_PATTERNS);
 
     getMapMarkers()->addPatternMark(dialog.getMarker());
@@ -3912,7 +3912,7 @@ void MapWidget::addHoldingMarker(const map::MapResult& result, const atools::geo
   HoldingMarkerDialog dialog(this, marker, result, false /* editMode */);
   if(dialog.execMarkerDialog(true /* forceShow */, &contextMenuActive) == QDialog::Accepted)
   {
-    // Enable display of user feature
+    // Enable display of Map Markers
     NavApp::getMapMarkHandler()->showMarkTypes(map::MARK_HOLDING);
 
     getMapMarkers()->addHoldingMark(dialog.getMarker());
@@ -3940,7 +3940,7 @@ void MapWidget::addMsaMarker(map::MapAirportMsa airportMsa)
 
   if(airportMsa.isValid())
   {
-    // Enable display of user feature
+    // Enable display of Map Markers
     NavApp::getMapMarkHandler()->showMarkTypes(map::MARK_MSA);
 
     map::MsaMarker msa;
@@ -4073,7 +4073,7 @@ void MapWidget::changeHome()
 void MapWidget::addNavRangeMark(const map::MapResult& result, const atools::geo::Pos& position)
 {
   bool rangeValid = false;
-  // Enable display of user feature
+  // Enable display of Map Markers
   NavApp::getMapMarkHandler()->showMarkTypes(map::MARK_RANGE);
 
   map::RangeMarker marker;
@@ -4138,7 +4138,7 @@ void MapWidget::addRangeMarkFromMap(const atools::geo::Pos& pos, bool showDialog
   if(dialog.execMarkerDialog(showDialog, &contextMenuActive) != QDialog::Accepted)
     return;
 
-  // Enable display of user feature
+  // Enable display of Map Markers
   NavApp::getMapMarkHandler()->showMarkTypes(map::MARK_RANGE);
 
   // Fill the marker object
@@ -4168,7 +4168,7 @@ void MapWidget::addRangeMark(const atools::geo::Pos& pos, const map::MapResult& 
   if(dialog.execMarkerDialog(showDialog, &contextMenuActive) != QDialog::Accepted)
     return;
 
-  // Enable display of user feature
+  // Enable display of Map Markers
   NavApp::getMapMarkHandler()->showMarkTypes(map::MARK_RANGE);
 
   // Store the correct position (snapped to object center if applicable)

@@ -33,7 +33,7 @@ class ActionButtonHandler;
 }
 
 /*
- * Adds a toolbutton and four actions to it that allow to show or hide user features like holds, range rings and others.
+ * Adds a toolbutton and four actions to it that allow to show or hide map markers like holds, range rings and others.
  */
 class MapMarkHandler :
   public QObject

@@ -421,7 +421,7 @@ void MapVisible::updateVisibleObjectsStatusBar()
 
       QStringList markTypes = NavApp::getMapMarkHandler()->getMarkTypesText();
       if(!markTypes.isEmpty())
-        tooltip.tr().td().b(tr("User features: ")).text(markTypes.join(tr(", "))).tdEnd().trEnd();
+        tooltip.tr().td().b(tr("Map Markers: ")).text(markTypes.join(tr(", "))).tdEnd().trEnd();
 
       tooltip.tableEnd();
 

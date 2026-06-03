@@ -2499,10 +2499,10 @@ userpoints and logbook entries when hovering the cursor over the map</string>
                <item>
                 <widget class="QCheckBox" name="checkBoxOptionsMapTooltipUser">
                  <property name="toolTip">
-                  <string>Show tooltip at the hotspot of user features like range rings, measurement lines, MSA diagrams, user holdings or traffic patterns.</string>
+                  <string>Show tooltip at the hotspot of map markers like range rings, measurement lines, MSA diagrams, user holdings or traffic patterns.</string>
                  </property>
                  <property name="text">
-                  <string>&amp;User Features</string>
+                  <string>&amp;Map Markers</string>
                  </property>
                  <property name="checked">
                   <bool>true</bool>
@@ -4717,7 +4717,7 @@ Note that this does not affect the stored trail points.</string>
             <item row="0" column="0">
              <widget class="QGroupBox" name="groupBox">
               <property name="title">
-               <string>Map Display Options for User Features</string>
+               <string>Map Display Options for Map Markers</string>
               </property>
               <layout class="QGridLayout" name="gridLayout_29">
                <property name="leftMargin">
@@ -4738,7 +4738,7 @@ Note that this does not affect the stored trail points.</string>
                <item row="0" column="4" alignment="Qt::AlignTop">
                 <widget class="QSpinBox" name="spinBoxOptionsDisplayThicknessUserFeature">
                  <property name="toolTip">
-                  <string>Line width for these user features</string>
+                  <string>Line width for these map markers</string>
                  </property>
                  <property name="suffix">
                   <string> %</string>

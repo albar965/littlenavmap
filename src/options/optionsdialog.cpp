@@ -267,7 +267,7 @@ OptionsDialog::OptionsDialog(QMainWindow *parentWindow)
   addPageListItem(QStringLiteral("mapuser"),
                   tr("Map User"),
                   tr("Change colors, symbols and texts for highlights, measurement lines and "
-                     "other user features for map and elevation profile."),
+                     "other map markers for map and elevation profile."),
                   QStringLiteral(":/littlenavmap/resources/icons/mapdisplay2.svg"));
 
   addPageListItem(QStringLiteral("mapoptions"),
@@ -2554,7 +2554,7 @@ void OptionsDialog::widgetsToOptionData(OptionData& data)
   data.displayTextSizeAirportRunway = ui->spinBoxOptionsDisplayTextSizeAirportRunway->value();
   data.displayTextSizeAirportTaxiway = ui->spinBoxOptionsDisplayTextSizeAirportTaxiway->value();
   data.displayThicknessTrail = ui->spinBoxOptionsDisplayThicknessTrail->value();
-  data.displayThicknessUserFeature = ui->spinBoxOptionsDisplayThicknessUserFeature->value();
+  data.displayThicknessMapMarker = ui->spinBoxOptionsDisplayThicknessUserFeature->value();
   data.displayThicknessMeasurement = ui->spinBoxOptionsDisplayThicknessMeasurement->value();
   data.displayThicknessCompassRose = ui->spinBoxOptionsDisplayThicknessCompassRose->value();
   data.displaySunShadingDimFactor = ui->spinBoxOptionsDisplaySunShadeDarkness->value();
@@ -2569,7 +2569,7 @@ void OptionsDialog::widgetsToOptionData(OptionData& data)
 
   data.mapNavTouchArea = ui->spinBoxOptionsMapNavTouchArea->value();
 
-  data.displayTextSizeUserFeature = ui->spinBoxOptionsDisplayTextSizeUserFeature->value();
+  data.displayTextSizeMapMarker = ui->spinBoxOptionsDisplayTextSizeUserFeature->value();
   data.displayTextSizeMeasurement = ui->spinBoxOptionsDisplayTextSizeMeasurement->value();
   data.displayTextSizeCompassRose = ui->spinBoxOptionsDisplayTextSizeCompassRose->value();
 
@@ -2893,7 +2893,7 @@ void OptionsDialog::optionDataToWidgets(const OptionData& data)
   ui->spinBoxOptionsDisplayTextSizeAirportRunway->setValue(data.displayTextSizeAirportRunway);
   ui->spinBoxOptionsDisplayTextSizeAirportTaxiway->setValue(data.displayTextSizeAirportTaxiway);
   ui->spinBoxOptionsDisplayThicknessTrail->setValue(data.displayThicknessTrail);
-  ui->spinBoxOptionsDisplayThicknessUserFeature->setValue(data.displayThicknessUserFeature);
+  ui->spinBoxOptionsDisplayThicknessUserFeature->setValue(data.displayThicknessMapMarker);
   ui->spinBoxOptionsDisplayThicknessMeasurement->setValue(data.displayThicknessMeasurement);
   ui->spinBoxOptionsDisplayThicknessCompassRose->setValue(data.displayThicknessCompassRose);
   ui->spinBoxOptionsDisplaySunShadeDarkness->setValue(data.displaySunShadingDimFactor);
@@ -2904,7 +2904,7 @@ void OptionsDialog::optionDataToWidgets(const OptionData& data)
   ui->spinBoxOptionsDisplayTransparencyAirspace->setValue(data.displayTransparencyAirspace);
   ui->spinBoxOptionsDisplayTextSizeAirportMsa->setValue(data.displayTextSizeAirportMsa);
   ui->spinBoxOptionsMapNavTouchArea->setValue(data.mapNavTouchArea);
-  ui->spinBoxOptionsDisplayTextSizeUserFeature->setValue(data.displayTextSizeUserFeature);
+  ui->spinBoxOptionsDisplayTextSizeUserFeature->setValue(data.displayTextSizeMapMarker);
   ui->spinBoxOptionsDisplayTextSizeMeasurement->setValue(data.displayTextSizeMeasurement);
   ui->spinBoxOptionsDisplayTextSizeCompassRose->setValue(data.displayTextSizeCompassRose);
   ui->spinBoxOptionsMapHighlightTransparent->setValue(data.displayMapHighlightTransparent);

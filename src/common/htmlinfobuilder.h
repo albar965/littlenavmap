@@ -302,7 +302,7 @@ public:
 
   void aircraftTrailText(const map::AircraftTrailSegment& trailSegment, atools::util::HtmlBuilder& html, bool logbook) const;
 
-  /* User features / marks */
+  /* Map markers */
   void msaMarkerText(const map::MsaMarker& marker, atools::util::HtmlBuilder& html, const Route *) const;
   void holdingMarkerText(const map::HoldingMarker& marker, atools::util::HtmlBuilder& html, const Route *) const;
   void patternMarkerText(const map::PatternMarker& marker, atools::util::HtmlBuilder& html, const Route *) const;

@@ -421,7 +421,7 @@ public:
   /* Too many objects on map */
   bool isPaintOverflow() const;
 
-  /* Do not show anything above this zoom distance except user features */
+  /* Do not show anything above this zoom distance except map markers */
   bool isDistanceCutOff() const;
 
   /* Instances having web = true do not render additional stuff like navigation areas */

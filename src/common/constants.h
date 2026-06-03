@@ -199,12 +199,12 @@ const QLatin1String MAP_MAX_NEAREST_AI_LABELS("Map/MaxNearestAiLabels");
 const QLatin1String MAP_MAX_NEAREST_AI_LABELS_DIST_NM("Map/MaxNearestAiLabelsDistNm");
 const QLatin1String MAP_MAX_NEAREST_AI_LABELS_VERT_DIST_FT("Map/MaxNearestAiLabelsVertDistFt");
 
-/* User defined features =========================================== */
+/* Map markers =========================================== */
 const QLatin1String MAP_DISTANCEMARKERS("Map/DistanceMarkers1"); // Obsolete
 const QLatin1String MAP_RANGEMARKERS("Map/RangeMarkers1"); // Obsolete
-const QLatin1String MAP_TRAFFICPATTERNS("Map/TrafficPatterns2"); // Obsolete
-const QLatin1String MAP_HOLDINGS("Map/Holdings1"); // Obsolete
-const QLatin1String MAP_AIRPORT_MSA("Map/AirportMsa1"); // Obsolete
+const QLatin1String MAP_PATTERNMARKERS("Map/TrafficPatterns2"); // Obsolete
+const QLatin1String MAP_HOLDING_MARKERS("Map/Holdings1"); // Obsolete
+const QLatin1String MAP_AIRPORT_MSA_MARKERS("Map/AirportMsa1"); // Obsolete
 
 const QLatin1String MAP_MARK_DISPLAY("Map/MarkDisplay1");
 const QLatin1String MAP_AIRPORT("Map/Airports3");
@@ -454,7 +454,7 @@ const QLatin1String FILE_PATTERN_LOAD_FLIGHTPLAN("(*.lnmpln *.pln *.flp *.fms *.
 const QLatin1String FILE_PATTERN_LNMPLN("(*.lnmpln)");
 const QLatin1String FILE_PATTERN_KML("(*.kml *.kmz)");
 const QLatin1String FILE_PATTERN_GPX("(*.gpx)");
-const QLatin1String FILE_PATTERN_LNM_USERFEATURES("(*.lnmuserfeat)");
+const QLatin1String FILE_PATTERN_LNM_MAPMARKERS("(*.lnmmarker)");
 
 const QLatin1String FILE_PATTERN_CSV("(*.csv)");
 const QLatin1String FILE_PATTERN_USER_FIX_DAT("(user_fix.dat)");
@@ -532,7 +532,7 @@ const QLatin1String STARTUP_FLIGHTPLAN_DESCR("flight-plan-descr");
 const QLatin1String STARTUP_AIRCRAFT_PERF("aircraft-perf");
 const QLatin1String STARTUP_LAYOUT("layout");
 const QLatin1String STARTUP_GPX("gpx");
-const QLatin1String STARTUP_MARKER("user-feature");
+const QLatin1String STARTUP_MARKER("marker");
 const QLatin1String STARTUP_FORCE_LOADING("force"); /* Force overwriting of files */
 
 /* Restart options - not visible for user */
@@ -567,7 +567,7 @@ const QLatin1String ISSUEREPORT_SUFFIX("_issuereport.zip");
 const QLatin1String MAPSTYLE_INI_SUFFIX("_mapstyle.ini");
 const QLatin1String MAPSTYLE_CONFIG(":/littlenavmap/resources/config/little_navmap_mapstyle.ini");
 
-const QLatin1String MAP_MARKERS_FILE_SUFFIX(".lnmuserfeat");
+const QLatin1String MAP_MARKERS_FILE_SUFFIX(".lnmmarker");
 
 // The 2020 SimConnect is used to connect to MSFS 2020 and 2024 for user aircraft and environment updates
 // SimConnect from 2024 has to be used to load the airport facilities from the simulator

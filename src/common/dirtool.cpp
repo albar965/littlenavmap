@@ -73,7 +73,7 @@ DirTool::DirTool(QWidget *parent, const QString& base, const QString& appName, c
 
   /*: Default folder name which might be created initially by program.
    * Change only once. Otherwise program might suggest the user to create the new folders again */
-  mapMarkerDir = tr("User Features");
+  mapMarkerDir = tr("Map Markers");
 }
 
 void DirTool::run(bool manual, bool& created)
@@ -102,7 +102,7 @@ void DirTool::run(bool manual, bool& created)
   message.append(tr("<li><b>%1</b><br/>User defined airspaces in OpenAir format</li>").arg(airspaceDir));
   message.append(tr("<li><b>%1</b><br/>A place for the GLOBE data used by the flight plan elevation profile</li>").arg(globeDir));
   message.append(tr("<li><b>%1</b><br/>Folder to store additional map themes</li>").arg(mapThemesDir));
-  message.append(tr("<li><b>%1</b><br/>Folder to store user features like range rings and measurement lines</li>").arg(mapMarkerDir));
+  message.append(tr("<li><b>%1</b><br/>Folder to store map markers like range rings and measurement lines</li>").arg(mapMarkerDir));
   message.append(tr("</li></ul>"));
   message.append(tr("<p>This step is optional.</p>"));
   message.append(tr("<p>Should Little Navmap create these directories now?</p>"));

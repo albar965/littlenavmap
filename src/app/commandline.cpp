@@ -84,8 +84,8 @@ CommandLine::CommandLine()
               lnm::STARTUP_GPX);
 
   // Load marker =============================
-  buildOption(markerOpt, "u", lnm::STARTUP_MARKER,
-              tr("Load the given <%1> user feature file \".lnmuserfeat\" on startup.").arg(lnm::STARTUP_MARKER),
+  buildOption(markerOpt, "m", lnm::STARTUP_MARKER,
+              tr("Load the given <%1> map marker file \".lnmmarker\" on startup.").arg(lnm::STARTUP_MARKER),
               lnm::STARTUP_MARKER);
 
   // Force =============================

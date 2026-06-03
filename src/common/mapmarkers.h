@@ -38,7 +38,7 @@ class XmlStreamReader;
 }
 
 /* ===============================================================================
- * Combines all user features and allows saving and loading from/to XML and settings.
+ * Combines all map markers and allows saving and loading from/to XML and settings.
  */
 class MapMarkers
 {
@@ -48,7 +48,7 @@ public:
   /* Save all to XML file */
   void save(const QString& filename, int numBackupFiles);
 
-  /* Load all from XML file. Appends to current list of user features. */
+  /* Load all from XML file. Appends to current list of map markers. */
   void restore(const QString& filename);
 
   /* Restore from legacy settings */
@@ -63,14 +63,14 @@ public:
   /* Appends from other by type */
   void append(const MapMarkers& other, map::MapTypes types = map::MARK_ALL);
 
-  /* Add user features. Id has to be set before using getNextUserFeatureId(). */
+  /* Add map markers. Id has to be set before using getNextMarkerId(). */
   void addRangeMark(const map::RangeMarker& obj);
   void addPatternMark(const map::PatternMarker& obj);
   void addDistanceMark(const map::DistanceMarker& obj);
   void addHoldingMark(const map::HoldingMarker& obj);
   void addMsaMark(const map::MsaMarker& obj);
 
-  /* Remove user features by generated id from getNextUserFeatureId() */
+  /* Remove map markers by generated id from getNextMarkerId() */
   void removeRangeMark(int id);
   void removePatternMark(int id);
   void removeDistanceMark(int id);
@@ -139,7 +139,7 @@ public:
    * Not thread safe. */
   int getNextMapMarkerId();
 
-  /* true if file is detected as a user feature XML file */
+  /* true if file is detected as a map marker XML file */
   static bool isMarkersFile(const QString& filename);
 
   /* Get wrapped map objects from holdings and MSA for painting. markers with

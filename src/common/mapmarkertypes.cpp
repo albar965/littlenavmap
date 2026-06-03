@@ -167,7 +167,7 @@ void HoldingMarker::restore(atools::util::XmlStreamReader& stream)
       stream.skipCurrentElement(true /* warning */);
   }
 
-  // Not used in user feature
+  // Not used in map marker
   holding.length = holding.speedLimit = holding.minAltititude = holding.maxAltititude = 0.f;
   holding.id = -1;
   objType = map::MARK_HOLDING;

@@ -136,7 +136,7 @@ struct PaintContext
   float textSizeAirway = 1.f;
   float thicknessAirway = 1.f;
   float textSizeCompassRose = 1.f;
-  float textSizeRangeUserFeature = 1.f;
+  float textSizeRangeMarker = 1.f;
   float textSizeRangeMeasurement = 1.f;
   float symbolSizeAirport = 1.f;
   float symbolSizeAirportWeather = 1.f;
@@ -150,7 +150,7 @@ struct PaintContext
   float textSizeAirportRunway = 1.f;
   float textSizeAirportTaxiway = 1.f;
   float thicknessTrail = 1.f;
-  float thicknessUserFeature = 1.f;
+  float thicknessMapMarker = 1.f;
   float thicknessMeasurement = 1.f;
   float thicknessCompassRose = 1.f;
   float textSizeMora = 1.f;

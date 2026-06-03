@@ -1372,7 +1372,7 @@ void MainWindow::connectAllSlots()
   connect(ui->actionLoadAircraftTrailFromGPX, &QAction::triggered, this, &MainWindow::trailLoadGpx);
   connect(ui->actionAppendAircraftTrailFromGPX, &QAction::triggered, this, &MainWindow::trailAppendGpx);
 
-  // User features / marker save and load options
+  // Markers save and load options
   connect(ui->actionMapLoadMarkers, &QAction::triggered, this, &MainWindow::loadMarkers);
   connect(ui->actionMapAppendMarkers, &QAction::triggered, this, &MainWindow::appendMarkers);
   connect(ui->actionMapSaveMarkers, &QAction::triggered, this, &MainWindow::saveMarkers);
@@ -2403,10 +2403,10 @@ void MainWindow::copyMarkersSelection(const MapMarkers& markers, bool append, bo
     // Dialog emums which are saved to state
     enum {CHOICE_RANGE, CHOICE_DISTANCE, CHOICE_HOLDING, CHOICE_PATTERNS, CHOICE_MSA};
 
-    atools::gui::ChoiceDialog choiceDialog(this, QCoreApplication::applicationName() % tr(" - User Feature types"),
-                                           tr("Select user feature types to load from file.\n"
+    atools::gui::ChoiceDialog choiceDialog(this, QCoreApplication::applicationName() % tr(" - Map Marker types"),
+                                           tr("Select map marker types to load from file.\n"
                                               "Selected features will %1.").arg(append ? tr("be added") : tr("replace current features")),
-                                           lnm::MAP_MARKER_LOAD_SELECTION, "USERFEATURES.html#load");
+                                           lnm::MAP_MARKER_LOAD_SELECTION, "MAPMARKER.html#load");
     choiceDialog.setHelpOnlineUrl(lnm::helpOnlineUrl);
     choiceDialog.setHelpLanguageOnline(lnm::helpLanguageOnline());
     choiceDialog.setRequiredAnyChecked({CHOICE_RANGE, CHOICE_DISTANCE, CHOICE_HOLDING, CHOICE_PATTERNS, CHOICE_MSA});
@@ -2456,8 +2456,8 @@ void MainWindow::copyMarkersSelection(const MapMarkers& markers, bool append, bo
 
 void MainWindow::loadMarkers()
 {
-  QString file = dialog->openFileDialog(tr("Open and Replace User Features"),
-                                        tr("User Feature Files %1;;All Files (*)").arg(lnm::FILE_PATTERN_LNM_USERFEATURES),
+  QString file = dialog->openFileDialog(tr("Open and Replace Map Markers"),
+                                        tr("Map Markers Files %1;;All Files (*)").arg(lnm::FILE_PATTERN_LNM_MAPMARKERS),
                                         "Map/Markers", atools::documentsDir());
 
   if(!file.isEmpty())
@@ -2484,17 +2484,17 @@ void MainWindow::loadMarkersFile(const QString& file, bool forceLoading)
       updateActionStates();
       updateMarkActionStates();
 
-      statusBar->setStatusMessage(tr("User Features loaded."));
+      statusBar->setStatusMessage(tr("Map Markers loaded."));
     }
     else
-      atools::gui::Dialog::warning(this, tr("The file \"%1\" is no valid user feature file.").arg(file));
+      atools::gui::Dialog::warning(this, tr("The file \"%1\" is no valid map markers file.").arg(file));
   }
 }
 
 void MainWindow::appendMarkers()
 {
-  QString file = dialog->openFileDialog(tr("Open and Append user features"),
-                                        tr("User Feature Files %1;;All Files (*)").arg(lnm::FILE_PATTERN_LNM_USERFEATURES),
+  QString file = dialog->openFileDialog(tr("Open and Append Map Markers"),
+                                        tr("Map Marker Files %1;;All Files (*)").arg(lnm::FILE_PATTERN_LNM_MAPMARKERS),
                                         "Map/Markers", atools::documentsDir());
 
   qDebug() << Q_FUNC_INFO << file;
@@ -2515,10 +2515,10 @@ void MainWindow::appendMarkers()
       updateActionStates();
       updateMarkActionStates();
 
-      statusBar->setStatusMessage(tr("User Features loaded."));
+      statusBar->setStatusMessage(tr("Map Markers loaded."));
     }
     else
-      atools::gui::Dialog::warning(this, tr("The file \"%1\" is no valid user feature file.").arg(file));
+      atools::gui::Dialog::warning(this, tr("The file \"%1\" is no valid map markers file.").arg(file));
   }
 }
 
@@ -2527,9 +2527,9 @@ void MainWindow::saveMarkers()
   qDebug() << Q_FUNC_INFO;
 
   QString filename = dialog->saveFileDialog(
-    tr("Save User Features"),
-    tr("User Feature Files %1;;All Files (*)").arg(lnm::FILE_PATTERN_LNM_USERFEATURES), "lnmuserfeat", "Map/Markers",
-    atools::documentsDir(), tr("User Features.lnmuserfeat"));
+    tr("Save Map Markers"),
+    tr("Map Markers Files %1;;All Files (*)").arg(lnm::FILE_PATTERN_LNM_MAPMARKERS), "lnmmarker", "Map/Markers",
+    atools::documentsDir(), tr("Map Markers.lnmmarker"));
 
   if(!filename.isEmpty())
   {
@@ -2538,7 +2538,7 @@ void MainWindow::saveMarkers()
     QGuiApplication::restoreOverrideCursor();
 
     updateActionStates();
-    statusBar->setStatusMessage(tr("User Features saved."));
+    statusBar->setStatusMessage(tr("Map Markers saved."));
   }
 }
 
@@ -4139,7 +4139,7 @@ void MainWindow::resetAllSettings()
   box.setMessage(tr("<p><b>This will reset all options, window layout, dialog layout, "
                       "aircraft trail, map position history and file histories "
                       "back to default and restart %1.</b></p>"
-                      "<p>User features like range rings or traffic patterns as well as "
+                      "<p>Map Markers like range rings or traffic patterns as well as "
                         "scenery, logbook and userpoint databases are not affected.</p>"
                         "<p>A copy of the settings file</p>"
                           "%2&nbsp;(click to open)"
@@ -4482,6 +4482,9 @@ void MainWindow::applyButtonStylesheet()
       QWidget *widget = toolBar->widgetForAction(action);
       if(widget != nullptr)
         widget->setStyleSheet(stylesheet);
+
+      // TODO Set flat
+      // TODO omit menus
     }
   }
 
@@ -4491,6 +4494,7 @@ void MainWindow::applyButtonStylesheet()
     QPushButton *button = dynamic_cast<QPushButton *>(widget);
     if(button != nullptr && !button->icon().isNull())
       button->setStyleSheet(stylesheet);
+    // TODO Set flat
   }
 #ifdef DEBUG_INFORMATION
   qDebug() << Q_FUNC_INFO << "done";
@@ -5269,7 +5273,7 @@ void MainWindow::fileOpenAny(const QString& filepath)
     // Load GPX trail
     trailLoadGpxFile(filepath, fileCheck.isForceLoading());
   else if(!fileCheck.getMarkersFile().isEmpty())
-    // Load user features / map markers
+    // Load map markers
     loadMarkersFile(filepath, fileCheck.isForceLoading());
   else if(!fileCheck.getLayoutFile().isEmpty())
     // Open window layout file

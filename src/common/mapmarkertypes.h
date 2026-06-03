@@ -30,7 +30,7 @@ class XmlStreamReader;
 namespace map {
 
 /* =====================================================================
- * All markers called user features in the user interface.
+ * All markers in the user interface.
  * Can be converted to QVariant as well as loaded and saved from/to XML
  * ===================================================================== */
 

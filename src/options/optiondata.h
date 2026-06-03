@@ -452,9 +452,9 @@ public:
     return displayClickOptions;
   }
 
-  int getDisplayThicknessUserFeature() const
+  int getDisplayThicknessMapMarker() const
   {
-    return displayThicknessUserFeature;
+    return displayThicknessMapMarker;
   }
 
   int getDisplayThicknessMeasurement() const
@@ -546,9 +546,9 @@ public:
   /* URL to "whazzup.txt" or empty if not applicable */
   QString getOnlineWhazzupUrl() const;
 
-  int getDisplayTextSizeUserFeature() const
+  int getDisplayTextSizeMapMarker() const
   {
-    return displayTextSizeUserFeature;
+    return displayTextSizeMapMarker;
   }
 
   int getDisplayTextSizeMeasurement() const
@@ -1020,7 +1020,7 @@ private:
   int displayThicknessTrail = 100;
 
   // spinBoxOptionsDisplayThicknessUserFeature
-  int displayThicknessUserFeature = 100;
+  int displayThicknessMapMarker = 100;
 
   // spinBoxOptionsDisplayThicknessMeasurement
   int displayThicknessMeasurement = 100;
@@ -1047,7 +1047,7 @@ private:
   int simCleanupTableTime = 10;
 
   // spinBoxOptionsDisplayTextSizeUserFeature
-  int displayTextSizeUserFeature = 100;
+  int displayTextSizeMapMarker = 100;
 
   // spinBoxOptionsDisplayTextSizeMeasurement
   int displayTextSizeMeasurement = 100;

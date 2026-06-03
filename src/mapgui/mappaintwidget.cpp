@@ -52,7 +52,7 @@ const static double MINIMUM_DISTANCE_KM = 0.05;
 const static double MAXIMUM_DISTANCE_KM = 6000.;
 const static int MAXIMUM_ZOOM = 1120;
 
-/* Do not show anything above this zoom distance except user features */
+/* Do not show anything above this zoom distance except map markers */
 constexpr float DISTANCE_CUT_OFF_LIMIT_MERCATOR_KM = 10000.f;
 constexpr float DISTANCE_CUT_OFF_LIMIT_SPHERICAL_KM = 8000.f;
 

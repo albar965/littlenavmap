@@ -71,7 +71,7 @@ public:
     return gpx;
   }
 
-  /* .lnmuserfeat files loaded as markers */
+  /* .lnmmarker files loaded as markers */
   const QString& getMarkersFile() const
   {
     return markers;

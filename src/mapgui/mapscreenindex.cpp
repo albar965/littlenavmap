@@ -838,7 +838,7 @@ void MapScreenIndex::getAllNearest(const QPoint& point, int maxDistance, map::Ma
     getNearestProcedureHighlights(xs, ys, maxDistance, result, queryTypes);
   }
 
-  // Get copies from highlightMapObjects and marks (user features). These are never artificial.
+  // Get copies from highlightMapObjects and marks (Map Markers). These are never artificial.
   // Highlighted waypoints are removed above by resolveWaypointNavaids() and have to be added here
   getNearestHighlightsAndMarkers(xs, ys, maxDistance, result, types);
 

@@ -86,8 +86,6 @@ map::MapTypes mapTypeFromString(const QStringList& flags)
       type.setFlag(AIRWAYV);
     if(str == QStringLiteral("AIRWAYJ"))
       type.setFlag(AIRWAYJ);
-    if(str == QStringLiteral("USER_FEATURE"))
-      type.setFlag(USER_FEATURE);
     if(str == QStringLiteral("AIRCRAFT"))
       type.setFlag(AIRCRAFT);
     if(str == QStringLiteral("AIRCRAFT_AI"))
@@ -177,7 +175,6 @@ QStringList mapTypeToString(const map::MapTypes& flags)
   ATOOLS_FLAGS_TO_STR(AIRWAY);
   ATOOLS_FLAGS_TO_STR(AIRWAYV);
   ATOOLS_FLAGS_TO_STR(AIRWAYJ);
-  ATOOLS_FLAGS_TO_STR(USER_FEATURE);
   ATOOLS_FLAGS_TO_STR(AIRCRAFT);
   ATOOLS_FLAGS_TO_STR(AIRCRAFT_AI);
   ATOOLS_FLAGS_TO_STR(AIRCRAFT_AI_SHIP);

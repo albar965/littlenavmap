@@ -1313,7 +1313,7 @@ void SearchBaseTable::contextMenu(const QPoint& point)
     controller->getTotalRowCount() > 0 && (view->selectionModel() == nullptr ? false : view->selectionModel()->hasSelection()));
 
   // Add marks ==============================================================================
-  // Update texts to give user a hint for hidden user features in the disabled menu items =====================
+  // Update texts to give user a hint for hidden map markers in the disabled menu items =====================
 
   ui->actionMapRangeRings->setEnabled(index.isValid() && position.isValid());
   ui->actionSearchSetMark->setEnabled(index.isValid() && position.isValid());

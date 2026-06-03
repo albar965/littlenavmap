@@ -131,7 +131,7 @@ void MapMarkHandler::addToolbarButton()
   // Create and add toolbar button =====================================
   toolButton->setIcon(QIcon(":/littlenavmap/resources/icons/userfeatures.svg"));
   toolButton->setPopupMode(QToolButton::InstantPopup);
-  toolButton->setToolTip(tr("Select user features like range rings or holdings for display"));
+  toolButton->setToolTip(tr("Select map markers like range rings or holdings for display"));
   toolButton->setStatusTip(toolButton->toolTip());
   toolButton->setCheckable(true);
 
@@ -144,15 +144,15 @@ void MapMarkHandler::addToolbarButton()
   ui->toolBarMapOptions->addWidget(toolButton);
 
   // Create and add actions to toolbar and menu =================================
-  actionAll = new QAction(tr("&All User Features"), buttonMenu);
-  actionAll->setToolTip(tr("Toggle all / current selection of user features"));
+  actionAll = new QAction(tr("&All Map Markers"), buttonMenu);
+  actionAll->setToolTip(tr("Toggle all / current selection of map markers"));
   actionAll->setStatusTip(actionAll->toolTip());
   buttonMenu->addAction(actionAll);
   buttonHandler->setAllAction(actionAll);
   ui->menuViewMarkers->addAction(actionAll);
 
-  actionNone = new QAction(tr("&No User Features"), buttonMenu);
-  actionNone->setToolTip(tr("Toggle none / current selection of user features"));
+  actionNone = new QAction(tr("&No Map Markers"), buttonMenu);
+  actionNone->setToolTip(tr("Toggle none / current selection of map markers"));
   actionNone->setStatusTip(actionNone->toolTip());
   buttonMenu->addAction(actionNone);
   buttonHandler->setNoneAction(actionNone);
@@ -309,7 +309,7 @@ void MapMarkHandler::routeResetAll()
                            tr("Reset the logbook to detect takeoff and landing for new logbook entries"), true /* checked */);
 
   choiceDialog.addLine();
-  choiceDialog.addLabel(tr("Remove user features placed on map:"));
+  choiceDialog.addLabel(tr("Remove map markers placed on map:"));
   choiceDialog.addCheckBox(REMOVE_MARK_RANGE, tr("&Range rings"), QStringLiteral(), false /* checked */);
   choiceDialog.addCheckBox(REMOVE_MARK_DISTANCE, tr("&Measurement lines"), QStringLiteral(), false /* checked */);
   choiceDialog.addCheckBox(REMOVE_MARK_HOLDING, tr("&Holdings"), QStringLiteral(), false /* checked */);

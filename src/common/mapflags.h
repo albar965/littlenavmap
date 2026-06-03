@@ -80,7 +80,7 @@ enum MapType : quint64
   AIRWAY =           1ULL << 10,
   AIRWAYV =          1ULL << 11,
   AIRWAYJ =          1ULL << 12,
-  USER_FEATURE =     1ULL << 13,
+  // 1 << 13, UNUSED
   AIRCRAFT =         1ULL << 14, /* Simulator user aircraft */
   AIRCRAFT_AI =      1ULL << 15, /* AI or multiplayer simulator aircraft */
   AIRCRAFT_AI_SHIP = 1ULL << 16, /* AI or multiplayer simulator ship */
@@ -243,10 +243,10 @@ enum MapObjectQueryType : quint32
   QUERY_AIRCRAFT_TRAIL = 1 << 12, /* Aircraft trail */
   QUERY_AIRCRAFT_TRAIL_LOG = 1 << 13, /* Aircraft trail */
 
-  /* All user creatable/placeable features */
+  /* All user creatable/placeable map markers */
   QUERY_MARK = QUERY_MARK_DISTANCE | QUERY_MARK_HOLDINGS | QUERY_MARK_PATTERNS | QUERY_MARK_RANGE | QUERY_MARK_MSA | QUERY_MARK_NAVRANGE,
 
-  /* All user creatable/placeable features that can be moved using drag and drop */
+  /* All creatable/placeable map markers that can be moved using drag and drop */
   QUERY_MOVEABLE_MARK = QUERY_MARK_DISTANCE | QUERY_MARK_HOLDINGS | QUERY_MARK_RANGE,
 };
 

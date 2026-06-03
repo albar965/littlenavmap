@@ -222,7 +222,7 @@ QString MapTooltip::buildTooltip(const map::MapResult& mapSearchResult, const at
     }
   }
 
-  // User features / marks ===================================================================
+  // Map Markers ===================================================================
   if(options.testFlag(optsd::TOOLTIP_MARKS))
   {
     // Measurment lines

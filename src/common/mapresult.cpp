@@ -1212,7 +1212,7 @@ MapResultIndex& MapResultIndex::addRef(const MapResult& resultParam, const MapTy
   addToIndexIf(resultParam.aiAircraft, types);
   addToIndexIf(resultParam.onlineAircraft, types);
 
-  // User features ===========
+  // Map markers ===========
   addToIndexIf(resultParam.rangeMarks, types);
   addToIndexIf(resultParam.distanceMarks, types);
   addToIndexIf(resultParam.holdingMarks, types);
