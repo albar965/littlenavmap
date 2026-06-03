@@ -29,8 +29,21 @@ namespace map {
 struct MapResult
 {
   /* Create from base class. Inspects type and adds one object to this */
-  MapResult& addFromMapBase(const map::MapBase *base);
-  static MapResult createFromMapBase(const map::MapBase *base);
+  map::MapResult& addFromMapBase(const map::MapBase *base);
+
+  static map::MapResult createFromMapBase(const map::MapBase *base)
+  {
+    return MapResult().addFromMapBase(base);
+  }
+
+  /* Adds valid object copies from list */
+  map::MapResult& addFromMapBase(const std::initializer_list<const map::MapBase *>& bases);
+
+  /* Adds valid object copies from list */
+  static map::MapResult createFromMapBase(const std::initializer_list<const map::MapBase *>& bases)
+  {
+    return MapResult().addFromMapBase(bases);
+  }
 
   QList<map::MapAirport> airports;
   QSet<int> airportIds; /* Ids used to deduplicate when merging highlights and nearest */
@@ -106,20 +119,21 @@ struct MapResult
     return size(types) > 0;
   }
 
+  /* Get parameters from first map object looking through the list of types. First one is returned. */
+  void getParams(const std::initializer_list<MapTypes>& types, int *id = nullptr,
+                 atools::geo::Pos *pos = nullptr, MapNav *nav = nullptr) const;
+
   /* Get id and type from the result. Vector of types defines priority. true if something was found.
    * id is set to -1 if nothing was found. */
-  bool getIdAndType(int& id, map::MapTypes& type, const std::initializer_list<map::MapTypes>& types) const;
+  bool getIdAndType(int& id, map::MapType& type, const std::initializer_list<map::MapTypes>& types) const;
   map::MapRef getRef(const std::initializer_list<map::MapTypes>& types) const;
-
-  /* Get id. This assumes there is only one object for the given type. Returns -1 if not found. */
-  int getId(const map::MapTypes& type) const;
 
   /* Get routeIndex. This assumes there is only one object for the given type. Returns -1 if not found.
    * Only for flight plan related types. */
   int getRouteIndex(const map::MapTypes& type) const;
 
   /* Get position and returns first for the list of types defining priority by order */
-  const atools::geo::Pos& getPosition(const std::initializer_list<map::MapTypes>& types) const;
+  const atools::geo::Pos getPosition(const std::initializer_list<map::MapTypes>& types) const;
 
   /* As above for ident */
   QString getIdent(const std::initializer_list<map::MapTypes>& types) const;
@@ -135,6 +149,12 @@ struct MapResult
 
   /* Sets routeIndex for all flight plan related types to -1 */
   MapResult& clearRouteIndex(const map::MapTypes& types = map::ALL);
+
+  /* Removes all userpoints which are currently not visible on the map */
+  MapResult& clearHiddenUserpoints(const QStringList& selectedTypes, const QStringList& allTypes, bool showUnknownType);
+
+  /* Build label with frequency (if applicable) for marker types. */
+  QString markerLabel() const;
 
   /* Give online airspaces/centers priority */
   void moveOnlineAirspacesToFront();
@@ -325,6 +345,22 @@ QDebug operator<<(QDebug out, const map::MapResult& record);
 struct MapResultIndex
   : public QList<const map::MapBase *>
 {
+  MapResultIndex()
+  {
+  }
+
+  /* Add objects */
+  explicit MapResultIndex(const map::MapResult& resultParam, const map::MapTypes& types = map::ALL)
+  {
+    add(resultParam, types);
+  }
+
+  /* Add references */
+  explicit MapResultIndex(const map::MapResult * resultParam, const map::MapTypes& types = map::ALL)
+  {
+    addRef(*resultParam, types);
+  }
+
   /* Sorting callback */
   typedef std::function<bool (const MapBase *, const MapBase *)> SortFunction;
 
@@ -369,6 +405,9 @@ struct MapResultIndex
   /* Remove duplicate MapProcedurePoint objects.
    * Ignore transitions and erase duplicates based on airport and approaches if true */
   void eraseDuplicateProcedures(bool base = false);
+
+  /* Return a result with only the closest in the index */
+  map::MapResult getClosestUnique(const atools::geo::Pos& pos);
 
 private:
   friend QDebug operator<<(QDebug out, const map::MapResultIndex& record);

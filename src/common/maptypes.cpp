@@ -24,10 +24,12 @@
 #include "common/symbolpainter.h"
 #include "common/unit.h"
 #include "common/vehicleicons.h"
+#include "fs/util/fsutil.h"
 #include "mapgui/maplayer.h"
 #include "options/optiondata.h"
 #include "userdata/userdataicons.h"
-#include "fs/util/fsutil.h"
+#include "util/xmlstreamreader.h"
+#include "util/xmlstreamwriter.h"
 
 #include <QRegularExpression>
 #include <QStringBuilder>
@@ -1451,6 +1453,11 @@ QString vorType(const MapVor& vor)
     return QStringLiteral();
 }
 
+QString vorType(const map::MapNav& nav)
+{
+  return vorType(nav.vorDmeOnly, nav.vorDme, nav.vorTacan, nav.vorVortac);
+}
+
 QString vorType(bool dmeOnly, bool hasDme, bool tacan, bool vortac)
 {
   if(vortac)
@@ -1632,10 +1639,10 @@ QString airportMsaTextShort(const MapAirportMsa& airportMsa)
 {
   if(!airportMsa.isValid())
     return QObject::tr("MSA");
-  else if(airportMsa.airportIdent == airportMsa.navIdent)
+  else if(airportMsa.airportIdent == airportMsa.nav.ident)
     return airportMsa.airportIdent;
   else
-    return QObject::tr("%1 (%2)").arg(airportMsa.airportIdent).arg(airportMsa.navIdent);
+    return QObject::tr("%1 (%2)").arg(airportMsa.airportIdent).arg(airportMsa.nav.ident);
 }
 
 QString airportMsaText(const MapAirportMsa& airportMsa, bool user)
@@ -1643,10 +1650,10 @@ QString airportMsaText(const MapAirportMsa& airportMsa, bool user)
   QString type = user ? QObject::tr("User MSA") : QObject::tr("MSA");
   if(!airportMsa.isValid())
     return type;
-  else if(airportMsa.airportIdent == airportMsa.navIdent)
+  else if(airportMsa.airportIdent == airportMsa.nav.ident)
     return QObject::tr("%1 at %2").arg(type).arg(airportMsa.airportIdent);
   else
-    return QObject::tr("%1 at %2 (%3)").arg(type).arg(airportMsa.airportIdent).arg(airportMsa.navIdent);
+    return QObject::tr("%1 at %2 (%3)").arg(type).arg(airportMsa.airportIdent).arg(airportMsa.nav.ident);
 }
 
 const QString& comTypeName(const QString& type)
@@ -1916,10 +1923,10 @@ QString holdingTextShort(const map::MapHolding& holding, bool user)
   QString text;
   if(user)
     text.append(QObject::tr("User holding at %1").
-                arg(holding.navIdent.isEmpty() ? Unit::coords(holding.position) : holding.navIdent));
+                arg(holding.nav.ident.isEmpty() ? Unit::coords(holding.position) : holding.nav.ident));
   else
     text.append(QObject::tr("Holding at %1").
-                arg(holding.navIdent.isEmpty() ? Unit::coords(holding.position) : holding.navIdent));
+                arg(holding.nav.ident.isEmpty() ? Unit::coords(holding.position) : holding.nav.ident));
 
   if(holding.time > 0.f)
     text.append(QObject::tr(", %1 min").arg(QLocale().toString(holding.time)));
@@ -1941,7 +1948,7 @@ QString holdingTextShort(const map::MapHolding& holding, bool user)
 
 float MapHolding::magCourse() const
 {
-  return atools::geo::normalizeCourse(courseTrue - magvar);
+  return atools::geo::normalizeCourse(courseTrue - nav.magvar);
 }
 
 float MapHolding::distance(bool *estimated) const
@@ -2324,6 +2331,44 @@ QString mapBaseText(const map::MapBase *base, int elideAirportName)
   return QStringLiteral();
 }
 
+QIcon mapBaseIconDelete(const map::MapBase *base, int size)
+{
+  if(base != nullptr)
+  {
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wswitch"
+    switch(base->getTypeEnum())
+#pragma GCC diagnostic pop
+    {
+      case map::USERPOINT:
+        return QIcon(QStringLiteral(":/littlenavmap/resources/icons/userdata_delete.svg"));
+
+      case map::LOGBOOK:
+        return QIcon(QStringLiteral(":/littlenavmap/resources/icons/logdata_delete.svg"));
+
+      case map::PROCEDURE_POINT:
+        return QIcon(QStringLiteral(":/littlenavmap/resources/icons/approachoff.svg"));
+
+      case map::MARK_RANGE:
+        return QIcon(QStringLiteral(":/littlenavmap/resources/icons/rangeringsoff.svg"));
+
+      case map::MARK_DISTANCE:
+        return QIcon(QStringLiteral(":/littlenavmap/resources/icons/distancemeasureoff.svg"));
+
+      case map::MARK_HOLDING:
+        return QIcon(QStringLiteral(":/littlenavmap/resources/icons/holdoff.svg"));
+
+      case map::MARK_PATTERNS:
+        return QIcon(QStringLiteral(":/littlenavmap/resources/icons/trafficpatternoff.svg"));
+
+      case map::MARK_MSA:
+        return QIcon(QStringLiteral(":/littlenavmap/resources/icons/msaoff.svg"));
+    }
+  }
+  return mapBaseIcon(base, size);
+
+}
+
 QIcon mapBaseIcon(const map::MapBase *base, int size)
 {
   if(base != nullptr)
@@ -2615,6 +2660,76 @@ void registerMapMetaTypes()
 {
   qRegisterMetaType<map::MapRef>();
   qRegisterMetaType<QList<map::MapRef> >();
+  qRegisterMetaType<map::MapAirspaceFilter>();
+  qRegisterMetaType<QList<map::MapAirspaceFilter> >();
 }
 
-} // namespace types
+MapNav::MapNav(const map::MapVor& vor)
+{
+  type = map::VOR;
+  ident = vor.ident;
+  vorDmeOnly = vor.dmeOnly;
+  vorDme = vor.hasDme;
+  vorTacan = vor.tacan;
+  vorVortac = vor.vortac;
+  magvar = vor.magvar;
+}
+
+MapNav::MapNav(const map::MapNdb& ndb)
+{
+  reset();
+  type = map::NDB;
+  ident = ndb.ident;
+  magvar = ndb.magvar;
+}
+
+MapNav::MapNav(const map::MapUserpoint& userpoint)
+{
+  reset();
+  type = map::USERPOINT;
+  ident = map::userpointShortText(userpoint, 20);
+}
+
+void MapNav::save(atools::util::XmlStreamWriter& stream) const
+{
+  stream.writeTextElement(QStringLiteral("NavType"), map::mapTypeToString(type).join('|'));
+  stream.writeTextElement(QStringLiteral("NavIdent"), ident);
+  stream.writeTextElement(QStringLiteral("MagVarDeg"), magvar);
+
+  if(type == map::VOR)
+  {
+    stream.writeStartElement(QStringLiteral("Vor"));
+    stream.writeAttribute(QStringLiteral("DmeOnly"), vorDmeOnly);
+    stream.writeAttribute(QStringLiteral("HasDme"), vorDme);
+    stream.writeAttribute(QStringLiteral("Tacan"), vorTacan);
+    stream.writeAttribute(QStringLiteral("Vortac"), vorVortac);
+    stream.writeEndElement(); // Vor
+  }
+}
+
+void MapNav::restore(atools::util::XmlStreamReader& stream)
+{
+  while(stream.readNextStartElement())
+  {
+    const QStringView name = stream.name();
+    if(name == QStringLiteral("NavType"))
+      type = map::mapTypeFromString(stream.readElementTextStr().split('|'));
+    else if(name == QStringLiteral("NavIdent"))
+      ident = stream.readElementTextStr();
+    else if(name == QStringLiteral("MagVarDeg"))
+      magvar = stream.readElementTextFloat();
+
+    else if(name == QStringLiteral("Vor"))
+    {
+      vorDmeOnly = stream.readAttributeBool(QStringLiteral("DmeOnly"));
+      vorDme = stream.readAttributeBool(QStringLiteral("HasDme"));
+      vorTacan = stream.readAttributeBool(QStringLiteral("Tacan"));
+      vorVortac = stream.readAttributeBool(QStringLiteral("Vortac"));
+      stream.skipCurrentElement();
+    }
+    else
+      stream.skipCurrentElement(true /* warning */);
+  }
+}
+
+} // namespace map

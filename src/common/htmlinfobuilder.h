@@ -49,6 +49,8 @@ class HtmlBuilder;
 }
 
 namespace map {
+
+struct MapNav;
 struct AircraftTrailSegment;
 struct MapAirport;
 struct MapAirportMsa;
@@ -301,9 +303,9 @@ public:
   void aircraftTrailText(const map::AircraftTrailSegment& trailSegment, atools::util::HtmlBuilder& html, bool logbook) const;
 
   /* User features / marks */
-  void msaMarkerText(const map::MsaMarker& msa, atools::util::HtmlBuilder& html, const Route *) const;
-  void holdingMarkerText(const map::HoldingMarker& holding, atools::util::HtmlBuilder& html, const Route *) const;
-  void patternMarkerText(const map::PatternMarker& pattern, atools::util::HtmlBuilder& html, const Route *) const;
+  void msaMarkerText(const map::MsaMarker& marker, atools::util::HtmlBuilder& html, const Route *) const;
+  void holdingMarkerText(const map::HoldingMarker& marker, atools::util::HtmlBuilder& html, const Route *) const;
+  void patternMarkerText(const map::PatternMarker& marker, atools::util::HtmlBuilder& html, const Route *) const;
   void rangeMarkerText(const map::RangeMarker& marker, atools::util::HtmlBuilder& html, const Route *) const;
   void distanceMarkerText(const map::DistanceMarker& marker, atools::util::HtmlBuilder& html, const Route *) const;
 
@@ -376,7 +378,7 @@ private:
   void airportTitle(const map::MapAirport& airport, atools::util::HtmlBuilder& html, int rating, bool procedures, const Route *route) const;
 
   void airportMsaTextInternal(const map::MapAirportMsa& msa, atools::util::HtmlBuilder& html, bool user) const;
-  void holdingTextInternal(const map::MapHolding& holding, atools::util::HtmlBuilder& html, bool user) const;
+  void holdingTextInternal(const map::MapHolding& holding, atools::util::HtmlBuilder& html, const QString& userText, bool user) const;
 
   void rowForInt(atools::util::HtmlBuilder& html, const atools::sql::SqlRecord *rec, const QString& colName,
                  const QString& msg, const QString& val) const;
@@ -468,6 +470,9 @@ private:
   QString sunriseSunsetText(const atools::geo::Pos& pos, const QDateTime& datetime) const;
 
   QString mapTypeToTooltip(map::MapType type, const QString& prefix) const;
+
+  /* Header for all map markers like measurment lines. Shows information about related navaid, if available.  */
+  void markerTitle(const QString& text, const map::MapNav& nav, float courseTrue, atools::util::HtmlBuilder& html, bool user = false) const;
 
   /* Airport, navaid and userpoint icon size */
   QSize symbolSize = QSize(18, 18);

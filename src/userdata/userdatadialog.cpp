@@ -129,7 +129,7 @@ UserdataDialog::UserdataDialog(QWidget *parent, ud::UserdataDialogMode mode, Use
   connect(ui->buttonBoxUserdata->button(QDialogButtonBox::Reset), &QPushButton::clicked, this, &UserdataDialog::resetClicked);
   connect(ui->buttonBoxUserdata, &QDialogButtonBox::rejected, this, &QDialog::reject);
 
-  atools::gui::WidgetState(lnm::TRAFFIC_PATTERN_DIALOG).restore(this);
+  atools::gui::WidgetState(lnm::PATTERN_MARKER_DIALOG).restore(this);
 
   updateWidgets();
 }

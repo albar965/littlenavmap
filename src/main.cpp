@@ -22,16 +22,17 @@
 #include "common/formatter.h"
 #include "common/maptypes.h"
 #include "common/maptypes.h"
+#include "common/maptypes.h"
 #include "common/proctypes.h"
 #include "common/settingsmigrate.h"
 #include "common/textpointer.h"
 #include "common/unit.h"
 #include "db/databasemanager.h"
 #include "exception.h"
-#include "common/maptypes.h"
 #include "fs/sc/simconnectdata.h"
 #include "fs/sc/simconnectreply.h"
 #include "fs/weather/metarparser.h"
+#include "gui/actiontool.h"
 #include "gui/mainwindow.h"
 #include "gui/translator.h"
 #include "logging/logginghandler.h"
@@ -324,6 +325,7 @@ int main(int argc, char *argv[])
       proc::initTranslateableTexts();
       atools::fs::weather::initTranslateableTexts();
       formatter::initTranslateableTexts();
+      atools::gui::ActionTool::initTranslateableTexts();
 
       // =============================================================================================
       // Set up Marble widget and print debugging information
@@ -453,6 +455,6 @@ int main(int argc, char *argv[])
 
   ATOOLS_DELETE_LOG(dbManager);
 
-  qInfo() << Q_FUNC_INFO << "Exiting";
+  qInfo() << Q_FUNC_INFO << "Exiting" << retval;
   return retval;
 }

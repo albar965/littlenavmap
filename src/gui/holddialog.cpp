@@ -19,53 +19,39 @@
 
 #include "app/navapp.h"
 #include "common/constants.h"
-#include "common/formatter.h"
 #include "common/mapmarkers.h"
 #include "common/mapresult.h"
 #include "common/maptypes.h"
 #include "common/unit.h"
 #include "common/unitstringtool.h"
-#include "geo/calculations.h"
 #include "gui/helphandler.h"
-#include "gui/tools.h"
 #include "gui/widgetstate.h"
 #include "settings/settings.h"
 #include "ui_holddialog.h"
 
 #include <QColor>
-#include <QColorDialog>
 
-HoldDialog::HoldDialog(QWidget *parent, const map::MapResult& resultParam, const atools::geo::Pos& positionParam)
-  : QDialog(parent), ui(new Ui::HoldDialog), color(Qt::darkBlue)
+const QString HoldDialog::DEFAULT_COLOR_STR = QColor(Qt::darkBlue).name(QColor::HexArgb);
+
+HoldDialog::HoldDialog(QWidget *parent, const map::HoldingMarker& markerParam, const map::MapResult& result, bool editMode)
+  : MarkerDialog(parent, tr("Holding"), markerParam, result, editMode), ui(new Ui::HoldDialog)
 {
   setWindowFlag(Qt::WindowContextHelpButtonHint, false);
-
   setWindowModality(Qt::ApplicationModal);
-
   ui->setupUi(this);
 
-  // Copy result
-  result = new map::MapResult;
-  *result = resultParam;
+  // Assign buttons for base class functions
+  setPushButtonColor(ui->pushButtonHoldColor);
+  setLabelHeader(ui->labelHoldNavaid);
 
-  // Remove duplicates
-  result->clearAllButFirst();
-
-  // Remove all except airport, VOR, NDB and waypoints
-  result->clear(~(map::AIRPORT | map::VOR | map::NDB | map::WAYPOINT | map::USERPOINT));
-
-  position = new atools::geo::Pos;
-  *position = positionParam;
-
+  // Default is OK button
   ui->buttonBoxHold->button(QDialogButtonBox::Ok)->setDefault(true);
   ui->comboBoxHoldTurnDirection->setFocus();
 
   connect(ui->buttonBoxHold, &QDialogButtonBox::clicked, this, &HoldDialog::buttonBoxClicked);
-  connect(ui->pushButtonHoldColor, &QPushButton::clicked, this, &HoldDialog::colorButtonClicked);
-  connect(ui->spinBoxHoldSpeed, static_cast<void (QSpinBox::*)(int)>(&QSpinBox::valueChanged),
-          this, &HoldDialog::updateLength);
-  connect(ui->doubleSpinBoxHoldTime, static_cast<void (QDoubleSpinBox::*)(double)>(&QDoubleSpinBox::valueChanged),
-          this, &HoldDialog::updateLength);
+  connect(ui->pushButtonHoldColor, &QPushButton::clicked, this, &MarkerDialog::colorButtonClicked);
+  connect(ui->spinBoxHoldSpeed, QOverload<int>::of(&QSpinBox::valueChanged), this, &HoldDialog::updateLengthLabel);
+  connect(ui->doubleSpinBoxHoldTime, QOverload<double>::of(&QDoubleSpinBox::valueChanged), this, &HoldDialog::updateLengthLabel);
 
   // Saves original texts and restores them on deletion
   units = new UnitStringTool();
@@ -76,11 +62,10 @@ HoldDialog::HoldDialog(QWidget *parent, const map::MapResult& resultParam, const
 
 HoldDialog::~HoldDialog()
 {
-  atools::gui::WidgetState(lnm::HOLD_DIALOG).save(this);
+  // Save dialog position and size
+  atools::gui::WidgetState(lnm::HOLDING_MARKER_DIALOG).save(this);
 
   delete units;
-  delete result;
-  delete position;
   delete ui;
 }
 
@@ -93,152 +78,106 @@ void HoldDialog::buttonBoxClicked(QAbstractButton *button)
     QDialog::accept();
   }
   else if(button == ui->buttonBoxHold->button(QDialogButtonBox::Help))
-    atools::gui::HelpHandler::openHelpUrlWeb(parentWidget(), lnm::helpOnlineUrl + "HOLD.html",
-                                             lnm::helpLanguageOnline());
+    // Keep dialog open
+    atools::gui::HelpHandler::openHelpUrlWeb(parentWidget(), lnm::helpOnlineUrl + "HOLD.html", lnm::helpLanguageOnline());
   else if(button == ui->buttonBoxHold->button(QDialogButtonBox::Cancel))
     QDialog::reject();
 }
 
 void HoldDialog::restoreState()
 {
-  atools::gui::WidgetState widgetState(lnm::HOLD_DIALOG);
-  widgetState.restore({this,
-                       ui->spinBoxHoldCourse,
-                       ui->spinBoxHoldSpeed,
-                       ui->spinBoxHoldAltitude,
-                       ui->doubleSpinBoxHoldTime,
-                       ui->comboBoxHoldTurnDirection});
-  color = atools::settings::Settings::instance().valueVar(lnm::HOLD_DIALOG_COLOR, color).value<QColor>();
+  atools::gui::WidgetState widgetState(lnm::HOLDING_MARKER_DIALOG);
 
-  updateWidgets();
-  updateLength();
+  // Load dialog position and size
+  widgetState.restore(this);
+
+  if(isEditMode())
+    markerToWidgets();
+  else
+  {
+    widgetState.restore({ui->spinBoxHoldCourse, ui->spinBoxHoldSpeed, ui->spinBoxHoldAltitude, ui->doubleSpinBoxHoldTime,
+                         ui->comboBoxHoldTurnDirection});
+    marker->holding.color = atools::settings::Settings::instance().valueStr(lnm::HOLDING_MARKER_DIALOG_COLOR, DEFAULT_COLOR_STR);
+    fillMarkerFromResultAndWidgets();
+  }
+
+  updateHeader();
+  updateLengthLabel();
   updateButtonColor();
 }
 
 void HoldDialog::saveState() const
 {
-  atools::gui::WidgetState widgetState(lnm::HOLD_DIALOG);
-  widgetState.save({this,
-                    ui->spinBoxHoldCourse,
-                    ui->spinBoxHoldSpeed,
-                    ui->spinBoxHoldAltitude,
-                    ui->doubleSpinBoxHoldTime,
+  atools::gui::WidgetState widgetState(lnm::HOLDING_MARKER_DIALOG);
+  widgetState.save({this, ui->spinBoxHoldCourse, ui->spinBoxHoldSpeed, ui->spinBoxHoldAltitude, ui->doubleSpinBoxHoldTime,
                     ui->comboBoxHoldTurnDirection});
-  atools::settings::Settings::instance().setValueVar(lnm::HOLD_DIALOG_COLOR, color);
+  atools::settings::Settings::instance().setValue(lnm::HOLDING_MARKER_DIALOG_COLOR, marker->holding.color.name(QColor::HexArgb));
 }
 
-void HoldDialog::colorButtonClicked()
+void HoldDialog::updateLengthLabel()
 {
-  QColor col = QColorDialog::getColor(color, parentWidget());
-  if(col.isValid())
-  {
-    color = col;
-    updateButtonColor();
-  }
-}
-
-void HoldDialog::updateButtonColor()
-{
-  atools::gui::changeWidgetColor(ui->pushButtonHoldColor, color);
-}
-
-void HoldDialog::updateLength()
-{
-  float speedKts = Unit::rev(ui->spinBoxHoldSpeed->value(), Unit::speedKtsF);
-  float mins = static_cast<float>(ui->doubleSpinBoxHoldTime->value());
-  float dist = static_cast<float>(speedKts * mins / 60.);
+  float minutes = static_cast<float>(ui->doubleSpinBoxHoldTime->value());
+  float distance = static_cast<float>(Unit::rev(ui->spinBoxHoldSpeed->value(), Unit::speedKtsF) * minutes / 60.);
 
   ui->labelHoldLength->setText(tr("Straight section length %1.<br/>"
                                   "Total time to complete is %2 minutes.").
-                               arg(Unit::distNm(dist)).
-                               arg(QLocale().toString(mins * 2.f + 2.f, 'f', 1)));
+                               arg(Unit::distNm(distance)).
+                               arg(QLocale().toString(minutes * 2.f + 2.f, 'f', 1)));
 }
 
-void HoldDialog::updateWidgets()
+void HoldDialog::fillMarkerFromResultAndWidgets()
 {
-  QString text;
+  marker->text.clear();
 
-  if(result->hasAirports())
-    text = map::airportText(result->airports.constFirst());
-  else if(result->hasVor())
-    text = map::vorText(result->vors.constFirst());
-  else if(result->hasNdb())
-    text = map::ndbText(result->ndbs.constFirst());
-  else if(result->hasWaypoints())
-    text = map::waypointText(result->waypoints.constFirst());
-  else if(result->hasUserpoints())
-    text = map::userpointText(result->userpoints.constFirst());
-  else
-    text = tr("Coordinates %1").arg(Unit::coords(*position));
+  // Clear holding data
+  map::MapHolding& holdingRef = marker->holding;
+  holdingRef.color = marker->holding.color;
+  holdingRef.id = -1;
+  holdingRef.name.clear();
+  holdingRef.speedLimit = holdingRef.length = holdingRef.minAltititude = holdingRef.maxAltititude = 0.f;
+  holdingRef.airportIdent.clear();
 
-  ui->labelHoldNavaid->setText(tr("<p><b>%1</b></p>").arg(text));
+  // Save altitude
+  float altitude = marker->getAltitude();
+
+  // Get navaid information from result
+  atools::geo::Pos position;
+  getResult()->getParams({map::AIRPORT, map::VOR, map::NDB, map::WAYPOINT, map::USERPOINT}, nullptr, &position, &holdingRef.nav);
+  if(!(holdingRef.nav.magvar < map::INVALID_MAGVAR))
+    holdingRef.nav.magvar = NavApp::getMagVar(position, 0.f);
+
+  if(position.isValidRange())
+    marker->position = holdingRef.position = position;
+
+  // Assign saved altitude again
+  marker->position.setAltitude(altitude);
+
+  marker->text = getResult()->markerLabel();
+
+  // Fall back to ident
+  if(marker->text.isEmpty())
+    marker->text = holdingRef.getIdent();
+
+  widgetsToMarker();
 }
 
-void HoldDialog::fillHold(map::HoldingMarker& holdingMarker)
+void HoldDialog::markerToWidgets()
 {
-  map::MapHolding& holding = holdingMarker.holding;
+  map::MapHolding& holding = marker->holding;
+  ui->spinBoxHoldAltitude->setValue(Unit::altFeetF(holding.position.getAltitude()));
+  ui->comboBoxHoldTurnDirection->setCurrentIndex(holding.turnLeft ? 1 : 0);
+  ui->doubleSpinBoxHoldTime->setValue(holding.time);
+  ui->spinBoxHoldSpeed->setValue(Unit::speedKtsF(holding.speedKts));
+  ui->spinBoxHoldCourse->setValue(atools::geo::normalizeCourse(holding.courseTrue - holding.nav.magvar));
+}
 
-  // Assign an artifical id to the hold to allow internal identification
-  holdingMarker.id = NavApp::getMapMarkers()->getNextMapMarkerId();
-  holding.color = color;
-
-  holding.id = -1;
-  holding.navIdent.clear();
-  holding.position = *position;
-  holding.navType = map::NONE;
-  holding.speedLimit = holding.length = holding.minAltititude = holding.maxAltititude = 0.f;
-  holding.airportIdent.clear();
-
-  if(result->hasAirports())
-  {
-    holding.navIdent = result->airports.constFirst().displayIdent();
-    holding.position = result->airports.constFirst().position;
-    holding.magvar = result->airports.constFirst().magvar;
-    holding.navType = map::AIRPORT;
-  }
-  else if(result->hasVor())
-  {
-    const map::MapVor& vor = result->vors.constFirst();
-    holding.navIdent = vor.ident;
-    holding.position = vor.position;
-    holding.magvar = vor.magvar;
-    holding.vorDmeOnly = vor.dmeOnly;
-    holding.vorHasDme = vor.hasDme;
-    holding.vorTacan = vor.tacan;
-    holding.vorVortac = vor.vortac;
-
-    holding.navType = map::VOR;
-  }
-  else if(result->hasNdb())
-  {
-    holding.navIdent = result->ndbs.constFirst().ident;
-    holding.position = result->ndbs.constFirst().position;
-    holding.magvar = result->ndbs.constFirst().magvar;
-    holding.navType = map::NDB;
-  }
-  else if(result->hasWaypoints())
-  {
-    holding.navIdent = result->waypoints.constFirst().ident;
-    holding.position = result->waypoints.constFirst().position;
-    holding.magvar = result->waypoints.constFirst().magvar;
-    holding.navType = map::WAYPOINT;
-  }
-  else if(result->hasUserpoints())
-  {
-    holding.navIdent = result->userpoints.constFirst().ident;
-    holding.position = result->userpoints.constFirst().position;
-    holding.magvar = NavApp::getMagVar(*position);
-    holding.navType = map::USERPOINT;
-  }
-  else
-    // Use calculated declination
-    holding.magvar = NavApp::getMagVar(*position);
-
-  holding.position.setAltitude(Unit::rev(ui->spinBoxHoldAltitude->value(), Unit::altFeetF));
+void HoldDialog::widgetsToMarker()
+{
+  map::MapHolding& holding = marker->holding;
+  marker->position.setAltitude(Unit::rev(ui->spinBoxHoldAltitude->value(), Unit::altFeetF));
+  holding.position.setAltitude(marker->position.getAltitude());
   holding.turnLeft = ui->comboBoxHoldTurnDirection->currentIndex() == 1;
   holding.time = static_cast<float>(ui->doubleSpinBoxHoldTime->value());
   holding.speedKts = Unit::rev(ui->spinBoxHoldSpeed->value(), Unit::speedKtsF);
-  holding.courseTrue = atools::geo::normalizeCourse(ui->spinBoxHoldCourse->value() + holding.magvar);
-
-  holdingMarker.position = holding.position;
+  holding.courseTrue = atools::geo::normalizeCourse(ui->spinBoxHoldCourse->value() + holding.nav.magvar);
 }

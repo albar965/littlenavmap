@@ -15,58 +15,59 @@
 * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 *****************************************************************************/
 
-#ifndef LNM_HOLDDIALOG_H
-#define LNM_HOLDDIALOG_H
+#ifndef LNM_DISTANCEMARKER_DIALOG_H
+#define LNM_DISTANCEMARKER_DIALOG_H
 
 #include "gui/markerdialog.h"
 
-namespace Ui {
-class HoldDialog;
-}
+#include <QValidator>
 
-namespace atools {
-namespace geo {
-class Pos;
-}
+namespace Ui {
+class DistanceMarkerDialog;
 }
 
 namespace map {
-struct MapResult;
-struct HoldingMarker;
+struct DistanceMarker;
 }
 
-class UnitStringTool;
 class QAbstractButton;
 
 /*
- * Allows user to customize hold parameters before adding it to the map. Similar to traffic pattern.
+ * Shows a dialog where user can set color and label for measurment lines.
  * Can be used for adding or editing marker.
- * Order of usage from result is (same as in map context menu) airport, vor, ndb, waypoint, pos
+ * Label can be set automaticall from navaid or changed by user.
+ *
+ * Reads state and defaults on intiantiation and saves it when calling getMarker().
  */
-class HoldDialog :
-  public MarkerDialog<map::HoldingMarker>
+class DistanceMarkerDialog :
+  public MarkerDialog<map::DistanceMarker>
 {
   Q_OBJECT
 
 public:
   /* Marker is copied to internal. Result is used to assign navaid. editMode false configures dialog for adding. */
-  explicit HoldDialog(QWidget *parent, const map::HoldingMarker& markerParam, const map::MapResult& result, bool editMode);
-  virtual ~HoldDialog() override;
+  explicit DistanceMarkerDialog(QWidget *parent, const map::DistanceMarker& markerParam, const map::MapResult& result, bool editMode);
+  virtual ~DistanceMarkerDialog() override;
+
+  /* Get color from settings before drag and drop action starts */
+  static QColor getSavedColor();
 
 private:
+  /* A button box button was clicked. Always saves state. */
+  void buttonBoxClicked(QAbstractButton *button);
+
   virtual void restoreState() override;
   virtual void saveState() const override;
-  virtual void markerToWidgets() override;
   virtual void widgetsToMarker() override;
+  virtual void markerToWidgets() override;
 
-  void fillMarkerFromResultAndWidgets();
-  void buttonBoxClicked(QAbstractButton *button);
-  void updateLengthLabel();
+  /* Text already given by navaid when editMode is false */
+  bool textPreFilled = false;
 
-  UnitStringTool *units = nullptr;
+  /* Color is set when clicking on button */
   const static QString DEFAULT_COLOR_STR;
 
-  Ui::HoldDialog *ui;
+  Ui::DistanceMarkerDialog *ui;
 };
 
-#endif // LNM_HOLDDIALOG_H
+#endif // LNM_DISTANCEMARKER_DIALOG_H

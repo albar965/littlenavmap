@@ -314,6 +314,8 @@
     <addaction name="actionMapShowMark"/>
     <addaction name="actionMapJumpCoordinates"/>
     <addaction name="separator"/>
+    <addaction name="actionMapDragAndDropEditMode"/>
+    <addaction name="separator"/>
     <addaction name="actionMapAircraftCenter"/>
     <addaction name="actionMapDeleteAircraftTrack"/>
     <addaction name="separator"/>
@@ -342,7 +344,6 @@
     <addaction name="actionShowDepartureCustom"/>
     <addaction name="actionShowApproachCustom"/>
     <addaction name="separator"/>
-    <addaction name="actionRouteEditMode"/>
     <addaction name="separator"/>
     <addaction name="actionRouteCalc"/>
     <addaction name="actionRouteRandom"/>
@@ -6569,6 +6570,8 @@ relation to shown airport</string>
    <addaction name="actionMapDeleteAircraftTrack"/>
    <addaction name="actionMapClearAllHighlights"/>
    <addaction name="separator"/>
+   <addaction name="actionMapDragAndDropEditMode"/>
+   <addaction name="separator"/>
    <addaction name="actionMapBack"/>
    <addaction name="actionMapNext"/>
    <addaction name="separator"/>
@@ -6630,8 +6633,6 @@ relation to shown airport</string>
    <addaction name="actionRouteSelectParking"/>
    <addaction name="actionShowDepartureCustom"/>
    <addaction name="actionShowApproachCustom"/>
-   <addaction name="separator"/>
-   <addaction name="actionRouteEditMode"/>
    <addaction name="separator"/>
    <addaction name="actionRouteNewFromString"/>
    <addaction name="separator"/>
@@ -8080,25 +8081,25 @@ relation to shown airport</string>
     <string>Alt+Shift+T</string>
    </property>
   </action>
-  <action name="actionRouteEditMode">
+  <action name="actionMapDragAndDropEditMode">
    <property name="checkable">
     <bool>true</bool>
    </property>
    <property name="checked">
-    <bool>true</bool>
+    <bool>false</bool>
    </property>
    <property name="icon">
     <iconset resource="../../littlenavmap.qrc">
-     <normaloff>:/littlenavmap/resources/icons/routeedit.svg</normaloff>:/littlenavmap/resources/icons/routeedit.svg</iconset>
+     <normaloff>:/littlenavmap/resources/icons/mapedit.svg</normaloff>:/littlenavmap/resources/icons/mapedit.svg</iconset>
    </property>
    <property name="text">
-    <string>&amp;Edit Flight Plan on Map</string>
+    <string>Map &amp;Drag and Drop Edit Mode</string>
    </property>
    <property name="toolTip">
-    <string>Toggle flight plan click and drag edit mode on the map</string>
+    <string>Toggle drag and drop edit mode on the map</string>
    </property>
    <property name="statusTip">
-    <string>Toggle flight plan click and drag edit mode on the map</string>
+    <string>Toggle drag and drop edit mode on the map</string>
    </property>
    <property name="shortcut">
     <string>Ctrl+Shift+E</string>
@@ -12658,6 +12659,27 @@ from either the departure parking or the user aircraft while taxiing.</string>
    </property>
    <property name="shortcut">
     <string>Return</string>
+   </property>
+  </action>
+  <action name="actionStartDistanceMarker">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="checked">
+    <bool>false</bool>
+   </property>
+   <property name="icon">
+    <iconset resource="../../littlenavmap.qrc">
+     <normaloff>:/littlenavmap/resources/icons/distancemeasure.svg</normaloff>:/littlenavmap/resources/icons/distancemeasure.svg</iconset>
+   </property>
+   <property name="text">
+    <string>&amp;Start Distance Measurement</string>
+   </property>
+   <property name="toolTip">
+    <string>Measure great circle distance on the map</string>
+   </property>
+   <property name="statusTip">
+    <string>Measure great circle distance on the map</string>
    </property>
   </action>
  </widget>

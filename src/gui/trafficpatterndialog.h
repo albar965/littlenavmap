@@ -18,7 +18,7 @@
 #ifndef LNM_TRAFFICPATTERN_H
 #define LNM_TRAFFICPATTERN_H
 
-#include <QDialog>
+#include "gui/markerdialog.h"
 
 namespace Ui {
 class TrafficPatternDialog;
@@ -39,37 +39,32 @@ class RunwayTable;
  * Reads state on intiantiation and saves it on destruction
  */
 class TrafficPatternDialog :
-  public QDialog
+  public MarkerDialog<map::PatternMarker>
 {
   Q_OBJECT
 
 public:
-  explicit TrafficPatternDialog(QWidget *parent, const map::MapAirport& mapAirport);
+  /* Marker is copied to internal. Result is used to assign navaid. editMode false configures dialog for adding. */
+  explicit TrafficPatternDialog(QWidget *parent, const map::PatternMarker& markerParam, const map::MapResult& result, bool editMode);
   virtual ~TrafficPatternDialog() override;
 
-  TrafficPatternDialog(const TrafficPatternDialog& other) = delete;
-  TrafficPatternDialog& operator=(const TrafficPatternDialog& other) = delete;
-
-  void fillPatternMarker(map::PatternMarker& pattern);
-
 private:
-  void restoreState();
-  void saveState() const;
+  virtual void restoreState() override;
+  virtual void saveState() const override;
+  virtual void markerToWidgets() override;
+  virtual void widgetsToMarker() override;
 
   void updateWidgets();
   void updateRunwayLabel();
   void buttonBoxClicked(QAbstractButton *button);
-  void colorButtonClicked();
-  void updateButtonColor();
-  void doubleClicked();
-
-  Ui::TrafficPatternDialog *ui;
-
-  QColor color;
+  void runwayTableDoubleClicked();
 
   UnitStringTool *units = nullptr;
-
   RunwayTable *runwayTable = nullptr;
+
+  const static QString DEFAULT_COLOR_STR;
+
+  Ui::TrafficPatternDialog *ui;
 };
 
 #endif // LNM_TRAFFICPATTERN_H

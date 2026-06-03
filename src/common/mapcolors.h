@@ -73,7 +73,6 @@ extern QColor airwayBothColor;
 extern QColor airwayTrackColor;
 extern QColor airwayTextColor;
 extern QColor holdingColor;
-extern QColor rangeRingColor;
 extern QColor rangeRingTextColor;
 extern QColor compassRoseColor;
 extern QColor compassRoseTextColor;
@@ -127,8 +126,8 @@ extern QPen profileSafeAltLinePen;
 extern QPen profileSafeAltLegLinePen;
 extern QPen profileElevationScalePen;
 
-extern QColor distanceMarkerTextColor;
-extern QColor distanceMarkerTextBackgroundColor;
+extern QColor markerTextColor;
+extern QColor markerTextBackgroundColor;
 
 /* Objects highlighted because of selection in search */
 extern QColor highlightBackColor;

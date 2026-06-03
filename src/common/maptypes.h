@@ -30,6 +30,12 @@
 class OptionData;
 class MapLayer;
 
+namespace atools {
+namespace util {
+class XmlStreamWriter;
+class XmlStreamReader;
+}
+}
 namespace proc {
 
 struct MapProcedureLeg;
@@ -75,7 +81,45 @@ struct PosCourse
 };
 
 // =====================================================================
-/* Primitive id type combo that is hashable and comparable */
+/* Identifies a navaid reference in markers, MSA and holding. */
+struct MapVor;
+struct MapNdb;
+struct MapUserpoint;
+
+struct MapNav
+{
+  MapNav()
+  {
+  }
+
+  /* Construct and copy navaid properties */
+  explicit MapNav(const map::MapVor& vor);
+  explicit MapNav(const map::MapNdb& ndb);
+  explicit MapNav(const map::MapUserpoint& userpoint);
+
+  void save(atools::util::XmlStreamWriter& stream) const;
+  void restore(atools::util::XmlStreamReader& stream);
+
+  void reset()
+  {
+    type = map::NONE;
+    ident.clear();
+    vorDmeOnly = false;
+    vorDme = true;
+    vorTacan = false;
+    vorVortac = false;
+    magvar = 0.f;
+  }
+
+  MapType type; /* VOR, NDB, AIRPORT, etc. */
+  QString ident;
+  bool vorDmeOnly, vorDme, vorTacan, vorVortac; /* VOR specific flags */
+  float magvar = 0.f; /* Declination from world or navaid */
+};
+
+// =====================================================================
+/* Primitive id type combo that is hashable and comparable and is used to identify database objects.
+ * Identifes an object across one database since ids are reused in different tables. */
 struct MapRef
 {
   MapRef()
@@ -427,6 +471,11 @@ struct MapAirport
   /* One of ident, ICAO, FAA, IATA or local code. Use only for display purposes and not for queries. */
   const QString& displayIdent(bool useIata = true) const;
 
+  const QString& getIdent() const
+  {
+    return displayIdent();
+  }
+
   /* One of ident or ICAO */
   const QString& displayIdentIcao() const
   {
@@ -478,6 +527,11 @@ struct MapAirport
    * @return true if this airport is visible on map
    */
   bool isVisible(map::MapTypes types, int minRunwayFt, const MapLayer *layer) const;
+
+  float getMagVar() const
+  {
+    return magvar;
+  }
 
 private:
   /* Check if airport should be drawn empty */
@@ -577,6 +631,11 @@ struct MapRunway
     return getDeparturePosition(!secondary);
   }
 
+  QString getIdent() const
+  {
+    return primaryName + '/' + secondaryName;
+  }
+
 };
 
 // =====================================================================
@@ -635,6 +694,12 @@ struct MapRunwayEnd
 
   bool secondary = false;
   bool navdata = false; /* true if source is third party nav database, false if source is simulator data */
+
+  const QString& getIdent() const
+  {
+    return name;
+  }
+
 };
 
 // =====================================================================
@@ -706,6 +771,11 @@ struct MapParking
   int getRadius() const
   {
     return radius > 0 ? radius : 100; // Default radius 100 ft
+  }
+
+  const QString& getIdent() const
+  {
+    return name;
   }
 
 };
@@ -821,6 +891,11 @@ struct MapVor
     return ident;
   }
 
+  float getMagVar() const
+  {
+    return magvar;
+  }
+
 };
 
 // =====================================================================
@@ -849,6 +924,11 @@ struct MapNdb
   const QString& getIdent() const
   {
     return ident;
+  }
+
+  float getMagVar() const
+  {
+    return magvar;
   }
 
 };
@@ -922,6 +1002,17 @@ struct MapUserpointRoute
   QString ident, region, name, comment;
   float magvar;
   int routeIndex = -1; /* Filled by the get nearest methods for building the context menu */
+
+  float getMagVar() const
+  {
+    return magvar;
+  }
+
+  const QString& getIdent() const
+  {
+    return ident;
+  }
+
 };
 
 // =====================================================================
@@ -985,6 +1076,12 @@ struct MapUserpoint
 
   QString name, ident, region, type, description, tags;
   bool temp = false;
+
+  const QString& getIdent() const
+  {
+    return ident;
+  }
+
 };
 
 // =====================================================================
@@ -1020,6 +1117,11 @@ struct MapUserAircraft
     return aircraft;
   }
 
+  const QString& getIdent() const
+  {
+    return aircraft.getAirplaneRegistration();
+  }
+
 private:
   atools::fs::sc::SimConnectUserAircraft aircraft;
 };
@@ -1048,6 +1150,11 @@ struct MapAiAircraft
   const atools::fs::sc::SimConnectAircraft& getAircraft() const
   {
     return aircraft;
+  }
+
+  const QString& getIdent() const
+  {
+    return aircraft.getAirplaneRegistration();
   }
 
 private:
@@ -1146,6 +1253,11 @@ struct MapLogbookEntry
   bool isDestOrDepartPosValid() const
   {
     return departurePos.isValid() || destinationPos.isValid();
+  }
+
+  const QString& getIdent() const
+  {
+    return departureIdent;
   }
 
 };
@@ -1395,6 +1507,11 @@ struct MapIls
   atools::geo::LineString boundary() const;
   atools::geo::Line centerLine() const;
 
+  float getMagVar() const
+  {
+    return magvar;
+  }
+
 };
 
 // =====================================================================
@@ -1486,14 +1603,10 @@ struct MapAirportMsa :
     return map::AIRPORT_MSA;
   }
 
-  QString airportIdent, navIdent, region, multipleCode, vorType;
+  QString airportIdent, region, multipleCode, vorType;
   int navId;
 
-  map::MapType navType; /* AIRPORT, VOR, NDB, ILS or WAYPOINT */
-  bool vorDmeOnly, vorHasDme, vorTacan, vorVortac; /* VOR specific flags */
-
-  float radius, /* Radius in NM */
-        magvar; /* Taken from environment or navaid */
+  float radius; /* Radius in NM */
 
   QList<float> bearings, /* Bearings in true or mag degree - same size as altitudes */
                altitudes; /* Altitudes in feet - same size as bearings */
@@ -1504,9 +1617,16 @@ struct MapAirportMsa :
                           bearingEndPos; /* Endpoints for bearing lines from center to end point */
   atools::geo::Rect bounding;
 
+  MapNav nav; /* Reference to related navaid. type is NONE if not attached to navaid. */
+
   const QString& getIdent() const
   {
-    return navIdent;
+    return nav.ident;
+  }
+
+  float getMagVar() const
+  {
+    return nav.magvar;
   }
 
 };
@@ -1528,9 +1648,7 @@ struct MapHolding
     return map::HOLDING;
   }
 
-  QString navIdent, name, vorType; /* Only for display purposes */
-  map::MapType navType; /* AIRPORT, VOR, NDB or WAYPOINT*/
-  bool vorDmeOnly, vorHasDme, vorTacan, vorVortac; /* VOR specific flags */
+  QString name, vorType; /* Only for display purposes */
 
   QString airportIdent;
 
@@ -1542,7 +1660,8 @@ struct MapHolding
         minAltititude, maxAltititude; /* 0 if not applicable - database holds */
 
   float courseTrue; /* degree true inbound course to fix */
-  float magvar; /* Taken from environment or navaid */
+
+  MapNav nav; /* Reference to related navaid. type is NONE if not attached to navaid. */
 
   QColor color; /* Only for user but keep this here to ease painting */
 
@@ -1553,7 +1672,12 @@ struct MapHolding
 
   const QString& getIdent() const
   {
-    return navIdent;
+    return nav.ident;
+  }
+
+  float getMagVar() const
+  {
+    return nav.magvar;
   }
 
 };
@@ -1731,6 +1855,7 @@ QString vorText(const map::MapVor& vor, int elideName = 100);
 QString vorTextShort(const MapVor& vor);
 QString vorType(const map::MapVor& vor);
 QString vorType(bool dmeOnly, bool hasDme, bool tacan, bool vortac);
+QString vorType(const map::MapNav& nav);
 
 QString ndbFullShortText(const map::MapNdb& ndb);
 QString ndbText(const map::MapNdb& ndb, int elideName = 100);
@@ -1763,6 +1888,9 @@ QString mapBaseText(const map::MapBase *base, int elideAirportName);
 /* Get corresponding icon for map object. Can be dynamically generated or resource depending on map object type */
 QIcon mapBaseIcon(const map::MapBase *base, int size);
 
+/* Delete  icons for type. Currently only marker types and userpoint. Returns static icons. */
+QIcon mapBaseIconDelete(const map::MapBase *base, int size);
+
 /* Get a number for surface quality to get the best runway. Higher numbers are better surface. */
 int surfaceQuality(const QString& surface);
 
@@ -1782,12 +1910,7 @@ void registerMapMetaTypes();
  * QTypeInfo<TYPE>::isRelocatable * std::is_copy_constructible_v<TYPE > */
 // static_assert(std::is_copy_constructible<map::MapBase>);
 
-#if QT_VERSION < QT_VERSION_CHECK(6, 8, 0)
-Q_DECLARE_TYPEINFO(map::MapBase, Q_PRIMITIVE_TYPE);
-#else
-Q_DECLARE_TYPEINFO(map::MapBase, Q_MOVABLE_TYPE);
-#endif
-
+Q_DECLARE_TYPEINFO(map::MapBase, Q_RELOCATABLE_TYPE);
 Q_DECLARE_TYPEINFO(map::MapAirport, Q_RELOCATABLE_TYPE);
 Q_DECLARE_TYPEINFO(map::MapAirportMsa, Q_RELOCATABLE_TYPE);
 Q_DECLARE_TYPEINFO(map::MapAirspace, Q_RELOCATABLE_TYPE);
@@ -1810,10 +1933,10 @@ Q_DECLARE_TYPEINFO(map::MapTaxiPath, Q_RELOCATABLE_TYPE);
 Q_DECLARE_TYPEINFO(map::MapUserpointRoute, Q_RELOCATABLE_TYPE);
 Q_DECLARE_TYPEINFO(map::MapVor, Q_RELOCATABLE_TYPE);
 Q_DECLARE_TYPEINFO(map::MapWaypoint, Q_RELOCATABLE_TYPE);
-Q_DECLARE_TYPEINFO(map::PosCourse, Q_PRIMITIVE_TYPE);
+Q_DECLARE_TYPEINFO(map::PosCourse, Q_RELOCATABLE_TYPE);
 
 /* Type info and serializable objects */
-Q_DECLARE_TYPEINFO(map::MapRef, Q_PRIMITIVE_TYPE);
+Q_DECLARE_TYPEINFO(map::MapRef, Q_RELOCATABLE_TYPE);
 Q_DECLARE_METATYPE(map::MapRef)
 Q_DECLARE_METATYPE(QList<map::MapRef>)
 

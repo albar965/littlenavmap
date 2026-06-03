@@ -225,11 +225,14 @@ QString MapTooltip::buildTooltip(const map::MapResult& mapSearchResult, const at
   // User features / marks ===================================================================
   if(options.testFlag(optsd::TOOLTIP_MARKS))
   {
-    // Traffic pattern
-    buildOneTooltip(html, overflow, numEntries, mapSearchResult.patternMarks, info, route, &HtmlInfoBuilder::patternMarkerText);
+    // Measurment lines
+    buildOneTooltip(html, overflow, numEntries, mapSearchResult.distanceMarks, info, route, &HtmlInfoBuilder::distanceMarkerText);
 
     // Range rings
     buildOneTooltip(html, overflow, numEntries, mapSearchResult.rangeMarks, info, route, &HtmlInfoBuilder::rangeMarkerText);
+
+    // Traffic pattern
+    buildOneTooltip(html, overflow, numEntries, mapSearchResult.patternMarks, info, route, &HtmlInfoBuilder::patternMarkerText);
 
     // User Holds
     buildOneTooltip(html, overflow, numEntries, mapSearchResult.holdingMarks, info, route, &HtmlInfoBuilder::holdingMarkerText);
@@ -237,8 +240,6 @@ QString MapTooltip::buildTooltip(const map::MapResult& mapSearchResult, const at
     // MSA diagrams
     buildOneTooltip(html, overflow, numEntries, mapSearchResult.msaMarks, info, route, &HtmlInfoBuilder::msaMarkerText);
 
-    // MSA diagrams
-    buildOneTooltip(html, overflow, numEntries, mapSearchResult.distanceMarks, info, route, &HtmlInfoBuilder::distanceMarkerText);
   }
 
   if(options.testFlag(optsd::TOOLTIP_NAVAID))

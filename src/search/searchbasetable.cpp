@@ -1220,7 +1220,8 @@ void SearchBaseTable::contextMenu(const QPoint& point)
   ActionTool::setText(ui->actionSearchFilterExcluding, filterText);
 
   int range = controller->hasColumn("range") ? controller->getRawData(index.row(), "range").toInt() : 0;
-  ui->actionMapNavaidRange->setEnabled(range > 0 && (mapObjType == map::VOR || mapObjType == map::NDB));
+  ActionTool::setText(ui->actionMapNavaidRange, range > 0 && (mapObjType == map::VOR || mapObjType == map::NDB),
+                      objectText, tr(" (no range)"));
 
   bool validType = mapObjType == map::VOR || mapObjType == map::NDB || mapObjType == map::WAYPOINT || mapObjType == map::AIRPORT ||
                    mapObjType == map::USERPOINT;
@@ -1283,7 +1284,7 @@ void SearchBaseTable::contextMenu(const QPoint& point)
   if(mapObjType == map::AIRPORT && airport.isValid())
   {
     ui->actionSearchMarkAddon->setEnabled(true);
-    ActionTool::setText(ui->actionSearchMarkAddon, true, objectText);
+    ActionTool::setText(ui->actionSearchMarkAddon, true /* enabled */, objectText);
 
     ContextMenuTool menuTool;
     menuTool.setActions(ui->actionSearchShowDepartureCustom, ui->actionSearchShowApproachCustom, ui->actionSearchShowApproaches);
@@ -1328,7 +1329,7 @@ void SearchBaseTable::contextMenu(const QPoint& point)
   if(airport.isValid())
     ActionTool::setText(ui->actionMapTrafficPattern, !airport.noRunways(), objectText, tr(" (no runway)"));
   else
-    ActionTool::setText(ui->actionMapTrafficPattern, false);
+    ActionTool::setText(ui->actionMapTrafficPattern, false /* enabled */, objectText, tr(" (not an airport)"));
 
   ui->actionSearchShowInformation->setEnabled(mapObjType != map::NONE);
   ui->actionSearchShowOnMap->setEnabled(mapObjType != map::NONE);
@@ -1500,7 +1501,6 @@ void SearchBaseTable::contextMenu(const QPoint& point)
     menu.addAction(ui->actionMapRangeRings);
     if(atools::contains(tabIndex, {si::SEARCH_NAV}))
       menu.addAction(ui->actionMapNavaidRange);
-    menu.addSeparator();
   }
 
   if(atools::contains(tabIndex, {si::SEARCH_AIRPORT, si::SEARCH_NAV, si::SEARCH_USER}))
@@ -1652,8 +1652,6 @@ void SearchBaseTable::contextMenu(const QPoint& point)
 
   if(action != nullptr)
   {
-    MapWidget *mapWidget = NavApp::getMapWidgetGui();
-
     // A menu item was selected
     // Other actions with shortcuts are connected directly to methods/signals
     if(action == ui->actionSearchResetView)
@@ -1678,34 +1676,13 @@ void SearchBaseTable::contextMenu(const QPoint& point)
     else if(action == ui->actionSearchSetMark)
       emit changeSearchMark(position);
     else if(action == ui->actionMapRangeRings)
-      mapWidget->addRangeMark(position, result, true /* showDialog */);
+      emit addRangeMark(position, result, true /* showDialog */);
     else if(action == ui->actionMapTrafficPattern)
-      mapWidget->addPatternMark(airport);
+      emit addPatternMark(airport);
     else if(action == ui->actionMapHold)
-      mapWidget->addHold(result, atools::geo::EMPTY_POS);
+      emit addHold(result, atools::geo::EMPTY_POS);
     else if(action == ui->actionMapNavaidRange)
-    {
-      QString freqChannelStr;
-      if(mapObjType == map::VOR)
-      {
-        int frequency = controller->getRawData(index.row(), "frequency").toInt();
-        if(frequency > 0)
-        {
-          // Use frequency for VOR and VORTAC
-          frequency /= 10;
-          freqChannelStr = QString::number(frequency);
-        }
-        else
-          // Use channel for TACAN
-          freqChannelStr = controller->getRawData(index.row(), "channel").toString();
-      }
-      else if(mapObjType == map::NDB)
-        freqChannelStr = controller->getRawData(index.row(), "frequency").toString();
-
-      mapWidget->addNavRangeMark(position, mapObjType,
-                                 controller->getRawData(index.row(), "ident").toString(),
-                                 freqChannelStr, controller->getRawData(index.row(), "range").toInt());
-    }
+      emit addNavRangeMark(result, position);
     // else if(action == ui->actionMapHideRangeRings)
     // NavApp::getMapWidget()->clearRangeRingsAndDistanceMarkers(); // Connected directly
     else if(action == ui->actionMapAirportMsa)

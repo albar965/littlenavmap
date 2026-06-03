@@ -178,6 +178,9 @@ public:
   /* true if any highlighting circles are to be drawn on the map */
   bool hasHighlights() const;
 
+  /* true if range rings, measurments or other markers are loaded */
+  bool hasAnyMapMarkers() const;
+
   const AircraftTrail& getAircraftTrail() const
   {
     return *aircraftTrail;
@@ -420,6 +423,7 @@ public:
   }
 
   atools::geo::Pos getGeoPos(const QPoint& screenPoint) const;
+  atools::geo::Pos getGeoPos(const QPointF& screenPoint) const;
 
   atools::geo::Pos getCenterPos() const
   {

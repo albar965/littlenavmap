@@ -137,6 +137,9 @@ public:
   void saveState() const;
   void restoreState();
 
+  /* true if range rings, measurments or other markers are loaded */
+  bool hasAnyMapMarkers() const;
+
   /* Get objects that are highlighted because of selected flight plan legs in the table */
   const QList<int>& getRouteHighlights() const
   {
@@ -262,7 +265,7 @@ private:
 
   void getNearestIls(int xs, int ys, int maxDistance, map::MapResult& result) const;
   void getNearestAirspaces(int xs, int ys, map::MapResult& result) const;
-  void getNearestHighlights(int xs, int ys, int maxDistance, map::MapResult& result, map::MapObjectQueryTypes types) const;
+  void getNearestHighlightsAndMarkers(int xs, int ys, int maxDistance, map::MapResult& result, map::MapObjectQueryTypes types) const;
   void getNearestProcedureHighlights(int xs, int ys, int maxDistance, map::MapResult& result, map::MapObjectQueryTypes types) const;
   void nearestProcedureHighlightsInternal(int xs, int ys, int maxDistance, map::MapResult& result, map::MapObjectQueryTypes types,
                                           const QList<proc::MapProcedureLegs>& procedureLegs, bool previewAll) const;
@@ -280,6 +283,9 @@ private:
 
   template<typename TYPE>
   int getNearestId(int xs, int ys, int maxDistance, const QHash<int, TYPE>& typeList) const;
+
+  template<typename TYPE>
+  int getNearestId(int xs, int ys, int maxDistance, const QMap<int, TYPE>& typeList) const;
 
   atools::fs::sc::SimConnectData *simData, *lastSimData;
 

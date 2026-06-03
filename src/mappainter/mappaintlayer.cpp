@@ -372,7 +372,11 @@ bool MapPaintLayer::render(GeoPainter *painter, ViewportParams *viewport, const 
       context.paintCopyright = mapPaintWidget->isPaintCopyright();
       context.paintWindHeader = mapPaintWidget->isPaintWindHeader();
       context.webMap = mapPaintWidget->isWeb();
-      context.currentDistanceMarkerId = NavApp::getMapWidgetGui()->getCurrentDistanceMarkerId();
+
+      const MapWidget *mapWidgetGui = NavApp::getMapWidgetGui();
+      context.currentDistanceMarkerId = mapWidgetGui->getCurrentDistanceMarkerId();
+      context.currentHoldingMarkerId = mapWidgetGui->getCurrentHoldingMarkerId();
+      context.currentRangeMarkerId = mapWidgetGui->getCurrentRangeMarkerId();
 
       context.mimimumRunwayLengthFt = minimumRunwayLengthFt;
 

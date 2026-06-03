@@ -52,8 +52,8 @@ bool StatusBarEventFilter::eventFilter(QObject *object, QEvent *event)
     if(mouseEvent != nullptr)
     {
       // Allow tooltips on click only on the left side of the first label widget
-      QRect rect(0, 0, firstWidget->geometry().left(), statusBar->height());
-      if(rect.contains(mouseEvent->pos()))
+      QRectF rect(0., 0., firstWidget->geometry().left(), statusBar->height());
+      if(rect.contains(mouseEvent->position()))
       {
         QToolTip::showText(QCursor::pos(), statusBar->toolTip(), statusBar);
         return true;

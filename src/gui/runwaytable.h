@@ -71,6 +71,10 @@ public:
     runwayEndIdPreSelected = runwayEndIdSelectedParam;
   }
 
+  /* Runway end name to be selected. Name is looked up in a fuzzy way. Selected in restoreState().
+   Defaults to first row which is airport */
+  void setPreSelectedRunwayEnd(const QString& name, QString *error);
+
   /* Get currently selected runway and runway end and optionally airport selection */
   void getCurrentSelected(map::MapRunway& runway, map::MapRunwayEnd& end, bool *airportSelected = nullptr) const;
 

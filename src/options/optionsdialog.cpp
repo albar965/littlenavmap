@@ -965,7 +965,6 @@ OptionsDialog::OptionsDialog(QMainWindow *parentWindow)
           &OptionsDialog::mapHighlightFlightplanColorClicked);
   connect(ui->pushButtonOptionsMapHighlightSearchColor, &QPushButton::clicked, this, &OptionsDialog::mapHighlightSearchColorClicked);
   connect(ui->pushButtonOptionsMapHighlightProfileColor, &QPushButton::clicked, this, &OptionsDialog::mapHighlightProfileColorClicked);
-  connect(ui->pushButtonOptionsMapMeasurementColor, &QPushButton::clicked, this, &OptionsDialog::mapMeasurementColorClicked);
 
   connect(ui->checkBoxOptionsMapFlightplanDimPassed, &QCheckBox::toggled, this, &OptionsDialog::updateFlightplanColorWidgets);
   connect(ui->checkBoxOptionsMapFlightplanHighlightActive, &QCheckBox::toggled, this, &OptionsDialog::updateFlightplanColorWidgets);
@@ -1721,7 +1720,6 @@ void OptionsDialog::saveState()
   settings.setValueVar(lnm::OPTIONS_DIALOG_FLIGHTPLAN_ACTIVE_COLOR, flightplanActiveColor);
   settings.setValueVar(lnm::OPTIONS_DIALOG_FLIGHTPLAN_PASSED_COLOR, flightplanPassedColor);
   settings.setValueVar(lnm::OPTIONS_DIALOG_TRAIL_COLOR, trailColor);
-  settings.setValueVar(lnm::OPTIONS_DIALOG_MEASUREMENT_COLOR, measurementColor);
   settings.setValueVar(lnm::OPTIONS_DIALOG_FLIGHTPLAN_HIGHLIGHT_COLOR, highlightFlightplanColor);
   settings.setValueVar(lnm::OPTIONS_DIALOG_SEARCH_HIGHLIGHT_COLOR, highlightSearchColor);
   settings.setValueVar(lnm::OPTIONS_DIALOG_PROFILE_HIGHLIGHT_COLOR, highlightProfileColor);
@@ -1819,8 +1817,6 @@ void OptionsDialog::restoreState()
                                             defaultData.flightplanPassedColor).value<QColor>();
   trailColor = settings.valueVar(lnm::OPTIONS_DIALOG_TRAIL_COLOR,
                                  defaultData.trailColor).value<QColor>();
-  measurementColor = settings.valueVar(lnm::OPTIONS_DIALOG_MEASUREMENT_COLOR,
-                                       defaultData.measurementColor).value<QColor>();
   highlightFlightplanColor = settings.valueVar(lnm::OPTIONS_DIALOG_FLIGHTPLAN_HIGHLIGHT_COLOR,
                                                defaultData.highlightFlightplanColor).value<QColor>();
   highlightSearchColor = settings.valueVar(lnm::OPTIONS_DIALOG_SEARCH_HIGHLIGHT_COLOR,
@@ -1949,7 +1945,6 @@ void OptionsDialog::updateButtonColors()
   atools::gui::changeWidgetColor(ui->pushButtonOptionsDisplayFlightplanActiveColor, flightplanActiveColor);
   atools::gui::changeWidgetColor(ui->pushButtonOptionsDisplayFlightplanPassedColor, flightplanPassedColor);
   atools::gui::changeWidgetColor(ui->pushButtonOptionsDisplayTrailColor, trailColor);
-  atools::gui::changeWidgetColor(ui->pushButtonOptionsMapMeasurementColor, measurementColor);
   atools::gui::changeWidgetColor(ui->pushButtonOptionsMapHighlightFlightPlanColor, highlightFlightplanColor);
   atools::gui::changeWidgetColor(ui->pushButtonOptionsMapHighlightSearchColor, highlightSearchColor);
   atools::gui::changeWidgetColor(ui->pushButtonOptionsMapHighlightProfileColor, highlightProfileColor);
@@ -2085,11 +2080,6 @@ void OptionsDialog::mapHighlightProfileColorClicked()
 void OptionsDialog::trailColorClicked()
 {
   colorButtonClicked(trailColor);
-}
-
-void OptionsDialog::mapMeasurementColorClicked()
-{
-  colorButtonClicked(measurementColor);
 }
 
 void OptionsDialog::updateHighlightWidgets()
@@ -2327,7 +2317,6 @@ void OptionsDialog::widgetsToOptionData(OptionData& data)
   data.highlightProfileColor = highlightProfileColor;
 
   data.trailColor = trailColor;
-  data.measurementColor = measurementColor;
 
   data.displayOptionsUserAircraft = optsac::ITEM_USER_AIRCRAFT_NONE;
   displayOptWidgetToOptionData(data.displayOptionsUserAircraft, p->displayOptItemIndexUser);
@@ -2680,7 +2669,6 @@ void OptionsDialog::optionDataToWidgets(const OptionData& data)
   flightplanActiveColor = data.flightplanActiveColor;
   flightplanPassedColor = data.flightplanPassedColor;
   trailColor = data.trailColor;
-  measurementColor = data.measurementColor;
   highlightFlightplanColor = data.highlightFlightplanColor;
   highlightSearchColor = data.highlightSearchColor;
   highlightProfileColor = data.highlightProfileColor;

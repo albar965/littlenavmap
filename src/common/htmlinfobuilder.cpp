@@ -249,13 +249,13 @@ void HtmlInfoBuilder::airportText(const MapAirport& airport, const map::WeatherC
   {
     // Add flight plan information if airport is a part of it
     if(airport.routeIndex == route->getDestinationAirportLegIndex())
-      html.row2(tr("Destination Airport"), QStringLiteral());
+      html.row2(tr("Destination Airport"), QStringLiteral(), ahtml::SMALL);
     else if(airport.routeIndex == route->getDepartureAirportLegIndex())
-      html.row2(tr("Departure Airport"), QStringLiteral());
+      html.row2(tr("Departure Airport"), QStringLiteral(), ahtml::SMALL);
     else if(airport.routeIndex >= route->getAlternateLegsOffset())
-      html.row2(tr("Alternate Airport"), QStringLiteral());
+      html.row2(tr("Alternate Airport"), QStringLiteral(), ahtml::SMALL);
     else
-      html.row2(tr("Flight Plan Position:"), locale.toString(airport.routeIndex + 1));
+      html.row2(tr("Flight Plan Position:"), locale.toString(airport.routeIndex + 1), ahtml::SMALL);
     flightplanWaypointRemarks(html, airport.routeIndex, route);
   }
 
@@ -1755,7 +1755,7 @@ void HtmlInfoBuilder::addRadionavFixType(HtmlBuilder& html, const SqlRecord& rec
       const MapNdb& ndb = result.ndbs.constFirst();
 
       html.row2If(tr("NDB Type:"), map::navTypeNameNdb(ndb.type));
-      html.row2(tr("NDB Frequency:"), locale.toString(ndb.frequency / 100., 'f', 2) % tr(" kHz"));
+      html.row2(tr("NDB Frequency:"), locale.toString(ndb.frequency / 100., 'f', 1) % tr(" kHz"));
 
       if(ndb.range > 0)
         html.row2(tr("NDB Range:"), Unit::distNm(ndb.range));
@@ -1927,9 +1927,9 @@ void HtmlInfoBuilder::airportMsaText(const map::MapAirportMsa& msa, atools::util
   airportMsaTextInternal(msa, html, false /* user */);
 }
 
-void HtmlInfoBuilder::msaMarkerText(const map::MsaMarker& msa, atools::util::HtmlBuilder& html, const Route *) const
+void HtmlInfoBuilder::msaMarkerText(const map::MsaMarker& marker, atools::util::HtmlBuilder& html, const Route *) const
 {
-  airportMsaTextInternal(msa.msa, html, true /* user */);
+  airportMsaTextInternal(marker.msa, html, true /* user */);
 }
 
 void HtmlInfoBuilder::airportMsaTextInternal(const map::MapAirportMsa& msa, atools::util::HtmlBuilder& html, bool user) const
@@ -1938,22 +1938,22 @@ void HtmlInfoBuilder::airportMsaTextInternal(const map::MapAirportMsa& msa, atoo
   html.nbsp().nbsp();
 
   QString title;
-  if(msa.navType == map::AIRPORT)
-    title.append(tr("%1 %2").arg(tr("Airport")).arg(msa.navIdent));
+  if(msa.nav.type == map::AIRPORT)
+    title.append(tr("%1 %2").arg(tr("Airport")).arg(msa.nav.ident));
   else
   {
-    if(!msa.navIdent.isEmpty())
+    if(!msa.nav.ident.isEmpty())
     {
-      if(msa.navType == map::WAYPOINT)
-        title.append(tr("%1 %2").arg(tr("Waypoint")).arg(msa.navIdent));
-      else if(msa.navType == map::VOR)
-        title.append(tr("%1 %2").arg(map::vorType(msa.vorDmeOnly, msa.vorHasDme, msa.vorTacan, msa.vorVortac)).arg(msa.navIdent));
-      else if(msa.navType == map::ILS)
-        title.append(tr("%1 %2").arg(tr("ILS/LOC")).arg(msa.navIdent));
-      else if(msa.navType == map::NDB)
-        title.append(tr("%1 %2").arg(tr("NDB")).arg(msa.navIdent));
-      else if(msa.navType == map::RUNWAYEND)
-        title.append(tr("%1 %2").arg(tr("Runway")).arg(msa.navIdent));
+      if(msa.nav.type == map::WAYPOINT)
+        title.append(tr("%1 %2").arg(tr("Waypoint")).arg(msa.nav.ident));
+      else if(msa.nav.type == map::VOR)
+        title.append(tr("%1 %2").arg(map::vorType(msa.nav)).arg(msa.nav.ident));
+      else if(msa.nav.type == map::ILS)
+        title.append(tr("%1 %2").arg(tr("ILS/LOC")).arg(msa.nav.ident));
+      else if(msa.nav.type == map::NDB)
+        title.append(tr("%1 %2").arg(tr("NDB")).arg(msa.nav.ident));
+      else if(msa.nav.type == map::RUNWAYEND)
+        title.append(tr("%1 %2").arg(tr("Runway")).arg(msa.nav.ident));
     }
 
     if(!msa.airportIdent.isEmpty())
@@ -1967,7 +1967,8 @@ void HtmlInfoBuilder::airportMsaTextInternal(const map::MapAirportMsa& msa, atoo
     // Add map link if not tooltip
     html.nbsp().nbsp();
     html.a(tr("Map"), QStringLiteral("lnm://show?lonx=%1&laty=%2&tooltip=%3").
-           arg(msa.position.getLonX()).arg(msa.position.getLatY()).arg(mapTypeToTooltip(msa.navType, QStringLiteral("show"))), LINK_FLAGS);
+           arg(msa.position.getLonX()).arg(msa.position.getLatY()).
+           arg(mapTypeToTooltip(msa.nav.type, QStringLiteral("show"))), LINK_FLAGS);
   }
 
   html.table();
@@ -1977,14 +1978,14 @@ void HtmlInfoBuilder::airportMsaTextInternal(const map::MapAirportMsa& msa, atoo
     html.row2(tr("Bearing and alt. units:"), msa.trueBearing ? tr("°T, ") : tr("°M, ") % Unit::getUnitAltStr());
 
   if(info)
-    html.row2(tr("Magnetic declination:"), map::magvarText(msa.magvar));
+    html.row2(tr("Magnetic declination:"), map::magvarText(msa.nav.magvar));
   if(msa.altitudes.size() == 0)
     html.row2(tr("No altitude"));
   else if(msa.altitudes.size() == 1)
     html.row2(tr("Minimum altitude:"), Unit::altFeet(msa.altitudes.at(0)));
 
   if(user)
-    html.row2(tr("Diagram added by user"), QStringLiteral());
+    html.row2(tr("Diagram added by user"), QStringLiteral(), ahtml::SMALL);
   html.tableEnd();
 
   if(verbose)
@@ -2464,29 +2465,34 @@ void HtmlInfoBuilder::ndbText(const MapNdb& ndb, HtmlBuilder& html, const Route 
 
 void HtmlInfoBuilder::holdingText(const MapHolding& holding, HtmlBuilder& html, const Route *) const
 {
-  holdingTextInternal(holding, html, false /* user */);
+  holdingTextInternal(holding, html, QStringLiteral(), false /* user */);
 }
 
-void HtmlInfoBuilder::holdingMarkerText(const HoldingMarker& holding, HtmlBuilder& html, const Route *) const
+void HtmlInfoBuilder::holdingMarkerText(const HoldingMarker& marker, HtmlBuilder& html, const Route *) const
 {
-  holdingTextInternal(holding.holding, html, true /* user */);
+  holdingTextInternal(marker.holding, html, marker.text, true /* user */);
+
+#ifdef DEBUG_INFORMATION_INFO
+  html.small(QStringLiteral("[navtype = %1, navident = %2, text = %3, id = %4]").
+             arg(map::mapTypeToString(marker.holding.nav.type).join('|')).
+             arg(marker.holding.nav.ident).
+             arg(marker.text).
+             arg(marker.id));
+#endif
 }
 
-void HtmlInfoBuilder::holdingTextInternal(const MapHolding& holding, HtmlBuilder& html, bool user) const
+void HtmlInfoBuilder::markerTitle(const QString& text, const map::MapNav& nav, float courseTrue, HtmlBuilder& html, bool user) const
 {
-  html.img(QIcon(":/littlenavmap/resources/icons/enroutehold.svg"), QStringLiteral(), QStringLiteral(), symbolSizeTitle);
-  html.nbsp().nbsp();
-
   QString navTypeStr;
-  if(holding.navType == map::AIRPORT)
+  if(nav.type == map::AIRPORT)
     navTypeStr = tr("Airport");
-  else if(holding.navType == map::VOR)
-    navTypeStr = map::vorType(holding.vorDmeOnly, holding.vorHasDme, holding.vorTacan, holding.vorVortac);
-  else if(holding.navType == map::NDB)
+  else if(nav.type == map::VOR)
+    navTypeStr = map::vorType(nav);
+  else if(nav.type == map::NDB)
     navTypeStr = tr("NDB");
-  else if(holding.navType == map::WAYPOINT)
+  else if(nav.type == map::WAYPOINT)
     navTypeStr = tr("Waypoint");
-  else if(holding.navType == map::USERPOINT)
+  else if(nav.type == map::USERPOINT)
     navTypeStr = tr("Userpoint");
 
   QString title;
@@ -2494,21 +2500,48 @@ void HtmlInfoBuilder::holdingTextInternal(const MapHolding& holding, HtmlBuilder
   if(user)
     title.append(tr("User "));
 
-  if(!navTypeStr.isEmpty())
-    // Hold has a navaid
-    title.append(tr("Holding at %1 %2, %3").
-                 arg(navTypeStr).arg(holding.navIdent).arg(courseTextFromTrue(holding.courseTrue, holding.magvar)));
+  if(courseTrue < map::INVALID_COURSE_VALUE)
+  {
+    if(!navTypeStr.isEmpty())
+      // Hold has a navaid
+      title.append(tr("%1 at %2 %3, %4").arg(text).arg(navTypeStr).arg(nav.ident).arg(courseTextFromTrue(courseTrue, nav.magvar)));
+    else
+      // Hold at a position
+      title.append(tr("%1 %2").arg(text).arg(courseTextFromTrue(courseTrue, nav.magvar)));
+  }
   else
-    // Hold at a position
-    title.append(tr("Holding %1").arg(courseTextFromTrue(holding.courseTrue, holding.magvar)));
+  {
+    if(!navTypeStr.isEmpty())
+      // Hold has a navaid
+      title.append(tr("%1 at %2 %3").arg(text).arg(navTypeStr).arg(nav.ident));
+    else
+      // Hold at a position
+      title.append(text);
+  }
 
   navaidTitle(html, title, true /* noEntities */);
 
+}
+
+void HtmlInfoBuilder::holdingTextInternal(const MapHolding& holding, HtmlBuilder& html, const QString& userText, bool user) const
+{
+  html.img(QIcon(":/littlenavmap/resources/icons/enroutehold.svg"), QStringLiteral(), QStringLiteral(), symbolSizeTitle);
+  html.nbsp().nbsp();
+
+  markerTitle(tr("Holding"), holding.nav, holding.courseTrue, html, user);
+
   html.table();
   // Add bearing/distance to table
-
   if(info && !print)
-    bearingToUserText(holding.position, holding.magvar, html);
+    bearingToUserText(holding.position, holding.nav.magvar, html);
+
+  if(userText != holding.nav.ident)
+    html.row2If(tr("Label:"), userText);
+
+  if(holding.name != holding.nav.ident)
+    html.row2If(tr("Name:"), holding.name);
+
+  html.row2If(tr("Turn:"), holding.turnLeft ? tr("Left") : tr("Right"));
 
   if(info && !holding.airportIdent.isEmpty())
     airportRow(queries->getAirportQuerySim()->getAirportByIdent(holding.airportIdent), html);
@@ -2569,19 +2602,35 @@ void HtmlInfoBuilder::rangeMarkerText(const RangeMarker& marker, atools::util::H
   html.img(QIcon(":/littlenavmap/resources/icons/rangerings.svg"), QStringLiteral(), QStringLiteral(), symbolSizeTitle);
   html.nbsp().nbsp();
 
-  navaidTitle(html, marker.ranges.size() > 1 ? tr("Range Rings") : tr("Range Ring"));
+  QString title;
+  if(marker.attachedToNavaid)
+    title = tr("Navaid Range");
+  else
+    title = marker.ranges.size() > 1 ? tr("Range Rings") : tr("Range Ring");
+
+  markerTitle(title, marker.nav, map::INVALID_COURSE_VALUE, html, false /* user */);
 
   html.table();
   html.row2If(tr("Label:"), marker.text);
 
-  QStringList distStr;
+  QStringList distStrList;
   for(double dist : marker.ranges)
-    distStr.append(Unit::distNm(dist, false /* addUnit */, 20 /* minValPrec */, false /* narrow */, 2 /* precision */));
+    distStrList.append(locale.toString(Unit::distNmF(dist), 'g', 6));
 
-  html.row2If(marker.ranges.size() > 1 ? tr("Radii:") : tr("Radius"),
-              tr("%1 %2").arg(distStr.join(tr(", "))).arg(Unit::getUnitDistStr()));
+  html.row2If(marker.ranges.size() > 1 ? tr("Radii:") : tr("Radius:"),
+              atools::strJoin(distStrList, tr(", "), tr(" and "), tr(" %1").arg(Unit::getUnitDistStr())));
 
   html.tableEnd();
+
+#ifdef DEBUG_INFORMATION_INFO
+  html.small(QStringLiteral("[attachedToNavaid = %1, navtype = %2, navident = %3, manual label = %4, aircraft range = %5, id = %6]").
+             arg(marker.attachedToNavaid).
+             arg(map::mapTypeToString(marker.nav.type).join('|')).
+             arg(marker.nav.ident).
+             arg(marker.manualLabel).
+             arg(marker.aircraftRange).
+             arg(marker.id));
+#endif
 }
 
 void HtmlInfoBuilder::distanceMarkerText(const DistanceMarker& marker, atools::util::HtmlBuilder& html, const Route *) const
@@ -2589,13 +2638,13 @@ void HtmlInfoBuilder::distanceMarkerText(const DistanceMarker& marker, atools::u
   html.img(QIcon(":/littlenavmap/resources/icons/distancemeasure.svg"), QStringLiteral(), QStringLiteral(), symbolSizeTitle);
   html.nbsp().nbsp();
 
-  navaidTitle(html, tr("Distance Measurement"));
-
   float initTrue = marker.from.initialBearing(marker.to);
   float finalTrue = marker.from.finalBearing(marker.to);
 
-  QString initCourseStr = tr("%L1°M, %L2°T").arg(initTrue - marker.magvar, 0, 'f', 0).arg(initTrue, 0, 'f', 0);
-  QString finalCourseStr = tr("%L1°M, %L2°T").arg(finalTrue - marker.magvar, 0, 'f', 0).arg(finalTrue, 0, 'f', 0);
+  markerTitle(tr("Distance Measurement"), marker.nav, initTrue, html, false /* user */);
+
+  QString initCourseStr = tr("%L1°M, %L2°T").arg(initTrue - marker.nav.magvar, 0, 'f', 0).arg(initTrue, 0, 'f', 0);
+  QString finalCourseStr = tr("%L1°M, %L2°T").arg(finalTrue - marker.nav.magvar, 0, 'f', 0).arg(finalTrue, 0, 'f', 0);
 
   html.table();
   html.row2If(tr("Label:"), marker.text);
@@ -2612,6 +2661,15 @@ void HtmlInfoBuilder::distanceMarkerText(const DistanceMarker& marker, atools::u
     html.row2If(tr("Course:"), initCourseStr);
 
   html.tableEnd();
+
+#ifdef DEBUG_INFORMATION_INFO
+  html.small(QStringLiteral("[manualLabel = %1, navtype = %2, navident = %3, text = %4, id = %5]").
+             arg(marker.manualLabel).
+             arg(map::mapTypeToString(marker.nav.type).join('|')).
+             arg(marker.nav.ident).
+             arg(marker.text).
+             arg(marker.id));
+#endif
 }
 
 void HtmlInfoBuilder::bearingAndDistanceTexts(const atools::geo::Pos& pos, float magvar, atools::util::HtmlBuilder& html, bool bearing,
@@ -2650,7 +2708,7 @@ void HtmlInfoBuilder::unlock()
   queries->unlock();
 }
 
-void HtmlInfoBuilder::patternMarkerText(const PatternMarker& pattern, atools::util::HtmlBuilder& html, const Route *) const
+void HtmlInfoBuilder::patternMarkerText(const PatternMarker& marker, atools::util::HtmlBuilder& html, const Route *) const
 {
   html.img(QIcon(":/littlenavmap/resources/icons/trafficpattern.svg"), QStringLiteral(), QStringLiteral(), symbolSizeTitle);
   html.nbsp().nbsp();
@@ -2658,12 +2716,12 @@ void HtmlInfoBuilder::patternMarkerText(const PatternMarker& pattern, atools::ut
   navaidTitle(html, tr("Traffic Pattern"), true /* noEntities */);
 
   html.table();
-  html.row2If(tr("Airport:"), pattern.airportIcao);
-  html.row2If(tr("Runway:"), pattern.runwayName);
-  html.row2If(tr("Turn:"), pattern.turnRight ? tr("Right") : tr("Left"));
-  html.row2(tr("Heading at final:"), courseTextFromTrue(pattern.courseTrue, pattern.magvar), ahtml::NO_ENTITIES);
+  html.row2If(tr("Airport:"), marker.airportIdent);
+  html.row2If(tr("Runway:"), marker.runwayName);
+  html.row2If(tr("Turn:"), marker.turnRight ? tr("Right") : tr("Left"));
+  html.row2(tr("Heading at final:"), courseTextFromTrue(marker.courseTrue, marker.nav.magvar), ahtml::NO_ENTITIES);
   html.row2(tr("Pattern altitude:"),
-            Unit::altFeet(pattern.position.getAltitude(), true /* addUnit */, false /* narrow */, 10.f /* round to */));
+            Unit::altFeet(marker.position.getAltitude(), true /* addUnit */, false /* narrow */, 10.f /* round to */));
   html.tableEnd();
 }
 
@@ -3617,7 +3675,7 @@ void HtmlInfoBuilder::userpointTextRoute(const MapUserpointRoute& userpoint, Htm
     if(!userpoint.name.isEmpty() || !userpoint.comment.isEmpty() || !userpoint.region.isEmpty())
     {
       html.table();
-      html.row2If(tr("Flight Plan Position:"), QString::number(userpoint.routeIndex + 1));
+      html.row2If(tr("Flight Plan Position:"), QString::number(userpoint.routeIndex + 1), ahtml::SMALL);
       if(verbose)
         html.row2If(tr("Region:"), userpoint.region);
       html.row2If(tr("Name:"), userpoint.name);
@@ -3625,7 +3683,7 @@ void HtmlInfoBuilder::userpointTextRoute(const MapUserpointRoute& userpoint, Htm
       html.tableEnd();
     }
     else
-      html.p().b(tr("Flight Plan Position: ") % QString::number(userpoint.routeIndex + 1)).pEnd();
+      html.p().b().small(tr("Flight Plan Position: ") % QString::number(userpoint.routeIndex + 1)).bEnd().pEnd();
 
     if(!info)
       routeWindText(html, route, userpoint.routeIndex);
@@ -3677,7 +3735,7 @@ void HtmlInfoBuilder::procedurePointText(const map::MapProcedurePoint& procPoint
   html.table();
 
   if(!info && procPoint.routeIndex >= 0)
-    html.row2(tr("Flight Plan Position:"), locale.toString(procPoint.routeIndex + 1));
+    html.row2(tr("Flight Plan Position:"), locale.toString(procPoint.routeIndex + 1), ahtml::SMALL);
 
   if(!legs->isAnyCustom() && (procPoint.preview || procPoint.previewAll))
     html.row2(tr("First and last Fix:"), atools::strJoin(procedureTextFirstAndLastFix(*legs, leg.mapType), tr(", "), tr(" and ")));
@@ -4458,7 +4516,7 @@ void HtmlInfoBuilder::aircraftProgressText(const atools::fs::sc::SimConnectAircr
 
         // Build link for related navaid ==============================================
         int id = -1;
-        MapTypes procMapType = map::NONE;
+        MapType procMapType = map::NONE;
         procLeg.recNavaids.getIdAndType(id, procMapType, {map::VOR, map::NDB, map::WAYPOINT});
         Pos recPos = procLeg.recNavaids.getPosition({map::VOR, map::NDB, map::WAYPOINT});
 
@@ -4471,7 +4529,7 @@ void HtmlInfoBuilder::aircraftProgressText(const atools::fs::sc::SimConnectAircr
             arg(recPos.getLonX()).arg(recPos.getLatY()).arg(mapTypeToTooltip(procMapType, QStringLiteral("show"))), LINK_FLAGS);
           recHtml.text(tr(", ")).
           a(tr("Info"), QStringLiteral("lnm://info?id=%1&type=%2&tooltip=%3").
-            arg(id).arg(procMapType.asFlagType()).arg(mapTypeToTooltip(procMapType, QStringLiteral("info"))), LINK_FLAGS);
+            arg(id).arg(procMapType).arg(mapTypeToTooltip(procMapType, QStringLiteral("info"))), LINK_FLAGS);
         }
         else if(recPos.isValid())
           // Only map
@@ -5397,7 +5455,7 @@ void HtmlInfoBuilder::head(HtmlBuilder& html, const QString& text, const RouteLe
   {
     // Is procedure leg, get fix information if available
     int id = -1;
-    MapTypes procMapType = map::NONE;
+    MapType procMapType = map::NONE;
 
     if(info && !print)
       leg.getProcedureLeg().navaids.getIdAndType(id, procMapType, {map::VOR, map::NDB, map::WAYPOINT});
@@ -5677,8 +5735,8 @@ void HtmlInfoBuilder::routeInfoText(HtmlBuilder& html, int routeIndex, bool reco
   if(!info && routeIndex >= 0)
   {
     if(recommended)
-      html.row2(tr("Related navaid for procedure"), QStringLiteral());
-    html.row2(tr("Flight Plan Position:"), locale.toString(routeIndex + 1));
+      html.row2(tr("Related navaid for procedure"), QStringLiteral(), ahtml::SMALL);
+    html.row2(tr("Flight Plan Position:"), locale.toString(routeIndex + 1), ahtml::SMALL);
     flightplanWaypointRemarks(html, routeIndex, route);
   }
 }

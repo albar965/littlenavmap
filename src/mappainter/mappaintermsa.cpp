@@ -90,13 +90,13 @@ void MapPainterMsa::drawMsaSymbol(const map::MapAirportMsa& airportMsa, float x,
   float scale = 0.f;
   if(!context->mapLayer->isAirportMsaDetails())
   {
-    if(airportMsa.navType == map::AIRPORT)
+    if(airportMsa.nav.type == map::AIRPORT)
       size = context->szF(context->symbolSizeAirport, context->mapLayer->getAirportSymbolSize());
-    else if(airportMsa.navType == map::VOR)
+    else if(airportMsa.nav.type == map::VOR)
       size = context->szF(context->symbolSizeNavaid, context->mapLayer->getVorSymbolSize());
-    else if(airportMsa.navType == map::NDB)
+    else if(airportMsa.nav.type == map::NDB)
       size = context->szF(context->symbolSizeNavaid, context->mapLayer->getNdbSymbolSize());
-    else if(airportMsa.navType == map::WAYPOINT || airportMsa.navType == map::ILS)
+    else if(airportMsa.nav.type == map::WAYPOINT || airportMsa.nav.type == map::ILS)
       size = context->szF(context->symbolSizeNavaid, context->mapLayer->getWaypointSymbolSize());
     size = std::max(size, 6.f);
   }

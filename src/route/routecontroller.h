@@ -393,6 +393,11 @@ signals:
 
   void addUserpointFromMap(const map::MapResult& result, const atools::geo::Pos& pos, bool airportAddon);
 
+  void addRangeMark(const atools::geo::Pos& pos, const map::MapResult& result, bool showDialog);
+  void addPatternMarker(const map::MapAirport& airport);
+  void addHoldingMarker(const map::MapResult& result, const atools::geo::Pos& position);
+  void addNavRangeMark(const map::MapResult& result, const atools::geo::Pos& position);
+
 private:
   friend class RouteCommand;
   friend class TableEditDelegate;
@@ -453,7 +458,7 @@ private:
   void tableSelectionChanged(const QItemSelection& = QItemSelection(), const QItemSelection& = QItemSelection());
 
   /* Convert given procedure type to waypoints */
-  void convertProcedure(proc::MapProcedureTypes types);
+  void convertProcedureInternal(proc::MapProcedureTypes types);
 
   void moveSelectedLegsDownTriggered();
   void moveSelectedLegsUpTriggered();

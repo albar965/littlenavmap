@@ -338,9 +338,11 @@ SOURCES += \
   src/geo/coordinateconverter.cpp \
   src/geo/marbleconverter.cpp \
   src/gui/contextmenutool.cpp \
+  src/gui/distancemarkerdialog.cpp \
   src/gui/holddialog.cpp \
   src/gui/coordinatedialog.cpp \
   src/gui/mainwindow.cpp \
+  src/gui/markerdialog.cpp \
   src/gui/messagesettings.cpp \
   src/gui/runwaytable.cpp \
   src/gui/statusbar.cpp \
@@ -554,9 +556,11 @@ HEADERS  += \
   src/geo/coordinateconverter.h \
   src/geo/marbleconverter.h \
   src/gui/contextmenutool.h \
+  src/gui/distancemarkerdialog.h \
   src/gui/holddialog.h \
   src/gui/coordinatedialog.h \
   src/gui/mainwindow.h \
+  src/gui/markerdialog.h \
   src/gui/messagesettings.h \
   src/gui/runwaytable.h \
   src/gui/statusbar.h \
@@ -725,6 +729,7 @@ FORMS += \
   src/db/databasedialog.ui \
   src/db/databaseprogressdialog.ui \
   src/gui/coordinatedialog.ui \
+  src/gui/distancemarkerdialog.ui \
   src/gui/holddialog.ui \
   src/gui/mainwindow.ui \
   src/gui/rangemarkerdialog.ui \
@@ -1072,3 +1077,6 @@ QMAKE_EXTRA_TARGETS += deploy copydata all
     }
   }
 }
+
+DISTFILES += \
+  resources/icons/mapedit.svg

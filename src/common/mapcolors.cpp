@@ -86,7 +86,6 @@ QColor airwayTextColor(80, 80, 80);
 
 QColor holdingColor(50, 50, 50);
 
-QColor rangeRingColor(Qt::red);
 QColor rangeRingTextColor(Qt::black);
 
 QColor weatherWindGustColor(QStringLiteral("#ff8040"));
@@ -136,8 +135,8 @@ QColor routeHighlightBackColor(Qt::black);
 /* Objects highlighted because of selection in route profile */
 QColor profileHighlightBackColor(Qt::black);
 
-QColor distanceMarkerTextBackgroundColor(255, 255, 255, 220);
-QColor distanceMarkerTextColor(Qt::black);
+QColor markerTextBackgroundColor(255, 255, 255, 200);
+QColor markerTextColor(Qt::black);
 
 QPen markEndurancePen(Qt::black, 2., Qt::DotLine, Qt::FlatCap, Qt::MiterJoin);
 QPen markEnduranceCritPen(Qt::red, 2., Qt::DotLine, Qt::FlatCap, Qt::MiterJoin);
@@ -164,7 +163,7 @@ QColor aircraftAiLabelColorBg(255, 255, 255);
 /* Text along route and approach segments */
 QColor routeTextColor(0, 0, 0);
 QColor routeTextColorGray(140, 140, 140);
-QColor routeTextBackgroundColor(255, 255, 255, 220);
+QColor routeTextBackgroundColor(255, 255, 255, 200);
 QColor routeProcedureMissedTextColor(90, 90, 90);
 QColor routeProcedureTextColor(0, 0, 0);
 QColor routeProcedurePointColor(90, 90, 90);
@@ -758,7 +757,6 @@ void loadColors()
   loadColor(colorSettings, QStringLiteral("Airway/TrackColorWest"), airwayTrackColorWest);
   loadColor(colorSettings, QStringLiteral("Airway/TextColor"), airwayTextColor);
 
-  loadColor(colorSettings, QStringLiteral("Marker/RangeRingColor"), rangeRingColor);
   loadColor(colorSettings, QStringLiteral("Marker/RangeRingTextColor"), rangeRingTextColor);
   loadColor(colorSettings, QStringLiteral("Marker/CompassRoseColor"), compassRoseColor);
   loadColor(colorSettings, QStringLiteral("Marker/CompassRoseTextColor"), compassRoseTextColor);
@@ -772,8 +770,8 @@ void loadColors()
   loadPen(colorSettings, QStringLiteral("Marker/TurnPathPen"), markTurnPathPen);
   loadColorArgb(colorSettings, QStringLiteral("Marker/TouchRegionFillColor"), touchRegionFillColor);
   loadColorArgb(colorSettings, QStringLiteral("Marker/TouchRegionCornerFillColor"), touchRegionCornerFillColor);
-  loadColor(colorSettings, QStringLiteral("Marker/DistanceMarkerTextColor"), distanceMarkerTextColor);
-  loadColorArgb(colorSettings, QStringLiteral("Marker/DistanceMarkerTextBackgroundColor"), distanceMarkerTextBackgroundColor);
+  loadColor(colorSettings, QStringLiteral("Marker/MarkerTextColor"), markerTextColor);
+  loadColorArgb(colorSettings, QStringLiteral("Marker/MarkerTextBackgroundColor"), markerTextBackgroundColor);
 
   loadColor(colorSettings, QStringLiteral("Highlight/HighlightBackColor"), highlightBackColor);
   loadColor(colorSettings, QStringLiteral("Highlight/RouteHighlightBackColor"), routeHighlightBackColor);

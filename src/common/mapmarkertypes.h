@@ -52,12 +52,14 @@ struct PatternMarker
 
   float magCourse() const;
 
+  /* Save and load from XML */
   void save(atools::util::XmlStreamWriter& stream) const;
   void restore(atools::util::XmlStreamReader& stream);
 
   QString displayText() const;
 
-  QString airportIcao, runwayName;
+  QString airportIdent, runwayName;
+  MapNav nav; /* Reference to related navaid. type is NONE if not attached to navaid. */
   QColor color;
   bool turnRight,
        base45Degree /* calculate base turn from 45 deg after threshold */,
@@ -66,7 +68,27 @@ struct PatternMarker
 
   float downwindParallelDistance, finalDistance, departureDistance; /* NM */
   float courseTrue; /* degree true final course*/
-  float magvar;
+
+  const QString& getIdent() const
+  {
+    return airportIdent;
+  }
+
+  float getMagVar() const
+  {
+    return nav.magvar;
+  }
+
+  QColor& getColor()
+  {
+    return color;
+  }
+
+  MapNav& getNav()
+  {
+    return nav;
+  }
+
 };
 
 QDataStream& operator>>(QDataStream& dataStream, map::PatternMarker& obj);
@@ -88,13 +110,39 @@ struct HoldingMarker
     return map::MARK_HOLDING;
   }
 
+  /* Save and load from XML */
   void save(atools::util::XmlStreamWriter& stream) const;
   void restore(atools::util::XmlStreamReader& stream);
 
+  /* "User Holding ..." */
   QString displayText() const;
+
+  /* Label. Can contain navaid ident and frequency if applicable */
+  QString text;
 
   /* Aggregate the database holding structure */
   map::MapHolding holding;
+
+  const QString& getIdent() const
+  {
+    return holding.getIdent();
+  }
+
+  float getMagVar() const
+  {
+    return holding.getMagVar();
+  }
+
+  QColor& getColor()
+  {
+    return holding.color;
+  }
+
+  MapNav& getNav()
+  {
+    return holding.nav;
+  }
+
 };
 
 /* Save only information for user defined holds */
@@ -117,10 +165,21 @@ struct MsaMarker
     return map::MARK_MSA;
   }
 
+  /* Save and load from XML */
   void save(atools::util::XmlStreamWriter& stream) const;
   void restore(atools::util::XmlStreamReader& stream);
 
   QString displayText() const;
+
+  const QString& getIdent() const
+  {
+    return msa.getIdent();
+  }
+
+  float getMagVar() const
+  {
+    return msa.getMagVar();
+  }
 
   /*   Aggregate the database MSA structure */
   map::MapAirportMsa msa;
@@ -145,6 +204,7 @@ struct RangeMarker
     return map::MARK_RANGE;
   }
 
+  /* Save and load from XML */
   void save(atools::util::XmlStreamWriter& stream) const;
   void restore(atools::util::XmlStreamReader& stream);
 
@@ -152,8 +212,27 @@ struct RangeMarker
 
   QString text; /* Text to display like VOR name and frequency */
   QList<double> ranges; /* Range ring list (NM) */
-  MapType navType; /* VOR, NDB, AIRPORT, etc. */
+  MapNav nav; /* Reference to related navaid. type is NONE if not attached to navaid. */
+  bool attachedToNavaid = false; /* true if range ring at navaid which cannot be moved*/
+  bool manualLabel = true; /* true if label was manually set by user and should not be changed when attaching to a navaid */
+  bool aircraftRange = false; /* Shows aircraft range instead of one or more range rings */
   QColor color;
+
+  const QString& getIdent() const
+  {
+    return nav.ident;
+  }
+
+  QColor& getColor()
+  {
+    return color;
+  }
+
+  MapNav& getNav()
+  {
+    return nav;
+  }
+
 };
 
 QDataStream& operator>>(QDataStream& dataStream, map::RangeMarker& obj);
@@ -196,16 +275,38 @@ struct DistanceMarker
 
   float getDistanceNm() const;
 
+  /* Save and load from XML */
   void save(atools::util::XmlStreamWriter& stream) const;
   void restore(atools::util::XmlStreamReader& stream);
 
   QString displayText() const;
 
   QString text; /* Text to display like VOR name and frequency */
+  MapNav nav; /* Reference to related navaid. type is NONE if not attached to navaid. */
   QColor color; /* Line color depends on origin (airport or navaid type */
   atools::geo::Pos from, to;
-  float magvar = 0.f; /* Declination from world or navaid */
-  map::DistanceMarkerFlags flags = map::DIST_MARK_NONE;
+  bool manualLabel = true; /* true if label was manually set by user and should not be changed when attaching to a navaid */
+
+  float getMagVar() const
+  {
+    return nav.magvar;
+  }
+
+  const QString& getIdent() const
+  {
+    return nav.ident;
+  }
+
+  QColor& getColor()
+  {
+    return color;
+  }
+
+  MapNav& getNav()
+  {
+    return nav;
+  }
+
 };
 
 QDataStream& operator>>(QDataStream& dataStream, map::DistanceMarker& obj);
@@ -213,6 +314,11 @@ QDataStream& operator<<(QDataStream& dataStream, const map::DistanceMarker& obj)
 
 /* Register serializable objects */
 void registerMarkerMetaTypes();
+
+/* Get labels for markers depending on clicked type */
+QString markerLabel(const map::MapUserpoint& userpoint);
+QString markerLabel(const map::MapVor& vor);
+QString markerLabel(const map::MapNdb& ndb);
 
 } // namespace map
 

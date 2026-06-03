@@ -201,7 +201,6 @@ private:
   void mapHighlightProfileColorClicked();
 
   void trailColorClicked();
-  void mapMeasurementColorClicked();
   void eastWestRuleClicked();
 
   // Add items to the tree widget and to the  displayOptItemIndex
@@ -310,7 +309,7 @@ private:
   bool buttonBoxHandlerActive = false;
 
   QString guiLanguage, guiFont, mapFont, profileFont;
-  QColor flightplanColor, flightplanOutlineColor, flightplanProcedureColor, flightplanActiveColor, trailColor, measurementColor,
+  QColor flightplanColor, flightplanOutlineColor, flightplanProcedureColor, flightplanActiveColor, trailColor,
          flightplanPassedColor, highlightFlightplanColor, highlightSearchColor, highlightProfileColor;
 
   Ui::OptionsDialog *ui;

@@ -418,7 +418,7 @@ void MapQuery::mapObjectByIdentInternal(map::MapResult& result, map::MapTypes ty
       MapAirportMsa msa;
       mapTypesFactory->fillAirportMsa(airportMsaByIdentQuery->record(), msa);
 
-      if(msa.navType == map::VOR)
+      if(msa.nav.type == map::VOR)
         mapTypesFactory->correctAirportMsa(getVorById(msa.navId), msa);
 
       result.airportMsa.append(msa);
@@ -625,7 +625,7 @@ map::MapAirportMsa MapQuery::getAirportMsaById(int id) const
     if(airportMsaByIdQuery->next())
     {
       mapTypesFactory->fillAirportMsa(airportMsaByIdQuery->record(), msa);
-      if(msa.navType == map::VOR)
+      if(msa.nav.type == map::VOR)
         mapTypesFactory->correctAirportMsa(getVorById(msa.navId), msa);
     }
     airportMsaByIdQuery->finish();
@@ -1195,7 +1195,7 @@ const QList<map::MapAirportMsa> *MapQuery::getAirportMsa(const Marble::GeoDataLa
         {
           MapAirportMsa msa;
           mapTypesFactory->fillAirportMsa(airportMsaByRectQuery->record(), msa);
-          if(msa.navType == map::VOR)
+          if(msa.nav.type == map::VOR)
             mapTypesFactory->correctAirportMsa(getVorById(msa.navId), msa);
           airportMsaCache.list.append(msa);
         }

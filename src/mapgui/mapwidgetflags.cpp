@@ -16,3 +16,27 @@
 *****************************************************************************/
 
 #include "mapwidgetflags.h"
+
+#include <QDebug>
+
+namespace ms {
+
+QStringList mapMouseStateToString(const ms::MouseStates& flags)
+{
+  ATOOLS_FLAGS_TO_STR_BEGIN(DRAG_NONE);
+  ATOOLS_FLAGS_TO_STR(DRAG_DIST_PRE);
+  ATOOLS_FLAGS_TO_STR(DRAG_DIST_NEW_TO);
+  ATOOLS_FLAGS_TO_STR(DRAG_DIST_CHANGE_FROM);
+  ATOOLS_FLAGS_TO_STR(DRAG_DIST_CHANGE_TO);
+  ATOOLS_FLAGS_TO_STR(DRAG_ROUTE_LEG);
+  ATOOLS_FLAGS_TO_STR(DRAG_ROUTE_POINT);
+  ATOOLS_FLAGS_TO_STR(DRAG_USER_POINT);
+  ATOOLS_FLAGS_TO_STR(DRAG_HOLDING);
+  ATOOLS_FLAGS_TO_STR(DRAG_RANGE);
+  ATOOLS_FLAGS_TO_STR(DRAG_CANCEL);
+  ATOOLS_FLAGS_TO_STR_END;
+}
+
+ATOOLS_DEFINE_DEBUG_OPERATORS_FOR_FLAGS(MouseStates, MouseState, mapMouseStateToString)
+
+} // namespace mapwin

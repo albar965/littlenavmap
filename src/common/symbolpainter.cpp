@@ -718,7 +718,7 @@ void SymbolPainter::drawAirportMsa(QPainter *painter, const map::MapAirportMsa& 
     {
       // Draw a header label =============================================
       QString heading = tr("MSA %1 %2 (%3, %4)").
-                        arg(airportMsa.navIdent).
+                        arg(airportMsa.nav.ident).
                         arg(Unit::distNm(airportMsa.radius, true, true)).
                         arg(airportMsa.trueBearing ? tr("°T") : tr("°M")).
                         arg(Unit::getUnitAltStr());
@@ -734,7 +734,7 @@ void SymbolPainter::drawAirportMsa(QPainter *painter, const map::MapAirportMsa& 
     }
 
     // Draw bearing lines and bearing degree labels ======================================
-    float magvar = airportMsa.trueBearing ? 0.f : airportMsa.magvar;
+    float magvar = airportMsa.trueBearing ? 0.f : airportMsa.nav.magvar;
     if(airportMsa.altitudes.size() > 1)
     {
       for(int i = 0; i < airportMsa.bearings.size(); i++)
@@ -1407,6 +1407,7 @@ void SymbolPainter::textBoxF(QPainter *painter, QStringList texts, QPen textPen,
     textPen.setColor(Qt::red);
     transparency = 255;
   }
+
   if(atts.testFlag(textatt::ERROR_COLOR))
   {
     backColor = Qt::red;

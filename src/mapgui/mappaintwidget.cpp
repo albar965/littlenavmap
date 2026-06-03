@@ -447,13 +447,18 @@ bool MapPaintWidget::isDistanceCutOff() const
     return distance() > DISTANCE_CUT_OFF_LIMIT_MERCATOR_KM;
 }
 
-Pos MapPaintWidget::getGeoPos(const QPoint& screenPoint) const
+Pos MapPaintWidget::getGeoPos(const QPointF& screenPoint) const
 {
   qreal lon, lat;
   if(geoCoordinates(screenPoint.x(), screenPoint.y(), lon, lat))
     return Pos(lon, lat);
   else
     return atools::geo::EMPTY_POS;
+}
+
+Pos MapPaintWidget::getGeoPos(const QPoint& screenPoint) const
+{
+  return getGeoPos(QPointF(screenPoint));
 }
 
 QPoint MapPaintWidget::getScreenPoint(const atools::geo::Pos& pos)
@@ -1074,6 +1079,11 @@ bool MapPaintWidget::hasHighlights() const
 {
   return !screenIndex->getSearchHighlights().isEmpty() || !screenIndex->getAirspaceHighlights().isEmpty() ||
          !screenIndex->getAirwayHighlights().isEmpty();
+}
+
+bool MapPaintWidget::hasAnyMapMarkers() const
+{
+  return screenIndex->hasAnyMapMarkers();
 }
 
 int MapPaintWidget::getAircraftTrailSize() const

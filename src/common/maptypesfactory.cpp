@@ -672,26 +672,26 @@ void MapTypesFactory::fillHolding(const atools::sql::SqlRecord& record, map::Map
   holding.id = record.valueInt(QStringLiteral("holding_id"));
   holding.airportIdent = record.valueStr(QStringLiteral("airport_ident"));
   // airport_ident varchar(5),           -- ICAO ident
-  holding.navIdent = record.valueStr(QStringLiteral("nav_ident"));
+  holding.nav.ident = record.valueStr(QStringLiteral("nav_ident"));
   // region varchar(2),                  -- ICAO two letter region identifier
   holding.position = Pos(record.valueFloat(QStringLiteral("lonx")), record.valueFloat(QStringLiteral("laty")));
 
-  holding.navType = strToType(record.valueStr(QStringLiteral("nav_type")));
+  holding.nav.type = strToType(record.valueStr(QStringLiteral("nav_type")));
   holding.name = record.valueStr(QStringLiteral("name"));
 
   holding.vorType = record.valueStr(QStringLiteral("vor_type"));
-  holding.vorTacan = holding.vorType == QStringLiteral("TC");
-  holding.vorVortac = holding.vorType.startsWith(QStringLiteral("VT"));
-  holding.vorDmeOnly = record.valueInt(QStringLiteral("vor_dme_only"));
-  holding.vorHasDme = record.valueInt(QStringLiteral("vor_has_dme"));
+  holding.nav.vorTacan = holding.vorType == QStringLiteral("TC");
+  holding.nav.vorVortac = holding.vorType.startsWith(QStringLiteral("VT"));
+  holding.nav.vorDmeOnly = record.valueInt(QStringLiteral("vor_dme_only"));
+  holding.nav.vorDme = record.valueInt(QStringLiteral("vor_has_dme"));
 
   // if(atools::almostEqual(record.valueFloat("mag_var"), 0.f) && (holding.vorType.isEmpty() || holding.vorDmeOnly))
   //// Calculate variance if not given except for VOR, VORTAC, VORDME and TACAN
   // holding.magvar = NavApp::getMagVar(holding.position);
   // else
-  holding.magvar = record.valueFloat(QStringLiteral("mag_var")); // Magnetic variance in degree < 0 for West and > 0 for East
+  holding.nav.magvar = record.valueFloat(QStringLiteral("mag_var")); // Magnetic variance in degree < 0 for West and > 0 for East
 
-  holding.courseTrue = atools::geo::normalizeCourse(record.valueFloat(QStringLiteral("course")) + holding.magvar);
+  holding.courseTrue = atools::geo::normalizeCourse(record.valueFloat(QStringLiteral("course")) + holding.nav.magvar);
 
   holding.turnLeft = record.valueStr(QStringLiteral("turn_direction")) == QStringLiteral("L");
   holding.length = record.valueFloat(QStringLiteral("leg_length"));
@@ -706,10 +706,10 @@ void MapTypesFactory::fillHolding(const atools::sql::SqlRecord& record, map::Map
 void MapTypesFactory::correctAirportMsa(const map::MapVor& vor, map::MapAirportMsa& airportMsa)
 {
   airportMsa.vorType = vor.type;
-  airportMsa.vorTacan = airportMsa.vorType == QStringLiteral("TC");
-  airportMsa.vorVortac = airportMsa.vorType.startsWith(QStringLiteral("VT"));
-  airportMsa.vorDmeOnly = vor.dmeOnly;
-  airportMsa.vorHasDme = vor.hasDme;
+  airportMsa.nav.vorTacan = airportMsa.vorType == QStringLiteral("TC");
+  airportMsa.nav.vorVortac = airportMsa.vorType.startsWith(QStringLiteral("VT"));
+  airportMsa.nav.vorDmeOnly = vor.dmeOnly;
+  airportMsa.nav.vorDme = vor.hasDme;
 }
 
 void MapTypesFactory::fillAirportMsa(const atools::sql::SqlRecord& record, map::MapAirportMsa& airportMsa)
@@ -717,22 +717,22 @@ void MapTypesFactory::fillAirportMsa(const atools::sql::SqlRecord& record, map::
   // left_lonx, top_laty, right_lonx, bottom_laty, radius, lonx, laty, geometry
   airportMsa.id = record.valueInt(QStringLiteral("airport_msa_id"));
   airportMsa.airportIdent = record.valueStr(QStringLiteral("airport_ident"));
-  airportMsa.navIdent = record.valueStr(QStringLiteral("nav_ident"));
+  airportMsa.nav.ident = record.valueStr(QStringLiteral("nav_ident"));
   airportMsa.navId = record.valueInt(QStringLiteral("nav_id"));
   airportMsa.region = record.valueStr(QStringLiteral("region"));
   airportMsa.multipleCode = record.valueStr(QStringLiteral("multiple_code"));
 
   airportMsa.vorType = record.valueStr(QStringLiteral("vor_type")); // Broken in Navigraph
 
-  airportMsa.vorTacan = airportMsa.vorType == QStringLiteral("TC");
-  airportMsa.vorVortac = airportMsa.vorType.startsWith(QStringLiteral("VT"));
-  airportMsa.vorDmeOnly = record.valueInt(QStringLiteral("vor_dme_only")) > 0;
-  airportMsa.vorHasDme = record.valueInt(QStringLiteral("vor_has_dme")) > 0;
+  airportMsa.nav.vorTacan = airportMsa.vorType == QStringLiteral("TC");
+  airportMsa.nav.vorVortac = airportMsa.vorType.startsWith(QStringLiteral("VT"));
+  airportMsa.nav.vorDmeOnly = record.valueInt(QStringLiteral("vor_dme_only")) > 0;
+  airportMsa.nav.vorDme = record.valueInt(QStringLiteral("vor_has_dme")) > 0;
 
   airportMsa.radius = record.valueFloat(QStringLiteral("radius"));
   airportMsa.trueBearing = record.valueInt(QStringLiteral("true_bearing")) > 0;
-  airportMsa.magvar = record.valueFloat(QStringLiteral("mag_var"));
-  airportMsa.navType = strToType(record.valueStr(QStringLiteral("nav_type")));
+  airportMsa.nav.magvar = record.valueFloat(QStringLiteral("mag_var"));
+  airportMsa.nav.type = strToType(record.valueStr(QStringLiteral("nav_type")));
   airportMsa.position = Pos(record.valueFloat(QStringLiteral("lonx")), record.valueFloat(QStringLiteral("laty")));
 
   atools::fs::common::BinaryMsaGeometry geo(record.valueBytes(QStringLiteral("geometry")));

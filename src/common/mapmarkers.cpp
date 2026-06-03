@@ -30,7 +30,7 @@
 #include <QFile>
 
 template<typename TYPE>
-void assignIdAndInsert(MapMarkers *markers, const QString& settingsName, QHash<int, TYPE>& hash)
+void assignIdAndInsert(MapMarkers *markers, const QString& settingsName, QMap<int, TYPE>& hash)
 {
   atools::settings::Settings& settings = atools::settings::Settings::instance();
 
@@ -42,7 +42,7 @@ void assignIdAndInsert(MapMarkers *markers, const QString& settingsName, QHash<i
 }
 
 template<typename TYPE>
-void assignIdAndCopy(MapMarkers *markers, const QHash<int, TYPE>& markersFrom, QHash<int, TYPE>& markersTo)
+void assignIdAndCopy(MapMarkers *markers, const QMap<int, TYPE>& markersFrom, QMap<int, TYPE>& markersTo)
 {
   markersTo.clear();
   for(auto obj : markersFrom)
@@ -53,7 +53,7 @@ void assignIdAndCopy(MapMarkers *markers, const QHash<int, TYPE>& markersFrom, Q
 }
 
 template<typename TYPE>
-void assignIdAndAppend(MapMarkers *markers, const QHash<int, TYPE>& markersFrom, QHash<int, TYPE>& markersTo)
+void assignIdAndAppend(MapMarkers *markers, const QMap<int, TYPE>& markersFrom, QMap<int, TYPE>& markersTo)
 {
   for(auto obj : markersFrom)
   {
@@ -64,7 +64,7 @@ void assignIdAndAppend(MapMarkers *markers, const QHash<int, TYPE>& markersFrom,
 
 /* Write list element and all items from the list as child elements */
 template<typename TYPE>
-void writeMarkerList(atools::util::XmlStreamWriter& writer, const QHash<int, TYPE>& markers, const QString& listElementName,
+void writeMarkerList(atools::util::XmlStreamWriter& writer, const QMap<int, TYPE>& markers, const QString& listElementName,
                      const QString& elementName)
 {
   writer.writeStartElement(listElementName);
@@ -79,7 +79,7 @@ void writeMarkerList(atools::util::XmlStreamWriter& writer, const QHash<int, TYP
 
 /* Read all child elements from current, assign id and add to the list */
 template<typename TYPE>
-void readMarkerList(MapMarkers *markers, atools::util::XmlStreamReader& reader, QHash<int, TYPE>& markerHash, const QString& elementName)
+void readMarkerList(MapMarkers *markers, atools::util::XmlStreamReader& reader, QMap<int, TYPE>& markerHash, const QString& elementName)
 {
   while(reader.readNextStartElement())
   {
@@ -316,23 +316,64 @@ void MapMarkers::append(const MapMarkers& other, map::MapTypes types)
 
 void MapMarkers::updateDistanceMarkerFromPos(int id, const atools::geo::Pos& pos)
 {
-  distanceMarkers[id].from = pos;
+  if(distanceMarkers.contains(id))
+    distanceMarkers[id].from = pos;
 }
 
 void MapMarkers::updateDistanceMarkerToPos(int id, const atools::geo::Pos& pos)
 {
-  distanceMarkers[id].to = distanceMarkers[id].position = pos;
+  if(distanceMarkers.contains(id))
+    distanceMarkers[id].to = distanceMarkers[id].position = pos;
 }
 
-void MapMarkers::updateDistanceMarker(int id, const map::DistanceMarker& marker)
+void MapMarkers::updateHoldingMarkerPosAndAlt(int id, const atools::geo::Pos& pos)
 {
-  distanceMarkers[id] = marker;
-  distanceMarkers[id].id = id;
+  if(holdingMarkers.contains(id))
+    holdingMarkers[id].position = holdingMarkers[id].holding.position = pos;
 }
 
-map::DistanceMarker& MapMarkers::getDistanceMarker(int id)
+void MapMarkers::updateRangeMarkerPos(int id, const atools::geo::Pos& pos)
+{
+  if(rangeMarkers.contains(id))
+    rangeMarkers[id].position = pos;
+}
+
+void MapMarkers::updateDistanceMarker(const map::DistanceMarker& marker)
+{
+  if(distanceMarkers.contains(marker.id))
+    distanceMarkers[marker.id] = marker;
+}
+
+void MapMarkers::updateHoldingMarker(const map::HoldingMarker& marker)
+{
+  if(holdingMarkers.contains(marker.id))
+    holdingMarkers[marker.id] = marker;
+}
+
+void MapMarkers::updateRangeMarker(const map::RangeMarker& marker)
+{
+  if(rangeMarkers.contains(marker.id))
+    rangeMarkers[marker.id] = marker;
+}
+
+map::DistanceMarker& MapMarkers::getDistanceMarkerRef(int id)
 {
   return distanceMarkers[id];
+}
+
+map::HoldingMarker& MapMarkers::getHoldingMarkerRef(int id)
+{
+  return holdingMarkers[id];
+}
+
+map::RangeMarker& MapMarkers::getRangeMarkerRef(int id)
+{
+  return rangeMarkers[id];
+}
+
+map::PatternMarker& MapMarkers::getPatternMarkerRef(int id)
+{
+  return patternMarkers[id];
 }
 
 bool MapMarkers::hasRangeMarkers() const
@@ -379,20 +420,54 @@ bool MapMarkers::isMarkersFile(const QString& filename)
          probe.at(2).startsWith(QStringLiteral("<userfeatures>"));
 }
 
-const QList<map::MapAirportMsa> MapMarkers::getMsaMarksFiltered() const
+const QList<const map::MapAirportMsa *> MapMarkers::getMsaMarksFiltered(int currentId) const
 {
-  QList<map::MapAirportMsa> retval;
+  // Sort markers into a list where the last one is the one currently edited and drawn on top
+  QList<const map::MapAirportMsa *> markers;
+  const map::MapAirportMsa *current = nullptr;
+
   for(const map::MsaMarker& marker : msaMarkers)
-    retval.append(marker.msa);
-  return retval;
+  {
+    if(marker.id == currentId)
+      current = &marker.msa;
+    else
+      markers.append(&marker.msa);
+  }
+
+  if(current != nullptr)
+    markers.append(current);
+
+  return markers;
 }
 
-const QList<map::MapHolding> MapMarkers::getHoldingMarksFiltered() const
+const QList<const map::MapHolding *> MapMarkers::getHoldingMarksFiltered(int currentId, QStringList& texts) const
 {
-  QList<map::MapHolding> retval;
+  // Sort markers into a list where the last one is the one currently edited and drawn on top
+  QList<const map::MapHolding *> markers;
+  const map::MapHolding *current = nullptr;
+  QString currentText;
+
   for(const map::HoldingMarker& marker : holdingMarkers)
-    retval.append(marker.holding);
-  return retval;
+  {
+    if(marker.id == currentId)
+    {
+      current = &marker.holding;
+      currentText = marker.text;
+    }
+    else
+    {
+      markers.append(&marker.holding);
+      texts.append(marker.text);
+    }
+  }
+
+  if(current != nullptr)
+  {
+    markers.append(current);
+    texts.append(currentText);
+  }
+
+  return markers;
 }
 
 void MapMarkers::addRangeMark(const map::RangeMarker& obj)

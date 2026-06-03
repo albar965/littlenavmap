@@ -104,7 +104,7 @@ struct PaintContext
   bool visibleWidget;
   bool paintCopyright = true, paintWindHeader = true, webMap = false;
   int mimimumRunwayLengthFt = -1; /* Value from toolbar */
-  int currentDistanceMarkerId = -1;
+  int currentDistanceMarkerId = -1, currentHoldingMarkerId = -1, currentRangeMarkerId = -1;
 
   /* ===============================================================================
    * Ids which are filled during painting and are passes between painters */

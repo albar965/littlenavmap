@@ -233,7 +233,8 @@ enum MapObjectQueryType : quint32
   QUERY_MARK_PATTERNS = 1 << 3, /* Traffic patterns */
   QUERY_PROCEDURES = 1 << 4, /* Procedure navaids when querying route */
   QUERY_PROCEDURES_MISSED = 1 << 5, /* Missed procedure navaids when querying route */
-  QUERY_MARK_RANGE = 1 << 6, /* Range rings */
+  QUERY_MARK_RANGE = 1 << 6, /* Range rings - moveable */
+  QUERY_MARK_NAVRANGE = 1 << 14, /* Range ring attached to navaid - not moveable */
   QUERY_MARK_MSA = 1 << 7, /* MSA sectors */
   QUERY_MARK_DISTANCE = 1 << 8, /* Measurement lines */
   QUERY_PREVIEW_PROC_POINTS = 1 << 9, /* Points from procedure preview */
@@ -243,23 +244,14 @@ enum MapObjectQueryType : quint32
   QUERY_AIRCRAFT_TRAIL_LOG = 1 << 13, /* Aircraft trail */
 
   /* All user creatable/placeable features */
-  QUERY_MARK = QUERY_MARK_DISTANCE | QUERY_MARK_HOLDINGS | QUERY_MARK_PATTERNS | QUERY_MARK_RANGE | QUERY_MARK_MSA,
+  QUERY_MARK = QUERY_MARK_DISTANCE | QUERY_MARK_HOLDINGS | QUERY_MARK_PATTERNS | QUERY_MARK_RANGE | QUERY_MARK_MSA | QUERY_MARK_NAVRANGE,
+
+  /* All user creatable/placeable features that can be moved using drag and drop */
+  QUERY_MOVEABLE_MARK = QUERY_MARK_DISTANCE | QUERY_MARK_HOLDINGS | QUERY_MARK_RANGE,
 };
 
 ATOOLS_DECLARE_FLAGS_32(MapObjectQueryTypes, map::MapObjectQueryType)
 ATOOLS_DECLARE_OPERATORS_FOR_FLAGS(map::MapObjectQueryTypes)
-
-/* ================================================================================== */
-/* Ident queries for airport defines which ident columns should be used in the lookup */
-enum DistanceMarkerFlag : quint32
-{
-  DIST_MARK_NONE = 0,
-  DIST_MARK_RADIAL = 1 << 0, /* Draw radial */
-  DIST_MARK_MAGVAR = 1 << 1 /* Has calibrated declination */
-};
-
-ATOOLS_DECLARE_FLAGS_32(DistanceMarkerFlags, map::DistanceMarkerFlag)
-ATOOLS_DECLARE_OPERATORS_FOR_FLAGS(map::DistanceMarkerFlags)
 
 /* ================================================================================== */
 /* Ident queries for airport defines which ident columns should be used in the lookup */
@@ -624,7 +616,6 @@ Q_DECLARE_METATYPE(map::MapTypes)
 
 Q_DECLARE_TYPEINFO(map::MapDisplayTypes, Q_PRIMITIVE_TYPE);
 Q_DECLARE_TYPEINFO(map::MapObjectQueryTypes, Q_PRIMITIVE_TYPE);
-Q_DECLARE_TYPEINFO(map::DistanceMarkerFlags, Q_PRIMITIVE_TYPE);
 Q_DECLARE_TYPEINFO(map::AirportQueryFlags, Q_PRIMITIVE_TYPE);
 Q_DECLARE_TYPEINFO(map::MapAirspaceTypes, Q_PRIMITIVE_TYPE);
 Q_DECLARE_TYPEINFO(map::MapAirspaceSources, Q_PRIMITIVE_TYPE);

@@ -795,14 +795,14 @@ void MapPainter::paintAircraftTrail(const QList<LineString>& lineStrings, float 
   }
 }
 
-QPolygonF MapPainter::buildArrow(float size, bool downwards) const
+QPolygonF MapPainter::buildArrow(float size, bool downwards, const QPointF& offset) const
 {
   if(downwards)
     // Pointing downwards
-    return QPolygonF({QPointF(0., size), QPointF(size, -size), QPointF(0., -size / 2.), QPointF(-size, -size)});
+    return QPolygonF({QPointF(0., size), QPointF(size, -size), QPointF(0., -size / 2.), QPointF(-size, -size)}).translated(offset);
   else
     // Point up
-    return QPolygonF({QPointF(0., -size), QPointF(size, size), QPointF(0., size / 2.), QPointF(-size, size)});
+    return QPolygonF({QPointF(0., -size), QPointF(size, size), QPointF(0., size / 2.), QPointF(-size, size)}).translated(offset);
 }
 
 void MapPainter::paintArrowAlongLine(QPainter *painter, const atools::geo::Line& line, const QPolygonF& arrow, float pos,
@@ -878,7 +878,7 @@ void MapPainter::getPixmap(QPixmap& pixmap, const QString& resource, int size) c
   }
 }
 
-void MapPainter::paintMsaMarks(const QList<map::MapAirportMsa>& airportMsa, bool user, bool drawFast) const
+void MapPainter::paintMsaMarkers(const QList<const map::MapAirportMsa *>& airportMsa, bool user, bool drawFast) const
 {
   Q_UNUSED(user)
 
@@ -888,14 +888,14 @@ void MapPainter::paintMsaMarks(const QList<map::MapAirportMsa>& airportMsa, bool
   atools::util::PainterContextSaver saver(context->painter);
   GeoPainter *painter = context->painter;
 
-  for(const map::MapAirportMsa& msa : airportMsa)
+  for(const map::MapAirportMsa *msa : airportMsa)
   {
     float x, y;
-    bool msaVisible = wToS(msa.position, x, y, scale->getScreeenSizeForRect(msa.bounding));
+    bool msaVisible = wToS(msa->position, x, y, scale->getScreeenSizeForRect(msa->bounding));
 
     if(!msaVisible)
       // Check bounding rect for visibility
-      msaVisible = context->visible(msa.bounding);
+      msaVisible = context->visible(msa->bounding);
 
     if(msaVisible)
     {
@@ -911,7 +911,7 @@ void MapPainter::paintMsaMarks(const QList<map::MapAirportMsa>& airportMsa, bool
 
       // Fill color for circle
       painter->setBrush(context->darkMap ? mapcolors::msaDiagramFillColorDark : mapcolors::msaDiagramFillColor);
-      drawPolygon(painter, msa.geometry);
+      drawPolygon(painter, msa->geometry);
 
       TextPlacement textPlacement(painter, this, context->screenRect);
       QList<atools::geo::Line> lines;
@@ -920,23 +920,23 @@ void MapPainter::paintMsaMarks(const QList<map::MapAirportMsa>& airportMsa, bool
       if(!drawFast)
       {
         // Skip lines if restriction is full circle
-        if(msa.altitudes.size() > 1)
+        if(msa->altitudes.size() > 1)
         {
           // Draw sector bearing lines and collect geometry and texts for placement =========================
-          for(int i = 0; i < msa.bearingEndPos.size(); i++)
+          for(int i = 0; i < msa->bearingEndPos.size(); i++)
           {
-            texts.append(tr("%1%2").arg(atools::geo::normalizeCourse(msa.bearings.value(i))).arg(msa.trueBearing ? tr("°T") : tr("°M")));
+            texts.append(tr("%1%2").arg(atools::geo::normalizeCourse(msa->bearings.value(i))).arg(msa->trueBearing ? tr("°T") : tr("°M")));
 
-            atools::geo::Line line(msa.bearingEndPos.value(i), msa.position);
+            atools::geo::Line line(msa->bearingEndPos.value(i), msa->position);
             lines.append(line);
             drawLine(painter, line);
           }
         }
 
         // Calculate font size from radius
-        float fontSize = scale->getPixelForNm(msa.radius) / 8.f * context->textSizeAirportMsa * context->sizeAll;
+        float fontSize = scale->getPixelForNm(msa->radius) / 8.f * context->textSizeAirportMsa * context->sizeAll;
 
-        if(msa.altitudes.size() == 1)
+        if(msa->altitudes.size() == 1)
           // Larger font for full circle restriction
           fontSize *= 2.f;
 
@@ -952,16 +952,16 @@ void MapPainter::paintMsaMarks(const QList<map::MapAirportMsa>& airportMsa, bool
           context->painter->setFont(font);
 
           // Draw altitude labels ===================================================================
-          for(int i = 0; i < msa.altitudes.size(); i++)
+          for(int i = 0; i < msa->altitudes.size(); i++)
           {
-            const atools::geo::Pos labelPos = msa.labelPositions.value(i);
+            const atools::geo::Pos labelPos = msa->labelPositions.value(i);
 
             float xp, yp;
-            bool visible = wToS(labelPos, xp, yp, scale->getScreeenSizeForRect(msa.bounding));
+            bool visible = wToS(labelPos, xp, yp, scale->getScreeenSizeForRect(msa->bounding));
 
             if(visible)
             {
-              QString text = Unit::altFeet(msa.altitudes.at(i), true /* addUnit */, true /* narrow */);
+              QString text = Unit::altFeet(msa->altitudes.at(i), true /* addUnit */, true /* narrow */);
               QSizeF txtsize = painter->fontMetrics().boundingRect(text).size();
               painter->drawText(QPointF(xp - txtsize.width() / 2., yp + txtsize.height() / 2.), text);
             }
@@ -976,8 +976,8 @@ void MapPainter::paintMsaMarks(const QList<map::MapAirportMsa>& airportMsa, bool
         context->szFont(context->textSizeAirportMsa);
 
         painter->setPen(context->darkMap ? mapcolors::msaDiagramLinePenDark : mapcolors::msaDiagramLinePen);
-        painter->setBrush(Qt::white);
-        painter->setBackground(Qt::white);
+        painter->setBrush(mapcolors::markerTextBackgroundColor);
+        painter->setBackground(mapcolors::markerTextBackgroundColor);
         painter->setBackgroundMode(Qt::OpaqueMode);
 
         // Draw bearing labels ==========================================================================
@@ -985,14 +985,14 @@ void MapPainter::paintMsaMarks(const QList<map::MapAirportMsa>& airportMsa, bool
         textPlacement.drawTextAlongLines();
 
         // Draw small center circle ===================================================================
-        drawCircle(painter, msa.position, 4);
+        drawCircle(painter, msa->position, 4);
       }
     }
   }
 }
 
-void MapPainter::paintHoldingMarks(const QList<map::MapHolding>& holdings, const MapLayer *layer, const MapLayer *layerText, bool user,
-                                   bool drawFast, bool darkMap) const
+void MapPainter::paintHoldings(const QList<const map::MapHolding *>& holdings, const QStringList& texts, const MapLayer *layer,
+                               const MapLayer *layerText, bool user, bool drawFast, bool darkMap) const
 {
   if(holdings.isEmpty())
     return;
@@ -1012,23 +1012,25 @@ void MapPainter::paintHoldingMarks(const QList<map::MapHolding>& holdings, const
 
   QColor holdingColor = mapcolors::holdingColor.lighter(darkMap ? 250 : 100);
 
-  for(const map::MapHolding& holding : holdings)
+  for(int i = 0; i < holdings.size(); i++)
   {
+    const map::MapHolding *holding = holdings.at(i);
+    const QString& text = texts.isEmpty() ? QStringLiteral() : texts.at(i);
     bool visible, hidden;
-    QPointF pt = wToS(holding.getPosition(), DEFAULT_WTOS_SIZE, &visible, &hidden);
+    QPointF pt = wToS(holding->getPosition(), DEFAULT_WTOS_SIZE, &visible, &hidden);
     if(hidden)
       continue;
 
-    QColor color = user ? holding.color : holdingColor;
+    QColor color = user ? holding->color : holdingColor;
 
-    float dist = holding.distance();
+    float dist = holding->distance();
     float distPixel = scale->getPixelForNm(dist);
-    float lineWidth = user ? context->szF(context->thicknessUserFeature, 3) : (detail2 ? 2.5f : 1.5f);
+    float lineWidth = user ? context->szF(context->thicknessUserFeature, (detail ? 2.5f : 1.5f)) : (detail2 ? 2.5f : 1.5f);
 
     if(layer->isApproach() && distPixel > 10.f)
     {
       // Calculcate approximate rectangle
-      Rect rect(holding.position, atools::geo::nmToMeter(dist) * 2.f, true /* fast */);
+      Rect rect(holding->position, atools::geo::nmToMeter(dist) * 2.f, true /* fast */);
 
       if(context->visible(rect))
       {
@@ -1040,49 +1042,54 @@ void MapPainter::paintHoldingMarks(const QList<map::MapHolding>& holdings, const
           if(detail2)
           {
             // Text for inbound leg =======================================
-            inboundText.append(formatter::courseTextFromTrue(holding.courseTrue, holding.magvar, false /* magBold */, false /* magBig */,
+            inboundText.append(formatter::courseTextFromTrue(holding->courseTrue, holding->nav.magvar, false /* magBold */,
+                                                             false /* magBig */,
                                                              false /* trueSmall */, true /* narrow */));
 
-            if(holding.time > 0.f)
-              inboundText.append(tr("%1min").arg(QString::number(holding.time, 'g', 2)));
-            if(holding.length > 0.f)
-              inboundText.append(Unit::distNm(holding.length, true /* addUnit */, 1, true /* narrow */));
+            if(holding->time > 0.f)
+              inboundText.append(tr("%1min").arg(QString::number(holding->time, 'g', 2)));
+            if(holding->length > 0.f)
+              inboundText.append(Unit::distNm(holding->length, true /* addUnit */, 1, true /* narrow */));
           }
 
-          if(!holding.navIdent.isEmpty())
-            inboundText.append(holding.navIdent);
+          if(!text.isEmpty())
+            inboundText.append(text);
+          else if(!holding->nav.ident.isEmpty())
+            inboundText.append(holding->nav.ident);
 
           if(detail2)
           {
             // Text for outbound leg =======================================
-            outboundText.append(formatter::courseTextFromTrue(opposedCourseDeg(holding.courseTrue), holding.magvar,
+            outboundText.append(formatter::courseTextFromTrue(opposedCourseDeg(holding->courseTrue), holding->nav.magvar,
                                                               false /* magBold */, false /* magBig */, false /* trueSmall */,
                                                               true /* narrow */));
 
             if(user)
             {
-              if(holding.speedKts > 0.f)
-                outboundText.append(Unit::speedKts(holding.speedKts, true /* addUnit */, true /* narrow */));
-              outboundText.append(Unit::altFeet(holding.position.getAltitude(), true /* addUnit */, true /* narrow */));
+              if(holding->speedKts > 0.f)
+                outboundText.append(Unit::speedKts(holding->speedKts, true /* addUnit */, true /* narrow */));
+              outboundText.append(Unit::altFeet(holding->position.getAltitude(), true /* addUnit */, true /* narrow */));
             }
             else
             {
-              if(holding.speedLimit > 0.f)
-                outboundText.append(Unit::speedKts(holding.speedLimit, true /* addUnit */, true /* narrow */));
+              if(holding->speedLimit > 0.f)
+                outboundText.append(Unit::speedKts(holding->speedLimit, true /* addUnit */, true /* narrow */));
 
-              if(holding.minAltititude > 0.f)
-                outboundText.append(tr("A%1").arg(Unit::altFeet(holding.minAltititude, true /* addUnit */,
+              if(holding->minAltititude > 0.f)
+                outboundText.append(tr("A%1").arg(Unit::altFeet(holding->minAltititude, true /* addUnit */,
                                                                 true /* narrow */)));
-              if(holding.maxAltititude > 0.f)
-                outboundText.append(tr("B%2").arg(Unit::altFeet(holding.maxAltititude, true /* addUnit */,
+              if(holding->maxAltititude > 0.f)
+                outboundText.append(tr("B%2").arg(Unit::altFeet(holding->maxAltititude, true /* addUnit */,
                                                                 true /* narrow */)));
             }
           }
         }
 
+        QColor textColor = user ? mapcolors::markerTextColor : color;
+        QColor textColorBackground = user ? mapcolors::markerTextBackgroundColor : backColor;
         paintHoldWithText(context->painter, static_cast<float>(pt.x()), static_cast<float>(pt.y()),
-                          holding.courseTrue, dist, 0.f, holding.turnLeft,
-                          inboundText.join(tr("/")), outboundText.join(tr("/")), color, backColor,
+                          holding->courseTrue, dist, 0.f, holding->turnLeft,
+                          inboundText.join(tr("/")), outboundText.join(tr("/")), textColor, textColorBackground,
                           detail && !drawFast ? QList<float>({0.80f}) : QList<float>() /* inbound arrows */,
                           detail && !drawFast ? QList<float>({0.80f}) : QList<float>() /* outbound arrows */);
       } // if(context->viewportRect.overlaps(rect))

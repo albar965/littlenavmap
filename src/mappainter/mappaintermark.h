@@ -50,7 +50,7 @@ public:
 
 private:
   /* Draw black yellow cross for search distance marker */
-  void paintMark();
+  void paintSearchCenterMarker();
 
   /* Paint the center of the home position */
   void paintHome();
@@ -59,16 +59,18 @@ private:
   void paintHighlights();
 
   /* Draw all rang rings. This includes the red rings and the radio navaid ranges. */
-  void paintRangeMarks();
+  void paintRangeMarkers();
 
   /* Draw great circle line distance measurement lines */
-  void paintDistanceMarks();
+  void paintDistanceMarkers();
 
   /* Traffic patterns */
-  void paintPatternMarks();
+  void paintPatternMarkers();
 
   /* Draw a compass rose for the user aircraft with tick marks. */
   void paintCompassRose();
+
+  /* MSA and holdings drawn in other painters */
 
   /* Draw a dotted line around aircraft to indicate endurance */
   void paintEndurance();

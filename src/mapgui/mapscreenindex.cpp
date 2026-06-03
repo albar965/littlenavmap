@@ -487,6 +487,11 @@ void MapScreenIndex::restoreState()
     markers->restoreFromSettings();
 }
 
+bool MapScreenIndex::hasAnyMapMarkers() const
+{
+  return markers->hasAnyMarkers();
+}
+
 void MapScreenIndex::setSearchHighlights(const map::MapResult& newHighlights)
 {
   *searchHighlights = newHighlights;
@@ -835,7 +840,7 @@ void MapScreenIndex::getAllNearest(const QPoint& point, int maxDistance, map::Ma
 
   // Get copies from highlightMapObjects and marks (user features). These are never artificial.
   // Highlighted waypoints are removed above by resolveWaypointNavaids() and have to be added here
-  getNearestHighlights(xs, ys, maxDistance, result, types);
+  getNearestHighlightsAndMarkers(xs, ys, maxDistance, result, types);
 
   // Update all incomplete objects, especially from search preview
   for(map::MapAirport& airport : result.airports)
@@ -893,12 +898,14 @@ void MapScreenIndex::getAllNearest(const QPoint& point, int maxDistance, map::Ma
   }
 }
 
-void MapScreenIndex::getNearestHighlights(int xs, int ys, int maxDistance, map::MapResult& result, map::MapObjectQueryTypes types) const
+void MapScreenIndex::getNearestHighlightsAndMarkers(int xs, int ys, int maxDistance, map::MapResult& result,
+                                                    map::MapObjectQueryTypes types) const
 {
   using maptools::insertSorted;
   using maptools::insertSortedFromTo;
   CoordinateConverter conv(mapWidget->viewport());
 
+  // Highlights ===========================================
   insertSorted(conv, xs, ys, searchHighlights->airports, result.airports, &result.airportIds, maxDistance);
   insertSorted(conv, xs, ys, searchHighlights->vors, result.vors, &result.vorIds, maxDistance);
   insertSorted(conv, xs, ys, searchHighlights->ndbs, result.ndbs, &result.ndbIds, maxDistance);
@@ -912,33 +919,45 @@ void MapScreenIndex::getNearestHighlights(int xs, int ys, int maxDistance, map::
   insertSorted(conv, xs, ys, searchHighlights->onlineAircraft, result.onlineAircraft, &result.onlineAircraftIds, maxDistance);
   insertSorted(conv, xs, ys, searchHighlights->runwayEnds, result.runwayEnds, nullptr, maxDistance);
 
-  // Add only if requested and visible on map
-  QSet<int> userFeatureIds;
-  if(types & map::QUERY_MARK_HOLDINGS && NavApp::getMapMarkHandler()->getMarkTypes().testFlag(map::MARK_HOLDING))
-    insertSorted(conv, xs, ys, markers->getHoldingMarkers().values(), result.holdingMarks, &userFeatureIds, maxDistance);
+  // Add markers only if requested and visible on map =============================
+  QSet<int> markerIds;
+  const MapMarkHandler *markHandler = NavApp::getMapMarkHandler();
+  if(types.testFlag(map::QUERY_MARK_HOLDINGS) && markHandler->getMarkTypes().testFlag(map::MARK_HOLDING))
+    insertSorted(conv, xs, ys, markers->getHoldingMarkers().values(), result.holdingMarks, &markerIds, maxDistance);
 
-  if(types & map::QUERY_MARK_MSA && NavApp::getMapMarkHandler()->getMarkTypes().testFlag(map::MARK_MSA))
+  if(types.testFlag(map::QUERY_MARK_MSA) && markHandler->getMarkTypes().testFlag(map::MARK_MSA))
   {
-    userFeatureIds.clear();
+    markerIds.clear();
     insertSorted(conv, xs, ys, markers->getMsaMarkers().values(), result.msaMarks, &result.airportMsaIds, maxDistance);
   }
 
-  if(types & map::QUERY_MARK_PATTERNS && NavApp::getMapMarkHandler()->getMarkTypes().testFlag(map::MARK_PATTERNS))
+  if(types.testFlag(map::QUERY_MARK_PATTERNS) && markHandler->getMarkTypes().testFlag(map::MARK_PATTERNS))
   {
-    userFeatureIds.clear();
-    insertSorted(conv, xs, ys, markers->getPatternMarkers().values(), result.patternMarks, &userFeatureIds, maxDistance);
+    markerIds.clear();
+    insertSorted(conv, xs, ys, markers->getPatternMarkers().values(), result.patternMarks, &markerIds, maxDistance);
   }
 
-  if(types & map::QUERY_MARK_RANGE && NavApp::getMapMarkHandler()->getMarkTypes().testFlag(map::MARK_RANGE))
+  if(types.testAnyFlag(map::QUERY_MARK_RANGE | map::QUERY_MARK_NAVRANGE) &&
+     markHandler->getMarkTypes().testFlag(map::MARK_RANGE))
   {
-    userFeatureIds.clear();
-    insertSorted(conv, xs, ys, markers->getRangeMarkers().values(), result.rangeMarks, &userFeatureIds, maxDistance);
+    // Get all range markers first
+    markerIds.clear();
+    insertSorted(conv, xs, ys, markers->getRangeMarkers().values(), result.rangeMarks, &markerIds, maxDistance);
+
+    // Remove all attached navigation aid range rings if not requested
+    if(!types.testFlag(map::QUERY_MARK_NAVRANGE))
+    {
+      result.rangeMarks.erase(std::remove_if(result.rangeMarks.begin(), result.rangeMarks.end(),
+                                             [](const map::RangeMarker& marker) -> bool {
+        return marker.attachedToNavaid;
+      }), result.rangeMarks.end());
+    }
   }
 
-  if(types & map::QUERY_MARK_DISTANCE && NavApp::getMapMarkHandler()->getMarkTypes().testFlag(map::MARK_DISTANCE))
+  if(types.testFlag(map::QUERY_MARK_DISTANCE) && markHandler->getMarkTypes().testFlag(map::MARK_DISTANCE))
   {
-    userFeatureIds.clear();
-    insertSortedFromTo(conv, xs, ys, markers->getDistanceMarkers().values(), result.distanceMarks, &userFeatureIds, maxDistance);
+    markerIds.clear();
+    insertSortedFromTo(conv, xs, ys, markers->getDistanceMarkers().values(), result.distanceMarks, &markerIds, maxDistance);
   }
 }
 
@@ -1073,6 +1092,19 @@ int MapScreenIndex::getNearestDistanceMarkId(int xs, int ys, int maxDistance, bo
 
 template<typename TYPE>
 int MapScreenIndex::getNearestId(int xs, int ys, int maxDistance, const QHash<int, TYPE>& typeList) const
+{
+  CoordinateConverter conv(mapWidget->viewport());
+  int x, y;
+  for(const TYPE& type : typeList)
+  {
+    if(conv.wToS(type.getPosition(), x, y) && atools::geo::manhattanDistance(x, y, xs, ys) < maxDistance)
+      return type.id;
+  }
+  return -1;
+}
+
+template<typename TYPE>
+int MapScreenIndex::getNearestId(int xs, int ys, int maxDistance, const QMap<int, TYPE>& typeList) const
 {
   CoordinateConverter conv(mapWidget->viewport());
   int x, y;

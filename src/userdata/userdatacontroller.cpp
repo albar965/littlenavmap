@@ -230,7 +230,7 @@ void UserdataController::addToolbarButton()
     // Create an overflow menu item for the button if the menu exceeds the screen height
     if(buttonMenu->sizeHint().height() > screenHeight * 8 / 10)
     {
-      buttonMenu = buttonMenu->addMenu(tr("More ..."));
+      buttonMenu = buttonMenu->addMenu(tr("&More ..."));
       buttonMenu->setToolTipsVisible(userdataToolButton->menu()->toolTipsVisible());
       buttonMenu->setTearOffEnabled(userdataToolButton->menu()->isTearOffEnabled());
     }
@@ -238,7 +238,7 @@ void UserdataController::addToolbarButton()
     // Create an overflow menu item for the main menu if the menu exceeds the screen height
     if(mainMenu->sizeHint().height() > screenHeight * 8 / 10)
     {
-      mainMenu = mainMenu->addMenu(tr("More ..."));
+      mainMenu = mainMenu->addMenu(tr("&More ..."));
       mainMenu->setToolTipsVisible(ui->menuViewUserpoints->toolTipsVisible());
       mainMenu->setTearOffEnabled(ui->menuViewUserpoints->isTearOffEnabled());
     }
@@ -511,10 +511,10 @@ void UserdataController::setMagDecReader(atools::fs::common::MagDecReader *magDe
   manager->setMagDecReader(magDecReader);
 }
 
-void UserdataController::editUserpointFromMap(const map::MapResult& result)
+void UserdataController::editUserpointFromMap(int id)
 {
   qDebug() << Q_FUNC_INFO;
-  editUserpoints({result.userpoints.constFirst().id});
+  editUserpoints({id});
 }
 
 void UserdataController::addUserpoint(int id, const atools::geo::Pos& pos)

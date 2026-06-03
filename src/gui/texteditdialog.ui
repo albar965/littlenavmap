@@ -28,7 +28,11 @@
     </widget>
    </item>
    <item>
-    <widget class="QLineEdit" name="lineEdit"/>
+    <widget class="QLineEdit" name="lineEdit">
+     <property name="clearButtonEnabled">
+      <bool>true</bool>
+     </property>
+    </widget>
    </item>
    <item>
     <widget class="QLabel" name="label2">
@@ -44,7 +48,11 @@
     </widget>
    </item>
    <item>
-    <widget class="QLineEdit" name="lineEdit2"/>
+    <widget class="QLineEdit" name="lineEdit2">
+     <property name="clearButtonEnabled">
+      <bool>true</bool>
+     </property>
+    </widget>
    </item>
    <item>
     <widget class="QLabel" name="label3">

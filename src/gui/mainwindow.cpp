@@ -1083,6 +1083,7 @@ void MainWindow::connectAllSlots()
   connect(ui->actionRouteFetchFromSimBrief, &QAction::triggered, simbriefHandler, &SimBriefHandler::fetchRouteFromSimBrief);
 
   // Route controller signals =======================================================
+  UserdataController *userdataController = NavApp::getUserdataController();
   connect(routeController, &RouteController::showRect, mapWidget, &MapPaintWidget::showRect);
   connect(routeController, &RouteController::showPos, mapWidget, &MapPaintWidget::showPos);
   connect(routeController, &RouteController::changeMark, mapWidget, &MapWidget::changeSearchMark);
@@ -1090,9 +1091,13 @@ void MainWindow::connectAllSlots()
   connect(routeController, &RouteController::routeAltitudeChanged, mapWidget, &MapPaintWidget::routeAltitudeChanged);
   connect(routeController, &RouteController::preRouteCalc, profileWidget, &ProfileWidget::preRouteCalc);
   connect(routeController, &RouteController::showInformation, infoController, &InfoController::showInformation);
-  connect(routeController, &RouteController::addUserpointFromMap,
-          NavApp::getUserdataController(), &UserdataController::addUserpointFromMap);
+  connect(routeController, &RouteController::addUserpointFromMap, userdataController, &UserdataController::addUserpointFromMap);
   connect(routeController, &RouteController::showProcedures, searchController->getProcedureSearch(), &ProcedureSearch::showProcedures);
+
+  connect(routeController, &RouteController::addRangeMark, mapWidget, &MapWidget::addRangeMark);
+  connect(routeController, &RouteController::addPatternMarker, mapWidget, &MapWidget::addPatternMarker);
+  connect(routeController, &RouteController::addHoldingMarker, mapWidget, &MapWidget::addHoldingMarker);
+  connect(routeController, &RouteController::addNavRangeMark, mapWidget, &MapWidget::addNavRangeMark);
 
   // Update rubber band in map window if user hovers over profile
   connect(profileWidget, &ProfileWidget::highlightProfilePoint, mapWidget, &MapPaintWidget::changeProfileHighlight);
@@ -1103,7 +1108,7 @@ void MainWindow::connectAllSlots()
   connect(routeController, &RouteController::routeAltitudeChanged, profileWidget, &ProfileWidget::routeAltitudeChanged);
   connect(routeController, &RouteController::routeChanged, this, &MainWindow::updateActionStates);
   connect(routeController, &RouteController::routeInsert, this, &MainWindow::routeInsert);
-  connect(routeController, &RouteController::addAirportMsa, mapWidget, &MapWidget::addMsaMark);
+  connect(routeController, &RouteController::addAirportMsa, mapWidget, &MapWidget::addMsaMarker);
 
   connect(routeController, &RouteController::routeChanged, NavApp::updateWindowTitle);
   connect(routeController, &RouteController::routeChanged, infoController, &InfoController::routeChanged);
@@ -1134,8 +1139,12 @@ void MainWindow::connectAllSlots()
   connect(airportSearch, &SearchBaseTable::routeAdd, routeController, &RouteController::routeAdd);
   connect(airportSearch, &SearchBaseTable::routeDirectTo, routeController, &RouteController::routeDirectTo);
   connect(airportSearch, &SearchBaseTable::selectionChanged, searchController, &SearchController::searchSelectionChanged);
-  connect(airportSearch, &SearchBaseTable::addAirportMsa, mapWidget, &MapWidget::addMsaMark);
-  connect(airportSearch, &SearchBaseTable::addUserpointFromMap, NavApp::getUserdataController(), &UserdataController::addUserpointFromMap);
+  connect(airportSearch, &SearchBaseTable::addAirportMsa, mapWidget, &MapWidget::addMsaMarker);
+  connect(airportSearch, &SearchBaseTable::addUserpointFromMap, userdataController, &UserdataController::addUserpointFromMap);
+  connect(airportSearch, &SearchBaseTable::addRangeMark, mapWidget, &MapWidget::addRangeMark);
+  connect(airportSearch, &SearchBaseTable::addPatternMark, mapWidget, &MapWidget::addPatternMarker);
+  connect(airportSearch, &SearchBaseTable::addHold, mapWidget, &MapWidget::addHoldingMarker);
+  connect(airportSearch, &SearchBaseTable::addNavRangeMark, mapWidget, &MapWidget::addNavRangeMark);
 
   // Nav search ===================================================================================
   NavSearch *navSearch = searchController->getNavSearch();
@@ -1144,7 +1153,11 @@ void MainWindow::connectAllSlots()
   connect(navSearch, &SearchBaseTable::showInformation, infoController, &InfoController::showInformation);
   connect(navSearch, &SearchBaseTable::selectionChanged, searchController, &SearchController::searchSelectionChanged);
   connect(navSearch, &SearchBaseTable::routeAdd, routeController, &RouteController::routeAdd);
-  connect(navSearch, &SearchBaseTable::addAirportMsa, mapWidget, &MapWidget::addMsaMark);
+  connect(navSearch, &SearchBaseTable::addAirportMsa, mapWidget, &MapWidget::addMsaMarker);
+  connect(navSearch, &SearchBaseTable::addRangeMark, mapWidget, &MapWidget::addRangeMark);
+  connect(navSearch, &SearchBaseTable::addPatternMark, mapWidget, &MapWidget::addPatternMarker);
+  connect(navSearch, &SearchBaseTable::addHold, mapWidget, &MapWidget::addHoldingMarker);
+  connect(navSearch, &SearchBaseTable::addNavRangeMark, mapWidget, &MapWidget::addNavRangeMark);
 
   // Userdata search ===================================================================================
   UserdataSearch *userSearch = searchController->getUserdataSearch();
@@ -1153,6 +1166,10 @@ void MainWindow::connectAllSlots()
   connect(userSearch, &SearchBaseTable::showInformation, infoController, &InfoController::showInformation);
   connect(userSearch, &SearchBaseTable::selectionChanged, searchController, &SearchController::searchSelectionChanged);
   connect(userSearch, &SearchBaseTable::routeAdd, routeController, &RouteController::routeAdd);
+  connect(userSearch, &SearchBaseTable::addRangeMark, mapWidget, &MapWidget::addRangeMark);
+  connect(userSearch, &SearchBaseTable::addPatternMark, mapWidget, &MapWidget::addPatternMarker);
+  connect(userSearch, &SearchBaseTable::addHold, mapWidget, &MapWidget::addHoldingMarker);
+  connect(userSearch, &SearchBaseTable::addNavRangeMark, mapWidget, &MapWidget::addNavRangeMark);
 
   // Logbook search ===================================================================================
   LogdataSearch *logSearch = searchController->getLogdataSearch();
@@ -1163,9 +1180,12 @@ void MainWindow::connectAllSlots()
   connect(logSearch, &SearchBaseTable::routeSetDeparture, routeController, &RouteController::routeSetDeparture);
   connect(logSearch, &SearchBaseTable::routeSetDestination, routeController, &RouteController::routeSetDestination);
   connect(logSearch, &SearchBaseTable::routeAddAlternate, routeController, &RouteController::routeAddAlternate);
+  connect(logSearch, &SearchBaseTable::addRangeMark, mapWidget, &MapWidget::addRangeMark);
+  connect(logSearch, &SearchBaseTable::addPatternMark, mapWidget, &MapWidget::addPatternMarker);
+  connect(logSearch, &SearchBaseTable::addHold, mapWidget, &MapWidget::addHoldingMarker);
+  connect(logSearch, &SearchBaseTable::addNavRangeMark, mapWidget, &MapWidget::addNavRangeMark);
 
   // User data ===================================================================================
-  UserdataController *userdataController = NavApp::getUserdataController();
   // Import ================
   connect(ui->actionUserdataImportCsv, &QAction::triggered, userdataController, &UserdataController::importCsv);
   connect(ui->actionUserdataImportGarminGTN, &QAction::triggered, userdataController, &UserdataController::importGarmin);
@@ -1444,18 +1464,21 @@ void MainWindow::connectAllSlots()
   connect(mapWidget, &MapWidget::showProcedures, searchController->getProcedureSearch(), &ProcedureSearch::showProcedures);
   connect(mapWidget, &MapWidget::showCustomApproach, routeController, &RouteController::showCustomApproach);
   connect(mapWidget, &MapWidget::showCustomDeparture, routeController, &RouteController::showCustomDeparture);
+  connect(mapWidget, &MapWidget::routeDelete, routeController, &RouteController::routeDelete);
   connect(mapWidget, &MapPaintWidget::shownMapFeaturesChanged, routeController, &RouteController::shownMapFeaturesChanged);
   connect(mapWidget, &MapWidget::showInRoute, this, &MainWindow::actionShortcutFlightplanTriggered);
   connect(mapWidget, &MapWidget::showInRoute, routeController, &RouteController::showInRoute);
-  connect(mapWidget, &MapWidget::addUserpointFromMap, NavApp::getUserdataController(), &UserdataController::addUserpointFromMap);
-  connect(mapWidget, &MapWidget::editUserpointFromMap, NavApp::getUserdataController(), &UserdataController::editUserpointFromMap);
-  connect(mapWidget, &MapWidget::deleteUserpointFromMap, NavApp::getUserdataController(), &UserdataController::deleteUserpointFromMap);
-  connect(mapWidget, &MapWidget::moveUserpointFromMap, NavApp::getUserdataController(), &UserdataController::moveUserpointFromMap);
+  connect(mapWidget, &MapWidget::addUserpointFromMap, userdataController, &UserdataController::addUserpointFromMap);
+  connect(mapWidget, &MapWidget::editUserpointFromMap, userdataController, &UserdataController::editUserpointFromMap);
+  connect(mapWidget, &MapWidget::deleteUserpointFromMap, userdataController, &UserdataController::deleteUserpointFromMap);
+  connect(mapWidget, &MapWidget::moveUserpointFromMap, userdataController, &UserdataController::moveUserpointFromMap);
 
-  connect(mapWidget, &MapWidget::editLogEntryFromMap, NavApp::getLogdataController(), &LogdataController::editLogEntryFromMap);
+  connect(mapWidget, &MapWidget::editLogEntryFromMap, logdataController, &LogdataController::editLogEntryFromMap);
+  connect(mapWidget, &MapWidget::deleteLogbookEntryFromMap, logdataController, &LogdataController::deleteLogEntryFromMap);
+
   connect(mapWidget, &MapWidget::exitFullScreenPressed, this, &MainWindow::exitFullScreenPressed);
-
   connect(mapWidget, &MapWidget::routeInsertProcedure, routeController, &RouteController::routeAddProcedure);
+  connect(mapWidget, &MapWidget::editUserWaypointName, routeController, &RouteController::editUserWaypointName);
 
   // Map needs to restore title bar state when floating
   connect(ui->dockWidgetMap, &QDockWidget::topLevelChanged, this, &MainWindow::mapDockTopLevelChanged);
@@ -1633,6 +1656,7 @@ void MainWindow::connectAllSlots()
   connect(mapWidget, &MapWidget::routeSetDeparture, routeController, &RouteController::routeSetDeparture);
   connect(mapWidget, &MapWidget::routeSetDestination, routeController, &RouteController::routeSetDestination);
   connect(mapWidget, &MapWidget::routeAddAlternate, routeController, &RouteController::routeAddAlternate);
+  connect(mapWidget, &MapWidget::convertProcedure, routeController, &RouteController::convertProcedure);
   connect(mapWidget, &MapWidget::routeAdd, routeController, &RouteController::routeAdd);
   connect(mapWidget, &MapWidget::directTo, routeController, &RouteController::routeDirectTo);
   connect(mapWidget, &MapWidget::routeReplace, routeController, &RouteController::routeReplace);
@@ -3862,7 +3886,9 @@ void MainWindow::updateActionStates()
   if(Application::isShuttingDown())
     return;
 
+  bool hasAnyMapMarkers = mapWidget->hasAnyMapMarkers();
   bool hasUserdata = NavApp::getUserdataController()->hasUserdata();
+
   ui->actionUserdataCleanup->setEnabled(hasUserdata);
   ui->actionUserdataExportCsv->setEnabled(hasUserdata);
   ui->actionUserdataExportUserfixDat->setEnabled(hasUserdata);
@@ -3911,7 +3937,7 @@ void MainWindow::updateActionStates()
   ui->actionMapShowTocTod->setEnabled(true);
   ui->actionMapShowAlternate->setEnabled(true);
   ui->actionInfoApproachShowMissedAppr->setEnabled(true);
-  ui->actionRouteEditMode->setEnabled(hasFlightplan);
+  ui->actionMapDragAndDropEditMode->setEnabled(hasFlightplan || hasUserdata || hasAnyMapMarkers);
   ui->actionPrintFlightplan->setEnabled(hasFlightplan);
   ui->actionRouteCopyString->setEnabled(hasFlightplan);
   ui->actionRouteAdjustAltitude->setEnabled(hasFlightplan);
@@ -4292,12 +4318,12 @@ void MainWindow::restoreStateMain()
     mapWidget->resetSettingActionsToDefault();
 
   // Map settings that are always loaded
-  widgetState.restore({ui->actionMapShowGrid, ui->actionMapShowCities, ui->actionRouteEditMode, ui->actionRouteSaveSidStarWaypointsOpt,
-                       ui->actionRouteSaveApprWaypointsOpt, ui->actionRouteSaveAirwayWaypointsOpt, ui->actionLogdataCreateLogbook,
-                       ui->actionAircraftPerformanceWarnMismatch, ui->actionMapShowSunShading, ui->actionMapShowAirportWeather,
-                       ui->actionMapShowMinimumAltitude, ui->actionRunWebserver, ui->actionShowAllowDocking,
-                       /*ui->actionDockWindowsNormalFrame, */ ui->actionShowAllowMoving, ui->actionShowWindowTitleBar,
-                       ui->actionWindowStayOnTop, ui->actionMapAircraftCenter});
+  widgetState.restore({ui->actionMapShowGrid, ui->actionMapShowCities, ui->actionRouteSaveSidStarWaypointsOpt,
+                       ui->actionMapDragAndDropEditMode, ui->actionRouteSaveApprWaypointsOpt, ui->actionRouteSaveAirwayWaypointsOpt,
+                       ui->actionLogdataCreateLogbook, ui->actionAircraftPerformanceWarnMismatch, ui->actionMapShowSunShading,
+                       ui->actionMapShowAirportWeather, ui->actionMapShowMinimumAltitude, ui->actionRunWebserver,
+                       ui->actionShowAllowDocking, /*ui->actionDockWindowsNormalFrame, */ ui->actionShowAllowMoving,
+                       ui->actionShowWindowTitleBar, ui->actionWindowStayOnTop, ui->actionMapAircraftCenter});
 
   widgetState.setBlockSignals(false);
 
@@ -4710,13 +4736,14 @@ void MainWindow::saveActionStates()
                                            ui->actionMapShowSelectedAltRange, ui->actionMapShowTurnPath, ui->actionMapAircraftCenter,
                                            ui->actionMapShowAircraftAi, ui->actionMapShowAircraftOnline, ui->actionMapShowAircraftAiBoat,
                                            ui->actionMapShowAircraftTrack, ui->actionInfoApproachShowMissedAppr, ui->actionMapShowGrid,
-                                           ui->actionMapShowCities, ui->actionMapShowSunShading, ui->actionMapShowAirportWeather,
-                                           ui->actionMapShowMinimumAltitude, ui->actionRouteEditMode,
-                                           ui->actionRouteSaveSidStarWaypointsOpt, ui->actionAircraftPerformanceWarnMismatch,
-                                           ui->actionRouteSaveApprWaypointsOpt, ui->actionRouteSaveAirwayWaypointsOpt,
-                                           ui->actionLogdataCreateLogbook, ui->actionRunWebserver, ui->actionSearchLogdataShowDirect,
-                                           ui->actionSearchLogdataShowRoute, ui->actionSearchLogdataShowTrack, ui->actionShowAllowDocking,
-                                           ui->actionShowAllowMoving, ui->actionShowWindowTitleBar, ui->actionWindowStayOnTop}));
+                                           ui->actionMapShowCities, ui->actionMapDragAndDropEditMode, ui->actionMapShowSunShading,
+                                           ui->actionMapShowAirportWeather, ui->actionMapShowMinimumAltitude,
+                                           ui->actionMapDragAndDropEditMode, ui->actionRouteSaveSidStarWaypointsOpt,
+                                           ui->actionAircraftPerformanceWarnMismatch, ui->actionRouteSaveApprWaypointsOpt,
+                                           ui->actionRouteSaveAirwayWaypointsOpt, ui->actionLogdataCreateLogbook, ui->actionRunWebserver,
+                                           ui->actionSearchLogdataShowDirect, ui->actionSearchLogdataShowRoute,
+                                           ui->actionSearchLogdataShowTrack, ui->actionShowAllowDocking, ui->actionShowAllowMoving,
+                                           ui->actionShowWindowTitleBar, ui->actionWindowStayOnTop}));
 
   Settings::syncSettings();
 }

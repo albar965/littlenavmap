@@ -175,8 +175,16 @@ void MapPainterNav::render()
     const QList<MapHolding> *holds = mapQuery->getHoldings(context->viewportBox, context->mapLayer, context->lazyUpdate, overflow);
     context->setQueryOverflow(overflow);
 
-    if(holds != nullptr)
-      paintHoldingMarks(*holds, context->mapLayer, context->mapLayerText, false /* user */, context->drawFast, context->darkMap);
+    if(holds != nullptr && !holds->isEmpty())
+    {
+      // Have to create a pointer array for method
+      QList<const map::MapHolding *> holdings;
+      for(const map::MapHolding& hold : *holds)
+        holdings.append(&hold);
+
+      paintHoldings(holdings, QStringList(), context->mapLayer, context->mapLayerText, false /* user */, context->drawFast,
+                    context->darkMap);
+    }
   }
   context->endTimer("Hold");
 }

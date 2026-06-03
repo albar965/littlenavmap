@@ -137,7 +137,7 @@ public:
 
   /* Add userpoint from map and prefill with result data */
   void addUserpointFromMap(const map::MapResult& result, atools::geo::Pos pos, bool airportAddon);
-  void editUserpointFromMap(const map::MapResult& result);
+  void editUserpointFromMap(int id);
   void deleteUserpointFromMap(int id);
   void moveUserpointFromMap(const map::MapUserpoint& userpoint);
 

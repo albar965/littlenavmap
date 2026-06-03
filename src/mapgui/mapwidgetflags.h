@@ -20,35 +20,47 @@
 
 #include "util/flags.h"
 
-namespace mapwin {
+namespace ms {
+
 /* State of click, drag and drop actions on the map */
 enum MouseState : quint32
 {
-  NONE = 0, /* Nothing */
+  // Also change in mapMouseStateToString()
 
-  DRAG_DIST_NEW_END = 1 << 0, /* A new distance measurement line is dragged moving the endpoint */
-  DRAG_DIST_CHANGE_START = 1 << 1, /* A present distance measurement line is changed dragging the origin */
-  DRAG_DIST_CHANGE_END = 1 << 2, /* A present distance measurement line is changed dragging the endpoint */
+  DRAG_NONE = 0, /* Nothing */
 
-  DRAG_ROUTE_LEG = 1 << 3, /* Changing a flight plan leg by adding a new point */
-  DRAG_ROUTE_POINT = 1 << 4, /* Changing the flight plan by replacing a present waypoint */
+  DRAG_DIST_PRE = 1 << 0, /* Show cross cursor and wait for click and hold */
+  DRAG_DIST_NEW_TO = 1 << 1, /* A new distance measurement line is dragged moving the endpoint */
+  DRAG_DIST_CHANGE_FROM = 1 << 2, /* A present distance measurement line is changed dragging the origin */
+  DRAG_DIST_CHANGE_TO = 1 << 3, /* A present distance measurement line is changed dragging the endpoint */
 
-  DRAG_USER_POINT = 1 << 5, /* Moving a userpoint around */
+  DRAG_ROUTE_LEG = 1 << 4, /* Changing a flight plan leg by adding a new point */
+  DRAG_ROUTE_POINT = 1 << 5, /* Changing the flight plan by replacing a present waypoint */
 
-  DRAG_POST = 1 << 6, /* Mouse released - all done */
-  DRAG_POST_MENU = 1 << 7, /* A menu is opened after selecting multiple objects.
-                            * Avoid cancelling all drag when loosing focus */
-  DRAG_POST_CANCEL = 1 << 8, /* Right mousebutton clicked - cancel all actions */
+  DRAG_USER_POINT = 1 << 6, /* Moving a userpoint around */
+
+  DRAG_HOLDING = 1 << 7, /* Moving a userpoint around */
+  DRAG_RANGE = 1 << 8, /* Moving a userpoint around */
+
+  DRAG_CANCEL = 1 << 9, /* Right mousebutton clicked or Esc clicked - cancel all actions.
+                         * Delays action to avoid recognizing stray mouse clicks. */
+
+  /* Any dragging of distance measurment lines */
+  DRAG_DIST_ANY = DRAG_DIST_NEW_TO | DRAG_DIST_CHANGE_FROM | DRAG_DIST_CHANGE_TO,
 
   /* Used to check if any interaction is going on */
-  DRAG_ALL = mapwin::DRAG_DIST_NEW_END | mapwin::DRAG_DIST_CHANGE_START | mapwin::DRAG_DIST_CHANGE_END | mapwin::DRAG_ROUTE_LEG |
-             mapwin::DRAG_ROUTE_POINT | mapwin::DRAG_USER_POINT
+  DRAG_ANY = ms::DRAG_DIST_ANY |
+             ms::DRAG_HOLDING | ms::DRAG_RANGE | ms::DRAG_USER_POINT |
+             ms::DRAG_ROUTE_LEG | ms::DRAG_ROUTE_POINT,
+
 };
 
-ATOOLS_DECLARE_FLAGS_32(MouseStates, mapwin::MouseState)
-ATOOLS_DECLARE_OPERATORS_FOR_FLAGS(mapwin::MouseStates)
-}
+ATOOLS_DECLARE_FLAGS_32(MouseStates, ms::MouseState)
+ATOOLS_DECLARE_OPERATORS_FOR_FLAGS(ms::MouseStates)
+ATOOLS_DECLARE_DEBUG_OPERATORS_FOR_FLAGS(MouseStates, ms::MouseState)
 
-Q_DECLARE_TYPEINFO(mapwin::MouseStates, Q_PRIMITIVE_TYPE);
+} // namespace ms
+
+Q_DECLARE_TYPEINFO(ms::MouseStates, Q_PRIMITIVE_TYPE);
 
 #endif // LNM_MAPWIDGETFLAGS_H

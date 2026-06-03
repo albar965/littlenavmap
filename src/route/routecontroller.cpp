@@ -2960,7 +2960,8 @@ void RouteController::tableContextMenu(const QPoint& pos)
       procName1 = route.getProcedureLegText(baseType, false /* includeRunway */,
                                             true /* missedAsApproach */, true /* transitionAsProcedure */);
 
-      ActionTool::setText(ui->actionRouteConvertProcedure, true, atools::strJoin({procName1, procName2}, tr(", "), tr(" and ")));
+      ActionTool::setText(ui->actionRouteConvertProcedure, true /* enabled */,
+                          atools::strJoin({procName1, procName2}, tr(", "), tr(" and ")));
     }
     else
     {
@@ -2989,7 +2990,7 @@ void RouteController::tableContextMenu(const QPoint& pos)
     if(routeLeg->isValidWaypoint() && routeLeg->getMapType() == map::AIRPORT)
     {
       ui->actionRouteMarkAddon->setEnabled(true);
-      ActionTool::setText(ui->actionRouteMarkAddon, true, objectText);
+      ActionTool::setText(ui->actionRouteMarkAddon, true /* enabled */, objectText);
 
       ContextMenuTool menuTool;
       menuTool.setActions(ui->actionRouteShowDepartureCustom, ui->actionRouteShowApproachCustom, ui->actionRouteShowApproaches);
@@ -3052,11 +3053,9 @@ void RouteController::tableContextMenu(const QPoint& pos)
   for(int idx : std::as_const(selectedRows))
   {
     const RouteLeg& leg = route.value(idx);
+    navaidText = leg.getDisplayText();
     if((leg.getVor().isValid() && leg.getVor().range > 0) || (leg.getNdb().isValid() && leg.getNdb().range > 0))
-    {
-      navaidText = leg.getDisplayText();
       numRadioNavaids++;
-    }
   }
 
   // Direct ==============================================================================
@@ -3073,7 +3072,9 @@ void RouteController::tableContextMenu(const QPoint& pos)
   // Add marks ==============================================================================
   ActionTool::setText(ui->actionMapRangeRings, routeLeg != nullptr, objectText);
 
-  if(numRadioNavaids == 0)
+  if(selectedRows.size() == 1)
+    ActionTool::setText(ui->actionMapNavaidRange, routeLeg != nullptr && routeLeg->getRange() > 1, navaidText, tr(" (no range)"));
+  else if(numRadioNavaids == 0)
     ui->actionMapNavaidRange->setEnabled(false);
   else if(numRadioNavaids == 1)
     ActionTool::setText(ui->actionMapNavaidRange, routeLeg != nullptr, navaidText);
@@ -3088,7 +3089,7 @@ void RouteController::tableContextMenu(const QPoint& pos)
   if(routeLeg != nullptr && routeLeg->isAirport())
     ActionTool::setText(ui->actionMapTrafficPattern, !routeLeg->getAirport().noRunways(), objectText, tr(" (no runway)"));
   else
-    ActionTool::setText(ui->actionMapTrafficPattern, false);
+    ActionTool::setText(ui->actionMapTrafficPattern, false /* enabled */, QStringLiteral(), tr(" (not an airport)"));
 
   // build menu ====================================================================
 
@@ -3196,12 +3197,12 @@ void RouteController::tableContextMenu(const QPoint& pos)
       emit changeMark(routeLeg->getPosition());
     else if(action == ui->actionMapRangeRings && routeLeg != nullptr)
     {
-      NavApp::getMapWidgetGui()->addRangeMark(routeLeg->getPosition(), buildMenuResult(index), true /* showDialog */);
+      emit addRangeMark(routeLeg->getPosition(), buildMenuResult(index), true /* showDialog */);
     }
     else if(action == ui->actionMapTrafficPattern && routeLeg != nullptr)
-      NavApp::getMapWidgetGui()->addPatternMark(routeLeg->getAirport());
+      emit addPatternMarker(routeLeg->getAirport());
     else if(action == ui->actionMapHold && routeLeg != nullptr)
-      NavApp::getMapWidgetGui()->addHold(buildMenuResult(index), routeLeg->getPosition());
+      emit addHoldingMarker(buildMenuResult(index), routeLeg->getPosition());
     else if(action == ui->actionMapNavaidRange)
     {
       // Show range rings for all radio navaids
@@ -3209,24 +3210,13 @@ void RouteController::tableContextMenu(const QPoint& pos)
       {
         const RouteLeg& routeLegSel = route.value(idx);
         if(routeLegSel.getNdb().isValid() || routeLegSel.getVor().isValid())
-        {
-          map::MapTypes type = routeLegSel.getMapType();
-          if(routeLegSel.isAnyProcedure())
-          {
-            if(routeLegSel.getNdb().isValid())
-              type = map::NDB;
-            if(routeLegSel.getVor().isValid())
-              type = map::VOR;
-          }
-
           if(routeLegSel.getRange() > 0)
-            NavApp::getMapWidgetGui()->addNavRangeMark(routeLegSel.getPosition(), type, routeLegSel.getDisplayIdent(),
-                                                       routeLegSel.getFrequencyOrChannel(), routeLegSel.getRange());
-        }
+            emit addNavRangeMark(map::MapResult::createFromMapBase({&routeLegSel.getVor(), &routeLegSel.getNdb()}),
+                                 routeLegSel.getPosition());
       }
     }
     else if(action == ui->actionRouteConvertProcedure)
-      convertProcedure(baseType);
+      convertProcedureInternal(baseType);
     else if(action == ui->actionRouteMarkAddon)
     {
       QModelIndex curIndex = tableViewRoute->currentIndex();
@@ -3277,7 +3267,7 @@ map::MapResult RouteController::buildMenuResult(const QModelIndex& index)
       }
       else
       {
-        map::MapTypes type;
+        map::MapType type;
         int id;
         if(routeLeg->isAnyProcedure())
           // Get type and id from procedure fix
@@ -3933,10 +3923,10 @@ void RouteController::setCurrentRow(int row, bool select)
 
 void RouteController::convertProcedure(int routeIndex)
 {
-  convertProcedure(proc::MapProcedureLegs::getProcedureTypeBase(route.value(routeIndex).getProcedureType()));
+  convertProcedureInternal(proc::MapProcedureLegs::getProcedureTypeBase(route.value(routeIndex).getProcedureType()));
 }
 
-void RouteController::convertProcedure(proc::MapProcedureTypes types)
+void RouteController::convertProcedureInternal(proc::MapProcedureTypes types)
 {
   qDebug() << Q_FUNC_INFO << types;
 

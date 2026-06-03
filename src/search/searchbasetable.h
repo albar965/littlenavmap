@@ -194,6 +194,18 @@ signals:
 
   void addUserpointFromMap(const map::MapResult& result, const atools::geo::Pos& pos, bool airportAddon);
 
+  /* Add general range ring or navaid ranges. From context menu or addNavRangeMark() */
+  void addRangeMark(const atools::geo::Pos& pos, const map::MapResult& result, bool showDialog);
+
+  /* Opens a dialog for configuration of a traffic pattern display object */
+  void addPatternMark(const map::MapAirport& airport);
+
+  /* Opens a dialog for configuration and adds a hold */
+  void addHold(const map::MapResult& result, const atools::geo::Pos& position);
+
+  /* Add radio navaid range ring. Falls back to normal range rings if range is 0. */
+  void addNavRangeMark(const map::MapResult& result, const atools::geo::Pos& position);
+
 protected:
   /* Update the hamburger menu button. Add * for change and check/uncheck actions */
   virtual void updateButtonMenu() = 0;

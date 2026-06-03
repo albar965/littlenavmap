@@ -48,7 +48,7 @@ void ContextMenuTool::initAirportActions(const map::MapAirport& airport, const R
         if(hasDeparture)
         {
           actionShowProcedures->setText(tr("Show Departure &Procedures for %1"));
-          ActionTool::setText(actionShowProcedures, true, objectText);
+          ActionTool::setText(actionShowProcedures, true /* enabled */, objectText);
         }
         else
           actionShowProcedures->setText(tr("Show Procedures (no departure procedure)"));
@@ -58,7 +58,7 @@ void ContextMenuTool::initAirportActions(const map::MapAirport& airport, const R
         if(hasAnyArrival)
         {
           actionShowProcedures->setText(tr("Show Arrival and Approach &Procedures for %1"));
-          ActionTool::setText(actionShowProcedures, true, objectText);
+          ActionTool::setText(actionShowProcedures, true /* enabled */, objectText);
         }
         else
           actionShowProcedures->setText(tr("Show &Procedures (no arrival and no approch procedure)"));
@@ -66,7 +66,7 @@ void ContextMenuTool::initAirportActions(const map::MapAirport& airport, const R
       else
       {
         actionShowProcedures->setText(tr("Show &Procedures for %1"));
-        ActionTool::setText(actionShowProcedures, true, objectText);
+        ActionTool::setText(actionShowProcedures, true /* enabled */, objectText);
       }
     }
     else

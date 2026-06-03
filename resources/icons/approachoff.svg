@@ -7,7 +7,7 @@
    height="300"
    id="svg2"
    inkscape:version="1.2.2 (b0a8486541, 2022-12-01)"
-   sodipodi:docname="approach.svg"
+   sodipodi:docname="approachoff.svg"
    xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
    xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
    xmlns="http://www.w3.org/2000/svg"
@@ -23,7 +23,6 @@
         <dc:format>image/svg+xml</dc:format>
         <dc:type
            rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
-        <dc:title />
       </cc:Work>
     </rdf:RDF>
   </metadata>
@@ -215,21 +214,21 @@
      transform="translate(1.303346,15.110008)">
     <g
        id="g4246"
-       transform="translate(381.99153,-18.432203)">
+       transform="translate(383.26272,-18.432203)">
       <path
          sodipodi:nodetypes="ccccc"
          inkscape:connector-curvature="0"
          id="path4199-5-3"
          d="m -187.38098,236.88712 -140.59759,57.25622 70.29879,-137.4149 15.04275,59.00299 z"
-         style="fill:#919191;fill-opacity:1;fill-rule:evenodd;stroke:#919191;stroke-width:1.15831px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1" />
+         style="fill:#919191;fill-opacity:1;fill-rule:evenodd;stroke:#919191;stroke-width:1.15830946px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1" />
       <path
          sodipodi:nodetypes="ccccc"
          inkscape:connector-curvature="0"
          id="path4199-56"
          d="M -310.85992,77.162611 -170.26233,19.906401 -240.56112,157.3213 -255.60387,98.318298 Z"
-         style="fill:#919191;fill-opacity:1;fill-rule:evenodd;stroke:#919191;stroke-width:1.15831px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1" />
+         style="fill:#919191;fill-opacity:1;fill-rule:evenodd;stroke:#919191;stroke-width:1.15830946px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1" />
       <rect
-         transform="rotate(-42.695582)"
+         transform="matrix(0.73496689,-0.678103,0.678103,0.73496689,0,0)"
          ry="50"
          rx="50.000008"
          y="-100.06019"
@@ -289,5 +288,10 @@
        rx="50.000008"
        ry="50"
        transform="matrix(0.73496689,-0.678103,0.678103,0.73496689,0,0)" />
+    <path
+       style="fill:none;fill-rule:evenodd;stroke:#ff0000;stroke-width:32.9297;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+       d="M 266.55466,267.85491 29.145792,8.2810121"
+       id="path8078"
+       inkscape:connector-curvature="0" />
   </g>
 </svg>

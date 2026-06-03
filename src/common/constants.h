@@ -199,12 +199,12 @@ const QLatin1String MAP_MAX_NEAREST_AI_LABELS("Map/MaxNearestAiLabels");
 const QLatin1String MAP_MAX_NEAREST_AI_LABELS_DIST_NM("Map/MaxNearestAiLabelsDistNm");
 const QLatin1String MAP_MAX_NEAREST_AI_LABELS_VERT_DIST_FT("Map/MaxNearestAiLabelsVertDistFt");
 
-/* User defined features */
-const QLatin1String MAP_DISTANCEMARKERS("Map/DistanceMarkers1");
-const QLatin1String MAP_RANGEMARKERS("Map/RangeMarkers1");
-const QLatin1String MAP_TRAFFICPATTERNS("Map/TrafficPatterns2");
-const QLatin1String MAP_HOLDINGS("Map/Holdings1");
-const QLatin1String MAP_AIRPORT_MSA("Map/AirportMsa1");
+/* User defined features =========================================== */
+const QLatin1String MAP_DISTANCEMARKERS("Map/DistanceMarkers1"); // Obsolete
+const QLatin1String MAP_RANGEMARKERS("Map/RangeMarkers1"); // Obsolete
+const QLatin1String MAP_TRAFFICPATTERNS("Map/TrafficPatterns2"); // Obsolete
+const QLatin1String MAP_HOLDINGS("Map/Holdings1"); // Obsolete
+const QLatin1String MAP_AIRPORT_MSA("Map/AirportMsa1"); // Obsolete
 
 const QLatin1String MAP_MARK_DISPLAY("Map/MarkDisplay1");
 const QLatin1String MAP_AIRPORT("Map/Airports3");
@@ -214,14 +214,26 @@ const QLatin1String MAP_DETAIL_LEVEL_TEXT("Map/DetailLevelText2");
 
 const QLatin1String LAYOUT_RECENT("WindowLayout/FilenamesRecent");
 
-const QLatin1String RANGE_MARKER_DIALOG("Map/RangeMarkerDialog");
-const QLatin1String RANGE_MARKER_DIALOG_COLOR("Map/RangeMarkerDialogColor");
-const QLatin1String RANGE_MARKER_DIALOG_RADII("Map/RangeMarkerDialogRadii");
+/* Marker dialog windows =========================================== */
+const QLatin1String RANGE_MARKER_DIALOG("Marker/RangeMarkerDialog");
+const QLatin1String RANGE_MARKER_DIALOG_COLOR("Marker/RangeMarkerDialogColor");
+const QLatin1String RANGE_MARKER_DIALOG_RADII("Marker/RangeMarkerDialogRadii");
 
+const QLatin1String DISTANCE_MARKER_DIALOG("Marker/DistanceMarkerDialog");
+const QLatin1String DISTANCE_MARKER_DIALOG_COLOR("Marker/DistanceMarkerDialogColor");
+
+const QLatin1String HOLDING_MARKER_DIALOG("Marker/HoldingMarkerDialog");
+const QLatin1String HOLDING_MARKER_DIALOG_COLOR("Marker/HoldingMarkerDialogColor");
+
+const QLatin1String PATTERN_MARKER_DIALOG("Marker/TrafficPatternDialog");
+const QLatin1String PATTERN_MARKER_DIALOG_COLOR("Marker/TrafficPatternDialogColor2");
+
+/* Connections =========================================== */
 const QLatin1String NAVCONNECT_REMOTEHOSTS("NavConnect/RemoteHosts");
 const QLatin1String NAVCONNECT_REMOTE("NavConnect/Remote");
 const QLatin1String NAVCONNECT_DIALOG("NavConnect/ConnectDialog");
 
+/* Filenames =========================================== */
 const QLatin1String ROUTE_FILENAME("Route/Filename");
 const QLatin1String ROUTE_DEFAULT_FILE_LNMPLN("Route/DefaultLnmpln");
 const QLatin1String ROUTE_HEADER_FOOTER_FLAGS("Route/HeaderFooterFlags2");
@@ -237,11 +249,7 @@ const QLatin1String ROUTE_STRING_DIALOG_DESCR("Route/StringDialogDescr");
 const QLatin1String ACTIONS_SHOW_ROUTESTRING_BACKGROUND_HINT("Route/StringDialogBackgroundHint");
 
 const QLatin1String ROUTEWINDOW_WIDGET_TABS("Route/WidgetTabs");
-const QLatin1String TRAFFIC_PATTERN_DIALOG("Route/TrafficPatternDialog");
-const QLatin1String TRAFFIC_PATTERN_DIALOG_COLOR("Route/TrafficPatternDialogColor");
 const QLatin1String FETCH_SIMBRIEF_DIALOG("Route/FetchSimBrief");
-const QLatin1String HOLD_DIALOG("Route/HoldDialog");
-const QLatin1String HOLD_DIALOG_COLOR("Route/HoldDialogColor");
 const QLatin1String CUSTOM_APPROACH_DIALOG("Route/CustomApproachDialog");
 const QLatin1String CUSTOM_DEPARTURE_DIALOG("Route/CustomDepartureDialog");
 const QLatin1String RUNWAY_SELECTION_DIALOG("Route/RunwaySelectionDialog");
@@ -356,7 +364,6 @@ const QLatin1String OPTIONS_DIALOG_FLIGHTPLAN_PROCEDURE_COLOR("OptionsDialog/Fli
 const QLatin1String OPTIONS_DIALOG_FLIGHTPLAN_ACTIVE_COLOR("OptionsDialog/FlightplanActiveColor");
 const QLatin1String OPTIONS_DIALOG_FLIGHTPLAN_PASSED_COLOR("OptionsDialog/FlightplanPassedColor");
 const QLatin1String OPTIONS_DIALOG_TRAIL_COLOR("OptionsDialog/TrailColor");
-const QLatin1String OPTIONS_DIALOG_MEASUREMENT_COLOR("OptionsDialog/MeasurementColor");
 
 const QLatin1String OPTIONS_DIALOG_FLIGHTPLAN_HIGHLIGHT_COLOR("OptionsDialog/MapHighlightFlightplanColor");
 const QLatin1String OPTIONS_DIALOG_SEARCH_HIGHLIGHT_COLOR("OptionsDialog/MapHighlightSearchColor");

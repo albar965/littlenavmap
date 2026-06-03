@@ -125,6 +125,22 @@ void RunwayTable::init()
   }
 }
 
+void RunwayTable::setPreSelectedRunwayEnd(const QString& name, QString *error)
+{
+  QList<map::MapRunwayEnd> runwayEnds;
+  QueryManager::instance()->getQueriesGui()->getMapQuery()->getRunwayEndByNameFuzzy(runwayEnds, name, *airport, navdata /* navdata */);
+
+  if(runwayEnds.size() >= 1)
+  {
+    setPreSelectedRunwayEnd(runwayEnds.constFirst().id);
+
+    if(runwayEnds.size() > 1 && error != nullptr)
+      *error = tr("Found more than one runway end matching name \"%1\" for airport \"%2\"").arg(name).arg(airport->ident);
+  }
+  else if(runwayEnds.isEmpty() && error != nullptr)
+    *error = tr("Found no runway end matching name \"%1\" for airport \"%2\"").arg(name).arg(airport->ident);
+}
+
 QString RunwayTable::getCurrentSelectedName(bool *airportSelected) const
 {
   map::MapRunway runway;

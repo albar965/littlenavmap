@@ -385,6 +385,9 @@ void ProcedureSearch::showProcedures(const map::MapAirport& airport, bool depart
 
 void ProcedureSearch::showProceduresInternal(const map::MapAirport& airportSim, bool departureFilter, bool arrivalFilter, bool silent)
 {
+  if(!airportSim.isValid())
+    return;
+
   map::MapAirport navAirport = QueryManager::instance()->getQueriesGui()->getMapQuery()->getAirportNav(airportSim);
   qDebug() << Q_FUNC_INFO << "airport" << airportSim << "navAirport" << navAirport
            << "departureFilter" << departureFilter << "arrivalFilter" << arrivalFilter;

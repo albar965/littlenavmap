@@ -183,7 +183,7 @@ protected:
                           const atools::geo::Pos& aircraftPos) const;
 
   /* Arrow pointing upwards or downwards */
-  QPolygonF buildArrow(float size, bool downwards = false) const;
+  QPolygonF buildArrow(float size, bool downwards = false, const QPointF& offset = QPointF(0., 0.)) const;
 
   /* Draw arrow at line position. pos = 0 is beginning and pos = 1 is end of line */
   void paintArrowAlongLine(QPainter *painter, const QLineF& line, const QPolygonF& arrow, float pos = 0.5f) const;
@@ -193,12 +193,13 @@ protected:
   /* Interface method to QPixmapCache*/
   void getPixmap(QPixmap& pixmap, const QString& resource, int size) const;
 
-  /* Draw enroute as well as user defined holdings */
-  void paintHoldingMarks(const QList<map::MapHolding>& holdings, const MapLayer *layer, const MapLayer *layerText,
-                         bool user, bool drawFast, bool darkMap) const;
+  /* Draw enroute as well as user defined holdings. Texts are drawn for user holdings. */
+  void paintHoldings(const QList<const map::MapHolding *>& holdings, const QStringList& texts, const MapLayer *layer,
+                     const MapLayer *layerText,
+                     bool user, bool drawFast, bool darkMap) const;
 
   /* Draw large semi-transparent MSA enabled by user */
-  void paintMsaMarks(const QList<map::MapAirportMsa>& airportMsa, bool user, bool drawFast) const;
+  void paintMsaMarkers(const QList<const map::MapAirportMsa *>& airportMsa, bool user, bool drawFast) const;
 
   /* Draw small flat circle for small radii or close zoom distances */
   void paintCircleSmallInternal(Marble::GeoPainter *painter, const atools::geo::Pos& centerPos, float radiusNm, bool fast,

@@ -61,6 +61,12 @@ The range ring is static and does not change with aircraft performance and fuel 
      <property name="toolTip">
       <string>Attaches a text to the range ring distance labels.</string>
      </property>
+     <property name="maxLength">
+      <number>40</number>
+     </property>
+     <property name="clearButtonEnabled">
+      <bool>true</bool>
+     </property>
     </widget>
    </item>
    <item row="4" column="1">
@@ -103,6 +109,9 @@ Other formats:
 - NAT type 5020N
 Formats above have to be given exactly as shown in the examples.</string>
      </property>
+     <property name="clearButtonEnabled">
+      <bool>true</bool>
+     </property>
     </widget>
    </item>
    <item row="1" column="0" rowspan="2">
@@ -131,8 +140,14 @@ Falls back to default if empty or not valid.</string>
      <property name="text">
       <string notr="true">50 100 200 500</string>
      </property>
+     <property name="maxLength">
+      <number>80</number>
+     </property>
      <property name="cursorPosition">
       <number>14</number>
+     </property>
+     <property name="clearButtonEnabled">
+      <bool>true</bool>
      </property>
     </widget>
    </item>
@@ -178,7 +193,7 @@ and use range ring radii as above.</string>
       <enum>Qt::Horizontal</enum>
      </property>
      <property name="standardButtons">
-      <set>QDialogButtonBox::Close|QDialogButtonBox::Help|QDialogButtonBox::Ok|QDialogButtonBox::Reset</set>
+      <set>QDialogButtonBox::Cancel|QDialogButtonBox::Help|QDialogButtonBox::Ok|QDialogButtonBox::Reset</set>
      </property>
     </widget>
    </item>

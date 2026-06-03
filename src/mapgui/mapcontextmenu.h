@@ -83,7 +83,8 @@ enum MenuActionType
   DESTINATION, /* Destination or custom procedure */
   DEPARTURE, /* Departure or custom procedure */
   DIRECT, /* Direct to waypoint or position */
-  MEASURE, /* GC measmurement line */
+  EDIT, /* General edit replacing EDITROUTEUSERPOINT, USERPOINTEDIT, LOGENTRYEDIT */
+  REMOVE, /* General remove replacing DELETEROUTEWAYPOINT, USERPOINTDELETE, REMOVEUSER */
   RANGERINGS, /* User defined range rings */
   NAVAIDRANGE, /* Show range ring for radio navaid */
   PATTERN, /* Airport traffic pattern */
@@ -92,18 +93,11 @@ enum MenuActionType
   ALTERNATE, /* Add alternate airport to flight plan */
   ADDROUTE, /* Add airport, navid or position to next flight plan leg */
   APPENDROUTE, /* Append airport, navid or position to end of flight plan */
-  DELETEROUTEWAYPOINT, /* Remove flight plan leg */
-  EDITROUTEUSERPOINT, /* Edit user defined route waypoint or remarks for any flight plan point */
   CONVERTPROCEDURE, /* Convert procedure to waypoints */
   MARKAIRPORTADDON, /* Mark airport as add-on */
   USERPOINTADD, /* Add userpoint (in sub-menu) */
-  USERPOINTEDIT, /* Edit userpoint (in sub-menu) */
-  USERPOINTMOVE, /* Move userpoint on map (in sub-menu) */
-  USERPOINTDELETE, /* Remove userpoint (in sub-menu) */
-  LOGENTRYEDIT, /* Edit logbook entry on preview */
   SHOWINSEARCH, /* Show objects in search window with filter and selection */
   SHOWINROUTE, /* Select legs in flight plan table */
-  REMOVEUSER /* Remove traffic pattern, hold, etc. */
 };
 
 }
@@ -181,8 +175,8 @@ private:
   void insertDirectToMenu(QMenu& menu);
 
   // ----
-  void insertMeasureMenu(QMenu& menu);
-  void insertRemoveMarkMenu(QMenu& menu);
+  void insertEditMenu(QMenu& menu);
+  void insertRemoveMenu(QMenu& menu);
 
   // ui->actionMapHideDistanceMarker
 
@@ -210,8 +204,6 @@ private:
   // ----
   void insertAddRouteMenu(QMenu& menu);
   void insertAppendRouteMenu(QMenu& menu);
-  void insertDeleteRouteWaypointMenu(QMenu& menu);
-  void insertEditRouteUserpointMenu(QMenu& menu);
 
   void insertConvertProcedureMenu(QMenu& menu);
 
@@ -219,12 +211,6 @@ private:
 
   // ---- sub-menu
   void insertUserpointAddMenu(QMenu& menu);
-  void insertUserpointEditMenu(QMenu& menu);
-  void insertUserpointMoveMenu(QMenu& menu);
-  void insertUserpointDeleteMenu(QMenu& menu);
-
-  // ----
-  void insertLogEntryEdit(QMenu& menu);
 
   // ----
   void insertShowInRouteMenu(QMenu& menu);

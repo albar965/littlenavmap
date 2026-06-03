@@ -412,11 +412,6 @@ public:
     return trailColor;
   }
 
-  const QColor& getMeasurementColor() const
-  {
-    return measurementColor;
-  }
-
   const optsd::DisplayOptionsAirport& getDisplayOptionsAirport() const
   {
     return displayOptionsAirport;
@@ -1121,8 +1116,8 @@ private:
   QColor flightplanColor = QColor(Qt::red),
          flightplanOutlineColor = QColor(Qt::black), flightplanProcedureColor = QColor(QLatin1String("#aa0000")),
          flightplanActiveColor = QColor(Qt::magenta), flightplanPassedColor = QColor(QLatin1String("#a0a0a4")),
-         trailColor = QColor(Qt::black), measurementColor = QColor(Qt::black),
-         highlightFlightplanColor = QColor(Qt::green), highlightSearchColor = QColor(Qt::yellow), highlightProfileColor = QColor(Qt::cyan);
+         trailColor = QColor(Qt::black), highlightFlightplanColor = QColor(Qt::green), highlightSearchColor = QColor(Qt::yellow),
+         highlightProfileColor = QColor(Qt::cyan);
 
   // comboBoxOptionsDisplayTrailType
   opts::DisplayTrailType displayTrailType = opts::TRAIL_TYPE_DASHED;

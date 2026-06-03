@@ -77,42 +77,53 @@ public:
   void removeHoldingMark(int id);
   void removeMsaMark(int id);
 
-  /* Update measurement lines positions for either end */
+  /* Update measurement lines positions for either end. Ignored if id is -1  */
   void updateDistanceMarkerFromPos(int id, const atools::geo::Pos& pos);
   void updateDistanceMarkerToPos(int id, const atools::geo::Pos& pos);
 
-  /* Update measurement lines all fields except id where the parameter is used. */
-  void updateDistanceMarker(int id, const map::DistanceMarker& marker);
+  /* Also altitude in pos. Ignored if id is -1  */
+  void updateHoldingMarkerPosAndAlt(int id, const atools::geo::Pos& pos);
+
+  /* Update position. Ignored if id is -1 */
+  void updateRangeMarkerPos(int id, const atools::geo::Pos& pos);
+
+  /* Update markers including id */
+  void updateDistanceMarker(const map::DistanceMarker& marker);
+  void updateHoldingMarker(const map::HoldingMarker& marker);
+  void updateRangeMarker(const map::RangeMarker& marker);
 
   /* Get range rings */
-  const QHash<int, map::RangeMarker>& getRangeMarkers() const
+  const QMap<int, map::RangeMarker>& getRangeMarkers() const
   {
     return rangeMarkers;
   }
 
   /* Get distance measurement lines */
-  const QHash<int, map::DistanceMarker>& getDistanceMarkers() const
+  const QMap<int, map::DistanceMarker>& getDistanceMarkers() const
   {
     return distanceMarkers;
   }
 
-  /* Get for editing */
-  map::DistanceMarker& getDistanceMarker(int id);
+  /* Get for editing. Do not pass not existing ids since this creates empty objects. */
+  map::DistanceMarker& getDistanceMarkerRef(int id);
+  map::HoldingMarker& getHoldingMarkerRef(int id);
+  map::RangeMarker& getRangeMarkerRef(int id);
+  map::PatternMarker& getPatternMarkerRef(int id);
 
   /* Airfield traffic patterns. */
-  const QHash<int, map::PatternMarker>& getPatternMarkers() const
+  const QMap<int, map::PatternMarker>& getPatternMarkers() const
   {
     return patternMarkers;
   }
 
   /* Holdings. */
-  const QHash<int, map::HoldingMarker>& getHoldingMarkers() const
+  const QMap<int, map::HoldingMarker>& getHoldingMarkers() const
   {
     return holdingMarkers;
   }
 
   /* Airport MSA. */
-  const QHash<int, map::MsaMarker>& getMsaMarkers() const
+  const QMap<int, map::MsaMarker>& getMsaMarkers() const
   {
     return msaMarkers;
   }
@@ -131,21 +142,28 @@ public:
   /* true if file is detected as a user feature XML file */
   static bool isMarkersFile(const QString& filename);
 
-  /* Get wrapped map objects from holdings and MSA for painting. */
-  const QList<map::MapHolding> getHoldingMarksFiltered() const;
-  const QList<map::MapAirportMsa> getMsaMarksFiltered() const;
+  /* Get wrapped map objects from holdings and MSA for painting. markers with
+   * currentId are currenly edited and are drawn as last on top, Sett currentId to -1 if nothing is edited.
+   * texts are marker texts. */
+  const QList<const map::MapHolding *> getHoldingMarksFiltered(int currentId, QStringList& texts) const;
+
+  /* Get wrapped map objects from holdings and MSA for painting. markers with
+   * currentId are currenly edited and are drawn as last on top, Sett currentId to -1 if nothing is edited. */
+  const QList<const map::MapAirportMsa *> getMsaMarksFiltered(int currentId) const;
 
 private:
   /* XML file version */
   static const int MARKERS_VERSION_MAJOR = 1;
   static const int MARKERS_VERSION_MINOR = 0;
 
-  QHash<int, map::RangeMarker> rangeMarkers;
-  QHash<int, map::DistanceMarker> distanceMarkers;
-  QHash<int, map::PatternMarker> patternMarkers;
-  QHash<int, map::HoldingMarker> holdingMarkers;
-  QHash<int, map::MsaMarker> msaMarkers;
+  /* Use maps to ensure stable draw order as entered by the user */
+  QMap<int, map::RangeMarker> rangeMarkers;
+  QMap<int, map::DistanceMarker> distanceMarkers;
+  QMap<int, map::PatternMarker> patternMarkers;
+  QMap<int, map::HoldingMarker> holdingMarkers;
+  QMap<int, map::MsaMarker> msaMarkers;
 
+  /* Used to assign a unique id at runtime */
   int currentMapMarkerId = 0;
 };
 

@@ -40,7 +40,7 @@ namespace map {
 // .   <Pos Lon="13.368729" Lat="55.534626" Alt="231.00"/>
 void PatternMarker::save(atools::util::XmlStreamWriter& stream) const
 {
-  stream.writeTextElement(QStringLiteral("AirportICAO"), airportIcao);
+  stream.writeTextElement(QStringLiteral("AirportIdent"), airportIdent);
   stream.writeTextElement(QStringLiteral("RunwayName"), runwayName);
   stream.writeTextElement(QStringLiteral("Color"), color);
   stream.writeTextElement(QStringLiteral("TurnRight"), turnRight);
@@ -51,17 +51,21 @@ void PatternMarker::save(atools::util::XmlStreamWriter& stream) const
   stream.writeTextElement(QStringLiteral("FinalDistanceNM"), finalDistance);
   stream.writeTextElement(QStringLiteral("DepartureDistanceNM"), departureDistance);
   stream.writeTextElement(QStringLiteral("CourseTrueDeg"), courseTrue);
-  stream.writeTextElement(QStringLiteral("MagVarDeg"), magvar);
   stream.writeTextElement(QStringLiteral("Pos"), position, true /* writeAltitude */);
+  stream.writeStartElement(QStringLiteral("Nav"));
+  nav.save(stream);
+  stream.writeEndElement();
 }
 
 void PatternMarker::restore(atools::util::XmlStreamReader& stream)
 {
+  nav.reset();
+
   while(stream.readNextStartElement())
   {
     const QStringView name = stream.name();
-    if(name == QStringLiteral("AirportICAO"))
-      airportIcao = stream.readElementTextStr();
+    if(name == QStringLiteral("AirportIdent"))
+      airportIdent = stream.readElementTextStr();
     else if(name == QStringLiteral("RunwayName"))
       runwayName = stream.readElementTextStr();
     else if(name == QStringLiteral("Color"))
@@ -82,10 +86,10 @@ void PatternMarker::restore(atools::util::XmlStreamReader& stream)
       departureDistance = stream.readElementTextFloat();
     else if(name == QStringLiteral("CourseTrueDeg"))
       courseTrue = stream.readElementTextFloat();
-    else if(name == QStringLiteral("MagVarDeg"))
-      magvar = stream.readElementTextFloat();
     else if(name == QStringLiteral("Pos"))
       position = stream.readElementPos();
+    else if(name == QStringLiteral("Nav"))
+      nav.restore(stream);
     else
       stream.skipCurrentElement(true /* warning */);
   }
@@ -95,15 +99,15 @@ void PatternMarker::restore(atools::util::XmlStreamReader& stream)
 
 QString PatternMarker::displayText() const
 {
-  if(airportIcao.isEmpty())
+  if(airportIdent.isEmpty())
     return QObject::tr("Traffic Pattern %1 RW %2").arg(turnRight ?
                                                        QObject::tr("R", "Pattern direction") :
                                                        QObject::tr("L", "Pattern direction")).arg(runwayName);
   else
     return QObject::tr("Traffic Pattern %1 %2 RW %3").
-           arg(airportIcao).arg(turnRight ?
-                                QObject::tr("R", "Pattern direction") :
-                                QObject::tr("L", "Pattern direction")).arg(runwayName);
+           arg(airportIdent).arg(turnRight ?
+                                 QObject::tr("R", "Pattern direction") :
+                                 QObject::tr("L", "Pattern direction")).arg(runwayName);
 }
 
 // HoldingMarker ######################################################################################
@@ -122,42 +126,29 @@ QString PatternMarker::displayText() const
 // .   <Pos Lon="13.368729" Lat="55.534626" Alt="231.00"/>
 void HoldingMarker::save(atools::util::XmlStreamWriter& stream) const
 {
-  stream.writeTextElement(QStringLiteral("NavIdent"), holding.navIdent);
-  stream.writeTextElement(QStringLiteral("NavType"), map::mapTypeToString(holding.navType).value(0));
-
-  stream.writeStartElement(QStringLiteral("Vor"));
-  stream.writeAttribute(QStringLiteral("DmeOnly"), holding.vorDmeOnly);
-  stream.writeAttribute(QStringLiteral("HasDme"), holding.vorHasDme);
-  stream.writeAttribute(QStringLiteral("Tacan"), holding.vorTacan);
-  stream.writeAttribute(QStringLiteral("Vortac"), holding.vorVortac);
-  stream.writeEndElement(); // Vor
-
+  stream.writeTextElement(QStringLiteral("Name"), holding.name);
+  stream.writeTextElement(QStringLiteral("Text"), text);
   stream.writeTextElement(QStringLiteral("Color"), holding.color);
   stream.writeTextElement(QStringLiteral("TurnLeft"), holding.turnLeft);
   stream.writeTextElement(QStringLiteral("TimeMin"), holding.time);
   stream.writeTextElement(QStringLiteral("SpeedKts"), holding.speedKts);
   stream.writeTextElement(QStringLiteral("CourseTrueDeg"), holding.courseTrue);
-  stream.writeTextElement(QStringLiteral("MagvarDeg"), holding.magvar);
   stream.writeTextElement(QStringLiteral("Pos"), holding.position, true /* writeAltitude */);
+  stream.writeStartElement(QStringLiteral("Nav"));
+  holding.nav.save(stream);
+  stream.writeEndElement();
 }
 
 void HoldingMarker::restore(atools::util::XmlStreamReader& stream)
 {
+  holding.nav.reset();
   while(stream.readNextStartElement())
   {
     const QStringView name = stream.name();
-    if(name == QStringLiteral("NavIdent"))
-      holding.navIdent = stream.readElementTextStr();
-    else if(name == QStringLiteral("NavType"))
-      holding.navType = map::mapTypeFromString(QStringList({stream.readElementTextStr()}));
-    else if(name == QStringLiteral("Vor"))
-    {
-      holding.vorDmeOnly = stream.readAttributeBool(QStringLiteral("DmeOnly"));
-      holding.vorHasDme = stream.readAttributeBool(QStringLiteral("HasDme"));
-      holding.vorTacan = stream.readAttributeBool(QStringLiteral("Tacan"));
-      holding.vorVortac = stream.readAttributeBool(QStringLiteral("Vortac"));
-      stream.skipCurrentElement();
-    }
+    if(name == QStringLiteral("Text"))
+      text = stream.readElementTextStr();
+    else if(name == QStringLiteral("Name"))
+      holding.name = stream.readElementTextStr();
     else if(name == QStringLiteral("Color"))
       holding.color = stream.readElementTextColor();
     else if(name == QStringLiteral("TurnLeft"))
@@ -168,28 +159,29 @@ void HoldingMarker::restore(atools::util::XmlStreamReader& stream)
       holding.speedKts = stream.readElementTextFloat();
     else if(name == QStringLiteral("CourseTrueDeg"))
       holding.courseTrue = stream.readElementTextFloat();
-    else if(name == QStringLiteral("MagvarDeg"))
-      holding.magvar = stream.readElementTextFloat();
     else if(name == QStringLiteral("Pos"))
       position = holding.position = stream.readElementPos();
+    else if(name == QStringLiteral("Nav"))
+      holding.nav.restore(stream);
     else
       stream.skipCurrentElement(true /* warning */);
   }
 
   // Not used in user feature
   holding.length = holding.speedLimit = holding.minAltititude = holding.maxAltititude = 0.f;
+  holding.id = -1;
   objType = map::MARK_HOLDING;
 }
 
 QString HoldingMarker::displayText() const
 {
-  if(holding.navIdent.isEmpty())
+  if(holding.nav.ident.isEmpty())
     return QObject::tr("User Holding %1 %2").
            arg(holding.turnLeft ? QObject::tr("L", "Holding direction") : QObject::tr("R", "Holding direction")).
            arg(Unit::altFeet(holding.position.getAltitude()));
   else
     return QObject::tr("User Holding %1 %2 %3").
-           arg(holding.navIdent).
+           arg(holding.nav.ident).
            arg(holding.turnLeft ? QObject::tr("L", "Holding direction") : QObject::tr("R", "Holding direction")).
            arg(Unit::altFeet(holding.position.getAltitude()));
 }
@@ -220,56 +212,36 @@ QString HoldingMarker::displayText() const
 void MsaMarker::save(atools::util::XmlStreamWriter& stream) const
 {
   stream.writeTextElement(QStringLiteral("AirportIdent"), msa.airportIdent);
-  stream.writeTextElement(QStringLiteral("NavIdent"), msa.navIdent);
   stream.writeTextElement(QStringLiteral("Region"), msa.region);
   stream.writeTextElement(QStringLiteral("MultipleCode"), msa.multipleCode);
   stream.writeTextElement(QStringLiteral("VorType"), msa.vorType);
-  stream.writeTextElement(QStringLiteral("NavType"), map::mapTypeToString(msa.navType).value(0));
-
-  stream.writeStartElement(QStringLiteral("Vor"));
-  stream.writeAttribute(QStringLiteral("DmeOnly"), msa.vorDmeOnly);
-  stream.writeAttribute(QStringLiteral("HasDme"), msa.vorHasDme);
-  stream.writeAttribute(QStringLiteral("Tacan"), msa.vorTacan);
-  stream.writeAttribute(QStringLiteral("Vortac"), msa.vorVortac);
-  stream.writeEndElement(); // Vor
-
   stream.writeTextElement(QStringLiteral("RadiusNM"), msa.radius);
-  stream.writeTextElement(QStringLiteral("MagvarDeg"), msa.magvar);
   stream.writeTextElement(QStringLiteral("TrueBearing"), msa.trueBearing);
   stream.writeTextElement(QStringLiteral("Bearings"), QStringLiteral("BearingDeg"), msa.bearings);
   stream.writeTextElement(QStringLiteral("Altitudes"), QStringLiteral("AltitudeFt"), msa.altitudes);
   stream.writeTextElement(QStringLiteral("Pos"), msa.position);
+  stream.writeStartElement(QStringLiteral("Nav"));
+  msa.nav.save(stream);
+  stream.writeEndElement();
 }
 
 void MsaMarker::restore(atools::util::XmlStreamReader& stream)
 {
+  msa.nav.reset();
+
   while(stream.readNextStartElement())
   {
     const QStringView name = stream.name();
     if(name == QStringLiteral("AirportIdent"))
       msa.airportIdent = stream.readElementTextStr();
-    else if(name == QStringLiteral("NavIdent"))
-      msa.navIdent = stream.readElementTextStr();
     else if(name == QStringLiteral("Region"))
       msa.region = stream.readElementTextStr();
     else if(name == QStringLiteral("MultipleCode"))
       msa.multipleCode = stream.readElementTextStr();
     else if(name == QStringLiteral("VorType"))
       msa.vorType = stream.readElementTextStr();
-    else if(name == QStringLiteral("NavType"))
-      msa.navType = map::mapTypeFromString(QStringList({stream.readElementTextStr()}));
-    else if(name == QStringLiteral("Vor"))
-    {
-      msa.vorDmeOnly = stream.readAttributeBool(QStringLiteral("DmeOnly"));
-      msa.vorHasDme = stream.readAttributeBool(QStringLiteral("HasDme"));
-      msa.vorTacan = stream.readAttributeBool(QStringLiteral("Tacan"));
-      msa.vorVortac = stream.readAttributeBool(QStringLiteral("Vortac"));
-      stream.skipCurrentElement();
-    }
     else if(name == QStringLiteral("RadiusNM"))
       msa.radius = stream.readElementTextFloat();
-    else if(name == QStringLiteral("MagvarDeg"))
-      msa.magvar = stream.readElementTextFloat();
     else if(name == QStringLiteral("TrueBearing"))
       msa.trueBearing = stream.readElementTextBool();
     else if(name == QStringLiteral("Bearings"))
@@ -278,6 +250,8 @@ void MsaMarker::restore(atools::util::XmlStreamReader& stream)
       msa.altitudes = stream.readElementListFloat(QStringLiteral("AltitudeFt"));
     else if(name == QStringLiteral("Pos"))
       position = msa.position = stream.readElementPos();
+    else if(name == QStringLiteral("Nav"))
+      msa.nav.restore(stream);
     else
       stream.skipCurrentElement(true /* warning */);
   }
@@ -289,7 +263,7 @@ void MsaMarker::restore(atools::util::XmlStreamReader& stream)
     for(int i = 0; i < msa.bearings.size(); i++)
       geo.addSector(msa.bearings.at(i), msa.altitudes.at(i));
 
-    geo.calculate(msa.position, msa.radius, msa.magvar, msa.trueBearing);
+    geo.calculate(msa.position, msa.radius, msa.nav.magvar, msa.trueBearing);
     msa.bearingEndPos = geo.getBearingEndPositions();
     msa.labelPositions = geo.getLabelPositions();
     msa.geometry = geo.getGeometry();
@@ -319,11 +293,19 @@ void RangeMarker::save(atools::util::XmlStreamWriter& stream) const
   stream.writeTextElement(QStringLiteral("Text"), text);
   stream.writeTextElement(QStringLiteral("Color"), color);
   stream.writeTextElement(QStringLiteral("Ranges"), QStringLiteral("RangeNM"), ranges);
+  stream.writeTextElement(QStringLiteral("AttachedToNavaid"), attachedToNavaid);
+  stream.writeTextElement(QStringLiteral("ManualLabel"), manualLabel);
+  stream.writeTextElement(QStringLiteral("AircraftRange"), aircraftRange);
   stream.writeTextElement(QStringLiteral("Pos"), position);
+  stream.writeStartElement(QStringLiteral("Nav"));
+  nav.save(stream);
+  stream.writeEndElement();
 }
 
 void RangeMarker::restore(atools::util::XmlStreamReader& stream)
 {
+  nav.reset();
+
   while(stream.readNextStartElement())
   {
     const QStringView name = stream.name();
@@ -333,8 +315,16 @@ void RangeMarker::restore(atools::util::XmlStreamReader& stream)
       color = stream.readElementTextColor();
     else if(name == QStringLiteral("Ranges"))
       ranges = stream.readElementListDouble(QStringLiteral("RangeNM"));
+    else if(name == QStringLiteral("AttachedToNavaid"))
+      attachedToNavaid = stream.readElementTextBool();
+    else if(name == QStringLiteral("ManualLabel"))
+      manualLabel = stream.readElementTextBool();
+    else if(name == QStringLiteral("AircraftRange"))
+      aircraftRange = stream.readElementTextBool();
     else if(name == QStringLiteral("Pos"))
       position = stream.readElementPos();
+    else if(name == QStringLiteral("Nav"))
+      nav.restore(stream);
     else
       stream.skipCurrentElement(true /* warning */);
   }
@@ -361,15 +351,18 @@ void DistanceMarker::save(atools::util::XmlStreamWriter& stream) const
 {
   stream.writeTextElement(QStringLiteral("Text"), text);
   stream.writeTextElement(QStringLiteral("Color"), color);
-  stream.writeTextElement(QStringLiteral("MagvarDeg"), magvar);
-  stream.writeTextElement(QStringLiteral("Radial"), flags.testFlag(DIST_MARK_RADIAL));
-  stream.writeTextElement(QStringLiteral("Magvar"), flags.testFlag(DIST_MARK_MAGVAR));
   stream.writeTextElement(QStringLiteral("PosFrom"), from);
   stream.writeTextElement(QStringLiteral("PosTo"), to);
+  stream.writeTextElement(QStringLiteral("ManualLabel"), manualLabel);
+  stream.writeStartElement(QStringLiteral("Nav"));
+  nav.save(stream);
+  stream.writeEndElement();
 }
 
 void DistanceMarker::restore(atools::util::XmlStreamReader& stream)
 {
+  nav.reset();
+
   while(stream.readNextStartElement())
   {
     const QStringView name = stream.name();
@@ -377,16 +370,14 @@ void DistanceMarker::restore(atools::util::XmlStreamReader& stream)
       text = stream.readElementTextStr();
     else if(name == QStringLiteral("Color"))
       color = stream.readElementTextColor();
-    else if(name == QStringLiteral("MagvarDeg"))
-      magvar = stream.readElementTextFloat();
-    else if(name == QStringLiteral("Radial"))
-      flags.setFlag(map::DIST_MARK_RADIAL, stream.readElementTextBool());
-    else if(name == QStringLiteral("Magvar"))
-      flags.setFlag(map::DIST_MARK_MAGVAR, stream.readElementTextBool());
     else if(name == QStringLiteral("PosFrom"))
       from = stream.readElementPos();
     else if(name == QStringLiteral("PosTo"))
       to = stream.readElementPos();
+    else if(name == QStringLiteral("ManualLabel"))
+      manualLabel = stream.readElementTextBool();
+    else if(name == QStringLiteral("Nav"))
+      nav.restore(stream);
     else
       stream.skipCurrentElement(true /* warning */);
   }
@@ -410,27 +401,31 @@ QString DistanceMarker::displayText() const
 
 QDataStream& operator>>(QDataStream& dataStream, PatternMarker& obj)
 {
-  dataStream >> obj.airportIcao >> obj.runwayName >> obj.color >> obj.turnRight >> obj.base45Degree >> obj.showEntryExit
+  obj.nav.reset();
+  dataStream >> obj.airportIdent >> obj.runwayName >> obj.color >> obj.turnRight >> obj.base45Degree >> obj.showEntryExit
   >> obj.runwayLength >> obj.downwindParallelDistance >> obj.finalDistance >> obj.departureDistance
-  >> obj.courseTrue >> obj.magvar >> obj.position;
+  >> obj.courseTrue >> obj.nav.magvar >> obj.position;
   obj.objType = map::MARK_PATTERNS;
   return dataStream;
 }
 
 QDataStream& operator<<(QDataStream& dataStream, const PatternMarker& obj)
 {
-  dataStream << obj.airportIcao << obj.runwayName << obj.color << obj.turnRight << obj.base45Degree << obj.showEntryExit
+  dataStream << obj.airportIdent << obj.runwayName << obj.color << obj.turnRight << obj.base45Degree << obj.showEntryExit
              << obj.runwayLength << obj.downwindParallelDistance << obj.finalDistance << obj.departureDistance
-             << obj.courseTrue << obj.magvar << obj.position;
+             << obj.courseTrue << obj.nav.magvar << obj.position;
 
   return dataStream;
 }
 
 QDataStream& operator>>(QDataStream& dataStream, HoldingMarker& obj)
 {
-  dataStream >> obj.holding.navIdent >> obj.holding.navType >> obj.holding.vorDmeOnly >> obj.holding.vorHasDme
-  >> obj.holding.vorTacan >> obj.holding.vorVortac >> obj.holding.color >> obj.holding.turnLeft >> obj.holding.time
-  >> obj.holding.speedKts >> obj.holding.courseTrue >> obj.holding.magvar >> obj.holding.position;
+  obj.holding.nav.reset();
+
+  dataStream >> obj.holding.nav.ident >> obj.holding.nav.type >> obj.holding.nav.vorDmeOnly
+  >> obj.holding.nav.vorDme
+  >> obj.holding.nav.vorTacan >> obj.holding.nav.vorVortac >> obj.holding.color >> obj.holding.turnLeft >> obj.holding.time
+  >> obj.holding.speedKts >> obj.holding.courseTrue >> obj.holding.nav.magvar >> obj.holding.position;
 
   obj.holding.length = obj.holding.speedLimit = obj.holding.minAltititude = obj.holding.maxAltititude = 0.f;
   obj.holding.airportIdent.clear();
@@ -442,17 +437,19 @@ QDataStream& operator>>(QDataStream& dataStream, HoldingMarker& obj)
 
 QDataStream& operator<<(QDataStream& dataStream, const HoldingMarker& obj)
 {
-  dataStream << obj.holding.navIdent << obj.holding.navType << obj.holding.vorDmeOnly << obj.holding.vorHasDme
-             << obj.holding.vorTacan << obj.holding.vorVortac << obj.holding.color << obj.holding.turnLeft
-             << obj.holding.time << obj.holding.speedKts << obj.holding.courseTrue << obj.holding.magvar << obj.holding.position;
+  dataStream << obj.holding.nav.ident << obj.holding.nav.type << obj.holding.nav.vorDmeOnly
+             << obj.holding.nav.vorDme
+             << obj.holding.nav.vorTacan << obj.holding.nav.vorVortac << obj.holding.color << obj.holding.turnLeft
+             << obj.holding.time << obj.holding.speedKts << obj.holding.courseTrue << obj.holding.nav.magvar << obj.holding.position;
   return dataStream;
 }
 
 QDataStream& operator>>(QDataStream& dataStream, map::MsaMarker& obj)
 {
-  dataStream >> obj.msa.airportIdent >> obj.msa.navIdent >> obj.msa.region >> obj.msa.multipleCode >> obj.msa.vorType;
-  dataStream >> obj.msa.navType >> obj.msa.vorDmeOnly >> obj.msa.vorHasDme >> obj.msa.vorTacan >> obj.msa.vorVortac;
-  dataStream >> obj.msa.radius >> obj.msa.magvar;
+  dataStream >> obj.msa.airportIdent >> obj.msa.nav.ident >> obj.msa.region >> obj.msa.multipleCode >> obj.msa.vorType;
+  dataStream >> obj.msa.nav.type >> obj.msa.nav.vorDmeOnly >> obj.msa.nav.vorDme >> obj.msa.nav.vorTacan
+  >> obj.msa.nav.vorVortac;
+  dataStream >> obj.msa.radius >> obj.msa.nav.magvar;
   dataStream >> obj.msa.bearings >> obj.msa.altitudes >> obj.msa.trueBearing
   >> obj.msa.geometry >> obj.msa.labelPositions >> obj.msa.bearingEndPos >> obj.msa.bounding >> obj.msa.position;
 
@@ -463,9 +460,10 @@ QDataStream& operator>>(QDataStream& dataStream, map::MsaMarker& obj)
 
 QDataStream& operator<<(QDataStream& dataStream, const map::MsaMarker& obj)
 {
-  dataStream << obj.msa.airportIdent << obj.msa.navIdent << obj.msa.region << obj.msa.multipleCode << obj.msa.vorType;
-  dataStream << obj.msa.navType << obj.msa.vorDmeOnly << obj.msa.vorHasDme << obj.msa.vorTacan << obj.msa.vorVortac;
-  dataStream << obj.msa.radius << obj.msa.magvar;
+  dataStream << obj.msa.airportIdent << obj.msa.nav.ident << obj.msa.region << obj.msa.multipleCode << obj.msa.vorType;
+  dataStream << obj.msa.nav.type << obj.msa.nav.vorDmeOnly << obj.msa.nav.vorDme << obj.msa.nav.vorTacan
+             << obj.msa.nav.vorVortac;
+  dataStream << obj.msa.radius << obj.msa.nav.magvar;
   dataStream << obj.msa.bearings << obj.msa.altitudes << obj.msa.trueBearing
              << obj.msa.geometry << obj.msa.labelPositions << obj.msa.bearingEndPos << obj.msa.bounding << obj.msa.position;
   return dataStream;
@@ -496,7 +494,9 @@ QDataStream& operator<<(QDataStream& dataStream, const map::RangeMarker& obj)
 
 QDataStream& operator>>(QDataStream& dataStream, map::DistanceMarker& obj)
 {
-  dataStream >> obj.text >> obj.color >> obj.from >> obj.to >> obj.magvar >> obj.flags;
+  obj.nav.reset();
+  quint32 flags;
+  dataStream >> obj.text >> obj.color >> obj.from >> obj.to >> obj.nav.magvar >> flags;
   obj.objType = map::MARK_DISTANCE;
   obj.position = obj.to;
   return dataStream;
@@ -504,13 +504,14 @@ QDataStream& operator>>(QDataStream& dataStream, map::DistanceMarker& obj)
 
 QDataStream& operator<<(QDataStream& dataStream, const map::DistanceMarker& obj)
 {
-  dataStream << obj.text << obj.color << obj.from << obj.to << obj.magvar << obj.flags;
+  quint32 flags = 0;
+  dataStream << obj.text << obj.color << obj.from << obj.to << obj.nav.magvar << flags;
   return dataStream;
 }
 
 float PatternMarker::magCourse() const
 {
-  return atools::geo::normalizeCourse(courseTrue - magvar);
+  return atools::geo::normalizeCourse(courseTrue - nav.magvar);
 }
 
 float DistanceMarker::getDistanceNm() const
@@ -532,4 +533,22 @@ void registerMarkerMetaTypes()
   qRegisterMetaType<QList<map::MsaMarker> >();
 }
 
-} // namespace types
+QString markerLabel(const MapUserpoint& userpoint)
+{
+  return map::userpointShortText(userpoint, 20);
+}
+
+QString markerLabel(const MapVor& vor)
+{
+  if(vor.frequency == 0 || vor.tacan)
+    return QObject::tr("%1 %2").arg(vor.ident).arg(vor.channel);
+  else
+    return QObject::tr("%1 %2").arg(vor.ident).arg(QString::number(vor.frequency / 1000., 'f', 2));
+}
+
+QString markerLabel(const MapNdb& ndb)
+{
+  return QObject::tr("%1 %2").arg(ndb.ident).arg(QString::number(ndb.frequency / 100., 'f', 1));
+}
+
+} // namespace map

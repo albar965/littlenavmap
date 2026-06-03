@@ -66,7 +66,7 @@
      </widget>
      <widget class="QStackedWidget" name="stackedWidgetOptions">
       <property name="currentIndex">
-       <number>18</number>
+       <number>12</number>
       </property>
       <widget class="QWidget" name="stackedWidgetOptionsStartup">
        <layout class="QVBoxLayout" name="verticalLayout_41">
@@ -1588,8 +1588,8 @@ aircraft progress, tooltips and information window.</string>
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>557</width>
-             <height>571</height>
+             <width>566</width>
+             <height>557</height>
             </rect>
            </property>
            <layout class="QVBoxLayout" name="verticalLayout_59">
@@ -4810,31 +4810,6 @@ Note that this does not affect the stored trail points.</string>
                  </property>
                 </widget>
                </item>
-               <item row="3" column="4" alignment="Qt::AlignTop">
-                <widget class="QSpinBox" name="spinBoxOptionsDisplayThicknessMeasurement">
-                 <property name="toolTip">
-                  <string>Line width for measurement lines</string>
-                 </property>
-                 <property name="suffix">
-                  <string> %</string>
-                 </property>
-                 <property name="prefix">
-                  <string>Line Width </string>
-                 </property>
-                 <property name="minimum">
-                  <number>20</number>
-                 </property>
-                 <property name="maximum">
-                  <number>200</number>
-                 </property>
-                 <property name="singleStep">
-                  <number>10</number>
-                 </property>
-                 <property name="value">
-                  <number>100</number>
-                 </property>
-                </widget>
-               </item>
                <item row="13" column="5">
                 <widget class="QSpinBox" name="spinBoxOptionsDisplayTextSizeCompassRose">
                  <property name="toolTip">
@@ -4871,25 +4846,6 @@ Note that this does not affect the stored trail points.</string>
                 <widget class="Line" name="line_22">
                  <property name="orientation">
                   <enum>Qt::Horizontal</enum>
-                 </property>
-                </widget>
-               </item>
-               <item row="3" column="2" rowspan="2">
-                <widget class="QLabel" name="labelOptionsMapDistanceMeasurement">
-                 <property name="text">
-                  <string>&amp;Distance measurements:</string>
-                 </property>
-                 <property name="alignment">
-                  <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignTop</set>
-                 </property>
-                 <property name="wordWrap">
-                  <bool>true</bool>
-                 </property>
-                 <property name="textInteractionFlags">
-                  <set>Qt::LinksAccessibleByMouse|Qt::TextSelectableByMouse</set>
-                 </property>
-                 <property name="buddy">
-                  <cstring>spinBoxOptionsDisplayThicknessMeasurement</cstring>
                  </property>
                 </widget>
                </item>
@@ -4988,31 +4944,6 @@ Note that this does not affect the stored trail points.</string>
                  </property>
                 </widget>
                </item>
-               <item row="3" column="5" alignment="Qt::AlignTop">
-                <widget class="QSpinBox" name="spinBoxOptionsDisplayTextSizeMeasurement">
-                 <property name="toolTip">
-                  <string>Text size for measurement labels</string>
-                 </property>
-                 <property name="suffix">
-                  <string> %</string>
-                 </property>
-                 <property name="prefix">
-                  <string>Text </string>
-                 </property>
-                 <property name="minimum">
-                  <number>50</number>
-                 </property>
-                 <property name="maximum">
-                  <number>200</number>
-                 </property>
-                 <property name="singleStep">
-                  <number>10</number>
-                 </property>
-                 <property name="value">
-                  <number>100</number>
-                 </property>
-                </widget>
-               </item>
                <item row="15" column="2" colspan="4">
                 <widget class="QLabel" name="labelOptionsCompassRoseHint">
                  <property name="text">
@@ -5051,23 +4982,6 @@ Note that this does not affect the stored trail points.</string>
                  </property>
                  <property name="value">
                   <number>100</number>
-                 </property>
-                </widget>
-               </item>
-               <item row="4" column="5">
-                <widget class="QPushButton" name="pushButtonOptionsMapMeasurementColor">
-                 <property name="sizePolicy">
-                  <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
-                   <horstretch>0</horstretch>
-                   <verstretch>0</verstretch>
-                  </sizepolicy>
-                 </property>
-                 <property name="toolTip">
-                  <string>Color for distance measurement lines.
-Does not apply to lines originating from airports or navaids.</string>
-                 </property>
-                 <property name="text">
-                  <string>Distance &amp;Measurement Line Color</string>
                  </property>
                 </widget>
                </item>
@@ -5175,6 +5089,75 @@ Value 0 is opaque and 90 is most transparent.</string>
                 <widget class="Line" name="line_3">
                  <property name="orientation">
                   <enum>Qt::Horizontal</enum>
+                 </property>
+                </widget>
+               </item>
+               <item row="4" column="4">
+                <widget class="QSpinBox" name="spinBoxOptionsDisplayThicknessMeasurement">
+                 <property name="toolTip">
+                  <string>Line width for measurement lines</string>
+                 </property>
+                 <property name="suffix">
+                  <string> %</string>
+                 </property>
+                 <property name="prefix">
+                  <string>Line Width </string>
+                 </property>
+                 <property name="minimum">
+                  <number>20</number>
+                 </property>
+                 <property name="maximum">
+                  <number>200</number>
+                 </property>
+                 <property name="singleStep">
+                  <number>10</number>
+                 </property>
+                 <property name="value">
+                  <number>100</number>
+                 </property>
+                </widget>
+               </item>
+               <item row="4" column="5">
+                <widget class="QSpinBox" name="spinBoxOptionsDisplayTextSizeMeasurement">
+                 <property name="toolTip">
+                  <string>Text size for measurement labels</string>
+                 </property>
+                 <property name="suffix">
+                  <string> %</string>
+                 </property>
+                 <property name="prefix">
+                  <string>Text </string>
+                 </property>
+                 <property name="minimum">
+                  <number>50</number>
+                 </property>
+                 <property name="maximum">
+                  <number>200</number>
+                 </property>
+                 <property name="singleStep">
+                  <number>10</number>
+                 </property>
+                 <property name="value">
+                  <number>100</number>
+                 </property>
+                </widget>
+               </item>
+               <item row="4" column="2" colspan="2">
+                <widget class="QLabel" name="labelOptionsMapDistanceMeasurement">
+                 <property name="text">
+                  <string>&amp;Distance measurements:</string>
+                 </property>
+                 <property name="alignment">
+                  <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignTop</set>
+                 </property>
+                 <property name="wordWrap">
+                  <bool>true</bool>
+                 </property>
+                 <property name="textInteractionFlags">
+                  <set>Qt::LinksAccessibleByMouse|Qt::TextSelectableByMouse</set>
+                 </property>
+                 <property name="buddy">
+                  <cstring>spinBoxOptionsDisplayThicknessMeasurement</cstring>
                  </property>
                 </widget>
                </item>
@@ -5341,8 +5324,8 @@ if you hover over the elevation profile.</string>
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>557</width>
-             <height>571</height>
+             <width>183</width>
+             <height>132</height>
             </rect>
            </property>
            <layout class="QVBoxLayout" name="verticalLayout_61">
@@ -5414,8 +5397,8 @@ if you hover over the elevation profile.</string>
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>557</width>
-             <height>571</height>
+             <width>362</width>
+             <height>307</height>
             </rect>
            </property>
            <layout class="QVBoxLayout" name="verticalLayout_30">
@@ -5577,8 +5560,8 @@ if you hover over the elevation profile.</string>
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>557</width>
-             <height>571</height>
+             <width>437</width>
+             <height>250</height>
             </rect>
            </property>
            <layout class="QVBoxLayout" name="verticalLayout_62">
@@ -5696,8 +5679,8 @@ if you hover over the elevation profile.</string>
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>543</width>
-             <height>616</height>
+             <width>319</width>
+             <height>731</height>
             </rect>
            </property>
            <layout class="QVBoxLayout" name="verticalLayout_63">
@@ -5819,8 +5802,8 @@ if you hover over the elevation profile.</string>
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>557</width>
-             <height>571</height>
+             <width>328</width>
+             <height>536</height>
             </rect>
            </property>
            <layout class="QGridLayout" name="gridLayout_39">
@@ -6453,8 +6436,8 @@ The buffer radius defines the surrounding from where the maximum elevation is ca
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>436</width>
-             <height>406</height>
+             <width>557</width>
+             <height>571</height>
             </rect>
            </property>
            <layout class="QVBoxLayout" name="verticalLayout_60">
@@ -7109,8 +7092,8 @@ put the active leg back on top after the given timeout while flying.</string>
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>318</width>
-             <height>242</height>
+             <width>557</width>
+             <height>571</height>
             </rect>
            </property>
            <layout class="QVBoxLayout" name="verticalLayout_26">
@@ -7269,8 +7252,8 @@ Note that this value does not affect flight plan calculation or saving of flight
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>272</width>
-             <height>765</height>
+             <width>543</width>
+             <height>629</height>
             </rect>
            </property>
            <layout class="QVBoxLayout" name="verticalLayout_27">
@@ -7510,8 +7493,8 @@ Note that this value does not affect flight plan calculation or saving of flight
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>360</width>
-             <height>944</height>
+             <width>543</width>
+             <height>893</height>
             </rect>
            </property>
            <layout class="QVBoxLayout" name="verticalLayout_28">
@@ -8108,8 +8091,8 @@ Entering a wrong value will cause errors when downloading weather reports.</stri
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>389</width>
-             <height>375</height>
+             <width>557</width>
+             <height>571</height>
             </rect>
            </property>
            <layout class="QVBoxLayout" name="verticalLayout_29">
@@ -8416,8 +8399,8 @@ Entering a wrong value will cause errors when downloading weather reports.</stri
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>543</width>
-             <height>402</height>
+             <width>557</width>
+             <height>571</height>
             </rect>
            </property>
            <layout class="QGridLayout" name="gridLayout_37">
@@ -8706,8 +8689,8 @@ Uncheck if you use such an add-on or see issues like a corruped map display.</st
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>395</width>
-             <height>524</height>
+             <width>557</width>
+             <height>571</height>
             </rect>
            </property>
            <layout class="QGridLayout" name="gridLayout_38">
@@ -9217,9 +9200,6 @@ You have to reload the scenery library so that the changes take effect.</string>
   <tabstop>scrollArea_6</tabstop>
   <tabstop>spinBoxOptionsDisplayThicknessUserFeature</tabstop>
   <tabstop>spinBoxOptionsDisplayTextSizeUserFeature</tabstop>
-  <tabstop>spinBoxOptionsDisplayThicknessMeasurement</tabstop>
-  <tabstop>spinBoxOptionsDisplayTextSizeMeasurement</tabstop>
-  <tabstop>pushButtonOptionsMapMeasurementColor</tabstop>
   <tabstop>spinBoxOptionsDisplaySymbolSizeUserpoint</tabstop>
   <tabstop>spinBoxOptionsDisplayTextSizeUserpoint</tabstop>
   <tabstop>checkBoxOptionsMapUserpointText</tabstop>
