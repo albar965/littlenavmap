@@ -19,6 +19,7 @@
 
 #include "atools.h"
 #include "common/constants.h"
+#include "common/elevationprovider.h"
 #include "common/mapresult.h"
 #include "common/maptypesfactory.h"
 #include "db/undoredoprogress.h"
@@ -385,8 +386,12 @@ void UserdataController::addUserpointFromMap(const map::MapResult& result, atool
   qDebug() << Q_FUNC_INFO;
 
   if(result.isEmpty(map::AIRPORT | map::VOR | map::NDB | map::WAYPOINT | map::USERPOINT))
+  {
+    if(NavApp::isGlobeOfflineProvider())
+      pos.setAltitude(NavApp::getElevationProvider()->getElevationFt(pos));
     // No prefill start empty dialog of with last added data
     addUserpointInternal(-1, pos, SqlRecord());
+  }
   else
   {
     // Prepare the dialog prefill data
@@ -462,6 +467,10 @@ void UserdataController::addUserpointFromMap(const map::MapResult& result, atool
     }
     else
       prefillRec.appendFieldAndValue("type", UserdataDialog::DEFAULT_TYPE);
+
+    if(NavApp::isGlobeOfflineProvider() && (atools::almostEqual(pos.getAltitude(), 0.f) ||
+                                            !(pos.getAltitude() < map::INVALID_ALTITUDE_VALUE)))
+      pos.setAltitude(NavApp::getElevationProvider()->getElevationFt(pos));
 
     prefillRec.appendFieldAndValue("altitude", pos.getAltitude());
 
