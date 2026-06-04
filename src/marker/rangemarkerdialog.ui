@@ -7,50 +7,13 @@
     <x>0</x>
     <y>0</y>
     <width>480</width>
-    <height>430</height>
+    <height>431</height>
    </rect>
   </property>
   <property name="windowTitle">
    <string>Little Navmap - Add Range Rings</string>
   </property>
   <layout class="QGridLayout" name="gridLayout">
-   <item row="12" column="1">
-    <widget class="QLabel" name="labelRangeMarkerCoordStatus">
-     <property name="text">
-      <string/>
-     </property>
-     <property name="wordWrap">
-      <bool>true</bool>
-     </property>
-     <property name="margin">
-      <number>5</number>
-     </property>
-     <property name="textInteractionFlags">
-      <set>Qt::LinksAccessibleByMouse|Qt::TextSelectableByMouse</set>
-     </property>
-    </widget>
-   </item>
-   <item row="16" column="0" colspan="2">
-    <widget class="QCheckBox" name="checkBoxRangeMarkerDoNotShow">
-     <property name="toolTip">
-      <string>Places a range ring with the set radii and color when shift-clicking into the map without showing this dialog.</string>
-     </property>
-     <property name="text">
-      <string>&amp;Do not show this dialog when using &quot;Shift+Click&quot; in the map
-and use range ring radii as above.</string>
-     </property>
-     <property name="checked">
-      <bool>false</bool>
-     </property>
-    </widget>
-   </item>
-   <item row="13" column="0" colspan="2">
-    <widget class="Line" name="line_3">
-     <property name="orientation">
-      <enum>Qt::Horizontal</enum>
-     </property>
-    </widget>
-   </item>
    <item row="1" column="0" rowspan="2">
     <widget class="QRadioButton" name="radioButtonRangeMarkerRadii">
      <property name="toolTip">
@@ -67,27 +30,6 @@ and use range ring radii as above.</string>
      </attribute>
     </widget>
    </item>
-   <item row="2" column="1">
-    <widget class="QLineEdit" name="lineEditRangeMarkerRadii">
-     <property name="toolTip">
-      <string>Space separated list of range ring radii.
-A range ring will be added for each radius value.
-Falls back to default if empty or not valid.</string>
-     </property>
-     <property name="text">
-      <string notr="true">50 100 200 500</string>
-     </property>
-     <property name="maxLength">
-      <number>80</number>
-     </property>
-     <property name="cursorPosition">
-      <number>14</number>
-     </property>
-     <property name="clearButtonEnabled">
-      <bool>true</bool>
-     </property>
-    </widget>
-   </item>
    <item row="6" column="0" colspan="2">
     <widget class="Line" name="line_2">
      <property name="orientation">
@@ -95,23 +37,10 @@ Falls back to default if empty or not valid.</string>
      </property>
     </widget>
    </item>
-   <item row="10" column="0">
-    <widget class="QLabel" name="labelRangeMarkerLatLon">
+   <item row="13" column="1">
+    <widget class="QLabel" name="labelRangeMarkerCoordStatus">
      <property name="text">
-      <string>&amp;Latitude and Longitude:</string>
-     </property>
-     <property name="buddy">
-      <cstring>lineEditRangeMarkerLatLon</cstring>
-     </property>
-    </widget>
-   </item>
-   <item row="3" column="0" colspan="2">
-    <widget class="QLabel" name="labelRangeMarkerRadii">
-     <property name="text">
-      <string>Maximum of %L1 values from %L2 to %L3 %dist%.</string>
-     </property>
-     <property name="alignment">
-      <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+      <string/>
      </property>
      <property name="wordWrap">
       <bool>true</bool>
@@ -146,7 +75,138 @@ Falls back to default if empty or not valid.</string>
      </property>
     </widget>
    </item>
+   <item row="15" column="1">
+    <spacer name="verticalSpacer">
+     <property name="orientation">
+      <enum>Qt::Vertical</enum>
+     </property>
+     <property name="sizeHint" stdset="0">
+      <size>
+       <width>20</width>
+       <height>40</height>
+      </size>
+     </property>
+    </spacer>
+   </item>
+   <item row="7" column="0">
+    <widget class="QLabel" name="labelRangeMarkerLabel">
+     <property name="text">
+      <string>L&amp;abel:</string>
+     </property>
+     <property name="buddy">
+      <cstring>lineEditRangeMarkerLabel</cstring>
+     </property>
+    </widget>
+   </item>
+   <item row="3" column="0" colspan="2">
+    <widget class="QLabel" name="labelRangeMarkerRadii">
+     <property name="text">
+      <string>Maximum of %L1 values from %L2 to %L3 %dist%.</string>
+     </property>
+     <property name="alignment">
+      <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+     </property>
+     <property name="wordWrap">
+      <bool>true</bool>
+     </property>
+     <property name="margin">
+      <number>5</number>
+     </property>
+     <property name="textInteractionFlags">
+      <set>Qt::LinksAccessibleByMouse|Qt::TextSelectableByMouse</set>
+     </property>
+    </widget>
+   </item>
+   <item row="2" column="1">
+    <widget class="QLineEdit" name="lineEditRangeMarkerRadii">
+     <property name="toolTip">
+      <string>Space separated list of range ring radii.
+A range ring will be added for each radius value.
+Falls back to default if empty or not valid.</string>
+     </property>
+     <property name="text">
+      <string notr="true">50 100 200 500</string>
+     </property>
+     <property name="maxLength">
+      <number>80</number>
+     </property>
+     <property name="cursorPosition">
+      <number>14</number>
+     </property>
+     <property name="clearButtonEnabled">
+      <bool>true</bool>
+     </property>
+    </widget>
+   </item>
+   <item row="4" column="0">
+    <widget class="QRadioButton" name="radioButtonRangeMarkerAircraft">
+     <property name="toolTip">
+      <string>Places a ring showing the estimated aircraft range with  full fuel load also considering reserve.
+Calculated based on usable fuel, speed and fuel flow for the cruise phase and reserve fuel.
+The range ring is static and does not change with aircraft performance and fuel load.</string>
+     </property>
+     <property name="text">
+      <string>&amp;Aircraft range:</string>
+     </property>
+     <attribute name="buttonGroup">
+      <string notr="true">buttonGroupRangeMarker</string>
+     </attribute>
+    </widget>
+   </item>
    <item row="10" column="1">
+    <widget class="QPushButton" name="pushButtonRangeMarkerColor">
+     <property name="toolTip">
+      <string>Color for the range rings.</string>
+     </property>
+     <property name="text">
+      <string>&amp;Line Color</string>
+     </property>
+    </widget>
+   </item>
+   <item row="14" column="0" colspan="2">
+    <widget class="Line" name="line_3">
+     <property name="orientation">
+      <enum>Qt::Horizontal</enum>
+     </property>
+    </widget>
+   </item>
+   <item row="7" column="1">
+    <widget class="QLineEdit" name="lineEditRangeMarkerLabel">
+     <property name="toolTip">
+      <string>Attaches a text to the range ring distance labels.</string>
+     </property>
+     <property name="maxLength">
+      <number>40</number>
+     </property>
+     <property name="clearButtonEnabled">
+      <bool>true</bool>
+     </property>
+    </widget>
+   </item>
+   <item row="8" column="0" colspan="2">
+    <widget class="QLabel" name="labelDistanceMarkerHint">
+     <property name="text">
+      <string>Leave the label field blank so that the name is automatically assigned based on airports or navigation aids.</string>
+     </property>
+     <property name="wordWrap">
+      <bool>true</bool>
+     </property>
+     <property name="buddy">
+      <cstring>lineEditDistanceMarkerLabel</cstring>
+     </property>
+    </widget>
+   </item>
+   <item row="11" column="0">
+    <widget class="QLabel" name="labelRangeMarkerLatLon">
+     <property name="text">
+      <string>&amp;Latitude and Longitude:</string>
+     </property>
+     <property name="buddy">
+      <cstring>lineEditRangeMarkerLatLon</cstring>
+     </property>
+    </widget>
+   </item>
+   <item row="11" column="1">
     <widget class="QLineEdit" name="lineEditRangeMarkerLatLon">
      <property name="toolTip">
       <string>Recognized coordinate formats:
@@ -171,36 +231,13 @@ Formats above have to be given exactly as shown in the examples.</string>
      </property>
     </widget>
    </item>
-   <item row="18" column="0" colspan="2">
+   <item row="19" column="0" colspan="2">
     <widget class="QDialogButtonBox" name="buttonBoxRangeMarker">
      <property name="orientation">
       <enum>Qt::Horizontal</enum>
      </property>
      <property name="standardButtons">
       <set>QDialogButtonBox::Cancel|QDialogButtonBox::Help|QDialogButtonBox::Ok|QDialogButtonBox::Reset</set>
-     </property>
-    </widget>
-   </item>
-   <item row="14" column="1">
-    <spacer name="verticalSpacer">
-     <property name="orientation">
-      <enum>Qt::Vertical</enum>
-     </property>
-     <property name="sizeHint" stdset="0">
-      <size>
-       <width>20</width>
-       <height>40</height>
-      </size>
-     </property>
-    </spacer>
-   </item>
-   <item row="7" column="0">
-    <widget class="QLabel" name="labelRangeMarkerLabel">
-     <property name="text">
-      <string>L&amp;abel:</string>
-     </property>
-     <property name="buddy">
-      <cstring>lineEditRangeMarkerLabel</cstring>
      </property>
     </widget>
    </item>
@@ -214,54 +251,24 @@ Formats above have to be given exactly as shown in the examples.</string>
      </property>
     </widget>
    </item>
-   <item row="4" column="0">
-    <widget class="QRadioButton" name="radioButtonRangeMarkerAircraft">
+   <item row="17" column="0" colspan="2">
+    <widget class="QCheckBox" name="checkBoxRangeMarkerDoNotShow">
      <property name="toolTip">
-      <string>Places a ring showing the estimated aircraft range with  full fuel load also considering reserve.
-Calculated based on usable fuel, speed and fuel flow for the cruise phase and reserve fuel.
-The range ring is static and does not change with aircraft performance and fuel load.</string>
+      <string>Places a range ring with the set radii and color when shift-clicking into the map without showing this dialog.</string>
      </property>
      <property name="text">
-      <string>&amp;Aircraft range:</string>
+      <string>&amp;Do not show this dialog when using &quot;Shift+Click&quot; in the map
+and use range ring radii as above.</string>
      </property>
-     <attribute name="buttonGroup">
-      <string notr="true">buttonGroupRangeMarker</string>
-     </attribute>
-    </widget>
-   </item>
-   <item row="7" column="1">
-    <widget class="QLineEdit" name="lineEditRangeMarkerLabel">
-     <property name="toolTip">
-      <string>Attaches a text to the range ring distance labels.</string>
-     </property>
-     <property name="maxLength">
-      <number>40</number>
-     </property>
-     <property name="clearButtonEnabled">
-      <bool>true</bool>
+     <property name="checked">
+      <bool>false</bool>
      </property>
     </widget>
    </item>
-   <item row="9" column="1">
-    <widget class="QPushButton" name="pushButtonRangeMarkerColor">
-     <property name="toolTip">
-      <string>Color for the range rings.</string>
-     </property>
-     <property name="text">
-      <string>&amp;Line Color</string>
-     </property>
-    </widget>
-   </item>
-   <item row="8" column="0" colspan="2">
-    <widget class="QLabel" name="labelDistanceMarkerHint">
-     <property name="text">
-      <string>Leave the label empty to assign it automatically from airports or navaids.</string>
-     </property>
-     <property name="wordWrap">
-      <bool>true</bool>
-     </property>
-     <property name="buddy">
-      <cstring>lineEditDistanceMarkerLabel</cstring>
+   <item row="9" column="0" colspan="2">
+    <widget class="Line" name="line_4">
+     <property name="orientation">
+      <enum>Qt::Horizontal</enum>
      </property>
     </widget>
    </item>

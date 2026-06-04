@@ -862,7 +862,7 @@ void MapContextMenu::insertEditMenu(QMenu& menu)
 
   insertMenuOrAction(menu, mc::EDIT, index,
                      tr("&Edit Feature %1 ..."), tr("Edit feature"),
-                     QStringLiteral(), QIcon(":/littlenavmap/resources/icons/edit.svg"), false /* allowNoMapObject */, callback);
+                     tr("Alt+Click"), QIcon(":/littlenavmap/resources/icons/edit.svg"), false /* allowNoMapObject */, callback);
 }
 
 void MapContextMenu::insertRemoveMenu(QMenu& menu)
@@ -921,7 +921,7 @@ void MapContextMenu::insertRemoveMenu(QMenu& menu)
 
   insertMenuOrAction(menu, mc::REMOVE, index,
                      tr("&Delete Feature %1"), tr("Delete feature"),
-                     QStringLiteral(), QIcon(":/littlenavmap/resources/icons/routedeleteleg.svg"), false /* allowNoMapObject */,
+                     tr("Ctrl+Alt+Shift+Click"), QIcon(":/littlenavmap/resources/icons/routedeleteleg.svg"), false /* allowNoMapObject */,
                      callback);
 }
 

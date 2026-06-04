@@ -173,11 +173,32 @@ const double DEFAULT_MAP_DISTANCE_KM = 7000.;
 
 const double MAP_ZOOM_OUT_LIMIT_KM = 10000.;
 
+/* Zoom and move keys =============================================================== */
 const static QSet<Qt::Key> ZOOM_KEYS({Qt::Key_Plus, Qt::Key_Minus, Qt::Key_Asterisk, Qt::Key_Slash});
 const static QSet<Qt::Key> MOVE_KEYS({Qt::Key_Left, Qt::Key_Right, Qt::Key_Up, Qt::Key_Down});
 
 /* All types that can be used in the route or can be source for range rings or measurment lines */
 const static map::MapType MAP_EDIT_TYPES = map::AIRPORT | map::VOR | map::NDB | map::WAYPOINT | map::USERPOINT;
+
+/* Keyboard modifiers =============================================================== */
+/* Keep only three relevant modifiers */
+const static Qt::KeyboardModifiers MODIFIER_FILTER(Qt::ControlModifier | Qt::ShiftModifier | Qt::AltModifier);
+
+/* General edit function */
+const static Qt::KeyboardModifiers MODIFIER_EDIT(Qt::AltModifier);
+
+/* General delete function */
+const static Qt::KeyboardModifiers MODIFIER_DELETE(Qt::ControlModifier | Qt::AltModifier | Qt::ShiftModifier);
+
+const static Qt::KeyboardModifiers MODIFIER_ADD_ROUTE(Qt::ControlModifier | Qt::AltModifier);
+const static Qt::KeyboardModifiers MODIFIER_APPEND_ROUTE(Qt::AltModifier | Qt::ShiftModifier);
+const static Qt::KeyboardModifiers MODIFIER_RANGE_MARKER(Qt::ShiftModifier);
+const static Qt::KeyboardModifiers MODIFIER_ADD_DISTANCE_MARKER(Qt::ControlModifier);
+
+const static Qt::KeyboardModifiers MODIFIER_ADD_USERPOINT(Qt::ControlModifier | Qt::ShiftModifier);
+
+/* Minimum distance to detect a drag and drop event */
+const static double CLICK_MOVE_MIN_DISTANCE_PIXEL = 5.f;
 
 using atools::geo::Pos;
 
@@ -694,7 +715,7 @@ void MapWidget::keyPressEvent(QKeyEvent *keyEvent)
   Qt::Key key = static_cast<Qt::Key>(keyEvent->key());
 
   // Get only real modifiers
-  Qt::KeyboardModifiers modifiers = keyEvent->modifiers() & (Qt::ControlModifier | Qt::ShiftModifier | Qt::AltModifier);
+  Qt::KeyboardModifiers modifiers = keyEvent->modifiers() & MODIFIER_FILTER;
 
 #ifdef DEBUG_INFORMATION_KEY_INPUT
   qDebug() << Q_FUNC_INFO << "MAPMOUSE" << "Text" << keyEvent->text()
@@ -738,7 +759,7 @@ void MapWidget::keyPressEvent(QKeyEvent *keyEvent)
   }
 }
 
-const map::MapResult MapWidget::resultAtPoint(const QPoint& point, map::MapObjectQueryType types, bool includeHiddenUserpoints)
+map::MapResult MapWidget::resultAtPoint(const QPoint& point, map::MapObjectQueryType types, bool includeHiddenUserpoints)
 {
   map::MapResult result;
   getScreenIndex()->getAllNearest(point, screenSearchDistance, result, types);
@@ -752,7 +773,7 @@ const map::MapResult MapWidget::resultAtPoint(const QPoint& point, map::MapObjec
   return result;
 }
 
-const map::MapResult MapWidget::resultAtPoint(const QPointF& point, map::MapObjectQueryType types, bool includeHiddenUserpoints)
+map::MapResult MapWidget::resultAtPoint(const QPointF& point, map::MapObjectQueryType types, bool includeHiddenUserpoints)
 {
   return resultAtPoint(point.toPoint(), types, includeHiddenUserpoints);
 }
@@ -772,99 +793,113 @@ bool MapWidget::mousePressCheckModifierActions(QMouseEvent *event)
   if(mouseState != ms::DRAG_NONE || noRender())
     return false; // Continue on event
 
+  // Keep only three relevant modifiers
+  const Qt::KeyboardModifiers modifiers = event->modifiers() & MODIFIER_FILTER;
+
   // Cursor can be outside or map region
   Pos pos = getGeoPos(event->position());
   if(pos.isValid())
   {
+    // Get all objects nearby sorted by distance to click position
+    map::MapResultIndex index(resultAtPoint(event->position(), map::QUERY_MARK, true /* includeHiddenUserpoints */));
+    index.sort(pos);
+
     if(event->buttons() == Qt::LeftButton)
     {
-      // Order of handled features is defined here ===============================================================
-
-      if(event->modifiers() == (Qt::AltModifier | Qt::ControlModifier) || event->modifiers() == (Qt::AltModifier | Qt::ShiftModifier))
+      if(modifiers == MODIFIER_EDIT)
       {
-        // Edit route Alt+Ctrl+Click or Alt+Shift+Click ===========================================================
-        // First check for not editable points if these are procedures which can be removed ======================
-        int routeIndex = getScreenIndex()->getNearestRoutePointIndex(event->pos().x(), event->pos().y(),
-                                                                     screenSearchDistance, false /* editableOnly */);
-
-        if(NavApp::getRouteConst().value(routeIndex).isAnyProcedure())
+        // Edit any feature ==============================================
+        // Copy of index with route legs only
+        map::MapResultIndex indexRoute = index;
+        indexRoute.eraseNonRouteIndexLegs();
+        int routeIndex = map::routeIndex(indexRoute.constFirstOrNull());
+        if(routeIndex != -1 && NavApp::getRouteConst().canEditComment(routeIndex))
         {
-          NavApp::getRouteController()->routeDelete(routeIndex, false /* selectCurrent */);
+          editAny(indexRoute.constFirstOrNull());
           return true; // Event was consumed
         }
+        else
+        {
+          // Remove all except markers, userpoints and logbook entries
+          index.removeNot(map::MARK_ALL_EDITABLE | map::USERPOINT | map::LOGBOOK);
 
-        // No procedure found - check for editable points which can be removed or added ===============
-        routeIndex = getScreenIndex()->getNearestRoutePointIndex(event->pos().x(), event->pos().y(),
-                                                                 screenSearchDistance, true /* editableOnly */);
+          editAny(index.constFirstOrNull());
+          return true; // Event was consumed
+        }
+      }
+      else if(modifiers == MODIFIER_DELETE)
+      {
+        // Delete any feature ==============================================
+        const MapScreenIndex *screenIndex = getScreenIndex();
 
-        if(routeIndex != -1)
+        // Test if a point can be deleted
+        int routeIndexEditable = screenIndex->getNearestRoutePointIndex(event->pos().x(), event->pos().y(),
+                                                                        screenSearchDistance, true /* editableOnly */);
+        if(routeIndexEditable != -1)
         {
           // Position is editable - remove for any modifier click
-          NavApp::getRouteController()->routeDelete(routeIndex, false /* selectCurrent */);
+          emit routeDelete(routeIndexEditable, false /* selectCurrent */);
           return true; // Event was consumed
         }
 
-        if(event->modifiers() == (Qt::AltModifier | Qt::ControlModifier))
+        // Test if a procedure can be deleted
+        int routeIndex = screenIndex->getNearestRoutePointIndex(event->pos().x(), event->pos().y(),
+                                                                screenSearchDistance, false /* editableOnly */);
+        if(NavApp::getRouteConst().value(routeIndex).isAnyProcedure())
         {
-          // Add to nearest leg of flight plan ==================================
-          updateRouteMenu(event->pos(), -1, -1, true /* click add */, false /* click append */);
+          emit routeDelete(routeIndex, false /* selectCurrent */);
           return true; // Event was consumed
         }
-        else if(event->modifiers() == (Qt::AltModifier | Qt::ShiftModifier))
-        {
-          // Append to flight plan ==================================
-          updateRouteMenu(event->pos(), -1, -1, false /* click add */, true /* click append */);
-          return true; // Event was consumed
-        }
-      }
-      else if(event->modifiers() == Qt::ShiftModifier)
-      {
-        // Range rings left Shift+Click =======================================================================
-        int id = getScreenIndex()->getNearestRangeMarkId(event->pos().x(), event->pos().y(), screenSearchDistance);
-        if(id != -1)
-          // Remove any ring for Shift+Click into center ================
-          removeRangeMark(id);
-        else
-          // Add rings for Shift+Click ==================================
-          addNavRangeMark(resultAtPoint(event->position(), map::QUERY_MOVEABLE_MARK, false /* includeHiddenUserpoints */), pos);
+
+        // Delete any other feature ==============================================
+        // Remove all except markers, userpoints and logbook entries
+        index.removeNot(map::MARK_ALL | map::USERPOINT | map::LOGBOOK);
+        removeAny(index.constFirstOrNull());
         return true; // Event was consumed
       }
-      else if(event->modifiers() == Qt::ControlModifier)
+      else if(modifiers == MODIFIER_ADD_ROUTE || modifiers == MODIFIER_APPEND_ROUTE)
+      {
+        // Add or append to route Alt+Ctrl+Click or Alt+Shift+Click ===========================================================
+        updateRouteMenu(event->pos(), -1, -1, modifiers == MODIFIER_ADD_ROUTE, modifiers == MODIFIER_APPEND_ROUTE);
+        return true; // Event was consumed
+      }
+      else if(modifiers == MODIFIER_RANGE_MARKER)
+      {
+        // Range rings Shift+Click =======================================================================
+        // Remove all objects that cannot have a range ring attached
+        index.removeNot(map::USERPOINT | map::LOGBOOK | map::NAV_ALL | map::AIRPORT);
+        addNavRangeMark(index.getResultFromFirst(), pos);
+        return true; // Event was consumed
+      }
+      else if(modifiers == MODIFIER_ADD_DISTANCE_MARKER)
       {
         // Measurement Ctrl+Click =======================================================================
+        // Dialog is not shown from Ctrl+Click if disabled by "do not show ..."
         distanceDragShowDialog = false;
-        NavApp::getMapMarkHandler()->showMarkTypes(map::MARK_DISTANCE);
-        int id = getScreenIndex()->getNearestDistanceMarkId(event->pos().x(), event->pos().y(), screenSearchDistance);
-        if(id != -1)
-          // Remove any measurement line for Ctrl+Click
-          removeDistanceMark(id);
-        else
-        {
-          // Add measurement line for Ctrl+Click
-          distanceMarkerBackup->id = addDistanceMarker(pos, resultAtPoint(event->position(), map::QUERY_MOVEABLE_MARK,
-                                                                          false /* includeHiddenUserpoints */));
-          setContextMenuPolicy(Qt::PreventContextMenu);
-          inputHandler()->setHandleMouseEvents(false);
 
-          // Start mouse dragging and disable context menu so we can catch the right button click as cancel
-          mouseState = ms::DRAG_DIST_NEW_TO;
-        }
+        // Enable distance marker display now
+        NavApp::getMapMarkHandler()->showMarkTypes(map::MARK_DISTANCE);
+
+        // Remove all objects that cannot have a line attached
+        index.removeNot(map::USERPOINT | map::LOGBOOK | map::NAV_ALL | map::AIRPORT);
+
+        // Add measurement line for Ctrl+Click
+        distanceMarkerBackup->id = addDistanceMarker(index.getResultFromFirst(), pos);
+        setContextMenuPolicy(Qt::PreventContextMenu);
+        inputHandler()->setHandleMouseEvents(false);
+
+        // Start mouse dragging and disable context menu so we can catch the right button click as cancel
+        mouseState = ms::DRAG_DIST_NEW_TO;
         return true; // Event was consumed
       }
-      else if(event->modifiers() == (Qt::ControlModifier | Qt::ShiftModifier))
+      else if(modifiers == MODIFIER_ADD_USERPOINT)
       {
-        // Edit userpoint Ctrl+Shift+Click =======================================================================
-        const map::MapResult result = resultAtPoint(event->position(), map::QUERY_MOVEABLE_MARK, false /* includeHiddenUserpoints */);
+        // Add userpoint Ctrl+Shift+Click =======================================================================
+        // Remove all objects that cannot be a base for a new userpoint
+        index.removeNot(map::USERPOINT | map::NAV_ALL | map::AIRPORT);
 
-        // Add or edit userpoint
-        if(result.hasUserpoints())
-          emit editUserpointFromMap(result.userpoints.constFirst().id);
-        else
-        {
-          if(NavApp::isGlobeOfflineProvider())
-            pos.setAltitude(NavApp::getElevationProvider()->getElevationFt(pos));
-          emit addUserpointFromMap(result, pos, false /* airportAddon */);
-        }
+        emit addUserpointFromMap(index.getResultFromFirst(), pos, false /* airportAddon */);
+        return true; // Event was consumed
       }
     } // if(event->buttons() == Qt::LeftButton)
   } // if(pos.isValid())
@@ -882,6 +917,9 @@ void MapWidget::mousePressEvent(QMouseEvent *event)
            << "touch" << isTouchArea(event);
 #endif
 
+  // Drag is cancelled if distance is too far on mouse release
+  buttonDownPoint = event->position();
+
   if(noRender())
   {
     // Zoomed to far out - reset cursor and ignore input
@@ -898,7 +936,6 @@ void MapWidget::mousePressEvent(QMouseEvent *event)
   }
 
   hideTooltip();
-
   jumpBackToAircraftCancel();
 
   // Avoid repaints
@@ -910,11 +947,15 @@ void MapWidget::mousePressEvent(QMouseEvent *event)
     // Event was consumed - do not proceed here
     return;
 
+  // Keep only three relevant modifiers
+  Qt::KeyboardModifiers modifiers = event->modifiers() & MODIFIER_FILTER;
   if(event->button() == Qt::LeftButton)
   {
     // Left button pressed down =========================================
     const Pos pos = getGeoPos(event->position());
     bool clickHandled = false;
+    map::MapResultIndex index(resultAtPoint(event->position(), map::QUERY_MARK, false /* includeHiddenUserpoints */));
+    index.sort(pos);
 
     if(mouseState == ms::DRAG_DIST_PRE)
     {
@@ -924,8 +965,9 @@ void MapWidget::mousePressEvent(QMouseEvent *event)
         // Pre-state for distance marker. Start dragging at click position and let use position the end
         NavApp::getMainUi()->actionStartDistanceMarker->setChecked(true);
         mouseState = ms::DRAG_DIST_NEW_TO;
-        distanceMarkerBackup->id = addDistanceMarker(pos, resultAtPoint(event->position(), map::QUERY_MOVEABLE_MARK,
-                                                                        false /* includeHiddenUserpoints */));
+        index.removeNot(map::USERPOINT | map::LOGBOOK | map::NAV_ALL | map::AIRPORT);
+
+        distanceMarkerBackup->id = addDistanceMarker(index.getResultFromFirst(), pos);
         distanceDragShowDialog = true;
       }
 
@@ -1007,7 +1049,8 @@ void MapWidget::mousePressEvent(QMouseEvent *event)
         } // if(route.size() > 1)
 
         // Start map marker drag and drop ===================================================================================
-        const map::MapResult result = resultAtPoint(event->position(), map::QUERY_MOVEABLE_MARK, false /* includeHiddenUserpoints */);
+        index.removeNot(map::MARK_ALL);
+        map::MapResult result = index.getResultFromFirst();
 
         // Measurement line start or end clicked ===================================
         if(!clickHandled && result.hasDistanceMarks())
@@ -1066,7 +1109,7 @@ void MapWidget::mousePressEvent(QMouseEvent *event)
   else
   {
     // No drag and drop mode - use hand to indicate scrolling
-    if(event->button() == Qt::LeftButton && event->modifiers() == Qt::NoModifier)
+    if(event->button() == Qt::LeftButton && modifiers == Qt::NoModifier)
       setMouseCursor(Qt::OpenHandCursor);
   }
 }
@@ -1077,7 +1120,7 @@ void MapWidget::mouseReleaseEvent(QMouseEvent *event)
   qDebug() << Q_FUNC_INFO << "MAPMOUSE" << mouseState << event->modifiers() << event->buttons() << event->button()
            << event->pos() << "noRender()" << noRender()
            << "handle mouse" << inputHandler()->isHandleMouseEvents() << "scrolling" << scrolling << "noInfoClick" << noInfoClick
-           << "touch" << isTouchArea(event);
+           << "touch" << isTouchArea(event) << "distance" << QLineF(buttonDownPoint, event->position()).length();
 #endif
 
   if(noRender())
@@ -1104,18 +1147,20 @@ void MapWidget::mouseReleaseEvent(QMouseEvent *event)
     return;
   }
 
+  // Keep only three relevant modifiers
+  Qt::KeyboardModifiers modifiers = event->modifiers() & MODIFIER_FILTER;
+
   hideTooltip();
 
   // Start aircraft centering, etc. again
   jumpBackToAircraftStart();
 
-  // Avoid unneededrepaints
+  // Avoid unneeded repaints
   resetPaintForDragTimer.stop();
 
   const Pos pos = getGeoPos(event->position());
-  map::MapResult result = resultAtPoint(event->position(), map::QUERY_NONE, false /* includeHiddenUserpoints */);
 
-  if(!scrolling && mouseState == ms::DRAG_NONE && event->modifiers() == Qt::NoModifier && event->button() == Qt::LeftButton && !noRender())
+  if(!scrolling && mouseState == ms::DRAG_NONE && modifiers == Qt::NoModifier && event->button() == Qt::LeftButton && !noRender())
   {
     // Not scrolling, not dragging and no modifiers and left button clicked
 
@@ -1151,8 +1196,15 @@ void MapWidget::mouseReleaseEvent(QMouseEvent *event)
 
   bool eventHandled = false;
   MapMarkers *markers = getScreenIndex()->getMapMarkers();
+  map::MapResult result = resultAtPoint(event->position(), map::QUERY_NONE, false /* includeHiddenUserpoints */);
 
-  if(mouseState.testAnyFlag(ms::DRAG_ROUTE_POINT | ms::DRAG_ROUTE_LEG))
+  if(QLineF(buttonDownPoint, event->position()).length() < CLICK_MOVE_MIN_DISTANCE_PIXEL)
+  {
+    // Too short movement between button down and release - cancel
+    cancelDragAll();
+    eventHandled = true;
+  }
+  else if(mouseState.testAnyFlag(ms::DRAG_ROUTE_POINT | ms::DRAG_ROUTE_LEG))
   {
     // Ending route dragging - update route =================================
     if(pos.isValidRange())
@@ -1160,7 +1212,6 @@ void MapWidget::mouseReleaseEvent(QMouseEvent *event)
 
     // End all dragging
     cancelDragRoute();
-
     eventHandled = true;
   }
   else if(mouseState.testAnyFlag(ms::DRAG_DIST_ANY))
@@ -1349,7 +1400,7 @@ void MapWidget::wheelEvent(QWheelEvent *event)
     lastWheelAngleX = ANGLE_THRESHOLD * atools::sign(angleDeltaX);
 
   // Get only real modifiers
-  Qt::KeyboardModifiers modifiers = event->modifiers() & (Qt::ControlModifier | Qt::ShiftModifier | Qt::AltModifier);
+  Qt::KeyboardModifiers modifiers = event->modifiers() & MODIFIER_FILTER;
 
   bool accepted = std::abs(lastWheelAngleY) >= ANGLE_THRESHOLD ||
                   (std::abs(lastWheelAngleX) >= ANGLE_THRESHOLD && modifiers == Qt::AltModifier);
@@ -1911,7 +1962,9 @@ void MapWidget::mouseMoveEvent(QMouseEvent *event)
   }
 
   // Dragging map with clicked left button ===================================
-  if(!mouseState.testAnyFlag(ms::DRAG_ANY) && event->buttons() == Qt::LeftButton && event->modifiers() == Qt::NoModifier)
+  // Keep only three relevant modifiers
+  Qt::KeyboardModifiers modifiers = event->modifiers() & MODIFIER_FILTER;
+  if(!mouseState.testAnyFlag(ms::DRAG_ANY) && event->buttons() == Qt::LeftButton && modifiers == Qt::NoModifier)
   {
     setMouseCursor(Qt::OpenHandCursor);
     scrolling = true;
@@ -2024,7 +2077,7 @@ void MapWidget::startDistanceMarkerDrag()
   setMouseCursor(Qt::CrossCursor);
 }
 
-int MapWidget::addDistanceMarker(const atools::geo::Pos& pos, const map::MapResult& result)
+int MapWidget::addDistanceMarker(const map::MapResult& result, const atools::geo::Pos& pos)
 {
   // Enable display of Map Markers
   NavApp::getMapMarkHandler()->showMarkTypes(map::MARK_DISTANCE);

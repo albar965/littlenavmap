@@ -377,7 +377,7 @@ private:
   void elevationDisplayTimerTimeout();
 
   /* Start a line measurement after context menu selection or click+modifier */
-  int addDistanceMarker(const atools::geo::Pos& pos, const map::MapResult& result);
+  int addDistanceMarker(const map::MapResult& result, const atools::geo::Pos& pos);
 
   /* Show disambiguation menu if needed and fill marker */
   bool fillDistanceMarkerMenu(map::DistanceMarker& marker, const atools::geo::Pos& pos, map::MapResult result, bool showMenu);
@@ -453,7 +453,7 @@ private:
 
   virtual void contextMenuEvent(QContextMenuEvent *event) override;
 
-  /* From context menu. Edit or remove action is selected by type in base */
+  /* From context menu. Edit or remove action is selected by type in base. All markers, userpoints and logbook entries. */
   void editAny(const map::MapBase *base);
   void removeAny(const map::MapBase *base);
 
@@ -488,8 +488,8 @@ private:
   void setMouseCursor(const QCursor& cursorParam);
 
   /* Get features at click position */
-  const map::MapResult resultAtPoint(const QPointF& point, map::MapObjectQueryType types, bool includeHiddenUserpoints);
-  const map::MapResult resultAtPoint(const QPoint& point, map::MapObjectQueryType types, bool includeHiddenUserpoints);
+  map::MapResult resultAtPoint(const QPointF& point, map::MapObjectQueryType types, bool includeHiddenUserpoints);
+  map::MapResult resultAtPoint(const QPoint& point, map::MapObjectQueryType types, bool includeHiddenUserpoints);
 
   int screenSearchDistance /* Radius for click sensitivity */,
       screenSearchDistanceTooltip /* Radius for tooltip sensitivity */;
@@ -570,6 +570,9 @@ private:
   QHash<QString, QAction *> mapOverlays;
 
   QPushButton *pushButtonExitFullscreen = nullptr;
+
+  /* Filled on mouse press. Drag is cancelled if distance is too far on mouse release */
+  QPointF buttonDownPoint;
 };
 
 #endif // LITTLENAVMAP_NAVMAPWIDGET_H

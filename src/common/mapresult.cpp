@@ -1308,6 +1308,15 @@ MapResultIndex& MapResultIndex::remove(const atools::geo::Pos& pos, float maxDis
   return *this;
 }
 
+MapResultIndex& MapResultIndex::remove(MapType types)
+{
+  erase(std::remove_if(begin(), end(), [&types](const MapBase *obj) -> bool {
+      return map::MapTypes(obj->objType).testAnyFlag(types);
+    }), end());
+
+  return *this;
+}
+
 void MapResultIndex::eraseNonRouteIndexLegs()
 {
   erase(std::remove_if(begin(), end(), [](const map::MapBase *base) -> bool {

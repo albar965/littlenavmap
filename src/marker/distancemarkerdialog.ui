@@ -7,31 +7,14 @@
     <x>0</x>
     <y>0</y>
     <width>480</width>
-    <height>230</height>
+    <height>248</height>
    </rect>
   </property>
   <property name="windowTitle">
    <string>Little Navmap - Add Measurement Line</string>
   </property>
   <layout class="QGridLayout" name="gridLayout">
-   <item row="4" column="1">
-    <widget class="QPushButton" name="pushButtonDistanceMarkerColor">
-     <property name="toolTip">
-      <string>Color for the range rings.</string>
-     </property>
-     <property name="text">
-      <string>&amp;Line Color</string>
-     </property>
-    </widget>
-   </item>
-   <item row="6" column="0" colspan="2">
-    <widget class="Line" name="line_3">
-     <property name="orientation">
-      <enum>Qt::Horizontal</enum>
-     </property>
-    </widget>
-   </item>
-   <item row="7" column="1">
+   <item row="8" column="1">
     <spacer name="verticalSpacer">
      <property name="orientation">
       <enum>Qt::Vertical</enum>
@@ -43,6 +26,19 @@
       </size>
      </property>
     </spacer>
+   </item>
+   <item row="3" column="0" colspan="2">
+    <widget class="QLabel" name="labelDistanceMarkerHint">
+     <property name="text">
+      <string>Leave the label field blank so that the name is automatically assigned based on airports or navigation aids at the line origin.</string>
+     </property>
+     <property name="wordWrap">
+      <bool>true</bool>
+     </property>
+     <property name="buddy">
+      <cstring>lineEditDistanceMarkerLabel</cstring>
+     </property>
+    </widget>
    </item>
    <item row="2" column="1">
     <widget class="QLineEdit" name="lineEditDistanceMarkerLabel">
@@ -57,17 +53,13 @@
      </property>
     </widget>
    </item>
-   <item row="9" column="0" colspan="2">
-    <widget class="QCheckBox" name="checkBoxDistanceMarkerDoNotShow">
-     <property name="toolTip">
-      <string>Places a range ring with the set radii and color when shift-clicking into the map without showing this dialog.</string>
+   <item row="12" column="0" colspan="2">
+    <widget class="QDialogButtonBox" name="buttonBoxDistanceMarker">
+     <property name="orientation">
+      <enum>Qt::Horizontal</enum>
      </property>
-     <property name="text">
-      <string>&amp;Do not show this dialog when using &quot;Ctrl+Click&quot; in the map
-and use color and label as above.</string>
-     </property>
-     <property name="checked">
-      <bool>false</bool>
+     <property name="standardButtons">
+      <set>QDialogButtonBox::Cancel|QDialogButtonBox::Help|QDialogButtonBox::Ok|QDialogButtonBox::Reset</set>
      </property>
     </widget>
    </item>
@@ -78,16 +70,6 @@ and use color and label as above.</string>
      </property>
      <property name="buddy">
       <cstring>lineEditDistanceMarkerLabel</cstring>
-     </property>
-    </widget>
-   </item>
-   <item row="11" column="0" colspan="2">
-    <widget class="QDialogButtonBox" name="buttonBoxDistanceMarker">
-     <property name="orientation">
-      <enum>Qt::Horizontal</enum>
-     </property>
-     <property name="standardButtons">
-      <set>QDialogButtonBox::Cancel|QDialogButtonBox::Help|QDialogButtonBox::Ok|QDialogButtonBox::Reset</set>
      </property>
     </widget>
    </item>
@@ -113,16 +95,41 @@ and use color and label as above.</string>
      </property>
     </widget>
    </item>
-   <item row="3" column="0" colspan="2">
-    <widget class="QLabel" name="labelDistanceMarkerHint">
+   <item row="5" column="1">
+    <widget class="QPushButton" name="pushButtonDistanceMarkerColor">
+     <property name="toolTip">
+      <string>Color for the range rings.</string>
+     </property>
      <property name="text">
-      <string>Leave the label empty to assign it automatically from airports or navaids.</string>
+      <string>&amp;Line Color</string>
      </property>
-     <property name="wordWrap">
-      <bool>true</bool>
+    </widget>
+   </item>
+   <item row="7" column="0" colspan="2">
+    <widget class="Line" name="line_3">
+     <property name="orientation">
+      <enum>Qt::Horizontal</enum>
      </property>
-     <property name="buddy">
-      <cstring>lineEditDistanceMarkerLabel</cstring>
+    </widget>
+   </item>
+   <item row="10" column="0" colspan="2">
+    <widget class="QCheckBox" name="checkBoxDistanceMarkerDoNotShow">
+     <property name="toolTip">
+      <string>Places a range ring with the set radii and color when shift-clicking into the map without showing this dialog.</string>
+     </property>
+     <property name="text">
+      <string>&amp;Do not show this dialog when using &quot;Ctrl+Click&quot; in the map
+and use color and label as above.</string>
+     </property>
+     <property name="checked">
+      <bool>false</bool>
+     </property>
+    </widget>
+   </item>
+   <item row="4" column="0" colspan="2">
+    <widget class="Line" name="line_4">
+     <property name="orientation">
+      <enum>Qt::Horizontal</enum>
      </property>
     </widget>
    </item>

@@ -151,7 +151,8 @@ struct MapResult
   MapResult& clearRouteIndex(const map::MapTypes& types = map::ALL);
 
   /* Removes all userpoints which are currently not visible on the map */
-  MapResult& clearHiddenUserpoints(const QMap<QString, QString>& selectedTypes, const QMap<QString, QString>& allTypes, bool showUnknownType);
+  MapResult& clearHiddenUserpoints(const QMap<QString, QString>& selectedTypes, const QMap<QString, QString>& allTypes,
+                                   bool showUnknownType);
 
   /* Build label with frequency (if applicable) for marker types. */
   QString markerLabel() const;
@@ -364,6 +365,11 @@ struct MapResultIndex
   /* Sorting callback */
   typedef std::function<bool (const MapBase *, const MapBase *)> SortFunction;
 
+  const map::MapBase *constFirstOrNull() const
+  {
+    return ptrOrNull(0);
+  }
+
   const map::MapBase *ptrOrNull(int index) const
   {
     return atools::inRange(*this, index) ? at(index) : nullptr;
@@ -399,6 +405,16 @@ struct MapResultIndex
   /* Remove all objects which are more far away  from pos than max distance */
   MapResultIndex& remove(const atools::geo::Pos& pos, float maxDistanceNm);
 
+  /* Remove all objects of the given types */
+  MapResultIndex& remove(map::MapType types);
+
+  /* Keep all objects of the given types and remove all others */
+  MapResultIndex& removeNot(map::MapType types)
+  {
+    remove(~map::MapTypes(types));
+    return *this;
+  }
+
   /* Remove all objects having a routeIndex = -1 */
   void eraseNonRouteIndexLegs();
 
@@ -408,6 +424,12 @@ struct MapResultIndex
 
   /* Return a result with only the closest in the index */
   map::MapResult getClosestUnique(const atools::geo::Pos& pos);
+
+  /* Put first entry into a result structure or return an empty result. */
+  map::MapResult getResultFromFirst() const
+  {
+    return map::MapResult::createFromMapBase(constFirstOrNull());
+  }
 
 private:
   friend QDebug operator<<(QDebug out, const map::MapResultIndex& record);

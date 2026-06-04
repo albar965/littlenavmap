@@ -111,6 +111,8 @@ enum MapType : quint64
 
   /* All marks */
   MARK_ALL = MARK_RANGE | MARK_DISTANCE | MARK_HOLDING | MARK_PATTERNS | MARK_MSA,
+  MARK_ALL_EDITABLE = MARK_RANGE | MARK_DISTANCE | MARK_HOLDING | MARK_PATTERNS,
+  MARK_ALL_MOVEABLE = MARK_RANGE | MARK_DISTANCE | MARK_HOLDING,
 
   /* Airport display flags ================================  */
   AIRPORT_HARD =         1ULL << 36, /* Display flag for airports having at least one hard runway */
