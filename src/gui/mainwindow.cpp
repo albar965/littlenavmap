@@ -4463,11 +4463,12 @@ void MainWindow::applyButtonStylesheet()
   if(NavApp::isGuiStyleAnyFusion())
   {
     // Build stylesheet with colors
+    // Limit to QAbstractButton to avoid changing the menu items
     QPalette palette = QGuiApplication::palette();
     stylesheet = QStringLiteral(
-      "QWidget { border: 1px solid transparent; padding: 1px; margin: 1px; }"
-      "QWidget:checked { border: 1px solid %1; padding: 1px; background: %2; margin: 1px; }"
-      "QWidget:hover { border: 1px solid %3; padding: 1px; margin: 1px; }").
+      "QAbstractButton { border: 1px solid transparent; padding: 1px; margin: 1px; }"
+      "QAbstractButton:checked { border: 1px solid %1; padding: 1px; background: %2; margin: 1px; }"
+      "QAbstractButton:hover { border: 1px solid %3; padding: 1px; margin: 1px; }").
                  arg(palette.color(QPalette::Active, QPalette::Mid).name()).
                  arg(palette.color(QPalette::Active, QPalette::Mid).lighter(NavApp::isGuiStyleDark() ? 400 : 160).name()).
                  arg(palette.color(QPalette::Active, QPalette::Highlight).name());
@@ -4479,12 +4480,15 @@ void MainWindow::applyButtonStylesheet()
   {
     for(QAction *action : toolBar->actions())
     {
-      QWidget *widget = toolBar->widgetForAction(action);
+      QAbstractButton *widget = dynamic_cast<QAbstractButton *>(toolBar->widgetForAction(action));
       if(widget != nullptr)
+      {
         widget->setStyleSheet(stylesheet);
 
-      // TODO Set flat
-      // TODO omit menus
+        QPushButton *button = dynamic_cast<QPushButton *>(widget);
+        if(button != nullptr && !button->icon().isNull())
+          button->setFlat(true);
+      }
     }
   }
 
@@ -4493,8 +4497,10 @@ void MainWindow::applyButtonStylesheet()
   {
     QPushButton *button = dynamic_cast<QPushButton *>(widget);
     if(button != nullptr && !button->icon().isNull())
+    {
       button->setStyleSheet(stylesheet);
-    // TODO Set flat
+      button->setFlat(true);
+    }
   }
 #ifdef DEBUG_INFORMATION
   qDebug() << Q_FUNC_INFO << "done";
