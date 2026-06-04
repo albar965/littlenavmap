@@ -90,7 +90,7 @@ public:
   void cleanupLogEntries();
 
   /* Show message box and delete entries with the given ids */
-  void deleteLogEntries(const QSet<int>& ids);
+  void deleteLogEntries(const QList<int>& ids);
 
   /* Import and export from a predefined CSV format. Import does not commit. */
   void importCsv();

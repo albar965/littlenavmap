@@ -1568,6 +1568,11 @@ QString logEntryText(const MapLogbookEntry& logEntry)
   return QObject::tr("Logbook Entry %1 to %2").arg(logEntry.departureIdent).arg(logEntry.destinationIdent);
 }
 
+QString logEntryTextShort(const MapLogbookEntry& logEntry)
+{
+  return QObject::tr("%1 to %2").arg(logEntry.departureIdent).arg(logEntry.destinationIdent);
+}
+
 QString userpointRouteText(const MapUserpointRoute& userpoint)
 {
   return QObject::tr("Position %1").arg(userpoint.ident);

@@ -58,7 +58,7 @@ public:
 signals:
   void addLogEntry();
   void editLogEntries(const QList<int>& ids);
-  void deleteLogEntries(const QSet<int>& ids);
+  void deleteLogEntries(const QList<int>& ids);
   void cleanupLogEntries();
 
 private:

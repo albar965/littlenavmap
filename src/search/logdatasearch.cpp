@@ -195,8 +195,7 @@ void LogdataSearch::editLogEntriesTriggered()
 
 void LogdataSearch::deleteLogEntriesTriggered()
 {
-  QList<int> selectedIds = getSelectedIds();
-  emit deleteLogEntries(QSet<int>(selectedIds.constBegin(), selectedIds.constEnd()));
+  emit deleteLogEntries(getSelectedIds());
 }
 
 void LogdataSearch::saveState()

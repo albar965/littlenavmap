@@ -1867,6 +1867,7 @@ QString userpointRouteText(const map::MapUserpointRoute& userpoint);
 QString userpointText(const MapUserpoint& userpoint, int elideName = 100);
 QString userpointShortText(const MapUserpoint& userpoint, int elideName = 100);
 QString logEntryText(const MapLogbookEntry& logEntry);
+QString logEntryTextShort(const MapLogbookEntry& logEntry);
 QString airwayText(const map::MapAirway& airway);
 
 /* Text like "Transition to KER runway 26". Text details (missed, approach and transition)

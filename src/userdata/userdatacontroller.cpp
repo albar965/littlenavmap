@@ -455,10 +455,9 @@ void UserdataController::addUserpointFromMap(const map::MapResult& result, atool
       prefillRec.appendFieldAndValue("ident", up.ident)
       .appendFieldAndValue("name", up.name)
       .appendFieldAndValue("type", up.type)
-      .appendFieldAndValue("region", up.region)
+      .appendFieldAndValue("region", up.region);
       // .appendFieldAndValue("description", up.description)
       // .appendFieldAndValue("tags", up.tags)
-      ;
       pos = up.position;
     }
     else
@@ -680,11 +679,25 @@ void UserdataController::editUserpoints(const QList<int>& ids)
 
 void UserdataController::deleteUserpoints(const QList<int>& ids)
 {
-  qDebug() << Q_FUNC_INFO;
+  // Generate a truncated list of object names to delete
+  QStringList texts;
+  for(int id : ids)
+  {
+    texts.append(map::userpointShortText(getUserpointById(id), 5000));
+    if(texts.size() > 6)
+      break;
+  }
+
+  // Function relies on line feeds - join and split again to get a list
+  texts = atools::elideTextLinesShort(texts.join('\n'), 5, 20, true /* compressEmpty */, true /* ellipseLastLine */).split('\n');
+
   int result = dialog->showQuestionMsgBox(lnm::ACTIONS_SHOW_DELETE_USERPOINT,
-                                          tr("Delete %1 %2?\n\n"
-                                             "Note that you can undo this action in menu \"Userpoints\".")
-                                          .arg(ids.size()).arg(ids.size() == 1 ? tr("userpoint") : tr("userpoints")),
+                                          tr("<p>Delete %1 %2?</p>"
+                                               "<ul><li>%3</li></ul>"
+                                                 "<p>Note that you can undo this action in menu \"Userpoints\".</p>").
+                                          arg(ids.size()).
+                                          arg(ids.size() == 1 ? tr("userpoint") : tr("userpoints")).
+                                          arg(texts.join(tr("</li><li>"))),
                                           tr("Do not &show this dialog again."),
                                           QMessageBox::Yes | QMessageBox::No, QMessageBox::No, QMessageBox::Yes);
 
