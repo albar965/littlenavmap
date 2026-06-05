@@ -366,8 +366,8 @@
     </property>
     <addaction name="actionShortcutUserpointSearch"/>
     <addaction name="separator"/>
-    <addaction name="actionSearchUserpointUndo"/>
-    <addaction name="actionSearchUserpointRedo"/>
+    <addaction name="actionMainUserpointUndo"/>
+    <addaction name="actionMainUserpointRedo"/>
     <addaction name="separator"/>
     <addaction name="actionUserdataCleanup"/>
     <addaction name="separator"/>
@@ -536,8 +536,8 @@
     </property>
     <addaction name="actionShortcutLogbookSearch"/>
     <addaction name="separator"/>
-    <addaction name="actionSearchLogdataUndo"/>
-    <addaction name="actionSearchLogdataRedo"/>
+    <addaction name="actionMainLogdataUndo"/>
+    <addaction name="actionMainLogdataRedo"/>
     <addaction name="separator"/>
     <addaction name="actionLogdataCleanup"/>
     <addaction name="separator"/>
@@ -11785,6 +11785,66 @@ relation to shown airport</string>
    </property>
    <property name="statusTip">
     <string>Show vertical aircraft trail</string>
+   </property>
+  </action>
+  <action name="actionMainUserpointUndo">
+   <property name="icon">
+    <iconset resource="../../littlenavmap.qrc">
+     <normaloff>:/littlenavmap/resources/icons/undo.svg</normaloff>:/littlenavmap/resources/icons/undo.svg</iconset>
+   </property>
+   <property name="text">
+    <string>&amp;Undo Userpoint</string>
+   </property>
+   <property name="toolTip">
+    <string>Undo last change</string>
+   </property>
+   <property name="statusTip">
+    <string>Undo last change</string>
+   </property>
+  </action>
+  <action name="actionMainUserpointRedo">
+   <property name="icon">
+    <iconset resource="../../littlenavmap.qrc">
+     <normaloff>:/littlenavmap/resources/icons/redo.svg</normaloff>:/littlenavmap/resources/icons/redo.svg</iconset>
+   </property>
+   <property name="text">
+    <string>&amp;Redo Userpoint</string>
+   </property>
+   <property name="toolTip">
+    <string>Redo last change</string>
+   </property>
+   <property name="statusTip">
+    <string>Redo last change</string>
+   </property>
+  </action>
+  <action name="actionMainLogdataUndo">
+   <property name="icon">
+    <iconset resource="../../littlenavmap.qrc">
+     <normaloff>:/littlenavmap/resources/icons/undo.svg</normaloff>:/littlenavmap/resources/icons/undo.svg</iconset>
+   </property>
+   <property name="text">
+    <string>&amp;Undo Logbook Entry</string>
+   </property>
+   <property name="toolTip">
+    <string>Undo last change</string>
+   </property>
+   <property name="statusTip">
+    <string>Undo last change</string>
+   </property>
+  </action>
+  <action name="actionMainLogdataRedo">
+   <property name="icon">
+    <iconset resource="../../littlenavmap.qrc">
+     <normaloff>:/littlenavmap/resources/icons/redo.svg</normaloff>:/littlenavmap/resources/icons/redo.svg</iconset>
+   </property>
+   <property name="text">
+    <string>&amp;Redo Logbook Entry</string>
+   </property>
+   <property name="toolTip">
+    <string>Redo last change</string>
+   </property>
+   <property name="statusTip">
+    <string>Redo last change</string>
    </property>
   </action>
   <action name="actionSearchUserpointUndo">

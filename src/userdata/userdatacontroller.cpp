@@ -68,10 +68,13 @@ UserdataController::UserdataController(atools::fs::userdata::UserdataManager *us
   Ui::MainWindow *ui = NavApp::getMainUi();
   connect(ui->actionSearchUserpointUndo, &QAction::triggered, this, &UserdataController::undoTriggered);
   connect(ui->actionSearchUserpointRedo, &QAction::triggered, this, &UserdataController::redoTriggered);
+  connect(ui->actionMainUserpointUndo, &QAction::triggered, this, &UserdataController::undoTriggered);
+  connect(ui->actionMainUserpointRedo, &QAction::triggered, this, &UserdataController::redoTriggered);
 
   manager->setMaximumUndoSteps(50);
   manager->setTextSuffix(tr("Userpoint", "Userpoint singular"), tr("Userpoints", "Userpoint plural"));
-  manager->setActions(ui->actionSearchUserpointUndo, ui->actionSearchUserpointRedo);
+  manager->setActionLists({ui->actionSearchUserpointUndo, ui->actionMainUserpointUndo},
+                          {ui->actionSearchUserpointRedo, ui->actionMainUserpointRedo});
 }
 
 UserdataController::~UserdataController()

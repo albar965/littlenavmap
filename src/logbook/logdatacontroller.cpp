@@ -86,10 +86,13 @@ LogdataController::LogdataController(atools::fs::userdata::LogdataManager *logda
   Ui::MainWindow *ui = NavApp::getMainUi();
   connect(ui->actionSearchLogdataUndo, &QAction::triggered, this, &LogdataController::undoTriggered);
   connect(ui->actionSearchLogdataRedo, &QAction::triggered, this, &LogdataController::redoTriggered);
+  connect(ui->actionMainLogdataUndo, &QAction::triggered, this, &LogdataController::undoTriggered);
+  connect(ui->actionMainLogdataRedo, &QAction::triggered, this, &LogdataController::redoTriggered);
 
   manager->setMaximumUndoSteps(50);
   manager->setTextSuffix(tr("Logbook Entry", "Log singular"), tr("Logbook Entries", "Log plural"));
-  manager->setActions(ui->actionSearchLogdataUndo, ui->actionSearchLogdataRedo);
+  manager->setActionLists({ui->actionSearchLogdataUndo, ui->actionMainLogdataUndo},
+                          {ui->actionSearchLogdataRedo, ui->actionMainLogdataRedo});
 }
 
 LogdataController::~LogdataController()
