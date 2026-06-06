@@ -602,7 +602,7 @@ static QHash<QString, map::MapAirspaceType> airspaceConfigNames(
 QColor colorForAirspaceFill(const map::MapAirspace& airspace, int transparency)
 {
   // Lower values make the airspace more opaque and higher values more transparent. Default is 80.
-  QColor color = airspaceFillColors[airspace.type];
+  QColor color = airspaceFillColors[airspace.airspaceType];
 
   // 0 = transparent, 1 = opaque
   color.setAlphaF(atools::minmax(0., 1., 1.5 * color.alphaF() * (1. - transparency / 100.)));
@@ -612,7 +612,7 @@ QColor colorForAirspaceFill(const map::MapAirspace& airspace, int transparency)
 QPen penForAirspace(const map::MapAirspace& airspace, int lineThickness)
 {
   // lineThickness = 20 to 300 and default 100 equal to a scale factor of 0.2 to 3.0
-  QPen pen = airspacePens[airspace.type];
+  QPen pen = airspacePens[airspace.airspaceType];
   pen.setWidthF(pen.widthF() * lineThickness / 100.);
   return pen;
 }
@@ -621,7 +621,7 @@ const QColor colorForAirwayOrTrack(const map::MapAirway& airway, bool darkMap)
 {
   static QColor EMPTY_COLOR;
 
-  switch(airway.type)
+  switch(airway.airwayTrackType)
   {
     case map::NO_AIRWAY:
       break;

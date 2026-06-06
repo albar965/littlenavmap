@@ -72,8 +72,8 @@ void FlightplanEntryBuilder::entryFromUserpoint(const map::MapUserpoint& userpoi
     ident = userpoint.ident;
   else if(!userpoint.name.isEmpty())
     ident = userpoint.name.toUpper();
-  else if(!userpoint.type.isEmpty())
-    ident = userpoint.type.toUpper();
+  else if(!userpoint.userpointType.isEmpty())
+    ident = userpoint.userpointType.toUpper();
 
   if(!ident.isEmpty())
     entry.setIdent(ident);
@@ -146,7 +146,7 @@ void FlightplanEntryBuilder::entryFromWaypoint(const map::MapWaypoint& waypoint,
   map::MapVor vor;
   map::MapNdb ndb;
 
-  if(resolveWaypoints && waypoint.type == "V")
+  if(resolveWaypoints && waypoint.waypointType == "V")
   {
     // Convert waypoint to underlying VOR for airway routes
     if(vorForWaypoint(waypoint, vor))
@@ -155,7 +155,7 @@ void FlightplanEntryBuilder::entryFromWaypoint(const map::MapWaypoint& waypoint,
       entryFromVor(vor, entry);
     }
   }
-  else if(resolveWaypoints && waypoint.type == "N")
+  else if(resolveWaypoints && waypoint.waypointType == "N")
   {
     // Convert waypoint to underlying NDB for airway routes
 

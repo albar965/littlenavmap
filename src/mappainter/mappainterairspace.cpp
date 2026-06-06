@@ -96,7 +96,7 @@ void MapPainterAirspace::render()
     // Draw airspace polygons ==================================================================================
     for(const MapAirspace *airspace : std::as_const(airspaces))
     {
-      if(!(airspace->type & context->airspaceFilterByLayer.types))
+      if(!(airspace->airspaceType & context->airspaceFilterByLayer.types))
         continue;
 
       if(!airspace->hasValidGeometry())
@@ -231,7 +231,7 @@ void MapPainterAirspace::render()
         const map::MapAirspace *airspace = visibleAirspace.airspace;
 
         // Check if layer option enables text display for this airspace type
-        if(airspace->type & context->airspaceTextsByLayer && !visibleAirspace.polygons.isEmpty())
+        if(airspace->airspaceType & context->airspaceTextsByLayer && !visibleAirspace.polygons.isEmpty())
         {
           // Build text depending on options
           QString airspaceText =

@@ -213,14 +213,14 @@ void SymbolPainter::drawHelipadSymbol(QPainter *painter, const map::MapHelipad& 
   painter->translate(QPointF(x, y));
   painter->rotate(helipad.heading);
 
-  if(helipad.type == "SQUARE" || helipad.type == "MEDICAL")
+  if(helipad.helipadType == "SQUARE" || helipad.helipadType == "MEDICAL")
     painter->drawRect(QRectF(-w, -h, w * 2., h * 2.));
   else
     painter->drawEllipse(QRectF(-w, -h, w * 2., h * 2.));
 
   if(!fast)
   {
-    if(helipad.type == "MEDICAL")
+    if(helipad.helipadType == "MEDICAL")
       painter->setPen(QPen(mapcolors::helipadMedicalOutlineColor, 3, Qt::SolidLine, Qt::FlatCap));
 
     // Draw the H symbol
@@ -1107,10 +1107,10 @@ void SymbolPainter::drawNdbText(QPainter *painter, const map::MapNdb& ndb, float
 
   if(flags & text::IDENT && flags & text::TYPE)
   {
-    if(ndb.type.isEmpty())
+    if(ndb.ndbType.isEmpty())
       texts.append(ndb.ident);
     else
-      texts.append(tr("%1 (%2)").arg(ndb.ident).arg(ndb.type == "CP" ? tr("CL") : ndb.type));
+      texts.append(tr("%1 (%2)").arg(ndb.ident).arg(ndb.ndbType == "CP" ? tr("CL") : ndb.ndbType));
   }
   else if(flags & text::IDENT)
     texts.append(ndb.ident);
@@ -1147,10 +1147,10 @@ void SymbolPainter::drawVorText(QPainter *painter, const map::MapVor& vor, float
 
   if(flags & text::IDENT && flags & text::TYPE)
   {
-    if(vor.type.isEmpty())
+    if(vor.vorType.isEmpty())
       texts.append(vor.ident);
     else
-      texts.append(tr("%1 (%2)").arg(vor.ident).arg(vor.type.at(0)));
+      texts.append(tr("%1 (%2)").arg(vor.ident).arg(vor.vorType.at(0)));
   }
   else if(flags & text::IDENT)
     texts.append(vor.ident);

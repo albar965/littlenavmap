@@ -5340,7 +5340,7 @@ void RouteController::updateTableModelAndErrors()
 
         if(airway.isValid())
         {
-          awname.append(map::airwayTrackTypeToShortString(airway.type));
+          awname.append(map::airwayTrackTypeToShortString(airway.airwayTrackType));
 
 #ifdef DEBUG_INFORMATION
           awname.append("[" + map::airwayRouteTypeToStringShort(airway.routeType) + "]");
@@ -5792,11 +5792,11 @@ void RouteController::validAircraftReceived(const atools::fs::sc::SimConnectUser
       qDebug() << Q_FUNC_INFO << "Adding to route" << *first;
 
       // Add nearest object to plan as  departure positionF
-      if(first->objType == map::PARKING)
+      if(first->type == map::PARKING)
         routeSetParkingPosition(first->asObj<map::MapParking>());
-      else if(first->objType == map::START)
+      else if(first->type == map::START)
         routeSetStartPosition(first->asObj<map::MapStart>());
-      else if(first->objType == map::AIRPORT)
+      else if(first->type == map::AIRPORT)
         routeSetDeparture(first->asObj<map::MapAirport>());
 
 #ifdef DEBUG_INFORMATION

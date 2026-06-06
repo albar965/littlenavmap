@@ -161,10 +161,10 @@ void ParkingDialog::updateTable()
       else if(p1.start.isValid())
       {
         // Compare start - first runways by name and then helipads by name
-        if(p1.start.type == p2.start.type)
+        if(p1.start.startType == p2.start.startType)
           return p1.start.runwayName < p2.start.runwayName;
         else
-          return p1.start.type > p2.start.type;
+          return p1.start.startType > p2.start.startType;
       }
     }
     // Sort runway before parking
@@ -201,8 +201,8 @@ void ParkingDialog::updateTable()
     {
       // Parking position =======================================================================
       items[internal::NAME] =
-        new QTableWidgetItem(mapcolors::iconForParkingType(startPos.parking.type), map::parkingNameOrNumber(startPos.parking));
-      items[internal::TYPE] = new QTableWidgetItem(map::parkingTypeName(startPos.parking.type));
+        new QTableWidgetItem(mapcolors::iconForParkingType(startPos.parking.parkingType), map::parkingNameOrNumber(startPos.parking));
+      items[internal::TYPE] = new QTableWidgetItem(map::parkingTypeName(startPos.parking.parkingType));
       items[internal::SIZE] = new QTableWidgetItem(Unit::distShortFeet(startPos.parking.getRadius() * 2));
       items[internal::CODES] = new QTableWidgetItem(startPos.parking.airlineCodes.split(",").join(tr(", ")));
       items[internal::FACILITIES] = new QTableWidgetItem(startPos.parking.jetway ? tr("Has Jetway") : QStringLiteral());
@@ -338,7 +338,7 @@ void ParkingDialog::updateTableSelection()
         (pos.parking.isValid() && parking.name == pos.parking.name && parking.number == pos.parking.number &&
          parking.suffix == pos.parking.suffix) ||
         // Start matches
-        (pos.start.isValid() && start.type == pos.start.type && start.runwayName == pos.start.runwayName) ||
+        (pos.start.isValid() && start.startType == pos.start.startType && start.runwayName == pos.start.runwayName) ||
         // Neither from route is valid and airport entry
         (!parking.isValid() && !start.isValid() && pos.airport.isValid()))
         ui->tableWidgetSelectParking->selectRow(row);

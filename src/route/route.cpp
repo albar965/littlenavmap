@@ -1633,7 +1633,7 @@ QBitArray Route::getJetAirwayFlags() const
   for(int i = 0; i < size(); i++)
   {
     const map::MapAirway& airway = value(i).getAirway();
-    flags.setBit(i, airway.isValid() && (airway.type == map::AIRWAY_JET || airway.type == map::AIRWAY_BOTH));
+    flags.setBit(i, airway.isValid() && (airway.airwayTrackType == map::AIRWAY_JET || airway.airwayTrackType == map::AIRWAY_BOTH));
   }
   return flags;
 }

@@ -94,7 +94,7 @@ void PatternMarker::restore(atools::util::XmlStreamReader& stream)
       stream.skipCurrentElement(true /* warning */);
   }
 
-  objType = map::MARK_PATTERNS;
+  type = map::MARK_PATTERNS;
 }
 
 QString PatternMarker::displayText() const
@@ -170,7 +170,7 @@ void HoldingMarker::restore(atools::util::XmlStreamReader& stream)
   // Not used in map marker
   holding.length = holding.speedLimit = holding.minAltititude = holding.maxAltititude = 0.f;
   holding.id = -1;
-  objType = map::MARK_HOLDING;
+  type = map::MARK_HOLDING;
 }
 
 QString HoldingMarker::displayText() const
@@ -272,7 +272,7 @@ void MsaMarker::restore(atools::util::XmlStreamReader& stream)
   else
     qWarning() << Q_FUNC_INFO << msa.bearings.size() << "!=" << msa.altitudes.size();
 
-  objType = map::MARK_MSA;
+  type = map::MARK_MSA;
 }
 
 QString MsaMarker::displayText() const
@@ -329,7 +329,7 @@ void RangeMarker::restore(atools::util::XmlStreamReader& stream)
       stream.skipCurrentElement(true /* warning */);
   }
 
-  objType = map::MARK_RANGE;
+  type = map::MARK_RANGE;
 }
 
 QString RangeMarker::displayText() const
@@ -382,7 +382,7 @@ void DistanceMarker::restore(atools::util::XmlStreamReader& stream)
       stream.skipCurrentElement(true /* warning */);
   }
 
-  objType = map::MARK_DISTANCE;
+  type = map::MARK_DISTANCE;
   position = to;
 }
 
@@ -405,7 +405,7 @@ QDataStream& operator>>(QDataStream& dataStream, PatternMarker& obj)
   dataStream >> obj.airportIdent >> obj.runwayName >> obj.color >> obj.turnRight >> obj.base45Degree >> obj.showEntryExit
   >> obj.runwayLength >> obj.downwindParallelDistance >> obj.finalDistance >> obj.departureDistance
   >> obj.courseTrue >> obj.nav.magvar >> obj.position;
-  obj.objType = map::MARK_PATTERNS;
+  obj.type = map::MARK_PATTERNS;
   return dataStream;
 }
 
@@ -431,7 +431,7 @@ QDataStream& operator>>(QDataStream& dataStream, HoldingMarker& obj)
   obj.holding.airportIdent.clear();
 
   obj.position = obj.holding.position;
-  obj.objType = map::MARK_HOLDING;
+  obj.type = map::MARK_HOLDING;
   return dataStream;
 }
 
@@ -454,7 +454,7 @@ QDataStream& operator>>(QDataStream& dataStream, map::MsaMarker& obj)
   >> obj.msa.geometry >> obj.msa.labelPositions >> obj.msa.bearingEndPos >> obj.msa.bounding >> obj.msa.position;
 
   obj.position = obj.msa.position;
-  obj.objType = map::MARK_MSA;
+  obj.type = map::MARK_MSA;
   return dataStream;
 }
 
@@ -478,7 +478,7 @@ QDataStream& operator>>(QDataStream& dataStream, map::RangeMarker& obj)
   for(float range : std::as_const(rangesFloat))
     obj.ranges.append(static_cast<double>(range));
 
-  obj.objType = map::MARK_RANGE;
+  obj.type = map::MARK_RANGE;
   return dataStream;
 }
 
@@ -497,7 +497,7 @@ QDataStream& operator>>(QDataStream& dataStream, map::DistanceMarker& obj)
   obj.nav.reset();
   quint32 flags;
   dataStream >> obj.text >> obj.color >> obj.from >> obj.to >> obj.nav.magvar >> flags;
-  obj.objType = map::MARK_DISTANCE;
+  obj.type = map::MARK_DISTANCE;
   obj.position = obj.to;
   return dataStream;
 }

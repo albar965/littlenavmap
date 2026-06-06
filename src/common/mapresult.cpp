@@ -365,10 +365,10 @@ MapResult& MapResult::clearHiddenUserpoints(const QMap<QString, QString>& select
   if(!userpoints.isEmpty())
     userpoints.erase(std::remove_if(userpoints.begin(), userpoints.end(),
                                     [&selectedTypes, &allTypes, showUnknownType](const map::MapUserpoint& userpoint) -> bool {
-        if(!showUnknownType && !allTypes.contains(userpoint.type))
+        if(!showUnknownType && !allTypes.contains(userpoint.userpointType))
           return true;
 
-        if(!selectedTypes.contains(userpoint.type))
+        if(!selectedTypes.contains(userpoint.userpointType))
           return true;
 
         return false;
@@ -1009,14 +1009,14 @@ QDebug operator<<(QDebug out, const map::MapResult& record)
   {
     out << "Parking[";
     for(const map::MapParking& obj :  record.parkings)
-      out << obj.id << obj.name << obj.number << obj.type << ",";
+      out << obj.id << obj.name << obj.number << obj.parkingType << ",";
     out << "]";
   }
   if(!record.starts.isEmpty())
   {
     out << "Start[";
     for(const map::MapStart& obj :  record.starts)
-      out << obj.id << obj.runwayName << obj.type << ",";
+      out << obj.id << obj.runwayName << obj.startType << ",";
     out << "]";
   }
   if(!record.waypoints.isEmpty())
@@ -1311,7 +1311,7 @@ MapResultIndex& MapResultIndex::remove(const atools::geo::Pos& pos, float maxDis
 MapResultIndex& MapResultIndex::remove(MapType types)
 {
   erase(std::remove_if(begin(), end(), [&types](const MapBase *obj) -> bool {
-      return map::MapTypes(obj->objType).testAnyFlag(types);
+      return map::MapTypes(obj->type).testAnyFlag(types);
     }), end());
 
   return *this;

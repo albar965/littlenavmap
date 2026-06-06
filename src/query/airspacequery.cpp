@@ -236,7 +236,7 @@ const QList<map::MapAirspace> *AirspaceQuery::getAirspaces(const GeoDataLatLonBo
         std::sort(airspaceCache.list.begin(), airspaceCache.list.end(),
                   [](const map::MapAirspace& airspace1, const map::MapAirspace& airspace2) -> bool
         {
-          return map::airspaceDrawingOrder(airspace1.type) < map::airspaceDrawingOrder(airspace2.type);
+          return map::airspaceDrawingOrder(airspace1.airspaceType) < map::airspaceDrawingOrder(airspace2.airspaceType);
         });
       }
     }

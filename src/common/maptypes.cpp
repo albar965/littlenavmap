@@ -962,7 +962,7 @@ QString parkingText(const MapParking& parking)
 {
   QStringList retval;
 
-  if(parking.type.isEmpty())
+  if(parking.parkingType.isEmpty())
     retval.append(QObject::tr("Parking"));
 
   retval.append(map::parkingName(parking.name));
@@ -983,7 +983,7 @@ const QString& parkingDatabaseName(const QString& name)
 
 QString parkingNameNumberAndType(const map::MapParking& parking)
 {
-  return atools::strJoin({parkingNameOrNumber(parking), parkingTypeName(parking.type)}, QObject::tr(", "));
+  return atools::strJoin({parkingNameOrNumber(parking), parkingTypeName(parking.parkingType)}, QObject::tr(", "));
 }
 
 QString parkingNameOrNumber(const MapParking& parking)
@@ -1488,7 +1488,7 @@ QString vorType(bool dmeOnly, bool hasDme, bool tacan, bool vortac)
 
 QString vorFullShortText(const MapVor& vor)
 {
-  return vorFullShortText(vor.type, vor.dmeOnly, vor.hasDme, vor.tacan, vor.vortac);
+  return vorFullShortText(vor.vorType, vor.dmeOnly, vor.hasDme, vor.tacan, vor.vortac);
 }
 
 QString vorFullShortText(const QString& vorType, bool dmeOnly, bool hasDme, bool tacan, bool vortac)
@@ -1550,7 +1550,7 @@ QString waypointText(const MapWaypoint& waypoint)
 QString userpointText(const MapUserpoint& userpoint, int elideName)
 {
   if(userpoint.ident.isEmpty() && userpoint.name.isEmpty())
-    return QObject::tr("Userpoint %1").arg(atools::elideTextShort(userpoint.type, elideName));
+    return QObject::tr("Userpoint %1").arg(atools::elideTextShort(userpoint.userpointType, elideName));
   else
     return QObject::tr("Userpoint %1").arg(atools::elideTextShort(userpoint.ident.isEmpty() ? userpoint.name : userpoint.ident, elideName));
 }
@@ -1558,7 +1558,7 @@ QString userpointText(const MapUserpoint& userpoint, int elideName)
 QString userpointShortText(const MapUserpoint& userpoint, int elideName)
 {
   if(userpoint.ident.isEmpty() && userpoint.name.isEmpty())
-    return atools::elideTextShort(userpoint.type, elideName);
+    return atools::elideTextShort(userpoint.userpointType, elideName);
   else
     return atools::elideTextShort(userpoint.ident.isEmpty() ? userpoint.name : userpoint.ident, elideName);
 }
@@ -1734,7 +1734,7 @@ QString patternDirection(const QString& type)
 QString ndbFullShortText(const MapNdb& ndb)
 {
   // Compass point vs. compass locator
-  QString type = ndb.type == QStringLiteral("CP") ? QObject::tr("CL") : ndb.type;
+  QString type = ndb.ndbType == QStringLiteral("CP") ? QObject::tr("CL") : ndb.ndbType;
   return type.isEmpty() ? QObject::tr("NDB") : QObject::tr("NDB (%1)").arg(type);
 }
 
@@ -1809,7 +1809,7 @@ QDebug operator<<(QDebug out, const map::MapAirport& obj)
   out.noquote().nospace() << "MapAirport[" << "id " << obj.id
                           << ", ident " << obj.ident
                           << ", navdata " << obj.navdata
-                          << ", type " << obj.objType
+                          << ", type " << obj.type
                           << ", procedure " << obj.procedure()
                           << ", " << obj.position << "]";
   return out;
@@ -1818,7 +1818,7 @@ QDebug operator<<(QDebug out, const map::MapAirport& obj)
 QDebug operator<<(QDebug out, const MapBase& obj)
 {
   QDebugStateSaver saver(out);
-  out.noquote().nospace() << "MapBase[" << "id " << obj.id << ", type " << obj.objType << ", " << obj.position << "]";
+  out.noquote().nospace() << "MapBase[" << "id " << obj.id << ", type " << obj.type << ", " << obj.position << "]";
   return out;
 }
 
@@ -1893,11 +1893,11 @@ QString ilsType(const map::MapIls& ils, bool gs, bool dme, const QString& separa
 
   if(!ils.isAnyGlsRnp())
   {
-    if(ils.type == '1')
+    if(ils.ilsType == '1')
       text += QObject::tr(" CAT I");
-    else if(ils.type == '2')
+    else if(ils.ilsType == '2')
       text += QObject::tr(" CAT II");
-    else if(ils.type == '3')
+    else if(ils.ilsType == '3')
       text += QObject::tr(" CAT III");
 
     if(gs && ils.hasGlideslope())
@@ -1998,7 +1998,7 @@ atools::geo::Line MapIls::centerLine() const
 
 QString MapIls::freqMHzOrChannel() const
 {
-  if(type == GLS_GROUND_STATION || type == SBAS_GBAS_THRESHOLD)
+  if(ilsType == GLS_GROUND_STATION || ilsType == SBAS_GBAS_THRESHOLD)
     return QObject::tr("%1").arg(frequency);
   else
     return QObject::tr("%1").arg(static_cast<float>(frequency / 1000.f), 0, 'f', 2);
@@ -2006,7 +2006,7 @@ QString MapIls::freqMHzOrChannel() const
 
 QString MapIls::freqMHzOrChannelLocale() const
 {
-  if(type == GLS_GROUND_STATION || type == SBAS_GBAS_THRESHOLD)
+  if(ilsType == GLS_GROUND_STATION || ilsType == SBAS_GBAS_THRESHOLD)
     return QObject::tr("%L1").arg(frequency);
   else
     return QObject::tr("%L1").arg(static_cast<float>(frequency / 1000.f), 0, 'f', 2);
@@ -2014,7 +2014,7 @@ QString MapIls::freqMHzOrChannelLocale() const
 
 QString MapIls::freqMHz() const
 {
-  if(type == GLS_GROUND_STATION || type == SBAS_GBAS_THRESHOLD)
+  if(ilsType == GLS_GROUND_STATION || ilsType == SBAS_GBAS_THRESHOLD)
     return QStringLiteral();
   else
     return QObject::tr("%1").arg(static_cast<float>(frequency / 1000.f), 0, 'f', 2);
@@ -2022,7 +2022,7 @@ QString MapIls::freqMHz() const
 
 QString MapIls::freqMHzLocale() const
 {
-  if(type == GLS_GROUND_STATION || type == SBAS_GBAS_THRESHOLD)
+  if(ilsType == GLS_GROUND_STATION || ilsType == SBAS_GBAS_THRESHOLD)
     return QStringLiteral();
   else
     return QObject::tr("%L1").arg(static_cast<float>(frequency / 1000.f), 0, 'f', 2);
@@ -2065,18 +2065,18 @@ QStringList airspaceNameMap(const MapAirspace& airspace, int maxTextLength, bool
   if(type)
   {
     // Type only if it not a part of the restrictive name
-    const QString& typeStr = airspaceTypeShortToString(airspace.type);
+    const QString& typeStr = airspaceTypeShortToString(airspace.airspaceType);
     if(!((name && airspace.name.startsWith(typeStr % '-')) || (restrictiveName && restrNameStr.startsWith(typeStr % '-'))))
     {
-      if(airspace.type == map::DANGER)
-        texts.append(airspaceTypeToString(airspace.type));
+      if(airspace.airspaceType == map::DANGER)
+        texts.append(airspaceTypeToString(airspace.airspaceType));
       else
         texts.append(typeStr);
     }
   }
 
   // Name if requested but always for FIR and UIR spaces
-  if(name || airspace.type == map::FIR || airspace.type == map::UIR)
+  if(name || airspace.airspaceType == map::FIR || airspace.airspaceType == map::UIR)
     texts.append(atools::elideTextShort(airspace.name, maxTextLength));
   if(restrictiveName)
     texts.append(restrNameStr);
@@ -2132,7 +2132,7 @@ QStringList airspaceNameMap(const MapAirspace& airspace, int maxTextLength, bool
 
 QString airspaceText(const MapAirspace& airspace)
 {
-  return QObject::tr("Airspace %1 (%2)").arg(airspace.name).arg(airspaceTypeToString(airspace.type));
+  return QObject::tr("Airspace %1 (%2)").arg(airspace.name).arg(airspaceTypeToString(airspace.airspaceType));
 }
 
 const QString& aircraftType(const atools::fs::sc::SimConnectAircraft& aircraft)
@@ -2431,7 +2431,7 @@ QIcon mapBaseIcon(const map::MapBase *base, int size)
         }
 
       case map::PARKING:
-        return mapcolors::iconForParkingType(base->asPtr<map::MapParking>()->type);
+        return mapcolors::iconForParkingType(base->asPtr<map::MapParking>()->parkingType);
 
       case map::START:
         return QIcon();
@@ -2440,7 +2440,7 @@ QIcon mapBaseIcon(const map::MapBase *base, int size)
         return SymbolPainter::createHelipadIcon(*base->asPtr<map::MapHelipad>(), size);
 
       case map::USERPOINT:
-        return QIcon(NavApp::getUserdataIcons()->getIconPath(base->asPtr<map::MapUserpoint>()->type));
+        return QIcon(NavApp::getUserdataIcons()->getIconPath(base->asPtr<map::MapUserpoint>()->userpointType));
 
       case map::LOGBOOK:
         return QIcon(QStringLiteral(":/littlenavmap/resources/icons/logbook.svg"));
@@ -2580,7 +2580,7 @@ MapProcedurePoint::~MapProcedurePoint()
 }
 
 MapProcedurePoint::MapProcedurePoint(const MapProcedurePoint& other)
-  : map::MapBase(other.objType)
+  : map::MapBase(other.type)
 {
   legs = new proc::MapProcedureLegs();
   this->operator=(other);

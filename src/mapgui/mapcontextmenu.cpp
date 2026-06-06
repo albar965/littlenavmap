@@ -439,7 +439,7 @@ void MapContextMenu::insertProcedureMenu(QMenu& menu)
   ActionCallback callback =
     [this](int index, const map::MapResultIndex& resultIndex, QString& text, QIcon&, bool& disable) -> void {
       const map::MapBase *base = resultIndex.ptrOrNull(index);
-      if(base != nullptr && base->objType == map::AIRPORT)
+      if(base != nullptr && base->type == map::AIRPORT)
       {
         // This is a submenu request if size is more than one - top level menu is not requested here
         bool submenu = resultIndex.size() > 1;
@@ -530,7 +530,7 @@ void MapContextMenu::insertProcedureAddMenu(QMenu& menu)
       bool submenu = resultIndex.size() > 1;
       const map::MapBase *base = resultIndex.ptrOrNull(index);
       disable = true;
-      if(base != nullptr && base->objType == map::PROCEDURE_POINT)
+      if(base != nullptr && base->type == map::PROCEDURE_POINT)
       {
         const map::MapProcedurePoint *pt = base->asPtr<map::MapProcedurePoint>();
         if(pt != nullptr)
@@ -695,7 +695,7 @@ void MapContextMenu::insertDestinationMenu(QMenu& menu)
   ActionCallback callback =
     [this](int index, const map::MapResultIndex& resultIndex, QString& text, QIcon&, bool& disable) -> void {
       const map::MapBase *base = resultIndex.ptrOrNull(index);
-      if(base != nullptr && base->objType == map::AIRPORT)
+      if(base != nullptr && base->type == map::AIRPORT)
       {
         // This is a submenu request if size is more than one - top level menu is not requested here
         bool submenu = resultIndex.size() > 1;
@@ -724,7 +724,7 @@ void MapContextMenu::insertDestinationMenu(QMenu& menu)
         text.append(ContextMenuTool::airportItemSuffix(departure, destination, alternate, roundtrip, noRunways));
 
         // Do our own text substitution for the airport to use shorter name
-        if(text.contains("%1") && base->objType == map::AIRPORT)
+        if(text.contains("%1") && base->type == map::AIRPORT)
           text = text.arg(map::airportText(*base->asPtr<map::MapAirport>(), TEXT_ELIDE_AIRPORT_NAME));
 
 #ifdef DEBUG_INFORMATION
@@ -873,7 +873,7 @@ void MapContextMenu::insertRemoveMenu(QMenu& menu)
 
   // Erase all points which are not route legs ============================
   index.erase(std::remove_if(index.begin(), index.end(), [this](const map::MapBase *base) -> bool {
-    return map::routeIndex(base) == -1 || (base->objType != map::PROCEDURE_POINT && isProcedure(base));
+    return map::routeIndex(base) == -1 || (base->type != map::PROCEDURE_POINT && isProcedure(base));
   }), index.end());
 
   // Erase duplicate occasions of procedures which can appear in double used waypoints
@@ -893,7 +893,7 @@ void MapContextMenu::insertRemoveMenu(QMenu& menu)
         bool submenu = resultIndex.size() > 1;
         if(map::routeIndex(base) != -1)
         {
-          if(base->objType == map::PROCEDURE_POINT)
+          if(base->type == map::PROCEDURE_POINT)
           {
             // Delete flight plan procedure
             const map::MapProcedurePoint *procPt = base->asPtr<map::MapProcedurePoint>();
@@ -953,9 +953,9 @@ void MapContextMenu::insertNavaidRangeMenu(QMenu& menu)
       if(base != nullptr)
       {
         int range = 0;
-        if(base->objType == map::VOR)
+        if(base->type == map::VOR)
           range = base->asObj<map::MapVor>().range;
-        else if(base->objType == map::NDB)
+        else if(base->type == map::NDB)
           range = base->asObj<map::MapNdb>().range;
 
         if(range < 1)
@@ -980,7 +980,7 @@ void MapContextMenu::insertPatternMenu(QMenu& menu)
       const map::MapBase *base = resultIndex.ptrOrNull(index);
       if(base != nullptr)
       {
-        if(base->objType == map::AIRPORT)
+        if(base->type == map::AIRPORT)
         {
           const map::MapAirport *airport = base->asPtr<map::MapAirport>();
           if(airport->noRunways())
@@ -1089,7 +1089,7 @@ void MapContextMenu::insertConvertProcedureMenu(QMenu& menu)
 
   // Erase all points which are not route legs and are not procedure points ============================
   index.erase(std::remove_if(index.begin(), index.end(), [this](const map::MapBase *base) -> bool {
-    return map::routeIndex(base) == -1 || (base->objType != map::PROCEDURE_POINT && isProcedure(base));
+    return map::routeIndex(base) == -1 || (base->type != map::PROCEDURE_POINT && isProcedure(base));
   }), index.end());
 
   // Erase duplicate occasions of procedures which can appear in double used waypoints
@@ -1101,7 +1101,7 @@ void MapContextMenu::insertConvertProcedureMenu(QMenu& menu)
     [this](int index, const map::MapResultIndex& resultIndex, QString& text, QIcon&, bool& disable) -> void {
       const map::MapBase *base = resultIndex.ptrOrNull(index);
       disable = true;
-      if(base != nullptr && base->objType == map::PROCEDURE_POINT)
+      if(base != nullptr && base->type == map::PROCEDURE_POINT)
       {
         const map::MapProcedurePoint *procPt = base->asPtr<map::MapProcedurePoint>();
         if(procPt != nullptr)
@@ -1193,7 +1193,7 @@ void MapContextMenu::insertShowInSearchMenu(QMenu& menu)
       const map::MapBase *base = resultIndex.ptrOrNull(index);
       disable = !visibleOnMap || base == nullptr;
 
-      if(base != nullptr && base->objType == map::AIRCRAFT)
+      if(base != nullptr && base->type == map::AIRCRAFT)
       {
         // Add shadowed online aircraft for user
         const map::MapUserAircraft *userAircraft = base->asPtr<map::MapUserAircraft>();

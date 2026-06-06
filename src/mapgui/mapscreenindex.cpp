@@ -154,7 +154,7 @@ void MapScreenIndex::updateAirspaceScreenGeometryInternal(QSet<map::MapAirspaceI
     CoordinateConverter conv(mapWidget->viewport());
     for(const map::MapAirspace *airspace : std::as_const(airspaces))
     {
-      if(!(airspace->type & filter.types) && !highlights)
+      if(!(airspace->airspaceType & filter.types) && !highlights)
         continue;
 
       Marble::GeoDataLatLonBox airspacebox = mconvert::toGdc(airspace->bounding);
@@ -389,7 +389,7 @@ void MapScreenIndex::updateAirwayScreenGeometryInternal(QSet<int>& ids, const Ma
           if(ids.contains(airway.id))
             continue;
 
-          if((airway.type == map::AIRWAY_VICTOR && !showVictor) || (airway.type == map::AIRWAY_JET && !showJet))
+          if((airway.airwayTrackType == map::AIRWAY_VICTOR && !showVictor) || (airway.airwayTrackType == map::AIRWAY_JET && !showJet))
             // Not visible by map setting
             continue;
 

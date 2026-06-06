@@ -362,7 +362,7 @@ void HtmlInfoBuilder::airportText(const MapAirport& airport, const map::WeatherC
   if(airport.xplane)
   {
     QString type;
-    switch(airport.type)
+    switch(airport.airportType)
     {
       case map::AP_TYPE_LAND:
         type = tr("Land airport");
@@ -628,13 +628,13 @@ void HtmlInfoBuilder::nearestMapObjectsTextRow(const MapAirport& airport, HtmlBu
   float bearingTrue = normalizeCourse(airport.position.angleDegTo(base->position));
 
   QString url;
-  if(base->objType == map::AIRPORT)
+  if(base->type == map::AIRPORT)
     // Show by id does only work for airport (needed for centering)
-    url = QStringLiteral("lnm://show?id=%1&type=%2&tooltip=showairport").arg(base->id).arg(base->objType);
+    url = QStringLiteral("lnm://show?id=%1&type=%2&tooltip=showairport").arg(base->id).arg(base->type);
   else
     // Show all other navaids by coordinate
     url = QStringLiteral("lnm://show?lonx=%1&laty=%2&tooltip=%3").
-          arg(base->position.getLonX()).arg(base->position.getLatY()).arg(mapTypeToTooltip(base->objType, QStringLiteral("show")));
+          arg(base->position.getLonX()).arg(base->position.getLatY()).arg(mapTypeToTooltip(base->type, QStringLiteral("show")));
 
   // Create table row ==========================
   html.tr(QColor());
@@ -1010,7 +1010,7 @@ void HtmlInfoBuilder::runwayText(const MapAirport& airport, HtmlBuilder& html, c
 
           html.row2(tr("Size:"), Unit::distShortFeet(helipad.width, false) % tr(" x ") % Unit::distShortFeet(helipad.length));
           html.row2If(tr("Surface:"), map::surfaceName(helipad.surface) % (helipad.transparent ? tr(" (Transparent)") : QStringLiteral()));
-          html.row2If(tr("Type:"), map::helipadTypeToStr(helipad.type));
+          html.row2If(tr("Type:"), map::helipadTypeToStr(helipad.helipadType));
           html.row2(tr("Heading:", "runway heading"), courseTextFromTrue(helipad.heading, airport.magvar), ahtml::NO_ENTITIES);
           html.row2(tr("Elevation:"), Unit::altFeet(helipad.position.getAltitude()));
 
@@ -1348,7 +1348,7 @@ void HtmlInfoBuilder::helipadText(const MapHelipad& helipad, HtmlBuilder& html, 
   if(!helipad.surface.isEmpty() && helipad.surface != QStringLiteral("UNKNOWN"))
     texts.append(tr("Surface ") % map::surfaceName(helipad.surface));
 
-  QString type = map::helipadTypeToStr(helipad.type);
+  QString type = map::helipadTypeToStr(helipad.helipadType);
   if(!type.isEmpty())
     texts.append(tr("Type ") % type);
 
@@ -1718,7 +1718,7 @@ void HtmlInfoBuilder::addRadionavFixType(HtmlBuilder& html, const SqlRecord& rec
       }
       else if(vor.vortac)
       {
-        html.row2If(tr("VORTAC Type:"), map::navTypeNameVorLong(vor.type));
+        html.row2If(tr("VORTAC Type:"), map::navTypeNameVorLong(vor.vorType));
         html.row2(tr("VORTAC Frequency:"), locale.toString(vor.frequency / 1000., 'f', 2) % tr(" MHz"));
         if(!vor.channel.isEmpty())
           html.row2(tr("VORTAC Channel:"), vor.channel);
@@ -1728,7 +1728,7 @@ void HtmlInfoBuilder::addRadionavFixType(HtmlBuilder& html, const SqlRecord& rec
       }
       else
       {
-        html.row2If(tr("VOR Type:"), map::navTypeNameVorLong(vor.type));
+        html.row2If(tr("VOR Type:"), map::navTypeNameVorLong(vor.vorType));
         html.row2(tr("VOR Frequency:"), locale.toString(vor.frequency / 1000., 'f', 2) % tr(" MHz"));
         if(vor.range > 0)
           html.row2(tr("VOR Range:"), Unit::distNm(vor.range));
@@ -1754,7 +1754,7 @@ void HtmlInfoBuilder::addRadionavFixType(HtmlBuilder& html, const SqlRecord& rec
     {
       const MapNdb& ndb = result.ndbs.constFirst();
 
-      html.row2If(tr("NDB Type:"), map::navTypeNameNdb(ndb.type));
+      html.row2If(tr("NDB Type:"), map::navTypeNameNdb(ndb.ndbType));
       html.row2(tr("NDB Frequency:"), locale.toString(ndb.frequency / 100., 'f', 1) % tr(" kHz"));
 
       if(ndb.range > 0)
@@ -2332,7 +2332,7 @@ void HtmlInfoBuilder::vorText(const MapVor& vor, HtmlBuilder& html, const Route 
         html.row2(tr("Type:"), tr("DME only"));
     }
     else
-      html.row2If(tr("Type:"), map::navTypeNameVorLong(vor.type));
+      html.row2If(tr("Type:"), map::navTypeNameVorLong(vor.vorType));
 
     if(rec != nullptr && !rec->isNull("airport_id"))
       airportRow(queries->getAirportQueryNav()->getAirportById(rec->valueInt("airport_id")), html);
@@ -2416,7 +2416,7 @@ void HtmlInfoBuilder::ndbText(const MapNdb& ndb, HtmlBuilder& html, const Route 
 
   if(verbose)
   {
-    html.row2If(tr("Type:"), map::navTypeNameNdb(ndb.type));
+    html.row2If(tr("Type:"), map::navTypeNameNdb(ndb.ndbType));
 
     if(rec != nullptr && !rec->isNull("airport_id"))
       airportRow(queries->getAirportQueryNav()->getAirportById(rec->valueInt("airport_id")), html);
@@ -2743,7 +2743,7 @@ bool HtmlInfoBuilder::userpointText(MapUserpoint userpoint, HtmlBuilder& html) c
   // Check if userpoint still exists since it can be deleted in the background
   if(!rec.isEmpty() && userpoint.isValid())
   {
-    QIcon icon(NavApp::getUserdataIcons()->getIconPath(userpoint.type));
+    QIcon icon(NavApp::getUserdataIcons()->getIconPath(userpoint.userpointType));
     html.img(icon, QStringLiteral(), QStringLiteral(), QSize(0, symbolSizeTitle.height())); // Pass only height over to avoid stretching the image
     html.nbsp().nbsp();
 
@@ -2763,11 +2763,11 @@ bool HtmlInfoBuilder::userpointText(MapUserpoint userpoint, HtmlBuilder& html) c
       bearingToUserText(userpoint.position, NavApp::getMagVar(userpoint.position), html);
 
     // Be cautious with user defined data and adapt it for HTML display
-    QString transType = UserdataIcons::typeToTranslated(userpoint.type);
-    if(transType == userpoint.type)
-      html.row2If(tr("Type:"), userpoint.type, ahtml::REPLACE_CRLF);
+    QString transType = UserdataIcons::typeToTranslated(userpoint.userpointType);
+    if(transType == userpoint.userpointType)
+      html.row2If(tr("Type:"), userpoint.userpointType, ahtml::REPLACE_CRLF);
     else
-      html.row2If(tr("Type:"), tr("%1 (%2)").arg(userpoint.type).arg(UserdataIcons::typeToTranslated(userpoint.type)), ahtml::REPLACE_CRLF);
+      html.row2If(tr("Type:"), tr("%1 (%2)").arg(userpoint.userpointType).arg(UserdataIcons::typeToTranslated(userpoint.userpointType)), ahtml::REPLACE_CRLF);
 
     html.row2If(tr("Ident:"), userpoint.ident, ahtml::REPLACE_CRLF);
     if(info)
@@ -3118,7 +3118,7 @@ void HtmlInfoBuilder::waypointText(const MapWaypoint& waypoint, HtmlBuilder& htm
   if(info)
   {
     if(waypoint.arincType.isEmpty())
-      html.row2If(tr("Type:"), map::navTypeNameWaypoint(waypoint.type));
+      html.row2If(tr("Type:"), map::navTypeNameWaypoint(waypoint.waypointType));
     else
       // Show detailed description instead
       html.row2If(tr("Type description:"), map::navTypeArincNamesWaypoint(waypoint.arincType));
@@ -3204,7 +3204,7 @@ void HtmlInfoBuilder::waypointAirwayText(const MapWaypoint& waypoint, HtmlBuilde
       QList<QStringList> airwayTexts;
       for(const MapAirway& aw : std::as_const(airways))
       {
-        QString txt(map::airwayTrackTypeToString(aw.type));
+        QString txt(map::airwayTrackTypeToString(aw.airwayTrackType));
 
         QString altTxt = map::airwayAltText(aw);
 
@@ -3333,7 +3333,7 @@ void HtmlInfoBuilder::airspaceText(const MapAirspace& airspace, const atools::sq
 
   if(info)
   {
-    const QString& remark = map::airspaceRemark(map::MapAirspaceType(airspace.type));
+    const QString& remark = map::airspaceRemark(map::MapAirspaceType(airspace.airspaceType));
     if(!remark.isEmpty())
       header.append(remark);
 
@@ -3364,7 +3364,7 @@ void HtmlInfoBuilder::airspaceText(const MapAirspace& airspace, const atools::sq
   html.table();
 
   html.row2If(tr("Designation:"), map::airspaceRestrictiveName(airspace));
-  html.row2If(tr("Type:"), map::airspaceTypeToString(airspace.type));
+  html.row2If(tr("Type:"), map::airspaceTypeToString(airspace.airspaceType));
 
   if(!airspace.isOnline())
   {
@@ -3454,7 +3454,7 @@ void HtmlInfoBuilder::airspaceText(const MapAirspace& airspace, const atools::sq
                               "multipleCode = %6, restrictiveDesignation = %7, restrictiveType = %8, timeCode = %9, db type = %10").
                arg(airspace.name).arg(airspace.comName).arg(airspace.comType).arg(airspace.minAltitudeType).
                arg(airspace.maxAltitudeType).arg(airspace.multipleCode).arg(airspace.restrictiveDesignation).
-               arg(airspace.restrictiveType).arg(airspace.timeCode).arg(map::airspaceTypeToDatabase(airspace.type)));
+               arg(airspace.restrictiveType).arg(airspace.timeCode).arg(map::airspaceTypeToDatabase(airspace.airspaceType)));
   }
 #endif
 
@@ -3468,9 +3468,9 @@ void HtmlInfoBuilder::airwayText(const MapAirway& airway, HtmlBuilder& html, con
     return;
 
   if(isAirway)
-    navaidTitle(html, tr("Airway: ") % airway.name % tr(" ") % map::airwayTrackTypeToString(airway.type));
+    navaidTitle(html, tr("Airway: ") % airway.name % tr(" ") % map::airwayTrackTypeToString(airway.airwayTrackType));
   else
-    navaidTitle(html, tr("Track: ") % airway.name % tr(" ") % map::airwayTrackTypeToString(airway.type));
+    navaidTitle(html, tr("Track: ") % airway.name % tr(" ") % map::airwayTrackTypeToString(airway.airwayTrackType));
 
   if(info && !print)
   {
@@ -3488,7 +3488,7 @@ void HtmlInfoBuilder::airwayText(const MapAirway& airway, HtmlBuilder& html, con
       html.row2If(tr("Route type:"), map::airwayRouteTypeToString(airway.routeType));
   }
   else
-    html.row2If(tr("Track type:"), map::airwayTrackTypeToString(airway.type));
+    html.row2If(tr("Track type:"), map::airwayTrackTypeToString(airway.airwayTrackType));
 
   WaypointTrackQuery *waypointQuery = queries->getWaypointTrackQuery();
   map::MapWaypoint from = waypointQuery->getWaypointById(airway.fromWaypointId);
@@ -3506,11 +3506,11 @@ void HtmlInfoBuilder::airwayText(const MapAirway& airway, HtmlBuilder& html, con
   {
     tempHtml.a(identRegionText(from.ident, from.region), QStringLiteral("lnm://show?lonx=%1&laty=%2&tooltip=%3").
                arg(from.position.getLonX()).arg(from.position.getLatY()).
-               arg(mapTypeToTooltip(from.objType, QStringLiteral("show"))), LINK_FLAGS);
+               arg(mapTypeToTooltip(from.type, QStringLiteral("show"))), LINK_FLAGS);
     tempHtml.text(connector);
     tempHtml.a(identRegionText(to.ident, to.region), QStringLiteral("lnm://show?lonx=%1&laty=%2&tooltip=%3").
                arg(to.position.getLonX()).arg(to.position.getLatY()).
-               arg(mapTypeToTooltip(to.objType, QStringLiteral("show"))), LINK_FLAGS);
+               arg(mapTypeToTooltip(to.type, QStringLiteral("show"))), LINK_FLAGS);
   }
   else
     tempHtml.text(tr("%1%2%3").arg(identRegionText(from.ident, from.region)).arg(connector).arg(identRegionText(to.ident, to.region)));
@@ -3583,7 +3583,7 @@ void HtmlInfoBuilder::airwayText(const MapAirway& airway, HtmlBuilder& html, con
                        QStringLiteral("lnm://show?lonx=%1&laty=%2&tooltip=%3").
                        arg(airwayWaypoint.waypoint.position.getLonX()).
                        arg(airwayWaypoint.waypoint.position.getLatY()).
-                       arg(mapTypeToTooltip(airwayWaypoint.waypoint.objType, QStringLiteral("show"))), LINK_FLAGS);
+                       arg(mapTypeToTooltip(airwayWaypoint.waypoint.type, QStringLiteral("show"))), LINK_FLAGS);
       }
 
       html.row2(tr("Waypoints Ident/Region:"), tempLinkHtml.getHtml(), ahtml::NO_ENTITIES);
@@ -3611,9 +3611,9 @@ void HtmlInfoBuilder::airwayText(const MapAirway& airway, HtmlBuilder& html, con
 void HtmlInfoBuilder::markerText(const MapMarker& marker, HtmlBuilder& html, const Route *) const
 {
   if(marker.ident.isEmpty())
-    head(html, tr("Marker: %1").arg(atools::capString(marker.type)));
+    head(html, tr("Marker: %1").arg(atools::capString(marker.markerType)));
   else
-    head(html, tr("Marker: %1 (%2)").arg(marker.ident).arg(atools::capString(marker.type)));
+    head(html, tr("Marker: %1 (%2)").arg(marker.ident).arg(atools::capString(marker.markerType)));
 }
 
 void HtmlInfoBuilder::towerText(const MapAirport& airport, HtmlBuilder& html, const Route *) const
@@ -3637,8 +3637,8 @@ void HtmlInfoBuilder::parkingText(const MapParking& parking, HtmlBuilder& html, 
     html.brText(tr("Flight plan departure parking"), ahtml::BOLD);
 
   QStringList texts;
-  if(!parking.type.isEmpty())
-    texts.append(map::parkingTypeName(parking.type));
+  if(!parking.parkingType.isEmpty())
+    texts.append(map::parkingTypeName(parking.parkingType));
 
   if(parking.radius > 0.f)
     texts.append(Unit::distShortFeet(parking.radius * 2.f));

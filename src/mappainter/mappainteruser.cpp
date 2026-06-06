@@ -74,7 +74,7 @@ void MapPainterUser::paintUserpoints(const QList<MapUserpoint>& userpoints, bool
       if(context->objCount())
         return;
 
-      if(icons->hasType(userpoint.type) || context->userPointTypeUnknown)
+      if(icons->hasType(userpoint.userpointType) || context->userPointTypeUnknown)
       {
         // Use navaid sizes as base but allow user to override with userpoint scale
         float size;
@@ -101,7 +101,7 @@ void MapPainterUser::paintUserpoints(const QList<MapUserpoint>& userpoints, bool
         }
 
         icon::TextPlacement textPlacementHint = icon::ICON_LABEL_LEFT;
-        const QPixmap *iconPixmap = icons->getIconPixmap(userpoint.type, atools::roundToInt(size), &textPlacementHint);
+        const QPixmap *iconPixmap = icons->getIconPixmap(userpoint.userpointType, atools::roundToInt(size), &textPlacementHint);
         context->painter->drawPixmap(QPointF(x - size / 2.f, y - size / 2.f), *iconPixmap);
 
         // Do not draw labels for airport add-on marks

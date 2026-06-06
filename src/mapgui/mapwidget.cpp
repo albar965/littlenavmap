@@ -1084,7 +1084,7 @@ void MapWidget::mousePressEvent(QMouseEvent *event)
           const MapLayer *mapLayer = paintLayer->getMapLayer();
           if(userpoint.isValid() && mapLayer != nullptr)
           {
-            userpointDragPixmap = *NavApp::getUserdataIcons()->getIconPixmap(userpoint.type, mapLayer->getUserPointSymbolSize());
+            userpointDragPixmap = *NavApp::getUserdataIcons()->getIconPixmap(userpoint.userpointType, mapLayer->getUserPointSymbolSize());
             userpointDragCurrrent = event->pos();
             *userpointBackup = userpoint;
             mouseState = ms::DRAG_USER_POINT;
@@ -2191,7 +2191,7 @@ void MapWidget::contextMenuEvent(QContextMenuEvent *event)
       if(base != nullptr)
       {
         id = base->id;
-        type = base->objType;
+        type = base->type;
         vor = base->asObj<map::MapVor>();
         ndb = base->asObj<map::MapNdb>();
         waypoint = base->asObj<map::MapWaypoint>();
@@ -2329,17 +2329,17 @@ void MapWidget::editAny(const map::MapBase *base)
     int routeIndex = map::routeIndex(base);
     if(routeIndex != -1)
       emit editUserWaypointName(routeIndex);
-    else if(base->objType == map::USERPOINT)
+    else if(base->type == map::USERPOINT)
       emit editUserpointFromMap(base->id);
-    else if(base->objType == map::LOGBOOK)
+    else if(base->type == map::LOGBOOK)
       emit editLogEntryFromMap(base->id);
-    else if(base->objType == map::MARK_RANGE)
+    else if(base->type == map::MARK_RANGE)
       editRangeMark(base->id);
-    else if(base->objType == map::MARK_DISTANCE)
+    else if(base->type == map::MARK_DISTANCE)
       editDistanceMark(base->id);
-    else if(base->objType == map::MARK_HOLDING)
+    else if(base->type == map::MARK_HOLDING)
       editHoldingMark(base->id);
-    else if(base->objType == map::MARK_PATTERNS)
+    else if(base->type == map::MARK_PATTERNS)
       editPatternMark(base->id);
   }
   else
@@ -2353,19 +2353,19 @@ void MapWidget::removeAny(const map::MapBase *base)
     int routeIndex = map::routeIndex(base);
     if(routeIndex != -1)
       emit routeDelete(routeIndex, true /* selectCurrent */);
-    else if(base->objType == map::USERPOINT)
+    else if(base->type == map::USERPOINT)
       emit deleteUserpointFromMap(base->id);
-    else if(base->objType == map::LOGBOOK)
+    else if(base->type == map::LOGBOOK)
       emit deleteLogbookEntryFromMap(base->id);
-    else if(base->objType == map::MARK_RANGE)
+    else if(base->type == map::MARK_RANGE)
       removeRangeMark(base->id);
-    else if(base->objType == map::MARK_DISTANCE)
+    else if(base->type == map::MARK_DISTANCE)
       removeDistanceMark(base->id);
-    else if(base->objType == map::MARK_HOLDING)
+    else if(base->type == map::MARK_HOLDING)
       removeHoldMark(base->id);
-    else if(base->objType == map::MARK_PATTERNS)
+    else if(base->type == map::MARK_PATTERNS)
       removePatternMarker(base->id);
-    else if(base->objType == map::MARK_MSA)
+    else if(base->type == map::MARK_MSA)
       removeMsaMarker(base->id);
   }
   else
@@ -3838,11 +3838,11 @@ void MapWidget::showResultInSearch(const map::MapBase *base)
   qDebug() << Q_FUNC_INFO << *base;
   using atools::sql::SqlRecord;
 
-  if(base->objType == map::LOGBOOK)
+  if(base->type == map::LOGBOOK)
     emit showInSearch(map::LOGBOOK,
                       NavApp::getLogdataController()->getLogEntryRecordByIdForShowInSearch(base->asObj<map::MapLogbookEntry>()),
                       true /* select */);
-  else if(base->objType == map::USERPOINT)
+  else if(base->type == map::USERPOINT)
   {
     map::MapUserpoint userpoint = base->asObj<map::MapUserpoint>();
 
@@ -3850,15 +3850,15 @@ void MapWidget::showResultInSearch(const map::MapBase *base)
     rec.appendFieldAndValueIf("ident", userpoint.ident);
     rec.appendFieldAndValueIf("region", userpoint.region);
     rec.appendFieldAndValueIf("name", userpoint.name);
-    rec.appendFieldAndValueIf("type", userpoint.type);
+    rec.appendFieldAndValueIf("type", userpoint.userpointType);
     rec.appendFieldAndValueIf("tags", userpoint.tags);
 
     emit showInSearch(map::USERPOINT, rec, true /* select */);
   }
-  else if(base->objType == map::AIRPORT)
+  else if(base->type == map::AIRPORT)
     emit showInSearch(map::AIRPORT, SqlRecord().
                       appendFieldAndValue("ident", QString("\"" % base->asObj<map::MapAirport>().ident % "\"")), true /* select */);
-  else if(base->objType == map::VOR)
+  else if(base->type == map::VOR)
   {
     map::MapVor vor = base->asObj<map::MapVor>();
     SqlRecord rec;
@@ -3868,7 +3868,7 @@ void MapWidget::showResultInSearch(const map::MapBase *base)
 
     emit showInSearch(map::VOR, rec, true /* select */);
   }
-  else if(base->objType == map::NDB)
+  else if(base->type == map::NDB)
   {
     map::MapNdb ndb = base->asObj<map::MapNdb>();
     SqlRecord rec;
@@ -3878,7 +3878,7 @@ void MapWidget::showResultInSearch(const map::MapBase *base)
 
     emit showInSearch(map::NDB, rec, true /* select */);
   }
-  else if(base->objType == map::WAYPOINT)
+  else if(base->type == map::WAYPOINT)
   {
     map::MapWaypoint waypoint = base->asObj<map::MapWaypoint>();
     SqlRecord rec;
@@ -3888,7 +3888,7 @@ void MapWidget::showResultInSearch(const map::MapBase *base)
 
     emit showInSearch(map::WAYPOINT, rec, true /* select */);
   }
-  else if(base->objType == map::AIRCRAFT)
+  else if(base->type == map::AIRCRAFT)
   {
     // Can only show online clients if aircraft is shadow of a client
     map::MapUserAircraft aircraft = base->asObj<map::MapUserAircraft>();
@@ -3899,7 +3899,7 @@ void MapWidget::showResultInSearch(const map::MapBase *base)
       emit showInSearch(map::AIRCRAFT_ONLINE, SqlRecord().appendFieldAndValue("callsign", shadowAircraft.getAirplaneRegistration()),
                         true /* select */);
   }
-  else if(base->objType == map::AIRCRAFT_AI)
+  else if(base->type == map::AIRCRAFT_AI)
   {
     // Can only show online clients if aircraft is shadow of a client
     map::MapAiAircraft aircraft = base->asObj<map::MapAiAircraft>();
@@ -3909,12 +3909,12 @@ void MapWidget::showResultInSearch(const map::MapBase *base)
       emit showInSearch(map::AIRCRAFT_ONLINE, SqlRecord().appendFieldAndValue("callsign", shadowAircraft.getAirplaneRegistration()),
                         true /* select */);
   }
-  else if(base->objType == map::AIRCRAFT_ONLINE)
+  else if(base->type == map::AIRCRAFT_ONLINE)
     emit showInSearch(map::AIRCRAFT_ONLINE, SqlRecord().appendFieldAndValue("callsign",
                                                                             base->asObj<map::MapOnlineAircraft>().
                                                                             getAircraft().getAirplaneRegistration()),
                       true /* select */);
-  else if(base->objType == map::AIRSPACE)
+  else if(base->type == map::AIRSPACE)
     emit showInSearch(map::AIRSPACE, SqlRecord().appendFieldAndValue("callsign", base->asObj<map::MapAirspace>().name), true /* select */);
 }
 

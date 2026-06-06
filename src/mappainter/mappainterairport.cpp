@@ -820,8 +820,8 @@ void MapPainterAirport::drawAirportDiagram(const map::MapAirport& airport, const
         w = scale->getPixelForFeet(radius, 90.f);
         h = scale->getPixelForFeet(radius, 0.f);
 
-        painter->setPen(QPen(mapcolors::colorOutlineForParkingType(parking.type), 2, Qt::SolidLine, Qt::FlatCap));
-        painter->setBrush(mapcolors::colorForParkingType(parking.type));
+        painter->setPen(QPen(mapcolors::colorOutlineForParkingType(parking.parkingType), 2, Qt::SolidLine, Qt::FlatCap));
+        painter->setBrush(mapcolors::colorForParkingType(parking.parkingType));
         painter->drawEllipse(QPointF(x, y), w, h);
 
         if(!fast)
@@ -899,7 +899,7 @@ void MapPainterAirport::drawAirportDiagram(const map::MapAirport& airport, const
           const MapParking& parking = parkings->at(i);
 
           // Use different text pen for better readability depending on background
-          painter->setPen(QPen(mapcolors::colorTextForParkingType(parking.type), 2, Qt::SolidLine, Qt::FlatCap));
+          painter->setPen(QPen(mapcolors::colorTextForParkingType(parking.parkingType), 2, Qt::SolidLine, Qt::FlatCap));
 
           // Get possibly truncated parking name but not for lowest layer
           QString text = parkingNameForSize(parking, mapLayerEffective->isAirportDiagramDetail3() ? 0.f : parkingSpot.width * 2.2f);

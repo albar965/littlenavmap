@@ -462,7 +462,7 @@ void UserdataController::addUserpointFromMap(const map::MapResult& result, atool
       const map::MapUserpoint& up = result.userpoints.constFirst();
       prefillRec.appendFieldAndValue("ident", up.ident)
       .appendFieldAndValue("name", up.name)
-      .appendFieldAndValue("type", up.type)
+      .appendFieldAndValue("type", up.userpointType)
       .appendFieldAndValue("region", up.region);
       // .appendFieldAndValue("description", up.description)
       // .appendFieldAndValue("tags", up.tags)

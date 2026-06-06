@@ -247,17 +247,17 @@ bool isSoftSurface(const QString& surface);
 struct MapBase
 {
   explicit MapBase(map::MapType type)
-    : objType(type)
+    : type(type)
   {
   }
 
   explicit MapBase(map::MapType type, int idParam)
-    : id(idParam), objType(type)
+    : id(idParam), type(type)
   {
   }
 
   explicit MapBase(map::MapType type, int idParam, const atools::geo::Pos& positionParam)
-    : id(idParam), position(positionParam), objType(type)
+    : id(idParam), position(positionParam), type(type)
   {
   }
 
@@ -270,14 +270,14 @@ struct MapBase
   {
     id = std::move(other.id);
     position = std::move(other.position);
-    objType = std::move(other.objType);
+    type = std::move(other.type);
   }
 
   MapBase& operator=(MapBase&& other) noexcept
   {
     id = std::move(other.id);
     position = std::move(other.position);
-    objType = std::move(other.objType);
+    type = std::move(other.type);
     return *this;
   }
 
@@ -285,7 +285,7 @@ struct MapBase
   {
     id = other.id;
     position = other.position;
-    objType = other.objType;
+    type = other.type;
 
     return *this;
   }
@@ -293,8 +293,8 @@ struct MapBase
   int id;
   atools::geo::Pos position;
 
-  /* Use simple type information to avoid vtable and RTTI overhead. Avoid QFlags wrapper here. */
-  map::MapType objType;
+  /* Use simple type information to avoid vtable and RTTI overhead. Avoid Flags wrapper here. */
+  map::MapType type;
 
   /* false if not initialized */
   bool isValid() const
@@ -325,24 +325,24 @@ struct MapBase
 
   map::MapRef getRef() const
   {
-    return map::MapRef(id, objType);
+    return map::MapRef(id, type);
   }
 
   map::MapRefExt getRefExt() const
   {
-    return map::MapRefExt(id, position, objType);
+    return map::MapRefExt(id, position, type);
   }
 
   map::MapRefExt getRefExt(const QString& name) const
   {
-    return map::MapRefExt(id, position, objType, name);
+    return map::MapRefExt(id, position, type, name);
   }
 
   /* Returns object cast to const concrete object pointer or null if type does not match */
   template<typename TYPE>
   const TYPE *asPtr() const
   {
-    if(TYPE::staticType() == objType)
+    if(TYPE::staticType() == type)
       return static_cast<const TYPE *>(this);
     else
       return nullptr;
@@ -352,7 +352,7 @@ struct MapBase
   template<typename TYPE>
   TYPE *asPtr()
   {
-    if(TYPE::staticType() == objType)
+    if(TYPE::staticType() == type)
       return static_cast<TYPE *>(this);
     else
       return nullptr;
@@ -362,7 +362,7 @@ struct MapBase
   template<typename TYPE>
   TYPE asObj() const
   {
-    if(TYPE::staticType() == objType)
+    if(TYPE::staticType() == type)
       return *static_cast<const TYPE *>(this);
     else
       return TYPE();
@@ -370,7 +370,7 @@ struct MapBase
 
   bool operator==(const map::MapBase& other) const
   {
-    return id == other.id && objType == other.objType;
+    return id == other.id && type == other.type;
   }
 
   bool operator!=(const map::MapBase& other) const
@@ -379,20 +379,20 @@ struct MapBase
   }
 
   /* Set type using QFlags wrapper */
-  void setType(map::MapTypes type)
+  void setType(map::MapTypes typeParam)
   {
-    objType = type.asEnum();
+    type = typeParam.asEnum();
   }
 
   /* Get type using QFlags wrapper */
   map::MapTypes getType() const
   {
-    return objType;
+    return type;
   }
 
   map::MapType getTypeEnum() const
   {
-    return objType;
+    return type;
   }
 
 protected:
@@ -456,7 +456,7 @@ struct MapAirport
         transitionLevel = 0.f; /* Feet. Transition Level is the altitude when flying where you are required to change from
                                 * standard of 1013 back to the local QNH. This is above the Transition Altitude. */
 
-  map::MapAirportType type; /* 1 Land airport, 16 Seaplane base, 17 Heliport. X-Plane only. -1 if not set. */
+  map::MapAirportType airportType; /* 1 Land airport, 16 Seaplane base, 17 Heliport. X-Plane only. -1 if not set. */
 
   map::MapAirportFlags flags = AP_NONE;
   float magvar = 0; /* Magnetic variance - positive is east, negative is west */
@@ -758,7 +758,7 @@ struct MapParking
     return map::PARKING;
   }
 
-  QString type, name,
+  QString parkingType, name,
           suffix, /* Name suffix - only MSFS */
           nameShort, /* Calculated short display name for X-Plane names */
           airlineCodes /* Comma separated list of airline codes */;
@@ -798,20 +798,20 @@ struct MapStart
 
   bool isRunway() const
   {
-    return type == 'R';
+    return startType == 'R';
   }
 
   bool isHelipad() const
   {
-    return type == 'H';
+    return startType == 'H';
   }
 
   bool isWater() const
   {
-    return type == 'W';
+    return startType == 'W';
   }
 
-  QChar type = '\0' /* R(UNWAY), H(ELIPAD) or W(ATER) */;
+  QChar startType = '\0' /* R(UNWAY), H(ELIPAD) or W(ATER) */;
   QString runwayName /* Runway name. Also contains helipad number as string like "01" if type is helipad */;
   int runwayEndId = 0;
   int airportId = 0 /* database id airport.airport_id */;
@@ -839,7 +839,7 @@ struct MapHelipad
     return startId >= 0;
   }
 
-  QString surface, type,
+  QString surface, helipadType,
           startName /* From outer join with start */;
   int startId, airportId, length, width, heading,
       startNumber /* From outer join with start */;
@@ -862,7 +862,7 @@ struct MapVor
     return map::VOR;
   }
 
-  QString ident, region, type /* HIGH, LOW, TERMINAL */, name /*, airportIdent*/;
+  QString ident, region, vorType /* HIGH, LOW, TERMINAL */, name /*, airportIdent*/;
   float magvar;
   int frequency /* MHz * 1000 */, range /* nm */;
   QString channel;
@@ -914,7 +914,7 @@ struct MapNdb
     return map::NDB;
   }
 
-  QString ident, region, type /* HH, H, COMPASS_POINT, etc. */, name /*, airportIdent*/;
+  QString ident, region, ndbType /* HH, H, COMPASS_POINT, etc. */, name /*, airportIdent*/;
   float magvar;
   int frequency /* kHz * 100 */, range /* nm */;
   int routeIndex = -1; /* Filled by the get nearest methods for building the context menu */
@@ -950,7 +950,7 @@ struct MapWaypoint
 
   float magvar;
   QString ident, region, name,
-          type /* NAMED, UNAMED, etc. */,
+          waypointType /* NAMED, UNAMED, etc. */,
           arincType /* ARINC * 424.18 field type definition 5.42 */;
   int routeIndex = -1; /* Filled by the get nearest methods for building the context menu */
   bool recommended = false; /* Filled by the get nearest methods for building the context menu
@@ -966,12 +966,12 @@ struct MapWaypoint
 
   bool isVor() const
   {
-    return type == QLatin1String("V");
+    return waypointType == QLatin1String("V");
   }
 
   bool isNdb() const
   {
-    return type == QLatin1String("N");
+    return waypointType == QLatin1String("N");
   }
 
 };
@@ -1032,49 +1032,49 @@ struct MapUserpoint
 
   bool isAddon() const
   {
-    return type.compare(QLatin1String("Addon"), Qt::CaseInsensitive) == 0;
+    return userpointType.compare(QLatin1String("Addon"), Qt::CaseInsensitive) == 0;
   }
 
   bool isVor() const
   {
-    return type.compare(QLatin1String("VOR"), Qt::CaseInsensitive) == 0 ||
-           type.compare(QLatin1String("VORDME"), Qt::CaseInsensitive) == 0 ||
-           type.compare(QLatin1String("DME"), Qt::CaseInsensitive) == 0 ||
-           type.compare(QLatin1String("VORTAC"), Qt::CaseInsensitive) == 0 ||
-           type.compare(QLatin1String("TACAN"), Qt::CaseInsensitive) == 0;
+    return userpointType.compare(QLatin1String("VOR"), Qt::CaseInsensitive) == 0 ||
+           userpointType.compare(QLatin1String("VORDME"), Qt::CaseInsensitive) == 0 ||
+           userpointType.compare(QLatin1String("DME"), Qt::CaseInsensitive) == 0 ||
+           userpointType.compare(QLatin1String("VORTAC"), Qt::CaseInsensitive) == 0 ||
+           userpointType.compare(QLatin1String("TACAN"), Qt::CaseInsensitive) == 0;
   }
 
   bool isWaypoint() const
   {
-    return type.compare(QLatin1String("Waypoint"), Qt::CaseInsensitive) == 0;
+    return userpointType.compare(QLatin1String("Waypoint"), Qt::CaseInsensitive) == 0;
   }
 
   bool isVrp() const
   {
-    return type.compare(QLatin1String("VRP"), Qt::CaseInsensitive) == 0;
+    return userpointType.compare(QLatin1String("VRP"), Qt::CaseInsensitive) == 0;
   }
 
   bool isObstacle() const
   {
-    return type.compare(QLatin1String("Obstacle"), Qt::CaseInsensitive) == 0;
+    return userpointType.compare(QLatin1String("Obstacle"), Qt::CaseInsensitive) == 0;
   }
 
   bool isNdb() const
   {
-    return type.compare(QLatin1String("NDB"), Qt::CaseInsensitive) == 0;
+    return userpointType.compare(QLatin1String("NDB"), Qt::CaseInsensitive) == 0;
   }
 
   bool isAirport() const
   {
-    return type.compare(QLatin1String("Airport"), Qt::CaseInsensitive) == 0;
+    return userpointType.compare(QLatin1String("Airport"), Qt::CaseInsensitive) == 0;
   }
 
   bool isLogbook() const
   {
-    return type.compare(QLatin1String("Logbook"), Qt::CaseInsensitive) == 0;
+    return userpointType.compare(QLatin1String("Logbook"), Qt::CaseInsensitive) == 0;
   }
 
-  QString name, ident, region, type, description, tags;
+  QString name, ident, region, userpointType, description, tags;
   bool temp = false;
 
   const QString& getIdent() const
@@ -1320,7 +1320,7 @@ struct MapAirway
   }
 
   QString name;
-  map::MapAirwayTrackType type;
+  map::MapAirwayTrackType airwayTrackType;
   map::MapAirwayRouteType routeType;
   int fromWaypointId, toWaypointId /* all database ids */,
       airwayId /* Mirrored from underlying airways for tracks */;
@@ -1359,7 +1359,7 @@ struct MapMarker
     return map::MARKER;
   }
 
-  QString type, ident;
+  QString markerType, ident;
   int heading;
 };
 
@@ -1407,7 +1407,7 @@ struct MapIls
           provider; /* Provider of the SBAS service can be "WAAS", "EGNOS", "MSAS".
                      * If no provider is specified, or this belongs to a GLS approach, then "GP" */
 
-  map::IlsType type; /* empty unknown
+  map::IlsType ilsType; /* empty unknown
                       * ILS Localizer only, no glideslope   0
                       * ILS Localizer/MLS/GLS Unknown cat   U
                       * ILS Localizer/MLS/GLS Cat I         1
@@ -1456,42 +1456,42 @@ struct MapIls
 
   bool isGls() const
   {
-    return type == GLS_GROUND_STATION;
+    return ilsType == GLS_GROUND_STATION;
   }
 
   bool isRnp() const
   {
-    return type == SBAS_GBAS_THRESHOLD;
+    return ilsType == SBAS_GBAS_THRESHOLD;
   }
 
   bool isAnyGlsRnp() const
   {
-    return type == SBAS_GBAS_THRESHOLD || type == GLS_GROUND_STATION;
+    return ilsType == SBAS_GBAS_THRESHOLD || ilsType == GLS_GROUND_STATION;
   }
 
   bool isIls() const
   {
-    return type == ILS_CAT || type == ILS_CAT_I || type == ILS_CAT_II || type == ILS_CAT_III;
+    return ilsType == ILS_CAT || ilsType == ILS_CAT_I || ilsType == ILS_CAT_II || ilsType == ILS_CAT_III;
   }
 
   bool isLoc() const
   {
-    return type == LOCALIZER;
+    return ilsType == LOCALIZER;
   }
 
   bool isIgs() const
   {
-    return type == IGS;
+    return ilsType == IGS;
   }
 
   bool isLda() const
   {
-    return type == LDA_GS || type == LDA;
+    return ilsType == LDA_GS || ilsType == LDA;
   }
 
   bool isSdf() const
   {
-    return type == SDF_GS || type == SDF;
+    return ilsType == SDF_GS || ilsType == SDF;
   }
 
   bool hasGlideslope() const
@@ -1541,7 +1541,7 @@ struct MapAirspace
    *  U Unknown - do not display value */
 
   QList<int> comFrequencies;
-  map::MapAirspaceType type = map::AIRSPACE_NONE;
+  map::MapAirspaceType airspaceType = map::AIRSPACE_NONE;
   map::MapAirspaceSource src;
 
   map::MapAirspaceId combinedId() const
@@ -1552,7 +1552,7 @@ struct MapAirspace
   /* Online airspaces can have missing coordinates and isValid is not reliable, therefore */
   bool isValidAirspace() const
   {
-    return type != map::AIRSPACE_NONE;
+    return airspaceType != map::AIRSPACE_NONE;
   }
 
   bool hasValidGeometry() const

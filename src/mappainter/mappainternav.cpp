@@ -231,8 +231,8 @@ void MapPainterNav::paintAirways(const QList<map::MapAirway> *airways, bool fast
     const MapAirway& airway = airways->at(i);
     bool isTrack = airway.isTrack();
 
-    if((airway.type == map::AIRWAY_JET && !context->objectTypes.testFlag(map::AIRWAYJ)) ||
-       (airway.type == map::AIRWAY_VICTOR && !context->objectTypes.testFlag(map::AIRWAYV)) ||
+    if((airway.airwayTrackType == map::AIRWAY_JET && !context->objectTypes.testFlag(map::AIRWAYJ)) ||
+       (airway.airwayTrackType == map::AIRWAY_VICTOR && !context->objectTypes.testFlag(map::AIRWAYV)) ||
        (isTrack && !context->objectTypes.testFlag(map::TRACK)))
       continue;
 
@@ -277,9 +277,9 @@ void MapPainterNav::paintAirways(const QList<map::MapAirway> *airways, bool fast
           text.append(tr(" / "));
 
           if(isTrack)
-            text.append(map::airwayTrackTypeToString(airway.type));
+            text.append(map::airwayTrackTypeToString(airway.airwayTrackType));
           else
-            text.append(map::airwayTrackTypeToShortString(airway.type));
+            text.append(map::airwayTrackTypeToShortString(airway.airwayTrackType));
 
           QString altTxt = map::airwayAltTextShort(airway);
 
@@ -533,7 +533,7 @@ void MapPainterNav::paintMarkers(const QList<map::MapMarker> *markers, bool draw
 
       if(context->mapLayerText->isMarkerInfo())
       {
-        QString type = marker.type.toLower();
+        QString type = marker.markerType.toLower();
         type[0] = type.at(0).toUpper();
         x -= size / 2.f + 2.f;
         symbolPainter->textBoxF(context->painter, {type}, mapcolors::markerSymbolColor, x, y, text::LEFT, transparency);
