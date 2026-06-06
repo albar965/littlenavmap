@@ -1049,7 +1049,7 @@ void MapWidget::mousePressEvent(QMouseEvent *event)
         } // if(route.size() > 1)
 
         // Start map marker drag and drop ===================================================================================
-        index.removeNot(map::MARK_ALL);
+        index.removeNot(map::MARK_ALL | map::USERPOINT);
         map::MapResult result = index.getResultFromFirst();
 
         // Measurement line start or end clicked ===================================
