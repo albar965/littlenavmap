@@ -356,7 +356,7 @@ void MapPainterVehicle::paintTextLabelAi(float x, float y, float size, const Sim
 
       // Draw text label
       symbolPainter->textBoxF(context->painter, texts, mapcolors::aircraftAiLabelColor, x + size / 2.f, y + size / 2.f,
-                              textatt::NONE, transparency, mapcolors::aircraftAiLabelColorBg);
+                              text::NO_ATTRIBUTE, transparency, mapcolors::aircraftAiLabelColorBg);
     }
   } // if((!flying && layer->isAiAircraftGroundText()) ||
 }
@@ -435,13 +435,13 @@ void MapPainterVehicle::paintTextLabelUser(float x, float y, int size, const Sim
     {
       ice.prepend(tr("Ice %"));
       symbolPainter->textBoxF(context->painter, ice, mapcolors::aircraftUserLabelColor, x - size * 3 / 4, y,
-                              textatt::ERROR_COLOR | textatt::LEFT, 255, mapcolors::aircraftUserLabelColorBg);
+                              text::ERROR_COLOR | text::LEFT, 255, mapcolors::aircraftUserLabelColorBg);
     }
   }
 
   // Draw text label
   symbolPainter->textBoxF(context->painter, texts, mapcolors::aircraftUserLabelColor, x + size * 3 / 4, y,
-                          textatt::NONE, transparency, mapcolors::aircraftUserLabelColorBg);
+                          text::NO_ATTRIBUTE, transparency, mapcolors::aircraftUserLabelColorBg);
 }
 
 void MapPainterVehicle::climbSinkPointer(QString& upDown, const SimConnectAircraft& aircraft) const
@@ -536,7 +536,6 @@ void MapPainterVehicle::paintTextLabelWind(float x, float y, float size, const S
     float xs, ys;
     QStringList texts;
 
-    textatt::TextAttributes atts = textatt::ROUTE_BG_COLOR;
     if(aircraft.getWindSpeedKts() >= 1.f)
     {
       if(context->dOptUserAc(optsac::ITEM_USER_AIRCRAFT_WIND))
@@ -551,13 +550,12 @@ void MapPainterVehicle::paintTextLabelWind(float x, float y, float size, const S
     }
     else
     {
-      atts |= textatt::CENTER | textatt::BELOW;
       texts.append(tr("No wind"));
       xs = x;
       ys = y;
     }
 
     // Draw text label
-    symbolPainter->textBoxF(context->painter, texts, QPen(Qt::black), xs, ys, atts, 255);
+    symbolPainter->textBoxF(context->painter, texts, QPen(Qt::black), xs, ys, text::PLACE_BELOW_CENTER, 255);
   }
 }

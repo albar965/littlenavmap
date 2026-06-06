@@ -807,6 +807,7 @@ private:
                          opts2::MAP_ROUTE_TEXT_BACKGROUND | opts2::MAP_USER_TEXT_BACKGROUND | opts2::ROUTE_HIGHLIGHT_ACTIVE_TABLE |
                          opts2::MAP_AI_TEXT_BACKGROUND | opts2::MAP_ROUTE_DIM_PASSED | opts2::MAP_AVOID_BLURRED_MAP |
                          opts2::ONLINE_AIRSPACE_BY_FILE | opts2::ONLINE_AIRSPACE_BY_NAME | opts2::RAISE_WINDOWS |
+                         opts2::MAP_NAVAID_FILL_BACKGROUND |
                          opts2::ROUTE_CENTER_ACTIVE_LEG | opts2::ROUTE_NO_FOLLOW_ON_MOVE | opts2::MAP_ROUTE_HIGHLIGHT_ACTIVE |
                          opts2::MAP_ROUTE_TRANSPARENT | opts2::MAP_HIGHLIGHT_TRANSPARENT | opts2::MAP_WEB_USE_UI_SCALE;
 

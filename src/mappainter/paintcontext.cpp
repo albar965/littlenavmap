@@ -40,65 +40,83 @@ void PaintContext::szFont(float scale) const
   mapcolors::scaleFont(painter, scale * sizeAll, &defaultFont);
 }
 
-textflags::TextFlags PaintContext::airportTextFlags() const
+text::Flag PaintContext::airportTextFlags() const
 {
   // Build and draw airport text
-  textflags::TextFlags textflags = textflags::NONE;
+  text::Flag textflags = text::NO_FLAG;
 
   if(mapLayerText->isAirportInfo())
-    textflags = textflags::INFO;
+    textflags = text::INFO;
 
   if(mapLayerText->isAirportIdent())
-    textflags |= textflags::IDENT;
+    textflags = textflags | text::IDENT;
 
   if(mapLayerText->isAirportName())
-    textflags |= textflags::NAME;
-
-  if(!flags2.testFlag(opts2::MAP_AIRPORT_TEXT_BACKGROUND))
-    textflags |= textflags::NO_BACKGROUND;
+    textflags = textflags | text::NAME;
 
   return textflags;
 }
 
-textflags::TextFlags PaintContext::airportTextFlagsMinor() const
+text::Flag PaintContext::airportTextFlagsMinor() const
 {
   // Build and draw airport text
-  textflags::TextFlags textflags = textflags::NONE;
+  text::Flag textflags = text::NO_FLAG;
 
   if(mapLayerText->isAirportMinorInfo())
-    textflags = textflags::INFO;
+    textflags = text::INFO;
 
   if(mapLayerText->isAirportMinorIdent())
-    textflags |= textflags::IDENT;
+    textflags = textflags | text::IDENT;
 
   if(mapLayerText->isAirportMinorName())
-    textflags |= textflags::NAME;
-
-  if(!flags2.testFlag(opts2::MAP_AIRPORT_TEXT_BACKGROUND))
-    textflags |= textflags::NO_BACKGROUND;
+    textflags = textflags | text::NAME;
 
   return textflags;
 }
 
-textflags::TextFlags PaintContext::airportTextFlagsRoute(bool drawAsRoute, bool drawAsLog) const
+text::Flag PaintContext::airportTextFlagsRoute() const
 {
   // Show ident always on route
-  textflags::TextFlags textflags = textflags::IDENT;
-
-  if(drawAsRoute)
-    textflags |= textflags::ROUTE_TEXT;
-
-  if(drawAsLog)
-    textflags |= textflags::LOG_TEXT;
+  text::Flag textflags = text::IDENT;
 
   // Use more more detailed text for flight plan
   if(mapLayerRouteText->isAirportRouteInfo())
-    textflags |= textflags::NAME | textflags::INFO;
-
-  if(!(flags2 & opts2::MAP_ROUTE_TEXT_BACKGROUND))
-    textflags |= textflags::NO_BACKGROUND;
+    textflags = textflags | text::NAME | text::INFO;
 
   return textflags;
+}
+
+text::Flag PaintContext::airportTextFlagsLog() const
+{
+  return text::IDENT;
+}
+
+text::Attribute PaintContext::airportTextAtts() const
+{
+  return flags2.testFlag(opts2::MAP_AIRPORT_TEXT_BACKGROUND) ? text::NO_ATTRIBUTE : text::NO_BACKGROUND;
+}
+
+text::Attribute PaintContext::airportTextAttsMinor() const
+{
+  return flags2.testFlag(opts2::MAP_AIRPORT_TEXT_BACKGROUND) ? text::NO_ATTRIBUTE : text::NO_BACKGROUND;
+}
+
+text::Attribute PaintContext::airportTextAttsRoute() const
+{
+  text::Attribute atts = text::ROUTE_BG_COLOR;
+
+  if(!(flags2 & opts2::MAP_ROUTE_TEXT_BACKGROUND))
+    atts = atts | text::NO_BACKGROUND;
+  return atts;
+}
+
+text::Attribute PaintContext::textAttsLog() const
+{
+  text::Attribute atts = text::LOG_BG_COLOR;
+
+  if(!(flags2 & opts2::MAP_ROUTE_TEXT_BACKGROUND))
+    atts = atts | text::NO_BACKGROUND;
+  return atts;
 }
 
 bool PaintContext::visibleAndResolves(const atools::geo::Line& line) const

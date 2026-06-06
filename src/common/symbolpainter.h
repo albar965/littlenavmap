@@ -18,18 +18,16 @@
 #ifndef LITTLENAVMAP_SYMBOLPAINTER_H
 #define LITTLENAVMAP_SYMBOLPAINTER_H
 
-#include "common/mapflags.h"
+#include "common/mapflagstext.h"
 #include "options/optionflags.h"
 
-#include <QColor>
-#include <QIcon>
 #include <QCoreApplication>
 #include <QCache>
+#include <QColor>
 
 namespace atools {
 namespace fs {
 namespace weather {
-
 class Metar;
 class MetarParser;
 }
@@ -38,10 +36,6 @@ class MetarParser;
 
 class QPainter;
 class QPen;
-
-namespace Marble {
-class GeoPainter;
-}
 
 namespace map {
 struct MapAirport;
@@ -54,6 +48,19 @@ struct MapAirway;
 struct MapHelipad;
 struct MapAirportMsa;
 }
+
+/* Navaids and airports background fill colors. Internal use only. */
+namespace sf {
+enum SymbolFill
+{
+  FILL_NONE,
+  FILL_WHITE,
+  FILL_PREVIEW, /* Procedure preview */
+  FILL_LOG, /* Logbook entry hightlight */
+  FILL_ROUTE /* All attached to a flight plan */
+};
+
+} // namespace sf
 
 /*
  * Draws all kind of map symbols and texts into an icon or a QPainter. Icons can change shape depending on size.
@@ -80,102 +87,103 @@ public:
   static QIcon createHelipadIcon(const map::MapHelipad& helipad, int size);
   static QIcon createAircraftTrailIcon(int size, const QPen& pen);
 
+  /* Airport ============================================= */
+
   /* Scale is not pixel size but a factor related for font size */
   static QIcon createAirportMsaIcon(const map::MapAirportMsa& airportMsa, const QFont& font, float symbolScale, int *actualSize = nullptr);
 
   /* Airport symbol. For airport diagram use a transparent text background */
-  void drawAirportSymbol(QPainter *painter, const map::MapAirport& airport, float x, float y, float size,
-                         bool isAirportDiagram, bool fast, bool addonHighlight);
+  void drawAirportSymbol(QPainter *painter, const map::MapAirport& airport, float x, float y, float size, sf::SymbolFill fill,
+                         bool isAirportDiagram, bool fast, bool addonHighlight) const;
   void drawAirportText(QPainter *painter, const map::MapAirport& airport, float x, float y,
-                       optsd::DisplayOptionsAirport dispOpts, textflags::TextFlags flags, float size, bool diagram,
-                       int maxTextLength, textatt::TextAttributes atts = textatt::NONE);
-
-  /* Waypoint symbol. Can use a different color for invalid waypoints that were not found in the database */
-  void drawWaypointSymbol(QPainter *painter, const QColor& col, float x, float y, float size, bool fill);
+                       optsd::DisplayOptionsAirport dispOpts, text::Flag flags, text::Attribute atts, float size, bool diagram,
+                       int maxTextLength) const;
 
   /* Waypoint symbol. Can use a different color for invalid waypoints that were not found in the database */
   void drawAirportWeather(QPainter *painter, const atools::fs::weather::MetarParser& metar,
-                          float x, float y, float size, bool windPointer, bool windBarbs, bool fast);
+                          float x, float y, float size, bool windPointer, bool windBarbs, bool fast) const;
 
   /* Wind arrow */
   void drawWindPointer(QPainter *painter, float x, float y, float size, float dir);
 
   /* Draw large symbol with sectors and labels. MSA circle with bearings and altitude */
   void drawAirportMsa(QPainter *painter, const map::MapAirportMsa& airportMsa, float x, float y, float size, float symbolScale, bool header,
-                      bool transparency, bool fast);
+                      bool transparency, bool fast) const;
+
+  /* Navaids ============================================= */
+
+  /* Waypoint symbol. Can use a different color for invalid waypoints that were not found in the database */
+  void drawWaypointSymbol(QPainter *painter, const QColor& col, float x, float y, float size, sf::SymbolFill fill) const;
+
+  /* Waypoint texts have no background excepts for flight plan */
+  void drawWaypointText(QPainter *painter, const map::MapWaypoint& wp, float x, float y,
+                        text::Flag flags, float size, bool fill, text::Attribute atts = text::NO_ATTRIBUTE,
+                        const QStringList *addtionalText = nullptr) const;
+
+  /* VOR with large size has a ring with compass ticks. For VORs part of the route the interior is filled.  */
+  void drawVorSymbol(QPainter *painter, const map::MapVor& vor, float x, float y, float size, float sizeLarge, sf::SymbolFill fill,
+                     bool fast, bool darkMap) const;
+
+  /* VOR texts have no background excepts for flight plan */
+  void drawVorText(QPainter *painter, const map::MapVor& vor, float x, float y, text::Flag flags,
+                   float size, bool fill, bool darkMap, text::Attribute atts = text::NO_ATTRIBUTE,
+                   const QStringList *addtionalText = nullptr) const;
+
+  /* NDB with dotted rings or solid rings depending on size. For NDBs part of the route the interior is filled.  */
+  void drawNdbSymbol(QPainter *painter, float x, float y, float size, sf::SymbolFill fill, bool fast, bool darkMap) const;
+
+  /* NDB texts have no background excepts for flight plan */
+  void drawNdbText(QPainter *painter, const map::MapNdb& ndb, float x, float y, text::Flag flags,
+                   float size, bool fill, bool darkMap, text::Attribute atts = text::NO_ATTRIBUTE,
+                   const QStringList *addtionalText = nullptr) const;
+
+  void drawMarkerSymbol(QPainter *painter, const map::MapMarker& marker, float x, float y, float size, bool fast) const;
+
+  /* Other ============================================= */
 
   /* Aircraft track */
   void drawTrackLine(QPainter *painter, float x, float y, float size, float dir);
 
-  /* Waypoint texts have no background excepts for flight plan */
-  void drawWaypointText(QPainter *painter, const map::MapWaypoint& wp, float x, float y,
-                        textflags::TextFlags flags, float size, bool fill, textatt::TextAttributes atts = textatt::NONE,
-                        const QStringList *addtionalText = nullptr);
-
-  /* VOR with large size has a ring with compass ticks. For VORs part of the route the interior is filled.  */
-  void drawVorSymbol(QPainter *painter, const map::MapVor& vor, float x, float y, float size, float sizeLarge, bool routeFill,
-                     bool fast, bool darkMap);
-
-  /* VOR texts have no background excepts for flight plan */
-  void drawVorText(QPainter *painter, const map::MapVor& vor, float x, float y, textflags::TextFlags flags,
-                   float size, bool fill, bool darkMap, textatt::TextAttributes atts = textatt::NONE,
-                   const QStringList *addtionalText = nullptr);
-
-  /* NDB with dotted rings or solid rings depending on size. For NDBs part of the route the interior is filled.  */
-  void drawNdbSymbol(QPainter *painter, float x, float y, float size, bool routeFill, bool fast, bool darkMap);
-
-  /* NDB texts have no background excepts for flight plan */
-  void drawNdbText(QPainter *painter, const map::MapNdb& ndb, float x, float y, textflags::TextFlags flags,
-                   float size, bool fill, bool darkMap, textatt::TextAttributes atts = textatt::NONE,
-                   const QStringList *addtionalText = nullptr);
-
-  void drawMarkerSymbol(QPainter *painter, const map::MapMarker& marker, float x, float y, float size, bool fast);
-
   static void drawHelipadSymbol(QPainter *painter, const map::MapHelipad& helipad, float x, float y, float w, float h, bool fast);
 
   /* User defined flight plan waypoint. Green rect. */
-  void drawUserpointSymbol(QPainter *painter, float x, float y, float size, bool routeFill);
+  void drawUserpointSymbol(QPainter *painter, float x, float y, float size, sf::SymbolFill fill) const;
 
   /* Circle for approach points which are not navaids */
-  void drawProcedureSymbol(QPainter *painter, float x, float y, float size, bool routeFill);
+  void drawProcedureSymbol(QPainter *painter, float x, float y, float size, sf::SymbolFill fill) const;
 
   /* Circle for flight plan waypoints */
-  void drawLogbookPreviewSymbol(QPainter *painter, float x, float y, float size);
+  void drawLogbookPreviewSymbol(QPainter *painter, float x, float y, float size) const;
 
   /* Maltese cross to indicate FAF on the map and ring to indicate fly over*/
-  void drawProcedureUnderlay(QPainter *painter, float x, float y, float size, bool flyover, bool faf);
+  void drawProcedureUnderlay(QPainter *painter, float x, float y, float size, bool flyover, bool faf) const;
 
   /* Flyover underlay */
-  void drawProcedureFlyover(QPainter *painter, float x, float y, float size);
+  void drawProcedureFlyover(QPainter *painter, float x, float y, float size) const;
 
   /* Maltese cross to indicate FAF on the map */
-  void drawProcedureFaf(QPainter *painter, float x, float y, float size);
+  void drawProcedureFaf(QPainter *painter, float x, float y, float size) const;
 
   /* Draw a custom text box */
-  void textBox(QPainter *painter, const QStringList& texts, const QPen& textPen, int x, int y,
-               textatt::TextAttributes atts = textatt::NONE,
-               int transparency = 255, const QColor& backgroundColor = QColor());
-  void textBoxF(QPainter *painter, QStringList texts, QPen textPen, float x, float y,
-                textatt::TextAttributes atts = textatt::NONE,
-                int transparency = 255, const QColor& backgroundColor = QColor());
+  void textBox(QPainter *painter, const QStringList& texts, const QPen& textPen, int x, int y, text::Attribute atts = text::NO_ATTRIBUTE,
+               int transparency = 255, const QColor& backgroundColor = QColor()) const;
+  void textBoxF(QPainter *painter, QStringList texts, QPen textPen, float x, float y, text::Attribute atts = text::NO_ATTRIBUTE,
+                int transparency = 255, const QColor& backgroundColor = QColor()) const;
 
   /* Get dimensions of a custom text box */
-  QRectF textBoxSize(QPainter *painter, const QStringList& texts, textatt::TextAttributes atts);
+  QRectF textBoxSize(QPainter *painter, const QStringList& texts, text::Attribute atts) const;
 
   /* Upper level winds */
   void drawWindBarbs(QPainter *painter, float wind, float gust, float dir, float x, float y, float size,
                      bool windBarbs, bool altWind, bool route, bool fast) const;
 
   /* Move coordinates by size based on text placement attributes */
-  void adjustPos(float& x, float& y, float size, textatt::TextAttributes atts);
+  void adjustPos(float& x, float& y, float size, text::Attribute atts) const;
 
 private:
-  QStringList airportTexts(optsd::DisplayOptionsAirport dispOpts, textflags::TextFlags flags,
-                           const map::MapAirport& airport, int maxTextLength);
-  const QPixmap *windPointerFromCache(int size);
-  const QPixmap *trackLineFromCache(int size);
+  QStringList airportTexts(optsd::DisplayOptionsAirport dispOpts, text::Flag flags, const map::MapAirport& airport,
+                           int maxTextLength) const;
 
-  QCache<int, QPixmap> windPointerPixmaps, trackLinePixmaps;
   static void prepareForIcon(QPainter& painter);
 
   void drawWindBarbs(QPainter *painter, const atools::fs::weather::MetarParser& parsedMetar, float x, float y,
@@ -187,6 +195,12 @@ private:
 
   static int airportMsaSize(QPainter *painter, const map::MapAirportMsa& airportMsa, float sizeFactor, bool drawDetails);
 
+  QColor symbolFillColor(sf::SymbolFill fill) const;
+
+  const QPixmap *windPointerFromCache(int size);
+  const QPixmap *trackLineFromCache(int size);
+
+  QCache<int, QPixmap> windPointerPixmaps, trackLinePixmaps;
 };
 
 #endif // LITTLENAVMAP_SYMBOLPAINTER_H

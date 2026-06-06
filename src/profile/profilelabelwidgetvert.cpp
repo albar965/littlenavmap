@@ -101,7 +101,7 @@ void ProfileLabelWidgetVert::paintEvent(QPaintEvent *)
       SymbolPainter symPainter;
       const QList<std::pair<int, int> > scaleValues = profileWidget->calcScaleValues();
 
-      textatt::TextAttributes atts = textatt::BOLD | textatt::LEFT;
+      text::Attribute atts = text::BOLD | text::LEFT;
       QColor baseColor = QApplication::palette().color(QPalette::Base);
       int maxw = 1;
       for(const std::pair<int, int>& scale : scaleValues)

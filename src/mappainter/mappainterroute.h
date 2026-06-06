@@ -18,9 +18,8 @@
 #ifndef LITTLENAVMAP_MAPPAINTERROUTE_H
 #define LITTLENAVMAP_MAPPAINTERROUTE_H
 
+#include "common/mapflagstext.h"
 #include "mappainter/mappainter.h"
-
-#include "common/mapflags.h"
 #include "geo/line.h"
 
 namespace Marble {
@@ -88,10 +87,10 @@ private:
   void paintRouteInternal(QStringList routeTexts, QList<atools::geo::Line> lines, int passedRouteLeg);
 
   /* Draw recommended navaids */
-  void paintRecommended(int passedRouteLeg, QSet<map::MapRef>& idMap);
+  void paintRecommended(int passedRouteLeg, QSet<map::MapRef>& idMap, bool preview);
 
   /* Draw only enlarged airport icon. The airport diagram is drawn in the MapPainterAirport which also omits the symbol. */
-  void paintAirport(float x, float y, const map::MapAirport& airport);
+  void paintAirport(float x, float y, const map::MapAirport& airport, bool preview);
 
   /* Draw navaid symbols */
   void paintVor(float x, float y, const map::MapVor& vor, bool preview);
@@ -124,21 +123,21 @@ private:
                          const proc::MapProcedureLeg& leg, const QPointF& intersectPoint, bool draw);
 
   /* Draw navaid labels */
-  void paintWaypointText(float x, float y, const map::MapWaypoint& waypoint, bool drawTextDetails, textatt::TextAttributes atts,
+  void paintWaypointText(float x, float y, const map::MapWaypoint& waypoint, bool drawTextDetails, text::Attribute atts,
                          const QStringList *additionalText);
-  void paintNdbText(float x, float y, const map::MapNdb& ndb, bool drawTextDetails, textatt::TextAttributes atts,
+  void paintNdbText(float x, float y, const map::MapNdb& ndb, bool drawTextDetails, text::Attribute atts,
                     const QStringList *additionalText);
-  void paintVorText(float x, float y, const map::MapVor& vor, bool drawTextDetails, textatt::TextAttributes atts,
+  void paintVorText(float x, float y, const map::MapVor& vor, bool drawTextDetails, text::Attribute atts,
                     const QStringList *additionalText);
-  void paintAirportText(float x, float y, const map::MapAirport& airport, textatt::TextAttributes atts);
+  void paintAirportText(float x, float y, const map::MapAirport& airport, text::Attribute atts);
 
   /* Draw text with light yellow background for flight plan */
-  void paintText(const QColor& color, float x, float y, float size, bool drawTextDetails, QStringList texts, textatt::TextAttributes atts);
+  void paintText(const QColor& color, float x, float y, float size, bool drawTextDetails, QStringList texts, text::Attribute atts);
 
-  void paintProcedurePointText(float x, float y, bool drawTextDetails, textatt::TextAttributes atts, const QStringList& texts);
+  void paintProcedurePointText(float x, float y, bool drawTextDetails, text::Attribute atts, const QStringList& texts);
 
   void drawSymbols(const QBitArray& visibleStartPoints, const QList<QPointF>& startPoints, bool preview);
-  void drawRouteSymbolText(const QBitArray& visibleStartPoints, const QList<QPointF>& startPoints);
+  void drawRouteSymbolText(const QBitArray& visibleStartPoints, const QList<QPointF>& startPoints, bool preview);
 
   /* TOD and TOC rings plus labels */
   void paintTopOfDescentAndClimb();
@@ -168,7 +167,7 @@ private:
   float sizeForRouteType(const MapLayer *layer, const RouteLeg& leg);
 
   /* Get text placement sector based on inbound and outbound leg courses */
-  textatt::TextAttributes textPlacementAttributes(int routeIndex);
+  text::Attribute textPlacementAtts(int routeIndex);
 
   /* Avoid drawing duplicate navaids from flight plan and preview */
   QSet<map::MapRef> routeProcIdMap;

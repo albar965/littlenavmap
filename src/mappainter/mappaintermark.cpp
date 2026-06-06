@@ -501,6 +501,8 @@ void MapPainterMark::paintLogEntries(const QList<map::MapLogbookEntry>& entries)
   }
 
   // Draw route ==========================================================================
+  text::Attribute atts = context->textAttsLog();
+
   if(context->objectDisplayTypes.testFlag(map::LOGBOOK_ROUTE) && !visibleRouteGeometries.isEmpty())
   {
     float outerlinewidth = context->szF(context->thicknessFlightplan, 7);
@@ -537,8 +539,8 @@ void MapPainterMark::paintLogEntries(const QList<map::MapLogbookEntry>& entries)
           symbolPainter->drawLogbookPreviewSymbol(context->painter, x, y, symbolSize);
 
           if(context->mapLayerText->isWaypointRouteIdent())
-            symbolPainter->textBoxF(context->painter, {ident}, routeLogEntryOutlineColor, x + symbolSize / 2 + 2, y,
-                                    textatt::LOG_BG_COLOR);
+            symbolPainter->textBoxF(context->painter, {ident}, routeLogEntryOutlineColor, x + symbolSize / 2 + 2, y, atts,
+                                    atts & text::NO_BACKGROUND ? 0 : 255);
         }
       }
     }
@@ -608,7 +610,20 @@ void MapPainterMark::paintLogEntries(const QList<map::MapLogbookEntry>& entries)
     if(!mapPaintWidget->isDistanceCutOff())
     {
       context->szFont(context->textSizeRangeMarker);
-      painter->setBackground(mapcolors::routeTextBackgroundColor);
+
+      if(atts & text::NO_BACKGROUND)
+      {
+        painter->setBackgroundMode(Qt::TransparentMode);
+        painter->setBrush(Qt::transparent);
+        painter->setBackground(Qt::transparent);
+      }
+      else
+      {
+        painter->setBackgroundMode(Qt::OpaqueMode);
+        painter->setBrush(mapcolors::routeTextBackgroundColor);
+        painter->setBackground(mapcolors::routeTextBackgroundColor);
+      }
+
       painter->setPen(mapcolors::routeTextColor);
       for(const MapLogbookEntry *entry : visibleLogEntries)
       {
@@ -641,7 +656,7 @@ void MapPainterMark::paintLogEntries(const QList<map::MapLogbookEntry>& entries)
   if(!mapPaintWidget->isDistanceCutOff())
   {
     float x, y;
-    textflags::TextFlags flags = context->airportTextFlagsRoute(false /* draw as route */, true /* draw as log */);
+    text::Flag flags = context->airportTextFlagsLog();
     float size = context->szF(context->symbolSizeAirport, context->mapLayer->getAirportSymbolSize());
     context->szFont(context->textSizeRoute);
 
@@ -655,9 +670,9 @@ void MapPainterMark::paintLogEntries(const QList<map::MapLogbookEntry>& entries)
            wToSBuf(entry->departure.position, x, y, MARGINS) : // Use valid airport position
            wToSBuf(entry->departurePos, x, y, MARGINS)) // Use recorded position
         {
-          symbolPainter->drawAirportSymbol(context->painter, entry->departure, x, y, size, false, context->drawFast,
-                                           context->flags2.testFlag(opts2::MAP_AIRPORT_HIGHLIGHT_ADDON));
-          symbolPainter->drawAirportText(context->painter, entry->departure, x, y, context->dispOptsAirport, flags, size,
+          symbolPainter->drawAirportSymbol(context->painter, entry->departure, x, y, size, sf::FILL_LOG, false /* isAirportDiagram */,
+                                           context->drawFast, context->flags2.testFlag(opts2::MAP_AIRPORT_HIGHLIGHT_ADDON));
+          symbolPainter->drawAirportText(context->painter, entry->departure, x, y, context->dispOptsAirport, flags, atts, size,
                                          context->mapLayer->isAirportDiagram(), context->mapLayerText->getMaxTextLengthAirport());
         }
         airportIds.insert(entry->departure.id);
@@ -669,9 +684,9 @@ void MapPainterMark::paintLogEntries(const QList<map::MapLogbookEntry>& entries)
            wToSBuf(entry->destination.position, x, y, MARGINS) :
            wToSBuf(entry->destinationPos, x, y, MARGINS))
         {
-          symbolPainter->drawAirportSymbol(context->painter, entry->destination, x, y, size, false, context->drawFast,
-                                           context->flags2.testFlag(opts2::MAP_AIRPORT_HIGHLIGHT_ADDON));
-          symbolPainter->drawAirportText(context->painter, entry->destination, x, y, context->dispOptsAirport, flags, size,
+          symbolPainter->drawAirportSymbol(context->painter, entry->destination, x, y, size, sf::FILL_LOG, false /* isAirportDiagram */,
+                                           context->drawFast, context->flags2.testFlag(opts2::MAP_AIRPORT_HIGHLIGHT_ADDON));
+          symbolPainter->drawAirportText(context->painter, entry->destination, x, y, context->dispOptsAirport, flags, atts, size,
                                          context->mapLayer->isAirportDiagram(), context->mapLayerText->getMaxTextLengthAirport());
         }
         airportIds.insert(entry->destination.id);
@@ -764,7 +779,7 @@ void MapPainterMark::paintAirwayTextList(const QList<map::MapAirway>& airwayList
         if(wToS(center, x, y))
         {
           if(!hidden1 && !hidden2)
-            symbolPainter->textBoxF(context->painter, {airway.name}, innerPen, x, y, textatt::CENTER);
+            symbolPainter->textBoxF(context->painter, {airway.name}, innerPen, x, y, text::CENTER);
         }
       }
     }
@@ -818,7 +833,7 @@ void MapPainterMark::paintAirspace(const map::MapAirspace& airspace)
 
         QPointF center = polygons.constFirst()->boundingRect().center();
         symbolPainter->textBoxF(painter, {map::airspaceNameMap(airspace, 20)}, innerPen,
-                                static_cast<float>(center.x()), static_cast<float>(center.y()), textatt::CENTER);
+                                static_cast<float>(center.x()), static_cast<float>(center.y()), text::CENTER);
       }
 
 #ifdef DEBUG_COLOR_AIRSPACE_POLY_POINTS_MARK
@@ -898,7 +913,7 @@ void MapPainterMark::paintRangeMarkers()
               painter->setBackground(mapcolors::markerTextBackgroundColor);
               painter->setBrush(mapcolors::markerTextBackgroundColor);
 
-              symbolPainter->textBoxF(painter, texts, painter->pen(), textPos.x(), textPos.y(), textatt::CENTER,
+              symbolPainter->textBoxF(painter, texts, painter->pen(), textPos.x(), textPos.y(), text::CENTER,
                                       mapcolors::markerTextBackgroundColor.alpha(), mapcolors::markerTextBackgroundColor);
             }
           }
@@ -986,20 +1001,20 @@ void MapPainterMark::paintEnduranceRing(float enduranceHours, float enduranceNm,
       else
         painter->setPen(mapcolors::rangeRingTextColor);
 
-      textatt::TextAttributes atts = textatt::CENTER;
+      text::Attribute atts = text::CENTER;
 
       const Route& route = NavApp::getRouteConst();
       if(route.getSizeWithoutAlternates() <= 1 || route.getActiveLegIndexCorrected() == map::INVALID_INDEX_VALUE)
       {
         // Show error colors only for free flight
         if(enduranceHours < 0.5f)
-          atts |= textatt::ERROR_COLOR;
+          atts = atts | text::ERROR_COLOR;
         else if(enduranceHours < 0.75f)
-          atts |= textatt::WARNING_COLOR;
+          atts = atts | text::WARNING_COLOR;
       }
       else if(enduranceHours < 0.1f)
         // Show error color even with flight plan if fuel gets really low
-        atts |= textatt::ERROR_COLOR;
+        atts = atts | text::ERROR_COLOR;
 
       QStringList texts;
 
@@ -1193,7 +1208,7 @@ void MapPainterMark::paintCompassRose()
 
               symbolPainter->textBoxF(painter, {text}, painter->pen(),
                                       static_cast<float>(endpointsScreen.at(i).x()),
-                                      static_cast<float>(endpointsScreen.at(i).y()), textatt::CENTER);
+                                      static_cast<float>(endpointsScreen.at(i).y()), text::CENTER);
             }
           }
         }
@@ -1212,7 +1227,7 @@ void MapPainterMark::paintCompassRose()
           // All 15 deg but not at 90 deg boundaries
           symbolPainter->textBoxF(painter, {QString::number(i * 5)}, painter->pen(),
                                   static_cast<float>(endpointsScreen.at(i).x()),
-                                  static_cast<float>(endpointsScreen.at(i).y()), textatt::CENTER);
+                                  static_cast<float>(endpointsScreen.at(i).y()), text::CENTER);
         }
       }
     }
@@ -1234,7 +1249,7 @@ void MapPainterMark::paintCompassRose()
         {
           float dist = i * stepsizeNm;
           QString text = tr("%1%2").arg(QLocale(QLocale::C).toString(Unit::distNmF(dist), 'g', 6)).arg(Unit::getUnitDistStr());
-          symbolPainter->textBoxF(painter, {text}, painter->pen(), static_cast<float>(s.x()), static_cast<float>(s.y()), textatt::CENTER);
+          symbolPainter->textBoxF(painter, {text}, painter->pen(), static_cast<float>(s.x()), static_cast<float>(s.y()), text::CENTER);
         }
       }
     }
@@ -1306,7 +1321,7 @@ void MapPainterMark::paintCompassRose()
             text = tr("%1°M").arg(QString::number(atools::roundToInt(aircraft.getTrackDegMag())));
 
           symbolPainter->textBoxF(painter, {text, tr("TRK")}, painter->pen(), static_cast<float>(trueTrackTextPoint.x()),
-                                  static_cast<float>(trueTrackTextPoint.y()), textatt::CENTER | textatt::ROUTE_BG_COLOR);
+                                  static_cast<float>(trueTrackTextPoint.y()), text::CENTER | text::ROUTE_BG_COLOR);
         }
       }
     }

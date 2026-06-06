@@ -4590,5 +4590,7 @@ void MapWidget::visibleLatLonAltBoxChanged(const Marble::GeoDataLatLonAltBox& vi
 #ifdef DEBUG_INFORMATION_MAPMOUSE
   qDebug() << Q_FUNC_INFO << "MAPMOUSE" << mouseState << "handle mouse" << inputHandler()->isHandleMouseEvents()
            << visibleLatLonAltBox.toString(Marble::GeoDataCoordinates::Degree);
+#else
+  Q_UNUSED(visibleLatLonAltBox)
 #endif
 }

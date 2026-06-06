@@ -19,7 +19,7 @@
 #define LITTLENAVMAP_PAINTCONTEXT_H
 
 #include "common/mapflags.h"
-
+#include "common/mapflagstext.h"
 #include "geo/rect.h"
 #include "options/optionflags.h"
 
@@ -240,9 +240,25 @@ struct PaintContext
   void szFont(float scale) const;
 
   /* Calculate label text flags for route waypoints depending on layer settings */
-  textflags::TextFlags airportTextFlags() const;
-  textflags::TextFlags airportTextFlagsMinor() const;
-  textflags::TextFlags airportTextFlagsRoute(bool drawAsRoute, bool drawAsLog) const;
+  text::Flag airportTextFlags(bool minor) const
+  {
+    return minor ? airportTextFlagsMinor() : airportTextFlags();
+  }
+
+  text::Flag airportTextFlags() const;
+  text::Flag airportTextFlagsMinor() const;
+  text::Flag airportTextFlagsRoute() const;
+  text::Flag airportTextFlagsLog() const;
+
+  text::Attribute airportTextAtts(bool minor) const
+  {
+    return minor ? airportTextAttsMinor() : airportTextAtts();
+  }
+
+  text::Attribute airportTextAtts() const;
+  text::Attribute airportTextAttsMinor() const;
+  text::Attribute airportTextAttsRoute() const;
+  text::Attribute textAttsLog() const;
 
   void startTimer(const QString& label)
   {

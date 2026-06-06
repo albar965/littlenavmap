@@ -915,7 +915,8 @@ void ProfileWidget::calculateProfileMargin()
 void ProfileWidget::paintEvent(QPaintEvent *)
 {
   // Show only ident in labels
-  static const textflags::TextFlags TEXTFLAGS = textflags::IDENT | textflags::ROUTE_TEXT | textflags::ABS_POS;
+  static const text::Flag TEXTFLAGS = text::IDENT;
+  static const text::Attribute TEXTATTS = text::ROUTE_BG_COLOR | text::ABS;
 
   // Saved route that was used to create the geometry
   const Route& route = legList->route;
@@ -1422,10 +1423,10 @@ void ProfileWidget::paintEvent(QPaintEvent *)
         int interceptY = altitudeY(route.getAltitudeForDistance(route.getTotalDistance() - distanceFromStart));
 
         // Draw symbol and label for intercept position
-        symbolPainter.drawProcedureSymbol(&painter, interceptX, interceptY, procPointSize, true);
+        symbolPainter.drawProcedureSymbol(&painter, interceptX, interceptY, procPointSize, sf::FILL_ROUTE);
         QStringList displayText = atools::elidedTexts(painter.fontMetrics(), procedureLeg.displayText, Qt::ElideRight,
                                                       legScreenWidth); // TODO legScreenWidth is not correct due to offset
-        symbolPainter.textBox(&painter, displayText, color, interceptX + 5, std::min(interceptY + 14, h), textatt::ROUTE_BG_COLOR, 255);
+        symbolPainter.textBox(&painter, displayText, color, interceptX + 5, std::min(interceptY + 14, h), text::ROUTE_BG_COLOR, 255);
       }
 
       // Symbols ========================================================
@@ -1440,15 +1441,15 @@ void ProfileWidget::paintEvent(QPaintEvent *)
            type == map::NDB || leg.getNdb().isValid())
           continue;
         else if(type == map::USERPOINTROUTE)
-          symbolPainter.drawUserpointSymbol(&painter, symPt.x(), symPt.y(), waypointSize, true);
+          symbolPainter.drawUserpointSymbol(&painter, symPt.x(), symPt.y(), waypointSize, sf::FILL_ROUTE);
         else if(type == map::INVALID)
-          symbolPainter.drawWaypointSymbol(&painter, mapcolors::routeInvalidPointColor, symPt.x(), symPt.y(), 9, true);
+          symbolPainter.drawWaypointSymbol(&painter, mapcolors::routeInvalidPointColor, symPt.x(), symPt.y(), 9, sf::FILL_ROUTE);
         else if(type == map::PROCEDURE)
           // Missed is not included
-          symbolPainter.drawProcedureSymbol(&painter, symPt.x(), symPt.y(), procPointSize, true);
+          symbolPainter.drawProcedureSymbol(&painter, symPt.x(), symPt.y(), procPointSize, sf::FILL_ROUTE);
       }
       else
-        symbolPainter.drawProcedureSymbol(&painter, symPt.x(), symPt.y(), procPointSize, true);
+        symbolPainter.drawProcedureSymbol(&painter, symPt.x(), symPt.y(), procPointSize, sf::FILL_ROUTE);
 
       // Procedure symbols ========================================================
       if(routeIndex >= activeRouteLeg - 1 && leg.isAnyProcedure())
@@ -1485,7 +1486,7 @@ void ProfileWidget::paintEvent(QPaintEvent *)
            type == map::USERPOINTROUTE || type == map::INVALID)
           continue;
         else if(type == map::WAYPOINT || leg.getWaypoint().isValid())
-          symbolPainter.drawWaypointSymbol(&painter, QColor(), symPt.x(), symPt.y(), waypointSize, true);
+          symbolPainter.drawWaypointSymbol(&painter, QColor(), symPt.x(), symPt.y(), waypointSize, sf::FILL_ROUTE);
       }
       // else procedure symbols drawn before
 
@@ -1524,10 +1525,10 @@ void ProfileWidget::paintEvent(QPaintEvent *)
           continue;
         else if(type == map::NDB || leg.getNdb().isValid())
           symbolPainter.drawNdbSymbol(&painter, symPt.x(), symPt.y(), navaidSize,
-                                      true /* routeFill */, false /* fast */, false /* darkMap */);
+                                      sf::FILL_ROUTE, false /* fast */, false /* darkMap */);
         else if(type == map::VOR || leg.getVor().isValid())
           symbolPainter.drawVorSymbol(&painter, leg.getVor(), symPt.x(), symPt.y(), navaidSize, 0.f,
-                                      true /* routeFill */, false /* fast */, false /* darkMap */);
+                                      sf::FILL_ROUTE, false /* fast */, false /* darkMap */);
       }
 
       // Procedure symbols ========================================================
@@ -1582,7 +1583,7 @@ void ProfileWidget::paintEvent(QPaintEvent *)
     // Draw Labels ========================
     for(const Label& label : labels)
       symbolPainter.textBox(&painter, label.texts, label.color, label.symPt.x() + 5,
-                            std::min(label.symPt.y() + 14, h), textatt::ROUTE_BG_COLOR, 255);
+                            std::min(label.symPt.y() + 14, h), text::ROUTE_BG_COLOR, 255);
 
     // ===============================================================================================
     // Draw the most important airport symbols on top ============================================
@@ -1598,12 +1599,12 @@ void ProfileWidget::paintEvent(QPaintEvent *)
       // Draw all airport except destination and departure
       if(leg.getMapType() == map::AIRPORT && routeIndex > 0 && routeIndex < route.getDestinationAirportLegIndex())
       {
-        symbolPainter.drawAirportSymbol(&painter, leg.getAirport(), symPt.x(), symPt.y(), airportSize, false, false, false);
+        symbolPainter.drawAirportSymbol(&painter, leg.getAirport(), symPt.x(), symPt.y(), airportSize, sf::FILL_ROUTE, false, false, false);
 
         // Labels ========================
         if(routeIndex >= activeRouteLeg - 1)
           symbolPainter.drawAirportText(&painter, leg.getAirport(), symPt.x() - 5, std::min(symPt.y() + 14, h),
-                                        optsd::AIRPORT_NONE, TEXTFLAGS, 10, false, 16);
+                                        optsd::AIRPORT_NONE, TEXTFLAGS, TEXTATTS, 10, false, 16);
       }
     } // for(int routeIndex : indexes)
 
@@ -1614,9 +1615,10 @@ void ProfileWidget::paintEvent(QPaintEvent *)
       if(departureLeg.getMapType() == map::AIRPORT)
       {
         int textW = painter.fontMetrics().horizontalAdvance(departureLeg.getDisplayIdent());
-        symbolPainter.drawAirportSymbol(&painter, departureLeg.getAirport(), paintMargin, flightplanY, airportSize, false, false, false);
+        symbolPainter.drawAirportSymbol(&painter, departureLeg.getAirport(), paintMargin, flightplanY, airportSize, sf::FILL_ROUTE,
+                                        false, false, false);
         symbolPainter.drawAirportText(&painter, departureLeg.getAirport(), paintMargin - textW / 2, flightplanTextY,
-                                      optsd::AIRPORT_NONE, TEXTFLAGS, 10, false, 16);
+                                      optsd::AIRPORT_NONE, TEXTFLAGS, TEXTATTS, 10, false, 16);
       }
 
       // Draw destination always on the right also if there are approach procedures
@@ -1624,10 +1626,10 @@ void ProfileWidget::paintEvent(QPaintEvent *)
       if(destinationLeg.getMapType() == map::AIRPORT)
       {
         int textW = painter.fontMetrics().horizontalAdvance(destinationLeg.getDisplayIdent());
-        symbolPainter.drawAirportSymbol(&painter, destinationLeg.getAirport(), paintMargin + w, flightplanY, airportSize, false, false,
-                                        false);
+        symbolPainter.drawAirportSymbol(&painter, destinationLeg.getAirport(), paintMargin + w, flightplanY, airportSize, sf::FILL_ROUTE,
+                                        false, false, false);
         symbolPainter.drawAirportText(&painter, destinationLeg.getAirport(), paintMargin + w - textW / 2, flightplanTextY,
-                                      optsd::AIRPORT_NONE, TEXTFLAGS, 10, false, 16);
+                                      optsd::AIRPORT_NONE, TEXTFLAGS, TEXTATTS, 10, false, 16);
       }
     }
 
@@ -1656,7 +1658,8 @@ void ProfileWidget::paintEvent(QPaintEvent *)
               painter.drawEllipse(QPoint(tocX, flightplanY), radius, radius);
 
               symbolPainter.textBox(&painter, {tr("TOC %1").arg(Unit::distNm(route.getTopOfClimbDistance()))},
-                                    QPen(Qt::black), tocX - radius * 2, flightplanY - 6, textatt::ROUTE_BG_COLOR | textatt::LEFT, 255);
+                                    QPen(Qt::black), tocX - radius * 2, flightplanY - 6,
+                                    text::ROUTE_BG_COLOR | text::LEFT, 255);
             }
           }
         }
@@ -1673,7 +1676,7 @@ void ProfileWidget::paintEvent(QPaintEvent *)
               painter.drawEllipse(QPoint(todX, flightplanY), radius, radius);
 
               symbolPainter.textBox(&painter, {tr("TOD %1").arg(Unit::distNm(route.getTopOfDescentFromDestination()))},
-                                    QPen(Qt::black), todX + radius * 2, flightplanY - 6, textatt::ROUTE_BG_COLOR, 255);
+                                    QPen(Qt::black), todX + radius * 2, flightplanY - 6, text::ROUTE_BG_COLOR, 255);
             }
           }
         }
@@ -1685,15 +1688,15 @@ void ProfileWidget::paintEvent(QPaintEvent *)
     float departureAlt = legList->route.getDepartureAirportLeg().getAltitude();
     int departureAltTextY = TOP + roundToInt(h - departureAlt * verticalScale);
     departureAltTextY = std::min(departureAltTextY, TOP + h - painter.fontMetrics().height() / 2);
-    symbolPainter.textBox(&painter, {Unit::altFeet(departureAlt)}, labelColor, paintMargin - 4, departureAltTextY,
-                          textatt::BOLD | textatt::LEFT, 255);
+    symbolPainter.textBox(&painter, {Unit::altFeet(departureAlt)}, labelColor, paintMargin - 4, departureAltTextY, text::BOLD | text::LEFT,
+                          255);
 
     // Destination altitude label =========================================================
     float destAlt = route.getDestinationAirportLeg().getAltitude();
     int destinationAltTextY = TOP + static_cast<int>(h - destAlt * verticalScale);
     destinationAltTextY = std::min(destinationAltTextY, TOP + h - painter.fontMetrics().height() / 2);
     symbolPainter.textBox(&painter, {Unit::altFeet(destAlt)}, labelColor, paintMargin + w + 4, destinationAltTextY,
-                          textatt::BOLD | textatt::RIGHT, 255);
+                          text::BOLD | text::RIGHT, 255);
   } // if(NavApp::getMapWidget()->getShownMapFeatures() & map::FLIGHTPLAN)
 
   // Draw user aircraft trail =========================================================
@@ -1805,15 +1808,15 @@ void ProfileWidget::paintEvent(QPaintEvent *)
       }
     }
 
-    textatt::TextAttributes att = textatt::NONE;
+    text::Attribute att = text::NO_ATTRIBUTE;
     float textx = acx, texty = acy + 20.f;
 
     QRectF rect = symbolPainter.textBoxSize(&painter, texts, att);
     if(textx + rect.right() > paintMargin + w)
       // Move text to the left when approaching the right corner
-      att |= textatt::LEFT;
+      att = att | text::LEFT;
 
-    att |= textatt::ROUTE_BG_COLOR;
+    att = att | text::ROUTE_BG_COLOR;
 
     if(acy - rect.height() > scrollArea->getOffset().y() + TOP)
       texty -= static_cast<float>(rect.bottom() + 20.); // Text at top

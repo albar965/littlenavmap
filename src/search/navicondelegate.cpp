@@ -73,9 +73,9 @@ void NavIconDelegate::paint(QPainter *painter, const QStyleOptionViewItem& optio
 
   if(type == map::WAYPOINT)
     // An empty waypoint is enough to draw the symbol
-    symbolPainter->drawWaypointSymbol(painter, QColor(), x, y, symbolSize * 0.7f, false);
+    symbolPainter->drawWaypointSymbol(painter, QColor(), x, y, symbolSize * 0.7f, sf::FILL_NONE);
   else if(type == map::NDB)
-    symbolPainter->drawNdbSymbol(painter, x, y, symbolSize, false, false, NavApp::isGuiStyleDark());
+    symbolPainter->drawNdbSymbol(painter, x, y, symbolSize, sf::FILL_NONE, false, NavApp::isGuiStyleDark());
   else if(type == map::VOR)
   {
     map::MapVor vor;
@@ -83,7 +83,6 @@ void NavIconDelegate::paint(QPainter *painter, const QStyleOptionViewItem& optio
     vor.hasDme = navtype == "VD" || navtype == "D";
     vor.tacan = map::navTypeTacan(navtype);
     vor.vortac = map::navTypeVortac(navtype);
-    symbolPainter->drawVorSymbol(painter, vor, x, y, symbolSize * 0.9f, 0.f,
-                                 false /* routeFill */, false /* fast */, NavApp::isGuiStyleDark());
+    symbolPainter->drawVorSymbol(painter, vor, x, y, symbolSize * 0.9f, 0.f, sf::FILL_NONE, false /* fast */, NavApp::isGuiStyleDark());
   }
 }

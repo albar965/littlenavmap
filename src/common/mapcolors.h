@@ -201,11 +201,26 @@ const QColor runwayTextBackgroundColor = QColor(255, 255, 255, 170);
 /* Text background color */
 const QColor textBoxColor = QColor(Qt::white);
 
+/* Navaid and airport bright fill colors */
+const QColor symbolFillTransparentColor = QColor(Qt::transparent);
+const QColor symbolFillWhiteColor = QColor(Qt::white);
+const QColor symbolFillRouteColor = QColor(255, 255, 150);
+const QColor symbolFillPreviewColor = QColor(190, 250, 255); /* Procedure preview */
+const QColor symbolFillLogbookPreviewColor = QColor(190, 250, 255);
+
 /* Text background color for flight plan waypoints */
 const QColor routeTextBoxColor = QColor(255, 255, 150);
 const QColor logTextBoxColor = QColor(150, 240, 255);
+const QColor previewTextBoxColor = QColor(190, 250, 255);
+
+/* Colors for aircraft range and other warning and error colors on the map */
+const QColor colorForegroundError("#ffffff");
+const QColor colorBackgroundError("#ff0000");
+const QColor colorForegroundWarning("#ff2000");
+const QColor colorBackgroundWarning(Qt::white);
 
 const QColor airportSymbolFillColor = QColor(Qt::white);
+const QColor airportSymbolFillRouteColor = QColor(255, 255, 150);
 
 const QPen aircraftBackPen = QPen(Qt::black, 7, Qt::SolidLine, Qt::RoundCap);
 const QPen aircraftFillPen = QPen(Qt::yellow, 4, Qt::SolidLine, Qt::RoundCap);

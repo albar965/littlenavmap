@@ -87,6 +87,6 @@ void AirportIconDelegate::paint(QPainter *painter, const QStyleOptionViewItem& o
 
   // Draw the symbol
   int symbolSize = option.rect.height() - 6;
-  symbolPainter->drawAirportSymbol(painter, ap, option.rect.x() + symbolSize,
-                                   option.rect.y() + symbolSize / 2.f + 2.f, symbolSize, false, false, false);
+  symbolPainter->drawAirportSymbol(painter, ap, option.rect.x() + symbolSize, option.rect.y() + symbolSize / 2.f + 2.f, symbolSize,
+                                   sf::FILL_WHITE, false, false, false);
 }

@@ -306,6 +306,7 @@ SOURCES += \
   src/common/jumpback.cpp \
   src/common/mapcolors.cpp \
   src/common/mapflags.cpp \
+  src/common/mapflagstext.cpp \
   src/common/mapmarkers.cpp \
   src/common/mapmarkertypes.cpp \
   src/common/mapresult.cpp \
@@ -524,6 +525,7 @@ HEADERS  += \
   src/common/jumpback.h \
   src/common/mapcolors.h \
   src/common/mapflags.h \
+  src/common/mapflagstext.h \
   src/common/mapmarkers.h \
   src/common/mapmarkertypes.h \
   src/common/mapresult.h \

@@ -418,11 +418,12 @@ void MapPainterNav::paintWaypoints(const QHash<int, map::MapWaypoint>& waypoints
       if((waypoint.hasJetAirways && drawAirwayJ) || (waypoint.hasVictorAirways && drawAirwayV) || (waypoint.hasTracks && drawTrack))
         size = std::max(5.f, size);
 
-      symbolPainter->drawWaypointSymbol(context->painter, QColor(), x, y, size, false);
+      symbolPainter->drawWaypointSymbol(context->painter, QColor(), x, y, size,
+                                        context->flags2.testFlag(opts2::MAP_NAVAID_FILL_BACKGROUND) ? sf::FILL_WHITE : sf::FILL_NONE);
 
-      textflags::TextFlags flags = textflags::NONE;
-      flags.setFlag(textflags::IDENT, context->mapLayerText->isWaypointIdent());
-      flags.setFlag(textflags::NAME, context->mapLayerText->isWaypointName());
+      text::Flags flags = text::NO_FLAG;
+      flags.setFlag(text::IDENT, context->mapLayerText->isWaypointIdent());
+      flags.setFlag(text::NAME, context->mapLayerText->isWaypointName());
 
       // If airways are drawn force display of the respecive waypoints
       if(context->mapLayerText->isWaypointIdent() || context->mapLayerText->isWaypointName() || // Draw all waypoint names or ...
@@ -457,14 +458,16 @@ void MapPainterNav::paintVors(const QHash<int, map::MapVor>& vors, bool drawFast
       if(context->objCount())
         return;
 
-      symbolPainter->drawVorSymbol(context->painter, vor, x, y, size, sizeLarge, false /* routeFill */, drawFast, context->darkMap);
+      symbolPainter->drawVorSymbol(context->painter, vor, x, y, size, sizeLarge,
+                                   context->flags2.testFlag(opts2::MAP_NAVAID_FILL_BACKGROUND) ? sf::FILL_WHITE : sf::FILL_NONE,
+                                   drawFast, context->darkMap);
 
-      textflags::TextFlags flags;
+      text::Flags flags;
 
       if(context->mapLayerText->isVorInfo())
-        flags = textflags::IDENT | textflags::TYPE | textflags::FREQ;
+        flags = text::IDENT | text::TYPE | text::FREQ;
       else if(context->mapLayerText->isVorIdent())
-        flags = textflags::IDENT;
+        flags = text::IDENT;
 
       symbolPainter->drawVorText(context->painter, vor, x, y, flags, size, fill, context->darkMap);
     }
@@ -492,14 +495,16 @@ void MapPainterNav::paintNdbs(const QHash<int, map::MapNdb>& ndbs, bool drawFast
       if(context->objCount())
         return;
 
-      symbolPainter->drawNdbSymbol(context->painter, x, y, size, false, drawFast, context->darkMap);
+      symbolPainter->drawNdbSymbol(context->painter, x, y, size,
+                                   context->flags2.testFlag(opts2::MAP_NAVAID_FILL_BACKGROUND) ? sf::FILL_WHITE : sf::FILL_NONE,
+                                   drawFast, context->darkMap);
 
-      textflags::TextFlags flags;
+      text::Flags flags;
 
       if(context->mapLayerText->isNdbInfo())
-        flags = textflags::IDENT | textflags::TYPE | textflags::FREQ;
+        flags = text::IDENT | text::TYPE | text::FREQ;
       else if(context->mapLayerText->isNdbIdent())
-        flags = textflags::IDENT;
+        flags = text::IDENT;
 
       symbolPainter->drawNdbText(context->painter, ndb, x, y, flags, size, fill, context->darkMap);
     }
@@ -531,7 +536,7 @@ void MapPainterNav::paintMarkers(const QList<map::MapMarker> *markers, bool draw
         QString type = marker.type.toLower();
         type[0] = type.at(0).toUpper();
         x -= size / 2.f + 2.f;
-        symbolPainter->textBoxF(context->painter, {type}, mapcolors::markerSymbolColor, x, y, textatt::LEFT, transparency);
+        symbolPainter->textBoxF(context->painter, {type}, mapcolors::markerSymbolColor, x, y, text::LEFT, transparency);
       }
     }
   }

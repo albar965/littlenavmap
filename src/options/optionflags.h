@@ -425,8 +425,10 @@ enum Flag2 : quint64
   MAP_WEB_USE_UI_SCALE = 1ULL << 31,
 
   /* checkBoxOptionsUnitEnhancedAccuracy */
-  UNIT_ENHANCED_ACCURACY = 1ULL << 32
+  UNIT_ENHANCED_ACCURACY = 1ULL << 32,
 
+  /* ui->checkBoxOptionsMapNavaidFill */
+  MAP_NAVAID_FILL_BACKGROUND = 1ULL << 33
 };
 
 ATOOLS_DECLARE_FLAGS_64(Flags2, Flag2)

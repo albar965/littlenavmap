@@ -161,7 +161,7 @@ void MapPainterTop::render()
     for(auto it = context->renderTimesMs.constBegin(); it != context->renderTimesMs.constEnd(); ++it)
       labels.append(QStringLiteral("%1: %2 ms").arg(it.key()).arg(it.value()));
 
-    symbolPainter->textBox(context->painter, labels, QPen(Qt::black), 1, 1, textatt::BELOW);
+    symbolPainter->textBox(context->painter, labels, QPen(Qt::black), 1, 1, text::BELOW);
   }
 }
 

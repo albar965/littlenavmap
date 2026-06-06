@@ -531,82 +531,6 @@ QDebug operator<<(QDebug out, const map::MapWeatherSource& type);
 
 } // namespace map
 
-namespace textflags {
-/* Flags that determine what information is added to an icon */
-enum TextFlag : quint32
-{
-  NONE = 0x0000,
-  IDENT = 0x0001, /* Draw airport or navaid ICAO ident */
-  TYPE = 0x0002, /* Draw navaid type (HIGH, MEDIUM, TERMINAL, HH, H, etc.) */
-  FREQ = 0x0004, /* Draw navaid frequency */
-  NAME = 0x0008,
-  MORSE = 0x0010, /* Draw navaid morse code */
-  INFO = 0x0020, /* Additional airport information like tower frequency, etc. */
-  ROUTE_TEXT = 0x0040, /* Object is part of route */
-  ABS_POS = 0x0080, /* Use absolute text positioning */
-  NO_BACKGROUND = 0x0100, /* No background */
-  LOG_TEXT = 0x0200, /* Object is part of log entry - only for airports */
-  ELLIPSE_IDENT = 0x0400 /* Add allipse to first text (ident) and ignore additional texts if additonal are not empty */
-};
-
-ATOOLS_DECLARE_FLAGS_32(TextFlags, textflags::TextFlag)
-ATOOLS_DECLARE_OPERATORS_FOR_FLAGS(textflags::TextFlags)
-}
-
-namespace textatt {
-
-/* Low level text attributes for custom text boxes */
-enum TextAttribute : quint32
-{
-  NONE = 0x0000,
-
-  /* Font attributes */
-  BOLD = 0x0001,
-  ITALIC = 0x0002,
-  UNDERLINE = 0x0004,
-  OVERLINE = 0x0008,
-  STRIKEOUT = 0x0010,
-
-  /* Text placement */
-  LEFT = 0x0020, /* Reference point is at the right of the text (right-aligned) to place text at the LEFT of an icon */
-  RIGHT = 0x0040, /* Reference point is at the left of the text (left-aligned) to place text at the RIGHT of an icon */
-  CENTER = 0x0080,
-
-  /* Vertical alignment */
-  BELOW = 0x1000, /* Reference point at top to place text BELOW an icon */
-  ABOVE = 0x2000, /* Reference point at bottom to place text ABOVE an icon */
-
-  /* Color attributes */
-  ROUTE_BG_COLOR = 0x0100, /* Use light yellow background for route objects */
-  LOG_BG_COLOR = 0x0200, /* Use light blue text background for log */
-  WARNING_COLOR = 0x0400, /* Orange warning text */
-  ERROR_COLOR = 0x0800, /* White on red error text */
-
-  NO_ROUND_RECT = 0x4000, /* No rounded background rect */
-
-  /* Automatic text placement to octants for flight plan labels */
-  PLACE_ABOVE = ABOVE | CENTER,
-  PLACE_ABOVE_RIGHT = ABOVE | RIGHT,
-  PLACE_RIGHT = RIGHT,
-  PLACE_BELOW_RIGHT = BELOW | RIGHT,
-  PLACE_BELOW = BELOW | CENTER,
-  PLACE_BELOW_LEFT = BELOW | LEFT,
-  PLACE_LEFT = LEFT,
-  PLACE_ABOVE_LEFT = ABOVE | LEFT,
-
-  /* Horizontal placement flags */
-  PLACE_ALL_HORIZ = LEFT | RIGHT,
-  /* Vertical placement flags */
-  PLACE_ALL_VERT = ABOVE | BELOW,
-
-  /* All placement flags */
-  PLACE_ALL = LEFT | RIGHT | CENTER | BELOW | ABOVE,
-};
-
-ATOOLS_DECLARE_FLAGS_32(TextAttributes, textatt::TextAttribute)
-ATOOLS_DECLARE_OPERATORS_FOR_FLAGS(textatt::TextAttributes)
-} // namespace textatt
-
 Q_DECLARE_TYPEINFO(map::MapAirspaceFilter, Q_PRIMITIVE_TYPE);
 Q_DECLARE_METATYPE(map::MapAirspaceFilter)
 
@@ -623,7 +547,5 @@ Q_DECLARE_TYPEINFO(map::MapAirspaceTypes, Q_PRIMITIVE_TYPE);
 Q_DECLARE_TYPEINFO(map::MapAirspaceSources, Q_PRIMITIVE_TYPE);
 Q_DECLARE_TYPEINFO(map::MapAirspaceFlags, Q_PRIMITIVE_TYPE);
 Q_DECLARE_TYPEINFO(map::MapAirportFlags, Q_PRIMITIVE_TYPE);
-Q_DECLARE_TYPEINFO(textflags::TextFlags, Q_PRIMITIVE_TYPE);
-Q_DECLARE_TYPEINFO(textatt::TextAttributes, Q_PRIMITIVE_TYPE);
 
 #endif // LITTLENAVMAP_MAPFLAGS_H
