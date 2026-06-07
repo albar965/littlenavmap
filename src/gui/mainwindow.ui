@@ -271,6 +271,7 @@
     <addaction name="separator"/>
     <addaction name="actionRunWebserver"/>
     <addaction name="actionOpenWebserver"/>
+    <addaction name="actionOpenWebserverQrCode"/>
     <addaction name="separator"/>
     <addaction name="actionResetMessages"/>
     <addaction name="separator"/>
@@ -12738,6 +12739,11 @@ from either the departure parking or the user aircraft while taxiing.</string>
    </property>
    <property name="statusTip">
     <string>Measure great circle distance on the map</string>
+   </property>
+  </action>
+  <action name="actionOpenWebserverQrCode">
+   <property name="text">
+    <string>Show Web Server Address as &amp;QR code</string>
    </property>
   </action>
  </widget>

@@ -43,6 +43,7 @@
 #include "gui/errorhandler.h"
 #include "gui/filehistoryhandler.h"
 #include "gui/helphandler.h"
+#include "gui/imagedialog.h"
 #include "gui/messagebox.h"
 #include "gui/messagesettings.h"
 #include "gui/statusbar.h"
@@ -70,6 +71,7 @@
 #include "perf/aircraftperfcontroller.h"
 #include "print/printsupport.h"
 #include "profile/profilewidget.h"
+#include "qrcode/qrcodegenerator.h"
 #include "query/airportquery.h"
 #include "query/procedurequery.h"
 #include "route/routecontroller.h"
@@ -1743,6 +1745,7 @@ void MainWindow::connectAllSlots()
   // Webserver
   connect(ui->actionRunWebserver, &QAction::toggled, this, &MainWindow::toggleWebserver);
   connect(ui->actionOpenWebserver, &QAction::triggered, this, &MainWindow::openWebserver);
+  connect(ui->actionOpenWebserverQrCode, &QAction::triggered, this, &MainWindow::openWebserverQrCode);
   connect(NavApp::getWebController(), &WebController::webserverStatusChanged, this, &MainWindow::webserverStatusChanged);
   connect(NavApp::getWebController(), &WebController::webserverStatusChanged, optionsDialog, &OptionsDialog::webserverStatusChanged);
 
@@ -5325,6 +5328,7 @@ void MainWindow::webserverStatusChanged(bool running)
 {
   ui->actionRunWebserver->setChecked(running);
   ui->actionOpenWebserver->setEnabled(running);
+  ui->actionOpenWebserverQrCode->setEnabled(running);
 }
 
 void MainWindow::toggleWebserver(bool checked)
@@ -5341,6 +5345,20 @@ void MainWindow::toggleWebserver(bool checked)
 void MainWindow::openWebserver()
 {
   NavApp::getWebController()->openPage();
+}
+
+void MainWindow::openWebserverQrCode()
+{
+  // Generate QR code if widget is visible and server running
+  QString urlString = NavApp::getWebController()->getUrl(false /* useIpAddress */).toString();
+
+  // Use widget height or at least 10 timess the height of a combo box
+  QImage img = atools::qrcode::QrCodeGenerator(this).generateQr(urlString, NavApp::getMinButtonSize().height() * 10);
+
+  atools::gui::ImageDialog dialog(this, QPixmap::fromImage(img),
+                                  QApplication::applicationName() % tr(" - QR code for Web Server"),
+                                  tr("Scan QR code to open web address %1.").arg(urlString));
+  dialog.exec();
 }
 
 void MainWindow::debugDumpContainerSizes() const

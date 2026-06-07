@@ -39,6 +39,7 @@
 #include "mapgui/mapthemehandler.h"
 #include "mapgui/mapwidget.h"
 #include "options/optiondata.h"
+#include "qrcode/qrcodegenerator.h"
 #include "settings/settings.h"
 #include "ui_optionsdialog.h"
 #include "util/htmlbuilder.h"
@@ -56,6 +57,7 @@
 #include <QStringBuilder>
 #include <QStandardItem>
 #include <QInputDialog>
+#include <QSvgRenderer>
 
 #include <marble/MarbleModel.h>
 #include <marble/MarbleDirs.h>
@@ -3418,14 +3420,31 @@ void OptionsDialog::updateWebServerStatus()
         else if(urls.size() == 1)
           ui->labelOptionsWebStatus->setText(tr("Web Server is running at the address:<br/>%1").arg(urls.constFirst()));
         if(urls.size() > 1)
-          ui->labelOptionsWebStatus->setText(tr("Web Server is running at addresses:<br/>%1").arg(urls.join(QStringLiteral("<br/>"))));
+          ui->labelOptionsWebStatus->setText(tr("Web Server is running at addresses:<br/>%1<br/>Click an address to open page.").
+                                             arg(urls.join(QStringLiteral("<br/>"))));
 
         ui->pushButtonOptionsWebStart->setText(tr("&Stop Web Server"));
+
+        if(ui->labelOptionsWebQrCode->isVisible())
+        {
+          // Generate QR code if widget is visible and server running
+          QString urlString = webController->getUrl(false /* useIpAddress */).toString();
+
+          // Use widget height or at least 5 timess the height of a combo box
+          QImage img = atools::qrcode::QrCodeGenerator(this).generateQr(urlString, NavApp::getMinButtonSize().height() * 5);
+          ui->labelOptionsWebQrCode->setPixmap(QPixmap::fromImage(img));
+          ui->labelOptionsWebQrCode->setToolTip(tr("Scan QR code to open web address %1.").arg(urlString));
+        }
       }
       else
       {
         ui->labelOptionsWebStatus->setText(tr("Web Server is not running."));
         ui->pushButtonOptionsWebStart->setText(tr("&Start Web Server"));
+
+        // Empty QR code widget
+        ui->labelOptionsWebQrCode->setPixmap(QPixmap());
+        ui->labelOptionsWebQrCode->setText(tr("Start server to see QR code."));
+        ui->labelOptionsWebQrCode->setToolTip(ui->labelOptionsWebQrCode->text());
       }
     }
   }
