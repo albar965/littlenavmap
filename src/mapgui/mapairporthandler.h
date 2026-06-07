@@ -29,6 +29,7 @@ class QAction;
 class QToolButton;
 class QSlider;
 
+class QLabel;
 namespace apinternal {
 class AirportSliderAction;
 class AirportLabelAction;
@@ -158,6 +159,32 @@ protected:
   int sliderValue = 0;
   opts::UnitShortDist sliderDistUnit = opts::DIST_SHORT_FT;
 };
+
+/*
+ * Internal Wrapper for label action.
+ */
+class AirportLabelAction
+  : public QWidgetAction
+{
+  Q_OBJECT
+
+public:
+  AirportLabelAction(QObject *parent) : QWidgetAction(parent)
+  {
+  }
+
+  void setText(const QString& textParam);
+
+protected:
+  /* Create a delete widget for more than one menu (tearout and normal) */
+  virtual QWidget *createWidget(QWidget *parent) override;
+  virtual void deleteWidget(QWidget *widget) override;
+
+  /* List of created/registered labels */
+  QList<QLabel *> labels;
+  QString text;
+};
+
 }
 
 #endif // LNM_MAPAIRPORTHANDLER_H

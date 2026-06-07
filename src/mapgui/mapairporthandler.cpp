@@ -189,29 +189,6 @@ void AirportSliderAction::reset()
 
 // =======================================================================================
 
-/*
- * Wrapper for label action.
- */
-class AirportLabelAction
-  : public QWidgetAction
-{
-public:
-  AirportLabelAction(QObject *parent) : QWidgetAction(parent)
-  {
-  }
-
-  void setText(const QString& textParam);
-
-protected:
-  /* Create a delete widget for more than one menu (tearout and normal) */
-  virtual QWidget *createWidget(QWidget *parent) override;
-  virtual void deleteWidget(QWidget *widget) override;
-
-  /* List of created/registered labels */
-  QList<QLabel *> labels;
-  QString text;
-};
-
 void AirportLabelAction::setText(const QString& textParam)
 {
   text = textParam;
