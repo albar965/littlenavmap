@@ -27,6 +27,7 @@
 #include "mapgui/maplayer.h"
 #include "mapgui/mapmarkhandler.h"
 #include "mappainter/mappaintlayer.h"
+#include "options/optiondata.h"
 #include "query/airspacequeries.h"
 #include "query/mapquery.h"
 #include "query/querymanager.h"
@@ -71,7 +72,10 @@ void MapVisible::updateVisibleObjectsStatusBar()
 
       QStringList airportShortLabel;
       atools::util::HtmlBuilder tooltip(false /* backgroundColorUsed */, NavApp::isGuiStyleDark());
-      tooltip.b(tr("Currently shown on map:"));
+      if(OptionData::instance().getFlags().testFlag(opts::ENABLE_TOOLTIPS_LINK))
+        tooltip.text(tr("Click \"Reset Display Settings\" in menu \"View\" to restore to defaults."),
+                     atools::util::html::SMALL | atools::util::html::BOLD).hr().
+        b(tr("Currently shown on map:"));
       tooltip.table();
 
       // Collect airport information ==========================================================

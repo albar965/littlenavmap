@@ -26,6 +26,7 @@
 #include "gui/stylehandler.h"
 #include "gui/widgetstate.h"
 #include "mapgui/mappaintwidget.h"
+#include "options/optiondata.h"
 #include "settings/settings.h"
 #include "util/htmlbuilder.h"
 
@@ -100,6 +101,10 @@ void StatusBar::optionsChanged(const optc::OptionChangeFlags& changeFlags)
 {
   if(changeFlags.testFlag(optc::OPTION_CHANGE_UNITS))
     distanceChanged();
+
+  // Update tooltips
+  updateDetailLabelTooltip();
+  updateConnectionStatusMessageText();
 }
 
 void StatusBar::updateClock() const
@@ -212,19 +217,13 @@ void StatusBar::setupLabels()
 {
   // ==============================================================
   // Create labels for the statusbar
-  addLabel(connectStatusLabel, "connectStatusLabel", tr("Not connected."),
-           tr("Simulator connection status."));
+  addLabel(connectStatusLabel, "connectStatusLabel", tr("Not connected."), tr("Simulator connection status."));
   addLabel(mapVisibleLabel, "mapVisibleLabel");
-  addLabel(mapDetailLabel, "mapDetailLabel", QStringLiteral(),
-           tr("Map detail level / text label level."));
-  addLabel(mapRenderStatusLabel, "mapRenderStatusLabel", QStringLiteral(),
-           tr("Map rendering and download status."));
-  addLabel(mapDistanceLabel, "mapDistanceLabel", QStringLiteral(),
-           tr("Map view distance to ground."));
-  addLabel(mapPositionLabel, "mapPositionLabel", QStringLiteral(),
-           tr("Coordinates and elevation at cursor position."));
-  addLabel(mapMagvarLabel, "mapMagvarLabel", QStringLiteral(),
-           tr("Magnetic declination at cursor position."));
+  addLabel(mapDetailLabel, "mapDetailLabel", QStringLiteral(), tr("Map detail level / text label level."));
+  addLabel(mapRenderStatusLabel, "mapRenderStatusLabel", QStringLiteral(), tr("Map rendering and download status."));
+  addLabel(mapDistanceLabel, "mapDistanceLabel", QStringLiteral(), tr("Map view distance to ground."));
+  addLabel(mapPositionLabel, "mapPositionLabel", QStringLiteral(), tr("Coordinates and elevation at cursor position."));
+  addLabel(mapMagvarLabel, "mapMagvarLabel", QStringLiteral(), tr("Magnetic declination at cursor position."));
   addLabel(timeZoneLabel, "timeZoneLabel", QStringLiteral(),
            tr("Time Zone country and offset from UTC (excluding DST) at cursor position."));
   addLabel(timeLabel, "timeLabel");
@@ -389,6 +388,7 @@ void StatusBar::setConnectionStatusMessageText(const QString& text, const QStrin
   {
     if(!text.isEmpty())
       connectionStatus = text;
+
     connectionStatusTooltip = tooltipText;
     updateConnectionStatusMessageText();
   }
@@ -422,6 +422,9 @@ void StatusBar::restoreState()
     state.restore(it.value());
 
   timeType = atools::settings::Settings::instance().valueEnum(lnm::MAINWINDOW_STATUSBAR_TIME_TYPE, TIME_UTC_REAL);
+
+  updateDetailLabelTooltip();
+  updateConnectionStatusMessageText();
 }
 
 void StatusBar::updateConnectionStatusMessageText()
@@ -433,11 +436,16 @@ void StatusBar::updateConnectionStatusMessageText()
     else
       connectStatusLabel->setText(tr("%1/%2").arg(connectionStatus).arg(onlineConnectionStatus));
 
+    QString tooltipHint;
+    if(OptionData::instance().getFlags().testFlag(opts::ENABLE_TOOLTIPS_LINK))
+      tooltipHint = tr("<small><b>Connect to flight simulator or change connection settings in menu \"Tools\"</b></small><hr/>");
+
     if(onlineConnectionStatusTooltip.isEmpty())
-      connectStatusLabel->setToolTip(connectionStatusTooltip);
+      connectStatusLabel->setToolTip(tooltipHint % connectionStatusTooltip);
     else
-      connectStatusLabel->setToolTip(tr("Simulator:\n%1\n\nOnline Network:\n%2").
+      connectStatusLabel->setToolTip(tooltipHint % tr("Simulator:\n%1\n\nOnline Network:\n%2").
                                      arg(connectionStatusTooltip).arg(onlineConnectionStatusTooltip));
+
     connectStatusLabel->setMinimumWidth(connectStatusLabel->width());
   }
 }
@@ -684,6 +692,16 @@ void StatusBar::statusMessageChanged(const QString& text)
                              arg(statusMessages.size()).
                              arg(statusMessages.size() > 1 ? tr("Messages") : tr("Message")));
   }
+}
+
+void StatusBar::updateDetailLabelTooltip()
+{
+  QString tooltipHint;
+  if(OptionData::instance().getFlags().testFlag(opts::ENABLE_TOOLTIPS_LINK))
+    tooltipHint =
+      tr("<small><b>Adjust detail levels in menu \"View\" or using \"Ctrl+Mouse Wheel\" and \"Ctrl+Shft+Mouse Wheel\".</b></small><hr/>");
+  tooltipHint = tooltipHint % tr("Map detail level / text label level.");
+  mapDetailLabel->setToolTip(tooltipHint);
 }
 
 void StatusBar::setDetailLabelText(const QString& text)

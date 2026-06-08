@@ -121,6 +121,8 @@ private:
   /* Allocate all labels */
   void setupLabels();
 
+  void updateDetailLabelTooltip();
+
   void addLabel(QLabel *& label, const QString& objectName, const QString& text = QString(), const QString& tooltip = QString());
   QAction *addMenuAction(QMenu& menu, QList<QAction *>& labelActions, const QLabel *label, const QString& text = QString(),
                          const QString& tooltip = QString()) const;

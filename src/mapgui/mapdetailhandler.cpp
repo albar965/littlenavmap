@@ -72,7 +72,7 @@ QWidget *DetailSliderAction::createWidget(QWidget *parent)
   slider->setSingleStep(1);
   slider->setTracking(true);
   slider->setValue(sliderValue);
-  slider->setToolTip(tr("Set detail level for map display (also \"Ctrl++\", \"Ctrl+-\" or \"Ctrl+Wheel\")."));
+  slider->setToolTip(tr("Set detail level for map display (also \"Ctrl++\", \"Ctrl+-\" or \"Ctrl+Mouse Wheel\")."));
 
   connect(slider, &QSlider::valueChanged, this, &DetailSliderAction::setSliderValue);
   connect(slider, &QSlider::valueChanged, this, &DetailSliderAction::valueChanged);

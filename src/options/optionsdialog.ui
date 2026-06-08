@@ -66,7 +66,7 @@
      </widget>
      <widget class="QStackedWidget" name="stackedWidgetOptions">
       <property name="currentIndex">
-       <number>25</number>
+       <number>2</number>
       </property>
       <widget class="QWidget" name="stackedWidgetOptionsStartup">
        <layout class="QVBoxLayout" name="verticalLayout_41">
@@ -80,8 +80,8 @@
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>525</width>
-             <height>499</height>
+             <width>557</width>
+             <height>571</height>
             </rect>
            </property>
            <layout class="QVBoxLayout" name="verticalLayout_21">
@@ -437,8 +437,8 @@ This is the file on top of the list &quot;Recent Window Layouts&quot;.</string>
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>514</width>
-             <height>373</height>
+             <width>557</width>
+             <height>571</height>
             </rect>
            </property>
            <layout class="QVBoxLayout" name="verticalLayout_22">
@@ -630,8 +630,8 @@ opening files, modifying the flight plan and other operations.</string>
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>419</width>
-             <height>910</height>
+             <width>543</width>
+             <height>909</height>
             </rect>
            </property>
            <layout class="QVBoxLayout" name="verticalLayout_23">
@@ -782,10 +782,10 @@ This does not affect the map window which can be changed separately on the optio
                <item>
                 <widget class="QCheckBox" name="checkBoxOptionsGuiTooltipsLink">
                  <property name="toolTip">
-                  <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Enables tooltips for the blue links in the flight plan header, procedure search and information window&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+                  <string>Enables additional hints in tooltips and also adds tooltips for the blue links in the flight plan header, procedure search and information window</string>
                  </property>
                  <property name="text">
-                  <string>Show tooltips for &amp;links</string>
+                  <string>Add &amp;hints to tooltips and show tooltips for links</string>
                  </property>
                  <property name="checked">
                   <bool>true</bool>
@@ -2828,7 +2828,7 @@ Map views might be shown with a larger zoom distance than expected if this optio
                <item>
                 <widget class="QCheckBox" name="checkBoxOptionsGuiWheel">
                  <property name="toolTip">
-                  <string>Reverses mouse wheel function for map zoom (Wheel and Shift+Wheel), map details (Ctrl+Wheel) and elevation profile (Wheel and Shift+Wheel).</string>
+                  <string>Reverses mouse wheel function for map zoom (Wheel and Shift+Mouse Wheel), map details (Ctrl+Mouse Wheel) and elevation profile (Wheel and Shift+Wheel).</string>
                  </property>
                  <property name="text">
                   <string>Reverse mouse &amp;wheel direction in map and elevation profile</string>
@@ -3049,7 +3049,7 @@ Note that some fonts, especially large fonts, can result in display errors on th
              <x>0</x>
              <y>0</y>
              <width>599</width>
-             <height>1021</height>
+             <height>1017</height>
             </rect>
            </property>
            <layout class="QVBoxLayout" name="verticalLayout_20">
@@ -4425,7 +4425,7 @@ Also used in the elevation profile.</string>
              <x>0</x>
              <y>0</y>
              <width>554</width>
-             <height>369</height>
+             <height>365</height>
             </rect>
            </property>
            <layout class="QVBoxLayout" name="verticalLayout_57">
@@ -6667,7 +6667,7 @@ Download the file &lt;b&gt;&lt;i&gt;All Tiles in One .zip (all10g.zip)&lt;/i&gt;
              <x>0</x>
              <y>0</y>
              <width>572</width>
-             <height>635</height>
+             <height>631</height>
             </rect>
            </property>
            <layout class="QVBoxLayout" name="verticalLayout_25">
@@ -7274,7 +7274,7 @@ Note that this value does not affect flight plan calculation or saving of flight
              <x>0</x>
              <y>0</y>
              <width>272</width>
-             <height>765</height>
+             <height>761</height>
             </rect>
            </property>
            <layout class="QVBoxLayout" name="verticalLayout_27">
@@ -7515,7 +7515,7 @@ Note that this value does not affect flight plan calculation or saving of flight
              <x>0</x>
              <y>0</y>
              <width>360</width>
-             <height>944</height>
+             <height>936</height>
             </rect>
            </property>
            <layout class="QVBoxLayout" name="verticalLayout_28">
@@ -8738,8 +8738,8 @@ Little Navmap GIT repository.
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>395</width>
-             <height>524</height>
+             <width>557</width>
+             <height>571</height>
             </rect>
            </property>
            <layout class="QGridLayout" name="gridLayout_38">
