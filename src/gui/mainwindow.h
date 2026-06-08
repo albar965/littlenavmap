@@ -406,6 +406,9 @@ private:
   /* A button like airport, vor, ndb, etc. was pressed - update the map */
   void updateMapObjectsShown();
 
+  /* Does not update profile */
+  void updateMapObjectsShownMap();
+
   /* Reset drawing settings */
   void resetMapObjectsShown();
 
