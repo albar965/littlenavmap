@@ -157,7 +157,7 @@ map::MapTypes mapTypeFromString(const QStringList& flags)
     if(str == QStringLiteral("AIRPORT_ADDON_ZOOM"))
       type.setFlag(AIRPORT_ADDON_ZOOM);
     if(str == QStringLiteral("AIRPORT_ADDON_ZOOM_FILTER"))
-      type.setFlag(AIRPORT_ADDON_ZOOM_FILTER);
+      type.setFlag(AIRPORT_ADDON_ZOOM_AND_FILTER);
   }
   return type;
 }
@@ -210,7 +210,7 @@ QStringList mapTypeToString(const map::MapTypes& flags)
   ATOOLS_FLAGS_TO_STR(PROCEDURE_POINT);
   ATOOLS_FLAGS_TO_STR(AIRCRAFT_TRAIL);
   ATOOLS_FLAGS_TO_STR(AIRPORT_ADDON_ZOOM);
-  ATOOLS_FLAGS_TO_STR(AIRPORT_ADDON_ZOOM_FILTER);
+  ATOOLS_FLAGS_TO_STR(AIRPORT_ADDON_ZOOM_AND_FILTER);
   ATOOLS_FLAGS_TO_STR_END;
 }
 

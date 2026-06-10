@@ -104,7 +104,8 @@ void MapPainterIls::render()
             if(!ils.airportIdent.isEmpty())
             {
               queries->getAirportQuerySim()->getAirportByIdent(airport, ils.airportIdent);
-              if(airport.isValid() && !airport.isVisible(context->objectTypes, context->mimimumRunwayLengthFt, context->mapLayer))
+              if(airport.isValid() && !airport.isVisible(context->objectTypes, context->mimimumRunwayLengthFt,
+                                                         context->maximumRunwayLengthFt, context->mapLayer))
                 continue;
             }
 

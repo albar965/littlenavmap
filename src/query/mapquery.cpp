@@ -706,12 +706,14 @@ void MapQuery::getNearestScreenObjects(const CoordinateConverter& conv, const Ma
   int x, y;
   if(mapLayer->isAirport() && types.testFlag(map::AIRPORT))
   {
-    int minRunwayLength = NavApp::getMapAirportHandler()->getMinimumRunwayFt(); // GUI setting
+    const MapAirportHandler *mapAirportHandler = NavApp::getMapAirportHandler();
+    int minRunway = mapAirportHandler->isMinimumRunwaySet() ? mapAirportHandler->getMinimumRunwayFt() : -1;
+    int maxRunway = mapAirportHandler->isMaximumRunwaySet() ? mapAirportHandler->getMaximumRunwayFt() : -1;
     for(int i = airportCache.list.size() - 1; i >= 0; i--)
     {
       const MapAirport& airport = airportCache.list.at(i);
 
-      if(airport.isVisible(types, minRunwayLength, mapLayer))
+      if(airport.isVisible(types, minRunway, maxRunway, mapLayer))
       {
         if(conv.wToS(airport.position, x, y))
           if(atools::geo::manhattanDistance(x, y, xs, ys) < screenDistance)
@@ -880,7 +882,7 @@ const QList<map::MapAirport> *MapQuery::getAirports(const Marble::GeoDataLatLonB
 {
   // Get flags for running separate queries for add-on and normal airports
   bool addonZoom = types.testFlag(map::AIRPORT_ADDON_ZOOM);
-  bool addonZoomFilter = types.testFlag(map::AIRPORT_ADDON_ZOOM_FILTER);
+  bool addonZoomFilter = types.testFlag(map::AIRPORT_ADDON_ZOOM_AND_FILTER);
   bool normal = types & map::AIRPORT_ALL;
 
   airportCache.updateCache(rect, mapLayer, queryRectInflationFactor, queryRectInflationIncrement, lazy,
@@ -911,7 +913,7 @@ const QList<map::MapAirport> *MapQuery::getAirportsByRect(const atools::geo::Rec
 
   // Get flags for running separate queries for add-on and normal airports
   bool addonZoom = types.testFlag(map::AIRPORT_ADDON_ZOOM);
-  bool addonZoomFilter = types.testFlag(map::AIRPORT_ADDON_ZOOM_FILTER);
+  bool addonZoomFilter = types.testFlag(map::AIRPORT_ADDON_ZOOM_AND_FILTER);
   bool normal = types & map::AIRPORT_ALL;
 
   airportCacheAddonZoomFlag = addonZoom;

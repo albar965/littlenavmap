@@ -389,12 +389,14 @@ void MapPaintWidget::setShowMapPois(bool show)
   setShowTerrain(show);
 }
 
-void MapPaintWidget::updateGeometryIndex(map::MapTypes oldTypes, map::MapDisplayTypes oldDisplayTypes, int oldMinRunwayLength)
+void MapPaintWidget::updateGeometryIndex(map::MapTypes oldTypes, map::MapDisplayTypes oldDisplayTypes, int oldMinRunwayLength,
+                                         int oldMaxRunwayLength)
 {
   // Update screen coordinate caches if display options have changed
   map::MapTypes types = getShownMapTypes();
   map::MapDisplayTypes displayTypes = getShownMapDisplayTypes();
-  int minRunwayLength = getShownMinimumRunwayFt();
+  int minRunwayLength = paintLayer->getShownMinimumRunwayFt();
+  int maxRunwayLength = paintLayer->getShownMaximumRunwayFt();
 
   if(((types& map::AIRWAY_ALL) != (oldTypes & map::AIRWAY_ALL)) || types.testFlag(map::TRACK) || oldTypes.testFlag(map::TRACK))
     screenIndex->updateAirwayScreenGeometry(getCurrentViewBoundingBox());
@@ -402,7 +404,7 @@ void MapPaintWidget::updateGeometryIndex(map::MapTypes oldTypes, map::MapDisplay
   if(types.testFlag(map::AIRSPACE) != oldTypes.testFlag(map::AIRSPACE))
     screenIndex->updateAirspaceScreenGeometry(getCurrentViewBoundingBox());
 
-  if(minRunwayLength != oldMinRunwayLength || // Airport visibility also changes ILS
+  if(minRunwayLength != oldMinRunwayLength || maxRunwayLength != oldMaxRunwayLength || // Airport visibility also changes ILS
      (types& map::AIRPORT_ALL_MASK) != (oldTypes & map::AIRPORT_ALL_MASK) || // ILS are disabled with airports
      (types.testFlag(map::ILS) != oldTypes.testFlag(map::ILS)) ||
      (displayTypes.testFlag(map::GLS) != oldDisplayTypes.testFlag(map::GLS)) ||
@@ -516,11 +518,6 @@ bool MapPaintWidget::checkPos(const atools::geo::Pos&)
 const map::MapTypes MapPaintWidget::getShownMapTypes() const
 {
   return paintLayer->getShownMapTypes();
-}
-
-int MapPaintWidget::getShownMinimumRunwayFt() const
-{
-  return paintLayer->getShownMinimumRunwayFt();
 }
 
 const map::MapDisplayTypes MapPaintWidget::getShownMapDisplayTypes() const

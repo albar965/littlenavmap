@@ -106,8 +106,8 @@ void AirportQuery::loadAirportProcedureCache()
 
 void AirportQuery::correctAirportProcedureFlag(MapAirport& airport)
 {
-  if(!airportsWithProceduresIdent.isEmpty())
-    airport.flags.setFlag(map::AP_PROCEDURE, hasAirportProcedures(airport.ident, airport.iata));
+  if(!airportsWithProceduresIdent.isEmpty() && hasAirportProcedures(airport.ident, airport.iata))
+    airport.flags = airport.flags | map::AP_PROCEDURE;
 }
 
 bool AirportQuery::hasAirportProcedures(const QString& ident, const QString& iata)

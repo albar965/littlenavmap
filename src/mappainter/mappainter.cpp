@@ -848,7 +848,7 @@ bool MapPainter::sortAirportFunction(const AirportPaintData& airportPaintData1, 
 
   // Put add-on on top if any add-on filter is set
   bool addonFlag = context->objectTypes.testFlag(map::AIRPORT_ADDON_ZOOM) ||
-                   context->objectTypes.testFlag(map::AIRPORT_ADDON_ZOOM_FILTER);
+                   context->objectTypes.testFlag(map::AIRPORT_ADDON_ZOOM_AND_FILTER);
 
   bool empty3dFlag = od.getFlags2().testFlag(opts2::MAP_EMPTY_AIRPORTS_3D) &&
                      NavApp::getCurrentSimulatorDb() != atools::fs::FsPaths::XPLANE_12;

@@ -263,7 +263,7 @@ void SymbolPainter::drawAirportSymbol(QPainter *painter, const map::MapAirport& 
 
   QColor apColor = mapcolors::colorForAirport(airport);
 
-  if(airport.flags.testFlag(AP_HARD) && !airport.flags.testFlag(AP_MIL) && !airport.flags.testFlag(AP_CLOSED))
+  if(airport.hard() && !airport.military() && !airport.closed())
     // Use filled circle
     painter->setBrush(QBrush(apColor));
   else
@@ -273,7 +273,7 @@ void SymbolPainter::drawAirportSymbol(QPainter *painter, const map::MapAirport& 
   if((!fast || isAirportDiagram) && size > 5)
   {
     // Draw spikes only for larger symbols
-    if(airport.anyFuel() && !airport.flags.testFlag(AP_MIL) && !airport.flags.testFlag(AP_CLOSED) && size > 6.f)
+    if(airport.anyFuel() && !airport.military() && !airport.closed() && size > 6.f)
     {
       // Draw fuel spikes
       float fuelRadius = radius * 1.4f;
@@ -290,7 +290,7 @@ void SymbolPainter::drawAirportSymbol(QPainter *painter, const map::MapAirport& 
 
   if((!fast || isAirportDiagram) && size > 5.f)
   {
-    if(airport.flags.testFlag(AP_MIL))
+    if(airport.military())
       // Military airport
       painter->drawEllipse(QPointF(x, y), radius / 2.f, radius / 2.f);
 
@@ -313,7 +313,7 @@ void SymbolPainter::drawAirportSymbol(QPainter *painter, const map::MapAirport& 
       painter->drawLine(QLineF(x + size / 5.f, y - radius / 2.f, x + size / 5.f, y + radius / 2.f));
     }
 
-    if(airport.flags.testFlag(AP_CLOSED) && size > 6.f)
+    if(airport.closed() && size > 6.f)
     {
       // Cross out whatever was painted before
       painter->setPen(QPen(QBrush(apColor), size / 6.f, Qt::SolidLine, Qt::FlatCap));
@@ -324,7 +324,7 @@ void SymbolPainter::drawAirportSymbol(QPainter *painter, const map::MapAirport& 
 
   if((!fast || isAirportDiagram) && size > 5.f)
   {
-    if(airport.flags.testFlag(AP_HARD) && !airport.flags.testFlag(AP_MIL) && !airport.flags.testFlag(AP_CLOSED) && size > 6)
+    if(airport.hard() && !airport.military() && !airport.closed() && size > 6)
     {
       // Draw line inside circle
       painter->translate(x, y);
@@ -1300,7 +1300,7 @@ QStringList SymbolPainter::airportTexts(optsd::DisplayOptionsAirport dispOpts, t
     if(dispOpts & optsd::ITEM_AIRPORT_RUNWAY)
       if(airport.longestRunwayLength != 0 || airport.getAltitude() != 0.f)
         texts.append(Unit::altFeet(airport.getAltitude(), true /*addUnit*/, true /*narrow*/) % " " %
-                     (airport.flags.testFlag(map::AP_LIGHT) ? "L " : "- ") %
+                     (airport.lighted() ? tr("L ", "Airport lighted sign") : tr("- ", "Airport not lighted sign")) %
                      Unit::distShortFeet(airport.longestRunwayLength, true /*addUnit*/, true /*narrow*/) % " ");
   }
 

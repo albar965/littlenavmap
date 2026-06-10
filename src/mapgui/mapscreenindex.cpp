@@ -249,6 +249,10 @@ void MapScreenIndex::updateIlsScreenGeometry(const Marble::GeoDataLatLonBox& cur
       routeIlsIds.insert(ils.id);
   }
 
+  const MapAirportHandler *mapAirportHandler = NavApp::getMapAirportHandler();
+  int minRunway = mapAirportHandler->isMinimumRunwaySet() ? mapAirportHandler->getMinimumRunwayFt() : -1;
+  int maxRunway = mapAirportHandler->isMaximumRunwaySet() ? mapAirportHandler->getMaximumRunwayFt() : -1;
+
   // Not flight plan ILS are hidden with the airports
   if((types.testFlag(map::ILS) || displayTypes.testFlag(map::GLS)) && types.testFlag(map::AIRPORT))
   {
@@ -271,8 +275,7 @@ void MapScreenIndex::updateIlsScreenGeometry(const Marble::GeoDataLatLonBox& cur
           if(!ils.airportIdent.isEmpty())
           {
             map::MapAirport airport = queries->getAirportQuerySim()->getAirportByIdent(ils.airportIdent);
-            if(airport.isValid() && !airport.isVisible(paintLayer->getShownMapTypes(), NavApp::getMapAirportHandler()->getMinimumRunwayFt(),
-                                                       paintLayer->getMapLayer()))
+            if(airport.isValid() && !airport.isVisible(paintLayer->getShownMapTypes(), minRunway, maxRunway, paintLayer->getMapLayer()))
               continue;
           }
 

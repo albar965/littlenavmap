@@ -112,12 +112,17 @@ void MapVisible::updateVisibleObjectsStatusBar()
             tooltip.text(tr("With ") % atools::strJoin(runways, tr(", "), tr(" and "), tr(" runways."))).br();
         }
 
-        int minRunwayLength = std::max(NavApp::getMapAirportHandler()->getMinimumRunwayFt(), layer->getMinRunwayLength());
-        if(minRunwayLength > 0)
-        {
+        // Airport runway limitations
+        const MapAirportHandler *airportHandler = NavApp::getMapAirportHandler();
+        int minRunwayLength = std::max(airportHandler->getMinimumRunwayFt(), layer->getMinRunwayLength());
+        if(minRunwayLength != -1)
           apShort.append(">" % QLocale().toString(minRunwayLength / 100));
-          tooltip.text(tr("Having runway length > %1.").arg(Unit::distShortFeet(minRunwayLength))).br();
-        }
+
+        int maxRunwayLength = airportHandler->getMaximumRunwayFt();
+        if(maxRunwayLength != -1)
+          apShort.append("<" % QLocale().toString(maxRunwayLength / 100));
+
+        tooltip.text(airportHandler->getRunwayText()).br();
 
         QStringList features;
         if(shown.testFlag(map::AIRPORT_EMPTY))
@@ -165,7 +170,7 @@ void MapVisible::updateVisibleObjectsStatusBar()
           features.append(tr("add-on overrides zoom (AZ)"));
           apShort.append(tr("AZ", "Airport status"));
         }
-        else if(shown.testFlag(map::AIRPORT_ADDON_ZOOM_FILTER))
+        else if(shown.testFlag(map::AIRPORT_ADDON_ZOOM_AND_FILTER))
         {
           features.append(tr("add-on overrides zoom and filter (AF)"));
           apShort.append(tr("AF", "Airport status"));

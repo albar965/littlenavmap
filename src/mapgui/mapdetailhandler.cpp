@@ -112,29 +112,6 @@ void DetailSliderAction::reset()
 
 // =======================================================================================
 
-/*
- * Wrapper for label action.
- */
-class DetailLabelAction
-  : public QWidgetAction
-{
-public:
-  DetailLabelAction(QObject *parent) : QWidgetAction(parent)
-  {
-  }
-
-  void setText(const QString& textParam);
-
-protected:
-  /* Create a delete widget for more than one menu (tearout and normal) */
-  virtual QWidget *createWidget(QWidget *parent) override;
-  virtual void deleteWidget(QWidget *widget) override;
-
-  /* List of created/registered labels */
-  QList<QLabel *> labels;
-  QString text;
-};
-
 void DetailLabelAction::setText(const QString& textParam)
 {
   text = textParam;

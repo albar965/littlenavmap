@@ -251,7 +251,7 @@ QByteArray JsonInfoBuilder::airport(AirportInfoData airportInfoData) const
     json["facilities"].push_back(qUtf8Printable(tr("Add-on")));
   if(data.airport.is3d())
     json["facilities"].push_back(qUtf8Printable(tr("3D")));
-  if(data.airport.flags.testFlag(map::MapAirportFlag::AP_MIL))
+  if(data.airport.military())
     json["facilities"].push_back(qUtf8Printable(tr("Military")));
   if(data.airport.apron())
     json["facilities"].push_back(qUtf8Printable(tr("Aprons")));
@@ -263,11 +263,11 @@ QByteArray JsonInfoBuilder::airport(AirportInfoData airportInfoData) const
     json["facilities"].push_back(qUtf8Printable(tr("Parking")));
   if(data.airport.helipad())
     json["facilities"].push_back(qUtf8Printable(tr("Helipads")));
-  if(data.airport.flags.testFlag(map::MapAirportFlag::AP_AVGAS))
+  if(data.airport.avgas())
     json["facilities"].push_back(qUtf8Printable(tr("Avgas")));
-  if(data.airport.flags.testFlag(map::MapAirportFlag::AP_JETFUEL))
+  if(data.airport.jetfuel())
     json["facilities"].push_back(qUtf8Printable(tr("Jetfuel")));
-  if(data.airport.flags.testFlag(map::MapAirportFlag::AP_ILS))
+  if(data.airport.ils())
     json["facilities"].push_back(qUtf8Printable(tr("ILS")));
   if(data.airport.vasi())
     json["facilities"].push_back(qUtf8Printable(tr("VASI")));
@@ -288,7 +288,7 @@ QByteArray JsonInfoBuilder::airport(AirportInfoData airportInfoData) const
     json["runways"].push_back(qUtf8Printable(tr("Water")));
   if(data.airport.closedRunways())
     json["runways"].push_back(qUtf8Printable(tr("Closed")));
-  if(data.airport.flags.testFlag(map::MapAirportFlag::AP_LIGHT))
+  if(data.airport.lighted())
     json["runways"].push_back(qUtf8Printable(tr("Lighted")));
 
   /* Fields added only if available */

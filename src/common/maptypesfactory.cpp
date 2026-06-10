@@ -148,7 +148,7 @@ void MapTypesFactory::fillAirportBase(const SqlRecord& record, map::MapAirport& 
 
     ap.bounding = Rect(record.valueFloat(QStringLiteral("left_lonx")), record.valueFloat(QStringLiteral("top_laty")),
                        record.valueFloat(QStringLiteral("right_lonx")), record.valueFloat(QStringLiteral("bottom_laty")));
-    ap.flags |= AP_COMPLETE;
+    ap.flags = ap.flags | AP_COMPLETE;
   }
 }
 

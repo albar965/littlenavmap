@@ -388,7 +388,7 @@ void HtmlInfoBuilder::airportText(const MapAirport& airport, const map::WeatherC
     facilities.append(tr("Add-on"));
   if(airport.is3d())
     facilities.append(tr("3D"));
-  if(airport.flags.testFlag(AP_MIL))
+  if(airport.military())
     facilities.append(tr("Military"));
   if(airport.apron())
     facilities.append(tr("Aprons"));
@@ -401,19 +401,19 @@ void HtmlInfoBuilder::airportText(const MapAirport& airport, const map::WeatherC
   if(airport.helipad())
     facilities.append(tr("Helipads"));
 
-  if(NavApp::getCurrentSimulatorDb() == atools::fs::FsPaths::MSFS && airport.flags.testFlag(AP_AVGAS) && airport.flags.testFlag(AP_JETFUEL))
+  if(NavApp::getCurrentSimulatorDb() == atools::fs::FsPaths::MSFS && airport.avgas() && airport.jetfuel())
     facilities.append(tr("Fuel"));
   else
   {
-    if(airport.flags.testFlag(AP_AVGAS))
+    if(airport.avgas())
       facilities.append(tr("Avgas"));
-    if(airport.flags.testFlag(AP_JETFUEL))
+    if(airport.jetfuel())
       facilities.append(tr("Jetfuel"));
   }
 
   if(mapQuery->hasProcedures(airport))
     facilities.append(tr("Procedures"));
-  if(airport.flags.testFlag(AP_ILS))
+  if(airport.ils())
     facilities.append(tr("ILS"));
   if(airport.vasi())
     facilities.append(tr("VASI"));
@@ -449,7 +449,7 @@ void HtmlInfoBuilder::airportText(const MapAirport& airport, const map::WeatherC
       runways.append(tr("Water"));
     if(airport.closedRunways())
       runways.append(tr("Closed"));
-    if(airport.flags.testFlag(AP_LIGHT))
+    if(airport.lighted())
       runways.append(tr("Lighted"));
   }
   else

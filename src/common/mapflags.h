@@ -133,7 +133,7 @@ enum MapType : quint64
 
   /* Add-on airport flags ================================  */
   AIRPORT_ADDON_ZOOM =        1ULL << 48, /* Add-on airports override zoom distance but but not filter */
-  AIRPORT_ADDON_ZOOM_FILTER = 1ULL << 49, /* Add-on airports override zoom distance and filters */
+  AIRPORT_ADDON_ZOOM_AND_FILTER = 1ULL << 49, /* Add-on airports override zoom distance and filters */
 
 
   // NEXT = 0x0001'0000'0000'0000 / 1ULL << 51 after START
@@ -144,7 +144,7 @@ enum MapType : quint64
   AIRPORT_ALL_VISIBLE = AIRPORT_HARD | AIRPORT_SOFT | AIRPORT_WATER | AIRPORT_HELIPAD,
 
   /* Any add-on override */
-  AIRPORT_ADDON_ANY = AIRPORT_ADDON_ZOOM | AIRPORT_ADDON_ZOOM_FILTER,
+  AIRPORT_ADDON_ANY = AIRPORT_ADDON_ZOOM | AIRPORT_ADDON_ZOOM_AND_FILTER,
 
   /* All available filters in drop down button */
   AIRPORT_FILTER_ALL = AIRPORT_ALL_VISIBLE | AIRPORT_EMPTY | AIRPORT_UNLIGHTED | AIRPORT_NO_PROCS |
@@ -157,7 +157,7 @@ enum MapType : quint64
   AIRPORT_ALL_MASK = AIRPORT_ALL | AIRPORT_ADDON_ANY,
 
   /* Default value on first start */
-  AIRPORT_DEFAULT = AIRPORT_ALL | AIRPORT_ADDON_ZOOM_FILTER,
+  AIRPORT_DEFAULT = AIRPORT_ALL | AIRPORT_ADDON_ZOOM_AND_FILTER,
 
   /* All online, AI and multiplayer aircraft ========================================= */
   AIRCRAFT_ALL = AIRCRAFT | AIRCRAFT_AI | AIRCRAFT_AI_SHIP | AIRCRAFT_ONLINE,

@@ -3766,7 +3766,8 @@ void MapWidget::updateMapObjectsShown()
   // Remember current values in paint layer to compare and detect changes
   map::MapTypes oldTypes = getShownMapTypes();
   map::MapDisplayTypes oldDisplayTypes = getShownMapDisplayTypes();
-  int oldMinRunwayLength = getShownMinimumRunwayFt();
+  int oldMinRunwayLength = paintLayer->getShownMinimumRunwayFt();
+  int oldMaxRunwayLength = paintLayer->getShownMaximumRunwayFt();
 
   setShowMapObject(map::AIRWAYV, ui->actionMapShowVictorAirways->isChecked());
   setShowMapObject(map::AIRWAYJ, ui->actionMapShowJetAirways->isChecked());
@@ -3813,16 +3814,23 @@ void MapWidget::updateMapObjectsShown()
   setShowMapObjectDisplay(map::GLS, ui->actionMapShowGls->isChecked());
 
   setShowMapObjects(NavApp::getMapMarkHandler()->getMarkTypes(), map::MARK_ALL);
-  setShowMapObjects(NavApp::getMapAirportHandler()->getAirportTypes(), map::AIRPORT_ALL_MASK);
-  paintLayer->setShowMinimumRunwayFt(NavApp::getMapAirportHandler()->getMinimumRunwayFt());
 
-  updateGeometryIndex(oldTypes, oldDisplayTypes, oldMinRunwayLength);
+  const MapAirportHandler *airportHandler = NavApp::getMapAirportHandler();
+  setShowMapObjects(airportHandler->getAirportTypes(), map::AIRPORT_ALL_MASK);
+
+  const MapAirportHandler *mapAirportHandler = NavApp::getMapAirportHandler();
+  int minRunway = mapAirportHandler->isMinimumRunwaySet() ? mapAirportHandler->getMinimumRunwayFt() : -1;
+  int maxRunway = mapAirportHandler->isMaximumRunwaySet() ? mapAirportHandler->getMaximumRunwayFt() : -1;
+  paintLayer->setShowMinimumRunwayFt(minRunway);
+  paintLayer->setShowMaximumRunwayFt(maxRunway);
+
+  updateGeometryIndex(oldTypes, oldDisplayTypes, oldMinRunwayLength, oldMaxRunwayLength);
 
   mapVisible->updateVisibleObjectsStatusBar();
 
   emit shownMapFeaturesChanged(paintLayer->getShownMapTypes());
 
-#ifdef DEBUG_INFORMATION
+#ifdef DEBUG_INFORMATION_TYPES
   printMapTypesToLog();
 #endif
 
@@ -4401,7 +4409,8 @@ void MapWidget::printMapTypesToLog()
            << " - getShownAirspaces" << getShownAirspaces() << Qt::endl
            << " - getAirspaceSources" << queries->getAirspaceQueries()->getAirspaceSources() << Qt::endl
            << " - getMapWeatherSource" << getMapWeatherSource() << Qt::endl
-           << " - getShownMinimumRunwayFt" << getShownMinimumRunwayFt() << Qt::endl
+           << " - getShownMinimumRunwayFt" << paintLayer->getShownMinimumRunwayFt() << Qt::endl
+           << " - getShownMaximumRunwayFt" << paintLayer->getShownMaximumRunwayFt() << Qt::endl
            << " - Userdata getSelectedTypes" << NavApp::getUserdataController()->getSelectedTypesMap().keys() << Qt::endl
            << " - getMarkTypes" << NavApp::getMapMarkHandler()->getMarkTypes() << Qt::endl
            << " - projection" << projection() << "getCurrentThemeId" << getCurrentThemeId() << Qt::endl

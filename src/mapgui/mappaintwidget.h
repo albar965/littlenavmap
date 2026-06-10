@@ -231,7 +231,6 @@ public:
   const map::MapDisplayTypes getShownMapDisplayTypes() const;
   const map::MapAirspaceFilter& getShownAirspaces() const;
   const map::MapAirspaceFilter getShownAirspaceTypesForLayer() const;
-  int getShownMinimumRunwayFt() const;
 
   /* User aircraft as shown on the map */
   const atools::fs::sc::SimConnectUserAircraft& getUserAircraft() const;
@@ -530,7 +529,7 @@ protected:
 
   virtual void resizeEvent(QResizeEvent *event) override;
 
-  void updateGeometryIndex(map::MapTypes oldTypes, map::MapDisplayTypes oldDisplayTypes, int oldMinRunwayLength);
+  void updateGeometryIndex(map::MapTypes oldTypes, map::MapDisplayTypes oldDisplayTypes, int oldMinRunwayLength, int oldMaxRunwayLength);
 
   /* If width and height of a bounding rect are smaller than this: Use show point */
   static constexpr float POS_IS_POINT_EPSILON_DEG = 0.0001f;

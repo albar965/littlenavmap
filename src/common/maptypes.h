@@ -458,7 +458,7 @@ struct MapAirport
 
   map::MapAirportType airportType; /* 1 Land airport, 16 Seaplane base, 17 Heliport. X-Plane only. -1 if not set. */
 
-  map::MapAirportFlags flags = AP_NONE;
+  map::MapAirportFlag flags = AP_NONE;
   float magvar = 0; /* Magnetic variance - positive is east, negative is west */
   bool navdata, /* true if source is third party nav database, false if source is simulator data */
        xplane; /* true if data source is X-Plane */
@@ -488,33 +488,146 @@ struct MapAirport
     return displayIdentIcao();
   }
 
-  bool closed() const;
-  bool military() const;
-  bool hard() const;
-  bool soft() const;
-  bool water() const;
-  bool lighted() const;
-  bool helipad() const;
-  bool softOnly() const;
-  bool waterOnly() const;
-  bool helipadOnly() const;
-  bool noRunways() const;
-  bool tower() const;
-  bool addon() const;
-  bool is3d() const;
-  bool anyFuel() const;
-  bool complete() const;
-  bool towerObject() const;
-  bool apron() const;
-  bool taxiway() const;
-  bool parking() const;
-  bool als() const;
-  bool vasi() const;
-  bool closedRunways() const;
-  bool procedure() const;
+  bool closed() const
+  {
+    return flags & AP_CLOSED;
+  }
+
+  bool military() const
+  {
+    return flags & AP_MIL;
+  }
+
+  bool ils() const
+  {
+    return flags & AP_ILS;
+  }
+
+  bool hard() const
+  {
+    return flags & AP_HARD;
+  }
+
+  bool soft() const
+  {
+    return flags & AP_SOFT;
+  }
+
+  bool water() const
+  {
+    return flags & AP_WATER;
+  }
+
+  bool lighted() const
+  {
+    return flags & AP_LIGHT;
+  }
+
+  bool helipad() const
+  {
+    return flags & AP_HELIPAD;
+  }
+
+  bool softOnly() const
+  {
+    return !hard() && soft();
+  }
+
+  bool waterOnly() const
+  {
+    return !hard() && !soft() && water();
+  }
+
+  bool helipadOnly() const
+  {
+    return !hard() && !soft() && !water() && helipad();
+  }
+
+  bool noRunways() const
+  {
+    return !hard() && !soft() && !water();
+  }
+
+  bool tower() const
+  {
+    return flags & AP_TOWER;
+  }
+
+  bool addon() const
+  {
+    return flags & AP_ADDON;
+  }
+
+  bool is3d() const
+  {
+    return flags & AP_3D;
+  }
+
+  bool anyFuel() const
+  {
+    return avgas() || jetfuel();
+  }
+
+  bool avgas() const
+  {
+    return flags & AP_AVGAS;
+  }
+
+  bool jetfuel() const
+  {
+    return flags & AP_JETFUEL;
+  }
+
+  bool complete() const
+  {
+    return flags & AP_COMPLETE;
+  }
+
+  bool towerObject() const
+  {
+    return flags & AP_TOWER_OBJ;
+  }
+
+  bool apron() const
+  {
+    return flags & AP_APRON;
+  }
+
+  bool taxiway() const
+  {
+    return flags & AP_TAXIWAY;
+  }
+
+  bool parking() const
+  {
+    return flags & AP_PARKING;
+  }
+
+  bool als() const
+  {
+    return flags & AP_ALS;
+  }
+
+  bool vasi() const
+  {
+    return flags & AP_VASI;
+  }
+
+  bool closedRunways() const
+  {
+    return flags & AP_RW_CLOSED;
+  }
+
+  bool procedure() const
+  {
+    return flags & AP_PROCEDURE;
+  }
 
   /* For map layer configuration soft, water, helipad and closed */
-  bool isMinor() const;
+  bool isMinor() const
+  {
+    return softOnly() || helipadOnly() || waterOnly() || closed();
+  }
 
   /* Check if airport should be drawn empty */
   bool emptyDraw() const;
@@ -526,7 +639,7 @@ struct MapAirport
    * @param objectTypes Map display configuration flags
    * @return true if this airport is visible on map
    */
-  bool isVisible(map::MapTypes types, int minRunwayFt, const MapLayer *layer) const;
+  bool isVisible(map::MapType types, int minRunwayFt, int maxRunwayFt, const MapLayer *layer) const;
 
   float getMagVar() const
   {

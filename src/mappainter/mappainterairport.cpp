@@ -249,12 +249,14 @@ void MapPainterAirport::collectVisibleAirports(QList<AirportPaintData>& visibleA
 
   // Use margins for text placed on the right side of the object to avoid disappearing at the left screen border
   int minRunwayLength = context->mimimumRunwayLengthFt; // GUI setting
+  int maxRunwayLength = context->maximumRunwayLengthFt; // GUI setting
 
   // Collect all airports that are visible ===========================
   for(const MapAirport& airport : airports)
   {
     // Either part of the route or enabled in the actions/menus/toolbar
-    if(airport.isVisible(context->objectTypes, minRunwayLength, context->mapLayer) || context->routeProcIdMap.contains(airport.getRef()))
+    if(airport.isVisible(context->objectTypes, minRunwayLength, maxRunwayLength, context->mapLayer) ||
+       context->routeProcIdMap.contains(airport.getRef()))
     {
       float x, y;
       bool hidden;

@@ -181,6 +181,16 @@ public:
     minimumRunwayLengthFt = value;
   }
 
+  int getShownMaximumRunwayFt() const
+  {
+    return maximumRunwayLengthFt;
+  }
+
+  void setShowMaximumRunwayFt(int maximumRunwayLengthFtParam)
+  {
+    maximumRunwayLengthFt = maximumRunwayLengthFtParam;
+  }
+
   /* No drawing at all and not map interactions except moving and zooming if true.
    * Limit depends on projection. */
   bool noRender() const;
@@ -222,7 +232,7 @@ private:
   QSet<int> shownDetailAirportIds;
 
   /* Value from toolbar */
-  int minimumRunwayLengthFt = 0;
+  int minimumRunwayLengthFt = 0, maximumRunwayLengthFt = 0;
 
   /* Default detail factor. Range is from 5 to 15 */
   int detailLevel = 10;

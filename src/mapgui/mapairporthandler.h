@@ -45,7 +45,7 @@ struct MapAirportHandler :
   Q_OBJECT
 
 public:
-  explicit MapAirportHandler(QWidget * parent);
+  explicit MapAirportHandler(QObject * parent);
   virtual ~MapAirportHandler() override;
 
   MapAirportHandler(const MapAirportHandler& other) = delete;
@@ -64,14 +64,22 @@ public:
     return airportTypes;
   }
 
-  /* Get minimum runway to show. -1 if not applicable or not set */
+  /* Get minimum or maximum runway to show. */
   int getMinimumRunwayFt() const;
+  int getMaximumRunwayFt() const;
+
+  /* true if a value is in its default position i.e. not set. */
+  int isMinimumRunwaySet() const;
+  int isMaximumRunwaySet() const;
 
   /* Reset map display settings */
   void resetSettingsToDefault();
 
   /* Update units, labels and more */
   void optionsChanged(const optc::OptionChangeFlags& changeFlags);
+
+  /* Get text like "Runway length between %1 and %2." or "No runway length limit." */
+  QString getRunwayText() const;
 
 signals:
   /* Redraw map */
@@ -105,7 +113,7 @@ private:
   QActionGroup *actionGroupAddon = nullptr;
 
   /* Widget wrapper allowing to put an arbitrary widget into a menu */
-  apinternal::AirportSliderAction *sliderActionRunwayLength = nullptr;
+  apinternal::AirportSliderAction *sliderActionRunwayLengthMin = nullptr, *sliderActionRunwayLengthMax = nullptr;
   apinternal::AirportLabelAction *labelActionRunwayLength = nullptr;
 
   /* Toolbutton getting all actions for dropdown menu */
@@ -125,39 +133,69 @@ class AirportSliderAction
   Q_OBJECT
 
 public:
-  explicit AirportSliderAction(QObject *parent);
-  virtual ~AirportSliderAction() override;
+  /* typeMinSlider = true: minimum length, typeMinSlider = false: maximum length */
+  explicit AirportSliderAction(QObject *parent, bool typeMinSlider);
 
-  /* value or -1 for leftmost in local units */
-  int getSliderValue() const;
+  /* Real value or -1 for leftmost in local short distance units like ft or meter / 100. */
+  int getSliderValueReal() const
+  {
+    return sliderValueReal;
+  }
 
   void saveState() const;
   void restoreState();
 
   void optionsChanged(const optc::OptionChangeFlags& changeFlags);
 
-  void setValue(int value);
+  /* Set limitation to avoid overlapping ranges between min and max slider */
+  void setLimit(int limitReal);
+
+  /* Reset slider and values to default */
   void reset();
+
+  /* minmum and maximum values in local unit (ft or meter) */
+  int getMinValueReal() const; /* Unlimited */
+  int getMaxValueReal() const;
 
 signals:
   void valueChanged(int value);
   void sliderReleased();
 
-protected:
-  /* Create and delete widget for more than one menu (tearout and normal) */
+private:
+  /* Create and delete widgets for more than one menu (tearout and normal) */
   virtual QWidget *createWidget(QWidget *parent) override;
   virtual void deleteWidget(QWidget *widget) override;
 
-  void sliderValueChanged(int value);
+  /* Set value - real and not raw slider value */
+  void setValuesReal(int realValue);
+  void setMinMaxValues();
 
-  /* minmum and maximum values in local unit (ft or meter) */
-  int minValue() const; /* Unlimited */
-  int maxValue() const;
+  void sliderValueChanged(int valueRaw);
 
-  /* List of created/registered slider widgets */
+  void setMinMaxValue(QSlider *slider);
+  void setValueReal(QSlider *slider, int valueReal);
+
+  /* typeMinSlider = true: Raw is 0 to 140 from left to right. Real is 0 to 140 left to right.
+   * typeMinSlider = false: Raw is from -140 from right to left. Real is 0 to 140 left to right.*/
+  int rawToReal(int rawValue)
+  {
+    return minimumSlider ? rawValue : -rawValue;
+  }
+
+  int realToRaw(int realValue)
+  {
+    return minimumSlider ? realValue : -realValue;
+  }
+
+  /* List of created/registered slider widgets in menu and tear-off */
   QList<QSlider *> sliders;
-  int sliderValue = 0;
   opts::UnitShortDist sliderDistUnit = opts::DIST_SHORT_FT;
+
+  // Real values in local units / 100
+  int sliderValueReal = 0, sliderLimitMinReal = 0, sliderLimitMaxReal = 0;
+
+  /* Minimum slider if true. Otherwise maximum with shifted values. */
+  bool minimumSlider = true;
 };
 
 /*
@@ -169,13 +207,14 @@ class AirportLabelAction
   Q_OBJECT
 
 public:
-  AirportLabelAction(QObject *parent) : QWidgetAction(parent)
+  explicit AirportLabelAction(QObject *parent)
+    : QWidgetAction(parent)
   {
   }
 
   void setText(const QString& textParam);
 
-protected:
+private:
   /* Create a delete widget for more than one menu (tearout and normal) */
   virtual QWidget *createWidget(QWidget *parent) override;
   virtual void deleteWidget(QWidget *widget) override;

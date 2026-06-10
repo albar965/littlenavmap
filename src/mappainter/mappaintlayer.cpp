@@ -123,6 +123,7 @@ void MapPaintLayer::copySettings(const MapPaintLayer& other)
   weatherSource = other.weatherSource;
   sunShading = other.sunShading;
   minimumRunwayLengthFt = other.minimumRunwayLengthFt;
+  maximumRunwayLengthFt = other.maximumRunwayLengthFt;
 
   // Updates layers too
   setDetailLevel(other.detailLevel, other.detailLevelText);
@@ -382,6 +383,7 @@ bool MapPaintLayer::render(GeoPainter *painter, ViewportParams *viewport, const 
       context.currentRangeMarkerId = mapWidgetGui->getCurrentRangeMarkerId();
 
       context.mimimumRunwayLengthFt = minimumRunwayLengthFt;
+      context.maximumRunwayLengthFt = maximumRunwayLengthFt;
 
       // Copy default font
       context.defaultFont = painter->font();

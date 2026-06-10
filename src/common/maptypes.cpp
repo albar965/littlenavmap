@@ -1040,61 +1040,6 @@ const QString& MapAirport::displayIdent(bool useIata) const
   return ident;
 }
 
-bool MapAirport::closed() const
-{
-  return flags.testFlag(AP_CLOSED);
-}
-
-bool MapAirport::military() const
-{
-  return flags.testFlag(AP_MIL);
-}
-
-bool MapAirport::hard() const
-{
-  return flags.testFlag(AP_HARD);
-}
-
-bool MapAirport::tower() const
-{
-  return flags.testFlag(AP_TOWER);
-}
-
-bool MapAirport::towerObject() const
-{
-  return flags.testFlag(AP_TOWER_OBJ);
-}
-
-bool MapAirport::apron() const
-{
-  return flags.testFlag(AP_APRON);
-}
-
-bool MapAirport::taxiway() const
-{
-  return flags.testFlag(AP_TAXIWAY);
-}
-
-bool MapAirport::parking() const
-{
-  return flags.testFlag(AP_PARKING);
-}
-
-bool MapAirport::als() const
-{
-  return flags.testFlag(AP_ALS);
-}
-
-bool MapAirport::vasi() const
-{
-  return flags.testFlag(AP_VASI);
-}
-
-bool MapAirport::closedRunways() const
-{
-  return flags.testFlag(AP_RW_CLOSED);
-}
-
 bool MapAirport::emptyDraw() const
 {
   if(NavApp::isNavdataAll())
@@ -1145,122 +1090,56 @@ int MapAirport::paintPriority(bool forceAddonFlag, bool emptyOptsFlag, bool empt
   return longestRunwayLength;
 }
 
-bool MapAirport::addon() const
+bool MapAirport::isVisible(map::MapType types, int minRunwayFt, int maxRunwayFt, const MapLayer *layer) const
 {
-  return flags.testFlag(AP_ADDON);
-}
-
-bool MapAirport::is3d() const
-{
-  return flags.testFlag(AP_3D);
-}
-
-bool MapAirport::procedure() const
-{
-  return flags.testFlag(AP_PROCEDURE);
-}
-
-bool MapAirport::anyFuel() const
-{
-  return flags.testFlag(AP_AVGAS) || flags.testFlag(AP_JETFUEL);
-}
-
-bool MapAirport::complete() const
-{
-  return flags.testFlag(AP_COMPLETE);
-}
-
-bool MapAirport::soft() const
-{
-  return flags.testFlag(AP_SOFT);
-}
-
-bool MapAirport::softOnly() const
-{
-  return !flags.testFlag(AP_HARD) && flags.testFlag(AP_SOFT);
-}
-
-bool MapAirport::isMinor() const
-{
-  return softOnly() || helipadOnly() || waterOnly() || closed();
-}
-
-bool MapAirport::water() const
-{
-  return flags.testFlag(AP_WATER);
-}
-
-bool MapAirport::lighted() const
-{
-  return flags.testFlag(AP_LIGHT);
-}
-
-bool MapAirport::helipad() const
-{
-  return flags.testFlag(AP_HELIPAD);
-}
-
-bool MapAirport::waterOnly() const
-{
-  return !flags.testFlag(AP_HARD) && !flags.testFlag(AP_SOFT) && flags.testFlag(AP_WATER);
-}
-
-bool MapAirport::helipadOnly() const
-{
-  return !flags.testFlag(AP_HARD) && !flags.testFlag(AP_SOFT) && !flags.testFlag(AP_WATER) && flags.testFlag(AP_HELIPAD);
-}
-
-bool MapAirport::noRunways() const
-{
-  return !flags.testFlag(AP_HARD) && !flags.testFlag(AP_SOFT) && !flags.testFlag(AP_WATER);
-}
-
-bool MapAirport::isVisible(map::MapTypes types, int minRunwayFt, const MapLayer *layer) const
-{
-  // Show addon independent of layer if flag is set
-  if(addon() && types.testFlag(map::AIRPORT_ADDON_ZOOM_FILTER))
+  // Show addon independent of layer if flag is set. Add-on airports override zoom distance and filters
+  if(addon() && types & map::AIRPORT_ADDON_ZOOM_AND_FILTER)
+    // Ignore all filters and zoom
     return true;
 
-  bool overrideAddon = addon() && types.testFlag(map::AIRPORT_ADDON_ZOOM);
+  // Add-on airports override zoom distance but but not filter
+  bool overrideAddonZoom = addon() && types & map::AIRPORT_ADDON_ZOOM;
 
-  if(!overrideAddon)
-    // Use max of layer and GUI min runway length if not overrideing addon
-    // otherwise use only GUI limit to force addons
-    minRunwayFt = std::max(minRunwayFt, layer->getMinRunwayLength());
-
-  if(minRunwayFt > 0 && longestRunwayLength < minRunwayFt)
+  if(!overrideAddonZoom && longestRunwayLength < layer->getMinRunwayLength())
+    // No override - check length
     return false;
 
-  if(emptyDraw() && !types.testFlag(map::AIRPORT_EMPTY))
+  if(minRunwayFt != -1 && longestRunwayLength < minRunwayFt)
     return false;
 
-  if(hard() && !types.testFlag(map::AIRPORT_HARD))
+  if(maxRunwayFt != -1 && longestRunwayLength > maxRunwayFt)
+    return false;
+
+  if(emptyDraw() && !(types & AIRPORT_EMPTY))
+    return false;
+
+  if(hard() && !(types & AIRPORT_HARD))
     return false;
 
   // Check user settings in types
-  if(softOnly() && !types.testFlag(map::AIRPORT_SOFT))
+  if(softOnly() && !(types & AIRPORT_SOFT))
     return false;
 
   // Check layer minor/major airport flag but not if overriding addon
-  if(!overrideAddon && !layer->isAirportMinor() && isMinor())
+  if(!overrideAddonZoom && !layer->isAirportMinor() && isMinor())
     return false;
 
-  if(waterOnly() && !types.testFlag(map::AIRPORT_WATER))
+  if(waterOnly() && !(types & AIRPORT_WATER))
     return false;
 
-  if(helipadOnly() && !types.testFlag(map::AIRPORT_HELIPAD))
+  if(helipadOnly() && !(types & AIRPORT_HELIPAD))
     return false;
 
-  if(!lighted() && !types.testFlag(map::AIRPORT_UNLIGHTED))
+  if(!lighted() && !(types & AIRPORT_UNLIGHTED))
     return false;
 
-  if(!procedure() && !types.testFlag(map::AIRPORT_NO_PROCS))
+  if(!procedure() && !(types & AIRPORT_NO_PROCS))
     return false;
 
-  if(closed() && !types.testFlag(map::AIRPORT_CLOSED))
+  if(closed() && !(types & AIRPORT_CLOSED))
     return false;
 
-  if(military() && !types.testFlag(map::AIRPORT_MILITARY))
+  if(military() && !(types & AIRPORT_MILITARY))
     return false;
 
   return true;
@@ -2208,7 +2087,7 @@ int routeIndex(const map::MapBase *base)
 {
   if(base != nullptr)
   {
-    map::MapTypes type = base->getType();
+    map::MapType type = base->getType();
     if(type == map::AIRPORT)
       return base->asPtr<map::MapAirport>()->routeIndex;
     else if(type == map::VOR)
@@ -2229,7 +2108,7 @@ bool isAircraftShadow(const map::MapBase *base)
 {
   if(base != nullptr)
   {
-    map::MapTypes type = base->getType();
+    map::MapType type = base->getType();
     if(type == map::AIRCRAFT)
       return base->asPtr<map::MapUserAircraft>()->getAircraft().isOnlineShadow();
     else if(type == map::AIRCRAFT_AI)
@@ -2244,7 +2123,7 @@ map::MapAirspaceSources airspaceSource(const map::MapBase *base)
 {
   if(base != nullptr)
   {
-    map::MapTypes type = base->getType();
+    map::MapType type = base->getType();
     if(type == map::AIRSPACE)
       return base->asPtr<map::MapAirspace>()->src;
   }

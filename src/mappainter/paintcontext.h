@@ -103,7 +103,7 @@ struct PaintContext
   map::MapWeatherSource weatherSource;
   bool visibleWidget;
   bool paintCopyright = true, paintWindHeader = true, webMap = false, paintNavigation = true;
-  int mimimumRunwayLengthFt = -1; /* Value from toolbar */
+  int mimimumRunwayLengthFt = -1, maximumRunwayLengthFt = -1; /* Value from toolbar */
   int currentDistanceMarkerId = -1, currentHoldingMarkerId = -1, currentRangeMarkerId = -1;
 
   /* ===============================================================================
