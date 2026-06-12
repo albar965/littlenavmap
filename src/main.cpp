@@ -228,7 +228,7 @@ int main(int argc, char *argv[])
         language = QLocale().name();
 
       qInfo() << Q_FUNC_INFO << "Loading translations for" << language;
-      Translator::load(language);
+      Translator::load(language, {"atools", "marble"});
 
       // Load help URLs from urls.cfg =================================
       lnm::loadHelpUrls();
