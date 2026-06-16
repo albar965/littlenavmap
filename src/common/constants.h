@@ -237,6 +237,8 @@ const QLatin1String HOLDING_MARKER_DIALOG_COLOR("Marker/HoldingMarkerDialogColor
 const QLatin1String PATTERN_MARKER_DIALOG("Marker/TrafficPatternDialog");
 const QLatin1String PATTERN_MARKER_DIALOG_COLOR("Marker/TrafficPatternDialogColor2");
 
+const QLatin1String MARKER_RECENT("Marker/FilenamesRecent");
+
 /* Connections =========================================== */
 const QLatin1String NAVCONNECT_REMOTEHOSTS("NavConnect/RemoteHosts");
 const QLatin1String NAVCONNECT_REMOTE("NavConnect/Remote");

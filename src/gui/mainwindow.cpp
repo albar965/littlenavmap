@@ -355,6 +355,9 @@ MainWindow::MainWindow()
     layoutFileHistory = new FileHistoryHandler(this, lnm::LAYOUT_RECENT, ui->menuWindowLayoutRecent, ui->actionWindowLayoutClearRecent);
     layoutFileHistory->setFirstItemShortcut("Ctrl+Shift+W");
 
+    qDebug() << Q_FUNC_INFO << "Creating FileHistoryHandler for marker files";
+    markerFileHistory = new FileHistoryHandler(this, lnm::MARKER_RECENT, ui->menuRecentMarkerFiles, ui->actionRecentMarkersClear);
+
     Application::showSplashScreenMessage(tr("Loading map themes ... "));
     mapThemeHandler = new MapThemeHandler(this);
     mapThemeHandler->loadThemes();
@@ -657,6 +660,7 @@ void MainWindow::deInit()
     ATOOLS_DELETE_LOG(routeFileHistory);
     ATOOLS_DELETE_LOG(kmlFileHistory);
     ATOOLS_DELETE_LOG(layoutFileHistory);
+    ATOOLS_DELETE_LOG(markerFileHistory);
     ATOOLS_DELETE_LOG(optionsDialog);
     ATOOLS_DELETE_LOG(mapWidget);
     ATOOLS_DELETE_LOG(dialog);
@@ -1378,6 +1382,7 @@ void MainWindow::connectAllSlots()
   connect(ui->actionMapLoadMarkers, &QAction::triggered, this, &MainWindow::loadMarkers);
   connect(ui->actionMapAppendMarkers, &QAction::triggered, this, &MainWindow::appendMarkers);
   connect(ui->actionMapSaveMarkers, &QAction::triggered, this, &MainWindow::saveMarkers);
+  connect(markerFileHistory, &FileHistoryHandler::fileSelected, this, &MainWindow::loadMarkersRecent);
 
   connect(ui->actionRouteShowSkyVector, &QAction::triggered, this, &MainWindow::openInSkyVector);
 
@@ -1483,7 +1488,6 @@ void MainWindow::connectAllSlots()
   connect(mapWidget, &MapWidget::editUserWaypointName, routeController, &RouteController::editUserWaypointName);
   connect(ui->actionMapDragAndDropEditMode, &QAction::toggled, mapWidget, &MapWidget::mapDragAndDropEditModeToggled);
 
-
   // Map needs to restore title bar state when floating
   connect(ui->dockWidgetMap, &QDockWidget::topLevelChanged, this, &MainWindow::mapDockTopLevelChanged);
   connect(ui->dockWidgetMap, &QDockWidget::visibilityChanged, this, &MainWindow::mapDockVisibilityChanged);
@@ -1512,8 +1516,8 @@ void MainWindow::connectAllSlots()
 
   connect(ui->actionMapShowIls, &QAction::toggled, this, &MainWindow::updateMapObjectsShown);
   connect(ui->actionMapShowGls, &QAction::toggled, this, &MainWindow::updateMapObjectsShown);
-  connect(ui->actionMapShowIls,  &QAction::toggled, profileWidget, &ProfileWidget::showIlsChanged);
-  connect(ui->actionMapShowGls,  &QAction::toggled, profileWidget, &ProfileWidget::showIlsChanged);
+  connect(ui->actionMapShowIls, &QAction::toggled, profileWidget, &ProfileWidget::showIlsChanged);
+  connect(ui->actionMapShowGls, &QAction::toggled, profileWidget, &ProfileWidget::showIlsChanged);
 
   // MARK_RANGE  MARK_DISTANCE MARK_HOLDING  MARK_PATTERNS MARK_MSA
   connect(ui->actionMapHideAllMarkers, &QAction::triggered, mapMarkHandler, &MapMarkHandler::clearAllMarkers);
@@ -2039,10 +2043,16 @@ void MainWindow::setToolTipsEnabledMainMenu(bool enabled)
   {
     if(routeFileHistory != nullptr)
       routeFileHistory->updateMenuTooltips();
+
     if(kmlFileHistory != nullptr)
       kmlFileHistory->updateMenuTooltips();
+
     if(layoutFileHistory != nullptr)
       layoutFileHistory->updateMenuTooltips();
+
+    if(markerFileHistory != nullptr)
+      markerFileHistory->updateMenuTooltips();
+
     if(NavApp::getAircraftPerfController() != nullptr)
       NavApp::getAircraftPerfController()->updateMenuTooltips();
   }
@@ -2459,6 +2469,11 @@ void MainWindow::copyMarkersSelection(const MapMarkers& markers, bool append, bo
     dialog->information(tr("File is valid but empty."));
 }
 
+void MainWindow::loadMarkersRecent(const QString& filename)
+{
+  loadMarkersFile(filename, false /* forceLoading */);
+}
+
 void MainWindow::loadMarkers()
 {
   QString file = dialog->openFileDialog(tr("Open and Replace Map Markers"),
@@ -2469,18 +2484,18 @@ void MainWindow::loadMarkers()
     loadMarkersFile(file, false /* forceLoading */);
 }
 
-void MainWindow::loadMarkersFile(const QString& file, bool forceLoading)
+void MainWindow::loadMarkersFile(const QString& filename, bool forceLoading)
 {
-  qDebug() << Q_FUNC_INFO << file;
+  qDebug() << Q_FUNC_INFO << filename;
 
-  if(!file.isEmpty())
+  if(!filename.isEmpty())
   {
-    if(MapMarkers::isMarkersFile(file))
+    if(MapMarkers::isMarkersFile(filename))
     {
       // Load into temporary lists
       QGuiApplication::setOverrideCursor(Qt::WaitCursor);
       MapMarkers markers;
-      markers.restore(file);
+      markers.restore(filename);
       QGuiApplication::restoreOverrideCursor();
 
       // Show selection dialog and overwrite and copy
@@ -2489,10 +2504,15 @@ void MainWindow::loadMarkersFile(const QString& file, bool forceLoading)
       updateActionStates();
       updateMarkActionStates();
 
+      markerFileHistory->addFile(filename);
+
       statusBar->setStatusMessage(tr("Map Markers loaded."));
     }
     else
-      atools::gui::Dialog::warning(this, tr("The file \"%1\" is no valid map markers file.").arg(file));
+    {
+      markerFileHistory->removeFile(filename);
+      atools::gui::Dialog::warning(this, tr("The file \"%1\" is no valid map markers file.").arg(filename));
+    }
   }
 }
 
@@ -2520,10 +2540,15 @@ void MainWindow::appendMarkers()
       updateActionStates();
       updateMarkActionStates();
 
+      markerFileHistory->addFile(file);
+
       statusBar->setStatusMessage(tr("Map Markers loaded."));
     }
     else
+    {
+      markerFileHistory->removeFile(file);
       atools::gui::Dialog::warning(this, tr("The file \"%1\" is no valid map markers file.").arg(file));
+    }
   }
 }
 
@@ -2541,6 +2566,8 @@ void MainWindow::saveMarkers()
     QGuiApplication::setOverrideCursor(Qt::WaitCursor);
     mapWidget->getMapMarkers()->save(filename, 0);
     QGuiApplication::restoreOverrideCursor();
+
+    markerFileHistory->addFile(filename);
 
     updateActionStates();
     statusBar->setStatusMessage(tr("Map Markers saved."));
@@ -4256,6 +4283,9 @@ void MainWindow::restoreStateMain()
   qDebug() << Q_FUNC_INFO << "layoutFileHistory";
   layoutFileHistory->restoreState();
 
+  qDebug() << Q_FUNC_INFO << "markerFileHistory";
+  markerFileHistory->restoreState();
+
   qDebug() << Q_FUNC_INFO << "searchController";
   routeFileHistory->restoreState();
 
@@ -4729,6 +4759,10 @@ void MainWindow::saveFileHistoryStates()
   qDebug() << Q_FUNC_INFO << "layoutFileHistory";
   if(layoutFileHistory != nullptr)
     layoutFileHistory->saveState();
+
+  qDebug() << Q_FUNC_INFO << "markerFileHistory";
+  if(markerFileHistory != nullptr)
+    markerFileHistory->saveState();
 
   Settings::syncSettings();
 }

@@ -238,7 +238,8 @@ public:
 
   /* Load or append markers (measurment line, range rings, etc.) from XML file */
   void loadMarkers();
-  void loadMarkersFile(const QString& file, bool forceLoading);
+  void loadMarkersRecent(const QString& filename);
+  void loadMarkersFile(const QString& filename, bool forceLoading);
   void appendMarkers();
   void saveMarkers();
 
@@ -609,7 +610,8 @@ private:
   QString mainWindowTitle;
   SearchController *searchController = nullptr;
   RouteController *routeController = nullptr;
-  atools::gui::FileHistoryHandler *routeFileHistory = nullptr, *kmlFileHistory = nullptr, *layoutFileHistory = nullptr;
+  atools::gui::FileHistoryHandler *routeFileHistory = nullptr, *kmlFileHistory = nullptr, *layoutFileHistory = nullptr,
+                                  *markerFileHistory = nullptr;
 
   /* Filepath of the inline nav map legend */
   QString legendFile;
