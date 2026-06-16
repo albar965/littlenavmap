@@ -21,7 +21,7 @@
 
 namespace ms {
 
-QStringList mapMouseStateToString(const ms::MouseStates& flags)
+QStringList mouseStateToString(const ms::MouseStates& flags)
 {
   ATOOLS_FLAGS_TO_STR_BEGIN(DRAG_NONE);
   ATOOLS_FLAGS_TO_STR(DRAG_DIST_PRE);
@@ -37,6 +37,6 @@ QStringList mapMouseStateToString(const ms::MouseStates& flags)
   ATOOLS_FLAGS_TO_STR_END;
 }
 
-ATOOLS_DEFINE_DEBUG_OPERATORS_FOR_FLAGS(MouseStates, MouseState, mapMouseStateToString)
+ATOOLS_DEFINE_DEBUG_OPERATORS_FOR_FLAGS(MouseStates, MouseState, mouseStateToString)
 
 } // namespace mapwin

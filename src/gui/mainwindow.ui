@@ -129,15 +129,6 @@
     <property name="title">
      <string>&amp;Window</string>
     </property>
-    <widget class="QMenu" name="menuViewOverlays">
-     <property name="title">
-      <string>M&amp;ap Overlays</string>
-     </property>
-     <addaction name="actionMapOverlayOverview"/>
-     <addaction name="actionMapOverlayCompass"/>
-     <addaction name="actionMapOverlayScalebar"/>
-     <addaction name="actionMapOverlayNavigation"/>
-    </widget>
     <widget class="QMenu" name="menuWindowStyle">
      <property name="title">
       <string>&amp;Style</string>
@@ -183,8 +174,6 @@
      </property>
     </widget>
     <addaction name="menuShortcuts"/>
-    <addaction name="separator"/>
-    <addaction name="menuViewOverlays"/>
     <addaction name="separator"/>
     <addaction name="menuWindowStyle"/>
     <addaction name="separator"/>
@@ -282,6 +271,10 @@
     <addaction name="separator"/>
     <addaction name="menuHelpFilesAndFolders"/>
     <addaction name="separator"/>
+    <addaction name="actionMapShowGridConfig"/>
+    <addaction name="actionMapShowLabelConfig"/>
+    <addaction name="actionMapShowMapOverlayConfig"/>
+    <addaction name="separator"/>
     <addaction name="actionRouteDisplayOptions"/>
     <addaction name="actionInfoDisplayOptions"/>
     <addaction name="actionProfileDisplayOptions"/>
@@ -292,6 +285,16 @@
     <property name="title">
      <string>&amp;Map</string>
     </property>
+    <widget class="QMenu" name="menuViewOverlays">
+     <property name="title">
+      <string>M&amp;ap Overlays</string>
+     </property>
+     <addaction name="actionMapOverlayOverview"/>
+     <addaction name="actionMapOverlayCompass"/>
+     <addaction name="actionMapOverlayScalebar"/>
+     <addaction name="actionMapOverlayNavigation"/>
+     <addaction name="actionMapOverlayLabelHint"/>
+    </widget>
     <addaction name="actionMapShowHome"/>
     <addaction name="actionMapAircraftCenterNow"/>
     <addaction name="actionRouteCenter"/>
@@ -314,6 +317,8 @@
     <addaction name="separator"/>
     <addaction name="actionMapDetailsTextMore"/>
     <addaction name="actionMapDetailsTextLess"/>
+    <addaction name="separator"/>
+    <addaction name="menuViewOverlays"/>
    </widget>
    <widget class="QMenu" name="menuRoute">
     <property name="title">
@@ -492,7 +497,6 @@
     <addaction name="menuAircraft"/>
     <addaction name="separator"/>
     <addaction name="actionMapShowGrid"/>
-    <addaction name="actionMapShowGridConfig"/>
     <addaction name="separator"/>
     <addaction name="actionMapShowCities"/>
     <addaction name="actionMapShowMinimumAltitude"/>
@@ -8507,6 +8511,23 @@ relation to shown airport</string>
     <string>Show or hide the overview map floating overlay</string>
    </property>
   </action>
+  <action name="actionMapOverlayLabelHint">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="checked">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>&amp;Help</string>
+   </property>
+   <property name="toolTip">
+    <string>Show or hide hints for map object editing</string>
+   </property>
+   <property name="statusTip">
+    <string>Show or hide hints for map object editing</string>
+   </property>
+  </action>
   <action name="actionMapOverlayScalebar">
    <property name="checkable">
     <bool>true</bool>
@@ -12279,7 +12300,7 @@ relation to shown airport</string>
      <normaloff>:/littlenavmap/resources/icons/mapgridconfig.svg</normaloff>:/littlenavmap/resources/icons/mapgridconfig.svg</iconset>
    </property>
    <property name="text">
-    <string>Show Map Grid &amp;Configuration ...</string>
+    <string>Show Map &amp;Grid Configuration ...</string>
    </property>
    <property name="toolTip">
     <string>Show map grid configuration</string>
@@ -12744,6 +12765,42 @@ from either the departure parking or the user aircraft while taxiing.</string>
   <action name="actionOpenWebserverQrCode">
    <property name="text">
     <string>Show Web Server Address as &amp;QR code</string>
+   </property>
+  </action>
+  <action name="actionMapShowLabelConfig">
+   <property name="checked">
+    <bool>false</bool>
+   </property>
+   <property name="icon">
+    <iconset resource="../../littlenavmap.qrc">
+     <normaloff>:/littlenavmap/resources/icons/mapgridconfig.svg</normaloff>:/littlenavmap/resources/icons/mapgridconfig.svg</iconset>
+   </property>
+   <property name="text">
+    <string>Show Map Help &amp;Overlay Configuration ...</string>
+   </property>
+   <property name="toolTip">
+    <string>Show the configuration for the map help overlay</string>
+   </property>
+   <property name="statusTip">
+    <string>Show map grid</string>
+   </property>
+  </action>
+  <action name="actionMapShowMapOverlayConfig">
+   <property name="checked">
+    <bool>false</bool>
+   </property>
+   <property name="icon">
+    <iconset resource="../../littlenavmap.qrc">
+     <normaloff>:/littlenavmap/resources/icons/mapgridconfig.svg</normaloff>:/littlenavmap/resources/icons/mapgridconfig.svg</iconset>
+   </property>
+   <property name="text">
+    <string>Show &amp;Overview Map Overlay Configuration ...</string>
+   </property>
+   <property name="toolTip">
+    <string>Show the configuration for the overview map overlay</string>
+   </property>
+   <property name="statusTip">
+    <string>Show map grid</string>
    </property>
   </action>
  </widget>

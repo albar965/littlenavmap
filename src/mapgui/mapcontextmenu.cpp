@@ -814,10 +814,7 @@ void MapContextMenu::insertEditMenu(QMenu& menu)
   // Add all marker types, userpoints and logbook
   index.addRef(*result, map::MARK_RANGE | map::MARK_DISTANCE | map::MARK_HOLDING | map::MARK_PATTERNS | map::USERPOINT | map::LOGBOOK);
 
-  // Remove markers attached to a navaid with one range ring. These cannot be edited.
-  index.erase(std::remove_if(index.begin(), index.end(), [](const map::MapBase *base) -> bool {
-    return base->asPtr<map::RangeMarker>() != nullptr && base->asPtr<map::RangeMarker>()->attachedToNavaid;
-  }), index.end());
+  index.eraseRangeMarkerAttachedToNavaid();
 
   index.sort(DEFAULT_TYPE_SORT, alphaSort);
 
@@ -921,7 +918,7 @@ void MapContextMenu::insertRemoveMenu(QMenu& menu)
 
   insertMenuOrAction(menu, mc::REMOVE, index,
                      tr("&Delete Feature %1"), tr("Delete feature"),
-                     tr("Ctrl+Alt+Shift+Click"), QIcon(":/littlenavmap/resources/icons/routedeleteleg.svg"), false /* allowNoMapObject */,
+                     tr("Delete+Click"), QIcon(":/littlenavmap/resources/icons/routedeleteleg.svg"), false /* allowNoMapObject */,
                      callback);
 }
 

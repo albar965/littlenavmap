@@ -39,6 +39,7 @@ class SqlRecord;
 }
 
 namespace map {
+struct MapResultIndex;
 struct MapNav;
 struct MapUserpoint;
 struct MapParking;
@@ -226,10 +227,24 @@ public:
   int getCurrentRangeMarkerId() const;
 
   /* Shows the configuration dialog for the degree grid */
-  void showGridConfiguration();
+  void showCoordinateGridOverlayConfiguration();
+
+  /* Shows the configuration dialog for overlay label */
+  void showLabelOverlayConfiguration();
+
+  /* Show configuration for the overview map overlay */
+  void showOverviewMapOverlayConfiguration();
+
+  /* Show configuration for the overlay if available */
+  void showOverlayConfiguration(const QString& name);
 
   /* Logs map display settings */
   void printMapTypesToLog();
+
+  /* Updates the label floating item */
+  void updateHelpOverlayLabel();
+
+  void mapDragAndDropEditModeToggled();
 
   /* MapPaintWidget overrides for UI updates mostly ============================================================ */
   virtual void optionsChanged(const optc::OptionChangeFlags& changeFlags) override;
@@ -339,6 +354,9 @@ private:
 
   /* Connect menu actions to overlays */
   void connectOverlayMenus();
+
+  /* true if given floating item is visible */
+  bool isOverlayVisible(const QString& name);
 
   /* Show information from context menu or single click */
   void handleInfoClick(const QPoint& point);
@@ -460,6 +478,7 @@ private:
   /* Stop all line drag and drop if the map loses focus */
   virtual void focusOutEvent(QFocusEvent *) override;
   virtual void keyPressEvent(QKeyEvent *keyEvent) override;
+  virtual void keyReleaseEvent(QKeyEvent *keyEvent) override;
 
   /* Hide tooltip and coordinate display */
   virtual void leaveEvent(QEvent *) override;
@@ -467,7 +486,7 @@ private:
   /* Aircraft and next leg centering set in options and all other conditions are met (flight plan present, etc.) */
   bool isCenterLegAndAircraftActive();
 
-  bool isMarkerEditActive() const;
+  bool isDragAndDropEditActive() const;
 
   void zoomInOut(bool directionIn, bool smooth);
 
@@ -497,7 +516,8 @@ private:
   ms::MouseStates mouseState = ms::DRAG_NONE;
   bool noInfoClick = false;
   bool scrolling = false;
-  bool contextMenuActive = false, distanceDragShowDialog = false;
+  bool contextMenuActive = false, distanceDragShowDialog = false,
+       deletePressed = false /* Detect delete key status for Delete+Mouse+Click */;
 
   /* Current moving position when dragging a flight plan point or leg */
   QPoint routeDragCurrrent;
@@ -513,7 +533,17 @@ private:
 
   /* Save last tooltip position. If invalid/null no tooltip will be shown */
   QPoint tooltipGlobalPos;
-  map::MapResult *mapResultTooltip, *mapResultTooltipLast, *mapResultInfoClick;
+  map::MapResult *resultTooltip, *resultTooltipLast, *resultInfoClick;
+
+  /* Indexes filled for each mouse move for mouse click and help overlay actions */
+  map::MapResultIndex *currentResultIndex;
+  int currentRouteLegIndex = -1, currentRoutePointIndex = -1;
+
+  /* Indexes and enums stored in updateHelpOverlayLabel() to detect status changes to minimize updates. */
+  int routeLegIndexHelp = -1, routePointIndexHelp = -1;
+  ms::MouseStates mouseStateHelp = ms::DRAG_NONE;
+  map::MapType mapTypeHelp = map::ALL;
+  bool markerEditActiveHelp = false;
 
   MapTooltip *mapTooltip;
 

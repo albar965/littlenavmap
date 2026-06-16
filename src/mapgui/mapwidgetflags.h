@@ -59,6 +59,8 @@ ATOOLS_DECLARE_FLAGS_32(MouseStates, ms::MouseState)
 ATOOLS_DECLARE_OPERATORS_FOR_FLAGS(ms::MouseStates)
 ATOOLS_DECLARE_DEBUG_OPERATORS_FOR_FLAGS(MouseStates, ms::MouseState)
 
+QStringList mouseStateToString(const ms::MouseStates& flags);
+
 } // namespace ms
 
 Q_DECLARE_TYPEINFO(ms::MouseStates, Q_PRIMITIVE_TYPE);

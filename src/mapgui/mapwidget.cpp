@@ -206,9 +206,10 @@ MapWidget::MapWidget(MainWindow *parent)
   : MapPaintWidget(parent, QueryManager::instance()->getQueriesGui(), true /* visible */, false /* web */), mainWindow(parent)
 {
   takeoffLandingLastAircraft = new atools::fs::sc::SimConnectUserAircraft;
-  mapResultTooltip = new map::MapResult;
-  mapResultTooltipLast = new map::MapResult;
-  mapResultInfoClick = new map::MapResult;
+  resultTooltip = new map::MapResult;
+  resultTooltipLast = new map::MapResult;
+  resultInfoClick = new map::MapResult;
+  currentResultIndex = new map::MapResultIndex;
 
   distanceMarkerBackup = new map::DistanceMarker;
   distanceMarkerBackup->id = -1;
@@ -275,6 +276,7 @@ MapWidget::MapWidget(MainWindow *parent)
   mapOverlays.insert("scalebar", ui->actionMapOverlayScalebar);
   mapOverlays.insert("navigation", ui->actionMapOverlayNavigation);
   mapOverlays.insert("overviewmap", ui->actionMapOverlayOverview);
+  mapOverlays.insert("label", ui->actionMapOverlayLabelHint);
 
   mapVisible = new MapVisible(paintLayer);
 
@@ -314,9 +316,10 @@ MapWidget::~MapWidget()
   ATOOLS_DELETE_LOG(mapVisible);
   ATOOLS_DELETE_LOG(pushButtonExitFullscreen);
   ATOOLS_DELETE_LOG(takeoffLandingLastAircraft);
-  ATOOLS_DELETE_LOG(mapResultTooltip);
-  ATOOLS_DELETE_LOG(mapResultTooltipLast);
-  ATOOLS_DELETE_LOG(mapResultInfoClick);
+  ATOOLS_DELETE_LOG(resultTooltip);
+  ATOOLS_DELETE_LOG(resultTooltipLast);
+  ATOOLS_DELETE_LOG(resultInfoClick);
+  ATOOLS_DELETE_LOG(currentResultIndex);
 
   ATOOLS_DELETE_LOG(distanceMarkerBackup);
   ATOOLS_DELETE_LOG(holdingMarkerBackup);
@@ -412,7 +415,7 @@ void MapWidget::handleInfoClick(const QPoint& point)
     NavApp::getRouteController()->debugNetworkClick(Pos(lon, lat));
 #endif
 
-  mapResultInfoClick->clear();
+  resultInfoClick->clear();
 
   map::MapObjectQueryTypes queryTypes = map::QUERY_PREVIEW_PROC_POINTS;
 
@@ -428,62 +431,42 @@ void MapWidget::handleInfoClick(const QPoint& point)
       queryTypes |= map::QUERY_ALTERNATE;
   }
 
-  *mapResultInfoClick = resultAtPoint(point, queryTypes, true /* includeHiddenUserpoints */);
+  *resultInfoClick = resultAtPoint(point, queryTypes, true /* includeHiddenUserpoints */);
 
   // Removes the online aircraft from onlineAircraft which also have a simulator shadow in simAircraft
-  NavApp::getOnlinedataController()->removeOnlineShadowedAircraft(mapResultInfoClick->onlineAircraft, mapResultInfoClick->aiAircraft);
+  NavApp::getOnlinedataController()->removeOnlineShadowedAircraft(resultInfoClick->onlineAircraft, resultInfoClick->aiAircraft);
 
   // Remove all unwanted features
   optsd::DisplayClickOptions opts = OptionData::instance().getDisplayClickOptions();
 
   if(!opts.testFlag(optsd::CLICK_AIRCRAFT_USER))
-    mapResultInfoClick->userAircraft.clear();
+    resultInfoClick->clear(map::AIRCRAFT);
 
   if(!opts.testFlag(optsd::CLICK_AIRCRAFT_AI))
-  {
-    mapResultInfoClick->aiAircraft.clear();
-    mapResultInfoClick->onlineAircraft.clear();
-    mapResultInfoClick->onlineAircraftIds.clear();
-  }
+    resultInfoClick->clear(map::AIRCRAFT_AI | map::AIRCRAFT_AI_SHIP | map::AIRCRAFT_ONLINE);
 
   if(!(opts.testFlag(optsd::CLICK_NAVAID)))
-  {
-    mapResultInfoClick->vors.clear();
-    mapResultInfoClick->vorIds.clear();
-    mapResultInfoClick->ndbs.clear();
-    mapResultInfoClick->ndbIds.clear();
-    mapResultInfoClick->holdings.clear();
-    mapResultInfoClick->holdingIds.clear();
-    mapResultInfoClick->waypoints.clear();
-    mapResultInfoClick->waypointIds.clear();
-    mapResultInfoClick->ils.clear();
-    mapResultInfoClick->airways.clear();
-    mapResultInfoClick->userpoints.clear();
-    mapResultInfoClick->logbookEntries.clear();
-  }
+    resultInfoClick->clear(map::VOR | map::NDB | map::HOLDING | map::WAYPOINT | map::ILS | map::AIRWAY | map::USERPOINT | map::LOGBOOK);
 
   if(!opts.testFlag(optsd::CLICK_AIRSPACE))
-    mapResultInfoClick->airspaces.clear();
+    resultInfoClick->airspaces.clear();
 
-  if(opts.testFlag(optsd::CLICK_AIRPORT_PROC) && mapResultInfoClick->hasAirports())
+  if(opts.testFlag(optsd::CLICK_AIRPORT_PROC) && resultInfoClick->hasAirports())
   {
     bool departureFilter, arrivalFilter;
-    NavApp::getRouteConst().getAirportProcedureFlags(mapResultInfoClick->airports.constFirst(), -1, departureFilter, arrivalFilter);
+    NavApp::getRouteConst().getAirportProcedureFlags(resultInfoClick->airports.constFirst(), -1, departureFilter, arrivalFilter);
 
-    emit showProcedures(mapResultInfoClick->airports.constFirst(), departureFilter, arrivalFilter);
+    emit showProcedures(resultInfoClick->airports.constFirst(), departureFilter, arrivalFilter);
   }
 
   if(!opts.testFlag(optsd::CLICK_AIRPORT))
-  {
-    mapResultInfoClick->airports.clear();
-    mapResultInfoClick->airportIds.clear();
-  }
+    resultInfoClick->clear(map::AIRPORT);
 
   qDebug() << Q_FUNC_INFO << "CLICK ========================================";
-  qDebug() << Q_FUNC_INFO << *mapResultInfoClick;
+  qDebug() << Q_FUNC_INFO << *resultInfoClick;
   qDebug() << Q_FUNC_INFO << "==============================================";
 
-  emit showInformation(*mapResultInfoClick);
+  emit showInformation(*resultInfoClick);
 }
 
 void MapWidget::handleRouteClick(const QPoint& point)
@@ -626,9 +609,9 @@ void MapWidget::updateTooltipResult()
     queryTypes |= map::QUERY_AIRCRAFT_TRAIL_LOG;
 
   // Load tooltip data into mapSearchResultTooltip
-  *mapResultTooltip = resultAtPoint(mapFromGlobal(tooltipGlobalPos), queryTypes, true /* includeHiddenUserpoints */);
+  *resultTooltip = resultAtPoint(mapFromGlobal(tooltipGlobalPos), queryTypes, true /* includeHiddenUserpoints */);
 
-  NavApp::getOnlinedataController()->removeOnlineShadowedAircraft(mapResultTooltip->onlineAircraft, mapResultTooltip->aiAircraft);
+  NavApp::getOnlinedataController()->removeOnlineShadowedAircraft(resultTooltip->onlineAircraft, resultTooltip->aiAircraft);
 }
 
 void MapWidget::hideTooltip()
@@ -676,7 +659,7 @@ void MapWidget::showTooltip(bool update)
       // Build a new tooltip HTML for weather changes or aircraft updates
       QString text;
       if(paintLayer->getMapLayer() != nullptr)
-        text = mapTooltip->buildTooltip(*mapResultTooltip, pos, &NavApp::getRouteConst(), paintLayer->getMapLayer()->isAirportDiagram(),
+        text = mapTooltip->buildTooltip(*resultTooltip, pos, &NavApp::getRouteConst(), paintLayer->getMapLayer()->isAirportDiagram(),
                                         OptionData::instance().getDisplayTooltipOptions());
 
       if(!text.isEmpty())
@@ -724,7 +707,11 @@ void MapWidget::keyPressEvent(QKeyEvent *keyEvent)
 #endif
 
   // Does not work for key presses that are consumed by the widget
-  if(key == Qt::Key_Escape)
+  // detect key release
+  // the current time is just my way of preventing same output of debug messages
+  if(key == Qt::Key_Delete)
+    deletePressed = true;
+  else if(key == Qt::Key_Escape)
   {
     // Reset all
     cancelDragAll();
@@ -757,6 +744,15 @@ void MapWidget::keyPressEvent(QKeyEvent *keyEvent)
     else if(key == Qt::Key_Minus)
       zoomInOut(false /* in */, false /* smooth */);
   }
+
+  updateHelpOverlayLabel();
+}
+
+void MapWidget::keyReleaseEvent(QKeyEvent *keyEvent)
+{
+  if(static_cast<Qt::Key>(keyEvent->key()) == Qt::Key_Delete)
+    deletePressed = false;
+  updateHelpOverlayLabel();
 }
 
 map::MapResult MapWidget::resultAtPoint(const QPoint& point, map::MapObjectQueryType types, bool includeHiddenUserpoints)
@@ -800,34 +796,27 @@ bool MapWidget::mousePressCheckModifierActions(QMouseEvent *event)
   Pos pos = getGeoPos(event->position());
   if(pos.isValid())
   {
-    // Get all objects nearby sorted by distance to click position
-    map::MapResultIndex index(resultAtPoint(event->position(), map::QUERY_MARK, true /* includeHiddenUserpoints */));
-    index.sort(pos);
-
     if(event->buttons() == Qt::LeftButton)
     {
       if(modifiers == MODIFIER_EDIT)
       {
         // Edit any feature ==============================================
         // Copy of index with route legs only
-        map::MapResultIndex indexRoute = index;
-        indexRoute.eraseNonRouteIndexLegs();
-        int routeIndex = map::routeIndex(indexRoute.constFirstOrNull());
-        if(routeIndex != -1 && NavApp::getRouteConst().canEditComment(routeIndex))
+        if(currentRoutePointIndex != -1 && NavApp::getRouteConst().canEditComment(currentRoutePointIndex))
         {
-          editAny(indexRoute.constFirstOrNull());
+          emit editUserWaypointName(currentRoutePointIndex);
           return true; // Event was consumed
         }
         else
         {
           // Remove all except markers, userpoints and logbook entries
-          index.removeNot(map::MARK_ALL_EDITABLE | map::USERPOINT | map::LOGBOOK);
-
-          editAny(index.constFirstOrNull());
+          currentResultIndex->removeAllBut(map::MARK_ALL_EDITABLE | map::USERPOINT | map::LOGBOOK);
+          currentResultIndex->eraseRangeMarkerAttachedToNavaid();
+          editAny(currentResultIndex->constFirstOrNull());
           return true; // Event was consumed
         }
       }
-      else if(modifiers == MODIFIER_DELETE)
+      else if(modifiers == MODIFIER_DELETE || deletePressed)
       {
         // Delete any feature ==============================================
         const MapScreenIndex *screenIndex = getScreenIndex();
@@ -853,8 +842,8 @@ bool MapWidget::mousePressCheckModifierActions(QMouseEvent *event)
 
         // Delete any other feature ==============================================
         // Remove all except markers, userpoints and logbook entries
-        index.removeNot(map::MARK_ALL | map::USERPOINT | map::LOGBOOK);
-        removeAny(index.constFirstOrNull());
+        currentResultIndex->removeAllBut(map::MARK_ALL | map::USERPOINT | map::LOGBOOK);
+        removeAny(currentResultIndex->constFirstOrNull());
         return true; // Event was consumed
       }
       else if(modifiers == MODIFIER_ADD_ROUTE || modifiers == MODIFIER_APPEND_ROUTE)
@@ -867,8 +856,8 @@ bool MapWidget::mousePressCheckModifierActions(QMouseEvent *event)
       {
         // Range rings Shift+Click =======================================================================
         // Remove all objects that cannot have a range ring attached
-        index.removeNot(map::USERPOINT | map::LOGBOOK | map::NAV_ALL | map::AIRPORT);
-        addNavRangeMark(index.getResultFromFirst(), pos);
+        currentResultIndex->removeAllBut(map::USERPOINT | map::NAV_ALL | map::AIRPORT);
+        addNavRangeMark(currentResultIndex->getResultFromFirst(), pos);
         return true; // Event was consumed
       }
       else if(modifiers == MODIFIER_ADD_DISTANCE_MARKER)
@@ -881,10 +870,10 @@ bool MapWidget::mousePressCheckModifierActions(QMouseEvent *event)
         NavApp::getMapMarkHandler()->showMarkTypes(map::MARK_DISTANCE);
 
         // Remove all objects that cannot have a line attached
-        index.removeNot(map::USERPOINT | map::LOGBOOK | map::NAV_ALL | map::AIRPORT);
+        currentResultIndex->removeAllBut(map::USERPOINT | map::NAV_ALL | map::AIRPORT);
 
         // Add measurement line for Ctrl+Click
-        distanceMarkerBackup->id = addDistanceMarker(index.getResultFromFirst(), pos);
+        distanceMarkerBackup->id = addDistanceMarker(currentResultIndex->getResultFromFirst(), pos);
         setContextMenuPolicy(Qt::PreventContextMenu);
         inputHandler()->setHandleMouseEvents(false);
 
@@ -896,9 +885,9 @@ bool MapWidget::mousePressCheckModifierActions(QMouseEvent *event)
       {
         // Add userpoint Ctrl+Shift+Click =======================================================================
         // Remove all objects that cannot be a base for a new userpoint
-        index.removeNot(map::USERPOINT | map::NAV_ALL | map::AIRPORT);
+        currentResultIndex->removeAllBut(map::USERPOINT | map::NAV_ALL | map::AIRPORT);
 
-        emit addUserpointFromMap(index.getResultFromFirst(), pos, false /* airportAddon */);
+        emit addUserpointFromMap(currentResultIndex->getResultFromFirst(), pos, false /* airportAddon */);
         return true; // Event was consumed
       }
     } // if(event->buttons() == Qt::LeftButton)
@@ -924,6 +913,7 @@ void MapWidget::mousePressEvent(QMouseEvent *event)
   {
     // Zoomed to far out - reset cursor and ignore input
     setMouseCursor(Qt::ArrowCursor);
+    updateHelpOverlayLabel();
     return;
   }
 
@@ -932,6 +922,7 @@ void MapWidget::mousePressEvent(QMouseEvent *event)
     // Touch/navigation areas are enabled and cursor is within a touch area
     // Change cursor and ignore mouse press - touch area is triggered on mouse release
     setMouseCursor(Qt::PointingHandCursor);
+    updateHelpOverlayLabel();
     return;
   }
 
@@ -944,8 +935,11 @@ void MapWidget::mousePressEvent(QMouseEvent *event)
   // ==============================================================================
   // Take actions (add/remove range rings, measurement), Ctrl+Click, Shift+Click, etc.
   if(mousePressCheckModifierActions(event))
+  {
+    updateHelpOverlayLabel();
     // Event was consumed - do not proceed here
     return;
+  }
 
   // Keep only three relevant modifiers
   Qt::KeyboardModifiers modifiers = event->modifiers() & MODIFIER_FILTER;
@@ -954,8 +948,6 @@ void MapWidget::mousePressEvent(QMouseEvent *event)
     // Left button pressed down =========================================
     const Pos pos = getGeoPos(event->position());
     bool clickHandled = false;
-    map::MapResultIndex index(resultAtPoint(event->position(), map::QUERY_MARK, false /* includeHiddenUserpoints */));
-    index.sort(pos);
 
     if(mouseState == ms::DRAG_DIST_PRE)
     {
@@ -965,9 +957,9 @@ void MapWidget::mousePressEvent(QMouseEvent *event)
         // Pre-state for distance marker. Start dragging at click position and let use position the end
         NavApp::getMainUi()->actionStartDistanceMarker->setChecked(true);
         mouseState = ms::DRAG_DIST_NEW_TO;
-        index.removeNot(map::USERPOINT | map::LOGBOOK | map::NAV_ALL | map::AIRPORT);
+        currentResultIndex->removeAllBut(map::USERPOINT | map::NAV_ALL | map::AIRPORT);
 
-        distanceMarkerBackup->id = addDistanceMarker(index.getResultFromFirst(), pos);
+        distanceMarkerBackup->id = addDistanceMarker(currentResultIndex->getResultFromFirst(), pos);
         distanceDragShowDialog = true;
       }
 
@@ -975,8 +967,7 @@ void MapWidget::mousePressEvent(QMouseEvent *event)
     }
     else
     {
-      const MapScreenIndex *screenIndex = getScreenIndex();
-      if(!clickHandled && isMarkerEditActive())
+      if(!clickHandled && isDragAndDropEditActive())
       {
         // Order of handled features is defined here ===============================================================
 
@@ -984,42 +975,36 @@ void MapWidget::mousePressEvent(QMouseEvent *event)
         const Route& route = NavApp::getRouteConst();
         if(route.size() > 1)
         {
-          // Make distance a bit larger to prefer points
-          int routePoint = screenIndex->getNearestRoutePointIndex(event->pos().x(), event->pos().y(), screenSearchDistance * 4 / 3,
-                                                                  true /* editableOnly */);
-          if(routePoint != -1)
+          if(currentRoutePointIndex != -1)
           {
             // Drag a flight plan waypoint ==============================================
-            routeDragPoint = routePoint;
-#ifdef DEBUG_INFORMATION
-            qDebug() << "route point" << routePoint;
-#endif
+            routeDragPoint = currentRoutePointIndex;
             // Found a leg - start dragging
             mouseState = ms::DRAG_ROUTE_POINT;
 
             routeDragCurrrent = QPoint(event->pos().x(), event->pos().y());
             routeDragFixed.clear();
 
-            if(routePoint > 0 && route.value(routePoint).isAlternate())
+            if(currentRoutePointIndex > 0 && route.value(currentRoutePointIndex).isAlternate())
               // Alternate airports are treated as endpoints
               routeDragFixed.append(route.getDestinationAirportLeg().getPosition());
-            else if(routePoint == route.getDestinationAirportLegIndex() && route.hasAlternates())
+            else if(currentRoutePointIndex == route.getDestinationAirportLegIndex() && route.hasAlternates())
             {
               // Add all lines to alternates as fixed lines if moving destination with alternates
-              if(routePoint > 0)
-                routeDragFixed.append(route.value(routePoint - 1).getPosition());
+              if(currentRoutePointIndex > 0)
+                routeDragFixed.append(route.value(currentRoutePointIndex - 1).getPosition());
               for(int i = route.getAlternateLegsOffset(); i < route.size(); i++)
                 routeDragFixed.append(route.value(i).getPosition());
             }
             else
             {
-              if(routePoint > 0)
+              if(currentRoutePointIndex > 0)
                 // First point of route
-                routeDragFixed.append(route.value(routePoint - 1).getPosition());
+                routeDragFixed.append(route.value(currentRoutePointIndex - 1).getPosition());
 
-              if(routePoint < route.size() - 1)
+              if(currentRoutePointIndex < route.size() - 1)
                 // Last point of plan
-                routeDragFixed.append(route.value(routePoint + 1).getPosition());
+                routeDragFixed.append(route.value(currentRoutePointIndex + 1).getPosition());
             }
 
             clickHandled = true;
@@ -1027,60 +1012,57 @@ void MapWidget::mousePressEvent(QMouseEvent *event)
           else
           {
             // Drag a route leg ===================================================
-            int routeLeg = screenIndex->getNearestRouteLegIndex(event->pos().x(), event->pos().y(), screenSearchDistance);
-            if(routeLeg != -1)
+            if(currentRouteLegIndex != -1)
             {
-              routeDragLeg = routeLeg;
-#ifdef DEBUG_INFORMATION
-              qDebug() << "route leg" << routeLeg;
-#endif
+              routeDragLeg = currentRouteLegIndex;
 
               // Found a leg - start dragging
               mouseState = ms::DRAG_ROUTE_LEG;
-
               routeDragCurrrent = QPoint(event->pos().x(), event->pos().y());
-
               routeDragFixed.clear();
-              routeDragFixed.append(route.value(routeLeg).getPosition());
-              routeDragFixed.append(route.value(routeLeg + 1).getPosition());
+              routeDragFixed.append(route.value(currentRouteLegIndex).getPosition());
+              routeDragFixed.append(route.value(currentRouteLegIndex + 1).getPosition());
               clickHandled = true;
             }
           }
         } // if(route.size() > 1)
 
         // Start map marker drag and drop ===================================================================================
-        index.removeNot(map::MARK_ALL | map::USERPOINT);
-        map::MapResult result = index.getResultFromFirst();
+        currentResultIndex->removeAllBut(map::MARK_ALL | map::USERPOINT);
+        currentResultIndex->eraseRangeMarkerAttachedToNavaid(); // Attached cannot be moved
+
+        const map::MapBase *base = currentResultIndex->constFirstOrNull();
+        map::MapType type = base != nullptr ? base->type : map::NONE;
 
         // Measurement line start or end clicked ===================================
-        if(!clickHandled && result.hasDistanceMarks())
+        if(!clickHandled && type == map::MARK_DISTANCE)
         {
-          *distanceMarkerBackup = result.distanceMarks.constFirst();
+          *distanceMarkerBackup = base->asObj<map::DistanceMarker>();
           mouseState = distanceMarkerBackup->from.distanceMeterTo(pos) < distanceMarkerBackup->to.distanceMeterTo(pos) ?
                        ms::DRAG_DIST_CHANGE_FROM : ms::DRAG_DIST_CHANGE_TO; // Either change end or origin
           clickHandled = true;
         }
 
         // Range rings center clicked ===================================
-        if(!clickHandled && result.hasRangeMarks())
+        if(!clickHandled && type == map::MARK_RANGE)
         {
-          *rangeMarkerBackup = result.rangeMarks.constFirst();
+          *rangeMarkerBackup = base->asObj<map::RangeMarker>();
           mouseState = ms::DRAG_RANGE;
           clickHandled = true;
         }
 
         // Holding clicked ===================================
-        if(!clickHandled && result.hasHoldingMarks())
+        if(!clickHandled && type == map::MARK_HOLDING)
         {
-          *holdingMarkerBackup = result.holdingMarks.constFirst();
+          *holdingMarkerBackup = base->asObj<map::HoldingMarker>();
           mouseState = ms::DRAG_HOLDING;
           clickHandled = true;
         }
 
         // Userpoint clicked ===================================
-        if(!clickHandled && result.hasUserpoints())
+        if(!clickHandled && type == map::USERPOINT)
         {
-          const map::MapUserpoint& userpoint = result.userpoints.constFirst();
+          const map::MapUserpoint& userpoint = base->asObj<map::MapUserpoint>();
           const MapLayer *mapLayer = paintLayer->getMapLayer();
           if(userpoint.isValid() && mapLayer != nullptr)
           {
@@ -1112,6 +1094,8 @@ void MapWidget::mousePressEvent(QMouseEvent *event)
     if(event->button() == Qt::LeftButton && modifiers == Qt::NoModifier)
       setMouseCursor(Qt::OpenHandCursor);
   }
+
+  updateHelpOverlayLabel();
 }
 
 void MapWidget::mouseReleaseEvent(QMouseEvent *event)
@@ -1123,14 +1107,20 @@ void MapWidget::mouseReleaseEvent(QMouseEvent *event)
            << "touch" << isTouchArea(event) << "distance" << QLineF(buttonDownPoint, event->position()).length();
 #endif
 
+  updateHelpOverlayLabel();
+
   if(noRender())
   {
     // Zoomed to far out - reset cursor and ignore input
     setMouseCursor(Qt::ArrowCursor);
+    updateHelpOverlayLabel();
     return;
   }
 
-  if(!mouseState.testAnyFlag(ms::DRAG_ANY) && isTouchArea(event))
+  // Check if mouse was moved between down and up which can happen while dragging overlays
+  bool clickInRange = QLineF(buttonDownPoint, event->position()).length() < CLICK_MOVE_MIN_DISTANCE_PIXEL;
+
+  if(!mouseState.testAnyFlag(ms::DRAG_ANY) && isTouchArea(event) && clickInRange)
   {
     // Not dragging anything and inside touch area
 
@@ -1144,11 +1134,9 @@ void MapWidget::mouseReleaseEvent(QMouseEvent *event)
       setMouseCursor(Qt::PointingHandCursor);
     }
 
+    updateHelpOverlayLabel();
     return;
   }
-
-  // Keep only three relevant modifiers
-  Qt::KeyboardModifiers modifiers = event->modifiers() & MODIFIER_FILTER;
 
   hideTooltip();
 
@@ -1158,11 +1146,15 @@ void MapWidget::mouseReleaseEvent(QMouseEvent *event)
   // Avoid unneeded repaints
   resetPaintForDragTimer.stop();
 
+  // Keep only three relevant modifiers
+  Qt::KeyboardModifiers modifiers = event->modifiers() & MODIFIER_FILTER;
   const Pos pos = getGeoPos(event->position());
 
-  if(!scrolling && mouseState == ms::DRAG_NONE && modifiers == Qt::NoModifier && event->button() == Qt::LeftButton && !noRender())
+  if(!scrolling && mouseState == ms::DRAG_NONE && modifiers == Qt::NoModifier && event->button() == Qt::LeftButton && !noRender() &&
+     clickInRange)
   {
     // Not scrolling, not dragging and no modifiers and left button clicked
+    // Also check for movement which can happen while dragging overlays
 
     if(!noInfoClick)
     {
@@ -1176,6 +1168,8 @@ void MapWidget::mouseReleaseEvent(QMouseEvent *event)
         if(pos.isValid())
           showPos(pos, map::INVALID_DISTANCE_VALUE, true);
       }
+
+      updateHelpOverlayLabel();
       return;
     }
     else
@@ -1198,7 +1192,7 @@ void MapWidget::mouseReleaseEvent(QMouseEvent *event)
   MapMarkers *markers = getScreenIndex()->getMapMarkers();
   map::MapResult result = resultAtPoint(event->position(), map::QUERY_NONE, false /* includeHiddenUserpoints */);
 
-  if(QLineF(buttonDownPoint, event->position()).length() < CLICK_MOVE_MIN_DISTANCE_PIXEL)
+  if(clickInRange)
   {
     // Too short movement between button down and release - cancel
     cancelDragAll();
@@ -1301,6 +1295,7 @@ void MapWidget::mouseReleaseEvent(QMouseEvent *event)
   }
 
   mainWindow->updateMarkActionStates();
+  updateHelpOverlayLabel();
 }
 
 void MapWidget::mouseDoubleClickEvent(QMouseEvent *event)
@@ -1333,11 +1328,11 @@ void MapWidget::mouseDoubleClickEvent(QMouseEvent *event)
   map::MapResult result;
 
   if(OptionData::instance().getMapNavigation() == opts::MAP_NAV_CLICK_CENTER &&
-     !mapResultInfoClick->isEmpty(map::AIRPORT | map::AIRCRAFT_ALL | map::NAV_ALL | map::ILS | map::USERPOINT | map::USERPOINTROUTE))
+     !resultInfoClick->isEmpty(map::AIRPORT | map::AIRCRAFT_ALL | map::NAV_ALL | map::ILS | map::USERPOINT | map::USERPOINTROUTE))
   {
     // Do info click and use previous result from single click event if the double click was on a map object
-    result = *mapResultInfoClick;
-    mapResultInfoClick->clear();
+    result = *resultInfoClick;
+    resultInfoClick->clear();
   }
   else
     result = resultAtPoint(event->position(), map::QUERY_MARK, true /* includeHiddenUserpoints */);
@@ -1476,6 +1471,8 @@ void MapWidget::wheelEvent(QWheelEvent *event)
       }
     }
   }
+
+  updateHelpOverlayLabel();
 
 #ifdef DEBUG_INFORMATION
   qDebug() << Q_FUNC_INFO << "distance NM" << atools::geo::kmToNm(distance())
@@ -1716,6 +1713,7 @@ bool MapWidget::eventFilter(QObject *obj, QEvent *event)
 
     event->accept(); // Do not propagate further
     QWidget::event(event); // Call own event handler
+    updateHelpOverlayLabel();
     return true; // Do not process further
   }
 
@@ -1724,6 +1722,7 @@ bool MapWidget::eventFilter(QObject *obj, QEvent *event)
   {
     event->accept(); // Do not propagate further
     QWidget::event(event); // Call own event handler
+    updateHelpOverlayLabel();
     return true; // Do not process further
   }
 
@@ -1732,6 +1731,7 @@ bool MapWidget::eventFilter(QObject *obj, QEvent *event)
   {
     event->accept(); // Do not propagate further
     QWidget::event(event); // Call own event handler
+    updateHelpOverlayLabel();
     return true; // Do not process further
   }
 
@@ -1747,10 +1747,12 @@ bool MapWidget::eventFilter(QObject *obj, QEvent *event)
     // No not pass general mouse movements to marble widget to avoid cursor fighting =========================================
     event->accept(); // Do not propagate further
     QWidget::event(event); // Call own event handler
+    updateHelpOverlayLabel();
     return true; // Do not process further
   }
 
-  return false;
+  updateHelpOverlayLabel();
+  return Marble::MarbleWidget::eventFilter(obj, event);
 }
 
 void MapWidget::cancelDragAll()
@@ -1758,6 +1760,7 @@ void MapWidget::cancelDragAll()
   // Do not cancel if context menu or dialog windows are open which causes focus loss
   if(!contextMenuActive)
   {
+    deletePressed = false;
     cancelDragRoute();
     cancelDragUserpoint();
     cancelDragDistanceMarker();
@@ -1768,6 +1771,7 @@ void MapWidget::cancelDragAll()
     mouseState = ms::DRAG_NONE;
     setViewContext(Marble::Still);
     setContextMenuPolicy(Qt::DefaultContextMenu);
+    updateHelpOverlayLabel();
     update();
   }
 }
@@ -1838,6 +1842,9 @@ void MapWidget::mouseMoveEvent(QMouseEvent *event)
            << "touch" << isTouchArea(event) << pos;
 #endif
 
+  currentResultIndex->clearAll();
+  currentRouteLegIndex = currentRoutePointIndex = -1;
+
   if(!isActiveWindow())
     return;
 
@@ -1853,6 +1860,7 @@ void MapWidget::mouseMoveEvent(QMouseEvent *event)
   {
     if(!scrolling)
       setMouseCursor(Qt::PointingHandCursor);
+    updateHelpOverlayLabel();
     return;
   }
 
@@ -1861,9 +1869,7 @@ void MapWidget::mouseMoveEvent(QMouseEvent *event)
 
   if(pos.isValidRange())
   {
-    if(mouseState.testFlag(ms::DRAG_DIST_PRE))
-      setMouseCursor(Qt::CrossCursor);
-    else if(mouseState.testAnyFlag(ms::DRAG_DIST_ANY))
+    if(mouseState.testAnyFlag(ms::DRAG_DIST_ANY))
     {
       // Changing or adding distance measurement line ==========================================
       // Position is valid update the distance mark continuously
@@ -1896,48 +1902,55 @@ void MapWidget::mouseMoveEvent(QMouseEvent *event)
       userpointDragCurrrent = QPoint(event->pos().x(), event->pos().y());
       update();
     }
-    else if(mouseState == ms::DRAG_NONE && !noRender())
+    else if((mouseState == ms::DRAG_NONE || mouseState.testFlag(ms::DRAG_DIST_PRE)) && !noRender())
     {
       // No drag mode - just mouse movement - change cursor =================================
 
       if(event->buttons() == Qt::NoButton)
       {
+        QCursor cursor = Qt::ArrowCursor;
+
         if(isTouchArea(event))
           // Touchscreen mode and mouse over one area =====================================
-          setMouseCursor(Qt::PointingHandCursor);
+          cursor = Qt::PointingHandCursor;
         else if(!isPointVisible(event->pos()))
           // Position is outside visible globe
-          setMouseCursor(Qt::ArrowCursor);
+          cursor = Qt::ForbiddenCursor;
         else
         {
           // Normal mode change cursor over route waypoints or legs and others  =====================================
-
           // No dragging going on now - update cursor over flight plan legs or markers
+          // Get nearest features and keep result for help overlay
           const Route& route = NavApp::getRouteConst();
 
-          Qt::CursorShape cursorShape = Qt::ArrowCursor;
+          // Make distance a bit larger to prefer points
+          currentRoutePointIndex =
+            screenIndex->getNearestRoutePointIndex(event->pos().x(), event->pos().y(), screenSearchDistance * 4 / 3,
+                                                   true /* editableOnly */);
+          currentRouteLegIndex = screenIndex->getNearestRouteLegIndex(event->pos().x(), event->pos().y(), screenSearchDistance);
 
-          if(isMarkerEditActive())
+          if(route.size() > 1 && isDragAndDropEditActive() && (currentRoutePointIndex != -1 || currentRouteLegIndex != -1))
+            // Change cursor at one route point or change cursor above a route line
+            cursor = Qt::PointingHandCursor;
+
+          // Other markers =======================================================================
+          // Get all features since these are also used as a template for userpoints
+          map::MapResultIndex index = map::MapResultIndex(resultAtPoint(event->position(), map::QUERY_MARK,
+                                                                        false /* includeHiddenUserpoints */));
+
+          if(!index.isEmpty())
           {
-            // Make distance a bit larger to prefer points
-            if(screenIndex->getNearestRoutePointIndex(event->pos().x(), event->pos().y(), screenSearchDistance * 4 / 3,
-                                                      true /* editableOnly */) != -1 && route.size() > 1)
-              // Change cursor at one route point
-              cursorShape = Qt::PointingHandCursor;
-            else if(screenIndex->getNearestRouteLegIndex(event->pos().x(), event->pos().y(), screenSearchDistance) != -1 &&
-                    route.size() > 1)
-              // Change cursor above a route line
-              cursorShape = Qt::PointingHandCursor;
-            else
-            {
-              if(resultAtPoint(event->position(), map::QUERY_MARK, false /* includeHiddenUserpoints */).
-                 hasTypes(map::MARK_ALL | map::USERPOINT))
-                cursorShape = Qt::PointingHandCursor;
-            }
-          }
+            index.sort(pos);
+            *currentResultIndex = index;
 
-          setMouseCursor(cursorShape);
+            index.eraseRangeMarkerAttachedToNavaid();
+            const map::MapBase *base = index.constFirstOrNull();
+            if(base != nullptr && isDragAndDropEditActive() && map::MapTypes(base->type).testAnyFlag(map::MARK_ALL | map::USERPOINT))
+              cursor = Qt::PointingHandCursor;
+          }
         }
+
+        setCursor(cursor);
       } // if(event->buttons() == Qt::NoButton)
       else
         // A mouse button is pressed
@@ -1982,6 +1995,8 @@ void MapWidget::mouseMoveEvent(QMouseEvent *event)
     else
       NavApp::getStatusBar()->updateMapPositionLabel(atools::geo::EMPTY_POS, QPoint());
   }
+
+  updateHelpOverlayLabel();
 }
 
 void MapWidget::resetPaintForDrag()
@@ -2320,6 +2335,8 @@ void MapWidget::contextMenuEvent(QContextMenuEvent *event)
   }
   else
     connectGlobalActions();
+
+  updateHelpOverlayLabel();
 }
 
 void MapWidget::editAny(const map::MapBase *base)
@@ -2342,8 +2359,6 @@ void MapWidget::editAny(const map::MapBase *base)
     else if(base->type == map::MARK_PATTERNS)
       editPatternMark(base->id);
   }
-  else
-    qWarning() << Q_FUNC_INFO << "base is null";
 }
 
 void MapWidget::removeAny(const map::MapBase *base)
@@ -2784,15 +2799,153 @@ int MapWidget::getCurrentRangeMarkerId() const
   return rangeMarkerBackup->id;
 }
 
-void MapWidget::showGridConfiguration()
+void MapWidget::updateHelpOverlayLabel()
 {
-  qDebug() << Q_FUNC_INFO;
+  if(!isOverlayVisible("label"))
+    return;
 
-  // Look through all render plugins and look for GraticulePlugin
-  const QList<Marble::RenderPlugin *> plugins = renderPlugins();
-  for(Marble::RenderPlugin *plugin : plugins)
+  // Order of handled features as in mousePressEvent() ===============================================================
+  map::MapResultIndex index = *currentResultIndex;
+  index.removeAllBut(map::MARK_ALL | map::USERPOINT | map::LOGBOOK);
+
+  const map::MapBase *base = index.constFirstOrNull();
+  const map::MapType type = base != nullptr ? base->type : map::NONE;
+
+  // Check if any state has changed and update only if this is the case
+  if(type != mapTypeHelp || currentRouteLegIndex != routeLegIndexHelp ||
+     mouseState != mouseStateHelp || routePointIndexHelp != currentRoutePointIndex ||
+     markerEditActiveHelp != isDragAndDropEditActive())
   {
-    if(plugin->nameId() == "coordinate-grid")
+    // Save state
+    mouseStateHelp = mouseState;
+    mapTypeHelp = type;
+    routeLegIndexHelp = currentRouteLegIndex;
+    routePointIndexHelp = currentRoutePointIndex;
+    markerEditActiveHelp = isDragAndDropEditActive();
+
+    QString text;
+
+    // Look at mouse states and build help text =================================
+    if(mouseState == ms::DRAG_DIST_PRE)
+      text = tr("${clickdrag} to add measurement line.");
+    else if(mouseState == ms::DRAG_DIST_NEW_TO || mouseState == ms::DRAG_DIST_CHANGE_FROM || mouseState == ms::DRAG_DIST_CHANGE_TO ||
+            mouseState == ms::DRAG_ROUTE_LEG || mouseState == ms::DRAG_ROUTE_POINT || mouseState == ms::DRAG_USER_POINT ||
+            mouseState == ms::DRAG_HOLDING || mouseState == ms::DRAG_RANGE)
+      text = tr("Press ${cancel} to cancel dragging.");
+    else if(currentRoutePointIndex != -1)
+    {
+      if(isDragAndDropEditActive())
+        text = tr("${clickdrag} to move, ${editclick} to edit or ${delclick} to delete flight plan position.");
+      else
+        text = tr("${editclick} to edit or ${delclick} to delete flight plan position.");
+    }
+    else if(currentRouteLegIndex != -1 && isDragAndDropEditActive())
+      text = tr("${clickdrag} to add new flight plan position.");
+    else if(type == map::MARK_DISTANCE)
+    {
+      if(isDragAndDropEditActive())
+        text = tr("${clickdrag} to move, ${editclick} to edit or ${delclick} to delete measurement line.");
+      else
+        text = tr("${editclick} to edit or ${delclick} to delete measurement line.");
+    }
+    else if(type == map::MARK_RANGE)
+    {
+      index.removeAllBut(map::MARK_RANGE);
+      index.eraseRangeMarkerAttachedToNavaid();
+      if(index.constFirstOrNull() != nullptr)
+      {
+        // Normal range rings
+        if(isDragAndDropEditActive())
+          text = tr("${clickdrag} to move, ${editclick} to edit or ${delclick} to delete range rings.");
+        else
+          text = tr("${delclick} to delete range rings.");
+      }
+      else
+        text = tr("${delclick} to delete navaid range ring.");
+    }
+    else if(type == map::MARK_HOLDING)
+    {
+      if(isDragAndDropEditActive())
+        text = tr("${clickdrag} to move, ${editclick} to edit or ${delclick} to delete holding.");
+      else
+        text = tr("${editclick} to edit or ${delclick} to delete holding.");
+    }
+    else if(type == map::MARK_PATTERNS)
+      text = tr("${editclick} to edit or ${delclick} to delete traffic pattern.");
+    else if(type == map::MARK_MSA)
+      text = tr("${delclick} to delete MSA Diagram.");
+    else if(type == map::USERPOINT)
+    {
+      if(isDragAndDropEditActive())
+        text = tr("${clickdrag} to move, ${editclick} to edit or ${delclick} to delete userpoint.");
+      else
+        text = tr("${editclick} to edit or ${delclick} to delete userpoint.");
+    }
+    else if(type == map::LOGBOOK)
+      text = tr("${editclick} to edit or ${delclick} to delete logbook entry.");
+    else
+    {
+      if(isDragAndDropEditActive())
+        text = tr("${editclick} to edit, ${delclick} to delete or ${clickdrag} to move "
+                  "a marker, userpoint or flight plan point or leg.");
+      else
+        text = tr("${editclick} to edit or ${delclick} to delete marker, userpoint or flight plan point or leg.");
+      text.append(tr("<br/><small><b>Right-Click</b> here to change this help overlay.</small>"));
+    }
+
+    // Replace shortcut variables ====================
+    text.replace(QStringLiteral("${clickdrag}"), tr("<b>Click and drag</b>"));
+    text.replace(QStringLiteral("${editclick}"), tr("<b>Alt+Click</b>"));
+    text.replace(QStringLiteral("${delclick}"), tr("<b>Delete+Click</b>"));
+    text.replace(QStringLiteral("${cancel}"), tr("<b>Esc</b> or <b>Right-Click</b>"));
+
+#ifdef DEBUG_INFORMATION_OVERLAY_LABEL
+    text = QStringLiteral("[handle mouse %1, scrolling %2, no info click %3, "
+                          "state %4, buttons %5, marker edit %6, del %7]").
+           arg(inputHandler()->isHandleMouseEvents()).arg(scrolling).arg(noInfoClick).
+           arg(ms::mouseStateToString(mouseState).join(",")).arg(QGuiApplication::mouseButtons()).
+           arg(isMarkerEditActive()).arg(deletePressed);
+
+#endif
+
+// Build colors
+    QColor backgroundColor = QApplication::palette().color(QPalette::Normal, NavApp::isGuiStyleDark() ? QPalette::Window : QPalette::Base);
+    backgroundColor.setAlpha(140);
+
+    // Set text into floating item / overlay
+    setLabelText(text, QStringLiteral(), QApplication::palette().color(QPalette::Normal, QPalette::Text), backgroundColor);
+
+    update();
+  }
+}
+
+void MapWidget::mapDragAndDropEditModeToggled()
+{
+  updateHelpOverlayLabel();
+  update();
+}
+
+void MapWidget::showOverviewMapOverlayConfiguration()
+{
+  showOverlayConfiguration("overviewmap");
+}
+
+void MapWidget::showCoordinateGridOverlayConfiguration()
+{
+  showOverlayConfiguration("coordinate-grid");
+}
+
+void MapWidget::showLabelOverlayConfiguration()
+{
+  showOverlayConfiguration("label");
+}
+
+void MapWidget::showOverlayConfiguration(const QString& name)
+{
+  // Look through all render plugins for given name
+  for(Marble::RenderPlugin *plugin : renderPlugins())
+  {
+    if(plugin->nameId() == name)
     {
       // Get configuration dialog - settings will be saved by the plugin
       QDialog *configDialog = plugin->configDialog();
@@ -2890,13 +3043,13 @@ void MapWidget::simDataChanged(const atools::fs::sc::SimConnectData& simulatorDa
     updateTooltipResult();
 
     // Update if any aircraft is shown for heading, speed and altitude
-    bool updateAircraft = NavApp::isConnectedAndAircraft() && mapResultTooltip->hasAnyAircraft();
+    bool updateAircraft = NavApp::isConnectedAndAircraft() && resultTooltip->hasAnyAircraft();
 
     // Update tooltip if bearing is shown
     bool updateBearing = NavApp::isConnectedAndAircraft();
 
     // Aircraft moved away from cursor or nothing in current result
-    bool aircraftDisappeared = mapResultTooltip->isEmpty() && mapResultTooltipLast->hasAnyAircraft();
+    bool aircraftDisappeared = resultTooltip->isEmpty() && resultTooltipLast->hasAnyAircraft();
 
     // Nothing found at all or aircraft moved away from cursor
     // This affects and hides tooltips across the whole application and should not be used on each update
@@ -2908,7 +3061,7 @@ void MapWidget::simDataChanged(const atools::fs::sc::SimConnectData& simulatorDa
       showTooltip(true /* update */);
 
     // Remember last result to detech disappearing aircraft
-    *mapResultTooltipLast = *mapResultTooltip;
+    *resultTooltipLast = *resultTooltip;
   }
 
   // ================================================================================
@@ -3292,6 +3445,17 @@ void MapWidget::clearHistory()
   history.clear();
 }
 
+bool MapWidget::isOverlayVisible(const QString& name)
+{
+  for(auto it = mapOverlays.constBegin(); it != mapOverlays.constEnd(); ++it)
+  {
+    Marble::AbstractFloatItem *overlay = floatItem(it.key());
+    if(overlay != nullptr && overlay->nameId() == name)
+      return overlay->visible() && overlay->enabled();
+  }
+  return false;
+}
+
 void MapWidget::showOverlays(bool show, bool showScalebar)
 {
   for(auto it = mapOverlays.constBegin(); it != mapOverlays.constEnd(); ++it)
@@ -3360,13 +3524,11 @@ void MapWidget::overlayStateFromMenu()
         overlay->setVisible(show);
         if(show)
         {
-          // qDebug() << "showing float item" << overlay->name() << "id" << overlay->nameId();
           setPropertyValue(overlay->nameId(), true);
           overlay->show();
         }
         else
         {
-          // qDebug() << "hiding float item" << overlay->name() << "id" << overlay->nameId();
           setPropertyValue(overlay->nameId(), false);
           overlay->hide();
         }
@@ -3399,7 +3561,7 @@ bool MapWidget::isCenterLegAndAircraftActive()
          route.getDistanceToFlightplan() < MAX_FLIGHTPLAN_DIST_FOR_CENTER_NM; // not too far away from flight plan
 }
 
-bool MapWidget::isMarkerEditActive() const
+bool MapWidget::isDragAndDropEditActive() const
 {
   return NavApp::getMainUi()->actionMapDragAndDropEditMode->isChecked();
 }
@@ -3422,19 +3584,6 @@ void MapWidget::saveState() const
 
   QSettings *qSettings = atools::settings::Settings::getQSettings();
   writePluginSettings(*qSettings);
-  // Workaround to overviewmap storing absolute paths which will be invalid when moving program location
-  settings.remove("plugin_overviewmap/path_earth");
-  settings.remove("plugin_overviewmap/path_jupiter");
-  settings.remove("plugin_overviewmap/path_mars");
-  settings.remove("plugin_overviewmap/path_mercury");
-  settings.remove("plugin_overviewmap/path_moon");
-  settings.remove("plugin_overviewmap/path_neptune");
-  settings.remove("plugin_overviewmap/path_pluto");
-  settings.remove("plugin_overviewmap/path_saturn");
-  settings.remove("plugin_overviewmap/path_sky");
-  settings.remove("plugin_overviewmap/path_sun");
-  settings.remove("plugin_overviewmap/path_uranus");
-  settings.remove("plugin_overviewmap/path_venus");
 
   // Mark coordinates
   settings.setValue(lnm::MAP_MARKLONX, searchMarkPos.getLonX());

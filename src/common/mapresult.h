@@ -409,7 +409,7 @@ struct MapResultIndex
   MapResultIndex& remove(map::MapType types);
 
   /* Keep all objects of the given types and remove all others */
-  MapResultIndex& removeNot(map::MapType types)
+  MapResultIndex& removeAllBut(map::MapType types)
   {
     remove(~map::MapTypes(types));
     return *this;
@@ -417,6 +417,9 @@ struct MapResultIndex
 
   /* Remove all objects having a routeIndex = -1 */
   void eraseNonRouteIndexLegs();
+
+  /* Remove markers attached to a navaid with one range ring. These cannot be edited. */
+  void eraseRangeMarkerAttachedToNavaid();
 
   /* Remove duplicate MapProcedurePoint objects.
    * Ignore transitions and erase duplicates based on airport and approaches if true */
@@ -429,6 +432,17 @@ struct MapResultIndex
   map::MapResult getResultFromFirst() const
   {
     return map::MapResult::createFromMapBase(constFirstOrNull());
+  }
+
+  void clearAll()
+  {
+    clear();
+    result.clear();
+  }
+
+  const map::MapResult& getResult() const
+  {
+    return result;
   }
 
 private:

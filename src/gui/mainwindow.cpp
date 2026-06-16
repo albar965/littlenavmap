@@ -1481,6 +1481,8 @@ void MainWindow::connectAllSlots()
   connect(mapWidget, &MapWidget::exitFullScreenPressed, this, &MainWindow::exitFullScreenPressed);
   connect(mapWidget, &MapWidget::routeInsertProcedure, routeController, &RouteController::routeAddProcedure);
   connect(mapWidget, &MapWidget::editUserWaypointName, routeController, &RouteController::editUserWaypointName);
+  connect(ui->actionMapDragAndDropEditMode, &QAction::toggled, mapWidget, &MapWidget::mapDragAndDropEditModeToggled);
+
 
   // Map needs to restore title bar state when floating
   connect(ui->dockWidgetMap, &QDockWidget::topLevelChanged, this, &MainWindow::mapDockTopLevelChanged);
@@ -1628,7 +1630,9 @@ void MainWindow::connectAllSlots()
   connect(ui->actionMapCopyCoordinates, &QAction::triggered, mapWidget, &MapWidget::copyCoordinatesCursor); // Triggered by Ctrl+C on map
   connect(ui->actionMapAircraftCenter, &QAction::toggled, mapWidget, &MapPaintWidget::showAircraft);
   connect(ui->actionMapAircraftCenterNow, &QAction::triggered, mapWidget, &MapPaintWidget::showAircraftNow);
-  connect(ui->actionMapShowGridConfig, &QAction::triggered, mapWidget, &MapWidget::showGridConfiguration);
+  connect(ui->actionMapShowGridConfig, &QAction::triggered, mapWidget, &MapWidget::showCoordinateGridOverlayConfiguration);
+  connect(ui->actionMapShowLabelConfig, &QAction::triggered, mapWidget, &MapWidget::showLabelOverlayConfiguration);
+  connect(ui->actionMapShowMapOverlayConfig, &QAction::triggered, mapWidget, &MapWidget::showOverviewMapOverlayConfiguration);
 
   // Update jump back
   connect(ui->actionMapAircraftCenter, &QAction::toggled, mapWidget, &MapPaintWidget::jumpBackToAircraftCancel);

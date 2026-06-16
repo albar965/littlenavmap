@@ -812,6 +812,7 @@ unix:!macx {
     $$MARBLE_LIB_PATH/marble/plugins/libCachePlugin.so \
     $$MARBLE_LIB_PATH/marble/plugins/libAtmospherePlugin.so \
     $$MARBLE_LIB_PATH/marble/plugins/libCompassFloatItem.so \
+    $$MARBLE_LIB_PATH/marble/plugins/libLabelFloatItem.so \
     $$MARBLE_LIB_PATH/marble/plugins/libGraticulePlugin.so \
     $$MARBLE_LIB_PATH/marble/plugins/libKmlPlugin.so \
     $$MARBLE_LIB_PATH/marble/plugins/libPn2Plugin.so \
@@ -958,6 +959,7 @@ macx {
     $$MARBLE_LIB_PATH/plugins/libCachePlugin.so \
     $$MARBLE_LIB_PATH/plugins/libAtmospherePlugin.so \
     $$MARBLE_LIB_PATH/plugins/libCompassFloatItem.so \
+    $$MARBLE_LIB_PATH/plugins/libLabelFloatItem.so \
     $$MARBLE_LIB_PATH/plugins/libGraticulePlugin.so \
     $$MARBLE_LIB_PATH/plugins/libKmlPlugin.so \
     $$MARBLE_LIB_PATH/plugins/libPn2Plugin.so \
@@ -968,6 +970,7 @@ macx {
   deploy.commands +=  $$INSTALL_MARBLE_DYLIB_CMD/libCachePlugin.so &&
   deploy.commands +=  $$INSTALL_MARBLE_DYLIB_CMD/libAtmospherePlugin.so &&
   deploy.commands +=  $$INSTALL_MARBLE_DYLIB_CMD/libCompassFloatItem.so &&
+  deploy.commands +=  $$INSTALL_MARBLE_DYLIB_CMD/libLabelFloatItem.so &&
   deploy.commands +=  $$INSTALL_MARBLE_DYLIB_CMD/libGraticulePlugin.so &&
   deploy.commands +=  $$INSTALL_MARBLE_DYLIB_CMD/libKmlPlugin.so &&
   deploy.commands +=  $$INSTALL_MARBLE_DYLIB_CMD/libPn2Plugin.so &&
@@ -1014,6 +1017,7 @@ win32 {
   deploy.commands += xcopy /F $$p($$MARBLE_LIB_PATH/../plugins/libCachePlugin$${DLL_SUFFIX}.dll) $$p($$DEPLOY_BASE/$$WIN_TARGET_NAME/plugins) &&
   deploy.commands += xcopy /F $$p($$MARBLE_LIB_PATH/../plugins/libAtmospherePlugin$${DLL_SUFFIX}.dll) $$p($$DEPLOY_BASE/$$WIN_TARGET_NAME/plugins) &&
   deploy.commands += xcopy /F $$p($$MARBLE_LIB_PATH/../plugins/libCompassFloatItem$${DLL_SUFFIX}.dll) $$p($$DEPLOY_BASE/$$WIN_TARGET_NAME/plugins) &&
+  deploy.commands += xcopy /F $$p($$MARBLE_LIB_PATH/../plugins/libLabelFloatItem$${DLL_SUFFIX}.dll) $$p($$DEPLOY_BASE/$$WIN_TARGET_NAME/plugins) &&
   deploy.commands += xcopy /F $$p($$MARBLE_LIB_PATH/../plugins/libGraticulePlugin$${DLL_SUFFIX}.dll) $$p($$DEPLOY_BASE/$$WIN_TARGET_NAME/plugins) &&
   deploy.commands += xcopy /F $$p($$MARBLE_LIB_PATH/../plugins/libKmlPlugin$${DLL_SUFFIX}.dll) $$p($$DEPLOY_BASE/$$WIN_TARGET_NAME/plugins) &&
   deploy.commands += xcopy /F $$p($$MARBLE_LIB_PATH/../plugins/libPn2Plugin$${DLL_SUFFIX}.dll) $$p($$DEPLOY_BASE/$$WIN_TARGET_NAME/plugins) &&

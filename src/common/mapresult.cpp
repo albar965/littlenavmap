@@ -1324,6 +1324,15 @@ void MapResultIndex::eraseNonRouteIndexLegs()
     }), end());
 }
 
+void MapResultIndex::eraseRangeMarkerAttachedToNavaid()
+{
+  // Remove markers attached to a navaid with one range ring. These cannot be edited.
+  erase(std::remove_if(begin(), end(), [](const map::MapBase *base) -> bool {
+      return base->asPtr<map::RangeMarker>() != nullptr && base->asPtr<map::RangeMarker>()->attachedToNavaid;
+    }), end());
+
+}
+
 void MapResultIndex::eraseDuplicateProcedures(bool base)
 {
   // Erase duplicate occasions of procedures which can appear in double used waypoints
