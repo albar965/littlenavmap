@@ -66,7 +66,7 @@
      </widget>
      <widget class="QStackedWidget" name="stackedWidgetOptions">
       <property name="currentIndex">
-       <number>9</number>
+       <number>10</number>
       </property>
       <widget class="QWidget" name="stackedWidgetOptionsStartup">
        <layout class="QVBoxLayout" name="verticalLayout_41">
@@ -3048,8 +3048,8 @@ Note that some fonts, especially large fonts, can result in display errors on th
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>572</width>
-             <height>573</height>
+             <width>355</width>
+             <height>586</height>
             </rect>
            </property>
            <layout class="QVBoxLayout" name="verticalLayout_71">
@@ -3783,6 +3783,9 @@ For VOR, NDB, ILS, waypoints and holdings. Not for flight plan labels.</string>
                  </property>
                  <property name="text">
                   <string>Text &amp;Background</string>
+                 </property>
+                 <property name="checked">
+                  <bool>true</bool>
                  </property>
                 </widget>
                </item>
@@ -4638,7 +4641,7 @@ Also used in the elevation profile.</string>
              <x>0</x>
              <y>0</y>
              <width>554</width>
-             <height>369</height>
+             <height>365</height>
             </rect>
            </property>
            <layout class="QVBoxLayout" name="verticalLayout_57">
@@ -6880,7 +6883,7 @@ Download the file &lt;b&gt;&lt;i&gt;All Tiles in One .zip (all10g.zip)&lt;/i&gt;
              <x>0</x>
              <y>0</y>
              <width>572</width>
-             <height>635</height>
+             <height>631</height>
             </rect>
            </property>
            <layout class="QVBoxLayout" name="verticalLayout_25">
@@ -7487,7 +7490,7 @@ Note that this value does not affect flight plan calculation or saving of flight
              <x>0</x>
              <y>0</y>
              <width>272</width>
-             <height>765</height>
+             <height>761</height>
             </rect>
            </property>
            <layout class="QVBoxLayout" name="verticalLayout_27">
@@ -7728,7 +7731,7 @@ Note that this value does not affect flight plan calculation or saving of flight
              <x>0</x>
              <y>0</y>
              <width>360</width>
-             <height>944</height>
+             <height>936</height>
             </rect>
            </property>
            <layout class="QVBoxLayout" name="verticalLayout_28">

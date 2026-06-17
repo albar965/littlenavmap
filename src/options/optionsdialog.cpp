@@ -787,6 +787,7 @@ OptionsDialog::OptionsDialog(QMainWindow *parentWindow)
     ui->checkBoxOptionsMapHighlightTransparent,
     ui->spinBoxOptionsMapHighlightTransparent,
     ui->checkBoxOptionsMapAirwayText,
+    ui->checkBoxOptionsMapAirspaceText,
     ui->checkBoxOptionsMapUserAircraftText,
     ui->checkBoxOptionsMapAiAircraftText,
     ui->checkBoxOptionsMapAiAircraftHideGround,
@@ -2422,6 +2423,7 @@ void OptionsDialog::widgetsToOptionData(OptionData& data)
   toFlags(data.flags2, ui->checkBoxOptionsMapNavaidFill, opts2::MAP_NAVAID_FILL_BACKGROUND);
   toFlags(data.flags2, ui->checkBoxOptionsMapUserpointText, opts2::MAP_USERPOINT_TEXT_BACKGROUND);
   toFlags(data.flags2, ui->checkBoxOptionsMapAirwayText, opts2::MAP_AIRWAY_TEXT_BACKGROUND);
+  toFlags(data.flags2, ui->checkBoxOptionsMapAirspaceText, opts2::MAP_AIRSPACE_TEXT_BACKGROUND);
   toFlags(data.flags2, ui->checkBoxOptionsMapFlightplanText, opts2::MAP_ROUTE_TEXT_BACKGROUND);
   toFlags(data.flags2, ui->checkBoxOptionsMapUserAircraftText, opts2::MAP_USER_TEXT_BACKGROUND);
   toFlags(data.flags2, ui->checkBoxOptionsMapAiAircraftText, opts2::MAP_AI_TEXT_BACKGROUND);
@@ -2768,6 +2770,7 @@ void OptionsDialog::optionDataToWidgets(const OptionData& data)
   fromFlags(data.flags2, ui->checkBoxOptionsMapNavaidFill, opts2::MAP_NAVAID_FILL_BACKGROUND);
   fromFlags(data.flags2, ui->checkBoxOptionsMapUserpointText, opts2::MAP_USERPOINT_TEXT_BACKGROUND);
   fromFlags(data.flags2, ui->checkBoxOptionsMapAirwayText, opts2::MAP_AIRWAY_TEXT_BACKGROUND);
+  fromFlags(data.flags2, ui->checkBoxOptionsMapAirspaceText, opts2::MAP_AIRSPACE_TEXT_BACKGROUND);
   fromFlags(data.flags2, ui->checkBoxOptionsMapUserAircraftText, opts2::MAP_USER_TEXT_BACKGROUND);
   fromFlags(data.flags2, ui->checkBoxOptionsMapAiAircraftText, opts2::MAP_AI_TEXT_BACKGROUND);
   fromFlags(data.flags, ui->checkBoxOptionsMapAiAircraftHideGround, opts::MAP_AI_HIDE_GROUND);

@@ -221,11 +221,21 @@ void MapPainterAirspace::render()
       textPlacement.setArrowRight(QStringLiteral());
       textPlacement.setTextOnTopOfLine(false);
 
-      // Look at all visible airspaces collected earlier ===============================
-      painter->setBrush(mapcolors::textBoxColorAirspace);
-      painter->setBackground(mapcolors::textBoxColorAirspace);
-      painter->setBackgroundMode(Qt::OpaqueMode);
+      // Adjust text pen and background =======================================
+      if(context->flags2.testFlag(opts2::MAP_AIRSPACE_TEXT_BACKGROUND))
+      {
+        painter->setBrush(mapcolors::textBoxColorAirspace);
+        painter->setBackground(mapcolors::textBoxColorAirspace);
+        painter->setBackgroundMode(Qt::OpaqueMode);
+      }
+      else
+      {
+        painter->setBrush(mapcolors::textBoxColorAirspace);
+        painter->setBackground(Qt::transparent);
+        painter->setBackgroundMode(Qt::TransparentMode);
+      }
 
+      // Look at all visible airspaces collected earlier ===============================
       for(const DrawAirspace& visibleAirspace : std::as_const(visibleAirspaces))
       {
         const map::MapAirspace *airspace = visibleAirspace.airspace;
@@ -239,6 +249,7 @@ void MapPainterAirspace::render()
 
           if(!airspaceText.isEmpty())
           {
+
             QPen textPen = mapcolors::penForAirspace(*airspace, displayThicknessAirspace);
             textPen.setColor(textPen.color().darker(150));
             painter->setPen(textPen);

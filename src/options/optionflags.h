@@ -434,7 +434,10 @@ enum Flag2 : quint64
   MAP_AIRPORT_TEXT_RUNWAY_BACKGROUND = 1ULL << 34,
 
   /* ui->checkBoxOptionsMapAirportTextTaxiway */
-  MAP_AIRPORT_TEXT_TAXIWAY_BACKGROUND = 1ULL << 35
+  MAP_AIRPORT_TEXT_TAXIWAY_BACKGROUND = 1ULL << 35,
+
+  /* ui->checkBoxOptionsMapAirspaceText */
+  MAP_AIRSPACE_TEXT_BACKGROUND = 1ULL << 36
 };
 
 ATOOLS_DECLARE_FLAGS_64(Flags2, Flag2)

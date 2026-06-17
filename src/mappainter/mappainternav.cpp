@@ -211,7 +211,7 @@ void MapPainterNav::paintAirways(const QList<map::MapAirway> *airways, bool fast
     QList<bool> positionReversed; // Line is reversed for text
   };
 
-  bool fill = context->flags2 & opts2::MAP_AIRWAY_TEXT_BACKGROUND;
+  bool background = context->flags2.testFlag(opts2::MAP_AIRWAY_TEXT_BACKGROUND);
   float linewidthAirway = context->szF(context->thicknessAirway, 1.f);
   float linewidthTrack = context->szF(context->thicknessAirway, 2.f);
 
@@ -331,7 +331,7 @@ void MapPainterNav::paintAirways(const QList<map::MapAirway> *airways, bool fast
   if(!textlist.isEmpty())
   {
     painter->setPen(mapcolors::airwayTextColor);
-    if(fill)
+    if(background)
     {
       painter->setBackgroundMode(Qt::OpaqueMode);
       painter->setBrush(mapcolors::textBoxColor);
