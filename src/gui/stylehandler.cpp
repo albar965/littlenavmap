@@ -122,6 +122,9 @@ StyleHandler::StyleHandler(QMainWindow *mainWindowParam)
   QString fusionStyleSheet(
     "QTabBar::close-button { image: url(:/littlenavmap/resources/icons/close.svg); } "
     "QTabBar::close-button:hover { image: url(:/littlenavmap/resources/icons/close_hover.svg); }"
+
+    // Separator lines =================
+    // "QFrame[frameShape=\"4\"], QFrame[frameShape=\"5\"] { color: #b8b8b8; }"
     );
 
   // Override checked menu items style with icons for windows
@@ -218,6 +221,9 @@ StyleHandler::StyleHandler(QMainWindow *mainWindowParam)
     QStringLiteral("QPushButton:checked { background-color: %1; }").arg(darkPalette.color(QPalette::Light).name()) %
     QStringLiteral("QMenu::item:selected { border-color: lightgray; background: %1; }").arg(darkPalette.color(QPalette::Highlight).name()) %
     QStringLiteral("QGroupBox {background-color: %2; }").arg(darkPalette.color(QPalette::Mid).name()) %
+
+    // Separator lines =================
+    // QStringLiteral("QFrame[frameShape=\"4\"], QFrame[frameShape=\"5\"] { color: #555555; }") %
 
     // Menu padding ====================
     "QMenu::item { padding: 2px 2px; }"
