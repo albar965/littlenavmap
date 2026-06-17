@@ -194,13 +194,19 @@ OptionsDialog::OptionsDialog(QMainWindow *parentWindow)
   // Zoom handlers for lists ==========================================================
   zoomHandlerMapThemeKeysTable = new atools::gui::WidgetZoomHandler(ui->tableWidgetOptionsMapKeys);
   zoomHandlerLabelTree = new atools::gui::WidgetZoomHandler(ui->treeWidgetOptionsDisplayTextOptions);
+  zoomHandlerLabelTreeAirport = new atools::gui::WidgetZoomHandler(ui->treeWidgetOptionsDisplayTextOptionsAirport);
   zoomHandlerDatabaseInclude = new atools::gui::WidgetZoomHandler(ui->tableWidgetOptionsDatabaseInclude);
   zoomHandlerDatabaseExclude = new atools::gui::WidgetZoomHandler(ui->tableWidgetOptionsDatabaseExclude);
   zoomHandlerDatabaseAddonExclude = new atools::gui::WidgetZoomHandler(ui->tableWidgetOptionsDatabaseExcludeAddon);
 
   gridDelegate = new atools::gui::GridDelegate(ui->treeWidgetOptionsDisplayTextOptions, 1. /* borderPenWidth */, 1 /* heightIncrease */);
-  listWidgetIndex = new atools::gui::ListWidgetIndex(ui->listWidgetOptionPages, ui->stackedWidgetOptions);
   ui->treeWidgetOptionsDisplayTextOptions->setItemDelegate(gridDelegate);
+
+  gridDelegateAirport = new atools::gui::GridDelegate(ui->treeWidgetOptionsDisplayTextOptionsAirport, 1. /* borderPenWidth */,
+                                                      1 /* heightIncrease */);
+  ui->treeWidgetOptionsDisplayTextOptionsAirport->setItemDelegate(gridDelegateAirport);
+
+  listWidgetIndex = new atools::gui::ListWidgetIndex(ui->listWidgetOptionPages, ui->stackedWidgetOptions);
 
   // Add option pages with text, icon and tooltip ========================================
   // The title has to match all text references in the program
@@ -251,10 +257,15 @@ OptionsDialog::OptionsDialog(QMainWindow *parentWindow)
                   tr("Change the map display font and overall scale for symbols and labels."),
                   QStringLiteral(":/littlenavmap/resources/icons/mapfont.svg"));
 
+  addPageListItem(QStringLiteral("mapdisplayairports"),
+                  tr("Map Display Airports"),
+                  tr("Change colors, symbols and texts for airports."),
+                  QStringLiteral(":/littlenavmap/resources/icons/mapdisplay.svg"));
+
   addPageListItem(QStringLiteral("mapdisplayfeatures"),
                   tr("Map Display Features"),
-                  tr("Change colors, symbols, texts and font for map display and elevation profile objects."),
-                  QStringLiteral(":/littlenavmap/resources/icons/mapdisplay.svg"));
+                  tr("Change colors, symbols, texts  for map display and elevation profile objects."),
+                  QStringLiteral(":/littlenavmap/resources/icons/mapdisplaynavaid.svg"));
 
   addPageListItem(QStringLiteral("mapflightplan"),
                   tr("Map Flight Plan"),
@@ -343,33 +354,9 @@ OptionsDialog::OptionsDialog(QMainWindow *parentWindow)
                   QStringLiteral(":/littlenavmap/resources/icons/database.svg"));
 
   // Build tree settings to map tab =====================================================
-  // Top of map =====================================================
-  QTreeWidgetItem *topOfMap = addTopItem(tr("Top of Map"), tr("Select information that is displayed on top of the map."));
-  addItem<optsac::DisplayOptionsUserAircraft>(topOfMap, p->displayOptItemIndexUser, tr("Wind Direction and Speed"),
-                                              tr("Show wind direction and speed on the top center of the map."),
-                                              optsac::ITEM_USER_AIRCRAFT_WIND, true /* checked */);
-  addItem<optsac::DisplayOptionsUserAircraft>(topOfMap, p->displayOptItemIndexUser, tr("Wind Pointer"),
-                                              tr("Show wind direction pointer on the top center of the map."),
-                                              optsac::ITEM_USER_AIRCRAFT_WIND_POINTER, true /* checked */);
-
-  // Map Navigation Aids =====================================================
-  QTreeWidgetItem *navAids = addTopItem(tr("Map Navigation Aids"), QStringLiteral());
-  addItem<optsd::DisplayOptionsNavAid>(navAids, p->displayOptItemIndexNavAid, tr("Center Cross"),
-                                       tr("Shows the map center. Useful if \"Click map to center position\"\n"
-                                          "on page \"Map Navigation\" is enabled."),
-                                       optsd::NAVAIDS_CENTER_CROSS);
-  addItem<optsd::DisplayOptionsNavAid>(navAids, p->displayOptItemIndexNavAid, tr("Screen Area"),
-                                       tr("Highlight click- or touchable areas on screen.\nOnly shown if \"Use map areas\"\n"
-                                          "on page \"Map Navigation\" is enabled as well."),
-                                       optsd::NAVAIDS_TOUCHSCREEN_REGIONS);
-  addItem<optsd::DisplayOptionsNavAid>(navAids, p->displayOptItemIndexNavAid, tr("Screen Area Icons"),
-                                       tr("Shows icons for the screen areas.\n"
-                                          "Useful if map areas are used for touchscreen navigation.\n"
-                                          "Only shown if \"Use map areas\" on page \"Map Navigation\" is enabled as well."),
-                                       optsd::NAVAIDS_TOUCHSCREEN_ICONS);
-
   // Airport =====================================================
-  QTreeWidgetItem *airport = addTopItem(tr("Airport Labels"), tr("Select airport labels to display on the map."));
+  QTreeWidgetItem *airport = addTopItem(ui->treeWidgetOptionsDisplayTextOptionsAirport, tr("Airport Labels"),
+                                        tr("Select airport labels to display on the map."));
   addItem<optsd::DisplayOptionsAirport>(airport, p->displayOptItemIndexAirport, tr("Name (Ident)"),
                                         tr("Airport name and ident in brackets depending on zoom factor.\n"
                                            "Ident can be internal, ICAO, FAA, IATA or local depending on availability."),
@@ -383,7 +370,8 @@ OptionsDialog::OptionsDialog(QMainWindow *parentWindow)
                                         optsd::ITEM_AIRPORT_RUNWAY, true /* checked */);
 
   // Airport details =====================================================
-  QTreeWidgetItem *airportDetails = addTopItem(tr("Airport Diagram Options"), tr("Select airport diagram elements."));
+  QTreeWidgetItem *airportDetails = addTopItem(ui->treeWidgetOptionsDisplayTextOptionsAirport, tr("Airport Diagram Options"),
+                                               tr("Select airport diagram elements."));
   addItem<optsd::DisplayOptionsAirport>(airportDetails, p->displayOptItemIndexAirport, tr("Runways"), tr("Show runways."),
                                         optsd::ITEM_AIRPORT_DETAIL_RUNWAY, true /* checked */);
   addItem<optsd::DisplayOptionsAirport>(airportDetails, p->displayOptItemIndexAirport, tr("Taxiways"),
@@ -402,9 +390,37 @@ OptionsDialog::OptionsDialog(QMainWindow *parentWindow)
   addItem<optsd::DisplayOptionsAirport>(airportDetails, p->displayOptItemIndexAirport, tr("Boundary"),
                                         tr("Display a white boundary around and below the airport diagram."),
                                         optsd::ITEM_AIRPORT_DETAIL_BOUNDARY);
+  ui->treeWidgetOptionsDisplayTextOptionsAirport->resizeColumnToContents(0);
+
+  // Top of map =====================================================
+  QTreeWidgetItem *topOfMap = addTopItem(ui->treeWidgetOptionsDisplayTextOptions, tr("Top of Map"),
+                                         tr("Select information that is displayed on top of the map."));
+  addItem<optsac::DisplayOptionsUserAircraft>(topOfMap, p->displayOptItemIndexUser, tr("Wind Direction and Speed"),
+                                              tr("Show wind direction and speed on the top center of the map."),
+                                              optsac::ITEM_USER_AIRCRAFT_WIND, true /* checked */);
+  addItem<optsac::DisplayOptionsUserAircraft>(topOfMap, p->displayOptItemIndexUser, tr("Wind Pointer"),
+                                              tr("Show wind direction pointer on the top center of the map."),
+                                              optsac::ITEM_USER_AIRCRAFT_WIND_POINTER, true /* checked */);
+
+  // Map Navigation Aids =====================================================
+  QTreeWidgetItem *navAids = addTopItem(ui->treeWidgetOptionsDisplayTextOptions, tr("Map Navigation Aids"), QStringLiteral());
+  addItem<optsd::DisplayOptionsNavAid>(navAids, p->displayOptItemIndexNavAid, tr("Center Cross"),
+                                       tr("Shows the map center. Useful if \"Click map to center position\"\n"
+                                          "on page \"Map Navigation\" is enabled."),
+                                       optsd::NAVAIDS_CENTER_CROSS);
+  addItem<optsd::DisplayOptionsNavAid>(navAids, p->displayOptItemIndexNavAid, tr("Screen Area"),
+                                       tr("Highlight click- or touchable areas on screen.\nOnly shown if \"Use map areas\"\n"
+                                          "on page \"Map Navigation\" is enabled as well."),
+                                       optsd::NAVAIDS_TOUCHSCREEN_REGIONS);
+  addItem<optsd::DisplayOptionsNavAid>(navAids, p->displayOptItemIndexNavAid, tr("Screen Area Icons"),
+                                       tr("Shows icons for the screen areas.\n"
+                                          "Useful if map areas are used for touchscreen navigation.\n"
+                                          "Only shown if \"Use map areas\" on page \"Map Navigation\" is enabled as well."),
+                                       optsd::NAVAIDS_TOUCHSCREEN_ICONS);
 
   // Flight plan =====================================================
-  QTreeWidgetItem *route = addTopItem(tr("Flight Plan Labels"), tr("Select display options for the flight plan line."));
+  QTreeWidgetItem *route = addTopItem(ui->treeWidgetOptionsDisplayTextOptions, tr("Flight Plan Labels"),
+                                      tr("Select display options for the flight plan line."));
   addItem<optsd::DisplayOptionsRoute>(route, p->displayOptItemIndexRoute, tr("Distance"),
                                       tr("Show distance along flight plan leg.\n"
                                          "The label moves to keep it visible while scrolling."),
@@ -438,7 +454,7 @@ OptionsDialog::OptionsDialog(QMainWindow *parentWindow)
                                       optsd::ROUTE_INITIAL_FINAL_TRUE_COURSE);
 
   // Airspace =====================================================
-  QTreeWidgetItem *airspaces = addTopItem(tr("Airspace Labels"), QStringLiteral());
+  QTreeWidgetItem *airspaces = addTopItem(ui->treeWidgetOptionsDisplayTextOptions, tr("Airspace Labels"), QStringLiteral());
   addItem<optsd::DisplayOptionsAirspace>(airspaces, p->displayOptItemIndexAirspace, tr("Name"),
                                          tr("Shows the airspace name."),
                                          optsd::AIRSPACE_NAME);
@@ -457,7 +473,7 @@ OptionsDialog::OptionsDialog(QMainWindow *parentWindow)
                                          optsd::AIRSPACE_COM, true /* checked */);
 
   // User aircraft =====================================================
-  QTreeWidgetItem *userAircraft = addTopItem(tr("User Aircraft Options and Labels"),
+  QTreeWidgetItem *userAircraft = addTopItem(ui->treeWidgetOptionsDisplayTextOptions, tr("User Aircraft Options and Labels"),
                                              tr("Select text labels and other options for the user aircraft."));
   addItem<optsac::DisplayOptionsUserAircraft>(userAircraft, p->displayOptItemIndexUser, tr("Registration"),
                                               tr("Aircraft registration like \"N1000A\" or \"D-MABC\"."),
@@ -511,7 +527,7 @@ OptionsDialog::OptionsDialog(QMainWindow *parentWindow)
                                               optsac::ITEM_USER_AIRCRAFT_ICE);
 
   // AI =====================================================
-  QTreeWidgetItem *aiAircraft = addTopItem(tr("AI, Multiplayer and Online Client Aircraft Labels"),
+  QTreeWidgetItem *aiAircraft = addTopItem(ui->treeWidgetOptionsDisplayTextOptions, tr("AI, Multiplayer and Online Client Aircraft Labels"),
                                            tr("Select text labels for the AI, multiplayer and online client aircraft."));
   addItem<optsac::DisplayOptionsAiAircraft>(aiAircraft, p->displayOptItemIndexAi, tr("Registration, Number or Callsign"),
                                             tr("Aircraft registration like \"N1000A\" or \"D-MABC\"."),
@@ -565,7 +581,7 @@ OptionsDialog::OptionsDialog(QMainWindow *parentWindow)
                                             optsac::ITEM_AI_AIRCRAFT_OBJECT_ID);
 
   // Compass rose =====================================================
-  QTreeWidgetItem *compassRose = addTopItem(tr("Compass Rose Options and Labels"),
+  QTreeWidgetItem *compassRose = addTopItem(ui->treeWidgetOptionsDisplayTextOptions, tr("Compass Rose Options and Labels"),
                                             tr("Select display options for the compass rose."));
   addItem<optsd::DisplayOptionsRose>(compassRose, p->displayOptItemIndexRose, tr("Direction Labels"),
                                      tr("Show N, S, E and W labels."),
@@ -601,7 +617,7 @@ OptionsDialog::OptionsDialog(QMainWindow *parentWindow)
                                      optsd::ROSE_TRUE_HEADING);
 
   // Measurment lines =====================================================
-  QTreeWidgetItem *measurement = addTopItem(tr("Measurement Line Labels"),
+  QTreeWidgetItem *measurement = addTopItem(ui->treeWidgetOptionsDisplayTextOptions, tr("Measurement Line Labels"),
                                             tr("Select display options for measurement lines."));
   addItem<optsd::DisplayOptionsMeasurement>(measurement, p->displayOptItemIndexMeasurement, tr("Distance"),
                                             tr("Great circle distance for measurement line."),
@@ -1046,10 +1062,13 @@ OptionsDialog::OptionsDialog(QMainWindow *parentWindow)
 OptionsDialog::~OptionsDialog()
 {
   ui->treeWidgetOptionsDisplayTextOptions->setItemDelegate(nullptr);
+  ui->treeWidgetOptionsDisplayTextOptionsAirport->setItemDelegate(nullptr);
 
   ATOOLS_DELETE_LOG(gridDelegate);
+  ATOOLS_DELETE_LOG(gridDelegateAirport);
   ATOOLS_DELETE_LOG(listWidgetIndex);
   ATOOLS_DELETE_LOG(zoomHandlerLabelTree);
+  ATOOLS_DELETE_LOG(zoomHandlerLabelTreeAirport);
   ATOOLS_DELETE_LOG(zoomHandlerDatabaseInclude);
   ATOOLS_DELETE_LOG(zoomHandlerDatabaseExclude);
   ATOOLS_DELETE_LOG(zoomHandlerDatabaseAddonExclude);
@@ -1997,9 +2016,9 @@ void OptionsDialog::displayOptDataToWidget(const TYPE& type, const QHash<TYPE, Q
     index.value(dispOpt)->setCheckState(0, type & dispOpt ? Qt::Checked : Qt::Unchecked);
 }
 
-QTreeWidgetItem *OptionsDialog::addTopItem(const QString& text, const QString& description)
+QTreeWidgetItem *OptionsDialog::addTopItem(QTreeWidget *treeWidget, const QString& text, const QString& description) const
 {
-  QTreeWidgetItem *item = new QTreeWidgetItem(ui->treeWidgetOptionsDisplayTextOptions->invisibleRootItem(), {text, description});
+  QTreeWidgetItem *item = new QTreeWidgetItem(treeWidget->invisibleRootItem(), {text, description});
   item->setFlags(Qt::ItemIsSelectable | Qt::ItemIsUserCheckable | Qt::ItemIsAutoTristate | Qt::ItemIsEnabled);
   item->setToolTip(1, description);
 

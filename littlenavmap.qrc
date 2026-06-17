@@ -365,5 +365,6 @@
         <file>resources/icons/edit.svg</file>
         <file>resources/icons/mapedit.svg</file>
         <file>resources/icons/approachoff.svg</file>
+        <file>resources/icons/mapdisplaynavaid.svg</file>
     </qresource>
 </RCC>

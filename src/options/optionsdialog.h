@@ -24,25 +24,26 @@
 #include <QDialogButtonBox>
 #include <QSize>
 
-class QLabel;
 namespace Ui {
 class OptionsDialog;
 }
 
-class QAbstractButton;
-class QMainWindow;
 class OptionData;
+class QAbstractButton;
 class QCheckBox;
-class QRadioButton;
-class RangeRingValidator;
-class QTreeWidgetItem;
-class QSpinBox;
-class UnitStringTool;
-class QListWidgetItem;
-class QListWidget;
 class QFontDialog;
-class QTableWidgetItem;
+class QLabel;
+class QListWidget;
+class QListWidgetItem;
+class QMainWindow;
+class QRadioButton;
+class QSpinBox;
 class QTableWidget;
+class QTableWidgetItem;
+class QTreeWidget;
+class QTreeWidgetItem;
+class RangeRingValidator;
+class UnitStringTool;
 struct OptionsPrivate;
 
 namespace atools {
@@ -53,6 +54,7 @@ class GridDelegate;
 class WidgetZoomHandler;
 }
 }
+
 /* Takes care about loading, changing and saving of global options.
  * All default options are defined in the widgets in the options.ui file.
  * OptionData will be populated by the OptionsDialog which loads widget data from the settings
@@ -204,7 +206,7 @@ private:
   void eastWestRuleClicked();
 
   // Add items to the tree widget and to the  displayOptItemIndex
-  QTreeWidgetItem *addTopItem(const QString& text, const QString& description);
+  QTreeWidgetItem *addTopItem(QTreeWidget *treeWidget, const QString& text, const QString& description) const;
 
   template<typename TYPE>
   QTreeWidgetItem *addItem(QTreeWidgetItem *root, QHash<TYPE, QTreeWidgetItem *>& index,
@@ -333,11 +335,11 @@ private:
 
   QFontDialog *fontDialog = nullptr;
 
-  atools::gui::WidgetZoomHandler *zoomHandlerLabelTree = nullptr, *zoomHandlerMapThemeKeysTable = nullptr,
-                                 *zoomHandlerDatabaseInclude = nullptr, *zoomHandlerDatabaseExclude = nullptr,
-                                 *zoomHandlerDatabaseAddonExclude = nullptr;
+  atools::gui::WidgetZoomHandler *zoomHandlerLabelTree = nullptr, *zoomHandlerLabelTreeAirport = nullptr,
+                                 *zoomHandlerMapThemeKeysTable = nullptr, *zoomHandlerDatabaseInclude = nullptr,
+                                 *zoomHandlerDatabaseExclude = nullptr, *zoomHandlerDatabaseAddonExclude = nullptr;
 
-  atools::gui::GridDelegate *gridDelegate = nullptr;
+  atools::gui::GridDelegate *gridDelegate = nullptr, *gridDelegateAirport = nullptr;
 
   atools::gui::ListWidgetIndex *listWidgetIndex = nullptr;
 
