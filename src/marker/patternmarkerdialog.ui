@@ -7,176 +7,18 @@
     <x>0</x>
     <y>0</y>
     <width>503</width>
-    <height>500</height>
+    <height>475</height>
    </rect>
   </property>
   <property name="windowTitle">
    <string>Little Navmap - Add Airport Traffic Pattern</string>
   </property>
   <layout class="QGridLayout" name="gridLayout">
-   <item row="12" column="1">
-    <widget class="QPushButton" name="pushButtonTrafficPatternColor">
-     <property name="text">
-      <string>&amp;Line Color</string>
-     </property>
-    </widget>
-   </item>
-   <item row="5" column="1">
-    <widget class="QComboBox" name="comboBoxTrafficPatternTurnDirection">
-     <item>
-      <property name="text">
-       <string>Left</string>
-      </property>
-     </item>
-     <item>
-      <property name="text">
-       <string>Right</string>
-      </property>
-     </item>
-    </widget>
-   </item>
-   <item row="9" column="0">
-    <widget class="QLabel" name="labelTrafficPatternDownwindDistance">
-     <property name="text">
-      <string>&amp;Downwind to runway:</string>
-     </property>
-     <property name="buddy">
-      <cstring>doubleSpinBoxDownwindDistance</cstring>
-     </property>
-    </widget>
-   </item>
-   <item row="4" column="0" colspan="2">
-    <widget class="Line" name="line">
-     <property name="orientation">
-      <enum>Qt::Horizontal</enum>
-     </property>
-    </widget>
-   </item>
-   <item row="6" column="1">
-    <widget class="QCheckBox" name="checkBoxTrafficPattern45Degree">
+   <item row="8" column="1">
+    <widget class="QDoubleSpinBox" name="doubleSpinBoxTrafficPatternDepartureDistance">
      <property name="toolTip">
-      <string>Ignore base leg to runway distance and calculate it using 45° from runway end to downwind leg</string>
-     </property>
-     <property name="text">
-      <string>&amp;Base 45° after threshold</string>
-     </property>
-     <property name="checked">
-      <bool>true</bool>
-     </property>
-    </widget>
-   </item>
-   <item row="11" column="0" colspan="2">
-    <widget class="Line" name="line_2">
-     <property name="orientation">
-      <enum>Qt::Horizontal</enum>
-     </property>
-    </widget>
-   </item>
-   <item row="15" column="0" colspan="2">
-    <widget class="QDialogButtonBox" name="buttonBoxTrafficPattern">
-     <property name="orientation">
-      <enum>Qt::Horizontal</enum>
-     </property>
-     <property name="standardButtons">
-      <set>QDialogButtonBox::Cancel|QDialogButtonBox::Help|QDialogButtonBox::Ok</set>
-     </property>
-    </widget>
-   </item>
-   <item row="7" column="0">
-    <widget class="QLabel" name="labelTrafficPatternBaseDistance">
-     <property name="text">
-      <string>&amp;Base leg to runway threshold:</string>
-     </property>
-     <property name="buddy">
-      <cstring>doubleSpinBoxTrafficPatternBaseDistance</cstring>
-     </property>
-    </widget>
-   </item>
-   <item row="5" column="0">
-    <widget class="QLabel" name="labelTrafficPatternTurnDirection">
-     <property name="text">
-      <string>&amp;Turn direction:</string>
-     </property>
-     <property name="buddy">
-      <cstring>comboBoxTrafficPatternTurnDirection</cstring>
-     </property>
-    </widget>
-   </item>
-   <item row="10" column="1">
-    <widget class="QSpinBox" name="spinBoxTrafficPatternAltitude">
-     <property name="toolTip">
-      <string>Pattern altitude above airport elevation</string>
-     </property>
-     <property name="showGroupSeparator" stdset="0">
-      <bool>true</bool>
-     </property>
-     <property name="suffix">
-      <string> %alt%</string>
-     </property>
-     <property name="minimum">
-      <number>100</number>
-     </property>
-     <property name="maximum">
-      <number>10000</number>
-     </property>
-     <property name="singleStep">
-      <number>100</number>
-     </property>
-     <property name="value">
-      <number>1000</number>
-     </property>
-    </widget>
-   </item>
-   <item row="0" column="0" colspan="2">
-    <widget class="QLabel" name="labelTrafficPatternAirport">
-     <property name="frameShape">
-      <enum>QFrame::Box</enum>
-     </property>
-     <property name="frameShadow">
-      <enum>QFrame::Sunken</enum>
-     </property>
-     <property name="text">
-      <string/>
-     </property>
-     <property name="wordWrap">
-      <bool>true</bool>
-     </property>
-     <property name="margin">
-      <number>5</number>
-     </property>
-     <property name="textInteractionFlags">
-      <set>Qt::LinksAccessibleByMouse|Qt::TextSelectableByMouse</set>
-     </property>
-    </widget>
-   </item>
-   <item row="1" column="0">
-    <widget class="QLabel" name="labelTrafficPatternRunway">
-     <property name="text">
-      <string>&amp;Runways:</string>
-     </property>
-     <property name="buddy">
-      <cstring>tableWidgetTrafficPatternRunway</cstring>
-     </property>
-    </widget>
-   </item>
-   <item row="12" column="0">
-    <widget class="QCheckBox" name="checkBoxTrafficPatternEntryExit">
-     <property name="toolTip">
-      <string>Show arrows indicating recommended entry end exit paths</string>
-     </property>
-     <property name="text">
-      <string>&amp;Entry and exit indicators</string>
-     </property>
-     <property name="checked">
-      <bool>true</bool>
-     </property>
-    </widget>
-   </item>
-   <item row="7" column="1">
-    <widget class="QDoubleSpinBox" name="doubleSpinBoxTrafficPatternBaseDistance">
-     <property name="toolTip">
-      <string>Distance from turn to final to runway end, 
-i.e. length of the final segment</string>
+      <string>Distance from runway threshold to turn to crosswind. 
+Measured from the start of the runway, i.e. the end of the final leg.</string>
      </property>
      <property name="showGroupSeparator" stdset="0">
       <bool>true</bool>
@@ -201,13 +43,23 @@ i.e. length of the final segment</string>
      </property>
     </widget>
    </item>
-   <item row="10" column="0">
-    <widget class="QLabel" name="labelTrafficPatternAltitude">
-     <property name="text">
-      <string>Pattern &amp;altitude:</string>
+   <item row="6" column="1">
+    <widget class="QCheckBox" name="checkBoxTrafficPattern45Degree">
+     <property name="toolTip">
+      <string>Ignore base leg to runway distance and calculate it using 45° from runway end to downwind leg</string>
      </property>
-     <property name="buddy">
-      <cstring>spinBoxTrafficPatternAltitude</cstring>
+     <property name="text">
+      <string>&amp;Base 45° after threshold</string>
+     </property>
+     <property name="checked">
+      <bool>true</bool>
+     </property>
+    </widget>
+   </item>
+   <item row="12" column="1">
+    <widget class="QPushButton" name="pushButtonTrafficPatternColor">
+     <property name="text">
+      <string>&amp;Color</string>
      </property>
     </widget>
    </item>
@@ -236,6 +88,53 @@ i.e. length of the final segment</string>
      </property>
      <property name="value">
       <double>1.000000000000000</double>
+     </property>
+    </widget>
+   </item>
+   <item row="8" column="0">
+    <widget class="QLabel" name="labelTrafficPatternDepartureDistance">
+     <property name="text">
+      <string>&amp;Departure from threshold:</string>
+     </property>
+     <property name="buddy">
+      <cstring>doubleSpinBoxTrafficPatternDepartureDistance</cstring>
+     </property>
+    </widget>
+   </item>
+   <item row="7" column="0">
+    <widget class="QLabel" name="labelTrafficPatternBaseDistance">
+     <property name="text">
+      <string>&amp;Base leg to runway threshold:</string>
+     </property>
+     <property name="buddy">
+      <cstring>doubleSpinBoxTrafficPatternBaseDistance</cstring>
+     </property>
+    </widget>
+   </item>
+   <item row="4" column="0" colspan="2">
+    <widget class="Line" name="line">
+     <property name="orientation">
+      <enum>Qt::Horizontal</enum>
+     </property>
+    </widget>
+   </item>
+   <item row="15" column="0" colspan="2">
+    <widget class="QDialogButtonBox" name="buttonBoxTrafficPattern">
+     <property name="orientation">
+      <enum>Qt::Horizontal</enum>
+     </property>
+     <property name="standardButtons">
+      <set>QDialogButtonBox::Cancel|QDialogButtonBox::Help|QDialogButtonBox::Ok</set>
+     </property>
+    </widget>
+   </item>
+   <item row="1" column="0">
+    <widget class="QLabel" name="labelTrafficPatternRunway">
+     <property name="text">
+      <string>&amp;Runways:</string>
+     </property>
+     <property name="buddy">
+      <cstring>tableWidgetTrafficPatternRunway</cstring>
      </property>
     </widget>
    </item>
@@ -288,21 +187,11 @@ i.e. length of the final segment</string>
      </attribute>
     </widget>
    </item>
-   <item row="8" column="0">
-    <widget class="QLabel" name="labelTrafficPatternDepartureDistance">
-     <property name="text">
-      <string>&amp;Departure from threshold:</string>
-     </property>
-     <property name="buddy">
-      <cstring>doubleSpinBoxTrafficPatternDepartureDistance</cstring>
-     </property>
-    </widget>
-   </item>
-   <item row="8" column="1">
-    <widget class="QDoubleSpinBox" name="doubleSpinBoxTrafficPatternDepartureDistance">
+   <item row="7" column="1">
+    <widget class="QDoubleSpinBox" name="doubleSpinBoxTrafficPatternBaseDistance">
      <property name="toolTip">
-      <string>Distance from runway threshold to turn to crosswind. 
-Measured from the start of the runway, i.e. the end of the final leg.</string>
+      <string>Distance from turn to final to runway end, 
+i.e. length of the final segment</string>
      </property>
      <property name="showGroupSeparator" stdset="0">
       <bool>true</bool>
@@ -324,6 +213,110 @@ Measured from the start of the runway, i.e. the end of the final leg.</string>
      </property>
      <property name="value">
       <double>3.000000000000000</double>
+     </property>
+    </widget>
+   </item>
+   <item row="10" column="1">
+    <widget class="QSpinBox" name="spinBoxTrafficPatternAltitude">
+     <property name="toolTip">
+      <string>Pattern altitude above airport elevation</string>
+     </property>
+     <property name="showGroupSeparator" stdset="0">
+      <bool>true</bool>
+     </property>
+     <property name="suffix">
+      <string> %alt%</string>
+     </property>
+     <property name="minimum">
+      <number>100</number>
+     </property>
+     <property name="maximum">
+      <number>10000</number>
+     </property>
+     <property name="singleStep">
+      <number>100</number>
+     </property>
+     <property name="value">
+      <number>1000</number>
+     </property>
+    </widget>
+   </item>
+   <item row="5" column="0">
+    <widget class="QLabel" name="labelTrafficPatternTurnDirection">
+     <property name="text">
+      <string>&amp;Turn direction:</string>
+     </property>
+     <property name="buddy">
+      <cstring>comboBoxTrafficPatternTurnDirection</cstring>
+     </property>
+    </widget>
+   </item>
+   <item row="10" column="0">
+    <widget class="QLabel" name="labelTrafficPatternAltitude">
+     <property name="text">
+      <string>Pattern &amp;altitude:</string>
+     </property>
+     <property name="buddy">
+      <cstring>spinBoxTrafficPatternAltitude</cstring>
+     </property>
+    </widget>
+   </item>
+   <item row="0" column="0" colspan="2">
+    <widget class="QLabel" name="labelTrafficPatternAirport">
+     <property name="frameShape">
+      <enum>QFrame::Box</enum>
+     </property>
+     <property name="frameShadow">
+      <enum>QFrame::Sunken</enum>
+     </property>
+     <property name="text">
+      <string/>
+     </property>
+     <property name="wordWrap">
+      <bool>true</bool>
+     </property>
+     <property name="margin">
+      <number>5</number>
+     </property>
+     <property name="textInteractionFlags">
+      <set>Qt::LinksAccessibleByMouse|Qt::TextSelectableByMouse</set>
+     </property>
+    </widget>
+   </item>
+   <item row="9" column="0">
+    <widget class="QLabel" name="labelTrafficPatternDownwindDistance">
+     <property name="text">
+      <string>&amp;Downwind to runway:</string>
+     </property>
+     <property name="buddy">
+      <cstring>doubleSpinBoxDownwindDistance</cstring>
+     </property>
+    </widget>
+   </item>
+   <item row="5" column="1">
+    <widget class="QComboBox" name="comboBoxTrafficPatternTurnDirection">
+     <item>
+      <property name="text">
+       <string>Left</string>
+      </property>
+     </item>
+     <item>
+      <property name="text">
+       <string>Right</string>
+      </property>
+     </item>
+    </widget>
+   </item>
+   <item row="11" column="1">
+    <widget class="QCheckBox" name="checkBoxTrafficPatternEntryExit">
+     <property name="toolTip">
+      <string>Show arrows indicating recommended entry end exit paths</string>
+     </property>
+     <property name="text">
+      <string>&amp;Entry and exit indicators</string>
+     </property>
+     <property name="checked">
+      <bool>true</bool>
      </property>
     </widget>
    </item>

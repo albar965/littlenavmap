@@ -101,7 +101,7 @@
       <string>Color for the range rings.</string>
      </property>
      <property name="text">
-      <string>&amp;Line Color</string>
+      <string>&amp;Color</string>
      </property>
     </widget>
    </item>
