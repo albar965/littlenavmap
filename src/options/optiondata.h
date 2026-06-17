@@ -803,7 +803,8 @@ private:
   optsw::FlagsWeather flagsWeather = optsw::WEATHER_INFO_FS | optsw::WEATHER_INFO_ACTIVESKY | optsw::WEATHER_INFO_NOAA |
                                      optsw::WEATHER_TOOLTIP_FS | optsw::WEATHER_TOOLTIP_ACTIVESKY | optsw::WEATHER_TOOLTIP_NOAA;
 
-  opts2::Flags2 flags2 = opts2::MAP_AIRPORT_TEXT_BACKGROUND | opts2::MAP_AIRPORT_HIGHLIGHT_ADDON |
+  opts2::Flags2 flags2 = opts2::MAP_AIRPORT_TEXT_BACKGROUND | opts2::MAP_AIRPORT_TEXT_RUNWAY_BACKGROUND |
+                         opts2::MAP_AIRPORT_TEXT_TAXIWAY_BACKGROUND | opts2::MAP_AIRPORT_HIGHLIGHT_ADDON |
                          opts2::MAP_ROUTE_TEXT_BACKGROUND | opts2::MAP_USER_TEXT_BACKGROUND | opts2::ROUTE_HIGHLIGHT_ACTIVE_TABLE |
                          opts2::MAP_AI_TEXT_BACKGROUND | opts2::MAP_ROUTE_DIM_PASSED | opts2::MAP_AVOID_BLURRED_MAP |
                          opts2::ONLINE_AIRSPACE_BY_FILE | opts2::ONLINE_AIRSPACE_BY_NAME | opts2::RAISE_WINDOWS |

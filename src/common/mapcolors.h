@@ -171,6 +171,7 @@ const QColor webTableAltBackgroundColor(QLatin1String("#eceae8"));
 
 extern QPen taxiwayLinePen;
 extern QColor taxiwayNameColor;
+extern QColor taxiwayNameColorDarkMap;
 extern QColor taxiwayNameBackgroundColor;
 
 const QBrush taxiwayClosedBrush = QBrush(QColor(255, 255, 0), Qt::BDiagPattern);
@@ -195,7 +196,8 @@ const QColor darkParkingTextColor = QColor(Qt::black);
 const QColor brightParkingTextColor = QColor(235, 235, 235);
 
 const QColor towerTextColor = QColor(Qt::black);
-const QColor runwayDimsTextColor = QColor(Qt::black);
+const QColor runwayNameColor = QColor(Qt::black);
+const QColor runwayNameColorDarkMap = QColor(Qt::lightGray);
 const QColor runwayTextBackgroundColor = QColor(255, 255, 255, 170);
 
 /* Text background color */

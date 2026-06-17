@@ -39,6 +39,7 @@ namespace mapcolors {
 QPen taxiwayLinePen(QColor(200, 200, 0), 1.5, Qt::DashLine, Qt::FlatCap);
 QColor taxiwayNameBackgroundColor(255, 255, 120);
 QColor taxiwayNameColor(Qt::black);
+QColor taxiwayNameColorDarkMap(Qt::lightGray);
 
 QColor airportDetailBackColor(255, 255, 255);
 QColor airportEmptyColor(130, 130, 130);

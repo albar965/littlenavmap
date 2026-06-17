@@ -659,6 +659,9 @@ void MapPainterAirport::drawAirportDiagram(const map::MapAirport& airport, const
   context->startTimer("Airport Diagram Taxi Names");
   if(!fast && taxipaths != nullptr && mapLayerEffective->isAirportDiagramDetail() && context->dOptAp(optsd::ITEM_AIRPORT_DETAIL_TAXI_NAME))
   {
+    bool background = context->flags2.testFlag(opts2::MAP_AIRPORT_TEXT_TAXIWAY_BACKGROUND);
+    const QColor taxiColor = !background && context->darkMap ? mapcolors::taxiwayNameColorDarkMap : mapcolors::taxiwayNameColor;
+
     QMultiHash<TaxiNameKey, TaxiNameValue> *taxiNameCache = mapPaintWidget->getMapCache()->getTaxiNameCache();
 
     if(context->viewContext == Marble::Animation)
@@ -680,10 +683,13 @@ void MapPainterAirport::drawAirportDiagram(const map::MapAirport& airport, const
           qDebug() << Q_FUNC_INFO << "####################### FETCH" << airport.id << taxiname
                    << points.getAirportPoint() << points.getTaxiTextPoint();
 #endif
+          bool background = context->flags2.testFlag(opts2::MAP_AIRPORT_TEXT_TAXIWAY_BACKGROUND);
+
           // Correct position based on position when cache entry was stored and new airport position
           const QPointF textPoint = points.getTaxiTextPoint() - (points.getAirportPoint() - airportPoint);
-          symbolPainter->textBoxF(painter, {taxiname}, mapcolors::taxiwayNameColor, textPoint.x(), textPoint.y(),
-                                  text::CENTER, 255, mapcolors::taxiwayNameBackgroundColor);
+          symbolPainter->textBoxF(painter, {taxiname}, taxiColor, textPoint.x(), textPoint.y(),
+                                  text::CENTER, background ? 255 : 0,
+                                  background ? mapcolors::taxiwayNameBackgroundColor : Qt::transparent);
         }
       }
     }
@@ -764,8 +770,9 @@ void MapPainterAirport::drawAirportDiagram(const map::MapAirport& airport, const
                     // Add to cache for next drawing with view context animation
                     taxiNameCache->insert(TaxiNameKey(airport.id, taxiname), TaxiNameValue(airportPoint, textPoint));
 
-                    symbolPainter->textBoxF(painter, {taxiname}, mapcolors::taxiwayNameColor, textPoint.x(), textPoint.y(),
-                                            text::CENTER, 255, mapcolors::taxiwayNameBackgroundColor);
+                    symbolPainter->textBoxF(painter, {taxiname}, taxiColor, textPoint.x(), textPoint.y(),
+                                            text::CENTER, background ? 255 : 0,
+                                            background ? mapcolors::taxiwayNameBackgroundColor : Qt::transparent);
                   }
                 }
               } // for(const QPointF& textPoint : QPolygonF({line.center(),
@@ -929,9 +936,10 @@ void MapPainterAirport::drawAirportDiagram(const map::MapAirport& airport, const
   context->startTimer("Airport Diagram Runway Texts");
   if(!fast && !runwayPaintData.isEmpty())
   {
+    bool background = context->flags2.testFlag(opts2::MAP_AIRPORT_TEXT_RUNWAY_BACKGROUND);
+    painter->setPen(!background && context->darkMap ? mapcolors::runwayNameColorDarkMap : mapcolors::runwayNameColor);
     const static QMarginsF RUNWAY_DIMENSION_MARGINS(4., 0., 4., 0.);
     painter->setBackgroundMode(Qt::TransparentMode);
-    painter->setPen(QPen(mapcolors::runwayDimsTextColor, 3, Qt::SolidLine, Qt::FlatCap));
 
     if(mapLayer->isAirportDiagram())
     {
@@ -981,7 +989,8 @@ void MapPainterAirport::drawAirportDiagram(const map::MapAirport& airport, const
 
         double textx = -textBackRect.width() / 2., texty = -runwayRect.width() / 2.;
         textBackRect.moveTo(textx, texty - textBackRect.height() - 5.);
-        painter->fillRect(textBackRect, mapcolors::runwayTextBackgroundColor);
+        if(background)
+          painter->fillRect(textBackRect, mapcolors::runwayTextBackgroundColor);
 
         // Draw runway length x width / L / surface
         painter->drawText(QPointF(textx + RUNWAY_DIMENSION_MARGINS.left(), texty - rwMetrics.descent() - 5.), runwayText);
@@ -1049,12 +1058,14 @@ void MapPainterAirport::drawAirportDiagram(const map::MapAirport& airport, const
           painter->rotate(rotate); // Rotate runway to horizontal layout
 
           textRectPrim.moveTo(-runwayRect.height() / 2., -runwayRect.width() / 2. - textRectPrim.height() - 5.);
-          painter->fillRect(textRectPrim, mapcolors::runwayTextBackgroundColor);
+          if(background)
+            painter->fillRect(textRectPrim, mapcolors::runwayTextBackgroundColor);
           painter->drawText(QPointF(-runwayRect.height() / 2. + RUNWAY_HEADING_MARGINS.left(),
                                     -runwayRect.width() / 2. - rwHdgMetrics.descent() - 5.), textPrim);
 
           textRectSec.moveTo(runwayRect.height() / 2. - textRectSec.width(), -runwayRect.width() / 2. - textRectSec.height() - 5.);
-          painter->fillRect(textRectSec, mapcolors::runwayTextBackgroundColor);
+          if(background)
+            painter->fillRect(textRectSec, mapcolors::runwayTextBackgroundColor);
           painter->drawText(QPointF(runwayRect.height() / 2. - textRectSec.width() + RUNWAY_HEADING_MARGINS.left(),
                                     -runwayRect.width() / 2. - rwHdgMetrics.descent() - 5.), textSec);
           painter->resetTransform();
@@ -1087,7 +1098,8 @@ void MapPainterAirport::drawAirportDiagram(const map::MapAirport& airport, const
         textRect = textRect.marginsAdded(RUNWAY_NUMBER_MARGINS);
         textRect.moveTo(-textRect.width() / 2., 4.);
 
-        painter->fillRect(textRect, mapcolors::runwayTextBackgroundColor);
+        if(background)
+          painter->fillRect(textRect, mapcolors::runwayTextBackgroundColor);
         painter->drawText(QPointF(-textRect.width() / 2. + RUNWAY_NUMBER_MARGINS.left(), runwayTextMetrics.ascent() + 4.),
                           runway.primaryName);
 
@@ -1113,7 +1125,8 @@ void MapPainterAirport::drawAirportDiagram(const map::MapAirport& airport, const
         textRect = textRect.marginsAdded(RUNWAY_NUMBER_MARGINS);
         textRect.moveTo(-textRect.width() / 2., 4.);
 
-        painter->fillRect(textRect, mapcolors::runwayTextBackgroundColor);
+        if(background)
+          painter->fillRect(textRect, mapcolors::runwayTextBackgroundColor);
         painter->drawText(QPointF(-textRect.width() / 2. + RUNWAY_NUMBER_MARGINS.left(), runwayTextMetrics.ascent() + 4.),
                           runway.secondaryName);
 

@@ -812,6 +812,8 @@ OptionsDialog::OptionsDialog(QMainWindow *parentWindow)
     ui->comboBoxOptionsUnitFuelWeight,
     ui->checkBoxOptionsMapZoomAvoidBlurred,
     ui->checkBoxOptionsMapAirportText,
+    ui->checkBoxOptionsMapAirportTextRunway,
+    ui->checkBoxOptionsMapAirportTextTaxiway,
     ui->checkBoxOptionsMapAirportAddon,
     ui->checkBoxOptionsMapNavaidText,
     ui->checkBoxOptionsMapNavaidFill,
@@ -1109,6 +1111,7 @@ void OptionsDialog::styleChanged()
   atools::gui::labelForcedUpdate(ui->labelOptionsWebStatus);
 
   gridDelegate->styleChanged();
+  gridDelegateAirport->styleChanged();
 
   // Update potential search hightlights with new color
   listWidgetIndex->setHighlightColor(NavApp::isGuiStyleDark() ? QColor(200, 0, 0, 200) : QColor(255, 255, 0, 200));
@@ -2412,6 +2415,8 @@ void OptionsDialog::widgetsToOptionData(OptionData& data)
 
   toFlags(data.flags2, ui->checkBoxOptionsMapEmptyAirports3D, opts2::MAP_EMPTY_AIRPORTS_3D);
   toFlags(data.flags2, ui->checkBoxOptionsMapAirportText, opts2::MAP_AIRPORT_TEXT_BACKGROUND);
+  toFlags(data.flags2, ui->checkBoxOptionsMapAirportTextRunway, opts2::MAP_AIRPORT_TEXT_RUNWAY_BACKGROUND);
+  toFlags(data.flags2, ui->checkBoxOptionsMapAirportTextTaxiway, opts2::MAP_AIRPORT_TEXT_TAXIWAY_BACKGROUND);
   toFlags(data.flags2, ui->checkBoxOptionsMapAirportAddon, opts2::MAP_AIRPORT_HIGHLIGHT_ADDON);
   toFlags(data.flags2, ui->checkBoxOptionsMapNavaidText, opts2::MAP_NAVAID_TEXT_BACKGROUND);
   toFlags(data.flags2, ui->checkBoxOptionsMapNavaidFill, opts2::MAP_NAVAID_FILL_BACKGROUND);
@@ -2756,6 +2761,8 @@ void OptionsDialog::optionDataToWidgets(const OptionData& data)
   fromFlags(data.flags2, ui->checkBoxOptionsMapEmptyAirports3D, opts2::MAP_EMPTY_AIRPORTS_3D);
 
   fromFlags(data.flags2, ui->checkBoxOptionsMapAirportText, opts2::MAP_AIRPORT_TEXT_BACKGROUND);
+  fromFlags(data.flags2, ui->checkBoxOptionsMapAirportTextRunway, opts2::MAP_AIRPORT_TEXT_RUNWAY_BACKGROUND);
+  fromFlags(data.flags2, ui->checkBoxOptionsMapAirportTextTaxiway, opts2::MAP_AIRPORT_TEXT_TAXIWAY_BACKGROUND);
   fromFlags(data.flags2, ui->checkBoxOptionsMapAirportAddon, opts2::MAP_AIRPORT_HIGHLIGHT_ADDON);
   fromFlags(data.flags2, ui->checkBoxOptionsMapNavaidText, opts2::MAP_NAVAID_TEXT_BACKGROUND);
   fromFlags(data.flags2, ui->checkBoxOptionsMapNavaidFill, opts2::MAP_NAVAID_FILL_BACKGROUND);
