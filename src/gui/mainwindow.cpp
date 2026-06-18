@@ -162,7 +162,7 @@ MainWindow::MainWindow()
          "<p>"
            "<b>Copyright 2015-2026 Alexander Barthel"
            "</b>"
-         "</p>").arg(lnm::helpDonateUrl).arg(QCoreApplication::applicationName());
+         "</p>").arg(lnm::helpDonateUrl, QCoreApplication::applicationName());
 
   layoutWarnText = tr("The option \"Allow to undock map window\" in the layout file is "
                       "different than the currently set option.\n"
@@ -1975,7 +1975,7 @@ void MainWindow::updateWindowTitle()
   if(version.isStable() || version.isReleaseCandidate() || version.isBeta())
     title += tr(" %1").arg(applicationVersion);
   else
-    title += tr(" %1 (%2)").arg(applicationVersion).arg(GIT_REVISION_LITTLENAVMAP);
+    title += tr(" %1 (%2)").arg(applicationVersion, GIT_REVISION_LITTLENAVMAP);
 
   // Database information  ==========================================
   // Simulator database =========
@@ -2017,8 +2017,8 @@ void MainWindow::updateWindowTitle()
   // Performance name  ==========================================
   if(!NavApp::getCurrentAircraftPerfFilePath().isEmpty())
     title += tr(" — %1%2").
-             arg(QFileInfo(NavApp::getCurrentAircraftPerfFilePath()).fileName()).
-             arg(NavApp::getAircraftPerfController()->hasChanged() ? tr(" *") : QStringLiteral());
+             arg(QFileInfo(NavApp::getCurrentAircraftPerfFilePath()).fileName(),
+                 NavApp::getAircraftPerfController()->hasChanged() ? tr(" *") : QStringLiteral());
   else if(NavApp::getAircraftPerfController()->hasChanged())
     title += tr(" — *");
 
@@ -4085,7 +4085,7 @@ void MainWindow::checkSceneryLibrary(const atools::fs::sc::SimConnectUserAircraf
         dialog->showWarnMsgBox(lnm::ACTIONS_SHOW_CONNECTION_SCENERYLIBRARY_FSXP3D,
                                tr("You are connected to %1 but use the scenery library database of %2.\n"
                                   "Switch to the correct scenery library database in menu \"Scenery Library\" now or before flying.").
-                               arg(simulatorConnectedName).arg(currentSimulatorDbName),
+                               arg(simulatorConnectedName, currentSimulatorDbName),
                                tr("Do not &show this dialog again."));
       }
       else if(simulatorDbCorrected != atools::fs::FsPaths::NONE)
@@ -4098,7 +4098,7 @@ void MainWindow::checkSceneryLibrary(const atools::fs::sc::SimConnectUserAircraf
                                  tr("You are connected to %1 but no scenery library database was found for this simulator.\n"
                                     "Either install the related simulator and load the scenery library database "
                                     "from menu \"Scenery Library\" or copy a scenery library database file from another computer.").
-                                 arg(simulatorConnectedName).arg(currentSimulatorDbName), tr("Do not &show this dialog again."));
+                                 arg(simulatorConnectedName, currentSimulatorDbName), tr("Do not &show this dialog again."));
         }
         else
         {
@@ -4106,7 +4106,7 @@ void MainWindow::checkSceneryLibrary(const atools::fs::sc::SimConnectUserAircraf
           int result = dialog->showQuestionMsgBox(lnm::ACTIONS_SHOW_CONNECTION_SCENERYLIBRARY,
                                                   tr("You are connected to %1 but use the scenery library database of %2.\n"
                                                      "Switch to the correct scenery library database for %1 now?").
-                                                  arg(simulatorConnectedName).arg(currentSimulatorDbName),
+                                                  arg(simulatorConnectedName, currentSimulatorDbName),
                                                   tr("Do not &show this dialog again and correct the mode automatically."),
                                                   QMessageBox::Yes | QMessageBox::No, QMessageBox::Yes, QMessageBox::Yes);
 
@@ -4184,9 +4184,10 @@ void MainWindow::resetAllSettings()
                           "<p>will be created in the folder</p>"
                             "%3&nbsp;(click to open)."
                             "<p>This allows you to undo this change.</p>"
-                              "<p>Reset and restart now?</p>").arg(QCoreApplication::applicationName()).
-                 arg(atools::util::HtmlBuilder::aFilePath(settingFile, atools::util::html::NOBR_WHITESPACE)).
-                 arg(atools::util::HtmlBuilder::aFilePath(settingPath, atools::util::html::NOBR_WHITESPACE)));
+                              "<p>Reset and restart now?</p>").
+                 arg(QCoreApplication::applicationName(),
+                     atools::util::HtmlBuilder::aFilePath(settingFile, atools::util::html::NOBR_WHITESPACE),
+                     atools::util::HtmlBuilder::aFilePath(settingPath, atools::util::html::NOBR_WHITESPACE)));
 
   box.setIcon(QMessageBox::Question);
   box.setHelpUrl(lnm::helpOnlineUrl % "MENUS.html#reset-and-restart", lnm::helpLanguageOnline());
@@ -4510,9 +4511,9 @@ void MainWindow::applyButtonStylesheet()
       "QAbstractButton { border: 1px solid transparent; padding: 1px; margin: 1px; }"
       "QAbstractButton:checked { border: 1px solid %1; padding: 1px; background: %2; margin: 1px; }"
       "QAbstractButton:hover { border: 1px solid %3; padding: 1px; margin: 1px; }").
-                 arg(palette.color(QPalette::Active, QPalette::Mid).name()).
-                 arg(palette.color(QPalette::Active, QPalette::Mid).lighter(NavApp::isGuiStyleDark() ? 400 : 160).name()).
-                 arg(palette.color(QPalette::Active, QPalette::Highlight).name());
+                 arg(palette.color(QPalette::Active, QPalette::Mid).name(),
+                     palette.color(QPalette::Active, QPalette::Mid).lighter(NavApp::isGuiStyleDark() ? 400 : 160).name(),
+                     palette.color(QPalette::Active, QPalette::Highlight).name());
 
   }
 
