@@ -405,6 +405,11 @@ void SearchController::showRandomRouteCalc()
   airportSearch->showRandomRouteCalc();
 }
 
+QWidget *SearchController::getCurrentSearchTabWidget()
+{
+  return tabHandlerSearch->getCurrentTabWidget();
+}
+
 si::TabSearchId SearchController::getCurrentSearchTabId()
 {
   return static_cast<si::TabSearchId>(tabHandlerSearch->getCurrentTabId());

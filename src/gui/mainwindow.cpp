@@ -1791,61 +1791,82 @@ void MainWindow::actionShortcutMapTriggered()
 
 void MainWindow::actionShortcutProfileTriggered()
 {
-  qDebug() << Q_FUNC_INFO;
-  dockHandler->activateWindow(ui->dockWidgetProfile);
-  profileWidget->activateWindow();
-  profileWidget->setFocus();
+  if(!atools::gui::hasAnyChildFocus(ui->dockWidgetProfile))
+  {
+    dockHandler->activateWindow(ui->dockWidgetProfile);
+    profileWidget->activateWindow();
+    profileWidget->setFocus();
+  }
+  else
+    dockHandler->closeDockWidget(ui->dockWidgetProfile);
+}
+
+void MainWindow::actionShortcutSearchTriggered(QWidget *focusWidget, int tabId)
+{
+  if(!atools::gui::hasAnyChildFocus(searchController->getCurrentSearchTabWidget()) || searchController->getCurrentSearchTabId() != tabId)
+  {
+    dockHandler->activateWindow(ui->dockWidgetSearch);
+    searchController->setCurrentSearchTabId(si::TabSearchId(tabId));
+    focusWidget->setFocus();
+
+    QComboBox *comboBox = dynamic_cast<QComboBox *>(focusWidget);
+    if(comboBox != nullptr)
+      comboBox->lineEdit()->selectAll();
+
+    QLineEdit *lineEdit = dynamic_cast<QLineEdit *>(focusWidget);
+    if(lineEdit != nullptr)
+      lineEdit->selectAll();
+  }
+  else
+    dockHandler->closeDockWidget(ui->dockWidgetSearch);
 }
 
 void MainWindow::actionShortcutAirportSearchTriggered()
 {
-  qDebug() << Q_FUNC_INFO;
-  dockHandler->activateWindow(ui->dockWidgetSearch);
-  searchController->setCurrentSearchTabId(si::SEARCH_AIRPORT);
-  ui->comboBoxAirportTextSearch->setFocus();
-  ui->comboBoxAirportTextSearch->lineEdit()->selectAll();
+  actionShortcutSearchTriggered(ui->comboBoxAirportTextSearch, si::SEARCH_AIRPORT);
 }
 
 void MainWindow::actionShortcutNavaidSearchTriggered()
 {
-  qDebug() << Q_FUNC_INFO;
-  dockHandler->activateWindow(ui->dockWidgetSearch);
-  searchController->setCurrentSearchTabId(si::SEARCH_NAV);
-  ui->comboBoxNavIcaoSearch->setFocus();
-  ui->comboBoxNavIcaoSearch->lineEdit()->selectAll();
+  actionShortcutSearchTriggered(ui->comboBoxNavIcaoSearch, si::SEARCH_NAV);
 }
 
 void MainWindow::actionShortcutProcedureSearchTriggered()
 {
-  qDebug() << Q_FUNC_INFO;
-  dockHandler->activateWindow(ui->dockWidgetSearch);
-  searchController->setCurrentSearchTabId(si::SEARCH_PROC);
-  ui->treeWidgetApproachSearch->setFocus();
+  actionShortcutSearchTriggered(ui->treeWidgetApproachSearch, si::SEARCH_PROC);
 }
 
 void MainWindow::actionShortcutUserpointSearchTriggered()
 {
-  qDebug() << Q_FUNC_INFO;
-  dockHandler->activateWindow(ui->dockWidgetSearch);
-  searchController->setCurrentSearchTabId(si::SEARCH_USER);
-  ui->treeWidgetApproachSearch->setFocus();
+  actionShortcutSearchTriggered(ui->lineEditUserdataIdent, si::SEARCH_USER);
 }
 
 void MainWindow::actionShortcutLogbookSearchTriggered()
 {
-  qDebug() << Q_FUNC_INFO;
-  dockHandler->activateWindow(ui->dockWidgetSearch);
-  searchController->setCurrentSearchTabId(si::SEARCH_LOG);
-  ui->lineEditLogdataAirport->setFocus();
-  ui->lineEditLogdataAirport->selectAll();
+  actionShortcutSearchTriggered(ui->lineEditLogdataAirport, si::SEARCH_LOG);
+}
+
+void MainWindow::actionShortcutRouteTriggered(QWidget *focusWidget, int tabId)
+{
+  atools::gui::TabWidgetHandler *routeTabHandler = NavApp::getRouteTabHandler();
+  if(!atools::gui::hasAnyChildFocus(ui->dockWidgetRoute) || routeTabHandler->getCurrentTabId() != tabId)
+  {
+    dockHandler->activateWindow(ui->dockWidgetRoute);
+    routeTabHandler->setCurrentTab(tabId);
+    focusWidget->setFocus();
+  }
+  else
+    dockHandler->closeDockWidget(ui->dockWidgetRoute);
 }
 
 void MainWindow::actionShortcutFlightplanTriggered()
 {
-  qDebug() << Q_FUNC_INFO;
-  dockHandler->activateWindow(ui->dockWidgetRoute);
-  NavApp::getRouteTabHandler()->setCurrentTab(rc::ROUTE);
-  ui->tableViewRoute->setFocus();
+  actionShortcutRouteTriggered(ui->tableViewRoute, rc::ROUTE);
+}
+
+void MainWindow::actionShortcutAircraftPerformanceTriggered()
+{
+  actionShortcutRouteTriggered(ui->textBrowserAircraftPerformanceReport, rc::AIRCRAFT);
 }
 
 void MainWindow::actionShortcutCalcRouteTriggered()
@@ -1853,46 +1874,46 @@ void MainWindow::actionShortcutCalcRouteTriggered()
   routeController->calculateRouteWindowShow();
 }
 
-void MainWindow::actionShortcutAircraftPerformanceTriggered()
+void MainWindow::actionShortcutInformationTriggered(QWidget *focusWidget, int tabId, int tabIdAirport)
 {
-  qDebug() << Q_FUNC_INFO;
-  dockHandler->activateWindow(ui->dockWidgetRoute);
-  NavApp::getRouteTabHandler()->setCurrentTab(rc::AIRCRAFT);
-  ui->textBrowserAircraftPerformanceReport->setFocus();
+  if(!atools::gui::hasAnyChildFocus(ui->dockWidgetInformation) || infoController->getCurrentInfoTabIndex() != tabId ||
+     (tabIdAirport != -1 && infoController->getCurrentAirportInfoTabIndex() != tabIdAirport))
+  {
+    dockHandler->activateWindow(ui->dockWidgetInformation);
+    infoController->setCurrentInfoTabIndex(ic::TabInfoId(tabId));
+    if(tabIdAirport != -1)
+      infoController->setCurrentAirportInfoTabIndex(ic::TabAirportInfoId(tabIdAirport));
+    focusWidget->setFocus();
+  }
+  else
+    dockHandler->closeDockWidget(ui->dockWidgetInformation);
 }
 
 void MainWindow::actionShortcutAirportInformationTriggered()
 {
-  qDebug() << Q_FUNC_INFO;
-  dockHandler->activateWindow(ui->dockWidgetInformation);
-  infoController->setCurrentInfoTabIndex(ic::INFO_AIRPORT);
-  infoController->setCurrentAirportInfoTabIndex(ic::INFO_AIRPORT_OVERVIEW);
-  ui->textBrowserAirportInfo->setFocus();
+  actionShortcutInformationTriggered(ui->textBrowserAirportInfo, ic::INFO_AIRPORT, ic::INFO_AIRPORT_OVERVIEW);
 }
 
 void MainWindow::actionShortcutAirportWeatherTriggered()
 {
-  qDebug() << Q_FUNC_INFO;
-  dockHandler->activateWindow(ui->dockWidgetInformation);
-  infoController->setCurrentInfoTabIndex(ic::INFO_AIRPORT);
-  infoController->setCurrentAirportInfoTabIndex(ic::INFO_AIRPORT_WEATHER);
-  ui->textBrowserWeatherInfo->setFocus();
+  actionShortcutInformationTriggered(ui->textBrowserWeatherInfo, ic::INFO_AIRPORT, ic::INFO_AIRPORT_WEATHER);
 }
 
 void MainWindow::actionShortcutNavaidInformationTriggered()
 {
-  qDebug() << Q_FUNC_INFO;
-  dockHandler->activateWindow(ui->dockWidgetInformation);
-  infoController->setCurrentInfoTabIndex(ic::INFO_NAVAID);
-  ui->textBrowserNavaidInfo->setFocus();
+  actionShortcutInformationTriggered(ui->textBrowserNavaidInfo, ic::INFO_NAVAID);
 }
 
 void MainWindow::actionShortcutAircraftProgressTriggered()
 {
-  qDebug() << Q_FUNC_INFO;
-  dockHandler->activateWindow(ui->dockWidgetAircraft);
-  infoController->setCurrentAircraftTabIndex(ic::AIRCRAFT_USER_PROGRESS);
-  ui->textBrowserAircraftProgressInfo->setFocus();
+  if(!atools::gui::hasAnyChildFocus(ui->dockWidgetAircraft) || infoController->getCurrentAircraftTabIndex() != ic::AIRCRAFT_USER_PROGRESS)
+  {
+    dockHandler->activateWindow(ui->dockWidgetAircraft);
+    infoController->setCurrentAircraftTabIndex(ic::AIRCRAFT_USER_PROGRESS);
+    ui->textBrowserAircraftProgressInfo->setFocus();
+  }
+  else
+    dockHandler->closeDockWidget(ui->dockWidgetAircraft);
 }
 
 void MainWindow::weatherUpdateTimeout()

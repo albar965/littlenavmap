@@ -173,6 +173,7 @@ public:
 
   void showRandomRouteCalc();
 
+  QWidget *getCurrentSearchTabWidget();
   si::TabSearchId getCurrentSearchTabId();
   QString getCurrentSearchTabText();
 

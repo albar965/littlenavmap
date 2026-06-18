@@ -1678,9 +1678,24 @@ QStringList InfoController::getAirportTextFull(const QString& ident) const
   return retval;
 }
 
+ic::TabInfoId InfoController::getCurrentInfoTabIndex() const
+{
+  return tabHandlerInfo->getCurrentTabId<ic::TabInfoId>();
+}
+
 void InfoController::setCurrentInfoTabIndex(ic::TabInfoId tabId)
 {
   tabHandlerInfo->setCurrentTab(tabId);
+}
+
+ic::TabAirportInfoId InfoController::getCurrentAirportInfoTabIndex() const
+{
+  return tabHandlerAirportInfo->getCurrentTabId<ic::TabAirportInfoId>();
+}
+
+ic::TabAircraftId InfoController::getCurrentAircraftTabIndex() const
+{
+  return tabHandlerAircraft->getCurrentTabId<ic::TabAircraftId>();
 }
 
 void InfoController::setCurrentAirportInfoTabIndex(ic::TabAirportInfoId tabId)

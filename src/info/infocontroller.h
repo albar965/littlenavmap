@@ -136,8 +136,13 @@ public:
   QStringList getAirportTextFull(const QString& ident) const;
 
   void setCurrentInfoTabIndex(ic::TabInfoId tabId);
+  ic::TabInfoId getCurrentInfoTabIndex() const;
+
   void setCurrentAirportInfoTabIndex(ic::TabAirportInfoId tabId);
+  ic::TabAirportInfoId getCurrentAirportInfoTabIndex() const;
+
   void setCurrentAircraftTabIndex(ic::TabAircraftId tabId);
+  ic::TabAircraftId getCurrentAircraftTabIndex() const;
 
   /* Reset all tab bars */
   void resetTabLayout();
