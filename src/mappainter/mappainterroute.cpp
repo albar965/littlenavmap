@@ -553,7 +553,7 @@ void MapPainterRoute::paintRouteInternal(QStringList routeTexts, QList<Line> lin
     painter->setBackgroundMode(Qt::OpaqueMode);
 
   painter->setBackground(mapcolors::routeTextBackgroundColor);
-  painter->setPen(mapcolors::routeTextColor);
+  painter->setPen(context->darkMap ? mapcolors::routeTextColorDarkMap : mapcolors::routeTextColor);
 
   if(context->mapLayerRouteText->isRouteTextAndDetail())
   {
@@ -622,7 +622,7 @@ void MapPainterRoute::paintRouteInternal(QStringList routeTexts, QList<Line> lin
       painter->setBackgroundMode(Qt::OpaqueMode);
 
     painter->setBackground(mapcolors::routeTextBackgroundColor);
-    painter->setPen(mapcolors::routeTextColor);
+    painter->setPen(context->darkMap ? mapcolors::routeTextColorDarkMap : mapcolors::routeTextColor);
     paintInboundOutboundTexts(textPlacementBuf, passedRouteLeg, true /* vor */);
     painter->restore();
   }
@@ -818,7 +818,8 @@ void MapPainterRoute::paintTopOfDescentAndClimb()
           if(context->mapLayerRouteText->isAirportRouteInfo())
             toc.append(Unit::distNm(route->getTopOfClimbDistance()));
 
-          paintText(mapcolors::routeTextColor, x, y, radius * 2.f, drawTextDetails, toc, TEXT_ATTS);
+          paintText(context->darkMap ? mapcolors::routeTextColorDarkMap : mapcolors::routeTextColor, x, y, radius * 2.f, drawTextDetails,
+                    toc, TEXT_ATTS);
         }
       }
     }
@@ -840,7 +841,8 @@ void MapPainterRoute::paintTopOfDescentAndClimb()
           if(context->mapLayerRouteText->isAirportRouteInfo())
             tod.append(Unit::distNm(route->getTopOfDescentFromDestination()));
 
-          paintText(mapcolors::routeTextColor, x, y, radius * 2.f, drawTextDetails, tod, TEXT_ATTS);
+          paintText(context->darkMap ? mapcolors::routeTextColorDarkMap : mapcolors::routeTextColor, x, y, radius * 2.f, drawTextDetails,
+                    tod, TEXT_ATTS);
         }
       }
     }

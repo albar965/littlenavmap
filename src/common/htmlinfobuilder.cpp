@@ -5700,7 +5700,7 @@ QString HtmlInfoBuilder::identRegionText(const QString& ident, const QString& re
   if(region.isEmpty())
     return ident;
   else
-    return tr("%1/%2").arg(ident).arg(region);
+    return tr("%1/%2").arg(ident, region);
 }
 
 QString HtmlInfoBuilder::highlightText(const QString& text) const

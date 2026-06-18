@@ -251,6 +251,7 @@ const QColor routeProcedurePreviewMissedColor = QColor(0, 120, 230);
 
 /* Text along route and approach segments */
 extern QColor routeTextColor;
+extern QColor routeTextColorDarkMap;
 extern QColor routeTextColorGray;
 extern QColor routeTextBackgroundColor;
 extern QColor routeProcedureMissedTextColor;

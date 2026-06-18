@@ -624,7 +624,7 @@ void MapPainterMark::paintLogEntries(const QList<map::MapLogbookEntry>& entries)
         painter->setBackground(mapcolors::routeTextBackgroundColor);
       }
 
-      painter->setPen(mapcolors::routeTextColor);
+      painter->setPen(context->darkMap ? mapcolors::routeTextColorDarkMap : mapcolors::routeTextColor);
       for(const MapLogbookEntry *entry : visibleLogEntries)
       {
         // Text for one line

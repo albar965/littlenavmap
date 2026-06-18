@@ -41,7 +41,7 @@ QColor taxiwayNameBackgroundColor(255, 255, 120);
 QColor taxiwayNameColor(Qt::black);
 QColor taxiwayNameColorDarkMap(Qt::lightGray);
 
-QColor airportDetailBackColor(255, 255, 255);
+QColor airportDetailBackColor(Qt::white);
 QColor airportEmptyColor(130, 130, 130);
 QColor toweredAirportColor(15, 70, 130);
 QColor unToweredAirportColor(126, 58, 91);
@@ -112,7 +112,7 @@ QColor compassRoseTextColor(Qt::black);
 QColor profileSkyColor(QColor(204, 204, 255));
 QColor profileLandColorInner(QColor(0, 128, 0));
 QColor profileLandColorOuter(QColor(80, 160, 80));
-QColor profileLabelColor(QColor(0, 0, 0));
+QColor profileLabelColor(Qt::black);
 
 QColor profileVasiAboveColor(QColor(QStringLiteral("#70ffffff")));
 QColor profileVasiBelowColor(QColor(QStringLiteral("#70ff0000")));
@@ -149,31 +149,32 @@ QColor mapPrintRowColor(250, 250, 250);
 QColor mapPrintRowColorAlt(240, 240, 240);
 QColor mapPrintHeaderColor(220, 220, 220);
 
-QPen searchCenterBackPen(QColor(0, 0, 0), 6., Qt::SolidLine, Qt::FlatCap);
-QPen searchCenterFillPen(QColor(255, 255, 0), 2., Qt::SolidLine, Qt::FlatCap);
-QPen touchMarkBackPen(QColor(0, 0, 0), 4., Qt::SolidLine, Qt::FlatCap);
-QPen touchMarkFillPen(QColor(255, 255, 255), 2., Qt::SolidLine, Qt::FlatCap);
+QPen searchCenterBackPen(Qt::black, 6., Qt::SolidLine, Qt::FlatCap);
+QPen searchCenterFillPen(Qt::yellow, 2., Qt::SolidLine, Qt::FlatCap);
+QPen touchMarkBackPen(QColor(Qt::black), 4., Qt::SolidLine, Qt::FlatCap);
+QPen touchMarkFillPen(Qt::white, 2., Qt::SolidLine, Qt::FlatCap);
 QColor touchRegionFillColor(QStringLiteral("#40888888"));
 QColor touchRegionCornerFillColor(QStringLiteral("#80888888"));
 
-QColor aircraftUserLabelColor(0, 0, 0);
+QColor aircraftUserLabelColor(Qt::black);
 QColor aircraftUserLabelColorBg(255, 255, 150);
-QColor aircraftAiLabelColor(0, 0, 0);
-QColor aircraftAiLabelColorBg(255, 255, 255);
+QColor aircraftAiLabelColor(Qt::black);
+QColor aircraftAiLabelColorBg(Qt::white);
 
 /* Text along route and approach segments */
-QColor routeTextColor(0, 0, 0);
+QColor routeTextColor(Qt::black);
+QColor routeTextColorDarkMap(Qt::lightGray);
 QColor routeTextColorGray(140, 140, 140);
 QColor routeTextBackgroundColor(255, 255, 255, 200);
 QColor routeProcedureMissedTextColor(90, 90, 90);
-QColor routeProcedureTextColor(0, 0, 0);
+QColor routeProcedureTextColor(Qt::black);
 QColor routeProcedurePointColor(90, 90, 90);
 QColor routeProcedurePointFlyoverColor(Qt::black);
 QColor routeUserPointColor(Qt::darkYellow);
 QColor routeInvalidPointColor(Qt::red);
 
-QColor routeDirectToDepartureBackgroundColor(255, 255, 255);
-QPen routeDirectToDeparturePen(QColor(0, 0, 0), 3., Qt::DotLine, Qt::FlatCap, Qt::MiterJoin);
+QColor routeDirectToDepartureBackgroundColor(Qt::white);
+QPen routeDirectToDeparturePen(QColor(Qt::black), 3., Qt::DotLine, Qt::FlatCap, Qt::MiterJoin);
 
 /* Procedure colors */
 QColor routeProcedureMissedTableColorDark(240, 170, 120);
@@ -811,6 +812,7 @@ void loadColors()
   loadPen(colorSettings, QStringLiteral("Profile/VasiCenterPen"), profileVasiCenterPen);
 
   loadColor(colorSettings, QStringLiteral("Route/TextColor"), routeTextColor);
+  loadColor(colorSettings, QStringLiteral("Route/TextColorDarkMap"), routeTextColorDarkMap);
   loadColor(colorSettings, QStringLiteral("Route/TextColorGray"), routeTextColorGray);
   loadColor(colorSettings, QStringLiteral("Route/TextBackgroundColor"), routeTextBackgroundColor);
   loadColor(colorSettings, QStringLiteral("Route/ProcedureMissedTextColor"), routeProcedureMissedTextColor);
