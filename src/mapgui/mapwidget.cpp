@@ -4478,7 +4478,7 @@ void MapWidget::setMapDetail(int level, int levelText)
     detailStrText = QString::number(levelText);
 
   // Update status bar label
-  NavApp::getStatusBar()->setDetailLabelText(tr("Detail %1/%2").arg(detailStr).arg(detailStrText));
+  NavApp::getStatusBar()->setDetailLabelText(tr("Detail %1/%2").arg(detailStr, detailStrText));
   NavApp::getStatusBar()->setStatusMessage(tr("Map detail level changed."));
 }
 

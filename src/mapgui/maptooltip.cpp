@@ -396,12 +396,6 @@ QString MapTooltip::buildTooltip(const map::MapResult& mapSearchResult, const at
 
       for(const MapAirspace& airspace : res.airspaces)
       {
-        if(checkText(html))
-        {
-          overflow = true;
-          break;
-        }
-
         if(!html.isEmpty())
           html.hr();
 

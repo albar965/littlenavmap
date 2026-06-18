@@ -187,7 +187,7 @@ QString RouteExport::exportFile(const RouteExportFormat& format, const QString& 
   QString suffix = format.getSuffix(); // Get suffix plus dot
   if(!suffix.isEmpty())
     // Suffix included in pattern
-    filter = tr("%1 Files %2;;All Files (*)").arg(format.getFormat()).arg(format.getFilter());
+    filter = tr("%1 Files %2;;All Files (*)").arg(format.getFormat(), format.getFilter());
   else
     // No suffix show only all files filter
     filter = tr("All Files (*)");
@@ -269,7 +269,7 @@ bool RouteExport::routeExportCheckDatabase(const QString& exportSimulatorName,
                                             tr("You are using the scenery library database of %1 and "
                                                "trying to export a flight plan for %2.\n\n"
                                                "Really continue?").
-                                            arg(currentSimulatorDbName).arg(exportSimulatorName),
+                                            arg(currentSimulatorDbName, exportSimulatorName),
                                             tr("Do not &show this dialog again and continue saving."),
                                             QMessageBox::Yes | QMessageBox::No, QMessageBox::Yes, QMessageBox::Yes);
 

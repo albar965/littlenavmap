@@ -58,7 +58,7 @@ bool ProfileOptions::showOptions()
   treeDialog.addItem2(headerItem, optsp::PROFILE_HEADER_DESCENT_PATH_DEVIATION, tr("Deviation"),
                       tr("Vertical altitude deviation from descent path.\n"
                          "%1 means above (increase sink rate) and %2 means below (decrease sink rate).").
-                      arg(TextPointer::getPointerDown()).arg(TextPointer::getPointerUp()));
+                      arg(TextPointer::getPointerDown(), TextPointer::getPointerUp()));
   treeDialog.addItem2(headerItem, optsp::PROFILE_HEADER_DESCENT_PATH_ANGLE, tr("Angle and Speed"),
                       tr("Vertical flight path angle needed to keep the vertical path angle.\n"
                          "Changes to \"Required angle\" if mandatory in approach procedures."));

@@ -599,7 +599,7 @@ QString MapAirportHandler::getRunwayText() const
         text = tr("No airports.");
     }
     else
-      text = tr("Runway length between %1 and %2.").arg(Unit::distShortFeet(runwayLengthMin)).arg(Unit::distShortFeet(runwayLengthMax));
+      text = tr("Runway length between %1 and %2.").arg(Unit::distShortFeet(runwayLengthMin), Unit::distShortFeet(runwayLengthMax));
   }
   else if(isMinimumRunwaySet())
     text = tr("Minimum runway length %1.").arg(Unit::distShortFeet(runwayLengthMin));

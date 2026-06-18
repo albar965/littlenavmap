@@ -427,17 +427,13 @@ void LogStatisticsDialog::updateStatisticsText()
   logdataController->getFlightStatsTime(earliest, latest, earliestSim, latestSim);
   html.table();
   html.row2If(tr("Earliest:"), tr("%1 %2").
-              arg(locale.toString(earliest, QLocale::ShortFormat)).
-              arg(earliest.timeZoneAbbreviation()));
+              arg(locale.toString(earliest, QLocale::ShortFormat), earliest.timeZoneAbbreviation()));
   html.row2If(tr("Earliest in Simulator:"), tr("%1 %2").
-              arg(locale.toString(earliestSim, QLocale::ShortFormat)).
-              arg(earliestSim.timeZoneAbbreviation()));
+              arg(locale.toString(earliestSim, QLocale::ShortFormat), earliestSim.timeZoneAbbreviation()));
   html.row2If(tr("Latest:"), tr("%1 %2").
-              arg(locale.toString(latest, QLocale::ShortFormat)).
-              arg(latest.timeZoneAbbreviation()));
+              arg(locale.toString(latest, QLocale::ShortFormat), latest.timeZoneAbbreviation()));
   html.row2If(tr("Latest in Simulator:"), tr("%1 %2").
-              arg(locale.toString(latestSim, QLocale::ShortFormat)).
-              arg(latestSim.timeZoneAbbreviation()));
+              arg(locale.toString(latestSim, QLocale::ShortFormat), latestSim.timeZoneAbbreviation()));
   html.tableEnd();
   html.row2AlignClear();
 

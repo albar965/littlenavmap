@@ -216,9 +216,10 @@ const QColor logTextBoxColor = QColor(150, 240, 255);
 const QColor previewTextBoxColor = QColor(190, 250, 255);
 
 /* Colors for aircraft range and other warning and error colors on the map */
-const QColor colorForegroundError("#ffffff");
-const QColor colorBackgroundError("#ff0000");
-const QColor colorForegroundWarning("#ff2000");
+const QColor colorForegroundError(Qt::white);
+const QColor colorBackgroundError(Qt::red);
+
+const QColor colorForegroundWarning(255, 32, 0);
 const QColor colorBackgroundWarning(Qt::white);
 
 const QColor airportSymbolFillColor = QColor(Qt::white);

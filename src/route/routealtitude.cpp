@@ -665,8 +665,7 @@ bool RouteAltitude::violatesAltitudeRestriction(QString& errorMessage, int legIn
 
     if(retval)
       errorMessage = tr("Leg number %1, %2 (%3) at %4 violates altitude restriction \"%5\".").
-                     arg(legIndex + 1).arg(leg.getIdent()).arg(leg.getProcedureType()).arg(Unit::altFeet(legAlt)).
-                     arg(proc::altRestrictionText(leg.restriction));
+                     arg(legIndex + 1).arg(leg.getIdent(), leg.getProcedureType(), Unit::altFeet(legAlt), proc::altRestrictionText(leg.restriction));
   }
 
   return retval;

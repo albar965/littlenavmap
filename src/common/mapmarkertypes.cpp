@@ -102,12 +102,12 @@ QString PatternMarker::displayText() const
   if(airportIdent.isEmpty())
     return QObject::tr("Traffic Pattern %1 RW %2").arg(turnRight ?
                                                        QObject::tr("R", "Pattern direction") :
-                                                       QObject::tr("L", "Pattern direction")).arg(runwayName);
+                                                       QObject::tr("L", "Pattern direction"), runwayName);
   else
     return QObject::tr("Traffic Pattern %1 %2 RW %3").
-           arg(airportIdent).arg(turnRight ?
-                                 QObject::tr("R", "Pattern direction") :
-                                 QObject::tr("L", "Pattern direction")).arg(runwayName);
+           arg(airportIdent, turnRight ?
+               QObject::tr("R", "Pattern direction") :
+               QObject::tr("L", "Pattern direction"), runwayName);
 }
 
 // HoldingMarker ######################################################################################
@@ -177,13 +177,12 @@ QString HoldingMarker::displayText() const
 {
   if(holding.nav.ident.isEmpty())
     return QObject::tr("User Holding %1 %2").
-           arg(holding.turnLeft ? QObject::tr("L", "Holding direction") : QObject::tr("R", "Holding direction")).
-           arg(Unit::altFeet(holding.position.getAltitude()));
+           arg(holding.turnLeft ? QObject::tr("L", "Holding direction") : QObject::tr("R", "Holding direction"),
+               Unit::altFeet(holding.position.getAltitude()));
   else
     return QObject::tr("User Holding %1 %2 %3").
-           arg(holding.nav.ident).
-           arg(holding.turnLeft ? QObject::tr("L", "Holding direction") : QObject::tr("R", "Holding direction")).
-           arg(Unit::altFeet(holding.position.getAltitude()));
+           arg(holding.nav.ident, holding.turnLeft ? QObject::tr("L", "Holding direction") : QObject::tr("R", "Holding direction"),
+               Unit::altFeet(holding.position.getAltitude()));
 }
 
 // MsaMarker ######################################################################################
@@ -394,7 +393,7 @@ QString DistanceMarker::displayText() const
   if(text.isEmpty())
     return QObject::tr("Measurement %1").arg(distStr);
   else
-    return QObject::tr("Measurement %1 %2").arg(text).arg(distStr);
+    return QObject::tr("Measurement %1 %2").arg(text, distStr);
 }
 
 // Binary legacy functions ######################################################################################
@@ -541,14 +540,14 @@ QString markerLabel(const MapUserpoint& userpoint)
 QString markerLabel(const MapVor& vor)
 {
   if(vor.frequency == 0 || vor.tacan)
-    return QObject::tr("%1 %2").arg(vor.ident).arg(vor.channel);
+    return QObject::tr("%1 %2").arg(vor.ident, vor.channel);
   else
-    return QObject::tr("%1 %2").arg(vor.ident).arg(QString::number(vor.frequency / 1000., 'f', 2));
+    return QObject::tr("%1 %2").arg(vor.ident, QString::number(vor.frequency / 1000., 'f', 2));
 }
 
 QString markerLabel(const MapNdb& ndb)
 {
-  return QObject::tr("%1 %2").arg(ndb.ident).arg(QString::number(ndb.frequency / 100., 'f', 1));
+  return QObject::tr("%1 %2").arg(ndb.ident, QString::number(ndb.frequency / 100., 'f', 1));
 }
 
 } // namespace map

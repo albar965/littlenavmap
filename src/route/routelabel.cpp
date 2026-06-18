@@ -306,8 +306,7 @@ void RouteLabel::buildHeaderAirports(atools::util::HtmlBuilder& html, bool widge
   if(route.hasValidDeparture())
   {
     departureAirport = tr("%1 (%2)").
-                       arg(route.getDepartureAirportLeg().getName()).
-                       arg(route.getDepartureAirportLeg().getDisplayIdent());
+                       arg(route.getDepartureAirportLeg().getName(), route.getDepartureAirportLeg().getDisplayIdent());
 
     if(route.getDepartureAirportLeg().getDepartureParking().isValid())
       departureParking = map::parkingNameOrNumber(route.getDepartureAirportLeg().getDepartureParking());
@@ -325,19 +324,17 @@ void RouteLabel::buildHeaderAirports(atools::util::HtmlBuilder& html, bool widge
   else
   {
     departureAirport = tr("%1 (%2)").
-                       arg(flightplan.constFirst().getIdent()).
-                       arg(flightplan.constFirst().getWaypointTypeAsDisplayString());
+                       arg(flightplan.constFirst().getIdent(), flightplan.constFirst().getWaypointTypeAsDisplayString());
   }
 
   // Add destination to text ==============================================================
   if(route.hasValidDestination())
     destinationAirport = tr("%1 (%2)").
-                         arg(route.getDestinationAirportLeg().getName()).
-                         arg(route.getDestinationAirportLeg().getDisplayIdent());
+                         arg(route.getDestinationAirportLeg().getName(), route.getDestinationAirportLeg().getDisplayIdent());
   else
     destinationAirport = tr("%1 (%2)").
-                         arg(flightplan.at(route.getDestinationAirportLegIndex()).getIdent()).
-                         arg(flightplan.at(route.getDestinationAirportLegIndex()).getWaypointTypeAsDisplayString());
+                         arg(flightplan.at(route.getDestinationAirportLegIndex()).getIdent(),
+                             flightplan.at(route.getDestinationAirportLegIndex()).getWaypointTypeAsDisplayString());
 
   if(!route.isEmpty())
   {
@@ -511,7 +508,7 @@ void RouteLabel::buildHeaderArrival(atools::util::HtmlBuilder& html, bool widget
       // Check STAR and approach runways - these have to match
       if(!approachRunway.isEmpty() && !starRunway.isEmpty() &&
          !atools::fs::util::runwayEqual(approachRunway, starRunway, true /* fuzzy */))
-        html.br().error(tr("STAR runway \"%1\" not equal to approach runway \"%2\".").arg(starRunway).arg(approachRunway));
+        html.br().error(tr("STAR runway \"%1\" not equal to approach runway \"%2\".").arg(starRunway, approachRunway));
     }
     else
       // HTML export or printing
@@ -845,15 +842,15 @@ void RouteLabel::updateFooterSelectionLabel()
     QString legText = numLegs == 1 ? tr("leg") : tr("legs");
 
     ui->labelRouteSelection->setVisible(true);
-    ui->labelRouteSelection->setText(tr("%L1 %2 from <b>%3</b> to <b>%4</b>: %5").arg(numLegs).arg(legText).
-                                     arg(atools::elideTextShort(from, 6)).arg(atools::elideTextShort(to, 6)).arg(texts.join(tr(", "))));
+    ui->labelRouteSelection->setText(tr("%L1 %2 from <b>%3</b> to <b>%4</b>: %5").arg(numLegs).arg(legText, atools::elideTextShort(from, 6),
+                                                                                                   atools::elideTextShort(to, 6),
+                                                                                                   texts.join(tr(", "))));
 
     ui->labelRouteSelection->setToolTip(tr("<p style='white-space:pre'>"
                                              "%L1 flight plan %2 from <b>%3</b> to <b>%4</b> in selection:<br/>"
                                              "%5</p>").
-                                        arg(numLegs).arg(legText).
-                                        arg(atools::elideTextShort(from, 20)).arg(atools::elideTextShort(to, 20)).
-                                        arg(tooltip.join(tr("<br/>"))));
+                                        arg(numLegs).arg(legText, atools::elideTextShort(from, 20), atools::elideTextShort(to, 20),
+                                                         tooltip.join(tr("<br/>"))));
   }
   else
   {

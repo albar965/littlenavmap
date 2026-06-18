@@ -2965,7 +2965,7 @@ void ProcedureQuery::getLegsForFlightplanProperties(const QHash<QString, QString
         sidId = getSidId(departAirportNav, properties.value(pln::SID), properties.value(pln::SID_RW), true);
 
       if(sidId == -1)
-        errors.append(tr("SID %1 from %2").arg(properties.value(pln::SID)).arg(runwayErrorString(properties.value(pln::SID_RW))));
+        errors.append(tr("SID %1 from %2").arg(properties.value(pln::SID), runwayErrorString(properties.value(pln::SID_RW))));
     }
 
     // Get a SID transition id =================================================================
@@ -3012,8 +3012,8 @@ void ProcedureQuery::getLegsForFlightplanProperties(const QHash<QString, QString
     approachId = getApproachId(destAirportNav, arincName, properties.value(pln::APPROACH_RW));
 
     if(approachId == -1)
-      errors.append(tr("Approach %1 to %2").arg(properties.value(pln::APPROACH_ARINC)).
-                    arg(runwayErrorString(properties.value(pln::APPROACH_RW))));
+      errors.append(tr("Approach %1 to %2").arg(properties.value(pln::APPROACH_ARINC),
+                                                runwayErrorString(properties.value(pln::APPROACH_RW))));
   }
 
   if(approachId == -1 && (properties.contains(pln::APPROACH) || properties.contains(pln::APPROACH_TYPE)))
@@ -3058,7 +3058,7 @@ void ProcedureQuery::getLegsForFlightplanProperties(const QHash<QString, QString
 
     if(approachId == -1)
       errors.append(tr("Approach %1 to %2").
-                    arg(properties.value(pln::APPROACH)).arg(runwayErrorString(properties.value(pln::APPROACH_RW))));
+                    arg(properties.value(pln::APPROACH), runwayErrorString(properties.value(pln::APPROACH_RW))));
   }
 
   // Get a transition id =================================================================
@@ -3084,7 +3084,7 @@ void ProcedureQuery::getLegsForFlightplanProperties(const QHash<QString, QString
       starId = getStarId(destAirportNav, properties.value(pln::STAR), starRw, false);
 
     if(starId == -1)
-      errors.append(tr("STAR %1 to %2").arg(properties.value(pln::STAR)).arg(runwayErrorString(starRw)));
+      errors.append(tr("STAR %1 to %2").arg(properties.value(pln::STAR), runwayErrorString(starRw)));
   }
 
   // Get a STAR transition id =================================================================
@@ -3147,7 +3147,7 @@ void ProcedureQuery::getLegsForFlightplanProperties(const QHash<QString, QString
     if(procedureValid(legs, &errors))
     {
       if(!sidRw.isEmpty() && !doesRunwayMatchSidOrStar(*legs, sidRw))
-        errors.append(tr("SID %1 is using an invalid runway %2").arg(properties.value(pln::SID)).arg(runwayErrorString(sidRw)));
+        errors.append(tr("SID %1 is using an invalid runway %2").arg(properties.value(pln::SID), runwayErrorString(sidRw)));
       else
       {
         sidLegs = *legs;
@@ -3164,7 +3164,7 @@ void ProcedureQuery::getLegsForFlightplanProperties(const QHash<QString, QString
     if(procedureValid(legs, &errors))
     {
       if(!sidRw.isEmpty() && !doesRunwayMatchSidOrStar(*legs, sidRw))
-        errors.append(tr("SID %1 is using an invalid runway %2").arg(properties.value(pln::SID)).arg(runwayErrorString(sidRw)));
+        errors.append(tr("SID %1 is using an invalid runway %2").arg(properties.value(pln::SID), runwayErrorString(sidRw)));
       else
       {
         sidLegs = *legs;
@@ -3201,7 +3201,7 @@ void ProcedureQuery::getLegsForFlightplanProperties(const QHash<QString, QString
     if(procedureValid(legs, &errors))
     {
       if(!starRw.isEmpty() && !doesRunwayMatchSidOrStar(*legs, starRw))
-        errors.append(tr("STAR %1 is using an invalid runway %2").arg(properties.value(pln::STAR)).arg(runwayErrorString(starRw)));
+        errors.append(tr("STAR %1 is using an invalid runway %2").arg(properties.value(pln::STAR), runwayErrorString(starRw)));
       else
       {
         starLegs = *legs;
@@ -3218,7 +3218,7 @@ void ProcedureQuery::getLegsForFlightplanProperties(const QHash<QString, QString
     if(procedureValid(legs, &errors))
     {
       if(!starRw.isEmpty() && !doesRunwayMatchSidOrStar(*legs, starRw))
-        errors.append(tr("STAR %1 is using an invalid runway %2").arg(properties.value(pln::STAR)).arg(runwayErrorString(starRw)));
+        errors.append(tr("STAR %1 is using an invalid runway %2").arg(properties.value(pln::STAR), runwayErrorString(starRw)));
       else
       {
         starLegs = *legs;
@@ -3241,7 +3241,7 @@ bool ProcedureQuery::procedureValid(const proc::MapProcedureLegs *legs, QStringL
     if(legs->hasHardError)
     {
       if(errors != nullptr)
-        errors->append(tr("Procedure %1 %2 in scenery library has errors").arg(legs->type).arg(legs->procedureFixIdent));
+        errors->append(tr("Procedure %1 %2 in scenery library has errors").arg(legs->type, legs->procedureFixIdent));
     }
     else
       // Usable

@@ -200,7 +200,7 @@ void UpdateHandler::updateFailed(QString errorString)
   qDebug() << Q_FUNC_INFO;
 
   QString message = tr("Error while checking for updates at\n\"%1\":\n%2").
-                    arg(updateCheck->getUrl().toDisplayString()).arg(errorString);
+                    arg(updateCheck->getUrl().toDisplayString(), errorString);
 
   if(updateReason == UPDATE_REASON_MANUAL)
     atools::gui::Dialog::warning(parentWidget, message);

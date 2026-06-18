@@ -260,8 +260,7 @@ void AircraftPerfDialog::updateRange()
     float enduranceHours = fuelVolWeight / fuelFlowVolWeight;
 
     ui->labelUsableFuelRange->setText(tr("Estimated range with reserve %1, %2.").
-                                      arg(Unit::distNm(enduranceHours * speedKts)).
-                                      arg(formatter::formatMinutesHoursLong(enduranceHours)));
+                                      arg(Unit::distNm(enduranceHours * speedKts), formatter::formatMinutesHoursLong(enduranceHours)));
   }
 }
 
@@ -274,9 +273,8 @@ void AircraftPerfDialog::vertSpeedChanged()
   // 2,3 NM per 1000 ft
 
   QString txt = tr("Descent Rule of Thumb: %1 per %2 %3.").
-                arg(Unit::distNm(1.f / -descentRateFtPerNm * Unit::rev(1000.f, Unit::altFeetF))).
-                arg(QLocale().toString(1000.f, 'f', 0)).
-                arg(Unit::getUnitAltStr());
+                arg(Unit::distNm(1.f / -descentRateFtPerNm * Unit::rev(1000.f, Unit::altFeetF)), QLocale().toString(1000.f, 'f', 0),
+                    Unit::getUnitAltStr());
 
   ui->labelDescentRule->setText(txt);
 }

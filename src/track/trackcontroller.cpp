@@ -210,8 +210,7 @@ void TrackController::trackDownloadSslErrors(const QStringList& errors, const QS
                                        "<p>URL: %1</p>"
                                          "<p>Error messages:<br/>%2</p>"
                                            "<p>Continue?</p>").
-                                  arg(downloadUrl).
-                                  arg(atools::strJoin(errors, tr("<br/>"))),
+                                  arg(downloadUrl, atools::strJoin(errors, tr("<br/>"))),
                                   tr("Do not &show this again and ignore errors."),
                                   QMessageBox::Cancel | QMessageBox::Yes,
                                   QMessageBox::Cancel, QMessageBox::Yes);
@@ -235,8 +234,7 @@ void TrackController::trackDownloadFailed(const QString& error, int errorCode, Q
                                                       "failed.</p><p>Error: %3 (%4)</p>"
                                                       "<p>Check track settings or disable track downloads.</p>"
                                                         "<p>Suppressing further messages during this session.</p>").
-                                                   arg(typeStr).
-                                                   arg(downloadUrl).arg(error).arg(errorCode),
+                                                   arg(typeStr, downloadUrl, error).arg(errorCode),
                                                    tr("Do not &show this dialog again."));
   }
 
@@ -267,8 +265,7 @@ void TrackController::tracksLoaded()
       atools::track::TrackType type = it.key();
       int num = numTracks.value(type);
       str.append(tr("<li>%1: %2 tracks.</li>").
-                 arg(atools::track::typeToString(type)).
-                 arg(num == 0 ? tr("No") : QString::number(num)));
+                 arg(atools::track::typeToString(type), num == 0 ? tr("No") : QString::number(num)));
 
     }
 
@@ -279,7 +276,7 @@ void TrackController::tracksLoaded()
       err += tr("</li><li>More ...");
 
     err += tr("</li></ul>");
-    QString boxMessage = tr("<p>Tracks downloaded.</p><ul>%1</ul>%2").arg(str.join("")).arg(err);
+    QString boxMessage = tr("<p>Tracks downloaded.</p><ul>%1</ul>%2").arg(str.join(""), err);
 
     atools::gui::Dialog::warning(mainWindow, boxMessage);
     NavApp::setStatusMessage(tr("Track download finished with errors."), true /* addToLog */);
@@ -291,7 +288,7 @@ void TrackController::tracksLoaded()
     {
       atools::track::TrackType type = it.key();
       int num = numTracks.value(type);
-      msg.append(tr("%1: %2 tracks").arg(atools::track::typeToString(type)).arg(num == 0 ? tr("no") : QString::number(num)));
+      msg.append(tr("%1: %2 tracks").arg(atools::track::typeToString(type), num == 0 ? tr("no") : QString::number(num)));
     }
 
     NavApp::setStatusMessage(tr("Tracks downloaded: %1.").arg(msg.join(tr(", "))), true /* addToLog */);

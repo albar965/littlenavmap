@@ -135,10 +135,10 @@ void RunwayTable::setPreSelectedRunwayEnd(const QString& name, QString *error)
     setPreSelectedRunwayEnd(runwayEnds.constFirst().id);
 
     if(runwayEnds.size() > 1 && error != nullptr)
-      *error = tr("Found more than one runway end matching name \"%1\" for airport \"%2\"").arg(name).arg(airport->ident);
+      *error = tr("Found more than one runway end matching name \"%1\" for airport \"%2\"").arg(name, airport->ident);
   }
   else if(runwayEnds.isEmpty() && error != nullptr)
-    *error = tr("Found no runway end matching name \"%1\" for airport \"%2\"").arg(name).arg(airport->ident);
+    *error = tr("Found no runway end matching name \"%1\" for airport \"%2\"").arg(name, airport->ident);
 }
 
 QString RunwayTable::getCurrentSelectedName(bool *airportSelected) const
@@ -204,7 +204,7 @@ void RunwayTable::fillAirportLabel()
   QString label;
   if(airportLabel != nullptr)
   {
-    label = tr("<p><b>%1, elevation %2</b></p>").arg(map::airportTextShort(*airport)).arg(Unit::altFeet(airport->position.getAltitude()));
+    label = tr("<p><b>%1, elevation %2</b></p>").arg(map::airportTextShort(*airport), Unit::altFeet(airport->position.getAltitude()));
 
     QString title, runwayText, sourceText;
     NavApp::getWeatherReporter()->getBestRunwaysTextShort(title, runwayText, sourceText, *airport);
@@ -390,8 +390,8 @@ void RunwayTable::addRunwayItem(const RunwayIdxEntry& entry, const QString& wind
 
   // Dimensions
   item = new QTableWidgetItem(tr("%1 x %2").
-                              arg(Unit::distShortFeet(runway.length, false /* addUnit */)).
-                              arg(Unit::distShortFeet(runway.width, false /* addUnit */)));
+                              arg(Unit::distShortFeet(runway.length, false /* addUnit */),
+                                  Unit::distShortFeet(runway.width, false /* addUnit */)));
   item->setTextAlignment(Qt::AlignRight);
   runwayTableWidget->setItem(tableIndex, col++, item);
 

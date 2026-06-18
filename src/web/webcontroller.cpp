@@ -296,9 +296,9 @@ QStringList WebController::getUrlStr()
 
     retval.append(tr("%1. %2 <a href=\"%3\"><b>%4:%5</b></a> <small>(<a href=\"%6\">%7:%8</a>)</small>").
                   arg(num++).
-                  arg(addr.protocol() == QAbstractSocket::IPv6Protocol ? tr("IPv6") : tr("IPv4")).
-                  arg(nameUrl.toString(QUrl::None).toHtmlEscaped()).arg(nameUrl.host().toHtmlEscaped()).arg(nameUrl.port()).
-                  arg(ipUrl.toString(QUrl::None).toHtmlEscaped()).arg(ipUrl.host().toHtmlEscaped()).arg(ipUrl.port()));
+                  arg(addr.protocol() == QAbstractSocket::IPv6Protocol ? tr("IPv6") : tr("IPv4"),
+                      nameUrl.toString(QUrl::None).toHtmlEscaped(), nameUrl.host().toHtmlEscaped()).arg(nameUrl.port()).
+                  arg(ipUrl.toString(QUrl::None).toHtmlEscaped(), ipUrl.host().toHtmlEscaped()).arg(ipUrl.port()));
   }
   return retval;
 }

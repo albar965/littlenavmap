@@ -270,8 +270,8 @@ void MapPainterVehicle::paintTextLabelAi(float x, float y, float size, const Sim
       if(aiDisp(hidden, optsac::ITEM_AI_AIRCRAFT_DEP_DEST, detail3, aircraft.getFromIdent() % aircraft.getToIdent()))
       {
         texts.append(tr("%1 to %2").
-                     arg(aircraft.getFromIdent().isEmpty() ? tr("Unknown") : aircraft.getFromIdent()).
-                     arg(aircraft.getToIdent().isEmpty() ? tr("Unknown") : aircraft.getToIdent()));
+                     arg(aircraft.getFromIdent().isEmpty() ? tr("Unknown") : aircraft.getFromIdent(),
+                         aircraft.getToIdent().isEmpty() ? tr("Unknown") : aircraft.getToIdent()));
       }
 
       // Heading ====================================================================================
@@ -290,8 +290,8 @@ void MapPainterVehicle::paintTextLabelAi(float x, float y, float size, const Sim
       float distMeter = aiPos.distanceMeterTo(userPos);
       if(aiDisp(hidden, optsac::ITEM_AI_AIRCRAFT_DIST_BEARING_FROM_USER, detail3, distMeter < atools::geo::nmToMeter(8000.f)))
         texts.append(tr("From User %1 %2°M").
-                     arg(Unit::distMeter(distMeter, true /* addUnit */, 5 /* minValPrec */, true /* narrow */)).
-                     arg(QString::number(atools::geo::normalizeCourse(userPos.angleDegTo(aiPos) - NavApp::getMagVar(userPos)), 'f', 0)));
+                     arg(Unit::distMeter(distMeter, true /* addUnit */, 5 /* minValPrec */, true /* narrow */),
+                         QString::number(atools::geo::normalizeCourse(userPos.angleDegTo(aiPos) - NavApp::getMagVar(userPos)), 'f', 0)));
 
       // Coordinates ====================================================================================
       if(aiDisp(hidden, optsac::ITEM_AI_AIRCRAFT_COORDINATES, detail3))
@@ -309,7 +309,7 @@ void MapPainterVehicle::paintTextLabelAi(float x, float y, float size, const Sim
       // Actual altitude ====================================================================================
       if(aiDisp(hidden, optsac::ITEM_AI_AIRCRAFT_ALTITUDE, detail1,
                 aircraft.getActualAltitudeFt()) && aircraft.isActualAltitudeFullyValid())
-        altTexts.append(tr("ALT %1%2").arg(Unit::altFeet(aircraft.getActualAltitudeFt())).arg(QStringLiteral()));
+        altTexts.append(tr("ALT %1%2").arg(Unit::altFeet(aircraft.getActualAltitudeFt()), QStringLiteral()));
 
       QString upDown;
       if(!aiDisp(hidden, optsac::ITEM_AI_AIRCRAFT_CLIMB_SINK, detail1, aircraft.getVerticalSpeedFeetPerMin()))

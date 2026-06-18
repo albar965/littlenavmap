@@ -231,10 +231,8 @@ void PrintSupport::createFlightplanDocuments()
   // Footer with program version at end of all pages ===============================================
   setPrintTextSize(printDialog->getPrintTextSize());
   cursor.insertText(tr("\n\n%1 Version %2 (revision %3) on %4 ").
-                    arg(QCoreApplication::applicationName()).
-                    arg(QApplication::applicationVersion()).
-                    arg(GIT_REVISION_LITTLENAVMAP).
-                    arg(QLocale().toString(QDateTime::currentDateTime())));
+                    arg(QCoreApplication::applicationName(), QApplication::applicationVersion(), GIT_REVISION_LITTLENAVMAP,
+                        QLocale().toString(QDateTime::currentDateTime())));
 
   printDocument->adjustSize();
 }
@@ -447,8 +445,6 @@ void PrintSupport::drawWatermarkInternal(const QPoint& pos, QPainter *painter)
   painter->drawText(pos.x(),
                     pos.y() - painter->fontMetrics().descent(),
                     tr("%1 Version %2 (revision %3) on %4 ").
-                    arg(QCoreApplication::applicationName()).
-                    arg(QApplication::applicationVersion()).
-                    arg(GIT_REVISION_LITTLENAVMAP).
-                    arg(QLocale().toString(QDateTime::currentDateTime())));
+                    arg(QCoreApplication::applicationName(), QApplication::applicationVersion(), GIT_REVISION_LITTLENAVMAP,
+                        QLocale().toString(QDateTime::currentDateTime())));
 }

@@ -343,7 +343,7 @@ bool DatabaseManager::checkIncompatibleDatabases(bool *databasesErased)
       // Avoid the splash screen hiding the dialog
       Application::closeSplashScreen();
 
-      QMessageBox box(QMessageBox::Question, QCoreApplication::applicationName(), msg.arg(databaseNames.join("<br/>")).arg(trailingMsg),
+      QMessageBox box(QMessageBox::Question, QCoreApplication::applicationName(), msg.arg(databaseNames.join("<br/>"), trailingMsg),
                       QMessageBox::No | QMessageBox::Yes, parentWidget);
       box.button(QMessageBox::No)->setText(tr("&No and Exit Application"));
       box.button(QMessageBox::Yes)->setText(tr("&Erase"));
@@ -452,14 +452,8 @@ void DatabaseManager::checkCopyAndPrepareDatabases()
              "<i>%5<br/><br/>"
              "%6, cycle %7, compiled on %8</i><hr/><br/>"
              ).
-          arg(settingsDb).
-          arg(settingsSource).
-          arg(settingsCycle).
-          arg(QLocale().toString(settingsLastLoad, QLocale::ShortFormat)).
-          arg(appDb).
-          arg(appSource).
-          arg(appCycle).
-          arg(QLocale().toString(appLastLoad, QLocale::ShortFormat)),
+          arg(settingsDb, settingsSource, settingsCycle, QLocale().toString(settingsLastLoad, QLocale::ShortFormat), appDb, appSource,
+              appCycle, QLocale().toString(appLastLoad, QLocale::ShortFormat)),
           tr("Do not &show this dialog again and skip copying."),
           QMessageBox::Yes | QMessageBox::No, QMessageBox::No, QMessageBox::No);
       }
@@ -511,7 +505,7 @@ void DatabaseManager::checkCopyAndPrepareDatabases()
         if(!resultCopy)
           Dialog::warning(parentWidget,
                           tr("Cannot copy database<br/><br/>\"%1\"<br/><br/>to<br/><br/>"
-                             "\"%2\"<br/><br/>.").arg(appDb).arg(settingsDb));
+                             "\"%2\"<br/><br/>.").arg(appDb, settingsDb));
       }
     }
   }
@@ -712,7 +706,7 @@ void DatabaseManager::insertSimSwitchActions()
 #endif
 
     QString dbname = FsPaths::typeToDisplayName(FsPaths::NAVIGRAPH);
-    navDbSubMenu = new QMenu(tr("&%1%2").arg(dbname).arg(suffix));
+    navDbSubMenu = new QMenu(tr("&%1%2").arg(dbname, suffix));
     navDbSubMenu->setToolTipsVisible(NavApp::isMenuToolTipsVisible());
 
     // Automatic =============================================================================
@@ -805,7 +799,7 @@ void DatabaseManager::insertSimSwitchAction(atools::fs::FsPaths::SimulatorType t
     if(!atts.isEmpty())
       suffix.append(tr(" (%1)").arg(atts.join(tr(", "))));
 
-    QAction *action = new QAction(tr("&%1 %2%3").arg(index).arg(FsPaths::typeToDisplayName(type)).arg(suffix), simDbActionGroup);
+    QAction *action = new QAction(tr("&%1 %2%3").arg(index).arg(FsPaths::typeToDisplayName(type), suffix), simDbActionGroup);
     action->setToolTip(tr("Switch to %1 database").arg(FsPaths::typeToDisplayName(type)));
     action->setStatusTip(action->toolTip());
     action->setData(QVariant::fromValue<atools::fs::FsPaths::SimulatorType>(type));
@@ -853,7 +847,7 @@ void DatabaseManager::switchNavFromMainMenu()
          "<p><b>Normally you should not use this mode.</b></p>"
            "<p>Really switch to mode \"%1\" now?</p>"
              "<p><a href=\"%1\">Click here for more information in the Little Navmap online manual</a></p>").
-      arg(navDbActionAll->text().remove("&")).arg(url.toString());
+      arg(navDbActionAll->text().remove("&"), url.toString());
 
     int result = dialog->showQuestionMsgBox(lnm::ACTIONS_SHOW_NAVDATA_WARNING, message,
                                             tr("Do not &show this dialog again and switch the mode."),
@@ -1000,8 +994,7 @@ void DatabaseManager::openWriteableDatabase(atools::sql::SqlDatabase *database, 
                         "File is either malformed or this is an internal error.<br/><br/>"
                         "You might want to report this to the developer.<br/><br/>"
                         "Exiting now.").
-                     arg(QString(e.what()).replace("\n", "<br/>")).
-                     arg(QCoreApplication::applicationName()));
+                     arg(QString(e.what()).replace("\n", "<br/>"), QCoreApplication::applicationName()));
 
     std::exit(1);
   }
@@ -1127,8 +1120,7 @@ void DatabaseManager::checkForChangedNavAndSimDatabases()
                         tr("<p>Detected a modification of one or more database files:<br/>"
                            "\"%1\"<br/><br/>"
                            "Always close %2 before copying, overwriting or updating scenery library databases.</p>").
-                        arg(files.join(tr("&quot;<br/>&quot;"))).
-                        arg(QCoreApplication::applicationName()));
+                        arg(files.join(tr("&quot;<br/>&quot;")), QCoreApplication::applicationName()));
 
         databaseNav->recordFileMetadata();
         databaseSim->recordFileMetadata();
@@ -1456,7 +1448,7 @@ void DatabaseManager::checkSceneryOptions(bool manualCheck)
                                            "<p style='white-space:pre'>You can change this manually in the menu<br/>"
                                            "\"Scenery Library\" -> \"Navigraph\" -> \"Do not use Navigraph Database\".</p>"
                                            "<p>Correct the scenery library mode now?</p>", "Sync texts with menu items").
-                                    arg(metaNav.getAiracCycle()).arg(metaSim.getAiracCycle()),
+                                    arg(metaNav.getAiracCycle(), metaSim.getAiracCycle()),
                                     manualCheck ? QStringLiteral() :
                                     tr("Do not &show this dialog again and always correct mode after loading."),
                                     QMessageBox::Yes | QMessageBox::No, QMessageBox::Yes, QMessageBox::Yes) == QMessageBox::Yes)
@@ -1475,7 +1467,7 @@ void DatabaseManager::checkSceneryOptions(bool manualCheck)
                                                "<p style='white-space:pre'>You can change this manually in the menu<br/>"
                                                "\"Scenery Library\" -> \"Navigraph\" -> \"Do not use Navigraph Database\".</p>"
                                                "<p>Correct the scenery library mode now?</p>", "Sync texts with menu items").
-                                    arg(metaNav.getAiracCycle()).arg(metaSim.getAiracCycle()),
+                                    arg(metaNav.getAiracCycle(), metaSim.getAiracCycle()),
                                     manualCheck ? QStringLiteral() :
                                     tr("Do not &show this dialog again and always correct mode after loading."),
                                     QMessageBox::Yes | QMessageBox::No, QMessageBox::Yes, QMessageBox::Yes) == QMessageBox::Yes)
@@ -1558,7 +1550,7 @@ bool DatabaseManager::checkValidBasePaths() const
                          "%2<br/><br/>"
                          "Either the \"OneStore\" or the \"Steam\" paths have to exist.<br/>"
                          "The path \"Community\" is always needed for add-ons.</p>%3").
-                      arg(databaseDialog->getBasePath()).arg(errors.join("<br/>")).arg(resetPath));
+                      arg(databaseDialog->getBasePath(), errors.join("<br/>"), resetPath));
     }
     else if(selectedFsType == atools::fs::FsPaths::MSFS_2024)
     {
@@ -1567,14 +1559,14 @@ bool DatabaseManager::checkValidBasePaths() const
                       tr("<p style='white-space:pre'>Cannot read base path \"%1\".<br/><br/>"
                          "Reason:<br/>"
                          "%2<br/></p>%3").
-                      arg(databaseDialog->getBasePath()).arg(errors.join("<br/>")).arg(resetPath));
+                      arg(databaseDialog->getBasePath(), errors.join("<br/>"), resetPath));
     }
     else
     {
       Dialog::warning(databaseDialog,
                       tr("<p style='white-space:pre'>Cannot read base path \"%1\".<br/><br/>"
                          "Reason:<br/>"
-                         "%2</p>%3").arg(databaseDialog->getBasePath()).arg(errors.join("<br/>")).arg(resetPath));
+                         "%2</p>%3").arg(databaseDialog->getBasePath(), errors.join("<br/>"), resetPath));
     }
     configValid = false;
   }
@@ -1593,7 +1585,7 @@ bool DatabaseManager::checkValidBasePaths() const
                            "Reason:<br/>"
                            "%2<br/><br/>"
                            "Enable the option \"Read inactive or disabled Scenery Entries\"<br/>"
-                           "or start X-Plane once to create the file.</p>").arg(filepath).arg(errors.join("<br/>")));
+                           "or start X-Plane once to create the file.</p>").arg(filepath, errors.join("<br/>")));
         configValid = false;
       }
     }
@@ -1608,7 +1600,7 @@ bool DatabaseManager::checkValidBasePaths() const
         Dialog::warning(databaseDialog,
                         tr("<p style='white-space:pre'>Cannot read scenery configuration \"%1\".<br/><br/>"
                            "Reason:<br/>"
-                           "%2</p>").arg(databaseDialog->getSceneryConfigFile()).arg(errors.join("<br/>")));
+                           "%2</p>").arg(databaseDialog->getSceneryConfigFile(), errors.join("<br/>")));
         configValid = false;
       }
     }
@@ -1909,7 +1901,7 @@ void DatabaseManager::updateDialogInfo(atools::fs::FsPaths::SimulatorType value)
     atools::util::Version databaseVersion = dbmeta.getDatabaseVersion();
 
     if(!dbmeta.isValid())
-      metaText = databaseMetaText.arg(tr("None")).arg(tr("None")).arg(applicationVersion.getVersionString()).arg(QStringLiteral());
+      metaText = databaseMetaText.arg(tr("None"), tr("None"), applicationVersion.getVersionString(), QStringLiteral());
     else
     {
       QString cycleText;
@@ -1917,12 +1909,12 @@ void DatabaseManager::updateDialogInfo(atools::fs::FsPaths::SimulatorType value)
         cycleText = databaseAiracCycleText.arg(dbmeta.getAiracCycle());
 
       metaText = databaseMetaText.
-                 arg(dbmeta.getLastLoadTime().isValid() ? dbmeta.getLastLoadTime().toString() : tr("None")).
-                 arg(databaseVersion.getVersionString()).arg(applicationVersion.getVersionString()).arg(cycleText);
+                 arg(dbmeta.getLastLoadTime().isValid() ? dbmeta.getLastLoadTime().toString() : tr("None"),
+                     databaseVersion.getVersionString(), applicationVersion.getVersionString(), cycleText);
     }
   }
   else
-    metaText = databaseMetaText.arg(tr("None")).arg(tr("None")).arg(applicationVersion.getVersionString()).arg(QStringLiteral());
+    metaText = databaseMetaText.arg(tr("None"), tr("None"), applicationVersion.getVersionString(), QStringLiteral());
 
   QString tableText, databaseInfoText = databaseLoader->getDatabaseInfoText();
   if(tempDb.isOpen() && dbtools::hasSchema(&tempDb))

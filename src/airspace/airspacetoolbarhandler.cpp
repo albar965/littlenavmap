@@ -345,7 +345,7 @@ void AirspaceToolBarHandler::updateSliderLabel()
     disabledText = tr(" (showing for all)");
 
   if(min == max)
-    labelActionAirspace->setText(tr("At %1%2").arg(Unit::altFeet(min)).arg(disabledText));
+    labelActionAirspace->setText(tr("At %1%2").arg(Unit::altFeet(min), disabledText));
   else
   {
     QString maxText;
@@ -359,7 +359,7 @@ void AirspaceToolBarHandler::updateSliderLabel()
     else
       maxText = Unit::altFeet(max);
 
-    labelActionAirspace->setText(tr("From %1 to %2%3").arg(Unit::altFeet(min, addUnit)).arg(maxText).arg(disabledText));
+    labelActionAirspace->setText(tr("From %1 to %2%3").arg(Unit::altFeet(min, addUnit), maxText, disabledText));
   }
 }
 

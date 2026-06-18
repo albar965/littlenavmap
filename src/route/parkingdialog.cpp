@@ -213,7 +213,7 @@ void ParkingDialog::updateTable()
       QString name = startPos.start.isHelipad() ? QString::number(startPos.start.helipadNumber) : startPos.start.runwayName;
 
       items[internal::NAME] = new QTableWidgetItem(mapcolors::iconForStart(startPos.start),
-                                                   tr("%1 %2").arg(map::startType(startPos.start)).arg(name));
+                                                   tr("%1 %2").arg(map::startType(startPos.start), name));
 
       if(!startPos.start.runwayName.isEmpty())
       {
@@ -230,9 +230,8 @@ void ParkingDialog::updateTable()
               float heading = atools::geo::normalizeCourse(end.heading - departureAirport.magvar);
               items[internal::TYPE] = new QTableWidgetItem(map::surfaceName(runway.surface));
               items[internal::SIZE] = new QTableWidgetItem(tr("%1 x %2, %3°M").
-                                                           arg(Unit::distShortFeet(runway.length, false)).
-                                                           arg(Unit::distShortFeet(runway.width)).
-                                                           arg(QLocale().toString(heading, 'f', 0)));
+                                                           arg(Unit::distShortFeet(runway.length, false), Unit::distShortFeet(runway.width),
+                                                               QLocale().toString(heading, 'f', 0)));
             }
 
             // Fill runway attribute list
@@ -397,11 +396,11 @@ void ParkingDialog::updateButtonsAndHeader()
   if(parking.isValid())
     currentSelectedText = tr("<br/>Currently selected in flight plan: %1.").arg(map::parkingNameOrNumber(parking));
   else if(start.isValid())
-    currentSelectedText = tr("<br/>Currently selected in flight plan: %1 %2.").arg(map::startType(start)).arg(start.runwayName);
+    currentSelectedText = tr("<br/>Currently selected in flight plan: %1 %2.").arg(map::startType(start), start.runwayName);
   else
     currentSelectedText = tr("<br/>Airport selected as start position.");
 
   ui->labelSelectParking->setText(tr("<b>%1, elevation %2</b>%3").
-                                  arg(map::airportTextShort(departureAirport)).
-                                  arg(Unit::altFeet(departureAirport.position.getAltitude())).arg(currentSelectedText));
+                                  arg(map::airportTextShort(departureAirport), Unit::altFeet(departureAirport.position.getAltitude()),
+                                      currentSelectedText));
 }

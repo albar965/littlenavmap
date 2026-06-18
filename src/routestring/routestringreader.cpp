@@ -264,7 +264,7 @@ bool RouteStringReader::createRouteFromString(const QString& routeString, rs::Ro
     else
       // Detected speed differs from aircraft performance
       appendWarning(tr("Ignoring speed instruction %1 in favor of aircraft performance which uses %2 true airspeed.").
-                    arg(Unit::speedKts(*speedKtsParam)).arg(Unit::speedKts(NavApp::getRouteCruiseSpeedKts())));
+                    arg(Unit::speedKts(*speedKtsParam), Unit::speedKts(NavApp::getRouteCruiseSpeedKts())));
   }
 
   // Do not get any navaids that are too far away
@@ -423,7 +423,7 @@ bool RouteStringReader::createRouteFromString(const QString& routeString, rs::Ro
             }
           }
           else
-            appendWarning(tr("No navaid found for %1 on airway %2. Ignoring.").arg(wp.ident).arg(item));
+            appendWarning(tr("No navaid found for %1 on airway %2. Ignoring.").arg(wp.ident, item));
           lastRef = curRef;
         }
       }
@@ -563,7 +563,7 @@ void RouteStringReader::addReport(atools::fs::pln::Flightplan *flightplan, const
   if(!flightplan->getDepartureName().isEmpty() && flightplan->getDepartureName() != flightplan->getDepartureIdent())
     // Departure is airport
     departAirport =
-      tr("%1 (%2)").arg(flightplan->getDepartureName()).arg(airportQuerySim->getDisplayIdent(flightplan->getDepartureIdent()));
+      tr("%1 (%2)").arg(flightplan->getDepartureName(), airportQuerySim->getDisplayIdent(flightplan->getDepartureIdent()));
   else
     // Departure is waypoint
     departAirport = flightplan->getDepartureIdent();
@@ -571,13 +571,13 @@ void RouteStringReader::addReport(atools::fs::pln::Flightplan *flightplan, const
   // Destination ============================
   if(!flightplan->getDestinationName().isEmpty() && flightplan->getDestinationName() != flightplan->getDestinationIdent())
     // Destination is airport
-    destAirport = tr("%1 (%2)").arg(flightplan->getDestinationName()).arg(airportQuerySim->getDisplayIdent(
-                                                                            flightplan->getDestinationIdent()));
+    destAirport = tr("%1 (%2)").arg(flightplan->getDestinationName(),
+                                    airportQuerySim->getDisplayIdent(flightplan->getDestinationIdent()));
   else
     // Departure is waypoint
     destAirport = flightplan->getDestinationIdent();
 
-  insertMessage(tr("Flight plan from <b>%1</b> to <b>%2</b>.").arg(departAirport).arg(destAirport), insertIndex++);
+  insertMessage(tr("Flight plan from <b>%1</b> to <b>%2</b>.").arg(departAirport, destAirport), insertIndex++);
   insertMessage(tr("Distance without procedures is <b>%1</b>.").arg(Unit::distNm(flightplan->getDistanceNm())), insertIndex++);
   if(cruiseAltitudeFt > 0.f)
     insertMessage(tr("Using cruise altitude <b>%1</b> for flight plan.").arg(Unit::altFeet(cruiseAltitudeFt)), insertIndex++);
@@ -594,7 +594,7 @@ void RouteStringReader::addReport(atools::fs::pln::Flightplan *flightplan, const
     if(!sid.isEmpty())
     {
       QString rwMsg = !sidRunway.isEmpty() ? tr(" and runway <b>%1</b>").arg(sidRunway) : QStringLiteral();
-      insertMessage(tr("Depart using SID <b>%1</b>%2.").arg(sid).arg(rwMsg), insertIndex++);
+      insertMessage(tr("Depart using SID <b>%1</b>%2.").arg(sid, rwMsg), insertIndex++);
     }
   }
 
@@ -604,7 +604,7 @@ void RouteStringReader::addReport(atools::fs::pln::Flightplan *flightplan, const
   if(!star.isEmpty())
   {
     QString rwMsg = !starRunway.isEmpty() ? tr(" and runway <b>%1</b>").arg(starRunway) : QStringLiteral();
-    insertMessage(tr("Arrive using STAR <b>%1</b>%2.").arg(star).arg(rwMsg), insertIndex++);
+    insertMessage(tr("Arrive using STAR <b>%1</b>%2.").arg(star, rwMsg), insertIndex++);
   }
 
   // Approach ===================================================================================
@@ -623,7 +623,7 @@ void RouteStringReader::addReport(atools::fs::pln::Flightplan *flightplan, const
       runway = tr(", land at runway <b>%1</b>").arg(runway);
 
     if(!approach.isEmpty())
-      insertMessage(tr("Approach%1 <b>%2</b> (<b>%3</b>)%4.").arg(transition).arg(approach).arg(arinc).arg(runway), insertIndex++);
+      insertMessage(tr("Approach%1 <b>%2</b> (<b>%3</b>)%4.").arg(transition, approach, arinc, runway), insertIndex++);
   }
 
   // Alternates ===================================================================================
@@ -635,8 +635,8 @@ void RouteStringReader::addReport(atools::fs::pln::Flightplan *flightplan, const
       alternateIdents.append(alternate->getIdent());
 
     insertMessage(tr("Alternate %1 <b>%2</b>.").
-                  arg(alternateIdents.size() == 1 ? tr("airport is") : tr("airports are")).
-                  arg(atools::strJoin(alternateIdents, tr("</b>, <b>"), tr("</b> and <b>"))), insertIndex++);
+                  arg(alternateIdents.size() == 1 ? tr("airport is") : tr("airports are"),
+                      atools::strJoin(alternateIdents, tr("</b>, <b>"), tr("</b> and <b>"))), insertIndex++);
   }
 
   // Add empty line ==============
@@ -664,8 +664,7 @@ void RouteStringReader::addReport(atools::fs::pln::Flightplan *flightplan, const
 
     insertMessage(tr("Found %1 %2:<br/><b>%3</b>.").
                   arg(idents.size()).
-                  arg(idents.size() == 1 ? tr("waypoint") : tr("waypoints")).
-                  arg(identStr), insertIndex++);
+                  arg(idents.size() == 1 ? tr("waypoint") : tr("waypoints"), identStr), insertIndex++);
   }
 
 }
@@ -803,7 +802,7 @@ void RouteStringReader::extractAirportIdentDeparture(QString item, QString& airp
 
     QString time = match.captured("time");
     if(!time.isEmpty())
-      appendWarning(tr("Ignoring time specification \"%1\" for departure airport %2.").arg(time).arg(item));
+      appendWarning(tr("Ignoring time specification \"%1\" for departure airport %2.").arg(time, item));
 
     runway = match.captured("rw");
   }
@@ -846,7 +845,7 @@ void RouteStringReader::extractAirportIdentDestination(QString item, QString& ai
   }
 
   if(!time.isEmpty())
-    appendWarning(tr("Ignoring time specification \"%1\" for destination airport %2.").arg(time).arg(item));
+    appendWarning(tr("Ignoring time specification \"%1\" for destination airport %2.").arg(time, item));
 }
 
 void RouteStringReader::airportSim(map::MapAirport& airport, const QString& ident)
@@ -995,7 +994,7 @@ bool RouteStringReader::addDeparture(atools::fs::pln::Flightplan *flightplan, ma
           procQuery->createCustomDeparture(sidLegs, departureAirport, runway, 3.f);
         else
         {
-          appendWarning(tr("Runway %1 not found for departure airport %2. Ignoring runway.").arg(runway).arg(departureAirport.ident));
+          appendWarning(tr("Runway %1 not found for departure airport %2. Ignoring runway.").arg(runway, departureAirport.ident));
 
           // Clear runway from SID
           sidLegs.runway.clear();
@@ -1011,7 +1010,7 @@ bool RouteStringReader::addDeparture(atools::fs::pln::Flightplan *flightplan, ma
         if(!ProcedureQuery::doesRunwayMatchSidOrStar(sidLegs, runway))
         {
           appendWarning(tr("Runway %1 does not match SID %2 at departure airport %3. Ignoring runway.").
-                        arg(runway).arg(sidLegs.procedureFixIdent).arg(airportIdent));
+                        arg(runway, sidLegs.procedureFixIdent, airportIdent));
           sidLegs.runway.clear();
           runway.clear();
         }
@@ -1117,7 +1116,7 @@ bool RouteStringReader::addDestination(atools::fs::pln::Flightplan *flightplan, 
       if(!ProcedureQuery::doesRunwayMatchSidOrStar(destInfo.star, destInfo.approach.runway))
       {
         appendWarning(tr("Approach runway %1 does not match STAR %2 at destination airport %3. Ignoring approach.").
-                      arg(destInfo.approach.runway).arg(destInfo.star.procedureFixIdent).arg(destInfo.airport.ident));
+                      arg(destInfo.approach.runway, destInfo.star.procedureFixIdent, destInfo.airport.ident));
 
         // Clear all approach and runway related to ignore when creating flight plan properties
         destInfo.star.runwayEnd = map::MapRunwayEnd();
@@ -1136,7 +1135,7 @@ bool RouteStringReader::addDestination(atools::fs::pln::Flightplan *flightplan, 
       if(!ProcedureQuery::doesRunwayMatchSidOrStar(destInfo.star, destInfo.runwayEnd.name))
       {
         appendWarning(tr("Runway %1 does not match STAR %2 at destination airport %3. Ignoring runway.").
-                      arg(destInfo.runwayEnd.name).arg(destInfo.star.procedureFixIdent).arg(destInfo.airport.ident));
+                      arg(destInfo.runwayEnd.name, destInfo.star.procedureFixIdent, destInfo.airport.ident));
 
         // Clear all approach and runway related to ignore when creating flight plan properties
         destInfo.star.runwayEnd = map::MapRunwayEnd();
@@ -1329,10 +1328,10 @@ void RouteStringReader::destinationInternal(map::MapAirport& destAirport, proc::
 
       if(!approach.isEmpty() && approachLegs.isProcedureEmpty())
         appendWarning(tr("Approach %1 not found for destination airport %2. Ignoring approach.").
-                      arg(approach).arg(destAirport.ident));
+                      arg(approach, destAirport.ident));
       else if(!transition.isEmpty() && approachLegs.isTransitionEmpty())
         appendWarning(tr("Transition %1 not found for destination airport %2. Ignoring transition.").
-                      arg(transition).arg(destAirport.ident));
+                      arg(transition, destAirport.ident));
     }
     else if(!runway.isEmpty())
     {
@@ -1345,7 +1344,7 @@ void RouteStringReader::destinationInternal(map::MapAirport& destAirport, proc::
         procQuery->createCustomApproach(approachLegs, destAirport, runway, 3.f, 1000.f, 0.f);
       else
         appendWarning(tr("Runway %1 not found for destination airport %2. Ignoring runway.").
-                      arg(runway).arg(destAirport.ident));
+                      arg(runway, destAirport.ident));
     }
 
     if(!approachLegs.isEmpty())
@@ -1725,13 +1724,11 @@ void RouteStringReader::filterAirways(QList<ParseEntry>& resultList, int i)
         {
           if(startIndex == -1)
             appendWarning(tr("Waypoint %1 not found in airway %2. Ignoring flight plan segment.").
-                          arg(lastResult.waypoints.isEmpty() ? QStringLiteral() : lastResult.waypoints.constFirst().ident).
-                          arg(airwayName));
+                          arg(lastResult.waypoints.isEmpty() ? QStringLiteral() : lastResult.waypoints.constFirst().ident, airwayName));
 
           if(endIndex == -1)
             appendWarning(tr("Waypoint %1 not found in airway %2. Ignoring flight plan segment.").
-                          arg(nextResult.waypoints.isEmpty() ? QStringLiteral() : nextResult.waypoints.constFirst().ident).
-                          arg(airwayName));
+                          arg(nextResult.waypoints.isEmpty() ? QStringLiteral() : nextResult.waypoints.constFirst().ident, airwayName));
           result.airways.clear();
         }
       }
@@ -1745,7 +1742,7 @@ void RouteStringReader::filterAirways(QList<ParseEntry>& resultList, int i)
     else
     {
       appendWarning(tr("No waypoint %1 found at airway %2. Ignoring flight plan segment.").
-                    arg(waypointNameStart).arg(airwayName));
+                    arg(waypointNameStart, airwayName));
       result.airways.clear();
     }
   }

@@ -90,9 +90,8 @@ bool XpconnectInstaller::install()
                             "<p>The X-Plane target installation is as selected in the menu \"Scenery Library\".</p>"
                               "<p><b>Note that you have to close X-Plane while installing the plugin.</b></p>"
                                 "%3").
-                     arg(NavApp::getCurrentSimulatorName()).
-                     arg(HtmlBuilder::aFilePath(pluginsPath, atools::util::html::NOBR_WHITESPACE)).
-                     arg(macOsNote));
+                     arg(NavApp::getCurrentSimulatorName(), HtmlBuilder::aFilePath(pluginsPath, atools::util::html::NOBR_WHITESPACE),
+                         macOsNote));
 
   infoBox.setIcon(QMessageBox::Question);
   infoBox.setDefaultButton(QDialogButtonBox::Yes);
@@ -190,7 +189,7 @@ bool XpconnectInstaller::install()
       }
     }
     else
-      dialog->warning(tr("X-Plane plugins path \"%1\" not valid.\nReason: %2.").arg(pluginsPath).arg(errors));
+      dialog->warning(tr("X-Plane plugins path \"%1\" not valid.\nReason: %2.").arg(pluginsPath, errors));
   }
 
   return retval;

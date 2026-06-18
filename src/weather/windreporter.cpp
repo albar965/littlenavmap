@@ -304,8 +304,8 @@ void WindReporter::windDownloadFinished()
     windQueryOnline->getValidity(from, to);
 
     QString validText = from.isValid() && to.isValid() ? tr(" Forecast from %1 to %2 UTC.").
-                        arg(QLocale().toString(from, QLocale::ShortFormat)).
-                        arg(QLocale().toString(to, QLocale::ShortFormat)) : QStringLiteral();
+                        arg(QLocale().toString(from, QLocale::ShortFormat),
+                            QLocale().toString(to, QLocale::ShortFormat)) : QStringLiteral();
 
     QString msg;
     switch(currentSource)
@@ -352,8 +352,7 @@ void WindReporter::windDownloadSslErrors(const QStringList& errors, const QStrin
                                        "<p>URL: %1</p>"
                                          "<p>Error messages:<br/>%2</p>"
                                            "<p>Continue?</p>").
-                                  arg(downloadUrl).
-                                  arg(atools::strJoin(errors, tr("<br/>"))),
+                                  arg(downloadUrl, atools::strJoin(errors, tr("<br/>"))),
                                   tr("Do not &show this again and ignore errors."),
                                   QMessageBox::Cancel | QMessageBox::Yes,
                                   QMessageBox::Cancel, QMessageBox::Yes);
@@ -488,7 +487,7 @@ void WindReporter::updateSliderLabel()
   else if(currentWindSelection == wind::FLIGHTPLAN)
     disabledText = tr(" (showing for flight plan)");
 
-  labelActionWindAltitude->setText(tr("At %1%2").arg(Unit::altFeet(sliderActionAltitude->getAltitudeFt())).arg(disabledText));
+  labelActionWindAltitude->setText(tr("At %1%2").arg(Unit::altFeet(sliderActionAltitude->getAltitudeFt()), disabledText));
 }
 
 bool WindReporter::isWindShown() const

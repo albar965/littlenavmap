@@ -508,7 +508,7 @@ QStringList SqlModel::buildColumnList(const atools::sql::SqlRecord& tableCols)
   {
     if(!col->getSqlFunction().isEmpty())
       // Use SQL function as column if defined
-      colNames.append(QStringLiteral("(%1) as %2").arg(col->getSqlFunction()).arg(col->getColumnName()));
+      colNames.append(QStringLiteral("(%1) as %2").arg(col->getSqlFunction(), col->getColumnName()));
     else if(col->isDistanceHeading() || !tableCols.contains(col->getColumnName()))
       // Add null for special distance columns
       // Null for columns which do not exist in the database

@@ -636,7 +636,7 @@ void MapPainterMark::paintLogEntries(const QList<map::MapLogbookEntry>& entries)
         textPlacement.calculateTextPositions(positions);
 
         QStringList text;
-        text.append(tr("%1 to %2").arg(entry->departureIdent).arg(entry->destinationIdent));
+        text.append(tr("%1 to %2").arg(entry->departureIdent, entry->destinationIdent));
         // text.append(atools::elideTextShort(entry->aircraftType, 5));
         // text.append(atools::elideTextShort(entry->aircraftRegistration, 7));
         if(entry->distanceGcNm > 0.f)
@@ -905,7 +905,7 @@ void MapPainterMark::paintRangeMarkers()
 
               // Build narrow text manually
               if(radius > 0.f)
-                texts.append(tr("%1%2").arg(QLocale(QLocale::C).toString(Unit::distNmF(radius), 'g', 6)).arg(Unit::getUnitDistStr()));
+                texts.append(tr("%1%2").arg(QLocale(QLocale::C).toString(Unit::distNmF(radius), 'g', 6), Unit::getUnitDistStr()));
 
               textPos.ry() += painter->fontMetrics().height() / 2 - painter->fontMetrics().descent();
 
@@ -1248,7 +1248,7 @@ void MapPainterMark::paintCompassRose()
         if(!s.isNull())
         {
           float dist = i * stepsizeNm;
-          QString text = tr("%1%2").arg(QLocale(QLocale::C).toString(Unit::distNmF(dist), 'g', 6)).arg(Unit::getUnitDistStr());
+          QString text = tr("%1%2").arg(QLocale(QLocale::C).toString(Unit::distNmF(dist), 'g', 6), Unit::getUnitDistStr());
           symbolPainter->textBoxF(painter, {text}, painter->pen(), static_cast<float>(s.x()), static_cast<float>(s.y()), text::CENTER);
         }
       }
@@ -1635,10 +1635,8 @@ void MapPainterMark::paintPatternMarkers()
             // Text for downwind leg =======================================
             QPointF center = downwind.center();
             QString text = tr("%1/%2").
-                           arg(Unit::altFeet(marker.position.getAltitude(), true /* addUnit */, true /* narrow */,
-                                             10.f /* round */)).
-                           arg(formatter::courseTextFromTrue(ageo::opposedCourseDeg(marker.courseTrue),
-                                                             marker.nav.magvar,
+                           arg(Unit::altFeet(marker.position.getAltitude(), true /* addUnit */, true /* narrow */, 10.f /* round */),
+                               formatter::courseTextFromTrue(ageo::opposedCourseDeg(marker.courseTrue), marker.nav.magvar,
                                                              false /* magBold */, false /* magBig */,
                                                              false /* trueSmall */, true /* narrow */));
 
@@ -1646,9 +1644,8 @@ void MapPainterMark::paintPatternMarkers()
 
             // Text for final leg =======================================
             text = tr("RW%1/%2").
-                   arg(marker.runwayName).
-                   arg(formatter::courseTextFromTrue(marker.courseTrue, marker.nav.magvar, false /* magBold */,
-                                                     false /* magBig */, false /* trueSmall */, true /* narrow */));
+                   arg(marker.runwayName, formatter::courseTextFromTrue(marker.courseTrue, marker.nav.magvar, false /* magBold */,
+                                                                        false /* magBig */, false /* trueSmall */, true /* narrow */));
             textPlacement.drawTextAlongOneLine(text, oppositeAngle, finalLine.pointAt(0.60), atools::roundToInt(finalLine.length()));
           }
 

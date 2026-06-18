@@ -194,9 +194,9 @@ QString StatusBar::dateTimeString(const QDateTime& datetime, const QString& inva
     return tr("%1%2 (%3)").
            arg(datetime.timeZone() == QDateTime::currentDateTime().timeZone() ?
                tr("Local%1: ").arg(sim ? tr(" simulator") : tr(" real")) :
-               tr("UTC%1: ").arg(sim ? tr(" simulator") : tr(" real"))).
-           arg(QLocale().toString(datetime).replace(GMT, UTC).replace(UTC % QStringLiteral(" ") % UTC, UTC)).
-           arg(formatter::formatTimeZoneOffset(datetime.timeZone().standardTimeOffset(datetime)));
+               tr("UTC%1: ").arg(sim ? tr(" simulator") : tr(" real")),
+               QLocale().toString(datetime).replace(GMT, UTC).replace(UTC % QStringLiteral(" ") % UTC, UTC),
+               formatter::formatTimeZoneOffset(datetime.timeZone().standardTimeOffset(datetime)));
   else
     return invalidStr;
 }
@@ -434,7 +434,7 @@ void StatusBar::updateConnectionStatusMessageText()
     if(onlineConnectionStatus.isEmpty())
       connectStatusLabel->setText(connectionStatus);
     else
-      connectStatusLabel->setText(tr("%1/%2").arg(connectionStatus).arg(onlineConnectionStatus));
+      connectStatusLabel->setText(tr("%1/%2").arg(connectionStatus, onlineConnectionStatus));
 
     QString tooltipHint;
     if(OptionData::instance().getFlags().testFlag(opts::ENABLE_TOOLTIPS_LINK))
@@ -444,7 +444,7 @@ void StatusBar::updateConnectionStatusMessageText()
       connectStatusLabel->setToolTip(tooltipHint % connectionStatusTooltip);
     else
       connectStatusLabel->setToolTip(tooltipHint % tr("Simulator:\n%1\n\nOnline Network:\n%2").
-                                     arg(connectionStatusTooltip).arg(onlineConnectionStatusTooltip));
+                                     arg(connectionStatusTooltip, onlineConnectionStatusTooltip));
 
     connectStatusLabel->setMinimumWidth(connectStatusLabel->width());
   }
@@ -622,7 +622,7 @@ void StatusBar::updateMapPositionLabel(const atools::geo::Pos& pos, const QPoint
       const QString offset = formatter::formatTimeZoneOffset(zone.standardTimeOffset(NavApp::getUtcDateTimeSimOrCurrent()));
       QLocale::Territory territory = zone.territory();
       if(territory != QLocale::AnyTerritory)
-        timeZoneLabel->setText(tr("%1 / %2").arg(QLocale::territoryToString(territory)).arg(offset));
+        timeZoneLabel->setText(tr("%1 / %2").arg(QLocale::territoryToString(territory), offset));
       else
         timeZoneLabel->setText(tr("%1").arg(offset));
 
@@ -667,8 +667,7 @@ void StatusBar::setStatusMessage(const QString& message, bool addToLog, bool pop
 
     for(int i = 0; i < statusMessages.size(); i++)
       msg.append(tr("%1: %2").
-                 arg(QLocale().toString(statusMessages.at(i).getTimestamp().time(), tr("hh:mm:ss"))).
-                 arg(statusMessages.at(i).getMessage()));
+                 arg(QLocale().toString(statusMessages.at(i).getTimestamp().time(), tr("hh:mm:ss")), statusMessages.at(i).getMessage()));
 
     statusBar->setToolTip(msg.join(tr("<br/>")) % tr("</p>"));
 

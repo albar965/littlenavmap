@@ -202,8 +202,15 @@ public:
   }
 
   /* Return string containing both units - weight and volume */
-  static QString ffLbsAndGal(float lbs, float gal, bool addUnit = true);
-  static QString fuelLbsAndGal(float lbs, float gal, bool addUnit = true);
+  static QString ffLbsAndGal(float lbs, float gal, bool addUnit = true)
+  {
+    return tr("%1, %2").arg(ffLbs(lbs, addUnit), ffGallon(gal, addUnit));
+  }
+
+  static QString fuelLbsAndGal(float lbs, float gal, bool addUnit = true)
+  {
+    return tr("%1, %2").arg(weightLbs(lbs, addUnit), volGallon(gal, addUnit));
+  }
 
   static QString fuelLbsGallon(float gal, bool addUnit = true, bool fuelAsVolume = false)
   {
@@ -232,7 +239,10 @@ public:
     return u(volLiterF(liter), unitFfVolStr, addUnit);
   }
 
-  static float ffLiterF(float liter);
+  static float ffLiterF(float liter)
+  {
+    return volLiterF(liter);
+  }
 
   static QString ffKg(float kg, bool addUnit = true)
   {
@@ -245,8 +255,15 @@ public:
   }
 
   /* Return string containing both units - weight and volume */
-  static QString ffKgAndLiter(float kg, float liter, bool addUnit = true);
-  static QString fuelKgAndLiter(float kg, float liter, bool addUnit = true);
+  static QString ffKgAndLiter(float kg, float liter, bool addUnit = true)
+  {
+    return tr("%1, %2").arg(ffKg(kg, addUnit), ffLiter(liter, addUnit));
+  }
+
+  static QString fuelKgAndLiter(float kg, float liter, bool addUnit = true)
+  {
+    return tr("%1, %2").arg(weightKg(kg, addUnit), volLiter(liter, addUnit));
+  }
 
   static QString fuelKgLiter(float kgLiter, bool addUnit = true, bool fuelAsVolume = false)
   {
@@ -498,7 +515,13 @@ private:
 
   /* Merges numbers and units depending on flags */
   static QString u(const QString& num, const QString& un, bool addUnit, bool narrow);
-  static QString u(float num, const QString& unitStr, bool addUnit, bool narrow = false, int precision = 0);
+
+  static QString u(float num, const QString& unitStr, bool addUnit, bool narrow = false, int precision = 0)
+  {
+    return narrow ? clocale->toString(num, 'f', precision) % (addUnit ? QStringLiteral() % unitStr : QStringLiteral()) :
+           locale->toString(num, 'f', precision) % (addUnit ? QStringLiteral(" ") % unitStr : QStringLiteral());
+  }
+
   static QString localOtherText(bool localBold, bool otherSmall);
   static QString localOtherText2(bool localBold, bool otherSmall);
 

@@ -236,8 +236,8 @@ void DatabaseLoader::loadScenery()
   timerThread.restart();
 
   // Initial text
-  progressDialog->setLabelText(databaseTimeText.arg(tr("Counting files ...")).
-                               arg(QStringLiteral()).arg(QStringLiteral()).arg(QStringLiteral()).arg(0).arg(0).arg(0).arg(0).arg(0).arg(
+  progressDialog->setLabelText(databaseTimeText.arg(tr("Counting files ..."), QStringLiteral(), QStringLiteral(),
+                                                    QStringLiteral()).arg(0).arg(0).arg(0).arg(0).arg(0).arg(
                                  0).arg(0).arg(0).arg(0));
 
   // Dialog does not close when clicking cancel
@@ -356,10 +356,8 @@ void DatabaseLoader::progressCallback()
 
       // Run script etc.
       progressDialog->setLabelText(
-        databaseTimeText.arg(atools::elideTextShortMiddle(navDatabaseProgressShared->getOtherAction(), MAX_TEXT_LENGTH)).
-        arg(formatter::formatElapsed(timer)).
-        arg(QStringLiteral()).
-        arg(QStringLiteral()).
+        databaseTimeText.arg(atools::elideTextShortMiddle(navDatabaseProgressShared->getOtherAction(), MAX_TEXT_LENGTH),
+                             formatter::formatElapsed(timer), QStringLiteral(), QStringLiteral()).
         arg(navDatabaseProgressShared->getNumErrors()).
         arg(navDatabaseProgressShared->getNumFiles()).
         arg(navDatabaseProgressShared->getNumAirports()).
@@ -383,10 +381,9 @@ void DatabaseLoader::progressCallback()
 
       // Switched to a new scenery area
       progressDialog->setLabelText(
-        databaseLoadingText.arg(atools::elideTextShortMiddle(navDatabaseProgressShared->getSceneryTitle(), MAX_TEXT_LENGTH)).
-        arg(atools::elideTextShortMiddle(path, MAX_TEXT_LENGTH)).
-        arg(atools::elideTextShortMiddle(file, MAX_TEXT_LENGTH)).
-        arg(formatter::formatElapsed(timer)).
+        databaseLoadingText.arg(atools::elideTextShortMiddle(navDatabaseProgressShared->getSceneryTitle(), MAX_TEXT_LENGTH),
+                                atools::elideTextShortMiddle(path, MAX_TEXT_LENGTH), atools::elideTextShortMiddle(file, MAX_TEXT_LENGTH),
+                                formatter::formatElapsed(timer)).
         arg(navDatabaseProgressShared->getNumErrors()).
         arg(navDatabaseProgressShared->getNumFiles()).
         arg(navDatabaseProgressShared->getNumAirports()).
@@ -408,10 +405,7 @@ void DatabaseLoader::progressCallback()
 
       // Last report
       progressDialog->setLabelText(
-        databaseTimeText.arg(tr("<big>Done.</big>")).
-        arg(formatter::formatElapsed(timer)).
-        arg(QStringLiteral()).
-        arg(QStringLiteral()).
+        databaseTimeText.arg(tr("<big>Done.</big>"), formatter::formatElapsed(timer), QStringLiteral(), QStringLiteral()).
         arg(navDatabaseProgressShared->getNumErrors()).
         arg(navDatabaseProgressShared->getNumFiles()).
         arg(navDatabaseProgressShared->getNumAirports()).
@@ -493,8 +487,7 @@ void DatabaseLoader::showErrors()
                         "the contact address below.</b>"
                         "<hr/>%1"
                           "<hr/>%2").
-                   arg(atools::gui::Application::getContactHtml()).
-                   arg(atools::gui::Application::getReportPathHtml()));
+                   arg(atools::gui::Application::getContactHtml(), atools::gui::Application::getReportPathHtml()));
 
       texts.append(tr("<hr/>Some files or scenery directories could not be read.<br/>"
                       "You should check if the airports of the affected sceneries display "
@@ -530,7 +523,7 @@ void DatabaseLoader::showErrors()
         numBgl++;
 
         texts.append(tr("<b>File:</b> \"%1\"<br/><b>Message:</b> %2<br/>").
-                     arg(fileErr.getFilepath()).arg(fileErr.getErrorMessage()));
+                     arg(fileErr.getFilepath(), fileErr.getErrorMessage()));
       }
       texts.append("<br/>");
       numScenery++;

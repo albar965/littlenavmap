@@ -412,7 +412,7 @@ void RouteMultiExportDialog::updateTableColors()
           if(!fmt.isPatternValid(&errorMessage))
             // Not valid
             item->setToolTip(tr("Error: %1\nPress \"Ctrl+E\" or double click to edit filename pattern.\n\n%2").
-                             arg(errorMessage).arg(patternHelp));
+                             arg(errorMessage, patternHelp));
           else if(fmt.isSelected())
             // Selected and valid
             item->setToolTip(tr("Format selected for export.\n"
@@ -640,7 +640,7 @@ void RouteMultiExportDialog::selectPath(rexp::RouteExportFormatType type, int ro
   QString filepath, filter;
   QString suffix = format.getSuffix(); // Get suffix plus dot
   if(!suffix.isEmpty())
-    filter = tr("%1 Files %2;;All Files (*)").arg(format.getFormat()).arg(format.getFilter());
+    filter = tr("%1 Files %2;;All Files (*)").arg(format.getFormat(), format.getFilter());
   else
     filter = tr("All Files (*)");
 
@@ -900,8 +900,8 @@ void RouteMultiExportDialog::tableContextMenu(const QPoint&)
     ui->actionSelectExportPath->setText(tr("&Select Export Path for \"%1\"").arg(text));
     ui->actionExportFileNow->setText(tr("&Export Flight Plan for \"%1\" Now ...").arg(text));
 
-    ui->actionEditField->setText(tr("&Edit %1 for \"%2\" ...").arg(fieldText).arg(text));
-    ui->actionResetField->setText(tr("&Reset %1 for \"%2\" ...").arg(fieldText).arg(text));
+    ui->actionEditField->setText(tr("&Edit %1 for \"%2\" ...").arg(fieldText, text));
+    ui->actionResetField->setText(tr("&Reset %1 for \"%2\" ...").arg(fieldText, text));
   }
 
   updateActions();

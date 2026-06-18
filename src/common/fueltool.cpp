@@ -123,7 +123,7 @@ QString FuelTool::weightVolLocalOther(float valueLbsGal, bool localBold, bool ot
   if(Unit::isShowOtherFuel())
   {
     QString other = otherSmall ? tr(" <span style=\"font-size: small;\">(%2)</span>") : tr(" (%2)");
-    return (local + other).arg(weightVolLocal(valueLbsGal)).arg(weightVolOther(valueLbsGal));
+    return (local + other).arg(weightVolLocal(valueLbsGal), weightVolOther(valueLbsGal));
   }
   else
     return local.arg(weightVolLocal(valueLbsGal));

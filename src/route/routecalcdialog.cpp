@@ -239,9 +239,9 @@ void RouteCalcDialog::updateHeader()
     {
       const RouteLeg& fromLeg = route.value(fromIndex);
       const RouteLeg& toLeg = route.value(toIndex);
-      departure = tr("%1 (%2)").arg(fromLeg.getDisplayIdent()).arg(fromLeg.getMapTypeName());
-      destination = tr("%1 (%2)").arg(toLeg.getDisplayIdent()).arg(toLeg.getMapTypeName());
-      title = tr("<b>Calculate flight plan between legs<br/>%1 and %2</b>").arg(departure).arg(destination);
+      departure = tr("%1 (%2)").arg(fromLeg.getDisplayIdent(), fromLeg.getMapTypeName());
+      destination = tr("%1 (%2)").arg(toLeg.getDisplayIdent(), toLeg.getMapTypeName());
+      title = tr("<b>Calculate flight plan between legs<br/>%1 and %2</b>").arg(departure, destination);
     }
     else
     {
@@ -260,20 +260,19 @@ void RouteCalcDialog::updateHeader()
       const RouteLeg& departLeg = route.getDepartureAirportLeg();
       const RouteLeg& destLeg = route.getDestinationAirportLeg();
       if(route.hasValidDeparture())
-        departure = tr("%1 (%2)").arg(departLeg.getName()).arg(departLeg.getDisplayIdent());
+        departure = tr("%1 (%2)").arg(departLeg.getName(), departLeg.getDisplayIdent());
       else
-        departure = tr("%1 (%2)").arg(departLeg.getDisplayIdent()).arg(departLeg.getMapTypeName());
+        departure = tr("%1 (%2)").arg(departLeg.getDisplayIdent(), departLeg.getMapTypeName());
 
       if(route.hasValidDestination())
-        destination = tr("%1 (%2)").arg(destLeg.getName()).arg(destLeg.getDisplayIdent());
+        destination = tr("%1 (%2)").arg(destLeg.getName(), destLeg.getDisplayIdent());
       else
-        destination = tr("%1 (%2)").arg(destLeg.getDisplayIdent()).arg(destLeg.getMapTypeName());
+        destination = tr("%1 (%2)").arg(destLeg.getDisplayIdent(), destLeg.getMapTypeName());
 
-      title = tr("<b>Calculate flight plan from<br/>%1 to %2</b><hr/>").arg(departure).arg(destination);
+      title = tr("<b>Calculate flight plan from<br/>%1 to %2</b><hr/>").arg(departure, destination);
 
       title.append(tr("Direct distance is %1. Flight plan distance is %2.").
-                   arg(Unit::distMeter(departLeg.getPosition().distanceMeterTo(destLeg.getPosition()))).
-                   arg(Unit::distNm(route.getTotalDistance())));
+                   arg(Unit::distMeter(departLeg.getPosition().distanceMeterTo(destLeg.getPosition())), Unit::distNm(route.getTotalDistance())));
     }
     else
     {

@@ -121,8 +121,7 @@ void HoldingMarkerDialog::updateLengthLabel()
 
   ui->labelHoldLength->setText(tr("Straight section length %1.<br/>"
                                   "Total time to complete is %2 minutes.").
-                               arg(Unit::distNm(distance)).
-                               arg(QLocale().toString(minutes * 2.f + 2.f, 'f', 1)));
+                               arg(Unit::distNm(distance), QLocale().toString(minutes * 2.f + 2.f, 'f', 1)));
 }
 
 void HoldingMarkerDialog::fillMarkerFromResultAndWidgets()

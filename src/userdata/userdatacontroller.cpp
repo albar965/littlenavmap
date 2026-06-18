@@ -708,8 +708,7 @@ void UserdataController::deleteUserpoints(const QList<int>& ids)
                                                "<ul><li>%3</li></ul>"
                                                  "<p>Note that you can undo this action in menu \"Userpoints\".</p>").
                                           arg(ids.size()).
-                                          arg(ids.size() == 1 ? tr("userpoint") : tr("userpoints")).
-                                          arg(texts.join(tr("</li><li>"))),
+                                          arg(ids.size() == 1 ? tr("userpoint") : tr("userpoints"), texts.join(tr("</li><li>"))),
                                           tr("Do not &show this dialog again."),
                                           QMessageBox::Yes | QMessageBox::No, QMessageBox::No, QMessageBox::Yes);
 

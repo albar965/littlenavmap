@@ -382,9 +382,9 @@ void RouteWaypointEditDialog::widgetsToEntry(atools::fs::pln::FlightplanEntry& e
 void RouteWaypointEditDialog::updateHeaderLabel()
 {
   ui->labelRouteUserWaypointHeaderWaypointInfo->setText(tr("<b>%1 %2 region %3</b>").
-                                                        arg(flightplanEntry->getWaypointTypeAsDisplayString()).
-                                                        arg(flightplanEntry->getIdent()).
-                                                        arg(flightplanEntry->getRegion()));
+                                                        arg(flightplanEntry->getWaypointTypeAsDisplayString(),
+                                                            flightplanEntry->getIdent(),
+                                                            flightplanEntry->getRegion()));
 }
 
 void RouteWaypointEditDialog::coordsEdited(const QString&)

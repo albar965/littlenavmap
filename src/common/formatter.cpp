@@ -150,7 +150,7 @@ bool checkCoords(QString *message, const QString& text, atools::geo::Pos *pos)
       if(coords.simplified() != text.simplified())
       {
         if(Unit::getUnitCoords() == opts::COORDS_LATY_LONX || Unit::getUnitCoords() == opts::COORDS_LONX_LATY)
-          *message = QObject::tr("Coordinates are valid: %1 (%2)").arg(coords).arg(Unit::coords(readPos, opts::COORDS_DMS));
+          *message = QObject::tr("Coordinates are valid: %1 (%2)").arg(coords, Unit::coords(readPos, opts::COORDS_DMS));
         else
           *message = QObject::tr("Coordinates are valid: %1").arg(coords);
       }
@@ -353,7 +353,7 @@ QString courseText(float magCourse, float trueCourse, bool magBold, bool magBig,
       return QStringLiteral();
 
     // Values are close - display only magnetic
-    return QObject::tr("%1%2°M%3").arg(style).arg(magStr).arg(styleEnd);
+    return QObject::tr("%1%2°M%3").arg(style, magStr, styleEnd);
   }
   else
   {
@@ -365,16 +365,15 @@ QString courseText(float magCourse, float trueCourse, bool magBold, bool magBig,
 
       // Values differ and both are valid - display magnetic and true
       return QObject::tr("%1%2°M%3,%4%5%6°T%7").
-             arg(style).arg(magStr).arg(styleEnd).
-             arg(narrow ? QStringLiteral() : QObject::tr(" ", "Separator for mag/true course text")).
+             arg(style, magStr, styleEnd, narrow ? QStringLiteral() : QObject::tr(" ", "Separator for mag/true course text")).
              arg(small).arg(trueStr).arg(smallEnd);
     }
     else if(!magStr.isEmpty())
       // Only mag value is valid
-      return QObject::tr("%1%2°M%3").arg(style).arg(magStr).arg(styleEnd);
+      return QObject::tr("%1%2°M%3").arg(style, magStr, styleEnd);
     else if(!trueStr.isEmpty())
       // Only true value is valid
-      return QObject::tr("%1%2°T%3").arg(style).arg(trueStr).arg(styleEnd);
+      return QObject::tr("%1%2°T%3").arg(style, trueStr, styleEnd);
   }
   return QStringLiteral();
 }
@@ -395,7 +394,7 @@ QString courseTextNarrow(float magCourse, float trueCourse)
     if(initTrueText == initMagText)
       initText = QObject::tr("%1°M/T").arg(initMagText);
     else
-      initText = QObject::tr("%1°M %2°T").arg(initMagText).arg(initTrueText);
+      initText = QObject::tr("%1°M %2°T").arg(initMagText, initTrueText);
   }
   else if(!initMagText.isEmpty())
     initText = QObject::tr("%1°M").arg(initMagText);

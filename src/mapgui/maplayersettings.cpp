@@ -111,7 +111,7 @@ void MapLayerSettings::reloadFromFile()
     xmlFile.close();
   }
   else
-    throw atools::Exception(tr("Cannot open file \"%1\". Reason: %2").arg(filename).arg(xmlFile.errorString()));
+    throw atools::Exception(tr("Cannot open file \"%1\". Reason: %2").arg(filename, xmlFile.errorString()));
 }
 
 void MapLayerSettings::loadFromFile()

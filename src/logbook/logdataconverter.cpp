@@ -92,7 +92,7 @@ int LogdataConverter::convertFromUserdata()
 #ifdef DEBUG_INFORMATION
     message = tr(
       "<i>Ident &quot;%1&quot;, name &quot;%2&quot;, region &quot;%3&quot;, tags &quot;%4&quot;, userdata_id %5</i>").
-              arg(ident).arg(name).arg(region).arg(tags).arg(query.valueInt("userdata_id"));
+              arg(ident, name, region, tags).arg(query.valueInt("userdata_id"));
 #else
     message = tr("<i>Ident &quot;%1&quot;, name &quot;%2&quot;, region &quot;%3&quot;, tags &quot;%4&quot;</i>").
               arg(ident).arg(name).arg(region).arg(tags);
@@ -397,7 +397,7 @@ float LogdataConverter::findFt(const QStringList& lines, QString nameTr, QString
     else if(unit == Unit::getSuffixAltMeter())
       return atools::geo::meterToFeet(value);
     else
-      errors.append(tr("Invalid altitude unit \"%1\" for %2.").arg(unit).arg(message));
+      errors.append(tr("Invalid altitude unit \"%1\" for %2.").arg(unit, message));
   }
   return INVALID_FLOAT;
 }
@@ -417,7 +417,7 @@ float LogdataConverter::findNm(const QStringList& lines, QString nameTr, QString
     else if(unit == Unit::getSuffixDistMi())
       return atools::geo::miToNm(value);
     else
-      errors.append(tr("Invalid distance unit \"%1\" for %2.").arg(unit).arg(message));
+      errors.append(tr("Invalid distance unit \"%1\" for %2.").arg(unit, message));
   }
   return INVALID_FLOAT;
 }
@@ -446,7 +446,7 @@ float LogdataConverter::findFloat(const QStringList& lines, QString nameTr, QStr
     if(ok)
       return retval;
     else
-      errors.append(tr("Invalid number \"%1\" for %2.").arg(str).arg(message));
+      errors.append(tr("Invalid number \"%1\" for %2.").arg(str, message));
   }
   return INVALID_FLOAT;
 }
@@ -461,7 +461,7 @@ QDateTime LogdataConverter::findDateTime(const QStringList& lines, QString nameT
     retval = formatter::readDateTime(str.section(',', 0, 0));
 
     if(!retval.isValid())
-      errors.append(tr("Invalid date and time \"%1\" for %2.").arg(str).arg(message));
+      errors.append(tr("Invalid date and time \"%1\" for %2.").arg(str, message));
   }
   return retval;
 }

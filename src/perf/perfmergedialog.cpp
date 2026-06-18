@@ -230,20 +230,12 @@ void PerfMergeDialog::updateWidgetValues()
   if(showAllWidgets)
     ui->labelAircraft->setText(tr("<p>From <b>%1</b>, type <b>%2</b>, fuel type <b>%3</b><br/>"
                                   "to <b>%4</b>, type <b>%5</b>, fuel type <b>%6</b></p>%7").
-                               arg(from->getName()).
-                               arg(from->getAircraftType()).
-                               arg(from->isAvgas() ? tr("Avgas") : tr("Jetfuel")).
-                               arg(to.getName()).
-                               arg(to.getAircraftType()).
-                               arg(to.isAvgas() ? tr("Avgas") : tr("Jetfuel")).
-                               arg(err));
+                               arg(from->getName(), from->getAircraftType(), from->isAvgas() ? tr("Avgas") : tr("Jetfuel"), to.getName(),
+                                   to.getAircraftType(), to.isAvgas() ? tr("Avgas") : tr("Jetfuel"), err));
   else
     ui->labelAircraft->setText(tr("<p>Merge current background collected performance to<br/>"
                                   "<b>%1</b>, type <b>%2</b>, fuel type <b>%3</b></p>%4").
-                               arg(to.getName()).
-                               arg(to.getAircraftType()).
-                               arg(to.isAvgas() ? tr("Avgas") : tr("Jetfuel")).
-                               arg(err));
+                               arg(to.getName(), to.getAircraftType(), to.isAvgas() ? tr("Avgas") : tr("Jetfuel"), err));
 
   // Update labels with current values from and to =============================================
   ui->labelSimulatorValue->setText(from->getSimulator());

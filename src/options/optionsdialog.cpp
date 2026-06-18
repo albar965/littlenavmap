@@ -1917,7 +1917,7 @@ void OptionsDialog::udpdateLanguageComboBox(const QString& lang)
     {
       // Usedata for item is locale object
       const QLocale& locale = locales.at(i);
-      ui->comboBoxOptionsGuiLanguage->addItem(tr("%1, %2").arg(locale.nativeLanguageName()).arg(locale.nativeTerritoryName()), locale);
+      ui->comboBoxOptionsGuiLanguage->addItem(tr("%1, %2").arg(locale.nativeLanguageName(), locale.nativeTerritoryName()), locale);
     }
   }
 
@@ -3843,7 +3843,7 @@ void OptionsDialog::mapboxUserMapClicked()
                           QStringLiteral("OPTIONS.html#mapboxtheme"));
 
     // Prefill with present keys ==============
-    dialog.setText(QStringLiteral("mapbox://styles/%1/%2").arg(userNameItem->text()).arg(userStyleItem->text()));
+    dialog.setText(QStringLiteral("mapbox://styles/%1/%2").arg(userNameItem->text(), userStyleItem->text()));
     dialog.setText2(tokenItem->text());
 
     if(dialog.exec() == QDialog::Accepted)

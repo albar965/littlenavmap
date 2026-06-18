@@ -768,8 +768,7 @@ void WeatherReporter::weatherDownloadSslErrors(const QStringList& errors, const 
                                        "<p>URL: %1</p>"
                                          "<p>Error messages:<br/>%2</p>"
                                            "<p>Continue?</p>").
-                                  arg(downloadUrl).
-                                  arg(atools::strJoin(errors, tr("<br/>"))),
+                                  arg(downloadUrl, atools::strJoin(errors, tr("<br/>"))),
                                   tr("Do not &show this again and ignore errors."),
                                   QMessageBox::Cancel | QMessageBox::Yes,
                                   QMessageBox::Cancel, QMessageBox::Yes);
@@ -794,7 +793,7 @@ void WeatherReporter::weatherDownloadFailed(const QString& error, int errorCode,
                                                      tr("<p>Download of weather from<br/>\"%1\"<br/>failed.</p><p>Error: %2 (%3)</p>"
                                                           "<p>Check weather settings or disable weather downloads.</p>"
                                                             "<p>Suppressing further messages during this session.</p>").
-                                                     arg(url).arg(error).arg(errorCode),
+                                                     arg(url, error).arg(errorCode),
                                                      tr("Do not &show this dialog again."));
   }
 }

@@ -341,9 +341,8 @@ void LogdataDialog::airportUpdated(QLineEdit *lineEdit, QLabel *label)
 
       if(!airports.isEmpty())
         label->setText(tr("%1,   elevation %2%3").
-                       arg(airports.constFirst().name).
-                       arg(Unit::altFeet(airports.constFirst().position.getAltitude())).
-                       arg(airports.size() > 1 ? tr(" (more found)") : QStringLiteral()));
+                       arg(airports.constFirst().name, Unit::altFeet(airports.constFirst().position.getAltitude()),
+                           airports.size() > 1 ? tr(" (more found)") : QStringLiteral()));
       else
         label->setText(atools::util::HtmlBuilder::errorMessage(tr("No airport found.").arg(ident)));
     }

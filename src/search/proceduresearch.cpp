@@ -588,9 +588,8 @@ void ProcedureSearch::updateHeaderLabel()
                                 "Update your navigation data or update or install an add-on airport to fix this.</p>"
                                 "<p style='white-space:pre'>You can still use procedures for this airport since %3<br/>"
                                 "uses a best guess to cross reference simulator runways.</p>").
-                             arg(runwayMismatches.size() == 1 ? tr("runway") : tr("runways")).
-                             arg(atools::strJoin(runwayMismatches, tr(", "), tr(" and "))).
-                             arg(QCoreApplication::applicationName());
+                             arg(runwayMismatches.size() == 1 ? tr("runway") : tr("runways"),
+                                 atools::strJoin(runwayMismatches, tr(", "), tr(" and ")), QCoreApplication::applicationName());
 
     ui->labelProcedureSearchWarn->setText(HtmlBuilder::warningMessage(tr("Runway mismatches found. Click here for details.")));
     ui->labelProcedureSearchWarn->setToolTip(warningTooltip);
@@ -640,7 +639,7 @@ QString ProcedureSearch::procedureAndTransitionText(const QTreeWidgetItem *item,
     if(ref.hasProcedureOnlyIds())
     {
       // Procedure ==============================
-      text.append(pattern.arg(item->data(COL_DESCRIPTION, role).toString()).arg(item->text(COL_IDENT)));
+      text.append(pattern.arg(item->data(COL_DESCRIPTION, role).toString(), item->text(COL_IDENT)));
 
       if(header)
         text.append(atools::strJoin(tr(". From "), firstLastWp, tr(", "), tr(" to "), tr(".")));
@@ -652,7 +651,7 @@ QString ProcedureSearch::procedureAndTransitionText(const QTreeWidgetItem *item,
         if(child != nullptr)
         {
           text.append(viaPattern);
-          text.append(pattern.arg(child->data(COL_DESCRIPTION, role).toString()).arg(child->text(COL_IDENT)));
+          text.append(pattern.arg(child->data(COL_DESCRIPTION, role).toString(), child->text(COL_IDENT)));
         }
       }
 
@@ -683,11 +682,11 @@ QString ProcedureSearch::procedureAndTransitionText(const QTreeWidgetItem *item,
             firstLastWp.append(firstLastWpProc.constLast());
         }
 
-        text.append(pattern.arg(procedure->data(COL_DESCRIPTION, role).toString()).arg(procedure->text(COL_IDENT)));
+        text.append(pattern.arg(procedure->data(COL_DESCRIPTION, role).toString(), procedure->text(COL_IDENT)));
         text.append(viaPattern);
       }
 
-      text.append(patternSpace.arg(item->data(COL_DESCRIPTION, role).toString()).arg(item->text(COL_IDENT)));
+      text.append(patternSpace.arg(item->data(COL_DESCRIPTION, role).toString(), item->text(COL_IDENT)));
 
       if(header)
         text.append(atools::strJoin(tr(". From "), firstLastWp, tr(", "), tr(" to "), tr(".")));
@@ -1139,7 +1138,7 @@ void ProcedureSearch::updateTreeHeader()
   header->setText(COL_IDENT, tr("Ident"));
   header->setToolTip(COL_IDENT, tr("ICAO ident of the navaid,"));
 
-  header->setText(COL_RESTR, tr("Restriction\n%1/%2/angle").arg(Unit::getUnitAltStr()).arg(Unit::getUnitSpeedStr()));
+  header->setText(COL_RESTR, tr("Restriction\n%1/%2/angle").arg(Unit::getUnitAltStr(), Unit::getUnitSpeedStr()));
   header->setToolTip(COL_RESTR, tr("Altitude restriction, speed limit or\nrequired descent flight path angle."));
 
   header->setText(COL_FROMTO, tr("First and last\nWaypoint"));
@@ -1471,10 +1470,10 @@ void ProcedureSearch::contextMenu(const QPoint& pos)
       else
       {
         if(ref.mapType & proc::PROCEDURE_ARRIVAL_ALL)
-          ui->actionInfoApproachAttach->setText(tr("&Select %1 and %2 as Destination").arg(currentAirportSim->displayIdent()).arg(text));
+          ui->actionInfoApproachAttach->setText(tr("&Select %1 and %2 as Destination").arg(currentAirportSim->displayIdent(), text));
 
         else if(ref.mapType & proc::PROCEDURE_SID_ALL)
-          ui->actionInfoApproachAttach->setText(tr("&Select %1 and %2 as Departure").arg(currentAirportSim->displayIdent()).arg(text));
+          ui->actionInfoApproachAttach->setText(tr("&Select %1 and %2 as Departure").arg(currentAirportSim->displayIdent(), text));
       }
     }
   }

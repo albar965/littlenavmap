@@ -517,8 +517,7 @@ QString Unit::weightLbsLocalOther(float lbs, bool localBold, bool otherSmall)
       if(showOtherFuel)
         // lbs (kg)
         return localOtherText(localBold, otherSmall).
-               arg(u(lbs, suffixFuelWeightLbs, true)).
-               arg(u(ageo::lbsToKg(lbs), suffixFuelWeightKg, true));
+               arg(u(lbs, suffixFuelWeightLbs, true), u(ageo::lbsToKg(lbs), suffixFuelWeightKg, true));
       else
         // lbs only
         return localOtherText(localBold, otherSmall).
@@ -528,8 +527,7 @@ QString Unit::weightLbsLocalOther(float lbs, bool localBold, bool otherSmall)
       if(showOtherFuel)
         // kg (lbs)
         return localOtherText(localBold, otherSmall).
-               arg(u(ageo::lbsToKg(lbs), suffixFuelWeightKg, true)).
-               arg(u(lbs, suffixFuelWeightLbs, true));
+               arg(u(ageo::lbsToKg(lbs), suffixFuelWeightKg, true), u(lbs, suffixFuelWeightLbs, true));
       else
         // kg only
         return localOtherText(localBold, otherSmall).
@@ -546,56 +544,25 @@ QString Unit::fuelLbsAndGalLocalOther(float lbs, float gal, bool localBold, bool
       if(showOtherFuel)
         // lbs, gal (kg, liter)
         return localOtherText2(localBold, otherSmall).
-               arg(u(lbs, suffixFuelWeightLbs, true)).
-               arg(u(gal, suffixFuelVolGal, true)).
-               arg(u(ageo::lbsToKg(lbs), suffixFuelWeightKg, true)).
-               arg(u(ageo::gallonToLiter(gal), suffixFuelVolLiter, true));
+               arg(u(lbs, suffixFuelWeightLbs, true), u(gal, suffixFuelVolGal, true),
+                   u(ageo::lbsToKg(lbs), suffixFuelWeightKg, true), u(ageo::gallonToLiter(gal), suffixFuelVolLiter, true));
       else
         // lbs, gal only
         return localOtherText2(localBold, otherSmall).
-               arg(u(lbs, suffixFuelWeightLbs, true)).
-               arg(u(gal, suffixFuelVolGal, true));
+               arg(u(lbs, suffixFuelWeightLbs, true), u(gal, suffixFuelVolGal, true));
 
     case opts::FUEL_WEIGHT_LITER_KG:
       if(showOtherFuel)
         // kg, liter (lbs, gal)
         return localOtherText2(localBold, otherSmall).
-               arg(u(ageo::lbsToKg(lbs), suffixFuelWeightKg, true)).
-               arg(u(ageo::gallonToLiter(gal), suffixFuelVolLiter, true)).
-               arg(u(lbs, suffixFuelWeightLbs, true)).
-               arg(u(gal, suffixFuelVolGal, true));
+               arg(u(ageo::lbsToKg(lbs), suffixFuelWeightKg, true), u(ageo::gallonToLiter(gal), suffixFuelVolLiter, true),
+                   u(lbs, suffixFuelWeightLbs, true), u(gal, suffixFuelVolGal, true));
       else
         // kg, liter only
         return localOtherText2(localBold, otherSmall).
-               arg(u(ageo::lbsToKg(lbs), suffixFuelWeightKg, true)).
-               arg(u(ageo::gallonToLiter(gal), suffixFuelVolLiter, true));
+               arg(u(ageo::lbsToKg(lbs), suffixFuelWeightKg, true), u(ageo::gallonToLiter(gal), suffixFuelVolLiter, true));
   }
   return QStringLiteral();
-}
-
-QString Unit::ffLbsAndGal(float lbs, float gal, bool addUnit)
-{
-  return tr("%1, %2").arg(ffLbs(lbs, addUnit)).arg(ffGallon(gal, addUnit));
-}
-
-QString Unit::fuelLbsAndGal(float lbs, float gal, bool addUnit)
-{
-  return tr("%1, %2").arg(weightLbs(lbs, addUnit)).arg(volGallon(gal, addUnit));
-}
-
-float Unit::ffLiterF(float liter)
-{
-  return volLiterF(liter);
-}
-
-QString Unit::ffKgAndLiter(float kg, float liter, bool addUnit)
-{
-  return tr("%1, %2").arg(ffKg(kg, addUnit)).arg(ffLiter(liter, addUnit));
-}
-
-QString Unit::fuelKgAndLiter(float kg, float liter, bool addUnit)
-{
-  return tr("%1, %2").arg(weightKg(kg, addUnit), volLiter(liter, addUnit));
 }
 
 QString Unit::adjustNum(QString num)
@@ -620,15 +587,15 @@ QString Unit::coords(const ageo::Pos& pos, opts::UnitCoords coordUnit)
     return QObject::tr("Invalid");
   int accuracy = enhancedAccuracy ? 8 : 5;
   if(coordUnit == opts::COORDS_LATY_LONX)
-    return tr("%1 %2").arg(adjustNum(locale->toString(pos.getLatY(), 'f', accuracy))).
-           arg(adjustNum(locale->toString(pos.getLonX(), 'f', accuracy)));
+    return tr("%1 %2").arg(adjustNum(locale->toString(pos.getLatY(), 'f', accuracy)),
+                           adjustNum(locale->toString(pos.getLonX(), 'f', accuracy)));
   else if(coordUnit == opts::COORDS_LONX_LATY)
-    return tr("%1 %2").arg(adjustNum(locale->toString(pos.getLonX(), 'f', accuracy))).
-           arg(adjustNum(locale->toString(pos.getLatY(), 'f', accuracy)));
+    return tr("%1 %2").arg(adjustNum(locale->toString(pos.getLonX(), 'f', accuracy)),
+                           adjustNum(locale->toString(pos.getLatY(), 'f', accuracy)));
   else if(coordUnit == opts::COORDS_DECIMAL_GOOGLE)
-    return tr("%1, %2").arg(coordsLatY(pos, coordUnit)).arg(coordsLonX(pos, coordUnit));
+    return tr("%1, %2").arg(coordsLatY(pos, coordUnit), coordsLonX(pos, coordUnit));
   else
-    return tr("%1 %2").arg(coordsLatY(pos, coordUnit)).arg(coordsLonX(pos, coordUnit));
+    return tr("%1 %2").arg(coordsLatY(pos, coordUnit), coordsLonX(pos, coordUnit));
 }
 
 QString Unit::coordsLonX(const ageo::Pos& pos, opts::UnitCoords coordUnit)
@@ -717,14 +684,6 @@ QString Unit::u(const QString& num, const QString& un, bool addUnit, bool narrow
   }
   else
     return num % (addUnit ? QStringLiteral(" ") % un : QStringLiteral());
-}
-
-QString Unit::u(float num, const QString& unitStr, bool addUnit, bool narrow, int precision)
-{
-  if(narrow)
-    return clocale->toString(num, 'f', precision) % (addUnit ? QStringLiteral() % unitStr : QStringLiteral());
-  else
-    return locale->toString(num, 'f', precision) % (addUnit ? QStringLiteral(" ") % unitStr : QStringLiteral());
 }
 
 void Unit::optionsChanged(const optc::OptionChangeFlags& changeFlags)

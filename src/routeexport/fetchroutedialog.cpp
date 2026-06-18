@@ -365,7 +365,7 @@ void FetchRouteDialog::downloadFailed(const QString& error, int errorCode, QStri
                                      "<p>Error: %3 (%4)</p>"
                                        "<p>Did you log into SimBrief and generate a flight plan?</p>"
                                          "<p>Is your Pilot ID or Username correct?</p>").
-                              arg(message).arg(downloadUrl).arg(error).arg(errorCode));
+                              arg(message, downloadUrl, error).arg(errorCode));
 
   // Have to update states in event queue since isDownloading is still set while in this method
   QTimer::singleShot(0, this, &FetchRouteDialog::updateButtonStates);
@@ -381,8 +381,7 @@ void FetchRouteDialog::downloadSslErrors(const QStringList& errors, const QStrin
                                        "<p>URL: %1</p>"
                                          "<p>Error messages:<br/>%2</p>"
                                            "<p>Continue?</p>").
-                                  arg(downloadUrl).
-                                  arg(atools::strJoin(errors, tr("<br/>"))),
+                                  arg(downloadUrl, atools::strJoin(errors, tr("<br/>"))),
                                   tr("Do not &show this again and ignore errors."),
                                   QMessageBox::Cancel | QMessageBox::Yes,
                                   QMessageBox::Cancel, QMessageBox::Yes);

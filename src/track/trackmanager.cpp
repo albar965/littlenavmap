@@ -258,8 +258,7 @@ void TrackManager::loadTracks(const TrackListType& tracks, bool onlyValid)
     else
     {
       QString err = tr("Error when parsing track %1 (%2) with route %3.").
-                    arg(track.name).
-                    arg(track.typeString()).arg(atools::elideTextShortMiddle(track.route.join(" "), 40));
+                    arg(track.name, track.typeString(), atools::elideTextShortMiddle(track.route.join(" "), 40));
       errorMessages.append(err);
       errorMessages.append(reader.getAllMessages());
     }

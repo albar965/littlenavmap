@@ -1403,22 +1403,22 @@ QString vorFullShortText(const QString& vorType, bool dmeOnly, bool hasDme, bool
 QString vorText(const MapVor& vor, int elideName)
 {
   return QObject::tr("%1 %2 (%3)").
-         arg(vorType(vor)).arg(atools::elideTextShort(atools::capString(vor.name), elideName)).arg(vor.ident);
+         arg(vorType(vor), atools::elideTextShort(atools::capString(vor.name), elideName), vor.ident);
 }
 
 QString vorTextShort(const MapVor& vor)
 {
-  return QObject::tr("%1 (%2)").arg(atools::capString(vor.name)).arg(vor.ident);
+  return QObject::tr("%1 (%2)").arg(atools::capString(vor.name), vor.ident);
 }
 
 QString ndbText(const MapNdb& ndb, int elideName)
 {
-  return QObject::tr("NDB %1 (%2)").arg(atools::elideTextShort(atools::capString(ndb.name), elideName)).arg(ndb.ident);
+  return QObject::tr("NDB %1 (%2)").arg(atools::elideTextShort(atools::capString(ndb.name), elideName), ndb.ident);
 }
 
 QString ndbTextShort(const MapNdb& ndb)
 {
-  return QObject::tr("%1 (%2)").arg(atools::capString(ndb.name)).arg(ndb.ident);
+  return QObject::tr("%1 (%2)").arg(atools::capString(ndb.name), ndb.ident);
 }
 
 QString waypointText(const MapWaypoint& waypoint)
@@ -1444,12 +1444,12 @@ QString userpointShortText(const MapUserpoint& userpoint, int elideName)
 
 QString logEntryText(const MapLogbookEntry& logEntry)
 {
-  return QObject::tr("Logbook Entry %1 to %2").arg(logEntry.departureIdent).arg(logEntry.destinationIdent);
+  return QObject::tr("Logbook Entry %1 to %2").arg(logEntry.departureIdent, logEntry.destinationIdent);
 }
 
 QString logEntryTextShort(const MapLogbookEntry& logEntry)
 {
-  return QObject::tr("%1 to %2").arg(logEntry.departureIdent).arg(logEntry.destinationIdent);
+  return QObject::tr("%1 to %2").arg(logEntry.departureIdent, logEntry.destinationIdent);
 }
 
 QString userpointRouteText(const MapUserpointRoute& userpoint)
@@ -1487,8 +1487,7 @@ QString airwayAltTextShort(const MapAirway& airway, bool addUnit, bool narrow)
 {
   if(airway.maxAltitude > 0 && airway.maxAltitude < map::MapAirway::MAX_ALTITUDE_LIMIT_FT)
     return QObject::tr("%1-%2").
-           arg(Unit::altFeet(airway.minAltitude, false /*addUnit*/, narrow)).
-           arg(Unit::altFeet(airway.maxAltitude, addUnit, narrow));
+           arg(Unit::altFeet(airway.minAltitude, false /*addUnit*/, narrow), Unit::altFeet(airway.maxAltitude, addUnit, narrow));
   else if(airway.minAltitude > 0)
     return Unit::altFeet(airway.minAltitude, addUnit, narrow);
   else
@@ -1509,14 +1508,14 @@ QString airportTextShort(const MapAirport& airport, int elideName, bool includeI
 
   if(includeIdent && airport.ident != displayIdent)
     // Show internal ident first if it differs from display ident (airport search context menu)
-    displayIdent = QObject::tr("%1, %2").arg(airport.ident).arg(displayIdent);
+    displayIdent = QObject::tr("%1, %2").arg(airport.ident, displayIdent);
 
   if(!airport.isValid())
     return QObject::tr("Airport");
   else if(airport.name.isEmpty())
     return displayIdent;
   else
-    return QObject::tr("%1 (%2)").arg(atools::elideTextShort(airport.name, elideName)).arg(displayIdent);
+    return QObject::tr("%1 (%2)").arg(atools::elideTextShort(airport.name, elideName), displayIdent);
 }
 
 QString airportMsaTextShort(const MapAirportMsa& airportMsa)
@@ -1526,7 +1525,7 @@ QString airportMsaTextShort(const MapAirportMsa& airportMsa)
   else if(airportMsa.airportIdent == airportMsa.nav.ident)
     return airportMsa.airportIdent;
   else
-    return QObject::tr("%1 (%2)").arg(airportMsa.airportIdent).arg(airportMsa.nav.ident);
+    return QObject::tr("%1 (%2)").arg(airportMsa.airportIdent, airportMsa.nav.ident);
 }
 
 QString airportMsaText(const MapAirportMsa& airportMsa, bool user)
@@ -1535,9 +1534,9 @@ QString airportMsaText(const MapAirportMsa& airportMsa, bool user)
   if(!airportMsa.isValid())
     return type;
   else if(airportMsa.airportIdent == airportMsa.nav.ident)
-    return QObject::tr("%1 at %2").arg(type).arg(airportMsa.airportIdent);
+    return QObject::tr("%1 at %2").arg(type, airportMsa.airportIdent);
   else
-    return QObject::tr("%1 at %2 (%3)").arg(type).arg(airportMsa.airportIdent).arg(airportMsa.nav.ident);
+    return QObject::tr("%1 at %2 (%3)").arg(type, airportMsa.airportIdent, airportMsa.nav.ident);
 }
 
 const QString& comTypeName(const QString& type)
@@ -1562,10 +1561,10 @@ QString magvarText(float magvar, bool shortText, bool degSign)
     const QString txt = degSign ? QObject::tr("%1°%2") : QObject::tr("%1%2");
 
     if(magvar < -0.04f)
-      return txt.arg(num).arg(shortText ? QObject::tr("W", "Compass direction west") : QObject::tr(" West"));
+      return txt.arg(num, shortText ? QObject::tr("W", "Compass direction west") : QObject::tr(" West"));
     else if(magvar > 0.04f)
       // positive" (or "easterly") variation
-      return txt.arg(num).arg(shortText ? QObject::tr("E", "Compass direction east") : QObject::tr(" East"));
+      return txt.arg(num, shortText ? QObject::tr("E", "Compass direction east") : QObject::tr(" East"));
     else
       return degSign ? QObject::tr("0°") : QObject::tr("0");
   }
@@ -1799,7 +1798,7 @@ QString ilsType(const map::MapIls& ils, bool gs, bool dme, const QString& separa
 
 QString ilsTextShort(const map::MapIls& ils)
 {
-  return QObject::tr("%1 %2").arg(ilsType(ils, true /* gs */, true /* dme */, QObject::tr(", "))).arg(ils.ident);
+  return QObject::tr("%1 %2").arg(ilsType(ils, true /* gs */, true /* dme */, QObject::tr(", ")), ils.ident);
 }
 
 QString holdingTextShort(const map::MapHolding& holding, bool user)
@@ -2011,7 +2010,7 @@ QStringList airspaceNameMap(const MapAirspace& airspace, int maxTextLength, bool
 
 QString airspaceText(const MapAirspace& airspace)
 {
-  return QObject::tr("Airspace %1 (%2)").arg(airspace.name).arg(airspaceTypeToString(airspace.airspaceType));
+  return QObject::tr("Airspace %1 (%2)").arg(airspace.name, airspaceTypeToString(airspace.airspaceType));
 }
 
 const QString& aircraftType(const atools::fs::sc::SimConnectAircraft& aircraft)

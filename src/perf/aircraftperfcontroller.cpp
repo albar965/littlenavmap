@@ -1025,7 +1025,7 @@ void AircraftPerfController::fuelReport(atools::util::HtmlBuilder& html, bool pr
 
   if(print)
     // Include header here if printing
-    html.h2(tr("Aircraft Performance %1 - %2").arg(perf->getName()).arg(perf->getAircraftType()), ahtml::BOLD | ahtml::BIG);
+    html.h2(tr("Aircraft Performance %1 - %2").arg(perf->getName(), perf->getAircraftType()), ahtml::BOLD | ahtml::BIG);
 
   FuelTool ft(perf);
 
@@ -1101,8 +1101,7 @@ void AircraftPerfController::fuelReport(atools::util::HtmlBuilder& html, bool pr
     if(hasLegs && perf->getUsableFuel() > 1.f && altLegs.getBlockFuel(*perf) > perf->getUsableFuel())
     {
       QString msg(tr("Block fuel of %1 exceeds usable of %2.").
-                  arg(ft.weightVolLocal(altLegs.getBlockFuel(*perf))).
-                  arg(ft.weightVolLocal(perf->getUsableFuel())));
+                  arg(ft.weightVolLocal(altLegs.getBlockFuel(*perf)), ft.weightVolLocal(perf->getUsableFuel())));
       errorTooltips.append(msg);
 
       if(visible)
@@ -1112,8 +1111,7 @@ void AircraftPerfController::fuelReport(atools::util::HtmlBuilder& html, bool pr
     if(perf->getUsableFuel() > 1.f && perf->getReserveFuel() > perf->getUsableFuel())
     {
       QString msg(tr("Reserve fuel of %1 exceeds usable of %2.").
-                  arg(ft.weightVolLocal(perf->getReserveFuel())).
-                  arg(ft.weightVolLocal(perf->getUsableFuel())));
+                  arg(ft.weightVolLocal(perf->getReserveFuel()), ft.weightVolLocal(perf->getUsableFuel())));
       errorTooltips.append(msg);
 
       if(visible)
@@ -1129,7 +1127,7 @@ void AircraftPerfController::fuelReport(atools::util::HtmlBuilder& html, bool pr
         {
           QString msg(tr("User aircraft type \"%1\" in simulator is not equal to type \"%2\" used in performance file.\n"
                          "Load the matching aircraft performance file or adapt the field \"Aircraft type\" in the currently loaded file.").
-                      arg(model).arg(perf->getAircraftType()));
+                      arg(model, perf->getAircraftType()));
           errorTooltips.append(msg);
 
           if(visible)
@@ -1156,7 +1154,7 @@ void AircraftPerfController::fuelReport(atools::util::HtmlBuilder& html, bool pr
         {
           float enduranceHours, enduranceNm;
           getEnduranceFull(enduranceHours, enduranceNm);
-          html.row2(text, tr("%1, %2").arg(Unit::distNm(enduranceNm)).arg(formatter::formatMinutesHoursLong(enduranceHours)), flags);
+          html.row2(text, tr("%1, %2").arg(Unit::distNm(enduranceNm), formatter::formatMinutesHoursLong(enduranceHours)), flags);
         }
         else
           html.row2Warning(text, tr("Cruise fuel flow not set"));
@@ -1178,8 +1176,8 @@ void AircraftPerfController::fuelReport(atools::util::HtmlBuilder& html, bool pr
 
       if(altLegs.getTravelTimeHours() > 0.f)
         html.row2(tr("Distance and Time:"), tr("%1, %2").
-                  arg(Unit::distNm(altLegs.getTotalDistance())).
-                  arg(formatter::formatMinutesHoursLong(altLegs.getTravelTimeHours())), ahtml::BOLD | flags);
+                  arg(Unit::distNm(altLegs.getTotalDistance()),
+                      formatter::formatMinutesHoursLong(altLegs.getTravelTimeHours())), ahtml::BOLD | flags);
       else
         html.row2(tr("Distance:"), tr("%1").
                   arg(Unit::distNm(altLegs.getTotalDistance())), ahtml::BOLD | flags);
@@ -1260,13 +1258,11 @@ void AircraftPerfController::fuelReport(atools::util::HtmlBuilder& html, bool pr
       if(perf->isClimbValid())
       {
         html.row2(tr("Climb:"), tr("%1 at %2, %3° Flight Path Angle").
-                  arg(Unit::speedVertFpm(perf->getClimbVertSpeed())).
-                  arg(Unit::speedKts(perf->getClimbSpeed())).
-                  arg(QLocale().toString(perf->getClimbFlightPathAngle(altLegs.getClimbHeadWind()), 'f', 1)));
+                  arg(Unit::speedVertFpm(perf->getClimbVertSpeed()), Unit::speedKts(perf->getClimbSpeed()),
+                      QLocale().toString(perf->getClimbFlightPathAngle(altLegs.getClimbHeadWind()), 'f', 1)));
 
         if(altLegs.getTopOfClimbDistance() < map::INVALID_DISTANCE_VALUE)
-          html.row2(tr("Time to Climb:"),
-                    formatter::formatMinutesHoursLong(NavApp::getAltitudeLegs().getClimbTime()));
+          html.row2(tr("Time to Climb:"), formatter::formatMinutesHoursLong(NavApp::getAltitudeLegs().getClimbTime()));
       }
       else
         html.row2(tr("Climb not valid"));
@@ -1275,14 +1271,12 @@ void AircraftPerfController::fuelReport(atools::util::HtmlBuilder& html, bool pr
       {
         float wind = altLegs.getDescentHeadWind();
         html.row2(tr("Descent:"), tr("%1 at %2, %3° Flight Path Angle").
-                  arg(Unit::speedVertFpm(perf->getDescentVertSpeed())).
-                  arg(Unit::speedKts(perf->getDescentSpeed())).
-                  arg(QLocale().toString(-perf->getDescentFlightPathAngle(wind), 'f', 1)));
+                  arg(Unit::speedVertFpm(perf->getDescentVertSpeed()), Unit::speedKts(perf->getDescentSpeed()),
+                      QLocale().toString(-perf->getDescentFlightPathAngle(wind), 'f', 1)));
 
         html.row2(tr("Descent Rule of Thumb:"), tr("%1 per %2 %3").
-                  arg(Unit::distNm(1.f / perf->getDescentRateFtPerNm(wind) * Unit::rev(1000.f, Unit::altFeetF))).
-                  arg(QLocale().toString(1000.f, 'f', 0)).
-                  arg(Unit::getUnitAltStr()));
+                  arg(Unit::distNm(1.f / perf->getDescentRateFtPerNm(wind) * Unit::rev(1000.f, Unit::altFeetF)),
+                      QLocale().toString(1000.f, 'f', 0), Unit::getUnitAltStr()));
       }
       else
         html.row2(tr("Descent not valid"));
@@ -1350,9 +1344,7 @@ void AircraftPerfController::windText(atools::util::HtmlBuilder& html, const QSt
   {
     if(std::abs(windSpeed) >= 1.f)
       // Display direction and speed if wind is not manually selected and available ====================
-      windText.append(tr("%1°T, %2").
-                      arg(formatter::directionStr(windDirection)).
-                      arg(Unit::speedKts(windSpeed)));
+      windText.append(tr("%1°T, %2").arg(formatter::directionStr(windDirection), Unit::speedKts(windSpeed)));
 
     // Display manual wind - only head- or tailwind =======================
     if(std::abs(headWind) >= 1.f)
@@ -1369,15 +1361,15 @@ void AircraftPerfController::windText(atools::util::HtmlBuilder& html, const QSt
         windPtr = TextPointer::getWindPointerNorth();
         windType = tr("tailwind");
       }
-      windText.append(tr("%1 %2 %3").arg(windPtr).arg(Unit::speedKts(std::abs(headWind))).arg(windType));
+      windText.append(tr("%1 %2 %3").arg(windPtr, Unit::speedKts(std::abs(headWind)), windType));
     }
   }
 
   QString head = tr("%1 (%2):");
   if(!windText.isEmpty())
-    html.row2(head.arg(label).arg(windReporter->getSourceText()), windText.join(tr("\n")), ahtml::ALIGN_RIGHT);
+    html.row2(head.arg(label, windReporter->getSourceText()), windText.join(tr("\n")), ahtml::ALIGN_RIGHT);
   else
-    html.row2(head.arg(label).arg(windReporter->getSourceText()), windReporter->isWindManual() ?
+    html.row2(head.arg(label, windReporter->getSourceText()), windReporter->isWindManual() ?
               tr("No head- or tailwind") : tr("No wind"), ahtml::ALIGN_RIGHT);
 }
 

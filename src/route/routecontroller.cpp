@@ -726,17 +726,15 @@ QString RouteController::getFlightplanTableAsHtmlDoc(float iconSizePixel) const
                            "<meta name=\"viewport\" content=\"width=device-width, initial-scale=1\" />"});
 
   atools::util::HtmlBuilder html(true /* backgroundColorUsed */, NavApp::isGuiStyleDark());
-  html.doc(tr("%1 - %2").arg(QCoreApplication::applicationName()).arg(QFileInfo(routeFilename).fileName()),
+  html.doc(tr("%1 - %2").arg(QCoreApplication::applicationName(), QFileInfo(routeFilename).fileName()),
            css, QStringLiteral() /* bodyStyle */, headerLines);
   html.text(NavApp::getRouteController()->getFlightplanTableAsHtml(iconSizePixel, true /* print */),
             atools::util::html::NO_ENTITIES);
 
   // Add footer ==============================
   html.p().small(tr("%1 Version %2 (revision %3) on %4 ").
-                 arg(QCoreApplication::applicationName()).
-                 arg(QApplication::applicationVersion()).
-                 arg(GIT_REVISION_LITTLENAVMAP).
-                 arg(QLocale().toString(QDateTime::currentDateTime()))).pEnd();
+                 arg(QCoreApplication::applicationName(), QApplication::applicationVersion(), GIT_REVISION_LITTLENAVMAP,
+                     QLocale().toString(QDateTime::currentDateTime()))).pEnd();
   html.docEnd();
   return html.getHtml();
 }
@@ -1579,7 +1577,7 @@ bool RouteController::loadFlightplanRouteStrCmdOrDataExchange(const QString& rou
 
   if(reader.hasErrorMessages() || reader.hasWarningMessages())
     dialog->warning(tr("<p>Errors reading flight plan route description<br/><b>%1</b><br/>from command line:</p><p>%2</p>").
-                    arg(routeString).arg(reader.getAllMessages().join("<br>")));
+                    arg(routeString, reader.getAllMessages().join("<br>")));
 
   return false;
 }
@@ -2716,8 +2714,8 @@ void RouteController::routeTableOptions()
                          "The wind information is taken from the selected METAR source in\n"
                          "menu \"Weather\" -> \"Airport Weather Source\".\n"
                          "Wind is taken from nearest airport if not available.").
-                      arg(TextPointer::getWindPointerSouth()).arg(TextPointer::getWindPointerNorth()).
-                      arg(TextPointer::getWindPointerEast()).arg(TextPointer::getWindPointerWest()),
+                      arg(TextPointer::getWindPointerSouth(), TextPointer::getWindPointerNorth(), TextPointer::getWindPointerEast(),
+                          TextPointer::getWindPointerWest()),
                       routeLabel->isFlag(routelabel::HEADER_RUNWAY_TAKEOFF_WIND));
 
   treeDialog.addItem2(headerItem, rcol::HEADER_DEPARTURE, tr("Departure"),
@@ -2737,8 +2735,8 @@ void RouteController::routeTableOptions()
                          "The wind information is taken from the selected METAR source in\n"
                          "menu \"Weather\" -> \"Airport Weather Source\".\n"
                          "Wind is taken from nearest airport if not available.").
-                      arg(TextPointer::getWindPointerSouth()).arg(TextPointer::getWindPointerNorth()).
-                      arg(TextPointer::getWindPointerEast()).arg(TextPointer::getWindPointerWest()),
+                      arg(TextPointer::getWindPointerSouth(), TextPointer::getWindPointerNorth(), TextPointer::getWindPointerEast(),
+                          TextPointer::getWindPointerWest()),
                       routeLabel->isFlag(routelabel::HEADER_RUNWAY_LAND_WIND));
 
   // Add footer options to tree ========================================
@@ -4112,8 +4110,8 @@ void RouteController::routeSetParkingPosition(const map::MapParking& parking, bo
   postChange(undoCommand);
   emit routeChanged(true /* geometryChanged */);
 
-  NavApp::setStatusMessage(tr("Start position set to %1 parking %2.").arg(route.getDepartureAirportLeg().getDisplayIdent()).
-                           arg(map::parkingNameOrNumber(parking)));
+  NavApp::setStatusMessage(tr("Start position set to %1 parking %2.").arg(route.getDepartureAirportLeg().getDisplayIdent(),
+                                                                          map::parkingNameOrNumber(parking)));
 }
 
 void RouteController::routeSetStartPosition(map::MapStart start, bool undo)
@@ -4160,8 +4158,7 @@ void RouteController::routeSetStartPosition(map::MapStart start, bool undo)
   emit routeChanged(true /* geometryChanged */);
 
   NavApp::setStatusMessage(tr("Start position set to %1 position %2.").
-                           arg(route.getDepartureAirportLeg().getDisplayIdent()).
-                           arg(start.runwayName));
+                           arg(route.getDepartureAirportLeg().getDisplayIdent(), start.runwayName));
 }
 
 void RouteController::routeSetDeparture(map::MapAirport airport, bool undo)
@@ -5700,7 +5697,7 @@ void RouteController::updateModelTimeFuelWindAlt()
               ptr = TextPointer::getWindPointerSouth();
             else if(headWind <= -1.f)
               ptr = TextPointer::getWindPointerNorth();
-            txt.append(tr("%1 %2").arg(ptr).arg(Unit::speedKts(std::abs(headWind), false /* addUnit */)));
+            txt.append(tr("%1 %2").arg(ptr, Unit::speedKts(std::abs(headWind), false /* addUnit */)));
           }
           model->item(row, rcol::WIND_HEAD_TAIL)->setText(txt);
         }
@@ -6083,15 +6080,13 @@ QStringList RouteController::getErrorStrings() const
     if(!procedureErrors.isEmpty())
     {
       errorText.append(tr("Cannot load %1: %2").
-                       arg(procedureErrors.size() > 1 ? tr("procedures") : tr("procedure")).
-                       arg(procedureErrors.join(tr(", "))));
+                       arg(procedureErrors.size() > 1 ? tr("procedures") : tr("procedure"), procedureErrors.join(tr(", "))));
       errorText.append(tr("Save and reload flight plan or select new procedures to fix this."));
     }
 
     if(!alternateErrors.isEmpty())
       errorText.append(tr("Cannot load %1: %2").
-                       arg(alternateErrors.size() > 1 ? tr("alternates") : tr("alternate")).
-                       arg(alternateErrors.join(tr(", "))));
+                       arg(alternateErrors.size() > 1 ? tr("alternates") : tr("alternate"), alternateErrors.join(tr(", "))));
 
     if(trackErrors)
       errorText.append(tr("Download oceanic tracks in menu \"Flight Plan\"\n"
@@ -6352,10 +6347,10 @@ void RouteController::updateRemarkHeader()
     QString navcycle = props.value(atools::fs::pln::NAVDATA_CYCLE);
 
     if(!simdata.isEmpty())
-      data.append(tr("%1%2").arg(simdata).arg(simcycle.isEmpty() ? QStringLiteral() : tr(" cycle %1").arg(simcycle)));
+      data.append(tr("%1%2").arg(simdata, simcycle.isEmpty() ? QStringLiteral() : tr(" cycle %1").arg(simcycle)));
 
     if(!navdata.isEmpty() && (navdata != simdata || simcycle != navcycle))
-      data.append(tr("%1%2").arg(navdata).arg(navcycle.isEmpty() ? QStringLiteral() : tr(" cycle %1").arg(navcycle)));
+      data.append(tr("%1%2").arg(navdata, navcycle.isEmpty() ? QStringLiteral() : tr(" cycle %1").arg(navcycle)));
 
     if(!data.isEmpty())
     {

@@ -474,7 +474,7 @@ void OnlinedataController::downloadFailed(const QString& error, int errorCode, Q
   NavApp::getStatusBar()->setOnlineConnectionStatusMessageText(tr("Online Network Failed"),
                                                                tr("Download from\n\"%1\"\nfailed. "
                                                                   "Reason:\n%2\nRetrying again in three minutes.").
-                                                               arg(url).arg(error));
+                                                               arg(url, error));
 
   // Delay next download for three minutes to give the user a chance to correct the URLs
   QTimer::singleShot(180 * 1000, this, &OnlinedataController::startProcessing);
@@ -491,8 +491,7 @@ void OnlinedataController::downloadSslErrors(const QStringList& errors, const QS
                                        "<p>URL: %1</p>"
                                          "<p>Error messages:<br/>%2</p>"
                                            "<p>Continue?</p>").
-                                  arg(downloadUrl).
-                                  arg(atools::strJoin(errors, tr("<br/>"))),
+                                  arg(downloadUrl, atools::strJoin(errors, tr("<br/>"))),
                                   tr("Do not &show this again and ignore the errors"),
                                   QMessageBox::Cancel | QMessageBox::Yes,
                                   QMessageBox::Cancel, QMessageBox::Yes);

@@ -438,8 +438,9 @@ void LogdataController::recordTakeoff(const atools::fs::sc::SimConnectUserAircra
 
   aircraftAtTakeoff = new atools::fs::sc::SimConnectUserAircraft(aircraft);
 
-  NavApp::setStatusMessage(tr("Logbook entry for %1 at %2%3 added.").arg(tr("departure")).arg(ident).
-                           arg(runwayEnd.isValid() ? tr(" runway %1").arg(runwayEnd.name) : QStringLiteral()), true /* addToLog */);
+  NavApp::setStatusMessage(tr("Logbook entry for %1 at %2%3 added.").
+                           arg(tr("departure"), ident,
+                               runwayEnd.isValid() ? tr(" runway %1").arg(runwayEnd.name) : QStringLiteral()), true /* addToLog */);
 }
 
 void LogdataController::recordLanding(atools::sql::SqlRecord& record, const atools::fs::sc::SimConnectUserAircraft& aircraft,
@@ -500,9 +501,8 @@ void LogdataController::recordLanding(atools::sql::SqlRecord& record, const atoo
 #endif
 
   NavApp::setStatusMessage(tr("Logbook entry for %1 at %2%3 updated.").
-                           arg(tr("arrival")).
-                           arg(ident).
-                           arg(runwayEnd.isValid() ? tr(" runway %1").arg(runwayEnd.name) : QStringLiteral()), true /* addToLog */);
+                           arg(tr("arrival"), ident, runwayEnd.isValid() ? tr(" runway %1").arg(runwayEnd.name) : QStringLiteral()),
+                           true /* addToLog */);
 
   logEntryId = -1;
   saveLogEntryId();
@@ -962,8 +962,7 @@ void LogdataController::deleteLogEntries(const QList<int>& ids)
                                                "<ul><li>%3</li></ul>"
                                                  "<p>Note that you can undo this action in menu \"Logbook\".</p>").
                                           arg(ids.size()).
-                                          arg(ids.size() == 1 ? tr("logbook entry") : tr("logbook entries")).
-                                          arg(texts.join(tr("</li><li>"))),
+                                          arg(ids.size() == 1 ? tr("logbook entry") : tr("logbook entries"), texts.join(tr("</li><li>"))),
                                           tr("Do not &show this dialog again."),
                                           QMessageBox::Yes | QMessageBox::No, QMessageBox::No, QMessageBox::Yes);
 

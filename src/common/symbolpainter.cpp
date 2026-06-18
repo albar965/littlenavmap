@@ -704,10 +704,7 @@ void SymbolPainter::drawAirportMsa(QPainter *painter, const map::MapAirportMsa& 
     {
       // Draw a header label =============================================
       QString heading = tr("MSA %1 %2 (%3, %4)").
-                        arg(airportMsa.nav.ident).
-                        arg(Unit::distNm(airportMsa.radius, true, true)).
-                        arg(airportMsa.trueBearing ? tr("°T") : tr("°M")).
-                        arg(Unit::getUnitAltStr());
+                        arg(airportMsa.nav.ident, Unit::distNm(airportMsa.radius, true, true), airportMsa.trueBearing ? tr("°T") : tr("°M"), Unit::getUnitAltStr());
 
       QRectF bounding = QFontMetricsF(painter->font()).boundingRect(heading);
       QPointF pt(x - bounding.size().width() / 2., y - radius);
@@ -1110,7 +1107,7 @@ void SymbolPainter::drawNdbText(QPainter *painter, const map::MapNdb& ndb, float
     if(ndb.ndbType.isEmpty())
       texts.append(ndb.ident);
     else
-      texts.append(tr("%1 (%2)").arg(ndb.ident).arg(ndb.ndbType == "CP" ? tr("CL") : ndb.ndbType));
+      texts.append(tr("%1 (%2)").arg(ndb.ident, ndb.ndbType == "CP" ? tr("CL") : ndb.ndbType));
   }
   else if(flags & text::IDENT)
     texts.append(ndb.ident);

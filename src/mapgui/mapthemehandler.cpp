@@ -120,9 +120,8 @@ void MapThemeHandler::loadThemes()
                          "%3&nbsp;(click to show).<br/>"
                          "Theme ids have to be unique across all map themes.<br/>"
                          "<b>Remove one of these two map themes to avoid this message.</b><br/>").
-                      arg(theme.theme).
-                      arg(HtmlBuilder::aFilePath(otherTheme.displayPath(), FLAGS)).
-                      arg(HtmlBuilder::aFilePath(theme.displayPath(), FLAGS)));
+                      arg(theme.theme, HtmlBuilder::aFilePath(otherTheme.displayPath(), FLAGS),
+                          HtmlBuilder::aFilePath(theme.displayPath(), FLAGS)));
         continue;
       }
 
@@ -164,9 +163,8 @@ void MapThemeHandler::loadThemes()
                          "%3&nbsp;(click to show).<br/>"
                          "Source directories are used to cache map tiles and have to be unique across all map themes.<br/>"
                          "<b>Remove one or more of these map themes to avoid this message.</b><br/>").
-                      arg(theme.sourceDirs.join(tr("\", \""))).
-                      arg(HtmlBuilder::aFilePath(theme.displayPath(), FLAGS)).
-                      arg(otherDgmlFilepathsText.join(tr("<br/>"))));
+                      arg(theme.sourceDirs.join(tr("\", \"")), HtmlBuilder::aFilePath(theme.displayPath(), FLAGS),
+                          otherDgmlFilepathsText.join(tr("<br/>"))));
         continue;
       }
 
@@ -194,8 +192,7 @@ void MapThemeHandler::loadThemes()
                          "%2&nbsp;(click to show).<br/>"
                          "Element must contain text \"earth\".<br/>"
                          "<b>Remove or repair this map theme to avoid this message.</b><br/>").
-                      arg(theme.target).
-                      arg(HtmlBuilder::aFilePath(theme.displayPath(), FLAGS)));
+                      arg(theme.target, HtmlBuilder::aFilePath(theme.displayPath(), FLAGS)));
         continue;
       }
 
@@ -231,7 +228,7 @@ void MapThemeHandler::loadThemes()
                            "%1&nbsp;(click to show)<br/>"
                            "has an invalid shortcut \"%2\". Only \"Ctrl+Alt+NUMBER\" allowed.<br/>"
                            "<b>Remove this map theme or adjust element \"&lt;shortcut&gt;\" avoid this message.</b><br/>").
-                        arg(HtmlBuilder::aFilePath(theme.displayPath(), FLAGS)).arg(theme.getShortcut()));
+                        arg(HtmlBuilder::aFilePath(theme.displayPath(), FLAGS), theme.getShortcut()));
           continue;
         }
         else if(!shortcuts.contains(theme.getShortcut().toLower()))
@@ -242,7 +239,7 @@ void MapThemeHandler::loadThemes()
                            "%1&nbsp;(click to show)<br/>"
                            "has a duplicate shortcut \"%2\".<br/>"
                            "<b>Remove this map theme or adjust element \"&lt;shortcut&gt;\" avoid this message.</b><br/>").
-                        arg(HtmlBuilder::aFilePath(theme.displayPath(), FLAGS)).arg(theme.getShortcut()));
+                        arg(HtmlBuilder::aFilePath(theme.displayPath(), FLAGS), theme.getShortcut()));
           continue;
         }
       }
@@ -307,7 +304,7 @@ void MapThemeHandler::showThemeLoadingErrors()
                           "<p>Ignoring duplicate, incorrect or rejected %2.</p>"
                             "<p>Note that all other valid map themes are loaded and can be used despite this message.</p>"
                               "<p>Restart Little Navmap after fixing the issues.</p>").
-                   arg(errors.join("</li><li>")).arg(errors.size() == 1 ? tr("map theme") : tr("map themes")));
+                   arg(errors.join("</li><li>"), errors.size() == 1 ? tr("map theme") : tr("map themes")));
     box.setHelpUrl(lnm::helpOnlineUrl + "MAPTHEMES.html", lnm::helpLanguageOnline());
     box.setShowInFileManager();
     box.exec();
@@ -392,7 +389,7 @@ void MapThemeHandler::saveKeyfile() const
     else
     {
       qWarning() << Q_FUNC_INFO << "Failed writing" << keys.size() << "keys to" << keyFile.fileName() << "error" << keyFile.errorString();
-      throw atools::Exception(tr("Failed writing to %1. Reason: %2").arg(keyFile.fileName()).arg(keyFile.errorString()));
+      throw atools::Exception(tr("Failed writing to %1. Reason: %2").arg(keyFile.fileName(), keyFile.errorString()));
     }
 
     keyFile.close();
@@ -400,7 +397,7 @@ void MapThemeHandler::saveKeyfile() const
   else
   {
     qWarning() << Q_FUNC_INFO << "Cannot open for writing" << keyFile.fileName() << "error" << keyFile.errorString();
-    throw atools::Exception(tr("Cannot open file for writing %1. Reason: %2").arg(keyFile.fileName()).arg(keyFile.errorString()));
+    throw atools::Exception(tr("Cannot open file for writing %1. Reason: %2").arg(keyFile.fileName(), keyFile.errorString()));
   }
 }
 
@@ -468,7 +465,7 @@ void MapThemeHandler::restoreKeyfile()
       if(keyFile.error() != QFileDevice::NoError)
       {
         qWarning() << Q_FUNC_INFO << "Failed reading" << keys.size() << "keys to" << keyFile.fileName() << "error" << keyFile.errorString();
-        throw atools::Exception(tr("Failed reading from %1. Reason: %2").arg(keyFile.fileName()).arg(keyFile.errorString()));
+        throw atools::Exception(tr("Failed reading from %1. Reason: %2").arg(keyFile.fileName(), keyFile.errorString()));
       }
 
       keyFile.close();
@@ -476,7 +473,7 @@ void MapThemeHandler::restoreKeyfile()
     else
     {
       qWarning() << Q_FUNC_INFO << "Cannot open for reading" << keyFile.fileName() << "error" << keyFile.errorString();
-      throw atools::Exception(tr("Cannot open file for reading %1. Reason: %2").arg(keyFile.fileName()).arg(keyFile.errorString()));
+      throw atools::Exception(tr("Cannot open file for reading %1. Reason: %2").arg(keyFile.fileName(), keyFile.errorString()));
     }
   }
   else
@@ -611,7 +608,7 @@ MapTheme MapThemeHandler::loadTheme(const QFileInfo& dgml)
     dgmlFile.close();
   } // if(dgmlFile.open(QIODevice::ReadOnly | QIODevice::Text))
   else
-    throw atools::Exception(tr("Cannot open file %1. Reason: %2").arg(dgmlFile.fileName()).arg(dgmlFile.errorString()));
+    throw atools::Exception(tr("Cannot open file %1. Reason: %2").arg(dgmlFile.fileName(), dgmlFile.errorString()));
 
 #ifdef DEBUG_INFORMATION
   qDebug() << Q_FUNC_INFO << theme;
@@ -853,7 +850,7 @@ void MapThemeHandler::changeMapTheme()
       QString url;
       if(!theme.getUrlRef().isEmpty())
         url = tr("<p>Click here to create an account: <a href=\"%1\">%2</a></p>").
-              arg(theme.getUrlRef()).arg(theme.getUrlName().isEmpty() ? tr("Link") : theme.getUrlName());
+              arg(theme.getUrlRef(), theme.getUrlName().isEmpty() ? tr("Link") : theme.getUrlName());
 
       atools::gui::Dialog(mainWindow).
       showInfoMsgBox(lnm::ACTIONS_SHOW_MAPTHEME_REQUIRES_KEY,
@@ -864,7 +861,7 @@ void MapThemeHandler::changeMapTheme()
                             "enter the information for the key(s) below:</p>"
                             "<ul><li>%2</li></ul>"
                               "<p>The map will not show correctly until this is done.</p>%3").
-                     arg(theme.getName()).arg(theme.getKeys().join(tr("</li><li>"))).arg(url),
+                     arg(theme.getName(), theme.getKeys().join(tr("</li><li>")), url),
                      tr("Do not &show this dialog again."));
     }
   }

@@ -518,7 +518,7 @@ void ConnectClient::handleError(atools::fs::sc::SimConnectStatus status, const Q
   }
 
   atools::gui::Application::closeSplashScreen();
-  errorMessageBox->setText(tr("<p>Error receiving data from %1:</p><p>%2</p><p>%3</p>").arg(program).arg(error).arg(hint));
+  errorMessageBox->setText(tr("<p>Error receiving data from %1:</p><p>%2</p><p>%3</p>").arg(program, error, hint));
   errorMessageBox->show();
 }
 
@@ -751,7 +751,7 @@ void ConnectClient::showXpconnectVersionWarning(const QString& xpconnectVersion)
                  "Minimum recommended version is \"%2\".<p>"
                  "<p>It is recommended to remove the old plugin and "
                    "install the included Little Xpconnect in X-Plane directory \"plugins\".</p>").
-              arg(xpconnectVersion).arg(minimumXpconnectVersion.getVersionString());
+              arg(xpconnectVersion, minimumXpconnectVersion.getVersionString());
 
   atools::gui::DialogButtonList buttonList =
   {
@@ -945,12 +945,12 @@ void ConnectClient::closeSocket(bool allowRestart)
     {
       msg = tr("Connecting ...");
       msgTooltip = tr("Error while trying to connect to \"%1\": %2 (%3).\nWill retry.").
-                   arg(peer).arg(errorStr).arg(error);
+                   arg(peer, errorStr).arg(error);
     }
     else
     {
       msg = tr("Connect Error");
-      msgTooltip = tr("Error in server connection to \"%1\": %2 (%3)").arg(peer).arg(errorStr).arg(error);
+      msgTooltip = tr("Error in server connection to \"%1\": %2 (%3)").arg(peer, errorStr).arg(error);
     }
   }
 

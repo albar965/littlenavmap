@@ -808,7 +808,7 @@ void ProfileWidget::paintVasi(QPainter& painter, const Route& route)
         {
           if(vasiList.at(0).second != vasiList.at(1).second)
             // Merge type if the angle is the same but type is different
-            vasiList[0].second = tr("%1 / %2").arg(vasiList.at(0).second).arg(vasiList.at(1).second);
+            vasiList[0].second = tr("%1 / %2").arg(vasiList.at(0).second, vasiList.at(1).second);
 
           // Remove duplicate
           vasiList.removeLast();
@@ -871,9 +871,9 @@ void ProfileWidget::paintVasi(QPainter& painter, const Route& route)
 
           QString txt;
           if(vasi.second.isEmpty())
-            txt = tr("%1° %2").arg(QLocale().toString(vasi.first, 'f', 1)).arg(TextPointer::getPointerRight());
+            txt = tr("%1° %2").arg(QLocale().toString(vasi.first, 'f', 1), TextPointer::getPointerRight());
           else
-            txt = tr("%1° / %2 %3").arg(QLocale().toString(vasi.first, 'f', 1)).arg(vasi.second).arg(TextPointer::getPointerRight());
+            txt = tr("%1° / %2 %3").arg(QLocale().toString(vasi.first, 'f', 1), vasi.second, TextPointer::getPointerRight());
           painter.drawText(10, -painter.fontMetrics().descent(), txt);
           painter.resetTransform();
         }
@@ -2570,7 +2570,7 @@ void ProfileWidget::buildTooltipText(int x, bool force)
 #endif
 
   if(altitude < map::INVALID_ALTITUDE_VALUE)
-    html.b(tr(", %1, %2 %3").arg(Unit::altFeet(altitude)).arg(fromTo).arg(toWaypoint));
+    html.b(tr(", %1, %2 %3").arg(Unit::altFeet(altitude), fromTo, toWaypoint));
 
   // Course ========================================
   if(routeLeg.getCourseStartMag() < map::INVALID_COURSE_VALUE)
@@ -2653,7 +2653,7 @@ void ProfileWidget::buildTooltipText(int x, bool force)
         windPtr = TextPointer::getWindPointerSouth();
       else if(headWind <= -1.f)
         windPtr = TextPointer::getWindPointerNorth();
-      html.text(tr(", %1 %2").arg(windPtr).arg(Unit::speedKts(std::abs(headWind))));
+      html.text(tr(", %1 %2").arg(windPtr, Unit::speedKts(std::abs(headWind))));
     }
   }
 
@@ -2833,8 +2833,7 @@ void ProfileWidget::updateHeaderLabel()
             // Time and distance to destination ==========================================
             if(timeToDestOpt)
               text.append(tr("<b>Destination:</b> %1 (%2)").
-                          arg(Unit::distNm(distToDestNm)).
-                          arg(formatter::formatMinutesHoursLong(fuelTime.timeToDest)));
+                          arg(Unit::distNm(distToDestNm), formatter::formatMinutesHoursLong(fuelTime.timeToDest)));
 
             float toTod = route.getTopOfDescentDistance() - distFromStartNm;
             bool todAhead = toTod > 0.f;
@@ -2842,8 +2841,8 @@ void ProfileWidget::updateHeaderLabel()
             // Time and distance to TOD ==========================================
             if(timeToTodOpt && todAhead)
               text.append(tr("<b>Top of Descent:</b> %1%2").
-                          arg(todAhead ? Unit::distNm(toTod) : tr("Passed")).
-                          arg(todAhead ? tr(" (%1)").arg(formatter::formatMinutesHoursLong(fuelTime.timeToTod)) : QStringLiteral()));
+                          arg(todAhead ? Unit::distNm(toTod) : tr("Passed"),
+                              todAhead ? tr(" (%1)").arg(formatter::formatMinutesHoursLong(fuelTime.timeToTod)) : QStringLiteral()));
 
             // Descent angle and speed after TOD ==========================================
             if((vertDeviationOpt || descentAngleOpt) && !todAhead)

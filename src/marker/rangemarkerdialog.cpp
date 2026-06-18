@@ -135,7 +135,7 @@ RangeMarkerDialog::RangeMarkerDialog(QWidget *parent, const map::RangeMarker& ma
     header.prepend(tr("Aircraft Performance: "));
 
   if(enduranceNm < map::INVALID_DISTANCE_VALUE)
-    ui->labelRangeMarkerAircraft->setText(tr("%1Estimated range with reserve: %2").arg(header).arg(Unit::distNm(enduranceNm)));
+    ui->labelRangeMarkerAircraft->setText(tr("%1Estimated range with reserve: %2").arg(header, Unit::distNm(enduranceNm)));
   else
     ui->labelRangeMarkerAircraft->setText(tr("%1Estimated range not valid.").arg(header));
 

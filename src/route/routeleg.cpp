@@ -570,7 +570,7 @@ QString RouteLeg::getMapTypeName() const
     return tr("Waypoint");
   else if(vor.isValid())
     return vor.vorType.isEmpty() ? map::vorType(vor) :
-           tr("%1 (%2)").arg(map::vorType(vor)).arg(map::navTypeNameVor(vor.vorType));
+           tr("%1 (%2)").arg(map::vorType(vor), map::navTypeNameVor(vor.vorType));
   else if(ndb.isValid())
     return ndb.ndbType.isEmpty() ? tr("NDB") :
            tr("NDB (%1)").arg(map::navTypeNameNdb(ndb.ndbType));
@@ -611,7 +611,7 @@ QString RouteLeg::getMapTypeNameShort() const
 QString RouteLeg::getDisplayText(int elideName) const
 {
   if(getMapType() == map::AIRPORT)
-    return tr("%1 (%2)").arg(atools::elideTextShort(getName(), elideName)).arg(airport.displayIdent());
+    return tr("%1 (%2)").arg(atools::elideTextShort(getName(), elideName), airport.displayIdent());
   else
   {
     QStringList texts;
@@ -1018,7 +1018,7 @@ bool RouteLeg::isAirwaySetAndInvalid(float minAltLegFt, float maxAltLegFt, QStri
   bool invalid = true;
   if(airway.isValid())
   {
-    const QString legText = tr("Leg to \"%1\" violates restriction for airway \"%2\":").arg(getDisplayIdent()).arg(getAirwayName());
+    const QString legText = tr("Leg to \"%1\" violates restriction for airway \"%2\":").arg(getDisplayIdent(), getAirwayName());
 
     // Set and valid - check direction
     if(airway.direction == map::DIR_BOTH)
@@ -1043,8 +1043,7 @@ bool RouteLeg::isAirwaySetAndInvalid(float minAltLegFt, float maxAltLegFt, QStri
         invalid = true;
         if(errors != nullptr)
           errors->append(legText % tr("Leg altitudes %1 to %2 are violating restriction. Airway: %3.").
-                         arg(Unit::altFeet(minAltLegFt, false /* addUnit */)).arg(Unit::altFeet(maxAltLegFt)).
-                         arg(map::airwayAltText(airway)));
+                         arg(Unit::altFeet(minAltLegFt, false /* addUnit */), Unit::altFeet(maxAltLegFt), map::airwayAltText(airway)));
       }
     }
 
@@ -1065,7 +1064,7 @@ bool RouteLeg::isAirwaySetAndInvalid(float minAltLegFt, float maxAltLegFt, QStri
 
       invalid = true;
       if(errors != nullptr)
-        errors->append(tr("%1 %2 not found for %3.").arg(track ? tr("Track or airway") : tr("Airway")).arg(name).arg(getDisplayIdent()));
+        errors->append(tr("%1 %2 not found for %3.").arg(track ? tr("Track or airway") : tr("Airway"), name, getDisplayIdent()));
       if(trackError != nullptr)
         *trackError |= track;
     }

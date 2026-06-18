@@ -272,16 +272,16 @@ QString procedureLegFixStr(const MapProcedureLeg& leg)
   if(atools::contains(leg.type, {proc::TRACK_FROM_FIX_TO_DME_DISTANCE, proc::HEADING_TO_DME_DISTANCE_TERMINATION,
                                  proc::COURSE_TO_DME_DISTANCE}))
     // DME distance always uses recommended fix (VOR, etc.)
-    fix = QObject::tr("%1+%2").arg(leg.recFixIdent).arg(atools::roundToInt(leg.distance));
+    fix = QObject::tr("%1+%2").arg(leg.recFixIdent, atools::roundToInt(leg.distance));
   else if(atools::contains(leg.type, {proc::TRACK_FROM_FIX_FROM_DISTANCE}))
     // Track from fix uses fix ident
-    fix = QObject::tr("%1+%2").arg(leg.fixIdent).arg(atools::roundToInt(leg.calculatedDistance));
+    fix = QObject::tr("%1+%2").arg(leg.fixIdent, atools::roundToInt(leg.calculatedDistance));
   else
     fix = leg.fixIdent;
 
   QString specialType(proc::proceduresLegSecialTypeShortStr(proc::specialType(leg.arincDescrCode)));
   if(!specialType.isEmpty())
-    return QObject::tr("%1 (%2)").arg(fix).arg(specialType);
+    return QObject::tr("%1 (%2)").arg(fix, specialType);
   else
     return fix;
 }
@@ -309,7 +309,7 @@ const QString& proceduresLegSecialTypeLongStr(proc::LegSpecialType type)
 QString procedureLegTypeStr(proc::ProcedureLegType type)
 {
 #ifdef DEBUG_INFORMATION
-  return QStringLiteral("%1 [%2]").arg(approachLegTypeToStr.value(type)).arg(approachLegTypeToShortStr.value(type));
+  return QStringLiteral("%1 [%2]").arg(approachLegTypeToStr.value(type), approachLegTypeToShortStr.value(type));
 #else
   return approachLegTypeToStr.value(type);
 #endif
@@ -322,7 +322,7 @@ const QString& procedureLegTypeShortStr(ProcedureLegType type)
 
 QString procedureLegTypeFullStr(ProcedureLegType type)
 {
-  return QObject::tr("%1 (%2)").arg(approachLegTypeToStr.value(type)).arg(approachLegTypeToShortStr.value(type));
+  return QObject::tr("%1 (%2)").arg(approachLegTypeToStr.value(type), approachLegTypeToShortStr.value(type));
 }
 
 const QString& procedureLegRemarks(proc::ProcedureLegType type)
@@ -378,9 +378,7 @@ QString altRestrictionText(const MapAltRestriction& restriction)
         return QObject::tr("At or below %1").arg(Unit::altFeet(restriction.alt1));
 
       case proc::MapAltRestriction::BETWEEN:
-        return QObject::tr("At or above %1 and at or below %2").
-               arg(Unit::altFeet(restriction.alt2)).
-               arg(Unit::altFeet(restriction.alt1));
+        return QObject::tr("At or above %1 and at or below %2").arg(Unit::altFeet(restriction.alt2), Unit::altFeet(restriction.alt1));
     }
   }
   return QStringLiteral();
@@ -911,11 +909,11 @@ QStringList procedureLegRemark(const MapProcedureLeg& leg)
 
   if(!leg.fixIdent.isEmpty() && !leg.fixPos.isValid())
     remarks.append(QObject::tr("Error: Fix %1/%2 type %3 not found").
-                   arg(leg.fixIdent).arg(leg.fixRegion).arg(leg.fixType));
+                   arg(leg.fixIdent, leg.fixRegion, leg.fixType));
 
   if(!leg.recFixIdent.isEmpty() && !leg.recFixPos.isValid())
     remarks.append(QObject::tr("Error: Recommended fix %1/%2 type %3 not found").
-                   arg(leg.recFixIdent).arg(leg.recFixRegion).arg(leg.recFixType));
+                   arg(leg.recFixIdent, leg.recFixRegion, leg.recFixType));
 
   remarks.removeDuplicates();
   remarks.removeAll(QStringLiteral());
@@ -990,10 +988,8 @@ QString procedureLegsText(const proc::MapProcedureLegs& legs, proc::MapProcedure
                    // Add missed text if leg ist missed
                    arg(narrow ? QStringLiteral() :
                        (procType.testFlag(proc::PROCEDURE_MISSED) && !missedAsApproach ?
-                        QObject::tr("Missed ") : QObject::tr("Approach "))).
-                   arg(legs.displayType()).
-                   arg(legs.suffix.isEmpty() ? QStringLiteral() : (QObject::tr("-") + legs.suffix)).
-                   arg(legs.procedureFixIdent);
+                        QObject::tr("Missed ") : QObject::tr("Approach ")), legs.displayType(),
+                       legs.suffix.isEmpty() ? QStringLiteral() : (QObject::tr("-") + legs.suffix), legs.procedureFixIdent);
 
         // Add transition text if type from related leg is a transitionn
         if(procType.testFlag(proc::PROCEDURE_TRANSITION) && legs.mapType.testFlag(proc::PROCEDURE_TRANSITION))
@@ -1004,9 +1000,9 @@ QString procedureLegsText(const proc::MapProcedureLegs& legs, proc::MapProcedure
     {
       // SID or STAR with respective transitions =================================
       if(legs.mapType.testFlag(proc::PROCEDURE_STAR_TRANSITION) && procType.testFlag(proc::PROCEDURE_STAR_TRANSITION))
-        procText = QObject::tr("STAR %1.%2").arg(legs.procedureFixIdent).arg(legs.transitionFixIdent);
+        procText = QObject::tr("STAR %1.%2").arg(legs.procedureFixIdent, legs.transitionFixIdent);
       else if(legs.mapType.testFlag(proc::PROCEDURE_SID_TRANSITION) && procType.testFlag(proc::PROCEDURE_SID_TRANSITION))
-        procText = QObject::tr("SID %1.%2").arg(legs.procedureFixIdent).arg(legs.transitionFixIdent);
+        procText = QObject::tr("SID %1.%2").arg(legs.procedureFixIdent, legs.transitionFixIdent);
       else if(legs.mapType.testFlag(proc::PROCEDURE_STAR))
         procText = QObject::tr("STAR %1").arg(legs.procedureFixIdent);
       else if(legs.mapType.testFlag(proc::PROCEDURE_SID))

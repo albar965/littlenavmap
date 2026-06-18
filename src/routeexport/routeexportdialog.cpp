@@ -174,7 +174,7 @@ RouteExportDialog::RouteExportDialog(QWidget *parent, re::RouteExportType routeT
       break;
   }
 
-  setWindowTitle(tr("%1 - Export for %2").arg(QCoreApplication::applicationName()).arg(getRouteTypeAsDisplayString(type)));
+  setWindowTitle(tr("%1 - Export for %2").arg(QCoreApplication::applicationName(), getRouteTypeAsDisplayString(type)));
 
   connect(ui->buttonBox, &QDialogButtonBox::clicked, this, &RouteExportDialog::buttonBoxClicked);
 

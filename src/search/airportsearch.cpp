@@ -943,9 +943,8 @@ void AirportSearch::dataRandomAirportsReceived(bool isSuccess, int indexDepartur
         airportDestination = airportQuery->getAirportById(data->at(indexDestination).first);
 
         text = tr("<p><b>%1</b> to <b>%2</b></p><p>Direct distance: %3</p>").
-               arg(map::airportTextShort(airportDeparture, 100 /* elide */)).
-               arg(map::airportTextShort(airportDestination, 100 /* elide */)).
-               arg(Unit::distMeter(airportDeparture.position.distanceMeterTo(airportDestination.position)));
+               arg(map::airportTextShort(airportDeparture, 100 /* elide */), map::airportTextShort(airportDestination, 100 /* elide */),
+                   Unit::distMeter(airportDeparture.position.distanceMeterTo(airportDestination.position)));
       }
       else
       {

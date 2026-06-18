@@ -239,9 +239,9 @@ void CustomProcedureDialog::updateWidgets()
       {
         float angle = end.heading - runwayTable->getAirport().magvar + getLegOffsetAngle();
         ui->labelCustomProcAngle->setText(tr("Final course to runway %1 %2 is %3°M").
-                                          arg(end.name).
-                                          arg(atools::almostEqual(getLegOffsetAngle(), 0.f) ? QStringLiteral() : tr("with offset ")).
-                                          arg(QLocale().toString(angle, 'f', 0)));
+                                          arg(end.name,
+                                              atools::almostEqual(getLegOffsetAngle(), 0.f) ? QStringLiteral() : tr("with offset "),
+                                              QLocale().toString(angle, 'f', 0)));
       }
       else
         ui->labelCustomProcAngle->clear();
