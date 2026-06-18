@@ -10020,7 +10020,7 @@ relation to shown airport</string>
   </action>
   <action name="actionShortcutAirportSearch">
    <property name="text">
-    <string>&amp;Airport Search</string>
+    <string>Toggle &amp;Airport Search</string>
    </property>
    <property name="toolTip">
     <string>Show and activate Airport Search Window</string>
@@ -10037,7 +10037,7 @@ relation to shown airport</string>
   </action>
   <action name="actionShortcutNavaidSearch">
    <property name="text">
-    <string>&amp;Navaid Search</string>
+    <string>Toggle &amp;Navaid Search</string>
    </property>
    <property name="toolTip">
     <string>Show and activate Navaid Search Window</string>
@@ -10054,7 +10054,7 @@ relation to shown airport</string>
   </action>
   <action name="actionShortcutUserpointSearch">
    <property name="text">
-    <string>&amp;Userpoint Search</string>
+    <string>Toggle &amp;Userpoint Search</string>
    </property>
    <property name="toolTip">
     <string>Show and activate Userpoint Search Window</string>
@@ -10071,7 +10071,7 @@ relation to shown airport</string>
   </action>
   <action name="actionShortcutFlightPlan">
    <property name="text">
-    <string>&amp;Flight Plan</string>
+    <string>Toggle &amp;Flight Plan</string>
    </property>
    <property name="toolTip">
     <string>Show and activate Flight Plan table</string>
@@ -10088,7 +10088,7 @@ relation to shown airport</string>
   </action>
   <action name="actionShortcutAirportInformation">
    <property name="text">
-    <string>Airport &amp;Information</string>
+    <string>Toggle Airport &amp;Information</string>
    </property>
    <property name="toolTip">
     <string>Show Airport Information</string>
@@ -10105,7 +10105,7 @@ relation to shown airport</string>
   </action>
   <action name="actionShortcutAirportWeather">
    <property name="text">
-    <string>Airport &amp;Weather Information</string>
+    <string>Toggle Airport &amp;Weather Information</string>
    </property>
    <property name="toolTip">
     <string>Show Airport Weather Information</string>
@@ -10122,7 +10122,7 @@ relation to shown airport</string>
   </action>
   <action name="actionShortcutNavaidInformation">
    <property name="text">
-    <string>Navaid &amp;Information</string>
+    <string>Toggle Navaid &amp;Information</string>
    </property>
    <property name="toolTip">
     <string>Show Navaid Information</string>
@@ -10139,7 +10139,7 @@ relation to shown airport</string>
   </action>
   <action name="actionShortcutAircraftPerformance">
    <property name="text">
-    <string>&amp;Fuel Report</string>
+    <string>Toggle &amp;Fuel Report</string>
    </property>
    <property name="toolTip">
     <string>Show Aircraft Performance and Fuel Planning</string>
@@ -10156,7 +10156,7 @@ relation to shown airport</string>
   </action>
   <action name="actionShortcutAircraftProgress">
    <property name="text">
-    <string>&amp;Simulator Aircraft Progress</string>
+    <string>Toggle &amp;Simulator Aircraft Progress</string>
    </property>
    <property name="toolTip">
     <string>Show Simulator Aircraft Progress</string>
@@ -10213,7 +10213,7 @@ relation to shown airport</string>
   </action>
   <action name="actionShortcutMap">
    <property name="text">
-    <string>&amp;Map</string>
+    <string>Activate &amp;Map</string>
    </property>
    <property name="toolTip">
     <string>Show and activate Map Window</string>
@@ -10230,7 +10230,7 @@ relation to shown airport</string>
   </action>
   <action name="actionShortcutProfile">
    <property name="text">
-    <string>&amp;Elevation Profile</string>
+    <string>Toggle &amp;Elevation Profile</string>
    </property>
    <property name="toolTip">
     <string>Show and activate Elevation Profile Window</string>
@@ -10504,7 +10504,7 @@ relation to shown airport</string>
   </action>
   <action name="actionShortcutLogbookSearch">
    <property name="text">
-    <string>&amp;Logbook Search</string>
+    <string>Toggle &amp;Logbook Search</string>
    </property>
    <property name="toolTip">
     <string>Show and activate Logbook Search Window</string>
@@ -10840,7 +10840,7 @@ relation to shown airport</string>
   </action>
   <action name="actionShortcutRouteCalc">
    <property name="text">
-    <string>&amp;Flight Plan Calculation</string>
+    <string>Show &amp;Flight Plan Calculation</string>
    </property>
    <property name="toolTip">
     <string>Show flight plan calculation window</string>
@@ -12567,7 +12567,7 @@ relation to shown airport</string>
   </action>
   <action name="actionShortcutProcedureSearch">
    <property name="text">
-    <string>&amp;Procedure Search</string>
+    <string>Toggle &amp;Procedure Search</string>
    </property>
    <property name="toolTip">
     <string>Show and activate Procedure Search Window</string>
