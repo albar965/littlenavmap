@@ -118,7 +118,7 @@ void WebController::startServer()
 
   if(htmlInfoBuilder == nullptr)
     htmlInfoBuilder = new HtmlInfoBuilder(mapController->getMapPaintWidget()->getQueries(),
-                                          true /* info */, true /* print */, true /* verbose */);
+                                          true /* info */, true /* print */, true /* webParam */, true /* verbose */);
 
   requestHandler = new RequestHandler(this, mapController, apiController, htmlInfoBuilder, verbose);
 

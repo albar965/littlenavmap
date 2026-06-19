@@ -62,7 +62,7 @@ RequestHandler::RequestHandler(QObject *parent, WebMapController *webMapControll
   connect(this, &RequestHandler::getFlightplanTableAsHtml,
           NavApp::getRouteController(), &RouteController::getFlightplanTableAsHtml, Qt::BlockingQueuedConnection);
   connect(this, &RequestHandler::getAirportText,
-          NavApp::getInfoController(), &InfoController::getAirportTextFull, Qt::BlockingQueuedConnection);
+          NavApp::getInfoController(), &InfoController::getAirportTextFullWeb, Qt::BlockingQueuedConnection);
   connect(this, &RequestHandler::getCurrentMapWidgetPos,
           NavApp::getMapPaintWidgetGui(), &MapPaintWidget::getCenterPos, Qt::BlockingQueuedConnection);
 

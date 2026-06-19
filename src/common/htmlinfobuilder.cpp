@@ -111,8 +111,8 @@ const static ahtml::Flags LINK_FLAGS = ahtml::BOLD;
 
 const static Flags WEATHER_TITLE_FLAGS = ahtml::BOLD | ahtml::BIG;
 
-HtmlInfoBuilder::HtmlInfoBuilder(Queries *queriesParam, bool infoParam, bool printParam, bool verboseParam)
-  : info(infoParam), print(printParam), verbose(verboseParam), queries(queriesParam)
+HtmlInfoBuilder::HtmlInfoBuilder(Queries *queriesParam, bool infoParam, bool printParam, bool webParam, bool verboseParam)
+  : info(infoParam), print(printParam), verbose(verboseParam), web(webParam), queries(queriesParam)
 {
   if(info)
     verbose = true;
@@ -834,7 +834,7 @@ void HtmlInfoBuilder::bestRunwaysText(const MapAirport& airport, HtmlBuilder& ht
         td(end.names.join(tr(", ")), ahtml::BOLD).
         td(end.softRunway ? tr("Soft") : tr("Hard")).
         td(lengthTxt, ahtml::ALIGN_RIGHT).
-        td(formatter::windInformationTailHead(end.headWind), ahtml::ALIGN_RIGHT).
+        td(formatter::windInformationTailHead(end.headWind, true /* addUnit */, web), ahtml::ALIGN_RIGHT).
         td(Unit::speedKts(end.crossWind), ahtml::ALIGN_RIGHT).
         trEnd();
         num++;
@@ -1115,7 +1115,7 @@ void HtmlInfoBuilder::runwayEndText(const MapAirport& airport, HtmlBuilder& html
     float windSpeedKts, windDirectionDeg;
     NavApp::getAirportMetarWind(windDirectionDeg, windSpeedKts, airport, false /* stationOnly */);
     QString windText = formatter::windInformationShort(windDirectionDeg, windSpeedKts, runwayEndHeadingTrue, -999.f /* minHeadWind */,
-                                                       true /* addUnit */);
+                                                       true /* addUnit */, web);
 
     if(!windText.isEmpty())
       html.row2If(tr("Wind:"), windText % tr(". METAR source \"%1\".").arg(map::mapWeatherSourceString(NavApp::getMapWeatherSource())));
@@ -5011,7 +5011,9 @@ void HtmlInfoBuilder::aircraftProgressText(const atools::fs::sc::SimConnectAircr
     ageo::windForCourse(headWind, crossWind, windSpeed, windDir, userAircraft->getHeadingDegMag());
 
     // Keep an empty line to avoid flickering
-    html.id(pid::ENV_WIND_DIR_SPEED).row2(QStringLiteral(), formatter::windInformation(headWind, crossWind, tr(", ")), ahtml::NO_ENTITIES);
+    html.id(pid::ENV_WIND_DIR_SPEED).row2(QStringLiteral(),
+                                          formatter::windInformation(headWind, crossWind, tr(", "), true /* addUnit */, web),
+                                          ahtml::NO_ENTITIES);
 
     // Total air temperature (TAT) is also called: indicated air temperature (IAT) or ram air temperature (RAT)
     float tat = userAircraft->getTotalAirTemperatureCelsius();

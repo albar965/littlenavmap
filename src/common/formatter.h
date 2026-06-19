@@ -66,17 +66,17 @@ QString formatElapsed(const QElapsedTimer& timer);
 QString formatDateTimeSeconds(const QDateTime& datetime, bool overrideLocale);
 
 /* Format wind as string with pointer. Tail head and crosswind. */
-QString windInformation(float headWindKts, float crossWindKts, const QString& separator, bool addUnit = true);
+QString windInformation(float headWindKts, float crossWindKts, const QString& separator, bool addUnit = true, bool simple = false);
 
 /* Crosswind > 1 kts */
-QString windInformationCross(float crossWindKts, bool addUnit = true);
+QString windInformationCross(float crossWindKts, bool addUnit = true, bool simple = false);
 
 /* Tail and headwind > 1 kts */
-QString windInformationTailHead(float headWindKts, bool addUnit = true);
+QString windInformationTailHead(float headWindKts, bool addUnit = true, bool simple = false);
 
 /* Only headwind > 1 kts and crosswind */
 QString windInformationShort(float windDirectionDeg, float windSpeedKts, float runwayEndHeading, float minHeadWind = 1.f,
-                             bool addUnit = false);
+                             bool addUnit = false, bool simple = false);
 
 /* Filters out "0" and replaces it with "360" */
 QString directionStr(float directionDeg);

@@ -88,6 +88,12 @@ void TextPointer::initPointerCharacters(const QFont& font)
 #endif
 }
 
+QString TextPointer::simplifyPointers(QString string)
+{
+  return string.replace(windPtrNorth, QStringLiteral("▲")).replace(windPtrSouth, QStringLiteral("▼")).
+         replace(windPtrEast, QStringLiteral("►")).replace(windPtrWest, QStringLiteral("◄"));
+}
+
 void TextPointer::printDebug()
 {
   qDebug() << Q_FUNC_INFO

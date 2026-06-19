@@ -210,9 +210,8 @@ void RunwayTable::fillAirportLabel()
     NavApp::getWeatherReporter()->getBestRunwaysTextShort(title, runwayText, sourceText, *airport);
     if(!sourceText.isEmpty())
       label.append(tr("<p>%1</p>").arg(atools::strJoin({title, runwayText, sourceText}, tr(" "))));
+    airportLabel->setText(label);
   }
-
-  airportLabel->setText(label);
 }
 
 void RunwayTable::fillRunwayList()

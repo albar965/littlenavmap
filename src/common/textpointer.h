@@ -33,24 +33,25 @@ public:
   /* Initialize wind pointers depending on font */
   static void initPointerCharacters(const QFont& font);
 
-  static const QString& getWindPointerNorth()
+  /* Uses plain arrows for macOS or web interface if simple is true */
+  static const QString& getWindPointerNorth(bool simple = false)
   {
-    return windPtrNorth;
+    return simple ? ptrUp : windPtrNorth;
   }
 
-  static const QString& getWindPointerSouth()
+  static const QString& getWindPointerSouth(bool simple = false)
   {
-    return windPtrSouth;
+    return simple ? ptrDown : windPtrSouth;
   }
 
-  static const QString& getWindPointerEast()
+  static const QString& getWindPointerEast(bool simple = false)
   {
-    return windPtrEast;
+    return simple ? ptrRight : windPtrEast;
   }
 
-  static const QString& getWindPointerWest()
+  static const QString& getWindPointerWest(bool simple = false)
   {
-    return windPtrWest;
+    return simple ? ptrLeft : windPtrWest;
   }
 
   static const QString& getPointerUp()
@@ -72,6 +73,9 @@ public:
   {
     return ptrLeft;
   }
+
+  /* Replaces wind pointers with simple arrows for macOS or web interface */
+  static QString simplifyPointers(QString string);
 
   static void printDebug();
 

@@ -65,7 +65,7 @@ InfoController::InfoController(QWidget *parent)
   queries = QueryManager::instance()->getQueriesGui();
 
   // Only GUI usage
-  infoBuilder = new HtmlInfoBuilder(queries, true /* info */, false /* print */, true /* verbose */);
+  infoBuilder = new HtmlInfoBuilder(queries, true /* info */, false /* print */, false /* webParam */, true /* verbose */);
 
   // Add tooltips to links ==================================================================
   Ui::MainWindow *ui = NavApp::getMainUi();
@@ -1641,7 +1641,7 @@ void InfoController::updateTextBrowserFontSizes()
   infoBuilder->setSymbolSizeVehicle(QSize(fontPixelSize, fontPixelSize));
 }
 
-QStringList InfoController::getAirportTextFull(const QString& ident) const
+QStringList InfoController::getAirportTextFullWeb(const QString& ident) const
 {
   map::MapAirport airport;
   queries->getAirportQuerySim()->getAirportByIdent(airport, ident);
@@ -1654,7 +1654,7 @@ QStringList InfoController::getAirportTextFull(const QString& ident) const
     const Route *route = &NavApp::getRouteConst();
 
     atools::util::HtmlBuilder html(mapcolors::webTableBackgroundColor, mapcolors::webTableAltBackgroundColor);
-    HtmlInfoBuilder builder(queries, true /* info */, true /* print */, true /* verbose */);
+    HtmlInfoBuilder builder(queries, true /* info */, true /* print */, true /* webParam */, true /* verbose */);
     builder.airportText(airport, weatherContext, html, route);
     retval.append(html.getHtml());
 

@@ -243,7 +243,8 @@ void PrintSupport::addAirport(QTextCursor& cursor, const map::MapAirport& airpor
   QTextBlockFormat pageBreakBlock;
   pageBreakBlock.setPageBreakPolicy(QTextFormat::PageBreak_AlwaysBefore);
 
-  HtmlInfoBuilder builder(QueryManager::instance()->getQueriesGui(), true /* info */, true /* print */, true /* verbose */);
+  HtmlInfoBuilder builder(QueryManager::instance()->getQueriesGui(),
+                          true /* info */, true /* print */, false /* webParam */, true /* verbose */);
   map::WeatherContext weatherContext;
 
   prt::PrintFlightplanOpts opts = printDialog->getPrintOptions();
@@ -438,7 +439,7 @@ void PrintSupport::drawWatermarkInternal(const QPoint& pos, QPainter *painter)
 {
   // Draw text
   painter->setPen(Qt::black);
-  painter->setBackground(QColor("#a0ffffff"));
+  painter->setBackground(QColor(255, 255, 255, 160));
   painter->setBrush(Qt::NoBrush);
   painter->setBackgroundMode(Qt::OpaqueMode);
 

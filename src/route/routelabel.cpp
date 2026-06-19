@@ -575,7 +575,7 @@ void RouteLabel::buildHeaderRunwayWind(atools::util::HtmlBuilder& html, const ma
     float windSpeedKts, windDirectionDeg;
     NavApp::getAirportMetarWind(windDirectionDeg, windSpeedKts, leg.getAirport(), false /* stationOnly */);
     QString windText = formatter::windInformationShort(windDirectionDeg, windSpeedKts, runwayEnd.heading,
-                                                       -999.f /* minHeadWind */, true /* addUnit */);
+                                                       -999.f /* minHeadWind */, true /* addUnit */, false /* simple */);
     if(!windText.isEmpty())
       html.b(tr("Wind ")).text(windText).text(tr(". "));
   }

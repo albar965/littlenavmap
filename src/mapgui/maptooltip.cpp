@@ -114,7 +114,7 @@ QString MapTooltip::buildTooltip(const map::MapResult& mapSearchResult, const at
   if(!prefix.isEmpty())
     html.small(prefix);
 
-  HtmlInfoBuilder info(QueryManager::instance()->getQueriesGui(), false /* info */, false /* print */,
+  HtmlInfoBuilder info(QueryManager::instance()->getQueriesGui(), false /* info */, false /* print */, false /* webParam */,
                        options.testFlag(optsd::TOOLTIP_VERBOSE));
 
   int fontPixelSize = atools::roundToInt(QFontMetricsF(QToolTip::font()).height() * 1.1);

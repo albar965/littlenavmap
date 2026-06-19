@@ -254,44 +254,47 @@ QDateTime readDateTime(QString str)
   return retval;
 }
 
-QString windInformationTailHead(float headWindKts, bool addUnit)
+QString windInformationTailHead(float headWindKts, bool addUnit, bool simple)
 {
+  qDebug() << Q_FUNC_INFO << "simple" << simple;
   if(std::abs(headWindKts) >= 1.0f)
   {
     QString windPtr;
     windPtr += Unit::speedKts(std::abs(headWindKts), addUnit);
 
     if(headWindKts <= -1.f)
-      windPtr += TextPointer::getWindPointerNorth(); // Tailwind
+      windPtr += TextPointer::getWindPointerNorth(simple); // Tailwind
     else
-      windPtr += TextPointer::getWindPointerSouth(); // Headwind
+      windPtr += TextPointer::getWindPointerSouth(simple); // Headwind
     return QObject::tr(" %1").arg(windPtr);
   }
   return QStringLiteral();
 }
 
-QString windInformationCross(float crossWindKts, bool addUnit)
+QString windInformationCross(float crossWindKts, bool addUnit, bool simple)
 {
+  qDebug() << Q_FUNC_INFO << "simple" << simple;
   QString windPtr;
   if(std::abs(crossWindKts) >= 0.5f) // Rounded up to 1
   {
     windPtr += Unit::speedKts(std::abs(crossWindKts), addUnit);
 
     if(crossWindKts > 0.f)
-      windPtr += TextPointer::getWindPointerWest();
+      windPtr += TextPointer::getWindPointerWest(simple);
     else if(crossWindKts < 0.f)
-      windPtr += TextPointer::getWindPointerEast();
+      windPtr += TextPointer::getWindPointerEast(simple);
   }
   return QObject::tr(" %1").arg(windPtr);
 }
 
-QString windInformation(float headWindKts, float crossWindKts, const QString& separator, bool addUnit)
+QString windInformation(float headWindKts, float crossWindKts, const QString& separator, bool addUnit, bool simple)
 {
-  return atools::strJoin(QStringList({windInformationTailHead(headWindKts, addUnit),
-                                      windInformationCross(crossWindKts, addUnit)}), separator);
+  return atools::strJoin(QStringList({windInformationTailHead(headWindKts, addUnit, simple),
+                                      windInformationCross(crossWindKts, addUnit, simple)}), separator);
 }
 
-QString windInformationShort(float windDirectionDeg, float windSpeedKts, float runwayEndHeading, float minHeadWind, bool addUnit)
+QString windInformationShort(float windDirectionDeg, float windSpeedKts, float runwayEndHeading, float minHeadWind, bool addUnit,
+                             bool simple)
 {
   QString windStr;
   if(windDirectionDeg < map::INVALID_METAR_VALUE && windSpeedKts >= 1.f && windSpeedKts < map::INVALID_METAR_VALUE)
@@ -301,7 +304,7 @@ QString windInformationShort(float windDirectionDeg, float windSpeedKts, float r
 
     // Only show for head wind > 1
     if(headWindKts >= minHeadWind)
-      windStr = formatter::windInformation(headWindKts, crossWindKts, QObject::tr(" "), addUnit);
+      windStr = formatter::windInformation(headWindKts, crossWindKts, QObject::tr(" "), addUnit, simple);
   }
   return windStr;
 }

@@ -121,7 +121,7 @@ public:
    * @param verboseParam Detailed tooltip text with info set to false
    * (i.e. generate alternating background color for tables)
    */
-  HtmlInfoBuilder(Queries *queriesParam, bool infoParam, bool printParam, bool verboseParam);
+  HtmlInfoBuilder(Queries *queriesParam, bool infoParam, bool printParam, bool webParam, bool verboseParam);
 
   virtual ~HtmlInfoBuilder();
 
@@ -487,7 +487,8 @@ private:
 
   bool info, /* Shown in information panel - otherwise tooltip */
        print, /* Printing */
-       verbose /* Verbose tooltip option in settings set */;
+       verbose, /* Verbose tooltip option in settings set */
+       web; /* For web page display */
 
   /* Bundled SQL queries. Web has to lock these before access. */
   Queries *queries;

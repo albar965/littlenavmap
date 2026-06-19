@@ -368,7 +368,7 @@ void ProfileWidget::centerAircraft()
   if(ui->actionProfileCenterAircraft->isChecked())
   {
     QPoint currentScreenPoint = toScreen(QPointF(aircraftDistanceFromStart, aircraftAlt(simData.getUserAircraftConst())));
-    bool destUsed;
+    bool destUsed = false;
     QPoint zoomScreenPoint = destinationAirportScreenPos(destUsed, ZOOM_DESTINATION_MAX_AHEAD);
     if(ui->actionProfileZoomAircraft->isChecked() && destUsed)
     {

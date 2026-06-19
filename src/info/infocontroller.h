@@ -133,7 +133,7 @@ public:
 
   /* Get airport information as HTML in the string list. Order is main, runway, com, procedure and weather.
    * List is empty if airport does not exist. Uses own white background color for tables. */
-  QStringList getAirportTextFull(const QString& ident) const;
+  QStringList getAirportTextFullWeb(const QString& ident) const;
 
   void setCurrentInfoTabIndex(ic::TabInfoId tabId);
   ic::TabInfoId getCurrentInfoTabIndex() const;

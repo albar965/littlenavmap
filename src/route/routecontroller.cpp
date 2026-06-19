@@ -728,8 +728,7 @@ QString RouteController::getFlightplanTableAsHtmlDoc(float iconSizePixel) const
   atools::util::HtmlBuilder html(true /* backgroundColorUsed */, NavApp::isGuiStyleDark());
   html.doc(tr("%1 - %2").arg(QCoreApplication::applicationName(), QFileInfo(routeFilename).fileName()),
            css, QStringLiteral() /* bodyStyle */, headerLines);
-  html.text(NavApp::getRouteController()->getFlightplanTableAsHtml(iconSizePixel, true /* print */),
-            atools::util::html::NO_ENTITIES);
+  html.text(getFlightplanTableAsHtml(iconSizePixel, true /* print */), atools::util::html::NO_ENTITIES);
 
   // Add footer ==============================
   html.p().small(tr("%1 Version %2 (revision %3) on %4 ").
@@ -841,10 +840,10 @@ QString RouteController::getFlightplanTableAsHtml(float iconSizePixel, bool prin
             flags |= atools::util::html::ALIGN_RIGHT;
 
           if(logicalCol == rcol::REMARKS)
-            html.td(atools::elideTextLinesShort(leg.getComment(), MAX_REMARK_LINES_HTML_AND_PRINT,
-                                                MAX_REMARK_COLS_HTML_AND_PRINT, true, true), flags, color);
+            html.td(TextPointer::simplifyPointers(atools::elideTextLinesShort(leg.getComment(), MAX_REMARK_LINES_HTML_AND_PRINT,
+                                                                              MAX_REMARK_COLS_HTML_AND_PRINT, true, true)), flags, color);
           else
-            html.td(item->text(), flags, color);
+            html.td(TextPointer::simplifyPointers(item->text()), flags, color);
         }
         else
           html.td(QStringLiteral());
@@ -2137,7 +2136,7 @@ void RouteController::calculateRoute()
       mode |= atools::routing::MODE_RADIONAV_NDB;
   }
 
-  if(!net->isLoaded())
+  if(net != nullptr && !net->isLoaded())
   {
     atools::routing::RouteNetworkLoader loader(NavApp::getDatabaseNav(), NavApp::getDatabaseTrack());
     loader.load(net);
@@ -2714,8 +2713,8 @@ void RouteController::routeTableOptions()
                          "The wind information is taken from the selected METAR source in\n"
                          "menu \"Weather\" -> \"Airport Weather Source\".\n"
                          "Wind is taken from nearest airport if not available.").
-                      arg(TextPointer::getWindPointerSouth(), TextPointer::getWindPointerNorth(), TextPointer::getWindPointerEast(),
-                          TextPointer::getWindPointerWest()),
+                      arg(TextPointer::getWindPointerSouth(), TextPointer::getWindPointerNorth(),
+                          TextPointer::getWindPointerEast(), TextPointer::getWindPointerWest()),
                       routeLabel->isFlag(routelabel::HEADER_RUNWAY_TAKEOFF_WIND));
 
   treeDialog.addItem2(headerItem, rcol::HEADER_DEPARTURE, tr("Departure"),
@@ -2735,8 +2734,8 @@ void RouteController::routeTableOptions()
                          "The wind information is taken from the selected METAR source in\n"
                          "menu \"Weather\" -> \"Airport Weather Source\".\n"
                          "Wind is taken from nearest airport if not available.").
-                      arg(TextPointer::getWindPointerSouth(), TextPointer::getWindPointerNorth(), TextPointer::getWindPointerEast(),
-                          TextPointer::getWindPointerWest()),
+                      arg(TextPointer::getWindPointerSouth(), TextPointer::getWindPointerNorth(),
+                          TextPointer::getWindPointerEast(), TextPointer::getWindPointerWest()),
                       routeLabel->isFlag(routelabel::HEADER_RUNWAY_LAND_WIND));
 
   // Add footer options to tree ========================================
