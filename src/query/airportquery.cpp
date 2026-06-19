@@ -570,9 +570,7 @@ const QList<map::MapApron> *AirportQuery::getAprons(int airportId)
   if(!query::valid(Q_FUNC_INFO, apronQuery))
     return nullptr;
 
-  if(apronCache.contains(airportId))
-    return apronCache.object(airportId);
-  else
+  if(!apronCache.contains(airportId))
   {
     apronQuery->bindValue(QStringLiteral(":airportId"), airportId);
     apronQuery->exec();
@@ -625,8 +623,9 @@ const QList<map::MapApron> *AirportQuery::getAprons(int airportId)
       std::reverse(aprons->begin(), aprons->end());
 
     apronCache.insert(airportId, aprons);
-    return aprons;
   }
+
+  return apronCache.object(airportId);
 }
 
 const QList<map::MapParking> *AirportQuery::getParkingsForAirport(int airportId)
@@ -634,25 +633,24 @@ const QList<map::MapParking> *AirportQuery::getParkingsForAirport(int airportId)
   if(!query::valid(Q_FUNC_INFO, parkingQuery))
     return nullptr;
 
-  if(parkingCache.contains(airportId))
-    return parkingCache.object(airportId);
-  else
+  if(!parkingCache.contains(airportId))
   {
     parkingQuery->bindValue(QStringLiteral(":airportId"), airportId);
     parkingQuery->exec();
 
-    QList<map::MapParking> *ps = new QList<map::MapParking>;
+    QList<map::MapParking> *parkings = new QList<map::MapParking>;
     while(parkingQuery->next())
     {
       map::MapParking p;
 
       // Vehicle paths are filtered out in the compiler
       mapTypesFactory->fillParking(parkingQuery->record(), p);
-      ps->append(p);
+      parkings->append(p);
     }
-    parkingCache.insert(airportId, ps);
-    return ps;
+    parkingCache.insert(airportId, parkings);
   }
+
+  return parkingCache.object(airportId);
 }
 
 const QList<map::MapStart> *AirportQuery::getStartPositionsForAirport(int airportId)
@@ -660,23 +658,22 @@ const QList<map::MapStart> *AirportQuery::getStartPositionsForAirport(int airpor
   if(!query::valid(Q_FUNC_INFO, startQuery))
     return nullptr;
 
-  if(startCache.contains(airportId))
-    return startCache.object(airportId);
-  else
+  if(!startCache.contains(airportId))
   {
     startQuery->bindValue(QStringLiteral(":airportId"), airportId);
     startQuery->exec();
 
-    QList<map::MapStart> *ps = new QList<map::MapStart>;
+    QList<map::MapStart> *starts = new QList<map::MapStart>;
     while(startQuery->next())
     {
       map::MapStart p;
       mapTypesFactory->fillStart(startQuery->record(), p);
-      ps->append(p);
+      starts->append(p);
     }
-    startCache.insert(airportId, ps);
-    return ps;
+    startCache.insert(airportId, starts);
   }
+
+  return startCache.object(airportId);
 }
 
 void AirportQuery::getStartByNameAndPos(map::MapStart& start, int airportId, const QString& runwayEndName, const ageo::Pos& position)
@@ -819,23 +816,22 @@ const QList<map::MapHelipad> *AirportQuery::getHelipads(int airportId)
   if(!query::valid(Q_FUNC_INFO, helipadQuery))
     return nullptr;
 
-  if(helipadCache.contains(airportId))
-    return helipadCache.object(airportId);
-  else
+  if(!helipadCache.contains(airportId))
   {
     helipadQuery->bindValue(QStringLiteral(":airportId"), airportId);
     helipadQuery->exec();
 
-    QList<map::MapHelipad> *hs = new QList<map::MapHelipad>;
+    QList<map::MapHelipad> *helipads = new QList<map::MapHelipad>;
     while(helipadQuery->next())
     {
       map::MapHelipad hp;
       mapTypesFactory->fillHelipad(helipadQuery->record(), hp);
-      hs->append(hp);
+      helipads->append(hp);
     }
-    helipadCache.insert(airportId, hs);
-    return hs;
+    helipadCache.insert(airportId, helipads);
   }
+
+  return helipadCache.object(airportId);
 }
 
 const map::MapHelipad AirportQuery::getHelipadForStart(const map::MapStart& start)
@@ -896,7 +892,8 @@ const map::MapResultIndex *AirportQuery::getNearestAirportObjects(const atools::
 
     nearestAirportObjectCache.insert(key, resultIndex);
   }
-  return resultIndex;
+
+  return nearestAirportObjectCache.object(key);
 }
 
 const map::MapResultIndex *AirportQuery::getNearestProcAirports(const atools::geo::Pos& pos, const QString& ident, float distanceNm)
@@ -942,7 +939,8 @@ const map::MapResultIndex *AirportQuery::nearestProcAirportsInternal(const atool
 
     nearestAirportProcCache.insert(key, resultIndex);
   }
-  return resultIndex;
+
+  return nearestAirportProcCache.object(key);
 }
 
 void AirportQuery::bestRunwayEndAndAirport(map::MapRunwayEnd& runwayEnd, map::MapAirport& airport,
@@ -980,7 +978,8 @@ void AirportQuery::bestRunwayEndAndAirport(map::MapRunwayEnd& runwayEnd, map::Ma
         }
         else
           // Ignore heading and look for nearest runway end for this runway
-          runwayEnd = primaryEnd.position.distanceMeterTo(pos) < secondaryEnd.position.distanceMeterTo(pos) ? primaryEnd : secondaryEnd;
+          runwayEnd = primaryEnd.position.distanceMeterTo(pos) < secondaryEnd.position.distanceMeterTo(pos) ?
+                      primaryEnd : secondaryEnd;
 
         if(runwayEnd.isValid())
         {
@@ -1110,7 +1109,7 @@ const QList<map::MapTaxiPath> *AirportQuery::getTaxiPaths(int airportId)
       tps->append(tp);
     }
     taxipathCache.insert(airportId, tps);
-    return tps;
+    return taxipathCache.object(airportId);
   }
 }
 
@@ -1119,28 +1118,27 @@ const QList<map::MapRunway> *AirportQuery::getRunways(int airportId)
   if(!query::valid(Q_FUNC_INFO, runwaysQuery))
     return nullptr;
 
-  if(runwayCache.contains(airportId))
-    return runwayCache.object(airportId);
-  else
+  if(!runwayCache.contains(airportId))
   {
     runwaysQuery->bindValue(QStringLiteral(":airportId"), airportId);
     runwaysQuery->exec();
 
-    QList<map::MapRunway> *rs = new QList<map::MapRunway>;
+    QList<map::MapRunway> *runways = new QList<map::MapRunway>;
     while(runwaysQuery->next())
     {
       map::MapRunway runway;
       mapTypesFactory->fillRunway(runwaysQuery->record(), runway, false);
-      rs->append(runway);
+      runways->append(runway);
     }
 
     // Sort to draw the hard/better runways last on top of other grass, turf, etc.
     using namespace std::placeholders;
-    std::sort(rs->begin(), rs->end(), std::bind(&AirportQuery::runwayCompare, this, _1, _2));
+    std::sort(runways->begin(), runways->end(), std::bind(&AirportQuery::runwayCompare, this, _1, _2));
 
-    runwayCache.insert(airportId, rs);
-    return rs;
+    runwayCache.insert(airportId, runways);
   }
+
+  return runwayCache.object(airportId);
 }
 
 QStringList AirportQuery::getRunwayNames(int airportId)

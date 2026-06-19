@@ -259,9 +259,7 @@ const LineString *AirspaceQuery::getAirspaceGeometryById(int airspaceId)
   if(!query::valid(Q_FUNC_INFO, airspaceLinesByIdQuery))
     return nullptr;
 
-  if(airspaceLineCache.contains(airspaceId))
-    return airspaceLineCache.object(airspaceId);
-  else
+  if(!airspaceLineCache.contains(airspaceId))
   {
     LineString *linestring = new LineString;
 
@@ -271,9 +269,9 @@ const LineString *AirspaceQuery::getAirspaceGeometryById(int airspaceId)
       airspaceGeometry(linestring, airspaceLinesByIdQuery->value(QStringLiteral("geometry")).toByteArray());
     airspaceLinesByIdQuery->finish();
     airspaceLineCache.insert(airspaceId, linestring);
-
-    return linestring;
   }
+
+  return airspaceLineCache.object(airspaceId);
 }
 
 const LineString *AirspaceQuery::getAirspaceGeometryByFile(QString callsign)

@@ -797,9 +797,7 @@ proc::MapProcedureLegs *ProcedureQuery::fetchProcedureLegs(const map::MapAirport
   Q_ASSERT(airport.navdata);
 
 #ifndef DEBUG_APPROACH_NO_CACHE
-  if(procedureCache.contains(procedureId))
-    return procedureCache.object(procedureId);
-  else
+  if(!procedureCache.contains(procedureId))
 #endif
   {
 #ifdef DEBUG_INFORMATION
@@ -813,8 +811,9 @@ proc::MapProcedureLegs *ProcedureQuery::fetchProcedureLegs(const map::MapAirport
       procedureLegIndex.insert(legs->at(i).legId, std::make_pair(procedureId, i));
 
     procedureCache.insert(procedureId, legs);
-    return legs;
   }
+
+  return procedureCache.object(procedureId);
 }
 
 proc::MapProcedureLegs *ProcedureQuery::fetchTransitionLegs(const map::MapAirport& airport, int procedureId, int transitionId)
@@ -825,9 +824,7 @@ proc::MapProcedureLegs *ProcedureQuery::fetchTransitionLegs(const map::MapAirpor
     return nullptr;
 
 #ifndef DEBUG_APPROACH_NO_CACHE
-  if(transitionCache.contains(transitionId))
-    return transitionCache.object(transitionId);
-  else
+  if(!transitionCache.contains(transitionId))
 #endif
   {
 #ifdef DEBUG_INFORMATION
@@ -884,8 +881,9 @@ proc::MapProcedureLegs *ProcedureQuery::fetchTransitionLegs(const map::MapAirpor
       transitionLegIndex.insert(legs->at(i).legId, std::make_pair(transitionId, i));
 
     transitionCache.insert(transitionId, legs);
-    return legs;
   }
+
+  return transitionCache.object(transitionId);
 }
 
 proc::MapProcedureLegs *ProcedureQuery::buildProcedureLegs(const map::MapAirport& airport, int procedureId)

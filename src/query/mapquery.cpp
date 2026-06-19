@@ -361,7 +361,8 @@ map::MapResultIndex *MapQuery::nearestNavaidsInternal(const Pos& pos, float dist
 
     nearestNavaidCache.insert(key, result);
   }
-  return result;
+
+  return nearestNavaidCache.object(key);
 }
 
 void MapQuery::getMapObjectByIdent(map::MapResult& result, map::MapTypes type, const QString& ident, const QString& region,
@@ -1332,15 +1333,15 @@ const QList<map::MapRunway> *MapQuery::getRunwaysForOverview(int airportId)
     runwayOverviewQuery->bindValue(QStringLiteral(":airportId"), airportId);
     runwayOverviewQuery->exec();
 
-    QList<map::MapRunway> *rws = new QList<map::MapRunway>;
+    QList<map::MapRunway> *runways = new QList<map::MapRunway>;
     while(runwayOverviewQuery->next())
     {
       map::MapRunway runway;
       mapTypesFactory->fillRunway(runwayOverviewQuery->record(), runway, true /* overview */);
-      rws->append(runway);
+      runways->append(runway);
     }
-    runwayOverwiewCache.insert(airportId, rws);
-    return rws;
+    runwayOverwiewCache.insert(airportId, runways);
+    return runwayOverwiewCache.object(airportId);
   }
 }
 
