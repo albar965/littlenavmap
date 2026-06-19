@@ -120,26 +120,26 @@ struct MapResult
   }
 
   /* Get parameters from first map object looking through the list of types. First one is returned. */
-  void getParams(const std::initializer_list<MapTypes>& types, int *id = nullptr,
+  void getParams(const std::initializer_list<MapType>& types, int *id = nullptr,
                  atools::geo::Pos *pos = nullptr, MapNav *nav = nullptr) const;
 
   /* Get id and type from the result. Vector of types defines priority. true if something was found.
    * id is set to -1 if nothing was found. */
-  bool getIdAndType(int& id, map::MapType& type, const std::initializer_list<map::MapTypes>& types) const;
-  map::MapRef getRef(const std::initializer_list<map::MapTypes>& types) const;
+  bool getIdAndType(int& id, map::MapType& type, const std::initializer_list<map::MapType>& types) const;
+  map::MapRef getRef(const std::initializer_list<map::MapType>& types) const;
 
   /* Get routeIndex. This assumes there is only one object for the given type. Returns -1 if not found.
    * Only for flight plan related types. */
   int getRouteIndex(const map::MapTypes& type) const;
 
   /* Get position and returns first for the list of types defining priority by order */
-  const atools::geo::Pos getPosition(const std::initializer_list<map::MapTypes>& types) const;
+  const atools::geo::Pos getPosition(const std::initializer_list<map::MapType>& types) const;
 
   /* As above for ident */
-  QString getIdent(const std::initializer_list<map::MapTypes>& types) const;
+  QString getIdent(const std::initializer_list<map::MapType>& types) const;
 
   /* As above for region */
-  QString getRegion(const std::initializer_list<map::MapTypes>& types) const;
+  QString getRegion(const std::initializer_list<map::MapType>& types) const;
 
   /* Remove the given types only */
   MapResult& clear(const map::MapTypes& types = map::ALL);

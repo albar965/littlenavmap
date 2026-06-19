@@ -25,11 +25,9 @@
 #include <QCoreApplication>
 
 namespace atools {
-
 namespace geo {
 class Pos;
 }
-
 namespace fs {
 namespace pln {
 class Flightplan;

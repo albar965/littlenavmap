@@ -2236,7 +2236,7 @@ void Route::calculateLegAltitudes()
 /* Update the bounding rect using marble functions to catch anti meridian overlap */
 void Route::updateBoundingRect()
 {
-  const static std::initializer_list<map::MapTypes> TYPES =
+  const static std::initializer_list<map::MapType> TYPES =
   {map::AIRPORT, map::VOR, map::NDB, map::WAYPOINT, map::PROCEDURE_POINT, map::USERPOINTROUTE};
 
   atools::geo::LineString positions;

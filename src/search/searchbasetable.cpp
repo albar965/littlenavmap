@@ -57,6 +57,9 @@ using atools::gui::ActionTool;
 /* When using distance search delay the update the table after 500 milliseconds */
 const int DISTANCE_EDIT_UPDATE_TIMEOUT_MS = 500;
 
+/* All objects that can have a MSA attached */
+const static std::initializer_list<map::MapType> MSA_TYPE_LIST = {map::AIRPORT, map::VOR, map::NDB, map::WAYPOINT};
+
 // ==================================================================================
 SearchBaseTable::SearchBaseTable(MainWindow *parent, QTableView *tableView, ColumnList *columnList,
                                  si::TabSearchId tabWidgetIndex)
@@ -1161,10 +1164,9 @@ void SearchBaseTable::contextMenu(const QPoint& point)
     mapQuery->getMapObjectById(result, mapObjType, airspaceSrc, id, mapObjType != map::AIRPORT);
 
     // Fill result with map objects ===========================
-    std::initializer_list<map::MapTypes> msaTypeList = {map::AIRPORT, map::VOR, map::NDB, map::WAYPOINT};
     if(result.hasTypes(map::AIRPORT | map::VOR | map::NDB | map::WAYPOINT))
-      mapQuery->getMapObjectByIdent(msaResult, map::AIRPORT_MSA, result.getIdent(msaTypeList),
-                                    result.getRegion(msaTypeList), QStringLiteral(), result.getPosition(msaTypeList));
+      mapQuery->getMapObjectByIdent(msaResult, map::AIRPORT_MSA, result.getIdent(MSA_TYPE_LIST),
+                                    result.getRegion(MSA_TYPE_LIST), QStringLiteral(), result.getPosition(MSA_TYPE_LIST));
 
     if(mapObjType == map::AIRPORT && result.hasAirports())
       airport = result.airports.constFirst();

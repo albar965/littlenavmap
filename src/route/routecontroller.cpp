@@ -3056,7 +3056,7 @@ void RouteController::tableContextMenu(const QPoint& pos)
   }
 
   // Direct ==============================================================================
-  if(!selectedRows.isEmpty())
+  if(!selectedRows.isEmpty() && routeLeg != nullptr)
   {
     bool disableDirect = true;
     QString suffix = proc::procedureTextSuffixDirectTo(route, selectedRows.constFirst(), &routeLeg->getAirport(), &disableDirect);
