@@ -39,6 +39,13 @@ static double queryRectInflationFactor = 0.2;
 static double queryRectInflationIncrement = 0.1;
 int AirspaceQuery::queryMaxRows = map::MAX_MAP_OBJECTS;
 
+inline const atools::geo::LineString *validPolygon(const atools::geo::LineString *lineString)
+{
+  if(lineString != nullptr && lineString->isValidPolygon())
+    return lineString;
+  return nullptr;
+}
+
 AirspaceQuery::AirspaceQuery(SqlDatabase *sqlDb, map::MapAirspaceSource src)
   : db(sqlDb), source(src)
 {
@@ -276,43 +283,35 @@ const LineString *AirspaceQuery::getAirspaceGeometryById(int airspaceId)
 
 const LineString *AirspaceQuery::getAirspaceGeometryByFile(QString callsign)
 {
-  if(airspaceGeoByFileQuery != nullptr)
+  if(airspaceGeoByFileQuery == nullptr)
+    return nullptr;
+
+  if(!onlineCenterGeoFileCache.contains(callsign))
   {
-    if(onlineCenterGeoFileCache.contains(callsign))
-    {
-      // Return nullptr if empty - empty objects in cache indicate object not present
-      const LineString *lineString = onlineCenterGeoFileCache.object(callsign);
-      if(lineString != nullptr && lineString->isValidPolygon())
-        return lineString;
-    }
-    else
-    {
-      LineString *lineString = new LineString();
-      callsign = callsign.trimmed().toUpper();
+    LineString *lineString = new LineString();
+    callsign = callsign.trimmed().toUpper();
 
-      // Do a pattern query and check for basename matches later
-      airspaceGeoByFileQuery->bindValue(QStringLiteral(":filepath"), QStringLiteral("%") + callsign + QStringLiteral("%"));
-      airspaceGeoByFileQuery->exec();
+    // Do a pattern query and check for basename matches later
+    airspaceGeoByFileQuery->bindValue(QStringLiteral(":filepath"), QStringLiteral("%") + callsign + QStringLiteral("%"));
+    airspaceGeoByFileQuery->exec();
 
-      while(airspaceGeoByFileQuery->next())
+    while(airspaceGeoByFileQuery->next())
+    {
+      QFileInfo fi(airspaceGeoByFileQuery->valueStr(QStringLiteral("filepath")).trimmed());
+      QString basename = fi.baseName().toUpper().trimmed();
+
+      // Check if the basename matches the callsign
+      if(basename == callsign.toUpper())
       {
-        QFileInfo fi(airspaceGeoByFileQuery->valueStr(QStringLiteral("filepath")).trimmed());
-        QString basename = fi.baseName().toUpper().trimmed();
-
-        // Check if the basename matches the callsign
-        if(basename == callsign.toUpper())
-        {
-          airspaceGeometry(lineString, airspaceGeoByFileQuery->value(QStringLiteral("geometry")).toByteArray());
-          break;
-        }
+        airspaceGeometry(lineString, airspaceGeoByFileQuery->value(QStringLiteral("geometry")).toByteArray());
+        break;
       }
-      airspaceGeoByFileQuery->finish();
-      onlineCenterGeoFileCache.insert(callsign, lineString);
-      if(lineString != nullptr && lineString->isValidPolygon())
-        return lineString;
     }
+    airspaceGeoByFileQuery->finish();
+    onlineCenterGeoFileCache.insert(callsign, lineString);
   }
-  return nullptr;
+
+  return validPolygon(onlineCenterGeoFileCache.object(callsign));
 }
 
 const LineString *AirspaceQuery::getAirspaceGeometryByName(QString callsign, const QString& facilityType)
@@ -354,38 +353,26 @@ const LineString *AirspaceQuery::getAirspaceGeometryByName(QString callsign, con
 
 const LineString *AirspaceQuery::airspaceGeometryByNameInternal(const QString& callsign, const QString& facilityType)
 {
-#ifdef DEBUG_INFORMATION
-  qDebug() << Q_FUNC_INFO << callsign << facilityType;
-#endif
+  if(airspaceGeoByNameQuery == nullptr)
+    return nullptr;
 
-  if(airspaceGeoByNameQuery != nullptr)
+  if(!onlineCenterGeoCache.contains(callsign))
   {
-    if(onlineCenterGeoCache.contains(callsign))
-    {
-      // Return nullptr if empty - empty objects in cache indicate object not present
-      const LineString *lineString = onlineCenterGeoCache.object(callsign);
-      if(lineString != nullptr && !lineString->isEmpty())
-        return lineString;
-    }
-    else
-    {
-      LineString *lineString = new LineString();
+    LineString *lineString = new LineString();
 
-      // Check if the airspace name matches the callsign
-      airspaceGeoByNameQuery->bindValue(QStringLiteral(":name"), callsign);
-      airspaceGeoByNameQuery->bindValue(QStringLiteral(":type"), facilityType.isEmpty() ? QStringLiteral("%") : facilityType);
-      airspaceGeoByNameQuery->exec();
+    // Check if the airspace name matches the callsign
+    airspaceGeoByNameQuery->bindValue(QStringLiteral(":name"), callsign);
+    airspaceGeoByNameQuery->bindValue(QStringLiteral(":type"), facilityType.isEmpty() ? QStringLiteral("%") : facilityType);
+    airspaceGeoByNameQuery->exec();
 
-      if(airspaceGeoByNameQuery->next())
-        airspaceGeometry(lineString, airspaceGeoByNameQuery->value(QStringLiteral("geometry")).toByteArray());
+    if(airspaceGeoByNameQuery->next())
+      airspaceGeometry(lineString, airspaceGeoByNameQuery->value(QStringLiteral("geometry")).toByteArray());
 
-      airspaceGeoByNameQuery->finish();
-      onlineCenterGeoCache.insert(callsign, lineString);
-      if(lineString->isValidPolygon())
-        return lineString;
-    }
+    airspaceGeoByNameQuery->finish();
+    onlineCenterGeoCache.insert(callsign, lineString);
   }
-  return nullptr;
+
+  return validPolygon(onlineCenterGeoCache.object(callsign));
 }
 
 SqlRecord AirspaceQuery::getAirspaceInfoRecordById(int airspaceId)

@@ -476,9 +476,9 @@ void AirportQuery::getAirportRegion(map::MapAirport& airport)
 
   // Use smallest manhattan distance to airport
   SqlQuery query(db);
-  query.prepare("select w.region from waypoint w "
-                "where w.region is not null "
-                "order by (abs(:lonx - w.lonx) + abs(:laty - w.laty)) limit 1");
+  query.prepare(QStringLiteral("select w.region from waypoint w "
+                               "where w.region is not null "
+                               "order by (abs(:lonx - w.lonx) + abs(:laty - w.laty)) limit 1"));
 
   query.bindValue(QStringLiteral(":lonx"), airport.position.getLonX());
   query.bindValue(QStringLiteral(":laty"), airport.position.getLatY());
@@ -693,16 +693,18 @@ void AirportQuery::startByNameAndPos(map::MapStart& start, int airportId, const 
 
   // No need to create a permanent query here since it is called rarely
   SqlQuery query(db);
-  query.prepare(
-    "select start_id, airport_id, runway_end_id, type, heading, number, runway_name, altitude, lonx, laty from ("
-    // Get start positions by number
-    "select s.start_id, s.airport_id, s.runway_end_id, s.type, s.heading, s.number, s.runway_name, s.altitude, s.lonx, s.laty "
-    "from start s where s.airport_id = :airportId and s.number = :number "
-    "union "
-    // Get runway start positions by runway name
-    "select s.start_id, s.airport_id, s.runway_end_id, s.type, s.heading, s.number, s.runway_name, s.altitude, s.lonx, s.laty "
-    "from start s "
-    "where s.airport_id = :airportId and s.runway_name = :runwayName)");
+  query.prepare(QStringLiteral("select start_id, airport_id, runway_end_id, type, heading, number, runway_name, "
+                               "altitude, lonx, laty from ("
+                               // Get start positions by number
+                               "select s.start_id, s.airport_id, s.runway_end_id, s.type, s.heading, s.number, s.runway_name, "
+                               "s.altitude, s.lonx, s.laty "
+                               "from start s where s.airport_id = :airportId and s.number = :number "
+                               "union "
+                               // Get runway start positions by runway name
+                               "select s.start_id, s.airport_id, s.runway_end_id, s.type, s.heading, s.number, s.runway_name, "
+                               "s.altitude, s.lonx, s.laty "
+                               "from start s "
+                               "where s.airport_id = :airportId and s.runway_name = :runwayName)"));
 
   query.bindValue(QStringLiteral(":number"), number);
   query.bindValue(QStringLiteral(":runwayName"), runwayEndName);

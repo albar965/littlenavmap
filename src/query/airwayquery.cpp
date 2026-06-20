@@ -220,13 +220,9 @@ void AirwayQuery::getAirwaysByNameAndWaypoint(QList<map::MapAirway>& airways, co
   if(!query::valid(Q_FUNC_INFO, airwayByNameAndWaypointQuery))
     return;
 
-  QList<map::MapAirway> *airwaysObj = airwayByNameCache.object({airwayName, waypoint1, waypoint2});
-  if(airwaysObj != nullptr)
-    // Copy airways from cache
-    airways = *airwaysObj;
-  else
+  if(!airwayByNameCache.contains({airwayName, waypoint1, waypoint2}))
   {
-    airwaysObj = new QList<map::MapAirway>(airways);
+    QList<map::MapAirway> *airwaysObj = new QList<map::MapAirway>;
 
     // Query from database
     airwayByNameAndWaypointQuery->bindValue(QStringLiteral(":airway"), airwayName.isEmpty() ? QStringLiteral("%") : airwayName);
@@ -242,10 +238,10 @@ void AirwayQuery::getAirwaysByNameAndWaypoint(QList<map::MapAirway>& airways, co
 
     // Add to the cache
     airwayByNameCache.insert({airwayName, waypoint1, waypoint2}, airwaysObj);
-
-    // Return copy
-    airways = *airwaysObj;
   }
+
+  // Return copy - never nullptr since either found in cache or added
+  airways = *airwayByNameCache.object({airwayName, waypoint1, waypoint2});
 }
 
 const QList<map::MapAirway> *AirwayQuery::getAirways(const GeoDataLatLonBox& rect, const MapLayer *mapLayer, bool lazy)

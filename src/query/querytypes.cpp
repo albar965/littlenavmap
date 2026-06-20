@@ -28,15 +28,15 @@ void inflateQueryRect(Marble::GeoDataLatLonBox& rect, double factor, double incr
 {
   rect.scale(1. + factor, 1. + factor);
 
-  if(rect.east(GeoDataCoordinates::Degree) + increment < 180.f)
+  if(rect.east(GeoDataCoordinates::Degree) + increment < 180.)
     rect.setEast(rect.east(GeoDataCoordinates::Degree) + increment, GeoDataCoordinates::Degree);
 
-  if(rect.west(GeoDataCoordinates::Degree) - increment > -180.f)
+  if(rect.west(GeoDataCoordinates::Degree) - increment > -180.)
     rect.setWest(rect.west(GeoDataCoordinates::Degree) - increment, GeoDataCoordinates::Degree);
 
-  if(rect.north(GeoDataCoordinates::Degree) + increment < 90.f)
+  if(rect.north(GeoDataCoordinates::Degree) + increment < 90.)
     rect.setNorth(rect.north(GeoDataCoordinates::Degree) + increment, GeoDataCoordinates::Degree);
-  if(rect.south(GeoDataCoordinates::Degree) - increment > -90.f)
+  if(rect.south(GeoDataCoordinates::Degree) - increment > -90.)
     rect.setSouth(rect.south(GeoDataCoordinates::Degree) - increment, GeoDataCoordinates::Degree);
 
   // qDebug() << rect.toString(GeoDataCoordinates::Degree);
@@ -50,18 +50,18 @@ void inflateQueryRect(Marble::GeoDataLatLonBox& rect, double factor, double incr
  */
 void bindRect(const Marble::GeoDataLatLonBox& rect, atools::sql::SqlQuery *query, const QString& prefix)
 {
-  query->bindValue(":" + prefix + "leftx", rect.west(GeoDataCoordinates::Degree));
-  query->bindValue(":" + prefix + "rightx", rect.east(GeoDataCoordinates::Degree));
-  query->bindValue(":" + prefix + "bottomy", rect.south(GeoDataCoordinates::Degree));
-  query->bindValue(":" + prefix + "topy", rect.north(GeoDataCoordinates::Degree));
+  query->bindValue(QStringLiteral(":") % prefix % QStringLiteral("leftx"), rect.west(GeoDataCoordinates::Degree));
+  query->bindValue(QStringLiteral(":") % prefix % QStringLiteral("rightx"), rect.east(GeoDataCoordinates::Degree));
+  query->bindValue(QStringLiteral(":") % prefix % QStringLiteral("bottomy"), rect.south(GeoDataCoordinates::Degree));
+  query->bindValue(QStringLiteral(":") % prefix % QStringLiteral("topy"), rect.north(GeoDataCoordinates::Degree));
 }
 
 void bindRect(const atools::geo::Rect& rect, atools::sql::SqlQuery *query, const QString& prefix)
 {
-  query->bindValue(":" + prefix + "leftx", rect.getWest());
-  query->bindValue(":" + prefix + "rightx", rect.getEast());
-  query->bindValue(":" + prefix + "bottomy", rect.getSouth());
-  query->bindValue(":" + prefix + "topy", rect.getNorth());
+  query->bindValue(QStringLiteral(":") % prefix % QStringLiteral("leftx"), rect.getWest());
+  query->bindValue(QStringLiteral(":") % prefix % QStringLiteral("rightx"), rect.getEast());
+  query->bindValue(QStringLiteral(":") % prefix % QStringLiteral("bottomy"), rect.getSouth());
+  query->bindValue(QStringLiteral(":") % prefix % QStringLiteral("topy"), rect.getNorth());
 }
 
 /* Inflates the rectangle and splits it at the antimeridian (date line) if it overlaps */

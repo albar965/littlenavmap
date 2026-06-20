@@ -110,38 +110,38 @@ void WaypointTrackQuery::getWaypointRectNearest(map::MapWaypoint& waypoint, cons
 void WaypointTrackQuery::getWaypoints(QList<map::MapWaypoint>& waypoints, const GeoDataLatLonBox& rect,
                                       const MapLayer *mapLayer, bool lazy, bool& overflow)
 {
-  const QList<map::MapWaypoint> *wp;
+  const QList<map::MapWaypoint> *waypoint;
   if(useTracks && mapLayer->isTrackWaypoint())
   {
-    wp = trackQuery->getWaypoints(rect, mapLayer, lazy, overflow);
-    if(wp != nullptr)
-      waypoints.append(*wp);
+    waypoint = trackQuery->getWaypoints(rect, mapLayer, lazy, overflow);
+    if(waypoint != nullptr)
+      waypoints.append(*waypoint);
   }
 
   if(!overflow && mapLayer->isAirwayWaypoint())
   {
-    wp = waypointQuery->getWaypoints(rect, mapLayer, lazy, overflow);
-    if(wp != nullptr)
-      copy(*wp, waypoints);
+    waypoint = waypointQuery->getWaypoints(rect, mapLayer, lazy, overflow);
+    if(waypoint != nullptr)
+      copy(*waypoint, waypoints);
   }
 }
 
 void WaypointTrackQuery::getWaypointsAirway(QList<map::MapWaypoint>& waypoints, const Marble::GeoDataLatLonBox& rect,
                                             const MapLayer *mapLayer, bool lazy, bool& overflow)
 {
-  const QList<map::MapWaypoint> *wp;
+  const QList<map::MapWaypoint> *waypoint;
   if(useTracks && mapLayer->isTrackWaypoint())
   {
-    wp = trackQuery->getWaypointsAirway(rect, mapLayer, lazy, overflow);
-    if(wp != nullptr)
-      waypoints.append(*wp);
+    waypoint = trackQuery->getWaypointsAirway(rect, mapLayer, lazy, overflow);
+    if(waypoint != nullptr)
+      waypoints.append(*waypoint);
   }
 
   if(!overflow && mapLayer->isAirwayWaypoint())
   {
-    wp = waypointQuery->getWaypointsAirway(rect, mapLayer, lazy, overflow);
-    if(wp != nullptr)
-      copy(*wp, waypoints);
+    waypoint = waypointQuery->getWaypointsAirway(rect, mapLayer, lazy, overflow);
+    if(waypoint != nullptr)
+      copy(*waypoint, waypoints);
   }
 }
 
@@ -198,9 +198,9 @@ SqlQuery *WaypointTrackQuery::getWaypointsByRectQueryTrack() const
 
 void WaypointTrackQuery::copy(const QList<map::MapWaypoint>& from, QList<map::MapWaypoint>& to)
 {
-  for(const map::MapWaypoint& w : from)
+  for(const map::MapWaypoint& waypoint : from)
   {
-    if(!to.contains(w))
-      to.append(w);
+    if(!to.contains(waypoint))
+      to.append(waypoint);
   }
 }
