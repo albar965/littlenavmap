@@ -17,6 +17,7 @@
 
 #include "query/mapquery.h"
 
+#include "app/navapp.h"
 #include "common/constants.h"
 #include "common/mapresult.h"
 #include "common/maptools.h"
@@ -26,32 +27,36 @@
 #include "logbook/logdatacontroller.h"
 #include "mapgui/mapairporthandler.h"
 #include "mapgui/maplayer.h"
-#include "app/navapp.h"
 #include "online/onlinedatacontroller.h"
 #include "query/airportquery.h"
 #include "query/airspacequeries.h"
 #include "query/airwaytrackquery.h"
 #include "query/waypointtrackquery.h"
+#include "querymanager.h"
 #include "settings/settings.h"
 #include "sql/sqldatabase.h"
 #include "sql/sqlutil.h"
 #include "userdata/userdatacontroller.h"
-#include "querymanager.h"
 
 using namespace Marble;
 using namespace atools::sql;
 using namespace atools::geo;
+
 using map::MapAirport;
-using map::MapVor;
-using map::MapNdb;
-using map::MapWaypoint;
-using map::MapMarker;
-using map::MapIls;
-using map::MapParking;
-using map::MapHelipad;
-using map::MapUserpoint;
 using map::MapAirportMsa;
+using map::MapAirspace;
+using map::MapAirway;
+using map::MapHelipad;
 using map::MapHolding;
+using map::MapIls;
+using map::MapLogbookEntry;
+using map::MapMarker;
+using map::MapNdb;
+using map::MapParking;
+using map::MapRunwayEnd;
+using map::MapUserpoint;
+using map::MapVor;
+using map::MapWaypoint;
 
 static double queryRectInflationFactor = 0.5;
 static double queryRectInflationIncrement = 0.5;
@@ -365,21 +370,21 @@ map::MapResultIndex *MapQuery::nearestNavaidsInternal(const Pos& pos, float dist
   return nearestNavaidCache.object(key);
 }
 
-void MapQuery::getMapObjectByIdent(map::MapResult& result, map::MapTypes type, const QString& ident, const QString& region,
+void MapQuery::getMapObjectByIdent(map::MapResult& result, map::MapType type, const QString& ident, const QString& region,
                                    const QString& airport, const Pos& sortByDistancePos, float maxDistanceMeter,
                                    bool airportFromNavDatabase, map::AirportQueryFlags flags) const
 {
   mapObjectByIdentInternal(result, type, ident, region, airport, sortByDistancePos, maxDistanceMeter, airportFromNavDatabase, flags);
 }
 
-void MapQuery::getMapObjectByIdent(map::MapResult& result, map::MapTypes type, const QString& ident,
+void MapQuery::getMapObjectByIdent(map::MapResult& result, map::MapType type, const QString& ident,
                                    const QString& region, const QString& airport, bool airportFromNavDatabase,
                                    map::AirportQueryFlags flags) const
 {
   mapObjectByIdentInternal(result, type, ident, region, airport, EMPTY_POS, map::INVALID_DISTANCE_VALUE, airportFromNavDatabase, flags);
 }
 
-void MapQuery::mapObjectByIdentInternal(map::MapResult& result, map::MapTypes type, const QString& ident,
+void MapQuery::mapObjectByIdentInternal(map::MapResult& result, map::MapType type, const QString& ident,
                                         const QString& region, const QString& airport, const Pos& sortByDistancePos,
                                         float maxDistanceMeter, bool airportFromNavDatabase, map::AirportQueryFlags flags) const
 {
@@ -490,6 +495,13 @@ void MapQuery::mapObjectByIdentInternal(map::MapResult& result, map::MapTypes ty
 
   if(type & map::AIRWAY)
     queries->getAirwayTrackQuery()->getAirwaysByName(result.airways, ident);
+
+  if(type & map::USERPOINT)
+  {
+    result.userpoints.append(NavApp::getUserdataController()->getUserpointsByIdent(ident, UserdataController::USERPOINT_NAV_TYPES));
+    maptools::sortByDistance(result.userpoints, sortByDistancePos);
+    maptools::removeByDistance(result.userpoints, sortByDistancePos, maxDistanceMeter);
+  }
 }
 
 void MapQuery::getMapObjectById(map::MapResult& result, map::MapTypes type, map::MapAirspaceSources src, int id,
@@ -539,7 +551,8 @@ void MapQuery::getMapObjectById(map::MapResult& result, map::MapTypes type, map:
   }
   else if(type == map::LOGBOOK)
   {
-    map::MapLogbookEntry logEntry = NavApp::getLogdataController()->getLogEntryById(id);
+    MapLogbookEntry logEntry =
+      NavApp::getLogdataController()->getLogEntryById(id);
     if(logEntry.isValid())
       result.logbookEntries.append(logEntry);
   }
@@ -551,13 +564,15 @@ void MapQuery::getMapObjectById(map::MapResult& result, map::MapTypes type, map:
   }
   else if(type == map::RUNWAYEND)
   {
-    map::MapRunwayEnd end = queries->getAirportQuery(airportFromNavDatabase)->getRunwayEndById(id);
+    MapRunwayEnd end =
+      queries->getAirportQuery(airportFromNavDatabase)->getRunwayEndById(id);
     if(end.isValid())
       result.runwayEnds.append(end);
   }
   else if(type == map::AIRSPACE)
   {
-    map::MapAirspace airspace = queries->getAirspaceQueries()->getAirspaceById({id, src});
+    MapAirspace airspace =
+      queries->getAirspaceQueries()->getAirspaceById({id, src});
     if(airspace.isValidAirspace())
       result.airspaces.append(airspace);
   }
@@ -567,7 +582,7 @@ void MapQuery::getMapObjectById(map::MapResult& result, map::MapTypes type, map:
   }
   else if(type == map::AIRWAY)
   {
-    map::MapAirway airway = queries->getAirwayTrackQuery()->getAirwayById(id);
+    MapAirway airway = queries->getAirwayTrackQuery()->getAirwayById(id);
     if(airway.isValid())
       result.airways.append(airway);
   }

@@ -131,12 +131,12 @@ public:
    * @param ident ICAO ident
    * @param region two letter ICAO region code
    */
-  void getMapObjectByIdent(map::MapResult& result, map::MapTypes type, const QString& ident, const QString& region = QString(),
+  void getMapObjectByIdent(map::MapResult& result, map::MapType type, const QString& ident, const QString& region = QString(),
                            const QString& airport = QString(), const atools::geo::Pos& sortByDistancePos = atools::geo::EMPTY_POS,
                            float maxDistanceMeter = map::INVALID_DISTANCE_VALUE, bool airportFromNavDatabase = false,
                            map::AirportQueryFlags flags = map::AP_QUERY_ALL) const;
 
-  void getMapObjectByIdent(map::MapResult& result, map::MapTypes type, const QString& ident, const QString& region,
+  void getMapObjectByIdent(map::MapResult& result, map::MapType type, const QString& ident, const QString& region,
                            const QString& airport, bool airportFromNavDatabase, map::AirportQueryFlags flags = map::AP_QUERY_ALL) const;
 
   /*
@@ -260,7 +260,7 @@ private:
   map::MapResultIndex *nearestNavaidsInternal(const atools::geo::Pos& pos, float distanceNm,
                                               map::MapTypes type, int maxIls, float maxIlsDist);
 
-  void mapObjectByIdentInternal(map::MapResult& result, map::MapTypes type,
+  void mapObjectByIdentInternal(map::MapResult& result, map::MapType type,
                                 const QString& ident, const QString& region, const QString& airport,
                                 const atools::geo::Pos& sortByDistancePos,
                                 float maxDistanceMeter, bool airportFromNavDatabase, map::AirportQueryFlags flags) const;
