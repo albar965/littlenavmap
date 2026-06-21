@@ -662,7 +662,7 @@ struct MapRunway
   : public MapBase
 {
   MapRunway()
-    : MapBase(staticType()) F
+    : MapBase(staticType())
   {
   }
 
