@@ -45,16 +45,13 @@ class MagDecReader;
 }
 namespace userdata {
 class UserdataManager;
-
 }
 }
 }
 
 namespace map {
 struct MapResult;
-
 struct MapUserpoint;
-
 }
 
 class UserdataIcons;
@@ -152,11 +149,17 @@ public:
   /* Fill structure for user point id */
   map::MapUserpoint getUserpointById(int id);
 
+  /* Get a list of userpoints sorted by distance to pos */
+  QList<map::MapUserpoint> getUserpointsByIdent(const QString& ident, const QStringList& types);
+
   /* Show choice dialog with options to remove empty or duplicate userpoints */
   void cleanupUserdata();
 
   /* true if any entries are present */
   bool hasUserdata() const;
+
+  /* Lookup userpoints of these types as navaids: "Waypoint", "VOR", "NDB", "VRP" */
+  const static QStringList USERPOINT_NAV_TYPES;
 
 signals:
   /* Sent after database modification to update the search result table */

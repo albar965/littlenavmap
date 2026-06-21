@@ -54,6 +54,8 @@ using atools::sql::SqlRecord;
 using atools::sql::SqlColumn;
 using atools::geo::Pos;
 
+const QStringList UserdataController::USERPOINT_NAV_TYPES({"Waypoint", "VOR", "NDB", "VRP"});
+
 UserdataController::UserdataController(atools::fs::userdata::UserdataManager *userdataManager, QWidget *parent)
   : manager(userdataManager), parentWidget(parent)
 {
@@ -520,6 +522,21 @@ map::MapUserpoint UserdataController::getUserpointById(int id)
   map::MapUserpoint obj;
   MapTypesFactory().fillUserdataPoint(manager->getRecord(id), obj);
   return obj;
+}
+
+QList<map::MapUserpoint> UserdataController::getUserpointsByIdent(const QString& ident, const QStringList& types)
+{
+  QList<map::MapUserpoint> userpoints;
+  for(const SqlRecord& record: manager->getRecords("ident", ident))
+  {
+    if(types.isEmpty() || types.contains(record.valueStr("type")))
+    {
+      map::MapUserpoint userpoint;
+      MapTypesFactory().fillUserdataPoint(record, userpoint);
+      userpoints.append(userpoint);
+    }
+  }
+  return userpoints;
 }
 
 void UserdataController::setMagDecReader(atools::fs::common::MagDecReader *magDecReader)
