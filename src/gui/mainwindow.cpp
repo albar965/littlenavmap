@@ -2786,7 +2786,7 @@ bool MainWindow::openInSkyVector()
   // https://skyvector.com/?fpl=%20EDDH%20AMLU7C%20AMLUH%20M852%20POVEL%20GALMA%20UM736%20DOSEL%20DETSA%20NIKMA%20T369%20RITEB%20RITE4B%20LIRF
 
   QString route = RouteStringWriter().createStringForRoute(NavApp::getRouteConst(), NavApp::getRouteCruiseSpeedKts(),
-                                                           rs::START_AND_DEST | rs::SKYVECTOR_COORDS);
+                                                           rs::WRITE_DEPART_AND_DEST | rs::WRITE_SKYVECTOR_COORDS);
 
   desktopServices->openUrl(QUrl("https://skyvector.com/?fpl=" % route));
   return true;

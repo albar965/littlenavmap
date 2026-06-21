@@ -1261,14 +1261,14 @@ RouteExportData RouteExport::createRouteExportData(re::RouteExportType routeExpo
       // <FlightPlan xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema"
       // FlightType="IFR"
       exportData.setFlightRules(flightplanType == atools::fs::pln::IFR ? "IFR" : "VFR");
-      exportData.setRoute(RouteStringWriter().createStringForRoute(route, 0.f, rs::SID_STAR));
+      exportData.setRoute(RouteStringWriter().createStringForRoute(route, 0.f, rs::WRITE_SID_STAR));
       exportData.setVoiceType("Full");
       break;
 
     case re::IVAP:
     case re::XIVAP:
       exportData.setFlightRules(flightplanType == atools::fs::pln::IFR ? "I" : "V");
-      exportData.setRoute(RouteStringWriter().createStringForRoute(route, 0.f, rs::SID_STAR | rs::DCT));
+      exportData.setRoute(RouteStringWriter().createStringForRoute(route, 0.f, rs::WRITE_SID_STAR | rs::WRITE_DCT));
       break;
 
   }
@@ -1594,7 +1594,7 @@ bool RouteExport::exportFlighplanAsTxt(const QString& filename)
 {
   qDebug() << Q_FUNC_INFO << filename;
   QString txt = RouteStringWriter().createStringForRoute(buildAdjustedRoute(rf::DEFAULT_OPTS | rf::REMOVE_RUNWAY_PROC), 0.f,
-                                                         rs::DCT | rs::START_AND_DEST | rs::SID_STAR_GENERIC);
+                                                         rs::WRITE_DCT | rs::WRITE_DEPART_AND_DEST | rs::WRITE_SID_STAR_GENERIC);
 
   QFile file(filename);
   if(file.open(QFile::WriteOnly | QIODevice::Text))
@@ -1615,7 +1615,7 @@ bool RouteExport::exportFlighplanAsUFmc(const QString& filename)
 {
   qDebug() << Q_FUNC_INFO << filename;
   QStringList list = RouteStringWriter().createStringListForRoute(
-    buildAdjustedRoute(rf::DEFAULT_OPTS | rf::REMOVE_RUNWAY_PROC), 0.f, rs::DCT | rs::START_AND_DEST);
+    buildAdjustedRoute(rf::DEFAULT_OPTS | rf::REMOVE_RUNWAY_PROC), 0.f, rs::WRITE_DCT | rs::WRITE_DEPART_AND_DEST);
 
   // Remove last DCT
   if(list.size() - 2 >= 0 && list.at(list.size() - 2) == "DCT")
@@ -1934,8 +1934,8 @@ bool RouteExport::exportFlighplanAsCorteIn(const QString& filename)
   qDebug() << Q_FUNC_INFO << filename;
   QString txt = RouteStringWriter().
                 createStringForRoute(buildAdjustedRoute(rf::DEFAULT_OPTS | rf::REMOVE_RUNWAY_PROC), 0.f,
-                                     rs::DCT | rs::NO_FINAL_DCT | rs::START_AND_DEST | rs::SID_STAR | rs::SID_STAR_SPACE |
-                                     rs::CORTEIN_DEPARTURE_RUNWAY /*| rs::CORTEIN_APPROACH unreliable */ | rs::FLIGHTLEVEL);
+                                     rs::WRITE_DCT | rs::WRITE_NO_FINAL_DCT | rs::WRITE_DEPART_AND_DEST | rs::WRITE_SID_STAR | rs::WRITE_SID_STAR_SPACE |
+                                     rs::WRITE_CORTEIN_DEPARTURE_RUNWAY /*| rs::CORTEIN_APPROACH unreliable */ | rs::WRITE_FLIGHTLEVEL);
 
   const atools::fs::pln::Flightplan& flightplan = NavApp::getRouteConst().getFlightplanConst();
 
@@ -2050,7 +2050,7 @@ bool RouteExport::exportFlighplanAsProSim(const QString& filename)
 
   // Create route string
   QString route =
-    RouteStringWriter().createStringForRoute(buildAdjustedRoute(rf::DEFAULT_OPTS | rf::REMOVE_RUNWAY_PROC), 0.f, rs::START_AND_DEST);
+    RouteStringWriter().createStringForRoute(buildAdjustedRoute(rf::DEFAULT_OPTS | rf::REMOVE_RUNWAY_PROC), 0.f, rs::WRITE_DEPART_AND_DEST);
 
   // Create route name inside file
   QString name = NavApp::getRouteConst().buildDefaultFilename(atools::fs::pln::pattern::DEPARTIDENT % atools::fs::pln::pattern::DESTIDENT,

@@ -79,7 +79,7 @@ public:
   /* Create a flight plan for the given route string and include speed and altitude if given (pointers != null).
    * Fills either flightplan and/or mapObjectRefs if not null.
    * Get error, warning and information messages with getMessages() */
-  bool createRouteFromString(const QString& routeString, rs::RouteStringOptions options, atools::fs::pln::Flightplan *flightplan,
+  bool createRouteFromString(const QString& routeString, rs::RouteStringOption optionsParam, atools::fs::pln::Flightplan *flightplan,
                              map::MapRefExtList *mapObjectRefs = nullptr, float *speedKtsParam = nullptr,
                              bool *altIncludedParam = nullptr);
 
@@ -99,7 +99,7 @@ public:
     return !errorMessages.isEmpty();
   }
 
-  /* Get messages in order of error, warning and info messages separated by an empty line */
+  /* Get messages in order of error, warning, note and info messages separated by an empty line */
   const QStringList getAllMessages() const;
 
 private:
@@ -109,6 +109,7 @@ private:
   /* Add messages to log */
   void appendMessage(const QString& message);
   void insertMessage(const QString& message, int index);
+  void appendNote(const QString& message);
   void appendWarning(const QString& message);
   void appendError(const QString& message);
   void addReport(atools::fs::pln::Flightplan *flightplan, const QString& rawRouteString, float cruiseAltitudeFt);
@@ -127,7 +128,7 @@ private:
 
   /* Get a result set with the single closest element */
   void resultWithClosest(map::MapResult& resultWithClosest, const map::MapResult& result, const atools::geo::Pos& nearestPos,
-                         map::MapTypes types);
+                         map::MapType types);
 
   /* Get airport or any navaid for item. Also resolves coordinate formats. Optionally tries to match position
    * to waypoints like oceaninc or confluence points.*/
@@ -149,7 +150,7 @@ private:
 
   /* Fetch destination airport as well as STAR */
   bool addDestination(atools::fs::pln::Flightplan *flightplan, QList<atools::fs::pln::FlightplanEntry> *alternates,
-                      map::MapRefExtList *mapObjectRefs, QStringList& items, QString& starEntryWp, rs::RouteStringOptions options);
+                      map::MapRefExtList *mapObjectRefs, QStringList& items, QString& starEntryWp);
   void destinationInternal(map::MapAirport& destAirport, proc::MapProcedureLegs& starLegs, proc::MapProcedureLegs& approachLegs,
                            QStringList& items, QString& starEntryWp, map::MapRunwayEnd& runwayEnd, int& consume, int index);
 
@@ -192,14 +193,24 @@ private:
   /* First try exact match and then all possible idents. */
   void airportSim(map::MapAirport& airport, const QString& ident);
 
+  /* Prepare search flags and more */
+  void initRouteTypes(rs::RouteStringOption optionsParam);
+
   MapQuery *mapQuery = nullptr;
   AirwayTrackQuery *airwayQuery = nullptr;
   WaypointTrackQuery *waypointQuery = nullptr;
   AirportQuery *airportQuerySim = nullptr, *airportQueryNav = nullptr;
   ProcedureQuery *procQuery = nullptr;
   FlightplanEntryBuilder *entryBuilder = nullptr;
-  QStringList errorMessages, warningMessages, logMessages;
+  QStringList errorMessages, noteMessages, warningMessages, logMessages;
   bool plaintextMessages = false;
+
+  /* Call initRouteTypes() to fill */
+  map::MapType routeTypesNavaids;
+  map::MapType routeTypes;
+  map::MapType routeTypesAndAirway;
+  const std::initializer_list<map::MapType> *routeTypesNavaidsList = nullptr;
+  rs::RouteStringOption options = rs::NONE;
 };
 
 #endif // LITTLENAVMAP_ROUTESTRINGREADER_H

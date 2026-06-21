@@ -410,13 +410,13 @@ QDebug operator<<(QDebug out, const map::MapBase& obj);
 struct MapPos
   : public MapBase
 {
-  MapPos() :
-    MapBase(map::NONE)
+  MapPos()
+    : MapBase(map::NONE)
   {
   }
 
-  explicit MapPos(const atools::geo::Pos& pos) :
-    MapBase(map::NONE, -1, pos)
+  explicit MapPos(const atools::geo::Pos& pos)
+    : MapBase(map::NONE, -1, pos)
   {
   }
 
@@ -429,8 +429,8 @@ struct MapPos
 struct MapAirport
   : public MapBase
 {
-  MapAirport() :
-    MapBase(staticType())
+  MapAirport()
+    : MapBase(staticType())
   {
   }
 
@@ -661,8 +661,8 @@ QDebug operator<<(QDebug out, const map::MapAirport& obj);
 struct MapRunway
   : public MapBase
 {
-  MapRunway() :
-    MapBase(staticType())
+  MapRunway()
+    : MapBase(staticType()) F
   {
   }
 
@@ -758,8 +758,8 @@ struct MapRunway
 struct MapRunwayEnd
   : public MapBase
 {
-  MapRunwayEnd() :
-    MapBase(staticType())
+  MapRunwayEnd()
+    : MapBase(staticType())
   {
   }
 
@@ -820,8 +820,8 @@ struct MapRunwayEnd
 struct MapApron
   : public MapBase
 {
-  MapApron() :
-    MapBase(map::NONE)
+  MapApron()
+    : MapBase(map::NONE)
   {
   }
 
@@ -861,8 +861,8 @@ struct MapTaxiPath
 struct MapParking
   : public MapBase
 {
-  MapParking() :
-    MapBase(staticType())
+  MapParking()
+    : MapBase(staticType())
   {
   }
 
@@ -899,8 +899,8 @@ struct MapParking
 struct MapStart
   : public MapBase
 {
-  MapStart() :
-    MapBase(staticType())
+  MapStart()
+    : MapBase(staticType())
   {
   }
 
@@ -937,8 +937,8 @@ struct MapStart
 struct MapHelipad
   : public MapBase
 {
-  MapHelipad() :
-    MapBase(staticType())
+  MapHelipad()
+    : MapBase(staticType())
   {
   }
 
@@ -965,8 +965,8 @@ struct MapHelipad
 struct MapVor
   : public MapBase
 {
-  MapVor() :
-    MapBase(staticType())
+  MapVor()
+    : MapBase(staticType())
   {
   }
 
@@ -1017,8 +1017,8 @@ struct MapVor
 struct MapNdb
   : public MapBase
 {
-  MapNdb() :
-    MapBase(staticType())
+  MapNdb()
+    : MapBase(staticType())
   {
   }
 
@@ -1051,8 +1051,8 @@ struct MapNdb
 struct MapWaypoint
   : public MapBase
 {
-  MapWaypoint() :
-    MapBase(staticType())
+  MapWaypoint()
+    : MapBase(staticType())
   {
   }
 
@@ -1102,8 +1102,8 @@ struct MapAirwayWaypoint
 struct MapUserpointRoute
   : public MapBase
 {
-  MapUserpointRoute() :
-    MapBase(staticType())
+  MapUserpointRoute()
+    : MapBase(staticType())
   {
   }
 
@@ -1126,6 +1126,12 @@ struct MapUserpointRoute
     return ident;
   }
 
+  map::MapRefExt getRefExt(const QString& name) const
+  {
+    // No id given
+    return map::MapRefExt(-1, position, type, name);
+  }
+
 };
 
 // =====================================================================
@@ -1133,8 +1139,8 @@ struct MapUserpointRoute
 struct MapUserpoint
   : public MapBase
 {
-  MapUserpoint() :
-    MapBase(staticType())
+  MapUserpoint()
+    : MapBase(staticType())
   {
   }
 
@@ -1195,6 +1201,11 @@ struct MapUserpoint
     return ident;
   }
 
+  map::MapRefExt getRefExt(const QString& name) const
+  {
+    return map::MapRefExt(id, position, type, name);
+  }
+
 };
 
 // =====================================================================
@@ -1202,8 +1213,8 @@ struct MapUserpoint
 struct MapUserAircraft
   : public MapBase
 {
-  MapUserAircraft() :
-    MapBase(staticType())
+  MapUserAircraft()
+    : MapBase(staticType())
   {
   }
 
@@ -1243,8 +1254,8 @@ private:
 struct MapAiAircraft
   : public MapBase
 {
-  MapAiAircraft() :
-    MapBase(staticType())
+  MapAiAircraft()
+    : MapBase(staticType())
   {
   }
 
@@ -1277,8 +1288,8 @@ private:
 struct MapOnlineAircraft
   : public MapBase
 {
-  MapOnlineAircraft() :
-    MapBase(staticType())
+  MapOnlineAircraft()
+    : MapBase(staticType())
   {
   }
 
@@ -1313,8 +1324,8 @@ private:
 struct MapLogbookEntry
   : public MapBase
 {
-  MapLogbookEntry() :
-    MapBase(staticType())
+  MapLogbookEntry()
+    : MapBase(staticType())
   {
   }
 
@@ -1412,8 +1423,8 @@ enum MapAirwayRouteType
 struct MapAirway
   : public MapBase
 {
-  MapAirway() :
-    MapBase(staticType())
+  MapAirway()
+    : MapBase(staticType())
   {
   }
 
@@ -1462,8 +1473,8 @@ struct MapAirway
 struct MapMarker
   : public MapBase
 {
-  MapMarker() :
-    MapBase(staticType())
+  MapMarker()
+    : MapBase(staticType())
   {
   }
 
@@ -1499,8 +1510,8 @@ enum IlsType : char
 struct MapIls
   : public MapBase
 {
-  MapIls() :
-    MapBase(staticType())
+  MapIls()
+    : MapBase(staticType())
   {
   }
 
@@ -1632,8 +1643,8 @@ struct MapIls
 struct MapAirspace
   : public MapBase
 {
-  MapAirspace() :
-    MapBase(staticType())
+  MapAirspace()
+    : MapBase(staticType())
   {
   }
 
@@ -1703,11 +1714,11 @@ struct MapAirspace
 
 // =====================================================================
 /* All information for a airport MSA circle */
-struct MapAirportMsa :
-  public MapBase
+struct MapAirportMsa
+  : public MapBase
 {
-  MapAirportMsa() :
-    MapBase(staticType())
+  MapAirportMsa()
+    : MapBase(staticType())
   {
   }
 
@@ -1751,8 +1762,8 @@ struct MapAirportMsa :
 struct MapHolding
   : public MapBase
 {
-  MapHolding() :
-    MapBase(staticType())
+  MapHolding()
+    : MapBase(staticType())
   {
   }
 

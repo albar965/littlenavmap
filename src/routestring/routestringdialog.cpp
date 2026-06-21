@@ -52,8 +52,6 @@ SyntaxHighlighter::SyntaxHighlighter(QObject *parent)
 {
 }
 
-
-
 void SyntaxHighlighter::styleChanged()
 {
   formatHighlight.setFontWeight(QFont::Bold);
@@ -72,8 +70,6 @@ void SyntaxHighlighter::highlightBlock(const QString& text)
   // In text block and have text - merge current formatting
   setFormat(0, text.size(), currentBlockState() == IN_HIGHLIGHT_BLOCK ? formatHighlight : formatNormal);
 }
-
-
 
 bool RouteStringTextEditEventFilter::eventFilter(QObject *object, QEvent *event)
 {
@@ -261,7 +257,7 @@ void RouteStringDialog::buildButtonMenu()
                           "Speed is ignored in favor to currently loaded aircraft performance\n"
                           "when reading a description into a flight plan."));
     action->setCheckable(true);
-    action->setData(static_cast<int>(rs::ALT_AND_SPEED));
+    action->setData(static_cast<int>(rs::WRITE_ALT_AND_SPEED));
     buttonMenu->addAction(action);
     actions.append(action);
 
@@ -269,7 +265,7 @@ void RouteStringDialog::buildButtonMenu()
     action->setObjectName("actionDct");
     action->setToolTip(tr("Fill direct connections between waypoints with a \"DCT\""));
     action->setCheckable(true);
-    action->setData(static_cast<int>(rs::DCT));
+    action->setData(static_cast<int>(rs::WRITE_DCT));
     buttonMenu->addAction(action);
     actions.append(action);
 
@@ -277,7 +273,7 @@ void RouteStringDialog::buildButtonMenu()
     action->setObjectName("actionAlternates");
     action->setToolTip(tr("Add the ICAO code for all alternate airports to the end of the description"));
     action->setCheckable(true);
-    action->setData(static_cast<int>(rs::ALTERNATES));
+    action->setData(static_cast<int>(rs::WRITE_ALTERNATES));
     buttonMenu->addAction(action);
     actions.append(action);
 
@@ -290,7 +286,7 @@ void RouteStringDialog::buildButtonMenu()
       action->setObjectName("actionSidStar");
       action->setToolTip(tr("Write SID, STAR and the respective transitions to the description"));
       action->setCheckable(true);
-      action->setData(static_cast<int>(rs::SID_STAR));
+      action->setData(static_cast<int>(rs::WRITE_SID_STAR));
 
       buttonMenu->addAction(action);
       procActionGroup->addAction(action);
@@ -301,7 +297,7 @@ void RouteStringDialog::buildButtonMenu()
     action->setObjectName("actionGenericSidStar");
     action->setToolTip(tr("Add \"SID\" and \"STAR\" words only instead of the real procedure names"));
     action->setCheckable(true);
-    action->setData(static_cast<int>(rs::SID_STAR_GENERIC));
+    action->setData(static_cast<int>(rs::WRITE_SID_STAR_GENERIC));
     buttonMenu->addAction(action);
     procActionGroup->addAction(action);
     actions.append(action);
@@ -310,7 +306,7 @@ void RouteStringDialog::buildButtonMenu()
     action->setObjectName("actionNoSidStar");
     action->setToolTip(tr("Add neither SID nor STAR to the description"));
     action->setCheckable(true);
-    action->setData(static_cast<int>(rs::SID_STAR_NONE));
+    action->setData(static_cast<int>(rs::DIALOG_SID_STAR_NONE));
     buttonMenu->addAction(action);
     procActionGroup->addAction(action);
     actions.append(action);
@@ -321,7 +317,7 @@ void RouteStringDialog::buildButtonMenu()
     action->setObjectName("actionReversedStar");
     action->setToolTip(tr("Write \"TRANS.STAR\" instead of \"STAR.TRANS\" or \"TRANS STAR\" instead of \"STAR TRANS\""));
     action->setCheckable(true);
-    action->setData(static_cast<int>(rs::STAR_REV_TRANSITION));
+    action->setData(static_cast<int>(rs::WRITE_STAR_REV_TRANSITION));
     buttonMenu->addAction(action);
     actions.append(action);
 
@@ -329,7 +325,7 @@ void RouteStringDialog::buildButtonMenu()
     action->setObjectName("actionSpaceSidStar");
     action->setToolTip(tr("Use a space instead of \".\" to separate SID, STAR and transition"));
     action->setCheckable(true);
-    action->setData(static_cast<int>(rs::SID_STAR_SPACE));
+    action->setData(static_cast<int>(rs::WRITE_SID_STAR_SPACE));
     buttonMenu->addAction(action);
     actions.append(action);
 
@@ -352,7 +348,7 @@ void RouteStringDialog::buildButtonMenu()
     buttonMenu->addSeparator();
 
     delete advancedMenu;
-    advancedMenu = new QMenu(tr("&Advanced"));
+    advancedMenu = new QMenu(tr("&More"));
     advancedMenu->setToolTipsVisible(buttonMenu->toolTipsVisible());
     advancedMenu->setTearOffEnabled(buttonMenu->isTearOffEnabled());
     buttonMenu->addMenu(advancedMenu);
@@ -361,7 +357,7 @@ void RouteStringDialog::buildButtonMenu()
     action->setObjectName("actionWaypoints");
     action->setToolTip(tr("Ignore airways and add all waypoints instead"));
     action->setCheckable(true);
-    action->setData(static_cast<int>(rs::NO_AIRWAYS));
+    action->setData(static_cast<int>(rs::WRITE_NO_AIRWAYS));
     advancedMenu->addAction(action);
     actions.append(action);
 
@@ -370,7 +366,17 @@ void RouteStringDialog::buildButtonMenu()
     action->setToolTip(tr("Omit departure and destination airport ident.\n"
                           "Note that the resulting description cannot be read into a flight plan."));
     action->setCheckable(true);
-    action->setData(static_cast<int>(rs::START_AND_DEST));
+    action->setData(static_cast<int>(rs::WRITE_DEPART_AND_DEST));
+    advancedMenu->addAction(action);
+    actions.append(action);
+
+    advancedMenu->addSeparator();
+
+    action = new QAction(tr("Read and Write &Userpoints"), advancedMenu);
+    action->setObjectName("actionUserpoints");
+    action->setToolTip(tr("Use userpoints of type \"Waypoint\", \"VOR\", \"NDB\" as \"VRP\" like navaids."));
+    action->setCheckable(true);
+    action->setData(static_cast<int>(rs::READ_WRITE_USERPOINT_IDENT));
     advancedMenu->addAction(action);
     actions.append(action);
 
@@ -441,7 +447,7 @@ void RouteStringDialog::loadFromFlightplanButtonClicked()
   flightplan->setFlightplanType(NavApp::getRouteConst().getFlightplanConst().getFlightplanType());
   updateTypeFromFlightplan();
   textEditRouteStringPrepend(routeStringWriter->createStringForRoute(NavApp::getRouteConst(), NavApp::getRouteCruiseSpeedKts(),
-                                                                     options | rs::ALT_AND_SPEED_METRIC), true /* newline*/);
+                                                                     options | rs::WRITE_ALT_AND_SPEED_METRIC), true /* newline*/);
   ui->textEditRouteString->setFocus();
 }
 
@@ -626,7 +632,7 @@ void RouteStringDialog::textChangedInternal(bool forceUpdate)
   // Compare with last read string to avoid needless updates
   if(forceUpdate || currentRouteString != lastCleanRouteString)
   {
-    QString errorString;
+    QString messages;
     lastCleanRouteString = currentRouteString;
 
     if(!currentRouteString.isEmpty())
@@ -646,8 +652,11 @@ void RouteStringDialog::textChangedInternal(bool forceUpdate)
           flightplan->setCruiseAltitudeFt(0.f);
 
         // Fill report into widget
-        errorString.append(routeStringReader->getAllMessages().join("<br/>"));
-        atools::gui::updateTextEdit(ui->textEditRouteStringErrors, errorString, false /* scrollToTop */, true /* keepSelection */);
+        // Get messages in order of error, warning, note and info messages separated by an empty line
+        // Colors are already formatted
+        messages.append(routeStringReader->getAllMessages().join("<br/>"));
+
+        atools::gui::updateTextEdit(ui->textEditRouteStringErrors, messages, false /* scrollToTop */, true /* keepSelection */);
       }
       else
         atools::gui::updateTextEdit(ui->textEditRouteStringErrors, tr("Description is too long."), false /* scrollToTop */,

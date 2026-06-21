@@ -859,7 +859,7 @@ void RouteController::routeStringToClipboard() const
 {
   // Create string from the current flight plan using current settings and not from the dialog
   QString str = RouteStringWriter().createStringForRoute(route, NavApp::getRouteCruiseSpeedKts(),
-                                                         RouteStringDialog::getOptionsFromSettings() | rs::ALT_AND_SPEED_METRIC);
+                                                         RouteStringDialog::getOptionsFromSettings() | rs::WRITE_ALT_AND_SPEED_METRIC);
 
   if(!str.isEmpty())
     QApplication::clipboard()->setText(str);
