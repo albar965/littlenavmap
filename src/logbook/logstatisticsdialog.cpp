@@ -158,7 +158,6 @@ LogStatisticsDialog::LogStatisticsDialog(QWidget *parent, LogdataController *log
   : QDialog(parent), ui(new Ui::LogStatisticsDialog), logdataController(logdataControllerParam)
 {
   setWindowFlag(Qt::WindowContextHelpButtonHint, false);
-
   setWindowModality(Qt::NonModal);
 
   // Prefill query vector
@@ -562,6 +561,11 @@ void LogStatisticsDialog::showEvent(QShowEvent *)
   setModel();
   updateWidgets();
   restoreState();
+
+  if(ui->tabWidget->currentIndex() == 0)
+    ui->textBrowserLogStatsOverview->setFocus();
+  else
+    ui->tableViewLogStatsGrouped->setFocus();
 }
 
 void LogStatisticsDialog::hideEvent(QHideEvent *)

@@ -279,7 +279,8 @@ void RouteCalcDialog::updateHeader()
       title = tr("<b>Calculate flight plan from<br/>%1 to %2</b><hr/>").arg(departure, destination);
 
       title.append(tr("Direct distance is %1. Flight plan distance is %2.").
-                   arg(Unit::distMeter(departLeg.getPosition().distanceMeterTo(destLeg.getPosition())), Unit::distNm(route.getTotalDistance())));
+                   arg(Unit::distMeter(departLeg.getPosition().distanceMeterTo(destLeg.getPosition())),
+                       Unit::distNm(route.getTotalDistance())));
     }
     else
     {

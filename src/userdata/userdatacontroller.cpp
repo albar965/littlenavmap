@@ -963,7 +963,7 @@ void UserdataController::exportBglXml()
   qDebug() << Q_FUNC_INFO;
   try
   {
-    bool selected, append, header, xp12;
+    bool selected = false, append = false, header = false, xp12 = false;
     if(exportSelectedQuestion(selected, append, header, xp12, false /* appendAllowed */, false /* headerAllowed */, false /* xplane */))
     {
       QString file = dialog->saveFileDialog(
@@ -976,8 +976,7 @@ void UserdataController::exportBglXml()
         QList<int> ids;
         if(selected)
           ids = NavApp::getUserdataSearch()->getSelectedIds();
-        int numExported =
-          manager->exportBgl(file, ids);
+        int numExported = manager->exportBgl(file, ids);
         NavApp::setStatusMessage(tr("%n userpoint(s) exported.", "", numExported));
       }
     }

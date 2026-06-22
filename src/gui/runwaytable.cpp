@@ -121,8 +121,10 @@ void RunwayTable::init()
       }
     }
 
-    selection->select(runwayTableWidget->model()->index(rowToSelect, 0), QItemSelectionModel::SelectCurrent | QItemSelectionModel::Rows);
+    runwayTableWidget->setCurrentCell(rowToSelect, 0, QItemSelectionModel::SelectCurrent | QItemSelectionModel::Rows);
   }
+
+  runwayTableWidget->setFocus();
 }
 
 void RunwayTable::setPreSelectedRunwayEnd(const QString& name, QString *error)

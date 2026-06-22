@@ -95,6 +95,7 @@ ParkingDialog::ParkingDialog(QWidget *parent, const map::MapAirport& departureAi
   updateTable();
   updateTableSelection();
   updateButtonsAndHeader();
+  ui->tableWidgetSelectParking->setFocus();
 
   connect(ui->tableWidgetSelectParking, &QTableWidget::itemSelectionChanged, this, &ParkingDialog::updateButtonsAndHeader);
   connect(ui->buttonBoxSelectParking, &QDialogButtonBox::clicked, this, &ParkingDialog::buttonBoxClicked);
@@ -340,7 +341,7 @@ void ParkingDialog::updateTableSelection()
         (pos.start.isValid() && start.startType == pos.start.startType && start.runwayName == pos.start.runwayName) ||
         // Neither from route is valid and airport entry
         (!parking.isValid() && !start.isValid() && pos.airport.isValid()))
-        ui->tableWidgetSelectParking->selectRow(row);
+        ui->tableWidgetSelectParking->setCurrentCell(row, 0, QItemSelectionModel::SelectCurrent | QItemSelectionModel::Rows);
     }
   }
 }

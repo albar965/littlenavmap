@@ -124,8 +124,6 @@ void CustomProcedureDialog::restoreState()
 
   runwayTable->init();
   updateWidgets();
-
-  ui->tableWidgetCustomProcRunway->setFocus();
 }
 
 void CustomProcedureDialog::saveState() const

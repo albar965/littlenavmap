@@ -195,7 +195,13 @@ void RouteWaypointEditDialog::setEntryAndShow(int index, const atools::fs::pln::
   show();
   raise();
   activateWindow();
-  ui->plainTextEditRouteUserWaypointComment->setFocus();
+
+  if(flightplanEntry->getWaypointType() == atools::fs::pln::entry::USER)
+    ui->lineEditRouteUserWaypointIdent->setFocus();
+  else
+    ui->plainTextEditRouteUserWaypointComment->setFocus();
+
+  ui->buttonBox->button(QDialogButtonBox::Close)->setDefault(true);
 }
 
 void RouteWaypointEditDialog::setEntryInternal(int index, const atools::fs::pln::FlightplanEntry& entryParam)
@@ -282,10 +288,9 @@ void RouteWaypointEditDialog::buttonBoxClicked(QAbstractButton *button)
   }
   else if(button == ui->buttonBox->button(QDialogButtonBox::Help))
   {
-    if(flightplanEntry->getWaypointType() == atools::fs::pln::entry::USER)
-      atools::gui::HelpHandler::openHelpUrlWeb(parentWidget(), lnm::helpOnlineUrl + "EDITFPPOSITION.html", lnm::helpLanguageOnline());
-    else
-      atools::gui::HelpHandler::openHelpUrlWeb(parentWidget(), lnm::helpOnlineUrl + "EDITFPREMARKS.html", lnm::helpLanguageOnline());
+    QString url = lnm::helpOnlineUrl + (flightplanEntry->getWaypointType() == atools::fs::pln::entry::USER ?
+                                        "EDITFPPOSITION.html" : "EDITFPREMARKS.html");
+    atools::gui::HelpHandler::openHelpUrlWeb(parentWidget(), url, lnm::helpLanguageOnline());
   }
 }
 

@@ -76,8 +76,6 @@ void RunwaySelectionDialog::restoreState()
 
   runwayTable->init();
   updateWidgets();
-
-  ui->tableWidgetRunwaySelection->setFocus();
 }
 
 void RunwaySelectionDialog::saveState() const
