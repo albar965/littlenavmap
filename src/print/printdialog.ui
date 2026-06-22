@@ -236,6 +236,9 @@ Note that the order of columns is as selected in the flight plan table.</string>
           <property name="editTriggers">
            <set>QAbstractItemView::NoEditTriggers</set>
           </property>
+          <property name="tabKeyNavigation">
+           <bool>false</bool>
+          </property>
           <property name="showDropIndicator" stdset="0">
            <bool>false</bool>
           </property>

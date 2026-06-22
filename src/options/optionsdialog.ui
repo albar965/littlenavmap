@@ -5954,6 +5954,9 @@ if you hover over the elevation profile.</string>
                  <property name="showDropIndicator" stdset="0">
                   <bool>false</bool>
                  </property>
+                 <property name="tabKeyNavigation">
+                  <bool>false</bool>
+                 </property>
                  <property name="alternatingRowColors">
                   <bool>true</bool>
                  </property>
@@ -9031,6 +9034,9 @@ You have to reload the scenery library so that the changes take effect.</string>
                  <property name="selectionMode">
                   <enum>QAbstractItemView::ExtendedSelection</enum>
                  </property>
+                 <property name="tabKeyNavigation">
+                  <bool>false</bool>
+                 </property>
                  <property name="textElideMode">
                   <enum>Qt::ElideLeft</enum>
                  </property>
@@ -9131,6 +9137,9 @@ You have to reload the scenery library so that the changes take effect.</string>
                   <set>QAbstractItemView::NoEditTriggers</set>
                  </property>
                  <property name="showDropIndicator" stdset="0">
+                  <bool>false</bool>
+                 </property>
+                 <property name="tabKeyNavigation">
                   <bool>false</bool>
                  </property>
                  <property name="alternatingRowColors">
@@ -9248,6 +9257,9 @@ You have to reload the scenery library so that the changes take effect.</string>
                  </property>
                  <property name="horizontalScrollMode">
                   <enum>QAbstractItemView::ScrollPerPixel</enum>
+                 </property>
+                 <property name="tabKeyNavigation">
+                  <bool>false</bool>
                  </property>
                  <property name="wordWrap">
                   <bool>false</bool>
