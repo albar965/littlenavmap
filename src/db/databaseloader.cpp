@@ -213,9 +213,6 @@ void DatabaseLoader::loadScenery()
   // No parent to allow non-modal dialog
   progressDialog = new DatabaseProgressDialog(nullptr, atools::fs::FsPaths::typeToShortDisplayName(selectedFsType));
 
-  // Add to dock handler to enable auto raise and closing on exit as well as applying stay-on-top status from main
-  NavApp::registerDialogInDockHandler(progressDialog);
-
   QString basePath = simulators.value(selectedFsType).basePath;
   navDatabaseOpts->setSceneryFile(simulators.value(selectedFsType).sceneryCfg);
   navDatabaseOpts->setBasepath(basePath);
@@ -584,7 +581,6 @@ void DatabaseLoader::loadSceneryStop()
 
 void DatabaseLoader::deleteProgressDialog()
 {
-  NavApp::unregisterDialogInDockHandler(progressDialog);
   delete progressDialog;
   progressDialog = nullptr;
 }

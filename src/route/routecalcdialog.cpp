@@ -97,10 +97,17 @@ RouteCalcDialog::RouteCalcDialog(QWidget *parent)
   ui->labelRouteCalcHeader->installEventFilter(new atools::gui::ClickToolTipHandler(ui->labelRouteCalcHeader));
 
   connect(ui->buttonBox, &QDialogButtonBox::clicked, this, &RouteCalcDialog::buttonBoxClicked);
+
+  // Add to dock handler to enable auto raise and closing on exit
+  NavApp::registerDialogInDockHandler(this);
+
+  ui->buttonBox->button(QDialogButtonBox::Apply)->setDefault(true);
 }
 
 RouteCalcDialog::~RouteCalcDialog()
 {
+  NavApp::unregisterDialogInDockHandler(this);
+
   delete units;
   delete ui;
 }

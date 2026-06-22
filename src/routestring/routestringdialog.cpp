@@ -205,12 +205,15 @@ RouteStringDialog::RouteStringDialog(QWidget *parent, const QString& settingsSuf
   eventFilter = new RouteStringTextEditEventFilter(this);
   ui->textEditRouteString->installEventFilter(eventFilter);
 
+  NavApp::registerDialogInDockHandler(this);
+
   // Apply splitter and text formats
   styleChanged();
 }
 
 RouteStringDialog::~RouteStringDialog()
 {
+  NavApp::unregisterDialogInDockHandler(this);
   ui->textEditRouteString->removeEventFilter(eventFilter);
   sytaxHighlighter->setDocument(nullptr);
   ATOOLS_DELETE_LOG(sytaxHighlighter);

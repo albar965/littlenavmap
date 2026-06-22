@@ -16,9 +16,11 @@
 *****************************************************************************/
 
 #include "db/databaseprogressdialog.h"
-#include "ui_databaseprogressdialog.h"
-#include "gui/widgetstate.h"
+
+#include "app/navapp.h"
 #include "common/constants.h"
+#include "gui/widgetstate.h"
+#include "ui_databaseprogressdialog.h"
 
 #include <QPushButton>
 
@@ -35,10 +37,15 @@ DatabaseProgressDialog::DatabaseProgressDialog(QWidget *parent, const QString& s
 
   connect(ui->buttonBoxDatabaseProgress, &QDialogButtonBox::clicked, this, &DatabaseProgressDialog::buttonBoxClicked);
   restoreState();
+
+  // Add to dock handler to enable auto raise and closing on exit as well as applying stay-on-top status from main
+  NavApp::registerDialogInDockHandler(this);
 }
 
 DatabaseProgressDialog::~DatabaseProgressDialog()
 {
+  NavApp::unregisterDialogInDockHandler(this);
+
   delete ui;
 }
 

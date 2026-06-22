@@ -75,12 +75,9 @@ LogdataController::LogdataController(atools::fs::userdata::LogdataManager *logda
   dialog = new atools::gui::Dialog(mainWindow);
 
   // Do not use a parent to allow the window moving to back
-  statsDialog = new LogStatisticsDialog(nullptr, this);
+  statisticsDialog = new LogStatisticsDialog(nullptr, this);
 
-  // Add to dock handler to enable auto raise and closing on exit
-  NavApp::registerDialogInDockHandler(statsDialog);
-
-  connect(this, &LogdataController::logDataChanged, statsDialog, &LogStatisticsDialog::logDataChanged);
+  connect(this, &LogdataController::logDataChanged, statisticsDialog, &LogStatisticsDialog::logDataChanged);
   connect(this, &LogdataController::logDataChanged, manager, &atools::sql::DataManagerBase::updateUndoRedoActions);
 
   Ui::MainWindow *ui = NavApp::getMainUi();
@@ -97,8 +94,7 @@ LogdataController::LogdataController(atools::fs::userdata::LogdataManager *logda
 
 LogdataController::~LogdataController()
 {
-  NavApp::unregisterDialogInDockHandler(statsDialog);
-  delete statsDialog;
+  delete statisticsDialog;
   delete aircraftAtTakeoff;
   delete dialog;
 }
@@ -188,12 +184,12 @@ void LogdataController::restoreState()
 
 void LogdataController::resetWindowLayout()
 {
-  statsDialog->resetWindowLayout();
+  statisticsDialog->resetWindowLayout();
 }
 
 void LogdataController::optionsChanged()
 {
-  statsDialog->optionsChanged();
+  statisticsDialog->optionsChanged();
 }
 
 void LogdataController::saveLogEntryId() const
@@ -208,12 +204,12 @@ void LogdataController::restoreLogEntryId()
 
 void LogdataController::fontChanged(const QFont& font)
 {
-  statsDialog->fontChanged(font);
+  statisticsDialog->fontChanged(font);
 }
 
 void LogdataController::styleChanged()
 {
-  statsDialog->styleChanged();
+  statisticsDialog->styleChanged();
 }
 
 void LogdataController::deleteLogEntryFromMap(int id)
@@ -282,10 +278,10 @@ void LogdataController::getFlightStatsSimulator(QList<std::pair<int, QString> >&
 
 void LogdataController::statisticsLogbookShow()
 {
-  statsDialog->setWindowState((statsDialog->windowState() & ~Qt::WindowMinimized) | Qt::WindowActive);
-  statsDialog->show();
-  statsDialog->raise();
-  statsDialog->activateWindow();
+  statisticsDialog->setWindowState((statisticsDialog->windowState() & ~Qt::WindowMinimized) | Qt::WindowActive);
+  statisticsDialog->show();
+  statisticsDialog->raise();
+  statisticsDialog->activateWindow();
 }
 
 atools::sql::SqlDatabase *LogdataController::getDatabase() const

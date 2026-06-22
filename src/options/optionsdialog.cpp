@@ -1064,6 +1064,8 @@ OptionsDialog::OptionsDialog(QMainWindow *parentWindow)
 /* called at program end */
 OptionsDialog::~OptionsDialog()
 {
+  NavApp::unregisterDialogInDockHandler(this);
+
   ui->treeWidgetOptionsDisplayTextOptions->setItemDelegate(nullptr);
   ui->treeWidgetOptionsDisplayTextOptionsAirport->setItemDelegate(nullptr);
 

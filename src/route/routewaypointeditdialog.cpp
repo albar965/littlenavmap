@@ -132,10 +132,15 @@ RouteWaypointEditDialog::RouteWaypointEditDialog(QWidget *parent)
   editTimer.setSingleShot(true);
   editTimer.setInterval(EDIT_TIMEOUT_MS);
   connect(&editTimer, &QTimer::timeout, this, &RouteWaypointEditDialog::fieldsEdited);
+
+  // Add to dock handler to enable auto raise and closing on exit
+  NavApp::registerDialogInDockHandler(this);
 }
 
 RouteWaypointEditDialog::~RouteWaypointEditDialog()
 {
+  NavApp::unregisterDialogInDockHandler(this);
+
   delete widgets;
   editTimer.stop();
   ui->plainTextEditRouteUserWaypointComment->removeEventFilter(eventFilter);

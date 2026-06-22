@@ -261,7 +261,7 @@ private:
 
   bool aircraftPassedTakeoffPoint = false;
 
-  LogStatisticsDialog *statsDialog = nullptr;
+  LogStatisticsDialog *statisticsDialog = nullptr;
 
   atools::fs::userdata::LogdataManager *manager;
   atools::gui::Dialog *dialog;

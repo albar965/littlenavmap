@@ -641,13 +641,6 @@ void MainWindow::deInit()
     qDebug() << Q_FUNC_INFO << "QueryManager::instance()->shutdown()";
     QueryManager::instance()->shutdown();
 
-    // Set all pointers to null to catch errors for late access
-    qDebug() << Q_FUNC_INFO << "NavApp::removeDialogFromDockHandler()";
-    dockHandler->unregisterDialog(routeStringDialog);
-
-    // Add to dock handler to enable auto raise and closing on exit
-    dockHandler->unregisterDialog(optionsDialog);
-
     ATOOLS_DELETE_LOG(routeStringDialog);
     ATOOLS_DELETE_LOG(routeController);
     ATOOLS_DELETE_LOG(searchController);
@@ -2153,9 +2146,6 @@ void MainWindow::routeFromStringCurrent()
     // Load last content
     routeStringDialog->restoreState();
 
-    // Add to dock handler to enable auto raise and closing on exit
-    dockHandler->registerDialog(routeStringDialog);
-
     // Connect signals from and to non-modal dialog
     connect(routeStringDialog, &RouteStringDialog::routeFromFlightplan, this, &MainWindow::routeFromFlightplan);
     connect(atools::gui::Application::applicationInstance(), &Application::fontChanged, routeStringDialog, &RouteStringDialog::fontChanged);
@@ -3394,7 +3384,10 @@ void MainWindow::openOptionsDialog()
   else
   {
     setStayOnTop(optionsDialog);
-    dockHandler->registerDialog(optionsDialog);
+
+    // Add to dock handler to enable auto raise and closing on exit
+    // Needs late registration since constructed too early
+    dockHandler->registerDialog(optionsDialog); // unregistered in destructor
     optionsDialog->show();
   }
 }

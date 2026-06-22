@@ -409,10 +409,6 @@ RouteController::RouteController(MainWindow *parentWindow, QTableView *tableView
   ui->actionRouteEditUserWaypoint->setShortcutContext(Qt::WidgetWithChildrenShortcut);
   ui->actionRouteShowLeg->setShortcutContext(Qt::WidgetWithChildrenShortcut); // Not shown in context menu
 
-  // Add to dock handler to enable auto raise and closing on exit
-  mainWindow->registerDialogInDockHandler(routeCalcDialog);
-  mainWindow->registerDialogInDockHandler(waypointEditDialog);
-
   // Add action/shortcuts to table view ==========================================
   tableViewRoute->addActions({ui->actionRouteLegDown, ui->actionRouteLegUp, ui->actionRouteDeleteLeg,
                               ui->actionRouteTableCopy, ui->actionRouteShowInformation,
