@@ -74,8 +74,6 @@ PatternMarkerDialog::PatternMarkerDialog(QWidget *parent, const map::PatternMark
   units = new UnitStringTool();
   units->init({ui->doubleSpinBoxTrafficPatternBaseDistance, ui->doubleSpinBoxTrafficPatternDepartureDistance,
                ui->doubleSpinBoxDownwindDistance, ui->spinBoxTrafficPatternAltitude});
-
-  restoreState();
 }
 
 PatternMarkerDialog::~PatternMarkerDialog()

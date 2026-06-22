@@ -49,6 +49,8 @@ public:
   explicit DistanceMarkerDialog(QWidget *parent, const map::DistanceMarker& markerParam, const map::MapResult& result, bool editMode);
   virtual ~DistanceMarkerDialog() override;
 
+  virtual void restoreState() override;
+
   /* Get color from settings before drag and drop action starts */
   static QColor getSavedColor();
 
@@ -56,7 +58,6 @@ private:
   /* A button box button was clicked. Always saves state. */
   void buttonBoxClicked(QAbstractButton *button);
 
-  virtual void restoreState() override;
   virtual void saveState() const override;
   virtual void widgetsToMarker() override;
   virtual void markerToWidgets() override;

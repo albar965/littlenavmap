@@ -53,8 +53,8 @@ public:
   explicit HoldingMarkerDialog(QWidget *parent, const map::HoldingMarker& markerParam, const map::MapResult& result, bool editMode);
   virtual ~HoldingMarkerDialog() override;
 
-private:
   virtual void restoreState() override;
+private:
   virtual void saveState() const override;
   virtual void markerToWidgets() override;
   virtual void widgetsToMarker() override;

@@ -48,8 +48,9 @@ public:
   explicit PatternMarkerDialog(QWidget *parent, const map::PatternMarker& markerParam, const map::MapResult& result, bool editMode);
   virtual ~PatternMarkerDialog() override;
 
-private:
   virtual void restoreState() override;
+
+private:
   virtual void saveState() const override;
   virtual void markerToWidgets() override;
   virtual void widgetsToMarker() override;

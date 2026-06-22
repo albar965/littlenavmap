@@ -56,8 +56,6 @@ HoldingMarkerDialog::HoldingMarkerDialog(QWidget *parent, const map::HoldingMark
   // Saves original texts and restores them on deletion
   units = new UnitStringTool();
   units->init({ui->spinBoxHoldSpeed, ui->spinBoxHoldAltitude});
-
-  restoreState();
 }
 
 HoldingMarkerDialog::~HoldingMarkerDialog()

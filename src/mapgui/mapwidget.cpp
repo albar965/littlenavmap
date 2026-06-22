@@ -1235,6 +1235,8 @@ void MapWidget::mouseReleaseEvent(QMouseEvent *event)
       if(!canceled && mouseState.testFlag(ms::DRAG_DIST_NEW_TO))
       {
         DistanceMarkerDialog dialog(this, markerRef, result, false /* editMode */);
+        dialog.restoreState();
+
         int retval = dialog.execMarkerDialog(distanceDragShowDialog, &contextMenuActive);
         if(retval == QDialog::Accepted && markerRef.getDistanceMeter() > 1.f)
           markerRef = dialog.getMarker();
@@ -1378,21 +1380,14 @@ void MapWidget::wheelEvent(QWheelEvent *event)
 
   // Pixel is null for mouse wheel - otherwise touchpad
   int angleDeltaY = event->angleDelta().y();
-  int angleDeltaX = event->angleDelta().x();
 
   // Sum up wheel events to start action one threshold is exceeded
   lastWheelAngleY += angleDeltaY;
-  lastWheelAngleX += angleDeltaX;
 
   if(atools::sign(lastWheelAngleY) != atools::sign(angleDeltaY))
     // User changed direction while moving - reverse direction
     // to allow immediate scroll direction change
     lastWheelAngleY = ANGLE_THRESHOLD * atools::sign(angleDeltaY);
-
-  if(atools::sign(lastWheelAngleX) != atools::sign(angleDeltaX))
-    // User changed direction while moving - reverse direction
-    // to allow immediate scroll direction change
-    lastWheelAngleX = ANGLE_THRESHOLD * atools::sign(angleDeltaX);
 
   // Get only real modifiers
   Qt::KeyboardModifiers modifiers = event->modifiers() & MODIFIER_FILTER;
@@ -1415,7 +1410,7 @@ void MapWidget::wheelEvent(QWheelEvent *event)
     bool reverse = OptionData::instance().getFlags().testFlag(opts::GUI_REVERSE_WHEEL);
     if(reverse)
     {
-      angleDeltaX = -angleDeltaX;
+      // angleDeltaX = -angleDeltaX;
       angleDeltaY = -angleDeltaY;
       directionIn = !directionIn;
     }
@@ -1438,15 +1433,6 @@ void MapWidget::wheelEvent(QWheelEvent *event)
       else if(angleDeltaY < 0)
         NavApp::getMapDetailHandler()->decreaseMapDetailText();
     }
-    // This completely fails on Windows
-    // else if(modifiers == Qt::AltModifier)
-    // {
-    //// Move in map position history ===================================================================
-    // if(angleDeltaY > 0 || angleDeltaX > 0)
-    // historyNext();
-    // else if(angleDeltaY < 0 || angleDeltaX < 0)
-    // historyBack();
-    // }
     else if(modifiers == Qt::NoModifier || modifiers == Qt::ShiftModifier)
     {
       // Zoom in/out ========================================================================
@@ -2396,6 +2382,7 @@ void MapWidget::editRangeMark(int id)
   queries->getMapQuery()->getMapObjectByIdent(result, markerRef.nav.type, markerRef.nav.ident, QStringLiteral(),
                                               QStringLiteral(), markerRef.position, 2000);
   RangeMarkerDialog dialog(this, markerRef, result, true /* editMode */);
+  dialog.restoreState();
 
   // Disable focus loss messages using contextMenuActive canceling dragging
   int retval = dialog.execMarkerDialog(true /* forceShow */, &contextMenuActive);
@@ -2414,6 +2401,7 @@ void MapWidget::editDistanceMark(int id)
   queries->getMapQuery()->getMapObjectByIdent(result, markerRef.nav.type, markerRef.nav.ident, QStringLiteral(),
                                               QStringLiteral(), markerRef.from, 2000);
   DistanceMarkerDialog dialog(this, markerRef, result, true /* editMode */);
+  dialog.restoreState();
 
   // Disable focus loss messages using contextMenuActive canceling dragging
   int retval = dialog.execMarkerDialog(true /* forceShow */, &contextMenuActive);
@@ -2432,6 +2420,7 @@ void MapWidget::editHoldingMark(int id)
   queries->getMapQuery()->getMapObjectByIdent(result, markerRef.holding.nav.type, markerRef.holding.nav.ident,
                                               QStringLiteral(), QStringLiteral(), markerRef.position, 2000);
   HoldingMarkerDialog dialog(this, markerRef, result, true /* editMode */);
+  dialog.restoreState();
 
   // Disable focus loss messages using contextMenuActive canceling dragging
   int retval = dialog.execMarkerDialog(true /* forceShow */, &contextMenuActive);
@@ -2453,6 +2442,7 @@ void MapWidget::editPatternMark(int id)
   if(result.hasAirports())
   {
     PatternMarkerDialog dialog(this, markerRef, result, true /* editMode */);
+    dialog.restoreState();
 
     // Disable focus loss messages using contextMenuActive canceling dragging
     int retval = dialog.execMarkerDialog(true /* forceShow */, &contextMenuActive);
@@ -2495,7 +2485,7 @@ void MapWidget::updateRouteMenu(const QPoint& point, int leg, int pointIndex, bo
   if(pointIndex >= 0)
   {
     if(NavApp::getRouteConst().value(pointIndex).isAlternate())
-      result.clear(map::MapType(~map::AIRPORT));
+      result.clear(map::MapTypes(~map::AIRPORT));
   }
 
   // Count number of all objects
@@ -2908,7 +2898,7 @@ void MapWidget::updateHelpOverlayLabel()
 
 #endif
 
-// Build colors
+    // Build colors
     QColor backgroundColor = QApplication::palette().color(QPalette::Normal, NavApp::isGuiStyleDark() ? QPalette::Window : QPalette::Base);
     backgroundColor.setAlpha(140);
 
@@ -4085,6 +4075,8 @@ void MapWidget::addPatternMarker(const map::MapAirport& airport)
   marker.position = airport.position;
 
   PatternMarkerDialog dialog(this, marker, map::MapResult::createFromMapBase(&airport), false /* editMode */);
+  dialog.restoreState();
+
   if(dialog.execMarkerDialog(true /* forceShow */, &contextMenuActive) == QDialog::Accepted)
   {
     // Enable display of Map Markers
@@ -4116,6 +4108,8 @@ void MapWidget::addHoldingMarker(const map::MapResult& result, const atools::geo
   marker.id = NavApp::getMapMarkers()->getNextMapMarkerId();
   marker.position = marker.holding.position = position;
   HoldingMarkerDialog dialog(this, marker, result, false /* editMode */);
+  dialog.restoreState();
+
   if(dialog.execMarkerDialog(true /* forceShow */, &contextMenuActive) == QDialog::Accepted)
   {
     // Enable display of Map Markers
@@ -4340,6 +4334,7 @@ void MapWidget::addRangeMarkFromMap(const atools::geo::Pos& pos, bool showDialog
   queries->getMapQuery()->getMapObjectByIdent(result, marker.nav.type, marker.nav.ident, QStringLiteral(),
                                               QStringLiteral(), marker.position, 2000);
   RangeMarkerDialog dialog(this, marker, result, false /* editMode */);
+  dialog.restoreState();
 
   if(dialog.execMarkerDialog(showDialog, &contextMenuActive) != QDialog::Accepted)
     return;
@@ -4370,6 +4365,7 @@ void MapWidget::addRangeMark(const atools::geo::Pos& pos, const map::MapResult& 
   // Create dialog which also loads the defaults from settings
   // Use the determined position (may have been snapped to waypoint/navaid)
   RangeMarkerDialog dialog(this, marker, result, false /* editMode */);
+  dialog.restoreState();
 
   if(dialog.execMarkerDialog(showDialog, &contextMenuActive) != QDialog::Accepted)
     return;

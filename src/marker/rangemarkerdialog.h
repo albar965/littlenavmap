@@ -55,8 +55,9 @@ public:
   explicit RangeMarkerDialog(QWidget *parent, const map::RangeMarker& markerParam, const map::MapResult& result, bool editMode);
   virtual ~RangeMarkerDialog() override;
 
-private:
   virtual void restoreState() override;
+
+private:
   virtual void saveState() const override;
   virtual void markerToWidgets() override;
   virtual void widgetsToMarker() override;

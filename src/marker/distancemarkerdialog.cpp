@@ -52,8 +52,6 @@ DistanceMarkerDialog::DistanceMarkerDialog(QWidget *parent, const map::DistanceM
 
   connect(ui->buttonBoxDistanceMarker, &QDialogButtonBox::clicked, this, &DistanceMarkerDialog::buttonBoxClicked);
   connect(ui->pushButtonDistanceMarkerColor, &QPushButton::clicked, this, &MarkerDialog::colorButtonClicked);
-
-  restoreState();
 }
 
 DistanceMarkerDialog::~DistanceMarkerDialog()

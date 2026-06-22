@@ -141,8 +141,6 @@ RangeMarkerDialog::RangeMarkerDialog(QWidget *parent, const map::RangeMarker& ma
 
   ui->lineEditRangeMarkerLatLon->setText(Unit::coords(marker->position));
   coordinatesEdited(QStringLiteral());
-
-  restoreState();
 }
 
 RangeMarkerDialog::~RangeMarkerDialog()
