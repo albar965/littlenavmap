@@ -39,6 +39,7 @@ class SqlRecord;
 }
 
 namespace map {
+struct MapRunwayEnd;
 struct MapResultIndex;
 struct MapNav;
 struct MapUserpoint;
@@ -307,7 +308,8 @@ signals:
   /* Show approaches from context menu */
   void showProcedures(const map::MapAirport& airport, bool departureFilter, bool arrivalFilter);
   void showCustomApproach(const map::MapAirport& airport);
-  void showCustomDeparture(const map::MapAirport& airport, const map::MapParking& parking, const map::MapHelipad& helipad);
+  void showCustomDeparture(const map::MapAirport& airport, const map::MapParking& parking, const map::MapHelipad& helipad,
+                           const map::MapRunwayEnd& runwayEnd);
 
   /* Emitted when the user presses the on-screen button */
   void exitFullScreenPressed();

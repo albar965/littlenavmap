@@ -156,6 +156,25 @@ void MapPainterTop::render()
     labels.append(QStringLiteral("Layer route text %1").arg(context->mapLayerRouteText->getMaxRange()));
     labels.append(QStringLiteral("Airport sym %1").arg(context->mapLayer->getAirportSymbolSize()));
     labels.append(QStringLiteral("Min RW %1").arg(context->mapLayer->getMinRunwayLength()));
+
+    if(context->mapLayer->isAirportOverviewRunway())
+      labels.append(QStringLiteral("AirportOverviewRunway"));
+
+    if(context->mapLayer->isAirportDiagramRunway())
+      labels.append(QStringLiteral("AirportDiagramRunway"));
+
+    if(context->mapLayer->isAirportDiagram())
+      labels.append(QStringLiteral("AirportDiagram"));
+
+    if(context->mapLayer->isAirportDiagramDetail())
+      labels.append(QStringLiteral("AirportDiagramDetail"));
+
+    if(context->mapLayer->isAirportDiagramDetail2())
+      labels.append(QStringLiteral("AirportDiagramDetail2"));
+
+    if(context->mapLayer->isAirportDiagramDetail3())
+      labels.append(QStringLiteral("AirportDiagramDetail3"));
+
     labels.append(QStringLiteral("-"));
 
     for(auto it = context->renderTimesMs.constBegin(); it != context->renderTimesMs.constEnd(); ++it)

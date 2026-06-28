@@ -260,7 +260,7 @@ QString ProcedureSearch::tooltipFunction(const QString&)
 {
   MapTooltip mapTooltip(mainWindow);
   return mapTooltip.buildTooltip(map::MapResult::createFromMapBase(currentAirportSim), atools::geo::EMPTY_POS, &NavApp::getRouteConst(),
-                                 false /* airportDiagram */, optsd::TOOLTIP_AIRPORT,
+                                 false /* airportDiagram */, false /* airportDiagramRunway */, optsd::TOOLTIP_AIRPORT,
                                  tr("Click here to show airport on the map and in information."));
 }
 

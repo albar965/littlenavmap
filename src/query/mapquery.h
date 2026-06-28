@@ -162,10 +162,9 @@ public:
    * @param screenDistance maximum distance to coordinates
    * @param result will receive objects based on type
    */
-  void getNearestScreenObjects(const CoordinateConverter& conv, const MapLayer *mapLayer, const QSet<int>& shownDetailAirportIds,
-                               bool airportDiagram,
-                               map::MapTypes types, map::MapDisplayTypes displayTypes, int xs, int ys, int screenDistance,
-                               map::MapResult& result) const;
+  void getNearestScreenObjects(const CoordinateConverter& converter, const MapLayer *mapLayer, const QSet<int>& shownParkingAirportIds,
+                               const QSet<int>& shownRunwayAirportIds, map::MapTypes types, map::MapDisplayTypes displayTypes,
+                               int xs, int ys, int screenDistance, map::MapResult& result) const;
 
   /* Only VOR, NDB, ILS and waypoints
    * All sorted by distance to pos with a maximum distance distanceNm

@@ -203,7 +203,7 @@ private:
   void postProcessLegs(const map::MapAirport& airport, proc::MapProcedureLegs& legs, bool addArtificialLegs) const;
 
   /* Prepare all leg coordinates and fill line */
-  void processLegs(proc::MapProcedureLegs& legs, const map::MapAirport& airport) const;
+  void processLegs(proc::MapProcedureLegs& legs) const;
 
   /* Collect leg errors to procedure error */
   void processLegErrors(proc::MapProcedureLegs& legs) const;

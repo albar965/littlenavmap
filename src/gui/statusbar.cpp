@@ -281,7 +281,7 @@ void StatusBar::customContextMenuRequested(const QPoint& point)
   // Time type actions =======================
   QActionGroup *group = new QActionGroup(&menu);
   QAction *actionUtcReal = new QAction(tr("&UTC Real Time"), group);
-  actionUtcReal->setToolTip(tr(""));
+  actionUtcReal->setToolTip(QStringLiteral());
   actionUtcReal->setCheckable(true);
   actionUtcReal->setChecked(timeType == TIME_UTC_REAL);
   actionUtcReal->setEnabled(actionTimeLabel->isChecked());
@@ -289,7 +289,7 @@ void StatusBar::customContextMenuRequested(const QPoint& point)
   menu.addAction(actionUtcReal);
 
   QAction *actionLocalReal = new QAction(tr("&Local Real Time"), group);
-  actionLocalReal->setToolTip(tr(""));
+  actionLocalReal->setToolTip(QStringLiteral());
   actionLocalReal->setCheckable(true);
   actionLocalReal->setChecked(timeType == TIME_LOCAL_REAL);
   actionLocalReal->setEnabled(actionTimeLabel->isChecked());
@@ -297,7 +297,7 @@ void StatusBar::customContextMenuRequested(const QPoint& point)
   menu.addAction(actionLocalReal);
 
   QAction *actionUtcSim = new QAction(tr("&UTC Simulator Time"), group);
-  actionUtcSim->setToolTip(tr(""));
+  actionUtcSim->setToolTip(QStringLiteral());
   actionUtcSim->setCheckable(true);
   actionUtcSim->setChecked(timeType == TIME_UTC_SIM);
   actionUtcSim->setEnabled(actionTimeLabel->isChecked());
@@ -305,7 +305,7 @@ void StatusBar::customContextMenuRequested(const QPoint& point)
   menu.addAction(actionUtcSim);
 
   QAction *actionLocalSim = new QAction(tr("&Local Simulator Time"), group);
-  actionLocalSim->setToolTip(tr(""));
+  actionLocalSim->setToolTip(QStringLiteral());
   actionLocalSim->setCheckable(true);
   actionLocalSim->setChecked(timeType == TIME_LOCAL_SIM);
   actionLocalSim->setEnabled(actionTimeLabel->isChecked());

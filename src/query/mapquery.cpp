@@ -28,6 +28,7 @@
 #include "mapgui/mapairporthandler.h"
 #include "mapgui/maplayer.h"
 #include "online/onlinedatacontroller.h"
+#include "options/optiondata.h"
 #include "query/airportquery.h"
 #include "query/airspacequeries.h"
 #include "query/airwaytrackquery.h"
@@ -53,6 +54,7 @@ using map::MapLogbookEntry;
 using map::MapMarker;
 using map::MapNdb;
 using map::MapParking;
+using map::MapRunway;
 using map::MapRunwayEnd;
 using map::MapUserpoint;
 using map::MapVor;
@@ -712,13 +714,14 @@ QList<map::MapIls> MapQuery::ilsByAirportAndRunway(const QString& airportIdent, 
   return ilsList;
 }
 
-void MapQuery::getNearestScreenObjects(const CoordinateConverter& conv, const MapLayer *mapLayer, const QSet<int>& shownDetailAirportIds,
-                                       bool airportDiagram, map::MapTypes types, map::MapDisplayTypes displayTypes,
-                                       int xs, int ys, int screenDistance, map::MapResult& result) const
+void MapQuery::getNearestScreenObjects(const CoordinateConverter& converter, const MapLayer *mapLayer,
+                                       const QSet<int>& shownParkingAirportIds, const QSet<int>& shownRunwayAirportIds, map::MapTypes types,
+                                       map::MapDisplayTypes displayTypes, int xs, int ys, int screenDistance, map::MapResult& result) const
 {
   using maptools::insertSortedByDistance;
   using maptools::insertSortedByTowerDistance;
 
+  const OptionData& optionData = OptionData::instance();
   int x, y;
   if(mapLayer->isAirport() && types.testFlag(map::AIRPORT))
   {
@@ -731,15 +734,15 @@ void MapQuery::getNearestScreenObjects(const CoordinateConverter& conv, const Ma
 
       if(airport.isVisible(types, minRunway, maxRunway, mapLayer))
       {
-        if(conv.wToS(airport.position, x, y))
+        if(converter.wToS(airport.position, x, y))
           if(atools::geo::manhattanDistance(x, y, xs, ys) < screenDistance)
-            insertSortedByDistance(conv, result.airports, &result.airportIds, xs, ys, airport);
+            insertSortedByDistance(converter, result.airports, &result.airportIds, xs, ys, airport);
 
-        if(airportDiagram)
+        if(mapLayer->isAirportDiagram() && optionData.getDisplayOptionsAirport().testFlag(optsd::ITEM_AIRPORT_DETAIL_PARKING))
         {
           // Include tower for airport diagrams
-          if(conv.wToS(airport.towerCoords, x, y) && atools::geo::manhattanDistance(x, y, xs, ys) < screenDistance)
-            insertSortedByTowerDistance(conv, result.towers, xs, ys, airport);
+          if(converter.wToS(airport.towerCoords, x, y) && atools::geo::manhattanDistance(x, y, xs, ys) < screenDistance)
+            insertSortedByTowerDistance(converter, result.towers, xs, ys, airport);
         }
       }
     }
@@ -750,9 +753,9 @@ void MapQuery::getNearestScreenObjects(const CoordinateConverter& conv, const Ma
     for(int i = airportMsaCache.list.size() - 1; i >= 0; i--)
     {
       const MapAirportMsa& msa = airportMsaCache.list.at(i);
-      if(conv.wToS(msa.position, x, y))
+      if(converter.wToS(msa.position, x, y))
         if(atools::geo::manhattanDistance(x, y, xs, ys) < screenDistance)
-          insertSortedByDistance(conv, result.airportMsa, &result.airportMsaIds, xs, ys, msa);
+          insertSortedByDistance(converter, result.airportMsa, &result.airportMsaIds, xs, ys, msa);
     }
   }
 
@@ -761,9 +764,9 @@ void MapQuery::getNearestScreenObjects(const CoordinateConverter& conv, const Ma
     for(int i = vorCache.list.size() - 1; i >= 0; i--)
     {
       const MapVor& vor = vorCache.list.at(i);
-      if(conv.wToS(vor.position, x, y))
+      if(converter.wToS(vor.position, x, y))
         if(atools::geo::manhattanDistance(x, y, xs, ys) < screenDistance)
-          insertSortedByDistance(conv, result.vors, &result.vorIds, xs, ys, vor);
+          insertSortedByDistance(converter, result.vors, &result.vorIds, xs, ys, vor);
     }
   }
 
@@ -772,9 +775,9 @@ void MapQuery::getNearestScreenObjects(const CoordinateConverter& conv, const Ma
     for(int i = ndbCache.list.size() - 1; i >= 0; i--)
     {
       const MapNdb& ndb = ndbCache.list.at(i);
-      if(conv.wToS(ndb.position, x, y))
+      if(converter.wToS(ndb.position, x, y))
         if((atools::geo::manhattanDistance(x, y, xs, ys)) < screenDistance)
-          insertSortedByDistance(conv, result.ndbs, &result.ndbIds, xs, ys, ndb);
+          insertSortedByDistance(converter, result.ndbs, &result.ndbIds, xs, ys, ndb);
     }
   }
 
@@ -783,9 +786,9 @@ void MapQuery::getNearestScreenObjects(const CoordinateConverter& conv, const Ma
     for(int i = holdingCache.list.size() - 1; i >= 0; i--)
     {
       const MapHolding& holding = holdingCache.list.at(i);
-      if(conv.wToS(holding.position, x, y))
+      if(converter.wToS(holding.position, x, y))
         if(atools::geo::manhattanDistance(x, y, xs, ys) < screenDistance)
-          insertSortedByDistance(conv, result.holdings, &result.holdingIds, xs, ys, holding);
+          insertSortedByDistance(converter, result.holdings, &result.holdingIds, xs, ys, holding);
     }
   }
 
@@ -795,9 +798,9 @@ void MapQuery::getNearestScreenObjects(const CoordinateConverter& conv, const Ma
     for(int i = userpointCache.list.size() - 1; i >= 0; i--)
     {
       const MapUserpoint& wp = userpointCache.list.at(i);
-      if(conv.wToS(wp.position, x, y))
+      if(converter.wToS(wp.position, x, y))
         if(atools::geo::manhattanDistance(x, y, xs, ys) < screenDistance)
-          insertSortedByDistance(conv, result.userpoints, &result.userpointIds, xs, ys, wp);
+          insertSortedByDistance(converter, result.userpoints, &result.userpointIds, xs, ys, wp);
     }
   }
 
@@ -811,7 +814,7 @@ void MapQuery::getNearestScreenObjects(const CoordinateConverter& conv, const Ma
   if(victorWaypoints || jetWaypoints || trackWaypoints || normalWaypoints || flightplan)
   {
     // Get all close waypoints
-    queries->getWaypointTrackQuery()->getNearestScreenObjects(conv, mapLayer, types, xs, ys, screenDistance, result);
+    queries->getWaypointTrackQuery()->getNearestScreenObjects(converter, mapLayer, types, xs, ys, screenDistance, result);
 
     // Filter waypoints by airway/track type and remove artificial ones
     QHash<int, MapWaypoint> waypoints;
@@ -826,16 +829,16 @@ void MapQuery::getNearestScreenObjects(const CoordinateConverter& conv, const Ma
     for(const map::MapWaypoint& wp : std::as_const(waypoints))
     {
       if(wp.artificial == map::WAYPOINT_ARTIFICIAL_NONE)
-        insertSortedByDistance(conv, result.waypoints, &result.waypointIds, xs, ys, wp);
+        insertSortedByDistance(converter, result.waypoints, &result.waypointIds, xs, ys, wp);
     }
 
     // Add VOR fetched for artificial waypoints
     for(const map::MapVor& vor : std::as_const(vors))
-      insertSortedByDistance(conv, result.vors, &result.vorIds, xs, ys, vor);
+      insertSortedByDistance(converter, result.vors, &result.vorIds, xs, ys, vor);
 
     // Add NDB fetched for artificial waypoints
     for(const map::MapNdb& ndb : std::as_const(ndbs))
-      insertSortedByDistance(conv, result.ndbs, &result.ndbIds, xs, ys, ndb);
+      insertSortedByDistance(converter, result.ndbs, &result.ndbIds, xs, ys, ndb);
   }
 
   if(mapLayer->isMarker() && types.testFlag(map::MARKER))
@@ -843,9 +846,9 @@ void MapQuery::getNearestScreenObjects(const CoordinateConverter& conv, const Ma
     for(int i = markerCache.list.size() - 1; i >= 0; i--)
     {
       const MapMarker& wp = markerCache.list.at(i);
-      if(conv.wToS(wp.position, x, y))
+      if(converter.wToS(wp.position, x, y))
         if(atools::geo::manhattanDistance(x, y, xs, ys) < screenDistance)
-          insertSortedByDistance(conv, result.markers, nullptr, xs, ys, wp);
+          insertSortedByDistance(converter, result.markers, nullptr, xs, ys, wp);
     }
   }
 
@@ -854,39 +857,66 @@ void MapQuery::getNearestScreenObjects(const CoordinateConverter& conv, const Ma
     for(int i = ilsCache.list.size() - 1; i >= 0; i--)
     {
       const MapIls& wp = ilsCache.list.at(i);
-      if(conv.wToS(wp.position, x, y))
+      if(converter.wToS(wp.position, x, y))
         if(atools::geo::manhattanDistance(x, y, xs, ys) < screenDistance)
-          insertSortedByDistance(conv, result.ils, nullptr, xs, ys, wp);
+          insertSortedByDistance(converter, result.ils, nullptr, xs, ys, wp);
     }
   }
 
   // Get objects from airport diagram =====================================================
-  if(mapLayer->isAirport() && airportDiagram)
+  AirportQuery *airportQuery = queries->getAirportQuerySim();
+  if(mapLayer->isAirport() && types.testFlag(map::PARKING))
   {
-    // Also check parking and helipads in airport diagrams
-    QHash<int, QList<MapParking> > parkingCache = queries->getAirportQuerySim()->getParkingCache();
-    for(auto it = parkingCache.constBegin(); it != parkingCache.constEnd(); ++it)
+    // Get parking from airport cache and put copies in result ===========================================
+    const QCache<int, QList<map::MapParking> >& parkingCache = airportQuery->getParkingCache();
+    for(int airportId : parkingCache.keys())
     {
       // Only draw if airport is actually drawn on map
-      if(shownDetailAirportIds.contains(it.key()))
+      if(shownParkingAirportIds.contains(airportId))
       {
-        for(const MapParking& parking : it.value())
+        // const QList<map::MapParking> *parkings = ;
+        for(const MapParking& parking : *parkingCache.object(airportId))
         {
-          if(conv.wToS(parking.position, x, y) && atools::geo::manhattanDistance(x, y, xs, ys) < screenDistance)
-            insertSortedByDistance(conv, result.parkings, nullptr, xs, ys, parking);
+          if(converter.wToS(parking.position, x, y) && atools::geo::manhattanDistance(x, y, xs, ys) < screenDistance)
+            insertSortedByDistance(converter, result.parkings, nullptr, xs, ys, parking);
         }
       }
     }
+  }
 
-    QHash<int, QList<MapHelipad> > helipadCache = queries->getAirportQuerySim()->getHelipadCache();
-    for(auto it = helipadCache.constBegin(); it != helipadCache.constEnd(); ++it)
+  if(mapLayer->isAirport() && types.testFlag(map::HELIPAD))
+  {
+    // Get helipads from airport cache copies in result ===========================================
+    const QCache<int, QList<MapHelipad> >& helipadCache = airportQuery->getHelipadCache();
+    for(int airportId : helipadCache.keys())
     {
-      if(shownDetailAirportIds.contains(it.key()))
+      if(shownParkingAirportIds.contains(airportId))
       {
-        for(const MapHelipad& helipad : it.value())
+        for(const MapHelipad& helipad : *helipadCache.object(airportId))
         {
-          if(conv.wToS(helipad.position, x, y) && atools::geo::manhattanDistance(x, y, xs, ys) < screenDistance)
-            insertSortedByDistance(conv, result.helipads, nullptr, xs, ys, helipad);
+          if(converter.wToS(helipad.position, x, y) && atools::geo::manhattanDistance(x, y, xs, ys) < screenDistance)
+            insertSortedByDistance(converter, result.helipads, nullptr, xs, ys, helipad);
+        }
+      }
+    }
+  }
+
+  // Get runways from airport cache and add runway ends ===========================================
+  // Opposed to parking and helipads the runway cache is always filled. Therefore, filter here.
+  if(mapLayer->isAirport() && types.testFlag(map::RUNWAYEND))
+  {
+    const QCache<int, QList<MapRunway> >& runwayCache = airportQuery->getRunwayCache();
+    for(int airportId : runwayCache.keys())
+    {
+      if(shownRunwayAirportIds.contains(airportId))
+      {
+        for(const MapRunway& runway : *runwayCache.object(airportId))
+        {
+          if(converter.wToS(runway.primaryPosition, x, y) && atools::geo::manhattanDistance(x, y, xs, ys) < screenDistance)
+            insertSortedByDistance(converter, result.runwayEnds, nullptr, xs, ys, runway.primaryEnd());
+
+          if(converter.wToS(runway.secondaryPosition, x, y) && atools::geo::manhattanDistance(x, y, xs, ys) < screenDistance)
+            insertSortedByDistance(converter, result.runwayEnds, nullptr, xs, ys, runway.secondaryEnd());
         }
       }
     }

@@ -2141,6 +2141,12 @@ QString mapBaseText(const map::MapBase *base, int elideAirportName)
       case map::AIRPORT:
         return map::airportText(*base->asPtr<map::MapAirport>(), elideAirportName);
 
+      case map::RUNWAY:
+        return map::runwayText(*base->asPtr<map::MapRunway>());
+
+      case map::RUNWAYEND:
+        return map::runwayEndText(*base->asPtr<map::MapRunwayEnd>());
+
       case map::AIRPORT_MSA:
         return map::airportMsaText(*base->asPtr<map::MapAirportMsa>(), false);
 
@@ -2410,6 +2416,32 @@ QStringList MapRunwayEnd::uniqueVasiTypeStr() const
   return vasi;
 }
 
+MapRunwayEnd MapRunway::primaryEnd() const
+{
+  MapRunwayEnd end;
+  end.id = primaryEndId;
+  end.position = primaryPosition;
+  end.secondary = false;
+  end.heading = heading;
+  end.name = primaryName;
+  end.navdata = false;
+  end.complete = false;
+  return end;
+}
+
+MapRunwayEnd MapRunway::secondaryEnd() const
+{
+  MapRunwayEnd end;
+  end.id = secondaryEndId;
+  end.position = secondaryPosition;
+  end.secondary = true;
+  end.heading = atools::geo::opposedCourseDeg(heading);
+  end.name = secondaryName;
+  end.navdata = false;
+  end.complete = false;
+  return end;
+}
+
 atools::geo::Pos MapRunway::getApproachPosition(bool secondary) const
 {
   if(secondary)
@@ -2613,6 +2645,26 @@ void MapNav::restore(atools::util::XmlStreamReader& stream)
     else
       stream.skipCurrentElement(true /* warning */);
   }
+}
+
+QString runwayText(const MapRunway& runway)
+{
+  return QObject::tr("Runway %1/%2").arg(runway.primaryName, runway.secondaryName);
+}
+
+QString runwayTextShort(const MapRunway& runway)
+{
+  return QObject::tr("%1/%2").arg(runway.primaryName, runway.secondaryName);
+}
+
+QString runwayEndText(const MapRunwayEnd& runwayEnd)
+{
+  return QObject::tr("Runway %1").arg(runwayEnd.name);
+}
+
+QString runwayEndTextShort(const MapRunwayEnd& runwayEnd)
+{
+  return runwayEnd.name;
 }
 
 } // namespace map

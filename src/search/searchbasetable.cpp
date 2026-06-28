@@ -1868,7 +1868,7 @@ void SearchBaseTable::showApproaches(bool customApproach, bool customDeparture)
         else if(customDeparture)
         {
           if(!destination || route.getSizeWithoutAlternates() == 1)
-            emit showCustomDeparture(airport, map::MapParking(), map::MapHelipad());
+            emit showCustomDeparture(airport, map::MapParking(), map::MapHelipad(), map::MapRunwayEnd());
         }
         else
         {

@@ -102,6 +102,23 @@ public:
     return inner;
   }
 
+  /* Same as runway width */
+  float width() const
+  {
+    return rect.width();
+  }
+
+  /* Right-click hotspots at runway end. Position corrected by pen width. */
+  const QPointF getPrimaryHotspot(double outlinePen) const
+  {
+    return QLineF(rect.topLeft(), rect.topRight()).center() - QPointF(0., outlinePen);
+  }
+
+  const QPointF getSecondaryHotspot(double outlinePen) const
+  {
+    return QLineF(rect.bottomLeft(), rect.bottomRight()).center() + QPointF(0., outlinePen);
+  }
+
 private:
   map::MapRunway runway;
   QPointF center;
@@ -571,10 +588,11 @@ void MapPainterAirport::drawAirportDiagram(const map::MapAirport& airport, const
   } // if(!fast && runways != nullptr)
 
   // Draw runways ===========================================================
+  double outlinePenWidthRunway = 3.;
   if(!runwayPaintData.isEmpty())
   {
     // Draw black runway outlines ==========================================
-    painter->setPen(QPen(mapcolors::runwayOutlineColor, 3, Qt::SolidLine, Qt::FlatCap));
+    painter->setPen(QPen(mapcolors::runwayOutlineColor, outlinePenWidthRunway, Qt::SolidLine, Qt::FlatCap));
     painter->setBrush(Qt::NoBrush);
 
     for(const RunwayPaintData& paintData : std::as_const(runwayPaintData))
@@ -679,10 +697,6 @@ void MapPainterAirport::drawAirportDiagram(const map::MapAirport& airport, const
         // Get positions for airport and name from cache
         for(const TaxiNameValue& points : taxiNameCache->values(TaxiNameKey(airport.id, taxiname)))
         {
-#ifdef DEBUG_INFORMATION_TAXINAME
-          qDebug() << Q_FUNC_INFO << "####################### FETCH" << airport.id << taxiname
-                   << points.getAirportPoint() << points.getTaxiTextPoint();
-#endif
           bool background = context->flags2.testFlag(opts2::MAP_AIRPORT_TEXT_TAXIWAY_BACKGROUND);
 
           // Correct position based on position when cache entry was stored and new airport position
@@ -711,12 +725,6 @@ void MapPainterAirport::drawAirportDiagram(const map::MapAirport& airport, const
                               translate(paintData.getCenter().x(), paintData.getCenter().y()).
                               rotate(paintData.getRunway().heading).
                               map(QPolygonF(paintData.getRect().marginsAdded(QMarginsF(margin, margin, margin, margin)))));
-
-#ifdef DEBUG_INFORMATION_RUNWAY_OUTLINE
-      painter->setBrush(Qt::transparent);
-      painter->setPen(Qt::blue);
-      painter->drawPath(allRunways);
-#endif
 
       // Map all visible names to a list of their path segments
       QMultiMap<QString, MapTaxiPath> nameToTaxiPathMap;
@@ -763,10 +771,6 @@ void MapPainterAirport::drawAirportDiagram(const map::MapAirport& airport, const
                     // Local list to check for duplicates and clusters
                     drawnTaxinames.insert(taxiname, textPoint);
 
-#ifdef DEBUG_INFORMATION_TAXINAME
-                    qDebug() << Q_FUNC_INFO << "####################### ADD" << airport.id << taxiname
-                             << airportPoint << textPoint;
-#endif
                     // Add to cache for next drawing with view context animation
                     taxiNameCache->insert(TaxiNameKey(airport.id, taxiname), TaxiNameValue(airportPoint, textPoint));
 
@@ -786,11 +790,17 @@ void MapPainterAirport::drawAirportDiagram(const map::MapAirport& airport, const
 
   // Draw parking, fuel and tower ===========================================================
   context->startTimer("Airport Diagram Parking");
+
+  if(mapLayer->isAirportDiagram() && context->dOptAp(optsd::ITEM_AIRPORT_DETAIL_PARKING))
+    // Add to index indicating that tooltips for parking or helipads are needed
+    context->shownParkingAirportIds->insert(airport.id);
+
+  if(mapLayer->isAirportDiagramRunway() && context->dOptAp(optsd::ITEM_AIRPORT_DETAIL_RUNWAY))
+    // Airports drawn having runway hotspots which require tooltips and more
+    context->shownRunwayAirportIds->insert(airport.id);
+
   if(mapLayer->isAirportDiagram() && context->dOptAp(optsd::ITEM_AIRPORT_DETAIL_PARKING))
   {
-    // Add to index indicating that tooltips for parking or helipads are needed
-    context->shownDetailAirportIds->insert(airport.id);
-
     // Approximate needed margins by largest parking diameter to avoid parking circles dissappearing on the screen borders
     int size = scale->getPixelIntForFeet(200);
     QMargins margins(size, size, size, size);
@@ -1142,6 +1152,37 @@ void MapPainterAirport::drawAirportDiagram(const map::MapAirport& airport, const
         painter->resetTransform();
       }
     } // for(const RunwayPaintData& paintData : std::as_const(runwayPaintData))
+
+    // Draw runway hotspots for menu ==========================================
+    // These appear before the airport diagram
+    if(mapLayer->isAirportDiagramRunway())
+    {
+      // Make radius and line width dependent on airport detail
+      double lineWidth = 2, radius = 3.;
+      if(mapLayer->isAirportDiagramDetail2())
+      {
+        lineWidth = 3;
+        radius = 5.;
+      }
+      else if(mapLayer->isAirportDiagramDetail())
+      {
+        lineWidth = 3;
+        radius = 4.;
+      }
+
+      for(const RunwayPaintData& paintData : std::as_const(runwayPaintData))
+      {
+        double hotspotOffset = paintData.getRunway().isWater() ? 0. : outlinePenWidthRunway;
+        painter->setPen(QPen(Qt::black, lineWidth));
+        painter->setBrush(Qt::white);
+
+        painter->translate(paintData.getCenter());
+        painter->rotate(paintData.getRunway().heading);
+        painter->drawEllipse(paintData.getPrimaryHotspot(hotspotOffset), radius, radius);
+        painter->drawEllipse(paintData.getSecondaryHotspot(hotspotOffset), radius, radius);
+        painter->resetTransform();
+      }
+    }
   } // if(!fast && !runwayPaintData.isEmpty())
   context->endTimer("Airport Diagram Runway Texts");
 }

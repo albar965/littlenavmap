@@ -115,7 +115,10 @@ struct PaintContext
                     routeProcIdMapRec /* Recommended navaids */;
 
   /* Airports drawn having parking spots which require tooltips and more */
-  QSet<int> *shownDetailAirportIds;
+  QSet<int> *shownParkingAirportIds;
+
+  /* Airports drawn having runway hotspots which require tooltips and more */
+  QSet<int> *shownRunwayAirportIds;
 
   /* All navaids drawn for route and procedures. Points to vector in MapScreenIndex */
   QList<map::MapRef> *routeDrawnNavaids;

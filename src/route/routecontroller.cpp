@@ -4025,10 +4025,16 @@ void RouteController::selectRange(int from, int to)
     tableViewRoute->selectionModel()->select(newSel, QItemSelectionModel::ClearAndSelect);
 }
 
+void RouteController::routeSetRunwayEnd(const map::MapRunwayEnd& runwayEnd, bool undo)
+{
+  map::MapStart start;
+  QueryManager::instance()->getQueriesGui()->getAirportQuerySim()->getStartByRunwayEndId(start, runwayEnd.id);
+
+  routeSetStartPosition(start, undo);
+}
+
 void RouteController::routeSetHelipad(const map::MapHelipad& helipad, bool undo)
 {
-  qDebug() << Q_FUNC_INFO << helipad.id;
-
   map::MapStart start;
   QueryManager::instance()->getQueriesGui()->getAirportQuerySim()->getStartById(start, helipad.startId);
 
@@ -4394,7 +4400,7 @@ void RouteController::showCustomDepartureMainMenu()
 {
   // Called from main menu for current departure
   if(route.hasValidDepartureAndRunways())
-    showCustomDeparture(route.getDepartureAirportLeg().getAirport(), map::MapParking(), map::MapHelipad());
+    showCustomDeparture(route.getDepartureAirportLeg().getAirport(), map::MapParking(), map::MapHelipad(), map::MapRunwayEnd());
 }
 
 void RouteController::showCustomApproachRouteTriggered()
@@ -4412,7 +4418,7 @@ void RouteController::showCustomDepartureRouteTriggered()
 
   // Allow for destination airport only or single airport plan where airport can be used both as departure and destination
   if(index.isValid() && (route.getDestinationAirportLegIndex() != index.row() || route.getSizeWithoutAlternates() == 1))
-    showCustomDeparture(route.value(index.row()).getAirport(), map::MapParking(), map::MapHelipad());
+    showCustomDeparture(route.value(index.row()).getAirport(), map::MapParking(), map::MapHelipad(), map::MapRunwayEnd());
 }
 
 void RouteController::showCustomApproach(map::MapAirport airport)
@@ -4503,7 +4509,8 @@ void RouteController::showCustomApproach(map::MapAirport airport)
   }
 }
 
-void RouteController::showCustomDeparture(map::MapAirport airport, const map::MapParking& parking, const map::MapHelipad& helipad)
+void RouteController::showCustomDeparture(map::MapAirport airport, const map::MapParking& parking, const map::MapHelipad& helipad,
+                                          const map::MapRunwayEnd& runwayEnd)
 {
   // Also called from search menu
   qDebug() << Q_FUNC_INFO << airport.id << airport.ident;
@@ -4515,7 +4522,7 @@ void RouteController::showCustomDeparture(map::MapAirport airport, const map::Ma
   bool airportChange = airport != route.getDepartureAirportLeg().getAirport();
 
   // Start position change requested
-  bool startChange = parking.isValid() || helipad.isValid();
+  bool startChange = parking.isValid() || helipad.isValid() || runwayEnd.isValid();
 
   if(airport.noRunways() && airportChange)
     // Airport has no runways and changes - set departure directly
@@ -4589,6 +4596,9 @@ void RouteController::showCustomDeparture(map::MapAirport airport, const map::Ma
 
         if(parking.isValid())
           routeSetParkingPosition(parking, false /* undo */);
+
+        if(runwayEnd.isValid())
+          routeSetRunwayEnd(runwayEnd, false /* undo */);
 
         if(helipad.isValid())
           routeSetHelipad(helipad, false /* undo */);

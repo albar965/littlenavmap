@@ -271,7 +271,7 @@
     <widget class="QCheckBox" name="checkBoxDoNotShowAgain">
      <property name="text">
       <string>&amp;Do not show this dialog again and select the airport automatically.
-You can still select a runway after adding the departure or destination.</string>
+You can still select a runway from the context menu after adding the departure or destination.</string>
      </property>
     </widget>
    </item>

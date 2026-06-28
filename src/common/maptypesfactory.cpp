@@ -120,6 +120,7 @@ void MapTypesFactory::fillRunwayEnd(const atools::sql::SqlRecord& record, MapRun
   end.leftVasiType = record.valueStr(QStringLiteral("left_vasi_type"));
   end.rightVasiType = record.valueStr(QStringLiteral("right_vasi_type"));
   end.pattern = record.valueStr(QStringLiteral("is_pattern"), QStringLiteral());
+  end.complete = true;
 }
 
 void MapTypesFactory::fillAirportBase(const SqlRecord& record, map::MapAirport& ap, bool complete)
@@ -392,6 +393,16 @@ void MapTypesFactory::fillLogbookEntry(const atools::sql::SqlRecord& rec, MapLog
     obj.position = obj.departurePos;
   else if(obj.destinationPos.isValid())
     obj.position = obj.destinationPos;
+}
+
+void MapTypesFactory::fillTaxiPath(const atools::sql::SqlRecord& rec, map::MapTaxiPath& obj)
+{
+  obj.closed = rec.value(QStringLiteral("type")).toString() == QStringLiteral("CLOSED");
+  obj.start = atools::geo::Pos(rec.value(QStringLiteral("start_lonx")).toFloat(), rec.value(QStringLiteral("start_laty")).toFloat());
+  obj.end = atools::geo::Pos(rec.value(QStringLiteral("end_lonx")).toFloat(), rec.value(QStringLiteral("end_laty")).toFloat());
+  obj.surface = rec.value(QStringLiteral("surface")).toString();
+  obj.name = rec.value(QStringLiteral("name")).toString();
+  obj.width = rec.value(QStringLiteral("width")).toInt();
 }
 
 void MapTypesFactory::fillNdb(const SqlRecord& record, map::MapNdb& ndb)

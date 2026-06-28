@@ -993,7 +993,7 @@ void ProcedureQuery::postProcessLegs(const map::MapAirport& airport, proc::MapPr
   processMagvar(legs, airport);
 
   // Prepare all leg coordinates and fill line
-  processLegs(legs, airport);
+  processLegs(legs);
 
   // Add artificial legs (not in the database) that end at or start before the runway
   processArtificialLegs(legs, airport, addArtificialLegs);
@@ -1440,12 +1440,12 @@ void ProcedureQuery::fetchRunwaysSim(map::MapRunway& runwaySim, map::MapRunwayEn
   // Try runway positions from simulator first using non-fuzzy search ==============================
   map::MapAirport airportSim = queries->getMapQuery()->getAirportSim(airport);
   runwayEndSim = queries->getAirportQuerySim()->getRunwayEndByName(airportSim.id, runwayEnd.name);
-  runwaySim = queries->getAirportQuerySim()->getRunwayByEndId(airportSim.id, runwayEndSim.id);
+  runwaySim = queries->getAirportQuerySim()->getRunwayByEndId(runwayEndSim.id);
 
   // Fall back to navdata or whatever the airport is or if runway is too far away (1 NM) ========================================
   if(!runwaySim.isValid() || !runwayEndSim.isValid() || runwayEndSim.position.distanceMeterTo(runwayEnd.position) > ageo::nmToMeter(1.f))
   {
-    runwaySim = queries->getAirportQuery(airport.navdata)->getRunwayByEndId(airport.id, runwayEnd.id);
+    runwaySim = queries->getAirportQuery(airport.navdata)->getRunwayByEndId(runwayEnd.id);
     runwayEndSim = runwayEnd;
   }
 }
@@ -1755,7 +1755,7 @@ void ProcedureQuery::processLegsDistanceAndCourse(proc::MapProcedureLegs& legs) 
   }
 }
 
-void ProcedureQuery::processLegs(proc::MapProcedureLegs& legs, const map::MapAirport& airport) const
+void ProcedureQuery::processLegs(proc::MapProcedureLegs& legs) const
 {
   // Intercept 30 for localizers and 30-45 for others
 
@@ -1959,7 +1959,7 @@ void ProcedureQuery::processLegs(proc::MapProcedureLegs& legs, const map::MapAir
       if(!leg.isMissed() && legs.mapType & proc::PROCEDURE_SID_ALL && i == 0)
       {
         // Get opposite runway end
-        map::MapRunway runway = queries->getAirportQuery(legs.runwayEnd.navdata)->getRunwayByEndId(airport.id, legs.runwayEnd.id);
+        map::MapRunway runway = queries->getAirportQuery(legs.runwayEnd.navdata)->getRunwayByEndId(legs.runwayEnd.id);
         if(runway.isValid())
           runwayPos = legs.runwayEnd.secondary ? runway.primaryPosition : runway.secondaryPosition;
 

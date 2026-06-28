@@ -219,16 +219,16 @@ void ParkingDialog::updateTable()
       if(!startPos.start.runwayName.isEmpty())
       {
         // Runway start ==========================
-        map::MapRunwayEnd end = airportQuerySim->getRunwayEndByName(startPos.start.airportId, startPos.start.runwayName);
-        if(end.isValid())
+        map::MapRunwayEnd runwayEnd = airportQuerySim->getRunwayEndByName(startPos.start.airportId, startPos.start.runwayName);
+        if(runwayEnd.isValid())
         {
-          map::MapRunway runway = airportQuerySim->getRunwayByEndId(startPos.start.airportId, end.id);
+          map::MapRunway runway = airportQuerySim->getRunwayByEndId(runwayEnd.id);
           if(runway.isValid())
           {
             if(departureAirport.isValid())
             {
               // Add runway information ===============================
-              float heading = atools::geo::normalizeCourse(end.heading - departureAirport.magvar);
+              float heading = atools::geo::normalizeCourse(runwayEnd.heading - departureAirport.magvar);
               items[internal::TYPE] = new QTableWidgetItem(map::surfaceName(runway.surface));
               items[internal::SIZE] = new QTableWidgetItem(tr("%1 x %2, %3°M").
                                                            arg(Unit::distShortFeet(runway.length, false), Unit::distShortFeet(runway.width),
@@ -239,16 +239,16 @@ void ParkingDialog::updateTable()
             QStringList atts;
             if(runway.hasEdgeLight())
               atts.append(tr("Lighted"));
-            if(!end.secondary && runway.primaryClosed)
+            if(!runwayEnd.secondary && runway.primaryClosed)
               atts.append(tr("Closed"));
-            if(end.secondary && runway.secondaryClosed)
+            if(runwayEnd.secondary && runway.secondaryClosed)
               atts.append(tr("Closed"));
 
             // Add ILS and similar approach aids
             if(departureAirport.isValid())
             {
               const Queries *queries = QueryManager::instance()->getQueriesGui();
-              for(const map::MapIls& ils : queries->getMapQuery()->getIlsByAirportAndRunway(departureAirport.ident, end.name))
+              for(const map::MapIls& ils : queries->getMapQuery()->getIlsByAirportAndRunway(departureAirport.ident, runwayEnd.name))
                 atts.append(map::ilsTypeShort(ils));
             }
             atts.removeAll(QStringLiteral());

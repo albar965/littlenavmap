@@ -1110,9 +1110,9 @@ void MapPainterMark::paintCompassRose()
 
     QList<ageo::Pos> endpoints;
     QList<QPointF> endpointsScreen;
-    for(float angle = 0.f; angle < 360.f; angle += 5)
+    for(int angle = 0; angle < 360; angle += 5)
     {
-      endpoints.append(pos.endpoint(radiusMeter, magVar + angle));
+      endpoints.append(pos.endpoint(radiusMeter, magVar + static_cast<float>(angle)));
       endpointsScreen.append(wToSF(endpoints.constLast()));
     }
 

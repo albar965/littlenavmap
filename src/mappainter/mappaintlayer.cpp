@@ -340,11 +340,13 @@ bool MapPaintLayer::render(GeoPainter *painter, ViewportParams *viewport, const 
 #endif
 
       // Clear the airport id cache
-      shownDetailAirportIds.clear();
+      shownParkingAirportIds.clear();
+      shownRunwayAirportIds.clear();
 
       // Prepare context =====================================================
       context = PaintContext();
-      context.shownDetailAirportIds = &shownDetailAirportIds;
+      context.shownParkingAirportIds = &shownParkingAirportIds;
+      context.shownRunwayAirportIds = &shownRunwayAirportIds;
       context.route = &NavApp::getRouteConst();
       context.mapLayer = mapLayer;
       context.mapLayerText = mapLayerText;

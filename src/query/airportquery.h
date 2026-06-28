@@ -165,6 +165,7 @@ public:
   void getStartByNameAndPos(map::MapStart& start, int airportId, const QString& runwayEndName,
                             const atools::geo::Pos& position);
   void getStartById(map::MapStart& start, int startId);
+  void getStartByRunwayEndId(map::MapStart& start, int runwayEndId);
 
   /* Get a completely filled runway list for the airport.
    * runways are sorted to get betters ones (hard surface, longer) at the end of a list */
@@ -199,18 +200,32 @@ public:
   void bestRunwayEndAndAirport(map::MapRunwayEnd& runwayEnd, map::MapAirport& airport, const map::MapResultIndex& runwayAirports,
                                const atools::geo::Pos& pos, float heading, float maxDistanceMeter, float maxHeadingDeviationDeg);
 
-  map::MapRunwayEnd getRunwayEndById(int id);
+  map::MapRunwayEnd getRunwayEndById(int runwayEndId);
 
   /* Get other runway end for given one */
   map::MapRunwayEnd getOpposedRunwayEnd(int airportId, const map::MapRunwayEnd& runwayEnd);
-  map::MapRunway getRunwayByEndId(int airportId, int runwayEndId);
-
-  /* Get copies of cached objects */
-  QHash<int, QList<map::MapParking> > getParkingCache() const;
-  QHash<int, QList<map::MapHelipad> > getHelipadCache() const;
+  map::MapRunway getRunwayByEndId(int runwayEndId);
+  map::MapAirport getAirportByRunwayEndId(int runwayEndId);
+  map::MapRunway getRunwayById(int runwayId);
 
   static QStringList airportColumns(const atools::sql::SqlDatabase *db);
   static QStringList airportOverviewColumns(const atools::sql::SqlDatabase *db);
+
+  /* Get cached objects */
+  const QCache<int, QList<map::MapParking> >& getParkingCache() const
+  {
+    return parkingCache;
+  }
+
+  const QCache<int, QList<map::MapHelipad> >& getHelipadCache() const
+  {
+    return helipadCache;
+  }
+
+  const QCache<int, QList<map::MapRunway> >& getRunwayCache() const
+  {
+    return runwayCache;
+  }
 
 private:
   friend Queries;
@@ -233,7 +248,7 @@ private:
                                               bool lazy, bool overview);
 
   bool runwayCompare(const map::MapRunway& r1, const map::MapRunway& r2);
-  bool hasQueryByAirportId(atools::sql::SqlQuery& query, int id) const;
+  bool hasQueryByAirportId(atools::sql::SqlQuery& query, int airportId) const;
   void startByNameAndPos(map::MapStart& start, int airportId, const QString& runwayEndName, const atools::geo::Pos& position);
   void runwayEndByNames(map::MapResult& result, const QString& runwayName, const QString& airportIdent);
   map::MapRunwayEnd runwayEndByName(int airportId, const QString& runway);
@@ -278,18 +293,16 @@ private:
   const Queries *queries;
 
   /* Database queries */
-  atools::sql::SqlQuery *runwayOverviewQuery = nullptr, *apronQuery = nullptr,
-                        *parkingQuery = nullptr, *startQuery = nullptr, *startByIdQuery = nullptr,
-                        *helipadQuery = nullptr, *taxiparthQuery = nullptr, *runwaysQuery = nullptr,
-                        *parkingTypeNumberQuery = nullptr, *parkingTypeNumberSuffixQuery = nullptr,
-                        *parkingNameQuery = nullptr;
-
-  atools::sql::SqlQuery *airportByIdentQuery = nullptr, *airportsByTruncatedIdentQuery = nullptr,
-                        *airportByOfficialQuery = nullptr, *airportByPosQuery = nullptr, *airportParkingQuery = nullptr,
-                        *airportStartQuery = nullptr, *airportCoordsByIdentQuery = nullptr, *airportCoordsByIdentOrIcaoQuery = nullptr,
-                        *airportByRectAndProcQuery = nullptr, *runwayEndByIdQuery = nullptr, *runwayEndByNameQuery = nullptr,
-                        *airportByIdQuery = nullptr, *airportAdminByIdQuery = nullptr, *airportProcByIdQuery = nullptr,
-                        *procArrivalByAirportIdQuery = nullptr, *procDepartureByAirportIdQuery = nullptr;
+  atools::sql::SqlQuery
+  *runwayOverviewQuery = nullptr, *apronQuery = nullptr, *parkingQuery = nullptr, *startQuery = nullptr, *startByIdQuery = nullptr,
+  *startByRunwayEndIdQuery = nullptr, *helipadQuery = nullptr, *taxiparthQuery = nullptr, *runwaysByAirportIdQuery = nullptr,
+  *parkingTypeNumberQuery = nullptr, *parkingTypeNumberSuffixQuery = nullptr, *parkingNameQuery = nullptr, *runwayByIdQuery = nullptr,
+  *airportByIdentQuery = nullptr, *airportsByTruncatedIdentQuery = nullptr, *airportByOfficialQuery = nullptr, *airportByPosQuery = nullptr,
+  *airportParkingQuery = nullptr, *airportStartQuery = nullptr, *airportCoordsByIdentQuery = nullptr,
+  *airportCoordsByIdentOrIcaoQuery = nullptr, *airportByRectAndProcQuery = nullptr, *runwayEndByIdQuery = nullptr,
+  *runwayEndByNameQuery = nullptr, *airportByIdQuery = nullptr, *airportAdminByIdQuery = nullptr, *airportProcByIdQuery = nullptr,
+  *procArrivalByAirportIdQuery = nullptr, *procDepartureByAirportIdQuery = nullptr, *runwayIdByEndIdQuery = nullptr,
+  *airportIdByRunwayEndIdQuery = nullptr;
 };
 
 #endif // LITTLENAVMAP_AIRPORTQUERY_H

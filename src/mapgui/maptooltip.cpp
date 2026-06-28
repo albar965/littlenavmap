@@ -103,7 +103,8 @@ void MapTooltip::buildOneTooltipRt(atools::util::HtmlBuilder& html, bool& overfl
 }
 
 QString MapTooltip::buildTooltip(const map::MapResult& mapSearchResult, const atools::geo::Pos& pos, const Route *route,
-                                 bool airportDiagram, optsd::DisplayTooltipOptions options, const QString& prefix)
+                                 bool airportDiagram, bool airportDiagramRunway, optsd::DisplayTooltipOptions options,
+                                 const QString& prefix)
 {
 #ifdef DEBUG_INFORMATION
   qDebug() << Q_FUNC_INFO << mapSearchResult;
@@ -339,12 +340,20 @@ QString MapTooltip::buildTooltip(const map::MapResult& mapSearchResult, const at
   }
 
   // Airport stuff ===========================================================================
-  if(airportDiagram && options.testFlag(optsd::TOOLTIP_AIRPORT))
+  if(options.testFlag(optsd::TOOLTIP_AIRPORT))
   {
-    buildOneTooltip(html, overflow, numEntries, mapSearchResult.towers, info, route, &HtmlInfoBuilder::towerText);
-    buildOneTooltip(html, overflow, numEntries, mapSearchResult.parkings, info, route, &HtmlInfoBuilder::parkingText);
-    buildOneTooltip(html, overflow, numEntries, mapSearchResult.helipads, info, route, &HtmlInfoBuilder::helipadText);
-    buildOneTooltip(html, overflow, numEntries, mapSearchResult.starts, info, route, &HtmlInfoBuilder::startText);
+    // Detailed diagram with parking, etc.
+    if(airportDiagram)
+    {
+      buildOneTooltip(html, overflow, numEntries, mapSearchResult.towers, info, route, &HtmlInfoBuilder::towerText);
+      buildOneTooltip(html, overflow, numEntries, mapSearchResult.parkings, info, route, &HtmlInfoBuilder::parkingText);
+      buildOneTooltip(html, overflow, numEntries, mapSearchResult.helipads, info, route, &HtmlInfoBuilder::helipadText);
+      buildOneTooltip(html, overflow, numEntries, mapSearchResult.starts, info, route, &HtmlInfoBuilder::startText);
+    }
+
+    // Overview diagram with runway shapes and numbers
+    if(airportDiagramRunway)
+      buildOneTooltip(html, overflow, numEntries, mapSearchResult.runwayEnds, info, route, &HtmlInfoBuilder::runwayEndText);
   }
 
   if(options.testFlag(optsd::TOOLTIP_NAVAID))

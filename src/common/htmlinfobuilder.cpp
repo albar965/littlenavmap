@@ -955,8 +955,7 @@ void HtmlInfoBuilder::runwayText(const MapAirport& airport, HtmlBuilder& html, c
           if(print)
             html.table().tr().td();
 
-          runwayEndText(airport, html, recordPrimary, rec.valueFloat("heading"), rec.valueFloat("length"),
-                        false /* secondary */);
+          runwayEndText(airport, html, recordPrimary, rec.valueFloat("heading"), rec.valueFloat("length"), false /* secondary */);
 
           if(print)
             html.tdEnd().td();
@@ -1019,6 +1018,13 @@ void HtmlInfoBuilder::runwayText(const MapAirport& airport, HtmlBuilder& html, c
         html.p(tr("Airport has no helipad."));
     } // if(details)
   }
+}
+
+void HtmlInfoBuilder::runwayEndText(const MapRunwayEnd& runwayEnd, HtmlBuilder& html, const Route *route) const
+{
+  map::MapStart start;
+  queries->getAirportQuerySim()->getStartByRunwayEndId(start, runwayEnd.id);
+  startText(start, html, route);
 }
 
 void HtmlInfoBuilder::runwayEndText(const MapAirport& airport, HtmlBuilder& html, const SqlRecord *rec,
@@ -1121,7 +1127,7 @@ void HtmlInfoBuilder::runwayEndText(const MapAirport& airport, HtmlBuilder& html
       html.row2If(tr("Wind:"), windText % tr(". METAR source \"%1\".").arg(map::mapWeatherSourceString(NavApp::getMapWeatherSource())));
   }
 
-#ifdef DEBUG_INFORMATION_INFO_RUNWAY
+#ifdef DEBUG_INFORMATION_INFO
   html.row2("[secondary]", secondary);
 #else
   Q_UNUSED(secondary)
@@ -1286,14 +1292,18 @@ void HtmlInfoBuilder::ilsTextInternal(const map::MapIls& ils, atools::util::Html
   }
 }
 
-void HtmlInfoBuilder::startText(const map::MapStart& start, HtmlBuilder& html, const Route *) const
+void HtmlInfoBuilder::startText(const map::MapStart& start, HtmlBuilder& html, const Route *route) const
 {
   if(start.isValid())
   {
+    if(route != nullptr && !route->isEmpty() && route->getDepartureStart().id == start.id)
+      html.textBr(tr("Flight plan start position"), ahtml::BOLD | ahtml::SMALL);
+
     if(start.isHelipad())
     {
       // Get helipad struct for start
       const map::MapHelipad helipad = queries->getAirportQuerySim()->getHelipadForStart(start);
+
       if(helipad.isValid())
         helipadText(helipad, html, nullptr);
     }
@@ -1302,7 +1312,7 @@ void HtmlInfoBuilder::startText(const map::MapStart& start, HtmlBuilder& html, c
       map::MapAirport airport = queries->getAirportQuerySim()->getAirportById(start.airportId);
       if(airport.isValid())
       {
-        map::MapRunway runway = queries->getAirportQuerySim()->getRunwayByEndId(airport.id, start.runwayEndId);
+        map::MapRunway runway = queries->getAirportQuerySim()->getRunwayByEndId(start.runwayEndId);
         if(runway.isValid())
         {
           const SqlRecord *recordRunwayEnd = queries->getInfoQuery()->getRunwayEndInformation(start.runwayEndId);
@@ -1335,9 +1345,12 @@ void HtmlInfoBuilder::startText(const map::MapStart& start, HtmlBuilder& html, c
   }
 }
 
-void HtmlInfoBuilder::helipadText(const MapHelipad& helipad, HtmlBuilder& html, const Route *) const
+void HtmlInfoBuilder::helipadText(const MapHelipad& helipad, HtmlBuilder& html, const Route *route) const
 {
-  head(html, tr("Helipad %1:").arg(helipad.startNumber));
+  head(html, tr("Helipad %1").arg(helipad.startNumber));
+
+  if(route != nullptr && !route->isEmpty() && route->getDepartureStart().id == helipad.startId)
+    html.brText(tr("Flight plan start position"), ahtml::BOLD | ahtml::SMALL);
 
   // Put texts into one line
   QStringList texts;
@@ -3615,7 +3628,7 @@ void HtmlInfoBuilder::parkingText(const MapParking& parking, HtmlBuilder& html, 
        (parking.number != -1 ? " " % locale.toString(parking.number) % parking.suffix : QStringLiteral()));
 
   if(route != nullptr && !route->isEmpty() && route->getDepartureParking().id == parking.id)
-    html.brText(tr("Flight plan departure parking"), ahtml::BOLD);
+    html.brText(tr("Flight plan departure parking"), ahtml::BOLD | ahtml::SMALL);
 
   QStringList texts;
   if(!parking.parkingType.isEmpty())

@@ -198,9 +198,15 @@ public:
   void dumpMapLayers() const;
 
   /* Airports actually drawn having parking spots which require tooltips and more */
-  const QSet<int>& getShownDetailAirportIds() const
+  const QSet<int>& getShownParkingAirportIds() const
   {
-    return shownDetailAirportIds;
+    return shownParkingAirportIds;
+  }
+
+  /* Airports drawn having runway hotspots which require tooltips and more */
+  const QSet<int>& getShownRunwayAirportIds() const
+  {
+    return shownRunwayAirportIds;
   }
 
 private:
@@ -229,7 +235,10 @@ private:
   map::MapSunShading sunShading = map::SUN_SHADING_SIMULATOR_TIME;
 
   /* Airports drawn having parking spots which require tooltips and more */
-  QSet<int> shownDetailAirportIds;
+  QSet<int> shownParkingAirportIds;
+
+  /* Airports drawn having runway hotspots which require tooltips and more */
+  QSet<int> shownRunwayAirportIds;
 
   /* Value from toolbar */
   int minimumRunwayLengthFt = 0, maximumRunwayLengthFt = 0;

@@ -67,7 +67,7 @@ public:
    * @return HTML code of the tooltip
    */
   QString buildTooltip(const map::MapResult& mapSearchResult, const atools::geo::Pos& pos, const Route *route, bool airportDiagram,
-                       optsd::DisplayTooltipOptions options, const QString& prefix = QString());
+                       bool airportDiagramRunway, optsd::DisplayTooltipOptions options, const QString& prefix = QString());
 
 private:
   bool checkText(atools::util::HtmlBuilder& html) const;

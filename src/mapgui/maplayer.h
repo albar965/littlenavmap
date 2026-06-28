@@ -99,22 +99,25 @@ public:
     return approachTextDetail;
   }
 
+  /* Blue/magenta white runway overview without numbers */
   bool isAirportOverviewRunway() const
   {
     return airportOverviewRunway;
   }
 
-  bool isAirportDiagram() const
-  {
-    return airportDiagram;
-  }
-
+  /* Ruwnays with surface color and small numbers including hotspots */
   bool isAirportDiagramRunway() const
   {
     return airportDiagramRunway;
   }
 
-  /* Lowest detail */
+  /* Aprons, parking and runway side labels. */
+  bool isAirportDiagram() const
+  {
+    return airportDiagram;
+  }
+
+  /* Lowest detail. Taxiway center lines and labels. */
   bool isAirportDiagramDetail() const
   {
     return airportDiagramDetail;

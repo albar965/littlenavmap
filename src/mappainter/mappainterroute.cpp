@@ -336,7 +336,7 @@ void MapPainterRoute::paintRoute()
   // Recommended navaids
   paintRecommended(passedRouteLeg, routeProcIdMap, false /* preview */);
 
-  // Draw highlight for departure parking, start, helipad or airport
+  // Draw highlight for departure start (parking, helipad or runway end) or airport  ==========================
   if(context->mapLayerRoute->isRouteTextAndDetail())
     paintStartParking();
 
@@ -2541,12 +2541,14 @@ void MapPainterRoute::paintStartParking()
     // Use airport symbol as base size for default
     float radius = context->szF(context->symbolSizeAirport * context->symbolSizeRoute,
                                 context->mapLayerRoute->getAirportSymbolSize()) * 0.75f;
+
+    // Use mapLayer since airport diagrams do not depend on route status
     float wradius = radius, hradius = radius;
     Pos startPos;
     if(route->hasDepartureParking())
     {
-      // Parking ramp or gate ==================
-      if(context->mapLayerRoute->isAirportDiagramDetail())
+      // Parking ramp or gate if visible ==================
+      if(context->mapLayer->isAirportDiagram())
       {
         // Radius based on parking size
         startPos = departureLeg.getDepartureParking().position;
@@ -2557,10 +2559,16 @@ void MapPainterRoute::paintStartParking()
         hradius = std::max(10.f, scale->getPixelForFeet(radius, 0));
       }
     }
-    else if(route->hasDepartureStart())
+    else if(route->hasDepartureHelipad())
     {
       // Start - runway, helipad or water ==================
-      if(context->mapLayerRoute->isAirportDiagramDetail())
+      if(context->mapLayer->isAirportDiagram())
+        startPos = departureLeg.getDepartureStart().position;
+    }
+    else if(route->hasDepartureRunway())
+    {
+      // Start - runway, helipad or water ==================
+      if(context->mapLayer->isAirportOverviewRunway())
         startPos = departureLeg.getDepartureStart().position;
     }
     else

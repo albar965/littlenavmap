@@ -209,6 +209,7 @@ public:
    * the current departure it will be replaced too. */
   void routeSetParkingPosition(const map::MapParking& parking, bool undo = true); /* From map context menu */
   void routeSetHelipad(const map::MapHelipad& helipad, bool undo = true); /* From map context menu */
+  void routeSetRunwayEnd(const map::MapRunwayEnd& runwayEnd, bool undo);
   void routeClearParkingAndStart(); /* Main menu and parking dialog - set airport as start */
 
   /* Shows the dialog to select departure parking or start position.
@@ -301,7 +302,8 @@ public:
 
   /* Add custom procedure and probably set new destination airport */
   void showCustomApproach(map::MapAirport airport);
-  void showCustomDeparture(map::MapAirport airport, const map::MapParking& parking, const map::MapHelipad& helipad);
+  void showCustomDeparture(map::MapAirport airport, const map::MapParking& parking, const map::MapHelipad& helipad,
+                           const map::MapRunwayEnd& runwayEnd);
 
   /* Add custom proc for departure or destination airport. Called from main menu actions. */
   void showCustomApproachMainMenu();

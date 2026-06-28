@@ -146,7 +146,7 @@ QString RouteLabel::tooltipFunction(const QString& key)
   }
 
   MapTooltip mapTooltip(NavApp::getMainWindow());
-  return mapTooltip.buildTooltip(result, atools::geo::EMPTY_POS, nullptr, true /* airportDiagram */,
+  return mapTooltip.buildTooltip(result, atools::geo::EMPTY_POS, nullptr, true /* airportDiagram */, true /* airportDiagramRunway */,
                                  optsd::TOOLTIP_AIRPORT, prefix);
 }
 
@@ -538,7 +538,7 @@ void RouteLabel::fetchTakeoffRunway(map::MapRunway& runway, map::MapRunwayEnd& r
         if(!runwayEnds.isEmpty())
           runwayEnd = runwayEnds.constFirst();
 
-        runway = queries->getAirportQuerySim()->getRunwayByEndId(departLeg.getId(), runwayEnd.id);
+        runway = queries->getAirportQuerySim()->getRunwayByEndId(runwayEnd.id);
       }
     }
   }
@@ -620,7 +620,7 @@ void RouteLabel::fetchLandingRunway(map::MapRunway& runway, map::MapRunwayEnd& r
             runwayEnd = runwayEnds.constFirst();
 
           if(runwayEnd.isFullyValid())
-            runway = queries->getAirportQuerySim()->getRunwayByEndId(destLeg.getId(), runwayEnd.id);
+            runway = queries->getAirportQuerySim()->getRunwayByEndId(runwayEnd.id);
         }
       }
     }

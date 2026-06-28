@@ -627,6 +627,22 @@ void MapContextMenu::insertDepartureMenu(QMenu& menu)
             otherSuffixes.append(tr("is start"));
           }
         }
+        else if(base->getType() == map::RUNWAYEND)
+        {
+          // User clicked on a runway end ================================
+          const map::MapRunwayEnd *runwayEnd = base->asPtr<map::MapRunwayEnd>();
+
+          airport = airportQuery->getAirportByRunwayEndId(runwayEnd->id);
+          parkingText = map::runwayEndText(*runwayEnd) % tr(" as Start Position");
+
+          map::MapStart currentStart = route.getDepartureStart();
+          if(currentStart.isRunway() && currentStart.runwayEndId == runwayEnd->id)
+          {
+            // Same runway already selected
+            disable = true;
+            otherSuffixes.append(tr("is start"));
+          }
+        }
         else if(base->getType() == map::AIRPORT)
           // Clicked on airport - no parking and no helipad ========================
           airport = base->asObj<map::MapAirport>();
@@ -661,7 +677,7 @@ void MapContextMenu::insertDepartureMenu(QMenu& menu)
         else
           disable = true;
 
-        // Replace or clear parking text
+        // Replace or clear start text
         text.replace("{parking}", parkingText);
 
         // Add suffixes
@@ -684,7 +700,8 @@ void MapContextMenu::insertDepartureMenu(QMenu& menu)
     };
 
   insertMenuOrAction(menu, mc::DEPARTURE,
-                     MapResultIndex().addRef(*result, map::AIRPORT | map::HELIPAD | map::START | map::PARKING).sort(alphaSort),
+                     MapResultIndex().addRef(*result, map::AIRPORT | map::HELIPAD | map::START | map::PARKING | map::RUNWAYEND).
+                     sort(alphaSort),
                      tr("&Select %1 as Departure ..."), tr("Select departure for airport"),
                      QStringLiteral(), QIcon(":/littlenavmap/resources/icons/airportroutestart.svg"), false /* allowNoMapObject */,
                      callback);
@@ -1237,7 +1254,6 @@ bool MapContextMenu::exec(QPoint menuPos, QPoint point)
   clear();
 
   const MapScreenIndex *screenIndex = mapWidget->getScreenIndex();
-  int screenSearchDist = OptionData::instance().getMapClickSensitivity();
 
   // ===================================================================================
   // Build menu - add actions
@@ -1256,7 +1272,7 @@ bool MapContextMenu::exec(QPoint menuPos, QPoint point)
   if(mapWidget->getShownMapDisplayTypes().testFlag(map::FLIGHTPLAN_ALTERNATE))
     queryType |= map::QUERY_ALTERNATE;
 
-  screenIndex->getAllNearest(point, screenSearchDist, *result, queryType);
+  screenIndex->getAllNearest(point, OptionData::instance().getMapClickSensitivity(), *result, queryType);
 
   result->moveOnlineAirspacesToFront();
 

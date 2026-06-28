@@ -37,10 +37,8 @@ class XmlStreamReader;
 }
 }
 namespace proc {
-
 struct MapProcedureLeg;
 struct MapProcedureLegs;
-
 }
 /*
  * Maptypes are mostly filled from database tables and are used to pass airport, navaid and more information
@@ -655,6 +653,71 @@ private:
 QDebug operator<<(QDebug out, const map::MapAirport& obj);
 
 // =====================================================================
+/* Airport runway end. All dimensions are feet */
+/* Database id is runway_end.runway_end_id */
+/* Position contains runway altitude in feet */
+struct MapRunwayEnd
+  : public MapBase
+{
+  MapRunwayEnd()
+    : MapBase(staticType())
+  {
+  }
+
+  static map::MapType staticType()
+  {
+    return map::RUNWAYEND;
+  }
+
+  /* True if coordinates and name are ok */
+  bool isFullyValid() const
+  {
+    return isValid() && !name.isEmpty() && name != QLatin1String("RW");
+  }
+
+  QString name, leftVasiType, rightVasiType, pattern;
+  float heading, /* degree true */
+        leftVasiPitch = 0.f, rightVasiPitch = 0.f;
+
+  bool secondary,
+       navdata, /* true if source is third party nav database, false if source is simulator data */
+       complete; /* Missing VASI and patter if incomplete */
+
+  bool hasAnyVasi() const
+  {
+    return hasLeftVasi() || hasRightVasi();
+  }
+
+  bool hasLeftVasi() const
+  {
+    return leftVasiPitch > 0.f;
+  }
+
+  bool hasRightVasi() const
+  {
+    return rightVasiPitch > 0.f;
+  }
+
+  QString leftVasiTypeStr() const
+  {
+    return leftVasiType == QLatin1String("UNKN") ? QString() : leftVasiType;
+  }
+
+  QString rightVasiTypeStr() const
+  {
+    return rightVasiType == QLatin1String("UNKN") ? QString() : rightVasiType;
+  }
+
+  QStringList uniqueVasiTypeStr() const;
+
+  const QString& getIdent() const
+  {
+    return name;
+  }
+
+};
+
+// =====================================================================
 /* Airport runway. All dimensions are feet */
 /* Database id is runway.runway_id */
 /* Position contains runway altitude in feet */
@@ -681,6 +744,10 @@ struct MapRunway
         primaryOffset, secondaryOffset, /* Offset threshold is a part of the runway length in ft */
         primaryBlastPad, secondaryBlastPad, primaryOverrun, secondaryOverrun; /* not part of the runway length all in ft */
   atools::geo::Pos primaryPosition, secondaryPosition;
+
+  /* Get incomplete ends */
+  map::MapRunwayEnd primaryEnd() const;
+  map::MapRunwayEnd secondaryEnd() const;
 
   /* Used by AirportQuery::getRunways */
   int airportId;
@@ -747,70 +814,6 @@ struct MapRunway
   QString getIdent() const
   {
     return primaryName + '/' + secondaryName;
-  }
-
-};
-
-// =====================================================================
-/* Airport runway end. All dimensions are feet */
-/* Database id is runway_end.runway_end_id */
-/* Position contains runway altitude in feet */
-struct MapRunwayEnd
-  : public MapBase
-{
-  MapRunwayEnd()
-    : MapBase(staticType())
-  {
-  }
-
-  static map::MapType staticType()
-  {
-    return map::RUNWAYEND;
-  }
-
-  /* True if coordinates and name are ok */
-  bool isFullyValid() const
-  {
-    return isValid() && !name.isEmpty() && name != QLatin1String("RW");
-  }
-
-  QString name, leftVasiType, rightVasiType, pattern;
-  float heading, /* degree true */
-        leftVasiPitch = 0.f, rightVasiPitch = 0.f;
-
-  bool hasAnyVasi() const
-  {
-    return hasLeftVasi() || hasRightVasi();
-  }
-
-  bool hasLeftVasi() const
-  {
-    return leftVasiPitch > 0.f;
-  }
-
-  bool hasRightVasi() const
-  {
-    return rightVasiPitch > 0.f;
-  }
-
-  QString leftVasiTypeStr() const
-  {
-    return leftVasiType == QLatin1String("UNKN") ? QString() : leftVasiType;
-  }
-
-  QString rightVasiTypeStr() const
-  {
-    return rightVasiType == QLatin1String("UNKN") ? QString() : rightVasiType;
-  }
-
-  QStringList uniqueVasiTypeStr() const;
-
-  bool secondary = false;
-  bool navdata = false; /* true if source is third party nav database, false if source is simulator data */
-
-  const QString& getIdent() const
-  {
-    return name;
   }
 
 };
@@ -1969,6 +1972,11 @@ const QString& comTypeName(const QString& type);
 
 QString airportText(const map::MapAirport& airport, int elideName = 100, bool includeIdent = false);
 QString airportTextShort(const map::MapAirport& airport, int elideName = 100, bool includeIdent = false);
+
+QString runwayText(const map::MapRunway& runway);
+QString runwayTextShort(const map::MapRunway& runway);
+QString runwayEndText(const map::MapRunwayEnd& runwayEnd);
+QString runwayEndTextShort(const map::MapRunwayEnd& runwayEnd);
 
 QString airportMsaText(const map::MapAirportMsa& airportMsa, bool user);
 QString airportMsaTextShort(const map::MapAirportMsa& airportMsa);

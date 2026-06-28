@@ -55,6 +55,7 @@ class Rect;
 }
 
 namespace map {
+struct MapRunwayEnd;
 struct MapHelipad;
 struct MapParking;
 struct MapAirport;
@@ -170,7 +171,8 @@ signals:
   /* Show approaches in context menu selected */
   void showProcedures(const map::MapAirport& airport, bool departureFilter, bool arrivalFilter);
   void showCustomApproach(const map::MapAirport& airport);
-  void showCustomDeparture(const map::MapAirport& airport, const map::MapParking& parking, const map::MapHelipad& helipad);
+  void showCustomDeparture(const map::MapAirport& airport, const map::MapParking& parking, const map::MapHelipad& helipad,
+                           const map::MapRunwayEnd& runwayEnd);
 
   /* Set airport as flight plan departure (from context menu) */
   void routeSetDeparture(const map::MapAirport& airport, bool undo = true);

@@ -66,7 +66,7 @@
      </widget>
      <widget class="QStackedWidget" name="stackedWidgetOptions">
       <property name="currentIndex">
-       <number>10</number>
+       <number>9</number>
       </property>
       <widget class="QWidget" name="stackedWidgetOptionsStartup">
        <layout class="QVBoxLayout" name="verticalLayout_41">
@@ -1588,8 +1588,8 @@ aircraft progress, tooltips and information window.</string>
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>566</width>
-             <height>401</height>
+             <width>586</width>
+             <height>531</height>
             </rect>
            </property>
            <layout class="QVBoxLayout" name="verticalLayout_59">
@@ -1820,8 +1820,8 @@ The &quot;Save as&quot; dialog will show up instead of overwriting the current f
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>317</width>
-             <height>492</height>
+             <width>586</width>
+             <height>531</height>
             </rect>
            </property>
            <layout class="QGridLayout" name="gridLayout">
@@ -2079,7 +2079,7 @@ Note that this function is disabled for X-Plane 12 since the 3D flag is unreliab
              <x>0</x>
              <y>0</y>
              <width>599</width>
-             <height>399</height>
+             <height>517</height>
             </rect>
            </property>
            <layout class="QGridLayout" name="gridLayout_2">
@@ -2543,8 +2543,8 @@ userpoints and logbook entries when hovering the cursor over the map</string>
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>510</width>
-             <height>526</height>
+             <width>586</width>
+             <height>531</height>
             </rect>
            </property>
            <layout class="QVBoxLayout" name="verticalLayout_12">
@@ -2872,8 +2872,8 @@ Map views might be shown with a larger zoom distance than expected if this optio
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>433</width>
-             <height>644</height>
+             <width>572</width>
+             <height>601</height>
             </rect>
            </property>
            <layout class="QVBoxLayout" name="verticalLayout_65">
@@ -3047,9 +3047,9 @@ Note that some fonts, especially large fonts, can result in display errors on th
            <property name="geometry">
             <rect>
              <x>0</x>
-             <y>0</y>
-             <width>355</width>
-             <height>586</height>
+             <y>-108</y>
+             <width>572</width>
+             <height>639</height>
             </rect>
            </property>
            <layout class="QVBoxLayout" name="verticalLayout_71">
@@ -3360,6 +3360,22 @@ Note that some fonts, especially large fonts, can result in display errors on th
                    <string>Description</string>
                   </property>
                  </column>
+                </widget>
+               </item>
+               <item>
+                <widget class="QLabel" name="labelOptionsAirportSettingsHint_2">
+                 <property name="text">
+                  <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;img src=&quot;:/littlenavmap/resources/icons/bulb.svg&quot;/&gt;&lt;span style=&quot; font-style:italic;&quot;&gt;Note that you cannot interact with hidden objects. This means that related items in the context menu are disabled if an airport object is hidden.&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+                 </property>
+                 <property name="wordWrap">
+                  <bool>true</bool>
+                 </property>
+                 <property name="margin">
+                  <number>10</number>
+                 </property>
+                 <property name="textInteractionFlags">
+                  <set>Qt::LinksAccessibleByMouse|Qt::TextSelectableByMouse</set>
+                 </property>
                 </widget>
                </item>
               </layout>
@@ -4165,8 +4181,8 @@ to avoid a cluttered up airports</string>
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>428</width>
-             <height>596</height>
+             <width>572</width>
+             <height>575</height>
             </rect>
            </property>
            <layout class="QVBoxLayout" name="verticalLayout_35">
@@ -4640,8 +4656,8 @@ Also used in the elevation profile.</string>
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>554</width>
-             <height>365</height>
+             <width>586</width>
+             <height>531</height>
             </rect>
            </property>
            <layout class="QVBoxLayout" name="verticalLayout_57">
@@ -4933,8 +4949,8 @@ Note that this does not affect the stored trail points.</string>
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>441</width>
-             <height>713</height>
+             <width>572</width>
+             <height>674</height>
             </rect>
            </property>
            <layout class="QGridLayout" name="gridLayout_35">
@@ -5561,8 +5577,8 @@ if you hover over the elevation profile.</string>
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>183</width>
-             <height>132</height>
+             <width>586</width>
+             <height>531</height>
             </rect>
            </property>
            <layout class="QVBoxLayout" name="verticalLayout_61">
@@ -5951,10 +5967,10 @@ if you hover over the elevation profile.</string>
                  <property name="editTriggers">
                   <set>QAbstractItemView::NoEditTriggers</set>
                  </property>
-                 <property name="showDropIndicator" stdset="0">
+                 <property name="tabKeyNavigation">
                   <bool>false</bool>
                  </property>
-                 <property name="tabKeyNavigation">
+                 <property name="showDropIndicator" stdset="0">
                   <bool>false</bool>
                  </property>
                  <property name="alternatingRowColors">
@@ -6886,7 +6902,7 @@ Download the file &lt;b&gt;&lt;i&gt;All Tiles in One .zip (all10g.zip)&lt;/i&gt;
              <x>0</x>
              <y>0</y>
              <width>572</width>
-             <height>631</height>
+             <height>635</height>
             </rect>
            </property>
            <layout class="QVBoxLayout" name="verticalLayout_25">
@@ -7493,7 +7509,7 @@ Note that this value does not affect flight plan calculation or saving of flight
              <x>0</x>
              <y>0</y>
              <width>272</width>
-             <height>761</height>
+             <height>765</height>
             </rect>
            </property>
            <layout class="QVBoxLayout" name="verticalLayout_27">
@@ -7734,7 +7750,7 @@ Note that this value does not affect flight plan calculation or saving of flight
              <x>0</x>
              <y>0</y>
              <width>360</width>
-             <height>936</height>
+             <height>944</height>
             </rect>
            </property>
            <layout class="QVBoxLayout" name="verticalLayout_28">
@@ -9025,6 +9041,9 @@ You have to reload the scenery library so that the changes take effect.</string>
                  <property name="editTriggers">
                   <set>QAbstractItemView::NoEditTriggers</set>
                  </property>
+                 <property name="tabKeyNavigation">
+                  <bool>false</bool>
+                 </property>
                  <property name="showDropIndicator" stdset="0">
                   <bool>false</bool>
                  </property>
@@ -9033,9 +9052,6 @@ You have to reload the scenery library so that the changes take effect.</string>
                  </property>
                  <property name="selectionMode">
                   <enum>QAbstractItemView::ExtendedSelection</enum>
-                 </property>
-                 <property name="tabKeyNavigation">
-                  <bool>false</bool>
                  </property>
                  <property name="textElideMode">
                   <enum>Qt::ElideLeft</enum>
@@ -9136,10 +9152,10 @@ You have to reload the scenery library so that the changes take effect.</string>
                  <property name="editTriggers">
                   <set>QAbstractItemView::NoEditTriggers</set>
                  </property>
-                 <property name="showDropIndicator" stdset="0">
+                 <property name="tabKeyNavigation">
                   <bool>false</bool>
                  </property>
-                 <property name="tabKeyNavigation">
+                 <property name="showDropIndicator" stdset="0">
                   <bool>false</bool>
                  </property>
                  <property name="alternatingRowColors">
@@ -9243,6 +9259,9 @@ You have to reload the scenery library so that the changes take effect.</string>
                  <property name="editTriggers">
                   <set>QAbstractItemView::NoEditTriggers</set>
                  </property>
+                 <property name="tabKeyNavigation">
+                  <bool>false</bool>
+                 </property>
                  <property name="showDropIndicator" stdset="0">
                   <bool>false</bool>
                  </property>
@@ -9257,9 +9276,6 @@ You have to reload the scenery library so that the changes take effect.</string>
                  </property>
                  <property name="horizontalScrollMode">
                   <enum>QAbstractItemView::ScrollPerPixel</enum>
-                 </property>
-                 <property name="tabKeyNavigation">
-                  <bool>false</bool>
                  </property>
                  <property name="wordWrap">
                   <bool>false</bool>

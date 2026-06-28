@@ -822,14 +822,17 @@ void MapScreenIndex::getAllNearest(const QPoint& point, int maxDistance, map::Ma
                            (map::AIRPORT_ALL_MASK | map::AIRPORT_MSA | map::VOR | map::NDB | map::WAYPOINT | map::MARKER |
                             map::HOLDING | map::AIRWAYJ | map::TRACK | map::AIRWAYV | map::USERPOINT | map::LOGBOOK);
 
-  map::MapDisplayTypes displayTypes = shownDisplay;
+  // Get towers, helipads and parking if enable and visible in zoom level
+  if(mapLayer->isAirportDiagram() && OptionData::instance().getDisplayOptionsAirport().testFlag(optsd::ITEM_AIRPORT_DETAIL_PARKING))
+    mapTypes |= map::HELIPAD | map::PARKING;
 
-  bool airportDiagram = mapLayer->isAirportDiagram() &&
-                        OptionData::instance().getDisplayOptionsAirport().testFlag(optsd::ITEM_AIRPORT_DETAIL_PARKING);
+  // Get runway ends if runways are visible in zoom level
+  if(mapLayer->isAirportDiagramRunway() && OptionData::instance().getDisplayOptionsAirport().testFlag(optsd::ITEM_AIRPORT_DETAIL_RUNWAY))
+    mapTypes |= map::RUNWAYEND;
 
   // Airports actually drawn having parking spots which require tooltips and more
-  const QSet<int>& shownDetailAirportIds = paintLayer->getShownDetailAirportIds();
-  queries->getMapQuery()->getNearestScreenObjects(conv, mapLayer, shownDetailAirportIds, airportDiagram, mapTypes, displayTypes,
+  queries->getMapQuery()->getNearestScreenObjects(conv, mapLayer, paintLayer->getShownParkingAirportIds(),
+                                                  paintLayer->getShownRunwayAirportIds(), mapTypes, shownDisplay,
                                                   xs, ys, maxDistance, result);
 
   // Get points of procedure preview
@@ -881,7 +884,7 @@ void MapScreenIndex::getAllNearest(const QPoint& point, int maxDistance, map::Ma
   auto coordinateFunc = [this](float lonX, float latY, double& xt, double& yt) {
                           mapWidget->screenCoordinates(lonX, latY, xt, yt);
                         };
-  Pos pos = conv.sToW(xs, ys);
+  const Pos pos = conv.sToW(xs, ys);
 
   if(pos.isValid())
   {

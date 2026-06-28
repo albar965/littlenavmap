@@ -2250,7 +2250,15 @@ void Route::updateBoundingRect()
       positions.append(leg.getProcedureLeg().recNavaids.getPosition(TYPES));
     }
   }
+
+  if(hasDepartureParking())
+    positions.append(getDepartureParking().position);
+
+  if(hasDepartureStart())
+    positions.append(getDepartureStart().position);
+
   boundingRect = atools::geo::bounding(positions);
+
 }
 
 void Route::nearestAllLegIndex(const map::PosCourse& pos, float& crossTrackDistanceMeter,

@@ -660,6 +660,7 @@ void MapWidget::showTooltip(bool update)
       QString text;
       if(paintLayer->getMapLayer() != nullptr)
         text = mapTooltip->buildTooltip(*resultTooltip, pos, &NavApp::getRouteConst(), paintLayer->getMapLayer()->isAirportDiagram(),
+                                        paintLayer->getMapLayer()->isAirportDiagramRunway(),
                                         OptionData::instance().getDisplayTooltipOptions());
 
       if(!text.isEmpty())
@@ -2457,21 +2458,27 @@ void MapWidget::editPatternMark(int id)
 
 void MapWidget::addDeparture(const map::MapBase *base)
 {
-  map::MapAirport airport = base != nullptr ? base->asObj<map::MapAirport>() : map::MapAirport();
+  if(base != nullptr)
+  {
+    map::MapAirport airport = base->asObj<map::MapAirport>();
+    const map::MapParking parking = base->asObj<map::MapParking>();
+    const map::MapHelipad helipad = base->asObj<map::MapHelipad>();
+    const map::MapRunwayEnd runwayEnd = base->asObj<map::MapRunwayEnd>();
+    AirportQuery *airportQuery = QueryManager::instance()->getQueriesGui()->getAirportQuerySim();
 
-  const map::MapParking parking = base->asObj<map::MapParking>();
-  const map::MapHelipad helipad = base->asObj<map::MapHelipad>();
-  AirportQuery *airportQuery = QueryManager::instance()->getQueriesGui()->getAirportQuerySim();
+    if(parking.isValid())
+      // Show dialog for runway/airport selection if airport has runways and has changed
+      airport = airportQuery->getAirportById(parking.airportId);
+    else if(helipad.isValid())
+      // Show dialog for runway/airport selection if airport has runways and has changed
+      airport = airportQuery->getAirportById(helipad.airportId);
+    else if(runwayEnd.isValid())
+      // Show dialog for runway/airport selection if airport has runways and has changed
+      airport = airportQuery->getAirportByRunwayEndId(runwayEnd.id);
 
-  if(parking.isValid())
-    // Show dialog for runway/airport selection if airport has runways and has changed
-    emit showCustomDeparture(airportQuery->getAirportById(parking.airportId), parking, helipad);
-  else if(helipad.isValid())
-    // Show dialog for runway/airport selection if airport has runways and has changed
-    emit showCustomDeparture(airportQuery->getAirportById(helipad.airportId), parking, helipad);
-  else
     // Select runway if departure airport has changed
-    emit showCustomDeparture(airport, parking, helipad);
+    emit showCustomDeparture(airport, parking, helipad, runwayEnd);
+  }
 }
 
 void MapWidget::updateRouteMenu(const QPoint& point, int leg, int pointIndex, bool fromClickAdd, bool fromClickAppend)
@@ -2880,7 +2887,8 @@ void MapWidget::updateHelpOverlayLabel()
                   "a marker, userpoint or flight plan point or leg.");
       else
         text = tr("${editclick} to edit or ${delclick} to delete marker, userpoint or flight plan point or leg.");
-      text.append(tr("<br/><small><b>Right-Click</b> here to change this help overlay.</small>"));
+      text.append(tr("<br/><small><b>Right-Click</b> here to change this help overlay. "
+                       "<b>Right-Click</b> on map objects for context menu.</small>"));
     }
 
     // Replace shortcut variables ====================

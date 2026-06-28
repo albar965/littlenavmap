@@ -157,12 +157,17 @@ public:
 
   /* Set departure parking information. Parking clears start and vice versa. */
   void setDepartureParking(const map::MapParking& departureParking);
+
+  /* Runway end or helipad. */
   void setDepartureStart(const map::MapStart& departureStart);
 
   /* Remove start and parking from route and flight plan */
   void clearDepartureStartAndParking();
 
+  /* Gate or parking */
   map::MapParking getDepartureParking() const;
+
+  /* Runway end or helipad. */
   map::MapStart getDepartureStart() const;
 
   /* First leg of departure procedure. 1 if SID used otherwise 0. */
@@ -301,7 +306,7 @@ public:
   /* @return true if departure is an airport and start position is a runway */
   bool hasDepartureRunway() const;
 
-  /* @return true if departure is an airport and a start position is set */
+  /* @return true if departure is an airport and a start position is set. Runway end or helipad. */
   bool hasDepartureStart() const;
 
   /* @return true if flight plan has no departure, no destination and no intermediate waypoints */

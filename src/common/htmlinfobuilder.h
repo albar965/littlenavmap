@@ -49,35 +49,35 @@ class HtmlBuilder;
 }
 
 namespace map {
-
-struct MapNav;
 struct AircraftTrailSegment;
+struct DistanceMarker;
+struct HoldingMarker;
+struct MapAirport;
 struct MapAirport;
 struct MapAirportMsa;
-struct MapVor;
-struct MapNdb;
-struct MapWaypoint;
-struct MapAirway;
 struct MapAirspace;
-struct MapIls;
-struct MapMarker;
-struct MapAirport;
-struct MapParking;
+struct MapAirway;
+struct MapBase;
 struct MapHelipad;
-struct MapStart;
-struct MapUserpointRoute;
+struct MapHolding;
+struct MapIls;
+struct MapLogbookEntry;
+struct MapMarker;
+struct MapNav;
+struct MapNdb;
+struct MapParking;
 struct MapProcedurePoint;
 struct MapProcedureRef;
-struct MapUserpoint;
-struct MapLogbookEntry;
-struct MapBase;
 struct MapResultIndex;
-struct MapHolding;
+struct MapRunwayEnd;
+struct MapStart;
+struct MapUserpoint;
+struct MapUserpointRoute;
+struct MapVor;
+struct MapWaypoint;
+struct MsaMarker;
 struct PatternMarker;
 struct RangeMarker;
-struct HoldingMarker;
-struct MsaMarker;
-struct DistanceMarker;
 }
 
 namespace atools {
@@ -147,6 +147,9 @@ public:
    */
   void runwayText(const map::MapAirport& airport, atools::util::HtmlBuilder& html, const Route *route, bool details = true,
                   bool soft = true) const;
+
+  /* Passes to starttext() method */
+  void runwayEndText(const map::MapRunwayEnd& airport, atools::util::HtmlBuilder& html, const Route *route) const;
 
   /* Adds text for preferred runways */
   void bestRunwaysText(const map::MapAirport& airport, atools::util::HtmlBuilder& html, const atools::fs::weather::MetarParser& parsed,
@@ -254,14 +257,15 @@ public:
    * @param helipad
    * @param html Result containing HTML snippet
    */
-  void helipadText(const map::MapHelipad& helipad, atools::util::HtmlBuilder& html, const Route *) const;
+  void helipadText(const map::MapHelipad& helipad, atools::util::HtmlBuilder& html, const Route *route) const;
 
   /*
    * Creates a HTML description for a start. Only called for tooltip. Start can be helipad or runway end.
+   * Shows detailed information on runway and end.
    * @param start
    * @param html Result containing HTML snippet
    */
-  void startText(const map::MapStart& start, atools::util::HtmlBuilder& html, const Route *) const;
+  void startText(const map::MapStart& start, atools::util::HtmlBuilder& html, const Route *route) const;
 
   /*
    * Creates a HTML description for a all upper layer winds at position

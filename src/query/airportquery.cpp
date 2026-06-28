@@ -126,7 +126,7 @@ void AirportQuery::getAirportAdminNamesById(int airportId, QString& city, QStrin
   if(!query::valid(Q_FUNC_INFO, airportAdminByIdQuery))
     return;
 
-  airportAdminByIdQuery->bindValue(QStringLiteral(":id"), airportId);
+  airportAdminByIdQuery->bindValue(QStringLiteral(":airportId"), airportId);
   airportAdminByIdQuery->exec();
   if(airportAdminByIdQuery->next())
   {
@@ -158,7 +158,7 @@ void AirportQuery::getAirportById(map::MapAirport& airport, int airportId)
   {
     ap = new map::MapAirport;
 
-    airportByIdQuery->bindValue(QStringLiteral(":id"), airportId);
+    airportByIdQuery->bindValue(QStringLiteral(":airportId"), airportId);
     airportByIdQuery->exec();
     if(airportByIdQuery->next())
       mapTypesFactory->fillAirport(airportByIdQuery->record(), *ap, true /* complete */, navdata, NavApp::isAirportDatabaseXPlane(navdata));
@@ -457,10 +457,10 @@ bool AirportQuery::hasDepartureProcedures(const map::MapAirport& airport) const
   return hasQueryByAirportId(*procDepartureByAirportIdQuery, airport.id);
 }
 
-bool AirportQuery::hasQueryByAirportId(atools::sql::SqlQuery& query, int id) const
+bool AirportQuery::hasQueryByAirportId(atools::sql::SqlQuery& query, int airportId) const
 {
   bool retval = false;
-  query.bindValue(QStringLiteral(":id"), id);
+  query.bindValue(QStringLiteral(":airportId"), airportId);
   query.exec();
   if(query.next())
     retval = true;
@@ -489,13 +489,13 @@ void AirportQuery::getAirportRegion(map::MapAirport& airport)
   query.finish();
 }
 
-map::MapRunwayEnd AirportQuery::getRunwayEndById(int id)
+map::MapRunwayEnd AirportQuery::getRunwayEndById(int runwayEndId)
 {
   map::MapRunwayEnd end;
   if(!query::valid(Q_FUNC_INFO, runwayEndByIdQuery))
     return end;
 
-  runwayEndByIdQuery->bindValue(QStringLiteral(":id"), id);
+  runwayEndByIdQuery->bindValue(QStringLiteral(":runwayEndId"), runwayEndId);
   runwayEndByIdQuery->exec();
   if(runwayEndByIdQuery->next())
     mapTypesFactory->fillRunwayEnd(runwayEndByIdQuery->record(), end, navdata);
@@ -520,19 +520,52 @@ map::MapRunwayEnd AirportQuery::getOpposedRunwayEnd(int airportId, const map::Ma
   return map::MapRunwayEnd();
 }
 
-map::MapRunway AirportQuery::getRunwayByEndId(int airportId, int runwayEndId)
+map::MapAirport AirportQuery::getAirportByRunwayEndId(int runwayEndId)
 {
-  const QList<map::MapRunway> *runways = getRunways(airportId);
-
-  if(runways != nullptr)
+  if(query::valid(Q_FUNC_INFO, airportIdByRunwayEndIdQuery))
   {
-    for(const map::MapRunway& runway : *runways)
-    {
-      if(runway.primaryEndId == runwayEndId || runway.secondaryEndId == runwayEndId)
-        return runway;
-    }
+    int id = -1;
+    airportIdByRunwayEndIdQuery->bindValue(QStringLiteral(":runwayEndId"), runwayEndId);
+    airportIdByRunwayEndIdQuery->exec();
+    if(airportIdByRunwayEndIdQuery->next())
+      id = airportIdByRunwayEndIdQuery->valueInt(0);
+    airportIdByRunwayEndIdQuery->finish();
+
+    if(id != -1)
+      return getAirportById(id);
   }
-  return map::MapRunway();
+
+  return map::MapAirport();
+}
+
+map::MapRunway AirportQuery::getRunwayById(int runwayId)
+{
+  map::MapRunway runway;
+  if(query::valid(Q_FUNC_INFO, runwayByIdQuery))
+  {
+    runwayByIdQuery->bindValue(QStringLiteral(":runwayId"), runwayId);
+    runwayByIdQuery->exec();
+    if(runwayByIdQuery->next())
+      mapTypesFactory->fillRunway(runwayByIdQuery->record(), runway, false /* overview */);
+    runwayByIdQuery->finish();
+  }
+
+  return runway;
+}
+
+map::MapRunway AirportQuery::getRunwayByEndId(int runwayEndId)
+{
+  map::MapRunway runway;
+  if(query::valid(Q_FUNC_INFO, runwayIdByEndIdQuery))
+  {
+    runwayIdByEndIdQuery->bindValue(QStringLiteral(":runwayEndId"), runwayEndId);
+    runwayIdByEndIdQuery->exec();
+    if(runwayIdByEndIdQuery->next())
+      runway = getRunwayById(runwayIdByEndIdQuery->valueInt("runway_id"));
+    runwayIdByEndIdQuery->finish();
+  }
+
+  return runway;
 }
 
 void AirportQuery::getRunwayEndByNames(map::MapResult& result, const QString& runwayName, const QString& airportIdent)
@@ -741,12 +774,25 @@ void AirportQuery::startByNameAndPos(map::MapStart& start, int airportId, const 
     start = map::MapStart();
 }
 
+void AirportQuery::getStartByRunwayEndId(map::MapStart& start, int runwayEndId)
+{
+  if(!query::valid(Q_FUNC_INFO, startByRunwayEndIdQuery))
+    return;
+
+  startByRunwayEndIdQuery->bindValue(QStringLiteral(":runwayEndId"), runwayEndId);
+  startByRunwayEndIdQuery->exec();
+
+  if(startByRunwayEndIdQuery->next())
+    mapTypesFactory->fillStart(startByRunwayEndIdQuery->record(), start);
+  startByRunwayEndIdQuery->finish();
+}
+
 void AirportQuery::getStartById(map::MapStart& start, int startId)
 {
   if(!query::valid(Q_FUNC_INFO, startByIdQuery))
     return;
 
-  startByIdQuery->bindValue(QStringLiteral(":id"), startId);
+  startByIdQuery->bindValue(QStringLiteral(":startId"), startId);
   startByIdQuery->exec();
 
   if(startByIdQuery->next())
@@ -1097,18 +1143,9 @@ const QList<map::MapTaxiPath> *AirportQuery::getTaxiPaths(int airportId)
     QList<map::MapTaxiPath> *tps = new QList<map::MapTaxiPath>;
     while(taxiparthQuery->next())
     {
-      // TODO should be moved to MapTypesFactory
-      map::MapTaxiPath tp;
-      tp.closed = taxiparthQuery->value(QStringLiteral("type")).toString() == QStringLiteral("CLOSED");
-      tp.start = ageo::Pos(taxiparthQuery->value(QStringLiteral("start_lonx")).toFloat(),
-                           taxiparthQuery->value(QStringLiteral("start_laty")).toFloat());
-      tp.end = ageo::Pos(taxiparthQuery->value(QStringLiteral("end_lonx")).toFloat(),
-                         taxiparthQuery->value(QStringLiteral("end_laty")).toFloat());
-      tp.surface = taxiparthQuery->value(QStringLiteral("surface")).toString();
-      tp.name = taxiparthQuery->value(QStringLiteral("name")).toString();
-      tp.width = taxiparthQuery->value(QStringLiteral("width")).toInt();
-
-      tps->append(tp);
+      map::MapTaxiPath taxiPath;
+      mapTypesFactory->fillTaxiPath(taxiparthQuery->record(), taxiPath);
+      tps->append(taxiPath);
     }
     taxipathCache.insert(airportId, tps);
     return taxipathCache.object(airportId);
@@ -1117,19 +1154,19 @@ const QList<map::MapTaxiPath> *AirportQuery::getTaxiPaths(int airportId)
 
 const QList<map::MapRunway> *AirportQuery::getRunways(int airportId)
 {
-  if(!query::valid(Q_FUNC_INFO, runwaysQuery))
+  if(!query::valid(Q_FUNC_INFO, runwaysByAirportIdQuery))
     return nullptr;
 
   if(!runwayCache.contains(airportId))
   {
-    runwaysQuery->bindValue(QStringLiteral(":airportId"), airportId);
-    runwaysQuery->exec();
+    runwaysByAirportIdQuery->bindValue(QStringLiteral(":airportId"), airportId);
+    runwaysByAirportIdQuery->exec();
 
     QList<map::MapRunway> *runways = new QList<map::MapRunway>;
-    while(runwaysQuery->next())
+    while(runwaysByAirportIdQuery->next())
     {
       map::MapRunway runway;
-      mapTypesFactory->fillRunway(runwaysQuery->record(), runway, false);
+      mapTypesFactory->fillRunway(runwaysByAirportIdQuery->record(), runway, false);
       runways->append(runway);
     }
 
@@ -1338,29 +1375,29 @@ void AirportQuery::initQueries()
   deInitQueries();
 
   airportByIdQuery = new SqlQuery(db);
-  airportByIdQuery->prepare("select " % airportQueryBase.join(", ") % " from airport where airport_id = :id ");
+  airportByIdQuery->prepare("select " % airportQueryBase.join(", ") % " from airport where airport_id = :airportId");
 
   airportAdminByIdQuery = new SqlQuery(db);
-  airportAdminByIdQuery->prepare("select city, state, country from airport where airport_id = :id ");
+  airportAdminByIdQuery->prepare("select city, state, country from airport where airport_id = :airportId");
 
   airportProcByIdQuery = new SqlQuery(db);
-  airportProcByIdQuery->prepare("select 1 from approach where airport_id = :id limit 1");
+  airportProcByIdQuery->prepare("select 1 from approach where airport_id = :airportId limit 1");
 
   // STAR and approach - "not SID"
   procArrivalByAirportIdQuery = new SqlQuery(db);
-  procArrivalByAirportIdQuery->prepare("select 1 from approach where airport_id = :id and  "
+  procArrivalByAirportIdQuery->prepare("select 1 from approach where airport_id = :airportId and  "
                                        "not (type = 'GPS' and suffix = 'D' and has_gps_overlay == 1) limit 1");
 
   // SID only
   procDepartureByAirportIdQuery = new SqlQuery(db);
   procDepartureByAirportIdQuery->prepare("select 1 from approach "
-                                         "where airport_id = :id and type = 'GPS' and suffix = 'D' and has_gps_overlay == 1 limit 1");
+                                         "where airport_id = :airportId and type = 'GPS' and suffix = 'D' and has_gps_overlay == 1 limit 1");
 
   airportByIdentQuery = new SqlQuery(db);
-  airportByIdentQuery->prepare("select " % airportQueryBase.join(", ") % " from airport where ident = :ident ");
+  airportByIdentQuery->prepare("select " % airportQueryBase.join(", ") % " from airport where ident = :ident");
 
   airportsByTruncatedIdentQuery = new SqlQuery(db);
-  airportsByTruncatedIdentQuery->prepare("select " % airportQueryBase.join(", ") % " from airport where ident like :ident ");
+  airportsByTruncatedIdentQuery->prepare("select " % airportQueryBase.join(", ") % " from airport where ident like :ident");
 
   icaoCol = airportQueryBase.contains("icao");
   iataCol = airportQueryBase.contains("iata");
@@ -1407,13 +1444,21 @@ void AirportQuery::initQueries()
     runwayEndQueryBase.append(", e.altitude ");
 
   runwayEndByIdQuery = new SqlQuery(db);
-  runwayEndByIdQuery->prepare("select " % runwayEndQueryBase % " from runway_end e where e.runway_end_id = :id");
+  runwayEndByIdQuery->prepare("select " % runwayEndQueryBase % " from runway_end e where e.runway_end_id = :runwayEndId");
 
   runwayEndByNameQuery = new SqlQuery(db);
   runwayEndByNameQuery->prepare(
     "select " % runwayEndQueryBase %
     "from runway r join runway_end e on (r.primary_end_id = e.runway_end_id or r.secondary_end_id = e.runway_end_id) "
     "join airport a on r.airport_id = a.airport_id where e.name = :name and a.ident = :airport");
+
+  runwayIdByEndIdQuery = new SqlQuery(db);
+  runwayIdByEndIdQuery->prepare("select runway_id from runway "
+                                "where primary_end_id = :runwayEndId or secondary_end_id = :runwayEndId");
+
+  airportIdByRunwayEndIdQuery = new SqlQuery(db);
+  airportIdByRunwayEndIdQuery->prepare("select airport_id from runway "
+                                       "where primary_end_id = :runwayEndId or secondary_end_id = :runwayEndId");
 
   // Runways > 4000 feet for simplyfied runway overview
   runwayOverviewQuery = new SqlQuery(db);
@@ -1435,7 +1480,11 @@ void AirportQuery::initQueries()
 
   startByIdQuery = new SqlQuery(db);
   startByIdQuery->prepare("select start_id, airport_id, s.runway_end_id, type, heading, number, runway_name, altitude, lonx, laty "
-                          "from start s where start_id = :id");
+                          "from start s where start_id = :startId");
+
+  startByRunwayEndIdQuery = new SqlQuery(db);
+  startByRunwayEndIdQuery->prepare("select start_id, airport_id, s.runway_end_id, type, heading, number, runway_name, altitude, lonx, laty "
+                                   "from start s where runway_end_id = :runwayEndId");
 
   parkingTypeNumberQuery = new SqlQuery(db);
   parkingTypeNumberQuery->prepare("select " % parkingQueryBase %
@@ -1469,21 +1518,24 @@ void AirportQuery::initQueries()
     "from taxi_path where airport_id = :airportId");
 
   // Runway joined with both runway ends
-  runwaysQuery = new SqlQuery(db);
-  runwaysQuery->prepare(
-    "select r.*, p.name as primary_name, s.name as secondary_name, "
-    "p.name as primary_name, s.name as secondary_name, "
-    "r.primary_end_id, r.secondary_end_id, "
-    "r.edge_light, r.center_light, "
-    "p.offset_threshold as primary_offset_threshold,  p.has_closed_markings as primary_closed_markings, "
-    "s.offset_threshold as secondary_offset_threshold,  s.has_closed_markings as secondary_closed_markings,"
-    "p.blast_pad as primary_blast_pad,  p.overrun as primary_overrun, "
-    "s.blast_pad as secondary_blast_pad,  s.overrun as secondary_overrun,"
-    "r.primary_lonx, r.primary_laty, r.secondary_lonx, r.secondary_laty "
-    "from runway r "
-    "join runway_end p on r.primary_end_id = p.runway_end_id "
-    "join runway_end s on r.secondary_end_id = s.runway_end_id "
-    "where r.airport_id = :airportId");
+  const QString runwayQuery("select r.*, p.name as primary_name, s.name as secondary_name, "
+                            "p.name as primary_name, s.name as secondary_name, "
+                            "r.primary_end_id, r.secondary_end_id, "
+                            "r.edge_light, r.center_light, "
+                            "p.offset_threshold as primary_offset_threshold,  p.has_closed_markings as primary_closed_markings, "
+                            "s.offset_threshold as secondary_offset_threshold,  s.has_closed_markings as secondary_closed_markings,"
+                            "p.blast_pad as primary_blast_pad,  p.overrun as primary_overrun, "
+                            "s.blast_pad as secondary_blast_pad,  s.overrun as secondary_overrun,"
+                            "r.primary_lonx, r.primary_laty, r.secondary_lonx, r.secondary_laty "
+                            "from runway r "
+                            "join runway_end p on r.primary_end_id = p.runway_end_id "
+                            "join runway_end s on r.secondary_end_id = s.runway_end_id");
+
+  runwaysByAirportIdQuery = new SqlQuery(db);
+  runwaysByAirportIdQuery->prepare(runwayQuery % " where r.airport_id = :airportId");
+
+  runwayByIdQuery = new SqlQuery(db);
+  runwayByIdQuery->prepare(runwayQuery % " where r.runway_id = :runwayId");
 
   airportParkingQuery = new SqlQuery(db);
   airportParkingQuery->prepare("select * from parking where " % whereRect % whereLimit);
@@ -1514,12 +1566,13 @@ void AirportQuery::deInitQueries()
   ATOOLS_DELETE(parkingQuery);
   ATOOLS_DELETE(startQuery);
   ATOOLS_DELETE(startByIdQuery);
+  ATOOLS_DELETE(startByRunwayEndIdQuery);
   ATOOLS_DELETE(parkingTypeNumberQuery);
   ATOOLS_DELETE(parkingTypeNumberSuffixQuery);
   ATOOLS_DELETE(parkingNameQuery);
   ATOOLS_DELETE(helipadQuery);
   ATOOLS_DELETE(taxiparthQuery);
-  ATOOLS_DELETE(runwaysQuery);
+  ATOOLS_DELETE(runwaysByAirportIdQuery);
   ATOOLS_DELETE(airportByIdQuery);
   ATOOLS_DELETE(airportAdminByIdQuery);
   ATOOLS_DELETE(airportProcByIdQuery);
@@ -1536,26 +1589,7 @@ void AirportQuery::deInitQueries()
   ATOOLS_DELETE(airportByRectAndProcQuery);
   ATOOLS_DELETE(runwayEndByIdQuery);
   ATOOLS_DELETE(runwayEndByNameQuery);
-}
-
-QHash<int, QList<map::MapParking> > AirportQuery::getParkingCache() const
-{
-  QHash<int, QList<map::MapParking> > retval;
-
-  const QList<int> keys = parkingCache.keys();
-  for(int key : keys)
-    retval.insert(key, *parkingCache.object(key));
-
-  return retval;
-}
-
-QHash<int, QList<map::MapHelipad> > AirportQuery::getHelipadCache() const
-{
-  QHash<int, QList<map::MapHelipad> > retval;
-
-  const QList<int> keys = helipadCache.keys();
-  for(int key : keys)
-    retval.insert(key, *helipadCache.object(key));
-
-  return retval;
+  ATOOLS_DELETE(airportIdByRunwayEndIdQuery);
+  ATOOLS_DELETE(runwayByIdQuery);
+  ATOOLS_DELETE(runwayIdByEndIdQuery);
 }

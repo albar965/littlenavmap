@@ -22,12 +22,12 @@
 
 namespace atools {
 namespace sql {
-
 class SqlRecord;
 }
 }
 
 namespace map {
+struct MapTaxiPath;
 struct MapAirport;
 struct MapRunway;
 struct MapRunwayEnd;
@@ -94,6 +94,8 @@ public:
   void fillUserdataPoint(const atools::sql::SqlRecord& rec, map::MapUserpoint& obj);
 
   void fillLogbookEntry(const atools::sql::SqlRecord& rec, map::MapLogbookEntry& obj);
+
+  void fillTaxiPath(const atools::sql::SqlRecord& rec, map::MapTaxiPath& obj);
 
 private:
   void fillVorBase(const atools::sql::SqlRecord& record, map::MapVor& vor);
