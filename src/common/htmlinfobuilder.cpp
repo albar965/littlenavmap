@@ -475,9 +475,9 @@ void HtmlInfoBuilder::airportText(const MapAirport& airport, const map::WeatherC
 
     if(info || verbose)
     {
-      html.table(0, 2, 0, 0, QApplication::palette().color(QPalette::Active, QPalette::Base));
+      html.table();
       html.row2(tr("Source for airport weather symbols on the map: "), map::mapWeatherSourceString(NavApp::getMapWeatherSource()),
-                ahtml::NONE, QColor(), QApplication::palette().color(QPalette::Active, QPalette::Base));
+                ahtml::NONE, QColor(), QApplication::palette().color(QPalette::Active, info ? QPalette::Base : QPalette::ToolTipBase));
       html.tableEnd();
     }
 
@@ -1787,7 +1787,7 @@ void HtmlInfoBuilder::weatherText(const map::WeatherContext& context, const MapA
     float transitionAltitude = 0.f, transitionLevel = 0.f;
     queries->getMapQuery()->getAirportTransitionAltiudeAndLevel(airport, transitionAltitude, transitionLevel);
 
-    QColor baseColor = QApplication::palette().color(QPalette::Active, QPalette::Base);
+    QColor baseColor = QApplication::palette().color(QPalette::Active, info ? QPalette::Base : QPalette::ToolTipBase);
     // Weather symbols =====================
     html.table();
     html.row2(tr("Source for airport weather symbols on the map: "), map::mapWeatherSourceString(NavApp::getMapWeatherSource()),
