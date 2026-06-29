@@ -383,10 +383,10 @@ const QList<QPolygonF *> CoordinateConverter::createPolygons(const atools::geo::
   QList<QPolygonF *> polys;
   for(const LineString& ls : linestring.splitAtAntiMeridianList())
   {
-    const QList<QPolygonF *> polyVector = createPolygonsInternal(ls, screenRect);
+    const QList<QPolygonF *> polyList = createPolygonsInternal(ls, screenRect);
 
-    if(!polyVector.isEmpty())
-      polys.append(polyVector);
+    if(!polyList.isEmpty())
+      polys.append(polyList);
   }
   return polys;
 }
@@ -468,7 +468,7 @@ bool CoordinateConverter::resolves(const atools::geo::Line& line) const
 const QList<QPolygonF *> CoordinateConverter::createPolylinesInternal(const atools::geo::LineString& linestring,
                                                                       const QRectF& screenRect, bool splitLongLines) const
 {
-  QList<QPolygonF *> polylineVector;
+  QList<QPolygonF *> polylineList;
 
   // Build Marble geometry object
   if(!linestring.isEmpty())
@@ -551,12 +551,12 @@ const QList<QPolygonF *> CoordinateConverter::createPolylinesInternal(const atoo
             }
 
             if(!polygons.isEmpty())
-              polylineVector.append(polygons);
+              polylineList.append(polygons);
           }
         }
       }
     }
     qDeleteAll(geoLineStrCorrected);
   }
-  return polylineVector;
+  return polylineList;
 }

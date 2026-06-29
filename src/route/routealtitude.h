@@ -450,7 +450,7 @@ private:
   void simplyfyRouteAltitudes();
   void simplifyRouteAltitude(int index, bool departure);
 
-  /* Adjust range for vector size */
+  /* Adjust range for list size */
   int fixRange(int index) const;
 
   /* Fill line object in leg with geometry */

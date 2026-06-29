@@ -124,7 +124,7 @@ private:
     return *this;
   }
 
-  /* Copies objects and avoids duplicates in the to list/vector. */
+  /* Copies objects and avoids duplicates in the to list. */
   void copy(const QList<map::MapWaypoint>& from, QList<map::MapWaypoint>& to);
 
   WaypointQuery *waypointQuery = nullptr, *trackQuery = nullptr;

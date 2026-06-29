@@ -180,9 +180,9 @@ void TrackManager::loadTracks(const TrackListType& tracks, bool onlyValid)
         trackRec.setValue("track_fragment_no", nameFragmentHash.value(track.name));
 
         if(!track.eastLevels.isEmpty())
-          trackRec.setValue("altitude_levels_east", atools::io::writeVector<quint16, quint16>(track.eastLevels));
+          trackRec.setValue("altitude_levels_east", atools::io::writeList<quint16, quint16>(track.eastLevels));
         if(!track.westLevels.isEmpty())
-          trackRec.setValue("altitude_levels_west", atools::io::writeVector<quint16, quint16>(track.westLevels));
+          trackRec.setValue("altitude_levels_west", atools::io::writeList<quint16, quint16>(track.westLevels));
 
         int airwayId = -1;
         map::MapRefExt fromRef, toRef;

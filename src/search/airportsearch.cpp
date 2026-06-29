@@ -862,7 +862,7 @@ void AirportSearch::randomFlightClicked(bool showDialog)
       predefinedDeparture = randomSearchAirports.indexOf(pair);
       if(predefinedDeparture == -1)
       {
-        // Append route departure airport id and set index to vector position
+        // Append route departure airport id and set index to list position
         predefinedDeparture = randomSearchAirports.size();
         randomSearchAirports.append(pair);
       }
@@ -874,7 +874,7 @@ void AirportSearch::randomFlightClicked(bool showDialog)
       predefinedDestination = randomSearchAirports.indexOf(pair);
       if(predefinedDestination == -1)
       {
-        // Append route destination airport id and set index to vector position
+        // Append route destination airport id and set index to list position
         predefinedDestination = randomSearchAirports.size();
         randomSearchAirports.append(pair);
       }

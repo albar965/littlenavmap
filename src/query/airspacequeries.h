@@ -137,7 +137,7 @@ private:
   void preLoadAirspaces();
   void postLoadAirspaces();
 
-  void getAirspacesInternal(AirspaceList& airspaceVector, const Marble::GeoDataLatLonBox& rect,
+  void getAirspacesInternal(AirspaceList& airspaceList, const Marble::GeoDataLatLonBox& rect,
                             const MapLayer *mapLayer, const map::MapAirspaceFilter& filter, float flightplanAltitude,
                             bool lazy, map::MapAirspaceSources src, bool& overflow);
 

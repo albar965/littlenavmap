@@ -279,7 +279,7 @@ void AircraftProgressConfig::restoreState()
   {
     // Load from settings
     QString idStr = settings.valueStr(lnm::INFOWINDOW_PROGRESS_FIELDS);
-    enabledIds = atools::strListToNumVector<pid::ProgressConfId>(idStr.split(";", Qt::SkipEmptyParts));
+    enabledIds = atools::strListToNumList<pid::ProgressConfId>(idStr.split(";", Qt::SkipEmptyParts));
   }
   else
     // Not saved yet - use defaults

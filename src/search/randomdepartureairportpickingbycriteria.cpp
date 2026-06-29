@@ -214,5 +214,5 @@ QList<int> RandomDepartureAirportPickingByCriteria::map_sort(int *array, int arr
   int index = -1;
   while(++index < arrayLength)
     sorter.insert(array[index], index);
-  return sorter.keys().toVector();
+  return sorter.keys().toList();
 }

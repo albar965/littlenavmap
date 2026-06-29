@@ -292,7 +292,7 @@ private:
   void updateLinkTooltipHandler();
   void restoreNetworkSettings(OptionData& od);
 
-  /* Converts range ring string to vector of floats. Falls back to 100 units single ring if nothing is valid.
+  /* Converts range ring string to list of floats. Falls back to 100 units single ring if nothing is valid.
    * Uses current locale to convert numbers and check min and max. */
   QList<float> rangeStringToFloat(const QString& rangeStr) const;
   QString rangeFloatToString(const QList<float>& ranges) const;

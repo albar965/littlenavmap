@@ -120,7 +120,7 @@ struct PaintContext
   /* Airports drawn having runway hotspots which require tooltips and more */
   QSet<int> *shownRunwayAirportIds;
 
-  /* All navaids drawn for route and procedures. Points to vector in MapScreenIndex */
+  /* All navaids drawn for route and procedures. Points to list in MapScreenIndex */
   QList<map::MapRef> *routeDrawnNavaids;
 
   /* Global scale applied to all features, labels and symbols */

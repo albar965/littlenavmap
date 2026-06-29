@@ -65,7 +65,7 @@ public:
     return discrete;
   }
 
-  /* Index of this one in MapThemeHandler vector of themes */
+  /* Index of this one in MapThemeHandler list of themes */
   int getIndex() const
   {
     return index;

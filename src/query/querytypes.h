@@ -175,7 +175,7 @@ const atools::sql::SqlRecord *cachedRecord(QCache<ID, atools::sql::SqlRecord>& c
   return rec;
 }
 
-/* Get a record vector from the cache of get it from a database query */
+/* Get a record list from the cache of get it from a database query */
 template<typename ID>
 const atools::sql::SqlRecordList *cachedRecordList(QCache<ID, atools::sql::SqlRecordList>& cache, atools::sql::SqlQuery *query, ID id)
 {

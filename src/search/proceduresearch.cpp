@@ -1281,7 +1281,7 @@ void ProcedureSearch::itemExpanded(QTreeWidgetItem *item)
     if(itemExpandedIndex.contains(type))
       return;
 
-    // Get a copy since vector is rebuilt underneath
+    // Get a copy since list is rebuilt underneath
     const MapProcedureRef ref = refFromItem(item);
 
     if(ref.legId == -1)

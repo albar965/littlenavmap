@@ -160,7 +160,7 @@ LogStatisticsDialog::LogStatisticsDialog(QWidget *parent, LogdataController *log
   setWindowFlag(Qt::WindowContextHelpButtonHint, false);
   setWindowModality(Qt::NonModal);
 
-  // Prefill query vector
+  // Prefill query list
   initQueries();
 
   ui->setupUi(this);

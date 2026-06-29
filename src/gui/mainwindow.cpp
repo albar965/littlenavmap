@@ -816,8 +816,8 @@ void MainWindow::debugActionTriggeredSegfault()
 
 void MainWindow::debugActionTriggeredAssert()
 {
-  QList<int> vector;
-  vector.constFirst();
+  QList<int> list;
+  list.constFirst();
 }
 
 bool MainWindow::isDebugMovingAircraft() const

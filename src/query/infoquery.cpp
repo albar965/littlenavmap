@@ -138,11 +138,11 @@ const SqlRecordList *InfoQuery::getRunwayInformation(int airportId)
 
 void InfoQuery::getRunwayEnds(maptools::RunwayList& ends, int airportId)
 {
-  const SqlRecordList *recVector = getRunwayInformation(airportId);
-  if(recVector != nullptr)
+  const SqlRecordList *recList = getRunwayInformation(airportId);
+  if(recList != nullptr)
   {
     // Collect runway ends and wind conditions =======================================
-    for(const SqlRecord& rec : *recVector)
+    for(const SqlRecord& rec : *recList)
     {
       int length = rec.valueInt(QStringLiteral("length"));
       QString surface = rec.valueStr(QStringLiteral("surface"));

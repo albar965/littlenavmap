@@ -105,7 +105,7 @@ public:
 private:
   virtual QValidator::State validate(QString& input, int&) const override;
 
-  bool ringStrToVector(const QString& str) const;
+  bool ringStrToList(const QString& str) const;
 
 };
 

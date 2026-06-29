@@ -534,9 +534,9 @@ void MapTypesFactory::fillAirwayOrTrack(const SqlRecord& record, map::MapAirway&
     else
       airway.maxAltitude = map::MapAirway::MAX_ALTITUDE_LIMIT_FT;
 
-    airway.altitudeLevelsEast = atools::io::readVector<quint16,
+    airway.altitudeLevelsEast = atools::io::readList<quint16,
                                                        quint16>(record.value(QStringLiteral("altitude_levels_east")).toByteArray());
-    airway.altitudeLevelsWest = atools::io::readVector<quint16,
+    airway.altitudeLevelsWest = atools::io::readList<quint16,
                                                        quint16>(record.value(QStringLiteral("altitude_levels_west")).toByteArray());
 
     // from_waypoint_name varchar(15),      -- Original name - also for coordinate formats

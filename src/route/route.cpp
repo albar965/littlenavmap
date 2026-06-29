@@ -908,7 +908,7 @@ void Route::updateApproachIls()
 #endif
 }
 
-void Route::updateApproachRunwayEndAndIls(QList<map::MapIls>& ilsVector, map::MapRunwayEnd *runwayEnd, bool recommended, bool map,
+void Route::updateApproachRunwayEndAndIls(QList<map::MapIls>& ilsList, map::MapRunwayEnd *runwayEnd, bool recommended, bool map,
                                           bool profile) const
 {
   QString destAirportIdent = getDestinationAirportLeg().getIdent();
@@ -992,7 +992,7 @@ void Route::updateApproachRunwayEndAndIls(QList<map::MapIls>& ilsVector, map::Ma
       }
 
       // ===================================================================================
-      // Fill vector
+      // Fill list
       if(approachLegs.isRnavGps())
       {
         // Keep other navaids (RNP - ILS are filtered out already)
@@ -1039,13 +1039,13 @@ void Route::updateApproachRunwayEndAndIls(QList<map::MapIls>& ilsVector, map::Ma
         }
       }
 
-      ilsVector = QList<map::MapIls>::fromList(ilsMapAll.values());
+      ilsList = QList<map::MapIls>::fromList(ilsMapAll.values());
 
     } // if(approachLegs.runwayEnd.isFullyValid())
   } // if(approachLegs.runwayEnd.isFullyValid())
 
   // No runway for approach found - circling - collect recommended independent of runway ============================================
-  if(ilsVector.isEmpty())
+  if(ilsList.isEmpty())
   {
     // Get all frequencies for recommended and for map only for ILS, LOC, etc. approach
     if(recommended || (map && approachLegs.hasFrequency()))
@@ -1059,22 +1059,22 @@ void Route::updateApproachRunwayEndAndIls(QList<map::MapIls>& ilsVector, map::Ma
         if(!leg.isMissed() && !leg.recFixIdent.isEmpty() && leg.recFixType != "N" && leg.recFixType != "TN")
           // Get ILS referenced in the recommended fix
           // Do not exclude waypoints since these are sometimes referenced instead of localizers
-          ilsVector = mapQuery->getIlsByAirportAndIdent(destAirportIdent, leg.recFixIdent);
+          ilsList = mapQuery->getIlsByAirportAndIdent(destAirportIdent, leg.recFixIdent);
 
-        if(!ilsVector.isEmpty())
+        if(!ilsList.isEmpty())
           break;
       }
     }
-  } // if(ilsVector.isEmpty())
+  } // if(ilsList.isEmpty())
 
   // Filter out unusable ILS for profile display ========================================================
   if(profile)
   {
-    ilsVector.erase(std::remove_if(ilsVector.begin(), ilsVector.end(), [this](const map::MapIls& ils) -> bool {
+    ilsList.erase(std::remove_if(ilsList.begin(), ilsList.end(), [this](const map::MapIls& ils) -> bool {
       // Needs to have GS, not farther away from runway end than 4NM and not more than 20 degree difference
       return !ils.hasGlideslope() || destRunwayEnd.position.distanceMeterTo(ils.position) > atools::geo::nmToMeter(4.) ||
              atools::geo::angleAbsDiff(destRunwayEnd.heading, ils.heading) > 20.f;
-    }), ilsVector.end());
+    }), ilsList.end());
   }
 }
 
@@ -2793,9 +2793,9 @@ void Route::createRouteLegsFromFlightplan()
 
 void Route::assignAltitudes()
 {
-  QList<float> altVector = altitude->getAltitudes();
+  QList<float> altList = altitude->getAltitudes();
   for(int i = 0; i < size(); i++)
-    flightplan[i].setAltitude(altVector.at(i));
+    flightplan[i].setAltitude(altList.at(i));
 }
 
 void Route::zeroAltitudes()
@@ -2862,7 +2862,7 @@ Route Route::adjustedToOptions(const Route& origRoute, rf::RouteAdjustOptions op
   // Restore duplicate waypoints at route/procedure entry/exits which were removed after route calculation
   if(options.testFlag(rf::ADD_PROC_ENTRY_EXIT_AIRWAY) || options.testFlag(rf::ADD_PROC_ENTRY_EXIT))
   {
-    QList<float> altVector = route.getAltitudeLegs().getAltitudes();
+    QList<float> altList = route.getAltitudeLegs().getAltitudes();
 
     // Check arrival airway ===========================================================================
     int arrivaLegsOffset = map::INVALID_INDEX_VALUE;
@@ -2884,7 +2884,7 @@ Route Route::adjustedToOptions(const Route& origRoute, rf::RouteAdjustOptions op
           entryBuilder.buildFlightplanEntry(arrivalLeg.getProcedureLeg(), entry, true /* resolve waypoints to VOR and others*/);
           entry.setAirway(arrivalLeg.getAirwayName());
           entry.setFlag(atools::fs::pln::entry::PROCEDURE, msfs);
-          entry.setAltitude(altVector.value(arrivaLegsOffset, 0.f));
+          entry.setAltitude(altList.value(arrivaLegsOffset, 0.f));
 
           RouteLeg newLeg = RouteLeg(&route.flightplan);
           if(msfs)
@@ -2919,7 +2919,7 @@ Route Route::adjustedToOptions(const Route& origRoute, rf::RouteAdjustOptions op
                                             true /* resolve waypoints to VOR and others*/);
           entry.setAirway(QStringLiteral());
           entry.setFlag(atools::fs::pln::entry::PROCEDURE, false);
-          entry.setAltitude(altVector.value(startIndexAfterProcedure - 1, 0.f));
+          entry.setAltitude(altList.value(startIndexAfterProcedure - 1, 0.f));
 
           RouteLeg newLeg = RouteLeg(&route.flightplan);
           newLeg.createCopyFromProcedureLeg(startIndexAfterProcedure, departureLeg, &routeLeg);
@@ -3005,7 +3005,7 @@ Route Route::adjustedToOptions(const Route& origRoute, rf::RouteAdjustOptions op
         const proc::MapProcedureLeg& lastStarLeg = route.getStarLegs().constLast();
         const proc::MapProcedureLeg& firstApproachLeg = route.getApproachLegs().constFirst();
 
-        // Only for vector or manual legs
+        // Only for list or manual legs
         if((lastStarLeg.fixIdent != firstApproachLeg.fixIdent ||
             lastStarLeg.fixType != firstApproachLeg.fixType) ||
            (proc::procedureLegFixAtStart(lastStarLeg.type) || lastStarLeg.type == proc::VECTORS))

@@ -96,10 +96,10 @@ void TrackController::preDatabaseLoad()
 
 void TrackController::postDatabaseLoad()
 {
-  if(!trackVector.isEmpty())
+  if(!trackList.isEmpty())
   {
     emit preTrackLoad();
-    trackManager->loadTracks(trackVector, downloadOnlyValid);
+    trackManager->loadTracks(trackList, downloadOnlyValid);
     emit postTrackLoad();
   }
 }
@@ -135,7 +135,7 @@ void TrackController::deleteTracks()
 {
   cancelDownload();
   downloadQueue.clear();
-  trackVector.clear();
+  trackList.clear();
 
   emit preTrackLoad();
   trackManager->clearTracks();
@@ -158,7 +158,7 @@ void TrackController::cancelDownload()
   qDebug() << Q_FUNC_INFO;
   downloader->cancelAllDownloads();
   downloadQueue.clear();
-  trackVector.clear();
+  trackList.clear();
 }
 
 bool TrackController::hasTracks() const
@@ -180,9 +180,9 @@ void TrackController::trackDownloadFinished(const atools::track::TrackListType& 
 {
   qDebug() << Q_FUNC_INFO << static_cast<int>(type) << "size" << tracks.size();
 
-  // Remove finished type from queue and append to vector
+  // Remove finished type from queue and append to list
   downloadQueue.removeAll(type);
-  trackVector.append(tracks);
+  trackList.append(tracks);
 
   if(downloadQueue.isEmpty())
   {
@@ -192,8 +192,8 @@ void TrackController::trackDownloadFinished(const atools::track::TrackListType& 
     // notify before changing database
     emit preTrackLoad();
 
-    // Load tracks but keep raw data in vector
-    trackManager->loadTracks(trackVector, downloadOnlyValid);
+    // Load tracks but keep raw data in list
+    trackManager->loadTracks(trackList, downloadOnlyValid);
     tracksLoaded();
     emit postTrackLoad();
   }
@@ -240,7 +240,7 @@ void TrackController::trackDownloadFailed(const QString& error, int errorCode, Q
 
   // Clear all on error
   downloadQueue.removeAll(type);
-  trackVector.clear();
+  trackList.clear();
 
   if(downloadQueue.isEmpty())
   {

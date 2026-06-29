@@ -239,13 +239,13 @@ void MapScreenIndex::updateIlsScreenGeometry(const Marble::GeoDataLatLonBox& cur
   if(!scale->isValid())
     return;
 
-  QList<map::MapIls> ilsVector;
+  QList<map::MapIls> ilsList;
   QSet<int> routeIlsIds;
   if(paintLayer->getShownMapDisplayTypes().testFlag(map::FLIGHTPLAN))
   {
     // Get ILS from flight plan which are also painted in the profile - only if plan is shown
-    ilsVector = NavApp::getRouteConst().getDestRunwayIlsMap();
-    for(const map::MapIls& ils : std::as_const(ilsVector))
+    ilsList = NavApp::getRouteConst().getDestRunwayIlsMap();
+    for(const map::MapIls& ils : std::as_const(ilsList))
       routeIlsIds.insert(ils.id);
   }
 
@@ -279,14 +279,14 @@ void MapScreenIndex::updateIlsScreenGeometry(const Marble::GeoDataLatLonBox& cur
               continue;
           }
 
-          ilsVector.append(ils);
+          ilsList.append(ils);
         }
       }
     }
   }
 
   CoordinateConverter conv(mapWidget->viewport());
-  for(const map::MapIls& ils : std::as_const(ilsVector))
+  for(const map::MapIls& ils : std::as_const(ilsList))
   {
     if(!ils.hasGeometry)
       continue;
@@ -447,11 +447,11 @@ void MapScreenIndex::updateLineScreenGeometry(QList<std::pair<int, QLine> >& ind
   QRect mapGeo = mapWidget->rect();
 
   const QList<Marble::GeoDataLatLonBox> curBoxCorrectedList = query::splitAtAntiMeridian(curBox);
-  const QList<Marble::GeoDataLineString *> geoLineStringVector = geoLineStr.toDateLineCorrected();
+  const QList<Marble::GeoDataLineString *> geoLineStringList = geoLineStr.toDateLineCorrected();
 
   for(const Marble::GeoDataLatLonBox& curBoxCorrected : curBoxCorrectedList)
   {
-    for(const Marble::GeoDataLineString *lineCorrected : geoLineStringVector)
+    for(const Marble::GeoDataLineString *lineCorrected : geoLineStringList)
     {
       if(lineCorrected->latLonAltBox().intersects(curBoxCorrected))
       {
@@ -473,7 +473,7 @@ void MapScreenIndex::updateLineScreenGeometry(QList<std::pair<int, QLine> >& ind
       }
     }
   }
-  qDeleteAll(geoLineStringVector);
+  qDeleteAll(geoLineStringList);
 }
 
 void MapScreenIndex::saveState() const

@@ -118,7 +118,7 @@ private:
   QList<atools::track::TrackType> downloadQueue;
 
   /* Saved raw track data */
-  atools::track::TrackListType trackVector;
+  atools::track::TrackListType trackList;
 
   /* Do not load tracks that are currently not valid. */
   bool downloadOnlyValid = false;

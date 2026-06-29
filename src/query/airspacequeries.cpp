@@ -132,7 +132,7 @@ atools::sql::SqlRecord AirspaceQueries::getAirspaceInfoRecordById(map::MapAirspa
   return rec;
 }
 
-void AirspaceQueries::getAirspacesInternal(AirspaceList& airspaceVector, const Marble::GeoDataLatLonBox& rect,
+void AirspaceQueries::getAirspacesInternal(AirspaceList& airspaceList, const Marble::GeoDataLatLonBox& rect,
                                            const MapLayer *mapLayer, const map::MapAirspaceFilter& filter, float flightplanAltitude,
                                            bool lazy, map::MapAirspaceSources src, bool& overflow)
 {
@@ -153,7 +153,7 @@ void AirspaceQueries::getAirspacesInternal(AirspaceList& airspaceVector, const M
       {
         // Append pointers
         for(const map::MapAirspace& airspace : *airspaces)
-          airspaceVector.append(&airspace);
+          airspaceList.append(&airspace);
       }
     }
   }

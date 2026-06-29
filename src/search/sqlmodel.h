@@ -87,7 +87,7 @@ public:
   /* Get field data formatted for display as seen in the table view */
   QVariant getFormattedFieldData(const QModelIndex& index) const;
 
-  /* Query the full result set into a vector of pairs with id and optional coordinates.
+  /* Query the full result set into a list of pairs with id and optional coordinates.
    * This does not work when using distance search. */
   void getFullResultSet(QList<std::pair<int, atools::geo::Pos> >& result);
 

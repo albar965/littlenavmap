@@ -1228,7 +1228,7 @@ void RouteAltitude::calculateDistances()
     return;
   }
 
-  // Fill all legs with distance and cruise altitude and add them to the vector
+  // Fill all legs with distance and cruise altitude and add them to the list
   for(int i = 0; i < route->size(); i++)
   {
     const RouteLeg& leg = route->value(i);

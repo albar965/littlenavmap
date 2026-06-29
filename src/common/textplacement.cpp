@@ -372,7 +372,7 @@ bool TextPlacement::findTextPosInternal(const Line& line, float distanceMeter, f
 
     // Calculate bearing and do some first rough filtering ============================================
     QList<int> pointsIdxValid; // Index into "points" of fully or partially visible points
-    QList<double> bearingsValid; // Same size vector as above
+    QList<double> bearingsValid; // Same size list as above
     for(int i = 0; i < points.size(); i++)
     {
       const QPointF& pt = points.at(i);

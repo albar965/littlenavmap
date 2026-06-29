@@ -56,7 +56,7 @@ bool MapScale::update(ViewportParams *viewportParams, double distance)
     double screenCenterX, screenCenterY;
     converter.wToS(center, screenCenterX, screenCenterY);
 
-    // Fill the scale vector
+    // Fill the scale list
     scales.clear();
     for(int compassDirection = 0; compassDirection <= 360; compassDirection += 45)
     {

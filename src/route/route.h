@@ -744,7 +744,7 @@ public:
 
 private:
   /* Get a list of approach ILS (not localizer) and the used runway end. Only for approaches. */
-  void updateApproachRunwayEndAndIls(QList<map::MapIls>& ilsVector, map::MapRunwayEnd *runwayEnd,
+  void updateApproachRunwayEndAndIls(QList<map::MapIls>& ilsList, map::MapRunwayEnd *runwayEnd,
                                      bool recommended, bool map, bool profile) const;
 
   /* Copy flight plan profile altitudes into entries for FMS and other formats

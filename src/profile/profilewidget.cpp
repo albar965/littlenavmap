@@ -677,8 +677,8 @@ void ProfileWidget::paintIls(QPainter& painter, const Route& route)
   if(!NavApp::getMainUi()->actionProfileShowIls->isChecked())
     return;
 
-  const QList<map::MapIls>& ilsVector = route.getDestRunwayIlsProfile();
-  if(!ilsVector.isEmpty())
+  const QList<map::MapIls>& ilsList = route.getDestRunwayIlsProfile();
+  if(!ilsList.isEmpty())
   {
     const RouteAltitude& altitudeLegs = route.getAltitudeLegs();
 
@@ -689,7 +689,7 @@ void ProfileWidget::paintIls(QPainter& painter, const Route& route)
     if(x < map::INVALID_INDEX_VALUE && y < map::INVALID_INDEX_VALUE)
     {
       // Draw all ILS
-      for(const map::MapIls& ils : ilsVector)
+      for(const map::MapIls& ils : ilsList)
       {
         bool isIls = !ils.isAnyGlsRnp();
 

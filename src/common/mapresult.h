@@ -123,7 +123,7 @@ struct MapResult
   void getParams(const std::initializer_list<MapType>& types, int *id = nullptr,
                  atools::geo::Pos *pos = nullptr, MapNav *nav = nullptr) const;
 
-  /* Get id and type from the result. Vector of types defines priority. true if something was found.
+  /* Get id and type from the result. List of types defines priority. true if something was found.
    * id is set to -1 if nothing was found. */
   bool getIdAndType(int& id, map::MapType& type, const std::initializer_list<map::MapType>& types) const;
   map::MapRef getRef(const std::initializer_list<map::MapType>& types) const;
