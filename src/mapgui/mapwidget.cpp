@@ -2855,7 +2855,7 @@ void MapWidget::updateHelpOverlayLabel()
         if(isDragAndDropEditActive())
           text = tr("${clickdrag} to move, ${editclick} to edit or ${delclick} to delete range rings.");
         else
-          text = tr("${delclick} to delete range rings.");
+          text = tr("${editclick} to edit or ${delclick} to delete range rings.");
       }
       else
         text = tr("${delclick} to delete navaid range ring.");

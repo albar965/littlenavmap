@@ -20,6 +20,8 @@
 
 #include "maptypes.h"
 
+#include <QCoreApplication>
+
 namespace atools {
 namespace util {
 
@@ -40,8 +42,11 @@ namespace map {
 struct PatternMarker
   : public MapBase
 {
-  PatternMarker() :
-    MapBase(staticType())
+  Q_DECLARE_TR_FUNCTIONS(PatternMarker)
+
+public:
+  PatternMarker()
+    : MapBase(staticType())
   {
   }
 
@@ -100,8 +105,11 @@ QDataStream& operator<<(QDataStream& dataStream, const map::PatternMarker& obj);
 struct HoldingMarker
   : public MapBase
 {
-  HoldingMarker() :
-    MapBase(staticType())
+  Q_DECLARE_TR_FUNCTIONS(PatternMarker)
+
+public:
+  HoldingMarker()
+    : MapBase(staticType())
   {
   }
 
@@ -155,8 +163,11 @@ QDataStream& operator<<(QDataStream& dataStream, const map::HoldingMarker& obj);
 struct MsaMarker
   : public MapBase
 {
-  MsaMarker() :
-    MapBase(staticType())
+  Q_DECLARE_TR_FUNCTIONS(PatternMarker)
+
+public:
+  MsaMarker()
+    : MapBase(staticType())
   {
   }
 
@@ -194,8 +205,11 @@ QDataStream& operator<<(QDataStream& dataStream, const map::MsaMarker& obj);
 struct RangeMarker
   : public MapBase
 {
-  RangeMarker() :
-    MapBase(staticType())
+  Q_DECLARE_TR_FUNCTIONS(PatternMarker)
+
+public:
+  RangeMarker()
+    : MapBase(staticType())
   {
   }
 
@@ -208,6 +222,8 @@ struct RangeMarker
   void save(atools::util::XmlStreamWriter& stream) const;
   void restore(atools::util::XmlStreamReader& stream);
 
+  QString displayTextRanges() const;
+  QString displayTextRangesShort() const;
   QString displayText() const;
 
   QString text; /* Text to display like VOR name and frequency */
@@ -243,6 +259,9 @@ QDataStream& operator<<(QDataStream& dataStream, const map::RangeMarker& obj);
 struct DistanceMarker
   : public MapBase
 {
+  Q_DECLARE_TR_FUNCTIONS(PatternMarker)
+
+public:
   DistanceMarker()
     : MapBase(staticType())
   {

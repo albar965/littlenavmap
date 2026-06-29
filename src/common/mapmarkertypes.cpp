@@ -100,14 +100,10 @@ void PatternMarker::restore(atools::util::XmlStreamReader& stream)
 QString PatternMarker::displayText() const
 {
   if(airportIdent.isEmpty())
-    return QObject::tr("Traffic Pattern %1 RW %2").arg(turnRight ?
-                                                       QObject::tr("R", "Pattern direction") :
-                                                       QObject::tr("L", "Pattern direction"), runwayName);
+    return tr("Traffic Pattern %1 RW %2").arg(turnRight ? tr("R", "Pattern direction") : tr("L", "Pattern direction"), runwayName);
   else
-    return QObject::tr("Traffic Pattern %1 %2 RW %3").
-           arg(airportIdent, turnRight ?
-               QObject::tr("R", "Pattern direction") :
-               QObject::tr("L", "Pattern direction"), runwayName);
+    return tr("Traffic Pattern %1 %2 RW %3").arg(airportIdent, turnRight ? tr("R", "Pattern direction") :
+                                                 tr("L", "Pattern direction"), runwayName);
 }
 
 // HoldingMarker ######################################################################################
@@ -176,13 +172,12 @@ void HoldingMarker::restore(atools::util::XmlStreamReader& stream)
 QString HoldingMarker::displayText() const
 {
   if(holding.nav.ident.isEmpty())
-    return QObject::tr("User Holding %1 %2").
-           arg(holding.turnLeft ? QObject::tr("L", "Holding direction") : QObject::tr("R", "Holding direction"),
-               Unit::altFeet(holding.position.getAltitude()));
+    return tr("User Holding %1 %2").arg(holding.turnLeft ? tr("L", "Holding direction") : tr("R", "Holding direction"),
+                                        Unit::altFeet(holding.position.getAltitude()));
   else
-    return QObject::tr("User Holding %1 %2 %3").
-           arg(holding.nav.ident, holding.turnLeft ? QObject::tr("L", "Holding direction") : QObject::tr("R", "Holding direction"),
-               Unit::altFeet(holding.position.getAltitude()));
+    return tr("User Holding %1 %2 %3").arg(holding.nav.ident,
+                                           holding.turnLeft ? tr("L", "Holding direction") : tr("R", "Holding direction"),
+                                           Unit::altFeet(holding.position.getAltitude()));
 }
 
 // MsaMarker ######################################################################################
@@ -331,12 +326,32 @@ void RangeMarker::restore(atools::util::XmlStreamReader& stream)
   type = map::MARK_RANGE;
 }
 
+QString RangeMarker::displayTextRanges() const
+{
+  QLocale locale;
+  QStringList distStrList;
+  for(double dist : ranges)
+    distStrList.append(locale.toString(Unit::distNmF(dist), 'g', 6));
+
+  return atools::strJoin(distStrList, tr(", "), tr(" and "), tr(" %1").arg(Unit::getUnitDistStr()));
+}
+
+QString RangeMarker::displayTextRangesShort() const
+{
+  QLocale locale;
+  QStringList distStrList;
+  for(double dist : ranges)
+    distStrList.append(locale.toString(Unit::distNmF(dist), 'g', 6));
+
+  return atools::strJoin(distStrList, tr(", "));
+}
+
 QString RangeMarker::displayText() const
 {
   if(text.isEmpty())
-    return QObject::tr("Range Rings");
+    return tr("Range Rings %1").arg(displayTextRangesShort());
   else
-    return QObject::tr("Range Rings %1").arg(text);
+    return tr("Range Rings %1 %2").arg(text, displayTextRangesShort());
 }
 
 // DistanceMarker ######################################################################################
@@ -391,9 +406,9 @@ QString DistanceMarker::displayText() const
   QString distStr(distanceMeter < map::INVALID_DISTANCE_VALUE ? Unit::distMeter(distanceMeter) : QStringLiteral());
 
   if(text.isEmpty())
-    return QObject::tr("Measurement %1").arg(distStr);
+    return tr("Measurement %1").arg(distStr);
   else
-    return QObject::tr("Measurement %1 %2").arg(text, distStr);
+    return tr("Measurement %1 %2").arg(text, distStr);
 }
 
 // Binary legacy functions ######################################################################################
