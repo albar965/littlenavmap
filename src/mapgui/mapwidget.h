@@ -539,13 +539,15 @@ private:
 
   /* Indexes filled for each mouse move for mouse click and help overlay actions */
   map::MapResultIndex *currentResultIndex;
-  int currentRouteLegIndex = -1, currentRoutePointIndex = -1;
+  int currentRouteLegIndex = -1, /* Cursor above line */
+      currentRoutePointIndexAll = -1, /* Cursor above point - editableOnly = false - includes procedures  */
+      currentRoutePointIndexEditable = -1; /* Cursor above point - editableOnly = true - no procedures */
 
   /* Indexes and enums stored in updateHelpOverlayLabel() to detect status changes to minimize updates. */
-  int routeLegIndexHelp = -1, routePointIndexHelp = -1;
+  int routeLegIndexHelp = -1, routePointIndexHelpAll = -1, routePointIndexHelpEditable = -1;
   ms::MouseStates mouseStateHelp = ms::DRAG_NONE;
   map::MapType mapTypeHelp = map::ALL;
-  bool markerEditActiveHelp = false;
+  bool dragAndDropActiveHelp = false;
 
   MapTooltip *mapTooltip;
 

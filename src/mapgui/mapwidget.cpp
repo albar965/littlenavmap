@@ -803,9 +803,9 @@ bool MapWidget::mousePressCheckModifierActions(QMouseEvent *event)
       {
         // Edit any feature ==============================================
         // Copy of index with route legs only
-        if(currentRoutePointIndex != -1 && NavApp::getRouteConst().canEditComment(currentRoutePointIndex))
+        if(currentRoutePointIndexEditable != -1 && NavApp::getRouteConst().canEditComment(currentRoutePointIndexEditable))
         {
-          emit editUserWaypointName(currentRoutePointIndex);
+          emit editUserWaypointName(currentRoutePointIndexEditable);
           return true; // Event was consumed
         }
         else
@@ -976,36 +976,36 @@ void MapWidget::mousePressEvent(QMouseEvent *event)
         const Route& route = NavApp::getRouteConst();
         if(route.size() > 1)
         {
-          if(currentRoutePointIndex != -1)
+          if(currentRoutePointIndexEditable != -1)
           {
             // Drag a flight plan waypoint ==============================================
-            routeDragPoint = currentRoutePointIndex;
+            routeDragPoint = currentRoutePointIndexEditable;
             // Found a leg - start dragging
             mouseState = ms::DRAG_ROUTE_POINT;
 
             routeDragCurrrent = QPoint(event->pos().x(), event->pos().y());
             routeDragFixed.clear();
 
-            if(currentRoutePointIndex > 0 && route.value(currentRoutePointIndex).isAlternate())
+            if(currentRoutePointIndexEditable > 0 && route.value(currentRoutePointIndexEditable).isAlternate())
               // Alternate airports are treated as endpoints
               routeDragFixed.append(route.getDestinationAirportLeg().getPosition());
-            else if(currentRoutePointIndex == route.getDestinationAirportLegIndex() && route.hasAlternates())
+            else if(currentRoutePointIndexEditable == route.getDestinationAirportLegIndex() && route.hasAlternates())
             {
               // Add all lines to alternates as fixed lines if moving destination with alternates
-              if(currentRoutePointIndex > 0)
-                routeDragFixed.append(route.value(currentRoutePointIndex - 1).getPosition());
+              if(currentRoutePointIndexEditable > 0)
+                routeDragFixed.append(route.value(currentRoutePointIndexEditable - 1).getPosition());
               for(int i = route.getAlternateLegsOffset(); i < route.size(); i++)
                 routeDragFixed.append(route.value(i).getPosition());
             }
             else
             {
-              if(currentRoutePointIndex > 0)
+              if(currentRoutePointIndexEditable > 0)
                 // First point of route
-                routeDragFixed.append(route.value(currentRoutePointIndex - 1).getPosition());
+                routeDragFixed.append(route.value(currentRoutePointIndexEditable - 1).getPosition());
 
-              if(currentRoutePointIndex < route.size() - 1)
+              if(currentRoutePointIndexEditable < route.size() - 1)
                 // Last point of plan
-                routeDragFixed.append(route.value(currentRoutePointIndex + 1).getPosition());
+                routeDragFixed.append(route.value(currentRoutePointIndexEditable + 1).getPosition());
             }
 
             clickHandled = true;
@@ -1830,7 +1830,7 @@ void MapWidget::mouseMoveEvent(QMouseEvent *event)
 #endif
 
   currentResultIndex->clearAll();
-  currentRouteLegIndex = currentRoutePointIndex = -1;
+  currentRouteLegIndex = currentRoutePointIndexAll = currentRoutePointIndexEditable = -1;
 
   if(!isActiveWindow())
     return;
@@ -1911,12 +1911,19 @@ void MapWidget::mouseMoveEvent(QMouseEvent *event)
           const Route& route = NavApp::getRouteConst();
 
           // Make distance a bit larger to prefer points
-          currentRoutePointIndex =
+          // Get all points - also procedures
+          currentRoutePointIndexAll =
+            screenIndex->getNearestRoutePointIndex(event->pos().x(), event->pos().y(), screenSearchDistance * 4 / 3,
+                                                   false /* editableOnly */);
+
+          // Get only editable points - not procedures
+          currentRoutePointIndexEditable =
             screenIndex->getNearestRoutePointIndex(event->pos().x(), event->pos().y(), screenSearchDistance * 4 / 3,
                                                    true /* editableOnly */);
+
           currentRouteLegIndex = screenIndex->getNearestRouteLegIndex(event->pos().x(), event->pos().y(), screenSearchDistance);
 
-          if(route.size() > 1 && isDragAndDropEditActive() && (currentRoutePointIndex != -1 || currentRouteLegIndex != -1))
+          if(route.size() > 1 && isDragAndDropEditActive() && (currentRoutePointIndexEditable != -1 || currentRouteLegIndex != -1))
             // Change cursor at one route point or change cursor above a route line
             cursor = Qt::PointingHandCursor;
 
@@ -2810,15 +2817,18 @@ void MapWidget::updateHelpOverlayLabel()
 
   // Check if any state has changed and update only if this is the case
   if(type != mapTypeHelp || currentRouteLegIndex != routeLegIndexHelp ||
-     mouseState != mouseStateHelp || routePointIndexHelp != currentRoutePointIndex ||
-     markerEditActiveHelp != isDragAndDropEditActive())
+     mouseState != mouseStateHelp ||
+     routePointIndexHelpAll != currentRoutePointIndexAll ||
+     routePointIndexHelpEditable != currentRoutePointIndexEditable ||
+     dragAndDropActiveHelp != isDragAndDropEditActive())
   {
     // Save state
     mouseStateHelp = mouseState;
     mapTypeHelp = type;
     routeLegIndexHelp = currentRouteLegIndex;
-    routePointIndexHelp = currentRoutePointIndex;
-    markerEditActiveHelp = isDragAndDropEditActive();
+    routePointIndexHelpAll = currentRoutePointIndexAll;
+    routePointIndexHelpEditable = currentRoutePointIndexEditable;
+    dragAndDropActiveHelp = isDragAndDropEditActive();
 
     QString text;
 
@@ -2829,13 +2839,17 @@ void MapWidget::updateHelpOverlayLabel()
             mouseState == ms::DRAG_ROUTE_LEG || mouseState == ms::DRAG_ROUTE_POINT || mouseState == ms::DRAG_USER_POINT ||
             mouseState == ms::DRAG_HOLDING || mouseState == ms::DRAG_RANGE)
       text = tr("Press ${cancel} to cancel dragging.");
-    else if(currentRoutePointIndex != -1)
+    else if(currentRoutePointIndexEditable != -1)
     {
+      // Editable route point - not procedure
       if(isDragAndDropEditActive())
         text = tr("${clickdrag} to move, ${editclick} to edit or ${delclick} to delete flight plan position.");
       else
         text = tr("${editclick} to edit or ${delclick} to delete flight plan position.");
     }
+    else if(currentRoutePointIndexAll != -1)
+      // Not editable route point - procedure
+      text = tr("${delclick} to delete flight plan position or procedure.");
     else if(currentRouteLegIndex != -1 && isDragAndDropEditActive())
       text = tr("${clickdrag} to add new flight plan position.");
     else if(type == map::MARK_DISTANCE)
