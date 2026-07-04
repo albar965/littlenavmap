@@ -45,6 +45,10 @@ bool checkCoordinates(const QString& text, atools::geo::Pos *pos = nullptr);
 
 /* All formatters are locale aware */
 
+/* Short date format plus time zone abbreviation */
+QString formatDateTimeShortTz(const QDateTime& datetime);
+QString formatTimeShortTz(const QDateTime& datetime);
+
 /* Format a decimal time in hours to h:mm format */
 QString formatMinutesHours(double timeHours);
 

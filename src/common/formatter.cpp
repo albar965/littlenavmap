@@ -436,4 +436,14 @@ QString directionStr(float directionDeg)
   return windDirStr;
 }
 
+QString formatDateTimeShortTz(const QDateTime& datetime)
+{
+  return QObject::tr("%1 %2").arg(QLocale().toString(datetime, QLocale::ShortFormat), datetime.timeZoneAbbreviation());
+}
+
+QString formatTimeShortTz(const QDateTime& datetime)
+{
+  return QObject::tr("%1 %2").arg(QLocale().toString(datetime.time(), QLocale::ShortFormat), datetime.timeZoneAbbreviation());
+}
+
 } // namespace formatter

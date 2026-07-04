@@ -43,7 +43,8 @@ const static QList<pid::ProgressConfId> ALLIDS({
   pid::ALT_AUTOPILOT_ALT, pid::SPEED_INDICATED, pid::SPEED_INDICATED_OTHER, pid::SPEED_GROUND, pid::SPEED_GROUND_OTHER, pid::SPEED_TRUE,
   pid::SPEED_MACH, pid::SPEED_VERTICAL, pid::SPEED_VERTICAL_OTHER, pid::SPEED_TRUE_OTHER, pid::DESCENT_DEVIATION, pid::DESCENT_ANGLE_SPEED,
   pid::DESCENT_VERT_ANGLE_NEXT, pid::ENV_WIND_DIR_SPEED, pid::ENV_TAT, pid::ENV_SAT, pid::ENV_ISA_DEV, pid::ENV_SEA_LEVEL_PRESS,
-  pid::ENV_DENSITY_ALTITUDE, pid::ENV_CONDITIONS, pid::ENV_VISIBILITY, pid::POS_COORDINATES});
+  pid::ENV_DENSITY_ALTITUDE, pid::ENV_CONDITIONS, pid::ENV_VISIBILITY, pid::POS_COORDINATES,
+  pid::DEST_TIME_REAL, pid::TOD_TIME_REAL, pid::TOC_TIME_REAL, pid::NEXT_TIME_REAL});
 
 // Default ids which are enabled without settings
 const static QList<pid::ProgressConfId> DEFAULTIDS({
@@ -117,6 +118,8 @@ void AircraftProgressConfig::progressConfiguration()
                       tr("Estimated fuel at destination.\n"
                          "Shows orange warning if below reserve and red error text if insufficient."));
   treeDialog.addItem2(destItem, pid::DEST_GROSS_WEIGHT, tr("Gross Weight"), tr("Estimated aircraft gross weight at destination."));
+  treeDialog.addItem2(destItem, pid::DEST_TIME_REAL, tr("Arrival Real Local Time"),
+                      tr("Arrival time in real local time at destination."));
 
   // TOC ==========================================================================================================
   QTreeWidgetItem *tocItem = treeDialog.addTopItem1(tr("Top of Climb"));
@@ -124,6 +127,8 @@ void AircraftProgressConfig::progressConfiguration()
                       tr("Distance to, time to and arrival time in UTC at the top of climb."));
   treeDialog.addItem2(tocItem, pid::TOC_FUEL, tr("Fuel"), tr("Estimated fuel at top of climb."));
   treeDialog.addItem2(tocItem, pid::TOC_FROM_DESTINATION, tr("From Departure"), tr("Distance from departure to top of climb."));
+  treeDialog.addItem2(tocItem, pid::TOC_TIME_REAL, tr("Arrival Real Local Time"),
+                      tr("Arrival time in real local time at top of climb."));
 
   // TOD ==========================================================================================================
   QTreeWidgetItem *todItem = treeDialog.addTopItem1(tr("Top of Descent"));
@@ -131,6 +136,8 @@ void AircraftProgressConfig::progressConfiguration()
                       tr("Distance to, time to and arrival time in UTC at the top of descent."));
   treeDialog.addItem2(todItem, pid::TOD_FUEL, tr("Fuel"), tr("Estimated fuel at top of descent."));
   treeDialog.addItem2(todItem, pid::TOD_TO_DESTINATION, tr("To Destination"), tr("Distance from top of descent to destination."));
+  treeDialog.addItem2(todItem, pid::TOD_TIME_REAL, tr("Arrival Real Local Time"),
+                      tr("Arrival time in real local time at top of descent."));
 
   // Next ==========================================================================================================
   QTreeWidgetItem *nextItem = treeDialog.addTopItem1(tr("Next Waypoint"));
@@ -142,6 +149,9 @@ void AircraftProgressConfig::progressConfiguration()
   treeDialog.addItem2(nextItem, pid::NEXT_RESTRICTION, tr("Restriction"), tr("Altitude, speed or vertical angle restriction."));
   treeDialog.addItem2(nextItem, pid::NEXT_DIST_TIME_ARR, tr("Distance, Time and Arrival"),
                       tr("Distance to, time to and arrival time in UTC at the next waypoint."));
+  treeDialog.addItem2(nextItem, pid::NEXT_TIME_REAL, tr("Arrival Real Local Time"),
+                      tr("Arrival time in real local time at next waypoint."));
+
   treeDialog.addItem2(nextItem, pid::NEXT_ALTITUDE, tr("Altitude"), tr("Calculated altitude at the next waypoint."));
   treeDialog.addItem2(nextItem, pid::NEXT_FUEL, tr("Fuel"), tr("Estimated fuel at the next waypoint."));
   treeDialog.addItem2(nextItem, pid::NEXT_COURSE_TO_WP, tr("Course to waypoint"), tr("Direct course to the next waypoint."));

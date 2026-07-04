@@ -38,16 +38,19 @@ enum ProgressConfId
   DEST_DIST_TIME_ARR = 20,
   DEST_FUEL,
   DEST_GROSS_WEIGHT,
+  DEST_TIME_REAL,
 
   // "Top of descent" =================================
   TOD_DIST_TIME_ARR = 40,
   TOD_FUEL,
   TOD_TO_DESTINATION,
+  TOD_TIME_REAL,
 
   // "Top of climb" =================================
   TOC_DIST_TIME_ARR = 60,
   TOC_FUEL,
   TOC_FROM_DESTINATION,
+  TOC_TIME_REAL,
 
   // "Next waypoint" =================================
   NEXT_LEG_TYPE = 80,
@@ -64,6 +67,7 @@ enum ProgressConfId
   NEXT_REMARKS,
   NEXT_COURSE_FROM_VOR,
   NEXT_COURSE_TO_VOR,
+  NEXT_TIME_REAL,
 
   // "Aircraft" =================================
   AIRCRAFT_HEADING = 100,

@@ -2115,7 +2115,7 @@ void HtmlInfoBuilder::decodedMetar(HtmlBuilder& html, const map::MapAirport& air
   if(!parsed.isFsxP3dFormat())
   {
     QDateTime time = parsed.getTimestamp();
-    QString text = locale.toString(time, QLocale::ShortFormat) % tr(" ") % time.timeZoneAbbreviation();
+    QString text = formatter::formatDateTimeShortTz(time);
 
     qint64 secsTo = time.secsTo(QDateTime::currentDateTimeUtc());
 
@@ -2948,19 +2948,11 @@ bool HtmlInfoBuilder::logEntryText(MapLogbookEntry logEntry, HtmlBuilder& html) 
     {
       QDateTime departTime = rec.valueDateTime("departure_time");
       if(departTime.isValid())
-      {
-        QString departTimeZone = departTime.timeZoneAbbreviation();
-        html.row2If(info ? tr("Real time:") : tr("Departure real time:"),
-                    tr("%1 %2").arg(locale.toString(departTime, QLocale::ShortFormat), departTimeZone));
-      }
+        html.row2If(info ? tr("Real time:") : tr("Departure real time:"), formatter::formatDateTimeShortTz(departTime));
 
       QDateTime departTimeSim = rec.valueDateTime("departure_time_sim");
       if(departTimeSim.isValid())
-      {
-        QString departTimeZoneSim = departTimeSim.timeZoneAbbreviation();
-        html.row2If(info ? tr("Simulator time:") : tr("Departure simulator time:"),
-                    tr("%1 %2").arg(locale.toString(departTimeSim, QLocale::ShortFormat), departTimeZoneSim));
-      }
+        html.row2If(info ? tr("Simulator time:") : tr("Departure simulator time:"), formatter::formatDateTimeShortTz(departTimeSim));
     }
 
     if(info)
@@ -2977,17 +2969,11 @@ bool HtmlInfoBuilder::logEntryText(MapLogbookEntry logEntry, HtmlBuilder& html) 
       html.row2If(tr("Runway:"), rec.valueStr("destination_runway"));
       QDateTime destTime = rec.valueDateTime("destination_time");
       if(destTime.isValid())
-      {
-        QString destTimeZone = destTime.timeZoneAbbreviation();
-        html.row2If(tr("Real time:"), tr("%1 %2").arg(locale.toString(destTime, QLocale::ShortFormat), destTimeZone));
-      }
+        html.row2If(tr("Real time:"), formatter::formatDateTimeShortTz(destTime));
 
       QDateTime destTimeSim = rec.valueDateTime("destination_time_sim");
       if(destTimeSim.isValid())
-      {
-        QString destTimeZoneSim = destTimeSim.timeZoneAbbreviation();
-        html.row2If(tr("Simulator time:"), tr("%1 %2").arg(locale.toString(destTimeSim, QLocale::ShortFormat), destTimeZoneSim));
-      }
+        html.row2If(tr("Simulator time:"), formatter::formatDateTimeShortTz(destTimeSim));
 
       if(grossWeight > 0.f)
         html.row2(tr("Gross Weight:"), Unit::weightLbs(grossWeight - usedFuel), ahtml::NO_ENTITIES);
@@ -4298,12 +4284,16 @@ void HtmlInfoBuilder::aircraftProgressText(const atools::fs::sc::SimConnectAircr
 
         if(timeToDestAvailable)
         {
-          QDateTime arrival = userAircraft->getZuluTime().addSecs(static_cast<int>(fuelTime.timeToDest * 3600.f));
+          const QDateTime arrival = userAircraft->getZuluTime().addSecs(atools::roundToInt(fuelTime.timeToDest * 3600.f));
 
           html.id(pid::DEST_DIST_TIME_ARR).row2(destinationText, strJoinVal({
             Unit::distNm(distToDestNm),
-            formatter::formatMinutesHoursLong(fuelTime.timeToDest),
-            locale.toString(arrival.time(), QLocale::ShortFormat) % tr(" ") % arrival.timeZoneAbbreviation()}));
+            formatter::formatMinutesHoursLong(fuelTime.timeToDest), formatter::formatTimeShortTz(arrival)}));
+
+          html.id(pid::DEST_TIME_REAL).row2(tr("Arrival Real Local Time:"),
+                                            locale.toString(QDateTime::currentDateTime().
+                                                            addSecs(atools::roundToInt(fuelTime.timeToDest * 3600.f)),
+                                                            QLocale::ShortFormat));
         }
         else
           html.id(pid::DEST_DIST_TIME_ARR).row2(destinationText, Unit::distNm(distToDestNm));
@@ -4363,11 +4353,17 @@ void HtmlInfoBuilder::aircraftProgressText(const atools::fs::sc::SimConnectAircr
             tocValues.append(formatter::formatMinutesHoursLong(fuelTime.timeToToc));
             tocHeader.append(tr("Time"));
 
-            QDateTime arrival = userAircraft->getZuluTime().addSecs(static_cast<int>(fuelTime.timeToToc * 3600.f));
-            tocValues.append(locale.toString(arrival.time(), QLocale::ShortFormat) % tr(" ") % arrival.timeZoneAbbreviation());
+            QDateTime arrival = userAircraft->getZuluTime().addSecs(atools::roundToInt(fuelTime.timeToToc * 3600.f));
+            tocValues.append(formatter::formatTimeShortTz(arrival));
             tocHeader.append(tr("Arrival"));
+
+            html.id(pid::TOC_DIST_TIME_ARR).row2(strJoinHdr(tocHeader), strJoinVal(tocValues));
+
+            html.id(pid::TOC_TIME_REAL).row2(tr("Arrival Real Local Time:"),
+                                             locale.toString(QDateTime::currentDateTime().
+                                                             addSecs(atools::roundToInt(fuelTime.timeToToc * 3600.f)),
+                                                             QLocale::ShortFormat));
           }
-          html.id(pid::TOC_DIST_TIME_ARR).row2(strJoinHdr(tocHeader), strJoinVal(tocValues));
 
           if(fuelTime.isFuelToTocValid())
           {
@@ -4405,11 +4401,16 @@ void HtmlInfoBuilder::aircraftProgressText(const atools::fs::sc::SimConnectAircr
             todValues.append(formatter::formatMinutesHoursLong(fuelTime.timeToTod));
             todHeader.append(tr("Time"));
 
-            QDateTime arrival = userAircraft->getZuluTime().addSecs(static_cast<int>(fuelTime.timeToTod * 3600.f));
-            todValues.append(locale.toString(arrival.time(), QLocale::ShortFormat) % tr(" ") % arrival.timeZoneAbbreviation());
+            QDateTime arrival = userAircraft->getZuluTime().addSecs(atools::roundToInt(fuelTime.timeToTod * 3600.f));
+            todValues.append(formatter::formatTimeShortTz(arrival));
             todHeader.append(tr("Arrival"));
+            html.id(pid::TOD_DIST_TIME_ARR).row2(strJoinHdr(todHeader), strJoinVal(todValues));
+
+            html.id(pid::TOD_TIME_REAL).row2(tr("Arrival Real Local Time:"),
+                                             locale.toString(QDateTime::currentDateTime().
+                                                             addSecs(atools::roundToInt(fuelTime.timeToTod * 3600.f)),
+                                                             QLocale::ShortFormat));
           }
-          html.id(pid::TOD_DIST_TIME_ARR).row2(strJoinHdr(todHeader), strJoinVal(todValues));
 
           if(fuelTime.isFuelToTodValid())
           {
@@ -4561,24 +4562,33 @@ void HtmlInfoBuilder::aircraftProgressText(const atools::fs::sc::SimConnectAircr
           distTimeStr.append(Unit::distNm(nextLegDistance));
           distTimeHeader.append(tr("Distance"));
 
-          if(aircraft.getGroundSpeedKts() > MIN_GROUND_SPEED &&
-             aircraft.getGroundSpeedKts() < atools::fs::sc::SC_INVALID_FLOAT && fuelTime.isTimeToNextValid())
+          bool timeToNextValid = aircraft.getGroundSpeedKts() > MIN_GROUND_SPEED &&
+                                 aircraft.getGroundSpeedKts() < atools::fs::sc::SC_INVALID_FLOAT && fuelTime.isTimeToNextValid();
+
+          if(timeToNextValid)
           {
             // Travel time
             distTimeStr.append(formatter::formatMinutesHoursLong(fuelTime.timeToNext));
             distTimeHeader.append(tr("Time"));
 
             // ETA
-            QDateTime arrivalNext = userAircraft->getZuluTime().addSecs(static_cast<int>(fuelTime.timeToNext * 3600.f));
+            QDateTime arrivalNext = userAircraft->getZuluTime().addSecs(atools::roundToInt(fuelTime.timeToNext * 3600.f));
             distTimeStr.append(locale.toString(arrivalNext.time(), QLocale::ShortFormat) % tr(" ") %
                                arrivalNext.timeZoneAbbreviation());
             distTimeHeader.append(tr("Arrival"));
           }
 
           if(!alternate && !destination)
+          {
             // Distance, time and arrival are already part of the
             // destination information when flying an alternate leg
             html.id(pid::NEXT_DIST_TIME_ARR).row2(strJoinHdr(distTimeHeader), strJoinVal(distTimeStr), ahtml::NO_ENTITIES);
+
+            if(timeToNextValid)
+              html.id(pid::TOD_TIME_REAL).row2(tr("Arrival Real Local Time:"),
+                                               locale.toString(QDateTime::currentDateTime().
+                                                               addSecs(atools::roundToInt(fuelTime.timeToNext * 3600.f))));
+          }
 
           // Next leg - altitude ====================================================
           float altitude = map::INVALID_ALTITUDE_VALUE;
@@ -4660,8 +4670,7 @@ void HtmlInfoBuilder::aircraftProgressText(const atools::fs::sc::SimConnectAircr
             bool procedure = false;
             routeLeg.getMagTrueRealCourse(courseMag, courseTrue, &procedure);
 
-            // TODO avoid breaking translation temporarily
-            QString text = procedure ? tr("Leg Course") + tr(":") : tr("Leg Start Course:");
+            const QString text = procedure ? tr("Leg Course:") : tr("Leg Start Course:");
             html.id(pid::NEXT_LEG_COURSE).row2If(text, courseText(courseMag, courseTrue, true /* magBold */), ahtml::NO_ENTITIES);
 
             if(userAircraft != nullptr && userAircraft->isFlying() && courseToWptTrue < INVALID_COURSE_VALUE)
@@ -4894,7 +4903,7 @@ void HtmlInfoBuilder::aircraftProgressText(const atools::fs::sc::SimConnectAircr
           if(Unit::getUnitSpeed() == opts::SPEED_KTS)
           {
             // Use int value to compare and display to avoid confusing warning display for 250 on rounding errors
-            int speedIndKtsInt = static_cast<int>(speedIndKts);
+            int speedIndKtsInt = atools::roundToInt(speedIndKts);
             if(aircraft.getIndicatedAltitudeFt() < 10000.f && speedIndKtsInt > 250)
               // Exceeding speed limit slightly - orange warning
               html.row2(warn, HtmlBuilder::warningMessage(Unit::speedKts(speedIndKtsInt), HtmlBuilder::MSG_FLAGS | ahtml::BIG) % otherInd,
