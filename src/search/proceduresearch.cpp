@@ -1135,8 +1135,10 @@ void ProcedureSearch::updateTreeHeader()
   header->setText(COL_DESCRIPTION, tr("Description"));
   header->setToolTip(COL_DESCRIPTION, tr("Procedure instruction."));
 
-  header->setText(COL_IDENT, tr("Ident"));
-  header->setToolTip(COL_IDENT, tr("ICAO ident of the navaid,"));
+  header->setText(COL_IDENT, tr("Ident /\n"
+                                "ARINC Approach Type"));
+  header->setToolTip(COL_IDENT, tr("ICAO ident of the navaid and\n"
+                                   "ARINC Approach Type for approaches."));
 
   header->setText(COL_RESTR, tr("Restriction\n%1/%2/angle").arg(Unit::getUnitAltStr(), Unit::getUnitSpeedStr()));
   header->setToolTip(COL_RESTR, tr("Altitude restriction, speed limit or\nrequired descent flight path angle."));
