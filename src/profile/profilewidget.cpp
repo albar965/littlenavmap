@@ -553,7 +553,7 @@ const QList<std::pair<int, int> > ProfileWidget::calcScaleValues()
 
   // Now collect all scale positions by iterating step-wise from bottom to top
   QList<std::pair<int, int> > steps;
-  for(float y = TOP + h, alt = 0; y > TOP; y -= step * tempScale, alt += step)
+  for(int y = TOP + h, alt = 0; y > TOP; y -= step * tempScale, alt += step)
     steps.append(std::make_pair(y, alt));
 
   return steps;

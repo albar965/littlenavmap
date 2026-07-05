@@ -206,7 +206,7 @@ OptionsDialog::OptionsDialog(QMainWindow *parentWindow)
                                                       1 /* heightIncrease */);
   ui->treeWidgetOptionsDisplayTextOptionsAirport->setItemDelegate(gridDelegateAirport);
 
-  listWidgetIndex = new atools::gui::ListWidgetIndex(ui->listWidgetOptionPages, ui->stackedWidgetOptions);
+  listWidgetIndex = new atools::gui::ListWidgetIndex(ui->splitterOptions, ui->listWidgetOptionPages, ui->stackedWidgetOptions);
 
   // Add option pages with text, icon and tooltip ========================================
   // The title has to match all text references in the program
