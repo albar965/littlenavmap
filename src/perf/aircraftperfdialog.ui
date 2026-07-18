@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>611</width>
-    <height>777</height>
+    <width>640</width>
+    <height>480</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -24,237 +24,306 @@
        <string>Aircraft</string>
       </attribute>
       <layout class="QVBoxLayout" name="verticalLayout_4">
+       <property name="spacing">
+        <number>0</number>
+       </property>
+       <property name="leftMargin">
+        <number>0</number>
+       </property>
+       <property name="topMargin">
+        <number>0</number>
+       </property>
+       <property name="rightMargin">
+        <number>0</number>
+       </property>
+       <property name="bottomMargin">
+        <number>0</number>
+       </property>
        <item>
-        <layout class="QGridLayout" name="gridLayout_7">
-         <item row="1" column="0">
-          <widget class="QLabel" name="labelSimulator">
-           <property name="text">
-            <string>&amp;Simulator</string>
-           </property>
-           <property name="buddy">
-            <cstring>comboBoxSimulator</cstring>
-           </property>
-          </widget>
-         </item>
-         <item row="2" column="1">
-          <widget class="QLineEdit" name="lineEditName">
-           <property name="toolTip">
-            <string>Name of aircraft.
+        <widget class="QScrollArea" name="scrollArea_2">
+         <property name="widgetResizable">
+          <bool>true</bool>
+         </property>
+         <widget class="QWidget" name="scrollAreaWidgetContents_2">
+          <property name="geometry">
+           <rect>
+            <x>0</x>
+            <y>0</y>
+            <width>616</width>
+            <height>398</height>
+           </rect>
+          </property>
+          <layout class="QVBoxLayout" name="verticalLayout_6">
+           <item>
+            <widget class="QGroupBox" name="groupBox_6">
+             <property name="title">
+              <string>Aircraft</string>
+             </property>
+             <layout class="QGridLayout" name="gridLayout_7">
+              <property name="leftMargin">
+               <number>2</number>
+              </property>
+              <property name="topMargin">
+               <number>2</number>
+              </property>
+              <property name="rightMargin">
+               <number>2</number>
+              </property>
+              <property name="bottomMargin">
+               <number>2</number>
+              </property>
+              <property name="spacing">
+               <number>2</number>
+              </property>
+              <item row="0" column="0" rowspan="2" colspan="2">
+               <widget class="QLabel" name="labelSimulator">
+                <property name="text">
+                 <string>&amp;Simulator</string>
+                </property>
+                <property name="buddy">
+                 <cstring>comboBoxSimulator</cstring>
+                </property>
+               </widget>
+              </item>
+              <item row="4" column="2">
+               <widget class="QLabel" name="labelTypeStatus">
+                <property name="text">
+                 <string/>
+                </property>
+                <property name="wordWrap">
+                 <bool>true</bool>
+                </property>
+                <property name="textInteractionFlags">
+                 <set>Qt::LinksAccessibleByMouse|Qt::TextSelectableByMouse</set>
+                </property>
+               </widget>
+              </item>
+              <item row="2" column="0">
+               <widget class="QLabel" name="labelName">
+                <property name="text">
+                 <string>&amp;Aircraft model:</string>
+                </property>
+                <property name="buddy">
+                 <cstring>lineEditName</cstring>
+                </property>
+               </widget>
+              </item>
+              <item row="2" column="2">
+               <widget class="QLineEdit" name="lineEditName">
+                <property name="toolTip">
+                 <string>Name of aircraft.
 This is for informational purposes only.</string>
-           </property>
-          </widget>
-         </item>
-         <item row="1" column="1">
-          <widget class="QComboBox" name="comboBoxSimulator">
-           <property name="toolTip">
-            <string>Short name for simulator like FSX, FSXSE, P3DV4, P3DV5, XP11 or MSFS.
+                </property>
+               </widget>
+              </item>
+              <item row="0" column="2">
+               <widget class="QComboBox" name="comboBoxSimulator">
+                <property name="toolTip">
+                 <string>Short name for simulator like FSX, FSXSE, P3DV4, P3DV5, XP11 or MSFS.
 A performance file can often be used for all simulators.</string>
-           </property>
-           <item>
-            <property name="text">
-             <string>All</string>
-            </property>
+                </property>
+                <item>
+                 <property name="text">
+                  <string>All</string>
+                 </property>
+                </item>
+                <item>
+                 <property name="text">
+                  <string notr="true">XP11</string>
+                 </property>
+                </item>
+                <item>
+                 <property name="text">
+                  <string notr="true">XP12</string>
+                 </property>
+                </item>
+                <item>
+                 <property name="text">
+                  <string notr="true">MSFS</string>
+                 </property>
+                </item>
+                <item>
+                 <property name="text">
+                  <string notr="true">P3DV6</string>
+                 </property>
+                </item>
+                <item>
+                 <property name="text">
+                  <string notr="true">P3DV5</string>
+                 </property>
+                </item>
+                <item>
+                 <property name="text">
+                  <string notr="true">P3DV4</string>
+                 </property>
+                </item>
+                <item>
+                 <property name="text">
+                  <string notr="true">P3DV3</string>
+                 </property>
+                </item>
+                <item>
+                 <property name="text">
+                  <string notr="true">FSX</string>
+                 </property>
+                </item>
+                <item>
+                 <property name="text">
+                  <string notr="true">FSXSE</string>
+                 </property>
+                </item>
+               </widget>
+              </item>
+              <item row="3" column="2">
+               <widget class="QLineEdit" name="lineEditType">
+                <property name="toolTip">
+                 <string>ICAO aircraft type designator like B732 or C172.
+The fuel report will show a warning if this does not match the simulator aircraft type.</string>
+                </property>
+               </widget>
+              </item>
+              <item row="3" column="0">
+               <widget class="QLabel" name="labelType">
+                <property name="font">
+                 <font>
+                  <bold>true</bold>
+                 </font>
+                </property>
+                <property name="text">
+                 <string>Aircraft &amp;type:</string>
+                </property>
+                <property name="buddy">
+                 <cstring>lineEditType</cstring>
+                </property>
+               </widget>
+              </item>
+              <item row="5" column="0" colspan="3">
+               <widget class="QLabel" name="labelTypeLink">
+                <property name="toolTip">
+                 <string>Opens the official ICAO database in the web browser to look up aircraft type designators.</string>
+                </property>
+                <property name="text">
+                 <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:700;&quot;&gt;The aircraft type is a required value.&lt;br/&gt;&lt;/span&gt;Click on the links below to look up aircraft types:&lt;br/&gt;&lt;a href=&quot;https://www.icao.int/operational-safety/doc-8643-aircraft-type-designators/search&quot;&gt;&lt;span style=&quot; font-weight:700; text-decoration: underline; color:#0057ae;&quot;&gt;ICAO - Aircraft Type Designators&lt;/span&gt;&lt;/a&gt; or &lt;a href=&quot;https://en.wikipedia.org/wiki/List_of_aircraft_type_designators&quot;&gt;&lt;span style=&quot; font-weight:700; text-decoration: underline; color:#0057ae;&quot;&gt;Wikipedia - List of ICAO aircraft type designators&lt;/span&gt;&lt;/a&gt;.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+                </property>
+                <property name="wordWrap">
+                 <bool>true</bool>
+                </property>
+                <property name="openExternalLinks">
+                 <bool>true</bool>
+                </property>
+                <property name="textInteractionFlags">
+                 <set>Qt::LinksAccessibleByMouse|Qt::TextSelectableByMouse</set>
+                </property>
+               </widget>
+              </item>
+             </layout>
+            </widget>
            </item>
            <item>
-            <property name="text">
-             <string notr="true">XP11</string>
-            </property>
-           </item>
-           <item>
-            <property name="text">
-             <string notr="true">XP12</string>
-            </property>
-           </item>
-           <item>
-            <property name="text">
-             <string notr="true">MSFS</string>
-            </property>
-           </item>
-           <item>
-            <property name="text">
-             <string notr="true">P3DV6</string>
-            </property>
-           </item>
-           <item>
-            <property name="text">
-             <string notr="true">P3DV5</string>
-            </property>
-           </item>
-           <item>
-            <property name="text">
-             <string notr="true">P3DV4</string>
-            </property>
-           </item>
-           <item>
-            <property name="text">
-             <string notr="true">P3DV3</string>
-            </property>
-           </item>
-           <item>
-            <property name="text">
-             <string notr="true">FSX</string>
-            </property>
-           </item>
-           <item>
-            <property name="text">
-             <string notr="true">FSXSE</string>
-            </property>
-           </item>
-          </widget>
-         </item>
-         <item row="3" column="0">
-          <widget class="QLabel" name="labelType">
-           <property name="font">
-            <font>
-             <bold>true</bold>
-            </font>
-           </property>
-           <property name="text">
-            <string>Aircraft &amp;type:</string>
-           </property>
-           <property name="buddy">
-            <cstring>lineEditType</cstring>
-           </property>
-          </widget>
-         </item>
-         <item row="5" column="1">
-          <widget class="QLabel" name="labelTypeLink">
-           <property name="toolTip">
-            <string>Opens the official ICAO database in the web browser to look up aircraft type designators.</string>
-           </property>
-           <property name="text">
-            <string>&lt;p&gt;Click on the links below to look up aircraft types:&lt;br/&gt;
-&lt;a href=&quot;https://www2023.icao.int/publications/DOC8643/Pages/Search.aspx&quot;&gt;&lt;b&gt;ICAO - Aircraft Type Designators&lt;/b&gt;&lt;/a&gt; or&lt;br/&gt;
-&lt;a href=&quot;https://en.wikipedia.org/wiki/List_of_aircraft_type_designators&quot;&gt;&lt;b&gt;Wikipedia - List of ICAO aircraft type designators&lt;/b&gt;&lt;/a&gt;.&lt;/p&gt;</string>
-           </property>
-           <property name="wordWrap">
-            <bool>true</bool>
-           </property>
-           <property name="openExternalLinks">
-            <bool>true</bool>
-           </property>
-           <property name="textInteractionFlags">
-            <set>Qt::LinksAccessibleByMouse|Qt::TextSelectableByMouse</set>
-           </property>
-          </widget>
-         </item>
-         <item row="8" column="0">
-          <widget class="QLabel" name="labelRunwayType">
-           <property name="text">
-            <string>Required runway &amp;type:</string>
-           </property>
-           <property name="buddy">
-            <cstring>comboBoxRunwayType</cstring>
-           </property>
-          </widget>
-         </item>
-         <item row="7" column="1">
-          <widget class="QSpinBox" name="spinBoxRunwayLength">
-           <property name="toolTip">
-            <string>Minimum required runway length for takeoff or landing.
+            <widget class="QGroupBox" name="groupBox_7">
+             <property name="title">
+              <string>Runway</string>
+             </property>
+             <layout class="QGridLayout" name="gridLayout_8">
+              <property name="leftMargin">
+               <number>2</number>
+              </property>
+              <property name="topMargin">
+               <number>2</number>
+              </property>
+              <property name="rightMargin">
+               <number>2</number>
+              </property>
+              <property name="bottomMargin">
+               <number>2</number>
+              </property>
+              <property name="spacing">
+               <number>2</number>
+              </property>
+              <item row="0" column="0">
+               <widget class="QLabel" name="labelRunwayLength">
+                <property name="text">
+                 <string>&amp;Required length:</string>
+                </property>
+                <property name="buddy">
+                 <cstring>spinBoxRunwayLength</cstring>
+                </property>
+               </widget>
+              </item>
+              <item row="0" column="1">
+               <widget class="QSpinBox" name="spinBoxRunwayLength">
+                <property name="toolTip">
+                 <string>Minimum required runway length for takeoff or landing.
 Use an approximate value for max takeoff weight.
 This is for informational purposes only.</string>
-           </property>
-           <property name="suffix">
-            <string> %distshort%</string>
-           </property>
-           <property name="maximum">
-            <number>1000000</number>
-           </property>
-           <property name="singleStep">
-            <number>100</number>
-           </property>
-          </widget>
-         </item>
-         <item row="3" column="1">
-          <widget class="QLineEdit" name="lineEditType">
-           <property name="toolTip">
-            <string>ICAO aircraft type designator like B732 or C172.
-The fuel report will show a warning if this does not match the simulator aircraft type.</string>
-           </property>
-          </widget>
-         </item>
-         <item row="6" column="0" colspan="2">
-          <widget class="Line" name="line">
-           <property name="orientation">
-            <enum>Qt::Horizontal</enum>
-           </property>
-          </widget>
-         </item>
-         <item row="7" column="0">
-          <widget class="QLabel" name="labelRunwayLength">
-           <property name="text">
-            <string>&amp;Required runway:</string>
-           </property>
-           <property name="buddy">
-            <cstring>spinBoxRunwayLength</cstring>
-           </property>
-          </widget>
-         </item>
-         <item row="8" column="1">
-          <widget class="QComboBox" name="comboBoxRunwayType">
-           <property name="toolTip">
-            <string>This is for informational purposes only.</string>
-           </property>
-           <item>
-            <property name="text">
-             <string>Hard and Soft</string>
-            </property>
+                </property>
+                <property name="suffix">
+                 <string> %distshort%</string>
+                </property>
+                <property name="maximum">
+                 <number>1000000</number>
+                </property>
+                <property name="singleStep">
+                 <number>100</number>
+                </property>
+               </widget>
+              </item>
+              <item row="1" column="0">
+               <widget class="QLabel" name="labelRunwayType">
+                <property name="text">
+                 <string>Required &amp;type:</string>
+                </property>
+                <property name="buddy">
+                 <cstring>comboBoxRunwayType</cstring>
+                </property>
+               </widget>
+              </item>
+              <item row="1" column="1">
+               <widget class="QComboBox" name="comboBoxRunwayType">
+                <property name="toolTip">
+                 <string>This is for informational purposes only.</string>
+                </property>
+                <item>
+                 <property name="text">
+                  <string>Hard and Soft</string>
+                 </property>
+                </item>
+                <item>
+                 <property name="text">
+                  <string>Hard</string>
+                 </property>
+                </item>
+                <item>
+                 <property name="text">
+                  <string>Water</string>
+                 </property>
+                </item>
+                <item>
+                 <property name="text">
+                  <string>Amphibian</string>
+                 </property>
+                </item>
+               </widget>
+              </item>
+             </layout>
+            </widget>
            </item>
            <item>
-            <property name="text">
-             <string>Hard</string>
-            </property>
+            <spacer name="verticalSpacer">
+             <property name="orientation">
+              <enum>Qt::Vertical</enum>
+             </property>
+             <property name="sizeHint" stdset="0">
+              <size>
+               <width>20</width>
+               <height>0</height>
+              </size>
+             </property>
+            </spacer>
            </item>
-           <item>
-            <property name="text">
-             <string>Water</string>
-            </property>
-           </item>
-           <item>
-            <property name="text">
-             <string>Amphibian</string>
-            </property>
-           </item>
-          </widget>
-         </item>
-         <item row="2" column="0">
-          <widget class="QLabel" name="labelName">
-           <property name="text">
-            <string>&amp;Aircraft model:</string>
-           </property>
-           <property name="buddy">
-            <cstring>lineEditName</cstring>
-           </property>
-          </widget>
-         </item>
-         <item row="4" column="1">
-          <widget class="QLabel" name="labelTypeStatus">
-           <property name="text">
-            <string/>
-           </property>
-           <property name="wordWrap">
-            <bool>true</bool>
-           </property>
-           <property name="textInteractionFlags">
-            <set>Qt::LinksAccessibleByMouse|Qt::TextSelectableByMouse</set>
-           </property>
-          </widget>
-         </item>
-        </layout>
-       </item>
-       <item>
-        <spacer name="verticalSpacer">
-         <property name="orientation">
-          <enum>Qt::Vertical</enum>
-         </property>
-         <property name="sizeHint" stdset="0">
-          <size>
-           <width>20</width>
-           <height>40</height>
-          </size>
-         </property>
-        </spacer>
+          </layout>
+         </widget>
+        </widget>
        </item>
       </layout>
      </widget>
@@ -264,778 +333,819 @@ The fuel report will show a warning if this does not match the simulator aircraf
       </attribute>
       <layout class="QVBoxLayout" name="verticalLayout_2">
        <property name="spacing">
-        <number>2</number>
+        <number>0</number>
        </property>
        <property name="leftMargin">
-        <number>2</number>
+        <number>0</number>
        </property>
        <property name="topMargin">
-        <number>2</number>
+        <number>0</number>
        </property>
        <property name="rightMargin">
-        <number>2</number>
+        <number>0</number>
        </property>
        <property name="bottomMargin">
-        <number>2</number>
+        <number>0</number>
        </property>
        <item>
-        <widget class="QLabel" name="label">
-         <property name="frameShape">
-          <enum>QFrame::Box</enum>
+        <widget class="QScrollArea" name="scrollArea">
+         <property name="widgetResizable">
+          <bool>true</bool>
          </property>
-         <property name="frameShadow">
-          <enum>QFrame::Sunken</enum>
-         </property>
-         <property name="text">
-          <string>Labels of minimum required values for fuel calculation and elevation profile are &lt;b&gt;bold&lt;/b&gt;.&lt;br/&gt;
+         <widget class="QWidget" name="scrollAreaWidgetContents">
+          <property name="geometry">
+           <rect>
+            <x>0</x>
+            <y>0</y>
+            <width>468</width>
+            <height>768</height>
+           </rect>
+          </property>
+          <layout class="QVBoxLayout" name="verticalLayout_5">
+           <item>
+            <widget class="QLabel" name="label">
+             <property name="frameShape">
+              <enum>QFrame::Box</enum>
+             </property>
+             <property name="frameShadow">
+              <enum>QFrame::Sunken</enum>
+             </property>
+             <property name="text">
+              <string>Labels of minimum required values for fuel calculation and elevation profile are &lt;b&gt;bold&lt;/b&gt;.&lt;br/&gt;
 
 &lt;b&gt;See &lt;a href=&quot;https://contentzone.eurocontrol.int/aircraftperformance/default.aspx?&quot;&gt;Aircraft Performance Database&lt;/a&gt; for a start.&lt;/b&gt;</string>
-         </property>
-         <property name="wordWrap">
-          <bool>true</bool>
-         </property>
-         <property name="margin">
-          <number>5</number>
-         </property>
-         <property name="openExternalLinks">
-          <bool>true</bool>
-         </property>
-         <property name="textInteractionFlags">
-          <set>Qt::LinksAccessibleByMouse|Qt::TextSelectableByMouse</set>
-         </property>
-        </widget>
-       </item>
-       <item>
-        <widget class="QGroupBox" name="groupBox">
-         <property name="title">
-          <string>Fuel</string>
-         </property>
-         <layout class="QGridLayout" name="gridLayout">
-          <property name="leftMargin">
-           <number>0</number>
-          </property>
-          <property name="topMargin">
-           <number>0</number>
-          </property>
-          <property name="rightMargin">
-           <number>0</number>
-          </property>
-          <property name="bottomMargin">
-           <number>0</number>
-          </property>
-          <property name="spacing">
-           <number>2</number>
-          </property>
-          <item row="7" column="1">
-           <widget class="QSpinBox" name="spinBoxTaxiFuel">
-            <property name="toolTip">
-             <string>Fuel used prior to takeoff by APU, engine start and taxi</string>
-            </property>
-            <property name="showGroupSeparator" stdset="0">
-             <bool>true</bool>
-            </property>
-            <property name="suffix">
-             <string> %fuel%</string>
-            </property>
-            <property name="maximum">
-             <number>1000000</number>
-            </property>
-            <property name="singleStep">
-             <number>10</number>
-            </property>
-           </widget>
-          </item>
-          <item row="8" column="0">
-           <widget class="QLabel" name="labelCruiseExtraFuel">
-            <property name="text">
-             <string>&amp;Extra fuel:</string>
-            </property>
-            <property name="buddy">
-             <cstring>spinBoxExtraFuel</cstring>
-            </property>
-           </widget>
-          </item>
-          <item row="6" column="1">
-           <widget class="QSpinBox" name="spinBoxReserveFuel">
-            <property name="toolTip">
-             <string>Minimum fuel required to fly for 30 minutes at 1,500 feet
+             </property>
+             <property name="wordWrap">
+              <bool>true</bool>
+             </property>
+             <property name="margin">
+              <number>5</number>
+             </property>
+             <property name="openExternalLinks">
+              <bool>true</bool>
+             </property>
+             <property name="textInteractionFlags">
+              <set>Qt::LinksAccessibleByMouse|Qt::TextSelectableByMouse</set>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QGroupBox" name="groupBox">
+             <property name="title">
+              <string>Fuel</string>
+             </property>
+             <layout class="QGridLayout" name="gridLayout">
+              <property name="leftMargin">
+               <number>2</number>
+              </property>
+              <property name="topMargin">
+               <number>2</number>
+              </property>
+              <property name="rightMargin">
+               <number>2</number>
+              </property>
+              <property name="bottomMargin">
+               <number>2</number>
+              </property>
+              <property name="spacing">
+               <number>2</number>
+              </property>
+              <item row="7" column="1">
+               <widget class="QSpinBox" name="spinBoxTaxiFuel">
+                <property name="toolTip">
+                 <string>Fuel used prior to takeoff by APU, engine start and taxi</string>
+                </property>
+                <property name="showGroupSeparator" stdset="0">
+                 <bool>true</bool>
+                </property>
+                <property name="suffix">
+                 <string> %fuel%</string>
+                </property>
+                <property name="maximum">
+                 <number>1000000</number>
+                </property>
+                <property name="singleStep">
+                 <number>10</number>
+                </property>
+               </widget>
+              </item>
+              <item row="8" column="0">
+               <widget class="QLabel" name="labelCruiseExtraFuel">
+                <property name="text">
+                 <string>&amp;Extra fuel:</string>
+                </property>
+                <property name="buddy">
+                 <cstring>spinBoxExtraFuel</cstring>
+                </property>
+               </widget>
+              </item>
+              <item row="6" column="1">
+               <widget class="QSpinBox" name="spinBoxReserveFuel">
+                <property name="toolTip">
+                 <string>Minimum fuel required to fly for 30 minutes at 1,500 feet
 above the alternate or at the destination at holding speed if
 an alternate is not required</string>
-            </property>
-            <property name="showGroupSeparator" stdset="0">
-             <bool>true</bool>
-            </property>
-            <property name="suffix">
-             <string> %fuel%</string>
-            </property>
-            <property name="maximum">
-             <number>1000000</number>
-            </property>
-            <property name="singleStep">
-             <number>10</number>
-            </property>
-           </widget>
-          </item>
-          <item row="5" column="0" colspan="2">
-           <widget class="QLabel" name="labelUsableFuelRange">
-            <property name="toolTip">
-             <string>Estimated range considering reserve fuel.
+                </property>
+                <property name="showGroupSeparator" stdset="0">
+                 <bool>true</bool>
+                </property>
+                <property name="suffix">
+                 <string> %fuel%</string>
+                </property>
+                <property name="maximum">
+                 <number>1000000</number>
+                </property>
+                <property name="singleStep">
+                 <number>10</number>
+                </property>
+               </widget>
+              </item>
+              <item row="5" column="0" colspan="2">
+               <widget class="QLabel" name="labelUsableFuelRange">
+                <property name="toolTip">
+                 <string>Estimated range considering reserve fuel.
 Based on cruise speed and fuel flow.</string>
-            </property>
-            <property name="text">
-             <string/>
-            </property>
-            <property name="alignment">
-             <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-            </property>
-            <property name="margin">
-             <number>5</number>
-            </property>
-            <property name="textInteractionFlags">
-             <set>Qt::LinksAccessibleByMouse|Qt::TextSelectableByMouse</set>
-            </property>
-           </widget>
-          </item>
-          <item row="8" column="1">
-           <widget class="QSpinBox" name="spinBoxExtraFuel">
-            <property name="toolTip">
-             <string>Fuel added at the discretion of the
+                </property>
+                <property name="text">
+                 <string/>
+                </property>
+                <property name="alignment">
+                 <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+                </property>
+                <property name="margin">
+                 <number>5</number>
+                </property>
+                <property name="textInteractionFlags">
+                 <set>Qt::LinksAccessibleByMouse|Qt::TextSelectableByMouse</set>
+                </property>
+               </widget>
+              </item>
+              <item row="8" column="1">
+               <widget class="QSpinBox" name="spinBoxExtraFuel">
+                <property name="toolTip">
+                 <string>Fuel added at the discretion of the
 captain or the dispatcher</string>
-            </property>
-            <property name="showGroupSeparator" stdset="0">
-             <bool>true</bool>
-            </property>
-            <property name="suffix">
-             <string> %fuel%</string>
-            </property>
-            <property name="maximum">
-             <number>1000000</number>
-            </property>
-            <property name="singleStep">
-             <number>10</number>
-            </property>
-           </widget>
-          </item>
-          <item row="6" column="0">
-           <widget class="QLabel" name="labelReserveFuel">
-            <property name="text">
-             <string>&amp;Reserve fuel:</string>
-            </property>
-            <property name="buddy">
-             <cstring>spinBoxReserveFuel</cstring>
-            </property>
-           </widget>
-          </item>
-          <item row="9" column="0">
-           <widget class="QLabel" name="labelExtraCruiseFuel">
-            <property name="text">
-             <string>&amp;Contingency fuel:</string>
-            </property>
-            <property name="buddy">
-             <cstring>spinBoxContingencyFuel</cstring>
-            </property>
-           </widget>
-          </item>
-          <item row="4" column="0">
-           <widget class="QLabel" name="labelUsableFuel">
-            <property name="text">
-             <string>&amp;Usable fuel:</string>
-            </property>
-            <property name="buddy">
-             <cstring>spinBoxUsableFuel</cstring>
-            </property>
-           </widget>
-          </item>
-          <item row="9" column="1">
-           <widget class="QSpinBox" name="spinBoxContingencyFuel">
-            <property name="toolTip">
-             <string>This accounts for additional en-route fuel consumption
+                </property>
+                <property name="showGroupSeparator" stdset="0">
+                 <bool>true</bool>
+                </property>
+                <property name="suffix">
+                 <string> %fuel%</string>
+                </property>
+                <property name="maximum">
+                 <number>1000000</number>
+                </property>
+                <property name="singleStep">
+                 <number>10</number>
+                </property>
+               </widget>
+              </item>
+              <item row="6" column="0">
+               <widget class="QLabel" name="labelReserveFuel">
+                <property name="text">
+                 <string>&amp;Reserve fuel:</string>
+                </property>
+                <property name="buddy">
+                 <cstring>spinBoxReserveFuel</cstring>
+                </property>
+               </widget>
+              </item>
+              <item row="9" column="0">
+               <widget class="QLabel" name="labelExtraCruiseFuel">
+                <property name="text">
+                 <string>&amp;Contingency fuel:</string>
+                </property>
+                <property name="buddy">
+                 <cstring>spinBoxContingencyFuel</cstring>
+                </property>
+               </widget>
+              </item>
+              <item row="4" column="0">
+               <widget class="QLabel" name="labelUsableFuel">
+                <property name="text">
+                 <string>&amp;Usable fuel:</string>
+                </property>
+                <property name="buddy">
+                 <cstring>spinBoxUsableFuel</cstring>
+                </property>
+               </widget>
+              </item>
+              <item row="9" column="1">
+               <widget class="QSpinBox" name="spinBoxContingencyFuel">
+                <property name="toolTip">
+                 <string>This accounts for additional en-route fuel consumption
 caused by wind or routing changes.
 This will increase the trip fuel by the given percentage.</string>
-            </property>
-            <property name="showGroupSeparator" stdset="0">
-             <bool>true</bool>
-            </property>
-            <property name="suffix">
-             <string> percent</string>
-            </property>
-            <property name="maximum">
-             <number>1000</number>
-            </property>
-            <property name="singleStep">
-             <number>5</number>
-            </property>
-           </widget>
-          </item>
-          <item row="4" column="1">
-           <widget class="QSpinBox" name="spinBoxUsableFuel">
-            <property name="toolTip">
-             <string>Usable fuel in tanks</string>
-            </property>
-            <property name="suffix">
-             <string> %fuel%</string>
-            </property>
-            <property name="maximum">
-             <number>1000000</number>
-            </property>
-            <property name="singleStep">
-             <number>10</number>
-            </property>
-           </widget>
-          </item>
-          <item row="7" column="0">
-           <widget class="QLabel" name="labelTaxiFuel">
-            <property name="text">
-             <string>&amp;Taxi fuel:</string>
-            </property>
-            <property name="buddy">
-             <cstring>spinBoxTaxiFuel</cstring>
-            </property>
-           </widget>
-          </item>
-          <item row="3" column="0" colspan="2">
-           <layout class="QHBoxLayout" name="horizontalLayout">
-            <property name="spacing">
-             <number>6</number>
-            </property>
-            <property name="topMargin">
-             <number>0</number>
-            </property>
-            <item>
-             <widget class="QLabel" name="labelFuelUnits">
-              <property name="text">
-               <string>&amp;Fuel units:</string>
+                </property>
+                <property name="showGroupSeparator" stdset="0">
+                 <bool>true</bool>
+                </property>
+                <property name="suffix">
+                 <string> percent</string>
+                </property>
+                <property name="maximum">
+                 <number>1000</number>
+                </property>
+                <property name="singleStep">
+                 <number>5</number>
+                </property>
+               </widget>
+              </item>
+              <item row="4" column="1">
+               <widget class="QSpinBox" name="spinBoxUsableFuel">
+                <property name="toolTip">
+                 <string>Usable fuel in tanks</string>
+                </property>
+                <property name="suffix">
+                 <string> %fuel%</string>
+                </property>
+                <property name="maximum">
+                 <number>1000000</number>
+                </property>
+                <property name="singleStep">
+                 <number>10</number>
+                </property>
+               </widget>
+              </item>
+              <item row="7" column="0">
+               <widget class="QLabel" name="labelTaxiFuel">
+                <property name="text">
+                 <string>&amp;Taxi fuel:</string>
+                </property>
+                <property name="buddy">
+                 <cstring>spinBoxTaxiFuel</cstring>
+                </property>
+               </widget>
+              </item>
+              <item row="3" column="0" colspan="2">
+               <layout class="QHBoxLayout" name="horizontalLayout">
+                <property name="spacing">
+                 <number>6</number>
+                </property>
+                <property name="leftMargin">
+                 <number>2</number>
+                </property>
+                <property name="topMargin">
+                 <number>2</number>
+                </property>
+                <property name="rightMargin">
+                 <number>2</number>
+                </property>
+                <property name="bottomMargin">
+                 <number>2</number>
+                </property>
+                <item>
+                 <widget class="QLabel" name="labelFuelUnits">
+                  <property name="text">
+                   <string>&amp;Fuel units:</string>
+                  </property>
+                  <property name="buddy">
+                   <cstring>comboBoxFuelUnit</cstring>
+                  </property>
+                 </widget>
+                </item>
+                <item>
+                 <widget class="QComboBox" name="comboBoxFuelUnit">
+                  <item>
+                   <property name="text">
+                    <string>Weight (lbs)</string>
+                   </property>
+                  </item>
+                  <item>
+                   <property name="text">
+                    <string>Volume (gal)</string>
+                   </property>
+                  </item>
+                  <item>
+                   <property name="text">
+                    <string>Weight (kg)</string>
+                   </property>
+                  </item>
+                  <item>
+                   <property name="text">
+                    <string>Volume (liter)</string>
+                   </property>
+                  </item>
+                 </widget>
+                </item>
+                <item>
+                 <widget class="QLabel" name="labelFuelType">
+                  <property name="text">
+                   <string>&amp;Fuel type:</string>
+                  </property>
+                  <property name="buddy">
+                   <cstring>comboBoxFuelType</cstring>
+                  </property>
+                 </widget>
+                </item>
+                <item>
+                 <widget class="QComboBox" name="comboBoxFuelType">
+                  <property name="toolTip">
+                   <string>Used to convert from weight to volume units.</string>
+                  </property>
+                  <item>
+                   <property name="text">
+                    <string>Avgas</string>
+                   </property>
+                  </item>
+                  <item>
+                   <property name="text">
+                    <string>Jetfuel</string>
+                   </property>
+                  </item>
+                 </widget>
+                </item>
+               </layout>
+              </item>
+             </layout>
+            </widget>
+           </item>
+           <item>
+            <widget class="QGroupBox" name="groupBox_2">
+             <property name="title">
+              <string>Climb</string>
+             </property>
+             <layout class="QGridLayout" name="gridLayout_2">
+              <property name="leftMargin">
+               <number>2</number>
               </property>
-              <property name="buddy">
-               <cstring>comboBoxFuelUnit</cstring>
+              <property name="topMargin">
+               <number>2</number>
               </property>
-             </widget>
-            </item>
-            <item>
-             <widget class="QComboBox" name="comboBoxFuelUnit">
-              <item>
-               <property name="text">
-                <string>Weight (lbs)</string>
-               </property>
-              </item>
-              <item>
-               <property name="text">
-                <string>Volume (gal)</string>
-               </property>
-              </item>
-              <item>
-               <property name="text">
-                <string>Weight (kg)</string>
-               </property>
-              </item>
-              <item>
-               <property name="text">
-                <string>Volume (liter)</string>
-               </property>
-              </item>
-             </widget>
-            </item>
-            <item>
-             <widget class="QLabel" name="labelFuelType">
-              <property name="text">
-               <string>&amp;Fuel type:</string>
+              <property name="rightMargin">
+               <number>2</number>
               </property>
-              <property name="buddy">
-               <cstring>comboBoxFuelType</cstring>
+              <property name="bottomMargin">
+               <number>2</number>
               </property>
-             </widget>
-            </item>
-            <item>
-             <widget class="QComboBox" name="comboBoxFuelType">
-              <property name="toolTip">
-               <string>Used to convert from weight to volume units.</string>
+              <property name="spacing">
+               <number>2</number>
               </property>
-              <item>
-               <property name="text">
-                <string>Avgas</string>
-               </property>
+              <item row="0" column="1">
+               <widget class="QSpinBox" name="spinBoxClimbSpeed">
+                <property name="toolTip">
+                 <string>Average climb speed to typical cruise altitude.</string>
+                </property>
+                <property name="showGroupSeparator" stdset="0">
+                 <bool>true</bool>
+                </property>
+                <property name="suffix">
+                 <string> %speed% true airspeed</string>
+                </property>
+                <property name="minimum">
+                 <number>20</number>
+                </property>
+                <property name="maximum">
+                 <number>10000</number>
+                </property>
+                <property name="singleStep">
+                 <number>10</number>
+                </property>
+                <property name="value">
+                 <number>100</number>
+                </property>
+               </widget>
               </item>
-              <item>
-               <property name="text">
-                <string>Jetfuel</string>
-               </property>
+              <item row="0" column="0">
+               <widget class="QLabel" name="labelClimbSpeed">
+                <property name="font">
+                 <font>
+                  <bold>true</bold>
+                 </font>
+                </property>
+                <property name="text">
+                 <string>Average &amp;climb speed:</string>
+                </property>
+                <property name="buddy">
+                 <cstring>spinBoxClimbSpeed</cstring>
+                </property>
+               </widget>
               </item>
-             </widget>
-            </item>
-           </layout>
-          </item>
-         </layout>
-        </widget>
-       </item>
-       <item>
-        <widget class="QGroupBox" name="groupBox_2">
-         <property name="title">
-          <string>Climb</string>
-         </property>
-         <layout class="QGridLayout" name="gridLayout_2">
-          <property name="leftMargin">
-           <number>0</number>
-          </property>
-          <property name="topMargin">
-           <number>0</number>
-          </property>
-          <property name="rightMargin">
-           <number>0</number>
-          </property>
-          <property name="bottomMargin">
-           <number>0</number>
-          </property>
-          <property name="spacing">
-           <number>2</number>
-          </property>
-          <item row="0" column="1">
-           <widget class="QSpinBox" name="spinBoxClimbSpeed">
-            <property name="toolTip">
-             <string>Average climb speed to typical cruise altitude.</string>
-            </property>
-            <property name="showGroupSeparator" stdset="0">
-             <bool>true</bool>
-            </property>
-            <property name="suffix">
-             <string> %speed% true airspeed</string>
-            </property>
-            <property name="minimum">
-             <number>20</number>
-            </property>
-            <property name="maximum">
-             <number>10000</number>
-            </property>
-            <property name="singleStep">
-             <number>10</number>
-            </property>
-            <property name="value">
-             <number>100</number>
-            </property>
-           </widget>
-          </item>
-          <item row="0" column="0">
-           <widget class="QLabel" name="labelClimbSpeed">
-            <property name="font">
-             <font>
-              <bold>true</bold>
-             </font>
-            </property>
-            <property name="text">
-             <string>Average &amp;climb speed:</string>
-            </property>
-            <property name="buddy">
-             <cstring>spinBoxClimbSpeed</cstring>
-            </property>
-           </widget>
-          </item>
-          <item row="3" column="0">
-           <widget class="QLabel" name="labelVertClimbSpeed">
-            <property name="font">
-             <font>
-              <bold>true</bold>
-             </font>
-            </property>
-            <property name="text">
-             <string>Average vertical &amp;climb speed:</string>
-            </property>
-            <property name="buddy">
-             <cstring>doubleSpinBoxClimbVertSpeed</cstring>
-            </property>
-           </widget>
-          </item>
-          <item row="4" column="0">
-           <widget class="QLabel" name="labelClimbFuelFlow">
-            <property name="font">
-             <font>
-              <bold>true</bold>
-             </font>
-            </property>
-            <property name="text">
-             <string>Average fuel flow for &amp;climb:</string>
-            </property>
-            <property name="buddy">
-             <cstring>spinBoxClimbFuelFlow</cstring>
-            </property>
-           </widget>
-          </item>
-          <item row="4" column="1">
-           <widget class="QSpinBox" name="spinBoxClimbFuelFlow">
-            <property name="toolTip">
-             <string>Fuel flow in climb to typical cruise altitude.</string>
-            </property>
-            <property name="showGroupSeparator" stdset="0">
-             <bool>true</bool>
-            </property>
-            <property name="suffix">
-             <string> %fuel% per hour</string>
-            </property>
-            <property name="maximum">
-             <number>100000</number>
-            </property>
-            <property name="singleStep">
-             <number>10</number>
-            </property>
-           </widget>
-          </item>
-          <item row="3" column="1">
-           <widget class="QDoubleSpinBox" name="doubleSpinBoxClimbVertSpeed">
-            <property name="toolTip">
-             <string>Average vertical climb speed to typical cruise altitude.</string>
-            </property>
-            <property name="showGroupSeparator" stdset="0">
-             <bool>true</bool>
-            </property>
-            <property name="decimals">
-             <number>0</number>
-            </property>
-            <property name="minimum">
-             <double>100.000000000000000</double>
-            </property>
-            <property name="maximum">
-             <double>10000.000000000000000</double>
-            </property>
-            <property name="singleStep">
-             <double>50.000000000000000</double>
-            </property>
-            <property name="value">
-             <double>550.000000000000000</double>
-            </property>
-           </widget>
-          </item>
-         </layout>
-        </widget>
-       </item>
-       <item>
-        <widget class="QGroupBox" name="groupBox_3">
-         <property name="title">
-          <string>Cruise</string>
-         </property>
-         <layout class="QGridLayout" name="gridLayout_3">
-          <property name="leftMargin">
-           <number>0</number>
-          </property>
-          <property name="topMargin">
-           <number>0</number>
-          </property>
-          <property name="rightMargin">
-           <number>0</number>
-          </property>
-          <property name="bottomMargin">
-           <number>0</number>
-          </property>
-          <property name="spacing">
-           <number>2</number>
-          </property>
-          <item row="0" column="0">
-           <widget class="QLabel" name="labelCruiseSpeed">
-            <property name="font">
-             <font>
-              <bold>true</bold>
-             </font>
-            </property>
-            <property name="text">
-             <string>C&amp;ruise speed at typical cruise altitude:</string>
-            </property>
-            <property name="buddy">
-             <cstring>spinBoxCruiseSpeed</cstring>
-            </property>
-           </widget>
-          </item>
-          <item row="0" column="1">
-           <widget class="QSpinBox" name="spinBoxCruiseSpeed">
-            <property name="showGroupSeparator" stdset="0">
-             <bool>true</bool>
-            </property>
-            <property name="suffix">
-             <string> %speed% true airspeed</string>
-            </property>
-            <property name="minimum">
-             <number>20</number>
-            </property>
-            <property name="maximum">
-             <number>10000</number>
-            </property>
-            <property name="singleStep">
-             <number>10</number>
-            </property>
-            <property name="value">
-             <number>100</number>
-            </property>
-           </widget>
-          </item>
-          <item row="1" column="0">
-           <widget class="QLabel" name="labelCruiseFuelFlow">
-            <property name="font">
-             <font>
-              <bold>true</bold>
-             </font>
-            </property>
-            <property name="text">
-             <string>Fuel flow in c&amp;ruise:</string>
-            </property>
-            <property name="buddy">
-             <cstring>spinBoxCruiseFuelFlow</cstring>
-            </property>
-           </widget>
-          </item>
-          <item row="1" column="1">
-           <widget class="QSpinBox" name="spinBoxCruiseFuelFlow">
-            <property name="showGroupSeparator" stdset="0">
-             <bool>true</bool>
-            </property>
-            <property name="suffix">
-             <string> %fuel% per hour</string>
-            </property>
-            <property name="maximum">
-             <number>100000</number>
-            </property>
-            <property name="singleStep">
-             <number>10</number>
-            </property>
-           </widget>
-          </item>
-         </layout>
-        </widget>
-       </item>
-       <item>
-        <widget class="QGroupBox" name="groupBox_4">
-         <property name="title">
-          <string>Descent</string>
-         </property>
-         <layout class="QGridLayout" name="gridLayout_4">
-          <property name="leftMargin">
-           <number>0</number>
-          </property>
-          <property name="topMargin">
-           <number>0</number>
-          </property>
-          <property name="rightMargin">
-           <number>0</number>
-          </property>
-          <property name="bottomMargin">
-           <number>0</number>
-          </property>
-          <property name="spacing">
-           <number>2</number>
-          </property>
-          <item row="3" column="0">
-           <widget class="QLabel" name="labelDescentVertSpeed">
-            <property name="font">
-             <font>
-              <bold>true</bold>
-             </font>
-            </property>
-            <property name="text">
-             <string>Average vertical &amp;descent speed:</string>
-            </property>
-            <property name="buddy">
-             <cstring>doubleSpinBoxDescentVertSpeed</cstring>
-            </property>
-           </widget>
-          </item>
-          <item row="0" column="0">
-           <widget class="QLabel" name="labelDescentSpeed">
-            <property name="font">
-             <font>
-              <bold>true</bold>
-             </font>
-            </property>
-            <property name="text">
-             <string>Average &amp;descent speed:</string>
-            </property>
-            <property name="buddy">
-             <cstring>spinBoxDescentSpeed</cstring>
-            </property>
-           </widget>
-          </item>
-          <item row="0" column="1">
-           <widget class="QSpinBox" name="spinBoxDescentSpeed">
-            <property name="showGroupSeparator" stdset="0">
-             <bool>true</bool>
-            </property>
-            <property name="suffix">
-             <string> %speed% true airspeed</string>
-            </property>
-            <property name="minimum">
-             <number>20</number>
-            </property>
-            <property name="maximum">
-             <number>10000</number>
-            </property>
-            <property name="singleStep">
-             <number>10</number>
-            </property>
-            <property name="value">
-             <number>100</number>
-            </property>
-           </widget>
-          </item>
-          <item row="4" column="0">
-           <widget class="QLabel" name="labelDescentFuelFlow">
-            <property name="font">
-             <font>
-              <bold>true</bold>
-             </font>
-            </property>
-            <property name="text">
-             <string>Average fuel flow for &amp;descent:</string>
-            </property>
-            <property name="buddy">
-             <cstring>spinBoxDescentFuelFlow</cstring>
-            </property>
-           </widget>
-          </item>
-          <item row="4" column="1">
-           <widget class="QSpinBox" name="spinBoxDescentFuelFlow">
-            <property name="showGroupSeparator" stdset="0">
-             <bool>true</bool>
-            </property>
-            <property name="suffix">
-             <string> %fuel% per hour</string>
-            </property>
-            <property name="maximum">
-             <number>100000</number>
-            </property>
-            <property name="singleStep">
-             <number>10</number>
-            </property>
-           </widget>
-          </item>
-          <item row="3" column="1">
-           <widget class="QDoubleSpinBox" name="doubleSpinBoxDescentVertSpeed">
-            <property name="showGroupSeparator" stdset="0">
-             <bool>true</bool>
-            </property>
-            <property name="decimals">
-             <number>0</number>
-            </property>
-            <property name="minimum">
-             <double>-10000.000000000000000</double>
-            </property>
-            <property name="maximum">
-             <double>-100.000000000000000</double>
-            </property>
-            <property name="singleStep">
-             <double>100.000000000000000</double>
-            </property>
-            <property name="value">
-             <double>-550.000000000000000</double>
-            </property>
-           </widget>
-          </item>
-          <item row="5" column="0" colspan="2">
-           <widget class="QLabel" name="labelDescentRule">
-            <property name="toolTip">
-             <string>Equivalent rule of thumb for
+              <item row="3" column="0">
+               <widget class="QLabel" name="labelVertClimbSpeed">
+                <property name="font">
+                 <font>
+                  <bold>true</bold>
+                 </font>
+                </property>
+                <property name="text">
+                 <string>Average vertical &amp;climb speed:</string>
+                </property>
+                <property name="buddy">
+                 <cstring>doubleSpinBoxClimbVertSpeed</cstring>
+                </property>
+               </widget>
+              </item>
+              <item row="4" column="0">
+               <widget class="QLabel" name="labelClimbFuelFlow">
+                <property name="font">
+                 <font>
+                  <bold>true</bold>
+                 </font>
+                </property>
+                <property name="text">
+                 <string>Average fuel flow for &amp;climb:</string>
+                </property>
+                <property name="buddy">
+                 <cstring>spinBoxClimbFuelFlow</cstring>
+                </property>
+               </widget>
+              </item>
+              <item row="4" column="1">
+               <widget class="QSpinBox" name="spinBoxClimbFuelFlow">
+                <property name="toolTip">
+                 <string>Fuel flow in climb to typical cruise altitude.</string>
+                </property>
+                <property name="showGroupSeparator" stdset="0">
+                 <bool>true</bool>
+                </property>
+                <property name="suffix">
+                 <string> %fuel% per hour</string>
+                </property>
+                <property name="maximum">
+                 <number>100000</number>
+                </property>
+                <property name="singleStep">
+                 <number>10</number>
+                </property>
+               </widget>
+              </item>
+              <item row="3" column="1">
+               <widget class="QDoubleSpinBox" name="doubleSpinBoxClimbVertSpeed">
+                <property name="toolTip">
+                 <string>Average vertical climb speed to typical cruise altitude.</string>
+                </property>
+                <property name="showGroupSeparator" stdset="0">
+                 <bool>true</bool>
+                </property>
+                <property name="decimals">
+                 <number>0</number>
+                </property>
+                <property name="minimum">
+                 <double>100.000000000000000</double>
+                </property>
+                <property name="maximum">
+                 <double>10000.000000000000000</double>
+                </property>
+                <property name="singleStep">
+                 <double>50.000000000000000</double>
+                </property>
+                <property name="value">
+                 <double>550.000000000000000</double>
+                </property>
+               </widget>
+              </item>
+             </layout>
+            </widget>
+           </item>
+           <item>
+            <widget class="QGroupBox" name="groupBox_4">
+             <property name="title">
+              <string>Descent</string>
+             </property>
+             <layout class="QGridLayout" name="gridLayout_4">
+              <property name="leftMargin">
+               <number>2</number>
+              </property>
+              <property name="topMargin">
+               <number>2</number>
+              </property>
+              <property name="rightMargin">
+               <number>2</number>
+              </property>
+              <property name="bottomMargin">
+               <number>2</number>
+              </property>
+              <property name="spacing">
+               <number>2</number>
+              </property>
+              <item row="3" column="0">
+               <widget class="QLabel" name="labelDescentVertSpeed">
+                <property name="font">
+                 <font>
+                  <bold>true</bold>
+                 </font>
+                </property>
+                <property name="text">
+                 <string>Average vertical &amp;descent speed:</string>
+                </property>
+                <property name="buddy">
+                 <cstring>doubleSpinBoxDescentVertSpeed</cstring>
+                </property>
+               </widget>
+              </item>
+              <item row="0" column="0">
+               <widget class="QLabel" name="labelDescentSpeed">
+                <property name="font">
+                 <font>
+                  <bold>true</bold>
+                 </font>
+                </property>
+                <property name="text">
+                 <string>Average &amp;descent speed:</string>
+                </property>
+                <property name="buddy">
+                 <cstring>spinBoxDescentSpeed</cstring>
+                </property>
+               </widget>
+              </item>
+              <item row="0" column="1">
+               <widget class="QSpinBox" name="spinBoxDescentSpeed">
+                <property name="showGroupSeparator" stdset="0">
+                 <bool>true</bool>
+                </property>
+                <property name="suffix">
+                 <string> %speed% true airspeed</string>
+                </property>
+                <property name="minimum">
+                 <number>20</number>
+                </property>
+                <property name="maximum">
+                 <number>10000</number>
+                </property>
+                <property name="singleStep">
+                 <number>10</number>
+                </property>
+                <property name="value">
+                 <number>100</number>
+                </property>
+               </widget>
+              </item>
+              <item row="4" column="0">
+               <widget class="QLabel" name="labelDescentFuelFlow">
+                <property name="font">
+                 <font>
+                  <bold>true</bold>
+                 </font>
+                </property>
+                <property name="text">
+                 <string>Average fuel flow for &amp;descent:</string>
+                </property>
+                <property name="buddy">
+                 <cstring>spinBoxDescentFuelFlow</cstring>
+                </property>
+               </widget>
+              </item>
+              <item row="4" column="1">
+               <widget class="QSpinBox" name="spinBoxDescentFuelFlow">
+                <property name="showGroupSeparator" stdset="0">
+                 <bool>true</bool>
+                </property>
+                <property name="suffix">
+                 <string> %fuel% per hour</string>
+                </property>
+                <property name="maximum">
+                 <number>100000</number>
+                </property>
+                <property name="singleStep">
+                 <number>10</number>
+                </property>
+               </widget>
+              </item>
+              <item row="3" column="1">
+               <widget class="QDoubleSpinBox" name="doubleSpinBoxDescentVertSpeed">
+                <property name="showGroupSeparator" stdset="0">
+                 <bool>true</bool>
+                </property>
+                <property name="decimals">
+                 <number>0</number>
+                </property>
+                <property name="minimum">
+                 <double>-10000.000000000000000</double>
+                </property>
+                <property name="maximum">
+                 <double>-100.000000000000000</double>
+                </property>
+                <property name="singleStep">
+                 <double>100.000000000000000</double>
+                </property>
+                <property name="value">
+                 <double>-550.000000000000000</double>
+                </property>
+               </widget>
+              </item>
+              <item row="5" column="0" colspan="2">
+               <widget class="QLabel" name="labelDescentRule">
+                <property name="toolTip">
+                 <string>Equivalent rule of thumb for
 the given descent speeds</string>
-            </property>
-            <property name="text">
-             <string/>
-            </property>
-            <property name="alignment">
-             <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-            </property>
-            <property name="margin">
-             <number>5</number>
-            </property>
-            <property name="textInteractionFlags">
-             <set>Qt::LinksAccessibleByMouse|Qt::TextSelectableByMouse</set>
-            </property>
-           </widget>
-          </item>
-         </layout>
-        </widget>
-       </item>
-       <item>
-        <widget class="QGroupBox" name="groupBox_5">
-         <property name="title">
-          <string>Alternate</string>
-         </property>
-         <layout class="QGridLayout" name="gridLayout_6">
-          <property name="leftMargin">
-           <number>0</number>
-          </property>
-          <property name="topMargin">
-           <number>0</number>
-          </property>
-          <property name="rightMargin">
-           <number>0</number>
-          </property>
-          <property name="bottomMargin">
-           <number>0</number>
-          </property>
-          <property name="spacing">
-           <number>2</number>
-          </property>
-          <item row="3" column="1">
-           <widget class="QSpinBox" name="spinBoxAlternateFuelFlow">
-            <property name="toolTip">
-             <string>Fuel flow  when flying to an alternate typically at low altitudes.
+                </property>
+                <property name="text">
+                 <string/>
+                </property>
+                <property name="alignment">
+                 <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+                </property>
+                <property name="margin">
+                 <number>5</number>
+                </property>
+                <property name="textInteractionFlags">
+                 <set>Qt::LinksAccessibleByMouse|Qt::TextSelectableByMouse</set>
+                </property>
+               </widget>
+              </item>
+             </layout>
+            </widget>
+           </item>
+           <item>
+            <widget class="QGroupBox" name="groupBox_3">
+             <property name="title">
+              <string>Cruise</string>
+             </property>
+             <layout class="QGridLayout" name="gridLayout_3">
+              <property name="leftMargin">
+               <number>2</number>
+              </property>
+              <property name="topMargin">
+               <number>2</number>
+              </property>
+              <property name="rightMargin">
+               <number>2</number>
+              </property>
+              <property name="bottomMargin">
+               <number>2</number>
+              </property>
+              <property name="spacing">
+               <number>2</number>
+              </property>
+              <item row="0" column="0">
+               <widget class="QLabel" name="labelCruiseSpeed">
+                <property name="font">
+                 <font>
+                  <bold>true</bold>
+                 </font>
+                </property>
+                <property name="text">
+                 <string>C&amp;ruise speed at typical cruise altitude:</string>
+                </property>
+                <property name="buddy">
+                 <cstring>spinBoxCruiseSpeed</cstring>
+                </property>
+               </widget>
+              </item>
+              <item row="0" column="1">
+               <widget class="QSpinBox" name="spinBoxCruiseSpeed">
+                <property name="showGroupSeparator" stdset="0">
+                 <bool>true</bool>
+                </property>
+                <property name="suffix">
+                 <string> %speed% true airspeed</string>
+                </property>
+                <property name="minimum">
+                 <number>20</number>
+                </property>
+                <property name="maximum">
+                 <number>10000</number>
+                </property>
+                <property name="singleStep">
+                 <number>10</number>
+                </property>
+                <property name="value">
+                 <number>100</number>
+                </property>
+               </widget>
+              </item>
+              <item row="1" column="0">
+               <widget class="QLabel" name="labelCruiseFuelFlow">
+                <property name="font">
+                 <font>
+                  <bold>true</bold>
+                 </font>
+                </property>
+                <property name="text">
+                 <string>Fuel flow in c&amp;ruise:</string>
+                </property>
+                <property name="buddy">
+                 <cstring>spinBoxCruiseFuelFlow</cstring>
+                </property>
+               </widget>
+              </item>
+              <item row="1" column="1">
+               <widget class="QSpinBox" name="spinBoxCruiseFuelFlow">
+                <property name="showGroupSeparator" stdset="0">
+                 <bool>true</bool>
+                </property>
+                <property name="suffix">
+                 <string> %fuel% per hour</string>
+                </property>
+                <property name="maximum">
+                 <number>100000</number>
+                </property>
+                <property name="singleStep">
+                 <number>10</number>
+                </property>
+               </widget>
+              </item>
+             </layout>
+            </widget>
+           </item>
+           <item>
+            <widget class="QGroupBox" name="groupBox_5">
+             <property name="title">
+              <string>Alternate</string>
+             </property>
+             <layout class="QGridLayout" name="gridLayout_6">
+              <property name="leftMargin">
+               <number>2</number>
+              </property>
+              <property name="topMargin">
+               <number>2</number>
+              </property>
+              <property name="rightMargin">
+               <number>2</number>
+              </property>
+              <property name="bottomMargin">
+               <number>2</number>
+              </property>
+              <property name="spacing">
+               <number>2</number>
+              </property>
+              <item row="3" column="1">
+               <widget class="QSpinBox" name="spinBoxAlternateFuelFlow">
+                <property name="toolTip">
+                 <string>Fuel flow  when flying to an alternate typically at low altitudes.
 The farthest alternate is used to calculate the fuel requirement.
 The default is the cruise fuel flow.</string>
-            </property>
-            <property name="showGroupSeparator" stdset="0">
-             <bool>true</bool>
-            </property>
-            <property name="suffix">
-             <string> %fuel% per hour</string>
-            </property>
-            <property name="maximum">
-             <number>100000</number>
-            </property>
-            <property name="singleStep">
-             <number>10</number>
-            </property>
-           </widget>
-          </item>
-          <item row="0" column="0">
-           <widget class="QLabel" name="labelAlternateSpeed">
-            <property name="text">
-             <string>Average speed for &amp;alternate:</string>
-            </property>
-            <property name="buddy">
-             <cstring>spinBoxAlternateSpeed</cstring>
-            </property>
-           </widget>
-          </item>
-          <item row="3" column="0">
-           <widget class="QLabel" name="labelAlternateFuelFlow">
-            <property name="text">
-             <string>Average fuel flow for &amp;alternate:</string>
-            </property>
-            <property name="buddy">
-             <cstring>spinBoxAlternateFuelFlow</cstring>
-            </property>
-           </widget>
-          </item>
-          <item row="0" column="1">
-           <widget class="QSpinBox" name="spinBoxAlternateSpeed">
-            <property name="toolTip">
-             <string>Average true airspeed when flying to alternate typically at low altitudes.
+                </property>
+                <property name="showGroupSeparator" stdset="0">
+                 <bool>true</bool>
+                </property>
+                <property name="suffix">
+                 <string> %fuel% per hour</string>
+                </property>
+                <property name="maximum">
+                 <number>100000</number>
+                </property>
+                <property name="singleStep">
+                 <number>10</number>
+                </property>
+               </widget>
+              </item>
+              <item row="0" column="0">
+               <widget class="QLabel" name="labelAlternateSpeed">
+                <property name="text">
+                 <string>Average speed for &amp;alternate:</string>
+                </property>
+                <property name="buddy">
+                 <cstring>spinBoxAlternateSpeed</cstring>
+                </property>
+               </widget>
+              </item>
+              <item row="3" column="0">
+               <widget class="QLabel" name="labelAlternateFuelFlow">
+                <property name="text">
+                 <string>Average fuel flow for &amp;alternate:</string>
+                </property>
+                <property name="buddy">
+                 <cstring>spinBoxAlternateFuelFlow</cstring>
+                </property>
+               </widget>
+              </item>
+              <item row="0" column="1">
+               <widget class="QSpinBox" name="spinBoxAlternateSpeed">
+                <property name="toolTip">
+                 <string>Average true airspeed when flying to alternate typically at low altitudes.
 The farthest alternate is used to calculate the fuel requirement.
 Default is cruise speed.</string>
-            </property>
-            <property name="showGroupSeparator" stdset="0">
-             <bool>true</bool>
-            </property>
-            <property name="suffix">
-             <string> %speed% true airspeed</string>
-            </property>
-            <property name="minimum">
-             <number>20</number>
-            </property>
-            <property name="maximum">
-             <number>10000</number>
-            </property>
-            <property name="singleStep">
-             <number>10</number>
-            </property>
-            <property name="value">
-             <number>100</number>
-            </property>
-           </widget>
-          </item>
-         </layout>
+                </property>
+                <property name="showGroupSeparator" stdset="0">
+                 <bool>true</bool>
+                </property>
+                <property name="suffix">
+                 <string> %speed% true airspeed</string>
+                </property>
+                <property name="minimum">
+                 <number>20</number>
+                </property>
+                <property name="maximum">
+                 <number>10000</number>
+                </property>
+                <property name="singleStep">
+                 <number>10</number>
+                </property>
+                <property name="value">
+                 <number>100</number>
+                </property>
+               </widget>
+              </item>
+             </layout>
+            </widget>
+           </item>
+           <item>
+            <spacer name="verticalSpacer_2">
+             <property name="orientation">
+              <enum>Qt::Vertical</enum>
+             </property>
+             <property name="sizeHint" stdset="0">
+              <size>
+               <width>20</width>
+               <height>0</height>
+              </size>
+             </property>
+            </spacer>
+           </item>
+          </layout>
+         </widget>
         </widget>
        </item>
       </layout>
@@ -1072,19 +1182,6 @@ Default is cruise speed.</string>
     </widget>
    </item>
    <item>
-    <spacer name="verticalSpacer_2">
-     <property name="orientation">
-      <enum>Qt::Vertical</enum>
-     </property>
-     <property name="sizeHint" stdset="0">
-      <size>
-       <width>20</width>
-       <height>40</height>
-      </size>
-     </property>
-    </spacer>
-   </item>
-   <item>
     <widget class="QDialogButtonBox" name="buttonBox">
      <property name="orientation">
       <enum>Qt::Horizontal</enum>
@@ -1098,11 +1195,6 @@ Default is cruise speed.</string>
  </widget>
  <tabstops>
   <tabstop>tabWidget</tabstop>
-  <tabstop>comboBoxSimulator</tabstop>
-  <tabstop>lineEditName</tabstop>
-  <tabstop>lineEditType</tabstop>
-  <tabstop>spinBoxRunwayLength</tabstop>
-  <tabstop>comboBoxRunwayType</tabstop>
   <tabstop>comboBoxFuelUnit</tabstop>
   <tabstop>comboBoxFuelType</tabstop>
   <tabstop>spinBoxUsableFuel</tabstop>
