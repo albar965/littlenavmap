@@ -763,26 +763,6 @@ MapMarkers *NavApp::getMapMarkers()
   return getMapWidgetGui()->getMapMarkers();
 }
 
-void NavApp::showFlightplan()
-{
-  mainWindow->showFlightplan();
-}
-
-void NavApp::showAircraftPerformance()
-{
-  mainWindow->showAircraftPerformance();
-}
-
-void NavApp::showLogbookSearch()
-{
-  mainWindow->showLogbookSearch();
-}
-
-void NavApp::showUserpointSearch()
-{
-  mainWindow->showUserpointSearch();
-}
-
 void NavApp::getReportFiles(QStringList& crashReportFiles, QString& reportFilename, bool issueReport)
 {
   // Settings and files have to be saved before

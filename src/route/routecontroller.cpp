@@ -4120,7 +4120,7 @@ void RouteController::routeSetStartPosition(map::MapStart start, bool undo)
   qDebug() << "route set start id" << start.id;
 
   RouteCommand *undoCommand = preChange(tr("Set Start Position"), undo);
-  NavApp::showFlightplan();
+  mainWindow->showFlightplan();
 
   if(route.isEmpty() || route.getDepartureAirportLeg().getMapType() != map::AIRPORT ||
      route.getDepartureAirportLeg().getId() != start.airportId)
@@ -4173,7 +4173,7 @@ void RouteController::routeSetDeparture(map::MapAirport airport, bool undo)
   atools::util::ContextSaverBool saver(ignoreFollowSelection);
 
   RouteCommand *undoCommand = preChange(tr("Set Departure"), undo);
-  NavApp::showFlightplan();
+  mainWindow->showFlightplan();
 
   routeSetDepartureInternal(airport);
 
@@ -4247,7 +4247,7 @@ void RouteController::routeSetDestination(map::MapAirport airport, bool undo)
   atools::util::ContextSaverBool saver(ignoreFollowSelection);
 
   RouteCommand *undoCommand = preChange(tr("Set Destination"), undo);
-  NavApp::showFlightplan();
+  mainWindow->showFlightplan();
 
   routeSetDestinationInternal(airport);
 
@@ -4305,7 +4305,7 @@ void RouteController::routeAddAlternate(map::MapAirport airport)
   atools::util::ContextSaverBool saver(ignoreFollowSelection);
 
   RouteCommand *undoCommand = preChange(tr("Add Alternate"));
-  NavApp::showFlightplan();
+  mainWindow->showFlightplan();
 
   FlightplanEntry entry;
   entryBuilder->buildFlightplanEntry(airport, entry, true /* alternate */);
@@ -4763,7 +4763,7 @@ void RouteController::routeAddProcedure(proc::MapProcedureLegs legs, bool undo)
 
   // Raise window if requested
   if(route.isEmpty())
-    NavApp::showFlightplan();
+    mainWindow->showFlightplan();
 
   // Ignore events triggering follow due to selection changes
   atools::util::ContextSaverBool saver(ignoreFollowSelection);
@@ -5005,7 +5005,7 @@ void RouteController::routeAdd(int id, atools::geo::Pos userPos, map::MapTypes t
   RouteCommand *undoCommand = preChange(tr("Add Waypoint"));
 
   if(route.isEmpty())
-    NavApp::showFlightplan();
+    mainWindow->showFlightplan();
 
   routeAddInternal(id, userPos, type, legIndex);
   updateActiveLeg();

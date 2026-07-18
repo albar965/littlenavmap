@@ -562,7 +562,7 @@ private:
   void actionShortcutAircraftProgressTriggered();
 
   void actionShortcutSearchTriggered(QWidget *focusWidget, int tabId);
-  void actionShortcutRouteTriggered(QWidget *focusWidget, int tabId);
+  void actionShortcutRouteTriggered(QWidget *focusWidget, int tabId, bool forceShow);
   void actionShortcutInformationTriggered(QWidget *focusWidget, int tabId, int tabIdAirport = -1);
 
   /* Internal web server actions */

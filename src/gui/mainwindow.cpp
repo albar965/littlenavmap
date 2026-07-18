@@ -1839,10 +1839,10 @@ void MainWindow::actionShortcutLogbookSearchTriggered()
   actionShortcutSearchTriggered(ui->lineEditLogdataAirport, si::SEARCH_LOG);
 }
 
-void MainWindow::actionShortcutRouteTriggered(QWidget *focusWidget, int tabId)
+void MainWindow::actionShortcutRouteTriggered(QWidget *focusWidget, int tabId, bool forceShow)
 {
   atools::gui::TabWidgetHandler *routeTabHandler = NavApp::getRouteTabHandler();
-  if(!atools::gui::hasAnyChildFocus(ui->dockWidgetRoute) || routeTabHandler->getCurrentTabId() != tabId)
+  if(forceShow || routeTabHandler->getCurrentTabId() != tabId || !atools::gui::hasAnyChildFocus(ui->dockWidgetRoute))
   {
     dockHandler->activateWindow(ui->dockWidgetRoute);
     routeTabHandler->setCurrentTab(tabId);
@@ -1854,12 +1854,17 @@ void MainWindow::actionShortcutRouteTriggered(QWidget *focusWidget, int tabId)
 
 void MainWindow::actionShortcutFlightplanTriggered()
 {
-  actionShortcutRouteTriggered(ui->tableViewRoute, rc::ROUTE);
+  // Toggle visibility
+  actionShortcutRouteTriggered(NavApp::isRouteEmpty() ?
+                               dynamic_cast<QWidget *>(ui->spinBoxRouteAlt) :
+                               dynamic_cast<QWidget *>(ui->tableViewRoute),
+                               rc::ROUTE, false /* forceShow */);
 }
 
 void MainWindow::actionShortcutAircraftPerformanceTriggered()
 {
-  actionShortcutRouteTriggered(ui->textBrowserAircraftPerformanceReport, rc::AIRCRAFT);
+  // Toggle visibility
+  actionShortcutRouteTriggered(ui->textBrowserAircraftPerformanceReport, rc::AIRCRAFT, false /* forceShow */);
 }
 
 void MainWindow::actionShortcutCalcRouteTriggered()
@@ -5360,13 +5365,16 @@ void MainWindow::resizeEvent(QResizeEvent *event)
 void MainWindow::showFlightplan()
 {
   if(NavApp::isMainWindowVisible() && OptionData::instance().getFlags2().testFlag(opts2::RAISE_WINDOWS))
-    actionShortcutFlightplanTriggered();
+    actionShortcutRouteTriggered(NavApp::isRouteEmpty() ?
+                                 dynamic_cast<QWidget *>(ui->spinBoxRouteAlt) :
+                                 dynamic_cast<QWidget *>(ui->tableViewRoute),
+                                 rc::ROUTE, true /* forceShow */);
 }
 
 void MainWindow::showAircraftPerformance()
 {
   if(NavApp::isMainWindowVisible() && OptionData::instance().getFlags2().testFlag(opts2::RAISE_WINDOWS))
-    actionShortcutAircraftPerformanceTriggered();
+    actionShortcutRouteTriggered(ui->textBrowserAircraftPerformanceReport, rc::AIRCRAFT, true /* forceShow */);
 }
 
 void MainWindow::showLogbookSearch()

@@ -329,7 +329,6 @@ public:
   /* Get minimum button size by squared height of the comboBoxRouteType */
   static QSize getMinButtonSize();
 
-
   static DatabaseManager *getDatabaseManager();
 
   /* MSFS translations from table "translation" */
@@ -429,11 +428,6 @@ public:
   static MapDetailHandler *getMapDetailHandler();
 
   static MapMarkers *getMapMarkers();
-
-  static void showFlightplan();
-  static void showAircraftPerformance();
-  static void showLogbookSearch();
-  static void showUserpointSearch();
 
   /* Creates a lock file and shows a warning dialog if this is already present from a former crash.
    * Sets safe mode if user chooses to skip file loading.
