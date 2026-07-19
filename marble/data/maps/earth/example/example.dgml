@@ -123,8 +123,7 @@
                        path="/styles/v1/{Example Map Username}/{Example Map Style}/tiles/512/{z}/{x}/{y}?access_token={Example Token}"/>
 
           <!-- Maximum tile downloads. Do not increase these values. Some services require lower values. -->
-          <downloadPolicy maximumConnections="20" usage="Browse"/>
-          <downloadPolicy maximumConnections="2" usage="Bulk"/>
+          <downloadPolicy maximumConnections="2" usage="Browse"/>
         </texture>
       </layer>
 

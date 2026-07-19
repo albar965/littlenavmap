@@ -38,8 +38,7 @@
           <storageLayout levelZeroColumns="1" levelZeroRows="1" minimumTileLevel="7" maximumTileLevel="12" mode="Custom"/>
           <projection name="Mercator"/>
           <downloadUrl protocol="https" host="nwy-tiles-api.prod.newaydata.com" path="/tiles/{zoomLevel}/{x}/{y}.jpg" query="path=latest/base/latest"/>
-          <downloadPolicy usage="Browse" maximumConnections="20"/>
-          <downloadPolicy usage="Bulk" maximumConnections="2"/>
+          <downloadPolicy usage="Browse" maximumConnections="2"/>
         </texture>
         <texture name="aero" expire="86400">
           <sourcedir format="PNG">earth/openflightmaps/aero</sourcedir>
@@ -47,8 +46,7 @@
           <storageLayout levelZeroColumns="1" levelZeroRows="1" minimumTileLevel="7" maximumTileLevel="12" mode="Custom"/>
           <projection name="Mercator"/>
           <downloadUrl protocol="https" host="nwy-tiles-api.prod.newaydata.com" path="/tiles/{zoomLevel}/{x}/{y}.png" query="path=latest/aero/latest"/>
-          <downloadPolicy usage="Browse" maximumConnections="20"/>
-          <downloadPolicy usage="Bulk" maximumConnections="2"/>
+          <downloadPolicy usage="Browse" maximumConnections="2"/>
           <blending name="OverpaintBlending"/>
         </texture>
       </layer>

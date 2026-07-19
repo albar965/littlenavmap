@@ -38,7 +38,6 @@
           <downloadUrl protocol="https" host="cartodb-basemaps-b.global.ssl.fastly.net" path="/dark_all/"/>
           <downloadUrl protocol="https" host="cartodb-basemaps-c.global.ssl.fastly.net" path="/dark_all/"/>
           <downloadPolicy usage="Browse" maximumConnections="2"/>
-          <downloadPolicy usage="Bulk" maximumConnections="2"/>
         </texture>
         </layer>
     </map>

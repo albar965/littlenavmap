@@ -39,8 +39,7 @@
           <downloadUrl protocol="https" host="b.tile.opentopomap.org" path="/"/>
           <downloadUrl protocol="https" host="c.tile.opentopomap.org" path="/"/>
 
-          <downloadPolicy usage="Browse" maximumConnections="20"/>
-          <downloadPolicy usage="Bulk" maximumConnections="2"/>
+          <downloadPolicy usage="Browse" maximumConnections="2"/>
         </texture>
       </layer>
     </map>

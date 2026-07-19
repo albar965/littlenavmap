@@ -35,9 +35,7 @@
 
           <downloadUrl protocol="https" host="tiles.stadiamaps.com" path="/tiles/stamen_terrain/{z}/{x}/{y}.png?api_key={Stadia API Key}"/>
 
-          <downloadPolicy usage="Browse" maximumConnections="20"/>
-
-          <downloadPolicy usage="Bulk" maximumConnections="2"/>
+          <downloadPolicy usage="Browse" maximumConnections="2"/>
         </texture>
       </layer>
     </map>
