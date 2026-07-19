@@ -264,7 +264,7 @@ public:
   /* Checks default and user folder and shows an error dialog if any is invalid */
   static void validateMapThemeDirectories(QWidget *parent);
 
-  /* Reset back to OpenStreetMap and Mecator */
+  /* Reset back to OpenStreetMap and Mercator */
   void resetToDefault();
 
 private:

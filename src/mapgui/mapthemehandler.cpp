@@ -756,23 +756,37 @@ void MapThemeHandler::setupMapThemesUi()
     }
 
     // Add item to menu in toolbar
-    QString shortName = atools::elideTextShortMiddle(theme.getName(), 24);
+    const QString shortName = atools::elideTextShortMiddle(theme.getName(), 24);
     QString name = theme.isOnline() ? shortName : tr("%1 (offline)").arg(shortName);
     if(theme.hasKeys())
       // Add star to maps which require an API key or token
       name += tr(" *");
 
+    const QString nativeThemePath = atools::nativeCleanPath(theme.getDgmlFilepath());
+    bool userTheme = !nativeThemePath.startsWith(atools::nativeCleanPath(mapThemeDefaultDir()));
+
+    if(userTheme)
+      // Indication for user installed map
+      name += tr(" (user)");
+
     // Build tooltip for entries
-    QStringList tip;
-    tip.append(theme.getName());
-    tip.append(theme.isOnline() ? tr("online") : tr("offline"));
-    tip.append(theme.hasKeys() ? tr("* requires registration") : tr("free"));
+    QStringList tooltipList;
+    if(userTheme)
+      tooltipList.append(tr("user installed theme"));
+    tooltipList.append(theme.isOnline() ? tr("online") : tr("offline"));
+    tooltipList.append(theme.hasKeys() ? tr("* requires registration") : tr("free"));
+
+    QString tooltipStr = tooltipList.join(tr(", "));
+
+    // Add path for user themes
+    if(userTheme)
+      tooltipStr.append('\n' % atools::elideTextShortMiddle(nativeThemePath, 80));
 
     // Create action for map/theme submenu
     QAction *action = ui->menuViewTheme->addAction(name);
     action->setCheckable(true);
-    action->setToolTip(tip.join(tr(", ")));
-    action->setStatusTip(action->toolTip());
+    action->setToolTip(theme.getName() % tr("\n") % tooltipStr);
+    action->setStatusTip(theme.getName() % tr(" ") % tooltipList.join(tr(", ")));
     action->setActionGroup(actionGroupMapTheme);
 
     // Attach theme name for theme in MapThemeHandler
@@ -1018,7 +1032,8 @@ void MapThemeHandler::resetToDefault()
 
 QString MapThemeHandler::mapThemeDefaultDir()
 {
-  return QCoreApplication::applicationDirPath() % atools::SEP % "data" % atools::SEP % "maps" % atools::SEP % "earth";
+  return QCoreApplication::applicationDirPath() % atools::SEP % QStringLiteral("data") % atools::SEP % QStringLiteral("maps") %
+         atools::SEP % QStringLiteral("earth");
 }
 
 QString MapThemeHandler::mapThemeUserDir()
