@@ -630,6 +630,7 @@ void MainWindow::deInit()
     qDebug() << Q_FUNC_INFO << "stopping timers";
     statusBar->deInit();
     weatherUpdateTimer.stop();
+    autoSaveTrailTimer.stop();
     mapWidget->cancelJumpBack();
     profileWidget->cancelJumpBack();
 
@@ -1739,7 +1740,11 @@ void MainWindow::connectAllSlots()
   connect(windReporter, &WindReporter::windDisplayUpdated, this, &MainWindow::updateActionStates);
   connect(windReporter, &WindReporter::windDisplayUpdated, mapWidget, &MapWidget::windDisplayUpdated);
 
+  // Weather updates
   connect(&weatherUpdateTimer, &QTimer::timeout, this, &MainWindow::weatherUpdateTimeout);
+
+  // Trail auto-save
+  connect(&autoSaveTrailTimer, &QTimer::timeout, this, &MainWindow::trailAutosaveTimeout);
 
   // Webserver
   connect(ui->actionRunWebserver, &QAction::toggled, this, &MainWindow::toggleWebserver);
@@ -1912,6 +1917,15 @@ void MainWindow::actionShortcutAircraftProgressTriggered()
   }
   else
     dockHandler->closeDockWidget(ui->dockWidgetAircraft);
+}
+
+void MainWindow::trailAutosaveTimeout()
+{
+#ifdef DEBUG_INFORMATION
+  qDebug() << Q_FUNC_INFO;
+#endif
+
+  mapWidget->saveTrailState();
 }
 
 void MainWindow::weatherUpdateTimeout()
@@ -3572,6 +3586,9 @@ void MainWindow::mainWindowShownDelayed()
   weatherUpdateTimer.setInterval(Settings::instance().getAndStoreValue(lnm::OPTIONS_WEATHER_UPDATE_RATE_SIM, 15000).toInt());
   weatherUpdateTimer.start();
 
+  autoSaveTrailTimer.setInterval(OptionData::instance().getAircraftTrailSaveMinutes() * 60 * 1000);
+  autoSaveTrailTimer.start();
+
   optionsDialog->checkOfficialOnlineUrls();
 
   // Start regular download of online network files
@@ -4435,6 +4452,8 @@ void MainWindow::optionsChangedInitial()
 
 void MainWindow::optionsChanged(const optc::OptionChangeFlags& changeFlags)
 {
+  autoSaveTrailTimer.setInterval(OptionData::instance().getAircraftTrailSaveMinutes() * 60 * 1000);
+
   // The units need to be called before all others
   Unit::optionsChanged(changeFlags);
 

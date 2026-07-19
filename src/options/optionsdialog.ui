@@ -66,7 +66,7 @@
      </widget>
      <widget class="QStackedWidget" name="stackedWidgetOptions">
       <property name="currentIndex">
-       <number>9</number>
+       <number>12</number>
       </property>
       <widget class="QWidget" name="stackedWidgetOptionsStartup">
        <layout class="QVBoxLayout" name="verticalLayout_41">
@@ -1588,8 +1588,8 @@ aircraft progress, tooltips and information window.</string>
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>586</width>
-             <height>531</height>
+             <width>566</width>
+             <height>401</height>
             </rect>
            </property>
            <layout class="QVBoxLayout" name="verticalLayout_59">
@@ -1820,8 +1820,8 @@ The &quot;Save as&quot; dialog will show up instead of overwriting the current f
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>586</width>
-             <height>531</height>
+             <width>317</width>
+             <height>492</height>
             </rect>
            </property>
            <layout class="QGridLayout" name="gridLayout">
@@ -2079,7 +2079,7 @@ Note that this function is disabled for X-Plane 12 since the 3D flag is unreliab
              <x>0</x>
              <y>0</y>
              <width>599</width>
-             <height>517</height>
+             <height>399</height>
             </rect>
            </property>
            <layout class="QGridLayout" name="gridLayout_2">
@@ -2543,8 +2543,8 @@ userpoints and logbook entries when hovering the cursor over the map</string>
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>586</width>
-             <height>531</height>
+             <width>510</width>
+             <height>526</height>
             </rect>
            </property>
            <layout class="QVBoxLayout" name="verticalLayout_12">
@@ -2872,8 +2872,8 @@ Map views might be shown with a larger zoom distance than expected if this optio
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>572</width>
-             <height>601</height>
+             <width>433</width>
+             <height>644</height>
             </rect>
            </property>
            <layout class="QVBoxLayout" name="verticalLayout_65">
@@ -3047,7 +3047,7 @@ Note that some fonts, especially large fonts, can result in display errors on th
            <property name="geometry">
             <rect>
              <x>0</x>
-             <y>-108</y>
+             <y>0</y>
              <width>572</width>
              <height>639</height>
             </rect>
@@ -4896,6 +4896,64 @@ Note that this does not affect the stored trail points.</string>
                  </property>
                  <property name="textInteractionFlags">
                   <set>Qt::LinksAccessibleByMouse|Qt::TextSelectableByMouse</set>
+                 </property>
+                </widget>
+               </item>
+              </layout>
+             </widget>
+            </item>
+            <item>
+             <widget class="QGroupBox" name="groupBox_50">
+              <property name="title">
+               <string>Aircraft Trail Autosave</string>
+              </property>
+              <layout class="QGridLayout" name="gridLayout_32">
+               <property name="leftMargin">
+                <number>2</number>
+               </property>
+               <property name="topMargin">
+                <number>2</number>
+               </property>
+               <property name="rightMargin">
+                <number>2</number>
+               </property>
+               <property name="bottomMargin">
+                <number>2</number>
+               </property>
+               <item row="0" column="1">
+                <widget class="QSpinBox" name="spinBoxSimSaveTrackMinutes">
+                 <property name="toolTip">
+                  <string>The shown user aircraft trail will be pruned if it contains more than this number of points. 
+Lower this value to avoid too long tracks and avoid stutters in map display.
+Note that this does not affect the stored trail points.</string>
+                 </property>
+                 <property name="showGroupSeparator" stdset="0">
+                  <bool>true</bool>
+                 </property>
+                 <property name="suffix">
+                  <string> Minutes</string>
+                 </property>
+                 <property name="minimum">
+                  <number>1</number>
+                 </property>
+                 <property name="maximum">
+                  <number>60</number>
+                 </property>
+                 <property name="singleStep">
+                  <number>1</number>
+                 </property>
+                 <property name="value">
+                  <number>5</number>
+                 </property>
+                </widget>
+               </item>
+               <item row="0" column="0" alignment="Qt::AlignVCenter">
+                <widget class="QLabel" name="labelSimSaveTrack">
+                 <property name="text">
+                  <string>&amp;Save trail automatically every:</string>
+                 </property>
+                 <property name="buddy">
+                  <cstring>spinBoxSimSaveTrackMinutes</cstring>
                  </property>
                 </widget>
                </item>

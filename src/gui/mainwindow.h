@@ -531,6 +531,10 @@ private:
 
   /* Update the info weather */
   void weatherUpdateTimeout();
+
+  /* Automatic trail saving */
+  void trailAutosaveTimeout();
+
   void updateAirspaceTypes(const map::MapAirspaceFilter& filter);
   void updateAirspaceSources();
   void resetWindowLayout();
@@ -653,6 +657,9 @@ private:
 
   /* Reload weather all 15 seconds */
   QTimer weatherUpdateTimer;
+
+  /* Auto-save trail */
+  QTimer autoSaveTrailTimer;
 
   bool firstStart = true; /* emit window shown only once after startup */
 

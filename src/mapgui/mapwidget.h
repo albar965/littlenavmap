@@ -77,6 +77,9 @@ public:
   void saveState() const;
   void restoreState();
 
+  /* Save trail and logbook trail for auto-save */
+  void saveTrailState() const;
+
   /* Get zoom and scroll position history */
   const atools::gui::MapPosHistory *getHistory() const
   {

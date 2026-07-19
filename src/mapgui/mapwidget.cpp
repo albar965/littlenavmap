@@ -3590,6 +3590,12 @@ void MapWidget::optionsChanged(const optc::OptionChangeFlags& changeFlags)
   MapPaintWidget::optionsChanged(changeFlags);
 }
 
+void MapWidget::saveTrailState() const
+{
+  aircraftTrail->saveState(lnm::AIRCRAFT_TRACK_SUFFIX, 2 /* numBackups */);
+  aircraftTrailLogbook->saveState(lnm::LOGBOOK_TRACK_SUFFIX, 0 /* numBackups */);
+}
+
 void MapWidget::saveState() const
 {
   atools::settings::Settings& settings = atools::settings::Settings::instance();

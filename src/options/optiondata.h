@@ -507,6 +507,11 @@ public:
     return aircraftTrailMaxPoints;
   }
 
+  int getAircraftTrailSaveMinutes() const
+  {
+    return aircraftTrailSaveMinutes;
+  }
+
   int getSimNoFollowAircraftScrollSeconds() const
   {
     return simNoFollowOnScrollTime;
@@ -1035,6 +1040,9 @@ private:
 
   // spinBoxSimMaxTrackPoints
   int aircraftTrailMaxPoints = 20000;
+
+  // spinBoxSimSaveTrackMinutes
+  int aircraftTrailSaveMinutes = 5;
 
   // spinBoxSimDoNotFollowOnScrollTime
   int simNoFollowOnScrollTime = 10;
