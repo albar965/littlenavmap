@@ -160,10 +160,7 @@ NavSearch::NavSearch(MainWindow *parent, QTableView *tableView, si::TabSearchId 
   append(Column("distance", tr("Distance\n%dist%")).distanceHeadingCol()).
   append(Column("heading", tr("Heading\n°T")).distanceHeadingCol()).
   append(Column("ident", tr("Ident")).filter().defaultSort().filterByBuilder()).
-
-  append(Column("nav_type", ui->comboBoxNavNavAidSearch, tr("Navaid\nType")).
-         indexCondMap(navTypeCondMap).includesName()).
-
+  append(Column("nav_type", ui->comboBoxNavNavAidSearch, tr("Navaid\nType")).indexCondMap(navTypeCondMap).includesName()).
   append(Column("type", ui->comboBoxNavTypeSearch, tr("Type")).indexCondMap(typeCondMap).includesName()).
   append(Column("name", ui->lineEditNavNameSearch, tr("Name")).filter()).
   append(Column("region", ui->lineEditNavRegionSearch, tr("Region")).filter()).
@@ -221,6 +218,7 @@ void NavSearch::connectSearchSlots()
   connect(ui->pushButtonNavSearchClearSelection, &QPushButton::clicked, this, &SearchBaseTable::nothingSelectedTriggered);
   connect(ui->pushButtonNavSearchReset, &QPushButton::clicked, this, &SearchBaseTable::resetSearch);
 
+  installEventFilterForWidget(ui->comboBoxNavIcaoSearch);
   installEventFilterForWidget(ui->comboBoxNavTypeSearch);
   installEventFilterForWidget(ui->lineEditNavNameSearch);
   installEventFilterForWidget(ui->lineEditNavRegionSearch);
