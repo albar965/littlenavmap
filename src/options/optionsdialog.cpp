@@ -129,7 +129,7 @@ OptionsDialog::OptionsDialog(QMainWindow *parentWindow)
   ui->spinBoxSimMaxTrailPoints->setMinimum(10);
 #endif
 
-  // Labels showing a hint and having a internal link to a page ============================================
+  // Labels showing a hint and probably having a internal link to a page ============================================
   hintLabels.append({ui->labelOptionsUpdatesHint, ui->labelOptionsUnitsHint, ui->labelOptionsGuiFontHint, ui->labelOptionsFreetypeHint,
                      ui->labelOptionsGuiTooltipHint, ui->labelOptionsUnitsTextSizeHint, ui->labelOptionsFilePatternsHint,
                      ui->labelOptionsResetLayoutHint, ui->labelOptionsRestartWebServer, ui->labelOptionsResetEmptyHint,
@@ -141,7 +141,8 @@ OptionsDialog::OptionsDialog(QMainWindow *parentWindow)
                      ui->labelMapApiKeysHint, ui->labelOptionsMapThemesHint, ui->labelOptionsUnitsOnlineAirspaceHint,
                      ui->labelOptionsOnlineHint, ui->labelOptionsSimUpdatesHint, ui->labelOptionsWeatherHint,
                      ui->labelOptionsFileXplaneHint, ui->labelOptionsWeatherDefaultsHint, ui->labelOptionsCacheDiskExpirationHint,
-                     ui->labelOptionsMapThemeDirRestartHint, ui->labelOptionsAppFontRouteHint});
+                     ui->labelOptionsMapThemeDirRestartHint, ui->labelOptionsAppFontRouteHint,
+                     ui->labelOptionsCacheConnectionsDefaultsHint, ui->labelOptionsUserAgentHint});
 
   // All labels having a http link ============================================
   linkLabels.append({ui->labelMapApiKeysHint, ui->labelCacheGlobePathDownload});
@@ -288,11 +289,6 @@ OptionsDialog::OptionsDialog(QMainWindow *parentWindow)
                   tr("Change label and other display options for map objects on the map and the elevation profile."),
                   QStringLiteral(":/littlenavmap/resources/icons/mapdisplaylabels.svg"));
 
-  addPageListItem(QStringLiteral("mapcache"),
-                  tr("Map Cache"),
-                  tr("Change map cache and the path for user airspaces."),
-                  QStringLiteral(":/littlenavmap/resources/icons/mapcache.svg"));
-
   addPageListItem(QStringLiteral("mapthemes"),
                   tr("Map Themes"),
                   tr("Change path to additional background map themes."),
@@ -352,6 +348,11 @@ OptionsDialog::OptionsDialog(QMainWindow *parentWindow)
                   tr("Scenery Library Database"),
                   tr("Exclude scenery files from loading and\nadd-on recognition."),
                   QStringLiteral(":/littlenavmap/resources/icons/database.svg"));
+
+  addPageListItem(QStringLiteral("connections"),
+                  tr("Connections and Cache"),
+                  tr("Change cache parameters and connection parameters."),
+                  QStringLiteral(":/littlenavmap/resources/icons/network.svg"));
 
   // Build tree settings to map tab =====================================================
   // Airport =====================================================
@@ -710,6 +711,7 @@ OptionsDialog::OptionsDialog(QMainWindow *parentWindow)
     ui->lineEditOptionsWeatherNoaaStationsUrl,
     ui->lineEditOptionsWeatherVatsimUrl,
     ui->lineEditOptionsWeatherIvaoUrl,
+    ui->lineEditOptionsUserAgent,
     ui->lineEditOptionsWeatherXplaneWind,
     ui->lineEditOptionsWeatherNoaaWindUrl,
     ui->tableWidgetOptionsDatabaseInclude,
@@ -914,6 +916,8 @@ OptionsDialog::OptionsDialog(QMainWindow *parentWindow)
 
   connect(ui->pushButtonOptionsWeatherXplaneWindPathSelect, &QPushButton::clicked, this,
           &OptionsDialog::weatherXplane11WindPathSelectClicked);
+
+  connect(ui->lineEditOptionsUserAgent, &QLineEdit::textEdited, this, &OptionsDialog::updateUserAgentLabel);
 
   // ===========================================================================
   // Weather test buttons
@@ -1182,6 +1186,7 @@ void OptionsDialog::showEvent(QShowEvent *)
   *savedOptionData = OptionData::instance();
 
   updateCacheElevationStates();
+  updateUserAgentLabel();
   updateCacheMapThemeDir();
   updateDatabaseButtonState();
   updateNavOptions();
@@ -1414,6 +1419,8 @@ optc::OptionChangeFlags OptionsDialog::buildFlagsFromChange(const OptionData& sa
                       saved.profileBuffer != changed.profileBuffer);
 
   changeFlags.setFlag(optc::OPTION_CHANGE_WEBSERVER, saved.webDocumentRoot != changed.webDocumentRoot);
+
+  changeFlags.setFlag(optc::OPTION_CHANGE_CONNECTION, saved.userAgent != changed.userAgent);
 
   return changeFlags;
 }
@@ -2496,6 +2503,7 @@ void OptionsDialog::widgetsToOptionData(OptionData& data)
   data.weatherNoaaUrl = ui->lineEditOptionsWeatherNoaaStationsUrl->text().trimmed();
   data.weatherVatsimUrl = ui->lineEditOptionsWeatherVatsimUrl->text().trimmed();
   data.weatherIvaoUrl = ui->lineEditOptionsWeatherIvaoUrl->text().trimmed();
+  data.userAgent = ui->lineEditOptionsUserAgent->text().simplified();
 
   toFlags(data.flags2, ui->checkBoxOptionsWebScale, opts2::MAP_WEB_USE_UI_SCALE);
 
@@ -2842,6 +2850,7 @@ void OptionsDialog::optionDataToWidgets(const OptionData& data)
   ui->lineEditOptionsWeatherNoaaStationsUrl->setText(data.weatherNoaaUrl.trimmed());
   ui->lineEditOptionsWeatherVatsimUrl->setText(data.weatherVatsimUrl.trimmed());
   ui->lineEditOptionsWeatherIvaoUrl->setText(data.weatherIvaoUrl.trimmed());
+  ui->lineEditOptionsUserAgent->setText(data.userAgent.simplified());
 
   addDatabaseTableItems(ui->tableWidgetOptionsDatabaseInclude, data.databaseInclude);
   addDatabaseTableItems(ui->tableWidgetOptionsDatabaseExclude, data.databaseExclude);
@@ -3113,6 +3122,20 @@ void OptionsDialog::offlineDataSelectClicked()
   updateCacheElevationStates();
 }
 
+void OptionsDialog::updateUserAgentLabel()
+{
+  // Mozilla/5.0 (compatible; Marble/23.8.5; DesktopDevice; Browser; QNamNetworkPlugin; marble)
+  QString agent = ui->lineEditOptionsUserAgent->text().simplified();
+
+  if(agent == QStringLiteral("RANDOM"))
+    ui->labelOptionUserAgent->setText(tr("Using random user agent. This changes on every restart:\n\"%1\"").
+                                      arg(OptionData::instanceInternal().userAgentRandom));
+  else if(agent.isEmpty())
+    ui->labelOptionUserAgent->setText(tr("Using default user agent:\n\"%1\""). arg(OptionData::instanceInternal().userAgentDefault));
+  else
+    ui->labelOptionUserAgent->setText(tr("User agent:\n\"%1\"").arg(agent));
+}
+
 void OptionsDialog::updateCacheElevationStates()
 {
   ui->lineEditCacheOfflineDataPath->setDisabled(ui->radioButtonCacheUseOnlineElevation->isChecked());
@@ -3274,7 +3297,6 @@ void OptionsDialog::updateXplane12PathStatus()
     ui->labelOptionsWeatherXplane12PathState->setText(tr("Using default weather from X-Plane 12 base path."));
 }
 
-/* Checks the path to the X-Plane wind GRIB file. Display an error message in the label */
 void OptionsDialog::updateXplaneWindStatus()
 {
   const QString path = ui->lineEditOptionsWeatherXplaneWind->text();

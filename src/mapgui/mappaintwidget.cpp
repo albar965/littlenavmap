@@ -76,20 +76,8 @@ MapPaintWidget::MapPaintWidget(QWidget *parent, Queries *queriesParam, bool visi
 
   verbose = settings.getAndStoreValue(lnm::OPTIONS_MAPWIDGET_DEBUG, false).toBool();
 
-  // Mozilla/5.0 (compatible; Marble/23.8.5; DesktopDevice; Browser; QNamNetworkPlugin; marble)
-  // userAgent = QStringLiteral("Mozilla/5.0 (compatible; Marble/%1; "
-  // "DesktopDevice; Browser; QNamNetworkPlugin; marble)").arg(MarbleGlobal::getVersionNumber2());
-
-  QString userAgent;
-  if(settings.contains(lnm::OPTIONS_MAPWIDGET_USER_AGENT))
-    userAgent = settings.valueStr(lnm::OPTIONS_MAPWIDGET_USER_AGENT);
-  else
-    userAgent = QStringLiteral("%1/%2 (+https://www.littlenavmap.org; contact: %3)").
-                arg(QCoreApplication::applicationName(), QCoreApplication::applicationVersion(),
-                    atools::gui::Application::getEmailAddresses().constFirst());
-
-  qDebug() << Q_FUNC_INFO << "User Agent Override web:" << isWeb() << "agent:" << userAgent;
-  model()->downloadManager()->setUserAgent(userAgent);
+  model()->downloadManager()->setUserAgent(OptionData::instance().getUserAgent());
+  qDebug() << Q_FUNC_INFO << "User Agent Override web:" << isWeb() << "agent:" << model()->downloadManager()->getUserAgent();
 
   aircraftTrail = new AircraftTrail();
   aircraftTrailLogbook = new AircraftTrail();

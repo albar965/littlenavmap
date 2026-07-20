@@ -66,7 +66,7 @@
      </widget>
      <widget class="QStackedWidget" name="stackedWidgetOptions">
       <property name="currentIndex">
-       <number>12</number>
+       <number>27</number>
       </property>
       <widget class="QWidget" name="stackedWidgetOptionsStartup">
        <layout class="QVBoxLayout" name="verticalLayout_41">
@@ -3048,8 +3048,8 @@ Note that some fonts, especially large fonts, can result in display errors on th
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>572</width>
-             <height>639</height>
+             <width>355</width>
+             <height>665</height>
             </rect>
            </property>
            <layout class="QVBoxLayout" name="verticalLayout_71">
@@ -3399,8 +3399,8 @@ Note that some fonts, especially large fonts, can result in display errors on th
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>572</width>
-             <height>843</height>
+             <width>543</width>
+             <height>847</height>
             </rect>
            </property>
            <layout class="QVBoxLayout" name="verticalLayout_20">
@@ -4181,8 +4181,8 @@ to avoid a cluttered up airports</string>
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>572</width>
-             <height>575</height>
+             <width>428</width>
+             <height>596</height>
             </rect>
            </property>
            <layout class="QVBoxLayout" name="verticalLayout_35">
@@ -4656,8 +4656,8 @@ Also used in the elevation profile.</string>
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>586</width>
-             <height>531</height>
+             <width>554</width>
+             <height>431</height>
             </rect>
            </property>
            <layout class="QVBoxLayout" name="verticalLayout_57">
@@ -5007,8 +5007,8 @@ Note that this does not affect the stored trail points.</string>
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>572</width>
-             <height>674</height>
+             <width>441</width>
+             <height>713</height>
             </rect>
            </property>
            <layout class="QGridLayout" name="gridLayout_35">
@@ -5635,8 +5635,8 @@ if you hover over the elevation profile.</string>
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>586</width>
-             <height>531</height>
+             <width>183</width>
+             <height>132</height>
             </rect>
            </property>
            <layout class="QVBoxLayout" name="verticalLayout_61">
@@ -5689,169 +5689,6 @@ if you hover over the elevation profile.</string>
                </item>
               </layout>
              </widget>
-            </item>
-           </layout>
-          </widget>
-         </widget>
-        </item>
-       </layout>
-      </widget>
-      <widget class="QWidget" name="stackedWidgetOptionsCache">
-       <layout class="QVBoxLayout" name="verticalLayout_55">
-        <item>
-         <widget class="QScrollArea" name="scrollArea_15">
-          <property name="widgetResizable">
-           <bool>true</bool>
-          </property>
-          <widget class="QWidget" name="scrollAreaWidgetContents_17">
-           <property name="geometry">
-            <rect>
-             <x>0</x>
-             <y>0</y>
-             <width>362</width>
-             <height>307</height>
-            </rect>
-           </property>
-           <layout class="QVBoxLayout" name="verticalLayout_30">
-            <item>
-             <widget class="QGroupBox" name="groupBox_2">
-              <property name="title">
-               <string>Map Display Cache for Background Map Tiles</string>
-              </property>
-              <layout class="QGridLayout" name="gridLayout_15">
-               <property name="leftMargin">
-                <number>2</number>
-               </property>
-               <property name="topMargin">
-                <number>2</number>
-               </property>
-               <property name="rightMargin">
-                <number>2</number>
-               </property>
-               <property name="bottomMargin">
-                <number>2</number>
-               </property>
-               <property name="spacing">
-                <number>2</number>
-               </property>
-               <item row="0" column="2">
-                <widget class="QPushButton" name="pushButtonOptionsCacheClearMemory">
-                 <property name="text">
-                  <string>&amp;Clear Memory Cache</string>
-                 </property>
-                </widget>
-               </item>
-               <item row="0" column="1">
-                <widget class="QSpinBox" name="spinBoxOptionsCacheMemoryMap">
-                 <property name="showGroupSeparator" stdset="0">
-                  <bool>true</bool>
-                 </property>
-                 <property name="suffix">
-                  <string> MB</string>
-                 </property>
-                 <property name="minimum">
-                  <number>100</number>
-                 </property>
-                 <property name="maximum">
-                  <number>2000</number>
-                 </property>
-                 <property name="singleStep">
-                  <number>100</number>
-                 </property>
-                 <property name="value">
-                  <number>1000</number>
-                 </property>
-                </widget>
-               </item>
-               <item row="1" column="0" alignment="Qt::AlignVCenter">
-                <widget class="QLabel" name="labelOptionsCacheDisk">
-                 <property name="text">
-                  <string>Maximum size of &amp;disk cache:</string>
-                 </property>
-                 <property name="wordWrap">
-                  <bool>true</bool>
-                 </property>
-                 <property name="buddy">
-                  <cstring>spinBoxOptionsCacheDiskMap</cstring>
-                 </property>
-                </widget>
-               </item>
-               <item row="1" column="1">
-                <widget class="QSpinBox" name="spinBoxOptionsCacheDiskMap">
-                 <property name="showGroupSeparator" stdset="0">
-                  <bool>true</bool>
-                 </property>
-                 <property name="suffix">
-                  <string> MB</string>
-                 </property>
-                 <property name="minimum">
-                  <number>500</number>
-                 </property>
-                 <property name="maximum">
-                  <number>8000</number>
-                 </property>
-                 <property name="singleStep">
-                  <number>100</number>
-                 </property>
-                 <property name="value">
-                  <number>2000</number>
-                 </property>
-                </widget>
-               </item>
-               <item row="0" column="0" alignment="Qt::AlignVCenter">
-                <widget class="QLabel" name="labelOptionsCacheMemory">
-                 <property name="text">
-                  <string>&amp;Maximum size of memory cache:</string>
-                 </property>
-                 <property name="wordWrap">
-                  <bool>true</bool>
-                 </property>
-                 <property name="buddy">
-                  <cstring>spinBoxOptionsCacheMemoryMap</cstring>
-                 </property>
-                </widget>
-               </item>
-               <item row="1" column="2">
-                <widget class="QPushButton" name="pushButtonOptionsCacheShow">
-                 <property name="toolTip">
-                  <string>Opens the cache directory in a file manager.</string>
-                 </property>
-                 <property name="text">
-                  <string>&amp;Show Disk Cache in File Manager</string>
-                 </property>
-                </widget>
-               </item>
-               <item row="2" column="0" colspan="3">
-                <widget class="QLabel" name="labelOptionsCacheDiskExpirationHint">
-                 <property name="text">
-                  <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;img src=&quot;:/littlenavmap/resources/icons/bulb.svg&quot;/&gt;&lt;span style=&quot; font-style:italic;&quot;&gt;Items in the disk cache expire after two weeks as a standard. The actual time depends on the used map theme.&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-                 </property>
-                 <property name="wordWrap">
-                  <bool>true</bool>
-                 </property>
-                 <property name="margin">
-                  <number>10</number>
-                 </property>
-                 <property name="textInteractionFlags">
-                  <set>Qt::LinksAccessibleByMouse|Qt::TextSelectableByMouse</set>
-                 </property>
-                </widget>
-               </item>
-              </layout>
-             </widget>
-            </item>
-            <item>
-             <spacer name="verticalSpacer_16">
-              <property name="orientation">
-               <enum>Qt::Vertical</enum>
-              </property>
-              <property name="sizeHint" stdset="0">
-               <size>
-                <width>20</width>
-                <height>40</height>
-               </size>
-              </property>
-             </spacer>
             </item>
            </layout>
           </widget>
@@ -6751,7 +6588,7 @@ The buffer radius defines the surrounding from where the maximum elevation is ca
              <x>0</x>
              <y>0</y>
              <width>436</width>
-             <height>406</height>
+             <height>319</height>
             </rect>
            </property>
            <layout class="QVBoxLayout" name="verticalLayout_60">
@@ -6856,72 +6693,6 @@ Download the file &lt;b&gt;&lt;i&gt;All Tiles in One .zip (all10g.zip)&lt;/i&gt;
                  </property>
                  <property name="clearButtonEnabled">
                   <bool>true</bool>
-                 </property>
-                </widget>
-               </item>
-              </layout>
-             </widget>
-            </item>
-            <item>
-             <widget class="QGroupBox" name="groupBox_41">
-              <property name="title">
-               <string>Cache for offline GLOBE elevation data</string>
-              </property>
-              <layout class="QGridLayout" name="gridLayout_26">
-               <property name="leftMargin">
-                <number>2</number>
-               </property>
-               <property name="topMargin">
-                <number>2</number>
-               </property>
-               <property name="rightMargin">
-                <number>2</number>
-               </property>
-               <property name="bottomMargin">
-                <number>2</number>
-               </property>
-               <property name="spacing">
-                <number>2</number>
-               </property>
-               <item row="0" column="1">
-                <widget class="QSpinBox" name="spinBoxOptionsCacheMemoryProfile">
-                 <property name="showGroupSeparator" stdset="0">
-                  <bool>true</bool>
-                 </property>
-                 <property name="suffix">
-                  <string> MB</string>
-                 </property>
-                 <property name="minimum">
-                  <number>500</number>
-                 </property>
-                 <property name="maximum">
-                  <number>2000</number>
-                 </property>
-                 <property name="singleStep">
-                  <number>100</number>
-                 </property>
-                 <property name="value">
-                  <number>1000</number>
-                 </property>
-                </widget>
-               </item>
-               <item row="0" column="2">
-                <widget class="QPushButton" name="pushButtonOptionsCacheClearProfile">
-                 <property name="text">
-                  <string>&amp;Clear Memory Cache</string>
-                 </property>
-                </widget>
-               </item>
-               <item row="0" column="0" alignment="Qt::AlignVCenter">
-                <widget class="QLabel" name="labelOptionsCacheMemoryProfile">
-                 <property name="text">
-                  <string>&amp;Maximum size of elevation memory cache:</string>
-                 </property>
-                 <property name="wordWrap">
-                  <bool>true</bool>
-                 </property>
-                 <property name="buddy">
-                  <cstring>spinBoxOptionsCacheMemoryProfile</cstring>
                  </property>
                 </widget>
                </item>
@@ -7807,8 +7578,8 @@ Note that this value does not affect flight plan calculation or saving of flight
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>360</width>
-             <height>944</height>
+             <width>245</width>
+             <height>766</height>
             </rect>
            </property>
            <layout class="QVBoxLayout" name="verticalLayout_28">
@@ -8120,238 +7891,6 @@ If this field is empty, the default Active Sky weather file path will be used wh
                  </property>
                  <property name="text">
                   <string>&amp;Select File ...</string>
-                 </property>
-                </widget>
-               </item>
-              </layout>
-             </widget>
-            </item>
-            <item>
-             <widget class="QGroupBox" name="groupBox_34">
-              <property name="title">
-               <string>Online Weather and Wind Forecast Web Addresses</string>
-              </property>
-              <layout class="QGridLayout" name="gridLayout_30">
-               <property name="leftMargin">
-                <number>2</number>
-               </property>
-               <property name="topMargin">
-                <number>2</number>
-               </property>
-               <property name="rightMargin">
-                <number>2</number>
-               </property>
-               <property name="bottomMargin">
-                <number>2</number>
-               </property>
-               <property name="horizontalSpacing">
-                <number>2</number>
-               </property>
-               <property name="verticalSpacing">
-                <number>6</number>
-               </property>
-               <item row="3" column="2">
-                <widget class="QPushButton" name="pushButtonOptionsWeatherNoaaWindTest">
-                 <property name="toolTip">
-                  <string>Send a test request to the NOAA wind service.</string>
-                 </property>
-                 <property name="text">
-                  <string>&amp;Test</string>
-                 </property>
-                </widget>
-               </item>
-               <item row="5" column="1">
-                <widget class="QLineEdit" name="lineEditOptionsWeatherVatsimUrl">
-                 <property name="toolTip">
-                  <string>Complete URL of the VATSIM network weather download service.
-There is usually no need to change this URL.
-Entering a wrong value will cause errors when downloading weather reports.</string>
-                 </property>
-                 <property name="text">
-                  <string notr="true">https://metar.vatsim.net/metar.php?id=ALL</string>
-                 </property>
-                 <property name="cursorPosition">
-                  <number>41</number>
-                 </property>
-                 <property name="placeholderText">
-                  <string>No URL set. VATSIM weather reports are disabled.</string>
-                 </property>
-                 <property name="clearButtonEnabled">
-                  <bool>true</bool>
-                 </property>
-                </widget>
-               </item>
-               <item row="3" column="1">
-                <widget class="QLineEdit" name="lineEditOptionsWeatherNoaaWindUrl">
-                 <property name="toolTip">
-                  <string>Base URL of the NOAA wind service.
-There is usually no need to change this URL.
-Entering a wrong value will cause errors when downloading wind reports.</string>
-                 </property>
-                 <property name="text">
-                  <string notr="true">https://nomads.ncep.noaa.gov/cgi-bin/filter_gfs_1p00.pl</string>
-                 </property>
-                 <property name="cursorPosition">
-                  <number>55</number>
-                 </property>
-                 <property name="placeholderText">
-                  <string>No URL set. NOAA weather reports are disabled.</string>
-                 </property>
-                 <property name="clearButtonEnabled">
-                  <bool>true</bool>
-                 </property>
-                </widget>
-               </item>
-               <item row="0" column="1">
-                <widget class="QLabel" name="labelOptionsWeatherNoaaUrl">
-                 <property name="text">
-                  <string>&amp;NOAA Weather Service URL:</string>
-                 </property>
-                 <property name="buddy">
-                  <cstring>lineEditOptionsWeatherNoaaStationsUrl</cstring>
-                 </property>
-                </widget>
-               </item>
-               <item row="4" column="1">
-                <widget class="QLabel" name="labelOptionsWeatherVatsimUrl">
-                 <property name="text">
-                  <string>&amp;VATSIM Weather Service URL:</string>
-                 </property>
-                 <property name="buddy">
-                  <cstring>lineEditOptionsWeatherVatsimUrl</cstring>
-                 </property>
-                </widget>
-               </item>
-               <item row="1" column="3">
-                <widget class="QPushButton" name="pushButtonOptionsWeatherNoaaReset">
-                 <property name="toolTip">
-                  <string>Reset the URL back to default</string>
-                 </property>
-                 <property name="text">
-                  <string>&amp;Reset</string>
-                 </property>
-                </widget>
-               </item>
-               <item row="1" column="1">
-                <widget class="QLineEdit" name="lineEditOptionsWeatherNoaaStationsUrl">
-                 <property name="toolTip">
-                  <string>Complete URL of the NOAA weather service file.
-&quot;%1&quot; is a placeholder that will be substituted with the current two-digit UTC hour.
-There is usually no need to change this URL.
-Entering a wrong value will cause errors when downloading weather reports.</string>
-                 </property>
-                 <property name="text">
-                  <string notr="true">https://tgftp.nws.noaa.gov/data/observations/metar/cycles/%1Z.TXT</string>
-                 </property>
-                 <property name="cursorPosition">
-                  <number>65</number>
-                 </property>
-                 <property name="placeholderText">
-                  <string>No URL set. NOAA weather reports are disabled.</string>
-                 </property>
-                 <property name="clearButtonEnabled">
-                  <bool>true</bool>
-                 </property>
-                </widget>
-               </item>
-               <item row="7" column="3">
-                <widget class="QPushButton" name="pushButtonOptionsWeatherIvaoReset">
-                 <property name="toolTip">
-                  <string>Reset the URL back to default</string>
-                 </property>
-                 <property name="text">
-                  <string>&amp;Reset</string>
-                 </property>
-                </widget>
-               </item>
-               <item row="2" column="1">
-                <widget class="QLabel" name="labelOptionsWeatherNoaaWindUrl">
-                 <property name="text">
-                  <string>NOAA &amp;Wind Service Base URL:</string>
-                 </property>
-                 <property name="buddy">
-                  <cstring>lineEditOptionsWeatherNoaaWindUrl</cstring>
-                 </property>
-                </widget>
-               </item>
-               <item row="3" column="3">
-                <widget class="QPushButton" name="pushButtonOptionsWeatherNoaaWindReset">
-                 <property name="toolTip">
-                  <string>Reset the URL back to default</string>
-                 </property>
-                 <property name="text">
-                  <string>&amp;Reset</string>
-                 </property>
-                </widget>
-               </item>
-               <item row="5" column="3">
-                <widget class="QPushButton" name="pushButtonOptionsWeatherVatsimReset">
-                 <property name="toolTip">
-                  <string>Reset the URL back to default</string>
-                 </property>
-                 <property name="text">
-                  <string>&amp;Reset</string>
-                 </property>
-                </widget>
-               </item>
-               <item row="7" column="2">
-                <widget class="QPushButton" name="pushButtonOptionsWeatherIvaoTest">
-                 <property name="toolTip">
-                  <string>Send a test request to a IVAO weather service.</string>
-                 </property>
-                 <property name="text">
-                  <string>&amp;Test</string>
-                 </property>
-                </widget>
-               </item>
-               <item row="5" column="2">
-                <widget class="QPushButton" name="pushButtonOptionsWeatherVatsimTest">
-                 <property name="toolTip">
-                  <string>Send a test request to a VATSIM weather service.</string>
-                 </property>
-                 <property name="text">
-                  <string>&amp;Test</string>
-                 </property>
-                </widget>
-               </item>
-               <item row="1" column="2">
-                <widget class="QPushButton" name="pushButtonOptionsWeatherNoaaTest">
-                 <property name="toolTip">
-                  <string>Send a test request to the NOAA weather service.</string>
-                 </property>
-                 <property name="text">
-                  <string>&amp;Test</string>
-                 </property>
-                </widget>
-               </item>
-               <item row="7" column="1">
-                <widget class="QLineEdit" name="lineEditOptionsWeatherIvaoUrl">
-                 <property name="toolTip">
-                  <string>Download URL for the IVAO weather file.
-There is usually no need to change this URL.
-Entering a wrong value will cause errors when downloading weather reports.</string>
-                 </property>
-                 <property name="text">
-                  <string notr="true">https://api.ivao.aero/v2/airports/all/metar</string>
-                 </property>
-                 <property name="cursorPosition">
-                  <number>43</number>
-                 </property>
-                 <property name="placeholderText">
-                  <string>No URL set. IVAO weather reports are disabled.</string>
-                 </property>
-                 <property name="clearButtonEnabled">
-                  <bool>true</bool>
-                 </property>
-                </widget>
-               </item>
-               <item row="6" column="1">
-                <widget class="QLabel" name="labelOptionsWeatherIvaoUrl">
-                 <property name="text">
-                  <string>&amp;IVAO Weather Download URL:</string>
-                 </property>
-                 <property name="buddy">
-                  <cstring>lineEditOptionsWeatherIvaoUrl</cstring>
                  </property>
                 </widget>
                </item>
@@ -9388,6 +8927,570 @@ You have to reload the scenery library so that the changes take effect.</string>
         </item>
        </layout>
       </widget>
+      <widget class="QWidget" name="stackedWidgetOptionsAdvanced">
+       <layout class="QVBoxLayout" name="verticalLayout_74">
+        <item>
+         <widget class="QScrollArea" name="scrollArea_28">
+          <property name="widgetResizable">
+           <bool>true</bool>
+          </property>
+          <widget class="QWidget" name="scrollAreaWidgetContents_29">
+           <property name="geometry">
+            <rect>
+             <x>0</x>
+             <y>0</y>
+             <width>572</width>
+             <height>847</height>
+            </rect>
+           </property>
+           <layout class="QVBoxLayout" name="verticalLayout_75">
+            <item>
+             <widget class="QLabel" name="labelOptionsConnectionHiint">
+              <property name="frameShape">
+               <enum>QFrame::Box</enum>
+              </property>
+              <property name="frameShadow">
+               <enum>QFrame::Sunken</enum>
+              </property>
+              <property name="text">
+               <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:700;&quot;&gt;This page contains advanced internal settings that you normally do not have to change.&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+              </property>
+              <property name="wordWrap">
+               <bool>true</bool>
+              </property>
+              <property name="margin">
+               <number>5</number>
+              </property>
+              <property name="textInteractionFlags">
+               <set>Qt::LinksAccessibleByMouse|Qt::TextSelectableByMouse</set>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QGroupBox" name="groupBox_2">
+              <property name="title">
+               <string>Map Display Cache for Background Map Tiles</string>
+              </property>
+              <layout class="QGridLayout" name="gridLayout_15">
+               <property name="leftMargin">
+                <number>2</number>
+               </property>
+               <property name="topMargin">
+                <number>2</number>
+               </property>
+               <property name="rightMargin">
+                <number>2</number>
+               </property>
+               <property name="bottomMargin">
+                <number>2</number>
+               </property>
+               <property name="spacing">
+                <number>2</number>
+               </property>
+               <item row="0" column="2">
+                <widget class="QPushButton" name="pushButtonOptionsCacheClearMemory">
+                 <property name="text">
+                  <string>&amp;Clear Memory Cache</string>
+                 </property>
+                </widget>
+               </item>
+               <item row="0" column="1">
+                <widget class="QSpinBox" name="spinBoxOptionsCacheMemoryMap">
+                 <property name="showGroupSeparator" stdset="0">
+                  <bool>true</bool>
+                 </property>
+                 <property name="suffix">
+                  <string> MB</string>
+                 </property>
+                 <property name="minimum">
+                  <number>100</number>
+                 </property>
+                 <property name="maximum">
+                  <number>2000</number>
+                 </property>
+                 <property name="singleStep">
+                  <number>100</number>
+                 </property>
+                 <property name="value">
+                  <number>1000</number>
+                 </property>
+                </widget>
+               </item>
+               <item row="1" column="0" alignment="Qt::AlignVCenter">
+                <widget class="QLabel" name="labelOptionsCacheDisk">
+                 <property name="text">
+                  <string>Maximum size of &amp;disk cache:</string>
+                 </property>
+                 <property name="wordWrap">
+                  <bool>true</bool>
+                 </property>
+                 <property name="buddy">
+                  <cstring>spinBoxOptionsCacheDiskMap</cstring>
+                 </property>
+                </widget>
+               </item>
+               <item row="1" column="1">
+                <widget class="QSpinBox" name="spinBoxOptionsCacheDiskMap">
+                 <property name="showGroupSeparator" stdset="0">
+                  <bool>true</bool>
+                 </property>
+                 <property name="suffix">
+                  <string> MB</string>
+                 </property>
+                 <property name="minimum">
+                  <number>500</number>
+                 </property>
+                 <property name="maximum">
+                  <number>8000</number>
+                 </property>
+                 <property name="singleStep">
+                  <number>100</number>
+                 </property>
+                 <property name="value">
+                  <number>2000</number>
+                 </property>
+                </widget>
+               </item>
+               <item row="0" column="0" alignment="Qt::AlignVCenter">
+                <widget class="QLabel" name="labelOptionsCacheMemory">
+                 <property name="text">
+                  <string>&amp;Maximum size of memory cache:</string>
+                 </property>
+                 <property name="wordWrap">
+                  <bool>true</bool>
+                 </property>
+                 <property name="buddy">
+                  <cstring>spinBoxOptionsCacheMemoryMap</cstring>
+                 </property>
+                </widget>
+               </item>
+               <item row="1" column="2">
+                <widget class="QPushButton" name="pushButtonOptionsCacheShow">
+                 <property name="toolTip">
+                  <string>Opens the cache directory in a file manager.</string>
+                 </property>
+                 <property name="text">
+                  <string>&amp;Show Disk Cache in File Manager</string>
+                 </property>
+                </widget>
+               </item>
+               <item row="2" column="0" colspan="3">
+                <widget class="QLabel" name="labelOptionsCacheDiskExpirationHint">
+                 <property name="text">
+                  <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;img src=&quot;:/littlenavmap/resources/icons/bulb.svg&quot;/&gt;&lt;span style=&quot; font-style:italic;&quot;&gt;Items in the disk cache expire after two weeks as a standard. The actual time depends on the used map theme.&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+                 </property>
+                 <property name="wordWrap">
+                  <bool>true</bool>
+                 </property>
+                 <property name="margin">
+                  <number>10</number>
+                 </property>
+                 <property name="textInteractionFlags">
+                  <set>Qt::LinksAccessibleByMouse|Qt::TextSelectableByMouse</set>
+                 </property>
+                </widget>
+               </item>
+              </layout>
+             </widget>
+            </item>
+            <item>
+             <widget class="QGroupBox" name="groupBox_41">
+              <property name="title">
+               <string>Cache for Offline GLOBE Elevation Data</string>
+              </property>
+              <layout class="QGridLayout" name="gridLayout_26">
+               <property name="leftMargin">
+                <number>2</number>
+               </property>
+               <property name="topMargin">
+                <number>2</number>
+               </property>
+               <property name="rightMargin">
+                <number>2</number>
+               </property>
+               <property name="bottomMargin">
+                <number>2</number>
+               </property>
+               <property name="spacing">
+                <number>2</number>
+               </property>
+               <item row="0" column="1">
+                <widget class="QSpinBox" name="spinBoxOptionsCacheMemoryProfile">
+                 <property name="showGroupSeparator" stdset="0">
+                  <bool>true</bool>
+                 </property>
+                 <property name="suffix">
+                  <string> MB</string>
+                 </property>
+                 <property name="minimum">
+                  <number>500</number>
+                 </property>
+                 <property name="maximum">
+                  <number>2000</number>
+                 </property>
+                 <property name="singleStep">
+                  <number>100</number>
+                 </property>
+                 <property name="value">
+                  <number>1000</number>
+                 </property>
+                </widget>
+               </item>
+               <item row="0" column="2">
+                <widget class="QPushButton" name="pushButtonOptionsCacheClearProfile">
+                 <property name="text">
+                  <string>&amp;Clear Memory Cache</string>
+                 </property>
+                </widget>
+               </item>
+               <item row="0" column="0" alignment="Qt::AlignVCenter">
+                <widget class="QLabel" name="labelOptionsCacheMemoryProfile">
+                 <property name="text">
+                  <string>&amp;Maximum size of elevation memory cache:</string>
+                 </property>
+                 <property name="wordWrap">
+                  <bool>true</bool>
+                 </property>
+                 <property name="buddy">
+                  <cstring>spinBoxOptionsCacheMemoryProfile</cstring>
+                 </property>
+                </widget>
+               </item>
+              </layout>
+             </widget>
+            </item>
+            <item>
+             <widget class="QGroupBox" name="groupBox_51">
+              <property name="title">
+               <string>Online Weather and Wind Forecast Web Addresses</string>
+              </property>
+              <layout class="QGridLayout" name="gridLayout_58">
+               <property name="leftMargin">
+                <number>2</number>
+               </property>
+               <property name="topMargin">
+                <number>2</number>
+               </property>
+               <property name="rightMargin">
+                <number>2</number>
+               </property>
+               <property name="bottomMargin">
+                <number>2</number>
+               </property>
+               <property name="horizontalSpacing">
+                <number>2</number>
+               </property>
+               <property name="verticalSpacing">
+                <number>6</number>
+               </property>
+               <item row="0" column="1">
+                <widget class="QLabel" name="labelOptionsWeatherNoaaUrl">
+                 <property name="text">
+                  <string>&amp;NOAA Weather Service URL:</string>
+                 </property>
+                </widget>
+               </item>
+               <item row="3" column="2">
+                <widget class="QPushButton" name="pushButtonOptionsWeatherNoaaWindTest">
+                 <property name="toolTip">
+                  <string>Send a test request to the NOAA wind service.</string>
+                 </property>
+                 <property name="text">
+                  <string>&amp;Test</string>
+                 </property>
+                </widget>
+               </item>
+               <item row="3" column="1">
+                <widget class="QLineEdit" name="lineEditOptionsWeatherNoaaWindUrl">
+                 <property name="toolTip">
+                  <string>Base URL of the NOAA wind service.
+There is usually no need to change this URL.
+Entering a wrong value will cause errors when downloading wind reports.</string>
+                 </property>
+                 <property name="text">
+                  <string notr="true">https://nomads.ncep.noaa.gov/cgi-bin/filter_gfs_1p00.pl</string>
+                 </property>
+                 <property name="cursorPosition">
+                  <number>55</number>
+                 </property>
+                 <property name="placeholderText">
+                  <string>No URL set. NOAA weather reports are disabled.</string>
+                 </property>
+                 <property name="clearButtonEnabled">
+                  <bool>true</bool>
+                 </property>
+                </widget>
+               </item>
+               <item row="3" column="3">
+                <widget class="QPushButton" name="pushButtonOptionsWeatherNoaaWindReset">
+                 <property name="toolTip">
+                  <string>Reset the URL back to default</string>
+                 </property>
+                 <property name="text">
+                  <string>&amp;Reset</string>
+                 </property>
+                </widget>
+               </item>
+               <item row="1" column="3">
+                <widget class="QPushButton" name="pushButtonOptionsWeatherNoaaReset">
+                 <property name="toolTip">
+                  <string>Reset the URL back to default</string>
+                 </property>
+                 <property name="text">
+                  <string>&amp;Reset</string>
+                 </property>
+                </widget>
+               </item>
+               <item row="7" column="1">
+                <widget class="QLineEdit" name="lineEditOptionsWeatherIvaoUrl">
+                 <property name="toolTip">
+                  <string>Download URL for the IVAO weather file.
+There is usually no need to change this URL.
+Entering a wrong value will cause errors when downloading weather reports.</string>
+                 </property>
+                 <property name="text">
+                  <string notr="true">https://api.ivao.aero/v2/airports/all/metar</string>
+                 </property>
+                 <property name="cursorPosition">
+                  <number>43</number>
+                 </property>
+                 <property name="placeholderText">
+                  <string>No URL set. IVAO weather reports are disabled.</string>
+                 </property>
+                 <property name="clearButtonEnabled">
+                  <bool>true</bool>
+                 </property>
+                </widget>
+               </item>
+               <item row="7" column="2">
+                <widget class="QPushButton" name="pushButtonOptionsWeatherIvaoTest">
+                 <property name="toolTip">
+                  <string>Send a test request to a IVAO weather service.</string>
+                 </property>
+                 <property name="text">
+                  <string>&amp;Test</string>
+                 </property>
+                </widget>
+               </item>
+               <item row="5" column="3">
+                <widget class="QPushButton" name="pushButtonOptionsWeatherVatsimReset">
+                 <property name="toolTip">
+                  <string>Reset the URL back to default</string>
+                 </property>
+                 <property name="text">
+                  <string>&amp;Reset</string>
+                 </property>
+                </widget>
+               </item>
+               <item row="4" column="1">
+                <widget class="QLabel" name="labelOptionsWeatherVatsimUrl">
+                 <property name="text">
+                  <string>&amp;VATSIM Weather Service URL:</string>
+                 </property>
+                </widget>
+               </item>
+               <item row="2" column="1">
+                <widget class="QLabel" name="labelOptionsWeatherNoaaWindUrl">
+                 <property name="text">
+                  <string>NOAA &amp;Wind Service Base URL:</string>
+                 </property>
+                </widget>
+               </item>
+               <item row="5" column="1">
+                <widget class="QLineEdit" name="lineEditOptionsWeatherVatsimUrl">
+                 <property name="toolTip">
+                  <string>Complete URL of the VATSIM network weather download service.
+There is usually no need to change this URL.
+Entering a wrong value will cause errors when downloading weather reports.</string>
+                 </property>
+                 <property name="text">
+                  <string notr="true">https://metar.vatsim.net/metar.php?id=ALL</string>
+                 </property>
+                 <property name="cursorPosition">
+                  <number>41</number>
+                 </property>
+                 <property name="placeholderText">
+                  <string>No URL set. VATSIM weather reports are disabled.</string>
+                 </property>
+                 <property name="clearButtonEnabled">
+                  <bool>true</bool>
+                 </property>
+                </widget>
+               </item>
+               <item row="1" column="2">
+                <widget class="QPushButton" name="pushButtonOptionsWeatherNoaaTest">
+                 <property name="toolTip">
+                  <string>Send a test request to the NOAA weather service.</string>
+                 </property>
+                 <property name="text">
+                  <string>&amp;Test</string>
+                 </property>
+                </widget>
+               </item>
+               <item row="1" column="1">
+                <widget class="QLineEdit" name="lineEditOptionsWeatherNoaaStationsUrl">
+                 <property name="toolTip">
+                  <string>Complete URL of the NOAA weather service file.
+&quot;%1&quot; is a placeholder that will be substituted with the current two-digit UTC hour.
+There is usually no need to change this URL.
+Entering a wrong value will cause errors when downloading weather reports.</string>
+                 </property>
+                 <property name="text">
+                  <string notr="true">https://tgftp.nws.noaa.gov/data/observations/metar/cycles/%1Z.TXT</string>
+                 </property>
+                 <property name="cursorPosition">
+                  <number>65</number>
+                 </property>
+                 <property name="placeholderText">
+                  <string>No URL set. NOAA weather reports are disabled.</string>
+                 </property>
+                 <property name="clearButtonEnabled">
+                  <bool>true</bool>
+                 </property>
+                </widget>
+               </item>
+               <item row="7" column="3">
+                <widget class="QPushButton" name="pushButtonOptionsWeatherIvaoReset">
+                 <property name="toolTip">
+                  <string>Reset the URL back to default</string>
+                 </property>
+                 <property name="text">
+                  <string>&amp;Reset</string>
+                 </property>
+                </widget>
+               </item>
+               <item row="6" column="1">
+                <widget class="QLabel" name="labelOptionsWeatherIvaoUrl">
+                 <property name="text">
+                  <string>&amp;IVAO Weather Download URL:</string>
+                 </property>
+                </widget>
+               </item>
+               <item row="5" column="2">
+                <widget class="QPushButton" name="pushButtonOptionsWeatherVatsimTest">
+                 <property name="toolTip">
+                  <string>Send a test request to a VATSIM weather service.</string>
+                 </property>
+                 <property name="text">
+                  <string>&amp;Test</string>
+                 </property>
+                </widget>
+               </item>
+               <item row="8" column="1">
+                <widget class="QLabel" name="labelOptionsCacheConnectionsDefaultsHint">
+                 <property name="text">
+                  <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;img src=&quot;:/littlenavmap/resources/icons/bulb.svg&quot;/&gt;&lt;span style=&quot; font-style:italic;&quot;&gt;Leave these options at default or empty (press &amp;quot;Reset&amp;quot;) if you are not running special setups such as networked connections where weather needs to be loaded from network shares, for example.&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+                 </property>
+                 <property name="wordWrap">
+                  <bool>true</bool>
+                 </property>
+                 <property name="margin">
+                  <number>10</number>
+                 </property>
+                 <property name="textInteractionFlags">
+                  <set>Qt::LinksAccessibleByMouse|Qt::TextSelectableByMouse</set>
+                 </property>
+                </widget>
+               </item>
+              </layout>
+             </widget>
+            </item>
+            <item>
+             <widget class="QGroupBox" name="groupBox_52">
+              <property name="title">
+               <string>User Agent for Map Tile Services</string>
+              </property>
+              <layout class="QGridLayout" name="gridLayout_59">
+               <property name="leftMargin">
+                <number>2</number>
+               </property>
+               <property name="topMargin">
+                <number>2</number>
+               </property>
+               <property name="rightMargin">
+                <number>2</number>
+               </property>
+               <property name="bottomMargin">
+                <number>2</number>
+               </property>
+               <property name="horizontalSpacing">
+                <number>2</number>
+               </property>
+               <item row="2" column="0" colspan="2">
+                <widget class="QLabel" name="labelOptionsUserAgentHint">
+                 <property name="text">
+                  <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;img src=&quot;:/littlenavmap/resources/icons/bulb.svg&quot;/&gt;&lt;span style=&quot; font-style:italic;&quot;&gt;The user agent is a code which is sent to a map web server for client identification using operating system information, program name and version. You can change it here for more privacy or if you see problems like blocked maps.&lt;br/&gt;
+Enter the word &quot;RANDOM&quot; to generate it randomly.&lt;/span&gt;&lt;/p&gt;
+&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;A restart is required after changing the user agent.&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+                 </property>
+                 <property name="wordWrap">
+                  <bool>true</bool>
+                 </property>
+                 <property name="margin">
+                  <number>10</number>
+                 </property>
+                 <property name="textInteractionFlags">
+                  <set>Qt::LinksAccessibleByMouse|Qt::TextSelectableByMouse</set>
+                 </property>
+                </widget>
+               </item>
+               <item row="1" column="0">
+                <widget class="QLabel" name="labelOptionUserAgent">
+                 <property name="text">
+                  <string>Using default.</string>
+                 </property>
+                 <property name="wordWrap">
+                  <bool>true</bool>
+                 </property>
+                 <property name="margin">
+                  <number>10</number>
+                 </property>
+                 <property name="textInteractionFlags">
+                  <set>Qt::LinksAccessibleByMouse|Qt::TextSelectableByMouse</set>
+                 </property>
+                </widget>
+               </item>
+               <item row="0" column="0">
+                <widget class="QLineEdit" name="lineEditOptionsUserAgent">
+                 <property name="toolTip">
+                  <string>User agent sent to online web tile services.</string>
+                 </property>
+                 <property name="text">
+                  <string notr="true"/>
+                 </property>
+                 <property name="cursorPosition">
+                  <number>0</number>
+                 </property>
+                 <property name="placeholderText">
+                  <string>Not set. Using default.</string>
+                 </property>
+                 <property name="clearButtonEnabled">
+                  <bool>true</bool>
+                 </property>
+                </widget>
+               </item>
+              </layout>
+             </widget>
+            </item>
+            <item>
+             <spacer name="verticalSpacer_29">
+              <property name="orientation">
+               <enum>Qt::Vertical</enum>
+              </property>
+              <property name="sizeHint" stdset="0">
+               <size>
+                <width>20</width>
+                <height>0</height>
+               </size>
+              </property>
+             </spacer>
+            </item>
+           </layout>
+          </widget>
+         </widget>
+        </item>
+       </layout>
+      </widget>
      </widget>
     </widget>
    </item>
@@ -9605,18 +9708,6 @@ You have to reload the scenery library so that the changes take effect.</string>
   <tabstop>pushButtonOptionsWeatherXplane12DirSelect</tabstop>
   <tabstop>lineEditOptionsWeatherAsnPath</tabstop>
   <tabstop>pushButtonOptionsWeatherAsnPathSelect</tabstop>
-  <tabstop>lineEditOptionsWeatherNoaaStationsUrl</tabstop>
-  <tabstop>pushButtonOptionsWeatherNoaaTest</tabstop>
-  <tabstop>pushButtonOptionsWeatherNoaaReset</tabstop>
-  <tabstop>lineEditOptionsWeatherNoaaWindUrl</tabstop>
-  <tabstop>pushButtonOptionsWeatherNoaaWindTest</tabstop>
-  <tabstop>pushButtonOptionsWeatherNoaaWindReset</tabstop>
-  <tabstop>lineEditOptionsWeatherVatsimUrl</tabstop>
-  <tabstop>pushButtonOptionsWeatherVatsimTest</tabstop>
-  <tabstop>pushButtonOptionsWeatherVatsimReset</tabstop>
-  <tabstop>lineEditOptionsWeatherIvaoUrl</tabstop>
-  <tabstop>pushButtonOptionsWeatherIvaoTest</tabstop>
-  <tabstop>pushButtonOptionsWeatherIvaoReset</tabstop>
   <tabstop>scrollArea_13</tabstop>
   <tabstop>radioButtonOptionsOnlineNone</tabstop>
   <tabstop>radioButtonOptionsOnlineVatsim</tabstop>
@@ -9639,7 +9730,6 @@ You have to reload the scenery library so that the changes take effect.</string>
   <tabstop>pushButtonOptionsWebStart</tabstop>
   <tabstop>spinBoxOptionsDisplayScaleAllWeb</tabstop>
   <tabstop>checkBoxOptionsWebScale</tabstop>
-  <tabstop>scrollArea_15</tabstop>
   <tabstop>spinBoxOptionsCacheMemoryMap</tabstop>
   <tabstop>pushButtonOptionsCacheClearMemory</tabstop>
   <tabstop>spinBoxOptionsCacheDiskMap</tabstop>

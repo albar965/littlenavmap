@@ -38,16 +38,18 @@ enum OptionChangeFlag : quint32
   OPTION_CHANGE_WEBSERVER = 1 << 8, /* Webserver root directory */
   OPTION_CHANGE_TEXT_SIZES = 1 << 9, /* Info or table text sizes */
   OPTION_CHANGE_ELEVATION = 1 << 10, /* Elevation source, path or cache change */
+  OPTION_CHANGE_CONNECTION = 1 << 11, /* Connection settings or paths */
 
   // Also change optionChangeFlagsToString()
 
   /* All options that require a restart */
-  OPTION_CHANGE_RESTART_NEEDED = OPTION_CHANGE_LANGUAGE | OPTION_CHANGE_UNDOCKMAP | OPTION_CHANGE_MAPTHEMES | OPTION_CHANGE_WEBSERVER,
+  OPTION_CHANGE_RESTART_NEEDED = OPTION_CHANGE_LANGUAGE | OPTION_CHANGE_UNDOCKMAP | OPTION_CHANGE_MAPTHEMES | OPTION_CHANGE_WEBSERVER |
+                                 OPTION_CHANGE_CONNECTION,
 
   /* All options but not restart flag */
   OPTION_CHANGE_ALL = OPTION_CHANGE_OTHER | OPTION_CHANGE_UI_FONT | OPTION_CHANGE_LANGUAGE | OPTION_CHANGE_UNITS | OPTION_CHANGE_UNDOCKMAP |
                       OPTION_CHANGE_MAPTHEMES | OPTION_CHANGE_SCENERY | OPTION_CHANGE_WEBSERVER | OPTION_CHANGE_TEXT_SIZES |
-                      OPTION_CHANGE_ELEVATION,
+                      OPTION_CHANGE_ELEVATION | OPTION_CHANGE_CONNECTION,
 };
 
 ATOOLS_DECLARE_FLAGS_32(OptionChangeFlags, optc::OptionChangeFlag)

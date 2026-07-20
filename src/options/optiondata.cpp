@@ -19,15 +19,17 @@
 
 #include "common/constants.h"
 #include "exception.h"
+#include "gui/application.h"
 #include "settings/settings.h"
 
-#include <QApplication>
-#include <QCoreApplication>
 #include <QDebug>
 #include <QFont>
 #include <QFontDatabase>
+#include <QRandomGenerator>
 #include <QSettings>
 #include <QSize>
+
+QString OptionData::userAgentRandom;
 
 OptionData *OptionData::optionData = nullptr;
 
@@ -40,7 +42,32 @@ const QString OptionData::WEATHER_NOAA_WIND_BASE_DEFAULT_URL = "https://nomads.n
 
 OptionData::OptionData()
 {
+  userAgentDefault = QStringLiteral("%1/%2 (+https://www.littlenavmap.org; contact: %3)").
+                     arg(QCoreApplication::applicationName(), QCoreApplication::applicationVersion(),
+                         atools::gui::Application::getEmailAddresses().constFirst());
 
+  QRandomGenerator random(QDateTime::currentSecsSinceEpoch());
+  static QStringList userAgentList({
+    QStringLiteral("Mozilla/5.0 (compatible; Marble/%1; DesktopDevice; Browser; QNamNetworkPlugin; %2)"),
+    QStringLiteral("Lynx/2.8.1pre.9 libwww-FM/2.14"),
+    QStringLiteral("Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:146.0) Gecko/20100101 Thunderbird/146.0.1"),
+    QStringLiteral("Opera/9.80 (Macintosh; Intel Mac OS X 10.14.1) Presto/2.12.388 Version/12.16"),
+    QStringLiteral("Java 1.6.0_26"),
+    QStringLiteral("curl/7.9.8 (i686-pc-linux-gnu) libcurl 7.9.8 (OpenSSL 0.9.6b) (ipv6 enabled)"),
+    QStringLiteral("wii libnup/1.0")
+  });
+
+  int index = random.bounded(0, userAgentList.size() - 1);
+
+  if(index == 0)
+  {
+    QStringList name({"Marble Virtual Globe", "marble"});
+    userAgentRandom = userAgentList.at(0).arg(QStringLiteral("%1.%2.%3").
+                                              arg(QString::number(random.bounded(22, 25)), QString::number(random.bounded(0, 9)),
+                                                  QString::number(random.bounded(0, 9))), name.at(random.bounded(0, name.size() - 1)));
+  }
+  else
+    userAgentRandom = userAgentList.at(index);
 }
 
 QString OptionData::getLanguageFromConfigFile()
@@ -51,6 +78,16 @@ QString OptionData::getLanguageFromConfigFile()
 void OptionData::saveLanguageToConfigFile(const QString& language)
 {
   atools::settings::Settings::instance().setValue(lnm::OPTIONS_DIALOG_LANGUAGE, language);
+}
+
+const QString& OptionData::getUserAgent() const
+{
+  if(userAgent == QStringLiteral("RANDOM"))
+    return userAgentRandom;
+  else if(userAgent.isEmpty())
+    return userAgentDefault;
+
+  return userAgent;
 }
 
 opts::OnlineFormat OptionData::getOnlineFormat() const

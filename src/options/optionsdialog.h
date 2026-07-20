@@ -156,6 +156,10 @@ private:
   void updateActiveSkyPathStatus();
   void updateXplane11PathStatus();
   void updateXplane12PathStatus();
+
+  void updateUserAgentLabel();
+
+  /* Checks the path to the X-Plane wind GRIB file. Display an error message in the label */
   void updateXplaneWindStatus();
   void updateFlightplanColorWidgets();
   void updateHighlightWidgets();

@@ -135,6 +135,9 @@ public:
     return weatherIvaoUrl;
   }
 
+  /* User agent or map tile services */
+  const QString& getUserAgent() const;
+
   /* Folders that are included in scanning */
   const QStringList& getDatabaseInclude() const
   {
@@ -1193,6 +1196,10 @@ private:
   QString onlineVatsimStatusUrl, onlineVatsimTransceiverUrl;
   QString onlineIvaoWhazzupUrl;
   QString onlinePilotEdgeStatusUrl;
+  QString userAgent, userAgentDefault;
+
+  /* Make static to avoid compare when checking for option changes */
+  static QString userAgentRandom;
 
   /* Webserver values */
   QString webDocumentRoot;
