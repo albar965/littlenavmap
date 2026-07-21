@@ -1184,6 +1184,7 @@ void RouteController::clearFlightplan()
 {
   routeFilename.clear();
   fileDepartureIdent.clear();
+  fileAircraftType.clear();
   fileDestinationIdent.clear();
   fileIfrVfr = pln::VFR;
   fileCruiseAltFt = 0.f;
@@ -1444,6 +1445,7 @@ void RouteController::loadFlightplanInternal(atools::fs::pln::Flightplan flightp
   fileDestinationIdent = routeFlightplan.getDestinationIdent();
   fileIfrVfr = routeFlightplan.getFlightplanType();
   fileCruiseAltFt = route.getCruiseAltitudeFt();
+  fileAircraftType = NavApp::getCurrentAircraftPerfAircraftType();
 
   if(clearUndoState)
     clearUndo();
@@ -1771,6 +1773,7 @@ void RouteController::saveFlightplanLnmExported(const QString& filename)
   fileDestinationIdent = route.getFlightplanConst().getDestinationIdent();
   fileIfrVfr = route.getFlightplanConst().getFlightplanType();
   fileCruiseAltFt = route.getCruiseAltitudeFt();
+  fileAircraftType = NavApp::getCurrentAircraftPerfAircraftType();
 
   // Set format to original route since it is saved as LNM now
   route.getFlightplan().setLnmFormat(true);
@@ -1964,6 +1967,7 @@ bool RouteController::saveFlightplanLnmInternal(const QString& filename, bool si
     fileCruiseAltFt = route.getCruiseAltitudeFt();
     fileDepartureIdent = flightplanCopy.getDepartureIdent();
     fileDestinationIdent = flightplanCopy.getDestinationIdent();
+    fileAircraftType = NavApp::getCurrentAircraftPerfAircraftType();
 
     // Set cruise altitude on plan copy in feet instead of local units
     flightplanCopy.setCruiseAltitudeFt(route.getCruiseAltitudeFt());
@@ -3681,6 +3685,9 @@ bool RouteController::doesLnmFilenameMatchRoute() const
 
     if(pattern.contains(atools::fs::pln::pattern::DEPARTIDENT))
       ok &= fileDepartureIdent == route.getFlightplanConst().getDepartureIdent();
+
+    if(pattern.contains(atools::fs::pln::pattern::AIRCRAFTTYPE))
+      ok &= fileAircraftType == NavApp::getCurrentAircraftPerfAircraftType();
 
     if(pattern.contains(atools::fs::pln::pattern::DESTIDENT))
       ok &= fileDestinationIdent == route.getFlightplanConst().getDestinationIdent();
@@ -6172,6 +6179,7 @@ void RouteController::clearRouteAndUndo()
   routeFilename.clear();
   fileDepartureIdent.clear();
   fileDestinationIdent.clear();
+  fileAircraftType.clear();
   fileIfrVfr = pln::VFR;
   fileCruiseAltFt = 0.f;
   clearUndo();

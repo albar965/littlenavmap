@@ -287,6 +287,7 @@ private:
 
   void flightplanPatternShortClicked();
   void flightplanPatternLongClicked();
+  void flightplanPatternFullClicked();
   void updateFlightplanExample();
   void updateLinks();
   void colorButtonClicked(QColor& color);

@@ -392,7 +392,8 @@ void RouteMultiExportDialog::updateTableColors()
                                "DEPARTNAME: Departure airport name\n"
                                "DESTIDENT: Destination airport ident\n"
                                "DESTNAME: Destination airport name\n"
-                               "CRUISEALT: Cruise altitude"));
+                               "AIRCRAFTTYPE: Aircraft ICAO type designator\n"
+                               "CRUISEALT: Cruise altitude", "Do not translate the keywords"));
 
   changingTable = true;
   for(int row = 0; row < itemModel->rowCount(); row++)

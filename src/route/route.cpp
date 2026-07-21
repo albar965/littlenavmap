@@ -3926,7 +3926,8 @@ QString Route::buildDefaultFilename(QString pattern, QString suffix) const
     // Clear suffix if this is already a part of the filename
     suffix.clear();
 
-  return Flightplan::getFilenamePattern(pattern, type, departName, departIdent, destName, destIdent, suffix,
+  return Flightplan::getFilenamePattern(pattern, type, departName, departIdent, destName, destIdent,
+                                        NavApp::getCurrentAircraftPerfAircraftType(), suffix,
                                         atools::roundToInt(Unit::altFeetF(flightplan.getCruiseAltitudeFt())));
 }
 
@@ -3938,7 +3939,8 @@ QString Route::buildDefaultFilenameShort(const QString& separator, const QString
   QString departIdent = getDepartureAirportLeg().getDisplayIdent(), destIdent = getDestinationAirportLeg().getDisplayIdent();
 
   return Flightplan::getFilenamePattern(atools::fs::pln::pattern::DEPARTIDENT % separator % atools::fs::pln::pattern::DESTIDENT,
-                                        QStringLiteral(), QStringLiteral(), departIdent, QStringLiteral(), destIdent, suffix,
+                                        QStringLiteral(), QStringLiteral(), departIdent, QStringLiteral(), destIdent,
+                                        NavApp::getCurrentAircraftPerfAircraftType(), suffix,
                                         atools::roundToInt(Unit::altFeetF(flightplan.getCruiseAltitudeFt())));
 }
 

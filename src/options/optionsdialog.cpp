@@ -1002,6 +1002,7 @@ OptionsDialog::OptionsDialog(QMainWindow *parentWindow)
   connect(ui->lineEditOptionsRouteFilename, &QLineEdit::textEdited, this, &OptionsDialog::updateFlightplanExample);
   connect(ui->pushButtonOptionsRouteFilenameShort, &QPushButton::clicked, this, &OptionsDialog::flightplanPatternShortClicked);
   connect(ui->pushButtonOptionsRouteFilenameLong, &QPushButton::clicked, this, &OptionsDialog::flightplanPatternLongClicked);
+  connect(ui->pushButtonOptionsRouteFilenameFull, &QPushButton::clicked, this, &OptionsDialog::flightplanPatternFullClicked);
 
   connect(ui->radioButtonCacheUseOffineElevation, &QRadioButton::clicked, this, &OptionsDialog::updateCacheElevationStates);
   connect(ui->radioButtonCacheUseOnlineElevation, &QRadioButton::clicked, this, &OptionsDialog::updateCacheElevationStates);
@@ -3628,6 +3629,12 @@ void OptionsDialog::flightplanPatternShortClicked()
 void OptionsDialog::flightplanPatternLongClicked()
 {
   ui->lineEditOptionsRouteFilename->setText(atools::fs::pln::pattern::LONG);
+  updateFlightplanExample();
+}
+
+void OptionsDialog::flightplanPatternFullClicked()
+{
+  ui->lineEditOptionsRouteFilename->setText(atools::fs::pln::pattern::FULL);
   updateFlightplanExample();
 }
 

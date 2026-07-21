@@ -645,7 +645,7 @@ private:
   Route route; /* real route containing all segments */
 
   /* Current filename of empty if no route - also remember start and dest to avoid accidental overwriting */
-  QString routeFilename, fileDepartureIdent, fileDestinationIdent;
+  QString routeFilename, fileDepartureIdent, fileDestinationIdent, fileAircraftType;
 
   /* Flight plan default name for temporary file in settings dir.  */
   QString routeFilenameDefault;

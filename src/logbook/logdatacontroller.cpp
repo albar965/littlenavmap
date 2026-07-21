@@ -1375,7 +1375,8 @@ QString LogdataController::buildFilename(const atools::sql::SqlRecord *record,
 {
   if(!flightplan.isEmpty())
     // Flight plan is valid - extract name from plan object
-    return flightplan.getFilenamePattern(OptionData::instance().getFlightplanPattern(), suffix, Unit::getUnitAlt() == opts::ALT_METER);
+    return flightplan.getFilenamePattern(OptionData::instance().getFlightplanPattern(), suffix,
+                                         NavApp::getCurrentAircraftPerfAircraftType(), Unit::getUnitAlt() == opts::ALT_METER);
   else if(record != nullptr)
   {
     // No flight plan - extract name from SQL record and values currently set in the GUI
@@ -1385,7 +1386,9 @@ QString LogdataController::buildFilename(const atools::sql::SqlRecord *record,
                                                            record->valueStr("departure_name"),
                                                            record->valueStr("departure_ident"),
                                                            record->valueStr("destination_name"),
-                                                           record->valueStr("destination_ident"), suffix,
+                                                           record->valueStr("destination_ident"),
+                                                           NavApp::getCurrentAircraftPerfAircraftType(),
+                                                           suffix,
                                                            atools::roundToInt(Unit::altFeetF(route.getCruiseAltitudeFt())));
   }
 
