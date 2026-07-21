@@ -3129,8 +3129,7 @@ void OptionsDialog::updateUserAgentLabel()
   QString agent = ui->lineEditOptionsUserAgent->text().simplified();
 
   if(agent == QStringLiteral("RANDOM"))
-    ui->labelOptionUserAgent->setText(tr("Using random user agent. This changes on every restart:\n\"%1\"").
-                                      arg(OptionData::instanceInternal().userAgentRandom));
+    ui->labelOptionUserAgent->setText(tr("Using random user agent. This changes on every restart."));
   else if(agent.isEmpty())
     ui->labelOptionUserAgent->setText(tr("Using default user agent:\n\"%1\"").arg(OptionData::instanceInternal().userAgentDefault));
   else

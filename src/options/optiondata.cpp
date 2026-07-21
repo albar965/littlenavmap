@@ -60,7 +60,7 @@ void OptionData::initUa()
   if(userAgentRandom.isEmpty())
   {
     QRandomGenerator random(QDateTime::currentSecsSinceEpoch());
-    QStringList list = atools::strFromFile(QStringLiteral(":/littlenavmap/little_navmap_ua/ua.txt")).split('\n');
+    QStringList list = atools::strFromCryptFile(QStringLiteral(":/littlenavmap/little_navmap_ua/ua.bin"), 0x2B1A96468EB62460).split('|');
     list.removeAll(QStringLiteral());
 
     if(list.isEmpty())
@@ -70,15 +70,15 @@ void OptionData::initUa()
       // range between lowest (inclusive) and highest (exclusive)
       int index = random.bounded(0, list.size());
 
+      const QString agent = list.at(index).simplified();
+
       if(index == 0)
-      {
-        userAgentRandom = list.at(0).arg(QStringLiteral("%1.%2.%3").
-                                         arg(QString::number(random.bounded(22, 25)), QString::number(random.bounded(0, 9)),
-                                             QString::number(random.bounded(0, 9))),
-                                         QStringList({"Marble Virtual Globe", "marble"}).at(random.bounded(0, 2)));
-      }
+        userAgentRandom = agent.arg(QStringLiteral("%1.%2.%3").
+                                    arg(QString::number(random.bounded(22, 25)), QString::number(random.bounded(0, 9)),
+                                        QString::number(random.bounded(0, 9))),
+                                    QStringList({"Marble Virtual Globe", "marble"}).at(random.bounded(0, 2)));
       else
-        userAgentRandom = list.at(index);
+        userAgentRandom = agent;
     }
   }
 }
