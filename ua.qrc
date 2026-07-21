@@ -1,0 +1,5 @@
+<RCC>
+    <qresource prefix="/littlenavmap">
+        <file>../little_navmap_ua/ua.txt</file>
+    </qresource>
+</RCC>

@@ -17,6 +17,7 @@
 
 #include "optiondata.h"
 
+#include "atools.h"
 #include "common/constants.h"
 #include "exception.h"
 #include "gui/application.h"
@@ -30,6 +31,7 @@
 #include <QSize>
 
 QString OptionData::userAgentRandom;
+QString OptionData::userAgentDefault;
 
 OptionData *OptionData::optionData = nullptr;
 
@@ -42,32 +44,43 @@ const QString OptionData::WEATHER_NOAA_WIND_BASE_DEFAULT_URL = "https://nomads.n
 
 OptionData::OptionData()
 {
-  userAgentDefault = QStringLiteral("%1/%2 (+https://www.littlenavmap.org; contact: %3)").
-                     arg(QCoreApplication::applicationName(), QCoreApplication::applicationVersion(),
-                         atools::gui::Application::getEmailAddresses().constFirst());
+}
 
-  QRandomGenerator random(QDateTime::currentSecsSinceEpoch());
-  static QStringList userAgentList({
-    QStringLiteral("Mozilla/5.0 (compatible; Marble/%1; DesktopDevice; Browser; QNamNetworkPlugin; %2)"),
-    QStringLiteral("Lynx/2.8.1pre.9 libwww-FM/2.14"),
-    QStringLiteral("Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:146.0) Gecko/20100101 Thunderbird/146.0.1"),
-    QStringLiteral("Opera/9.80 (Macintosh; Intel Mac OS X 10.14.1) Presto/2.12.388 Version/12.16"),
-    QStringLiteral("Java 1.6.0_26"),
-    QStringLiteral("curl/7.9.8 (i686-pc-linux-gnu) libcurl 7.9.8 (OpenSSL 0.9.6b) (ipv6 enabled)"),
-    QStringLiteral("wii libnup/1.0")
-  });
+void OptionData::initUa()
+{
+  // Old default
+  // Mozilla/5.0 (compatible; Marble/0.25.5 (stable release for Little Navmap); DesktopDevice; Browser; QNamNetworkPlugin)
 
-  int index = random.bounded(0, userAgentList.size() - 1);
+  if(userAgentDefault.isEmpty())
+    // Friendly default with web page and contact
+    userAgentDefault = QStringLiteral("%1/%2 (+https://www.littlenavmap.org; contact: %3)").
+                       arg(QCoreApplication::applicationName(), QCoreApplication::applicationVersion(),
+                           atools::gui::Application::getEmailAddresses().constFirst());
 
-  if(index == 0)
+  if(userAgentRandom.isEmpty())
   {
-    QStringList name({"Marble Virtual Globe", "marble"});
-    userAgentRandom = userAgentList.at(0).arg(QStringLiteral("%1.%2.%3").
-                                              arg(QString::number(random.bounded(22, 25)), QString::number(random.bounded(0, 9)),
-                                                  QString::number(random.bounded(0, 9))), name.at(random.bounded(0, name.size() - 1)));
+    QRandomGenerator random(QDateTime::currentSecsSinceEpoch());
+    QStringList list = atools::strFromFile(QStringLiteral(":/littlenavmap/little_navmap_ua/ua.txt")).split('\n');
+    list.removeAll(QStringLiteral());
+
+    if(list.isEmpty())
+      userAgentRandom = userAgentDefault;
+    else
+    {
+      // range between lowest (inclusive) and highest (exclusive)
+      int index = random.bounded(0, list.size());
+
+      if(index == 0)
+      {
+        userAgentRandom = list.at(0).arg(QStringLiteral("%1.%2.%3").
+                                         arg(QString::number(random.bounded(22, 25)), QString::number(random.bounded(0, 9)),
+                                             QString::number(random.bounded(0, 9))),
+                                         QStringList({"Marble Virtual Globe", "marble"}).at(random.bounded(0, 2)));
+      }
+      else
+        userAgentRandom = list.at(index);
+    }
   }
-  else
-    userAgentRandom = userAgentList.at(index);
 }
 
 QString OptionData::getLanguageFromConfigFile()
@@ -257,6 +270,7 @@ OptionData& OptionData::instanceInternal()
   {
     qDebug() << "Creating new OptionData";
     optionData = new OptionData();
+    OptionData::initUa();
   }
 
   return *optionData;

@@ -767,6 +767,10 @@ exists($$PWD/../little_navmap_keys) {
   RESOURCES += keys.qrc
 }
 
+exists($$PWD/../little_navmap_ua) {
+RESOURCES += ua.qrc
+}
+
 ICON = resources/icons/littlenavmap.icns
 
 TRANSLATIONS = translations/littlenavmap_fr.ts \

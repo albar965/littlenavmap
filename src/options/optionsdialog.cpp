@@ -1840,6 +1840,7 @@ void OptionsDialog::restoreState()
   addDatabaseTableItems(ui->tableWidgetOptionsDatabaseExclude, settings.valueStrList(lnm::OPTIONS_DIALOG_DB_EXCLUDE));
   addDatabaseTableItems(ui->tableWidgetOptionsDatabaseExcludeAddon, settings.valueStrList(lnm::OPTIONS_DIALOG_DB_ADDON_EXCLUDE));
 
+  // Used to get default colors
   OptionData defaultData;
   flightplanColor = settings.valueVar(lnm::OPTIONS_DIALOG_FLIGHTPLAN_COLOR,
                                       defaultData.flightplanColor).value<QColor>();
@@ -3131,7 +3132,7 @@ void OptionsDialog::updateUserAgentLabel()
     ui->labelOptionUserAgent->setText(tr("Using random user agent. This changes on every restart:\n\"%1\"").
                                       arg(OptionData::instanceInternal().userAgentRandom));
   else if(agent.isEmpty())
-    ui->labelOptionUserAgent->setText(tr("Using default user agent:\n\"%1\""). arg(OptionData::instanceInternal().userAgentDefault));
+    ui->labelOptionUserAgent->setText(tr("Using default user agent:\n\"%1\"").arg(OptionData::instanceInternal().userAgentDefault));
   else
     ui->labelOptionUserAgent->setText(tr("User agent:\n\"%1\"").arg(agent));
 }
