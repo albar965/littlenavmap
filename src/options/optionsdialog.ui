@@ -66,7 +66,7 @@
      </widget>
      <widget class="QStackedWidget" name="stackedWidgetOptions">
       <property name="currentIndex">
-       <number>4</number>
+       <number>27</number>
       </property>
       <widget class="QWidget" name="stackedWidgetOptionsStartup">
        <layout class="QVBoxLayout" name="verticalLayout_41">
@@ -80,8 +80,8 @@
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>586</width>
-             <height>531</height>
+             <width>525</width>
+             <height>499</height>
             </rect>
            </property>
            <layout class="QVBoxLayout" name="verticalLayout_21">
@@ -437,8 +437,8 @@ This is the file on top of the list &quot;Recent Window Layouts&quot;.</string>
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>586</width>
-             <height>531</height>
+             <width>514</width>
+             <height>373</height>
             </rect>
            </property>
            <layout class="QVBoxLayout" name="verticalLayout_22">
@@ -630,8 +630,8 @@ opening files, modifying the flight plan and other operations.</string>
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>572</width>
-             <height>893</height>
+             <width>419</width>
+             <height>910</height>
             </rect>
            </property>
            <layout class="QVBoxLayout" name="verticalLayout_23">
@@ -1228,8 +1228,8 @@ This does not affect the map window which can be changed separately on the optio
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>586</width>
-             <height>531</height>
+             <width>569</width>
+             <height>445</height>
             </rect>
            </property>
            <layout class="QGridLayout" name="gridLayout_36">
@@ -1838,8 +1838,8 @@ Example: &quot;IFR Frankfurt Am Main (EDDF) to Fiumicino (LIRF).lnmpln&quot;</st
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>317</width>
-             <height>492</height>
+             <width>586</width>
+             <height>531</height>
             </rect>
            </property>
            <layout class="QGridLayout" name="gridLayout">
@@ -2097,7 +2097,7 @@ Note that this function is disabled for X-Plane 12 since the 3D flag is unreliab
              <x>0</x>
              <y>0</y>
              <width>599</width>
-             <height>399</height>
+             <height>517</height>
             </rect>
            </property>
            <layout class="QGridLayout" name="gridLayout_2">
@@ -2561,8 +2561,8 @@ userpoints and logbook entries when hovering the cursor over the map</string>
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>510</width>
-             <height>526</height>
+             <width>586</width>
+             <height>531</height>
             </rect>
            </property>
            <layout class="QVBoxLayout" name="verticalLayout_12">
@@ -2890,8 +2890,8 @@ Map views might be shown with a larger zoom distance than expected if this optio
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>433</width>
-             <height>644</height>
+             <width>572</width>
+             <height>601</height>
             </rect>
            </property>
            <layout class="QVBoxLayout" name="verticalLayout_65">
@@ -3066,8 +3066,8 @@ Note that some fonts, especially large fonts, can result in display errors on th
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>355</width>
-             <height>665</height>
+             <width>572</width>
+             <height>639</height>
             </rect>
            </property>
            <layout class="QVBoxLayout" name="verticalLayout_71">
@@ -3417,8 +3417,8 @@ Note that some fonts, especially large fonts, can result in display errors on th
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>543</width>
-             <height>847</height>
+             <width>572</width>
+             <height>843</height>
             </rect>
            </property>
            <layout class="QVBoxLayout" name="verticalLayout_20">
@@ -4199,8 +4199,8 @@ to avoid a cluttered up airports</string>
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>428</width>
-             <height>596</height>
+             <width>572</width>
+             <height>575</height>
             </rect>
            </property>
            <layout class="QVBoxLayout" name="verticalLayout_35">
@@ -4674,8 +4674,8 @@ Also used in the elevation profile.</string>
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>554</width>
-             <height>431</height>
+             <width>586</width>
+             <height>531</height>
             </rect>
            </property>
            <layout class="QVBoxLayout" name="verticalLayout_57">
@@ -5025,8 +5025,8 @@ Note that this does not affect the stored trail points.</string>
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>441</width>
-             <height>713</height>
+             <width>572</width>
+             <height>674</height>
             </rect>
            </property>
            <layout class="QGridLayout" name="gridLayout_35">
@@ -5653,8 +5653,8 @@ if you hover over the elevation profile.</string>
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>183</width>
-             <height>132</height>
+             <width>586</width>
+             <height>531</height>
             </rect>
            </property>
            <layout class="QVBoxLayout" name="verticalLayout_61">
@@ -5726,8 +5726,8 @@ if you hover over the elevation profile.</string>
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>437</width>
-             <height>250</height>
+             <width>586</width>
+             <height>531</height>
             </rect>
            </property>
            <layout class="QVBoxLayout" name="verticalLayout_62">
@@ -5845,8 +5845,8 @@ if you hover over the elevation profile.</string>
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>319</width>
-             <height>731</height>
+             <width>572</width>
+             <height>599</height>
             </rect>
            </property>
            <layout class="QVBoxLayout" name="verticalLayout_63">
@@ -5971,8 +5971,8 @@ if you hover over the elevation profile.</string>
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>328</width>
-             <height>536</height>
+             <width>586</width>
+             <height>531</height>
             </rect>
            </property>
            <layout class="QGridLayout" name="gridLayout_39">
@@ -6441,8 +6441,8 @@ airspace filename has to match the callsign of the online center.</string>
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>462</width>
-             <height>260</height>
+             <width>586</width>
+             <height>531</height>
             </rect>
            </property>
            <layout class="QVBoxLayout" name="verticalLayout_67">
@@ -6605,8 +6605,8 @@ The buffer radius defines the surrounding from where the maximum elevation is ca
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>436</width>
-             <height>319</height>
+             <width>586</width>
+             <height>531</height>
             </rect>
            </property>
            <layout class="QVBoxLayout" name="verticalLayout_60">
@@ -7195,8 +7195,8 @@ put the active leg back on top after the given timeout while flying.</string>
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>318</width>
-             <height>242</height>
+             <width>586</width>
+             <height>531</height>
             </rect>
            </property>
            <layout class="QVBoxLayout" name="verticalLayout_26">
@@ -7355,8 +7355,8 @@ Note that this value does not affect flight plan calculation or saving of flight
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>272</width>
-             <height>765</height>
+             <width>572</width>
+             <height>612</height>
             </rect>
            </property>
            <layout class="QVBoxLayout" name="verticalLayout_27">
@@ -7596,8 +7596,8 @@ Note that this value does not affect flight plan calculation or saving of flight
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>245</width>
-             <height>766</height>
+             <width>572</width>
+             <height>630</height>
             </rect>
            </property>
            <layout class="QVBoxLayout" name="verticalLayout_28">
@@ -7962,8 +7962,8 @@ If this field is empty, the default Active Sky weather file path will be used wh
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>389</width>
-             <height>375</height>
+             <width>586</width>
+             <height>531</height>
             </rect>
            </property>
            <layout class="QVBoxLayout" name="verticalLayout_29">
@@ -8270,8 +8270,8 @@ If this field is empty, the default Active Sky weather file path will be used wh
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>543</width>
-             <height>469</height>
+             <width>586</width>
+             <height>531</height>
             </rect>
            </property>
            <layout class="QGridLayout" name="gridLayout_37">
@@ -8588,8 +8588,8 @@ Little Navmap GIT repository.
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>395</width>
-             <height>524</height>
+             <width>586</width>
+             <height>531</height>
             </rect>
            </property>
            <layout class="QGridLayout" name="gridLayout_38">
@@ -8956,9 +8956,9 @@ You have to reload the scenery library so that the changes take effect.</string>
            <property name="geometry">
             <rect>
              <x>0</x>
-             <y>0</y>
+             <y>-299</y>
              <width>572</width>
-             <height>847</height>
+             <height>859</height>
             </rect>
            </property>
            <layout class="QVBoxLayout" name="verticalLayout_75">
@@ -9416,7 +9416,7 @@ Entering a wrong value will cause errors when downloading weather reports.</stri
             <item>
              <widget class="QGroupBox" name="groupBox_52">
               <property name="title">
-               <string>User Agent for Map Tile Services</string>
+               <string>User Agent for Online Map Tile Services</string>
               </property>
               <layout class="QGridLayout" name="gridLayout_59">
                <property name="leftMargin">
@@ -9434,12 +9434,10 @@ Entering a wrong value will cause errors when downloading weather reports.</stri
                <property name="horizontalSpacing">
                 <number>2</number>
                </property>
-               <item row="2" column="0" colspan="2">
+               <item row="3" column="0" colspan="2">
                 <widget class="QLabel" name="labelOptionsUserAgentHint">
                  <property name="text">
-                  <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;img src=&quot;:/littlenavmap/resources/icons/bulb.svg&quot;/&gt;&lt;span style=&quot; font-style:italic;&quot;&gt;The user agent is a code which is sent to a map web server for client identification using operating system information, program name and version. You can change it here for more privacy or if you see problems like blocked maps.&lt;br/&gt;
-Enter the word &quot;RANDOM&quot; to generate it randomly.&lt;/span&gt;&lt;/p&gt;
-&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;A restart is required after changing the user agent.&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+                  <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;img src=&quot;:/littlenavmap/resources/icons/bulb.svg&quot;/&gt;&lt;span style=&quot; font-style:italic;&quot;&gt;The user agent is a code which is sent to a map web server for client identification. It includes operating system information, preferred languages, program name and version. You can change it here for more privacy or if you see problems like blocked maps.&lt;/span&gt;&lt;/p&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;A restart is required after changing the user agent.&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
                  </property>
                  <property name="wordWrap">
                   <bool>true</bool>
@@ -9452,7 +9450,7 @@ Enter the word &quot;RANDOM&quot; to generate it randomly.&lt;/span&gt;&lt;/p&gt
                  </property>
                 </widget>
                </item>
-               <item row="1" column="0">
+               <item row="2" column="0">
                 <widget class="QLabel" name="labelOptionUserAgent">
                  <property name="text">
                   <string>Using default.</string>
@@ -9484,6 +9482,16 @@ Enter the word &quot;RANDOM&quot; to generate it randomly.&lt;/span&gt;&lt;/p&gt
                  </property>
                  <property name="clearButtonEnabled">
                   <bool>true</bool>
+                 </property>
+                </widget>
+               </item>
+               <item row="1" column="0">
+                <widget class="QCheckBox" name="checkBoxOptionUserAgentRandom">
+                 <property name="toolTip">
+                  <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Generate a new user agent on every startup.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+                 </property>
+                 <property name="text">
+                  <string>&amp;Randomize user agent for maximum privacy.</string>
                  </property>
                 </widget>
                </item>

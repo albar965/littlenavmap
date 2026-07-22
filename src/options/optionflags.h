@@ -135,7 +135,10 @@ enum Flag : quint64
   GUI_ADD_DEPARTURE = 1ULL << 31,
 
   /* checkBoxOptionsGuiTooltipsLink */
-  ENABLE_TOOLTIPS_LINK = 1ULL << 32
+  ENABLE_TOOLTIPS_LINK = 1ULL << 32,
+
+  /* checkBoxOptionUserAgentRandom */
+  RANDOM_USER_AGENT = 1ULL << 33
 
 };
 

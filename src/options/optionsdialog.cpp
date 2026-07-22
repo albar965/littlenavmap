@@ -712,6 +712,7 @@ OptionsDialog::OptionsDialog(QMainWindow *parentWindow)
     ui->lineEditOptionsWeatherVatsimUrl,
     ui->lineEditOptionsWeatherIvaoUrl,
     ui->lineEditOptionsUserAgent,
+    ui->checkBoxOptionUserAgentRandom,
     ui->lineEditOptionsWeatherXplaneWind,
     ui->lineEditOptionsWeatherNoaaWindUrl,
     ui->tableWidgetOptionsDatabaseInclude,
@@ -973,6 +974,7 @@ OptionsDialog::OptionsDialog(QMainWindow *parentWindow)
   connect(ui->pushButtonOptionsCacheShow, &QPushButton::clicked, this, &OptionsDialog::showDiskCacheClicked);
 
   connect(ui->checkBoxOptionsSimUpdatesConstant, &QCheckBox::toggled, this, &OptionsDialog::updateWhileFlyingWidgets);
+  connect(ui->checkBoxOptionUserAgentRandom, &QCheckBox::toggled, this, &OptionsDialog::updateUserAgentLabel);
 
   // ===========================================================================
   // Cache
@@ -1421,7 +1423,8 @@ optc::OptionChangeFlags OptionsDialog::buildFlagsFromChange(const OptionData& sa
 
   changeFlags.setFlag(optc::OPTION_CHANGE_WEBSERVER, saved.webDocumentRoot != changed.webDocumentRoot);
 
-  changeFlags.setFlag(optc::OPTION_CHANGE_CONNECTION, saved.userAgent != changed.userAgent);
+  changeFlags.setFlag(optc::OPTION_CHANGE_CONNECTION, saved.userAgent != changed.userAgent ||
+                      saved.flags.testFlag(opts::RANDOM_USER_AGENT) != changed.flags.testFlag(opts::RANDOM_USER_AGENT));
 
   return changeFlags;
 }
@@ -2506,6 +2509,7 @@ void OptionsDialog::widgetsToOptionData(OptionData& data)
   data.weatherVatsimUrl = ui->lineEditOptionsWeatherVatsimUrl->text().trimmed();
   data.weatherIvaoUrl = ui->lineEditOptionsWeatherIvaoUrl->text().trimmed();
   data.userAgent = ui->lineEditOptionsUserAgent->text().simplified();
+  data.flags.setFlag(opts::RANDOM_USER_AGENT, ui->checkBoxOptionUserAgentRandom->isChecked());
 
   toFlags(data.flags2, ui->checkBoxOptionsWebScale, opts2::MAP_WEB_USE_UI_SCALE);
 
@@ -2852,7 +2856,9 @@ void OptionsDialog::optionDataToWidgets(const OptionData& data)
   ui->lineEditOptionsWeatherNoaaStationsUrl->setText(data.weatherNoaaUrl.trimmed());
   ui->lineEditOptionsWeatherVatsimUrl->setText(data.weatherVatsimUrl.trimmed());
   ui->lineEditOptionsWeatherIvaoUrl->setText(data.weatherIvaoUrl.trimmed());
+
   ui->lineEditOptionsUserAgent->setText(data.userAgent.simplified());
+  ui->checkBoxOptionUserAgentRandom->setChecked(data.flags.testFlag(opts::RANDOM_USER_AGENT));
 
   addDatabaseTableItems(ui->tableWidgetOptionsDatabaseInclude, data.databaseInclude);
   addDatabaseTableItems(ui->tableWidgetOptionsDatabaseExclude, data.databaseExclude);
@@ -3126,10 +3132,12 @@ void OptionsDialog::offlineDataSelectClicked()
 
 void OptionsDialog::updateUserAgentLabel()
 {
+  ui->lineEditOptionsUserAgent->setDisabled(ui->checkBoxOptionUserAgentRandom->isChecked());
+
   // Mozilla/5.0 (compatible; Marble/23.8.5; DesktopDevice; Browser; QNamNetworkPlugin; marble)
   QString agent = ui->lineEditOptionsUserAgent->text().simplified();
 
-  if(agent == QStringLiteral("RANDOM"))
+  if(ui->checkBoxOptionUserAgentRandom->isChecked())
     ui->labelOptionUserAgent->setText(tr("Using random user agent. This changes on every restart."));
   else if(agent.isEmpty())
     ui->labelOptionUserAgent->setText(tr("Using default user agent:\n\"%1\"").arg(OptionData::instanceInternal().userAgentDefault));
