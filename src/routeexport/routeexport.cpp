@@ -370,7 +370,7 @@ bool RouteExport::routeExportInternalPln(const RouteExportFormat& format)
           break;
 
         case rexp::PLNMSFS:
-          result = exportFlighplan(routeFile, rf::DEFAULT_OPTS_MSFS, std::bind(&FlightplanIO::savePlnMsfs, flightplanIO, _1, _2));
+          result = exportFlighplan(routeFile, rf::DEFAULT_OPTS_MSFS_2020, std::bind(&FlightplanIO::savePlnMsfs20, flightplanIO, _1, _2));
           break;
 
         case rexp::PLNMSFS24:
@@ -378,7 +378,8 @@ bool RouteExport::routeExportInternalPln(const RouteExportFormat& format)
           break;
 
         case rexp::PLNMSFSCOMPAT:
-          result = exportFlighplan(routeFile, rf::DEFAULT_OPTS_MSFS, std::bind(&FlightplanIO::savePlnMsfsCompat, flightplanIO, _1, _2));
+          result = exportFlighplan(routeFile, rf::DEFAULT_OPTS_MSFS_2020,
+                                   std::bind(&FlightplanIO::savePlnMsfsCompat, flightplanIO, _1, _2));
           break;
 
         case rexp::PLNISG:
@@ -1094,7 +1095,7 @@ bool RouteExport::routeExportPms50Multi(const RouteExportFormat& format)
     {
       try
       {
-        flightplanIO->savePlnPms50(buildAdjustedRoute(rf::DEFAULT_OPTS_MSFS | rf::REMOVE_RUNWAY_PROC).getFlightplanConst(), routeFile);
+        flightplanIO->savePlnPms50(buildAdjustedRoute(rf::DEFAULT_OPTS_MSFS_2020 | rf::REMOVE_RUNWAY_PROC).getFlightplanConst(), routeFile);
       }
       catch(atools::Exception& e)
       {
@@ -1934,7 +1935,8 @@ bool RouteExport::exportFlighplanAsCorteIn(const QString& filename)
   qDebug() << Q_FUNC_INFO << filename;
   QString txt = RouteStringWriter().
                 createStringForRoute(buildAdjustedRoute(rf::DEFAULT_OPTS | rf::REMOVE_RUNWAY_PROC), 0.f,
-                                     rs::WRITE_DCT | rs::WRITE_NO_FINAL_DCT | rs::WRITE_DEPART_AND_DEST | rs::WRITE_SID_STAR | rs::WRITE_SID_STAR_SPACE |
+                                     rs::WRITE_DCT | rs::WRITE_NO_FINAL_DCT | rs::WRITE_DEPART_AND_DEST | rs::WRITE_SID_STAR |
+                                     rs::WRITE_SID_STAR_SPACE |
                                      rs::WRITE_CORTEIN_DEPARTURE_RUNWAY /*| rs::CORTEIN_APPROACH unreliable */ | rs::WRITE_FLIGHTLEVEL);
 
   const atools::fs::pln::Flightplan& flightplan = NavApp::getRouteConst().getFlightplanConst();
