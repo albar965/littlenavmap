@@ -66,7 +66,7 @@
      </widget>
      <widget class="QStackedWidget" name="stackedWidgetOptions">
       <property name="currentIndex">
-       <number>0</number>
+       <number>3</number>
       </property>
       <widget class="QWidget" name="stackedWidgetOptionsStartup">
        <layout class="QVBoxLayout" name="verticalLayout_41">
@@ -80,8 +80,8 @@
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>586</width>
-             <height>531</height>
+             <width>525</width>
+             <height>459</height>
             </rect>
            </property>
            <layout class="QVBoxLayout" name="verticalLayout_21">
@@ -437,8 +437,8 @@ This is the file on top of the list &quot;Recent Window Layouts&quot;.</string>
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>586</width>
-             <height>531</height>
+             <width>514</width>
+             <height>333</height>
             </rect>
            </property>
            <layout class="QVBoxLayout" name="verticalLayout_22">
@@ -629,9 +629,9 @@ opening files, modifying the flight plan and other operations.</string>
            <property name="geometry">
             <rect>
              <x>0</x>
-             <y>-322</y>
-             <width>572</width>
-             <height>853</height>
+             <y>0</y>
+             <width>419</width>
+             <height>870</height>
             </rect>
            </property>
            <layout class="QVBoxLayout" name="verticalLayout_23">
@@ -1267,90 +1267,29 @@ This does not affect the map window which can be changed separately on the optio
                <property name="horizontalSpacing">
                 <number>2</number>
                </property>
-               <item row="0" column="0" alignment="Qt::AlignVCenter">
-                <widget class="QLabel" name="labelOptionsUnitDistance">
+               <item row="9" column="0" colspan="3">
+                <widget class="QCheckBox" name="checkBoxOptionsUnitTrueCourse">
+                 <property name="toolTip">
+                  <string>Shows true course or heading values as small text besides magnetic course
+in information displays and tooltips .
+Only magnetic course is shown if both values are equal.
+Also affects labels at holds and traffic patterns.</string>
+                 </property>
                  <property name="text">
-                  <string>&amp;Distance:</string>
+                  <string>Show &amp;true course and heading besides magnetic course in information displays</string>
+                 </property>
+                 <property name="checked">
+                  <bool>false</bool>
+                 </property>
+                </widget>
+               </item>
+               <item row="5" column="0" alignment="Qt::AlignVCenter">
+                <widget class="QLabel" name="labelOptionsUnitFuel">
+                 <property name="text">
+                  <string>&amp;Fuel and Weight:</string>
                  </property>
                  <property name="buddy">
-                  <cstring>comboBoxOptionsUnitDistance</cstring>
-                 </property>
-                </widget>
-               </item>
-               <item row="0" column="1">
-                <widget class="QComboBox" name="comboBoxOptionsUnitDistance">
-                 <item>
-                  <property name="text">
-                   <string>Nautical Miles (NM)</string>
-                  </property>
-                 </item>
-                 <item>
-                  <property name="text">
-                   <string>Kilometers (km)</string>
-                  </property>
-                 </item>
-                 <item>
-                  <property name="text">
-                   <string>Statute Miles (mi)</string>
-                  </property>
-                 </item>
-                </widget>
-               </item>
-               <item row="1" column="0" alignment="Qt::AlignVCenter">
-                <widget class="QLabel" name="labelOptionsUnitShortDistance">
-                 <property name="text">
-                  <string>&amp;Short Distance:</string>
-                 </property>
-                 <property name="buddy">
-                  <cstring>comboBoxOptionsUnitShortDistance</cstring>
-                 </property>
-                </widget>
-               </item>
-               <item row="1" column="1">
-                <widget class="QComboBox" name="comboBoxOptionsUnitShortDistance">
-                 <item>
-                  <property name="text">
-                   <string>Feet (ft)</string>
-                  </property>
-                 </item>
-                 <item>
-                  <property name="text">
-                   <string>Meter (m)</string>
-                  </property>
-                 </item>
-                </widget>
-               </item>
-               <item row="2" column="0" alignment="Qt::AlignVCenter">
-                <widget class="QLabel" name="labelOptionsUnitAlt">
-                 <property name="text">
-                  <string>&amp;Altitude and elevation:</string>
-                 </property>
-                 <property name="buddy">
-                  <cstring>comboBoxOptionsUnitAlt</cstring>
-                 </property>
-                </widget>
-               </item>
-               <item row="2" column="1">
-                <widget class="QComboBox" name="comboBoxOptionsUnitAlt">
-                 <item>
-                  <property name="text">
-                   <string>Feet (ft)</string>
-                  </property>
-                 </item>
-                 <item>
-                  <property name="text">
-                   <string>Meter (m)</string>
-                  </property>
-                 </item>
-                </widget>
-               </item>
-               <item row="3" column="0" alignment="Qt::AlignVCenter">
-                <widget class="QLabel" name="labelOptionsUnitSpeed">
-                 <property name="text">
-                  <string>&amp;Speed:</string>
-                 </property>
-                 <property name="buddy">
-                  <cstring>comboBoxOptionsUnitSpeed</cstring>
+                  <cstring>comboBoxOptionsUnitFuelWeight</cstring>
                  </property>
                 </widget>
                </item>
@@ -1373,40 +1312,6 @@ This does not affect the map window which can be changed separately on the optio
                  </item>
                 </widget>
                </item>
-               <item row="4" column="0" alignment="Qt::AlignVCenter">
-                <widget class="QLabel" name="labelOptionsUnitVertSpeed">
-                 <property name="text">
-                  <string>&amp;Vertical Speed:</string>
-                 </property>
-                 <property name="buddy">
-                  <cstring>comboBoxOptionsUnitVertSpeed</cstring>
-                 </property>
-                </widget>
-               </item>
-               <item row="4" column="1">
-                <widget class="QComboBox" name="comboBoxOptionsUnitVertSpeed">
-                 <item>
-                  <property name="text">
-                   <string>Feet per Minute (fpm)</string>
-                  </property>
-                 </item>
-                 <item>
-                  <property name="text">
-                   <string>Meter per Second (m/s)</string>
-                  </property>
-                 </item>
-                </widget>
-               </item>
-               <item row="5" column="0" alignment="Qt::AlignVCenter">
-                <widget class="QLabel" name="labelOptionsUnitFuel">
-                 <property name="text">
-                  <string>&amp;Fuel and Weight:</string>
-                 </property>
-                 <property name="buddy">
-                  <cstring>comboBoxOptionsUnitFuelWeight</cstring>
-                 </property>
-                </widget>
-               </item>
                <item row="5" column="1">
                 <widget class="QComboBox" name="comboBoxOptionsUnitFuelWeight">
                  <item>
@@ -1421,28 +1326,88 @@ This does not affect the map window which can be changed separately on the optio
                  </item>
                 </widget>
                </item>
-               <item row="5" column="2">
-                <widget class="QCheckBox" name="checkBoxOptionsUnitFuelOther">
-                 <property name="toolTip">
-                  <string>Shows values for other fuel units (lbs/gal or kg/liter) as small text in
-information displays and tooltips besides selected units.</string>
-                 </property>
+               <item row="1" column="0" alignment="Qt::AlignVCenter">
+                <widget class="QLabel" name="labelOptionsUnitShortDistance">
                  <property name="text">
-                  <string>&amp;Show other fuel units too</string>
+                  <string>&amp;Short Distance:</string>
                  </property>
-                 <property name="checked">
-                  <bool>false</bool>
+                 <property name="buddy">
+                  <cstring>comboBoxOptionsUnitShortDistance</cstring>
                  </property>
                 </widget>
                </item>
-               <item row="6" column="0" alignment="Qt::AlignVCenter">
-                <widget class="QLabel" name="labelOptionsUnitCoords">
+               <item row="0" column="1">
+                <widget class="QComboBox" name="comboBoxOptionsUnitDistance">
+                 <item>
+                  <property name="text">
+                   <string>Nautical Miles (NM)</string>
+                  </property>
+                 </item>
+                 <item>
+                  <property name="text">
+                   <string>Kilometers (km)</string>
+                  </property>
+                 </item>
+                 <item>
+                  <property name="text">
+                   <string>Statute Miles (mi)</string>
+                  </property>
+                 </item>
+                </widget>
+               </item>
+               <item row="2" column="1">
+                <widget class="QComboBox" name="comboBoxOptionsUnitAlt">
+                 <item>
+                  <property name="text">
+                   <string>Feet (ft)</string>
+                  </property>
+                 </item>
+                 <item>
+                  <property name="text">
+                   <string>Meter (m)</string>
+                  </property>
+                 </item>
+                </widget>
+               </item>
+               <item row="8" column="0" colspan="3">
+                <widget class="Line" name="line_18">
+                 <property name="orientation">
+                  <enum>Qt::Horizontal</enum>
+                 </property>
+                </widget>
+               </item>
+               <item row="3" column="0" alignment="Qt::AlignVCenter">
+                <widget class="QLabel" name="labelOptionsUnitSpeed">
                  <property name="text">
-                  <string>&amp;Coordinates:</string>
+                  <string>&amp;Speed:</string>
                  </property>
                  <property name="buddy">
-                  <cstring>comboBoxOptionsUnitCoords</cstring>
+                  <cstring>comboBoxOptionsUnitSpeed</cstring>
                  </property>
+                </widget>
+               </item>
+               <item row="0" column="0" alignment="Qt::AlignVCenter">
+                <widget class="QLabel" name="labelOptionsUnitDistance">
+                 <property name="text">
+                  <string>&amp;Distance:</string>
+                 </property>
+                 <property name="buddy">
+                  <cstring>comboBoxOptionsUnitDistance</cstring>
+                 </property>
+                </widget>
+               </item>
+               <item row="1" column="1">
+                <widget class="QComboBox" name="comboBoxOptionsUnitShortDistance">
+                 <item>
+                  <property name="text">
+                   <string>Feet (ft)</string>
+                  </property>
+                 </item>
+                 <item>
+                  <property name="text">
+                   <string>Meter (m)</string>
+                  </property>
+                 </item>
                 </widget>
                </item>
                <item row="6" column="1">
@@ -1483,15 +1448,68 @@ also define the order when reading coordinates in the user interface if enabled.
                  </item>
                 </widget>
                </item>
-               <item row="7" column="0" colspan="3">
-                <widget class="QLabel" name="label_2">
-                 <property name="font">
-                  <font>
-                   <bold>false</bold>
-                  </font>
+               <item row="2" column="0" alignment="Qt::AlignVCenter">
+                <widget class="QLabel" name="labelOptionsUnitAlt">
+                 <property name="text">
+                  <string>&amp;Altitude and elevation:</string>
+                 </property>
+                 <property name="buddy">
+                  <cstring>comboBoxOptionsUnitAlt</cstring>
+                 </property>
+                </widget>
+               </item>
+               <item row="4" column="1">
+                <widget class="QComboBox" name="comboBoxOptionsUnitVertSpeed">
+                 <item>
+                  <property name="text">
+                   <string>Feet per Minute (fpm)</string>
+                  </property>
+                 </item>
+                 <item>
+                  <property name="text">
+                   <string>Meter per Second (m/s)</string>
+                  </property>
+                 </item>
+                </widget>
+               </item>
+               <item row="6" column="0" alignment="Qt::AlignVCenter">
+                <widget class="QLabel" name="labelOptionsUnitCoords">
+                 <property name="text">
+                  <string>&amp;Coordinates:</string>
+                 </property>
+                 <property name="buddy">
+                  <cstring>comboBoxOptionsUnitCoords</cstring>
+                 </property>
+                </widget>
+               </item>
+               <item row="5" column="2">
+                <widget class="QCheckBox" name="checkBoxOptionsUnitFuelOther">
+                 <property name="toolTip">
+                  <string>Shows values for other fuel units (lbs/gal or kg/liter) as small text in
+information displays and tooltips besides selected units.</string>
                  </property>
                  <property name="text">
-                  <string>&lt;b&gt;A restart is recommended after changing units.&lt;/b&gt;</string>
+                  <string>&amp;Show other fuel units too</string>
+                 </property>
+                 <property name="checked">
+                  <bool>false</bool>
+                 </property>
+                </widget>
+               </item>
+               <item row="4" column="0" alignment="Qt::AlignVCenter">
+                <widget class="QLabel" name="labelOptionsUnitVertSpeed">
+                 <property name="text">
+                  <string>&amp;Vertical Speed:</string>
+                 </property>
+                 <property name="buddy">
+                  <cstring>comboBoxOptionsUnitVertSpeed</cstring>
+                 </property>
+                </widget>
+               </item>
+               <item row="7" column="0" colspan="3">
+                <widget class="QLabel" name="labelOptionsUnitsHint_2">
+                 <property name="text">
+                  <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:700;&quot;&gt;Note that any parameters like &amp;quot;Flight Plan&amp;quot; -&amp;gt; &amp;quot;Minimum Altitude Buffer&amp;quot;, &amp;quot;Map Navigation&amp;quot; -&amp;gt; &amp;quot;Zoom distances&amp;quot;, &amp;quot;Map Online&amp;quot; -&amp;gt; &amp;quot;Display sizes&amp;quot;, &amp;quot;Elevation Profile&amp;quot; -&amp;gt; &amp;quot;Buffer radius&amp;quot; and more are not changed when changing units. &lt;br/&gt;Adjust these manually to the new units.&lt;/span&gt;&lt;/p&gt;&lt;p&gt;&lt;span style=&quot; font-weight:700;&quot;&gt;A restart is recommended after changing units.&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
                  </property>
                  <property name="wordWrap">
                   <bool>true</bool>
@@ -1501,29 +1519,6 @@ also define the order when reading coordinates in the user interface if enabled.
                  </property>
                  <property name="textInteractionFlags">
                   <set>Qt::LinksAccessibleByMouse|Qt::TextSelectableByMouse</set>
-                 </property>
-                </widget>
-               </item>
-               <item row="8" column="0" colspan="3">
-                <widget class="Line" name="line_18">
-                 <property name="orientation">
-                  <enum>Qt::Horizontal</enum>
-                 </property>
-                </widget>
-               </item>
-               <item row="9" column="0" colspan="3">
-                <widget class="QCheckBox" name="checkBoxOptionsUnitTrueCourse">
-                 <property name="toolTip">
-                  <string>Shows true course or heading values as small text besides magnetic course
-in information displays and tooltips .
-Only magnetic course is shown if both values are equal.
-Also affects labels at holds and traffic patterns.</string>
-                 </property>
-                 <property name="text">
-                  <string>Show &amp;true course and heading besides magnetic course in information displays</string>
-                 </property>
-                 <property name="checked">
-                  <bool>false</bool>
                  </property>
                 </widget>
                </item>
@@ -1588,8 +1583,8 @@ aircraft progress, tooltips and information window.</string>
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>586</width>
-             <height>531</height>
+             <width>480</width>
+             <height>380</height>
             </rect>
            </property>
            <layout class="QVBoxLayout" name="verticalLayout_59">
@@ -1838,8 +1833,8 @@ Example: &quot;IFR Frankfurt Am Main (EDDF) to Fiumicino (LIRF).lnmpln&quot;</st
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>586</width>
-             <height>531</height>
+             <width>317</width>
+             <height>452</height>
             </rect>
            </property>
            <layout class="QGridLayout" name="gridLayout">
@@ -2097,7 +2092,7 @@ Note that this function is disabled for X-Plane 12 since the 3D flag is unreliab
              <x>0</x>
              <y>0</y>
              <width>599</width>
-             <height>517</height>
+             <height>399</height>
             </rect>
            </property>
            <layout class="QGridLayout" name="gridLayout_2">
@@ -2561,8 +2556,8 @@ userpoints and logbook entries when hovering the cursor over the map</string>
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>586</width>
-             <height>531</height>
+             <width>510</width>
+             <height>486</height>
             </rect>
            </property>
            <layout class="QVBoxLayout" name="verticalLayout_12">
@@ -2890,8 +2885,8 @@ Map views might be shown with a larger zoom distance than expected if this optio
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>586</width>
-             <height>531</height>
+             <width>433</width>
+             <height>333</height>
             </rect>
            </property>
            <layout class="QVBoxLayout" name="verticalLayout_65">
@@ -3065,9 +3060,9 @@ Note that some fonts, especially large fonts, can result in display errors on th
            <property name="geometry">
             <rect>
              <x>0</x>
-             <y>-108</y>
-             <width>572</width>
-             <height>639</height>
+             <y>0</y>
+             <width>355</width>
+             <height>665</height>
             </rect>
            </property>
            <layout class="QVBoxLayout" name="verticalLayout_71">
@@ -3416,8 +3411,8 @@ Note that some fonts, especially large fonts, can result in display errors on th
            <property name="geometry">
             <rect>
              <x>0</x>
-             <y>-272</y>
-             <width>572</width>
+             <y>0</y>
+             <width>543</width>
              <height>803</height>
             </rect>
            </property>
@@ -4199,8 +4194,8 @@ to avoid a cluttered up airports</string>
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>572</width>
-             <height>535</height>
+             <width>428</width>
+             <height>556</height>
             </rect>
            </property>
            <layout class="QVBoxLayout" name="verticalLayout_35">
@@ -4674,8 +4669,8 @@ Also used in the elevation profile.</string>
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>586</width>
-             <height>531</height>
+             <width>554</width>
+             <height>387</height>
             </rect>
            </property>
            <layout class="QVBoxLayout" name="verticalLayout_57">
@@ -5024,9 +5019,9 @@ Note that this does not affect the stored trail points.</string>
            <property name="geometry">
             <rect>
              <x>0</x>
-             <y>-103</y>
-             <width>572</width>
-             <height>634</height>
+             <y>0</y>
+             <width>441</width>
+             <height>673</height>
             </rect>
            </property>
            <layout class="QGridLayout" name="gridLayout_35">
@@ -5653,8 +5648,8 @@ if you hover over the elevation profile.</string>
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>586</width>
-             <height>531</height>
+             <width>183</width>
+             <height>132</height>
             </rect>
            </property>
            <layout class="QVBoxLayout" name="verticalLayout_61">
@@ -5726,8 +5721,8 @@ if you hover over the elevation profile.</string>
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>586</width>
-             <height>531</height>
+             <width>437</width>
+             <height>273</height>
             </rect>
            </property>
            <layout class="QVBoxLayout" name="verticalLayout_62">
@@ -5844,9 +5839,9 @@ if you hover over the elevation profile.</string>
            <property name="geometry">
             <rect>
              <x>0</x>
-             <y>-114</y>
-             <width>572</width>
-             <height>645</height>
+             <y>0</y>
+             <width>319</width>
+             <height>811</height>
             </rect>
            </property>
            <layout class="QVBoxLayout" name="verticalLayout_63">
@@ -5971,8 +5966,8 @@ if you hover over the elevation profile.</string>
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>586</width>
-             <height>531</height>
+             <width>328</width>
+             <height>496</height>
             </rect>
            </property>
            <layout class="QGridLayout" name="gridLayout_39">
@@ -6441,8 +6436,8 @@ airspace filename has to match the callsign of the online center.</string>
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>586</width>
-             <height>531</height>
+             <width>462</width>
+             <height>220</height>
             </rect>
            </property>
            <layout class="QVBoxLayout" name="verticalLayout_67">
@@ -6605,8 +6600,8 @@ The buffer radius defines the surrounding from where the maximum elevation is ca
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>586</width>
-             <height>531</height>
+             <width>436</width>
+             <height>279</height>
             </rect>
            </property>
            <layout class="QVBoxLayout" name="verticalLayout_60">
@@ -6747,9 +6742,9 @@ Download the file &lt;b&gt;&lt;i&gt;All Tiles in One .zip (all10g.zip)&lt;/i&gt;
            <property name="geometry">
             <rect>
              <x>0</x>
-             <y>-64</y>
+             <y>0</y>
              <width>572</width>
-             <height>595</height>
+             <height>591</height>
             </rect>
            </property>
            <layout class="QVBoxLayout" name="verticalLayout_25">
@@ -7195,8 +7190,8 @@ put the active leg back on top after the given timeout while flying.</string>
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>586</width>
-             <height>531</height>
+             <width>318</width>
+             <height>202</height>
             </rect>
            </property>
            <layout class="QVBoxLayout" name="verticalLayout_26">
@@ -7354,9 +7349,9 @@ Note that this value does not affect flight plan calculation or saving of flight
            <property name="geometry">
             <rect>
              <x>0</x>
-             <y>-41</y>
-             <width>572</width>
-             <height>572</height>
+             <y>0</y>
+             <width>272</width>
+             <height>721</height>
             </rect>
            </property>
            <layout class="QVBoxLayout" name="verticalLayout_27">
@@ -7595,9 +7590,9 @@ Note that this value does not affect flight plan calculation or saving of flight
            <property name="geometry">
             <rect>
              <x>0</x>
-             <y>-4</y>
-             <width>572</width>
-             <height>630</height>
+             <y>0</y>
+             <width>245</width>
+             <height>758</height>
             </rect>
            </property>
            <layout class="QVBoxLayout" name="verticalLayout_28">
@@ -7962,8 +7957,8 @@ If this field is empty, the default Active Sky weather file path will be used wh
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>586</width>
-             <height>531</height>
+             <width>389</width>
+             <height>375</height>
             </rect>
            </property>
            <layout class="QVBoxLayout" name="verticalLayout_29">
@@ -8270,8 +8265,8 @@ If this field is empty, the default Active Sky weather file path will be used wh
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>586</width>
-             <height>531</height>
+             <width>543</width>
+             <height>469</height>
             </rect>
            </property>
            <layout class="QGridLayout" name="gridLayout_37">
@@ -8588,8 +8583,8 @@ Little Navmap GIT repository.
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>586</width>
-             <height>531</height>
+             <width>395</width>
+             <height>524</height>
             </rect>
            </property>
            <layout class="QGridLayout" name="gridLayout_38">
@@ -8956,9 +8951,9 @@ You have to reload the scenery library so that the changes take effect.</string>
            <property name="geometry">
             <rect>
              <x>0</x>
-             <y>-391</y>
-             <width>572</width>
-             <height>922</height>
+             <y>0</y>
+             <width>369</width>
+             <height>1139</height>
             </rect>
            </property>
            <layout class="QVBoxLayout" name="verticalLayout_75">
