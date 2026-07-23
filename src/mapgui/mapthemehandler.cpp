@@ -21,6 +21,7 @@
 #include "atools.h"
 #include "common/constants.h"
 #include "exception.h"
+#include "gui/desktopservices.h"
 #include "gui/dialog.h"
 #include "gui/messagebox.h"
 #include "gui/widgetstate.h"
@@ -41,6 +42,7 @@
 #include <QSettings>
 #include <QStringBuilder>
 #include <QXmlStreamReader>
+#include <marble/MarbleDirs.h>
 
 const static quint64 KEY = 0x19CB0467EBD391CC;
 const static QLatin1String FILENAME("mapthemekeys.bin");
@@ -1028,6 +1030,16 @@ void MapThemeHandler::resetToDefault()
 
   changeMapTheme();
   changeMapProjection();
+}
+
+void MapThemeHandler::openMapCache(QWidget *parentWidget)
+{
+  atools::gui::DesktopServices(parentWidget).openFile(getDiskCache());
+}
+
+QString MapThemeHandler::getDiskCache()
+{
+  return atools::nativeCleanPath(Marble::MarbleDirs::localPath() % atools::SEP % "maps" % atools::SEP % "earth");
 }
 
 QString MapThemeHandler::mapThemeDefaultDir()

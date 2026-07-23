@@ -267,6 +267,14 @@ public:
   /* Reset back to OpenStreetMap and Mercator */
   void resetToDefault();
 
+  /* Open cache folder for themes in file manager. */
+  static void openMapCache(QWidget *parentWidget);
+
+  /* Get cache folder for themes.
+   * Windows: C:\Users\YOURUSERNAME\AppData\Local\.marble\data\earth
+   * Linux and macOS: $HOME/.local/share/marble/maps/earth */
+  static QString getDiskCache();
+
 private:
   static QString mapThemeDefaultDir();
   static QString mapThemeUserDir();

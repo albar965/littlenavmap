@@ -59,9 +59,6 @@
 #include <QInputDialog>
 #include <QSvgRenderer>
 
-#include <marble/MarbleModel.h>
-#include <marble/MarbleDirs.h>
-
 // Show a warning if user decreases update rate for online services below this limit
 const int MIN_ONLINE_UPDATE_SECONDS = 120;
 
@@ -1097,7 +1094,9 @@ OptionsDialog::~OptionsDialog()
 void OptionsDialog::hintLinkActivated(const QString& link)
 {
   qDebug() << Q_FUNC_INFO << link;
-  if(link.startsWith(QStringLiteral("lnm://")))
+  if(link.startsWith(QStringLiteral("lnm://openmapcache")))
+    MapThemeHandler::openMapCache(this);
+  else if(link.startsWith(QStringLiteral("lnm://")))
   {
     const QString id = link.mid(6);
     QListWidgetItem *item = listWidgetItemIndex.value(id, nullptr);
@@ -3428,8 +3427,7 @@ void OptionsDialog::clearMemCacheProfileClicked()
 /* Opens the disk cache in explorer, finder, whatever */
 void OptionsDialog::showDiskCacheClicked()
 {
-  atools::gui::DesktopServices::openUrl(this, QUrl::fromLocalFile(Marble::MarbleDirs::localPath() % atools::SEP % QStringLiteral("maps") %
-                                                                  atools::SEP % QStringLiteral("earth")).toString());
+  MapThemeHandler::openMapCache(this);
 }
 
 void OptionsDialog::addPageListItem(const QString& id, const QString& text, const QString& tooltip, const QString& iconPath)
@@ -3858,8 +3856,7 @@ void OptionsDialog::mapboxUserMapClicked()
        "You can find the Token on your Mapbox Account page.</p>"
        "<p><a href=\"https://account.mapbox.com/\"><b>Click here to open the Mapbox Account page in your browser</b></a></p>");
 
-  QUrl cacheUrl = QUrl::fromLocalFile(atools::cleanPath(Marble::MarbleDirs::localPath() % atools::SEP % "maps" % atools::SEP %
-                                                        "earth" % atools::SEP % "mapboxuser"));
+  QUrl cacheUrl = QUrl::fromLocalFile(MapThemeHandler::getDiskCache() % atools::SEP % "mapboxuser");
 
   QString label3 =
     tr("<p><b>You have to clear the map cache manually after updating or changing your Mapbox style.</b></p>"

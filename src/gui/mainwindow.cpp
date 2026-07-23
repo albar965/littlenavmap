@@ -1942,9 +1942,7 @@ void MainWindow::showDatabaseFiles()
 
 void MainWindow::showShowMapCache()
 {
-  // Windows: C:\Users\YOURUSERNAME\AppData\Local\.marble\data
-  // Linux and macOS: $HOME/.local/share/marble
-  desktopServices->openFile(Marble::MarbleDirs::localPath() % atools::SEP % "maps" % atools::SEP % "earth");
+  MapThemeHandler::openMapCache(this);
 }
 
 void MainWindow::showMapInstallation()
