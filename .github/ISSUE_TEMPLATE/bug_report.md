@@ -11,9 +11,11 @@ assignees: albar965
 
 **►►Do not submit AI generated bug reports!◄◄**
 
-**All issues for _atools_, _Little Navconnect_, _Little Xpconnect_ are collected in this repository since ownership is often not clear.**
+**►►Look at the [Little Navmap FAQ](https://albar965.github.io/littlenavmap-faq.html) first to see if your problem is already listed.◄◄**
 
-**Look at the [Little Navmap FAQ](https://albar965.github.io/littlenavmap-faq.html) first to see if your problem is already listed.**
+**►►Also, look out for open and closed issues that might be duplicates of yours.◄◄**
+
+**All issues for _atools_, _Little Navconnect_, _Little Xpconnect_ are collected in this repository since ownership is often not clear.**
 
 **Describe the bug**
 A clear and concise description of what the bug is.
@@ -42,7 +44,7 @@ Attach any related files if copyright and size permits: Flight plan files, FSX/P
  - X-Plane 11
  - X-Plane 12
  - FSX
- - Prepar3D 
+ - Prepar3D
 
 **AIRAC cycle and used navigation data**
 
@@ -50,3 +52,5 @@ AIRAC cycle and navdata source if applicable: FSX Stock, Navigraph Cycle 2601, X
 
 **Additional context**
 Add any other context about the problem here.
+
+Thank you for following the instructions.👍 This can save me a lot of time.🙂
