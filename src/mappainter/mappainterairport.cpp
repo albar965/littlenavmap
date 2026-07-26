@@ -35,6 +35,10 @@
 #include "route/route.h"
 #include "util/paintercontextsaver.h"
 
+#ifdef Q_OS_WIN
+#include "options/optiondata.h"
+#endif
+
 #include <QElapsedTimer>
 #include <QPainterPath>
 #include <QStringBuilder>
@@ -42,6 +46,7 @@
 
 #include <marble/GeoPainter.h>
 #include <marble/ViewportParams.h>
+
 
 /* Minimum width for runway diagram */
 static const float RUNWAY_MIN_WIDTH_FT = 4.f;
