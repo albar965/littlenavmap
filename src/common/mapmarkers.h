@@ -23,11 +23,11 @@
 #include <QCoreApplication>
 
 namespace map {
-class MsaMarker;
-class HoldingMarker;
-class PatternMarker;
-class DistanceMarker;
-class RangeMarker;
+struct MsaMarker;
+struct HoldingMarker;
+struct PatternMarker;
+struct DistanceMarker;
+struct RangeMarker;
 }
 
 namespace atools {

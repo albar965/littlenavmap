@@ -853,7 +853,7 @@ macx {
   copydata.commands += cp -Rv $$PWD/timezone $$OUT_PWD/littlenavmap.app/Contents/MacOS &&
   copydata.commands += cp -Rv $$PWD/marble/data $$OUT_PWD/littlenavmap.app/Contents/MacOS &&
   copydata.commands += cp -vf $$PWD/translations/*.qm $$OUT_PWD/littlenavmap.app/Contents/MacOS &&
-  copydata.commands += cp -vf $$ATOOLS_INC_PATH/../translations/*.qm $$OUT_PWD/littlenavmap.app/Contents/MacOS
+  copydata.commands += cp -vf $$ATOOLS_INC_PATH/../translations/*.qm $$OUT_PWD/littlenavmap.app/Contents/MacOS &&
   copydata.commands += cp -vf $$MARBLE_INC_PATH/../translations/*.qm $$OUT_PWD/littlenavmap.app/Contents/MacOS
 }
 
