@@ -22,7 +22,7 @@
 #include <QAction>
 
 namespace map {
-class MapAirport;
+struct MapAirport;
 }
 class Route;
 

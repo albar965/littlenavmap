@@ -43,14 +43,13 @@ class MapScale;
 class MapWidget;
 class SymbolPainter;
 class Route;
-class PaintContext;
+struct PaintContext;
 
 namespace map {
 struct MapAirport;
 struct MapRef;
 struct MapHolding;
 struct MapAirportMsa;
-
 }
 
 /* Used to collect airports for drawing. Needs to copy airport since it might be removed from the cache. */
