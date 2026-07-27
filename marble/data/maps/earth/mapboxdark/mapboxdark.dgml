@@ -28,7 +28,7 @@
       <target/>
       <layer name="mapboxdark" backend="texture">
         <!-- Tiles expire after 60 days -->
-        <texture name="mapnik_data" expire="5184000">
+        <texture name="mapnik_data" expire="1209600">
           <sourcedir format="PNG"> earth/mapboxdark </sourcedir>
           <tileSize width="512" height="512"/>
           <storageLayout levelZeroColumns="1" levelZeroRows="1" maximumTileLevel="19" mode="Custom"/>

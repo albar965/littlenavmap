@@ -116,12 +116,13 @@ void MapThemeHandler::loadThemes()
       if(ids.contains(theme.theme))
       {
         MapTheme otherTheme = ids.value(theme.theme);
-        errors.append(tr("Duplicate map theme id \"%1\" in element \"&lt;theme&gt;\". Theme with first occurrence"
+        errors.append(tr("Duplicate map theme id \"%1\" in element \"&lt;theme&gt;\". Theme with first occurrence<br/>"
                          "%2&nbsp;(click to show).<br/>"
-                         "Theme with second occurrence being ignored"
+                         "Theme with second occurrence being ignored:<br/>"
                          "%3&nbsp;(click to show).<br/>"
                          "Theme ids have to be unique across all map themes.<br/>"
-                         "<b>Remove one of these two map themes to avoid this message.</b><br/>").
+                         "<b>Remove one of these two map themes to avoid this message.<br/>"
+                         "Remove any themes you installed manually first.</b><br/>").
                       arg(theme.theme, HtmlBuilder::aFilePath(otherTheme.displayPath(), FLAGS),
                           HtmlBuilder::aFilePath(theme.displayPath(), FLAGS)));
         continue;
@@ -159,12 +160,13 @@ void MapThemeHandler::loadThemes()
           otherDgmlFilepathsText.append(HtmlBuilder::aFilePath(otherDgmlFilepath, FLAGS));
 
         errors.append(tr("Duplicate source directory or directories \"%1\" in element \"&lt;sourcedir&gt;\".<br/>"
-                         "Map theme with first occurrence"
+                         "Map theme with first occurrence:<br/>"
                          "%2&nbsp;(click to show).<br/>"
-                         "Theme(s) with second occurrence being ignored"
+                         "Theme(s) with second occurrence being ignored:<br/>"
                          "%3&nbsp;(click to show).<br/>"
                          "Source directories are used to cache map tiles and have to be unique across all map themes.<br/>"
-                         "<b>Remove one or more of these map themes to avoid this message.</b><br/>").
+                         "<b>Remove one or more of these map themes to avoid this message.<br/>"
+                         "Remove any themes you installed manually first.</b><br/>").
                       arg(theme.sourceDirs.join(tr("\", \"")), HtmlBuilder::aFilePath(theme.displayPath(), FLAGS),
                           otherDgmlFilepathsText.join(tr("<br/>"))));
         continue;
@@ -172,7 +174,7 @@ void MapThemeHandler::loadThemes()
 
       if(theme.theme.isEmpty())
       {
-        errors.append(tr("Empty id in in element \"&lt;theme&gt;\" in map theme"
+        errors.append(tr("Empty id in in element \"&lt;theme&gt;\" in map theme:<br/>"
                          "%1&nbsp;(click to show).<br/>"
                          "<b>Remove or repair this map theme to avoid this message.</b><br/>").
                       arg(HtmlBuilder::aFilePath(theme.displayPath(), FLAGS)));
@@ -181,7 +183,7 @@ void MapThemeHandler::loadThemes()
 
       if(theme.online && theme.sourceDirs.isEmpty())
       {
-        errors.append(tr("Empty source directory in in element \"&lt;sourcedir&gt;\" in map theme"
+        errors.append(tr("Empty source directory in in element \"&lt;sourcedir&gt;\" in map theme:<br/>"
                          "%1&nbsp;(click to show).<br/>"
                          "<b>Remove or repair this map theme to avoid this message.</b><br/>").
                       arg(HtmlBuilder::aFilePath(theme.displayPath(), FLAGS)));
@@ -190,7 +192,7 @@ void MapThemeHandler::loadThemes()
 
       if(theme.target != "earth")
       {
-        errors.append(tr("Invalid target \"%1\" in element \"&lt;target&gt;\" in map theme "
+        errors.append(tr("Invalid target \"%1\" in element \"&lt;target&gt;\" in map theme:<br/>"
                          "%2&nbsp;(click to show).<br/>"
                          "Element must contain text \"earth\".<br/>"
                          "<b>Remove or repair this map theme to avoid this message.</b><br/>").
@@ -213,7 +215,7 @@ void MapThemeHandler::loadThemes()
 
       if(rejected)
       {
-        errors.append(tr("Map theme"
+        errors.append(tr("Map theme<br/>"
                          "%1&nbsp;(click to show)<br/>"
                          "was rejected since the service is discontinued.<br/>"
                          "<b>Remove this map theme to avoid this message.</b><br/>").
@@ -226,7 +228,7 @@ void MapThemeHandler::loadThemes()
       {
         if(!SHORTCUT_REGEXP.match(theme.getShortcut()).hasMatch())
         {
-          errors.append(tr("Map theme"
+          errors.append(tr("Map theme<br/>"
                            "%1&nbsp;(click to show)<br/>"
                            "has an invalid shortcut \"%2\". Only \"Ctrl+Alt+NUMBER\" allowed.<br/>"
                            "<b>Remove this map theme or adjust element \"&lt;shortcut&gt;\" avoid this message.</b><br/>").
@@ -237,7 +239,7 @@ void MapThemeHandler::loadThemes()
           shortcuts.insert(theme.getShortcut().toLower());
         else
         {
-          errors.append(tr("Map theme"
+          errors.append(tr("Map theme<br/>"
                            "%1&nbsp;(click to show)<br/>"
                            "has a duplicate shortcut \"%2\".<br/>"
                            "<b>Remove this map theme or adjust element \"&lt;shortcut&gt;\" avoid this message.</b><br/>").
@@ -301,8 +303,8 @@ void MapThemeHandler::showThemeLoadingErrors()
 
     atools::gui::MessageBox box(mainWindow);
     box.setIcon(QMessageBox::Warning);
-    box.setMessage(tr("<p>Found errors in map %2:</p>"
-                        "<ul><li>%1</li></ul>"
+    box.setMessage(tr("<p style='white-space:pre'>Found errors in map %2:</p>"
+                        "<p style='white-space:pre'><ul><li>%1</li></ul></p>"
                           "<p>Ignoring duplicate, incorrect or rejected %2.</p>"
                             "<p>Note that all other valid map themes are loaded and can be used despite this message.</p>"
                               "<p>Restart Little Navmap after fixing the issues.</p>").

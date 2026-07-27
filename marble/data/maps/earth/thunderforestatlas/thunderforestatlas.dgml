@@ -28,7 +28,7 @@
       <target/>
       <layer name="thunderforestatlas" backend="texture">
         <!-- Tiles expire after 60 days -->
-        <texture name="mapnik_data" expire="5184000">
+        <texture name="mapnik_data" expire="1209600">
           <sourcedir format="PNG"> earth/thunderforestatlas </sourcedir>
           <tileSize width="256" height="256"/>
           <storageLayout levelZeroColumns="1" levelZeroRows="1" maximumTileLevel="19" mode="Custom"/>
