@@ -17,10 +17,10 @@
 
 #include "search/sqlproxymodel.h"
 
+#include "common/mapinvalid.h"
+#include "common/unit.h"
 #include "geo/calculations.h"
 #include "search/sqlmodel.h"
-#include "common/unit.h"
-#include "common/mapflags.h"
 
 #include <QApplication>
 #include <QDate>

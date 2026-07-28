@@ -17,7 +17,7 @@
 
 #include "mapscale.h"
 
-#include "common/mapflags.h"
+#include "common/mapinvalid.h"
 #include "geo/calculations.h"
 #include "geo/coordinateconverter.h"
 #include "geo/marbleconverter.h"

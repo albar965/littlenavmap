@@ -19,6 +19,7 @@
 #define LITTLENAVMAP_MAPTYPESFACTORY_H
 
 #include "common/mapflags.h"
+#include "common/mapinvalid.h"
 
 namespace atools {
 namespace sql {

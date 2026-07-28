@@ -18,7 +18,7 @@
 #ifndef LITTLENAVMAP_MAPTOOLS_H
 #define LITTLENAVMAP_MAPTOOLS_H
 
-#include "common/mapflags.h"
+#include "common/mapinvalid.h"
 #include "geo/calculations.h"
 #include "geo/coordinateconverter.h"
 #include "geo/pos.h"

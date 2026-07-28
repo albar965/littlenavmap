@@ -30,22 +30,6 @@
  */
 namespace map {
 
-/* Value for invalid/not found distances */
-Q_DECL_CONSTEXPR static float INVALID_COURSE_VALUE = std::numeric_limits<float>::max();
-Q_DECL_CONSTEXPR static float INVALID_HEADING_VALUE = INVALID_COURSE_VALUE;
-Q_DECL_CONSTEXPR static float INVALID_ANGLE_VALUE = INVALID_COURSE_VALUE;
-Q_DECL_CONSTEXPR static float INVALID_DISTANCE_VALUE = std::numeric_limits<float>::max();
-Q_DECL_CONSTEXPR static float INVALID_ALTITUDE_VALUE = std::numeric_limits<float>::max();
-Q_DECL_CONSTEXPR static float INVALID_SPEED_VALUE = std::numeric_limits<float>::max();
-Q_DECL_CONSTEXPR static float INVALID_TIME_VALUE = std::numeric_limits<float>::max();
-Q_DECL_CONSTEXPR static float INVALID_WEIGHT_VALUE = std::numeric_limits<float>::max();
-Q_DECL_CONSTEXPR static float INVALID_VOLUME_VALUE = std::numeric_limits<float>::max();
-Q_DECL_CONSTEXPR static float INVALID_LON_LAT_VALUE = std::numeric_limits<float>::max();
-Q_DECL_CONSTEXPR static float INVALID_METAR_VALUE = std::numeric_limits<float>::max(); // Same as in metarparser.h
-Q_DECL_CONSTEXPR static int INVALID_INDEX_VALUE = std::numeric_limits<int>::max();
-
-Q_DECL_CONSTEXPR static float INVALID_MAGVAR = 9999.f;
-
 Q_DECL_CONSTEXPR static float DEFAULT_ILS_WIDTH_DEG = 4.f;
 Q_DECL_CONSTEXPR static float DEFAULT_GLS_RNP_WIDTH_DEG = 8.f;
 

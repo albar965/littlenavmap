@@ -20,6 +20,7 @@
 
 #include "geo/line.h"
 #include "common/mapflags.h"
+#include "common/mapinvalid.h"
 #include "geo/linestring.h"
 #include "fs/sc/simconnectuseraircraft.h"
 #include "fs/common/xpgeometry.h"

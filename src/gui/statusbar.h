@@ -18,8 +18,9 @@
 #ifndef LNM_GUI_STATUSBAR_H
 #define LNM_GUI_STATUSBAR_H
 
-#include "common/mapflags.h"
+#include "common/mapinvalid.h"
 #include "options/optionchangeflags.h"
+
 #include <QDateTime>
 #include <QLabel>
 #include <QObject>

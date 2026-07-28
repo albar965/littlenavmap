@@ -18,7 +18,7 @@
 #include "common/formatter.h"
 
 #include "atools.h"
-#include "common/mapflags.h"
+#include "common/mapinvalid.h"
 #include "fs/util/coordinates.h"
 #include "fs/util/fsutil.h"
 #include "geo/calculations.h"
