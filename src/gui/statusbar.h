@@ -18,13 +18,13 @@
 #ifndef LNM_GUI_STATUSBAR_H
 #define LNM_GUI_STATUSBAR_H
 
+#include "common/mapflags.h"
 #include "options/optionchangeflags.h"
 #include <QDateTime>
 #include <QLabel>
 #include <QObject>
 #include <QTimer>
 
-#include <marble/MarbleGlobal.h>
 #include <marble/RenderState.h>
 
 class QStatusBar;
@@ -158,6 +158,10 @@ private:
   QLabel *mapDistanceLabel = nullptr, *mapPositionLabel = nullptr, *mapMagvarLabel = nullptr, *timeZoneLabel = nullptr,
          *mapRenderStatusLabel = nullptr, *mapDetailLabel = nullptr, *mapVisibleLabel = nullptr, *connectStatusLabel = nullptr,
          *timeLabel = nullptr;
+
+  /* Compare new to last value to avoid unneeded updates */
+  QPoint lastPoint;
+  float lastAltitude = map::INVALID_ALTITUDE_VALUE;
 
   /* Connection field and tooltip in statusbar */
   QString connectionStatus, connectionStatusTooltip, onlineConnectionStatus, onlineConnectionStatusTooltip;

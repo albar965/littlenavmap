@@ -61,7 +61,6 @@ StatusBar::StatusBar(QStatusBar *statusBarParam)
 
 StatusBar::~StatusBar()
 {
-
 }
 
 void StatusBar::init()
@@ -153,10 +152,12 @@ void StatusBar::updateClock() const
     }
 
     // Label text ===========================
+
+    QString timeText;
     if(datetimeText.isNull())
-      timeLabel->setText(tr(" — "));
+      timeText = tr(" — ");
     else
-      timeLabel->setText(datetimeText.toString(QStringLiteral("d   HH:mm:ss %1 ").arg(datetimeText.timeZoneAbbreviation())));
+      timeText = datetimeText.toString(QStringLiteral("d   HH:mm:ss %1 ").arg(datetimeText.timeZoneAbbreviation()));
 
     // Tooltip text ===========================
     if(timeLabel->isVisible())
@@ -184,7 +185,11 @@ void StatusBar::updateClock() const
         QToolTip::showText(QCursor::pos(), html.getHtml());
     }
 
-    timeLabel->setMinimumWidth(timeLabel->width());
+    if(timeLabel->text() != timeText)
+    {
+      timeLabel->setText(timeText);
+      timeLabel->setMinimumWidth(timeLabel->width());
+    }
   }
 }
 
@@ -454,9 +459,14 @@ void StatusBar::setMapObjectsShownMessageText(const QString& text, const QString
 {
   if(!NavApp::isShuttingDown())
   {
-    mapVisibleLabel->setText(text);
-    mapVisibleLabel->setToolTip(tooltipText);
-    mapVisibleLabel->setMinimumWidth(mapVisibleLabel->width());
+    if(mapVisibleLabel->text() != text)
+    {
+      mapVisibleLabel->setText(text);
+      mapVisibleLabel->setMinimumWidth(mapVisibleLabel->width());
+    }
+
+    if(mapVisibleLabel->toolTip() != tooltipText)
+      mapVisibleLabel->setToolTip(tooltipText);
   }
 }
 
@@ -480,14 +490,17 @@ void StatusBar::distanceChanged()
     const MapPaintWidget *mapWidget = NavApp::getMapPaintWidgetGui();
     if(mapWidget != nullptr)
     {
-      QString text = Unit::distMeter(mapWidget->distance() * 1000.f);
+      QString distanceText = Unit::distMeter(mapWidget->distance() * 1000.f);
 
 #ifdef DEBUG_INFORMATION
-      text += QStringLiteral(" [%1km][%2z]").arg(mapWidget->distance(), 0, 'f', 2).arg(mapWidget->zoom());
+      distanceText += QStringLiteral(" [%1km][%2z]").arg(mapWidget->distance(), 0, 'f', 2).arg(mapWidget->zoom());
 #endif
 
-      mapDistanceLabel->setText(text);
-      mapDistanceLabel->setMinimumWidth(mapDistanceLabel->width());
+      if(mapDistanceLabel->text() != distanceText)
+      {
+        mapDistanceLabel->setText(distanceText);
+        mapDistanceLabel->setMinimumWidth(mapDistanceLabel->width());
+      }
     }
   }
 }
@@ -592,19 +605,27 @@ void StatusBar::updateMapPositionLabel(const atools::geo::Pos& pos, const QPoint
 {
   if(!atools::gui::Application::isShuttingDown() && statusBar->isVisible())
   {
-    if(pos.isValid())
+    if(pos.isValid() && (lastPoint != point || !atools::almostEqual(pos.getAltitude(), lastAltitude, 10.f)))
     {
+      lastPoint = point;
+      lastAltitude = pos.getAltitude();
+
       // Coordinates ============================
-      QString text(Unit::coords(pos));
+      QString coordinateText(Unit::coords(pos));
 
       if(NavApp::isGlobeOfflineProvider() && pos.getAltitude() < map::INVALID_ALTITUDE_VALUE)
-        text += tr(" / ") % Unit::altMeter(pos.getAltitude());
+        coordinateText += tr(" / ") % Unit::altMeter(pos.getAltitude());
+
 #ifdef DEBUG_INFORMATION
-      text.append(QStringLiteral(" [L %1,%2/G %3,%4]").arg(point.x()).arg(point.y()).arg(QCursor::pos().x()).arg(QCursor::pos().y()));
+      coordinateText.append(QStringLiteral(" [L %1,%2/G %3,%4]").
+                            arg(point.x()).arg(point.y()).arg(QCursor::pos().x()).arg(QCursor::pos().y()));
 #endif
 
-      mapPositionLabel->setText(text);
-      mapPositionLabel->setMinimumWidth(mapPositionLabel->width());
+      if(mapPositionLabel->text() != coordinateText)
+      {
+        mapPositionLabel->setText(coordinateText);
+        mapPositionLabel->setMinimumWidth(mapPositionLabel->width());
+      }
 
       // Declination ============================
       float magVar = NavApp::getMagVar(pos);
@@ -614,27 +635,39 @@ void StatusBar::updateMapPositionLabel(const atools::geo::Pos& pos, const QPoint
       magVarText += QStringLiteral(" [%1]").arg(magVar, 0, 'f', 2);
 #endif
 
-      mapMagvarLabel->setText(magVarText);
-      mapMagvarLabel->setMinimumWidth(mapMagvarLabel->width());
+      if(mapMagvarLabel->text() != magVarText)
+      {
+        mapMagvarLabel->setText(magVarText);
+        mapMagvarLabel->setMinimumWidth(mapMagvarLabel->width());
+      }
 
       // Time Zone  ============================
       const QTimeZone zone = NavApp::getTimeZone(pos);
       const QString offset = formatter::formatTimeZoneOffset(zone.standardTimeOffset(NavApp::getUtcDateTimeSimOrCurrent()));
       QLocale::Territory territory = zone.territory();
+      QString timeZoneText;
       if(territory != QLocale::AnyTerritory)
-        timeZoneLabel->setText(tr("%1 / %2").arg(QLocale::territoryToString(territory), offset));
+        timeZoneText = tr("%1 / %2").arg(QLocale::territoryToString(territory), offset);
       else
-        timeZoneLabel->setText(tr("%1").arg(offset));
+        timeZoneText = tr("%1").arg(offset);
 
-      timeZoneLabel->setMinimumWidth(timeZoneLabel->width());
+      if(timeZoneLabel->text() != timeZoneText)
+      {
+        timeZoneLabel->setText(timeZoneText);
+        timeZoneLabel->setMinimumWidth(timeZoneLabel->width());
+      }
 
-      // Stop status bar time to avoid shrinking =====================
+      // Stop status bar timer to avoid shrinking =====================
       shrinkStatusBarTimer.stop();
     }
     else
     {
-      mapPositionLabel->setText(tr(" — "));
-      mapPositionLabel->setMinimumWidth(mapPositionLabel->width());
+      if(mapPositionLabel->text() != tr(" — "))
+      {
+        mapPositionLabel->setText(tr(" — "));
+        mapPositionLabel->setMinimumWidth(mapPositionLabel->width());
+      }
+
       mapMagvarLabel->setText(tr(" — "));
       timeZoneLabel->setText(tr(" — "));
 
@@ -707,8 +740,11 @@ void StatusBar::setDetailLabelText(const QString& text)
 {
   if(!atools::gui::Application::isShuttingDown())
   {
-    mapDetailLabel->setText(text);
-    mapDetailLabel->setMinimumWidth(mapDetailLabel->width());
+    if(mapDetailLabel->text() != text)
+    {
+      mapDetailLabel->setText(text);
+      mapDetailLabel->setMinimumWidth(mapDetailLabel->width());
+    }
   }
 }
 
