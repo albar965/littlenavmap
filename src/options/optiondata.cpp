@@ -95,9 +95,7 @@ void OptionData::saveLanguageToConfigFile(const QString& language)
 
 const QString& OptionData::getUserAgent() const
 {
-  if(flags.testFlag(opts::RANDOM_USER_AGENT))
-    return userAgentRandom;
-  else if(userAgent.isEmpty())
+  if(userAgent.isEmpty())
     return userAgentDefault;
 
   return userAgent;
