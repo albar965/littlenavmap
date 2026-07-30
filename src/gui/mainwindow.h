@@ -573,7 +573,9 @@ private:
   void toggleWebserver(bool checked);
   void webserverStatusChanged(bool running);
   void openWebserver();
-  void openWebserverQrCode();
+  void openWebserverQrCodeAction();
+  void openWebserverQrCodeOptions();
+  void openWebserverQrCode(QWidget *parent);
   void saveStateNow();
   void optionsChanged(const optc::OptionChangeFlags& changeFlags);
   void optionsChangedInitial();

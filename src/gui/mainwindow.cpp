@@ -43,9 +43,9 @@
 #include "gui/errorhandler.h"
 #include "gui/filehistoryhandler.h"
 #include "gui/helphandler.h"
-#include "gui/imagedialog.h"
 #include "gui/messagebox.h"
 #include "gui/messagesettings.h"
+#include "gui/qrcodedialog.h"
 #include "gui/statusbar.h"
 #include "gui/stylehandler.h"
 #include "gui/tabwidgethandler.h"
@@ -71,7 +71,6 @@
 #include "perf/aircraftperfcontroller.h"
 #include "print/printsupport.h"
 #include "profile/profilewidget.h"
-#include "qrcode/qrcodegenerator.h"
 #include "query/airportquery.h"
 #include "query/procedurequery.h"
 #include "route/routecontroller.h"
@@ -1309,6 +1308,7 @@ void MainWindow::connectAllSlots()
 
   // Scenery library menu ============================================================
   DatabaseManager *databaseManager = NavApp::getDatabaseManager();
+  connect(optionsDialog, &OptionsDialog::showQrCodeClicked, this, &MainWindow::openWebserverQrCodeOptions);
   connect(optionsDialog, &OptionsDialog::loadSceneryLibrary, databaseManager, &DatabaseManager::loadScenery, Qt::QueuedConnection);
   connect(ui->actionLoadAirspaces, &QAction::triggered, NavApp::getAirspaceController(), &AirspaceController::loadAirspaces);
   connect(ui->actionReloadScenery, &QAction::triggered, databaseManager, &DatabaseManager::loadScenery);
@@ -1749,7 +1749,7 @@ void MainWindow::connectAllSlots()
   // Webserver
   connect(ui->actionRunWebserver, &QAction::toggled, this, &MainWindow::toggleWebserver);
   connect(ui->actionOpenWebserver, &QAction::triggered, this, &MainWindow::openWebserver);
-  connect(ui->actionOpenWebserverQrCode, &QAction::triggered, this, &MainWindow::openWebserverQrCode);
+  connect(ui->actionOpenWebserverQrCode, &QAction::triggered, this, &MainWindow::openWebserverQrCodeAction);
   connect(NavApp::getWebController(), &WebController::webserverStatusChanged, this, &MainWindow::webserverStatusChanged);
   connect(NavApp::getWebController(), &WebController::webserverStatusChanged, optionsDialog, &OptionsDialog::webserverStatusChanged);
 
@@ -5429,17 +5429,33 @@ void MainWindow::openWebserver()
   NavApp::getWebController()->openPage();
 }
 
-void MainWindow::openWebserverQrCode()
+void MainWindow::openWebserverQrCodeAction()
+{
+  openWebserverQrCode(this);
+}
+
+void MainWindow::openWebserverQrCodeOptions()
+{
+  openWebserverQrCode(optionsDialog);
+}
+
+void MainWindow::openWebserverQrCode(QWidget *parent)
 {
   // Generate QR code if widget is visible and server running
   QString urlString = NavApp::getWebController()->getUrl(false /* useIpAddress */).toString();
+  QString urlStringIp = NavApp::getWebController()->getUrl(true /* useIpAddress */).toString();
 
-  // Use widget height or at least 10 timess the height of a combo box
-  QImage img = atools::qrcode::QrCodeGenerator(this).generateQr(urlString, NavApp::getMinButtonSize().height() * 10);
-
-  atools::gui::ImageDialog dialog(this, QPixmap::fromImage(img),
+  atools::gui::QrCodeDialog dialog(parent, {urlString, urlStringIp}, {tr("Computer Name"), tr("IP-Address")},
+                                  {tr("Scan the QR code to open the web address<br/>"
+                                      "<a href=\"%1\">%1</a>.").arg(urlString),
+                                   tr("Scan QR code to open web address<br/>"
+                                      "<a href=\"%1\">%1</a>.<br/>"
+                                      "Note that the IP-address can change between reboots.").arg(urlStringIp)},
                                   QApplication::applicationName() % tr(" - QR code for Web Server"),
-                                  tr("Scan QR code to open web address %1.").arg(urlString));
+                                  "WEBSERVER.html#qrcode");
+  dialog.setHelpOnlineUrl(lnm::helpOnlineUrl);
+  dialog.setHelpLanguageOnline(lnm::helpLanguageOnline());
+
   dialog.exec();
 }
 

@@ -970,9 +970,6 @@ OptionsDialog::OptionsDialog(QMainWindow *parentWindow)
   connect(ui->pushButtonOptionsCacheShow, &QPushButton::clicked, this, &OptionsDialog::showDiskCacheClicked);
 
   connect(ui->checkBoxOptionsSimUpdatesConstant, &QCheckBox::toggled, this, &OptionsDialog::updateWhileFlyingWidgets);
-
-  // ===========================================================================
-  // Cache
   connect(ui->pushButtonOptionsCacheClearProfile, &QPushButton::clicked, this, &OptionsDialog::clearMemCacheProfileClicked);
 
   // ===========================================================================
@@ -1037,6 +1034,7 @@ OptionsDialog::OptionsDialog(QMainWindow *parentWindow)
   connect(ui->pushButtonOptionsWebSelectDocroot, &QPushButton::clicked, this, &OptionsDialog::selectWebDocrootClicked);
   connect(ui->lineEditOptionsWebDocroot, &QLineEdit::textEdited, this, &OptionsDialog::updateWebDocrootStatus);
   connect(ui->pushButtonOptionsWebStart, &QPushButton::clicked, this, &OptionsDialog::startStopWebServerClicked);
+  connect(ui->pushButtonOptionsWebQrCode, &QPushButton::clicked, this, &OptionsDialog::showQrCodeClicked);
 
   // Flight plan =======================================================================
   connect(ui->checkBoxOptionsRouteEastWestRule, &QPushButton::clicked, this, &OptionsDialog::eastWestRuleClicked);
@@ -3478,27 +3476,13 @@ void OptionsDialog::updateWebServerStatus()
                                              arg(urls.join(QStringLiteral("<br/>"))));
 
         ui->pushButtonOptionsWebStart->setText(tr("&Stop Web Server"));
-
-        if(ui->labelOptionsWebQrCode->isVisible())
-        {
-          // Generate QR code if widget is visible and server running
-          QString urlString = webController->getUrl(false /* useIpAddress */).toString();
-
-          // Use widget height or at least 5 timess the height of a combo box
-          QImage img = atools::qrcode::QrCodeGenerator(this).generateQr(urlString, NavApp::getMinButtonSize().height() * 5);
-          ui->labelOptionsWebQrCode->setPixmap(QPixmap::fromImage(img));
-          ui->labelOptionsWebQrCode->setToolTip(tr("Scan QR code to open web address %1.").arg(urlString));
-        }
+        ui->pushButtonOptionsWebQrCode->setEnabled(true);
       }
       else
       {
         ui->labelOptionsWebStatus->setText(tr("Web Server is not running."));
         ui->pushButtonOptionsWebStart->setText(tr("&Start Web Server"));
-
-        // Empty QR code widget
-        ui->labelOptionsWebQrCode->setPixmap(QPixmap());
-        ui->labelOptionsWebQrCode->setText(tr("Start server to see QR code."));
-        ui->labelOptionsWebQrCode->setToolTip(ui->labelOptionsWebQrCode->text());
+        ui->pushButtonOptionsWebQrCode->setEnabled(false);
       }
     }
   }

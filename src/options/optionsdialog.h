@@ -116,6 +116,9 @@ signals:
   /* Open load scenery library dialog. Connect queued to allow the options to close before. */
   void loadSceneryLibrary();
 
+  /* Show QR code dialog for web server */
+  void showQrCodeClicked();
+
   /* Restart. Connect queued to allow the options to close before. */
   void restartApplication(bool resetLayout);
 
