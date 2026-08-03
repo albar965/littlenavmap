@@ -63,6 +63,8 @@ public:
   /* true if any fusion based style like Dark or Fusion */
   bool isGuiStyleAnyFusion() const;
 
+  static void logPalette(const QPalette& palette);
+
 signals:
   /* Sent on change */
   void preStyleChange();
@@ -86,8 +88,6 @@ private:
 
   /* Index to current or dark/fusion */
   int styleIndex() const;
-
-  void logPalette(const QPalette& palette) const;
 
   /* All system and custom styleDescriptions */
   QList<StyleDescription> styleDescriptions;

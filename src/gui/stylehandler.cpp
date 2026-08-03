@@ -269,7 +269,7 @@ StyleHandler::~StyleHandler()
   ATOOLS_DELETE(styleActionGroup);
 }
 
-void StyleHandler::logPalette(const QPalette& palette) const
+void StyleHandler::logPalette(const QPalette& palette)
 {
   qDebug() << "Palette =========================================";
 
@@ -417,7 +417,7 @@ void StyleHandler::paletteChanged(const QPalette&)
 
 void StyleHandler::applyCurrentStyle()
 {
-  qDebug() << Q_FUNC_INFO << "index" << currentStyleIndex;
+  qDebug() << Q_FUNC_INFO << "index" << currentStyleIndex << "automaticStyle" << automaticStyle;
 
   // Avoid recursion through palette signal when applying style
   applyingStyle = true;
@@ -447,10 +447,38 @@ void StyleHandler::applyCurrentStyle()
   else
     qWarning() << Q_FUNC_INFO << "Style is null" << styleDescription.getStyleName();
 
+#if defined(Q_OS_WIN32)
+  if(!automaticStyle)
+    // One windows do not use style sheet for automatic style to avoid unreadable tab bar close buttons
+    atools::gui::Application::applicationInstance()->setStyleSheet(styleDescription.getStylesheet());
+#else
   atools::gui::Application::applicationInstance()->setStyleSheet(styleDescription.getStylesheet());
+#endif
+
+  qDebug() << Q_FUNC_INFO << "styleDescription.getStylesheet()" << styleDescription.getStylesheet();
 
   // Need to clear due to Qt bug
   QPixmapCache::clear();
+
+  qDebug() << Q_FUNC_INFO << "QApplication::palette() after set" << QApplication::palette();
+  logPalette(QApplication::palette());
+
+  qDebug() << Q_FUNC_INFO << "systemPalette after set" << systemPalette;
+  logPalette(systemPalette);
+
+#if defined(Q_OS_WIN32)
+  // Workaround for Windows using automatic style and dark. Avoid dark links and blue alternate base.
+  if(QApplication::styleHints()->colorScheme() == Qt::ColorScheme::Dark && automaticStyle)
+  {
+    qDebug() << Q_FUNC_INFO << "Is Dark";
+    QPalette palette = QApplication::palette();
+    palette.setColor(QPalette::AlternateBase, palette.color(QPalette::Base).lighter(150));
+    palette.setColor(QPalette::Link, palette.color(QPalette::Link).lighter(150));
+    palette.setColor(QPalette::LinkVisited, palette.color(QPalette::LinkVisited).lighter(150));
+    QApplication::setPalette(palette);
+  }
+#endif
+
   applyingStyle = false;
 
   emit styleChanged();
