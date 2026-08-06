@@ -254,9 +254,10 @@ public:
   static bool hasXplane12Simulator();
 
   /* Selected navdatabase in menu */
-  static bool isNavdataAll();
-  static bool isNavdataOff();
-  static bool isNavdataMixed();
+  static bool isNavDataAll();
+  static bool isNavDataOff();
+  static bool isNavDataMixed();
+  static bool isNavDataAuto();
 
   static OptionsDialog *getOptionsDialog();
 

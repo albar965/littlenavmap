@@ -1463,7 +1463,7 @@ bool RouteExport::routeValidate(const QList<RouteExportFormat>& formats, bool mu
   }
 
   // Check wrong scenery library mode for saves to X-Plane  ================================
-  if(save && validateNavdataAll && NavApp::isNavdataAll())
+  if(save && validateNavdataAll && NavApp::isNavDataAll())
   {
     QString message;
 

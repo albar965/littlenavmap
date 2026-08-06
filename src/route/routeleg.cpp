@@ -230,7 +230,7 @@ void RouteLeg::createFromDatabaseByEntry(int entryIndex, const RouteLeg *prevLeg
           // There is a parking name and this is the departure airport
           bool translateName = false;
           QList<map::MapParking> parkings;
-          if(NavApp::isAirportDatabaseXPlane(false /* navdata */) || NavApp::isNavdataAll() || name.endsWith(PARKING_NO_NUMBER))
+          if(NavApp::isAirportDatabaseXPlane(false /* navdata */) || NavApp::isNavDataAll() || name.endsWith(PARKING_NO_NUMBER))
           {
             // X-Plane style parking - name only ======
             if(name.endsWith(PARKING_NO_NUMBER))

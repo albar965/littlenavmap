@@ -86,7 +86,7 @@ void AirportQuery::loadAirportProcedureCache()
   airportsWithProceduresIdent.clear();
   airportsWithProceduresIata.clear();
 
-  if(navdata && NavApp::isNavdataMixed())
+  if(navdata && NavApp::isNavDataMixed())
   {
     QString queryStr;
     if(iataCol)

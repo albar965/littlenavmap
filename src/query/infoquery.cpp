@@ -295,7 +295,7 @@ void InfoQuery::initQueries()
                     "where vor_id = :id");
 
   // Check for holding table in nav (Navigraph) database and then in simulator database (X-Plane only)
-  SqlDatabase *msaDb = NavApp::isNavdataOff() ?
+  SqlDatabase *msaDb = NavApp::isNavDataOff() ?
                        SqlUtil::getDbWithTableAndRows("airport_msa", {dbSim, dbNav}) :
                        SqlUtil::getDbWithTableAndRows("airport_msa", {dbNav, dbSim});
 
@@ -309,7 +309,7 @@ void InfoQuery::initQueries()
   }
 
   // Same as above for airport MSA table
-  SqlDatabase *holdingDb = NavApp::isNavdataOff() ?
+  SqlDatabase *holdingDb = NavApp::isNavDataOff() ?
                            SqlUtil::getDbWithTableAndRows("holding", {dbSim, dbNav}) :
                            SqlUtil::getDbWithTableAndRows("holding", {dbNav, dbSim});
   if(holdingDb != nullptr)

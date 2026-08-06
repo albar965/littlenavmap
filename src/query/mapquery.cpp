@@ -1284,7 +1284,7 @@ const QList<map::MapIls> *MapQuery::getIls(GeoDataLatLonBox rect, const MapLayer
       {
         // ILS is always loaded from nav except if all is off
         map::MapRunwayEnd end;
-        if(mapLayer->isIlsDetail() && !NavApp::isNavdataOff())
+        if(mapLayer->isIlsDetail() && !NavApp::isNavDataOff())
           // Get the runway end to fix graphical alignment issues in map
           end = queries->getAirportQueryNav()->getRunwayEndById(ilsByRectQuery->valueInt(QStringLiteral("loc_runway_end_id")));
 
@@ -1315,7 +1315,7 @@ const QList<map::MapAirport> *MapQuery::fetchAirports(const Marble::GeoDataLatLo
 
   if(airportCache.list.isEmpty() && !lazy)
   {
-    bool navdata = NavApp::isNavdataAll();
+    bool navdata = NavApp::isNavDataAll();
 
     for(const GeoDataLatLonBox& box : query::splitAtAntiMeridian(rect, queryRectInflationFactor, queryRectInflationIncrement))
     {
@@ -1484,12 +1484,12 @@ void MapQuery::initQueries()
 
   // Check for holding table in nav (Navigraph) database and then in simulator database (X-Plane only)
   // Reverse search order depending on scenery library settings
-  SqlDatabase *holdingDb = NavApp::isNavdataOff() ?
+  SqlDatabase *holdingDb = NavApp::isNavDataOff() ?
                            SqlUtil::getDbWithTableAndRows("holding", {dbSim, dbNav}) :
                            SqlUtil::getDbWithTableAndRows("holding", {dbNav, dbSim});
 
   // Same as above for airport MSA table
-  SqlDatabase *msaDb = NavApp::isNavdataOff() ?
+  SqlDatabase *msaDb = NavApp::isNavDataOff() ?
                        SqlUtil::getDbWithTableAndRows("airport_msa", {dbSim, dbNav}) :
                        SqlUtil::getDbWithTableAndRows("airport_msa", {dbNav, dbSim});
 

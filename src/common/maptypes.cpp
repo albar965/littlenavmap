@@ -1042,7 +1042,7 @@ const QString& MapAirport::displayIdent(bool useIata) const
 
 bool MapAirport::emptyDraw() const
 {
-  if(NavApp::isNavdataAll())
+  if(NavApp::isNavDataAll())
     return false;
 
   const OptionData& od = OptionData::instance();
@@ -1053,7 +1053,7 @@ bool MapAirport::emptyDraw() const
 
 bool MapAirport::emptyDraw(bool emptyOptsFlag, bool emptyOpts3dFlag) const
 {
-  if(NavApp::isNavdataAll())
+  if(NavApp::isNavDataAll())
     return false;
 
   if(emptyOptsFlag)

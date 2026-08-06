@@ -623,19 +623,24 @@ bool NavApp::hasXplane12Simulator()
   return atools::fs::FsPaths::hasXplane12Simulator();
 }
 
-bool NavApp::isNavdataAll()
+bool NavApp::isNavDataAll()
 {
   return databaseManager->getNavDatabaseStatus() == navdb::ALL;
 }
 
-bool NavApp::isNavdataMixed()
+bool NavApp::isNavDataMixed()
 {
   return databaseManager->getNavDatabaseStatus() == navdb::MIXED;
 }
 
-bool NavApp::isNavdataOff()
+bool NavApp::isNavDataOff()
 {
   return databaseManager->getNavDatabaseStatus() == navdb::OFF;
+}
+
+bool NavApp::isNavDataAuto()
+{
+  return databaseManager->isNavDatabaseAuto();
 }
 
 OptionsDialog *NavApp::getOptionsDialog()

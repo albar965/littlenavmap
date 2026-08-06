@@ -149,7 +149,7 @@ void ConnectDialog::updateWarningMessage()
   cd::ConnectSimType connectSim = getCurrentSimType();
   atools::fs::FsPaths::SimulatorType simulatorDb = NavApp::getCurrentSimulatorDb();
 
-  if(NavApp::isNavdataAll())
+  if(NavApp::isNavDataAll())
   {
     // Always warn about navigraph for all mode =========================
     ui->labelConnectWarning->show();

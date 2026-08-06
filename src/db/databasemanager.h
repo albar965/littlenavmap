@@ -214,6 +214,11 @@ public:
     return navDatabaseStatus;
   }
 
+  bool isNavDatabaseAuto() const
+  {
+    return navDatabaseAuto;
+  }
+
   atools::fs::userdata::UserdataManager *getUserdataManager() const
   {
     return userdataManager;

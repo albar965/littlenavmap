@@ -5279,7 +5279,7 @@ void HtmlInfoBuilder::addScenery(const atools::sql::SqlRecord *rec, HtmlBuilder&
   {
     case DATASOURCE_COM:
       // COM is used from sim except in Navigraph all - no file given
-      html.row2(NavApp::isNavdataAll() ? tr("Navigraph") : tr("Simulator"));
+      html.row2(NavApp::isNavDataAll() ? tr("Navigraph") : tr("Simulator"));
       break;
 
     case DATASOURCE_HOLD:
@@ -5290,7 +5290,7 @@ void HtmlInfoBuilder::addScenery(const atools::sql::SqlRecord *rec, HtmlBuilder&
                   filepathTextShow(rec->valueStr(QStringLiteral("filepath"), QStringLiteral())),
                   ahtml::NO_ENTITIES);
       else
-        html.row2(!NavApp::isNavdataOff() ? tr("Navigraph") : tr("Simulator"));
+        html.row2(!NavApp::isNavDataOff() ? tr("Navigraph") : tr("Simulator"));
       break;
   }
 

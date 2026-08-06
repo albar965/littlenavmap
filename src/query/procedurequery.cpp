@@ -570,7 +570,7 @@ void ProcedureQuery::buildLegEntry(atools::sql::SqlQuery *query, proc::MapProced
     // Due to an error in the DFD compiler co-located ILS/LOC and NDB always select the NDB
     // Example ENOV LDMB. LOC and NDB have name HN.
     bool foundIls = false;
-    if((NavApp::isNavdataAll() || NavApp::isNavdataMixed()) && legs.hasFrequency())
+    if((NavApp::isNavDataAll() || NavApp::isNavDataMixed()) && legs.hasFrequency())
     {
       mapObjectByIdent(leg.recNavaids, map::ILS, leg.recFixIdent, leg.recFixRegion, QStringLiteral(), recFixPos);
       if(!leg.recNavaids.ils.isEmpty() &&

@@ -2034,13 +2034,18 @@ void MainWindow::updateWindowTitle()
   if((navDbStatus == navdb::ALL || navDbStatus == navdb::MIXED) && !NavApp::getDatabaseAiracCycleNav().isEmpty())
     title += tr(" ") % NavApp::getDatabaseAiracCycleNav();
 
+  if(NavApp::isNavDataAuto())
+    title += tr(" / A");
+
   // Flight plan name  ==========================================
   if(!routeController->getRouteFilePath().isEmpty())
   {
+    QString name = atools::elideTextShortMiddle(QFileInfo(routeController->getRouteFilePath()).fileName(), 80);
+
     if(routeController->hasChanged())
-      title += tr(" — %1 *").arg(QFileInfo(routeController->getRouteFilePath()).fileName());
+      title += tr(" — %1 *").arg(name);
     else
-      title += tr(" — %1").arg(QFileInfo(routeController->getRouteFilePath()).fileName());
+      title += tr(" — %1").arg(name);
   }
   else if(routeController->hasChanged())
     title += tr(" — *");
@@ -2048,7 +2053,7 @@ void MainWindow::updateWindowTitle()
   // Performance name  ==========================================
   if(!NavApp::getCurrentAircraftPerfFilePath().isEmpty())
     title += tr(" — %1%2").
-             arg(QFileInfo(NavApp::getCurrentAircraftPerfFilePath()).fileName(),
+             arg(atools::elideTextShortMiddle(QFileInfo(NavApp::getCurrentAircraftPerfFilePath()).fileName(), 60),
                  NavApp::getAircraftPerfController()->hasChanged() ? tr(" *") : QStringLiteral());
   else if(NavApp::getAircraftPerfController()->hasChanged())
     title += tr(" — *");
@@ -5446,13 +5451,13 @@ void MainWindow::openWebserverQrCode(QWidget *parent)
   QString urlStringIp = NavApp::getWebController()->getUrl(true /* useIpAddress */).toString();
 
   atools::gui::QrCodeDialog dialog(parent, {urlString, urlStringIp}, {tr("Computer Name"), tr("IP-Address")},
-                                  {tr("Scan the QR code to open the web address<br/>"
-                                      "<a href=\"%1\">%1</a>.").arg(urlString),
-                                   tr("Scan QR code to open web address<br/>"
-                                      "<a href=\"%1\">%1</a>.<br/>"
-                                      "Note that the IP-address can change between reboots.").arg(urlStringIp)},
-                                  QApplication::applicationName() % tr(" - QR code for Web Server"),
-                                  "WEBSERVER.html#qrcode");
+                                   {tr("Scan the QR code to open the web address<br/>"
+                                       "<a href=\"%1\">%1</a>.").arg(urlString),
+                                    tr("Scan QR code to open web address<br/>"
+                                       "<a href=\"%1\">%1</a>.<br/>"
+                                       "Note that the IP-address can change between reboots.").arg(urlStringIp)},
+                                   QApplication::applicationName() % tr(" - QR code for Web Server"),
+                                   "WEBSERVER.html#qrcode");
   dialog.setHelpOnlineUrl(lnm::helpOnlineUrl);
   dialog.setHelpLanguageOnline(lnm::helpLanguageOnline());
 
