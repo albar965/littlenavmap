@@ -97,7 +97,7 @@ private:
   void actionsToFlags();
   QAction *addAction(const QString& icon, const QString& text, const QString& tooltip);
 
-  QStringList mapFlagTexts(map::MapTypes types) const;
+  QStringList mapFlagTextsNumbered(map::MapTypes types) const;
 
   /* Actions for toolbar button and menu */
   QAction *actionAll = nullptr, *actionNone = nullptr, *actionRangeRings = nullptr, *actionMeasurementLines = nullptr,

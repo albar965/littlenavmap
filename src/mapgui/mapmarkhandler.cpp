@@ -237,29 +237,38 @@ void MapMarkHandler::actionsToFlags()
     markTypes |= map::MARK_PATTERNS;
 }
 
-QStringList MapMarkHandler::mapFlagTexts(map::MapTypes types) const
+QStringList MapMarkHandler::mapFlagTextsNumbered(map::MapTypes types) const
 {
+  const MapMarkers *markers = NavApp::getMapMarkers();
+
   QStringList featureStr;
-  if(types.testFlag(map::MARK_RANGE))
-    featureStr.append(tr("range rings"));
+  if(types.testFlag(map::MARK_RANGE) && !markers->getRangeMarkers().isEmpty())
+    featureStr.append(markers->getRangeMarkers().size() == 1 ?
+                      tr("one range ring") : tr("%1 range rings").arg(markers->getRangeMarkers().size()));
 
-  if(types.testFlag(map::MARK_DISTANCE))
-    featureStr.append(tr("measurement lines"));
+  if(types.testFlag(map::MARK_DISTANCE) && !markers->getDistanceMarkers().isEmpty())
+    featureStr.append(markers->getDistanceMarkers().size() == 1 ?
+                      tr("one measurement line") : tr("%1 measurement lines").arg(markers->getDistanceMarkers().size()));
 
-  if(types.testFlag(map::MARK_PATTERNS))
-    featureStr.append(tr("traffic patterns"));
+  if(types.testFlag(map::MARK_PATTERNS) && !markers->getPatternMarkers().isEmpty())
+    featureStr.append(markers->getPatternMarkers().size() == 1 ?
+                      tr("one traffic pattern") : tr("%1 traffic patterns").arg(markers->getPatternMarkers().size()));
 
-  if(types.testFlag(map::MARK_HOLDING))
-    featureStr.append(tr("holdings"));
+  if(types.testFlag(map::MARK_HOLDING) && !markers->getHoldingMarkers().isEmpty())
+    featureStr.append(markers->getHoldingMarkers().size() == 1 ?
+                      tr("one holding") : tr("%1 holdings").arg(markers->getHoldingMarkers().size()));
 
-  if(types.testFlag(map::MARK_MSA))
-    featureStr.append(tr("MSA diagrams"));
+  if(types.testFlag(map::MARK_MSA) && !markers->getMsaMarkers().isEmpty())
+    featureStr.append(markers->getMsaMarkers().size() == 1 ?
+                      tr("one MSA diagram") : tr("%1 MSA diagrams").arg(markers->getMsaMarkers().size()));
 
   return featureStr;
 }
 
 void MapMarkHandler::clearMarkers(bool quiet, map::MapType types) const
 {
+  MapMarkers *markers = NavApp::getMapMarkers();
+
   if(!quiet)
   {
     QString settingsKey;
@@ -277,20 +286,22 @@ void MapMarkHandler::clearMarkers(bool quiet, map::MapType types) const
     else if(types == map::MARK_MSA)
       settingsKey = lnm::ACTIONS_SHOW_DELETE_MSAMARKS;
 
-    QString text = atools::strJoin(mapFlagTexts(types), tr(", "), tr(" and "));
-    int result = atools::gui::Dialog(mainWindow).showQuestionMsgBox(settingsKey,
-                                                                    tr("Delete all %1 from map?\n\n"
-                                                                       "Note that this cannot be undone.").arg(text),
-                                                                    tr("Do not &show this dialog again."),
-                                                                    QMessageBox::Yes | QMessageBox::No,
-                                                                    QMessageBox::No, QMessageBox::Yes);
+    QString text = atools::strJoin(mapFlagTextsNumbered(types), tr(", "), tr(" and "));
+    int result = atools::gui::Dialog(mainWindow).
+                 showQuestionMsgBox(settingsKey,
+                                    tr("Delete %1 from the map?\n\n"
+                                       "Note that this cannot be undone.\n"
+                                       "You can save your current map markers from menu \"Markers\" to a file.").arg(text),
+                                    tr("Do not &show this dialog again."),
+                                    QMessageBox::Yes | QMessageBox::No,
+                                    QMessageBox::No, QMessageBox::Yes);
 
     if(result == QMessageBox::Yes)
-      NavApp::getMapMarkers()->clear(types);
+      markers->clear(types);
   }
   else
     // More than one type from choice dialog
-    NavApp::getMapMarkers()->clear(types);
+    markers->clear(types);
 
   mainWindow->updateMarkActionStates();
 }
