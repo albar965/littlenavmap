@@ -121,7 +121,7 @@ bool MapPainter::wToSBuf(const atools::geo::Pos& coords, QPointF& point, const Q
   return retval;
 }
 
-void MapPainter::paintArc(GeoPainter *painter, const Pos& centerPos, float radiusNm, float angleDegStart, float angleDegEnd,
+void MapPainter::paintArc(GeoPainter *painter, const Pos& centerPos, float radiusNm, int angleDegStart, int angleDegEnd,
                           bool fast) const
 {
   if(radiusNm > atools::geo::EARTH_CIRCUMFERENCE_METER / 4.)
@@ -147,7 +147,7 @@ void MapPainter::paintArc(GeoPainter *painter, const Pos& centerPos, float radiu
   if(angleDegEnd < angleDegStart)
     angleDegEnd += 360.f;
 
-  for(float angle = angleDegStart; angle <= angleDegEnd; angle += step)
+  for(int angle = angleDegStart; angle <= angleDegEnd; angle += step)
   {
     // Line segment from p1 to p2
     Pos p2 = centerPos.endpoint(radiusMeter, atools::geo::normalizeCourse(angle));
@@ -348,6 +348,11 @@ void MapPainter::paintCircleLargeInternal(GeoPainter *painter, const Pos& center
         *textPos = QPoint(0, 0);
     }
   }
+}
+
+int MapPainter::touchIconSize(Marble::GeoPainter *painter) const
+{
+  return atools::minmax(10, 30, std::max(painter->viewport().height(), painter->viewport().width()) / 20);
 }
 
 void MapPainter::drawLineStraight(Marble::GeoPainter *painter, const atools::geo::Line& line) const
@@ -907,7 +912,7 @@ void MapPainter::paintMsaMarkers(const QList<const map::MapAirportMsa *>& airpor
       gridCol.setAlphaF(atools::minmax(0., 1., 1. - context->transparencyAirportMsa));
       QPen pen = context->darkMap ? mapcolors::msaDiagramLinePenDark : mapcolors::msaDiagramLinePen;
       pen.setColor(gridCol);
-      context->painter->setPen(pen);
+      context->painter->setPen(context->szPen(pen));
 
       // Fill color for circle
       painter->setBrush(context->darkMap ? mapcolors::msaDiagramFillColorDark : mapcolors::msaDiagramFillColor);
@@ -934,7 +939,7 @@ void MapPainter::paintMsaMarkers(const QList<const map::MapAirportMsa *>& airpor
         }
 
         // Calculate font size from radius
-        float fontSize = scale->getPixelForNm(msa->radius) / 8.f * context->textSizeAirportMsa * context->sizeAll;
+        float fontSize = scale->getPixelForNm(msa->radius) / 8.f * context->textSizeAirportMsa * context->scaleAll;
 
         if(msa->altitudes.size() == 1)
           // Larger font for full circle restriction
@@ -1025,7 +1030,10 @@ void MapPainter::paintHoldings(const QList<const map::MapHolding *>& holdings, c
 
     float dist = holding->distance();
     float distPixel = scale->getPixelForNm(dist);
-    float lineWidth = user ? context->szF(context->thicknessMapMarker, (detail ? 2.5f : 1.5f)) : (detail2 ? 2.5f : 1.5f);
+
+    float lineWidth = user ?
+                      context->szF(context->thicknessMapMarker, (detail ? 2.5f : 1.5f)) :
+                      context->szF(detail2 ? 2.5f : 1.5f);
 
     if(layer->isApproach() && distPixel > 10.f)
     {

@@ -101,9 +101,12 @@ void MapPainterMsa::drawMsaSymbol(const map::MapAirportMsa& airportMsa, float x,
     size = std::max(size, 6.f);
   }
   else
-    scale = context->mapLayer->getAirportMsaSymbolScale();
+    scale = context->mapLayer->getAirportMsaSymbolScale() * context->scaleAll;
+
+  float lineWidth = context->szF(2);
+  context->szFont(1);
 
   // Draw the full symbol with all sectors
-  symbolPainter->drawAirportMsa(painter, airportMsa, x, y, size * 2.f, scale, context->mapLayerText->isAirportMsaDetails() /* header */,
-                                true /* transparency */, fast);
+  symbolPainter->drawAirportMsa(painter, airportMsa, x, y, size * 2.f, scale, lineWidth,
+                                context->mapLayerText->isAirportMsaDetails() /* header */, true /* transparency */, fast);
 }

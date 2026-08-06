@@ -660,9 +660,9 @@ public:
     return displayTextSizeAirportMsa;
   }
 
-  int getMapNavTouchArea() const
+  int getMapNavTouchAreaSize() const
   {
-    return mapNavTouchArea;
+    return mapNavTouchAreaSize;
   }
 
   optsw::FlagsWeather getFlagsWeather() const
@@ -760,6 +760,11 @@ public:
   int getDisplayThicknessAirspace() const
   {
     return displayThicknessAirspace;
+  }
+
+  int getDisplayThicknessMora() const
+  {
+    return displayThicknessMora;
   }
 
   int getDisplayTransparencyAirspace() const
@@ -1110,10 +1115,13 @@ private:
   int displayTextSizeAirportMsa = 100;
 
   // spinBoxOptionsMapNavTouchscreenArea
-  int mapNavTouchArea = 10;
+  int mapNavTouchAreaSize = 10;
 
   // spinBoxOptionsDisplayThicknessAirspace
   int displayThicknessAirspace = 100;
+
+  // spinBoxOptionsDisplayThicknessMora
+  int displayThicknessMora = 100;
 
   // spinBoxOptionsDisplayTransparencyAirspace
   int displayTransparencyAirspace = 80;

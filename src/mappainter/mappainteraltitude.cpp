@@ -60,10 +60,11 @@ void MapPainterAltitude::render()
       atools::util::PainterContextSaver paintContextSaver(context->painter);
 
       // Use width and style from pen but override transparency
-      QColor gridCol = context->darkMap ? mapcolors::minimumAltitudeGridPenDark.color() : mapcolors::minimumAltitudeGridPen.color();
+      QColor gridCol = context->darkMap ? mapcolors::minimumAltitudeGridColorDark : mapcolors::minimumAltitudeGridColor;
       gridCol.setAlphaF(atools::minmax(0., 1., 1. - context->transparencyMora));
-      QPen pen = context->darkMap ? mapcolors::minimumAltitudeGridPenDark : mapcolors::minimumAltitudeGridPen;
+      QPen pen = context->darkMap ? mapcolors::minimumAltitudeGridColorDark : mapcolors::minimumAltitudeGridColor;
       pen.setColor(gridCol);
+      pen.setWidthF(context->szF(context->thicknessMora, 1.f));
       context->painter->setPen(pen);
 
       // Get covered one degree coordinate rectangles
@@ -138,7 +139,7 @@ void MapPainterAltitude::render()
         textCol.setAlphaF(atools::minmax(0., 1., 1. - context->transparencyMora));
         context->painter->setPen(textCol);
 
-        float fontSize = minWidth * context->textSizeMora * context->sizeAll;
+        float fontSize = minWidth * context->textSizeMora * context->scaleAll;
         QFont font = context->painter->font();
         font.setItalic(true);
         font.setPixelSize(atools::roundToInt(fontSize));

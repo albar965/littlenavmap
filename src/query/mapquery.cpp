@@ -291,51 +291,51 @@ map::MapResultIndex *MapQuery::nearestNavaidsInternal(const Pos& pos, float dist
 {
   query::NearestCacheKeyNavaid key = {pos, distanceNm, type};
 
-  map::MapResultIndex *result = nearestNavaidCache.object(key);
+  map::MapResultIndex *resultIndex = nearestNavaidCache.object(key);
 
-  if(result == nullptr)
+  if(resultIndex == nullptr)
   {
-    map::MapResult res;
+    map::MapResult result;
 
     // Create a rectangle that roughly covers the requested region
     atools::geo::Rect rect(pos, atools::geo::nmToMeter(distanceNm), true /* fast */);
 
     if(type & map::VOR)
     {
-      query::fetchObjectsForRect(rect, vorsByRectQuery, [this, &res](atools::sql::SqlQuery *query) -> void {
+      query::fetchObjectsForRect(rect, vorsByRectQuery, [this, &result](atools::sql::SqlQuery *query) -> void {
         MapVor obj;
         mapTypesFactory->fillVor(query->record(), obj);
-        res.vors.append(obj);
+        result.vors.append(obj);
       });
     }
 
     if(type & map::NDB)
     {
-      query::fetchObjectsForRect(rect, ndbsByRectQuery, [this, &res](atools::sql::SqlQuery *query) -> void {
+      query::fetchObjectsForRect(rect, ndbsByRectQuery, [this, &result](atools::sql::SqlQuery *query) -> void {
         MapNdb obj;
         mapTypesFactory->fillNdb(query->record(), obj);
-        res.ndbs.append(obj);
+        result.ndbs.append(obj);
       });
     }
 
     if(type & map::WAYPOINT)
     {
       query::fetchObjectsForRect(rect, queries->getWaypointTrackQuery()->getWaypointsByRectQueryTrack(),
-                                 [this, &res](atools::sql::SqlQuery *query) -> void {
+                                 [this, &result](atools::sql::SqlQuery *query) -> void {
         MapWaypoint obj;
         mapTypesFactory->fillWaypoint(query->record(), obj, true /* track database */);
-        res.waypoints.append(obj);
+        result.waypoints.append(obj);
       });
 
       query::fetchObjectsForRect(rect, queries->getWaypointTrackQuery()->getWaypointsByRectQuery(),
-                                 [this, &res](atools::sql::SqlQuery *query) -> void {
+                                 [this, &result](atools::sql::SqlQuery *query) -> void {
         MapWaypoint obj;
         mapTypesFactory->fillWaypoint(query->record(), obj, false /* track database */);
 
-        if(!res.waypoints.contains(obj))
-          res.waypoints.append(obj);
+        if(!result.waypoints.contains(obj))
+          result.waypoints.append(obj);
       });
-      maptools::removeDuplicatesById(res.waypoints);
+      maptools::removeDuplicatesById(result.waypoints);
     }
 
     if(type & map::ILS)
@@ -353,20 +353,20 @@ map::MapResultIndex *MapQuery::nearestNavaidsInternal(const Pos& pos, float dist
         });
         maptools::removeByDistance(ilsRes, pos, atools::geo::nmToMeter(maxIlsDist));
         maptools::sortByDistance(ilsRes, pos);
-        res.ils.append(ilsRes.mid(0, maxIls));
+        result.ils.append(ilsRes.mid(0, maxIls));
       }
     }
 
-    result = new map::MapResultIndex;
-    result->add(res);
+    resultIndex = new map::MapResultIndex;
+    resultIndex->add(result);
 
     // Remove all that are too far away
-    result->remove(pos, distanceNm);
+    resultIndex->remove(pos, distanceNm);
 
     // Sort the rest by distance
-    result->sort(pos);
+    resultIndex->sort(pos);
 
-    nearestNavaidCache.insert(key, result);
+    nearestNavaidCache.insert(key, resultIndex);
   }
 
   return nearestNavaidCache.object(key);

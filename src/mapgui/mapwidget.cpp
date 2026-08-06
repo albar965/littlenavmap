@@ -1477,7 +1477,7 @@ MapWidget::TouchArea MapWidget::touchArea(QMouseEvent *event)
 {
   if(event != nullptr && OptionData::instance().getMapNavigation() == opts::MAP_NAV_TOUCHSCREEN)
   {
-    int areaSize = OptionData::instance().getMapNavTouchArea();
+    int areaSize = OptionData::instance().getMapNavTouchAreaSize();
     int w = width() * areaSize / 100;
     int h = height() * areaSize / 100;
 

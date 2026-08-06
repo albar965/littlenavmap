@@ -516,46 +516,58 @@ void MapPainterVehicle::appendSpeedText(QStringList& texts, const SimConnectAirc
     texts.append(line.join(tr(", ")));
 }
 
-void MapPainterVehicle::paintWindPointer(const atools::fs::sc::SimConnectUserAircraft& aircraft, float x, float y) const
+void MapPainterVehicle::paintWindPointerAndText(const atools::fs::sc::SimConnectUserAircraft& aircraft) const
 {
-  if(aircraft.getWindDirectionDegT() < atools::fs::sc::SC_INVALID_FLOAT)
+  float windPointerSize = static_cast<float>(QFontMetricsF(context->painter->font()).height()) * 2.f * 1.25f;
+  float windDirection = aircraft.getWindDirectionDegT();
+  bool windPointerDrawn = false;
+  float yOffset = 0.f;
+
+  // Draw lower if the touch icon is visible
+  if(context->dispOptsNavaid.testFlag(optsd::NAVAIDS_TOUCHSCREEN_ICONS))
+    yOffset = TOUCH_ICON_BORDER_DIST + touchIconSize(context->painter);
+
+  if(context->paintWindHeader && context->dOptUserAc(optsac::ITEM_USER_AIRCRAFT_WIND_POINTER) &&
+     windDirection < atools::fs::sc::SC_INVALID_FLOAT && aircraft.getWindSpeedKts() >= 1.f)
   {
-    // Use standard font size since there is no separate size setting
-    context->szFont(1.f);
-    float windPointerSize = static_cast<float>(QFontMetricsF(context->painter->font()).height()) * 2.f * 1.25f;
-    if(aircraft.getWindSpeedKts() >= 1.f)
-      symbolPainter->drawWindPointer(context->painter, x, y, windPointerSize, aircraft.getWindDirectionDegT());
-    paintTextLabelWind(x, y, windPointerSize, aircraft);
+    // Draw wind pointer ==========================================
+    // Center coordinates for arrow center
+    symbolPainter->drawWindPointer(context->painter, context->screenRect.width() / 2., windPointerSize / 2. + yOffset,
+                                   windPointerSize, windDirection);
+    windPointerDrawn = true;
   }
-}
 
-void MapPainterVehicle::paintTextLabelWind(float x, float y, float size, const SimConnectUserAircraft& aircraft) const
-{
-  if(aircraft.getWindDirectionDegT() < atools::fs::sc::SC_INVALID_FLOAT)
+  if(context->dOptUserAc(optsac::ITEM_USER_AIRCRAFT_WIND))
   {
-    float xs, ys;
+    // Draw text label ==========================================
     QStringList texts;
-
     if(aircraft.getWindSpeedKts() >= 1.f)
     {
-      if(context->dOptUserAc(optsac::ITEM_USER_AIRCRAFT_WIND))
-      {
-        texts.append(tr("%1 °M").
-                     arg(QString::number(atools::geo::normalizeCourse(aircraft.getWindDirectionDegT() - aircraft.getMagVarDeg()), 'f', 0)));
+      texts.append(tr("%1 °M").arg(QString::number(atools::geo::normalizeCourse(windDirection - aircraft.getMagVarDeg()), 'f', 0)));
+      texts.append(tr("%2").arg(Unit::speedKts(aircraft.getWindSpeedKts())));
+    }
+    else
+      texts.append(tr("No wind"));
 
-        texts.append(tr("%2").arg(Unit::speedKts(aircraft.getWindSpeedKts())));
-      }
-      xs = x + size / 2.f + 4.f;
-      ys = y + size / 2.f;
+    // Use standard font size since there is no separate size setting
+    context->szFont(1.f);
+    float x, y;
+    text::Attribute textAtt = text::NO_ATTRIBUTE;
+    if(windPointerDrawn)
+    {
+      // Place text at bottom right corner of pointer
+      x = context->screenRect.width() / 2.f + windPointerSize * 0.6f;
+      y = windPointerSize * 0.6f;
+      textAtt = text::PLACE_BELOW_RIGHT;
     }
     else
     {
-      texts.append(tr("No wind"));
-      xs = x;
-      ys = y;
+      // No pointer - place text in center
+      x = context->screenRect.width() / 2.f;
+      y = 0.f;
+      textAtt = text::PLACE_BELOW_CENTER;
     }
 
-    // Draw text label
-    symbolPainter->textBoxF(context->painter, texts, QPen(Qt::black), xs, ys, text::PLACE_BELOW_CENTER, 255);
+    symbolPainter->textBoxF(context->painter, texts, QPen(Qt::black), x, y + yOffset, textAtt, 255);
   }
 }

@@ -398,7 +398,7 @@ bool MapPaintLayer::render(GeoPainter *painter, ViewportParams *viewport, const 
       const OptionData& od = OptionData::instance();
 
       // Overall scale different for desktop and web
-      context.sizeAll = (mapPaintWidget->isWeb() ? od.getDisplayScaleAllWeb() : od.getDisplayScaleAll()) / 100.f;
+      context.scaleAll = (mapPaintWidget->isWeb() ? od.getDisplayScaleAllWeb() : od.getDisplayScaleAll()) / 100.f;
 
       context.symbolSizeAircraftAi = od.getDisplaySymbolSizeAircraftAi() / 100.f;
       context.symbolSizeAircraftUser = od.getDisplaySymbolSizeAircraftUser() / 100.f;
@@ -434,6 +434,9 @@ bool MapPaintLayer::render(GeoPainter *painter, ViewportParams *viewport, const 
       context.thicknessMeasurement = od.getDisplayThicknessMeasurement() / 100.f;
       context.thicknessCompassRose = od.getDisplayThicknessCompassRose() / 100.f;
       context.thicknessAirway = od.getDisplayThicknessAirway() / 100.f;
+      context.thicknessMora = od.getDisplayThicknessMora() / 100.f;
+      context.displayThicknessAirspace = od.getDisplayThicknessAirspace() / 100.f;
+      context.displayTransparencyAirspace = od.getDisplayTransparencyAirspace() / 100.f;
 
       context.dispOptsUser = od.getDisplayOptionsUserAircraft();
       context.dispOptsAi = od.getDisplayOptionsAiAircraft();
@@ -443,6 +446,11 @@ bool MapPaintLayer::render(GeoPainter *painter, ViewportParams *viewport, const 
       context.dispOptsRoute = od.getDisplayOptionsRoute();
       context.flags = od.getFlags();
       context.flags2 = od.getFlags2();
+      context.displayOptionsAirspace = od.getDisplayOptionsAirspace();
+      context.dispOptsNavaid = od.getDisplayOptionsNavAid();
+      context.mapNav = od.getMapNavigation();
+      context.navAreaSize = od.getMapNavTouchAreaSize();
+
       context.verboseDraw = NavApp::getMainWindow()->isDebugMapPaint();
 
       context.weatherSource = weatherSource;

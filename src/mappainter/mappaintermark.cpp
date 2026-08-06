@@ -148,10 +148,10 @@ void MapPainterMark::paintSearchCenterMarker()
   float x, y;
   if(wToS(mapPaintWidget->getSearchMarkPos(), x, y))
   {
-    context->painter->setPen(mapcolors::searchCenterBackPen);
+    context->painter->setPen(context->szPen(mapcolors::searchCenterBackPen));
     drawCross(painter, x, y, context->szF(context->symbolSizeAirport, 10.f));
 
-    context->painter->setPen(mapcolors::searchCenterFillPen);
+    context->painter->setPen(context->szPen(mapcolors::searchCenterFillPen));
     drawCross(painter, x, y, context->szF(context->symbolSizeAirport, 8.f));
   }
 }
@@ -954,8 +954,8 @@ void MapPainterMark::paintSelectedAltitudeRange()
             context->szFont(context->textSizeRangeMarker);
 
             // Draw arc
-            float arcAngleStart = ageo::normalizeCourse(userAircraft.getTrackDegTrue() - 45.f);
-            float arcAngleEnd = ageo::normalizeCourse(userAircraft.getTrackDegTrue() + 45.f);
+            int arcAngleStart = atools::roundToInt(ageo::normalizeCourse(userAircraft.getTrackDegTrue() - 45.f));
+            int arcAngleEnd = atools::roundToInt(ageo::normalizeCourse(userAircraft.getTrackDegTrue() + 45.f));
             paintArc(painter, pos, rangeDistanceNm, arcAngleStart, arcAngleEnd, context->drawFast);
           }
         }
@@ -1712,7 +1712,7 @@ void MapPainterMark::paintRouteDrag()
     ageo::Pos curGeo;
     if(sToW(cur.x(), cur.y(), curGeo))
     {
-      context->painter->setPen(QPen(mapcolors::mapDragColor, 3, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin));
+      context->painter->setPen(QPen(mapcolors::mapDragColor, context->szF(3), Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin));
 
       // Draw lines from current mouse position to all fixed points which can be waypoints or several alternates
       for(const ageo::Pos& pos : std::as_const(fixed))

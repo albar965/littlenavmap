@@ -1443,7 +1443,7 @@ void ProfileWidget::paintEvent(QPaintEvent *)
         else if(type == map::USERPOINTROUTE)
           symbolPainter.drawUserpointSymbol(&painter, symPt.x(), symPt.y(), waypointSize, sf::FILL_ROUTE);
         else if(type == map::INVALID)
-          symbolPainter.drawWaypointSymbol(&painter, mapcolors::routeInvalidPointColor, symPt.x(), symPt.y(), 9, sf::FILL_ROUTE);
+          symbolPainter.drawWaypointSymbol(&painter, mapcolors::routeInvalidPointColor, symPt.x(), symPt.y(), 9.f, 1.f, sf::FILL_ROUTE);
         else if(type == map::PROCEDURE)
           // Missed is not included
           symbolPainter.drawProcedureSymbol(&painter, symPt.x(), symPt.y(), procPointSize, sf::FILL_ROUTE);
@@ -1486,7 +1486,7 @@ void ProfileWidget::paintEvent(QPaintEvent *)
            type == map::USERPOINTROUTE || type == map::INVALID)
           continue;
         else if(type == map::WAYPOINT || leg.getWaypoint().isValid())
-          symbolPainter.drawWaypointSymbol(&painter, QColor(), symPt.x(), symPt.y(), waypointSize, sf::FILL_ROUTE);
+          symbolPainter.drawWaypointSymbol(&painter, QColor(), symPt.x(), symPt.y(), waypointSize, 1.f, sf::FILL_ROUTE);
       }
       // else procedure symbols drawn before
 
@@ -1524,10 +1524,10 @@ void ProfileWidget::paintEvent(QPaintEvent *)
            type == map::USERPOINTROUTE || type == map::INVALID)
           continue;
         else if(type == map::NDB || leg.getNdb().isValid())
-          symbolPainter.drawNdbSymbol(&painter, symPt.x(), symPt.y(), navaidSize,
+          symbolPainter.drawNdbSymbol(&painter, symPt.x(), symPt.y(), navaidSize, 1.f,
                                       sf::FILL_ROUTE, false /* fast */, false /* darkMap */);
         else if(type == map::VOR || leg.getVor().isValid())
-          symbolPainter.drawVorSymbol(&painter, leg.getVor(), symPt.x(), symPt.y(), navaidSize, 0.f,
+          symbolPainter.drawVorSymbol(&painter, leg.getVor(), symPt.x(), symPt.y(), navaidSize, 1.f, 0.f,
                                       sf::FILL_ROUTE, false /* fast */, false /* darkMap */);
       }
 

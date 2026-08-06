@@ -145,10 +145,11 @@ void MapPainterIls::drawIlsSymbol(const map::MapIls& ils, bool fast)
   QColor symColor = isIls ? mapcolors::ilsSymbolColor : mapcolors::glsSymbolColor;
   QColor textColor = isIls ? mapcolors::ilsTextColor : mapcolors::glsTextColor;
   QPen centerPen = isIls ? mapcolors::ilsCenterPen : mapcolors::glsCenterPen;
+  centerPen.setWidthF(context->szF(centerPen.widthF()));
 
   painter->setBackgroundMode(Qt::TransparentMode);
   painter->setBrush(fast ? QBrush(Qt::transparent) : QBrush(fillColor));
-  painter->setPen(QPen(symColor, 2, Qt::SolidLine, Qt::FlatCap));
+  painter->setPen(QPen(symColor, context->szF(2), Qt::SolidLine, Qt::FlatCap));
 
   QSize size = scale->getScreeenSizeForRect(ils.bounding);
   bool visible;

@@ -37,7 +37,7 @@ const float CIRCLE_MAX_POINTS = 92.f;
 
 void PaintContext::szFont(float scale) const
 {
-  mapcolors::scaleFont(painter, scale * sizeAll, &defaultFont);
+  mapcolors::scaleFont(painter, scale * scaleAll, &defaultFont);
 }
 
 text::Flag PaintContext::airportTextFlags() const

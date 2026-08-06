@@ -34,8 +34,7 @@ struct DistanceMarker;
 class MapWidget;
 
 /*
- * Paint all marks, distance measure lines, range rings, selected object highlights
- * and magnetic pole indications.
+ * Paint all marks, distance measure lines, range rings and selected object highlights.
  */
 class MapPainterMark :
   public MapPainter

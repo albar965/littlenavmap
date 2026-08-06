@@ -94,11 +94,17 @@ struct PaintContext
   optsd::DisplayOptionsRose dispOptsRose;
   optsd::DisplayOptionsMeasurement dispOptsMeasurement;
   optsd::DisplayOptionsRoute dispOptsRoute;
+  optsd::DisplayOptionsNavAid dispOptsNavaid;
+  opts::MapNavigation mapNav;
+
+  int navAreaSize;
+
 
   /* ===============================================================================
    * Flags from options dialog */
   opts::Flags flags;
   opts2::Flags2 flags2;
+  optsd::DisplayOptionsAirspace displayOptionsAirspace;
 
   map::MapWeatherSource weatherSource;
   bool visibleWidget;
@@ -124,7 +130,7 @@ struct PaintContext
   QList<map::MapRef> *routeDrawnNavaids;
 
   /* Global scale applied to all features, labels and symbols */
-  float sizeAll = 1.f;
+  float scaleAll = 1.f;
 
   /* ===============================================================================
    * Text sizes and line thickness in percent / 100 as set in options dialog. To be used with szF() or szFont() */
@@ -138,6 +144,9 @@ struct PaintContext
   float textSizeUserpoint = 1.f;
   float textSizeAirway = 1.f;
   float thicknessAirway = 1.f;
+  float thicknessMora = 1.f;
+  float displayThicknessAirspace = 1.f;
+  float displayTransparencyAirspace = 1.f;
   float textSizeCompassRose = 1.f;
   float textSizeRangeMarker = 1.f;
   float textSizeRangeMeasurement = 1.f;
@@ -226,21 +235,43 @@ struct PaintContext
   /* Calculate real symbol sizes */
   float szF(float scale, int size) const
   {
-    return scale * size * sizeAll;
+    return scale * size * scaleAll;
   }
 
   float szF(float scale, float size) const
   {
-    return scale * size * sizeAll;
+    return scale * size * scaleAll;
   }
 
   float szF(float scale, double size) const
   {
-    return scale * static_cast<float>(size) * sizeAll;
+    return scale * static_cast<float>(size) * scaleAll;
+  }
+
+  /* Using scale 1 */
+  float szF(int size) const
+  {
+    return size * scaleAll;
+  }
+
+  float szF(float size) const
+  {
+    return size * scaleAll;
+  }
+
+  float szF(double size) const
+  {
+    return static_cast<float>(size) * scaleAll;
   }
 
   /* Calculate and set font based on scale */
   void szFont(float scale) const;
+
+  QPen szPen(QPen pen)
+  {
+    pen.setWidthF(pen.widthF() * scaleAll);
+    return pen;
+  }
 
   /* Calculate label text flags for route waypoints depending on layer settings */
   text::Flag airportTextFlags(bool minor) const

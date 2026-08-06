@@ -66,7 +66,7 @@
      </widget>
      <widget class="QStackedWidget" name="stackedWidgetOptions">
       <property name="currentIndex">
-       <number>25</number>
+       <number>8</number>
       </property>
       <widget class="QWidget" name="stackedWidgetOptionsStartup">
        <layout class="QVBoxLayout" name="verticalLayout_41">
@@ -2885,8 +2885,8 @@ Map views might be shown with a larger zoom distance than expected if this optio
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>433</width>
-             <height>333</height>
+             <width>586</width>
+             <height>531</height>
             </rect>
            </property>
            <layout class="QVBoxLayout" name="verticalLayout_65">
@@ -2988,7 +2988,7 @@ Note that some fonts, especially large fonts, can result in display errors on th
                   <number>50</number>
                  </property>
                  <property name="maximum">
-                  <number>200</number>
+                  <number>300</number>
                  </property>
                  <property name="singleStep">
                   <number>10</number>
@@ -3061,8 +3061,8 @@ Note that some fonts, especially large fonts, can result in display errors on th
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>355</width>
-             <height>665</height>
+             <width>572</width>
+             <height>639</height>
             </rect>
            </property>
            <layout class="QVBoxLayout" name="verticalLayout_71">
@@ -3412,15 +3412,15 @@ Note that some fonts, especially large fonts, can result in display errors on th
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>543</width>
-             <height>807</height>
+             <width>572</width>
+             <height>860</height>
             </rect>
            </property>
            <layout class="QVBoxLayout" name="verticalLayout_20">
             <item>
              <widget class="QGroupBox" name="groupBoxOptionsDisplay">
               <property name="title">
-               <string>Navaids, Airway, Airspaces and MORA Grid Display Options</string>
+               <string>Navaid, Airway and Airspace Display Options</string>
               </property>
               <layout class="QGridLayout" name="gridLayout_10">
                <property name="leftMargin">
@@ -3438,126 +3438,50 @@ Note that some fonts, especially large fonts, can result in display errors on th
                <property name="spacing">
                 <number>2</number>
                </property>
-               <item row="11" column="2">
-                <widget class="QSpinBox" name="spinBoxOptionsDisplayTextSizeAirspace">
-                 <property name="toolTip">
-                  <string>Text size for airspaces.</string>
+               <item row="5" column="0" rowspan="3" alignment="Qt::AlignVCenter">
+                <widget class="QLabel" name="labelOptionsMapSizeAirway">
+                 <property name="text">
+                  <string>Air&amp;ways:</string>
                  </property>
-                 <property name="suffix">
-                  <string> %</string>
+                 <property name="alignment">
+                  <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignTop</set>
                  </property>
-                 <property name="prefix">
-                  <string>Text </string>
-                 </property>
-                 <property name="minimum">
-                  <number>50</number>
-                 </property>
-                 <property name="maximum">
-                  <number>200</number>
-                 </property>
-                 <property name="singleStep">
-                  <number>10</number>
-                 </property>
-                 <property name="value">
-                  <number>100</number>
+                 <property name="buddy">
+                  <cstring>spinBoxOptionsDisplayThicknessAirway</cstring>
                  </property>
                 </widget>
                </item>
-               <item row="14" column="0" colspan="3">
-                <widget class="QLabel" name="labelOptionsAirspaceSettingsHint">
-                 <property name="text">
-                  <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;img src=&quot;:/littlenavmap/resources/icons/bulb.svg&quot;/&gt;&lt;span style=&quot; font-style:italic;&quot;&gt;Airspace label settings can be found on page &lt;/span&gt;&lt;a href=&quot;lnm://mapoptions&quot;&gt;&lt;span style=&quot; font-style:italic; text-decoration: underline;&quot;&gt;Map Options and Labels&lt;/span&gt;&lt;/a&gt;&lt;span style=&quot; font-style:italic;&quot;&gt; in branch &amp;quot;Airspaces&amp;quot;.&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+               <item row="2" column="2">
+                <widget class="QCheckBox" name="checkBoxOptionsMapNavaidText">
+                 <property name="toolTip">
+                  <string>Draw white background for navaid labels.
+For VOR, NDB, ILS, waypoints and holdings. Not for flight plan labels.</string>
                  </property>
-                 <property name="wordWrap">
+                 <property name="text">
+                  <string>Text &amp;Background</string>
+                 </property>
+                </widget>
+               </item>
+               <item row="13" column="1" colspan="2">
+                <widget class="QCheckBox" name="checkBoxOptionsMapAirspaceNoMultZ">
+                 <property name="toolTip">
+                  <string>Hide flight buffer zones (FBZ) and redundant airspaces having a multiple code of &quot;Z&quot;.</string>
+                 </property>
+                 <property name="text">
+                  <string>Hide Multiple Code &amp;Z airspaces and FBZ areas</string>
+                 </property>
+                 <property name="checked">
                   <bool>true</bool>
                  </property>
-                 <property name="margin">
-                  <number>10</number>
-                 </property>
-                 <property name="textInteractionFlags">
-                  <set>Qt::LinksAccessibleByMouse|Qt::TextSelectableByMouse</set>
-                 </property>
                 </widget>
                </item>
-               <item row="5" column="1">
-                <widget class="QSpinBox" name="spinBoxOptionsDisplayThicknessAirway">
+               <item row="8" column="2">
+                <widget class="QCheckBox" name="checkBoxOptionsMapAirwayText">
                  <property name="toolTip">
-                  <string>Airway line width</string>
+                  <string>Draw white background for airway text labels</string>
                  </property>
-                 <property name="suffix">
-                  <string> %</string>
-                 </property>
-                 <property name="prefix">
-                  <string>Line Width </string>
-                 </property>
-                 <property name="minimum">
-                  <number>20</number>
-                 </property>
-                 <property name="maximum">
-                  <number>300</number>
-                 </property>
-                 <property name="singleStep">
-                  <number>10</number>
-                 </property>
-                 <property name="value">
-                  <number>100</number>
-                 </property>
-                </widget>
-               </item>
-               <item row="1" column="1">
-                <widget class="QSpinBox" name="spinBoxOptionsDisplaySymbolSizeNavaid">
-                 <property name="toolTip">
-                  <string>For VOR, NDB, waypoints, holdings, top of climb and top of descent.</string>
-                 </property>
-                 <property name="suffix">
-                  <string> %</string>
-                 </property>
-                 <property name="prefix">
-                  <string>Symbol </string>
-                 </property>
-                 <property name="minimum">
-                  <number>50</number>
-                 </property>
-                 <property name="maximum">
-                  <number>200</number>
-                 </property>
-                 <property name="singleStep">
-                  <number>10</number>
-                 </property>
-                 <property name="value">
-                  <number>100</number>
-                 </property>
-                </widget>
-               </item>
-               <item row="4" column="0" colspan="3">
-                <widget class="Line" name="line_4">
-                 <property name="orientation">
-                  <enum>Qt::Horizontal</enum>
-                 </property>
-                </widget>
-               </item>
-               <item row="11" column="1">
-                <widget class="QSpinBox" name="spinBoxOptionsDisplayThicknessAirspace">
-                 <property name="toolTip">
-                  <string>Airspace contour line width</string>
-                 </property>
-                 <property name="suffix">
-                  <string> %</string>
-                 </property>
-                 <property name="prefix">
-                  <string>Line Width </string>
-                 </property>
-                 <property name="minimum">
-                  <number>20</number>
-                 </property>
-                 <property name="maximum">
-                  <number>300</number>
-                 </property>
-                 <property name="singleStep">
-                  <number>10</number>
-                 </property>
-                 <property name="value">
-                  <number>100</number>
+                 <property name="text">
+                  <string>Text &amp;Background</string>
                  </property>
                 </widget>
                </item>
@@ -3599,6 +3523,115 @@ Note that some fonts, especially large fonts, can result in display errors on th
                  </property>
                 </widget>
                </item>
+               <item row="4" column="0" colspan="3">
+                <widget class="Line" name="line_4">
+                 <property name="orientation">
+                  <enum>Qt::Horizontal</enum>
+                 </property>
+                </widget>
+               </item>
+               <item row="11" column="1">
+                <widget class="QSpinBox" name="spinBoxOptionsDisplayThicknessAirspace">
+                 <property name="toolTip">
+                  <string>Airspace contour line width</string>
+                 </property>
+                 <property name="suffix">
+                  <string> %</string>
+                 </property>
+                 <property name="prefix">
+                  <string>Line Width </string>
+                 </property>
+                 <property name="minimum">
+                  <number>20</number>
+                 </property>
+                 <property name="maximum">
+                  <number>300</number>
+                 </property>
+                 <property name="singleStep">
+                  <number>10</number>
+                 </property>
+                 <property name="value">
+                  <number>100</number>
+                 </property>
+                </widget>
+               </item>
+               <item row="3" column="2">
+                <widget class="QCheckBox" name="checkBoxOptionsMapNavaidFill">
+                 <property name="toolTip">
+                  <string>Fill symbols or symbol centers for navaids white.
+For VOR, NDB and waypoints. Not for flight plan labels.</string>
+                 </property>
+                 <property name="text">
+                  <string>Fill &amp;Symbol</string>
+                 </property>
+                 <property name="checked">
+                  <bool>true</bool>
+                 </property>
+                </widget>
+               </item>
+               <item row="5" column="1">
+                <widget class="QSpinBox" name="spinBoxOptionsDisplayThicknessAirway">
+                 <property name="toolTip">
+                  <string>Airway line width</string>
+                 </property>
+                 <property name="suffix">
+                  <string> %</string>
+                 </property>
+                 <property name="prefix">
+                  <string>Line Width </string>
+                 </property>
+                 <property name="minimum">
+                  <number>20</number>
+                 </property>
+                 <property name="maximum">
+                  <number>300</number>
+                 </property>
+                 <property name="singleStep">
+                  <number>10</number>
+                 </property>
+                 <property name="value">
+                  <number>100</number>
+                 </property>
+                </widget>
+               </item>
+               <item row="11" column="0" alignment="Qt::AlignVCenter">
+                <widget class="QLabel" name="labelOptionsMapSizeAirspace">
+                 <property name="text">
+                  <string>Air&amp;spaces:</string>
+                 </property>
+                 <property name="alignment">
+                  <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignTop</set>
+                 </property>
+                 <property name="buddy">
+                  <cstring>spinBoxOptionsDisplayThicknessAirspace</cstring>
+                 </property>
+                </widget>
+               </item>
+               <item row="1" column="1">
+                <widget class="QSpinBox" name="spinBoxOptionsDisplaySymbolSizeNavaid">
+                 <property name="toolTip">
+                  <string>For VOR, NDB, waypoints, holdings, top of climb and top of descent.</string>
+                 </property>
+                 <property name="suffix">
+                  <string> %</string>
+                 </property>
+                 <property name="prefix">
+                  <string>Symbol </string>
+                 </property>
+                 <property name="minimum">
+                  <number>50</number>
+                 </property>
+                 <property name="maximum">
+                  <number>200</number>
+                 </property>
+                 <property name="singleStep">
+                  <number>10</number>
+                 </property>
+                 <property name="value">
+                  <number>100</number>
+                 </property>
+                </widget>
+               </item>
                <item row="10" column="0" colspan="3">
                 <widget class="Line" name="line_13">
                  <property name="orientation">
@@ -3632,88 +3665,41 @@ Lower values make the airspace more opaque and higher values more transparent.</
                  </property>
                 </widget>
                </item>
-               <item row="8" column="2">
-                <widget class="QCheckBox" name="checkBoxOptionsMapAirwayText">
+               <item row="11" column="2">
+                <widget class="QSpinBox" name="spinBoxOptionsDisplayTextSizeAirspace">
+                 <property name="toolTip">
+                  <string>Text size for airspaces.</string>
+                 </property>
+                 <property name="suffix">
+                  <string> %</string>
+                 </property>
+                 <property name="prefix">
+                  <string>Text </string>
+                 </property>
+                 <property name="minimum">
+                  <number>50</number>
+                 </property>
+                 <property name="maximum">
+                  <number>200</number>
+                 </property>
+                 <property name="singleStep">
+                  <number>10</number>
+                 </property>
+                 <property name="value">
+                  <number>100</number>
+                 </property>
+                </widget>
+               </item>
+               <item row="12" column="2">
+                <widget class="QCheckBox" name="checkBoxOptionsMapAirspaceText">
                  <property name="toolTip">
                   <string>Draw white background for airway text labels</string>
                  </property>
                  <property name="text">
                   <string>Text &amp;Background</string>
                  </property>
-                </widget>
-               </item>
-               <item row="13" column="1" colspan="2">
-                <widget class="QCheckBox" name="checkBoxOptionsMapAirspaceNoMultZ">
-                 <property name="toolTip">
-                  <string>Hide flight buffer zones (FBZ) and redundant airspaces having a multiple code of &quot;Z&quot;.</string>
-                 </property>
-                 <property name="text">
-                  <string>Hide Multiple Code &amp;Z airspaces and FBZ areas</string>
-                 </property>
                  <property name="checked">
                   <bool>true</bool>
-                 </property>
-                </widget>
-               </item>
-               <item row="16" column="0">
-                <widget class="QLabel" name="labelOptionsMapMora">
-                 <property name="toolTip">
-                  <string/>
-                 </property>
-                 <property name="text">
-                  <string>&amp;Minimum altitude grid (MORA):</string>
-                 </property>
-                 <property name="wordWrap">
-                  <bool>true</bool>
-                 </property>
-                 <property name="buddy">
-                  <cstring>spinBoxOptionsDisplayTransparencyMora</cstring>
-                 </property>
-                </widget>
-               </item>
-               <item row="15" column="0" colspan="3">
-                <widget class="Line" name="line_10">
-                 <property name="orientation">
-                  <enum>Qt::Horizontal</enum>
-                 </property>
-                </widget>
-               </item>
-               <item row="11" column="0" alignment="Qt::AlignVCenter">
-                <widget class="QLabel" name="labelOptionsMapSizeAirspace">
-                 <property name="text">
-                  <string>Air&amp;spaces:</string>
-                 </property>
-                 <property name="alignment">
-                  <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignTop</set>
-                 </property>
-                 <property name="buddy">
-                  <cstring>spinBoxOptionsDisplayThicknessAirspace</cstring>
-                 </property>
-                </widget>
-               </item>
-               <item row="16" column="1">
-                <widget class="QSpinBox" name="spinBoxOptionsDisplayTransparencyMora">
-                 <property name="toolTip">
-                  <string>Transparency of the MORA text and grid.
-Value 0 is opaque and 90 is most transparent.</string>
-                 </property>
-                 <property name="suffix">
-                  <string> %</string>
-                 </property>
-                 <property name="prefix">
-                  <string>Transparency </string>
-                 </property>
-                 <property name="minimum">
-                  <number>0</number>
-                 </property>
-                 <property name="maximum">
-                  <number>90</number>
-                 </property>
-                 <property name="singleStep">
-                  <number>10</number>
-                 </property>
-                 <property name="value">
-                  <number>50</number>
                  </property>
                 </widget>
                </item>
@@ -3742,45 +3728,114 @@ Value 0 is opaque and 90 is most transparent.</string>
                  </property>
                 </widget>
                </item>
-               <item row="3" column="2">
-                <widget class="QCheckBox" name="checkBoxOptionsMapNavaidFill">
-                 <property name="toolTip">
-                  <string>Fill symbols or symbol centers for navaids white.
-For VOR, NDB and waypoints. Not for flight plan labels.</string>
-                 </property>
+               <item row="14" column="0" colspan="3">
+                <widget class="QLabel" name="labelOptionsAirspaceSettingsHint">
                  <property name="text">
-                  <string>Fill &amp;Symbol</string>
+                  <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;img src=&quot;:/littlenavmap/resources/icons/bulb.svg&quot;/&gt;&lt;span style=&quot; font-style:italic;&quot;&gt;Airspace label settings can be found on page &lt;/span&gt;&lt;a href=&quot;lnm://mapoptions&quot;&gt;&lt;span style=&quot; font-style:italic; text-decoration: underline;&quot;&gt;Map Options and Labels&lt;/span&gt;&lt;/a&gt;&lt;span style=&quot; font-style:italic;&quot;&gt; in branch &amp;quot;Airspaces&amp;quot;.&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
                  </property>
-                 <property name="checked">
+                 <property name="wordWrap">
                   <bool>true</bool>
                  </property>
+                 <property name="margin">
+                  <number>10</number>
+                 </property>
+                 <property name="textInteractionFlags">
+                  <set>Qt::LinksAccessibleByMouse|Qt::TextSelectableByMouse</set>
+                 </property>
                 </widget>
                </item>
-               <item row="2" column="2">
-                <widget class="QCheckBox" name="checkBoxOptionsMapNavaidText">
+              </layout>
+             </widget>
+            </item>
+            <item>
+             <widget class="QGroupBox" name="groupBox_53">
+              <property name="title">
+               <string>MORA Grid Display Options</string>
+              </property>
+              <layout class="QGridLayout" name="gridLayout_57">
+               <property name="leftMargin">
+                <number>2</number>
+               </property>
+               <property name="topMargin">
+                <number>2</number>
+               </property>
+               <property name="rightMargin">
+                <number>2</number>
+               </property>
+               <property name="bottomMargin">
+                <number>2</number>
+               </property>
+               <property name="spacing">
+                <number>2</number>
+               </property>
+               <item row="1" column="1">
+                <widget class="QSpinBox" name="spinBoxOptionsDisplayTransparencyMora">
                  <property name="toolTip">
-                  <string>Draw white background for navaid labels.
-For VOR, NDB, ILS, waypoints and holdings. Not for flight plan labels.</string>
+                  <string>Transparency of the MORA text and grid.
+Value 0 is opaque and 90 is most transparent.</string>
                  </property>
-                 <property name="text">
-                  <string>Text &amp;Background</string>
+                 <property name="suffix">
+                  <string> %</string>
+                 </property>
+                 <property name="prefix">
+                  <string>Transparency </string>
+                 </property>
+                 <property name="minimum">
+                  <number>0</number>
+                 </property>
+                 <property name="maximum">
+                  <number>90</number>
+                 </property>
+                 <property name="singleStep">
+                  <number>10</number>
+                 </property>
+                 <property name="value">
+                  <number>50</number>
                  </property>
                 </widget>
                </item>
-               <item row="5" column="0" rowspan="3" alignment="Qt::AlignVCenter">
-                <widget class="QLabel" name="labelOptionsMapSizeAirway">
-                 <property name="text">
-                  <string>Air&amp;ways:</string>
+               <item row="0" column="1">
+                <widget class="QSpinBox" name="spinBoxOptionsDisplayThicknessMora">
+                 <property name="toolTip">
+                  <string>MORA grid line width</string>
                  </property>
-                 <property name="alignment">
-                  <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignTop</set>
+                 <property name="suffix">
+                  <string> %</string>
+                 </property>
+                 <property name="prefix">
+                  <string>Line Width </string>
+                 </property>
+                 <property name="minimum">
+                  <number>20</number>
+                 </property>
+                 <property name="maximum">
+                  <number>300</number>
+                 </property>
+                 <property name="singleStep">
+                  <number>10</number>
+                 </property>
+                 <property name="value">
+                  <number>100</number>
+                 </property>
+                </widget>
+               </item>
+               <item row="0" column="0">
+                <widget class="QLabel" name="labelOptionsMapMora">
+                 <property name="toolTip">
+                  <string/>
+                 </property>
+                 <property name="text">
+                  <string>&amp;Minimum altitude grid (MORA):</string>
+                 </property>
+                 <property name="wordWrap">
+                  <bool>true</bool>
                  </property>
                  <property name="buddy">
-                  <cstring>spinBoxOptionsDisplayThicknessAirway</cstring>
+                  <cstring>spinBoxOptionsDisplayTransparencyMora</cstring>
                  </property>
                 </widget>
                </item>
-               <item row="16" column="2">
+               <item row="0" column="2">
                 <widget class="QSpinBox" name="spinBoxOptionsDisplayTextSizeMora">
                  <property name="toolTip">
                   <string>Text size of the MORA altitude labels</string>
@@ -3802,19 +3857,6 @@ For VOR, NDB, ILS, waypoints and holdings. Not for flight plan labels.</string>
                  </property>
                  <property name="value">
                   <number>100</number>
-                 </property>
-                </widget>
-               </item>
-               <item row="12" column="2">
-                <widget class="QCheckBox" name="checkBoxOptionsMapAirspaceText">
-                 <property name="toolTip">
-                  <string>Draw white background for airway text labels</string>
-                 </property>
-                 <property name="text">
-                  <string>Text &amp;Background</string>
-                 </property>
-                 <property name="checked">
-                  <bool>true</bool>
                  </property>
                 </widget>
                </item>
@@ -4194,8 +4236,8 @@ to avoid a cluttered up airports</string>
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>428</width>
-             <height>556</height>
+             <width>572</width>
+             <height>535</height>
             </rect>
            </property>
            <layout class="QVBoxLayout" name="verticalLayout_35">
@@ -4669,8 +4711,8 @@ Also used in the elevation profile.</string>
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>554</width>
-             <height>391</height>
+             <width>586</width>
+             <height>531</height>
             </rect>
            </property>
            <layout class="QVBoxLayout" name="verticalLayout_57">
@@ -5020,8 +5062,8 @@ Note that this does not affect the stored trail points.</string>
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>441</width>
-             <height>673</height>
+             <width>572</width>
+             <height>634</height>
             </rect>
            </property>
            <layout class="QGridLayout" name="gridLayout_35">
@@ -5648,8 +5690,8 @@ if you hover over the elevation profile.</string>
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>183</width>
-             <height>132</height>
+             <width>586</width>
+             <height>531</height>
             </rect>
            </property>
            <layout class="QVBoxLayout" name="verticalLayout_61">
@@ -5721,8 +5763,8 @@ if you hover over the elevation profile.</string>
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>437</width>
-             <height>273</height>
+             <width>586</width>
+             <height>531</height>
             </rect>
            </property>
            <layout class="QVBoxLayout" name="verticalLayout_62">
@@ -5840,8 +5882,8 @@ if you hover over the elevation profile.</string>
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>319</width>
-             <height>811</height>
+             <width>572</width>
+             <height>645</height>
             </rect>
            </property>
            <layout class="QVBoxLayout" name="verticalLayout_63">
@@ -5966,8 +6008,8 @@ if you hover over the elevation profile.</string>
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>328</width>
-             <height>496</height>
+             <width>586</width>
+             <height>531</height>
             </rect>
            </property>
            <layout class="QGridLayout" name="gridLayout_39">
@@ -6436,8 +6478,8 @@ airspace filename has to match the callsign of the online center.</string>
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>462</width>
-             <height>220</height>
+             <width>586</width>
+             <height>531</height>
             </rect>
            </property>
            <layout class="QVBoxLayout" name="verticalLayout_67">
@@ -6600,8 +6642,8 @@ The buffer radius defines the surrounding from where the maximum elevation is ca
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>436</width>
-             <height>279</height>
+             <width>586</width>
+             <height>531</height>
             </rect>
            </property>
            <layout class="QVBoxLayout" name="verticalLayout_60">
@@ -7190,8 +7232,8 @@ put the active leg back on top after the given timeout while flying.</string>
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>318</width>
-             <height>202</height>
+             <width>586</width>
+             <height>531</height>
             </rect>
            </property>
            <layout class="QVBoxLayout" name="verticalLayout_26">
@@ -7350,8 +7392,8 @@ Note that this value does not affect flight plan calculation or saving of flight
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>272</width>
-             <height>725</height>
+             <width>572</width>
+             <height>572</height>
             </rect>
            </property>
            <layout class="QVBoxLayout" name="verticalLayout_27">
@@ -7591,8 +7633,8 @@ Note that this value does not affect flight plan calculation or saving of flight
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>245</width>
-             <height>766</height>
+             <width>572</width>
+             <height>630</height>
             </rect>
            </property>
            <layout class="QVBoxLayout" name="verticalLayout_28">
@@ -7957,8 +7999,8 @@ If this field is empty, the default Active Sky weather file path will be used wh
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>389</width>
-             <height>375</height>
+             <width>586</width>
+             <height>531</height>
             </rect>
            </property>
            <layout class="QVBoxLayout" name="verticalLayout_29">
@@ -8534,7 +8576,7 @@ Uncheck if you use such an add-on or see issues like a corruped map display.</st
                   <number>50</number>
                  </property>
                  <property name="maximum">
-                  <number>200</number>
+                  <number>300</number>
                  </property>
                  <property name="singleStep">
                   <number>10</number>
@@ -8565,8 +8607,8 @@ Uncheck if you use such an add-on or see issues like a corruped map display.</st
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>586</width>
-             <height>531</height>
+             <width>395</width>
+             <height>524</height>
             </rect>
            </property>
            <layout class="QGridLayout" name="gridLayout_38">
@@ -8934,8 +8976,8 @@ You have to reload the scenery library so that the changes take effect.</string>
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>572</width>
-             <height>876</height>
+             <width>369</width>
+             <height>1093</height>
             </rect>
            </property>
            <layout class="QVBoxLayout" name="verticalLayout_75">

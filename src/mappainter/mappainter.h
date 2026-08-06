@@ -125,7 +125,7 @@ protected:
    * for the circle depends on the zoom distance. Optimized for large circles. */
   void paintCircle(Marble::GeoPainter *painter, const atools::geo::Pos& centerPos, float radiusNm, bool fast, QPointF *textPos) const;
 
-  void paintArc(Marble::GeoPainter *painter, const atools::geo::Pos& centerPos, float radiusNm, float angleDegStart, float angleDegEnd,
+  void paintArc(Marble::GeoPainter *painter, const atools::geo::Pos& centerPos, float radiusNm, int angleDegStart, int angleDegEnd,
                 bool fast) const;
 
   void drawLine(Marble::GeoPainter *painter, const atools::geo::Line& line, bool forceDraw = false) const;
@@ -207,6 +207,11 @@ protected:
   /* Draw a large spherical correct projected circle */
   void paintCircleLargeInternal(Marble::GeoPainter *painter, const atools::geo::Pos& centerPos, float radiusNm, bool fast,
                                 QPointF *textPos) const;
+
+  /* Make icon size dependent on screen size but limit min and max */
+  int touchIconSize(Marble::GeoPainter *painter) const;
+
+  const int TOUCH_ICON_BORDER_DIST = 5;
 
   PaintContext *context = nullptr;
   SymbolPainter *symbolPainter = nullptr;

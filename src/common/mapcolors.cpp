@@ -99,10 +99,10 @@ QColor weatherMvfrColor(QColor(QStringLiteral("#0000d0")));
 QColor weatherVfrColor(QColor(QStringLiteral("#00b000")));
 QColor weatherErrorColor(QColor(QStringLiteral("#808080")));
 
-QPen minimumAltitudeGridPen(QColor(QStringLiteral("#a0a0a0")), 1.);
+QColor minimumAltitudeGridColor(QStringLiteral("#a0a0a0"));
 QColor minimumAltitudeNumberColor(QColor(QStringLiteral("#70000000")));
 
-QPen minimumAltitudeGridPenDark(QColor(QStringLiteral("#808080")), 1.);
+QColor minimumAltitudeGridColorDark(QStringLiteral("#808080"));
 QColor minimumAltitudeNumberColorDark(QColor(QStringLiteral("#70a0a0a0")));
 
 QColor compassRoseColor(Qt::darkRed);
@@ -151,7 +151,7 @@ QColor mapPrintHeaderColor(220, 220, 220);
 
 QPen searchCenterBackPen(Qt::black, 6., Qt::SolidLine, Qt::FlatCap);
 QPen searchCenterFillPen(Qt::yellow, 2., Qt::SolidLine, Qt::FlatCap);
-QPen touchMarkBackPen(QColor(Qt::black), 4., Qt::SolidLine, Qt::FlatCap);
+QPen touchMarkBackPen(QColor(Qt::black), 6., Qt::SolidLine, Qt::FlatCap);
 QPen touchMarkFillPen(Qt::white, 2., Qt::SolidLine, Qt::FlatCap);
 QColor touchRegionFillColor(QStringLiteral("#40888888"));
 QColor touchRegionCornerFillColor(QStringLiteral("#80888888"));
@@ -791,10 +791,10 @@ void loadColors()
   loadColor(colorSettings, QStringLiteral("Weather/WeatherMvfrColor"), weatherMvfrColor);
   loadColor(colorSettings, QStringLiteral("Weather/WeatherVfrColor"), weatherVfrColor);
 
-  loadPen(colorSettings, QStringLiteral("AltitudeGrid/MinimumAltitudeGridPen"), minimumAltitudeGridPen);
-  loadColorArgb(colorSettings, QStringLiteral("AltitudeGrid/MinimumAltitudeNumberColor"), minimumAltitudeNumberColor);
-  loadPen(colorSettings, QStringLiteral("AltitudeGrid/MinimumAltitudeGridPenDark"), minimumAltitudeGridPenDark);
-  loadColorArgb(colorSettings, QStringLiteral("AltitudeGrid/MinimumAltitudeNumberColorDark"), minimumAltitudeNumberColorDark);
+  loadColor(colorSettings, QStringLiteral("AltitudeGrid/MinimumAltitudeGridColor"), minimumAltitudeGridColor);
+  loadColor(colorSettings, QStringLiteral("AltitudeGrid/MinimumAltitudeNumberColor"), minimumAltitudeNumberColor);
+  loadColor(colorSettings, QStringLiteral("AltitudeGrid/MinimumAltitudeGridColorDark"), minimumAltitudeGridColorDark);
+  loadColor(colorSettings, QStringLiteral("AltitudeGrid/MinimumAltitudeNumberColorDark"), minimumAltitudeNumberColorDark);
 
   loadColor(colorSettings, QStringLiteral("Profile/SkyColor"), profileSkyColor);
   loadColor(colorSettings, QStringLiteral("Profile/LandColorInner"), profileLandColorInner);

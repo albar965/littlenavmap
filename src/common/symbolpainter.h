@@ -103,17 +103,19 @@ public:
   void drawAirportWeather(QPainter *painter, const atools::fs::weather::MetarParser& metar,
                           float x, float y, float size, bool windPointer, bool windBarbs, bool fast) const;
 
-  /* Wind arrow */
+  /* Wind arrow. x and y are center coordinates. */
   void drawWindPointer(QPainter *painter, float x, float y, float size, float dir);
 
   /* Draw large symbol with sectors and labels. MSA circle with bearings and altitude */
-  void drawAirportMsa(QPainter *painter, const map::MapAirportMsa& airportMsa, float x, float y, float size, float symbolScale, bool header,
+  void drawAirportMsa(QPainter *painter, const map::MapAirportMsa& airportMsa, float x, float y, float size, float symbolScale,
+                      float lineWidth, bool header,
                       bool transparency, bool fast) const;
 
   /* Navaids ============================================= */
 
   /* Waypoint symbol. Can use a different color for invalid waypoints that were not found in the database */
-  void drawWaypointSymbol(QPainter *painter, const QColor& col, float x, float y, float size, sf::SymbolFill fill) const;
+  void drawWaypointSymbol(QPainter *painter, const QColor& col, float x, float y, float size, float lineWidthScale,
+                          sf::SymbolFill fill) const;
 
   /* Waypoint texts have no background excepts for flight plan */
   void drawWaypointText(QPainter *painter, const map::MapWaypoint& wp, float x, float y,
@@ -121,7 +123,8 @@ public:
                         const QStringList *addtionalText = nullptr) const;
 
   /* VOR with large size has a ring with compass ticks. For VORs part of the route the interior is filled.  */
-  void drawVorSymbol(QPainter *painter, const map::MapVor& vor, float x, float y, float size, float sizeLarge, sf::SymbolFill fill,
+  void drawVorSymbol(QPainter *painter, const map::MapVor& vor, float x, float y, float size, float lineWidthScale, float sizeLarge,
+                     sf::SymbolFill fill,
                      bool fast, bool darkMap) const;
 
   /* VOR texts have no background excepts for flight plan */
@@ -130,7 +133,8 @@ public:
                    const QStringList *addtionalText = nullptr) const;
 
   /* NDB with dotted rings or solid rings depending on size. For NDBs part of the route the interior is filled.  */
-  void drawNdbSymbol(QPainter *painter, float x, float y, float size, sf::SymbolFill fill, bool fast, bool darkMap) const;
+  void drawNdbSymbol(QPainter *painter, float x, float y, float size, float lineWidthScale, sf::SymbolFill fill, bool fast,
+                     bool darkMap) const;
 
   /* NDB texts have no background excepts for flight plan */
   void drawNdbText(QPainter *painter, const map::MapNdb& ndb, float x, float y, text::Flag flags,

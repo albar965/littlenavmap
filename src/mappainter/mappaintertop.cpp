@@ -24,7 +24,6 @@
 #include "mapgui/mappaintwidget.h"
 #include "mapgui/mapthemehandler.h"
 #include "mappainter/paintcontext.h"
-#include "options/optiondata.h"
 #include "util/paintercontextsaver.h"
 
 #ifdef DEBUG_APPROACH_PAINT
@@ -51,45 +50,37 @@ void MapPainterTop::render()
   if(!context->visibleWidget)
     return;
 
-  optsd::DisplayOptionsNavAid opts = OptionData::instance().getDisplayOptionsNavAid();
-  opts::MapNavigation nav = OptionData::instance().getMapNavigation();
-
   float size = context->szF(context->symbolSizeAirport, 10.f);
-  float size2 = context->szF(context->symbolSizeAirport, 9.f);
+  float size2 = context->szF(context->symbolSizeAirport, 8.f);
 
   if(!context->webMap && context->paintNavigation)
   {
     // Draw center cross =====================================
     // Usable in all modes
     Marble::GeoPainter *painter = context->painter;
-    if(opts & optsd::NAVAIDS_CENTER_CROSS)
+    if(context->dispOptsNavaid.testFlag(optsd::NAVAIDS_CENTER_CROSS))
     {
       QRect vp = painter->viewport();
       int x = vp.center().x();
       int y = vp.center().y();
 
-      painter->setPen(mapcolors::touchMarkBackPen);
+      painter->setPen(context->szPen(mapcolors::touchMarkBackPen));
       drawCross(painter, x, y, size);
 
-      painter->setPen(mapcolors::touchMarkFillPen);
+      painter->setPen(context->szPen(mapcolors::touchMarkFillPen));
       drawCross(painter, x, y, size2);
     }
 
     // Screen navigation areas =====================================
     // Show only if touch areas are enabled
-    if(nav == opts::MAP_NAV_TOUCHSCREEN)
+    if(context->mapNav == opts::MAP_NAV_TOUCHSCREEN)
     {
-      int areaSize = OptionData::instance().getMapNavTouchArea();
-      if(opts & optsd::NAVAIDS_TOUCHSCREEN_REGIONS)
-        drawTouchRegions(areaSize);
+      if(context->dispOptsNavaid.testFlag(optsd::NAVAIDS_TOUCHSCREEN_REGIONS))
+        drawTouchRegions(context->navAreaSize);
 
       // Navigation icons in the corners
-      if(opts & optsd::NAVAIDS_TOUCHSCREEN_ICONS)
-      {
-        // Make icon size dependent on screen size but limit min and max
-        int iconSize = std::max(painter->viewport().height(), painter->viewport().width()) / 20;
-        drawTouchIcons(std::max(std::min(iconSize, 30), 10));
-      }
+      if(context->dispOptsNavaid.testFlag(optsd::NAVAIDS_TOUCHSCREEN_ICONS))
+        drawTouchIcons(touchIconSize(painter));
     }
   }
 
@@ -188,22 +179,21 @@ void MapPainterTop::paintCopyright()
 {
   if(context->paintCopyright)
   {
-    QString mapCopyright = NavApp::getMapThemeHandler()->getTheme(mapPaintWidget->getCurrentThemeId()).getCopyright();
+    const QString& mapCopyright = NavApp::getMapThemeHandler()->getTheme(mapPaintWidget->getCurrentThemeId()).getCopyright();
     if(!mapCopyright.isEmpty())
     {
       Marble::GeoPainter *painter = context->painter;
       atools::util::PainterContextSaver saver(painter);
 
-      painter->setFont(QApplication::font());
-      mapcolors::scaleFont(painter, 0.9f);
+      context->szFont(0.9f);
 
       // Move text more into the center for web apps
-      int rightOffset = context->visibleWidget ? 0 : 20;
-      int bottomOffset = context->visibleWidget ? 0 : 4;
+      int rightOffset = context->visibleWidget ? context->szF(2) : 20;
+      int bottomOffset = context->visibleWidget ? context->szF(2) : 4;
 
       // Draw text
       painter->setPen(Qt::black);
-      painter->setBackground(QColor(QStringLiteral("#b0ffffff")));
+      painter->setBackground(QColor(255, 255, 255, 176));
       painter->setBrush(Qt::NoBrush);
       painter->setBackgroundMode(Qt::OpaqueMode);
       painter->drawText(painter->viewport().width() - painter->fontMetrics().horizontalAdvance(mapCopyright) - rightOffset,
@@ -215,36 +205,34 @@ void MapPainterTop::paintCopyright()
 void MapPainterTop::drawTouchIcons(int iconSize)
 {
   Marble::GeoPainter *painter = context->painter;
-  QRect vp = painter->viewport();
-  int w = vp.width();
-  int h = vp.height();
-  static const int borderDist = 5;
+  int w = context->screenRect.width();
+  int h = context->screenRect.height();
 
   // Get pixmap from cache
   QPixmap pixmap;
   getPixmap(pixmap, QStringLiteral(":/littlenavmap/resources/icons/zoomin.svg"), iconSize);
-  painter->drawPixmap(QPoint(borderDist, borderDist), pixmap);
+  painter->drawPixmap(QPoint(TOUCH_ICON_BORDER_DIST, TOUCH_ICON_BORDER_DIST), pixmap);
 
   getPixmap(pixmap, QStringLiteral(":/littlenavmap/resources/icons/arrowup.svg"), iconSize);
-  painter->drawPixmap(QPoint(w / 2 - iconSize, borderDist), pixmap);
+  painter->drawPixmap(QPoint(w / 2 - iconSize / 2, TOUCH_ICON_BORDER_DIST), pixmap);
 
   getPixmap(pixmap, QStringLiteral(":/littlenavmap/resources/icons/zoomout.svg"), iconSize);
-  painter->drawPixmap(QPoint(w - iconSize - borderDist, borderDist), pixmap);
+  painter->drawPixmap(QPoint(w - iconSize - TOUCH_ICON_BORDER_DIST, TOUCH_ICON_BORDER_DIST), pixmap);
 
   getPixmap(pixmap, QStringLiteral(":/littlenavmap/resources/icons/arrowleft.svg"), iconSize);
-  painter->drawPixmap(QPoint(borderDist, h / 2 - iconSize), pixmap);
+  painter->drawPixmap(QPoint(TOUCH_ICON_BORDER_DIST, h / 2 - iconSize / 2), pixmap);
 
   getPixmap(pixmap, QStringLiteral(":/littlenavmap/resources/icons/arrowright.svg"), iconSize);
-  painter->drawPixmap(QPoint(w - iconSize - borderDist, h / 2 - iconSize), pixmap);
+  painter->drawPixmap(QPoint(w - iconSize - TOUCH_ICON_BORDER_DIST, h / 2 - iconSize / 2), pixmap);
 
   getPixmap(pixmap, QStringLiteral(":/littlenavmap/resources/icons/back.svg"), iconSize);
-  painter->drawPixmap(QPoint(borderDist, h - iconSize - borderDist), pixmap);
+  painter->drawPixmap(QPoint(TOUCH_ICON_BORDER_DIST, h - iconSize - TOUCH_ICON_BORDER_DIST), pixmap);
 
   getPixmap(pixmap, QStringLiteral(":/littlenavmap/resources/icons/arrowdown.svg"), iconSize);
-  painter->drawPixmap(QPoint(w / 2 - iconSize, h - iconSize - borderDist), pixmap);
+  painter->drawPixmap(QPoint(w / 2 - iconSize / 2, h - iconSize - TOUCH_ICON_BORDER_DIST), pixmap);
 
   getPixmap(pixmap, QStringLiteral(":/littlenavmap/resources/icons/next.svg"), iconSize);
-  painter->drawPixmap(QPoint(w - iconSize - borderDist, h - iconSize - borderDist), pixmap);
+  painter->drawPixmap(QPoint(w - iconSize - TOUCH_ICON_BORDER_DIST, h - iconSize - TOUCH_ICON_BORDER_DIST), pixmap);
 }
 
 void MapPainterTop::drawTouchRegions(int areaSize)

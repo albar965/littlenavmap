@@ -2124,7 +2124,7 @@ void MapPainterRoute::paintWaypoint(const QColor& col, float x, float y, bool pr
   float size = context->szF(context->symbolSizeNavaid * context->symbolSizeRoute, context->mapLayerRoute->getWaypointSymbolSize());
   size = std::max(size, 8.f);
 
-  symbolPainter->drawWaypointSymbol(context->painter, col, x, y, size, preview ? sf::FILL_PREVIEW : sf::FILL_ROUTE);
+  symbolPainter->drawWaypointSymbol(context->painter, col, x, y, size, context->scaleAll, preview ? sf::FILL_PREVIEW : sf::FILL_ROUTE);
 }
 
 void MapPainterRoute::paintWaypointText(float x, float y, const map::MapWaypoint& waypoint, bool drawTextDetails,
@@ -2155,8 +2155,8 @@ void MapPainterRoute::paintVor(float x, float y, const map::MapVor& vor, bool pr
   context->routeDrawnNavaids->append(vor.getRef());
   float size = context->szF(context->symbolSizeNavaid * context->symbolSizeRoute, context->mapLayerRoute->getVorSymbolSizeRoute());
   float sizeLarge = context->szF(context->symbolSizeNavaid * context->symbolSizeRoute, context->mapLayerRoute->getVorSymbolSizeLarge());
-  symbolPainter->drawVorSymbol(context->painter, vor, x, y, size, sizeLarge, preview ? sf::FILL_PREVIEW : sf::FILL_ROUTE, false /* fast */,
-                               context->darkMap);
+  symbolPainter->drawVorSymbol(context->painter, vor, x, y, size, context->scaleAll, sizeLarge, preview ? sf::FILL_PREVIEW : sf::FILL_ROUTE,
+                               false /* fast */, context->darkMap);
 }
 
 void MapPainterRoute::paintVorText(float x, float y, const map::MapVor& vor, bool drawTextDetails, text::Attribute atts,
@@ -2189,8 +2189,8 @@ void MapPainterRoute::paintNdb(float x, float y, const map::MapNdb& ndb, bool pr
   context->routeDrawnNavaids->append(ndb.getRef());
   float size = context->szF(context->symbolSizeNavaid * context->symbolSizeRoute, context->mapLayerRoute->getNdbSymbolSize());
   size = std::max(size, 8.f);
-  symbolPainter->drawNdbSymbol(context->painter, x, y, size, preview ? sf::FILL_PREVIEW : sf::FILL_ROUTE, false /* fast */,
-                               context->darkMap);
+  symbolPainter->drawNdbSymbol(context->painter, x, y, size, context->scaleAll, preview ? sf::FILL_PREVIEW : sf::FILL_ROUTE,
+                               false /* fast */, context->darkMap);
 }
 
 void MapPainterRoute::paintNdbText(float x, float y, const map::MapNdb& ndb, bool drawTextDetails, text::Attribute atts,

@@ -75,7 +75,7 @@ QIcon SymbolPainter::createAirportMsaIcon(const map::MapAirportMsa& airportMsa, 
   if(actualSize != nullptr)
     *actualSize = size;
 
-  SymbolPainter().drawAirportMsa(&painter, airportMsa, size / 2.f, size / 2.f, 0.f, symbolScale,
+  SymbolPainter().drawAirportMsa(&painter, airportMsa, size / 2.f, size / 2.f, 0.f, symbolScale, 2.f,
                                  false /* header */, false /* transparency */, false /* fast */);
   return QIcon(pixmap);
 }
@@ -87,7 +87,8 @@ QIcon SymbolPainter::createVorIcon(const map::MapVor& vor, int size, bool darkMa
   QPainter painter(&pixmap);
   prepareForIcon(painter);
 
-  SymbolPainter().drawVorSymbol(&painter, vor, size / 2.f, size / 2.f, size * 7.f / 10.f, 0.f, sf::FILL_NONE, false /* fast */, darkMap);
+  SymbolPainter().drawVorSymbol(&painter, vor, size / 2.f, size / 2.f, size * 7.f / 10.f, 1.f, 0.f,
+                                sf::FILL_NONE, false /* fast */, darkMap);
   return QIcon(pixmap);
 }
 
@@ -98,7 +99,7 @@ QIcon SymbolPainter::createNdbIcon(int size, bool darkMap)
   QPainter painter(&pixmap);
   prepareForIcon(painter);
 
-  SymbolPainter().drawNdbSymbol(&painter, size / 2.f, size / 2.f, size * 8.f / 10.f, sf::FILL_NONE, false /* fast */, darkMap);
+  SymbolPainter().drawNdbSymbol(&painter, size / 2.f, size / 2.f, size * 8.f / 10.f, 1.f, sf::FILL_NONE, false /* fast */, darkMap);
   return QIcon(pixmap);
 }
 
@@ -123,7 +124,7 @@ QIcon SymbolPainter::createWaypointIcon(int size, const QColor& color)
   QPainter painter(&pixmap);
   prepareForIcon(painter);
 
-  SymbolPainter().drawWaypointSymbol(&painter, color, size / 2.f, size / 2.f, size / 2.f, sf::FILL_NONE);
+  SymbolPainter().drawWaypointSymbol(&painter, color, size / 2.f, size / 2.f, size / 2.f, 1.f, sf::FILL_NONE);
   return QIcon(pixmap);
 }
 
@@ -336,13 +337,14 @@ void SymbolPainter::drawAirportSymbol(QPainter *painter, const map::MapAirport& 
   }
 }
 
-void SymbolPainter::drawWaypointSymbol(QPainter *painter, const QColor& col, float x, float y, float size, sf::SymbolFill fill) const
+void SymbolPainter::drawWaypointSymbol(QPainter *painter, const QColor& col, float x, float y, float size, float lineWidthScale,
+                                       sf::SymbolFill fill) const
 {
   atools::util::PainterContextSaver saver(painter);
   painter->setBackgroundMode(Qt::OpaqueMode);
   painter->setBrush(symbolFillColor(fill));
 
-  float lineWidth = std::max(size / 6.f, 1.5f);
+  float lineWidth = std::max(size / 6.f, 1.5f) * lineWidthScale;
 
   QColor color = col.isValid() ? col : mapcolors::waypointSymbolColor;
   double radius = size / 2.;
@@ -351,7 +353,7 @@ void SymbolPainter::drawWaypointSymbol(QPainter *painter, const QColor& col, flo
   QPolygonF polygon;
   polygon << QPointF(x, y - radius) << QPointF(x + radius, y + radius) << QPointF(x - radius, y + radius);
 
-  if(size > 4)
+  if(size > lineWidth)
     painter->setPen(QPen(color, lineWidth, Qt::SolidLine, Qt::FlatCap, Qt::MiterJoin));
   else
   {
@@ -644,7 +646,6 @@ QList<int> SymbolPainter::calculateWindBarbs(float& lineLength, float lineWidth,
     }
     else if(tempWind >= 5.f)
     {
-      tempWind -= 5.f;
       barbs.append(5);
       break;
     }
@@ -660,10 +661,14 @@ void SymbolPainter::drawWindPointer(QPainter *painter, float x, float y, float s
   atools::util::PainterContextSaver saver(painter);
   painter->setBackgroundMode(Qt::TransparentMode);
 
-  painter->translate(x, y + size / 2.f);
-  painter->rotate(atools::geo::normalizeCourse(dir + 180.f));
-  painter->drawPixmap(QPointF(-size / 2.f, -size / 2.f), *windPointerFromCache(atools::roundToInt(size)));
-  painter->resetTransform();
+  const QPixmap *windPointerPixmap = windPointerFromCache(atools::roundToInt(size));
+  if(windPointerPixmap != nullptr)
+  {
+    painter->translate(x, y);
+    painter->rotate(atools::geo::normalizeCourse(dir + 180.f));
+    painter->drawPixmap(QPointF(-windPointerPixmap->width() / 2.f, -windPointerPixmap->height() / 2.f), *windPointerPixmap);
+    painter->resetTransform();
+  }
 }
 
 int SymbolPainter::airportMsaSize(QPainter *painter, const map::MapAirportMsa& airportMsa, float sizeFactor, bool drawDetails)
@@ -673,7 +678,7 @@ int SymbolPainter::airportMsaSize(QPainter *painter, const map::MapAirportMsa& a
 }
 
 void SymbolPainter::drawAirportMsa(QPainter *painter, const map::MapAirportMsa& airportMsa, float x, float y, float size, float symbolScale,
-                                   bool header, bool transparency, bool fast) const
+                                   float lineWidth, bool header, bool transparency, bool fast) const
 {
   atools::util::PainterContextSaver saver(painter);
 
@@ -681,7 +686,7 @@ void SymbolPainter::drawAirportMsa(QPainter *painter, const map::MapAirportMsa& 
   QColor opaqueFillColor = mapcolors::msaFillColor;
   opaqueFillColor.setAlpha(255);
 
-  painter->setPen(QPen(mapcolors::msaSymbolColor, 2, Qt::SolidLine, Qt::FlatCap));
+  painter->setPen(QPen(mapcolors::msaSymbolColor, lineWidth, Qt::SolidLine, Qt::FlatCap));
   painter->setBackground(transparency ? mapcolors::msaFillColor : opaqueFillColor);
   painter->setBrush(transparency ? mapcolors::msaFillColor : opaqueFillColor);
   painter->setBackgroundMode(Qt::OpaqueMode);
@@ -704,7 +709,8 @@ void SymbolPainter::drawAirportMsa(QPainter *painter, const map::MapAirportMsa& 
     {
       // Draw a header label =============================================
       QString heading = tr("MSA %1 %2 (%3, %4)").
-                        arg(airportMsa.nav.ident, Unit::distNm(airportMsa.radius, true, true), airportMsa.trueBearing ? tr("°T") : tr("°M"), Unit::getUnitAltStr());
+                        arg(airportMsa.nav.ident, Unit::distNm(airportMsa.radius, true, true), airportMsa.trueBearing ? tr("°T") : tr("°M"),
+                            Unit::getUnitAltStr());
 
       QRectF bounding = QFontMetricsF(painter->font()).boundingRect(heading);
       QPointF pt(x - bounding.size().width() / 2., y - radius);
@@ -891,9 +897,8 @@ void SymbolPainter::drawProcedureFaf(QPainter *painter, float x, float y, float 
   painter->drawPolygon(poly);
 }
 
-void SymbolPainter::drawVorSymbol(QPainter *painter, const map::MapVor& vor, float x, float y, float size, float sizeLarge,
-                                  sf::SymbolFill fill,
-                                  bool fast, bool darkMap) const
+void SymbolPainter::drawVorSymbol(QPainter *painter, const map::MapVor& vor, float x, float y, float size, float lineWidthScale,
+                                  float sizeLarge, sf::SymbolFill fill, bool fast, bool darkMap) const
 {
   atools::util::PainterContextSaver saver(painter);
 
@@ -907,8 +912,8 @@ void SymbolPainter::drawVorSymbol(QPainter *painter, const map::MapVor& vor, flo
 
   if(size > 4)
   {
-    float lineWidth = std::max(size / 16.f, 1.5f);
-    float roseLineWidth = std::max(size / 20.f, 0.8f);
+    float lineWidth = std::max(size / 16.f, 1.5f) * lineWidthScale;
+    float roseLineWidth = std::max(size / 20.f, 0.8f) * lineWidthScale;
 
     painter->setPen(QPen(symbolColor, lineWidth, Qt::SolidLine, Qt::SquareCap));
 
@@ -1039,7 +1044,8 @@ void SymbolPainter::drawVorSymbol(QPainter *painter, const map::MapVor& vor, flo
   painter->drawPoint(QPointF(x, y));
 }
 
-void SymbolPainter::drawNdbSymbol(QPainter *painter, float x, float y, float size, sf::SymbolFill fill, bool fast, bool darkMap) const
+void SymbolPainter::drawNdbSymbol(QPainter *painter, float x, float y, float size, float lineWidthScale, sf::SymbolFill fill, bool fast,
+                                  bool darkMap) const
 {
   atools::util::PainterContextSaver saver(painter);
 
@@ -1050,7 +1056,7 @@ void SymbolPainter::drawNdbSymbol(QPainter *painter, float x, float y, float siz
 
   if(size > 4.f)
   {
-    float lineWidth = std::max(size / 16.f, 1.5f);
+    float lineWidth = std::max(size / 16.f, 1.5f) * lineWidthScale;
 
     // Use dotted or solid line depending on size
     painter->setPen(QPen(symbolColor, lineWidth,
@@ -1534,26 +1540,18 @@ QRectF SymbolPainter::textBoxSize(QPainter *painter, const QStringList& texts, t
 
 const QPixmap *SymbolPainter::windPointerFromCache(int size)
 {
-  if(windPointerPixmaps.contains(size))
-    return windPointerPixmaps.object(size);
-  else
-  {
-    QPixmap *newPx = new QPixmap(QIcon(":/littlenavmap/resources/icons/windpointer.svg").pixmap(QSize(size, size)));
-    windPointerPixmaps.insert(size, newPx);
-    return newPx;
-  }
+  if(!windPointerPixmaps.contains(size))
+    windPointerPixmaps.insert(size, new QPixmap(QIcon(":/littlenavmap/resources/icons/windpointer.svg").pixmap(QSize(size, size))));
+
+  return windPointerPixmaps.object(size);
 }
 
 const QPixmap *SymbolPainter::trackLineFromCache(int size)
 {
-  if(trackLinePixmaps.contains(size))
-    return trackLinePixmaps.object(size);
-  else
-  {
-    QPixmap *newPx = new QPixmap(QIcon(":/littlenavmap/resources/icons/trackline.svg").pixmap(QSize(size, size)));
-    trackLinePixmaps.insert(size, newPx);
-    return newPx;
-  }
+  if(!trackLinePixmaps.contains(size))
+    trackLinePixmaps.insert(size, new QPixmap(QIcon(":/littlenavmap/resources/icons/trackline.svg").pixmap(QSize(size, size))));
+
+  return trackLinePixmaps.object(size);
 }
 
 void SymbolPainter::prepareForIcon(QPainter& painter)

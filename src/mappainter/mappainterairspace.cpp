@@ -24,7 +24,6 @@
 #include "mapgui/maplayer.h"
 #include "mapgui/mapscale.h"
 #include "mappainter/paintcontext.h"
-#include "options/optiondata.h"
 #include "query/airspacequeries.h"
 #include "query/querymanager.h"
 #include "route/route.h"
@@ -82,10 +81,6 @@ void MapPainterAirspace::render()
                                               context->viewContext == Marble::Animation, map::AIRSPACE_SRC_ALL, overflow);
   context->setQueryOverflow(overflow);
 
-  const OptionData& optionData = OptionData::instance();
-  int displayThicknessAirspace = optionData.getDisplayThicknessAirspace();
-  int displayTransparencyAirspace = optionData.getDisplayTransparencyAirspace();
-
   QList<DrawAirspace> visibleAirspaces;
   if(!airspaces.isEmpty())
   {
@@ -102,7 +97,7 @@ void MapPainterAirspace::render()
       if(!airspace->hasValidGeometry())
         continue;
 
-      const QPen airspacePen = mapcolors::penForAirspace(*airspace, displayThicknessAirspace);
+      const QPen airspacePen = mapcolors::penForAirspace(*airspace, context->displayThicknessAirspace * context->scaleAll * 100);
       QPen pen = airspacePen; // Modified for online airspaces
 
       // Check if coordinates overlap with viewport
@@ -123,7 +118,7 @@ void MapPainterAirspace::render()
 
           // Fast draw does not fill
           if(!context->drawFast)
-            painter->setBrush(mapcolors::colorForAirspaceFill(*airspace, displayTransparencyAirspace));
+            painter->setBrush(mapcolors::colorForAirspaceFill(*airspace, context->displayTransparencyAirspace * 100));
 
           // Convert to screen polygons probably cutting them and removing duplicate points =====================
           const QList<QPolygonF *> polygons = createPolygons(*lineString, context->screenRect);
@@ -201,12 +196,11 @@ void MapPainterAirspace::render()
 
     // Draw airspace labels ==================================================================================
     // Collection from options dialog
-    const optsd::DisplayOptionsAirspace displayOptionsAirspace = optionData.getDisplayOptionsAirspace();
-    bool name = displayOptionsAirspace.testFlag(optsd::AIRSPACE_NAME),
-         restrictiveName = displayOptionsAirspace.testFlag(optsd::AIRSPACE_RESTRICTIVE_NAME),
-         type = displayOptionsAirspace.testFlag(optsd::AIRSPACE_TYPE),
-         altitude = displayOptionsAirspace.testFlag(optsd::AIRSPACE_ALTITUDE),
-         com = displayOptionsAirspace.testFlag(optsd::AIRSPACE_COM);
+    bool name = context->displayOptionsAirspace.testFlag(optsd::AIRSPACE_NAME),
+         restrictiveName = context->displayOptionsAirspace.testFlag(optsd::AIRSPACE_RESTRICTIVE_NAME),
+         type = context->displayOptionsAirspace.testFlag(optsd::AIRSPACE_TYPE),
+         altitude = context->displayOptionsAirspace.testFlag(optsd::AIRSPACE_ALTITUDE),
+         com = context->displayOptionsAirspace.testFlag(optsd::AIRSPACE_COM);
 
     // Do not draw while moving . Also all text options have to be enabled
     if(context->viewContext == Marble::Still && (name || restrictiveName || type || altitude || com) && !context->drawFast)
@@ -249,8 +243,7 @@ void MapPainterAirspace::render()
 
           if(!airspaceText.isEmpty())
           {
-
-            QPen textPen = mapcolors::penForAirspace(*airspace, displayThicknessAirspace);
+            QPen textPen = mapcolors::penForAirspace(*airspace, context->displayThicknessAirspace * 100);
             textPen.setColor(textPen.color().darker(150));
             painter->setPen(textPen);
 

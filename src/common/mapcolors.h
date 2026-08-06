@@ -101,11 +101,11 @@ extern QColor weatherVfrColor;
 extern QColor weatherErrorColor;
 
 /* Minimum off route altitude (MORA) */
-extern QPen minimumAltitudeGridPen;
+extern QColor minimumAltitudeGridColor;
 extern QColor minimumAltitudeNumberColor;
 
 /* For dark map themes */
-extern QPen minimumAltitudeGridPenDark;
+extern QColor minimumAltitudeGridColorDark;
 extern QColor minimumAltitudeNumberColorDark;
 
 /* Elevation profile colors and pens */

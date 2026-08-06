@@ -71,8 +71,7 @@ protected:
   void appendSpeedText(QStringList& texts, const atools::fs::sc::SimConnectAircraft& aircraft, bool ias, bool gs, bool tas) const;
   void climbSinkPointer(QString& upDown, const atools::fs::sc::SimConnectAircraft& aircraft) const;
 
-  void paintWindPointer(const atools::fs::sc::SimConnectUserAircraft& aircraft, float x, float y) const;
-  void paintTextLabelWind(float x, float y, float size, const atools::fs::sc::SimConnectUserAircraft& aircraft) const;
+  void paintWindPointerAndText(const atools::fs::sc::SimConnectUserAircraft& aircraft) const;
 
   /* Calculate rotation for aircraft icon */
   float calcRotation(const atools::fs::sc::SimConnectAircraft& aircraft) const;

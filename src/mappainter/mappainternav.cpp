@@ -418,7 +418,7 @@ void MapPainterNav::paintWaypoints(const QHash<int, map::MapWaypoint>& waypoints
       if((waypoint.hasJetAirways && drawAirwayJ) || (waypoint.hasVictorAirways && drawAirwayV) || (waypoint.hasTracks && drawTrack))
         size = std::max(5.f, size);
 
-      symbolPainter->drawWaypointSymbol(context->painter, QColor(), x, y, size,
+      symbolPainter->drawWaypointSymbol(context->painter, QColor(), x, y, size, context->scaleAll,
                                         context->flags2.testFlag(opts2::MAP_NAVAID_FILL_BACKGROUND) ? sf::FILL_WHITE : sf::FILL_NONE);
 
       text::Flags flags = text::NO_FLAG;
@@ -458,7 +458,7 @@ void MapPainterNav::paintVors(const QHash<int, map::MapVor>& vors, bool drawFast
       if(context->objCount())
         return;
 
-      symbolPainter->drawVorSymbol(context->painter, vor, x, y, size, sizeLarge,
+      symbolPainter->drawVorSymbol(context->painter, vor, x, y, size, context->scaleAll, sizeLarge,
                                    context->flags2.testFlag(opts2::MAP_NAVAID_FILL_BACKGROUND) ? sf::FILL_WHITE : sf::FILL_NONE,
                                    drawFast, context->darkMap);
 
@@ -495,7 +495,7 @@ void MapPainterNav::paintNdbs(const QHash<int, map::MapNdb>& ndbs, bool drawFast
       if(context->objCount())
         return;
 
-      symbolPainter->drawNdbSymbol(context->painter, x, y, size,
+      symbolPainter->drawNdbSymbol(context->painter, x, y, size, context->scaleAll,
                                    context->flags2.testFlag(opts2::MAP_NAVAID_FILL_BACKGROUND) ? sf::FILL_WHITE : sf::FILL_NONE,
                                    drawFast, context->darkMap);
 

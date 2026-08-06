@@ -408,12 +408,12 @@ OptionsDialog::OptionsDialog(QMainWindow *parentWindow)
                                        optsd::NAVAIDS_CENTER_CROSS);
   addItem<optsd::DisplayOptionsNavAid>(navAids, p->displayOptItemIndexNavAid, tr("Screen Area"),
                                        tr("Highlight click- or touchable areas on screen.\nOnly shown if \"Use map areas\"\n"
-                                          "on page \"Map Navigation\" is enabled as well."),
+                                          "on page \"Map Navigation\" is enabled."),
                                        optsd::NAVAIDS_TOUCHSCREEN_REGIONS);
   addItem<optsd::DisplayOptionsNavAid>(navAids, p->displayOptItemIndexNavAid, tr("Screen Area Icons"),
                                        tr("Shows icons for the screen areas.\n"
                                           "Useful if map areas are used for touchscreen navigation.\n"
-                                          "Only shown if \"Use map areas\" on page \"Map Navigation\" is enabled as well."),
+                                          "Only shown if \"Use map areas\" on page \"Map Navigation\" is enabled."),
                                        optsd::NAVAIDS_TOUCHSCREEN_ICONS);
 
   // Flight plan =====================================================
@@ -796,6 +796,7 @@ OptionsDialog::OptionsDialog(QMainWindow *parentWindow)
     ui->spinBoxOptionsDisplayTextSizeAirway,
     ui->spinBoxOptionsDisplayThicknessAirway,
     ui->spinBoxOptionsDisplayThicknessAirspace,
+    ui->spinBoxOptionsDisplayThicknessMora,
     ui->spinBoxOptionsDisplayTextSizeMora,
     ui->spinBoxOptionsDisplayTransparencyMora,
     ui->spinBoxOptionsDisplayTextSizeAirportMsa,
@@ -2578,6 +2579,7 @@ void OptionsDialog::widgetsToOptionData(OptionData& data)
   data.displayTextSizeUserpoint = ui->spinBoxOptionsDisplayTextSizeUserpoint->value();
   data.displayThicknessAirway = ui->spinBoxOptionsDisplayThicknessAirway->value();
   data.displayThicknessAirspace = ui->spinBoxOptionsDisplayThicknessAirspace->value();
+  data.displayThicknessMora = ui->spinBoxOptionsDisplayThicknessMora->value();
   data.displayTextSizeAirway = ui->spinBoxOptionsDisplayTextSizeAirway->value();
   data.displayThicknessFlightplan = ui->spinBoxOptionsDisplayThicknessFlightplan->value();
   data.displayThicknessFlightplanProfile = ui->spinBoxOptionsDisplayThicknessFlightplanProfile->value();
@@ -2608,7 +2610,7 @@ void OptionsDialog::widgetsToOptionData(OptionData& data)
   data.displayTransparencyAirspace = ui->spinBoxOptionsDisplayTransparencyAirspace->value();
   data.displayTextSizeAirportMsa = ui->spinBoxOptionsDisplayTextSizeAirportMsa->value();
 
-  data.mapNavTouchArea = ui->spinBoxOptionsMapNavTouchArea->value();
+  data.mapNavTouchAreaSize = ui->spinBoxOptionsMapNavTouchArea->value();
 
   data.displayTextSizeMapMarker = ui->spinBoxOptionsDisplayTextSizeUserFeature->value();
   data.displayTextSizeMeasurement = ui->spinBoxOptionsDisplayTextSizeMeasurement->value();
@@ -2924,6 +2926,7 @@ void OptionsDialog::optionDataToWidgets(const OptionData& data)
   ui->spinBoxOptionsDisplayTextSizeAirspace->setValue(data.displayTextSizeAirspace);
   ui->spinBoxOptionsDisplayThicknessAirway->setValue(data.displayThicknessAirway);
   ui->spinBoxOptionsDisplayThicknessAirspace->setValue(data.displayThicknessAirspace);
+  ui->spinBoxOptionsDisplayThicknessMora->setValue(data.displayThicknessMora);
   ui->spinBoxOptionsDisplayTextSizeAirway->setValue(data.displayTextSizeAirway);
   ui->spinBoxOptionsDisplayThicknessFlightplan->setValue(data.displayThicknessFlightplan);
   ui->spinBoxOptionsDisplayThicknessFlightplanProfile->setValue(data.displayThicknessFlightplanProfile);
@@ -2951,7 +2954,7 @@ void OptionsDialog::optionDataToWidgets(const OptionData& data)
   ui->spinBoxOptionsDisplayTransparencyAirportMsa->setValue(data.displayTransparencyAirportMsa);
   ui->spinBoxOptionsDisplayTransparencyAirspace->setValue(data.displayTransparencyAirspace);
   ui->spinBoxOptionsDisplayTextSizeAirportMsa->setValue(data.displayTextSizeAirportMsa);
-  ui->spinBoxOptionsMapNavTouchArea->setValue(data.mapNavTouchArea);
+  ui->spinBoxOptionsMapNavTouchArea->setValue(data.mapNavTouchAreaSize);
   ui->spinBoxOptionsDisplayTextSizeUserFeature->setValue(data.displayTextSizeMapMarker);
   ui->spinBoxOptionsDisplayTextSizeMeasurement->setValue(data.displayTextSizeMeasurement);
   ui->spinBoxOptionsDisplayTextSizeCompassRose->setValue(data.displayTextSizeCompassRose);
