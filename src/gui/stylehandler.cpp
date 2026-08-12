@@ -477,6 +477,14 @@ void StyleHandler::applyCurrentStyle()
     palette.setColor(QPalette::LinkVisited, palette.color(QPalette::LinkVisited).lighter(150));
     QApplication::setPalette(palette);
   }
+#elif defined(Q_OS_MACOS)
+  if(QApplication::styleHints()->colorScheme() == Qt::ColorScheme::Dark && automaticStyle)
+  {
+    qDebug() << Q_FUNC_INFO << "Is Dark";
+    QPalette palette = QApplication::palette();
+    palette.setColor(QPalette::AlternateBase, palette.color(QPalette::Base).lighter(150));
+    QApplication::setPalette(palette);
+  }
 #endif
 
   applyingStyle = false;
