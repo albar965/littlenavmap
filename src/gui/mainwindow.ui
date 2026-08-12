@@ -228,9 +228,8 @@
     <addaction name="actionHelpChangelog"/>
     <addaction name="separator"/>
     <addaction name="actionHelpAbout"/>
-    <addaction name="separator"/>
-    <addaction name="actionAboutMarble"/>
     <addaction name="actionHelpAboutQt"/>
+    <addaction name="actionAboutMarble"/>
     <addaction name="separator"/>
     <addaction name="actionHelpDonate"/>
     <addaction name="actionHelpCheckUpdates"/>
@@ -7959,7 +7958,7 @@ relation to shown airport</string>
     <string>About the Marble Widget</string>
    </property>
    <property name="menuRole">
-    <enum>QAction::ApplicationSpecificRole</enum>
+    <enum>QAction::NoRole</enum>
    </property>
   </action>
   <action name="actionMapShowGrid">
@@ -9006,7 +9005,7 @@ relation to shown airport</string>
      <normaloff>:/littlenavmap/resources/icons/about.svg</normaloff>:/littlenavmap/resources/icons/about.svg</iconset>
    </property>
    <property name="text">
-    <string>&amp;Donate for this Program</string>
+    <string>&amp;Donate for Little Navmap</string>
    </property>
    <property name="toolTip">
     <string>If you would like show your appreciation you can donate here</string>
