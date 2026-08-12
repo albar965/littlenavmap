@@ -30,11 +30,6 @@ using namespace Marble;
 using namespace atools::geo;
 using atools::roundToInt;
 
-/* Minimum points to use for a circle */
-const float CIRCLE_MIN_POINTS = 32.f;
-/* Maximum points to use for a circle */
-const float CIRCLE_MAX_POINTS = 92.f;
-
 void PaintContext::szFont(float scale) const
 {
   mapcolors::scaleFont(painter, scale * scaleAll, &defaultFont);

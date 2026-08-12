@@ -59,10 +59,6 @@ static const int SCALE_STEPS[NUM_SCALE_STEPS] = {500, 1000, 2000, 5000, 10000};
 static const int MIN_SCALE_SCREEN_DISTANCE = 25;
 const int TOP = 16; /* Top margin inside widget */
 
-/* Thread will start after this delay if route was changed */
-static const int ROUTE_CHANGE_UPDATE_TIMEOUT_MS = 200;
-static const int ROUTE_CHANGE_OFFLINE_UPDATE_TIMEOUT_MS = 100;
-
 /* Thread will start after this delay if an elevation update arrives */
 static const int ELEVATION_CHANGE_ONLINE_UPDATE_TIMEOUT_MS = 5000;
 static const int ELEVATION_CHANGE_OFFLINE_UPDATE_TIMEOUT_MS = 100;

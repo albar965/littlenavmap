@@ -46,43 +46,6 @@ OptionData::OptionData()
 {
 }
 
-void OptionData::initUa()
-{
-  // Old default
-  // Mozilla/5.0 (compatible; Marble/0.25.5 (stable release for Little Navmap); DesktopDevice; Browser; QNamNetworkPlugin)
-
-  if(userAgentDefault.isEmpty())
-    // Friendly default with web page and contact
-    userAgentDefault = QStringLiteral("%1/%2 (+https://www.littlenavmap.org; contact: %3)").
-                       arg(QCoreApplication::applicationName(), QCoreApplication::applicationVersion(),
-                           atools::gui::Application::getEmailAddresses().constFirst());
-
-  if(userAgentRandom.isEmpty())
-  {
-    QRandomGenerator random(QDateTime::currentSecsSinceEpoch());
-    QStringList list = atools::strFromCryptFile(QStringLiteral(":/littlenavmap/little_navmap_ua/ua.bin"), 0x2B1A96468EB62460).split('|');
-    list.removeAll(QStringLiteral());
-
-    if(list.isEmpty())
-      userAgentRandom = userAgentDefault;
-    else
-    {
-      // range between lowest (inclusive) and highest (exclusive)
-      int index = random.bounded(0, list.size());
-
-      const QString agent = list.at(index).simplified();
-
-      if(index == 0)
-        userAgentRandom = agent.arg(QStringLiteral("%1.%2.%3").
-                                    arg(QString::number(random.bounded(22, 25)), QString::number(random.bounded(0, 9)),
-                                        QString::number(random.bounded(0, 9))),
-                                    QStringList({"Marble Virtual Globe", "marble"}).at(random.bounded(0, 2)));
-      else
-        userAgentRandom = agent;
-    }
-  }
-}
-
 QString OptionData::getLanguageFromConfigFile()
 {
   return atools::settings::Settings::instance().valueStr(lnm::OPTIONS_DIALOG_LANGUAGE);
@@ -268,7 +231,6 @@ OptionData& OptionData::instanceInternal()
   {
     qDebug() << "Creating new OptionData";
     optionData = new OptionData();
-    OptionData::initUa();
   }
 
   return *optionData;

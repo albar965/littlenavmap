@@ -801,8 +801,6 @@ private:
   OptionData();
   static OptionData& instanceInternal();
 
-  static void initUa();
-
   // Singleton instance
   static OptionData *optionData;
 
