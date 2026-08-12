@@ -34,6 +34,7 @@
 #include <QLocale>
 #include <QRegularExpression>
 #include <QStringBuilder>
+#include <QTimeZone>
 
 namespace formatter {
 
@@ -49,6 +50,25 @@ QString formatMinutesHours(double timeHours)
     minutes = 0;
   }
   return QObject::tr("%L1:%L2").arg(hours).arg(minutes, 2, 10, QChar('0'));
+}
+
+QString formatTimeZoneTextShort(const QTimeZone& timezone, const QDateTime& offsetRefTime, const QString& separator)
+{
+  if(timezone.isValid())
+  {
+    QString timeZoneText;
+    const QString offset = formatter::formatTimeZoneOffset(timezone.standardTimeOffset(offsetRefTime));
+    QLocale::Territory territory = timezone.territory();
+    QString territoryStr = QLocale::territoryToString(territory);
+    if(territory != QLocale::AnyTerritory && !territoryStr.isEmpty() && territory != QStringLiteral("Default"))
+      timeZoneText = atools::strJoin({territoryStr, offset}, separator);
+    else
+      timeZoneText = offset;
+
+    return timeZoneText;
+  }
+  else
+    return QObject::tr("Invalid time zone");
 }
 
 QString formatTimeZoneOffset(int seconds)

@@ -21,6 +21,7 @@
 #include <QObject>
 #include <QString>
 
+class QTimeZone;
 namespace atools {
 namespace geo {
 class Pos;
@@ -28,7 +29,6 @@ class Pos;
 }
 
 class QDateTime;
-
 class QElapsedTimer;
 
 namespace formatter {
@@ -52,6 +52,7 @@ QString formatTimeShortTz(const QDateTime& datetime);
 /* Format a decimal time in hours to h:mm format */
 QString formatMinutesHours(double timeHours);
 
+QString formatTimeZoneTextShort(const QTimeZone& timezone, const QDateTime& offsetRefTime, const QString& separator);
 QString formatTimeZoneOffset(int seconds);
 
 /* Format a decimal time in hours to X h Y m format */

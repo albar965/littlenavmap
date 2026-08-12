@@ -156,7 +156,7 @@ void NavApp::init(MainWindow *mainWindowParam)
   moraReader->readFromTable();
 
   timeZone = new atools::timezone::TimeZoneManager;
-  timeZone->readFile(Settings::getOverloadedPath(lnm::TIMEZONE_DATABASE));
+  timeZone->readFile(Settings::getOverloadedPath(QApplication::applicationDirPath() % QDir::separator() % lnm::TIMEZONE_DATABASE));
 
   // Cache for aircraft and other icons
   vehicleIcons = new VehicleIcons();

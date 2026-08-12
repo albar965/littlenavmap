@@ -642,15 +642,8 @@ void StatusBar::updateMapPositionLabel(const atools::geo::Pos& pos, const QPoint
       }
 
       // Time Zone  ============================
-      const QTimeZone zone = NavApp::getTimeZone(pos);
-      const QString offset = formatter::formatTimeZoneOffset(zone.standardTimeOffset(NavApp::getUtcDateTimeSimOrCurrent()));
-      QLocale::Territory territory = zone.territory();
-      QString timeZoneText;
-      if(territory != QLocale::AnyTerritory)
-        timeZoneText = tr("%1 / %2").arg(QLocale::territoryToString(territory), offset);
-      else
-        timeZoneText = tr("%1").arg(offset);
-
+      const QString timeZoneText = formatter::formatTimeZoneTextShort(NavApp::getTimeZone(pos), NavApp::getUtcDateTimeSimOrCurrent(),
+                                                                      tr(" / "));
       if(timeZoneLabel->text() != timeZoneText)
       {
         timeZoneLabel->setText(timeZoneText);

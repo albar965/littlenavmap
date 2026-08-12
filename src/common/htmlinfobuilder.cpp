@@ -329,22 +329,22 @@ void HtmlInfoBuilder::airportText(const MapAirport& airport, const map::WeatherC
     // Use locale by UI language
     QLocale uiLanguagelocale(OptionData::getLanguageFromConfigFile());
 
-    QStringList timezoneText;
+    QStringList timezoneTexts;
 #ifdef DEBUG_INFORMATION
-    timezoneText.append("[" % QString(zone.id()) % "]");
-    timezoneText.append("[" % uiLanguagelocale.bcp47Name() % "]");
+    timezoneTexts.append("[" % QString(zone.id()) % "]");
+    timezoneTexts.append("[" % uiLanguagelocale.bcp47Name() % "]");
 #endif
 
     QString territory = QLocale::territoryToString(zone.territory());
     if(country != territory && territory != QStringLiteral("Default"))
-      timezoneText.append(territory);
+      timezoneTexts.append(territory);
 
     if(info)
-      timezoneText.append(zone.displayName(QTimeZone::StandardTime, QTimeZone::LongName, uiLanguagelocale));
+      timezoneTexts.append(zone.displayName(QTimeZone::StandardTime, QTimeZone::LongName, uiLanguagelocale));
 
-    timezoneText.append(zone.displayName(QTimeZone::StandardTime, QTimeZone::OffsetName, uiLanguagelocale));
-    timezoneText.append(tr("(no DST)"));
-    html.row2(tr("Time Zone:"), atools::strJoin(timezoneText, tr(", ")));
+    timezoneTexts.append(zone.displayName(QTimeZone::StandardTime, QTimeZone::OffsetName, uiLanguagelocale));
+    timezoneTexts.append(tr("(no DST)"));
+    html.row2(tr("Time Zone:"), atools::strJoin(timezoneTexts, tr(", ")));
   }
 
   // Coordinates ===============================================
