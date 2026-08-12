@@ -306,19 +306,15 @@ SOURCES += \
   src/common/jumpback.cpp \
   src/common/mapcolors.cpp \
   src/common/mapflags.cpp \
-  src/common/mapflagstext.cpp \
-  src/common/mapinvalid.cpp \
   src/common/mapmarkers.cpp \
   src/common/mapmarkertypes.cpp \
   src/common/mapresult.cpp \
   src/common/maptools.cpp \
   src/common/maptypes.cpp \
   src/common/maptypesfactory.cpp \
-  src/common/procflags.cpp \
   src/common/proctypes.cpp \
   src/common/settingsmigrate.cpp \
   src/common/symbolpainter.cpp \
-  src/common/tabindexes.cpp \
   src/common/textplacement.cpp \
   src/common/textpointer.cpp \
   src/common/unit.cpp \
@@ -408,7 +404,6 @@ SOURCES += \
   src/perf/aircraftperfdialog.cpp \
   src/perf/perfmergedialog.cpp \
   src/print/printdialog.cpp \
-  src/print/printdialogflags.cpp \
   src/print/printsupport.cpp \
   src/profile/profilelabelwidgethoriz.cpp \
   src/profile/profilelabelwidgetvert.cpp \
@@ -440,15 +435,12 @@ SOURCES += \
   src/route/routeextractor.cpp \
   src/route/routeflags.cpp \
   src/route/routelabel.cpp \
-  src/route/routelabelflags.cpp \
   src/route/routeleg.cpp \
   src/route/routewaypointeditdialog.cpp \
   src/route/runwayselectiondialog.cpp \
   src/routeexport/fetchroutedialog.cpp \
   src/routeexport/routeexport.cpp \
-  src/routeexport/routeexportdata.cpp \
   src/routeexport/routeexportdialog.cpp \
-  src/routeexport/routeexportflags.cpp \
   src/routeexport/routeexportformat.cpp \
   src/routeexport/routemultiexportdialog.cpp \
   src/routeexport/simbriefexportdialog.cpp \
@@ -477,7 +469,6 @@ SOURCES += \
   src/search/searcheventfilter.cpp \
   src/search/sqlcontroller.cpp \
   src/search/sqlmodel.cpp \
-  src/search/sqlmodeltypes.cpp \
   src/search/sqlproxymodel.cpp \
   src/search/userdatasearch.cpp \
   src/search/usericondelegate.cpp \
@@ -493,7 +484,6 @@ SOURCES += \
   src/web/requesthandler.cpp \
   src/web/webapp.cpp \
   src/web/webcontroller.cpp \
-  src/web/webflags.cpp \
   src/web/webmapcontroller.cpp \
   src/web/webtools.cpp \
   src/webapi/abstractactionscontroller.cpp \

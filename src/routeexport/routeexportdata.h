@@ -27,8 +27,6 @@
 class RouteExportData
 {
 public:
-  RouteExportData();
-
   const QString& getPilotInCommand() const
   {
     return pilotInCommand;
