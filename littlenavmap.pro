@@ -115,6 +115,7 @@ DEPLOY_BASE=$$(DEPLOY_BASE)
 DATABASE_BASE=$$(DATABASE_BASE)
 HELP_BASE=$$(HELP_BASE)
 QUIET=$$(ATOOLS_QUIET)
+GUI_BUILD=$$(GUI_BUILD)
 
 # =======================================================================
 # Fill defaults for unset
@@ -281,6 +282,7 @@ message(DEFINES: $$DEFINES)
 message(QT: $$QT)
 message(OUT_PWD: $$OUT_PWD)
 message(PWD: $$PWD)
+message(GUI_BUILD: $$GUI_BUILD)
 message(-----------------------------------)
 }
 
@@ -930,10 +932,15 @@ unix:!macx {
 
 # Mac specific deploy target
 macx {
-
-  INSTALL_MARBLE_DYLIB_CMD=install_name_tool \
-         -change  $$INSTALL_MARBLE_DYLIB \
-         @executable_path/../Frameworks/libmarblewidget-lnm-qt6.dylib $$OUT_PWD/littlenavmap.app/Contents/PlugIns
+  isEqual(GUI_BUILD, "true") {
+    # Needs "-rpath" in GUI
+    INSTALL_MARBLE_DYLIB_CMD=install_name_tool -change  $$INSTALL_MARBLE_DYLIB \
+           -rpath @executable_path/../Frameworks/libmarblewidget-lnm-qt6.dylib $$OUT_PWD/littlenavmap.app/Contents/PlugIns
+  } else {
+    # Command line version
+    INSTALL_MARBLE_DYLIB_CMD=install_name_tool -change  $$INSTALL_MARBLE_DYLIB \
+           @executable_path/../Frameworks/libmarblewidget-lnm-qt6.dylib $$OUT_PWD/littlenavmap.app/Contents/PlugIns
+  }
 
   DEPLOY_APP=\"$$PWD/../deploy/Little Navmap.app\"
   DEPLOY_DIR=\"$$PWD/../deploy\"
