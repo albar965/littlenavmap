@@ -974,59 +974,56 @@ void MapWidget::mousePressEvent(QMouseEvent *event)
 
         // Route drag and drop ===================================================================================
         const Route& route = NavApp::getRouteConst();
-        if(route.size() > 1)
+        if(currentRoutePointIndexEditable != -1)
         {
-          if(currentRoutePointIndexEditable != -1)
+          // Drag a flight plan waypoint ==============================================
+          routeDragPoint = currentRoutePointIndexEditable;
+          // Found a leg - start dragging
+          mouseState = ms::DRAG_ROUTE_POINT;
+
+          routeDragCurrrent = QPoint(event->pos().x(), event->pos().y());
+          routeDragFixed.clear();
+
+          if(currentRoutePointIndexEditable > 0 && route.value(currentRoutePointIndexEditable).isAlternate())
+            // Alternate airports are treated as endpoints
+            routeDragFixed.append(route.getDestinationAirportLeg().getPosition());
+          else if(currentRoutePointIndexEditable == route.getDestinationAirportLegIndex() && route.hasAlternates())
           {
-            // Drag a flight plan waypoint ==============================================
-            routeDragPoint = currentRoutePointIndexEditable;
-            // Found a leg - start dragging
-            mouseState = ms::DRAG_ROUTE_POINT;
-
-            routeDragCurrrent = QPoint(event->pos().x(), event->pos().y());
-            routeDragFixed.clear();
-
-            if(currentRoutePointIndexEditable > 0 && route.value(currentRoutePointIndexEditable).isAlternate())
-              // Alternate airports are treated as endpoints
-              routeDragFixed.append(route.getDestinationAirportLeg().getPosition());
-            else if(currentRoutePointIndexEditable == route.getDestinationAirportLegIndex() && route.hasAlternates())
-            {
-              // Add all lines to alternates as fixed lines if moving destination with alternates
-              if(currentRoutePointIndexEditable > 0)
-                routeDragFixed.append(route.value(currentRoutePointIndexEditable - 1).getPosition());
-              for(int i = route.getAlternateLegsOffset(); i < route.size(); i++)
-                routeDragFixed.append(route.value(i).getPosition());
-            }
-            else
-            {
-              if(currentRoutePointIndexEditable > 0)
-                // First point of route
-                routeDragFixed.append(route.value(currentRoutePointIndexEditable - 1).getPosition());
-
-              if(currentRoutePointIndexEditable < route.size() - 1)
-                // Last point of plan
-                routeDragFixed.append(route.value(currentRoutePointIndexEditable + 1).getPosition());
-            }
-
-            clickHandled = true;
+            // Add all lines to alternates as fixed lines if moving destination with alternates
+            if(currentRoutePointIndexEditable > 0)
+              routeDragFixed.append(route.value(currentRoutePointIndexEditable - 1).getPosition());
+            for(int i = route.getAlternateLegsOffset(); i < route.size(); i++)
+              routeDragFixed.append(route.value(i).getPosition());
           }
           else
           {
-            // Drag a route leg ===================================================
-            if(currentRouteLegIndex != -1)
-            {
-              routeDragLeg = currentRouteLegIndex;
+            if(currentRoutePointIndexEditable > 0)
+              // First point of route
+              routeDragFixed.append(route.value(currentRoutePointIndexEditable - 1).getPosition());
 
-              // Found a leg - start dragging
-              mouseState = ms::DRAG_ROUTE_LEG;
-              routeDragCurrrent = QPoint(event->pos().x(), event->pos().y());
-              routeDragFixed.clear();
-              routeDragFixed.append(route.value(currentRouteLegIndex).getPosition());
-              routeDragFixed.append(route.value(currentRouteLegIndex + 1).getPosition());
-              clickHandled = true;
-            }
+            if(currentRoutePointIndexEditable < route.size() - 1)
+              // Last point of plan
+              routeDragFixed.append(route.value(currentRoutePointIndexEditable + 1).getPosition());
           }
-        } // if(route.size() > 1)
+
+          clickHandled = true;
+        }
+        else
+        {
+          // Drag a route leg ===================================================
+          if(currentRouteLegIndex != -1)
+          {
+            routeDragLeg = currentRouteLegIndex;
+
+            // Found a leg - start dragging
+            mouseState = ms::DRAG_ROUTE_LEG;
+            routeDragCurrrent = QPoint(event->pos().x(), event->pos().y());
+            routeDragFixed.clear();
+            routeDragFixed.append(route.value(currentRouteLegIndex).getPosition());
+            routeDragFixed.append(route.value(currentRouteLegIndex + 1).getPosition());
+            clickHandled = true;
+          }
+        }
 
         // Start map marker drag and drop ===================================================================================
         currentResultIndex->removeAllBut(map::MARK_ALL | map::USERPOINT);
@@ -1908,8 +1905,6 @@ void MapWidget::mouseMoveEvent(QMouseEvent *event)
           // Normal mode change cursor over route waypoints or legs and others  =====================================
           // No dragging going on now - update cursor over flight plan legs or markers
           // Get nearest features and keep result for help overlay
-          const Route& route = NavApp::getRouteConst();
-
           // Make distance a bit larger to prefer points
           // Get all points - also procedures
           currentRoutePointIndexAll =
@@ -1923,9 +1918,13 @@ void MapWidget::mouseMoveEvent(QMouseEvent *event)
 
           currentRouteLegIndex = screenIndex->getNearestRouteLegIndex(event->pos().x(), event->pos().y(), screenSearchDistance);
 
-          if(route.size() > 1 && isDragAndDropEditActive() && (currentRoutePointIndexEditable != -1 || currentRouteLegIndex != -1))
-            // Change cursor at one route point or change cursor above a route line
+          // Change cursor at one route point to indicate editing
+          if(currentRoutePointIndexEditable != -1)
             cursor = Qt::PointingHandCursor;
+
+          // Change cursor at one route point or change cursor above a route line to indicate editing or moving
+          if((currentRoutePointIndexEditable != -1 || currentRouteLegIndex != -1) && isDragAndDropEditActive())
+            cursor = Qt::SizeAllCursor;
 
           // Other markers =======================================================================
           // Get all features since these are also used as a template for userpoints
@@ -1937,10 +1936,13 @@ void MapWidget::mouseMoveEvent(QMouseEvent *event)
             index.sort(pos);
             *currentResultIndex = index;
 
-            index.eraseRangeMarkerAttachedToNavaid();
-            const map::MapBase *base = index.constFirstOrNull();
-            if(base != nullptr && isDragAndDropEditActive() && map::MapTypes(base->type).testAnyFlag(map::MARK_ALL | map::USERPOINT))
+            // First check for editable objects and change cursor
+            if((index.getResult().hasAnyRemovableMarker() || index.getResult().hasUserpoints()))
               cursor = Qt::PointingHandCursor;
+
+            // Check for moveable objects and maybe override cursor
+            if(isDragAndDropEditActive() && (index.getResult().hasAnyMovableMarker() || index.getResult().hasUserpoints()))
+              cursor = Qt::SizeAllCursor;
           }
         }
 

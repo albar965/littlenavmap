@@ -297,6 +297,21 @@ struct MapResult
     return !msaMarks.isEmpty();
   }
 
+  bool hasAnyRemovableMarker() const
+  {
+    return hasDistanceMarks() || hasRangeMarks() || hasHoldingMarks() || hasPatternMarks() || hasMsaMarks();
+  }
+
+  bool hasAnyEditableMarker() const
+  {
+    return hasDistanceMarks() || hasRangeMarks() || hasHoldingMarks() || hasPatternMarks();
+  }
+
+  bool hasAnyMovableMarker() const
+  {
+    return hasDistanceMarks() || hasRangeMarks() || hasHoldingMarks();
+  }
+
   /* Special methods for the online and navdata airspaces which are stored mixed */
   bool hasSimNavUserAirspaces() const;
   bool hasOnlineAirspaces() const;
