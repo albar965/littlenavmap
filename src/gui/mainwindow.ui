@@ -6215,22 +6215,6 @@ relation to shown airport</string>
               <number>0</number>
              </property>
              <item>
-              <widget class="QLabel" name="labelProfileVerticalSlider">
-               <property name="sizePolicy">
-                <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-                 <horstretch>0</horstretch>
-                 <verstretch>0</verstretch>
-                </sizepolicy>
-               </property>
-               <property name="text">
-                <string/>
-               </property>
-               <property name="pixmap">
-                <pixmap resource="../../littlenavmap.qrc">:/littlenavmap/resources/icons/viewvert.svg</pixmap>
-               </property>
-              </widget>
-             </item>
-             <item>
               <widget class="QLabel" name="labelProfileHorizontalSlider">
                <property name="sizePolicy">
                 <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
@@ -6246,6 +6230,22 @@ relation to shown airport</string>
                </property>
               </widget>
              </item>
+             <item>
+              <widget class="QLabel" name="labelProfileVerticalSlider">
+               <property name="sizePolicy">
+                <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+                 <horstretch>0</horstretch>
+                 <verstretch>0</verstretch>
+                </sizepolicy>
+               </property>
+               <property name="text">
+                <string/>
+               </property>
+               <property name="pixmap">
+                <pixmap resource="../../littlenavmap.qrc">:/littlenavmap/resources/icons/viewvert.svg</pixmap>
+               </property>
+              </widget>
+             </item>
             </layout>
            </item>
            <item>
@@ -6257,12 +6257,12 @@ relation to shown airport</string>
               <number>0</number>
              </property>
              <item>
-              <widget class="QSlider" name="verticalSliderProfileZoom">
+              <widget class="QSlider" name="horizontalSliderProfileZoom">
                <property name="toolTip">
-                <string>Zoom vertically into the elevation profile (Shift+Mouse Wheel)</string>
+                <string>Zoom horizontally into the elevation profile (Mouse Wheel)</string>
                </property>
                <property name="statusTip">
-                <string>Zoom vertically into the elevation profile</string>
+                <string>Zoom horizontally into the elevation profile</string>
                </property>
                <property name="minimum">
                 <number>1</number>
@@ -6288,12 +6288,12 @@ relation to shown airport</string>
               </widget>
              </item>
              <item>
-              <widget class="QSlider" name="horizontalSliderProfileZoom">
+              <widget class="QSlider" name="verticalSliderProfileZoom">
                <property name="toolTip">
-                <string>Zoom horizontally into the elevation profile (Mouse Wheel)</string>
+                <string>Zoom vertically into the elevation profile (%1+Mouse Wheel)</string>
                </property>
                <property name="statusTip">
-                <string>Zoom horizontally into the elevation profile</string>
+                <string>Zoom vertically into the elevation profile</string>
                </property>
                <property name="minimum">
                 <number>1</number>
@@ -12985,7 +12985,6 @@ from either the departure parking or the user aircraft while taxiing.</string>
   <tabstop>widgetProfileLabelVert</tabstop>
   <tabstop>widgetProfileLabelHoriz</tabstop>
   <tabstop>scrollAreaProfile</tabstop>
-  <tabstop>verticalSliderProfileZoom</tabstop>
   <tabstop>horizontalSliderProfileZoom</tabstop>
   <tabstop>pushButtonProfileExpand</tabstop>
   <tabstop>pushButtonProfileSettings</tabstop>
