@@ -483,6 +483,7 @@ void StyleHandler::applyCurrentStyle()
     qDebug() << Q_FUNC_INFO << "Is Dark";
     QPalette palette = QApplication::palette();
     palette.setColor(QPalette::AlternateBase, palette.color(QPalette::Base).lighter(150));
+    palette.setColor(QPalette::ToolTipText, palette.color(QPalette::WindowText));
     QApplication::setPalette(palette);
   }
 #endif
