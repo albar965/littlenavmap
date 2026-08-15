@@ -113,8 +113,10 @@ ProfileScrollArea::ProfileScrollArea(ProfileWidget *parent, QScrollArea *scrollA
 
   // Use tooltip palette
   tooltipLabel->setPalette(QToolTip::palette());
+#ifndef Q_OS_MACOS
   tooltipLabel->setForegroundRole(QPalette::ToolTipText);
   tooltipLabel->setBackgroundRole(QPalette::ToolTipBase);
+#endif
 
   // Shrink font a bit
   QFont font = tooltipLabel->font();
