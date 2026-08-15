@@ -52,6 +52,15 @@ ProfileScrollArea::ProfileScrollArea(ProfileWidget *parent, QScrollArea *scrollA
 {
   Ui::MainWindow *ui = NavApp::getMainUi();
 
+  // Linux/Win macOS
+  // Shift -> Meta (Ctrl)
+  // Ctrl -> Command
+#ifdef Q_OS_MACOS
+  ui->verticalSliderProfileZoom->setToolTip(tr("Zoom vertically into the elevation profile (Ctrl+Mouse Wheel)"));
+#else
+  ui->verticalSliderProfileZoom->setToolTip(tr("Zoom vertically into the elevation profile (Shift+Mouse Wheel)"));
+#endif
+
   scrollArea->setContextMenuPolicy(Qt::DefaultContextMenu);
   scrollArea->setFocusPolicy(Qt::WheelFocus);
 
@@ -515,6 +524,13 @@ bool ProfileScrollArea::mouseReleaseEvent(QMouseEvent *event)
 
 bool ProfileScrollArea::wheelEvent(QWheelEvent *event)
 {
+#ifdef DEBUG_INFORMATION_WHEEL
+  qDebug() << Q_FUNC_INFO
+           << "pixelDelta" << event->pixelDelta() << "angleDelta" << event->angleDelta()
+           << event->source() << "event->pos()" << event->position()
+           << "event->angleDelta()" << event->angleDelta() << "event->modifiers()" << event->modifiers();
+#endif
+
   static const int ANGLE_THRESHOLD = 120;
 
   if(!viewport->geometry().contains(event->position().toPoint()))
@@ -576,7 +592,11 @@ bool ProfileScrollArea::wheelEvent(QWheelEvent *event)
           horizScrollBar->setValue(static_cast<int>(horizScrollBar->value() - (diffPos + mouseToCenter.x() + correction)));
         }
       }
+#ifdef Q_OS_MACOS
+      else if(event->modifiers() == Qt::MetaModifier)
+#else
       else if(event->modifiers() == Qt::ShiftModifier)
+#endif
       {
         // Zoom in vertically ==================================
         int value = ui->verticalSliderProfileZoom->value();

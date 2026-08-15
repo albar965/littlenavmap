@@ -126,6 +126,29 @@ OptionsDialog::OptionsDialog(QMainWindow *parentWindow)
   ui->spinBoxSimMaxTrailPoints->setMinimum(10);
 #endif
 
+  // Linux/Win macOS
+  // Shift -> Meta (Ctrl)
+  // Ctrl -> Command
+#ifdef Q_OS_MACOS
+  ui->labelOptionsUnitsTextSizeHint->setText(
+    tr("<p><img src=\":/littlenavmap/resources/icons/bulb.svg\"/>"
+       "<span style=\" font-style:italic;\">"
+         "You can temporarily change the text size for information and progress pages using Command+Mouse Wheel.</span></p>"));
+
+  ui->checkBoxOptionsGuiWheel->setToolTip(tr("Reverses mouse wheel function for map zoom (Wheel and Ctrl+Mouse Wheel), "
+                                             "map details (Command+Mouse Wheel), map label details (Command+Ctrl+Mouse Wheel) "
+                                             "and elevation profile (Wheel and Ctrl+Wheel)."));
+#else
+  ui->labelOptionsUnitsTextSizeHint->setText(
+    tr("<p><img src=\":/littlenavmap/resources/icons/bulb.svg\"/>"
+       "<span style=\" font-style:italic;\">"
+         "You can temporarily change the text size for information and progress pages using Ctrl+Mouse Wheel.</span></p>"));
+
+  ui->checkBoxOptionsGuiWheel->setToolTip(tr("Reverses mouse wheel function for map zoom (Wheel and Shift+Mouse Wheel), "
+                                             "map details (Ctrl+Mouse Wheel), map label details (Ctrl+Shift+Mouse Wheel) "
+                                             "and elevation profile (Wheel and Shift+Wheel)."));
+#endif
+
   // Labels showing a hint and probably having a internal link to a page ============================================
   hintLabels.append({ui->labelOptionsUpdatesHint, ui->labelOptionsUnitsHint, ui->labelOptionsGuiFontHint, ui->labelOptionsFreetypeHint,
                      ui->labelOptionsGuiTooltipHint, ui->labelOptionsUnitsTextSizeHint, ui->labelOptionsFilePatternsHint,

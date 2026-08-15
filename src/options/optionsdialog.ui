@@ -1025,7 +1025,7 @@ This does not affect the map window which can be changed separately on the optio
                <item row="9" column="0" colspan="3">
                 <widget class="QLabel" name="labelOptionsUnitsTextSizeHint">
                  <property name="text">
-                  <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;img src=&quot;:/littlenavmap/resources/icons/bulb.svg&quot;/&gt;&lt;span style=&quot; font-style:italic;&quot;&gt;You can temporarily change the text size for information and progress pages using Ctrl+Mouse Wheel.&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+                  <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;img src=&quot;:/littlenavmap/resources/icons/bulb.svg&quot;/&gt;&lt;span style=&quot; font-style:italic;&quot;&gt;You can temporarily change the text size for information and progress pages using %1+Mouse Wheel.&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
                  </property>
                  <property name="wordWrap">
                   <bool>true</bool>
@@ -2841,7 +2841,7 @@ Map views might be shown with a larger zoom distance than expected if this optio
                <item>
                 <widget class="QCheckBox" name="checkBoxOptionsGuiWheel">
                  <property name="toolTip">
-                  <string>Reverses mouse wheel function for map zoom (Wheel and Shift+Mouse Wheel), map details (Ctrl+Mouse Wheel) and elevation profile (Wheel and Shift+Wheel).</string>
+                  <string>Reverses mouse wheel function for map zoom (Wheel and %1+Mouse Wheel), map details (%1+Mouse Wheel) and elevation profile (Wheel and Shift+Wheel).</string>
                  </property>
                  <property name="text">
                   <string>Reverse mouse &amp;wheel direction in map and elevation profile</string>

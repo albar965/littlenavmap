@@ -354,7 +354,7 @@ void RangeMarkerDialog::widgetsToMarker()
     marker->manualLabel = false;
   }
 
-  // Ignore aircraft option if dialog was not opened (i.e. Ctrl+Click into map)
+  // Ignore aircraft option if dialog was not opened (i.e. Shift+Click into map)
   if(ui->radioButtonRangeMarkerRadii->isChecked())
   {
     marker->ranges.clear();

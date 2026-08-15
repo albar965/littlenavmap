@@ -723,8 +723,16 @@ void StatusBar::updateDetailLabelTooltip()
 {
   QString tooltipHint;
   if(OptionData::instance().getFlags().testFlag(opts::ENABLE_TOOLTIPS_LINK))
+#ifdef Q_OS_MACOS
     tooltipHint =
-      tr("<small><b>Adjust detail levels in menu \"View\" or using \"Ctrl+Mouse Wheel\" and \"Ctrl+Shft+Mouse Wheel\".</b></small><hr/>");
+      tr("<small><b>Adjust detail levels in menu \"View\" or using \"Command+Mouse Wheel\" and \"Command+Ctrl+Mouse Wheel\"."
+         "</b></small><hr/>");
+#else
+    tooltipHint =
+      tr("<small><b>Adjust detail levels in menu \"View\" or using \"Ctrl+Mouse Wheel\" and \"Ctrl+Shft+Mouse Wheel\"."
+         "</b></small><hr/>");
+#endif
+
   tooltipHint = tooltipHint % tr("Map detail level / text label level.");
   mapDetailLabel->setToolTip(tooltipHint);
 }

@@ -180,9 +180,21 @@ const static QSet<Qt::Key> MOVE_KEYS({Qt::Key_Left, Qt::Key_Right, Qt::Key_Up, Q
 /* All types that can be used in the route or can be source for range rings or measurment lines */
 const static map::MapType MAP_EDIT_TYPES = map::AIRPORT | map::VOR | map::NDB | map::WAYPOINT | map::USERPOINT;
 
-/* Keyboard modifiers =============================================================== */
+/* Keyboard modifiers ===============================================================
+ *
+ * On macOS, the ControlModifier value corresponds to the Command keys on the keyboard,
+ * and the MetaModifier value corresponds to the Control keys.
+ * The KeypadModifier value will also be set when an arrow key is pressed as the arrow keys are considered part of the keypad.
+ *
+ * On Windows Keyboards, Qt::MetaModifier and Qt::Key_Meta are mapped to the Windows key.
+*/
+
 /* Keep only three relevant modifiers */
+#ifdef Q_OS_MACOS
+const static Qt::KeyboardModifiers MODIFIER_FILTER(Qt::ControlModifier | Qt::ShiftModifier | Qt::AltModifier | Qt::MetaModifier);
+#else
 const static Qt::KeyboardModifiers MODIFIER_FILTER(Qt::ControlModifier | Qt::ShiftModifier | Qt::AltModifier);
+#endif
 
 /* General edit function */
 const static Qt::KeyboardModifiers MODIFIER_EDIT(Qt::AltModifier);
@@ -1366,9 +1378,10 @@ void MapWidget::wheelEvent(QWheelEvent *event)
   static const int ANGLE_THRESHOLD = 120;
 
 #ifdef DEBUG_INFORMATION_WHEEL
-  qDebug() << Q_FUNC_INFO << "pixelDelta" << event->pixelDelta() << "angleDelta" << event->angleDelta()
+  qDebug() << Q_FUNC_INFO
+  << "pixelDelta" << event->pixelDelta() << "angleDelta" << event->angleDelta()
            << "lastWheelAngleY" << lastWheelAngleY << "lastWheelAngleX" << lastWheelAngleX
-           << event->source() << "geometry()" << geometry() << "rect()" << rect() << "event->pos()" << event->pos()
+           << event->source() << "geometry()" << geometry() << "rect()" << rect() << "event->pos()" << event->position()
            << "event->angleDelta()" << event->angleDelta() << "event->modifiers()" << event->modifiers();
 #endif
 
@@ -1423,7 +1436,11 @@ void MapWidget::wheelEvent(QWheelEvent *event)
       else if(angleDeltaY < 0)
         NavApp::getMapDetailHandler()->decreaseMapDetail();
     }
+#ifdef Q_OS_MACOS
+    else if(modifiers == (Qt::ControlModifier | Qt::MetaModifier))
+#else
     else if(modifiers == (Qt::ControlModifier | Qt::ShiftModifier))
+#endif
     {
       // Adjust map label detail ===================================================================
       if(angleDeltaY > 0)
@@ -1431,7 +1448,11 @@ void MapWidget::wheelEvent(QWheelEvent *event)
       else if(angleDeltaY < 0)
         NavApp::getMapDetailHandler()->decreaseMapDetailText();
     }
+#ifdef Q_OS_MACOS
+    else if(modifiers == Qt::NoModifier || modifiers == Qt::MetaModifier)
+#else
     else if(modifiers == Qt::NoModifier || modifiers == Qt::ShiftModifier)
+#endif
     {
       // Zoom in/out ========================================================================
       // Check for threshold
@@ -1442,7 +1463,11 @@ void MapWidget::wheelEvent(QWheelEvent *event)
         qreal centerLat = centerLatitude();
         qreal centerLon = centerLongitude();
 
+#ifdef Q_OS_MACOS
+        zoomInOut(directionIn, modifiers == Qt::MetaModifier /* smooth */);
+#else
         zoomInOut(directionIn, modifiers == Qt::ShiftModifier /* smooth */);
+#endif
 
         // Get global coordinates of cursor in new zoom level
         qreal lon2, lat2;

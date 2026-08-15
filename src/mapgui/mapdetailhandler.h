@@ -107,7 +107,8 @@ class DetailSliderAction
   Q_OBJECT
 
 public:
-  explicit DetailSliderAction(QObject *parent, const QString& settingsKeyParam, int minimumValue, int maximumValue);
+  explicit DetailSliderAction(QObject *parent, const QString& settingsKeyParam, const QString& toolTipParam, int minimumValue,
+                              int maximumValue);
   virtual ~DetailSliderAction() override;
 
   /* MAP_MIN_DETAIL_LEVEL = 8 -> MAP_DEFAULT_DETAIL_LEVEL = 10 -> MAP_MAX_DETAIL_LEVEL = 15 */
@@ -131,7 +132,7 @@ protected:
   /* List of created/registered slider widgets */
   QList<QSlider *> sliders;
   int sliderValue = 0, minValue, maxValue;
-  QString settingsKey;
+  QString settingsKey, toolTip;
 };
 
 /*

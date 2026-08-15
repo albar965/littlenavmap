@@ -29,8 +29,9 @@
 
 namespace mdinternal {
 
-DetailSliderAction::DetailSliderAction(QObject *parent, const QString& settingsKeyParam, int minimumValue, int maximumValue)
-  : QWidgetAction(parent), minValue(minimumValue), maxValue(maximumValue), settingsKey(settingsKeyParam)
+DetailSliderAction::DetailSliderAction(QObject *parent, const QString& settingsKeyParam, const QString& toolTipParam, int minimumValue,
+                                       int maximumValue)
+  : QWidgetAction(parent), minValue(minimumValue), maxValue(maximumValue), settingsKey(settingsKeyParam), toolTip(toolTipParam)
 {
   sliderValue = minValue;
   setSliderValue(sliderValue);
@@ -72,7 +73,7 @@ QWidget *DetailSliderAction::createWidget(QWidget *parent)
   slider->setSingleStep(1);
   slider->setTracking(true);
   slider->setValue(sliderValue);
-  slider->setToolTip(tr("Set detail level for map display (also \"Ctrl++\", \"Ctrl+-\" or \"Ctrl+Mouse Wheel\")."));
+  slider->setToolTip(toolTip);
 
   connect(slider, &QSlider::valueChanged, this, &DetailSliderAction::setSliderValue);
   connect(slider, &QSlider::valueChanged, this, &DetailSliderAction::valueChanged);
@@ -218,7 +219,14 @@ void MapDetailHandler::insertToolbarButton()
   // Create and add the wrapped actions ================
   labelActionDetailLevel = new mdinternal::DetailLabelAction(toolButton->menu());
   toolButton->menu()->addAction(labelActionDetailLevel);
-  sliderActionDetailLevel = new mdinternal::DetailSliderAction(toolButton->menu(), lnm::MAP_DETAIL_LEVEL,
+
+#ifdef Q_OS_MACOS
+  QString toolTip = tr("Set detail level for map display (also \"Command++\", \"Command+-\" or \"Command+Mouse Wheel\").");
+#else
+  QString toolTip = tr("Set detail level for map display (also \"Ctrl++\", \"Ctrl+-\" or \"Ctrl+Mouse Wheel\").");
+#endif
+
+  sliderActionDetailLevel = new mdinternal::DetailSliderAction(toolButton->menu(), lnm::MAP_DETAIL_LEVEL, toolTip,
                                                                MapLayerSettings::MAP_MIN_DETAIL_LEVEL,
                                                                MapLayerSettings::MAP_MAX_DETAIL_LEVEL);
   toolButton->menu()->addAction(sliderActionDetailLevel);
@@ -228,7 +236,13 @@ void MapDetailHandler::insertToolbarButton()
 
   labelActionDetailLevelText = new mdinternal::DetailLabelAction(toolButton->menu());
   toolButton->menu()->addAction(labelActionDetailLevelText);
-  sliderActionDetailLevelText = new mdinternal::DetailSliderAction(toolButton->menu(), lnm::MAP_DETAIL_LEVEL_TEXT,
+
+#ifdef Q_OS_MACOS
+  toolTip = tr("Set detail level for map display labels (also \"Command+Shift++\", \"Command+-\" or \"Command+Ctrl+Mouse Wheel\").");
+#else
+  toolTip = tr("Set detail level for map display labels (also \"Ctrl+Shift++\", \"Ctrl+Shift+-\" or \"Ctrl+Shift+Mouse Wheel\").");
+#endif
+  sliderActionDetailLevelText = new mdinternal::DetailSliderAction(toolButton->menu(), lnm::MAP_DETAIL_LEVEL_TEXT, toolTip,
                                                                    MapLayerSettings::MAP_MIN_DETAIL_LEVEL_TEXT,
                                                                    MapLayerSettings::MAP_MAX_DETAIL_LEVEL_TEXT);
 
@@ -272,7 +286,11 @@ void MapDetailHandler::updateActions()
     text = tr("Lower map detail level %1").arg(level);
   else if(level > MapLayerSettings::MAP_DEFAULT_DETAIL_LEVEL)
     text = tr("Higher map detail level %1").arg(level);
+#ifdef Q_OS_MACOS
+  text += tr(" (Command+Mouse Wheel)");
+#else
   text += tr(" (Ctrl+Mouse Wheel)");
+#endif
   labelActionDetailLevel->setText(text);
 
   if(levelText == MapLayerSettings::MAP_DEFAULT_DETAIL_LEVEL)
@@ -286,7 +304,11 @@ void MapDetailHandler::updateActions()
   else if(levelText > MapLayerSettings::MAP_DEFAULT_DETAIL_LEVEL)
     text = tr("More map labels %1").arg(levelText);
 
+#ifdef Q_OS_MACOS
+  text += tr(" (Command+Ctrl+Mouse Wheel)");
+#else
   text += tr(" (Ctrl+Shift+Mouse Wheel)");
+#endif
   labelActionDetailLevelText->setText(text);
 }
 

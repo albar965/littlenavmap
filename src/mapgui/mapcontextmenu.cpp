@@ -182,7 +182,11 @@ void MapContextMenu::buildMainMenu()
   mapMenu.addSeparator();
 
   if(!ui->actionStartDistanceMarker->text().contains('\t'))
+#ifdef Q_OS_MACOS
+    ui->actionStartDistanceMarker->setText(ui->actionStartDistanceMarker->text() % tr("\tCommand+Click"));
+#else
     ui->actionStartDistanceMarker->setText(ui->actionStartDistanceMarker->text() % tr("\tCtrl+Click"));
+#endif
 
   mapMenu.addAction(ui->actionStartDistanceMarker);
   insertRangeRingsMenu(mapMenu);
@@ -1073,7 +1077,12 @@ void MapContextMenu::insertAddRouteMenu(QMenu& menu)
                      addRef(*result, map::AIRPORT | map::VOR | map::NDB | map::WAYPOINT | map::USERPOINT).
                      sort(DEFAULT_TYPE_SORT, alphaSort),
                      tr("Add %1 to Flight &Plan"), tr("Add airport, navaid or position to the nearest flight plan leg"),
-                     tr("Ctrl+Alt+Click"), QIcon(":/littlenavmap/resources/icons/routeadd.svg"), true /* allowNoMapObject */, callback);
+#ifdef Q_OS_MACOS
+                     tr("Command+Alt+Click"),
+#else
+                     tr("Ctrl+Alt+Click"),
+#endif
+                     QIcon(":/littlenavmap/resources/icons/routeadd.svg"), true /* allowNoMapObject */, callback);
 }
 
 void MapContextMenu::insertAppendRouteMenu(QMenu& menu)
@@ -1179,7 +1188,12 @@ void MapContextMenu::insertUserpointAddMenu(QMenu& menu)
                      addRef(*result, map::AIRPORT | map::VOR | map::NDB | map::WAYPOINT | map::USERPOINT).
                      sort(DEFAULT_TYPE_SORT, alphaSort),
                      tr("Add &Userpoint %1 ..."), tr("Add a userpoint at this position"),
-                     tr("Ctrl+Shift+Click"), QIcon(":/littlenavmap/resources/icons/userdata_add.svg"), true /* allowNoMapObject */,
+#ifdef Q_OS_MACOS
+                     tr("Command+Shift+Click"),
+#else
+                     tr("Ctrl+Shift+Click"),
+#endif
+                     QIcon(":/littlenavmap/resources/icons/userdata_add.svg"), true /* allowNoMapObject */,
                      callback);
 }
 

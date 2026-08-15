@@ -43,6 +43,14 @@ DistanceMarkerDialog::DistanceMarkerDialog(QWidget *parent, const map::DistanceM
   setPushButtonColor(ui->pushButtonDistanceMarkerColor);
   setLabelHeader(ui->labelDistanceMarkerHeader);
 
+#ifdef Q_OS_MACOS
+  ui->checkBoxDistanceMarkerDoNotShow->setText(tr("&Do not show this dialog when using \"Command+Click\" in the map\n"
+                                                  "and use color and label as above."));
+#else
+  ui->checkBoxDistanceMarkerDoNotShow->setText(tr("&Do not show this dialog when using \"Ctrl+Click\" in the map\n"
+                                                  "and use color and label as above."));
+#endif
+
   // Default is OK button
   ui->buttonBoxDistanceMarker->button(QDialogButtonBox::Ok)->setDefault(true);
 
