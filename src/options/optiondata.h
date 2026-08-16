@@ -800,6 +800,7 @@ private:
 
   OptionData();
   static OptionData& instanceInternal();
+  static void initDefaultUserAgent();
 
   // Singleton instance
   static OptionData *optionData;
@@ -1207,7 +1208,7 @@ private:
   QString userAgent;
 
   /* Make static to avoid compare when checking for option changes */
-  static QString userAgentRandom, userAgentDefault;
+  static QString userAgentDefault;
 
   /* Webserver values */
   QString webDocumentRoot;

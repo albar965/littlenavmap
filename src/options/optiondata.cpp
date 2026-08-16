@@ -17,7 +17,6 @@
 
 #include "optiondata.h"
 
-#include "atools.h"
 #include "common/constants.h"
 #include "exception.h"
 #include "gui/application.h"
@@ -30,7 +29,6 @@
 #include <QSettings>
 #include <QSize>
 
-QString OptionData::userAgentRandom;
 QString OptionData::userAgentDefault;
 
 OptionData *OptionData::optionData = nullptr;
@@ -44,6 +42,18 @@ const QString OptionData::WEATHER_NOAA_WIND_BASE_DEFAULT_URL = "https://nomads.n
 
 OptionData::OptionData()
 {
+}
+
+void OptionData::initDefaultUserAgent()
+{
+  // Old default
+  // Mozilla/5.0 (compatible; Marble/0.25.5 (stable release for Little Navmap); DesktopDevice; Browser; QNamNetworkPlugin)
+
+  if(userAgentDefault.isEmpty())
+    // Friendly default with web page and contact
+    userAgentDefault = QStringLiteral("%1/%2 (+https://www.littlenavmap.org; contact: %3)").
+                       arg(QCoreApplication::applicationName(), QCoreApplication::applicationVersion(),
+                           atools::gui::Application::getEmailAddresses().constFirst());
 }
 
 QString OptionData::getLanguageFromConfigFile()
@@ -231,6 +241,7 @@ OptionData& OptionData::instanceInternal()
   {
     qDebug() << "Creating new OptionData";
     optionData = new OptionData();
+    OptionData::initDefaultUserAgent();
   }
 
   return *optionData;
