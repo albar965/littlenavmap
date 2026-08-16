@@ -35,7 +35,8 @@ bool ProfileOptions::showOptions()
   qDebug() << Q_FUNC_INFO;
 
   atools::gui::TreeDialog treeDialog(parentWidget, QCoreApplication::applicationName() + tr(" - Elevation Profile Display Options"),
-                                     tr("Select options for Elevation Profile."),
+                                     tr("Select options for Elevation Profile.\n"
+                                        "More settings in options on pages \"Elevation Profile\" and \"Elevation Data\"."),
                                      lnm::PROFILE_DISPLAY_OPTIONS_DIALOG, "PROFILE.html#profile-options",
                                      true /* showExpandCollapse */);
   treeDialog.setHelpOnlineUrl(lnm::helpOnlineUrl);
@@ -90,9 +91,9 @@ bool ProfileOptions::showOptions()
   treeDialog.addItem2(profileItem, optsp::PROFILE_GROUND, tr("Ground"),
                       tr("Green ground display."));
   treeDialog.addItem2(profileItem, optsp::PROFILE_GROUND_AROUND, tr("Ground maximum"),
-                      tr("Light green ground display showing the maximum elevation within the buffer radius given in options "
-                         "page \"Elevation Data\".\n"
-                         "Only shown when using GLOBE offline elevation data."));
+                      tr("Light green ground display showing the maximum elevation\n"
+                         "within the buffer radius given in options page \"Elevation Data\".\n"
+                         "Needs GLOBE offline elevation data installed."));
   treeDialog.addItem2(profileItem, optsp::PROFILE_SAFE_ALTITUDE, tr("Safe Altitude Line"),
                       tr("Red safe altitude line for whole flight plan."));
   treeDialog.addItem2(profileItem, optsp::PROFILE_LEG_SAFE_ALTITUDE, tr("Leg Safe Altitude Lines"),
