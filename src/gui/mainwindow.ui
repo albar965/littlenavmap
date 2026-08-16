@@ -12239,13 +12239,13 @@ relation to shown airport</string>
      <normaloff>:/littlenavmap/resources/icons/help.svg</normaloff>:/littlenavmap/resources/icons/help.svg</iconset>
    </property>
    <property name="text">
-    <string>&amp;Changelog (Offline, Text)</string>
+    <string>&amp;Changelog (Online)</string>
    </property>
    <property name="toolTip">
-    <string>Open changelog in text editor</string>
+    <string>Open changelog in web browser</string>
    </property>
    <property name="statusTip">
-    <string>Open changelog in text editor</string>
+    <string>Open changelog in web browser</string>
    </property>
   </action>
   <action name="actionShowMapInstallation">

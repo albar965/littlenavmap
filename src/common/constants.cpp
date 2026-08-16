@@ -50,6 +50,7 @@ QString helpOnlineInstallGlobeUrl;
 QString helpOnlineInstallDirUrl;
 QString helpOnlineNavdatabasesUrl;
 QString helpOnlineStartUrl;
+QString helpOnlineChangelogUrl;
 QString helpOfflineFile;
 QString helpDonateUrl;
 QString helpManualDownloadUrl;
@@ -125,6 +126,7 @@ void loadHelpUrls()
     helpOnlineInstallDirUrl = base % QStringLiteral("FOLDERS.html");
     helpOnlineNavdatabasesUrl = base % QStringLiteral("NAVDATA.html");
     helpOnlineStartUrl = base % QStringLiteral("START.html");
+    helpOnlineChangelogUrl = QStringLiteral("CHANGELOG.txt");
   }
   else
   {
@@ -146,6 +148,7 @@ void loadHelpUrls()
     helpOnlineInstallDirUrl = settings.value(QStringLiteral("help/installdir"), base + QStringLiteral("FOLDERS.html")).toString();
     helpOnlineNavdatabasesUrl = settings.value(QStringLiteral("help/navdata"), base + QStringLiteral("NAVDATA.html")).toString();
     helpOnlineStartUrl = settings.value(QStringLiteral("help/start"), base + QStringLiteral("START.html")).toString();
+    helpOnlineChangelogUrl = settings.value(QStringLiteral("help/changelog"), QStringLiteral("CHANGELOG.txt")).toString();
   }
 
   qDebug() << Q_FUNC_INFO << "Help URL" << helpOnlineUrl;

@@ -850,6 +850,14 @@ void MainWindow::showChangelog()
   desktopServices->openFile(QApplication::applicationDirPath() % atools::SEP % "CHANGELOG.txt");
 }
 
+void MainWindow::showChangelogOnline()
+{
+  desktopServices->openUrl(atools::replaceVar(lnm::helpOnlineChangelogUrl,
+  {
+    {QStringLiteral("VERSION"), QApplication::applicationVersion()}
+  }));
+}
+
 void MainWindow::showDonationPage()
 {
   desktopServices->openUrl(lnm::helpDonateUrl);
@@ -1445,7 +1453,7 @@ void MainWindow::connectAllSlots()
 
   connect(ui->actionHelpContentsOffline, &QAction::triggered, this, &MainWindow::showOfflineHelp);
   connect(ui->actionHelpDownloads, &QAction::triggered, this, &MainWindow::showOnlineDownloads);
-  connect(ui->actionHelpChangelog, &QAction::triggered, this, &MainWindow::showChangelog);
+  connect(ui->actionHelpChangelog, &QAction::triggered, this, &MainWindow::showChangelogOnline);
   connect(ui->actionHelpAbout, &QAction::triggered, helpHandler, &atools::gui::HelpHandler::about);
   connect(ui->actionHelpAboutQt, &QAction::triggered, helpHandler, &atools::gui::HelpHandler::aboutQt);
   connect(ui->actionHelpCheckUpdates, &QAction::triggered, this, &MainWindow::checkForUpdates);
@@ -3658,6 +3666,11 @@ void MainWindow::mainWindowShownDelayed()
     dialog->showWarnMsgBox(lnm::ACTIONS_SHOW_APPLE_TRANSLOCATION, message, tr("Do not &show this dialog again."));
   }
 #endif
+  // Version change actions ====================================================
+  if(migrate::getOptionsVersion().isValid() && migrate::getOptionsVersion() < atools::util::Version(QApplication::applicationVersion()))
+    // Open online changelog for this version on Github
+    showChangelogOnline();
+
   // First installation actions ====================================================
 
   Settings& settings = Settings::instance();

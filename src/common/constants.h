@@ -57,6 +57,7 @@ extern QString helpOnlineInstallGlobeUrl;
 extern QString helpOnlineInstallDirUrl;
 extern QString helpOnlineNavdatabasesUrl;
 extern QString helpOnlineStartUrl;
+extern QString helpOnlineChangelogUrl;
 extern QString helpOfflineFile;
 extern QString helpDonateUrl;
 extern QString helpManualDownloadUrl;
