@@ -9310,7 +9310,7 @@ relation to shown airport</string>
     <bool>true</bool>
    </property>
    <property name="text">
-    <string>&amp;Create Logbook entries</string>
+    <string>&amp;Create Logbook entries for Flights</string>
    </property>
    <property name="toolTip">
     <string>Create a Logbook entry including flight information on takeoff and landing</string>
@@ -10563,17 +10563,6 @@ relation to shown airport</string>
    </property>
    <property name="statusTip">
     <string>Shows the logbook statistics window</string>
-   </property>
-  </action>
-  <action name="actionLogdataConvertUserdata">
-   <property name="text">
-    <string>Convert Logbook Entries from &amp;Userpoints</string>
-   </property>
-   <property name="toolTip">
-    <string>Convert legacy logbook entries from userpoints to the new logbook</string>
-   </property>
-   <property name="statusTip">
-    <string>Convert legacy logbook entries from userpoints to the new logbook</string>
    </property>
   </action>
   <action name="actionViewAirspaceSrcSimulator">

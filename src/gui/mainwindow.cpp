@@ -1234,8 +1234,6 @@ void MainWindow::connectAllSlots()
   connect(ui->actionLogdataImportCsv, &QAction::triggered, logdataController, &LogdataController::importCsv);
   connect(ui->actionLogdataExportCsv, &QAction::triggered, logdataController, &LogdataController::exportCsv);
   connect(ui->actionLogdataImportXplane, &QAction::triggered, logdataController, &LogdataController::importXplane);
-  connect(ui->actionLogdataConvertUserdata, &QAction::triggered,
-          logdataController, &LogdataController::convertUserdata);
 
   connect(searchController->getLogdataSearch(), &SearchBaseTable::loadRouteFile,
           std::bind(&MainWindow::routeOpenFile, this, std::placeholders::_1 /* filepath */, false /* forceLoading */));

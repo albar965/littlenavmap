@@ -154,9 +154,6 @@ public:
   void fontChanged(const QFont& font);
   void styleChanged();
 
-  /* Convert legacy logbook entries from userdata to the new logbook */
-  void convertUserdata();
-
   /* Resets detection of flight */
   void resetTakeoffLandingDetection();
 
