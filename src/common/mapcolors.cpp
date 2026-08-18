@@ -111,7 +111,7 @@ QColor compassRoseTextColor(Qt::black);
 /* Elevation profile colors and pens */
 QColor profileSkyColor(QColor(204, 204, 255));
 QColor profileLandColorInner(QColor(0, 128, 0));
-QColor profileLandColorOuter(QColor(80, 160, 80));
+QColor profileLandColorOuter(QColor(120, 160, 120));
 QColor profileLabelColor(Qt::black);
 
 QColor profileVasiAboveColor(QColor(QStringLiteral("#70ffffff")));
