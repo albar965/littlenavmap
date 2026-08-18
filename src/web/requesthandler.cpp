@@ -387,7 +387,7 @@ inline void RequestHandler::handleHtmlFileRequest(HttpRequest& request, HttpResp
     t.setVariable(QStringLiteral(u"applicationName"), QCoreApplication::applicationName());
     t.setVariable(QStringLiteral(u"applicationVersion"), QApplication::applicationVersion());
     t.setVariable(QStringLiteral(u"helpUrl"),
-                  atools::gui::HelpHandler::getHelpUrlWeb(lnm::helpOnlineUrl + QStringLiteral(u"WEBSERVER.html"),
+                  atools::gui::HelpHandler::getHelpUrlWeb(lnm::helpOnlineUrl + QStringLiteral("WEBSERVER.html"),
                                                           lnm::helpLanguageOnline()).toString());
 
     // Put refresh values back in page by inserting select control ==============================

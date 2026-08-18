@@ -3880,7 +3880,7 @@ void OptionsDialog::mapboxUserMapClicked()
   if(userNameItem != nullptr && userStyleItem != nullptr && tokenItem != nullptr)
   {
     TextEditDialog dialog(this, QCoreApplication::applicationName() % tr(" - Enter Mapbox Keys"), label, label2, label3,
-                          QStringLiteral("OPTIONS.html#mapboxtheme"));
+                          QStringLiteral("OPTIONS.html#options-map-keys"));
 
     // Prefill with present keys ==============
     dialog.setText(QStringLiteral("mapbox://styles/%1/%2").arg(userNameItem->text(), userStyleItem->text()));

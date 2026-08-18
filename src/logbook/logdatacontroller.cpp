@@ -901,7 +901,7 @@ void LogdataController::cleanupLogEntries()
       // Build preview dialog ===============================================
       atools::gui::SqlQueryDialog previewDialog(mainWindow, QCoreApplication::applicationName() % tr(" - Cleanup Preview"),
                                                 tr("These logbook entries will be deleted.\nNote that you can undo this change."),
-                                                lnm::SEARCHTAB_USERDATA_CLEANUP_PREVIEW, "LOGBOOK.html#cleanup-logbook-entries",
+                                                lnm::SEARCHTAB_USERDATA_CLEANUP_PREVIEW, "LOGBOOK.html#logbook-cleanup",
                                                 tr("&Delete Logbook entries"));
       previewDialog.setHelpOnlineUrl(lnm::helpOnlineUrl);
       previewDialog.setHelpLanguageOnline(lnm::helpLanguageOnline());

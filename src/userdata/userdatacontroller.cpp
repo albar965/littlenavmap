@@ -1188,7 +1188,7 @@ void UserdataController::cleanupUserdata()
       // Build preview dialog ===============================================
       atools::gui::SqlQueryDialog previewDialog(parentWidget, QCoreApplication::applicationName() + tr(" - Cleanup Preview"),
                                                 tr("These userpoints will be deleted.\nNote that you can undo this change."),
-                                                lnm::SEARCHTAB_USERDATA_CLEANUP_PREVIEW, "USERPOINT.html#cleanup-userpoints",
+                                                lnm::SEARCHTAB_USERDATA_CLEANUP_PREVIEW, "USERPOINT.html#userpoint-cleanup",
                                                 tr("&Delete Userpoints"));
       previewDialog.setHelpOnlineUrl(lnm::helpOnlineUrl);
       previewDialog.setHelpLanguageOnline(lnm::helpLanguageOnline());
