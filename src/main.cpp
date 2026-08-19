@@ -72,10 +72,6 @@ int main(int argc, char *argv[])
   // Initialize the resources from atools static library
   Q_INIT_RESOURCE(atools);
 
-#ifdef SIMCONNECT_BUILD_WIN64
-  Q_INIT_RESOURCE(navdata);
-#endif
-
   // Register all types to allow conversion from/to QVariant and thus reading/writing into settings
   atools::fs::sc::registerMetaTypes();
 

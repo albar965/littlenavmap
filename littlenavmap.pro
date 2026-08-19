@@ -778,6 +778,8 @@ OTHER_FILES += \
   $$files(build/*, true) \
   $$files(customize/*, true) \
   $$files(timezone/*, true) \
+  $$files(wmm/*, true) \
+  $$files(navdata/*, true) \
   $$files(desktop/*, true) \
   $$files(etc/*, true) \
   $$files(help/*, true) \
@@ -826,6 +828,7 @@ unix:!macx {
   copydata.commands += cp -vf $$PWD/resources/config/little_navmap_mapstyle.ini $$OUT_PWD/customize &&
   copydata.commands += cp -vf $$PWD/resources/config/maplayers.xml $$OUT_PWD/customize &&
   copydata.commands += cp -avfu $$PWD/timezone $$OUT_PWD &&
+  copydata.commands += cp -avfu $$PWD/wmm $$OUT_PWD &&
   copydata.commands += cp -avfu $$PWD/marble/data $$OUT_PWD &&
   copydata.commands += cp -vf $$PWD/desktop/littlenavmap*.sh $$OUT_PWD &&
   copydata.commands += chmod -v a+x $$OUT_PWD/littlenavmap*.sh
@@ -841,6 +844,7 @@ macx {
   copydata.commands += cp -vf $$PWD/resources/config/little_navmap_mapstyle.ini $$OUT_PWD/littlenavmap.app/Contents/MacOS/customize &&
   copydata.commands += cp -vf $$PWD/resources/config/maplayers.xml $$OUT_PWD/littlenavmap.app/Contents/MacOS/customize &&
   copydata.commands += cp -Rv $$PWD/timezone $$OUT_PWD/littlenavmap.app/Contents/MacOS &&
+  copydata.commands += cp -Rv $$PWD/wmm $$OUT_PWD/littlenavmap.app/Contents/MacOS &&
   copydata.commands += cp -Rv $$PWD/marble/data $$OUT_PWD/littlenavmap.app/Contents/MacOS &&
   copydata.commands += cp -vf $$PWD/translations/*.qm $$OUT_PWD/littlenavmap.app/Contents/MacOS &&
   copydata.commands += cp -vf $$ATOOLS_INC_PATH/../translations/*.qm $$OUT_PWD/littlenavmap.app/Contents/MacOS &&
@@ -875,6 +879,7 @@ unix:!macx {
   deploy.commands += cp -Rvf $$OUT_PWD/web $$DEPLOY_DIR &&
   deploy.commands += cp -Rvf $$OUT_PWD/customize $$DEPLOY_DIR &&
   deploy.commands += cp -Rvf $$OUT_PWD/timezone $$DEPLOY_DIR &&
+  deploy.commands += cp -Rvf $$OUT_PWD/wmm $$DEPLOY_DIR &&
   deploy.commands += cp -Rvf $$OUT_PWD/littlenavmap $$DEPLOY_DIR &&
   for(TL, TRANSLATION_LANGUAGES) {
     exists($$[QT_INSTALL_TRANSLATIONS]/qt_$${TL}.qm) {
@@ -1047,6 +1052,8 @@ win32 {
   deploy.commands += xcopy /F $$p($$PWD/resources/config/little_navmap_mapstyle.ini) $$p($$DEPLOY_BASE/$$WIN_TARGET_NAME/customize) &&
   deploy.commands += xcopy /F $$p($$PWD/resources/config/maplayers.xml) $$p($$DEPLOY_BASE/$$WIN_TARGET_NAME/customize) &&
   deploy.commands += xcopy /I /S /E /F /Y $$p($$PWD/timezone) $$p($$DEPLOY_BASE/$$WIN_TARGET_NAME/timezone) &&
+  deploy.commands += xcopy /I /S /E /F /Y $$p($$PWD/wmm) $$p($$DEPLOY_BASE/$$WIN_TARGET_NAME/wmm) &&
+  deploy.commands += xcopy /I /S /E /F /Y $$p($$PWD/navdata) $$p($$DEPLOY_BASE/$$WIN_TARGET_NAME/navdata) &&
   deploy.commands += xcopy /I /S /E /F /Y $$p($$PWD/marble/data) $$p($$DEPLOY_BASE/$$WIN_TARGET_NAME/data) &&
   deploy.commands += xcopy /I /S /E /F /Y $$p($$PWD/etc) $$p($$DEPLOY_BASE/$$WIN_TARGET_NAME/etc) &&
   deploy.commands += xcopy /I /S /E /F /Y $$p($$PWD/simconnect) $$p($$DEPLOY_BASE/$$WIN_TARGET_NAME/simconnect) &&
