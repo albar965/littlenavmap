@@ -53,6 +53,7 @@
 #include "query/waypointtrackquery.h"
 #include "openairac/provenancemanager.h"
 #include "openairac/coveragemanager.h"
+#include "openairac/weather/weatherclient.h"
 #include "route/route.h"
 #include "route/routealtitude.h"
 #include "userdata/userdatacontroller.h"
@@ -1935,6 +1936,25 @@ void HtmlInfoBuilder::weatherText(const map::WeatherContext& context, const MapA
         html.p(tr("No IVAO weather station found nearby."), ahtml::BOLD);
 
     } // if(flags & optsw::WEATHER_INFO_ALL)
+
+    // OpenAIRAC / AviationWeather.gov Live Weather Section [AWC]
+    openairac::MetarInfo liveMetar = openairac::WeatherClient::instance().getCachedMetar(airport.ident);
+    openairac::TafInfo liveTaf = openairac::WeatherClient::instance().getCachedTaf(airport.ident);
+    if(liveMetar.isValid() || liveTaf.isValid())
+    {
+      html.hr();
+      html.text(tr("OpenAIRAC / AviationWeather.gov Live Weather [AWC]"), WEATHER_TITLE_FLAGS);
+      if(liveMetar.isValid())
+      {
+        html.p(tr("<b>METAR</b> <span style='background:%1;color:white;padding:2px 6px;border-radius:3px;font-weight:bold;'>%2</span> (Age %3 min):<br/><code>%4</code>").
+               arg(liveMetar.flightCategoryColorHex(), liveMetar.flightCategoryString(), QString::number(liveMetar.ageMinutes()), liveMetar.rawText.toHtmlEscaped()));
+      }
+      if(liveTaf.isValid())
+      {
+        html.p(tr("<b>TAF</b> (Valid %1 to %2):<br/><code>%3</code>").
+               arg(liveTaf.validFrom.toString(QStringLiteral("HH:mm'Z'")), liveTaf.validTo.toString(QStringLiteral("HH:mm'Z'")), liveTaf.rawText.toHtmlEscaped()));
+      }
+    }
     else
       html.p().warning(tr("No weather display selected in options dialog on page \"Weather\"."));
   } // if(info)

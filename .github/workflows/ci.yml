@@ -66,9 +66,14 @@ jobs:
           test -f src/openairac/charts/chartviewerwidget.h
           test -f src/openairac/charts/chartsdock.h
           test -f src/openairac/charts/flightsuggestions.h
+          test -f src/openairac/weather/weathermodel.h
+          test -f src/openairac/weather/weatherclient.h
+          test -f src/openairac/weather/flightbriefingdialog.h
           test -f docs/UPSTREAM_SYNC.md
           test -f docs/OPENAIRAC_INTEGRATION.md
           test -f docs/EFB_ROADMAP.md
           test -f docs/CHARTS.md
           test -f docs/OFFLINE_CHARTS.md
+          test -f docs/WEATHER.md
+          test -f docs/FLIGHT_BRIEFING.md
           echo "OpenAIRAC Map Windows workspace integrity verified."

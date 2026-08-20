@@ -293,6 +293,7 @@ public:
   {
     return chartsDock;
   }
+  void showFlightBriefing();
 
   /* Register and unregister dialogs for autoraise */
   void registerDialogInDockHandler(QDialog *dialogWidget);

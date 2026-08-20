@@ -354,6 +354,9 @@ SOURCES += \
   src/openairac/charts/chartviewerwidget.cpp \
   src/openairac/charts/chartsdock.cpp \
   src/openairac/charts/flightsuggestions.cpp \
+  src/openairac/weather/weathermodel.cpp \
+  src/openairac/weather/weatherclient.cpp \
+  src/openairac/weather/flightbriefingdialog.cpp \
   src/online/clientdetailhandler.cpp \
   src/gui/stylehandler.cpp \
   src/gui/textdialog.cpp \
@@ -573,6 +576,9 @@ HEADERS  += \
   src/openairac/charts/chartviewerwidget.h \
   src/openairac/charts/chartsdock.h \
   src/openairac/charts/flightsuggestions.h \
+  src/openairac/weather/weathermodel.h \
+  src/openairac/weather/weatherclient.h \
+  src/openairac/weather/flightbriefingdialog.h \
   src/db/undoredoprogress.h \
   src/geo/aircrafttrail.h \
   src/geo/coordinateconverter.h \

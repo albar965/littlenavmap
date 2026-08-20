@@ -100,6 +100,7 @@
 #include "web/webcontroller.h"
 
 #include "openairac/charts/chartsdock.h"
+#include "openairac/weather/flightbriefingdialog.h"
 #include <marble/MarbleAboutDialog.h>
 #include <marble/MarbleModel.h>
 #include <marble/HttpDownloadManager.h>
@@ -1393,6 +1394,13 @@ void MainWindow::connectAllSlots()
   connect(ui->actionRouteReverse, &QAction::triggered, routeController, &RouteController::reverseRoute);
   connect(ui->actionRouteCopyString, &QAction::triggered, routeController, &RouteController::routeStringToClipboard);
   connect(ui->actionRouteAdjustAltitude, &QAction::triggered, routeController, &RouteController::adjustFlightplanAltitude);
+
+  // OpenAIRAC Flight Briefing
+  QAction *actionFlightBriefing = new QAction(tr("OpenAIRAC Preflight Briefing..."), this);
+  actionFlightBriefing->setShortcut(QKeySequence(QStringLiteral("Ctrl+Shift+B")));
+  actionFlightBriefing->setStatusTip(tr("Open preflight weather, charts, and route briefing"));
+  ui->menuRoute->addAction(actionFlightBriefing);
+  connect(actionFlightBriefing, &QAction::triggered, this, &MainWindow::showFlightBriefing);
 
   // Help menu ========================================================================
   connect(ui->actionHelpUserManualContents, &QAction::triggered, this, [this](bool) -> void {
@@ -5450,4 +5458,31 @@ void MainWindow::debugDumpContainerSizes() const
   if(NavApp::getConnectClient() != nullptr)
     NavApp::getConnectClient()->debugDumpContainerSizes();
   qDebug() << Q_FUNC_INFO << "======================================";
+}
+
+void MainWindow::showFlightBriefing()
+{
+  const Route& route = NavApp::getRouteConst();
+  QString dep = route.getDepartureAirportIdent();
+  QString dest = route.getDestinationAirportIdent();
+  if (dep.isEmpty() && dest.isEmpty()) {
+    dep = QStringLiteral("KJFK");
+    dest = QStringLiteral("LFPG");
+  }
+
+  QList<QPair<double, double>> coords;
+  for (int i = 0; i < route.size(); ++i) {
+    const RouteLeg& leg = route.getLegConst(i);
+    coords.append(qMakePair(leg.getPosition().getLon(), leg.getPosition().getLat()));
+  }
+
+  double flightHours = 7.0;
+  if (route.hasValidDeparture() && route.hasValidDestination()) {
+    flightHours = route.getFlightPlanDurationMinutes() / 60.0;
+    if (flightHours < 0.1) flightHours = 7.0;
+  }
+
+  openairac::FlightBriefingDialog dlg(this);
+  dlg.setRoute(dep, dest, QStringList(), coords, flightHours);
+  dlg.exec();
 }
