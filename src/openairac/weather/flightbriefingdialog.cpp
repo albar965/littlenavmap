@@ -17,8 +17,8 @@
 #include "openairac/weather/flightbriefingdialog.h"
 #include "openairac/weather/weatherclient.h"
 #include "openairac/charts/chartclient.h"
+#include "openairac/online/onlineclient.h"
 #include "openairac/navigationprovider.h"
-#include <QVBoxLayout>
 #include <QHBoxLayout>
 #include <QClipboard>
 #include <QGuiApplication>
@@ -199,12 +199,73 @@ QString FlightBriefingDialog::generateBriefingHtml() const
     }
     html += QStringLiteral("</div>");
 
-    // Footer & Provenance
-    html += QStringLiteral("<div style='font-size: 11px; color: #777; border-top: 1px solid #ddd; padding-top: 6px;'>");
-    html += QStringLiteral("<b>Data Provenance:</b> Navdata: OpenAIRAC | Charts: FAA d-TPP / France SIA through OpenAIRAC | Weather: NOAA AviationWeather.gov<br/>");
-    html += QStringLiteral("<i>OpenAIRAC first: transparent open aviation data without proprietary subscriptions.</i>");
+    // 4. Online Network Awareness Block [VATSIM]
+    RouteOnlineItem onlineAwareness = OnlineClient::instance().getRouteOnlineAwareness(m_depIcao, m_destIcao, m_routeCoords, 50.0);
+    html += QStringLiteral("<div style='border: 1px solid #17a2b8; border-radius: 4px; padding: 8px; margin-bottom: 10px; background: #f4faff;'>");
+    html += QStringLiteral("<h3 style='margin-top: 0; color: #117a8b;'>4. Online Network Awareness [VATSIM]</h3>");
+
+    // Departure ATC
+    html += QStringLiteral("<p style='margin-bottom: 4px;'><b>Departure ATC (") + escapeHtml(m_depIcao) + QStringLiteral("):</b> ");
+    if (onlineAwareness.departureAtc.isEmpty()) {
+        html += QStringLiteral("<i>No active ATC stations online.</i>");
+    } else {
+        QStringList atcStrs;
+        for (const OnlineControllerItem& c : onlineAwareness.departureAtc) {
+            atcStrs.append(QStringLiteral("<b>") + escapeHtml(c.callsign) + QStringLiteral("</b> (") + escapeHtml(c.frequency) + QStringLiteral(" - ") + escapeHtml(c.facilityTypeName) + QStringLiteral(")"));
+        }
+        html += atcStrs.join(QStringLiteral(", "));
+    }
+    if (onlineAwareness.hasDepartureAtis) {
+        html += QStringLiteral("<br/><b>Departure ATIS:</b> ") + escapeHtml(onlineAwareness.departureAtis.callsign) + QStringLiteral(" (") + QString(onlineAwareness.departureAtis.atisCode) + QStringLiteral(" - ") + escapeHtml(onlineAwareness.departureAtis.frequency) + QStringLiteral(")");
+    }
+    html += QStringLiteral("</p>");
+
+    // Enroute ATC
+    html += QStringLiteral("<p style='margin-bottom: 4px;'><b>Enroute ATC Sectors:</b> ");
+    if (onlineAwareness.enrouteAtc.isEmpty()) {
+        html += QStringLiteral("<i>No relevant enroute centers online.</i>");
+    } else {
+        QStringList ctrStrs;
+        for (const OnlineControllerItem& c : onlineAwareness.enrouteAtc) {
+            ctrStrs.append(QStringLiteral("<b>") + escapeHtml(c.callsign) + QStringLiteral("</b> (") + escapeHtml(c.frequency) + QStringLiteral(")"));
+        }
+        html += ctrStrs.join(QStringLiteral(", "));
+    }
+    html += QStringLiteral("</p>");
+
+    // Arrival ATC
+    html += QStringLiteral("<p style='margin-bottom: 4px;'><b>Arrival ATC (") + escapeHtml(m_destIcao) + QStringLiteral("):</b> ");
+    if (onlineAwareness.arrivalAtc.isEmpty()) {
+        html += QStringLiteral("<i>No active ATC stations online.</i>");
+    } else {
+        QStringList atcStrs;
+        for (const OnlineControllerItem& c : onlineAwareness.arrivalAtc) {
+            atcStrs.append(QStringLiteral("<b>") + escapeHtml(c.callsign) + QStringLiteral("</b> (") + escapeHtml(c.frequency) + QStringLiteral(" - ") + escapeHtml(c.facilityTypeName) + QStringLiteral(")"));
+        }
+        html += atcStrs.join(QStringLiteral(", "));
+    }
+    if (onlineAwareness.hasArrivalAtis) {
+        html += QStringLiteral("<br/><b>Arrival ATIS:</b> ") + escapeHtml(onlineAwareness.arrivalAtis.callsign) + QStringLiteral(" (") + QString(onlineAwareness.arrivalAtis.atisCode) + QStringLiteral(" - ") + escapeHtml(onlineAwareness.arrivalAtis.frequency) + QStringLiteral(")");
+    }
+    html += QStringLiteral("</p>");
+
+    // Traffic
+    html += QStringLiteral("<p style='margin-bottom: 4px;'><b>Online Traffic:</b> ") + QString::number(onlineAwareness.trafficInCorridor.size()) + QStringLiteral(" aircraft in route corridor (50 NM) | ") + QString::number(onlineAwareness.trafficNearDestination.size()) + QStringLiteral(" aircraft near destination</p>");
+
+    // Matching Events
+    if (!onlineAwareness.matchingEvents.isEmpty()) {
+        html += QStringLiteral("<p style='margin-bottom: 4px; color: #d9534f;'><b>Matching Online Events:</b></p><ul>");
+        for (const OnlineEventItem& ev : onlineAwareness.matchingEvents) {
+            html += QStringLiteral("<li><b>") + escapeHtml(ev.name) + QStringLiteral("</b> (") + ev.startTime.toString(QStringLiteral("yyyy-MM-dd hh:mmZ")) + QStringLiteral(" to ") + ev.endTime.toString(QStringLiteral("yyyy-MM-dd hh:mmZ")) + QStringLiteral(")</li>");
+        }
+        html += QStringLiteral("</ul>");
+    }
     html += QStringLiteral("</div>");
 
+    // Footer & Provenance
+    html += QStringLiteral("<div style='font-size: 11px; color: #777; border-top: 1px solid #ddd; padding-top: 6px;'>");
+    html += QStringLiteral("<b>Data Provenance:</b> Navdata: OpenAIRAC | Charts: FAA d-TPP / France SIA through OpenAIRAC | Weather: NOAA AviationWeather.gov | Online: VATSIM Data API v3<br/>");
+    html += QStringLiteral("<i>OpenAIRAC first: transparent open aviation data without proprietary subscriptions.</i>");
     html += QStringLiteral("</div>");
     return html;
 }
@@ -240,6 +301,17 @@ QString FlightBriefingDialog::generateBriefingPlainText() const
         txt += QStringLiteral("     ") + s.rawText + QStringLiteral("\n");
     }
 
+    txt += QStringLiteral("\n4. ONLINE NETWORK AWARENESS [VATSIM]:\n");
+    RouteOnlineItem onlineAwareness = OnlineClient::instance().getRouteOnlineAwareness(m_depIcao, m_destIcao, m_routeCoords, 50.0);
+    txt += QStringLiteral("   Departure ATC (") + m_depIcao + QStringLiteral("): ") + QString::number(onlineAwareness.departureAtc.size()) + QStringLiteral(" online\n");
+    for (const OnlineControllerItem& c : onlineAwareness.departureAtc) {
+        txt += QStringLiteral("     - ") + c.callsign + QStringLiteral(" (") + c.frequency + QStringLiteral(" - ") + c.facilityTypeName + QStringLiteral(")\n");
+    }
+    txt += QStringLiteral("   Arrival ATC   (") + m_destIcao + QStringLiteral("): ") + QString::number(onlineAwareness.arrivalAtc.size()) + QStringLiteral(" online\n");
+    for (const OnlineControllerItem& c : onlineAwareness.arrivalAtc) {
+        txt += QStringLiteral("     - ") + c.callsign + QStringLiteral(" (") + c.frequency + QStringLiteral(" - ") + c.facilityTypeName + QStringLiteral(")\n");
+    }
+    txt += QStringLiteral("   Corridor Traffic: ") + QString::number(onlineAwareness.trafficInCorridor.size()) + QStringLiteral(" aircraft\n");
     txt += QStringLiteral("\n================================================================================\n");
     txt += QStringLiteral("End of OpenAIRAC Flight Briefing\n");
     return txt;

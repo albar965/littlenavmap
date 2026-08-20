@@ -357,6 +357,9 @@ SOURCES += \
   src/openairac/weather/weathermodel.cpp \
   src/openairac/weather/weatherclient.cpp \
   src/openairac/weather/flightbriefingdialog.cpp \
+  src/openairac/online/onlinenetworkmodel.cpp \
+  src/openairac/online/onlineclient.cpp \
+  src/openairac/online/eventsdock.cpp \
   src/online/clientdetailhandler.cpp \
   src/gui/stylehandler.cpp \
   src/gui/textdialog.cpp \
@@ -579,6 +582,9 @@ HEADERS  += \
   src/openairac/weather/weathermodel.h \
   src/openairac/weather/weatherclient.h \
   src/openairac/weather/flightbriefingdialog.h \
+  src/openairac/online/onlinenetworkmodel.h \
+  src/openairac/online/onlineclient.h \
+  src/openairac/online/eventsdock.h \
   src/db/undoredoprogress.h \
   src/geo/aircrafttrail.h \
   src/geo/coordinateconverter.h \

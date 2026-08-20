@@ -36,12 +36,12 @@ OpenAIRAC Map EFB Platform
 - Route weather profile (cross-section showing winds aloft, icing probability, turbulence, and cloud tops).
 - Real-time radar / precipitation tile overlays.
 
-### Phase 4: Online Network Integration (v2.3)
-- Real-time VATSIM / IVAO ATC airspace sector visualization.
-- Controller frequency auto-tuning assistance and ATIS text feeds.
-- Live traffic rendering with wake turbulence and TCAS situational awareness.
-
-### Phase 5: Worldwide NOTAM Aggregator (v2.4)
+### Phase 4: Online Network Integration (v0.4.0 — SHIPPED)
+- Real-time VATSIM Data API v3 live telemetry (1,800+ concurrent pilots, controllers, ATIS).
+- Display interpolation for smooth aircraft motion without position jumping.
+- ATC along route analysis and integrated Flight Briefing online section.
+- Dedicated Online Events dock with flight plan route matching.
+- Privacy-aware map badging and ephemeral operational caching.
 - Geocoded NOTAM filtering along the planned route and destination runway closures.
 - Visual airspace restriction overlays with temporal activation timers.
 
