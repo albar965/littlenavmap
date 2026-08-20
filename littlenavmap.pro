@@ -349,6 +349,11 @@ SOURCES += \
   src/openairac/provenancemanager.cpp \
   src/openairac/coveragemanager.cpp \
   src/openairac/openairacdbmanager.cpp \
+  src/openairac/charts/chartmodel.cpp \
+  src/openairac/charts/chartclient.cpp \
+  src/openairac/charts/chartviewerwidget.cpp \
+  src/openairac/charts/chartsdock.cpp \
+  src/openairac/charts/flightsuggestions.cpp \
   src/online/clientdetailhandler.cpp \
   src/gui/stylehandler.cpp \
   src/gui/textdialog.cpp \
@@ -563,6 +568,11 @@ HEADERS  += \
   src/openairac/provenancemanager.h \
   src/openairac/coveragemanager.h \
   src/openairac/openairacdbmanager.h \
+  src/openairac/charts/chartmodel.h \
+  src/openairac/charts/chartclient.h \
+  src/openairac/charts/chartviewerwidget.h \
+  src/openairac/charts/chartsdock.h \
+  src/openairac/charts/flightsuggestions.h \
   src/db/undoredoprogress.h \
   src/geo/aircrafttrail.h \
   src/geo/coordinateconverter.h \

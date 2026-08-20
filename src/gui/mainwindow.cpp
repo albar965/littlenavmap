@@ -99,6 +99,7 @@
 #include "weather/windreporter.h"
 #include "web/webcontroller.h"
 
+#include "openairac/charts/chartsdock.h"
 #include <marble/MarbleAboutDialog.h>
 #include <marble/MarbleModel.h>
 #include <marble/HttpDownloadManager.h>
@@ -244,11 +245,13 @@ MainWindow::MainWindow()
 
     // Create dock and mainwindow handler ============================================
     atools::settings::Settings& settings = atools::settings::Settings::instance();
+    chartsDock = new openairac::ChartsDock(this);
+    addDockWidget(Qt::RightDockWidgetArea, chartsDock);
+
     dockHandler = new atools::gui::DockWidgetHandler(this,
                                                      // Add all available dock widgets here ==========================
                                                      {ui->dockWidgetAircraft, ui->dockWidgetSearch, ui->dockWidgetProfile,
-                                                      ui->dockWidgetInformation, ui->dockWidgetRoute},
-                                                     // Add all available toolbars  here =============================
+                                                      ui->dockWidgetInformation, ui->dockWidgetRoute, chartsDock},
                                                      {ui->toolBarMain, ui->toolBarMap, ui->toolBarMapOptions,
                                                       ui->toolBarMapOptionsRouteAircraft, ui->toolBarMapOptionsOther,
                                                       ui->toolBarRoute, ui->toolBarView, ui->toolBarAirspaces, ui->toolBarTools},
@@ -969,8 +972,8 @@ void MainWindow::setupUi()
                                   ui->dockWidgetSearch->toggleViewAction(),
                                   ui->dockWidgetAircraft->toggleViewAction(),
                                   ui->dockWidgetProfile->toggleViewAction(),
-                                  ui->dockWidgetInformation->toggleViewAction()});
-
+                                  ui->dockWidgetInformation->toggleViewAction(),
+                                  chartsDock->toggleViewAction()});
   // Add toobar actions to menu
   ui->menuWindowToolbars->addActions({ui->toolBarMain->toggleViewAction(),
                                       ui->toolBarMap->toggleViewAction(),

@@ -106,6 +106,10 @@ struct MapAirport;
 }
 
 class MapMarkers;
+namespace openairac {
+class ChartsDock;
+}
+
 
 /*
  * Main window contains all instances of controllers, widgets and managment classes.
@@ -283,6 +287,11 @@ public:
   atools::gui::DockWidgetHandler *getDockHandler() const
   {
     return dockHandler;
+  }
+
+  openairac::ChartsDock *getChartsDock() const
+  {
+    return chartsDock;
   }
 
   /* Register and unregister dialogs for autoraise */
@@ -641,6 +650,7 @@ private:
   atools::gui::DesktopServices *desktopServices = nullptr;
   atools::gui::DockWidgetHandler *dockHandler = nullptr;
 
+  openairac::ChartsDock *chartsDock = nullptr;
   /* Managment and controller classes */
   WeatherReporter *weatherReporter = nullptr;
   WindReporter *windReporter = nullptr;
