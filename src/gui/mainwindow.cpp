@@ -139,30 +139,20 @@ MainWindow::MainWindow()
   setWindowFlag(Qt::WindowContextHelpButtonHint, false);
 
   aboutMessage =
-    tr("<p style='white-space:pre'>is a free open source flight planner, navigation tool, moving map,<br/>"
-       "airport search and airport information system<br/>"
-       "for X-Plane 11, X-Plane 12, Flight Simulator X, Prepar3D, Microsoft Flight Simulator 2020 and Microsoft Flight Simulator 2024.</p>"
-       "<p>"
-         "<b>"
-           "<a href=\"%1\">Donate here to support the development of %2</a>."
-           "</b>"
-         "</p>"
-         "<p>This software is licensed under "
-           "<a href=\"http://www.gnu.org/licenses/gpl-3.0\">GPL3"
-           "</a> or any later version."
-         "</p>"
-         "<p>The source code for this application is available at "
-           "<a href=\"https://github.com/albar965\">GitHub"
-           "</a>."
-         "</p>"
-         "<p>More about my projects at "
-           "<a href=\"https://www.littlenavmap.org\">www.littlenavmap.org"
-           "</a>."
-         "</p>"
-         "<p>"
-           "<b>Copyright 2015-2026 Alexander Barthel"
-           "</b>"
-         "</p>").arg(lnm::helpDonateUrl, QCoreApplication::applicationName());
+    tr("<h3>OpenAIRAC Map</h3>"
+       "<p><b>Version 0.1.0</b> (based on Little Navmap upstream 3.0.x / 3.1.x)</p>"
+       "<p>OpenAIRAC Map is an open-first aviation flight planner, moving map, and navigation ecosystem application.<br/>"
+       "Compatible with X-Plane 11, X-Plane 12, Microsoft Flight Simulator (2020 / 2024), and Prepar3D.</p>"
+       "<p><b>Open-AIRAC comes first:</b> independent, open aviation data, transparent provenance, and no proprietary subscription required.</p>"
+       "<hr/>"
+       "<p><b>Licensing & Upstream Credits:</b><br/>"
+       "Licensed under the <a href=\"http://www.gnu.org/licenses/gpl-3.0\">GNU General Public License v3 (GPL-3.0)</a> or later.<br/>"
+       "Based on <b>Little Navmap</b> — Copyright © 2015-2026 Alexander Barthel and contributors.<br/>"
+       "OpenAIRAC Map modifications — Copyright © 2026 OpenAIRAC Contributors.<br/>"
+       "Upstream repository: <a href=\"https://github.com/albar965/littlenavmap\">https://github.com/albar965/littlenavmap</a><br/>"
+       "OpenAIRAC fork: <a href=\"https://github.com/bobberdolle1/openairac-map\">https://github.com/bobberdolle1/openairac-map</a><br/>"
+       "OpenAIRAC platform: <a href=\"https://github.com/bobberdolle1/open-airac\">https://github.com/bobberdolle1/open-airac</a></p>"
+       "<p><a href=\"%1\">Donate to support upstream Little Navmap development</a>.</p>").arg(lnm::helpDonateUrl);
 
   layoutWarnText = tr("The option \"Allow to undock map window\" in the layout file is "
                       "different than the currently set option.\n"
@@ -2023,17 +2013,19 @@ void MainWindow::updateWindowTitle()
       title += tr(" %1").arg(NavApp::getDatabaseAiracCycleSim());
   }
 
-  // Nav database =========
+  // Nav database badge & cycle =========
+  QString navSource = NavApp::getDatabaseDataSourceNav().toUpper();
+  QString badge = (navSource.contains(QStringLiteral("NAVIGRAPH"))) ? QStringLiteral("N") : QStringLiteral("OA");
+
   if(navDbStatus == navdb::ALL)
-    title += tr(" / N");
+    title += tr(" / %1").arg(badge);
   else if(navDbStatus == navdb::MIXED)
-    title += tr(" / N");
+    title += tr(" / %1").arg(badge);
   else if(navDbStatus == navdb::OFF)
-    title += tr(" / (N)");
+    title += tr(" / (%1)").arg(badge);
 
   if((navDbStatus == navdb::ALL || navDbStatus == navdb::MIXED) && !NavApp::getDatabaseAiracCycleNav().isEmpty())
     title += tr(" ") % NavApp::getDatabaseAiracCycleNav();
-
   // Flight plan name  ==========================================
   if(!routeController->getRouteFilePath().isEmpty())
   {

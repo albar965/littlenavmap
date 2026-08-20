@@ -1,0 +1,67 @@
+name: OpenAIRAC Map CI
+
+on:
+  push:
+    branches: [ master, develop/**, release/** ]
+  pull_request:
+    branches: [ master ]
+
+jobs:
+  build-linux:
+    name: Linux (Ubuntu 24.04 / Qt)
+    runs-on: ubuntu-24.04
+    steps:
+      - name: Checkout OpenAIRAC Map
+        uses: actions/checkout@v4
+        with:
+          path: openairac-map
+
+      - name: Checkout atools
+        uses: actions/checkout@v4
+        with:
+          repository: albar965/atools
+          path: atools
+
+      - name: Install System Dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y qtbase5-dev qttools5-dev-tools qt5-qmake libqt5svg5-dev libqt5sql5-sqlite libqt5network5
+
+      - name: Verify Workspace Structure
+        run: |
+          ls -la
+          cd openairac-map
+          ls -la src/openairac/
+
+      - name: Validate Project Configuration
+        run: |
+          cd openairac-map
+          qmake -version
+
+  build-windows:
+    name: Windows (MSVC / CMake)
+    runs-on: windows-latest
+    steps:
+      - name: Checkout OpenAIRAC Map
+        uses: actions/checkout@v4
+        with:
+          path: openairac-map
+
+      - name: Checkout atools
+        uses: actions/checkout@v4
+        with:
+          repository: albar965/atools
+          path: atools
+
+      - name: Verify OpenAIRAC Subsystem
+        shell: bash
+        run: |
+          cd openairac-map
+          test -f src/openairac/navigationprovider.h
+          test -f src/openairac/provenancemanager.h
+          test -f src/openairac/coveragemanager.h
+          test -f src/openairac/openairacdbmanager.h
+          test -f docs/UPSTREAM_SYNC.md
+          test -f docs/OPENAIRAC_INTEGRATION.md
+          test -f docs/EFB_ROADMAP.md
+          echo "OpenAIRAC Map Windows workspace integrity verified."

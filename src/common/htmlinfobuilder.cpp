@@ -51,6 +51,8 @@
 #include "query/infoquery.h"
 #include "query/mapquery.h"
 #include "query/waypointtrackquery.h"
+#include "openairac/provenancemanager.h"
+#include "openairac/coveragemanager.h"
 #include "route/route.h"
 #include "route/routealtitude.h"
 #include "userdata/userdatacontroller.h"
@@ -576,6 +578,15 @@ void HtmlInfoBuilder::airportText(const MapAirport& airport, const map::WeatherC
   if(info && !print)
     addAirportFolder(airport, html);
 
+  // Add OpenAIRAC Provenance & Coverage Diagnostics
+  if(info && !print)
+  {
+    openairac::EntityProvenance prov = openairac::ProvenanceManager::instance().getAirportProvenance(airport.ident, airport.country, airport.numApproach);
+    html.raw(openairac::ProvenanceManager::instance().formatProvenanceHtml(prov));
+
+    openairac::AirportCoverageSummary cov = openairac::CoverageManager::instance().evaluateAirportCoverage(airport.ident, airport.country, 0, 0, airport.numApproach);
+    html.raw(openairac::CoverageManager::instance().formatCoverageHtml(cov));
+  }
   if(!info)
     routeWindText(html, route, airport.routeIndex);
 

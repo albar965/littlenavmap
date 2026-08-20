@@ -345,7 +345,11 @@ SOURCES += \
   src/gui/messagesettings.cpp \
   src/gui/runwaytable.cpp \
   src/gui/statusbar.cpp \
-  src/gui/statusbareventfilter.cpp \
+  src/openairac/navigationprovider.cpp \
+  src/openairac/provenancemanager.cpp \
+  src/openairac/coveragemanager.cpp \
+  src/openairac/openairacdbmanager.cpp \
+  src/online/clientdetailhandler.cpp \
   src/gui/stylehandler.cpp \
   src/gui/textdialog.cpp \
   src/gui/texteditdialog.cpp \
@@ -555,6 +559,10 @@ HEADERS  += \
   src/db/databaseprogressdialog.h \
   src/db/dbtools.h \
   src/db/dbtypes.h \
+  src/openairac/navigationprovider.h \
+  src/openairac/provenancemanager.h \
+  src/openairac/coveragemanager.h \
+  src/openairac/openairacdbmanager.h \
   src/db/undoredoprogress.h \
   src/geo/aircrafttrail.h \
   src/geo/coordinateconverter.h \

@@ -684,7 +684,7 @@ void DatabaseManager::insertSimSwitchActions()
   if(simDbActions.size() == 1)
     simDbActions.constFirst()->setDisabled(true);
 
-  // Insert Navigraph menu ==================================
+  // Insert Navigation Data / OpenAIRAC menu ==================================
   QString file = buildDatabaseFileName(FsPaths::NAVIGRAPH);
 
   if(!file.isEmpty())
@@ -705,10 +705,14 @@ void DatabaseManager::insertSimSwitchActions()
     suffix += " (" % meta.getLastLoadTime().toString() % " | " % meta.getDataSource() % ")";
 #endif
 
-    QString dbname = FsPaths::typeToDisplayName(FsPaths::NAVIGRAPH);
-    navDbSubMenu = new QMenu(tr("&%1%2").arg(dbname, suffix));
+    QString dbname = meta.getDataSource();
+    if (dbname.isEmpty() || dbname.toUpper() == QStringLiteral("OPENAIRAC")) {
+      dbname = QStringLiteral("OpenAIRAC");
+    } else if (dbname.toUpper() == QStringLiteral("NAVIGRAPH")) {
+      dbname = QStringLiteral("Navigraph (Optional)");
+    }
+    navDbSubMenu = new QMenu(tr("&Navigation Data (%1%2)").arg(dbname, suffix));
     navDbSubMenu->setToolTipsVisible(NavApp::isMenuToolTipsVisible());
-
     // Automatic =============================================================================
     navDbActionAuto = new QAction(tr("&Select Automatically"), navDbSubMenu);
     navDbActionAuto->setCheckable(true);
@@ -726,17 +730,17 @@ void DatabaseManager::insertSimSwitchActions()
     navDbActionAll->setActionGroup(navDbActionGroup);
     navDbSubMenu->addAction(navDbActionAll);
 
-    navDbActionMixed = new QAction(tr("Use %1 for &Navaids and Procedures").arg(dbname), navDbActionGroup);
+    navDbActionMixed = new QAction(tr("Use %1 for &Navaids, Airways and Procedures (Scenery Blending)").arg(dbname), navDbActionGroup);
     navDbActionMixed->setCheckable(true);
     navDbActionMixed->setChecked(navDatabaseStatus == navdb::MIXED);
-    navDbActionMixed->setStatusTip(tr("Use only navaids, airways, airspaces and procedures from %1 database").arg(dbname));
+    navDbActionMixed->setStatusTip(tr("Use navaids, airways, and procedures from %1 database blended with simulator scenery geometry").arg(dbname));
     navDbActionMixed->setActionGroup(navDbActionGroup);
     navDbSubMenu->addAction(navDbActionMixed);
 
-    navDbActionOff = new QAction(tr("Do &not use %1 database").arg(dbname), navDbActionGroup);
+    navDbActionOff = new QAction(tr("Do &not use %1 (Simulator Scenery Only)").arg(dbname), navDbActionGroup);
     navDbActionOff->setCheckable(true);
     navDbActionOff->setChecked(navDatabaseStatus == navdb::OFF);
-    navDbActionOff->setStatusTip(tr("Do not use %1 database").arg(dbname));
+    navDbActionOff->setStatusTip(tr("Use simulator scenery database only").arg(dbname));
     navDbActionOff->setActionGroup(navDbActionGroup);
     navDbSubMenu->addAction(navDbActionOff);
 
@@ -1965,6 +1969,21 @@ void DatabaseManager::updateDialogInfo(atools::fs::FsPaths::SimulatorType value)
 /* Create database name including simulator short name */
 QString DatabaseManager::buildDatabaseFileName(atools::fs::FsPaths::SimulatorType type) const
 {
+  if (type == atools::fs::FsPaths::NAVIGRAPH) {
+    // Check for OpenAIRAC primary and legacy databases first
+    QString oaPrimary = databaseDirectory % QDir::separator() % QStringLiteral("openairac.sqlite");
+    if (QFile::exists(oaPrimary)) {
+      return oaPrimary;
+    }
+    QString oaPrefixed = databaseDirectory % QDir::separator() % lnm::DATABASE_PREFIX % QStringLiteral("openairac.sqlite");
+    if (QFile::exists(oaPrefixed)) {
+      return oaPrefixed;
+    }
+    QString oaLegacy = databaseDirectory % QDir::separator() % lnm::DATABASE_PREFIX % QStringLiteral("openairac.db");
+    if (QFile::exists(oaLegacy)) {
+      return oaLegacy;
+    }
+  }
   return databaseDirectory %
          QDir::separator() % lnm::DATABASE_PREFIX %
          atools::fs::FsPaths::typeToShortName(type).toLower() % lnm::DATABASE_SUFFIX;
@@ -1973,12 +1992,26 @@ QString DatabaseManager::buildDatabaseFileName(atools::fs::FsPaths::SimulatorTyp
 /* Create database name including simulator short name in application directory */
 QString DatabaseManager::buildDatabaseFileNameAppDir(atools::fs::FsPaths::SimulatorType type) const
 {
+  if (type == atools::fs::FsPaths::NAVIGRAPH) {
+    QString appDbDir = QCoreApplication::applicationDirPath() % QDir::separator() % lnm::DATABASE_DIR;
+    QString oaPrimary = appDbDir % QDir::separator() % QStringLiteral("openairac.sqlite");
+    if (QFile::exists(oaPrimary)) {
+      return oaPrimary;
+    }
+    QString oaPrefixed = appDbDir % QDir::separator() % lnm::DATABASE_PREFIX % QStringLiteral("openairac.sqlite");
+    if (QFile::exists(oaPrefixed)) {
+      return oaPrefixed;
+    }
+    QString oaLegacy = appDbDir % QDir::separator() % lnm::DATABASE_PREFIX % QStringLiteral("openairac.db");
+    if (QFile::exists(oaLegacy)) {
+      return oaLegacy;
+    }
+  }
   return QCoreApplication::applicationDirPath() %
          QDir::separator() % lnm::DATABASE_DIR %
          QDir::separator() % lnm::DATABASE_PREFIX %
          atools::fs::FsPaths::typeToShortName(type).toLower() % lnm::DATABASE_SUFFIX;
 }
-
 QString DatabaseManager::buildCompilingDatabaseFileName() const
 {
   return databaseDirectory % QDir::separator() % lnm::DATABASE_PREFIX % "compiling" % lnm::DATABASE_SUFFIX;
