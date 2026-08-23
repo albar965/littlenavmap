@@ -130,7 +130,7 @@ void MapPainterNav::render()
   context->endTimer("Waypoint draw");
 
   // VOR -------------------------------------------------
-  context->startTimer("VOR");
+  context->startTimer("VOR Collection");
   if(context->mapLayer->isVor() && context->objectTypes.testFlag(map::VOR) && !context->isObjectOverflow())
   {
     const QList<MapVor> *vors = mapQuery->getVors(context->viewportBox, context->mapLayer, context->lazyUpdate, overflow);
@@ -138,8 +138,11 @@ void MapPainterNav::render()
     if(vors != nullptr)
       maptools::insert(allVor, *vors);
   }
-  paintVors(allVor, context->drawFast);
-  context->endTimer("VOR");
+  context->endTimer("VOR Collection");
+
+  context->startTimer("DME");
+  paintVors(allVor, context->drawFast, true /* dmeOnly */);
+  context->endTimer("DME");
 
   // NDB -------------------------------------------------
   context->startTimer("NDB");
@@ -152,6 +155,10 @@ void MapPainterNav::render()
   }
   paintNdbs(allNdb, context->drawFast);
   context->endTimer("NDB");
+
+  context->startTimer("VOR");
+  paintVors(allVor, context->drawFast, false /* dmeOnly */);
+  context->endTimer("VOR");
 
   // Marker -------------------------------------------------
   context->startTimer("Marker");
@@ -436,7 +443,7 @@ void MapPainterNav::paintWaypoints(const QHash<int, map::MapWaypoint>& waypoints
   }
 }
 
-void MapPainterNav::paintVors(const QHash<int, map::MapVor>& vors, bool drawFast)
+void MapPainterNav::paintVors(const QHash<int, map::MapVor>& vors, bool drawFast, bool dmeOnly)
 {
   bool fill = context->flags2 & opts2::MAP_NAVAID_TEXT_BACKGROUND;
   float size = context->szF(context->symbolSizeNavaid, context->mapLayer->getVorSymbolSize());
@@ -449,7 +456,7 @@ void MapPainterNav::paintVors(const QHash<int, map::MapVor>& vors, bool drawFast
 
   for(const MapVor& vor : vors)
   {
-    if(context->routeProcIdMap.contains(vor.getRef()) || context->routeProcIdMapRec.contains(vor.getRef()))
+    if(vor.dmeOnly != dmeOnly || context->routeProcIdMap.contains(vor.getRef()) || context->routeProcIdMapRec.contains(vor.getRef()))
       continue;
 
     float x, y;

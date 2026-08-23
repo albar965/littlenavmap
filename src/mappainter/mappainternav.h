@@ -40,7 +40,7 @@ public:
 
 private:
   void paintNdbs(const QHash<int, map::MapNdb>& ndbs, bool drawFast);
-  void paintVors(const QHash<int, map::MapVor>& vors, bool drawFast);
+  void paintVors(const QHash<int, map::MapVor>& vors, bool drawFast, bool dmeOnly);
   void paintWaypoints(const QHash<int, map::MapWaypoint>& waypoints);
 
   void paintMarkers(const QList<map::MapMarker> *markers, bool drawFast);
