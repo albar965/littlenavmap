@@ -303,7 +303,7 @@ QAction *MapContextMenu::insertAction(QMenu& menu, mc::MenuActionType actionType
         actionText = actionText.arg(QStringLiteral());
     }
 
-    // needs main window as parent for status tip
+    // Needs main window as parent for status tip
     action = new QAction(icon, actionText, mainWindow);
     if(callback)
       // Overrides if callback is set
@@ -318,10 +318,10 @@ QAction *MapContextMenu::insertAction(QMenu& menu, mc::MenuActionType actionType
     action->setToolTip(tip);
   action->setStatusTip(tip);
 
-  // Action to menu
+  // Action to menu - The ownership of action is *not* transferred to menu
   menu.addAction(action);
 
-  // Action to index for later deletion
+  // Action to index for later deletion - needed since parent is main window
   actionsAndMenus.append(action);
 
   // Insert reference data to index
@@ -360,6 +360,7 @@ void MapContextMenu::insertMenuOrAction(QMenu& menu, mc::MenuActionType actionTy
       subText += "\t" + key;
 
     // Add a sub-menu with all found entries - cut off and add "more..." if size exceeded
+    // The popup menu will be deleted when that parent is destroyed
     QMenu *subMenu = new QMenu(subText, &menu);
 
     subMenu->setIcon(icon);
@@ -368,7 +369,6 @@ void MapContextMenu::insertMenuOrAction(QMenu& menu, mc::MenuActionType actionTy
     subMenu->setStatusTip(tip);
     subMenu->setToolTipsVisible(menu.toolTipsVisible());
     menu.addMenu(subMenu);
-    actionsAndMenus.append(subMenu);
 
     // Add menu items to sub. One for each map object in index
     for(int i = 0, idx = 0; i < resultIndex.size(); i++, idx++)
@@ -376,13 +376,13 @@ void MapContextMenu::insertMenuOrAction(QMenu& menu, mc::MenuActionType actionTy
       if(idx >= MAX_MENU_ITEMS)
       {
         // Overflow - create new sub-menu
-        QMenu *sub = new QMenu(tr("&More ..."), subMenu);
-        subMenu->addMenu(sub);
+        // The popup menu will be deleted when that parent is destroyed
+        QMenu *subMenuMore = new QMenu(tr("&More ..."), subMenu);
+        subMenu->addMenu(subMenuMore);
         subMenu->setToolTipsVisible(menu.toolTipsVisible());
 
         // Add for later deletion
-        actionsAndMenus.append(sub);
-        subMenu = sub;
+        subMenu = subMenuMore;
         idx = 0;
       }
 
