@@ -528,9 +528,12 @@ void DatabaseLoader::showErrors()
 
     if(totalErrors > 0 || Settings::instance().valueBool(lnm::ACTIONS_SHOW_DATABASE_HINTS, true))
     {
-      // Let the error dialog be a child of main to block main window
-      TextDialog errorDialog(NavApp::getQMainWidget(), tr("%1 - Load Scenery Library Results").arg(QCoreApplication::applicationName()),
+      // Let the error dialog be a child of the progress dialog to avoid issues when other modal dialog windows are open
+      TextDialog errorDialog(progressDialog, tr("%1 - Load Scenery Library Results").arg(QCoreApplication::applicationName()),
                              "SCENERY.html#errors"); // anchor for future use
+
+      // Block only the parent progress dialog
+      errorDialog.setWindowModality(Qt::WindowModal);
 
       // Show check box in case of notes
       errorDialog.setNotShowAgainCheckBoxVisible(totalNotes > 0);
