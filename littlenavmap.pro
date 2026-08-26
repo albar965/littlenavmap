@@ -132,8 +132,9 @@ isEmpty(ATOOLS_INC_PATH) : ATOOLS_INC_PATH=$$PWD/../atools/src
 isEmpty(ATOOLS_LIB_PATH) : ATOOLS_LIB_PATH=$$PWD/../build-atools-$$CONF_TYPE
 
 win32 {
-isEmpty(MARBLE_INC_PATH) : MARBLE_INC_PATH=$$PWD/../Marble-$$CONF_TYPE-$$WINARCH/include
-isEmpty(MARBLE_LIB_PATH) : MARBLE_LIB_PATH=$$PWD/../Marble-$$CONF_TYPE-$$WINARCH/lib
+# Always use release to avoid problems loading library twice
+isEmpty(MARBLE_INC_PATH) : MARBLE_INC_PATH=$$PWD/../Marble-release-$$WINARCH/include
+isEmpty(MARBLE_LIB_PATH) : MARBLE_LIB_PATH=$$PWD/../Marble-release-$$WINARCH/lib
 } else {
 isEmpty(MARBLE_INC_PATH) : MARBLE_INC_PATH=$$PWD/../Marble-$$CONF_TYPE/include
 isEmpty(MARBLE_LIB_PATH) : MARBLE_LIB_PATH=$$PWD/../Marble-$$CONF_TYPE/lib
@@ -188,7 +189,8 @@ win32 {
 
   DEFINES += _USE_MATH_DEFINES
 
-  CONFIG(debug, debug|release) : LIBS += -L$$MARBLE_LIB_PATH -llibmarblewidget-lnm-qt6d
+  # Always use release instead of "libmarblewidget-lnm-qt6d" to avoid problems loading library twice
+  CONFIG(debug, debug|release) : LIBS += -L$$MARBLE_LIB_PATH -llibmarblewidget-lnm-qt6
   CONFIG(release, debug|release) : LIBS += -L$$MARBLE_LIB_PATH -llibmarblewidget-lnm-qt6
   LIBS += -L$$ATOOLS_LIB_PATH -latools -lz
 }
@@ -1008,7 +1010,8 @@ win32 {
   RC_ICONS = resources/icons/littlenavmap64.ico
   RC_ICONS += resources/icons/littlenavmapdoc.ico
 
-  CONFIG(debug, debug|release) : DLL_SUFFIX=d
+  # Always use release instead of suffix "d" to avoid problems loading library twice
+  CONFIG(debug, debug|release) : DLL_SUFFIX=
   CONFIG(release, debug|release) : DLL_SUFFIX=
 
   WIN_TARGET_NAME="$$TARGET_NAME $$WINARCH"
