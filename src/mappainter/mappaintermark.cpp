@@ -890,6 +890,10 @@ void MapPainterMark::paintRangeMarkers()
 
         if(context->visibleAndResolves(rect))
         {
+          QList<QStringList> textList;
+          QPolygonF textPositionList;
+          painter->setBrush(Qt::transparent);
+
           // Draw all rings
           for(double radius : marker->ranges)
           {
@@ -909,13 +913,20 @@ void MapPainterMark::paintRangeMarkers()
 
               textPos.ry() += painter->fontMetrics().height() / 2 - painter->fontMetrics().descent();
 
-              painter->setPen(mapcolors::markerTextColor);
-              painter->setBackground(mapcolors::markerTextBackgroundColor);
-              painter->setBrush(mapcolors::markerTextBackgroundColor);
-
-              symbolPainter->textBoxF(painter, texts, painter->pen(), textPos.x(), textPos.y(), text::CENTER,
-                                      mapcolors::markerTextBackgroundColor.alpha(), mapcolors::markerTextBackgroundColor);
+              textList.append(texts);
+              textPositionList.append(textPos);
             }
+          }
+
+          // Draw all rings
+          painter->setPen(mapcolors::markerTextColor);
+          painter->setBackground(mapcolors::markerTextBackgroundColor);
+          painter->setBrush(mapcolors::markerTextBackgroundColor);
+          for(int i = 0; i < textList.size(); i++)
+          {
+            const QPointF& textPos = textPositionList.at(i);
+            symbolPainter->textBoxF(painter, textList.at(i), painter->pen(), textPos.x(), textPos.y(), text::CENTER,
+                                    mapcolors::markerTextBackgroundColor.alpha(), mapcolors::markerTextBackgroundColor);
           }
         }
       }
