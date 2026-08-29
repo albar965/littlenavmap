@@ -10,11 +10,11 @@
       <!-- The license here applies to the actual map content, not this dgml file. See the license header above for the dgml file license -->
       <!-- The content that this license refers to is not distributed with this package -->
       <license short="© CARTO and OpenStreetMap contributors">Source: © OpenStreetMap contributors, License: Creative Commons Attribution-ShareAlike 2.0 (CC BY-SA)</license>
-      <name>CARTO Positron</name>
+      <name>CARTO Voyager</name>
       <target>earth</target>
-      <theme>cartolight</theme>
-      <icon pixmap="cartolight-preview.png"/>
-      <shortcut>Ctrl+Alt+1</shortcut>
+      <theme>cartovoyager</theme>
+      <icon pixmap="cartovoyager-preview.png"/>
+      <shortcut></shortcut>
       <visible>true</visible>
       <description><![CDATA[<p>A <i>global roadmap</i> created by the OpenStreetMap (OSM) project.</p><p>OSM is an open community which creates free editable maps. The OSM data was rendered using Mapnik.</p>]]></description>
       <zoom>
@@ -22,19 +22,19 @@
         <maximum>  3328  </maximum>
         <discrete> true </discrete>
       </zoom>
-      <url href="https://www.carto.com">CARTO</url>
+      <url href="https://carto.com/basemaps/apikey/">CARTO API Key</url>
     </head>
     <map bgcolor="#000000">
       <canvas/>
       <target/>
-      <layer name="cartolight" backend="texture">
+      <layer name="cartovoyager" backend="texture">
         <!-- Tiles expire after 14 days -->
         <texture name="mapnik_data" expire="1209600">
-          <sourcedir format="PNG"> earth/cartolight </sourcedir>
+          <sourcedir format="PNG"> earth/cartovoyager </sourcedir>
           <tileSize width="256" height="256"/>
           <storageLayout levelZeroColumns="1" levelZeroRows="1" maximumTileLevel="19" mode="Custom"/>
           <projection name="Mercator"/>
-          <downloadUrl protocol="https" host="basemaps.cartocdn.com" path="/rastertiles/light_all/{z}/{x}/{y}.png?key={Carto API Key}"/>
+          <downloadUrl protocol="https" host="basemaps.cartocdn.com" path="/rastertiles/voyager/{z}/{x}/{y}.png?key={Carto API Key}"/>
           <downloadPolicy usage="Browse" maximumConnections="2"/>
         </texture>
         </layer>

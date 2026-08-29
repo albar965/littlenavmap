@@ -32,11 +32,9 @@
         <texture name="mapnik_data" expire="1209600">
           <sourcedir format="PNG"> earth/cartodark</sourcedir>
           <tileSize width="256" height="256"/>
-          <storageLayout levelZeroColumns="1" levelZeroRows="1" maximumTileLevel="19" mode="OpenStreetMap"/>
+          <storageLayout levelZeroColumns="1" levelZeroRows="1" maximumTileLevel="19" mode="Custom"/>
           <projection name="Mercator"/>
-          <downloadUrl protocol="https" host="cartodb-basemaps-a.global.ssl.fastly.net" path="/dark_all/"/>
-          <downloadUrl protocol="https" host="cartodb-basemaps-b.global.ssl.fastly.net" path="/dark_all/"/>
-          <downloadUrl protocol="https" host="cartodb-basemaps-c.global.ssl.fastly.net" path="/dark_all/"/>
+          <downloadUrl protocol="https" host="basemaps.cartocdn.com" path="/rastertiles/dark_all/{z}/{x}/{y}.png?key={Carto API Key}"/>
           <downloadPolicy usage="Browse" maximumConnections="2"/>
         </texture>
         </layer>
