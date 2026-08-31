@@ -419,12 +419,13 @@ void MapPainter::drawPolyline(Marble::GeoPainter *painter, const QPolygonF& poly
 #ifdef DEBUG_INFORMATION_PAINT_POLYGON
   {
     atools::util::PainterContextSaver save(painter);
-    painter->setPen(Qt::black);
+    painter->setPen(Qt::white);
     for(int i = 0; i < polygon.size(); i++)
     {
       QPointF pt = polygon.at(i);
-      painter->drawEllipse(pt, 3, 3);
+      painter->drawEllipse(pt, 2, 2);
 
+#ifdef DEBUG_INFORMATION_PAINT_POLYGON_NUM
       if((i % 4) == 0)
         pt.rx() += 10;
       else if((i % 4) == 1)
@@ -434,6 +435,7 @@ void MapPainter::drawPolyline(Marble::GeoPainter *painter, const QPolygonF& poly
       else if((i % 4) == 3)
         pt.ry() -= 10;
       painter->drawText(pt, QString::number(i));
+#endif
     }
   }
 #endif
@@ -460,12 +462,13 @@ void MapPainter::drawPolygon(Marble::GeoPainter *painter, const QPolygonF& polyg
 #ifdef DEBUG_INFORMATION_PAINT_POLYGON
   {
     atools::util::PainterContextSaver save(painter);
-    painter->setPen(Qt::black);
+    painter->setPen(Qt::white);
     for(int i = 0; i < polygon.size(); i++)
     {
       QPointF pt = polygon.at(i);
-      painter->drawEllipse(pt, 3, 3);
+      painter->drawEllipse(pt, 2, 2);
 
+#ifdef DEBUG_INFORMATION_PAINT_POLYGON_NUM
       if((i % 4) == 0)
         pt.rx() += 10;
       else if((i % 4) == 1)
@@ -475,6 +478,7 @@ void MapPainter::drawPolygon(Marble::GeoPainter *painter, const QPolygonF& polyg
       else if((i % 4) == 3)
         pt.ry() -= 10;
       painter->drawText(pt, QString::number(i));
+#endif
     }
   }
 #endif
@@ -499,8 +503,8 @@ void MapPainter::drawLine(Marble::GeoPainter *painter, const atools::geo::Line& 
     for(const Line& splitLine : line.splitAtAntiMeridian())
     {
       bool visible1, visible2, hidden1, hidden2;
-      QPointF pt1 = wToSF(splitLine.getPos1(), DEFAULT_WTOS_SIZE, &visible1, &hidden1);
-      QPointF pt2 = wToSF(splitLine.getPos2(), DEFAULT_WTOS_SIZE, &visible2, &hidden2);
+      const QPointF pt1 = wToSF(splitLine.getPos1(), DEFAULT_WTOS_SIZE, &visible1, &hidden1);
+      const QPointF pt2 = wToSF(splitLine.getPos2(), DEFAULT_WTOS_SIZE, &visible2, &hidden2);
       if(!hidden1 && !hidden2)
         drawLine(context->painter, pt1, pt2);
     }

@@ -470,43 +470,38 @@ const QList<QPolygonF *> CoordinateConverter::createPolylinesInternal(const atoo
 {
   QList<QPolygonF *> polylineList;
 
-  // Build Marble geometry object
   if(!linestring.isEmpty())
   {
-    GeoDataLineString geoLineStr;
-    geoLineStr.setTessellate(true);
+    // Build Marble geometry objects from anti-meridian split
+    QList<GeoDataLineString> geoLineStrList;
 
-    if(splitLongLines)
+    for(int i = 0; i < linestring.size() - 1; i++)
     {
-      for(int i = 0; i < linestring.size() - 1; i++)
+      for(const Line& splitLine : atools::geo::splitAtAntiMeridian(linestring.at(i), linestring.at(i + 1)))
       {
-        for(const Line& splitLine : atools::geo::splitAtAntiMeridian(linestring.at(i), linestring.at(i + 1)))
-        {
-          // Split long lines to work around the buggy visibility check in Marble resulting in disappearing line segments
-          // Do a quick check using Manhattan distance in degree
-          LineString lines;
-          if(splitLine.lengthSimple() > 30.f)
-            splitLine.interpolatePoints(splitLine.lengthMeter(), 20, lines);
-          else if(splitLine.lengthSimple() > 5.f)
-            splitLine.interpolatePoints(splitLine.lengthMeter(), 5, lines);
-          else
-            lines.append(splitLine.getPos1());
+        GeoDataLineString geoLineStr;
+        geoLineStr.setTessellate(true);
 
-          // Append split points or single point
-          for(const Pos& pos : std::as_const(lines))
-            geoLineStr << mconvert::toGdc(pos);
-        }
+        // Split long lines to work around the buggy visibility check in Marble resulting in disappearing line segments
+        // Do a quick check using Manhattan distance in degree
+        LineString lines;
+        if(splitLongLines && splitLine.lengthSimple() > 30.f)
+          splitLine.interpolatePoints(splitLine.lengthMeter(), 20, lines);
+        else if(splitLongLines && splitLine.lengthSimple() > 5.f)
+          splitLine.interpolatePoints(splitLine.lengthMeter(), 5, lines);
+        else
+          lines.append(splitLine.getPos1());
+
+        // Append split points or single point
+        for(const Pos& pos : std::as_const(lines))
+          geoLineStr << mconvert::toGdc(pos);
+
+        // Add last missing point
+        geoLineStr << mconvert::toGdc(splitLine.getPos2());
+
+        geoLineStrList.append(geoLineStr);
       }
     }
-    else
-    {
-      // Skip generation if intermediate points and create direct
-      for(const Pos& pos : linestring)
-        geoLineStr << mconvert::toGdc(pos);
-    }
-
-    // Add last point
-    geoLineStr << mconvert::toGdc(linestring.constLast());
 
 #ifdef DEBUG_INFORMATION_LINERENDER
     qDebug() << Q_FUNC_INFO << "=========================================";
@@ -514,14 +509,13 @@ const QList<QPolygonF *> CoordinateConverter::createPolylinesInternal(const atoo
       qDebug() << Q_FUNC_INFO << "long" << c.longitude(GeoDataCoordinates::Degree) << "lat" << c.latitude(GeoDataCoordinates::Degree);
 #endif
 
-    // Build polyline vector ==============================================
-    QList<GeoDataLineString *> geoLineStrCorrected = geoLineStr.toDateLineCorrected();
-    for(const GeoDataLineString *geoLine : std::as_const(geoLineStrCorrected))
+    for(const GeoDataLineString& geoLineStr : geoLineStrList)
     {
-      if(viewport->viewLatLonAltBox().intersects(geoLine->latLonAltBox()))
+      // Build polyline vector ==============================================
+      if(viewport->viewLatLonAltBox().intersects(geoLineStr.latLonAltBox()))
       {
         QList<QPolygonF *> polygons;
-        viewport->screenCoordinates(*geoLine, polygons);
+        viewport->screenCoordinates(geoLineStr, polygons);
 
         if(!polygons.isEmpty())
         {
@@ -556,7 +550,7 @@ const QList<QPolygonF *> CoordinateConverter::createPolylinesInternal(const atoo
         }
       }
     }
-    qDeleteAll(geoLineStrCorrected);
   }
+
   return polylineList;
 }

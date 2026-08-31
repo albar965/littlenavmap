@@ -27,6 +27,9 @@
 #include "query/airspacequeries.h"
 #include "query/querymanager.h"
 #include "route/route.h"
+#ifdef DEBUG_INFORMATION_PAINT_POLYGON
+#include "util/paintercontextsaver.h"
+#endif
 #include "util/polygontools.h"
 
 #include <marble/GeoDataLineString.h>
