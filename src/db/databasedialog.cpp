@@ -42,8 +42,10 @@ DatabaseDialog::DatabaseDialog(QWidget *parent, const SimulatorTypeMap& pathMap)
 
   ui->setupUi(this);
 
-  ui->buttonBoxDatabase->button(QDialogButtonBox::Ok)->setText(tr("&Load"));
-  ui->buttonBoxDatabase->button(QDialogButtonBox::Ok)->setDefault(true);
+  QPushButton *okButton = ui->buttonBoxDatabase->button(QDialogButtonBox::Ok);
+  okButton->setText(tr("&Load"));
+  okButton->setDefault(true);
+  okButton->setFocus();
 
   // Sort keys to avoid random order
   QList<FsPaths::SimulatorType> keys = simulators.getAllInstalled();

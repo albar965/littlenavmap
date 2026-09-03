@@ -122,8 +122,8 @@ void RequestHandler::service(HttpRequest& request, HttpResponse& response)
     else if(path == QLatin1String("/plugins"))
     {
       response.setHeader("Content-Type", "text/plain");
-      response.write(QDir(WebApp::getDocroot() + path).entryList(QDir::Dirs | QDir::NoDotAndDotDot, QDir::Name | QDir::LocaleAware).join(
-                       "/").toUtf8(), true);
+      response.write(QDir(WebApp::getDocroot() + path).
+                     entryList(QDir::Dirs | QDir::NoDotAndDotDot, QDir::Name | QDir::LocaleAware).join('/').toUtf8(), true);
     }
     else // all other paths
     {

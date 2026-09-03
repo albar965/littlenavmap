@@ -80,8 +80,7 @@ void AirportFiles::updateAirportFiles(const QString& airportIdent)
       QDir airportDir = dir;
       if(airportDir.exists())
       {
-        const QFileInfoList entryInfoList = airportDir.entryInfoList(QDir::Files | QDir::NoDotAndDotDot,
-                                                                     QDir::Name | QDir::LocaleAware);
+        const QFileInfoList entryInfoList = airportDir.entryInfoList(QDir::Files | QDir::NoDotAndDotDot, QDir::Name | QDir::LocaleAware);
 
         for(const QFileInfo& file : entryInfoList)
         {
