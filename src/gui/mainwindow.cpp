@@ -3534,7 +3534,6 @@ void MainWindow::mainWindowShownDelayed()
   qDebug() << Q_FUNC_INFO << "enter";
 
   Application::showSplashScreenMessage(tr("Main window shown ... "));
-  statusBar->setStatusMessage(tr("Started."));
 
   loadWindowState();
 
@@ -3559,11 +3558,13 @@ void MainWindow::mainWindowShownDelayed()
   profileWidget->mainWindowShown();
 
   // Set theme later to avoid window jumping when loading offline themes - no theme results in blank window
+  // Sets status messages - overwrite with "Started" below
   mapThemeHandler->changeMapTheme();
   mapThemeHandler->changeMapProjection();
   mapWidget->showSavedPosOnStartup();
 
   Application::closeSplashScreen();
+  statusBar->setStatusMessage(tr("Started."));
 
   if(migrate::getOptionsVersion().isValid() && migrate::getOptionsVersion() <= atools::util::Version("3.0.9"))
   {

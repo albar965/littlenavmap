@@ -702,6 +702,10 @@ void StatusBar::setStatusMessage(const QString& message, bool addToLog, bool pop
       QToolTip::showText(statusBar->mapToGlobal(QPoint(0, 0)), message, statusBar, QRect(), 4000);
   }
 
+#ifdef DEBUG_INFORMATION
+  qDebug() << Q_FUNC_INFO << message;
+#endif
+
   statusBar->showMessage(message);
 }
 
