@@ -18,10 +18,10 @@
 #include "perfmergedialog.h"
 #include "ui_perfmergedialog.h"
 
-#include "common/unit.h"
 #include "common/constants.h"
-#include "gui/helphandler.h"
+#include "common/unit.h"
 #include "fs/perf/aircraftperf.h"
+#include "gui/helphandler.h"
 #include "gui/widgetstate.h"
 #include "util/htmlbuilder.h"
 
@@ -33,18 +33,17 @@ PerfMergeDialog::PerfMergeDialog(QWidget *parent, const AircraftPerf& sourcePerf
   : QDialog(parent), ui(new Ui::PerfMergeDialog), to(destPerf), showAllWidgets(showAll)
 {
   setWindowFlag(Qt::WindowContextHelpButtonHint, false);
-
   setWindowModality(Qt::ApplicationModal);
 
-  from = new atools::fs::perf::AircraftPerf(sourcePerfLbs);
+  from = new AircraftPerf(sourcePerfLbs);
 
   if(to.useFuelAsVolume())
     from->fromLbsToGal();
 
   ui->setupUi(this);
 
-  ui->buttonBox->button(QDialogButtonBox::Ok)->setText(tr("&Merge"));
-  ui->buttonBox->button(QDialogButtonBox::Save)->setText(tr("Merge and &Save"));
+  // ui->buttonBox->button(QDialogButtonBox::Ok)->setText(tr("&Ok"));
+  ui->buttonBox->button(QDialogButtonBox::Save)->setText(tr("Ok and &Save"));
 
   connect(ui->buttonBox, &QDialogButtonBox::clicked, this, &PerfMergeDialog::buttonBoxClicked);
 
@@ -109,24 +108,10 @@ PerfMergeDialog::~PerfMergeDialog()
 void PerfMergeDialog::restoreState()
 {
   atools::gui::WidgetState ws(lnm::AIRCRAFT_PERF_MERGE_DIALOG);
-  ws.restore({this,
-              ui->comboBoxSimulator,
-              ui->comboBoxName,
-              ui->comboBoxType,
-              ui->comboBoxClimbFuelFlow,
-              ui->comboBoxClimbSpeed,
-              ui->comboBoxClimbVertSpeed,
-              ui->comboBoxCruiseFuelFlow,
-              ui->comboBoxCruiseSpeed,
-              ui->comboBoxDescentFuelFlow,
-              ui->comboBoxDescentSpeed,
-              ui->comboBoxDescentVertSpeed,
-              ui->comboBoxTaxiFuel,
-              ui->comboBoxAlternateFuelFlow,
-              ui->comboBoxAlternateSpeed,
-              ui->comboBoxContingencyFuel,
-              ui->comboBoxExtraFuel,
-              ui->comboBoxReserveFuel,
+  ws.restore({this, ui->comboBoxSimulator, ui->comboBoxName, ui->comboBoxType, ui->comboBoxClimbFuelFlow, ui->comboBoxClimbSpeed,
+              ui->comboBoxClimbVertSpeed, ui->comboBoxCruiseFuelFlow, ui->comboBoxCruiseSpeed, ui->comboBoxDescentFuelFlow,
+              ui->comboBoxDescentSpeed, ui->comboBoxDescentVertSpeed, ui->comboBoxTaxiFuel, ui->comboBoxAlternateFuelFlow,
+              ui->comboBoxAlternateSpeed, ui->comboBoxContingencyFuel, ui->comboBoxExtraFuel, ui->comboBoxReserveFuel,
               ui->comboBoxUsableFuel});
 
   // New in 2.7
@@ -143,24 +128,10 @@ void PerfMergeDialog::restoreState()
 void PerfMergeDialog::saveState() const
 {
   atools::gui::WidgetState ws(lnm::AIRCRAFT_PERF_MERGE_DIALOG);
-  ws.save({this,
-           ui->comboBoxSimulator,
-           ui->comboBoxName,
-           ui->comboBoxType,
-           ui->comboBoxClimbFuelFlow,
-           ui->comboBoxClimbSpeed,
-           ui->comboBoxClimbVertSpeed,
-           ui->comboBoxCruiseFuelFlow,
-           ui->comboBoxCruiseSpeed,
-           ui->comboBoxDescentFuelFlow,
-           ui->comboBoxDescentSpeed,
-           ui->comboBoxDescentVertSpeed,
-           ui->comboBoxTaxiFuel,
-           ui->comboBoxAlternateFuelFlow,
-           ui->comboBoxAlternateSpeed,
-           ui->comboBoxContingencyFuel,
-           ui->comboBoxExtraFuel,
-           ui->comboBoxReserveFuel,
+  ws.save({this, ui->comboBoxSimulator, ui->comboBoxName, ui->comboBoxType, ui->comboBoxClimbFuelFlow, ui->comboBoxClimbSpeed,
+           ui->comboBoxClimbVertSpeed, ui->comboBoxCruiseFuelFlow, ui->comboBoxCruiseSpeed, ui->comboBoxDescentFuelFlow,
+           ui->comboBoxDescentSpeed, ui->comboBoxDescentVertSpeed, ui->comboBoxTaxiFuel, ui->comboBoxAlternateFuelFlow,
+           ui->comboBoxAlternateSpeed, ui->comboBoxContingencyFuel, ui->comboBoxExtraFuel, ui->comboBoxReserveFuel,
            ui->comboBoxUsableFuel});
 }
 
@@ -209,8 +180,7 @@ void PerfMergeDialog::process()
 
   if(showAllWidgets)
   {
-    to.setAlternateFuelFlow(procNum(ui->comboBoxAlternateFuelFlow, from->getAlternateFuelFlow(),
-                                    to.getAlternateFuelFlow()));
+    to.setAlternateFuelFlow(procNum(ui->comboBoxAlternateFuelFlow, from->getAlternateFuelFlow(), to.getAlternateFuelFlow()));
     to.setAlternateSpeed(procNum(ui->comboBoxAlternateSpeed, from->getAlternateSpeed(), to.getAlternateSpeed()));
     to.setContingencyFuel(procNum(ui->comboBoxContingencyFuel, from->getContingencyFuel(), to.getContingencyFuel()));
     to.setExtraFuel(procNum(ui->comboBoxExtraFuel, from->getExtraFuel(), to.getExtraFuel()));
@@ -224,8 +194,8 @@ void PerfMergeDialog::updateWidgetValues()
   // Show error if fuel type mismatch =====================================================
   QString err;
   if(from->isJetFuel() != to.isJetFuel())
-    err = "<p>" + atools::util::HtmlBuilder::errorMessage(tr("Fuel type does not match.")) + "</p>";
-
+    err = atools::util::HtmlBuilder::errorMessage(tr("Fuel type does not match.")) +
+          tr(" Go to main menu \"Aircraft\", select \"Edit Aircraft Performance\" and correct this in the edit dialog window.");
   // Update header =====================================================
   if(showAllWidgets)
     ui->labelAircraft->setText(tr("<p>From <b>%1</b>, type <b>%2</b>, fuel type <b>%3</b><br/>"

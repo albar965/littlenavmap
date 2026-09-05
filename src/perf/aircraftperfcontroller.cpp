@@ -872,8 +872,7 @@ void AircraftPerfController::updateReportCurrent()
     atools::fs::perf::FlightSegment segment = perfHandler->getCurrentFlightSegment();
 
     // Icon, name and aircraft type =======================================================
-    html.img(QIcon(":/littlenavmap/resources/icons/aircraftperf.svg"), QStringLiteral(), QStringLiteral(),
-             QSize(symbolSize, symbolSize));
+    html.img(QIcon(":/littlenavmap/resources/icons/aircraftperf.svg"), QStringLiteral(), QStringLiteral(), QSize(symbolSize, symbolSize));
     html.nbsp().nbsp();
 
     QStringList header({curPerfLbs.getName(), curPerfLbs.getAircraftType(), curPerfLbs.getSimulator()});
