@@ -231,6 +231,16 @@ void MapContextMenu::buildMainMenu()
   else
     // No position - no sub-menu
     subMenuMore->setDisabled(true);
+
+  mapMenu.addSeparator();
+  QMenu *subMenuOverlays = new QMenu(tr("M&ap Overlays"), &mapMenu);
+  mapMenu.addMenu(subMenuOverlays);
+  // Used directly in MapWidget::contextMenuEvent()
+  subMenuOverlays->addAction(ui->actionMapOverlayOverview);
+  subMenuOverlays->addAction(ui->actionMapOverlayCompass);
+  subMenuOverlays->addAction(ui->actionMapOverlayScalebar);
+  subMenuOverlays->addAction(ui->actionMapOverlayNavigation);
+  subMenuOverlays->addAction(ui->actionMapOverlayLabelHint);
 }
 
 bool MapContextMenu::alphaSort(const map::MapBase *base1, const map::MapBase *base2)
