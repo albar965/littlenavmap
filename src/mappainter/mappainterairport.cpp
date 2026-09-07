@@ -1164,18 +1164,18 @@ void MapPainterAirport::drawAirportDiagram(const map::MapAirport& airport, const
       double lineWidth = 1, radius = 2.;
       if(mapLayer->isAirportDiagramDetail2())
       {
-        lineWidth = 3;
-        radius = 5.;
+        lineWidth = 2.;
+        radius = 3.5;
       }
       else if(mapLayer->isAirportDiagramDetail())
       {
-        lineWidth = 3;
-        radius = 4.;
+        lineWidth = 1.5;
+        radius = 2.5;
       }
       else if(mapLayer->isAirportDiagram())
       {
-        lineWidth = 2;
-        radius = 3.;
+        lineWidth = 1.5;
+        radius = 2.;
       }
 
       for(const RunwayPaintData& paintData : std::as_const(runwayPaintData))

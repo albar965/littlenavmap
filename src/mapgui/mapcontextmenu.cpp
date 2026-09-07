@@ -1289,8 +1289,7 @@ bool MapContextMenu::exec(QPoint menuPos, QPoint point)
   visibleOnMap = mapBasePos->position.isValid();
 
   // Get objects near position =============================================================
-  map::MapObjectQueryTypes queryType = map::QUERY_MARK | map::QUERY_PREVIEW_PROC_POINTS |
-                                       map::QUERY_PROC_RECOMMENDED;
+  map::MapObjectQueryTypes queryType = map::QUERY_MARK | map::QUERY_PREVIEW_PROC_POINTS | map::QUERY_PROC_RECOMMENDED;
 
   // Fetch alternates only if enabled on map
   if(mapWidget->getShownMapDisplayTypes().testFlag(map::FLIGHTPLAN_ALTERNATE))
