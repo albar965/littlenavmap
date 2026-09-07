@@ -867,7 +867,7 @@ void MapThemeHandler::changeMapTheme()
       // Fetch all keys for map theme
       QString url;
       if(!theme.getUrlRef().isEmpty())
-        url = tr("<p>Click here to create an account: <a href=\"%1\">%2</a></p>").
+        url = tr("<p>Click here to create an account or to request a key: <a href=\"%1\">%2</a></p>").
               arg(theme.getUrlRef(), theme.getUrlName().isEmpty() ? tr("Link") : theme.getUrlName());
 
       atools::gui::Dialog(mainWindow).

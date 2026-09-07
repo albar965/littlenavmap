@@ -22,7 +22,7 @@
         <maximum>  3328  </maximum>
         <discrete> true </discrete>
       </zoom>
-      <url href="https://www.carto.com">CARTO</url>
+      <url href="https://carto.com/basemaps/apikey/">CARTO API Key</url>
     </head>
     <map bgcolor="#000000">
       <canvas/>

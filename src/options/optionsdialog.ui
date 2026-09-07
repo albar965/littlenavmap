@@ -66,7 +66,7 @@
      </widget>
      <widget class="QStackedWidget" name="stackedWidgetOptions">
       <property name="currentIndex">
-       <number>27</number>
+       <number>16</number>
       </property>
       <widget class="QWidget" name="stackedWidgetOptionsStartup">
        <layout class="QVBoxLayout" name="verticalLayout_41">
@@ -80,8 +80,8 @@
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>525</width>
-             <height>459</height>
+             <width>586</width>
+             <height>531</height>
             </rect>
            </property>
            <layout class="QVBoxLayout" name="verticalLayout_21">
@@ -437,8 +437,8 @@ This is the file on top of the list &quot;Recent Window Layouts&quot;.</string>
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>514</width>
-             <height>333</height>
+             <width>586</width>
+             <height>531</height>
             </rect>
            </property>
            <layout class="QVBoxLayout" name="verticalLayout_22">
@@ -630,8 +630,8 @@ opening files, modifying the flight plan and other operations.</string>
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>419</width>
-             <height>870</height>
+             <width>572</width>
+             <height>853</height>
             </rect>
            </property>
            <layout class="QVBoxLayout" name="verticalLayout_23">
@@ -1228,8 +1228,8 @@ This does not affect the map window which can be changed separately on the optio
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>560</width>
-             <height>485</height>
+             <width>586</width>
+             <height>531</height>
             </rect>
            </property>
            <layout class="QGridLayout" name="gridLayout_36">
@@ -1583,8 +1583,8 @@ aircraft progress, tooltips and information window.</string>
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>480</width>
-             <height>380</height>
+             <width>586</width>
+             <height>531</height>
             </rect>
            </property>
            <layout class="QVBoxLayout" name="verticalLayout_59">
@@ -1833,8 +1833,8 @@ Example: &quot;IFR Frankfurt Am Main (EDDF) to Fiumicino (LIRF).lnmpln&quot;</st
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>317</width>
-             <height>452</height>
+             <width>586</width>
+             <height>531</height>
             </rect>
            </property>
            <layout class="QGridLayout" name="gridLayout">
@@ -2092,7 +2092,7 @@ Note that this function is disabled for X-Plane 12 since the 3D flag is unreliab
              <x>0</x>
              <y>0</y>
              <width>599</width>
-             <height>399</height>
+             <height>517</height>
             </rect>
            </property>
            <layout class="QGridLayout" name="gridLayout_2">
@@ -2556,8 +2556,8 @@ userpoints and logbook entries when hovering the cursor over the map</string>
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>510</width>
-             <height>486</height>
+             <width>586</width>
+             <height>531</height>
             </rect>
            </property>
            <layout class="QVBoxLayout" name="verticalLayout_12">
@@ -2885,8 +2885,8 @@ Map views might be shown with a larger zoom distance than expected if this optio
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>433</width>
-             <height>333</height>
+             <width>586</width>
+             <height>531</height>
             </rect>
            </property>
            <layout class="QVBoxLayout" name="verticalLayout_65">
@@ -3061,8 +3061,8 @@ Note that some fonts, especially large fonts, can result in display errors on th
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>355</width>
-             <height>665</height>
+             <width>572</width>
+             <height>639</height>
             </rect>
            </property>
            <layout class="QVBoxLayout" name="verticalLayout_71">
@@ -3412,8 +3412,8 @@ Note that some fonts, especially large fonts, can result in display errors on th
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>552</width>
-             <height>868</height>
+             <width>572</width>
+             <height>860</height>
             </rect>
            </property>
            <layout class="QVBoxLayout" name="verticalLayout_20">
@@ -4236,8 +4236,8 @@ to avoid a cluttered up airports</string>
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>428</width>
-             <height>556</height>
+             <width>572</width>
+             <height>535</height>
             </rect>
            </property>
            <layout class="QVBoxLayout" name="verticalLayout_35">
@@ -5883,7 +5883,7 @@ if you hover over the elevation profile.</string>
              <x>0</x>
              <y>0</y>
              <width>572</width>
-             <height>645</height>
+             <height>683</height>
             </rect>
            </property>
            <layout class="QVBoxLayout" name="verticalLayout_63">
@@ -5896,7 +5896,7 @@ if you hover over the elevation profile.</string>
                <item>
                 <widget class="QLabel" name="labelMapApiKeysHint">
                  <property name="text">
-                  <string>&lt;p&gt;You can enter login information, tokens or API keys for map services which need an user account. The required keys shown below are extracted from the installed map themes. &lt;/p&gt;&lt;p&gt;Click one of the following links to go directly to the account pages of the respective map services. You may need to sign in or create an account.&lt;br/&gt;- &lt;a href=&quot;https://account.mapbox.com/&quot;&gt;&lt;b&gt;Mapbox Account page&lt;/b&gt;&lt;/a&gt;&lt;br/&gt;- &lt;a href=&quot;https://manage.thunderforest.com/dashboard&quot;&gt;&lt;b&gt;Thunderforest Console&lt;/b&gt;&lt;/a&gt;&lt;br/&gt;- &lt;a href=&quot;https://cloud.maptiler.com/account/keys/&quot;&gt;&lt;b&gt;Maptiler Cloud Account API key page&lt;/b&gt;&lt;/a&gt;&lt;br/&gt;- &lt;a href=&quot;https://stadiamaps.com/stamen/onboarding/create-account/&quot;&gt;&lt;b&gt;Stadia Maps / StamenTerrain&lt;/b&gt;&lt;/a&gt;&lt;/p&gt;&lt;p&gt;&lt;b&gt;A restart might be needed after changing keys. Note that all accounts are free. You do not have to enter any payment information there. Click the help button for details.&lt;br/&gt;Do not show this information publicly in forums on screenshots.&lt;/b&gt;&lt;/p&gt;&lt;p&gt;Double click a value to edit.&lt;/p&gt;</string>
+                  <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;You can enter login information, tokens or API keys for map services which need an user account. The required keys shown below are extracted from the installed map themes. &lt;/p&gt;&lt;p&gt;Click one of the following links to go directly to the account pages of the respective map services. You may need to sign in or create an account.&lt;br/&gt;- &lt;a href=&quot;https://account.mapbox.com/&quot;&gt;&lt;span style=&quot; font-weight:700; text-decoration: underline; color:#0057ae;&quot;&gt;Mapbox Account page&lt;/span&gt;&lt;/a&gt;&lt;br/&gt;- &lt;a href=&quot;https://manage.thunderforest.com/dashboard&quot;&gt;&lt;span style=&quot; font-weight:700; text-decoration: underline; color:#0057ae;&quot;&gt;Thunderforest Console&lt;/span&gt;&lt;/a&gt;&lt;br/&gt;- &lt;a href=&quot;https://cloud.maptiler.com/account/keys/&quot;&gt;&lt;span style=&quot; font-weight:700; text-decoration: underline; color:#0057ae;&quot;&gt;Maptiler Cloud Account API key page&lt;/span&gt;&lt;/a&gt;&lt;br/&gt;- &lt;a href=&quot;https://stadiamaps.com/stamen/onboarding/create-account/&quot;&gt;&lt;span style=&quot; font-weight:700; text-decoration: underline; color:#0057ae;&quot;&gt;Stadia Maps / StamenTerrain&lt;br/&gt;&lt;/span&gt;&lt;/a&gt;- &lt;a href=&quot;https://carto.com/basemaps/apikey/&quot;&gt;&lt;span style=&quot; font-weight:700; text-decoration: underline; color:#0057ae;&quot;&gt;CARTO API Key Request&lt;/span&gt;&lt;/a&gt;&lt;/p&gt;&lt;p&gt;&lt;span style=&quot; font-weight:700;&quot;&gt;A restart might be needed after changing keys. Note that all accounts are free. You do not have to enter any payment information there. Click the help button for details.&lt;br/&gt;&lt;br/&gt;►► Do not show this information publicly in forums on screenshots. ◄◄&lt;/span&gt;&lt;/p&gt;&lt;p&gt;Double click a value to edit.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
                  </property>
                  <property name="wordWrap">
                   <bool>true</bool>
@@ -6008,8 +6008,8 @@ if you hover over the elevation profile.</string>
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>586</width>
-             <height>531</height>
+             <width>328</width>
+             <height>496</height>
             </rect>
            </property>
            <layout class="QGridLayout" name="gridLayout_39">
@@ -6478,8 +6478,8 @@ airspace filename has to match the callsign of the online center.</string>
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>586</width>
-             <height>531</height>
+             <width>462</width>
+             <height>266</height>
             </rect>
            </property>
            <layout class="QVBoxLayout" name="verticalLayout_67">
@@ -6642,8 +6642,8 @@ The buffer radius defines the surrounding from where the maximum elevation is ca
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>586</width>
-             <height>531</height>
+             <width>436</width>
+             <height>279</height>
             </rect>
            </property>
            <layout class="QVBoxLayout" name="verticalLayout_60">
@@ -6786,7 +6786,7 @@ Download the file &lt;b&gt;&lt;i&gt;All Tiles in One .zip (all10g.zip)&lt;/i&gt;
              <x>0</x>
              <y>0</y>
              <width>572</width>
-             <height>595</height>
+             <height>591</height>
             </rect>
            </property>
            <layout class="QVBoxLayout" name="verticalLayout_25">
@@ -7232,8 +7232,8 @@ put the active leg back on top after the given timeout while flying.</string>
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>586</width>
-             <height>531</height>
+             <width>318</width>
+             <height>202</height>
             </rect>
            </property>
            <layout class="QVBoxLayout" name="verticalLayout_26">
@@ -7392,8 +7392,8 @@ Note that this value does not affect flight plan calculation or saving of flight
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>572</width>
-             <height>572</height>
+             <width>272</width>
+             <height>721</height>
             </rect>
            </property>
            <layout class="QVBoxLayout" name="verticalLayout_27">
@@ -7633,8 +7633,8 @@ Note that this value does not affect flight plan calculation or saving of flight
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>572</width>
-             <height>630</height>
+             <width>245</width>
+             <height>758</height>
             </rect>
            </property>
            <layout class="QVBoxLayout" name="verticalLayout_28">
@@ -7999,8 +7999,8 @@ If this field is empty, the default Active Sky weather file path will be used wh
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>586</width>
-             <height>531</height>
+             <width>389</width>
+             <height>375</height>
             </rect>
            </property>
            <layout class="QVBoxLayout" name="verticalLayout_29">
@@ -8307,8 +8307,8 @@ If this field is empty, the default Active Sky weather file path will be used wh
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>586</width>
-             <height>531</height>
+             <width>543</width>
+             <height>429</height>
             </rect>
            </property>
            <layout class="QGridLayout" name="gridLayout_37">
@@ -8607,8 +8607,8 @@ Uncheck if you use such an add-on or see issues like a corruped map display.</st
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>586</width>
-             <height>531</height>
+             <width>395</width>
+             <height>524</height>
             </rect>
            </property>
            <layout class="QGridLayout" name="gridLayout_38">
