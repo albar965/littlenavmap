@@ -900,9 +900,12 @@ void AircraftPerfController::updateReportCurrent()
 
       html.p().b(tr("Aircraft")).pEnd();
       html.table();
-      html.row2(tr("Current flight segment: "), perfHandler->getCurrentFlightSegmentString() %
+      html.row2(tr("Flight segment:"), perfHandler->getCurrentFlightSegmentString() %
                 (perfHandler->isFinished() ? tr(", <b>Finished.</b>") : QStringLiteral()), ahtml::NO_ENTITIES);
-      html.row2If(tr("Aircraft status: "), perfHandler->getAircraftStatusTexts().join(tr(", ")));
+
+      if(!perfHandler->isFinished())
+        html.row2If(tr("Aircraft status:"), perfHandler->getAircraftStatusTexts().join(tr(", ")));
+
       html.tableEnd();
       html.pEnd();
     }
@@ -914,8 +917,12 @@ void AircraftPerfController::updateReportCurrent()
       html.p().b(tr("Fuel")).pEnd();
       html.table();
       html.row2(tr("Fuel Type:"), curPerfLbs.isAvgas() ? tr("Avgas") : tr("Jetfuel"));
-      html.row2(tr("Total Fuel Consumed:"), ft.weightVolLocal(perfHandler->getTotalFuelConsumedLbs()));
-      html.row2(tr("Taxi Fuel:"), ft.weightVolLocal(curPerfLbs.getTaxiFuel()));
+
+      html.row2(tr("Total Fuel Consumed:"), perfHandler->getTotalFuelConsumedLbs() >= 0.f ?
+                ft.weightVolLocal(perfHandler->getTotalFuelConsumedLbs()) : tr("—"));
+
+      html.row2(tr("Taxi Fuel:"), curPerfLbs.getTaxiFuel() >= 0.f ? ft.weightVolLocal(curPerfLbs.getTaxiFuel()) : tr("—"));
+
       html.tableEnd();
     }
 
@@ -1378,7 +1385,7 @@ void AircraftPerfController::saveState() const
 
   try
   {
-    perfHandler->saveCollected(atools::settings::Settings::getConfigFilename(lnm::PERF_COLLECTED_SUFFIX));
+    perfHandler->saveState(atools::settings::Settings::getConfigFilename(lnm::PERF_COLLECTED_SUFFIX), lnm::AIRCRAFT_PERF_PREFIX);
   }
   catch(atools::Exception& e)
   {
@@ -1429,30 +1436,23 @@ void AircraftPerfController::restoreState()
 
   Ui::MainWindow *ui = NavApp::getMainUi();
   atools::gui::WidgetState state(lnm::AIRCRAFT_PERF_WIDGETS, false /* visibility */, true /* blockSignals */);
-  state.restore({ui->spinBoxAircraftPerformanceWindSpeed,
-                 ui->spinBoxAircraftPerformanceWindDirection,
+  state.restore({ui->spinBoxAircraftPerformanceWindSpeed, ui->spinBoxAircraftPerformanceWindDirection,
                  ui->spinBoxAircraftPerformanceWindAlt});
-
-  perfHandler->setCruiseAltitude(cruiseAlt());
-  perfHandler->start();
 
   if(!atools::gui::Application::isSafeMode())
   {
-    QString defaultFilename = atools::settings::Settings::getConfigFilename(lnm::PERF_COLLECTED_SUFFIX);
-    if(atools::checkFile(Q_FUNC_INFO, defaultFilename))
+    try
     {
-      try
-      {
-        perfHandler->restoreCollected(defaultFilename);
-      }
-      catch(atools::Exception& e)
-      {
-        atools::gui::ErrorHandler(mainWindow).handleException(e);
-      }
-      catch(...)
-      {
-        atools::gui::ErrorHandler(mainWindow).handleUnknownException();
-      }
+      perfHandler->restoreState(atools::settings::Settings::getConfigFilename(lnm::PERF_COLLECTED_SUFFIX), lnm::AIRCRAFT_PERF_PREFIX);
+      perfHandler->setCruiseAltitude(cruiseAlt());
+    }
+    catch(atools::Exception& e)
+    {
+      atools::gui::ErrorHandler(mainWindow).handleException(e);
+    }
+    catch(...)
+    {
+      atools::gui::ErrorHandler(mainWindow).handleUnknownException();
     }
   }
 

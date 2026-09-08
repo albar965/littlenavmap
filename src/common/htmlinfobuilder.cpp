@@ -1172,7 +1172,7 @@ void HtmlInfoBuilder::ilsTextInternal(const map::MapIls& ils, atools::util::Html
   else
   {
     if(procInfo)
-      html.row2(prefix % tr("Type: "), map::ilsType(ils, true /* gs */, true /* dme */, tr(", ")));
+      html.row2(prefix % tr("Type:"), map::ilsType(ils, true /* gs */, true /* dme */, tr(", ")));
     else
     {
       // Runway information
@@ -2120,11 +2120,11 @@ void HtmlInfoBuilder::decodedMetar(HtmlBuilder& html, const map::MapAirport& air
     qint64 secsTo = time.secsTo(QDateTime::currentDateTimeUtc());
 
     if(secsTo > WEATHER_MAX_AGE_HOURS_ERR_OUTDATED * 3600)
-      html.row2Error(tr("Time: "), text + tr(" (outdated)"));
+      html.row2Error(tr("Time:"), text + tr(" (outdated)"));
     else if(secsTo > WEATHER_MAX_AGE_HOURS_ERR * 3600)
-      html.row2Error(tr("Time: "), text + tr(" (%1 hours old)").arg(secsTo / 3600));
+      html.row2Error(tr("Time:"), text + tr(" (%1 hours old)").arg(secsTo / 3600));
     else if(secsTo > WEATHER_MAX_AGE_HOURS_WARN * 3600)
-      html.row2Warning(tr("Time: "), text + tr(" (%1 hours old)").arg(secsTo / 3600));
+      html.row2Warning(tr("Time:"), text + tr(" (%1 hours old)").arg(secsTo / 3600));
     else
       html.row2(tr("Time: "), text);
   }

@@ -319,6 +319,7 @@ const QLatin1String AIRCRAFT_PERF_WIDGETS("AircraftPerformance/Widget");
 const QLatin1String AIRCRAFT_PERF_FILENAMESRECENT("AircraftPerformance/FilenamesRecent");
 const QLatin1String AIRCRAFT_PERF_EDIT_DIALOG("AircraftPerformance/EditDialog");
 const QLatin1String AIRCRAFT_PERF_MERGE_DIALOG("AircraftPerformance/MergeDialog");
+const QLatin1String AIRCRAFT_PERF_PREFIX("AircraftPerformance/PerfHandler");
 
 const QLatin1String AIRSPACE_CONTROLLER_WIDGETS("AirspaceController/Widget");
 
