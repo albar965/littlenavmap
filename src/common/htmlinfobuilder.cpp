@@ -2661,8 +2661,10 @@ void HtmlInfoBuilder::distanceMarkerText(const DistanceMarker& marker, atools::u
   html.tableEnd();
 
 #ifdef DEBUG_INFORMATION_INFO
-  html.small(QStringLiteral("[manualLabel = %1, navtype = %2, navident = %3, text = %4, id = %5]").
-             arg(marker.manualLabel).arg(map::mapTypeToString(marker.nav.type).join('|'), marker.nav.ident, marker.text).arg(marker.id));
+  html.small(QStringLiteral("[manualLabel = %1, navtype = %2, navident = %3, text = %4, id = %5, dx = %6, dy = %7]").
+             arg(marker.manualLabel).arg(map::mapTypeToString(marker.nav.type).join('|'), marker.nav.ident, marker.text).
+             arg(marker.id).arg(std::abs(marker.from.getLonX() - marker.to.getLonX())).
+             arg(std::abs(marker.from.getLatY() - marker.to.getLatY())));
 #endif
 }
 

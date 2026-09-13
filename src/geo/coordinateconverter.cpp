@@ -218,7 +218,7 @@ QPoint CoordinateConverter::wToS(const Marble::GeoDataCoordinates& coords, const
 
 QPointF CoordinateConverter::wToSF(const Marble::GeoDataCoordinates& coords, const QSize& size, bool *visible, bool *isHidden) const
 {
-  double xr, yr;
+  double xr = 0.f, yr = 0.f;
   bool isVisible = wToS(coords, xr, yr, size, isHidden);
 
   if(visible != nullptr)
