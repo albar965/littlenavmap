@@ -59,15 +59,12 @@ ConnectDialog::ConnectDialog(QWidget *parent, bool simConnectAvailable)
   }
   else
   {
-
 #if defined(SIMCONNECT_BUILD_WIN64)
     ui->tabWidgetConnect->setTabText(0, tr("MSFS"));
-    ui->labelConnectFsx->setText(tr("Connect directly to MSFS running on the same computer as "
-                                    "Little Navmap"));
+    ui->labelConnectFsx->setText(tr("Connect directly to MSFS running on the same computer as Little Navmap"));
 #elif defined(SIMCONNECT_BUILD_WIN32)
     ui->tabWidgetConnect->setTabText(0, tr("FSX or Prepar3D"));
-    ui->labelConnectFsx->setText(tr("Connect directly to FSX or Prepar3D running on the same computer as "
-                                    "Little Navmap"));
+    ui->labelConnectFsx->setText(tr("Connect directly to FSX or Prepar3D running on the same computer as Little Navmap"));
 #endif
   }
 #else
@@ -153,31 +150,36 @@ void ConnectDialog::updateWarningMessage()
   {
     // Always warn about navigraph for all mode =========================
     ui->labelConnectWarning->show();
-    ui->labelConnectWarning->setText(HtmlBuilder::warningMessage(tr("Scenery library mode is \"Use Navigraph for all Features\".<br/>"
-                                                                    "Click here for details.")));
+    ui->labelConnectWarning->setText(HtmlBuilder::warningMessage(
+                                       tr("Scenery library mode is \"Use Navigraph for all Features\".<br/>"
+                                          "Click here for details.")));
     ui->labelConnectWarning->setToolTip(tr("<p>Little Navmap is using navdata and airports from the Navigraph database.<br/>"
                                            "Airport aprons, taxiways and more are not available, smaller airports will be missing and "
-                                           "the runway layout might not match the one in the simulator.</p>"));
+                                           "the runway layout might not match the one in the simulator.<br/>"
+                                           "Change to the right database the in menu \"Scenery Library\" -> \"Navigraph\".</p>"));
   }
   else if(connectSim == cd::FSX_P3D_MSFS && atools::fs::FsPaths::isAnyXplane(simulatorDb))
   {
     // Using XP databasee with MS simulator =========================
     ui->labelConnectWarning->show();
-    ui->labelConnectWarning->setText(HtmlBuilder::warningMessage(tr("Using X-Plane scenery library with FSX, P3D or MSFS.<br>"
-                                                                    "Click here for details.")));
-    ui->labelConnectWarning->setToolTip(tr("<p>Little Navmap is using navdata and airports "
-                                             "from the X-Plane scenery library database but "
-                                             "you are about to connect to FSX, P3D or MSFS.</p>"));
+    ui->labelConnectWarning->setText(HtmlBuilder::warningMessage(
+                                       tr("Using X-Plane scenery library when connecting to MSFS.<br>"
+                                          "Click here for details.")));
+    ui->labelConnectWarning->setToolTip(tr("<p>Little Navmap is using navdata and airports from the X-Plane scenery library database but "
+                                             "you are about to connect to MSFS.<br/>"
+                                             "Change to the right database the in menu \"Scenery Library\".</p>"));
   }
   else if(connectSim == cd::XPLANE && atools::fs::FsPaths::isAnyMs(simulatorDb))
   {
     // Using MS databasee with XP simulator =========================
     ui->labelConnectWarning->show();
-    ui->labelConnectWarning->setText(HtmlBuilder::warningMessage(tr("Using FSX, P3D or MSFS scenery library with X-Plane.<br/>"
-                                                                    "Click here for details.")));
+    ui->labelConnectWarning->setText(HtmlBuilder::warningMessage(
+                                       tr("Using FSX, P3D or MSFS scenery library when connecting to X-Plane.<br/>"
+                                          "Click here for details.")));
     ui->labelConnectWarning->setToolTip(tr("<p>Little Navmap is using navdata and airports "
-                                             "from the FSX, P3D or MSFS scenery library database but "
-                                             "you are about to connect to X-Plane.</p>"));
+                                             "from a FSX, P3D or MSFS scenery library database but "
+                                             "you are about to connect to X-Plane.<br/>"
+                                             "Change to the right database the in menu \"Scenery Library\".</p>"));
   }
   else
   {
