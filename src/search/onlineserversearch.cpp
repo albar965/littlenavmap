@@ -38,7 +38,7 @@ OnlineServerSearch::OnlineServerSearch(MainWindow *parent, QTableView *tableView
   append(Column("server_id").hidden()).
   append(Column("name", tr("Name")).defaultSort()).
   append(Column("ident", tr("Ident"))).
-  append(Column("hostname", tr("Hostname or\nIP-Address"))).
+  append(Column("hostname", tr("Hostname or\nIP Address"))).
   append(Column("location", tr("Location"))).
   append(Column("voice_type", tr("Voice\nType")))
   ;

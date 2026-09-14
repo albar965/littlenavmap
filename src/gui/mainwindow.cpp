@@ -5462,12 +5462,12 @@ void MainWindow::openWebserverQrCode(QWidget *parent)
   QString urlString = NavApp::getWebController()->getUrl(false /* useIpAddress */).toString();
   QString urlStringIp = NavApp::getWebController()->getUrl(true /* useIpAddress */).toString();
 
-  atools::gui::QrCodeDialog dialog(parent, {urlString, urlStringIp}, {tr("Computer Name"), tr("IP-Address")},
+  atools::gui::QrCodeDialog dialog(parent, {urlString, urlStringIp}, {tr("Computer Name"), tr("IP Address")},
                                    {tr("Scan the QR code to open the web address<br/>"
                                        "<a href=\"%1\">%1</a>.").arg(urlString),
                                     tr("Scan QR code to open web address<br/>"
                                        "<a href=\"%1\">%1</a>.<br/>"
-                                       "Note that the IP-address can change between reboots.").arg(urlStringIp)},
+                                       "Note that the IP Address can change between reboots.").arg(urlStringIp)},
                                    QApplication::applicationName() % tr(" - QR code for Web Server"),
                                    "WEBSERVER.html#qrcode");
   dialog.setHelpOnlineUrl(lnm::helpOnlineUrl);
