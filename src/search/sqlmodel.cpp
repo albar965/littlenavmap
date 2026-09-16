@@ -278,7 +278,7 @@ void SqlModel::filter(const Column *col, const QVariant& variantDisp, const QVar
   else
   {
     QVariant variantSql;
-    QString oper, escape;
+    QString operand, escape;
 
     if(col->hasMinMaxSpinbox())
     {
@@ -286,68 +286,79 @@ void SqlModel::filter(const Column *col, const QVariant& variantDisp, const QVar
       if(!variantDisp.isNull() && maxValue.isNull())
       {
         // Only min value set
-        oper = '>';
+        operand = '>';
         variantSql = variantDisp;
       }
       else if(variantDisp.isNull() && !maxValue.isNull())
       {
         // Only max value set
-        oper = '<';
+        operand = '<';
         variantSql = maxValue;
       }
       else
         // Min and max values set - use range and leave newVariant invalid
-        oper = QStringLiteral("between %1 and %2").arg(variantDisp.toInt()).arg(maxValue.toInt());
+        operand = QStringLiteral("between %1 and %2").arg(variantDisp.toInt()).arg(maxValue.toInt());
     }
     else if(!col->getCondition().isEmpty())
     {
       // Single spinbox giving a min or max value
-      oper = col->getCondition();
+      operand = col->getCondition();
       variantSql = variantDisp;
     }
     else if(col->hasIndexConditionMap())
       // A combo box
-      oper = col->getIndexConditionMap().at(variantDisp.toInt());
+      operand = col->getIndexConditionMap().at(variantDisp.toInt());
     else if(col->hasIncludeExcludeCond())
     {
       // A checkbox - tri state is already filtered by the caller
       if(variantDisp.toInt() == 0)
-        oper = col->getExcludeCondition();
+        operand = col->getExcludeCondition();
       else
-        oper = col->getIncludeCondition();
+        operand = col->getIncludeCondition();
     }
     else
     {
       if(variantDisp.metaType() == QMetaType::fromType<QString>())
       {
         // Use like queries for strings so we will query case insensitive
-        QString newVal = variantDisp.toString();
+        QString value = variantDisp.toString();
 
-        if(newVal.startsWith('-'))
+        if(value == QStringLiteral("\"\""))
         {
-          if(newVal == '-')
+          // Two double quotes (empty) translate to null
+          operand = QStringLiteral("is null");
+
+          // No value needed
+          value.clear();
+        }
+        else if(value.startsWith('-'))
+        {
+          if(value == '-')
           {
             // A single '-' translates to not nulls
-            oper = QStringLiteral("is not null");
-            newVal.clear();
+            operand = QStringLiteral("is not null");
+
+            // No value needed
+            value.clear();
           }
           else
           {
-            oper = QStringLiteral("not like");
+            // Not like plus value
+            operand = QStringLiteral("not like");
             escape = ESCAPE;
-            newVal.remove(0, 1);
+            value.remove(0, 1);
           }
         }
         else
         {
-          oper = QStringLiteral("like");
+          operand = QStringLiteral("like");
           escape = ESCAPE;
         }
 
         // Replace '*' with '%' for SQL
-        buildSqlWhereValue(newVal, exact);
+        buildSqlWhereValue(value, exact);
 
-        variantSql = newVal;
+        variantSql = value;
       }
       else if(variantDisp.metaType() == QMetaType::fromType<int>() ||
               variantDisp.metaType() == QMetaType::fromType<unsigned int>() ||
@@ -357,12 +368,12 @@ void SqlModel::filter(const Column *col, const QVariant& variantDisp, const QVar
       {
         // Use equal for numbers
         variantSql = variantDisp;
-        oper = '=';
+        operand = '=';
       }
     }
 
     // Insert new condition or replace values in existing condition
-    whereConditionMap.insert(colName, WhereCondition(oper, escape, variantSql, variantDisp, col));
+    whereConditionMap.insert(colName, WhereCondition(operand, escape, variantSql, variantDisp, col));
   }
   buildQuery();
 }
@@ -382,9 +393,9 @@ void SqlModel::buildSqlWhereValue(QString& whereValue, bool exact) const
     whereValue = whereValue.replace(QStringLiteral("%"), QStringLiteral("\\%")).replace(QStringLiteral("_"),
                                                                                         QStringLiteral("\\_")).replace('*', '%');
 
-    if(whereValue.startsWith('"') && whereValue.endsWith('"'))
-      // Remove quotes from exact searches
-      whereValue = whereValue.remove('"');
+    if(whereValue.size() >= 3 && whereValue.startsWith('"') && whereValue.endsWith('"'))
+      // Remove quotes from start and end for exact searches
+      whereValue = whereValue.mid(1, whereValue.size() - 2);
     else if(!exact)
       // Enclose with percent to have partial matches
       whereValue = '%' % whereValue % '%';
@@ -754,19 +765,24 @@ bool SqlModel::isDistanceSearchActive() const
 /* Convert a value to string for the where clause */
 QString SqlModel::buildWhereValue(const WhereCondition& cond)
 {
-  QMetaType type = cond.getValueSql().metaType();
-  QString val;
-  if(type == QMetaType::fromType<QString>() || type == QMetaType::fromType<QChar>())
-    // Use semicolons for string and escape single quotes
-    val = QStringLiteral(" '") % cond.getValueSql().toString().replace(QStringLiteral("'"), QStringLiteral("''")) % QStringLiteral("'");
-  else if(type == QMetaType::fromType<bool>() ||
-          type == QMetaType::fromType<int>() ||
-          type == QMetaType::fromType<unsigned int>() ||
-          type == QMetaType::fromType<long long>() ||
-          type == QMetaType::fromType<unsigned long long>() ||
-          type == QMetaType::fromType<double>())
-    val = ' ' % cond.getValueSql().toString();
-  return val;
+  const QMetaType type = cond.getValueSql().metaType();
+  QString valueStr = cond.getValueSql().toString();
+
+  if(!valueStr.isEmpty())
+  {
+    if(type == QMetaType::fromType<QString>() || type == QMetaType::fromType<QChar>())
+      // Use semicolons for string and escape single quotes
+      return QStringLiteral(" '") % valueStr.replace(QStringLiteral("'"), QStringLiteral("''")) % QStringLiteral("'");
+    else if(type == QMetaType::fromType<bool>() ||
+            type == QMetaType::fromType<int>() ||
+            type == QMetaType::fromType<unsigned int>() ||
+            type == QMetaType::fromType<long long>() ||
+            type == QMetaType::fromType<unsigned long long>() ||
+            type == QMetaType::fromType<double>())
+      return ' ' % valueStr;
+  }
+
+  return QStringLiteral();
 }
 
 void SqlModel::refreshData(bool force)
