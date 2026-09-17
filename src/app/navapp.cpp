@@ -982,7 +982,7 @@ atools::fs::common::MoraReader *NavApp::getMoraReader()
   return moraReader;
 }
 
-const atools::timezone::TimeZoneManager *NavApp::getTimeZoneManager()
+atools::timezone::TimeZoneManager *NavApp::getTimeZoneManager()
 {
   return timeZone;
 }
