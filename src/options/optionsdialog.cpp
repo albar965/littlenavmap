@@ -724,6 +724,10 @@ OptionsDialog::OptionsDialog(QMainWindow *parentWindow)
     ui->checkBoxOptionsWeatherTooltipVatsim,
     ui->checkBoxOptionsWeatherTooltipIvao,
     ui->checkBoxOptionsWeatherTooltipFs,
+    ui->checkBoxOptionsWeatherTooltipNearest,
+    ui->checkBoxOptionsWeatherTooltipInterpolated,
+    ui->checkBoxOptionsWeatherInfoNearest,
+    ui->checkBoxOptionsWeatherInfoInterpolated,
     // ui->lineEditOptionsMapRangeRings, // Saved separately lnm::OPTIONS_DIALOG_RANGE_DISTANCES
     ui->lineEditOptionsWeatherAsnPath,
     ui->lineEditOptionsWeatherXplanePath,
@@ -2437,8 +2441,13 @@ void OptionsDialog::widgetsToOptionData(OptionData& data)
   toFlags(data.flagsWeather, ui->checkBoxOptionsWeatherTooltipVatsim, optsw::WEATHER_TOOLTIP_VATSIM);
   toFlags(data.flagsWeather, ui->checkBoxOptionsWeatherTooltipIvao, optsw::WEATHER_TOOLTIP_IVAO);
   toFlags(data.flagsWeather, ui->checkBoxOptionsWeatherTooltipFs, optsw::WEATHER_TOOLTIP_FS);
-  toFlags(data.flags, ui->checkBoxOptionsSimUpdatesConstant, opts::SIM_UPDATE_MAP_CONSTANTLY);
 
+  toFlags(data.flagsWeather, ui->checkBoxOptionsWeatherTooltipNearest, optsw::WEATHER_TOOLTIP_NEAREST);
+  toFlags(data.flagsWeather, ui->checkBoxOptionsWeatherTooltipInterpolated, optsw::WEATHER_TOOLTIP_INTERPOLATED);
+  toFlags(data.flagsWeather, ui->checkBoxOptionsWeatherInfoNearest, optsw::WEATHER_INFO_NEAREST);
+  toFlags(data.flagsWeather, ui->checkBoxOptionsWeatherInfoInterpolated, optsw::WEATHER_INFO_INTERPOLATED);
+
+  toFlags(data.flags, ui->checkBoxOptionsSimUpdatesConstant, opts::SIM_UPDATE_MAP_CONSTANTLY);
   toFlags(data.flags2, ui->checkBoxOptionsMapZoomAvoidBlurred, opts2::MAP_AVOID_BLURRED_MAP);
   toFlags(data.flags2, ui->checkBoxOptionsMapUndock, opts2::MAP_ALLOW_UNDOCK);
   toFlags(data.flags2, ui->checkBoxOptionsGuiToolbarSize, opts2::OVERRIDE_TOOLBAR_SIZE);
@@ -2786,8 +2795,13 @@ void OptionsDialog::optionDataToWidgets(const OptionData& data)
   fromFlags(data.flagsWeather, ui->checkBoxOptionsWeatherTooltipVatsim, optsw::WEATHER_TOOLTIP_VATSIM);
   fromFlags(data.flagsWeather, ui->checkBoxOptionsWeatherTooltipIvao, optsw::WEATHER_TOOLTIP_IVAO);
   fromFlags(data.flagsWeather, ui->checkBoxOptionsWeatherTooltipFs, optsw::WEATHER_TOOLTIP_FS);
-  fromFlags(data.flags, ui->checkBoxOptionsSimUpdatesConstant, opts::SIM_UPDATE_MAP_CONSTANTLY);
 
+  fromFlags(data.flagsWeather, ui->checkBoxOptionsWeatherTooltipNearest, optsw::WEATHER_TOOLTIP_NEAREST);
+  fromFlags(data.flagsWeather, ui->checkBoxOptionsWeatherTooltipInterpolated, optsw::WEATHER_TOOLTIP_INTERPOLATED);
+  fromFlags(data.flagsWeather, ui->checkBoxOptionsWeatherInfoNearest, optsw::WEATHER_INFO_NEAREST);
+  fromFlags(data.flagsWeather, ui->checkBoxOptionsWeatherInfoInterpolated, optsw::WEATHER_INFO_INTERPOLATED);
+
+  fromFlags(data.flags, ui->checkBoxOptionsSimUpdatesConstant, opts::SIM_UPDATE_MAP_CONSTANTLY);
   fromFlags(data.flags2, ui->checkBoxOptionsMapZoomAvoidBlurred, opts2::MAP_AVOID_BLURRED_MAP);
   fromFlags(data.flags2, ui->checkBoxOptionsMapUndock, opts2::MAP_ALLOW_UNDOCK);
   fromFlags(data.flags2, ui->checkBoxOptionsGuiToolbarSize, opts2::OVERRIDE_TOOLBAR_SIZE);

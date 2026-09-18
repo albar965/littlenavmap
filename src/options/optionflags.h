@@ -490,11 +490,23 @@ enum FlagWeather : quint32
    * ui->checkBoxOptionsWeatherTooltipIvao*/
   WEATHER_TOOLTIP_IVAO = 1ULL << 9,
 
+  /* checkBoxOptionsWeatherTooltipNearest */
+  WEATHER_TOOLTIP_NEAREST = 1ULL << 10,
+
+  /* checkBoxOptionsWeatherTooltipInterpolated */
+  WEATHER_TOOLTIP_INTERPOLATED = 1ULL << 11,
+
+  /* checkBoxOptionsWeatherInfoNearest */
+  WEATHER_INFO_NEAREST = 1ULL << 12,
+
+  /* checkBoxOptionsWeatherInfoInterpolated */
+  WEATHER_INFO_INTERPOLATED = 1ULL << 13,
+
   WEATHER_INFO_ALL = WEATHER_INFO_ACTIVESKY | WEATHER_INFO_NOAA | WEATHER_INFO_VATSIM | WEATHER_INFO_FS |
-                     WEATHER_INFO_IVAO,
+                     WEATHER_INFO_IVAO | WEATHER_INFO_NEAREST | WEATHER_INFO_INTERPOLATED,
 
   WEATHER_TOOLTIP_ALL = WEATHER_TOOLTIP_ACTIVESKY | WEATHER_TOOLTIP_NOAA | WEATHER_TOOLTIP_VATSIM | WEATHER_TOOLTIP_FS |
-                        WEATHER_TOOLTIP_IVAO
+                        WEATHER_TOOLTIP_IVAO | WEATHER_TOOLTIP_NEAREST
 };
 
 ATOOLS_DECLARE_FLAGS_32(FlagsWeather, optsw::FlagWeather)

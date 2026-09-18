@@ -481,9 +481,8 @@ void HtmlInfoBuilder::airportText(const MapAirport& airport, const map::WeatherC
       html.tableEnd();
     }
 
-    html.table();
-
     // Source for map icon display
+    html.table();
     addMetarLines(html, weatherContext, NavApp::getMapWeatherSource(), airport);
     html.tableEnd();
   }
@@ -5592,6 +5591,10 @@ void HtmlInfoBuilder::rowForStrCap(HtmlBuilder& html, const SqlRecord *rec, cons
 void HtmlInfoBuilder::addMetarLines(HtmlBuilder& html, const map::WeatherContext& weatherContext, MapWeatherSource src,
                                     const map::MapAirport& airport) const
 {
+  const optsw::FlagsWeather weatherFlags = OptionData::instance().getFlagsWeather();
+  bool nearest = weatherFlags.testFlag(info ? optsw::WEATHER_INFO_NEAREST : optsw::WEATHER_TOOLTIP_NEAREST);
+  bool interpolated = weatherFlags.testFlag(info ? optsw::WEATHER_INFO_INTERPOLATED : optsw::WEATHER_TOOLTIP_INTERPOLATED);
+
   const Metar& fsMetar = weatherContext.simMetar;
   if(fsMetar.hasAnyMetar())
   {
@@ -5599,8 +5602,12 @@ void HtmlInfoBuilder::addMetarLines(HtmlBuilder& html, const map::WeatherContext
     bool mapDisplay = src == WEATHER_SOURCE_SIMULATOR;
     QString sim = tr("%1 ").arg(NavApp::getCurrentSimulatorShortDisplayName());
     addMetarLine(html, tr("%1Station").arg(sim), airport, fsMetar.getStation(), mapDisplay);
-    addMetarLine(html, tr("%1Nearest").arg(sim), airport, fsMetar.getNearest(), mapDisplay);
-    addMetarLine(html, tr("%1Interpolated").arg(sim), airport, fsMetar.getInterpolated(), mapDisplay);
+
+    if(nearest)
+      addMetarLine(html, tr("%1Nearest").arg(sim), airport, fsMetar.getNearest(), mapDisplay);
+
+    if(interpolated)
+      addMetarLine(html, tr("%1Interpolated").arg(sim), airport, fsMetar.getInterpolated(), mapDisplay);
   }
 
   // Active Sky weather =====================================================
@@ -5608,25 +5615,34 @@ void HtmlInfoBuilder::addMetarLines(HtmlBuilder& html, const map::WeatherContext
 
   // NOAA weather =====================================================
   addMetarLine(html, tr("NOAA Station"), airport, weatherContext.noaaMetar.getStation(), src == WEATHER_SOURCE_NOAA);
-  addMetarLine(html, tr("NOAA Nearest"), airport, weatherContext.noaaMetar.getNearest(), src == WEATHER_SOURCE_NOAA);
-  addMetarLine(html, tr("NOAA Interpolated"), airport, weatherContext.noaaMetar.getInterpolated(), src == WEATHER_SOURCE_NOAA);
+  if(nearest)
+    addMetarLine(html, tr("NOAA Nearest"), airport, weatherContext.noaaMetar.getNearest(), src == WEATHER_SOURCE_NOAA);
+
+  if(interpolated)
+    addMetarLine(html, tr("NOAA Interpolated"), airport, weatherContext.noaaMetar.getInterpolated(), src == WEATHER_SOURCE_NOAA);
 
   // VATSIM weather =====================================================
   addMetarLine(html, tr("VATSIM Station"), airport, weatherContext.vatsimMetar.getStation(), src == WEATHER_SOURCE_VATSIM);
-  addMetarLine(html, tr("VATSIM Nearest"), airport, weatherContext.vatsimMetar.getNearest(), src == WEATHER_SOURCE_VATSIM);
-  addMetarLine(html, tr("VATSIM Interpolated"), airport, weatherContext.vatsimMetar.getInterpolated(), src == WEATHER_SOURCE_VATSIM);
+  if(nearest)
+    addMetarLine(html, tr("VATSIM Nearest"), airport, weatherContext.vatsimMetar.getNearest(), src == WEATHER_SOURCE_VATSIM);
+
+  if(interpolated)
+    addMetarLine(html, tr("VATSIM Interpolated"), airport, weatherContext.vatsimMetar.getInterpolated(), src == WEATHER_SOURCE_VATSIM);
 
   // IVAO weather =====================================================
   addMetarLine(html, tr("IVAO Station"), airport, weatherContext.ivaoMetar.getStation(), src == WEATHER_SOURCE_IVAO);
-  addMetarLine(html, tr("IVAO Nearest"), airport, weatherContext.ivaoMetar.getNearest(), src == WEATHER_SOURCE_IVAO);
-  addMetarLine(html, tr("IVAO Interpolated"), airport, weatherContext.ivaoMetar.getInterpolated(), src == WEATHER_SOURCE_IVAO);
+  if(nearest)
+    addMetarLine(html, tr("IVAO Nearest"), airport, weatherContext.ivaoMetar.getNearest(), src == WEATHER_SOURCE_IVAO);
+
+  if(interpolated)
+    addMetarLine(html, tr("IVAO Interpolated"), airport, weatherContext.ivaoMetar.getInterpolated(), src == WEATHER_SOURCE_IVAO);
 }
 
 void HtmlInfoBuilder::addMetarLine(atools::util::HtmlBuilder& html, const QString& header,
                                    const map::MapAirport& airport, const atools::fs::weather::MetarParser& metar, bool mapDisplay) const
 {
-  // Show only if valid. METARS shown on map display are only shown in info and not tooltip
-  if(metar.hasMetarString() && (info || mapDisplay))
+  // Show only if valid.
+  if(metar.hasMetarString() && (verbose || mapDisplay))
   {
     HtmlBuilder weatherHtml = html.cleared();
 
