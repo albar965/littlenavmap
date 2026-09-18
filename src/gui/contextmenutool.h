@@ -40,15 +40,19 @@ public:
 
   void setActions(QAction *actionShowDepartureParam, QAction *actionShowApproachParam, QAction *actionShowProceduresParam)
   {
-    actionShowProcedures = actionShowProceduresParam;
-    actionShowApproach = actionShowApproachParam;
     actionShowDeparture = actionShowDepartureParam;
+    actionShowApproach = actionShowApproachParam;
+    actionShowProcedures = actionShowProceduresParam;
   }
 
   /* Returns a list of all suffixes depending on flags. Example: " (is destination, no runway) ...".
    * Ellipse is added only if runways are present (shows dialog for selection. */
   static QString airportItemSuffix(bool airportDeparture, bool airportDestination, bool airportAlternate,
                                    bool airportRoundTrip, bool noRunways, const QStringList& otherSuffixes = QStringList());
+
+  /* Suffixes for selecting an alternate airport. Does not add ellipse. */
+  static QString airportItemAlternateSuffix(bool airportDeparture, bool airportDestination, bool airportAlternate, bool airportRoundTrip,
+                                            bool noRunways, const QStringList& otherSuffixes);
 
 private:
   QAction *actionShowProcedures = nullptr, *actionShowApproach = nullptr, *actionShowDeparture = nullptr;

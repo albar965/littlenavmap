@@ -800,7 +800,7 @@ void MapContextMenu::insertAlternateMenu(QMenu& menu)
 
           bool departure, destination, alternate, roundtrip, noRunways = airport.noRunways();
           proc::procedureFlags(route, base, &departure, &destination, &alternate, &roundtrip);
-          text.append(ContextMenuTool::airportItemSuffix(departure, destination, alternate, roundtrip, noRunways, otherSuffix));
+          text.append(ContextMenuTool::airportItemAlternateSuffix(departure, destination, alternate, roundtrip, noRunways, otherSuffix));
         }
       }
     };

@@ -11501,7 +11501,7 @@ relation to shown airport</string>
      <normaloff>:/littlenavmap/resources/icons/airportroutestart.svg</normaloff>:/littlenavmap/resources/icons/airportroutestart.svg</iconset>
    </property>
    <property name="text">
-    <string>Set %1 as &amp;Departure</string>
+    <string>Set %1 as &amp;Departure ...</string>
    </property>
    <property name="toolTip">
     <string>Set this as departure for the flight plan</string>
@@ -11516,7 +11516,7 @@ relation to shown airport</string>
      <normaloff>:/littlenavmap/resources/icons/airportroutedest.svg</normaloff>:/littlenavmap/resources/icons/airportroutedest.svg</iconset>
    </property>
    <property name="text">
-    <string>Set %1 as &amp;Destination</string>
+    <string>Set %1 as &amp;Destination ...</string>
    </property>
    <property name="toolTip">
     <string>Set this as destination for the flight plan</string>

@@ -1184,8 +1184,8 @@ void MainWindow::connectAllSlots()
   connect(logSearch, &SearchBaseTable::showRect, mapWidget, &MapPaintWidget::showRect);
   connect(logSearch, &SearchBaseTable::showInformation, infoController, &InfoController::showInformation);
   connect(logSearch, &SearchBaseTable::selectionChanged, searchController, &SearchController::searchSelectionChanged);
-  connect(logSearch, &SearchBaseTable::routeSetDeparture, routeController, &RouteController::routeSetDeparture);
-  connect(logSearch, &SearchBaseTable::routeSetDestination, routeController, &RouteController::routeSetDestination);
+  connect(logSearch, &SearchBaseTable::showCustomApproach, routeController, &RouteController::showCustomApproach);
+  connect(logSearch, &SearchBaseTable::showCustomDeparture, routeController, &RouteController::showCustomDeparture);
   connect(logSearch, &SearchBaseTable::routeAddAlternate, routeController, &RouteController::routeAddAlternate);
   connect(logSearch, &SearchBaseTable::addRangeMark, mapWidget, &MapWidget::addRangeMark);
   connect(logSearch, &SearchBaseTable::addPatternMark, mapWidget, &MapWidget::addPatternMarker);

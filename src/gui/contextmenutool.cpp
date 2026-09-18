@@ -25,7 +25,8 @@ using atools::gui::ActionTool;
 
 void ContextMenuTool::initAirportActions(const map::MapAirport& airport, const Route& route, int routeLegIndex, const QString& objectText)
 {
-  actionShowProcedures->setDisabled(true);
+  if(actionShowProcedures != nullptr)
+    actionShowProcedures->setDisabled(true);
   actionShowApproach->setDisabled(true);
   actionShowDeparture->setDisabled(true);
 
@@ -41,36 +42,39 @@ void ContextMenuTool::initAirportActions(const map::MapAirport& airport, const R
     bool noRunways = airport.noRunways();
 
     // Procedure menu item ================================================================
-    if(hasAnyArrival || hasDeparture)
+    if(actionShowProcedures != nullptr)
     {
-      if(airportDeparture && !airportRoundTrip)
+      if(hasAnyArrival || hasDeparture)
       {
-        if(hasDeparture)
+        if(airportDeparture && !airportRoundTrip)
         {
-          actionShowProcedures->setText(tr("Show Departure &Procedures for %1"));
-          ActionTool::setText(actionShowProcedures, true /* enabled */, objectText);
+          if(hasDeparture)
+          {
+            actionShowProcedures->setText(tr("Show Departure &Procedures for %1"));
+            ActionTool::setText(actionShowProcedures, true /* enabled */, objectText);
+          }
+          else
+            actionShowProcedures->setText(tr("Show Procedures (no departure procedure)"));
+        }
+        else if(airportDestination && !airportRoundTrip)
+        {
+          if(hasAnyArrival)
+          {
+            actionShowProcedures->setText(tr("Show Arrival and Approach &Procedures for %1"));
+            ActionTool::setText(actionShowProcedures, true /* enabled */, objectText);
+          }
+          else
+            actionShowProcedures->setText(tr("Show &Procedures (no arrival and no approch procedure)"));
         }
         else
-          actionShowProcedures->setText(tr("Show Procedures (no departure procedure)"));
-      }
-      else if(airportDestination && !airportRoundTrip)
-      {
-        if(hasAnyArrival)
         {
-          actionShowProcedures->setText(tr("Show Arrival and Approach &Procedures for %1"));
+          actionShowProcedures->setText(tr("Show &Procedures for %1"));
           ActionTool::setText(actionShowProcedures, true /* enabled */, objectText);
         }
-        else
-          actionShowProcedures->setText(tr("Show &Procedures (no arrival and no approch procedure)"));
       }
       else
-      {
-        actionShowProcedures->setText(tr("Show &Procedures for %1"));
-        ActionTool::setText(actionShowProcedures, true /* enabled */, objectText);
-      }
+        actionShowProcedures->setText(tr("Show Procedures (no procedure)"));
     }
-    else
-      actionShowProcedures->setText(tr("Show Procedures (no procedure)"));
 
     // Departure and destination menu items ================================================================
     if(noRunways)
@@ -117,14 +121,15 @@ void ContextMenuTool::initAirportActions(const map::MapAirport& airport, const R
   }
   else
   {
-    actionShowProcedures->setText(tr("Show &Procedures"));
+    if(actionShowProcedures != nullptr)
+      actionShowProcedures->setText(tr("Show &Procedures"));
     actionShowDeparture->setText(tr("&Select Departure %1"));
     actionShowApproach->setText(tr("Select &Destination %1"));
   }
 }
 
-QString ContextMenuTool::airportItemSuffix(bool airportDeparture, bool airportDestination, bool airportAlternate,
-                                           bool airportRoundTrip, bool noRunways, const QStringList& otherSuffixes)
+QString ContextMenuTool::airportItemAlternateSuffix(bool airportDeparture, bool airportDestination, bool airportAlternate,
+                                                    bool airportRoundTrip, bool noRunways, const QStringList& otherSuffixes)
 {
   QStringList hints;
 
@@ -145,8 +150,14 @@ QString ContextMenuTool::airportItemSuffix(bool airportDeparture, bool airportDe
   hints.append(otherSuffixes);
   hints.removeDuplicates();
 
-  QString hintStr = atools::strJoin(tr(" ("), hints, tr(", "), tr(", "), tr(")"));
+  return atools::strJoin(tr(" ("), hints, tr(", "), tr(", "), tr(")"));
+}
 
+QString ContextMenuTool::airportItemSuffix(bool airportDeparture, bool airportDestination, bool airportAlternate,
+                                           bool airportRoundTrip, bool noRunways, const QStringList& otherSuffixes)
+{
+  QString hintStr = airportItemAlternateSuffix(airportDeparture, airportDestination, airportAlternate, airportRoundTrip, noRunways,
+                                               otherSuffixes);
   // Having ruwnays triggers the selection dialog */
   if(!noRunways)
     hintStr.append(tr(" ..."));

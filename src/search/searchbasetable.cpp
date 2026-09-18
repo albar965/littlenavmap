@@ -1129,10 +1129,8 @@ void SearchBaseTable::contextMenu(const QPoint& point)
   // Airport in airport search also used for airport below cursor in logbook
   map::MapAirport airport;
   map::MapLogbookEntry logEntry;
+  QString logAirportIdent;
   atools::sql::SqlRecord logRecord;
-
-  // True if airport below cursor in logbook and ident not empty
-  bool logAirport = false;
 
   int id = -1;
   const Column *columnDescriptor = nullptr;
@@ -1179,15 +1177,18 @@ void SearchBaseTable::contextMenu(const QPoint& point)
       QString name = columnDescriptor->getColumnName();
       QList<map::MapAirport> airports;
       if(name == "destination_ident" || name == "destination_name")
+      {
         airports = airportQuery->getAirportsByOfficialIdent(logEntry.destinationIdent, &logEntry.destinationPos);
+        logAirportIdent = logEntry.destinationIdent;
+      }
       else if(name == "departure_ident" || name == "departure_name")
+      {
         airports = airportQuery->getAirportsByOfficialIdent(logEntry.departureIdent, &logEntry.departurePos);
+        logAirportIdent = logEntry.departureIdent;
+      }
 
       if(!airports.isEmpty())
-      {
         airport = airports.constFirst();
-        logAirport = true;
-      }
       else
         qWarning() << Q_FUNC_INFO << "No airport found";
     }
@@ -1232,8 +1233,8 @@ void SearchBaseTable::contextMenu(const QPoint& point)
   ui->actionSearchDirectTo->setEnabled(validType && NavApp::isConnectedAndAircraft());
 
   // Airport actions ==============================================================
-  bool disableDepartDest = false, disableAlternate = false, disableDirectTo = false;
-  QString departDestSuffix = proc::procedureTextSuffixDepartDest(route, airport, &disableDepartDest);
+  bool disableDepartAndDest = false, disableAlternate = false, disableDirectTo = false;
+  QString departDestSuffix = proc::procedureTextSuffixDepartDest(route, airport, &disableDepartAndDest);
   QString directToSuffix = proc::procedureTextSuffixDirectTo(route, routeIndex, &airport, &disableDirectTo);
 
   // Need at least one airport or destination to add an alternate
@@ -1248,8 +1249,8 @@ void SearchBaseTable::contextMenu(const QPoint& point)
 
   bool departure, destination, alternate, roundtrip, noRunways = airport.noRunways();
   proc::procedureFlags(route, &airport, &departure, &destination, &alternate, &roundtrip);
-  QString alternateSuffix = ContextMenuTool::airportItemSuffix(departure, destination, alternate, roundtrip, noRunways,
-                                                               alternateSuffixList);
+  QString alternateSuffix = ContextMenuTool::airportItemAlternateSuffix(departure, destination, alternate, roundtrip, noRunways,
+                                                                        alternateSuffixList);
 
   // Airport search
   ui->actionSearchRouteAirportAlternate->setDisabled(disableAlternate);
@@ -1264,8 +1265,8 @@ void SearchBaseTable::contextMenu(const QPoint& point)
   }
 
   // Logbook airport sub-menu
-  ui->actionSearchLogRouteAirportStart->setDisabled(disableDepartDest);
-  ui->actionSearchLogRouteAirportDest->setDisabled(disableDepartDest);
+  ui->actionSearchLogRouteAirportStart->setDisabled(disableDepartAndDest);
+  ui->actionSearchLogRouteAirportDest->setDisabled(disableDepartAndDest);
   ui->actionSearchLogRouteAirportAlternate->setDisabled(disableAlternate);
 
   ui->actionSearchMarkAddon->setEnabled(airport.isValid());
@@ -1295,18 +1296,29 @@ void SearchBaseTable::contextMenu(const QPoint& point)
 
   if(tabIndex == si::SEARCH_LOG)
   {
-    QString airportText;
+    QString airportText, suffix;
     if(airport.isValid())
       airportText = map::airportTextShort(airport, NAVAID_NAMES_ELIDE);
-    else if(logAirport)
-      airportText = tr("(Airport not found)");
+    else
+    {
+      alternateSuffix.clear();
+      if(!logAirportIdent.isEmpty())
+        suffix = tr(" (%1 not found)").arg(logAirportIdent);
+      else
+        suffix = tr(" (no airport)");
+    }
 
-    ui->actionSearchLogRouteAirportStart->setText(ui->actionSearchLogRouteAirportStart->text().arg(airportText) + departDestSuffix);
-    ui->actionSearchLogRouteAirportDest->setText(ui->actionSearchLogRouteAirportDest->text().arg(airportText) + departDestSuffix);
-    ui->actionSearchLogRouteAirportAlternate->setText(ui->actionSearchLogRouteAirportAlternate->text().arg(airportText) + alternateSuffix);
+    ContextMenuTool menuTool;
+    menuTool.setActions(ui->actionSearchLogRouteAirportStart, ui->actionSearchLogRouteAirportDest, nullptr);
+    menuTool.initAirportActions(airport, route, -1, airportText);
 
-    ui->actionSearchLogShowInformationAirport->setText(ui->actionSearchLogShowInformationAirport->text().arg(airportText));
-    ui->actionSearchLogShowOnMapAirport->setText(ui->actionSearchLogShowOnMapAirport->text().arg(airportText));
+    ui->actionSearchLogRouteAirportStart->setText(ui->actionSearchLogRouteAirportStart->text() + suffix);
+    ui->actionSearchLogRouteAirportDest->setText(ui->actionSearchLogRouteAirportDest->text() + suffix);
+    ui->actionSearchLogRouteAirportAlternate->setText(ui->actionSearchLogRouteAirportAlternate->text().arg(airportText) + alternateSuffix +
+                                                      suffix);
+
+    ui->actionSearchLogShowInformationAirport->setText(ui->actionSearchLogShowInformationAirport->text().arg(airportText) + suffix);
+    ui->actionSearchLogShowOnMapAirport->setText(ui->actionSearchLogShowOnMapAirport->text().arg(airportText) + suffix);
   }
 
   ui->actionSearchTableCopy->setEnabled(index.isValid());
@@ -1707,9 +1719,9 @@ void SearchBaseTable::contextMenu(const QPoint& point)
     }
     // Log airport actions are not connected to any method unlike airport search actions
     else if(action == ui->actionSearchLogRouteAirportStart)
-      emit routeSetDeparture(airport);
+      emit showCustomDeparture(airport, map::MapParking(), map::MapHelipad(), map::MapRunwayEnd());
     else if(action == ui->actionSearchLogRouteAirportDest)
-      emit routeSetDestination(airport);
+      emit showCustomApproach(airport);
     else if(action == ui->actionSearchLogRouteAirportAlternate)
       emit routeAddAlternate(airport);
     else if(action == ui->actionLogdataRouteOpen)
