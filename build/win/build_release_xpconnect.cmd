@@ -34,8 +34,12 @@ rem Windows/qmake cannot deal with paths containing spaces/quotes - defines thes
 rem if defined XPSDK_BASE ( echo %XPSDK_BASE% ) else ( set XPSDK_BASE="%APROJECTS%\X-Plane SDK")
 
 rem Defines the used Qt for Xpconnect
-if defined QTDIR_STATIC ( echo QTDIR_STATIC=%QTDIR_STATIC% ) else ( set QTDIR_STATIC=%APROJECTS%\qt-%QT_VERSION%-static)
-if defined PATH_STATIC ( echo PATH_STATIC=%PATH_STATIC% ) else ( set PATH_STATIC=C:\Qt\Tools\mingw1120_64\bin\;%QTDIR_STATIC%\bin)
+rem if defined QTDIR_STATIC ( echo QTDIR_STATIC=%QTDIR_STATIC% ) else ( set QTDIR_STATIC=%APROJECTS%\qt-%QT_VERSION%-static)
+rem if defined PATH_STATIC ( echo PATH_STATIC=%PATH_STATIC% ) else ( set PATH_STATIC=C:\Qt\Tools\mingw1120_64\bin\;%QTDIR_STATIC%\bin)
+
+rem Defines the used Qt for all builds
+if defined QTDIR_SHARED ( echo QTDIR_SHARED=%QTDIR_SHARED% ) else ( set QTDIR_SHARED=C:\Qt\%QT_VERSION%\mingw_64)
+if defined PATH_SHARED ( echo PATH_SHARED=%PATH_SHARED% ) else ( set PATH_SHARED=C:\Qt\Tools\CMake_64\bin;C:\Qt\Tools\mingw1120_64\bin\;%QTDIR_SHARED%\bin)
 
 
 
@@ -58,8 +62,10 @@ mkdir "%APROJECTS%\build-atools-%CONF_TYPE%"
 pushd "%APROJECTS%\build-atools-%CONF_TYPE%"
 if errorlevel 1 goto :err
 
-set QTDIR=%QTDIR_STATIC%
-set PATH=%PATH%;%PATH_STATIC%
+set QTDIR=%QTDIR_SHARED%
+set PATH=%PATH%;%PATH_SHARED%
+rem set QTDIR=%QTDIR_STATIC%
+rem set PATH=%PATH%;%PATH_STATIC%
 
 echo QTDIR=%QTDIR%
 echo PATH=%PATH%
