@@ -23,6 +23,7 @@
 #include "mapgui/maplayer.h"
 #include "mapgui/mappaintwidget.h"
 #include "mapgui/mapthemehandler.h"
+#include "mapgui/mapwidget.h"
 #include "mappainter/paintcontext.h"
 #include "util/paintercontextsaver.h"
 
@@ -140,6 +141,7 @@ void MapPainterTop::render()
     context->szFont(0.8f);
 
     QStringList labels;
+    labels.append(QStringLiteral("JumpBack %1").arg(NavApp::getMapWidgetGui()->getJumpBackRemainingTime()));
     labels.append(QStringLiteral("Layer %1").arg(context->mapLayer->getMaxRange()));
     labels.append(QStringLiteral("Layer text %1").arg(context->mapLayerText->getMaxRange()));
     labels.append(QStringLiteral("Layer effective %1").arg(context->mapLayerEffective->getMaxRange()));

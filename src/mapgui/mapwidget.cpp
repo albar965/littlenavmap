@@ -367,7 +367,7 @@ void MapWidget::removeFullScreenExitButton()
   }
 }
 
-void MapWidget::getUserpointDragPoints(QPoint& cur, QPixmap& pixmap)
+void MapWidget::getUserpointDragPoints(QPoint& cur, QPixmap& pixmap) const
 {
   cur = userpointDragCurrrent;
   pixmap = userpointDragPixmap;
@@ -378,7 +378,7 @@ map::MapWeatherSource MapWidget::getMapWeatherSource() const
   return paintLayer->getMapWeatherSource();
 }
 
-void MapWidget::getRouteDragPoints(atools::geo::LineString& fixedPos, QPoint& cur)
+void MapWidget::getRouteDragPoints(atools::geo::LineString& fixedPos, QPoint& cur) const
 {
   fixedPos = routeDragFixed;
   cur = routeDragCurrrent;
@@ -389,6 +389,7 @@ void MapWidget::historyNext()
   const atools::gui::MapPosHistoryEntry& entry = history.next();
   if(entry.isValid())
   {
+    // Reset timer
     jumpBackToAircraftStart();
 
     // Do not fix zoom - display as is
@@ -405,6 +406,7 @@ void MapWidget::historyBack()
   const atools::gui::MapPosHistoryEntry& entry = history.back();
   if(entry.isValid())
   {
+    // Reset timer
     jumpBackToAircraftStart();
 
     // Do not fix zoom - display as is
@@ -525,6 +527,11 @@ void MapWidget::fuelOnOffTimeout()
   }
 }
 
+int MapWidget::getJumpBackRemainingTime() const
+{
+  return jumpBack->getRemainingTimeMs();
+}
+
 void MapWidget::jumpBackToAircraftStart()
 {
 #ifdef DEBUG_INFORMATION_JUMPBACK
@@ -534,7 +541,7 @@ void MapWidget::jumpBackToAircraftStart()
   if(NavApp::getMainUi()->actionMapAircraftCenter->isChecked() && NavApp::isConnectedAndAircraft())
   {
     if(jumpBack->isActive())
-      // Simply restart
+      // Simply restart using same coordinates
       jumpBack->restart();
     else
       // Start and save coordinates
@@ -566,6 +573,7 @@ void MapWidget::jumpBackToAircraftTimeout(const atools::geo::Pos& pos)
       jumpBack->restart();
     else
     {
+      // Cancel. Next map movement will save the position
       jumpBack->cancel();
 
       hideTooltip();
@@ -626,15 +634,6 @@ void MapWidget::updateTooltipResult()
   NavApp::getOnlinedataController()->removeOnlineShadowedAircraft(resultTooltip->onlineAircraft, resultTooltip->aiAircraft);
 }
 
-void MapWidget::hideTooltip()
-{
-  // Passing empty string hides tooltip
-  // This affects and hides tooltips across the whole application
-  QToolTip::showText(tooltipGlobalPos, QStringLiteral(), this);
-
-  tooltipGlobalPos = QPoint();
-}
-
 void MapWidget::handleHistory()
 {
   if(!noStoreInHistory)
@@ -647,6 +646,19 @@ void MapWidget::handleHistory()
 void MapWidget::updateTooltip()
 {
   showTooltip(true /* update */);
+}
+
+void MapWidget::hideTooltip()
+{
+  if(QToolTip::isVisible())
+    // Tooltip now hidden. Reset timer.
+    jumpBackToAircraftStart();
+
+  // Passing empty string hides tooltip
+  // This affects and hides tooltips across the whole application
+  QToolTip::showText(tooltipGlobalPos, QStringLiteral(), this);
+
+  tooltipGlobalPos = QPoint();
 }
 
 void MapWidget::showTooltip(bool update)
@@ -676,7 +688,8 @@ void MapWidget::showTooltip(bool update)
                                         OptionData::instance().getDisplayTooltipOptions());
 
       if(!text.isEmpty())
-        QToolTip::showText(tooltipGlobalPos, text, this);
+        // Show for forever (one day) to allow us to hide it manually
+        QToolTip::showText(tooltipGlobalPos, text, this, QRect(), 24 * 3600 * 1000);
       else
         // No text - hide
         hideTooltip();
@@ -940,7 +953,6 @@ void MapWidget::mousePressEvent(QMouseEvent *event)
   }
 
   hideTooltip();
-  jumpBackToAircraftCancel();
 
   // Avoid repaints
   resetPaintForDragTimer.stop();
@@ -1127,6 +1139,9 @@ void MapWidget::mouseReleaseEvent(QMouseEvent *event)
     return;
   }
 
+  // Start aircraft centering, etc. again
+  jumpBackToAircraftStart();
+
   // Check if mouse was moved between down and up which can happen while dragging overlays
   bool clickInRange = QLineF(buttonDownPoint, event->position()).length() < CLICK_MOVE_MIN_DISTANCE_PIXEL;
 
@@ -1149,9 +1164,6 @@ void MapWidget::mouseReleaseEvent(QMouseEvent *event)
   }
 
   hideTooltip();
-
-  // Start aircraft centering, etc. again
-  jumpBackToAircraftStart();
 
   // Avoid unneeded repaints
   resetPaintForDragTimer.stop();
@@ -1379,7 +1391,7 @@ void MapWidget::wheelEvent(QWheelEvent *event)
 
 #ifdef DEBUG_INFORMATION_WHEEL
   qDebug() << Q_FUNC_INFO
-  << "pixelDelta" << event->pixelDelta() << "angleDelta" << event->angleDelta()
+           << "pixelDelta" << event->pixelDelta() << "angleDelta" << event->angleDelta()
            << "lastWheelAngleY" << lastWheelAngleY << "lastWheelAngleX" << lastWheelAngleX
            << event->source() << "geometry()" << geometry() << "rect()" << rect() << "event->pos()" << event->position()
            << "event->angleDelta()" << event->angleDelta() << "event->modifiers()" << event->modifiers();
@@ -1689,14 +1701,11 @@ bool MapWidget::eventFilter(QObject *obj, QEvent *event)
          (modifiers == Qt::ControlModifier || modifiers == (Qt::ControlModifier | Qt::ShiftModifier)))
         consumeEvent = true;
 
-      // Movement starts delay every time
-      if(!consumeEvent && MOVE_KEYS.contains(key))
-        jumpBackToAircraftStart();
+      // Any key input starts delay again
+      jumpBackToAircraftStart();
 
       if(!consumeEvent && ZOOM_KEYS.contains(key))
       {
-        jumpBackToAircraftStart();
-
         // Pass to key event handler for zooming
         event->accept(); // Do not propagate further
         QWidget::event(event); // Call own event handler
@@ -1712,10 +1721,6 @@ bool MapWidget::eventFilter(QObject *obj, QEvent *event)
     }
   }
 
-  // Wheel =============================================
-  if(event->type() == QEvent::Wheel)
-    jumpBackToAircraftStart();
-
   if(mouseEvent != nullptr && !isPointVisible(mouseEvent->pos()))
   {
     // Filter any obscure Marble actions around the visible globe =========================================
@@ -1729,6 +1734,8 @@ bool MapWidget::eventFilter(QObject *obj, QEvent *event)
   // Catch the double click event to avoid Marble actions =========================================
   if(event->type() == QEvent::MouseButtonDblClick)
   {
+    jumpBackToAircraftStart();
+
     event->accept(); // Do not propagate further
     QWidget::event(event); // Call own event handler
     updateHelpOverlayLabel();
@@ -1738,6 +1745,8 @@ bool MapWidget::eventFilter(QObject *obj, QEvent *event)
   // Catch the wheel event and do own zooming since Marble is buggy =========================================
   if(event->type() == QEvent::Wheel)
   {
+    jumpBackToAircraftStart();
+
     event->accept(); // Do not propagate further
     QWidget::event(event); // Call own event handler
     updateHelpOverlayLabel();
@@ -1973,9 +1982,6 @@ void MapWidget::mouseMoveEvent(QMouseEvent *event)
 
         setCursor(cursor);
       } // if(event->buttons() == Qt::NoButton)
-      else
-        // A mouse button is pressed
-        jumpBackToAircraftCancel();
     }
   }
   else
@@ -1984,7 +1990,6 @@ void MapWidget::mouseMoveEvent(QMouseEvent *event)
   // Change cursor and keep aircraft from centering if moving in any drag and drop mode ================
   if(mouseState.testAnyFlag(ms::DRAG_ANY))
   {
-    jumpBackToAircraftCancel();
     setMouseCursor(Qt::CrossCursor);
 
     // Set context for fast redraw
@@ -2358,6 +2363,9 @@ void MapWidget::contextMenuEvent(QContextMenuEvent *event)
     connectGlobalActions();
 
   updateHelpOverlayLabel();
+
+  // Reset timer once done with the context menu
+  jumpBackToAircraftStart();
 }
 
 void MapWidget::editAny(const map::MapBase *base)
@@ -3394,7 +3402,7 @@ void MapWidget::simDataChanged(const atools::fs::sc::SimConnectData& simulatorDa
     if(!updatesEnabled())
       // Re-enabling updates implicitly calls update() on the widget
       setUpdatesEnabled(true);
-    else if((dataHasChanged || aiVisible || trailTruncated) && !contextMenuActive)
+    else if((dataHasChanged || aiVisible || trailTruncated)/* && !contextMenuActive*/)
       // Not scrolled or zoomed but needs a redraw
       update();
 

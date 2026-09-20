@@ -52,6 +52,12 @@ public:
   /* Start timer and do not reset values */
   void restart();
 
+  /* Get remaining time or -1 if not active */
+  int getRemainingTimeMs() const
+  {
+    return timer.remainingTime();
+  }
+
 signals:
   /* Timer triggered. Go back to aircraft centering. */
   void jumpBack(const atools::geo::Pos& pos);

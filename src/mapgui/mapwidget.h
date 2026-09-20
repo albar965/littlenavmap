@@ -88,10 +88,12 @@ public:
 
   /* If currently dragging flight plan: start, mouse and end position of the moving line. Start of end might be omitted
    * if dragging departure or destination */
-  void getRouteDragPoints(atools::geo::LineString& fixedPos, QPoint& cur);
+  void getRouteDragPoints(atools::geo::LineString& fixedPos, QPoint& cur) const;
 
   /* Get source and current position while dragging a userpoint */
-  void getUserpointDragPoints(QPoint& cur, QPixmap& pixmap);
+  void getUserpointDragPoints(QPoint& cur, QPixmap& pixmap) const;
+
+  int getJumpBackRemainingTime() const;
 
   map::MapWeatherSource getMapWeatherSource() const;
 
@@ -420,9 +422,6 @@ private:
   void simDataCalcFuelOnOff(const atools::fs::sc::SimConnectUserAircraft& aircraft,
                             const atools::fs::sc::SimConnectUserAircraft& last);
 
-  /* Center aircraft again after scrolling or zooming */
-  void jumpBackToAircraftTimeout(const atools::geo::Pos& pos);
-
   /* Needed filter to avoid and/or disable some Marble pecularities */
   bool eventFilter(QObject *obj, QEvent *event) override;
 
@@ -452,11 +451,15 @@ private:
   virtual void updateMapVisibleUi() const override;
   virtual void updateMapVisibleUiPostDatabaseLoad() const override;
 
-  /* Called at start of user interaction like moving or scrolling */
+  /* Called at start of user interaction like moving or scrolling.
+   * Restarts with unchanged position if active. Saves position and starts if inactive. */
   virtual void jumpBackToAircraftStart() override;
 
-  /* From center button. Stops timer. */
+  /* Stops timer and sets to inactive. */
   virtual void jumpBackToAircraftCancel() override;
+
+  /* Timeout. Center aircraft again after scrolling or zooming. */
+  void jumpBackToAircraftTimeout(const atools::geo::Pos& pos);
 
   /* Hide and prevent re-show */
   virtual void hideTooltip() override;
