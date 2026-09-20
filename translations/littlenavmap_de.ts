@@ -1645,7 +1645,7 @@ von &quot;Kurs zum Wegpunkt&quot; unterscheidet.</translation>
     <message>
         <location filename="../src/info/aircraftprogressconfig.cpp" line="158"/>
         <source>Leg course from</source>
-        <translation>Abschnittskurs von:</translation>
+        <translation>Abschnittskurs von</translation>
     </message>
     <message>
         <location filename="../src/info/aircraftprogressconfig.cpp" line="158"/>
@@ -1657,7 +1657,7 @@ der kalibrierten Missweisung.</translation>
     <message>
         <location filename="../src/info/aircraftprogressconfig.cpp" line="160"/>
         <source>Leg course to</source>
-        <translation>Abschnittskurs zu:</translation>
+        <translation>Abschnittskurs zu</translation>
     </message>
     <message>
         <location filename="../src/info/aircraftprogressconfig.cpp" line="160"/>

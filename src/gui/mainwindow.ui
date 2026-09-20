@@ -11194,7 +11194,7 @@ relation to shown airport</string>
      <normaloff>:/littlenavmap/resources/icons/fullscreen.svg</normaloff>:/littlenavmap/resources/icons/fullscreen.svg</iconset>
    </property>
    <property name="text">
-    <string>&amp;Fullscreen Map</string>
+    <string>Exit &amp;fullscreen mode</string>
    </property>
    <property name="toolTip">
     <string>Maximize the map and hide all other dock windows and the toolbar</string>
