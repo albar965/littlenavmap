@@ -4,6 +4,655 @@ This text is partially Markdown, so the formatting is sometimes strange.
 
 ==>>=============================================================================
 
+# Version 3.2.1.beta
+
+**This is a beta/test release of Little Navmap which adds new features, user interface improvements and fixes bugs.**
+
+**Note that the program translations and the user manual have not been updated yet.**
+
+**The menu layout and option pages have changed. See below in section `User Interface` for more information.**
+
+**See here if you would like to run the beta release besides your stable installation:
+[Little Navmap - User Manual - Portable Execution](https://www.littlenavmap.org/manuals/littlenavmap/release/latest/en/INSTALLATION.html#portable-execution).**
+
+**Also update Little Navconnect and Little Xpconnect if you're using one of these.
+Little Navmap will show a notification dialog if you use an outdated version of Little Xpconnect.
+You can still continue to use it, though.**
+
+**macOS users: Keep in mind that you have to clear the quarantine flag when updating Little Xpconnect. See
+[Little Navmap - User Manual - Clearing the Quarantine Flag on macOS](https://www.littlenavmap.org/manuals/littlenavmap/release/latest/en/XPCONNECT.html#clearing-the-quarantine-flag-on-macos).**
+
+Note that the font handling has changed. You probably have to adapt font sizes in the information display, the
+map display and the rest of the application.
+
+Thank you very much to everyone who reported bugs and issues!
+
+## Known Issues so far
+
+* X-Plane historical weather is not supported yet. Little Navmap will always show the latest.
+* The Little Xpconnect plugin uses shared libraries which can result in conflicts with other add-ons.
+* Loading of the MSFS scenery library takes at least 15 minutes. I cannot change this.
+
+## Changes from 3.0.18 to 3.2.1.beta
+
+* Added option for nearest and interpolated METAR reports.
+* Fixed crash when entering - in airport Country and other search fields
+* Added "" for searching for is null and - for searching is not null
+* Updated translation files
+* Update deletion of obsolete file in installer
+* Text corrections.
+* Changed texts in connection dialog and added hint about FSX and P3D
+* Debug information for measurement lines
+* Version 3.2.1.beta
+* Fixed aircraft performance handler
+  A saved performance collection is now continued once LNM is restarted. Once a session is finished
+  it won't be changed when doing a new flight. The session has to be reset manually. Fuel counter
+  now stops after touchdown. Text fixes.
+* Made runway ends hotspot indicators smaller
+* Text corrections
+  Fixed link in CARTO DGML files to request API key Clarified note about not showing keys in public
+* Added overlay sub-menu to map context menu.
+* Small corrections to aircraft performance user interface and messages
+* Removed last message about map projection after startup
+* Load is now focused button in load scenery library dialog
+* Better display of short measurment lines across the anti-meridian
+  Improved behavior if line points are close to anti-meridian Problems can still appear near the
+  poles due to rounding errors. Short measurement lines crossing the anti-meridian can appear
+  squiggly
+  #1381
+* Adjusted Carto map DGML files for new API key requirement
+  Added Carto map style Voyager Register for an API key at https://carto.com/basemaps/apikey/
+* Optimizations for range ring drawing
+  Fixed issue with white filled range rings
+* Corrected wrong territory comparison
+* Now linking with marble release on Windows to avoid message about library loaded twice
+* Fixed issue where an open modal dialog blocked application after loading database
+* Fixed crash after showing menu `More` in map context menu
+* Updated translation files
+* Changed draw order for navaids
+  waypoints, DME, NDB and then other VORs
+* Updated navaids for MSFS 2024
+* Removed WMM and navdata from resources. Now copied to installation folder.
+* Reduced SVG icons sizes and optimized icons
+* Corrections for help links.
+* Remove remaining traces of obsolete userdata to logbook conversion.
+* Adjusted colors for elevation profile ground
+* Change changelog to Github URL instead of local text file.
+  Now opening changelog automatically when version change is detected.
+* Fixes in options and profile texts
+* Fixed regression with user agent
+* Adusted keyboard modifiers for macOS and fixed tooltips
+  Changed tooltips and texts where command key is used on macOS. Fixed map detail button missing on
+  tooltip
+  Linux/Win -> macOS Shift -> Meta (Ctrl) Ctrl -> Command
+* Fix for transparent tooltip in profile on macOS
+* Fixed wrong tooltip text color on macOS dark style modes.
+* Changed order or sliders in profile
+  Normal horizontal zoom is now at the left
+* Fixed wrong cursor on editable map features
+  Now showing cross mark for moveable or editable features. Showing pointing hand for editable or
+  removeable features.
+* Fix for wrong alternate base color on macOS dark mode
+* Corrected separators in help menu on macOS
+* Fixed crash when timezone file cannot be loaded on macOS
+  Apply workaround to Qt bugs where QTimeZone fails to parse etc strings on macOS
+* Added GUI_BUILD variable for macOS builds
+  install_name_tool needs different syntax in Qt Creator and command line
+* Removed unneeded files
+* Removed unneeded code
+* Documentation on MSFS 2024 navaid collection.
+* Updated delete before installation list for Windows installer
+* Better delete message for map markers
+* Now adding `A` to title bar for automatic navdata selection
+  Shortening file names in title bar now
+* Map improvements and fixes for scaling
+  Fixed issues with map features not resized according to global scale and web server scale Line
+  widths now scaled too More fixes when drawing Added option for MORA grid line width Corrected wind
+  pointer placement
+* Fixed issues with dark color mode on Windows
+  Fixed dark links and blue alternate base when using automatic style. Adjusted base color for
+  better visibility in dark mode.
+* Changes to QR code display for web server
+  Changed dialog to show code for IP or name Added button to show QR code dialog from options Added
+  scaling for image keeping aspect ratio Added combo box for code selection
+* Version 3.2.0.beta
+* Split mapflags include file
+* Reduced unneeded updates and widget resizing in status bar
+* Adjusted user agent options
+  Removed random user agent option and adapted hint text in options
+* Changes to map themes
+  Set expiry time to two weeks for all included themes. Added OSM German and OSM French to stock
+  themes. Better error messages for map theme duplicates and errors.
+* Fixed for wrong forwards
+* Fixed for build issues and warnings on macOS
+* Fixed Windows build
+* Updated issue template.
+* Renamed route flags
+* Added note about changing values when changing units.
+* Adjusted hints in options
+  Added note about deleting theme cache. Changed size of spaces to avoid unneeded inflation of
+  dialog window size. Map theme cache folder can now be opened from hints.
+* Added checkbox for user agent configuration.
+* Added parameter AIRCRAFTTYPE to flight plan file name pattern
+  Added `Full pattern` in options on page file. The AIRCRAFTTYPE keyword is replaced with the ICAO
+  type designator for aircraft in the filenname pattern.
+* Refined ua settings
+* Changed color for national parks
+* Work on user agent
+* Added option to change user agent
+  Moved settings for map display cache, GLOBE cache, weather addresses and new user agent option to
+  page `Connections and Cache`
+* Added autosave for aircraft trail which can be changed in options
+  Closes #1366
+* Using correct user agent now
+* Added option for user agent
+* Added user indication and path to map theme name and tooltip
+* Fixed broken shortcuts in nav search ident field
+* Now limiting maximum connections to two to avoid server overload.
+  Adapted maximum connections in DGML files.
+* Added scroll areas to dialog windows to avoid issues with small screens or large scaling factors
+  Logbook Edit/new, Aircraft perf edit/new, Aircraft perf merge, route calc, userpoint edit/new
+* Fixed issue where opening flight plans closed dock window
+* Adjustements to runway end markers
+* Better list widget index behavior
+  List items now highlighted for matches. Selection now restored. Now showing message if nothing
+  matches or if search string is too short.
+* Text correction for procedure search table header.
+* Added real local time indication in aircraft progress
+  Read local time can be shown for destination, TOC, TOD and next waypoint. Is off by default.
+  Enable in Tools -> Aircraft display options
+* Corrected wrong display for map click help
+* Fixed wrong background color in tooltip text for weather source.
+* Removed remaining vector references.
+* Better text for range markers
+  Fixed missing edit hint in map click help.
+* Runway ends now have a hotspot which allows to select them as start position similar to parking
+  Corrected display for flight plan related tooltip messages. Added hint for hidden objects in
+  options dialog on page map display airport. Changed fetch of cached parking, helipads and runways
+  to avoid copying. Hotspot for runway end right-click is a black and white circle.
+* Fix for warning calling virtual functions from constructor
+* Fixed several focus and selection issues in dialogs
+  Tables now have current selection and entry set correctly after opening dialog windows. Now close
+  button is default when pressing enter instead of help.
+* Disabled confusing tab navigation for tables and lists
+* Moved register and unregister to constructor and destructors for non-modal dialogs
+* Fixed compilation issue
+  #1288
+* Route string description now matches userpoints
+  Read and write now considers userpoints matching `Waypoint`, `VOR`, `NDB` or `VRP`. Changed
+  sub-menu advanced in drop down dialog menu to more for more consistency. Added option `Read and
+  Write Userpoints`
+  #1288
+* Added userpoint lookup in UserdataController
+  Added default userpoint navaid replacements `Waypoint`, `VOR`, `NDB`, `VRP`
+  #1288
+* Added userpoint type to MapQuery::getMapObjectByIdent
+  #1288
+* Cleanup and optimizations in query classes
+* Warnings cleared
+* Fixed warnings and optimizations in result
+* Fixed broken wind arrows on web interface in macOS
+  #1318
+* Optimizations after check
+* Changed shortcur menu texts to clarify which shortcut toggles or activates a window
+  #1314
+* Pressing a function a second time closes active dock.
+  Pressing F4 activates airport search. Pressing again with active airport search closes the dock
+  and its tab stack buddies.
+  #1314
+* Improved map display route labels for dark maps.
+* Optimizations for string arguments
+* Attempt to style separator lines
+* Added text background option for airspaces
+  #1313
+* Added text background option for taxiways and runways in airport diagram
+  Adjusting text color depending on dark map style
+  #1313
+* Reorganized options
+  Added new airport display options page including label option tree More cleanup and name changes
+  in map options
+* Adjusted layout and tab order in marker dialogs
+* Added recent files menu to markers menu
+  Also fixed inconsistent naming for remove/delete
+* Added floating item on map showing help for map actions
+  Added Delete+Click besides Ctrl+Alt+Shift+Click for marker deletion Moved menus for overlays to
+  menu `Map`. Added overlay configuration menus to menu `Tools`. Better feature selection in case of
+  ambiguities
+* Moved translation files to sub-folder
+* Added maximum runway length slider to drop down menu in airport toolbar filter
+  More cleanup and optimization
+* Optimization - now omitting profile updates where not needed
+* Added more hints to status bar tooltips
+  Can be disabled in options
+* Added QR code display for web server address in options and tools menu
+* Fixed warning with AirportLabelAction
+* Userpoints can now be moved on map
+* Renamed type in map base
+* VOR, NDB and waypoints are now filled white
+  Adjusted map display for flight plan, procedure preview and selected logbook entries.
+* Fixed issue with overlapping undo/redo shortcuts for userpoints and logbook
+* Adjusted default toolbar style and toolbar like buttons
+* Now always setting altitude when creating new userpoints.
+* Better delete question dialog window for userpoints and logbooks.
+* Work on map editing modifier clicks
+  Alt+Click now edits all features on the map. Ctrl+Alt+Shift+Click now deletes all features on the
+  map. Better label with explanation in measurement line and range ring dialog. Ignoring drag
+  actions shorter than five pixels now.
+* Added hints for empty marker fields
+  Fixed issue where `do not show again` was not reset for delete marker questions Added confirmation
+  dialogs when deleting logbook entries and userpoints.
+* Renamed user features to more specific map markers
+* Merge pull request #1360 from 6639835/master
+  fix(route): avoid arbitrary procedure turn arcs after marker legs
+* Disabled drawing of touch screen marks for map image saving and clipboard copy.
+* Cleanup and renaming in marker dialog windows
+* Optimizations to avoid copying of user point lists
+* Fixed update issues for userpoints and logbook entries in information window
+  Information is now updated if userpoint or logbook entry is deleted
+* Changed user feature / marker editing and moving
+  All user features / markers are now editable #1168 Now all user features use the same text
+  background color More information in user feature tooltips. Changed color in
+  little_navmap_mapstyle.ini for all marker types and removed color setting for measurement lines in
+  options. Colors can now be set for user features / markers individually. Added new drag and drop
+  mode which can be used to move all user features / markers and userpoints on the map. This
+  replaces the flight plan drag and drop mode. Now using real drag and drop. Means: keep mouse
+  button pressed while moving a feature. Settings and colors of user feature / Marker dialogs are
+  now reset. Corrected draw order of user features / markers. Corrected order of user features /
+  markers to be the same in all menus. Fixed several formatting issues in tooltips. Made types
+  relocatable to avoid issues with not called constructors. Combined all edit and delete actions for
+  markers and userpoints into two map context menu items. Enabled clear button on more line edit
+  fields. Fixed missing registration for MapAirspaceFilter Moving userpoints now uses cursor center
+  instead of icon. Fixes for touch screen mode.
+* Userpoint last changed timestamp is now updated after moving point
+* Fixed issue where toggle all/none did not work after automatic enabling for userpoints or user
+  features
+* Fixed distance lines having direction reversed when loading
+  Corrected wrong flags test in MainWindow::optionsChanged Optimization when drawing measurement
+  lines
+* Changed drawing of regions for touch screen map mode
+  Removed crosses Removed option `Screen Areas Marks` Added new color option
+  TouchRegionCornerFillColor
+* Removed unneeded functions in map widget
+* Work on html and information displays
+  Improved display for METAR data in information Adjusted table colors for dark mode. Adjusted
+  alignment for weather data.
+* Improvements for context menus
+  Fixed changes applied when selecting cancel in runway dialog Added option `do not show again` in
+  runway selection dialog Now combining undo step for departure position, runway and airport
+* Added missing mnemonics in departure and destination context menus.
+* Corrected too large weather symbols
+  Added option AirportWeatherSymbolSize in maplayers.xml
+* Work on tooltips and HTML display
+  Fixed issue with misplaced horizontal line when using images in tooltip and information. Removed
+  unneeded line breaks. Added tooltip for departure start position in flight plan header. Made
+  tooltips smaller by compacting information. Corrected display for helipad numbers. More text
+  changes for consistency and better explanations for departure start. Fixed issue where helipad
+  positions where not saved with plan when using MSFS 2024 databases. Added workaround for missing
+  helipad numbers in MSFS 2024 database. Added map link for runway ends in info. Removed section
+  `Start positions`. Airway information and parking more compact. Map tooltip now shows only weather
+  source selected in menu. All other sources are only shown in information.
+* Fixed issue where procedures were found for helipads
+  Example WN70 selected accidentally procedures from KOLM. Now excluding helipads and closed
+  airports when trying to match airports between simulator and navdata Problems with too close
+  airports can remain
+* Added offsets for context menus to avoid accidental selection
+* Reworked context menus
+  Removed select runway menu items. Runways can now be selected when selecting an airport as
+  departure or destination. Runway selection dialog now always shows airport to clear runway or
+  procedures Fixed wrong names for departure and destination icons Aligned texts in all menus Fixed
+  crash when selecting runways for departure or arrival Fixed direct to wrongly enabled in map
+  context menu without connection to sim Now showing hints (is destination, etc.) in all flight plan
+  related menus
+* Removed obsolete deployment files
+* Updated portable scripts to pass over command line arguments
+* Fixed crash when selecting runway from flight plan context menu
+* Changed style for toolbar and toolbar like buttons
+* Added airport tooltips for route label and procedure search
+* Changed NAT URL to new JSON location
+* Corrected issue where automatic could not be selected in scenery library
+* Added display for waypoint names on lower zoom levels
+  Fixes in name capitalization
+* Information and highlights
+  Remove highlight links are now grayed out if no highlights are present Online and normal airspaces
+  are now cleared separately as indicated in the tabs
+* Fixed build error
+* Better error handling in build scripts
+* Made formatting for lambdas more consistent
+* Changed editing on multi-export configuration
+  Table can now select cells instead of rows. Reset and edit now based on selected cell. Press
+  Ctrl+E for inline editing paths and patterns. Changed context menu to show more information about
+  selected entry.
+* Added inline editing of remarks in flight plan table
+  Double click on remarks column opens inline editor. Focus lost or Esc saves changes. Ctrl+E still
+  opens edit dialog window.
+  #1350 and #1349
+* Now restoring window state from minimized if user activates non-modal windows like route calc
+* Changed flight plan waypoint related actions
+  Changed shortcut from `Return` to Ctrl+E to edit flight plan waypoints in table, userpoints in
+  search and logbook entries in search. Return is now consistent across all tables and shows item on
+  map and in information window. Dialog for editing flight plan waypoint remarks and flight plan
+  userpoints is now non-modal. Changes are applied immediately or after a delay. Dialog is cleared
+  for certain flight plan changes.
+  #1350 and #1349
+* Refactoring - removed unused methods and other
+* New coordinate formatter method with error message
+* Fixes in context menus
+  Added sub menu files and more to flight plan table Add range rings now show clicked feature name
+  Adding range rings now pre-fills feature name More corrections to menu texts
+* Fixed missing ident when adding range rings from search
+* Added export for all search result tables
+  Added menu `More` to search context menu. Now disabling or enabling export options for userpoints
+  and logbook depending on present entries Added default names for export. Better action labels for
+  clipboard options to indicate CSV. Header is now default on for all CSV exports. Small text
+  corrections.
+* Added CSV flight plan export format to multi export and file menu
+  CSV flight plan export saves all information independent of column order and visibility in flight
+  plan table. Adapted to CSV export changes
+  #1345
+* Resetting all table views for flight plan, search and logbook stats now
+  Workaround where column headers remained fixed after loading saved state. Reset view function now
+  also clear saved state.
+* Small adjustements to dialog margins
+  #1351
+* Optimization to painting.
+  Reduced accesses to GeoDataLatLonBox
+* Removed unwanted changes from PR #1351
+  Some did not compile with Qt 6.5 and a few changes did not make sense
+* Merge pull request #1351 from 6639835/master
+  fix(qt6): restore SimBrief export and Marble APIs (#1305)
+* Merge branch 'master' into master
+* Create pull_request_template.md
+* Update issue templates
+* Update issue templates
+* Update issue templates
+* More fixes for initial window layout application
+* Fixed issue with style change send twice after changing palette
+* Corrections in scenery library menu
+  Fixed issue where simulator menu item could be unchecked
+* Fixed long switch time between databases
+  Regression in Qt sending excessive signals when changing table header data
+* Fixed problem where profile was not updated after starting up
+* Added startup message to splash screen
+  Now setting font to splash screen message
+* Removed unneeded string instantiations
+* Reorganized option pages
+  Adde new pages `Map Font and Scale` and `Elevation Profile`
+* Added separate font option for elevation profile
+  Changed icons for profile data and map cache
+* Added option for buffer radius in elevation profile
+* Optimizations in Unit.
+  Replaced std::function with bare function pointer Renamed methods in Column
+* Changed option handling and fixed slow updates when applying option changes
+  Now updating only relevant parts of the program after applying changes. Fixed font handling.
+  Changed option dialog buttons to apply and close. Asking to apply if user changed options. Added
+  reset setting and restore defaults buttons Default map and profile font is now not bold. Asking
+  for restart if related options have changed. Resetting layout now if user changed map dock option.
+* Removed note about background when using route description.
+* Fixed several issues with application restart
+  Now resetting layout when map window option has changed. Reset options and restart now working.
+  Avoiding connection of new instance to currently running instance.
+* Fix for multiple DDE option
+* Using type safe testAnyFlags now
+* Fixed options dialog splitter having wrong size after reset
+* Fixed reset settings and restart behavior
+  Now using hidden startup option to avoid the new instance connecting to the old one while
+  restarting
+* Reduced dependencies for optiondata
+  Added separate option flags include file
+* Fixed issue where aiports popped out at screen borders
+  Helipads and other small airports were also drawn outside screen border.
+* More drawing accuracy and avoiding jumping map features
+* Added option for separate flight plan symbol size
+  Flight plan and label symbol sizes are now combined with general airport and navaid symbol and
+  label sizes.
+* Reduced wind update delay for faster startup of elevation profile
+* More fixes on elevation fonts
+  Labels were still cut off at corners Fonts at boundaries not adhere to map font settings.
+* File loading dialog fixed
+  Loading and canceling out when opening KML files produced a wrong error message.
+* Added option set cache size for GLOBE offline reader
+* Reworked elevation profile
+  Display options for the elevation profile are reset back to defaults Optimizations to speed up
+  calculation Increased profile accuracy and added maximum profile for surrounding area Changed
+  profile colors Altitude now shows faster when hovering mouse on map Added message when calculating
+  profile Fixed issues with cut-off text at departure and destination
+* Updated installer to remove obsolete night style configuration
+* Changed style handling
+  Renamed little_navmap_nightstyle.ini to little_navmap_darkstyle.ini Fusion and Dark are now loaded
+  from resources instead of hardcoding. Updated customize/README.txt Styles and map display
+  configuration is now copied to folder customize Made link and visited link color the same in
+  styles
+* Moved paths to lnm namespace variables.
+* Reorganized option pages
+  Moved map theme path to page `Map Themes` Added scroll area to all pages Renamed cache and files
+  to map cache
+* Improved display of flight plan header
+* Fixed pointer initialization
+* Deleting Ui objects now late to avoid crashes
+* Changed option dialog pages
+  Added page Elevation Data Renamed map keys to map theme keys Fixed wrong page links in options
+  dialog
+* Link tooltips for more dialog windows
+  Links are now underlined in the whole application
+* Fixed more issues with application font setting
+  Now adjusting all icon buttons to font size Reduced number of font applications Removed early font
+  assignment Font setting is now clear if equal to system font
+* Added tooltips to links in options dialog
+* Added white star for star rating to avoid confusion about dashes
+* Corrected font change in user interface
+  Fixed several issues where font was not applied or layout was garbled. Now resizing buttons with
+  images. Added wait cursor for style switch
+* Fixed loading of GFP flight plans
+  Now detecting procedures and runways. Resolving airports from user waypoint saved formats now
+* Fixed issues with disappearing lines and labels on map
+* Added map performance display option to debug menu
+* explicit constructors for map types
+* Attempt to fix build error when using Qt 6.10
+  Corrected move constructor and added move assignment operator to MapBase
+  #1343
+* Optimization: decleared flags as primitive type
+* Export `GTNXi with user defined waypoints.gfp` now also saves departure and destination as
+  coordinates
+* More debugging output for route adjustment
+* More debug output and optimizations in route string writer
+* Using ATOOLS_FLAGS_TO_STR to create debug output now
+  Added debug operators for basic enum types
+* Improved tooltips for links
+  Now using exact navaid types if available More texts corrected
+* Added tooltips for links in flight plan header, procedure search and information windows
+  Can be enabled or disabled in options on page `Display and Text` Added map link for logbook
+  entries.
+* Fixed issues when changing application font.
+  Updating connect and load database dialog now. Updating geometry after changing font. Fixed
+  updates of tab bar height after change. Dock widget title bar now changed.
+* Moved widgetutil functions to tools
+* Added combo boxes with saved history to airport and navaid search.
+  Added handling for combo boxes in search queries
+  #1335
+* Using ComboBoxHandler in connect dialog now.
+  Now puts the current entry on top of the list.
+* Work on tab style
+  Made tab height smaller and the same as height in locked layout Replaced close icons with svg
+* Added option for enhanced accuracy for scenery and other developers
+  Enhanced accuracy shows more decimal places for measurement lines, flight plan lines and range
+  rings, if enabled. Using double precision for range rings now Optimization in Unit: more inlines.
+  Fixed issues with inaccurate display of range ring distances. Now using correct locale dependent
+  sign
+  #1249
+* Cleanup in options dialog
+  Changed texts and group boxes for more clarification Changed page `Map Options` to page `Map
+  Options and Labels`
+* Fixed airport missing procedures
+  Airport reference points for UBBQ in simulator and navdata are too far away
+* Timezone name now correct depending on user interface language settings
+* Fixed captures of lambda expressions
+  Inline qHash
+* Moved map markers manager class to own file
+  to avoid dependencies
+* Reworked command line options and added more functions for user features
+  Added --force option to avoid any `has changed` dialog windows. Added options to load GPX and user
+  features Added folder `User Features` to directory structure. Use tools -> create dir structure to
+  add missing folders. Sub-menu user features added in map menu. Remove all user features menu item
+  added. Fixed issues with jumping main window on startup when using load recent layout. More code
+  cleanup
+* Cleanup and refactoring in markers
+  Moved current id to object
+* Renamed lnmmarker to lnmuserfeat
+  Changed markers in XML file to user features Added backup files to markers Added file detection
+* Omitting updates if status bar is not visible
+* Attempted fix to avoid crashes when reporting socket errors
+  Now using timer to start dialog boxes in main loop. Closing socket early before showing dialog
+  boxes.
+  #1336
+* Optimization in constants to speed up loading
+* Added ad-blocker recommendation
+* Reworked handling of user features
+  All user features like range rings or measurement lines are now saved into a XML file
+  little_navmap.lnmmarker in the settings folder. User features saved in little_navmap.ini are now
+  loaded once after updating and the redirected to the XML file. Moved all to MapMarkers.
+* Fixed issue where VOR information on MSA was incomplete when using Navigraph navdata
+* Improved drawing of taxiway labels
+  Labels are now better placed and avoid clusters Avoiding taxiway label overlap with runways now
+  Drawing labels after runway in case of slight overlap to avoid half drawn labels
+  #1290
+* Updated translation files
+  Added phrasebook for Qt Linguist
+* Changed links in options dialog
+  Links now use a symbolic name to jump to a page Renamed UI file for options dialog
+* QStringLiteral() and formatting
+* Updated airport link list
+  Removed AirNav.com from airport link list since data is not global Added metar.cloud
+* Fixed font and color update issues
+  Adapted to name changes in atools Small UI updates in options dialog Options dialog is now
+  not-modal Fixed issue with overlapping widgets when resizing main window Font now propagates
+  throughout the whole application when changed. Restart not needed. Fixed some widget colors not
+  being updated when changing style. Fixed font assignment in procedure search
+* Updated link to ICAO aircraft designator search in performance
+  Closes #1311
+* Using long name `Danger` for airpaces now  where needed
+  #1312
+* Fixed issue where font settings were not taken in search tables
+* Changed shortcuts for more logic
+  Ctrl+Alt+A is now actionMapShowAirports Ctrl+Alt+H is now actionMapAircraftCenter
+* Disabled sun shading for offline maps
+* Fixed style handling
+  Fusion is now always a light style independent of system
+* String optimizations in query classes
+* Optimizations for weather loading and parsing
+  Replaced std functions with raw function pointer to fetch airport coordinates. Speed up reading of
+  timestamps by replacing with own parsing Replaced strings with byte arrays in METAR index
+* Udated hash functions for Qt 6
+* Updated year in splash screen
+* Udated hash functions for Qt 6
+* Attempt to avoid stutters while downloading weather
+* Added configuration options for status bar
+  Fields can now be disabled in status bar context menu Four different time options can be selected
+* Fixed missing tooltip indications in drow down menu buttons
+* Adapted to changes in Settings
+  Now using template enum setters and getters
+* Adapted to changes in WidgetState
+* Moved status bar code out of MainWindow
+  Removed dependencies to MainWindow where not needed
+* Fixed issue where program froze when quitting during startup
+  Early termination resulted in a deadlock in Marble code which was still loading files for offline
+  maps. Now delaying exit as a workaround.
+* Removed bad file reference in DGML files
+  DATELINE.PNT is not included and not needed. This resulted in endless loading messages.
+* Updated Marble assets
+* Adjusted tree display
+* Added METAR & TAF link to airport information
+* Added time zone to tool tips, airport information and status bar
+* Fixed wrong UTC time and timezone when using X-Plane
+  albar965/littlenavmap#1125
+* Corrected time display in status bar
+  Removed GMT and added time zone for local time
+* Corrected missing display of coordinates if environment is not enabled in progress tab
+* Fixed deprecated time and color functions from Qt 6.10
+* Fix for broken table display in printing and PDF export
+* Added option for overall map display scaling
+  Added `Map Display Scaling` on options page `Map Display` to changed scale of all features, labels
+  and symbols. This helps to avoid issues with high density displays.
+  Added separate scaling for web display on options page `Web Server` to changed scale of all
+  features, labels and symbols on the web page to support display on high DPI tables or monitors.
+* Fixed crash when using old configuration files
+* Refactoring: Moved paint context to own class
+* Adjusted dark group box style
+* Added separator lines to random selection dialog
+* String optimizations
+* Now using Q_RELOCATABLE_TYPE
+* Updated translation files
+* Updated GridDelegate to avoid fat borders in tree views
+* Fixed issue with broken `show in search function` for userpoints
+  More string optimizations in search
+* String optimizations for online data fetching
+* Fix for broken zoom functionality in elevation profile
+* Fixed too large label in multi export configuration
+* Updates to style handling
+* Added automatic style change for dark/light system styles
+  Automatic now uses system colors while fusion uses its own light colors. Automatic is now default.
+* Better startup
+  Fixed jumping window when updating stored window position Fixed placement of main window when last
+  saved position is off-screen
+* Now relying on MAKEFLAGS for -j option
+* Adapted to changes for simpleprogressdialog in atools
+  Fixed issue where database configuration was logged twice Now correcting X-Plane configuration
+  where navdata is newer than simulator
+* Added options to load runway taxipaths and omit navaids for MSFS 2024 and 2020.
+  NAVAIDS: MSFS 2024 and MSFS 2020 only - disables complete navaid loading. Will skip waypoints,
+  VOR, NDB and ILS to speed up loading. Add `NAVAIDS` to `ExcludeBglObjectFilter` to skip navaid
+  loading.
+  TAXIWAYRUNWAY: MSFS 2024 and MSFS 2020 only - excludes or includes taxiways of type runway. Remove
+  `TAXIWAYRUNWAY` from `ExcludeBglObjectFilter` to include these.
+* Fixes for build on macOS
+* More Qt 6 porting
+  Disabled all deprecated before qt 6.5 Added version check for Qt version Fixed types not
+  registered Removed QStringLiteral from headers to avoid code bloat Changed fontchanged signal
+  Removed high DPI option since it is now default
+* Changed build for minimum Xpconnect
+* Optimisations
+  Partly added QString with QStringLiteral Removed 32-bit build scripts Updated copyright year
+* Updated to c++20 to allow compilation with Qt 6.10
+* Fixed compilation issues in installer
+* Updated setup to remove obsolete files on installation
+* Fix for wrong version variable
+* build scripts now use QT_VERSION
+  Corrected paths
+* Adapted to Xpconnect architecture changes on macOS
+* Fixes for build on macOS and cleared warnings. Minmum OS is now 11. Now building Intel and Arm
+  architectures.
+* Changed build scripts
+  Now requiring QT_VERSION environment variable Removed debug/release for Qt build Fixed warnings
+* Improved Windows build
+  Added script to build static Qt Adapted Xponnect to own static build
+* Updated Windows codec handling for online networks
+* Formatted code
+  Cleanup in output stream operators
+* Adapted to Qt 6
+  Replaced QVector with QList Replaced qAsConst with std::as_const Formatting more
+* Adapted build files for Qt 6
+* Adapted to Qt 6
+* Updated to C++17 standard
+* Added Wayland libraries
+* Removed latlon plugin
+* Removed unused Marble images
+* Removed QML and QtQuick references
+* Removed unused windows cursors
+* Fixed linux download links
+* Merge pull request #1315 from 6639835/master
+  Use DME location instead of LOC location for distance related legs
+* 3.1.0.develop
+* Merge branch 'release/3.0'
+* Updated translation files
+* Updated Chinese translation by Eyderoe
+* Updated links in README.md for 3.0.18
+* Updated links in README.md for 3.0.18
+
+
+
+
+
+==<<=============================================================================
+
 # Version 3.0.18
 
 ## Notes
@@ -75,7 +724,7 @@ Changes by [u-an-i](https://github.com/u-an-i).
 * Updated German translation.
 * Updated Brazilian Portuguese translation by Ricardo.
 
-==<<=============================================================================
+=================================================================================
 
 # Version 3.0.17
 
