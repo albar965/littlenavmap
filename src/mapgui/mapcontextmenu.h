@@ -98,6 +98,7 @@ enum MenuActionType
   USERPOINTADD, /* Add userpoint (in sub-menu) */
   SHOWINSEARCH, /* Show objects in search window with filter and selection */
   SHOWINROUTE, /* Select legs in flight plan table */
+  RNAV_REFERENCE, /* Show VOR/DME radial-distance references for clicked position */
 };
 
 }
@@ -182,6 +183,7 @@ private:
 
   // ----
   void insertRangeRingsMenu(QMenu& menu);
+  void insertRnavReferenceAction(QMenu& menu);
   void insertNavaidRangeMenu(QMenu& menu);
 
   // ui->actionMapHideOneRangeRing

@@ -43,6 +43,42 @@ paths       :
               schema        : 
                 type          : string
                 example       : "Airport not found" 
+  /rnav/reference :
+    get:
+      tags:
+      - RNAV
+      summary: Get VOR/DME radial-distance RNAV references for a coordinate
+      operationId: rnavReferenceAction
+      parameters:
+      - name: lat
+        required: true
+        in: query
+        description: Target latitude in decimal degrees
+        schema:
+          type: number
+          minimum: -90
+          maximum: 90
+      - name: lon
+        required: true
+        in: query
+        description: Target longitude in decimal degrees
+        schema:
+          type: number
+          minimum: -180
+          maximum: 180
+      responses:
+        200:
+          description: Ranked VOR/DME RNAV references
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RnavReferenceResponse'
+        400:
+          description: Invalid target coordinate
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
   /map/image    :
     get           :
       tags          :
@@ -238,6 +274,40 @@ components  :
           type                : number
         lon                 :
           type                : number
+    ErrorResponse:
+      type: object
+      properties:
+        error:
+          type: string
+    RnavCandidate:
+      type: object
+      properties:
+        recommended:
+          type: boolean
+        ident:
+          type: string
+        name:
+          type: string
+        frequency_mhz:
+          type: number
+        has_dme:
+          type: boolean
+        published_range_nm:
+          type: number
+        radial_magnetic_deg:
+          type: number
+        reference_distance_nm:
+          description: Ground distance from the base VOR/DME to the target coordinate in NM; this is the RNAV reference offset, not airborne DME slant range.
+          type: number
+    RnavReferenceResponse:
+      type: object
+      properties:
+        target:
+          $ref: '#/components/schemas/Coordinates'
+        candidates:
+          type: array
+          items:
+            $ref: '#/components/schemas/RnavCandidate'
     AirportInfoResponse :
       type                : object
       properties          :

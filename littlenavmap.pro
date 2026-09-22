@@ -457,6 +457,7 @@ SOURCES += \
   src/routestring/routestringreader.cpp \
   src/routestring/routestringtypes.cpp \
   src/routestring/routestringwriter.cpp \
+  src/rnav/rnavreference.cpp \
   src/search/abstractsearch.cpp \
   src/search/airporticondelegate.cpp \
   src/search/airportsearch.cpp \
@@ -501,6 +502,7 @@ SOURCES += \
   src/webapi/actionscontrollerindex.cpp \
   src/webapi/airportactionscontroller.cpp \
   src/webapi/mapactionscontroller.cpp \
+  src/webapi/rnavactionscontroller.cpp \
   src/webapi/simactionscontroller.cpp \
   src/webapi/uiactionscontroller.cpp \
   src/webapi/webapicontroller.cpp
@@ -677,6 +679,7 @@ HEADERS  += \
   src/routestring/routestringreader.h \
   src/routestring/routestringtypes.h \
   src/routestring/routestringwriter.h \
+  src/rnav/rnavreference.h \
   src/search/abstractsearch.h \
   src/search/airporticondelegate.h \
   src/search/airportsearch.h \
@@ -721,6 +724,7 @@ HEADERS  += \
   src/webapi/actionscontrollerindex.h \
   src/webapi/airportactionscontroller.h \
   src/webapi/mapactionscontroller.h \
+  src/webapi/rnavactionscontroller.h \
   src/webapi/simactionscontroller.h \
   src/webapi/uiactionscontroller.h \
   src/webapi/webapicontroller.h \

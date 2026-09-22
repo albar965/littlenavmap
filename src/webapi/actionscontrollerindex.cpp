@@ -18,6 +18,7 @@
 #include "actionscontrollerindex.h"
 #include "airportactionscontroller.h"
 #include "mapactionscontroller.h"
+#include "rnavactionscontroller.h"
 #include "simactionscontroller.h"
 #include "uiactionscontroller.h"
 
@@ -26,6 +27,7 @@ void ActionsControllerIndex::registerQMetaTypes()
   /* Available action controllers must be registered here */
   qRegisterMetaType<AirportActionsController *>();
   qRegisterMetaType<MapActionsController *>();
+  qRegisterMetaType<RnavActionsController *>();
   qRegisterMetaType<SimActionsController *>();
   qRegisterMetaType<UiActionsController *>();
 }

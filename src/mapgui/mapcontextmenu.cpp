@@ -185,6 +185,7 @@ void MapContextMenu::buildMainMenu()
     ui->actionStartDistanceMarker->setText(ui->actionStartDistanceMarker->text() % tr("\tCtrl+Click"));
 
   mapMenu.addAction(ui->actionStartDistanceMarker);
+  insertRnavReferenceAction(mapMenu);
   insertRangeRingsMenu(mapMenu);
   insertNavaidRangeMenu(mapMenu);
   insertPatternMenu(mapMenu);
@@ -955,6 +956,17 @@ void MapContextMenu::insertRangeRingsMenu(QMenu& menu)
                      sort(DEFAULT_TYPE_SORT, alphaSort),
                      tr("Add Range &Rings at %1 ..."), tr("Add range rings at this position to map"),
                      tr("Shift+Click"), QIcon(":/littlenavmap/resources/icons/rangerings.svg"), true /* allowNoMapObject */, callback);
+}
+
+void MapContextMenu::insertRnavReferenceAction(QMenu& menu)
+{
+  ActionCallback callback = [this](int, const map::MapResultIndex&, QString&, QIcon&, bool& disable) -> void {
+    disable = !visibleOnMap;
+  };
+
+  insertAction(menu, mc::RNAV_REFERENCE, tr("&RNAV Reference ..."),
+               tr("Show VOR/DME radial and distance references for this map position"), QStringLiteral(), QIcon(),
+               -1, MapResultIndex(), true /* allowNoMapObject */, callback);
 }
 
 void MapContextMenu::insertNavaidRangeMenu(QMenu& menu)

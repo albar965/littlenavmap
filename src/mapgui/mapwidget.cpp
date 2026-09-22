@@ -64,6 +64,7 @@
 #include "query/procedurequery.h"
 #include "route/routealtitude.h"
 #include "route/routecontroller.h"
+#include "rnav/rnavreference.h"
 #include "search/searchcontroller.h"
 #include "settings/settings.h"
 #include "ui_mainwindow.h"
@@ -75,6 +76,7 @@
 #include <QContextMenuEvent>
 #include <QToolTip>
 #include <QClipboard>
+#include <QMessageBox>
 #include <QPushButton>
 #include <QStringBuilder>
 
@@ -2259,6 +2261,42 @@ void MapWidget::contextMenuEvent(QContextMenuEvent *event)
         case mc::RANGERINGS:
           addRangeMark(pos, result, true /* showDialog */);
           break;
+
+        case mc::RNAV_REFERENCE:
+        {
+          QList<map::MapVor> vors;
+          {
+            QueryLocker locker(queries);
+            map::MapResultIndex *nearby = queries->getMapQuery()->getNearestNavaids(pos, 200.f, map::VOR, 0, 0.f);
+            if(nearby != nullptr)
+              for(const map::MapBase *nearbyBase : *nearby)
+                if(nearbyBase != nullptr && nearbyBase->type == map::VOR)
+                  vors.append(nearbyBase->asObj<map::MapVor>());
+          }
+
+          const QList<rnav::Reference> references = rnav::calculateReferences(pos, vors);
+          if(references.isEmpty())
+          {
+            QMessageBox::information(this, tr("RNAV Reference"),
+                                     tr("No suitable VOR/DME station found within the published station range."));
+            break;
+          }
+
+          QString text = tr("<table><tr><th align=\"left\">VOR/DME</th><th align=\"left\">Frequency</th>"
+                            "<th align=\"left\">Radial</th><th align=\"left\">Distance</th><th align=\"left\">Range</th></tr>");
+          for(const rnav::Reference& reference : references)
+          {
+            text += tr("<tr><td>%1</td><td>%2 MHz</td><td>R-%3°</td><td>%4 NM</td><td>%5 NM</td></tr>")
+                    .arg(reference.vor.ident.toHtmlEscaped())
+                    .arg(reference.vor.frequency / 1000.0, 0, 'f', 2)
+                    .arg(qRound(reference.radialMagDeg))
+                    .arg(reference.distanceNm, 0, 'f', 1)
+                    .arg(reference.vor.range);
+          }
+          text += QStringLiteral("</table>");
+          QMessageBox::information(this, tr("RNAV Reference"), text);
+          break;
+        }
 
         case mc::NAVAIDRANGE:
           // Navaid range rings
