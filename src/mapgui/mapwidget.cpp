@@ -2143,6 +2143,7 @@ void MapWidget::contextMenuEvent(QContextMenuEvent *event)
     return;
 
   // Disable any automatic scrolling and focus lost actions resulting in drag cancellation
+  // Enabled early after successfull contextMenu.exec()
   atools::util::ContextSaverBool saver(contextMenuActive);
 
   QPoint point;
@@ -2179,7 +2180,7 @@ void MapWidget::contextMenuEvent(QContextMenuEvent *event)
   // Open menu - use null point if cursor is outside of map window
   if(contextMenu.exec(menuPoint, notInViewport ? QPoint() : point))
   {
-    // Enable map updates again
+    // Enable map updates again for most actions
     contextMenuActive = false;
     connectGlobalActions();
 
@@ -2274,13 +2275,20 @@ void MapWidget::contextMenuEvent(QContextMenuEvent *event)
         case mc::PROCEDUREADD:
           if(legs != nullptr)
           {
+            // Disable any automatic scrolling and focus lost actions resulting in drag cancellation
+            // This is required for all actions which open a dialog window
+            atools::util::ContextSaverBool saver(contextMenuActive);
+
             emit routeInsertProcedure(*legs);
             NavApp::getSearchController()->clearProcedureSelectionAndPreviews();
           }
           break;
 
         case mc::DESTINATION:
-          emit showCustomApproach(airport);
+          {
+            atools::util::ContextSaverBool saver(contextMenuActive);
+            emit showCustomApproach(airport);
+          }
           break;
 
         case mc::DEPARTURE:
@@ -2334,20 +2342,32 @@ void MapWidget::contextMenuEvent(QContextMenuEvent *event)
           break;
 
         case mc::CONVERTPROCEDURE:
-          emit convertProcedure(contextMenu.getSelectedRouteIndex());
+          {
+            // Disable any automatic scrolling and focus lost actions resulting in drag cancellation
+            atools::util::ContextSaverBool saver(contextMenuActive);
+            emit convertProcedure(contextMenu.getSelectedRouteIndex());
+          }
           break;
 
         case mc::MARKAIRPORTADDON:
-          if(NavApp::isGlobeOfflineProvider())
-            pos.setAltitude(NavApp::getElevationProvider()->getElevationFt(pos));
-          emit addUserpointFromMap(result, pos, true /* airportAddon */);
+          {
+            // Disable any automatic scrolling and focus lost actions resulting in drag cancellation
+            atools::util::ContextSaverBool saver(contextMenuActive);
+            if(NavApp::isGlobeOfflineProvider())
+              pos.setAltitude(NavApp::getElevationProvider()->getElevationFt(pos));
+            emit addUserpointFromMap(result, pos, true /* airportAddon */);
+          }
           break;
 
         case mc::USERPOINTADD:
-          if(NavApp::isGlobeOfflineProvider())
-            pos.setAltitude(NavApp::getElevationProvider()->getElevationFt(pos));
-          emit addUserpointFromMap(result, pos, false /* airportAddon */);
-          break;
+          {
+            // Disable any automatic scrolling and focus lost actions resulting in drag cancellation
+            // This is required for all actions which open a dialog window
+            atools::util::ContextSaverBool saver(contextMenuActive);
+            if(NavApp::isGlobeOfflineProvider())
+              pos.setAltitude(NavApp::getElevationProvider()->getElevationFt(pos));
+            emit addUserpointFromMap(result, pos, false /* airportAddon */);
+          }          break;
 
         case mc::SHOWINSEARCH:
           showResultInSearch(base);
@@ -2372,6 +2392,10 @@ void MapWidget::editAny(const map::MapBase *base)
 {
   if(base != nullptr)
   {
+    // Disable any automatic scrolling and focus lost actions resulting in drag cancellation
+    // This is required for all actions which open a dialog window
+    atools::util::ContextSaverBool saver(contextMenuActive);
+
     int routeIndex = map::routeIndex(base);
     if(routeIndex != -1)
       emit editUserWaypointName(routeIndex);
@@ -2394,6 +2418,9 @@ void MapWidget::removeAny(const map::MapBase *base)
 {
   if(base != nullptr)
   {
+    // Disable any automatic scrolling and focus lost actions resulting in drag cancellation
+    atools::util::ContextSaverBool saver(contextMenuActive);
+
     int routeIndex = map::routeIndex(base);
     if(routeIndex != -1)
       emit routeDelete(routeIndex, true /* selectCurrent */);
@@ -2502,6 +2529,9 @@ void MapWidget::addDeparture(const map::MapBase *base)
 {
   if(base != nullptr)
   {
+    // Disable any automatic scrolling and focus lost actions resulting in drag cancellation
+    atools::util::ContextSaverBool saver(contextMenuActive);
+
     map::MapAirport airport = base->asObj<map::MapAirport>();
     const map::MapParking parking = base->asObj<map::MapParking>();
     const map::MapHelipad helipad = base->asObj<map::MapHelipad>();
@@ -3402,7 +3432,7 @@ void MapWidget::simDataChanged(const atools::fs::sc::SimConnectData& simulatorDa
     if(!updatesEnabled())
       // Re-enabling updates implicitly calls update() on the widget
       setUpdatesEnabled(true);
-    else if((dataHasChanged || aiVisible || trailTruncated)/* && !contextMenuActive*/)
+    else if(dataHasChanged || aiVisible || trailTruncated)
       // Not scrolled or zoomed but needs a redraw
       update();
 
@@ -4132,6 +4162,9 @@ void MapWidget::addPatternMarker(const map::MapAirport& airport)
 {
   qDebug() << Q_FUNC_INFO;
 
+  // Disable any automatic scrolling and focus lost actions resulting in drag cancellation
+  atools::util::ContextSaverBool saver(contextMenuActive);
+
   // Create new marker with new id
   map::PatternMarker marker;
   marker.id = NavApp::getMapMarkers()->getNextMapMarkerId();
@@ -4165,6 +4198,9 @@ void MapWidget::removePatternMarker(int id)
 void MapWidget::addHoldingMarker(const map::MapResult& result, const atools::geo::Pos& position)
 {
   qDebug() << Q_FUNC_INFO;
+
+  // Disable any automatic scrolling and focus lost actions resulting in drag cancellation
+  atools::util::ContextSaverBool saver(contextMenuActive);
 
   // Create new marker with new id
   map::HoldingMarker marker;
@@ -4302,6 +4338,10 @@ void MapWidget::jumpToCoordinatesCenter()
 void MapWidget::jumpToCoordinatesPos(const atools::geo::Pos& pos)
 {
   qDebug() << Q_FUNC_INFO << pos;
+
+  // Disable any automatic scrolling and focus lost actions resulting in drag cancellation
+  atools::util::ContextSaverBool saver(contextMenuActive);
+
   CoordinateDialog dialog(this, pos);
   if(dialog.exec() == QDialog::Accepted)
   {
@@ -4387,6 +4427,9 @@ void MapWidget::addNavRangeMark(const map::MapResult& result, const atools::geo:
 
 void MapWidget::addRangeMarkFromMap(const atools::geo::Pos& pos, bool showDialog)
 {
+  // Disable any automatic scrolling and focus lost actions resulting in drag cancellation
+  atools::util::ContextSaverBool saver(contextMenuActive);
+
   // Create new marker with new id
   map::RangeMarker marker;
   marker.position = pos;
@@ -4420,6 +4463,9 @@ void MapWidget::addRangeMarkFromMap(const atools::geo::Pos& pos, bool showDialog
 
 void MapWidget::addRangeMark(const atools::geo::Pos& pos, const map::MapResult& result, bool showDialog)
 {
+  // Disable any automatic scrolling and focus lost actions resulting in drag cancellation
+  atools::util::ContextSaverBool saver(contextMenuActive);
+
   // Pre-fill the marker object with waypoint information before opening dialog
   map::RangeMarker marker;
   marker.id = NavApp::getMapMarkers()->getNextMapMarkerId();

@@ -3935,8 +3935,10 @@ void RouteController::convertProcedureInternal(proc::MapProcedureTypes types)
                          "<p>Note that you can undo this conversion.</p>"
                            "<p>Converting a procedure to waypoints loses information:</p>"
                              "<ul>"
-                               "<li>Several approach procedure leg types like holds and turns cannot be converted and will appear as straight lines.</li>"
-                                 "<li>Speed and altitude restrictions are included as remarks and are not followed in the elevation profile.</li>"
+                               "<li>Several approach procedure leg types like holds and turns cannot be converted and "
+                                 "will appear as straight lines.</li>"
+                                 "<li>Speed and altitude restrictions are included as remarks and "
+                                   "are not followed in the elevation profile.</li>"
                                  "</ul>");
 
   dialog->showWarnMsgBox(lnm::ACTIONS_SHOW_FLIGHTPLAN_WARN_CONVERT, message, tr("Do not &show this dialog again."));

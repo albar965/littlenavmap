@@ -524,7 +524,8 @@ private:
   ms::MouseStates mouseState = ms::DRAG_NONE;
   bool noInfoClick = false;
   bool scrolling = false;
-  bool contextMenuActive = false, distanceDragShowDialog = false,
+  bool contextMenuActive = false, /* Set if context menu or dialog windows are open and avoids jump back to aircraft */
+       distanceDragShowDialog = false, /* Show dialog window if distance drag is finished */
        deletePressed = false /* Detect delete key status for Delete+Mouse+Click */;
 
   /* Current moving position when dragging a flight plan point or leg */
