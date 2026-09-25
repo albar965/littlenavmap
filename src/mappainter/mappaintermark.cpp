@@ -94,8 +94,11 @@ void MapPainterMark::render()
 {
   atools::util::PainterContextSaver saver(context->painter);
 
-  paintSearchCenterMarker();
-  paintHome();
+  if(context->objectDisplayTypes.testFlag(map::MARK_SEARCH_CENTER))
+    paintSearchCenterMarker();
+
+  if(context->objectDisplayTypes.testFlag(map::MARK_HOME))
+    paintHome();
 
   // Traffic patterns
   if(context->objectTypes.testFlag(map::MARK_PATTERNS))

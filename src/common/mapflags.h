@@ -198,6 +198,9 @@ enum MapDisplayType : quint32
   AIRCRAFT_TURN_PATH = 1 << 20, /* Turn path at aircraft */
   DIRECT_TO_DEPARTURE = 1 << 22, /* Course line direct to departure runway */
 
+  MARK_HOME = 1 << 23, /* Center of home view */
+  MARK_SEARCH_CENTER = 1 << 24, /* Center for distance search */
+
   /* Also update mapDisplayTypeToString() */
 
   LOGBOOK_ALL = LOGBOOK_DIRECT | LOGBOOK_ROUTE | LOGBOOK_TRACK

@@ -368,6 +368,8 @@ MapPixmap MapActionsController::getPixmapRect(int width, int height, atools::geo
       mapPaintWidget->setShowMapObjectDisplay(map::AIRCRAFT_ENDURANCE, false);
       mapPaintWidget->setShowMapObjectDisplay(map::AIRCRAFT_SELECTED_ALT_RANGE, false);
       mapPaintWidget->setShowMapObjectDisplay(map::AIRCRAFT_TURN_PATH, false);
+      mapPaintWidget->setShowMapObjectDisplay(map::MARK_HOME, false);
+      mapPaintWidget->setShowMapObjectDisplay(map::MARK_SEARCH_CENTER, false);
 
       // Set detail factor
       mapPaintWidget->getMapPaintLayer()->setDetailLevel(detailFactor, detailFactor);

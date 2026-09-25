@@ -1561,6 +1561,10 @@ void MainWindow::connectAllSlots()
   connect(ui->actionMapShowAircraftOnline, &QAction::toggled, this, &MainWindow::updateMapObjectsShownMap);
   connect(ui->actionMapShowAircraftAiBoat, &QAction::toggled, this, &MainWindow::updateMapObjectsShownMap);
   connect(ui->actionMapShowAircraftTrack, &QAction::toggled, this, &MainWindow::updateMapObjectsShown);
+
+  connect(ui->actionShowHomeViewMarker, &QAction::toggled, this, &MainWindow::updateMapObjectsShown);
+  connect(ui->actionShowDistanceSearchCenterMarker, &QAction::toggled, this, &MainWindow::updateMapObjectsShown);
+
   connect(ui->actionShowAirspaces, &QAction::toggled, this, &MainWindow::updateMapObjectsShownMap);
   connect(ui->actionMapResetSettings, &QAction::triggered, this, &MainWindow::resetMapObjectsShown);
 
@@ -4405,6 +4409,7 @@ void MainWindow::restoreStateMain()
                          ui->actionMapShowRoute, ui->actionMapShowTocTod, ui->actionMapShowAlternate, ui->actionMapShowAircraft,
                          ui->actionShowDirectToRunway, ui->actionMapShowCompassRose, ui->actionMapShowCompassRoseAttach,
                          ui->actionMapShowEndurance, ui->actionMapShowSelectedAltRange, ui->actionMapShowTurnPath,
+                         ui->actionShowDistanceSearchCenterMarker, ui->actionShowHomeViewMarker,
                          ui->actionMapShowAircraftAi, ui->actionMapShowAircraftOnline, ui->actionMapShowAircraftAiBoat,
                          ui->actionMapShowAircraftTrack, ui->actionInfoApproachShowMissedAppr, ui->actionSearchLogdataShowDirect,
                          ui->actionSearchLogdataShowRoute, ui->actionSearchLogdataShowTrack});
@@ -4843,6 +4848,7 @@ void MainWindow::saveActionStates()
                                            ui->actionMapShowVictorAirways, ui->actionMapShowJetAirways, ui->actionMapShowTracks,
                                            ui->actionShowAirspaces, ui->actionMapShowRoute, ui->actionMapShowTocTod,
                                            ui->actionMapShowAlternate, ui->actionMapShowAircraft, ui->actionMapShowCompassRose,
+                                           ui->actionShowDistanceSearchCenterMarker, ui->actionShowHomeViewMarker,
                                            ui->actionMapShowCompassRoseAttach, ui->actionMapShowEndurance, ui->actionShowDirectToRunway,
                                            ui->actionMapShowSelectedAltRange, ui->actionMapShowTurnPath, ui->actionMapAircraftCenter,
                                            ui->actionMapShowAircraftAi, ui->actionMapShowAircraftOnline, ui->actionMapShowAircraftAiBoat,

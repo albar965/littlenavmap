@@ -459,6 +459,9 @@
      <property name="title">
       <string>Map &amp;Markers</string>
      </property>
+     <addaction name="actionShowHomeViewMarker"/>
+     <addaction name="actionShowDistanceSearchCenterMarker"/>
+     <addaction name="separator"/>
     </widget>
     <widget class="QMenu" name="menuAircraft">
      <property name="title">
@@ -12810,6 +12813,42 @@ from either the departure parking or the user aircraft while taxiing.</string>
    </property>
    <property name="statusTip">
     <string>Delete all recent flight plans from the menu</string>
+   </property>
+  </action>
+  <action name="actionShowHomeViewMarker">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="icon">
+    <iconset resource="../../littlenavmap.qrc">
+     <normaloff>:/littlenavmap/resources/icons/home.svg</normaloff>:/littlenavmap/resources/icons/home.svg</iconset>
+   </property>
+   <property name="text">
+    <string>Show &amp;Home View Marker</string>
+   </property>
+   <property name="toolTip">
+    <string>Show the center of the home view</string>
+   </property>
+   <property name="statusTip">
+    <string>Show the center of the home view</string>
+   </property>
+  </action>
+  <action name="actionShowDistanceSearchCenterMarker">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="icon">
+    <iconset resource="../../littlenavmap.qrc">
+     <normaloff>:/littlenavmap/resources/icons/mark.svg</normaloff>:/littlenavmap/resources/icons/mark.svg</iconset>
+   </property>
+   <property name="text">
+    <string>Show &amp;Distance Search Center Marker</string>
+   </property>
+   <property name="toolTip">
+    <string>Show the center for the airport and navaid distance search</string>
+   </property>
+   <property name="statusTip">
+    <string>Show the center for the airport and navaid distance search</string>
    </property>
   </action>
  </widget>

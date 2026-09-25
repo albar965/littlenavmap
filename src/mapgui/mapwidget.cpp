@@ -3886,6 +3886,7 @@ void MapWidget::resetSettingActionsToDefault()
                                       ui->actionShowAirspaces, ui->actionMapShowRoute, ui->actionMapShowTocTod, ui->actionMapShowAlternate,
                                       ui->actionMapShowAircraft, ui->actionMapShowCompassRose, ui->actionMapShowCompassRoseAttach,
                                       ui->actionMapShowEndurance, ui->actionMapShowSelectedAltRange, ui->actionMapShowTurnPath,
+                                      ui->actionShowDistanceSearchCenterMarker, ui->actionShowHomeViewMarker,
                                       ui->actionMapShowAircraftAi, ui->actionMapShowAircraftOnline, ui->actionShowDirectToRunway,
                                       ui->actionMapShowAircraftAiBoat, ui->actionMapShowAircraftTrack, ui->actionInfoApproachShowMissedAppr,
                                       ui->actionMapShowGrid, ui->actionMapShowCities, ui->actionMapShowMinimumAltitude,
@@ -3934,6 +3935,10 @@ void MapWidget::resetSettingActionsToDefault()
   ui->actionMapShowCities->setChecked(true);
   ui->actionMapShowMinimumAltitude->setChecked(true);
   // --
+
+  ui->actionShowDistanceSearchCenterMarker->setChecked(false);
+  ui->actionShowHomeViewMarker->setChecked(false);
+
   ui->actionMapShowAirportWeather->setChecked(true);
   // Weather sources unmodified
   // --
@@ -4018,6 +4023,8 @@ void MapWidget::updateMapObjectsShown()
   setShowMapObjectDisplay(map::AIRCRAFT_SELECTED_ALT_RANGE, ui->actionMapShowSelectedAltRange->isChecked());
   setShowMapObjectDisplay(map::AIRCRAFT_TURN_PATH, ui->actionMapShowTurnPath->isChecked());
   setShowMapObjectDisplay(map::DIRECT_TO_DEPARTURE, ui->actionShowDirectToRunway->isChecked());
+  setShowMapObjectDisplay(map::MARK_HOME, ui->actionShowHomeViewMarker->isChecked());
+  setShowMapObjectDisplay(map::MARK_SEARCH_CENTER, ui->actionShowDistanceSearchCenterMarker->isChecked());
   setShowMapObject(map::AIRCRAFT, ui->actionMapShowAircraft->isChecked());
   setShowMapObject(map::AIRCRAFT_TRAIL, ui->actionMapShowAircraftTrack->isChecked());
   setShowMapObject(map::AIRCRAFT_AI, ui->actionMapShowAircraftAi->isChecked());
@@ -4359,6 +4366,8 @@ void MapWidget::changeSearchMark(const atools::geo::Pos& pos)
 {
   searchMarkPos = pos;
 
+  NavApp::getMainUi()->actionShowDistanceSearchCenterMarker->setChecked(true);
+
   // Will update any active distance search
   emit searchMarkChanged(searchMarkPos);
   update();
@@ -4369,6 +4378,7 @@ void MapWidget::changeHome()
 {
   homePos = getCenterPos();
   homeDistance = distance();
+  NavApp::getMainUi()->actionShowHomeViewMarker->setChecked(true);
   update();
   NavApp::getStatusBar()->setStatusMessage(tr("Changed home position."));
 }
