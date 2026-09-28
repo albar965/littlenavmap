@@ -421,6 +421,11 @@ placed on the map by the user.
   not show procedures since Qingdao Liuting was wrongly detected. #1337
 * Now correcting all country names which are missing or misspelled. This is applied when loading
   scenery library data of all simulators.
+* Now skipping the loading of all navdata and all procedures if a Navigraph update is detected in
+  the scenery library. This is done by checking for the files `navigraph-navdata/manifest.json` and
+  `navigraph-navdata-base/manifest.json` in `Community` for creator and other attributes.
+  This speeds up loading significantly but requires the installation of the Navigraph update
+  in Little Navmap.
 
 ### General
 
