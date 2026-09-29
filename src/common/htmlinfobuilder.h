@@ -313,7 +313,7 @@ public:
   void rangeMarkerText(const map::RangeMarker& marker, atools::util::HtmlBuilder& html, const Route *) const;
   void distanceMarkerText(const map::DistanceMarker& marker, atools::util::HtmlBuilder& html, const Route *) const;
 
-  void setSymbolSize(const QSize& value)
+  void setSymbolSize(const QSizeF& value)
   {
     symbolSize = value;
   }
@@ -479,7 +479,7 @@ private:
   void markerTitle(const QString& text, const map::MapNav& nav, float courseTrue, atools::util::HtmlBuilder& html, bool user = false) const;
 
   /* Airport, navaid and userpoint icon size */
-  QSize symbolSize = QSize(18, 18);
+  QSizeF symbolSize = QSize(18., 18.);
 
   /* Airport, navaid and userpoint icon title size */
   QSize symbolSizeTitle = QSize(24, 24);

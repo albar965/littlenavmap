@@ -75,7 +75,7 @@ class SymbolPainter
 public:
   /* Create icons for tooltips, table views and more. Size is pixel. */
   static QIcon createAirportIcon(const map::MapAirport& airport, int size);
-  static QIcon createAirportWeatherIcon(const atools::fs::weather::MetarParser& metar, int size);
+  static QIcon createAirportWeatherIcon(const atools::fs::weather::MetarParser& metar, float size);
   static QIcon createVorIcon(const map::MapVor& vor, int size, bool darkMap);
   static QIcon createNdbIcon(int size, bool darkMap);
   static QIcon createAirwayIcon(const map::MapAirway& airway, int size, bool darkMap);

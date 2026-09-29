@@ -5679,9 +5679,13 @@ void HtmlInfoBuilder::addFlightRulesSuffix(atools::util::HtmlBuilder& html, cons
   {
     if(!print)
     {
+      QSizeF symSize = symbolSize;
+      if(!info)
+        symSize *= 0.8;
+
       // Do not enclose img tab with div tags to avoid unwanted line breaks
-      html.img(SymbolPainter::createAirportWeatherIcon(metar, symbolSize.height()), QStringLiteral(), QStringLiteral(), symbolSize,
-               false /* divEnclose */);
+      html.img(SymbolPainter::createAirportWeatherIcon(metar, symSize.height()),
+               QStringLiteral(), QStringLiteral(), symSize.toSize(), false /* divEnclose */);
       html.nbsp();
     }
 

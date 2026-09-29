@@ -42,7 +42,7 @@ QIcon SymbolPainter::createAirportIcon(const map::MapAirport& airport, int size)
   return QIcon(pixmap);
 }
 
-QIcon SymbolPainter::createAirportWeatherIcon(const atools::fs::weather::MetarParser& metar, int size)
+QIcon SymbolPainter::createAirportWeatherIcon(const atools::fs::weather::MetarParser& metar, float size)
 {
   QPixmap pixmap(size, size);
   pixmap.fill(QColor(Qt::transparent));
