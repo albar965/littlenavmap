@@ -137,6 +137,7 @@ void messages::resetAllMessages()
 
   settings.setValue(lnm::ACTIONS_SHOW_DELETE_USERPOINT, true);
   settings.setValue(lnm::ACTIONS_SHOW_DELETE_LOGBOOKENTRY, true);
+  settings.setValue(lnm::ACTIONS_SHOW_STATUSBAR_INFO, true);
 }
 
 void messages::resetEssentialMessages()

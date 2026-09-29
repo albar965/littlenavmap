@@ -131,6 +131,8 @@ private:
 
   QString dateTimeString(const QDateTime& datetime, const QString& invalidStr, bool sim) const;
 
+  void showStatusBarToggled(bool checked);
+
   /* List of status bar messages. First is shown and others are shown in tooltip. */
   class StatusMessage
   {

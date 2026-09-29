@@ -22,12 +22,14 @@
 #include "common/formatter.h"
 #include "common/maptypes.h"
 #include "common/unit.h"
+#include "gui/dialog.h"
 #include "gui/statusbareventfilter.h"
 #include "gui/stylehandler.h"
 #include "gui/widgetstate.h"
 #include "mapgui/mappaintwidget.h"
 #include "options/optiondata.h"
 #include "settings/settings.h"
+#include "ui_mainwindow.h"
 #include "util/htmlbuilder.h"
 
 #include <QActionGroup>
@@ -252,14 +254,36 @@ QAction *StatusBar::addMenuAction(QMenu& menu, QList<QAction *>& labelActions, c
   return action;
 }
 
+void StatusBar::showStatusBarToggled(bool checked)
+{
+  if(!checked)
+    atools::gui::Dialog(statusBar).showInfoMsgBox(lnm::ACTIONS_SHOW_STATUSBAR_INFO,
+                                                  tr("You can show the status bar again by enabling "
+                                                     "\"Show Statusbar\" in main menu \"Window\"."),
+                                                  tr("Do not &show this dialog again."));
+
+  // Let the other action propagate the signal
+  NavApp::getMainUi()->actionShowStatusbar->setChecked(checked);
+}
+
 void StatusBar::customContextMenuRequested(const QPoint& point)
 {
   qDebug() << Q_FUNC_INFO;
 
-  // Label show/hide actions =======================
-  QList<QAction *> labelActions;
   QMenu menu(statusBar);
   menu.setToolTipsVisible(NavApp::isMenuToolTipsVisible());
+
+  // Hide statusbar =======================
+  QAction *showAction = new QAction(tr("&Show Statusbar"), &menu);
+  showAction->setToolTip(tr("Deselect to hide the status bar"));
+  showAction->setCheckable(true);
+  showAction->setChecked(statusBar->isVisible());
+  menu.addAction(showAction);
+  menu.addSeparator();
+  connect(showAction, &QAction::toggled, this, &StatusBar::showStatusBarToggled);
+
+  // Label show/hide actions =======================
+  QList<QAction *> labelActions;
   addMenuAction(menu, labelActions, connectStatusLabel, tr("&Simulator connection status"),
                 tr("Shows if Little Navmap is connected to the simulator"));
   addMenuAction(menu, labelActions, mapVisibleLabel, tr("Map &content indicator"),

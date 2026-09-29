@@ -349,8 +349,9 @@ placed on the map by the user.
   `Select automatically` now uses system colors while `Fusion` uses its own light colors and is
   now default. Disable this to select a style manually.
 * Corrected time display in status bar. Removed GMT and added time zone for local time.
-* Added configuration options for status bar. Individual fields can now be hidden in the status
-  bar context menu (right-click on it). Four different time display options can be selected now.
+* Added configuration options for status bar. Individual fields and the status bar can now be
+  hidden in the status bar context menu (right-click on it). Four different time display options
+  can be selected now.
 * Added small hints and help texts in status bar and other tooltips. These can be disabled in
   options on page `Display and Text`.
 * Little Navmap now comes with its own timezone database that is used to show time zones and
@@ -422,10 +423,11 @@ placed on the map by the user.
 * Now correcting all country names which are missing or misspelled. This is applied when loading
   scenery library data of all simulators.
 * Now skipping the loading of all navdata and all procedures if a Navigraph update is detected in
-  the scenery library. This is done by checking for the files `navigraph-navdata/manifest.json` and
-  `navigraph-navdata-base/manifest.json` in `Community` for creator and other attributes.
-  This speeds up loading significantly but requires the installation of the Navigraph update
-  in Little Navmap.
+  the scenery library. This is done by checking for the manifest files in `Community` for creator
+  and other attributes. This speeds up loading significantly if a Navigraph update is installed in
+  MSFS 2024 but requires the additional installation of the Navigraph update in Little Navmap.
+  Note that you will see zero for navaid numbers in the load scenery library dialog window with
+  Navigraph and MSFS 2024.
 
 ### General
 

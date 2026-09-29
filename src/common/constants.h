@@ -153,6 +153,7 @@ const QLatin1String ACTIONS_SHOW_INSTALL_XPCONNECT_WARN_XPL("Actions/ShowInstall
 const QLatin1String ACTIONS_SHOW_INSTALL_XPCONNECT_INFO("Actions/ShowInstallXpconnectInfo");
 const QLatin1String ACTIONS_SHOW_OPTIONS_RELOAD_SCENERY_LIBRARY("Actions/ShowOptionsReloadSceneryLibrary");
 const QLatin1String ACTIONS_SHOW_CUSTOM_PROCEDURE_DIALOG("Actions/ShowCustomProcedureDialog");
+const QLatin1String ACTIONS_SHOW_STATUSBAR_INFO("Actions/ShowStatusBarInfo");
 
 /* Other setting key names =============================================================== */
 const QLatin1String DATABASE_BASEPATH("Database/BasePath");
