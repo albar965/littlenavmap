@@ -275,10 +275,10 @@ void ConnectClient::disconnectedFromSimulatorDirect()
   showTerminalError();
 
   // Try to reconnect if it was not unlinked by using the disconnect button
-  if(!errorState && connectDialog->isAutoConnect() && connectDialog->isAnyConnectDirect() && !manualDisconnect && !simconnectPaused)
-    connectInternal();
-  else
-    statusBar->setConnectionStatusMessageText(tr("Disconnected"), tr("Disconnected from local flight simulator."));
+  // if(!errorState && connectDialog->isAutoConnect() && connectDialog->isAnyConnectDirect() && !manualDisconnect && !simconnectPaused)
+  // connectInternal();
+  // else
+  statusBar->setConnectionStatusMessageText(tr("Disconnected"), tr("Disconnected from local flight simulator."));
   connectDialog->setConnected(isConnected());
 
   metarIdentCache.clear();
@@ -796,7 +796,12 @@ void ConnectClient::connectInternal()
     qDebug() << Q_FUNC_INFO << "Starting direct connection";
 
     // Datareader has its own reconnect mechanism
-    dataReader->setHandler(handlerByDialogSettings());
+    atools::fs::sc::ConnectHandler *handler = handlerByDialogSettings();
+
+    // if(dataReader->getHandler() != handler)
+    // disconnectClicked();
+
+    dataReader->setHandler(handler);
 
     if(isXpConnect())
       dataReader->setReconnectRateSec(directReconnectXpSec);
@@ -816,14 +821,18 @@ void ConnectClient::connectInternal()
                                                 tr("Too many errors when trying to connect to simulator (%1).").arg(simName()));
     else
     {
-      dataReader->start();
       statusBar->setConnectionStatusMessageText(tr("Connecting (%1) ...").arg(simShortName()),
                                                 tr("Trying to connect to local flight simulator (%1).").arg(simName()));
+      dataReader->start();
     }
   }
   else if(socket == nullptr && !connectDialog->getRemoteHostname().isEmpty())
   {
     qDebug() << Q_FUNC_INFO << "Starting network connection";
+
+    statusBar->setConnectionStatusMessageText(tr("Connecting ..."),
+                                              tr("Trying to connect to remote flight simulator on \"%1\".").
+                                              arg(connectDialog->getRemoteHostname()));
 
     // Create new socket and connect signals
     socket = new QTcpSocket(this);
@@ -835,10 +844,6 @@ void ConnectClient::connectInternal()
     qDebug() << Q_FUNC_INFO << "Connecting to" << connectDialog->getRemoteHostname() << ":" << connectDialog->getRemotePort();
     socket->connectToHost(connectDialog->getRemoteHostname(), connectDialog->getRemotePort(),
                           QAbstractSocket::ReadWrite, QAbstractSocket::AnyIPProtocol);
-
-    statusBar->setConnectionStatusMessageText(tr("Connecting ..."),
-                                              tr("Trying to connect to remote flight simulator on \"%1\".").
-                                              arg(connectDialog->getRemoteHostname()));
   }
 }
 

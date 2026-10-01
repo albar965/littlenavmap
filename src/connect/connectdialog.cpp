@@ -107,13 +107,9 @@ ConnectDialog::ConnectDialog(QWidget *parent, bool simConnectAvailable)
                                                      lnm::NAVCONNECT_REMOTEHOSTS);
 
   connect(ui->comboBoxConnectHostname, &QComboBox::editTextChanged, this, &ConnectDialog::updateButtonStates);
-
-  connect(ui->spinBoxConnectUpdateRateFsx, static_cast<void (QSpinBox::*)(int)>(&QSpinBox::valueChanged),
-          this, &ConnectDialog::updateRateHasChanged);
-  connect(ui->spinBoxConnectUpdateRateXp, static_cast<void (QSpinBox::*)(int)>(&QSpinBox::valueChanged),
-          this, &ConnectDialog::updateRateHasChanged);
-  connect(ui->spinBoxConnectAiFetchRadius, static_cast<void (QSpinBox::*)(int)>(&QSpinBox::valueChanged),
-          this, &ConnectDialog::aiFetchRadiusHasChanged);
+  connect(ui->spinBoxConnectUpdateRateFsx, QOverload<int>::of(&QSpinBox::valueChanged), this, &ConnectDialog::updateRateHasChanged);
+  connect(ui->spinBoxConnectUpdateRateXp, QOverload<int>::of(&QSpinBox::valueChanged), this, &ConnectDialog::updateRateHasChanged);
+  connect(ui->spinBoxConnectAiFetchRadius, QOverload<int>::of(&QSpinBox::valueChanged), this, &ConnectDialog::aiFetchRadiusHasChanged);
 }
 
 ConnectDialog::~ConnectDialog()
