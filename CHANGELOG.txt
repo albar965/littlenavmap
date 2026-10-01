@@ -56,8 +56,6 @@ whole program.**
 
 * X-Plane historical weather is not supported yet. Little Navmap will always show the
   latest weather.
-* The Little Xpconnect plugin uses shared libraries which has a small potential to cause conflicts
-  with other plugins using the same libraries. See below in section X-Plane for details.
 * Loading of the MSFS scenery library takes at least 15 minutes. I cannot change this as long as
   SimConnect is required to load the scenery library.
 * PACOTS (Pacific tracks system) are not available anymore since the FAA is hiding it
@@ -269,11 +267,6 @@ See also section `Options` below for new map display related settings.
 
 * Fixed wrong UTC time and timezone calculation which appeared some cases. #1125
 * Now correcting scenery library selection in automatic mode if navdata is newer than simulator.
-* Little Xpconnect needs the shared libraries below on Windows now, which has a small potential for
-  conflicts with other plugins using the same libraries. These are `libgcc_s_seh-1.dll`,
-  `libstdc++-6.dll`, `libwinpthread-1.dll` and `Qt6Core.dll`. This will be fixed in a future release
-  by going back to a static build. Revert to an older Little Xpconnect version from Little Navmap
-  3.0.18 if you run into issues.
 
 ### Weather
 
