@@ -36,7 +36,7 @@ export ATOOLS_NO_CRASHHANDLER=${ATOOLS_NO_CRASHHANDLER:-"true"}
 export QMAKE_SHARED=${QMAKE_SHARED:-"${HOME}/Qt/${QT_VERSION}/gcc_64/bin/qmake"}
 
 # Defines the used Qt for Xpconnect (/mnt/disk/qt-6.5.99-static/bin/qmake)
-export QMAKE_STATIC=${QMAKE_STATIC:-"${APROJECTS}/qt-${QT_VERSION}-static/bin/qmake"}
+export QMAKE_STATIC=${QMAKE_STATIC:-"${APROJECTS}/qt-${QT_VERSION_STATIC}-static/bin/qmake"}
 
 # Do not change the DEPLOY_BASE since some scripts depend on it
 export DEPLOY_BASE="${APROJECTS}/deploy"
