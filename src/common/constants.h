@@ -182,7 +182,7 @@ const QLatin1String INFOWINDOW_PROGRESS_FIELDS("InfoWindow/ProgressFields");
 const QLatin1String MAINWINDOW_FIRSTAPPLICATIONSTART("MainWindow/FirstApplicationStart");
 const QLatin1String MAINWINDOW_WIDGET("MainWindow/Widget");
 const QLatin1String MAINWINDOW_WIDGET_MAPTHEME("MainWindow/WidgetMapTheme");
-const QLatin1String MAINWINDOW_WIDGET_DOCKHANDLER("MainWindow/WidgetDockHandler");
+const QLatin1String MAINWINDOW_WIDGET_DOCKHANDLER("MainWindow/WidgetDockHandler32");
 const QLatin1String MAINWINDOW_PRINT_SIZE("MainWindow/PrintPreviewSize");
 
 const QLatin1String MAP_AIRSPACES("Map/AirspaceFilter3");

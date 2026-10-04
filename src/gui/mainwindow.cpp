@@ -4671,7 +4671,7 @@ void MainWindow::saveStateMain()
 #ifdef DEBUG_CREATE_WINDOW_STATE
     // Save the state into a binary file to be used for reset window layout
     // One state is needed with undockable map window and one without
-    QFile stateFile(QStringLiteral("mainwindow_state_%1.bin").
+    QFile stateFile(atools::settings::Settings::getPath() + atools::SEP + QStringLiteral("mainwindow_state_%1.bin").
                     arg(OptionData::instance().getFlags2().testFlag(opts2::MAP_ALLOW_UNDOCK) ? "dock" : "nodock"));
     if(stateFile.open(QFile::WriteOnly))
     {

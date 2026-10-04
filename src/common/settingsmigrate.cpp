@@ -360,6 +360,12 @@ void checkAndMigrateSettings()
         removeAndLog("Track/PacotsUrlParam");
       }
 
+      if(optionsVersion <= Version("3.0.18"))
+      {
+        removeAndLog("OptionsDialog/Widget_checkBoxOptionsStartupLoadLayout");
+        removeAndLog("MainWindow/WidgetDockHandler");
+      }
+
       qInfo() << Q_FUNC_INFO << "Clearing all essential messages since version differs";
       messages::resetEssentialMessages();
 
