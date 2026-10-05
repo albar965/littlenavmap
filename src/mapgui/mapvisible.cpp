@@ -55,11 +55,11 @@ void MapVisible::updateVisibleObjectsStatusBar()
   {
     NavApp::getStatusBar()->setMapObjectsShownMessageText(
       atools::util::HtmlBuilder::errorMessage(tr("Database is empty")),
-      tr("<p style='white-space:pre'>The currently selected scenery database for the simulator is empty.<br/>Go to: "
-           "Main menu -&gt; \"Scenery Library\" -&gt; \"Load Scenery Library\" "
-           "or press <code>Ctrl+Shift+L</code>.<br/>"
-           "Then select the simulator and press \"Load\".</p>",
-         "Keep instructions in sync with translated menus and shortcuts"));
+      tr("<p style='white-space:pre'>The currently selected scenery database for the simulator is empty.<br/>"
+         "Showing Navigraph database with AIRAC cycle %1.<br/>"
+         "Go to: Main menu -&gt; \"Scenery Library\" -&gt; \"Load Scenery Library\" or press <code>Ctrl+Shift+L</code>.<br/>"
+         "Then select a simulator and press \"Load\".</p>",
+         "Keep instructions in sync with translated menus and shortcuts").arg(NavApp::getDatabaseAiracCycleNav()));
   }
   else
   {
