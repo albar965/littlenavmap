@@ -4,6 +4,33 @@ This text is partially Markdown, so the formatting might look strange.
 
 ==>>=============================================================================
 
+# Version 3.2.2.beta
+
+**This is a beta/test release of Little Navmap which fixes crashes on startup which first appeared
+in 3.2.1.beta.**
+
+**See [Version 3.2.1.beta](https://github.com/albar965/littlenavmap/releases/tag/v3.2.1.beta) for
+the full changelog.**
+
+**Please note that when reverting to Little Navmap 3.0.18, file names may appear garbled and
+corresponding error messages may be displayed if the paths contain special characters such as
+umlauts or accents. This can happen when loading files from one of the menus `Recent`, for example.
+You can ignore the error messages and simply reload the files normally to fix this.**
+
+## Changes from 3.2.1.beta to 3.2.2.beta
+
+* Fixed crash on startup. The window layout is now reset to default. Saved window layout files might
+  cause crashes in rare cases but can still be used. #1389
+* The setting `Load window layout from last used file` on options page `Startup and Updates` is now
+  reset to off to avoid potential crashes when loading incompatible layout files.
+* Included default window layout files have been updated for compatibility with Qt 6.
+* Fixed crash on startup with enabled web server.
+* Small text correction in empty database message in status bar.
+* Adjusted performance collection to use indicated or actual altitude altitude to detect cruise
+  phase more reliably.
+
+==<<=============================================================================
+
 # Version 3.2.1.beta
 
 **This is a beta/test release of Little Navmap which adds new features, user interface improvements
@@ -468,7 +495,7 @@ placed on the map by the user.
 * Updated Chinese translation by Eyderoe.
 * Updated all used libraries like OpenSSL, Zip, SDKs and more to the latest.
 
-==<<=============================================================================
+=================================================================================
 
 # Version 3.0.18
 
