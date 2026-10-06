@@ -2,6 +2,8 @@
 
 <!-- VERSION_NUMBER_TODO Update all download texts and links. -->
 
+<!-- TODO Update with last generated header from release -->
+
 [**► Windows 64-bit Installer \(*MSFS 2020, MSFS 2024 and X-Plane*\)** - LittleNavmap-win64-3.0.18-Install.exe](https://github.com/albar965/littlenavmap/releases/download/v3.0.18/LittleNavmap-win64-3.0.18-Install.exe)<br/>
 [**► macOS** - LittleNavmap-macOS-3.0.18.zip](https://github.com/albar965/littlenavmap/releases/download/v3.0.18/LittleNavmap-macOS-3.0.18.zip)<br/>
 [**► Linux \(64 bit, based on Ubuntu 24.04\)** - LittleNavmap-linux-ubuntu-24.04-3.0.18.tar.xz](https://github.com/albar965/littlenavmap/releases/download/v3.0.18/LittleNavmap-linux-ubuntu-24.04-3.0.18.tar.xz)<br/>

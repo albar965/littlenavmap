@@ -28,6 +28,8 @@ You can ignore the error messages and simply reload the files normally to fix th
 * Small text correction in empty database message in status bar.
 * Adjusted performance collection to use indicated or actual altitude altitude to detect cruise
   phase more reliably.
+* Removed old Ubuntu 22.04 build causing crashes and added new Ubuntu 26.04 build. Now providing
+  two builds for 24.04 and 26.04.
 
 ==<<=============================================================================
 
