@@ -7359,77 +7359,65 @@ Les colonnes seront vides à l&apos;exportation si elles sont désactivées.</tr
         <translation type="obsolete">Arrivée</translation>
     </message>
     <message>
-        <location filename="../src/logbook/logdataconverter.cpp" line="93"/>
         <source>&lt;i&gt;Ident &amp;quot;%1&amp;quot;, name &amp;quot;%2&amp;quot;, region &amp;quot;%3&amp;quot;, tags &amp;quot;%4&amp;quot;, userdata_id %5&lt;/i&gt;</source>
-        <translation type="unfinished">&lt;i&gt;Ident &amp;quot;%1&amp;quot;, nom &amp;quot;%2&amp;quot;, région &amp;quot;%3&amp;quot;, balises &amp;quot;%4&amp;quot;, userdata_id %5&lt;/i&gt;</translation>
+        <translation type="obsolete">&lt;i&gt;Ident &amp;quot;%1&amp;quot;, nom &amp;quot;%2&amp;quot;, région &amp;quot;%3&amp;quot;, balises &amp;quot;%4&amp;quot;, userdata_id %5&lt;/i&gt;</translation>
     </message>
     <message>
-        <location filename="../src/logbook/logdataconverter.cpp" line="97"/>
         <source>&lt;i&gt;Ident &amp;quot;%1&amp;quot;, name &amp;quot;%2&amp;quot;, region &amp;quot;%3&amp;quot;, tags &amp;quot;%4&amp;quot;&lt;/i&gt;</source>
-        <translation type="unfinished">&lt;i&gt;Ident &amp;quot;%1&amp;quot;, nom &amp;quot;%2&amp;quot;, région &amp;quot;%3&amp;quot;, balises &amp;quot;%4&amp;quot;&lt;/i&gt;</translation>
+        <translation type="obsolete">&lt;i&gt;Ident &amp;quot;%1&amp;quot;, nom &amp;quot;%2&amp;quot;, région &amp;quot;%3&amp;quot;, balises &amp;quot;%4&amp;quot;&lt;/i&gt;</translation>
     </message>
     <message>
-        <location filename="../src/logbook/logdataconverter.cpp" line="115"/>
         <source>Entry has both departure and destination tag: %1.</source>
-        <translation type="unfinished">L&apos;entrée a les balises de départ et de destination: %1.</translation>
+        <translation type="obsolete">L&apos;entrée a les balises de départ et de destination: %1.</translation>
     </message>
     <message>
-        <location filename="../src/logbook/logdataconverter.cpp" line="124"/>
         <source>Entry has neither departure nor destination tag: %1.</source>
-        <translation type="unfinished">L&apos;entrée n&apos;a ni la balise départ ni la balise destination: %1.</translation>
+        <translation type="obsolete">L&apos;entrée n&apos;a ni la balise départ ni la balise destination: %1.</translation>
     </message>
     <message>
-        <location filename="../src/logbook/logdataconverter.cpp" line="131"/>
         <source>Additional departure found: %1.</source>
-        <translation type="unfinished">Départ supplémentaire trouvé: %1.</translation>
+        <translation type="obsolete">Départ supplémentaire trouvé: %1.</translation>
     </message>
     <message>
-        <location filename="../src/logbook/logdataconverter.cpp" line="138"/>
         <source>Additional destination found: %1.</source>
-        <translation type="unfinished">Destination supplémentaire trouvée: %1.</translation>
+        <translation type="obsolete">Destination supplémentaire trouvée: %1.</translation>
     </message>
     <message>
-        <location filename="../src/logbook/logdataconverter.cpp" line="173"/>
         <source>Converted from userdata
 
 ==== Original departure description:
 </source>
         <extracomment>The text &quot;Converted from userdata&quot; has to match the one in LogdataController::convertUserdata</extracomment>
-        <translation type="unfinished">Converti à partir des données utilisateur
+        <translation type="obsolete">Converti à partir des données utilisateur
 
 ==== Description originale du départ:
 </translation>
     </message>
     <message>
-        <location filename="../src/logbook/logdataconverter.cpp" line="176"/>
         <source>
 
 ==== Original arrival description:
 </source>
-        <translation type="unfinished">
+        <translation type="obsolete">
 
 ==== Description originale de l&apos;arrivée:
 </translation>
     </message>
     <message>
-        <location filename="../src/logbook/logdataconverter.cpp" line="400"/>
         <source>Invalid altitude unit &quot;%1&quot; for %2.</source>
-        <translation type="unfinished">Unité d&apos;altitude invalide &quot;%1&quot; pour %2.</translation>
+        <translation type="obsolete">Unité d&apos;altitude invalide &quot;%1&quot; pour %2.</translation>
     </message>
     <message>
-        <location filename="../src/logbook/logdataconverter.cpp" line="420"/>
         <source>Invalid distance unit &quot;%1&quot; for %2.</source>
-        <translation type="unfinished">Unité de distance &quot;%1&quot; pour %2 non valable.</translation>
+        <translation type="obsolete">Unité de distance &quot;%1&quot; pour %2 non valable.</translation>
     </message>
     <message>
-        <location filename="../src/logbook/logdataconverter.cpp" line="449"/>
         <source>Invalid number &quot;%1&quot; for %2.</source>
-        <translation type="unfinished">Le nombre &quot;%1&quot; pour %2 n&apos;est pas valide.</translation>
+        <translation type="obsolete">Le nombre &quot;%1&quot; pour %2 n&apos;est pas valide.</translation>
     </message>
     <message>
-        <location filename="../src/logbook/logdataconverter.cpp" line="464"/>
         <source>Invalid date and time &quot;%1&quot; for %2.</source>
-        <translation type="unfinished">Date et heure &quot;%1&quot; pour %2 non valide.</translation>
+        <translation type="obsolete">Date et heure &quot;%1&quot; pour %2 non valide.</translation>
     </message>
 </context>
 <context>
@@ -25371,11 +25359,16 @@ Allez dans le menu «Outils» -&gt; «Options» et ensuite à la page «Cache et
         <translation type="obsolete">O</translation>
     </message>
     <message>
-        <location filename="../src/mapgui/mapvisible.cpp" line="58"/>
         <source>&lt;p style=&apos;white-space:pre&apos;&gt;The currently selected scenery database for the simulator is empty.&lt;br/&gt;Go to: Main menu -&amp;gt; &quot;Scenery Library&quot; -&amp;gt; &quot;Load Scenery Library&quot; or press &lt;code&gt;Ctrl+Shift+L&lt;/code&gt;.&lt;br/&gt;Then select the simulator and press &quot;Load&quot;.&lt;/p&gt;</source>
         <oldsource>&lt;p style=&apos;white-space:pre&apos;&gt;The currently selected scenery database for the simulator is empty.&lt;br/&gt;Go to: Main menu -&amp;gt; &quot;Scenery Library&quot; -&amp;gt; &quot;Load Scenery Library&quot; or press &lt;code&gt;Ctrl+Shift+L&lt;/code&gt;.&lt;br/&gt;Then choose the simulator and press &quot;Load&quot;.&lt;/p&gt;</oldsource>
         <comment>Keep instructions in sync with translated menus and shortcuts</comment>
-        <translation type="unfinished">&lt;p style=&apos;white-space:pre&apos;&gt;La base de données de scènes actuellement sélectionnée pour le simulateur est vide.&lt;br/&gt;Allez à: Menu principal -&amp;gt; &quot;Scenery Library&quot; -&amp;gt; &quot;Charger la bibliothèque de scènes&quot; ou appuyez sur &lt;code&gt;Ctrl+Shift+L&lt;/code&gt;.&lt;br/&gt;Choisissez ensuite le simulateur et appuyez sur &quot;Charger&quot;.&lt;/p&gt;</translation>
+        <translation type="obsolete">&lt;p style=&apos;white-space:pre&apos;&gt;La base de données de scènes actuellement sélectionnée pour le simulateur est vide.&lt;br/&gt;Allez à: Menu principal -&amp;gt; &quot;Scenery Library&quot; -&amp;gt; &quot;Charger la bibliothèque de scènes&quot; ou appuyez sur &lt;code&gt;Ctrl+Shift+L&lt;/code&gt;.&lt;br/&gt;Choisissez ensuite le simulateur et appuyez sur &quot;Charger&quot;.&lt;/p&gt;</translation>
+    </message>
+    <message>
+        <location filename="../src/mapgui/mapvisible.cpp" line="58"/>
+        <source>&lt;p style=&apos;white-space:pre&apos;&gt;The currently selected scenery database for the simulator is empty.&lt;br/&gt;Showing Navigraph database with AIRAC cycle %1.&lt;br/&gt;Go to: Main menu -&amp;gt; &quot;Scenery Library&quot; -&amp;gt; &quot;Load Scenery Library&quot; or press &lt;code&gt;Ctrl+Shift+L&lt;/code&gt;.&lt;br/&gt;Then select a simulator and press &quot;Load&quot;.&lt;/p&gt;</source>
+        <comment>Keep instructions in sync with translated menus and shortcuts</comment>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../src/mapgui/mapvisible.cpp" line="76"/>
@@ -52183,16 +52176,14 @@ Les formats ci-dessus doivent être donnés exactement comme dans les exemples.<
         <translation type="unfinished">Userpoint déplacé.</translation>
     </message>
     <message>
-        <location filename="../src/logbook/logdataconverter.cpp" line="105"/>
         <source>Departure</source>
         <extracomment>The translated texts in this method should not be changed to avoid issues with the logbook conversion</extracomment>
-        <translation>Départ</translation>
+        <translation type="vanished">Départ</translation>
     </message>
     <message>
-        <location filename="../src/logbook/logdataconverter.cpp" line="110"/>
         <source>Arrival</source>
         <extracomment>The translated texts in this method should not be changed to avoid issues with the logbook conversion</extracomment>
-        <translation type="unfinished">Arrivée</translation>
+        <translation type="obsolete">Arrivée</translation>
     </message>
     <message>
         <source> runway %1</source>
@@ -52203,44 +52194,34 @@ Les formats ci-dessus doivent être donnés exactement comme dans les exemples.<
         <translation type="vanished">%1 à %2%3</translation>
     </message>
     <message>
-        <location filename="../src/logbook/logdataconverter.cpp" line="262"/>
-        <location filename="../src/logbook/logdataconverter.cpp" line="299"/>
         <source>Simulator Date and Time: %1 %2, %3 %4</source>
         <extracomment>The translated texts in this method should not be changed to avoid issues with the logbook conversion</extracomment>
-        <translation type="unfinished">Date et heure du simulateur: %1 %2, %3 %4</translation>
+        <translation type="obsolete">Date et heure du simulateur: %1 %2, %3 %4</translation>
     </message>
     <message>
-        <location filename="../src/logbook/logdataconverter.cpp" line="284"/>
-        <location filename="../src/logbook/logdataconverter.cpp" line="320"/>
         <source>Registration: %1</source>
         <oldsource>Date and Time: %1</oldsource>
         <extracomment>The translated texts in this method should not be changed to avoid issues with the logbook conversion</extracomment>
-        <translation type="unfinished">Date et Heure: %1</translation>
+        <translation type="obsolete">Date et Heure: %1</translation>
     </message>
     <message>
-        <location filename="../src/logbook/logdataconverter.cpp" line="269"/>
-        <location filename="../src/logbook/logdataconverter.cpp" line="305"/>
         <source>Flight Plan:</source>
         <extracomment>The translated texts in this method should not be changed to avoid issues with the logbook conversion</extracomment>
-        <translation type="unfinished">Plan de vol:</translation>
+        <translation type="obsolete">Plan de vol:</translation>
     </message>
     <message>
-        <location filename="../src/logbook/logdataconverter.cpp" line="272"/>
-        <location filename="../src/logbook/logdataconverter.cpp" line="308"/>
         <source>Aircraft Performance:</source>
         <extracomment>The translated texts in this method should not be changed to avoid issues with the logbook conversion</extracomment>
-        <translation type="unfinished">Paramètres de l&apos;avion:</translation>
+        <translation type="obsolete">Paramètres de l&apos;avion:</translation>
     </message>
     <message>
         <source>From: %2 to %3</source>
         <translation type="vanished">De: %2 à %3</translation>
     </message>
     <message>
-        <location filename="../src/logbook/logdataconverter.cpp" line="275"/>
-        <location filename="../src/logbook/logdataconverter.cpp" line="311"/>
         <source>Cruising altitude: %1</source>
         <extracomment>The translated texts in this method should not be changed to avoid issues with the logbook conversion</extracomment>
-        <translation type="unfinished">Altitude de croisière: %1</translation>
+        <translation type="obsolete">Altitude de croisière: %1</translation>
     </message>
     <message>
         <source>Aircraft:</source>
@@ -52255,25 +52236,19 @@ Les formats ci-dessus doivent être donnés exactement comme dans les exemples.<
         <translation type="vanished">Compagnie aérienne : %1</translation>
     </message>
     <message>
-        <location filename="../src/logbook/logdataconverter.cpp" line="278"/>
-        <location filename="../src/logbook/logdataconverter.cpp" line="314"/>
         <source>Flight Number: %1</source>
         <extracomment>The translated texts in this method should not be changed to avoid issues with the logbook conversion</extracomment>
-        <translation type="unfinished">Numéro de vol: %1</translation>
+        <translation type="obsolete">Numéro de vol: %1</translation>
     </message>
     <message>
-        <location filename="../src/logbook/logdataconverter.cpp" line="281"/>
-        <location filename="../src/logbook/logdataconverter.cpp" line="317"/>
         <source>Model: %1</source>
         <extracomment>The translated texts in this method should not be changed to avoid issues with the logbook conversion</extracomment>
-        <translation>Modèle: %1</translation>
+        <translation type="vanished">Modèle: %1</translation>
     </message>
     <message>
-        <location filename="../src/logbook/logdataconverter.cpp" line="287"/>
-        <location filename="../src/logbook/logdataconverter.cpp" line="323"/>
         <source>Type: %1</source>
         <extracomment>The translated texts in this method should not be changed to avoid issues with the logbook conversion</extracomment>
-        <translation>Type: %1</translation>
+        <translation type="vanished">Type: %1</translation>
     </message>
     <message>
         <source>Trip:</source>
@@ -52284,16 +52259,14 @@ Les formats ci-dessus doivent être donnés exactement comme dans les exemples.<
         <translation type="vanished">Temps : %1</translation>
     </message>
     <message>
-        <location filename="../src/logbook/logdataconverter.cpp" line="326"/>
         <source>Flight Plan Distance: %1</source>
         <extracomment>The translated texts in this method should not be changed to avoid issues with the logbook conversion</extracomment>
-        <translation type="unfinished">Distance du plan de vol: %1</translation>
+        <translation type="obsolete">Distance du plan de vol: %1</translation>
     </message>
     <message>
-        <location filename="../src/logbook/logdataconverter.cpp" line="329"/>
         <source>Flown Distance: %1</source>
         <extracomment>The translated texts in this method should not be changed to avoid issues with the logbook conversion</extracomment>
-        <translation type="unfinished">Distance parcourue: %1</translation>
+        <translation type="obsolete">Distance parcourue: %1</translation>
     </message>
     <message>
         <source>Average Groundspeed: %1</source>

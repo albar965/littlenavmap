@@ -7039,77 +7039,65 @@ Columns will be empty on export if disabled.</source>
 <context>
     <name>LogdataConverter</name>
     <message>
-        <location filename="../src/logbook/logdataconverter.cpp" line="93"/>
         <source>&lt;i&gt;Ident &amp;quot;%1&amp;quot;, name &amp;quot;%2&amp;quot;, region &amp;quot;%3&amp;quot;, tags &amp;quot;%4&amp;quot;, userdata_id %5&lt;/i&gt;</source>
-        <translation>&lt;i&gt;识别码 &amp;quot;%1&amp;quot;, 名称 &amp;quot;%2&amp;quot;, 区域 &amp;quot;%3&amp;quot;, 标签 &amp;quot;%4&amp;quot;, 用户数据ID %5&lt;/i&gt;</translation>
+        <translation type="vanished">&lt;i&gt;识别码 &amp;quot;%1&amp;quot;, 名称 &amp;quot;%2&amp;quot;, 区域 &amp;quot;%3&amp;quot;, 标签 &amp;quot;%4&amp;quot;, 用户数据ID %5&lt;/i&gt;</translation>
     </message>
     <message>
-        <location filename="../src/logbook/logdataconverter.cpp" line="97"/>
         <source>&lt;i&gt;Ident &amp;quot;%1&amp;quot;, name &amp;quot;%2&amp;quot;, region &amp;quot;%3&amp;quot;, tags &amp;quot;%4&amp;quot;&lt;/i&gt;</source>
-        <translation>&lt;i&gt;识别码 &amp;quot;%1&amp;quot;, 名称 &amp;quot;%2&amp;quot;, 区域 &amp;quot;%3&amp;quot;, 标签 &amp;quot;%4&amp;quot;&lt;/i&gt;</translation>
+        <translation type="vanished">&lt;i&gt;识别码 &amp;quot;%1&amp;quot;, 名称 &amp;quot;%2&amp;quot;, 区域 &amp;quot;%3&amp;quot;, 标签 &amp;quot;%4&amp;quot;&lt;/i&gt;</translation>
     </message>
     <message>
-        <location filename="../src/logbook/logdataconverter.cpp" line="115"/>
         <source>Entry has both departure and destination tag: %1.</source>
-        <translation>同时有离场机场和到达机场标签的条目：%1。</translation>
+        <translation type="vanished">同时有离场机场和到达机场标签的条目：%1。</translation>
     </message>
     <message>
-        <location filename="../src/logbook/logdataconverter.cpp" line="124"/>
         <source>Entry has neither departure nor destination tag: %1.</source>
-        <translation>没有离场机场也没有到达机场标签的条目：%1。</translation>
+        <translation type="vanished">没有离场机场也没有到达机场标签的条目：%1。</translation>
     </message>
     <message>
-        <location filename="../src/logbook/logdataconverter.cpp" line="131"/>
         <source>Additional departure found: %1.</source>
-        <translation>找到了额外的离场机场：%1。</translation>
+        <translation type="vanished">找到了额外的离场机场：%1。</translation>
     </message>
     <message>
-        <location filename="../src/logbook/logdataconverter.cpp" line="138"/>
         <source>Additional destination found: %1.</source>
-        <translation>找到了额外的到达机场：%1。</translation>
+        <translation type="vanished">找到了额外的到达机场：%1。</translation>
     </message>
     <message>
-        <location filename="../src/logbook/logdataconverter.cpp" line="173"/>
         <source>Converted from userdata
 
 ==== Original departure description:
 </source>
         <extracomment>The text &quot;Converted from userdata&quot; has to match the one in LogdataController::convertUserdata</extracomment>
-        <translation>*转换自用户数据*
+        <translation type="vanished">*转换自用户数据*
 
 ====原始离场机场描述：
 </translation>
     </message>
     <message>
-        <location filename="../src/logbook/logdataconverter.cpp" line="176"/>
         <source>
 
 ==== Original arrival description:
 </source>
-        <translation>
+        <translation type="vanished">
 
 ==== 原始到达机场描述：
 </translation>
     </message>
     <message>
-        <location filename="../src/logbook/logdataconverter.cpp" line="400"/>
         <source>Invalid altitude unit &quot;%1&quot; for %2.</source>
-        <translation>%2 的高度单位 “%1” 无效。</translation>
+        <translation type="vanished">%2 的高度单位 “%1” 无效。</translation>
     </message>
     <message>
-        <location filename="../src/logbook/logdataconverter.cpp" line="420"/>
         <source>Invalid distance unit &quot;%1&quot; for %2.</source>
-        <translation>%2 的距离单位 “%1” 无效。</translation>
+        <translation type="vanished">%2 的距离单位 “%1” 无效。</translation>
     </message>
     <message>
-        <location filename="../src/logbook/logdataconverter.cpp" line="449"/>
         <source>Invalid number &quot;%1&quot; for %2.</source>
-        <translation>%2 的数值 “%1” 无效。</translation>
+        <translation type="vanished">%2 的数值 “%1” 无效。</translation>
     </message>
     <message>
-        <location filename="../src/logbook/logdataconverter.cpp" line="464"/>
         <source>Invalid date and time &quot;%1&quot; for %2.</source>
-        <translation>%2 的日期和时间 “%1” 无效。</translation>
+        <translation type="vanished">%2 的日期和时间 “%1” 无效。</translation>
     </message>
 </context>
 <context>
@@ -23441,11 +23429,16 @@ Go to menu &quot;Tools&quot; -&gt; &quot;Options&quot; and then to page &quot;Ca
         <translation type="vanished">W</translation>
     </message>
     <message>
-        <location filename="../src/mapgui/mapvisible.cpp" line="58"/>
         <source>&lt;p style=&apos;white-space:pre&apos;&gt;The currently selected scenery database for the simulator is empty.&lt;br/&gt;Go to: Main menu -&amp;gt; &quot;Scenery Library&quot; -&amp;gt; &quot;Load Scenery Library&quot; or press &lt;code&gt;Ctrl+Shift+L&lt;/code&gt;.&lt;br/&gt;Then select the simulator and press &quot;Load&quot;.&lt;/p&gt;</source>
         <oldsource>&lt;p style=&apos;white-space:pre&apos;&gt;The currently selected scenery database for the simulator is empty.&lt;br/&gt;Go to: Main menu -&amp;gt; &quot;Scenery Library&quot; -&amp;gt; &quot;Load Scenery Library&quot; or press &lt;code&gt;Ctrl+Shift+L&lt;/code&gt;.&lt;br/&gt;Then choose the simulator and press &quot;Load&quot;.&lt;/p&gt;</oldsource>
         <comment>Keep instructions in sync with translated menus and shortcuts</comment>
-        <translation>&lt;p style=&apos;white-space:pre&apos;&gt;当前选中的该模拟器的地景数据库为空。&lt;br/&gt;到: 主菜单 -&amp;gt; &quot;地景库&quot; -&amp;gt; &quot;载入地景库&quot; 或按 &lt;code&gt;Ctrl+Shift+L&lt;/code&gt;.&lt;br/&gt;并选择您的模拟器，然后点击 &quot;载入&quot;.&lt;/p&gt;</translation>
+        <translation type="vanished">&lt;p style=&apos;white-space:pre&apos;&gt;当前选中的该模拟器的地景数据库为空。&lt;br/&gt;到: 主菜单 -&amp;gt; &quot;地景库&quot; -&amp;gt; &quot;载入地景库&quot; 或按 &lt;code&gt;Ctrl+Shift+L&lt;/code&gt;.&lt;br/&gt;并选择您的模拟器，然后点击 &quot;载入&quot;.&lt;/p&gt;</translation>
+    </message>
+    <message>
+        <location filename="../src/mapgui/mapvisible.cpp" line="58"/>
+        <source>&lt;p style=&apos;white-space:pre&apos;&gt;The currently selected scenery database for the simulator is empty.&lt;br/&gt;Showing Navigraph database with AIRAC cycle %1.&lt;br/&gt;Go to: Main menu -&amp;gt; &quot;Scenery Library&quot; -&amp;gt; &quot;Load Scenery Library&quot; or press &lt;code&gt;Ctrl+Shift+L&lt;/code&gt;.&lt;br/&gt;Then select a simulator and press &quot;Load&quot;.&lt;/p&gt;</source>
+        <comment>Keep instructions in sync with translated menus and shortcuts</comment>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../src/mapgui/mapvisible.cpp" line="76"/>
@@ -48991,84 +48984,64 @@ Formats above have to be given exactly as shown in the examples.</source>
 <context>
     <name>UserdataController</name>
     <message>
-        <location filename="../src/logbook/logdataconverter.cpp" line="105"/>
         <source>Departure</source>
         <extracomment>The translated texts in this method should not be changed to avoid issues with the logbook conversion</extracomment>
-        <translation>离场</translation>
+        <translation type="vanished">离场</translation>
     </message>
     <message>
-        <location filename="../src/logbook/logdataconverter.cpp" line="110"/>
         <source>Arrival</source>
         <extracomment>The translated texts in this method should not be changed to avoid issues with the logbook conversion</extracomment>
-        <translation>到达</translation>
+        <translation type="vanished">到达</translation>
     </message>
     <message>
-        <location filename="../src/logbook/logdataconverter.cpp" line="262"/>
-        <location filename="../src/logbook/logdataconverter.cpp" line="299"/>
         <source>Simulator Date and Time: %1 %2, %3 %4</source>
         <extracomment>The translated texts in this method should not be changed to avoid issues with the logbook conversion</extracomment>
-        <translation>模拟器日期和时间：%1 %2, %3 %4</translation>
+        <translation type="vanished">模拟器日期和时间：%1 %2, %3 %4</translation>
     </message>
     <message>
-        <location filename="../src/logbook/logdataconverter.cpp" line="269"/>
-        <location filename="../src/logbook/logdataconverter.cpp" line="305"/>
         <source>Flight Plan:</source>
         <extracomment>The translated texts in this method should not be changed to avoid issues with the logbook conversion</extracomment>
-        <translation>飞行计划：</translation>
+        <translation type="vanished">飞行计划：</translation>
     </message>
     <message>
-        <location filename="../src/logbook/logdataconverter.cpp" line="272"/>
-        <location filename="../src/logbook/logdataconverter.cpp" line="308"/>
         <source>Aircraft Performance:</source>
         <extracomment>The translated texts in this method should not be changed to avoid issues with the logbook conversion</extracomment>
-        <translation>飞行器性能：</translation>
+        <translation type="vanished">飞行器性能：</translation>
     </message>
     <message>
-        <location filename="../src/logbook/logdataconverter.cpp" line="275"/>
-        <location filename="../src/logbook/logdataconverter.cpp" line="311"/>
         <source>Cruising altitude: %1</source>
         <extracomment>The translated texts in this method should not be changed to avoid issues with the logbook conversion</extracomment>
-        <translation>巡航高度：%1</translation>
+        <translation type="vanished">巡航高度：%1</translation>
     </message>
     <message>
-        <location filename="../src/logbook/logdataconverter.cpp" line="278"/>
-        <location filename="../src/logbook/logdataconverter.cpp" line="314"/>
         <source>Flight Number: %1</source>
         <extracomment>The translated texts in this method should not be changed to avoid issues with the logbook conversion</extracomment>
-        <translation>航班号：%1</translation>
+        <translation type="vanished">航班号：%1</translation>
     </message>
     <message>
-        <location filename="../src/logbook/logdataconverter.cpp" line="281"/>
-        <location filename="../src/logbook/logdataconverter.cpp" line="317"/>
         <source>Model: %1</source>
         <extracomment>The translated texts in this method should not be changed to avoid issues with the logbook conversion</extracomment>
-        <translation>机模：%1</translation>
+        <translation type="vanished">机模：%1</translation>
     </message>
     <message>
-        <location filename="../src/logbook/logdataconverter.cpp" line="284"/>
-        <location filename="../src/logbook/logdataconverter.cpp" line="320"/>
         <source>Registration: %1</source>
         <extracomment>The translated texts in this method should not be changed to avoid issues with the logbook conversion</extracomment>
-        <translation>注册号：%1</translation>
+        <translation type="vanished">注册号：%1</translation>
     </message>
     <message>
-        <location filename="../src/logbook/logdataconverter.cpp" line="287"/>
-        <location filename="../src/logbook/logdataconverter.cpp" line="323"/>
         <source>Type: %1</source>
         <extracomment>The translated texts in this method should not be changed to avoid issues with the logbook conversion</extracomment>
-        <translation>类型：%1</translation>
+        <translation type="vanished">类型：%1</translation>
     </message>
     <message>
-        <location filename="../src/logbook/logdataconverter.cpp" line="326"/>
         <source>Flight Plan Distance: %1</source>
         <extracomment>The translated texts in this method should not be changed to avoid issues with the logbook conversion</extracomment>
-        <translation>飞行计划距离：%1</translation>
+        <translation type="vanished">飞行计划距离：%1</translation>
     </message>
     <message>
-        <location filename="../src/logbook/logdataconverter.cpp" line="329"/>
         <source>Flown Distance: %1</source>
         <extracomment>The translated texts in this method should not be changed to avoid issues with the logbook conversion</extracomment>
-        <translation>已飞距离：%1</translation>
+        <translation type="vanished">已飞距离：%1</translation>
     </message>
     <message>
         <location filename="../src/userdata/userdatacontroller.cpp" line="185"/>
