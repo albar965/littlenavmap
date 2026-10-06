@@ -934,6 +934,7 @@ unix:!macx {
   deploy.commands += cp -vfa $$[QT_INSTALL_LIBS]/libQt6XcbQpa.so*  $$DEPLOY_DIR_LIB &&
   deploy.commands += cp -vfa $$[QT_INSTALL_LIBS]/libQt6Xml.so* $$DEPLOY_DIR_LIB &&
   deploy.commands += cp -vfa $$[QT_INSTALL_LIBS]/libQt6WaylandClient.so* $$DEPLOY_DIR_LIB &&
+  deploy.commands += cp -vfa $$[QT_INSTALL_LIBS]/libQt6OpenGL.so* $$DEPLOY_DIR_LIB &&
   deploy.commands += rm -fv $$DEPLOY_DIR_LIB/lib*.so.*.debug $$DEPLOY_DIR_LIB/*/lib*.so.*.debug
 }
 
