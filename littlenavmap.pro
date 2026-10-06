@@ -354,7 +354,6 @@ SOURCES += \
   src/info/aircraftprogressconfig.cpp \
   src/info/infocontroller.cpp \
   src/logbook/logdatacontroller.cpp \
-  src/logbook/logdataconverter.cpp \
   src/logbook/logdatadialog.cpp \
   src/logbook/logstatisticsdialog.cpp \
   src/main.cpp \
@@ -568,7 +567,6 @@ HEADERS  += \
   src/info/aircraftprogressconfig.h \
   src/info/infocontroller.h \
   src/logbook/logdatacontroller.h \
-  src/logbook/logdataconverter.h \
   src/logbook/logdatadialog.h \
   src/logbook/logstatisticsdialog.h \
   src/mapgui/imageexportdialog.h \
