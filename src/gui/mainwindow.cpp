@@ -3543,7 +3543,7 @@ void MainWindow::mainWindowShownDelayed()
   if(Application::getStartupOptions().contains(lnm::STARTUP_RESET_LAYOUT))
   {
     qDebug() << Q_FUNC_INFO << "resetWindowLayout";
-    resetWindowLayout();
+    resetWindowLayoutInternal();
   }
 
   // Raise all floating docks and focus map widget
@@ -4250,6 +4250,12 @@ void MainWindow::resetWindowLayout()
 {
   qDebug() << Q_FUNC_INFO;
   saveStateMain();
+  resetWindowLayoutInternal();
+}
+
+void MainWindow::resetWindowLayoutInternal()
+{
+  qDebug() << Q_FUNC_INFO;
 
   mapWidget->removeFullScreenExitButton();
 
@@ -4308,7 +4314,7 @@ void MainWindow::restoreStateMain()
   }
   else
     // Use default state saved in application resources
-    resetWindowLayout();
+    resetWindowLayoutInternal();
 
   // Need to be loaded in constructor first since it reads all options
   // optionsDialog->restoreState();

@@ -539,6 +539,7 @@ private:
   void updateAirspaceTypes(const map::MapAirspaceFilter& filter);
   void updateAirspaceSources();
   void resetWindowLayout();
+  void resetWindowLayoutInternal();
   void resetTabLayout();
 
   /* Check manually for updates as triggered by the action */

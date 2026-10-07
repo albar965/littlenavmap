@@ -220,8 +220,8 @@ const QLatin1String MAP_MARK_DISPLAY("Map/MarkDisplay1");
 const QLatin1String MAP_AIRPORT("Map/Airports3");
 const QLatin1String MAP_AIRPORT_RUNWAY_LENGTH_MIN("Map/AirportsRunwayLengthMin");
 const QLatin1String MAP_AIRPORT_RUNWAY_LENGTH_MAX("Map/AirportsRunwayLengthMax");
-const QLatin1String MAP_DETAIL_LEVEL("Map/DetailLevel2");
-const QLatin1String MAP_DETAIL_LEVEL_TEXT("Map/DetailLevelText2");
+const QLatin1String MAP_DETAIL_LEVEL("Map/DetailLevel3");
+const QLatin1String MAP_DETAIL_LEVEL_TEXT("Map/DetailLevelText3");
 
 const QLatin1String LAYOUT_RECENT("WindowLayout/FilenamesRecent");
 

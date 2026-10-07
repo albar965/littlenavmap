@@ -360,10 +360,22 @@ void checkAndMigrateSettings()
         removeAndLog("Track/PacotsUrlParam");
       }
 
-      if(optionsVersion <= Version("3.0.18"))
+      if(optionsVersion <= Version("3.2.1.beta"))
       {
         removeAndLog("OptionsDialog/Widget_checkBoxOptionsStartupLoadLayout");
         removeAndLog("MainWindow/WidgetDockHandler");
+        removeAndLog("StatusBar/Label_visible_connectStatusLabel");
+        removeAndLog("StatusBar/Label_visible_mapDetailLabel");
+        removeAndLog("StatusBar/Label_visible_mapDistanceLabel");
+        removeAndLog("StatusBar/Label_visible_mapMagvarLabel");
+        removeAndLog("StatusBar/Label_visible_mapPositionLabel");
+        removeAndLog("StatusBar/Label_visible_mapRenderStatusLabel");
+        removeAndLog("StatusBar/Label_visible_mapVisibleLabel");
+        removeAndLog("StatusBar/Label_visible_timeLabel");
+        removeAndLog("StatusBar/Label_visible_timeZoneLabel");
+        removeAndLog("StatusBar/TimeType");
+        removeAndLog("Map/DetailLevel2");
+        removeAndLog("Map/DetailLevelText2");
       }
 
       qInfo() << Q_FUNC_INFO << "Clearing all essential messages since version differs";

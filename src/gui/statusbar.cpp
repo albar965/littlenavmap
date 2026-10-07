@@ -448,7 +448,12 @@ void StatusBar::restoreState()
   atools::gui::WidgetState state(lnm::MAINWINDOW_STATUSBAR, true /* visibility */);
 
   for(auto it = labels.begin(); it != labels.end(); ++it)
-    state.restore(it.value());
+  {
+    if(state.contains(it.value()))
+      state.restore(it.value());
+    else
+      it.value()->setVisible(true);
+  }
 
   timeType = atools::settings::Settings::instance().valueEnum(lnm::MAINWINDOW_STATUSBAR_TIME_TYPE, TIME_UTC_REAL);
 
