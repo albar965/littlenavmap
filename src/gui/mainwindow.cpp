@@ -298,8 +298,7 @@ MainWindow::MainWindow()
     // centralWidget->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Preferred);
     // centralWidget->hide(); // Potentially messes up docking windows (i.e. Profile dock cannot be shrinked) in certain configurations.
     // setCentralWidget(centralWidget);
-    if(OptionData::instance().getFlags2().testFlag(opts2::MAP_ALLOW_UNDOCK))
-      centralWidget()->hide();
+    centralWidget()->hide();
 
     setupUi();
 
@@ -365,18 +364,10 @@ MainWindow::MainWindow()
     Application::showSplashScreenMessage(tr("Creating map ... "));
     qDebug() << Q_FUNC_INFO << "Creating MapWidget";
     mapWidget = new MapWidget(this);
-    if(OptionData::instance().getFlags2().testFlag(opts2::MAP_ALLOW_UNDOCK))
-    {
-      // Map widget is a normal dock window
-      ui->verticalLayoutMap->replaceWidget(ui->widgetDummyMap, mapWidget);
-      ui->dockWidgetMap->show();
-    }
-    else
-    {
-      // Map widget is a fixed central widget
-      setCentralWidget(mapWidget);
-      ui->dockWidgetMap->hide();
-    }
+
+    // Map widget is a normal dock window
+    ui->verticalLayoutMap->replaceWidget(ui->widgetDummyMap, mapWidget);
+    ui->dockWidgetMap->show();
 
     statusBar = new StatusBar(ui->statusBar);
     statusBar->init();
@@ -1787,12 +1778,10 @@ void MainWindow::connectAllSlots()
 void MainWindow::actionShortcutMapTriggered()
 {
   qDebug() << Q_FUNC_INFO;
-  if(OptionData::instance().getFlags2().testFlag(opts2::MAP_ALLOW_UNDOCK))
-  {
-    ui->dockWidgetMap->show();
-    ui->dockWidgetMap->activateWindow();
-    dockHandler->raiseFloatingDockWidget(ui->dockWidgetMap);
-  }
+  ui->dockWidgetMap->show();
+  ui->dockWidgetMap->activateWindow();
+  dockHandler->raiseFloatingDockWidget(ui->dockWidgetMap);
+
   mapWidget->activateWindow();
   mapWidget->setFocus();
 }
@@ -2893,7 +2882,7 @@ void MainWindow::layoutSaveAs()
   {
     try
     {
-      dockHandler->saveWindowState(layoutFile, OptionData::instance().getFlags2().testFlag(opts2::MAP_ALLOW_UNDOCK));
+      dockHandler->saveWindowState(layoutFile, true /* allowUndockCentral */);
       layoutFileHistory->addFile(layoutFile);
       statusBar->setStatusMessage(tr("Window layout saved."));
     }
@@ -2922,7 +2911,7 @@ bool MainWindow::layoutOpenInternal(const QString& layoutFile)
 {
   try
   {
-    if(dockHandler->loadWindowState(layoutFile, OptionData::instance().getFlags2().testFlag(opts2::MAP_ALLOW_UNDOCK), layoutWarnText))
+    if(dockHandler->loadWindowState(layoutFile, true /* allowUndockCentral */, layoutWarnText))
     {
       dockHandler->currentStateToWindow();
 
@@ -3501,7 +3490,7 @@ void MainWindow::loadLayoutDelayed(const QString& filename)
   try
   {
     // Load layout file delayed - does not apply state
-    if(dockHandler->loadWindowState(filename, OptionData::instance().getFlags2().testFlag(opts2::MAP_ALLOW_UNDOCK), layoutWarnText))
+    if(dockHandler->loadWindowState(filename, true /* allowUndockCentral */, layoutWarnText))
       dockHandler->currentStateToWindow();
   }
   catch(atools::Exception& e)
@@ -3890,9 +3879,8 @@ void MainWindow::allowMovingWindows()
   qDebug() << Q_FUNC_INFO;
   dockHandler->setMovingAllowed(ui->actionShowAllowMoving->isChecked());
 
-  if(OptionData::instance().getFlags2().testFlag(opts2::MAP_ALLOW_UNDOCK))
-    // Undockable map widget is not registered in handler
-    dockHandler->setMovingAllowed(ui->dockWidgetMap, ui->actionShowAllowMoving->isChecked());
+  // Undockable map widget is not registered in handler
+  dockHandler->setMovingAllowed(ui->dockWidgetMap, ui->actionShowAllowMoving->isChecked());
 }
 
 void MainWindow::windowFrameDocking()
@@ -3909,9 +3897,8 @@ void MainWindow::allowDockingWindows()
   qDebug() << Q_FUNC_INFO;
   dockHandler->setDockingAllowed(ui->actionShowAllowDocking->isChecked());
 
-  if(OptionData::instance().getFlags2().testFlag(opts2::MAP_ALLOW_UNDOCK))
-    // Undockable map widget is not registered in handler
-    dockHandler->setDockingAllowed(ui->dockWidgetMap, ui->actionShowAllowDocking->isChecked());
+  // Undockable map widget is not registered in handler
+  dockHandler->setDockingAllowed(ui->dockWidgetMap, ui->actionShowAllowDocking->isChecked());
 }
 
 void MainWindow::hideTitleBar()
@@ -3919,22 +3906,21 @@ void MainWindow::hideTitleBar()
   qDebug() << Q_FUNC_INFO;
   dockHandler->setHideTitleBar(!ui->actionShowWindowTitleBar->isChecked());
 
-  if(OptionData::instance().getFlags2().testFlag(opts2::MAP_ALLOW_UNDOCK))
-    // Undockable map widget is not registered in handler
-    dockHandler->setHideTitleBar(ui->dockWidgetMap, !ui->actionShowWindowTitleBar->isChecked());
+  // Undockable map widget is not registered in handler
+  dockHandler->setHideTitleBar(ui->dockWidgetMap, !ui->actionShowWindowTitleBar->isChecked());
 }
 
 void MainWindow::mapDockVisibilityChanged(bool visible)
 {
   // Map widget changed visbility
-  if(!NavApp::isCloseCalled() && OptionData::instance().getFlags2().testFlag(opts2::MAP_ALLOW_UNDOCK))
+  if(!NavApp::isCloseCalled())
     dockHandler->setDockWindowFrame(ui->dockWidgetMap, dockHandler->getWindowFrame() && visible);
 }
 
 void MainWindow::mapDockTopLevelChanged(bool topLevel)
 {
   // Map widget changed floating state
-  if(!NavApp::isCloseCalled() && OptionData::instance().getFlags2().testFlag(opts2::MAP_ALLOW_UNDOCK))
+  if(!NavApp::isCloseCalled())
     dockHandler->setHideTitleBar(ui->dockWidgetMap, dockHandler->getHideTitleBar() && !topLevel);
 }
 
@@ -3943,9 +3929,8 @@ void MainWindow::raiseFloatingWindows()
   qDebug() << Q_FUNC_INFO;
   dockHandler->raiseWindows();
 
-  if(OptionData::instance().getFlags2().testFlag(opts2::MAP_ALLOW_UNDOCK))
-    // Map window is not registered in dockHandler
-    dockHandler->raiseFloatingDockWidget(ui->dockWidgetMap);
+  // Map window is not registered in dockHandler
+  dockHandler->raiseFloatingDockWidget(ui->dockWidgetMap);
 
   // Avoid having random widget focus
   mapWidget->setFocus();
@@ -4268,11 +4253,9 @@ void MainWindow::resetWindowLayout()
 
   mapWidget->removeFullScreenExitButton();
 
-  bool allowUndockMap = OptionData::instance().getFlags2().testFlag(opts2::MAP_ALLOW_UNDOCK);
-  dockHandler->resetWindowState(lnm::DEFAULT_MAINWINDOW_SIZE, lnm::MAINWINDOW_STATE_BIN.
-                                arg(allowUndockMap ? lnm::MAINWINDOW_STATE_DOCK : lnm::MAINWINDOW_STATE_NODOCK));
+  dockHandler->resetWindowState(lnm::DEFAULT_MAINWINDOW_SIZE, lnm::MAINWINDOW_STATE_BIN);
 
-  ui->dockWidgetMap->setVisible(allowUndockMap);
+  ui->dockWidgetMap->setVisible(true);
 
   ui->actionShowFullscreenMap->blockSignals(true);
   ui->actionShowFullscreenMap->setChecked(false);
@@ -4434,10 +4417,7 @@ void MainWindow::restoreStateMain()
   // Already loaded in constructor early to allow database creations
   // databaseLoader->restoreState();
 
-  if(!(OptionData::instance().getFlags2().testFlag(opts2::MAP_ALLOW_UNDOCK)))
-    ui->dockWidgetMap->hide();
-  else
-    ui->dockWidgetMap->show();
+  ui->dockWidgetMap->show();
 
   // Load layout file from either command line or recent list ===============================
   const OptionData& optionData = OptionData::instance();
@@ -4675,8 +4655,7 @@ void MainWindow::saveStateMain()
 #ifdef DEBUG_CREATE_WINDOW_STATE
     // Save the state into a binary file to be used for reset window layout
     // One state is needed with undockable map window and one without
-    QFile stateFile(atools::settings::Settings::getPath() + atools::SEP + QStringLiteral("mainwindow_state_%1.bin").
-                    arg(OptionData::instance().getFlags2().testFlag(opts2::MAP_ALLOW_UNDOCK) ? "dock" : "nodock"));
+    QFile stateFile(atools::settings::Settings::getPath() + atools::SEP + QStringLiteral("mainwindow_state_dock.bin"));
     if(stateFile.open(QFile::WriteOnly))
     {
       stateFile.write(saveState());

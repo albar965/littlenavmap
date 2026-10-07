@@ -364,7 +364,7 @@ enum Flag2 : quint64
   MAP_AVOID_BLURRED_MAP = 1ULL << 11,
 
   /* checkBoxOptionsMapUndock */
-  MAP_ALLOW_UNDOCK = 1ULL << 12,
+  // MAP_ALLOW_UNDOCK = 1ULL << 12,
 
   /* checkBoxOptionsGuiHighDpi - DISABLED in Qt 6 since always on */
   // HIGH_DPI_DISPLAY_SUPPORT = 1ULL << 13,

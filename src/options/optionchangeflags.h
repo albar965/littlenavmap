@@ -32,7 +32,7 @@ enum OptionChangeFlag : quint32
   OPTION_CHANGE_UI_FONT = 1 << 2, /* User interface font */
   OPTION_CHANGE_LANGUAGE = 1 << 3, /* User interface language */
   OPTION_CHANGE_UNITS = 1 << 4, /* Units */
-  OPTION_CHANGE_UNDOCKMAP = 1 << 5, /* Map window undock status */
+  // OPTION_CHANGE_UNDOCKMAP = 1 << 5, /* Map window undock status */
   OPTION_CHANGE_MAPTHEMES = 1 << 6, /* Map theme directory or keys changed */
   OPTION_CHANGE_SCENERY = 1 << 7, /* Scenery library includes or excludes */
   OPTION_CHANGE_WEBSERVER = 1 << 8, /* Webserver root directory */
@@ -43,11 +43,11 @@ enum OptionChangeFlag : quint32
   // Also change optionChangeFlagsToString()
 
   /* All options that require a restart */
-  OPTION_CHANGE_RESTART_NEEDED = OPTION_CHANGE_LANGUAGE | OPTION_CHANGE_UNDOCKMAP | OPTION_CHANGE_MAPTHEMES | OPTION_CHANGE_WEBSERVER |
+  OPTION_CHANGE_RESTART_NEEDED = OPTION_CHANGE_LANGUAGE | OPTION_CHANGE_MAPTHEMES | OPTION_CHANGE_WEBSERVER |
                                  OPTION_CHANGE_CONNECTION,
 
   /* All options but not restart flag */
-  OPTION_CHANGE_ALL = OPTION_CHANGE_OTHER | OPTION_CHANGE_UI_FONT | OPTION_CHANGE_LANGUAGE | OPTION_CHANGE_UNITS | OPTION_CHANGE_UNDOCKMAP |
+  OPTION_CHANGE_ALL = OPTION_CHANGE_OTHER | OPTION_CHANGE_UI_FONT | OPTION_CHANGE_LANGUAGE | OPTION_CHANGE_UNITS |
                       OPTION_CHANGE_MAPTHEMES | OPTION_CHANGE_SCENERY | OPTION_CHANGE_WEBSERVER | OPTION_CHANGE_TEXT_SIZES |
                       OPTION_CHANGE_ELEVATION | OPTION_CHANGE_CONNECTION,
 };

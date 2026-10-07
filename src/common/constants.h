@@ -512,10 +512,8 @@ const QLatin1String URLS_CONFIG(":/littlenavmap/resources/config/urls.cfg");
 /* Configuration for logging files and channels */
 const QLatin1String LOGGING_CONFIG(":/littlenavmap/resources/config/logging.cfg");
 
-/* Window state binary for undockable map window and dockable map window. %1 = "dock" or "nodock" */
-const QLatin1String MAINWINDOW_STATE_BIN(":/littlenavmap/resources/config/mainwindow_state_%1.bin");
-const QLatin1String MAINWINDOW_STATE_DOCK("dock");
-const QLatin1String MAINWINDOW_STATE_NODOCK("nodock");
+/* Window state binary for undockable map window */
+const QLatin1String MAINWINDOW_STATE_BIN(":/littlenavmap/resources/config/mainwindow_state_dock.bin");
 
 /* Oceanic track configuration */
 const QLatin1String TRACK_CONFIG(":/littlenavmap/resources/config/track.cfg");

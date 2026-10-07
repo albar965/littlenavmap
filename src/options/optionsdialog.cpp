@@ -152,7 +152,7 @@ OptionsDialog::OptionsDialog(QMainWindow *parentWindow)
   // Labels showing a hint and probably having a internal link to a page ============================================
   hintLabels.append({ui->labelOptionsUpdatesHint, ui->labelOptionsUnitsHint, ui->labelOptionsGuiFontHint, ui->labelOptionsFreetypeHint,
                      ui->labelOptionsGuiTooltipHint, ui->labelOptionsUnitsTextSizeHint, ui->labelOptionsFilePatternsHint,
-                     ui->labelOptionsResetLayoutHint, ui->labelOptionsRestartWebServer, ui->labelOptionsResetEmptyHint,
+                     ui->labelOptionsRestartWebServer, ui->labelOptionsResetEmptyHint,
                      ui->labelOptionsNavigationAidsHint, ui->labelOptionsAppFontHint, ui->labelOptionsAppFontHintProfile,
                      ui->labelOptionsAirportSettingsHint, ui->labelOptionsAirspaceSettingsHint, ui->labelOptionsUserAircraftSettingsHint,
                      ui->labelOptionsAiHint, ui->labelOptionsLabelHint, ui->labelOptionsProfileHint, ui->labelOptionsFlightPlanLabelHint,
@@ -702,7 +702,6 @@ OptionsDialog::OptionsDialog(QMainWindow *parentWindow)
     ui->checkBoxOptionsMapClickNavaid,
     ui->checkBoxOptionsMapClickAirspace,
     ui->checkBoxOptionsMapClickFlightplan,
-    ui->checkBoxOptionsMapUndock,
     ui->checkBoxOptionsRouteEastWestRule,
     ui->comboBoxOptionsRouteAltitudeRuleType,
     ui->checkBoxOptionsStartupLoadKml,
@@ -1346,9 +1345,6 @@ void OptionsDialog::buttonBoxHandler(QDialogButtonBox::StandardButton button, bo
       for(auto it = defaultOpts.mapThemeKeys.begin(); it != defaultOpts.mapThemeKeys.end(); ++it)
         it.value().clear();
 
-      // Keep the undock map window state to avoid a messed up layout after restart
-      defaultOpts.flags2.setFlag(opts2::MAP_ALLOW_UNDOCK, optionDataRef.getFlags2().testFlag(opts2::MAP_ALLOW_UNDOCK));
-
       optionDataToWidgets(defaultOpts);
       updateWidgetStates();
       updateWebOptionsFromData();
@@ -1417,9 +1413,6 @@ optc::OptionChangeFlags OptionsDialog::buildFlagsFromChange(const OptionData& sa
                       saved.unitCoords != changed.unitCoords ||
                       saved.unitFuelWeight != changed.unitFuelWeight);
 
-  changeFlags.setFlag(optc::OPTION_CHANGE_UNDOCKMAP,
-                      saved.flags2.testFlag(opts2::MAP_ALLOW_UNDOCK) != changed.flags2.testFlag(opts2::MAP_ALLOW_UNDOCK));
-
   changeFlags.setFlag(optc::OPTION_CHANGE_MAPTHEMES,
                       saved.cacheMapThemeDir != changed.cacheMapThemeDir ||
                       saved.mapThemeKeys != changed.mapThemeKeys);
@@ -1463,17 +1456,7 @@ void OptionsDialog::emitOptionsChanged()
   Dialog dialog(this);
   if(changeFlags != optc::OPTION_CHANGE_NONE)
   {
-    bool load = false, restart = false, resetLayout = false;
-
-    if(changeFlags.testFlag(optc::OPTION_CHANGE_UNDOCKMAP))
-    {
-      int retval = dialog.question(tr("You changed the option \"Allow to undock the map window\".\n\n"
-                                      "This will reset the window layout back to default after a restart.\n"
-                                      "You window layout might break if you do not restart now."
-                                      "Restart %1 now?").arg(QCoreApplication::applicationName()),
-                                   QMessageBox::Yes | QMessageBox::No, QMessageBox::No);
-      resetLayout = restart = retval == QDialogButtonBox::Yes;
-    }
+    bool load = false, restart = false;
 
     if(!restart && changeFlags.testAnyFlag(optc::OPTION_CHANGE_RESTART_NEEDED))
     {
@@ -1520,7 +1503,7 @@ void OptionsDialog::emitOptionsChanged()
       emit loadSceneryLibrary();
 
     if(restart)
-      emit restartApplication(resetLayout);
+      emit restartApplication(false /* resetLayout */);
   }
 }
 
@@ -2449,7 +2432,6 @@ void OptionsDialog::widgetsToOptionData(OptionData& data)
 
   toFlags(data.flags, ui->checkBoxOptionsSimUpdatesConstant, opts::SIM_UPDATE_MAP_CONSTANTLY);
   toFlags(data.flags2, ui->checkBoxOptionsMapZoomAvoidBlurred, opts2::MAP_AVOID_BLURRED_MAP);
-  toFlags(data.flags2, ui->checkBoxOptionsMapUndock, opts2::MAP_ALLOW_UNDOCK);
   toFlags(data.flags2, ui->checkBoxOptionsGuiToolbarSize, opts2::OVERRIDE_TOOLBAR_SIZE);
   toFlags(data.flags, ui->checkBoxOptionsFreetype, opts::GUI_FREETYPE_FONT_ENGINE);
 
@@ -2803,7 +2785,6 @@ void OptionsDialog::optionDataToWidgets(const OptionData& data)
 
   fromFlags(data.flags, ui->checkBoxOptionsSimUpdatesConstant, opts::SIM_UPDATE_MAP_CONSTANTLY);
   fromFlags(data.flags2, ui->checkBoxOptionsMapZoomAvoidBlurred, opts2::MAP_AVOID_BLURRED_MAP);
-  fromFlags(data.flags2, ui->checkBoxOptionsMapUndock, opts2::MAP_ALLOW_UNDOCK);
   fromFlags(data.flags2, ui->checkBoxOptionsGuiToolbarSize, opts2::OVERRIDE_TOOLBAR_SIZE);
   fromFlags(data.flags, ui->checkBoxOptionsFreetype, opts::GUI_FREETYPE_FONT_ENGINE);
 
