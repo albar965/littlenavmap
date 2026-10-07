@@ -24,12 +24,14 @@ You can ignore the error messages and simply reload the files normally to fix th
 * The setting `Load window layout from last used file` on options page `Startup and Updates` is now
   reset to off to avoid potential crashes when loading incompatible layout files.
 * Included default window layout files have been updated for compatibility with Qt 6.
+* Reduced default window size for smaller screens.
 * Fixed crash on startup with enabled web server.
 * Small text correction in empty database message in status bar.
 * Adjusted performance collection to use indicated or actual altitude altitude to detect cruise
   phase more reliably.
 * Removed old Ubuntu 22.04 build causing crashes and added new Ubuntu 26.04 build. Now providing
-  two builds for 24.04 and 26.04.
+  two builds for 24.04 and 26.04. Ubuntu 26.04 users have to install additional libraries:
+  `sudo apt install libopengl0 libxcb-cursor0 libxcb-icccm4 libxcb-keysyms1 libxcb-xkb1 libxkbcommon0 libxkbcommon-x11-0`
 
 ==<<=============================================================================
 

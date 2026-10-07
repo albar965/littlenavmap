@@ -57,7 +57,7 @@ QString helpManualDownloadUrl;
 QString helpFaqUrl;
 QString updateDefaultUrl;
 
-const QSize DEFAULT_MAINWINDOW_SIZE(1360, 800);
+const QSize DEFAULT_MAINWINDOW_SIZE(1200, 600);
 
 const QString helpLanguageOnline()
 {

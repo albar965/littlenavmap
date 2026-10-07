@@ -2874,6 +2874,8 @@ void MainWindow::layoutOpen()
 
   if(!layoutFile.isEmpty())
   {
+    saveStateMain();
+
     if(layoutOpenInternal(layoutFile))
       layoutFileHistory->addFile(layoutFile);
   }
@@ -4262,6 +4264,7 @@ void MainWindow::resetAllSettings()
 void MainWindow::resetWindowLayout()
 {
   qDebug() << Q_FUNC_INFO;
+  saveStateMain();
 
   mapWidget->removeFullScreenExitButton();
 
@@ -4289,6 +4292,7 @@ void MainWindow::resetWindowLayout()
 void MainWindow::resetTabLayout()
 {
   qDebug() << Q_FUNC_INFO;
+  saveStateMain();
   searchController->resetTabLayout();
   infoController->resetTabLayout();
   routeController->resetTabLayout();
