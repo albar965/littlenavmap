@@ -364,6 +364,7 @@ void checkAndMigrateSettings()
       {
         removeAndLog("OptionsDialog/Widget_checkBoxOptionsStartupLoadLayout");
         removeAndLog("MainWindow/WidgetDockHandler");
+        removeAndLog("MainWindow/WidgetDockHandler32");
         removeAndLog("StatusBar/Label_visible_connectStatusLabel");
         removeAndLog("StatusBar/Label_visible_mapDetailLabel");
         removeAndLog("StatusBar/Label_visible_mapDistanceLabel");

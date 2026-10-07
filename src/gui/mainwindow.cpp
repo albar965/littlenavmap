@@ -4297,9 +4297,10 @@ void MainWindow::restoreStateMain()
 
   applyToolBarSize();
 
-  if(!Application::isSafeMode() && settings.contains(lnm::MAINWINDOW_WIDGET_DOCKHANDLER))
+  const QByteArray dockSettings = settings.valueVar(lnm::MAINWINDOW_WIDGET_DOCKHANDLER).toByteArray();
+  if(!Application::isSafeMode() && dockSettings.size() > 256)
   {
-    dockHandler->restoreState(settings.valueVar(lnm::MAINWINDOW_WIDGET_DOCKHANDLER).toByteArray());
+    dockHandler->restoreState(dockSettings);
 
     // Start with normal state - apply fullscreen later to avoid layout mess up
     // This does not set or change fullscreen flags
@@ -4661,7 +4662,7 @@ void MainWindow::saveStateMain()
 #ifdef DEBUG_CREATE_WINDOW_STATE
     // Save the state into a binary file to be used for reset window layout
     // One state is needed with undockable map window and one without
-    QFile stateFile(atools::settings::Settings::getPath() + atools::SEP + QStringLiteral("mainwindow_state_dock.bin"));
+    QFile stateFile(atools::settings::Settings::getPath() + atools::SEP + QStringLiteral("mainwindow_state.bin"));
     if(stateFile.open(QFile::WriteOnly))
     {
       stateFile.write(saveState());

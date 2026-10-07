@@ -182,7 +182,7 @@ const QLatin1String INFOWINDOW_PROGRESS_FIELDS("InfoWindow/ProgressFields");
 const QLatin1String MAINWINDOW_FIRSTAPPLICATIONSTART("MainWindow/FirstApplicationStart");
 const QLatin1String MAINWINDOW_WIDGET("MainWindow/Widget");
 const QLatin1String MAINWINDOW_WIDGET_MAPTHEME("MainWindow/WidgetMapTheme");
-const QLatin1String MAINWINDOW_WIDGET_DOCKHANDLER("MainWindow/WidgetDockHandler32");
+const QLatin1String MAINWINDOW_WIDGET_DOCKHANDLER("MainWindow/WidgetDockHandler33");
 const QLatin1String MAINWINDOW_PRINT_SIZE("MainWindow/PrintPreviewSize");
 
 const QLatin1String MAP_AIRSPACES("Map/AirspaceFilter3");
@@ -513,7 +513,7 @@ const QLatin1String URLS_CONFIG(":/littlenavmap/resources/config/urls.cfg");
 const QLatin1String LOGGING_CONFIG(":/littlenavmap/resources/config/logging.cfg");
 
 /* Window state binary for undockable map window */
-const QLatin1String MAINWINDOW_STATE_BIN(":/littlenavmap/resources/config/mainwindow_state_dock.bin");
+const QLatin1String MAINWINDOW_STATE_BIN(":/littlenavmap/resources/config/mainwindow_state.bin");
 
 /* Oceanic track configuration */
 const QLatin1String TRACK_CONFIG(":/littlenavmap/resources/config/track.cfg");
