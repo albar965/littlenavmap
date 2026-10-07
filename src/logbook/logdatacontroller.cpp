@@ -36,11 +36,8 @@
 #include "gui/dialog.h"
 #include "gui/errorhandler.h"
 #include "gui/errorhandler.h"
-#include "gui/helphandler.h"
 #include "gui/mainwindow.h"
 #include "gui/sqlquerydialog.h"
-#include "gui/textdialog.h"
-#include "logbook/logdataconverter.h"
 #include "logbook/logdatadialog.h"
 #include "logbook/logstatisticsdialog.h"
 #include "options/optiondata.h"
@@ -56,7 +53,6 @@
 #include "sql/sqlrecord.h"
 #include "sql/sqltransaction.h"
 #include "ui_mainwindow.h"
-#include "util/htmlbuilder.h"
 #include "zip/gzip.h"
 
 #include <QDebug>
