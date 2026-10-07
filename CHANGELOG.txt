@@ -19,8 +19,8 @@ You can ignore the error messages and simply reload the files normally to fix th
 
 ## Changes from 3.2.1.beta to 3.2.2.beta
 
-* Fixed crash on startup. The window layout is now reset to default. Saved window layout files might
-  cause crashes in rare cases but can still be used. #1389
+* Fixed crash on startup. The window layout is now reset to default. Previously saved old window
+  layout files might cause crashes in rare cases but can still be used. #1389
 * The setting `Load window layout from last used file` on options page `Startup and Updates` is now
   reset to off to avoid potential crashes when loading incompatible layout files.
 * Removed the option `Allow to undock Map Window` in options. This is now default and gives
@@ -35,7 +35,10 @@ You can ignore the error messages and simply reload the files normally to fix th
 * Map detail level is now reset to default.
 * Removed old Ubuntu 22.04 build causing crashes and added new Ubuntu 26.04 build. Now providing
   two builds for 24.04 and 26.04. Ubuntu 26.04 users have to install additional libraries:
-  `sudo apt install libopengl0 libxcb-cursor0 libxcb-icccm4 libxcb-keysyms1 libxcb-xkb1 libxkbcommon0 libxkbcommon-x11-0`
+  `sudo apt install libopengl0 libxcb-cursor0 libxcb-icccm4 libxcb-keysyms1 libxcb-xkb1 libxkbcommon0 libxkbcommon-x11-0`.
+* Removed options page `Map` and put settings for empty airports to page `Map Display Airports`.
+* Renamed page `Map Font and Scale` to `Map Display` and put map shading options for dark mode and
+  sun shading there.
 
 ==<<=============================================================================
 

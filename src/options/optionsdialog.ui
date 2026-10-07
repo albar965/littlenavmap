@@ -66,7 +66,7 @@
      </widget>
      <widget class="QStackedWidget" name="stackedWidgetOptions">
       <property name="currentIndex">
-       <number>5</number>
+       <number>6</number>
       </property>
       <widget class="QWidget" name="stackedWidgetOptionsStartup">
        <layout class="QVBoxLayout" name="verticalLayout_41">
@@ -80,8 +80,8 @@
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>586</width>
-             <height>531</height>
+             <width>525</width>
+             <height>459</height>
             </rect>
            </property>
            <layout class="QVBoxLayout" name="verticalLayout_21">
@@ -437,8 +437,8 @@ This is the file on top of the list &quot;Recent Window Layouts&quot;.</string>
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>586</width>
-             <height>531</height>
+             <width>514</width>
+             <height>333</height>
             </rect>
            </property>
            <layout class="QVBoxLayout" name="verticalLayout_22">
@@ -630,8 +630,8 @@ opening files, modifying the flight plan and other operations.</string>
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>572</width>
-             <height>853</height>
+             <width>419</width>
+             <height>870</height>
             </rect>
            </property>
            <layout class="QVBoxLayout" name="verticalLayout_23">
@@ -673,7 +673,7 @@ This will scale the Little Navmap map graphics and icons for better visibility i
                <item row="3" column="0" colspan="4">
                 <widget class="QLabel" name="labelOptionsGuiFontHint">
                  <property name="text">
-                  <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Note that not all fonts are suitable for the user interface.&lt;br/&gt;&lt;img src=&quot;:/littlenavmap/resources/icons/bulb.svg&quot;/&gt;&lt;span style=&quot; font-style:italic;&quot;&gt;The map font can be changed on the page &lt;/span&gt;&lt;a href=&quot;lnm://mapdisplayfont&quot;&gt;&lt;span style=&quot; font-style:italic; text-decoration: underline; color:#0057ae;&quot;&gt;Map Font and Scale&lt;/span&gt;&lt;/a&gt;&lt;span style=&quot; font-style:italic;&quot;&gt; and the elevation profile font on the page &lt;/span&gt;&lt;a href=&quot;lnm://elevationprofile&quot;&gt;&lt;span style=&quot; font-style:italic; text-decoration: underline; color:#0057ae;&quot;&gt;Elevation Profile&lt;/span&gt;&lt;/a&gt;.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+                  <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Note that not all fonts are suitable for the user interface.&lt;br/&gt;&lt;img src=&quot;:/littlenavmap/resources/icons/bulb.svg&quot;/&gt;&lt;span style=&quot; font-style:italic;&quot;&gt;The map font can be changed on the page &lt;/span&gt;&lt;a href=&quot;lnm://mapdisplayfont&quot;&gt;&lt;span style=&quot; font-style:italic; text-decoration: underline; color:#0057ae;&quot;&gt;Map Display&lt;/span&gt;&lt;/a&gt;&lt;span style=&quot; font-style:italic;&quot;&gt; and the elevation profile font on the page &lt;/span&gt;&lt;a href=&quot;lnm://elevationprofile&quot;&gt;&lt;span style=&quot; font-style:italic; text-decoration: underline; color:#0057ae;&quot;&gt;Elevation Profile&lt;/span&gt;&lt;/a&gt;.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
                  </property>
                  <property name="wordWrap">
                   <bool>true</bool>
@@ -1228,8 +1228,8 @@ This does not affect the map window which can be changed separately on the optio
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>586</width>
-             <height>531</height>
+             <width>560</width>
+             <height>485</height>
             </rect>
            </property>
            <layout class="QGridLayout" name="gridLayout_36">
@@ -1583,8 +1583,8 @@ aircraft progress, tooltips and information window.</string>
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>586</width>
-             <height>531</height>
+             <width>480</width>
+             <height>380</height>
             </rect>
            </property>
            <layout class="QVBoxLayout" name="verticalLayout_59">
@@ -1821,14 +1821,14 @@ Example: &quot;IFR Frankfurt Am Main (EDDF) to Fiumicino (LIRF).lnmpln&quot;</st
         </item>
        </layout>
       </widget>
-      <widget class="QWidget" name="stackedWidgetOptionsMap">
-       <layout class="QVBoxLayout" name="verticalLayout_46">
+      <widget class="QWidget" name="stackedWidgetOptionsMapNavigation">
+       <layout class="QVBoxLayout" name="verticalLayout_47">
         <item>
-         <widget class="QScrollArea" name="scrollArea">
+         <widget class="QScrollArea" name="scrollArea_5">
           <property name="widgetResizable">
            <bool>true</bool>
           </property>
-          <widget class="QWidget" name="scrollAreaWidgetContents_2">
+          <widget class="QWidget" name="scrollAreaWidgetContents_6">
            <property name="geometry">
             <rect>
              <x>0</x>
@@ -1837,13 +1837,13 @@ Example: &quot;IFR Frankfurt Am Main (EDDF) to Fiumicino (LIRF).lnmpln&quot;</st
              <height>531</height>
             </rect>
            </property>
-           <layout class="QGridLayout" name="gridLayout">
-            <item row="1" column="0" colspan="2">
-             <widget class="QGroupBox" name="groupBox_31">
+           <layout class="QVBoxLayout" name="verticalLayout_12">
+            <item>
+             <widget class="QGroupBox" name="groupBoxOptionsMapZoomClick_2">
               <property name="title">
-               <string>Map Display Options</string>
+               <string>Navigation</string>
               </property>
-              <layout class="QGridLayout" name="gridLayout_47">
+              <layout class="QGridLayout" name="gridLayout_33">
                <property name="leftMargin">
                 <number>2</number>
                </property>
@@ -1859,136 +1859,74 @@ Example: &quot;IFR Frankfurt Am Main (EDDF) to Fiumicino (LIRF).lnmpln&quot;</st
                <property name="spacing">
                 <number>2</number>
                </property>
-               <item row="0" column="0" alignment="Qt::AlignVCenter">
-                <widget class="QLabel" name="label">
+               <item row="2" column="0" colspan="2">
+                <widget class="QRadioButton" name="radioButtonOptionsMapNavTouchscreen">
+                 <property name="toolTip">
+                  <string>You can still use the default click and drag method to scroll and the mouse wheel to zoom in this mode.
+Enable &quot;Navigation Aids&quot;, &quot;Screen Areas&quot; on options page &quot;Map Options and Labels&quot; to display hints on the map.</string>
+                 </property>
                  <property name="text">
-                  <string>&amp;Sun shading darkness:</string>
+                  <string>Use map &amp;areas for navigation. Useful when using touchscreens.</string>
+                 </property>
+                </widget>
+               </item>
+               <item row="3" column="0" alignment="Qt::AlignVCenter">
+                <widget class="QLabel" name="labelOptionsMapNavTouchscreenArea">
+                 <property name="text">
+                  <string>&amp;Screen click area size:</string>
                  </property>
                  <property name="buddy">
-                  <cstring>spinBoxOptionsDisplaySunShadeDarkness</cstring>
+                  <cstring>spinBoxOptionsMapNavTouchArea</cstring>
                  </property>
                 </widget>
                </item>
-               <item row="0" column="1">
-                <widget class="QSpinBox" name="spinBoxOptionsDisplaySunShadeDarkness">
-                 <property name="toolTip">
-                  <string>Sun shading level. Lower values result in a darker display.</string>
-                 </property>
-                 <property name="suffix">
-                  <string> % Brightness</string>
-                 </property>
-                 <property name="prefix">
-                  <string/>
-                 </property>
-                 <property name="minimum">
-                  <number>10</number>
-                 </property>
-                 <property name="maximum">
-                  <number>90</number>
-                 </property>
-                 <property name="singleStep">
-                  <number>10</number>
-                 </property>
-                 <property name="value">
-                  <number>40</number>
-                 </property>
-                </widget>
-               </item>
-               <item row="1" column="0" alignment="Qt::AlignVCenter">
-                <widget class="QLabel" name="labelOptionsGuiThemeMapDimming">
+               <item row="0" column="0" colspan="2">
+                <widget class="QRadioButton" name="radioButtonOptionsMapNavDragMove">
                  <property name="text">
-                  <string>Map &amp;dimming in dark style:</string>
-                 </property>
-                 <property name="buddy">
-                  <cstring>spinBoxOptionsGuiThemeMapDimming</cstring>
-                 </property>
-                </widget>
-               </item>
-               <item row="1" column="1">
-                <widget class="QSpinBox" name="spinBoxOptionsGuiThemeMapDimming">
-                 <property name="toolTip">
-                  <string>Darken the map and the flight plan elevation profile for the user interface style &quot;Dark&quot;. Lower values result in a darker display.</string>
-                 </property>
-                 <property name="readOnly">
-                  <bool>false</bool>
-                 </property>
-                 <property name="suffix">
-                  <string> % Brightness</string>
-                 </property>
-                 <property name="minimum">
-                  <number>10</number>
-                 </property>
-                 <property name="maximum">
-                  <number>100</number>
-                 </property>
-                 <property name="singleStep">
-                  <number>10</number>
-                 </property>
-                 <property name="value">
-                  <number>80</number>
-                 </property>
-                </widget>
-               </item>
-              </layout>
-             </widget>
-            </item>
-            <item row="0" column="0" colspan="2">
-             <widget class="QGroupBox" name="groupBoxMapTooltips_3">
-              <property name="title">
-               <string>Empty Airports</string>
-              </property>
-              <layout class="QVBoxLayout" name="verticalLayout_37">
-               <property name="spacing">
-                <number>2</number>
-               </property>
-               <property name="leftMargin">
-                <number>2</number>
-               </property>
-               <property name="topMargin">
-                <number>2</number>
-               </property>
-               <property name="rightMargin">
-                <number>2</number>
-               </property>
-               <property name="bottomMargin">
-                <number>2</number>
-               </property>
-               <item>
-                <widget class="QCheckBox" name="checkBoxOptionsMapEmptyAirports">
-                 <property name="toolTip">
-                  <string>Empty airports are not add-ons, have no taxiways, no parking and no aprons.
-These airports are drawn underneath all other airports and use a gray symbol.
-The airports toolbar button can be used to hide empty airports if this box is checked.</string>
-                 </property>
-                 <property name="text">
-                  <string>&amp;Treat empty airports special</string>
+                  <string>&amp;Click and drag map to move. Mouse wheel zooms to cursor position.</string>
                  </property>
                  <property name="checked">
-                  <bool>false</bool>
+                  <bool>true</bool>
                  </property>
                 </widget>
                </item>
-               <item>
-                <widget class="QCheckBox" name="checkBoxOptionsMapEmptyAirports3D">
+               <item row="1" column="0" colspan="2">
+                <widget class="QRadioButton" name="radioButtonOptionsMapNavClickCenter">
                  <property name="toolTip">
-                  <string>All X-Plane 11 airports which are 2D and stock airports
-are drawn underneath all other airports and use a gray symbol.
-The airports toolbar button can be used to hide empty airports if this box is checked.
-
-Note that this function is disabled for X-Plane 12 since the 3D flag is unreliable there.</string>
+                  <string>Enable &quot;Navigation Aids&quot;, &quot;Center Cross&quot; on
+options page &quot;Map Options and Labels&quot; to display a screen center hint.</string>
                  </property>
                  <property name="text">
-                  <string>&amp;X-Plane 11 2D airports are shown as empty</string>
-                 </property>
-                 <property name="checked">
-                  <bool>false</bool>
+                  <string>Click &amp;map to center position. Mouse wheel zooms to the map center position.</string>
                  </property>
                 </widget>
                </item>
-               <item>
-                <widget class="QLabel" name="labelOptionsResetEmptyHint">
+               <item row="3" column="1">
+                <widget class="QSpinBox" name="spinBoxOptionsMapNavTouchArea">
+                 <property name="toolTip">
+                  <string>Size of a screen area (virtual button) in percent of screen size.</string>
+                 </property>
+                 <property name="suffix">
+                  <string> %</string>
+                 </property>
+                 <property name="minimum">
+                  <number>5</number>
+                 </property>
+                 <property name="maximum">
+                  <number>35</number>
+                 </property>
+                 <property name="singleStep">
+                  <number>5</number>
+                 </property>
+                 <property name="value">
+                  <number>10</number>
+                 </property>
+                </widget>
+               </item>
+               <item row="4" column="0" colspan="2">
+                <widget class="QLabel" name="labelOptionsNavigationAidsHint">
                  <property name="text">
-                  <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;img src=&quot;:/littlenavmap/resources/icons/bulb.svg&quot;/&gt;&lt;span style=&quot; font-style:italic;&quot;&gt;You can hide empty airports in the map display by deselecting the menu item &amp;quot;Empty&amp;quot; in menu &amp;quot;View&amp;quot; -&amp;gt; &amp;quot;Airports&amp;quot; or using the related toolbar button.&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+                  <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;img src=&quot;:/littlenavmap/resources/icons/bulb.svg&quot;/&gt;&lt;span style=&quot; font-style:italic;&quot;&gt;Enable &amp;quot;Navigation Aids&amp;quot;, &amp;quot;Center Cross&amp;quot; on options page &lt;/span&gt;&lt;a href=&quot;lnm://mapoptions&quot;&gt;&lt;span style=&quot; font-style:italic; text-decoration: underline;&quot;&gt;Map Options and Labels&lt;/span&gt;&lt;/a&gt;&lt;span style=&quot; font-style:italic;&quot;&gt; to display a screen center hint.&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
                  </property>
                  <property name="wordWrap">
                   <bool>true</bool>
@@ -2004,8 +1942,197 @@ Note that this function is disabled for X-Plane 12 since the 3D flag is unreliab
               </layout>
              </widget>
             </item>
-            <item row="4" column="0">
-             <spacer name="verticalSpacer_18">
+            <item>
+             <widget class="QGroupBox" name="groupBoxOptionsMapZoomClick">
+              <property name="title">
+               <string>Zoom and Click</string>
+              </property>
+              <layout class="QVBoxLayout" name="verticalLayout_13">
+               <property name="spacing">
+                <number>2</number>
+               </property>
+               <property name="leftMargin">
+                <number>2</number>
+               </property>
+               <property name="topMargin">
+                <number>2</number>
+               </property>
+               <property name="rightMargin">
+                <number>2</number>
+               </property>
+               <property name="bottomMargin">
+                <number>2</number>
+               </property>
+               <item>
+                <widget class="QLabel" name="labelOptionsMapZoomShowMapDouble">
+                 <property name="text">
+                  <string>&amp;Zoom distance for double click on object:</string>
+                 </property>
+                 <property name="buddy">
+                  <cstring>doubleSpinBoxOptionsMapZoomShowMap</cstring>
+                 </property>
+                </widget>
+               </item>
+               <item>
+                <widget class="QDoubleSpinBox" name="doubleSpinBoxOptionsMapZoomShowMap">
+                 <property name="toolTip">
+                  <string>Viewpoint distance above earth surface when zooming after double clicking on an object in a table or in the map..
+Smaller values will zoom in closer to an airport or navaid. </string>
+                 </property>
+                 <property name="suffix">
+                  <string> %dist%</string>
+                 </property>
+                 <property name="decimals">
+                  <number>1</number>
+                 </property>
+                 <property name="minimum">
+                  <double>0.100000000000000</double>
+                 </property>
+                 <property name="maximum">
+                  <double>1000.000000000000000</double>
+                 </property>
+                 <property name="value">
+                  <double>1.500000000000000</double>
+                 </property>
+                </widget>
+               </item>
+               <item>
+                <widget class="QLabel" name="labelOptionsMapZoomShowMapMenu">
+                 <property name="text">
+                  <string>&amp;Zoom distance for &quot;Show on Map&quot; menu item:</string>
+                 </property>
+                 <property name="buddy">
+                  <cstring>doubleSpinBoxOptionsMapZoomShowMapMenu</cstring>
+                 </property>
+                </widget>
+               </item>
+               <item>
+                <widget class="QDoubleSpinBox" name="doubleSpinBoxOptionsMapZoomShowMapMenu">
+                 <property name="toolTip">
+                  <string>Viewpoint distance above earth surface when zooming after selecting &quot;Show on map&quot; or clicking the map links in the information windows.
+Smaller values will zoom in closer to an airport or navaid.
+</string>
+                 </property>
+                 <property name="suffix">
+                  <string> %dist%</string>
+                 </property>
+                 <property name="decimals">
+                  <number>1</number>
+                 </property>
+                 <property name="minimum">
+                  <double>0.100000000000000</double>
+                 </property>
+                 <property name="maximum">
+                  <double>1000.000000000000000</double>
+                 </property>
+                 <property name="value">
+                  <double>1.500000000000000</double>
+                 </property>
+                </widget>
+               </item>
+               <item>
+                <widget class="QCheckBox" name="checkBoxOptionsMapZoomAvoidBlurred">
+                 <property name="toolTip">
+                  <string>Zooms the map one step out for actions like center flight plan or double click to achieve a sharp map display.
+This works best with the Mercator projection and online maps.
+Map views might be shown with a larger zoom distance than expected if this option is selected.</string>
+                 </property>
+                 <property name="text">
+                  <string>&amp;Avoid blurred map display by zooming out to next best step</string>
+                 </property>
+                 <property name="checked">
+                  <bool>true</bool>
+                 </property>
+                </widget>
+               </item>
+              </layout>
+             </widget>
+            </item>
+            <item>
+             <widget class="QGroupBox" name="groupBoxMapTooltips_2">
+              <property name="title">
+               <string>Details while scrolling the map (click and drag, zoom in and out)</string>
+              </property>
+              <layout class="QVBoxLayout" name="verticalLayout_36">
+               <property name="spacing">
+                <number>2</number>
+               </property>
+               <property name="leftMargin">
+                <number>2</number>
+               </property>
+               <property name="topMargin">
+                <number>2</number>
+               </property>
+               <property name="rightMargin">
+                <number>2</number>
+               </property>
+               <property name="bottomMargin">
+                <number>2</number>
+               </property>
+               <item>
+                <widget class="QComboBox" name="comboBoxMapScrollZoomDetails">
+                 <property name="currentIndex">
+                  <number>1</number>
+                 </property>
+                 <item>
+                  <property name="text">
+                   <string>High - Full details and reload all data while scrolling or zooming</string>
+                  </property>
+                 </item>
+                 <item>
+                  <property name="text">
+                   <string>Normal - Full details while scrolling or zooming. Loading of map objects delayed.</string>
+                  </property>
+                 </item>
+                 <item>
+                  <property name="text">
+                   <string>Low - Low details while scrolling or zooming. Loading of map objects delayed.</string>
+                  </property>
+                 </item>
+                </widget>
+               </item>
+              </layout>
+             </widget>
+            </item>
+            <item>
+             <widget class="QGroupBox" name="groupBox_15">
+              <property name="title">
+               <string>Mouse Wheel</string>
+              </property>
+              <layout class="QVBoxLayout" name="verticalLayout_40">
+               <property name="spacing">
+                <number>2</number>
+               </property>
+               <property name="leftMargin">
+                <number>2</number>
+               </property>
+               <property name="topMargin">
+                <number>2</number>
+               </property>
+               <property name="rightMargin">
+                <number>2</number>
+               </property>
+               <property name="bottomMargin">
+                <number>2</number>
+               </property>
+               <item>
+                <widget class="QCheckBox" name="checkBoxOptionsGuiWheel">
+                 <property name="toolTip">
+                  <string>Reverses mouse wheel function for map zoom (Wheel and %1+Mouse Wheel), map details (%1+Mouse Wheel) and elevation profile (Wheel and Shift+Wheel).</string>
+                 </property>
+                 <property name="text">
+                  <string>Reverse mouse &amp;wheel direction in map and elevation profile</string>
+                 </property>
+                 <property name="checked">
+                  <bool>false</bool>
+                 </property>
+                </widget>
+               </item>
+              </layout>
+             </widget>
+            </item>
+            <item>
+             <spacer name="verticalSpacer_5">
               <property name="orientation">
                <enum>Qt::Vertical</enum>
               </property>
@@ -2036,7 +2163,7 @@ Note that this function is disabled for X-Plane 12 since the 3D flag is unreliab
              <x>0</x>
              <y>0</y>
              <width>599</width>
-             <height>399</height>
+             <height>517</height>
             </rect>
            </property>
            <layout class="QGridLayout" name="gridLayout_2">
@@ -2488,335 +2615,6 @@ userpoints and logbook entries when hovering the cursor over the map</string>
         </item>
        </layout>
       </widget>
-      <widget class="QWidget" name="stackedWidgetOptionsMapNavigation">
-       <layout class="QVBoxLayout" name="verticalLayout_47">
-        <item>
-         <widget class="QScrollArea" name="scrollArea_5">
-          <property name="widgetResizable">
-           <bool>true</bool>
-          </property>
-          <widget class="QWidget" name="scrollAreaWidgetContents_6">
-           <property name="geometry">
-            <rect>
-             <x>0</x>
-             <y>0</y>
-             <width>510</width>
-             <height>486</height>
-            </rect>
-           </property>
-           <layout class="QVBoxLayout" name="verticalLayout_12">
-            <item>
-             <widget class="QGroupBox" name="groupBoxOptionsMapZoomClick_2">
-              <property name="title">
-               <string>Navigation</string>
-              </property>
-              <layout class="QGridLayout" name="gridLayout_33">
-               <property name="leftMargin">
-                <number>2</number>
-               </property>
-               <property name="topMargin">
-                <number>2</number>
-               </property>
-               <property name="rightMargin">
-                <number>2</number>
-               </property>
-               <property name="bottomMargin">
-                <number>2</number>
-               </property>
-               <property name="spacing">
-                <number>2</number>
-               </property>
-               <item row="2" column="0" colspan="2">
-                <widget class="QRadioButton" name="radioButtonOptionsMapNavTouchscreen">
-                 <property name="toolTip">
-                  <string>You can still use the default click and drag method to scroll and the mouse wheel to zoom in this mode.
-Enable &quot;Navigation Aids&quot;, &quot;Screen Areas&quot; on options page &quot;Map Options and Labels&quot; to display hints on the map.</string>
-                 </property>
-                 <property name="text">
-                  <string>Use map &amp;areas for navigation. Useful when using touchscreens.</string>
-                 </property>
-                </widget>
-               </item>
-               <item row="3" column="0" alignment="Qt::AlignVCenter">
-                <widget class="QLabel" name="labelOptionsMapNavTouchscreenArea">
-                 <property name="text">
-                  <string>&amp;Screen click area size:</string>
-                 </property>
-                 <property name="buddy">
-                  <cstring>spinBoxOptionsMapNavTouchArea</cstring>
-                 </property>
-                </widget>
-               </item>
-               <item row="0" column="0" colspan="2">
-                <widget class="QRadioButton" name="radioButtonOptionsMapNavDragMove">
-                 <property name="text">
-                  <string>&amp;Click and drag map to move. Mouse wheel zooms to cursor position.</string>
-                 </property>
-                 <property name="checked">
-                  <bool>true</bool>
-                 </property>
-                </widget>
-               </item>
-               <item row="1" column="0" colspan="2">
-                <widget class="QRadioButton" name="radioButtonOptionsMapNavClickCenter">
-                 <property name="toolTip">
-                  <string>Enable &quot;Navigation Aids&quot;, &quot;Center Cross&quot; on
-options page &quot;Map Options and Labels&quot; to display a screen center hint.</string>
-                 </property>
-                 <property name="text">
-                  <string>Click &amp;map to center position. Mouse wheel zooms to the map center position.</string>
-                 </property>
-                </widget>
-               </item>
-               <item row="3" column="1">
-                <widget class="QSpinBox" name="spinBoxOptionsMapNavTouchArea">
-                 <property name="toolTip">
-                  <string>Size of a screen area (virtual button) in percent of screen size.</string>
-                 </property>
-                 <property name="suffix">
-                  <string> %</string>
-                 </property>
-                 <property name="minimum">
-                  <number>5</number>
-                 </property>
-                 <property name="maximum">
-                  <number>35</number>
-                 </property>
-                 <property name="singleStep">
-                  <number>5</number>
-                 </property>
-                 <property name="value">
-                  <number>10</number>
-                 </property>
-                </widget>
-               </item>
-               <item row="4" column="0" colspan="2">
-                <widget class="QLabel" name="labelOptionsNavigationAidsHint">
-                 <property name="text">
-                  <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;img src=&quot;:/littlenavmap/resources/icons/bulb.svg&quot;/&gt;&lt;span style=&quot; font-style:italic;&quot;&gt;Enable &amp;quot;Navigation Aids&amp;quot;, &amp;quot;Center Cross&amp;quot; on options page &lt;/span&gt;&lt;a href=&quot;lnm://mapoptions&quot;&gt;&lt;span style=&quot; font-style:italic; text-decoration: underline;&quot;&gt;Map Options and Labels&lt;/span&gt;&lt;/a&gt;&lt;span style=&quot; font-style:italic;&quot;&gt; to display a screen center hint.&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-                 </property>
-                 <property name="wordWrap">
-                  <bool>true</bool>
-                 </property>
-                 <property name="margin">
-                  <number>10</number>
-                 </property>
-                 <property name="textInteractionFlags">
-                  <set>Qt::LinksAccessibleByMouse|Qt::TextSelectableByMouse</set>
-                 </property>
-                </widget>
-               </item>
-              </layout>
-             </widget>
-            </item>
-            <item>
-             <widget class="QGroupBox" name="groupBoxOptionsMapZoomClick">
-              <property name="title">
-               <string>Zoom and Click</string>
-              </property>
-              <layout class="QVBoxLayout" name="verticalLayout_13">
-               <property name="spacing">
-                <number>2</number>
-               </property>
-               <property name="leftMargin">
-                <number>2</number>
-               </property>
-               <property name="topMargin">
-                <number>2</number>
-               </property>
-               <property name="rightMargin">
-                <number>2</number>
-               </property>
-               <property name="bottomMargin">
-                <number>2</number>
-               </property>
-               <item>
-                <widget class="QLabel" name="labelOptionsMapZoomShowMapDouble">
-                 <property name="text">
-                  <string>&amp;Zoom distance for double click on object:</string>
-                 </property>
-                 <property name="buddy">
-                  <cstring>doubleSpinBoxOptionsMapZoomShowMap</cstring>
-                 </property>
-                </widget>
-               </item>
-               <item>
-                <widget class="QDoubleSpinBox" name="doubleSpinBoxOptionsMapZoomShowMap">
-                 <property name="toolTip">
-                  <string>Viewpoint distance above earth surface when zooming after double clicking on an object in a table or in the map..
-Smaller values will zoom in closer to an airport or navaid. </string>
-                 </property>
-                 <property name="suffix">
-                  <string> %dist%</string>
-                 </property>
-                 <property name="decimals">
-                  <number>1</number>
-                 </property>
-                 <property name="minimum">
-                  <double>0.100000000000000</double>
-                 </property>
-                 <property name="maximum">
-                  <double>1000.000000000000000</double>
-                 </property>
-                 <property name="value">
-                  <double>1.500000000000000</double>
-                 </property>
-                </widget>
-               </item>
-               <item>
-                <widget class="QLabel" name="labelOptionsMapZoomShowMapMenu">
-                 <property name="text">
-                  <string>&amp;Zoom distance for &quot;Show on Map&quot; menu item:</string>
-                 </property>
-                 <property name="buddy">
-                  <cstring>doubleSpinBoxOptionsMapZoomShowMapMenu</cstring>
-                 </property>
-                </widget>
-               </item>
-               <item>
-                <widget class="QDoubleSpinBox" name="doubleSpinBoxOptionsMapZoomShowMapMenu">
-                 <property name="toolTip">
-                  <string>Viewpoint distance above earth surface when zooming after selecting &quot;Show on map&quot; or clicking the map links in the information windows.
-Smaller values will zoom in closer to an airport or navaid.
-</string>
-                 </property>
-                 <property name="suffix">
-                  <string> %dist%</string>
-                 </property>
-                 <property name="decimals">
-                  <number>1</number>
-                 </property>
-                 <property name="minimum">
-                  <double>0.100000000000000</double>
-                 </property>
-                 <property name="maximum">
-                  <double>1000.000000000000000</double>
-                 </property>
-                 <property name="value">
-                  <double>1.500000000000000</double>
-                 </property>
-                </widget>
-               </item>
-               <item>
-                <widget class="QCheckBox" name="checkBoxOptionsMapZoomAvoidBlurred">
-                 <property name="toolTip">
-                  <string>Zooms the map one step out for actions like center flight plan or double click to achieve a sharp map display.
-This works best with the Mercator projection and online maps.
-Map views might be shown with a larger zoom distance than expected if this option is selected.</string>
-                 </property>
-                 <property name="text">
-                  <string>&amp;Avoid blurred map display by zooming out to next best step</string>
-                 </property>
-                 <property name="checked">
-                  <bool>true</bool>
-                 </property>
-                </widget>
-               </item>
-              </layout>
-             </widget>
-            </item>
-            <item>
-             <widget class="QGroupBox" name="groupBoxMapTooltips_2">
-              <property name="title">
-               <string>Details while scrolling the map (click and drag, zoom in and out)</string>
-              </property>
-              <layout class="QVBoxLayout" name="verticalLayout_36">
-               <property name="spacing">
-                <number>2</number>
-               </property>
-               <property name="leftMargin">
-                <number>2</number>
-               </property>
-               <property name="topMargin">
-                <number>2</number>
-               </property>
-               <property name="rightMargin">
-                <number>2</number>
-               </property>
-               <property name="bottomMargin">
-                <number>2</number>
-               </property>
-               <item>
-                <widget class="QComboBox" name="comboBoxMapScrollZoomDetails">
-                 <property name="currentIndex">
-                  <number>1</number>
-                 </property>
-                 <item>
-                  <property name="text">
-                   <string>High - Full details and reload all data while scrolling or zooming</string>
-                  </property>
-                 </item>
-                 <item>
-                  <property name="text">
-                   <string>Normal - Full details while scrolling or zooming. Loading of map objects delayed.</string>
-                  </property>
-                 </item>
-                 <item>
-                  <property name="text">
-                   <string>Low - Low details while scrolling or zooming. Loading of map objects delayed.</string>
-                  </property>
-                 </item>
-                </widget>
-               </item>
-              </layout>
-             </widget>
-            </item>
-            <item>
-             <widget class="QGroupBox" name="groupBox_15">
-              <property name="title">
-               <string>Mouse Wheel</string>
-              </property>
-              <layout class="QVBoxLayout" name="verticalLayout_40">
-               <property name="spacing">
-                <number>2</number>
-               </property>
-               <property name="leftMargin">
-                <number>2</number>
-               </property>
-               <property name="topMargin">
-                <number>2</number>
-               </property>
-               <property name="rightMargin">
-                <number>2</number>
-               </property>
-               <property name="bottomMargin">
-                <number>2</number>
-               </property>
-               <item>
-                <widget class="QCheckBox" name="checkBoxOptionsGuiWheel">
-                 <property name="toolTip">
-                  <string>Reverses mouse wheel function for map zoom (Wheel and %1+Mouse Wheel), map details (%1+Mouse Wheel) and elevation profile (Wheel and Shift+Wheel).</string>
-                 </property>
-                 <property name="text">
-                  <string>Reverse mouse &amp;wheel direction in map and elevation profile</string>
-                 </property>
-                 <property name="checked">
-                  <bool>false</bool>
-                 </property>
-                </widget>
-               </item>
-              </layout>
-             </widget>
-            </item>
-            <item>
-             <spacer name="verticalSpacer_5">
-              <property name="orientation">
-               <enum>Qt::Vertical</enum>
-              </property>
-              <property name="sizeHint" stdset="0">
-               <size>
-                <width>20</width>
-                <height>0</height>
-               </size>
-              </property>
-             </spacer>
-            </item>
-           </layout>
-          </widget>
-         </widget>
-        </item>
-       </layout>
-      </widget>
       <widget class="QWidget" name="stackedWidgetOptionsMapFontScale">
        <layout class="QVBoxLayout" name="verticalLayout_64">
         <item>
@@ -2829,8 +2627,8 @@ Map views might be shown with a larger zoom distance than expected if this optio
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>433</width>
-             <height>333</height>
+             <width>586</width>
+             <height>531</height>
             </rect>
            </property>
            <layout class="QVBoxLayout" name="verticalLayout_65">
@@ -2975,6 +2773,100 @@ Note that some fonts, especially large fonts, can result in display errors on th
              </widget>
             </item>
             <item>
+             <widget class="QGroupBox" name="groupBox_31">
+              <property name="title">
+               <string>Map Shading Options</string>
+              </property>
+              <layout class="QGridLayout" name="gridLayout_47">
+               <property name="leftMargin">
+                <number>2</number>
+               </property>
+               <property name="topMargin">
+                <number>2</number>
+               </property>
+               <property name="rightMargin">
+                <number>2</number>
+               </property>
+               <property name="bottomMargin">
+                <number>2</number>
+               </property>
+               <property name="spacing">
+                <number>2</number>
+               </property>
+               <item row="0" column="0" alignment="Qt::AlignVCenter">
+                <widget class="QLabel" name="label">
+                 <property name="text">
+                  <string>&amp;Sun shading darkness:</string>
+                 </property>
+                 <property name="buddy">
+                  <cstring>spinBoxOptionsDisplaySunShadeDarkness</cstring>
+                 </property>
+                </widget>
+               </item>
+               <item row="0" column="1">
+                <widget class="QSpinBox" name="spinBoxOptionsDisplaySunShadeDarkness">
+                 <property name="toolTip">
+                  <string>Sun shading level. Lower values result in a darker display.</string>
+                 </property>
+                 <property name="suffix">
+                  <string> % Brightness</string>
+                 </property>
+                 <property name="prefix">
+                  <string/>
+                 </property>
+                 <property name="minimum">
+                  <number>10</number>
+                 </property>
+                 <property name="maximum">
+                  <number>90</number>
+                 </property>
+                 <property name="singleStep">
+                  <number>10</number>
+                 </property>
+                 <property name="value">
+                  <number>40</number>
+                 </property>
+                </widget>
+               </item>
+               <item row="1" column="0" alignment="Qt::AlignVCenter">
+                <widget class="QLabel" name="labelOptionsGuiThemeMapDimming">
+                 <property name="text">
+                  <string>Map &amp;dimming in dark style:</string>
+                 </property>
+                 <property name="buddy">
+                  <cstring>spinBoxOptionsGuiThemeMapDimming</cstring>
+                 </property>
+                </widget>
+               </item>
+               <item row="1" column="1">
+                <widget class="QSpinBox" name="spinBoxOptionsGuiThemeMapDimming">
+                 <property name="toolTip">
+                  <string>Darken the map and the flight plan elevation profile for the user interface style &quot;Dark&quot;. Lower values result in a darker display.</string>
+                 </property>
+                 <property name="readOnly">
+                  <bool>false</bool>
+                 </property>
+                 <property name="suffix">
+                  <string> % Brightness</string>
+                 </property>
+                 <property name="minimum">
+                  <number>10</number>
+                 </property>
+                 <property name="maximum">
+                  <number>100</number>
+                 </property>
+                 <property name="singleStep">
+                  <number>10</number>
+                 </property>
+                 <property name="value">
+                  <number>80</number>
+                 </property>
+                </widget>
+               </item>
+              </layout>
+             </widget>
+            </item>
+            <item>
              <spacer name="verticalSpacer_4">
               <property name="orientation">
                <enum>Qt::Vertical</enum>
@@ -3005,8 +2897,8 @@ Note that some fonts, especially large fonts, can result in display errors on th
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>355</width>
-             <height>665</height>
+             <width>572</width>
+             <height>785</height>
             </rect>
            </property>
            <layout class="QVBoxLayout" name="verticalLayout_71">
@@ -3323,6 +3215,78 @@ Note that some fonts, especially large fonts, can result in display errors on th
                 <widget class="QLabel" name="labelOptionsAirportSettingsHint_2">
                  <property name="text">
                   <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;img src=&quot;:/littlenavmap/resources/icons/bulb.svg&quot;/&gt;&lt;span style=&quot; font-style:italic;&quot;&gt;Note that you cannot interact with hidden objects. This means that related items in the context menu are disabled if an airport object is hidden.&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+                 </property>
+                 <property name="wordWrap">
+                  <bool>true</bool>
+                 </property>
+                 <property name="margin">
+                  <number>10</number>
+                 </property>
+                 <property name="textInteractionFlags">
+                  <set>Qt::LinksAccessibleByMouse|Qt::TextSelectableByMouse</set>
+                 </property>
+                </widget>
+               </item>
+              </layout>
+             </widget>
+            </item>
+            <item>
+             <widget class="QGroupBox" name="groupBoxMapTooltips_3">
+              <property name="title">
+               <string>Empty Airports</string>
+              </property>
+              <layout class="QVBoxLayout" name="verticalLayout_37">
+               <property name="spacing">
+                <number>2</number>
+               </property>
+               <property name="leftMargin">
+                <number>2</number>
+               </property>
+               <property name="topMargin">
+                <number>2</number>
+               </property>
+               <property name="rightMargin">
+                <number>2</number>
+               </property>
+               <property name="bottomMargin">
+                <number>2</number>
+               </property>
+               <item>
+                <widget class="QCheckBox" name="checkBoxOptionsMapEmptyAirports">
+                 <property name="toolTip">
+                  <string>Empty airports are not add-ons, have no taxiways, no parking and no aprons.
+These airports are drawn underneath all other airports and use a gray symbol.
+The airports toolbar button can be used to hide empty airports if this box is checked.</string>
+                 </property>
+                 <property name="text">
+                  <string>&amp;Treat empty airports special</string>
+                 </property>
+                 <property name="checked">
+                  <bool>false</bool>
+                 </property>
+                </widget>
+               </item>
+               <item>
+                <widget class="QCheckBox" name="checkBoxOptionsMapEmptyAirports3D">
+                 <property name="toolTip">
+                  <string>All X-Plane 11 airports which are 2D and stock airports
+are drawn underneath all other airports and use a gray symbol.
+The airports toolbar button can be used to hide empty airports if this box is checked.
+
+Note that this function is disabled for X-Plane 12 since the 3D flag is unreliable there.</string>
+                 </property>
+                 <property name="text">
+                  <string>&amp;X-Plane 11 2D airports are shown as empty</string>
+                 </property>
+                 <property name="checked">
+                  <bool>false</bool>
+                 </property>
+                </widget>
+               </item>
+               <item>
+                <widget class="QLabel" name="labelOptionsResetEmptyHint">
+                 <property name="text">
+                  <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;img src=&quot;:/littlenavmap/resources/icons/bulb.svg&quot;/&gt;&lt;span style=&quot; font-style:italic;&quot;&gt;You can hide empty airports in the map display by deselecting the menu item &amp;quot;Empty&amp;quot; in menu &amp;quot;View&amp;quot; -&amp;gt; &amp;quot;Airports&amp;quot; or using the related toolbar button.&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
                  </property>
                  <property name="wordWrap">
                   <bool>true</bool>
@@ -7336,8 +7300,8 @@ Note that this value does not affect flight plan calculation or saving of flight
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>572</width>
-             <height>649</height>
+             <width>450</width>
+             <height>696</height>
             </rect>
            </property>
            <layout class="QVBoxLayout" name="verticalLayout_27">
@@ -7643,8 +7607,8 @@ Note that this value does not affect flight plan calculation or saving of flight
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>572</width>
-             <height>630</height>
+             <width>245</width>
+             <height>758</height>
             </rect>
            </property>
            <layout class="QVBoxLayout" name="verticalLayout_28">
@@ -8009,8 +7973,8 @@ If this field is empty, the default Active Sky weather file path will be used wh
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>586</width>
-             <height>531</height>
+             <width>389</width>
+             <height>375</height>
             </rect>
            </property>
            <layout class="QVBoxLayout" name="verticalLayout_29">
@@ -8317,8 +8281,8 @@ If this field is empty, the default Active Sky weather file path will be used wh
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>586</width>
-             <height>531</height>
+             <width>543</width>
+             <height>429</height>
             </rect>
            </property>
            <layout class="QGridLayout" name="gridLayout_37">
@@ -8617,8 +8581,8 @@ Uncheck if you use such an add-on or see issues like a corruped map display.</st
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>586</width>
-             <height>531</height>
+             <width>395</width>
+             <height>524</height>
             </rect>
            </property>
            <layout class="QGridLayout" name="gridLayout_38">
@@ -8986,8 +8950,8 @@ You have to reload the scenery library so that the changes take effect.</string>
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>572</width>
-             <height>876</height>
+             <width>366</width>
+             <height>1093</height>
             </rect>
            </property>
            <layout class="QVBoxLayout" name="verticalLayout_75">
@@ -9622,7 +9586,6 @@ Entering a wrong value will cause errors when downloading weather reports.</stri
   <tabstop>checkBoxOptionsGuiAvoidOverwrite</tabstop>
   <tabstop>lineEditOptionsRouteFilename</tabstop>
   <tabstop>checkBoxOptionsGuiCenterKml</tabstop>
-  <tabstop>scrollArea</tabstop>
   <tabstop>checkBoxOptionsMapEmptyAirports</tabstop>
   <tabstop>checkBoxOptionsMapEmptyAirports3D</tabstop>
   <tabstop>spinBoxOptionsDisplaySunShadeDarkness</tabstop>

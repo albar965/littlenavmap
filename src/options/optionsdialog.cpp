@@ -258,24 +258,19 @@ OptionsDialog::OptionsDialog(QMainWindow *parentWindow)
                   tr("Edit flight plan file pattern and more file related actions."),
                   QStringLiteral(":/littlenavmap/resources/icons/fileopen.svg"));
 
-  addPageListItem(QStringLiteral("map"),
-                  tr("Map"),
-                  tr("Change map window behavior, handling of empty airports, and general display options."),
-                  QStringLiteral(":/littlenavmap/resources/icons/mapsettings.svg"));
+  addPageListItem(QStringLiteral("mapnavigation"),
+                  tr("Map Navigation"),
+                  tr("Zoom, click, screen navigation and mouse wheel settings."),
+                  QStringLiteral(":/littlenavmap/resources/icons/mapnavigation.svg"));
 
   addPageListItem(QStringLiteral("maptooltipsandclicks"),
                   tr("Map Tooltips and Clicks"),
                   tr("Tooltip and map click settings."),
                   QStringLiteral(":/littlenavmap/resources/icons/mapclick.svg"));
 
-  addPageListItem(QStringLiteral("mapnavigation"),
-                  tr("Map Navigation"),
-                  tr("Zoom, click, screen navigation and mouse wheel settings."),
-                  QStringLiteral(":/littlenavmap/resources/icons/mapnavigation.svg"));
-
   addPageListItem(QStringLiteral("mapdisplayfont"),
-                  tr("Map Font and Scale"),
-                  tr("Change the map display font and overall scale for symbols and labels."),
+                  tr("Map Display"),
+                  tr("Change the map display font, overall scale for symbols and labels and shading."),
                   QStringLiteral(":/littlenavmap/resources/icons/mapfont.svg"));
 
   addPageListItem(QStringLiteral("mapdisplayairports"),
