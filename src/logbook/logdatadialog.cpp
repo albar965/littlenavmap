@@ -101,7 +101,8 @@ LogdataDialog::LogdataDialog(QWidget *parent, ld::LogdataDialogMode mode)
     ui->labelFuelUsed->setVisible(false);
     ui->labelFuelUnits->setVisible(false);
     ui->labelFuelGrossweight->setVisible(false);
-    ui->lineFuelWeight->setVisible(false);
+    ui->groupBoxWeight->setVisible(false);
+    ui->groupBoxTrail->setVisible(false);
 
     ui->labelAttachedPlan->setVisible(false);
     ui->pushButtonAttachedPlanOpen->setVisible(false);

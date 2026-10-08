@@ -24,7 +24,7 @@
      </property>
      <widget class="QWidget" name="tabAircraft">
       <attribute name="title">
-       <string>Aircraft</string>
+       <string>Aircraft, Departure and Destination</string>
       </attribute>
       <layout class="QVBoxLayout" name="verticalLayout_2">
        <property name="spacing">
@@ -520,7 +520,7 @@
      </widget>
      <widget class="QWidget" name="tabFlight">
       <attribute name="title">
-       <string>Flight</string>
+       <string>Flight and Files</string>
       </attribute>
       <layout class="QVBoxLayout" name="verticalLayout_3">
        <property name="spacing">
@@ -1178,82 +1178,63 @@ This updates only the path and does not attach the file to the logbook entry.</s
               <property name="spacing">
                <number>2</number>
               </property>
-              <item row="0" column="1" colspan="2">
-               <layout class="QHBoxLayout" name="horizontalLayoutAttachedGpx_2">
-                <property name="spacing">
-                 <number>6</number>
-                </property>
-                <property name="leftMargin">
-                 <number>2</number>
-                </property>
-                <property name="topMargin">
-                 <number>2</number>
-                </property>
-                <property name="rightMargin">
-                 <number>2</number>
-                </property>
-                <property name="bottomMargin">
-                 <number>2</number>
-                </property>
-                <item>
-                 <widget class="QLabel" name="labelAttachedGpx">
-                  <property name="minimumSize">
-                   <size>
-                    <width>160</width>
-                    <height>0</height>
-                   </size>
-                  </property>
-                  <property name="text">
-                   <string>Attached GPX file:</string>
-                  </property>
-                 </widget>
-                </item>
-                <item>
-                 <widget class="QPushButton" name="pushButtonAttachedGpxAdd">
-                  <property name="toolTip">
-                   <string>Attach a GPX aircraft trail file to the logbook entry.
+              <item row="0" column="2">
+               <widget class="QPushButton" name="pushButtonAttachedGpxSaveAs">
+                <property name="toolTip">
+                 <string>Save the attached GPX aircraft trail to a new file.
 GPX files contain flight plan points and the flown trail.</string>
-                  </property>
-                  <property name="text">
-                   <string>&amp;Attach ...</string>
-                  </property>
-                 </widget>
-                </item>
-                <item>
-                 <widget class="QPushButton" name="pushButtonAttachedGpxSaveAs">
-                  <property name="toolTip">
-                   <string>Save the attached GPX aircraft trail to a new file.
+                </property>
+                <property name="text">
+                 <string>&amp;Save as ...</string>
+                </property>
+               </widget>
+              </item>
+              <item row="0" column="3">
+               <spacer name="horizontalSpacer_4">
+                <property name="orientation">
+                 <enum>Qt::Horizontal</enum>
+                </property>
+                <property name="sizeHint" stdset="0">
+                 <size>
+                  <width>0</width>
+                  <height>0</height>
+                 </size>
+                </property>
+               </spacer>
+              </item>
+              <item row="0" column="1">
+               <widget class="QPushButton" name="pushButtonAttachedGpxAdd">
+                <property name="toolTip">
+                 <string>Attach a GPX aircraft trail file to the logbook entry.
 GPX files contain flight plan points and the flown trail.</string>
-                  </property>
-                  <property name="text">
-                   <string>&amp;Save as ...</string>
-                  </property>
-                 </widget>
-                </item>
-                <item>
-                 <spacer name="horizontalSpacer_4">
-                  <property name="orientation">
-                   <enum>Qt::Horizontal</enum>
-                  </property>
-                  <property name="sizeHint" stdset="0">
-                   <size>
-                    <width>0</width>
-                    <height>0</height>
-                   </size>
-                  </property>
-                 </spacer>
-                </item>
-                <item>
-                 <widget class="QPushButton" name="pushButtonAttachedGpxClear">
-                  <property name="toolTip">
-                   <string>Removes the attached file</string>
-                  </property>
-                  <property name="text">
-                   <string>&amp;Clear</string>
-                  </property>
-                 </widget>
-                </item>
-               </layout>
+                </property>
+                <property name="text">
+                 <string>&amp;Attach ...</string>
+                </property>
+               </widget>
+              </item>
+              <item row="0" column="0">
+               <widget class="QLabel" name="labelAttachedGpx">
+                <property name="minimumSize">
+                 <size>
+                  <width>160</width>
+                  <height>0</height>
+                 </size>
+                </property>
+                <property name="text">
+                 <string>Attached GPX file:</string>
+                </property>
+               </widget>
+              </item>
+              <item row="0" column="4">
+               <widget class="QPushButton" name="pushButtonAttachedGpxClear">
+                <property name="toolTip">
+                 <string>Removes the attached file</string>
+                </property>
+                <property name="text">
+                 <string>&amp;Clear</string>
+                </property>
+               </widget>
               </item>
              </layout>
             </widget>
@@ -1311,207 +1292,248 @@ GPX files contain flight plan points and the flown trail.</string>
             <height>661</height>
            </rect>
           </property>
-          <layout class="QGridLayout" name="gridLayout_11">
+          <layout class="QVBoxLayout" name="verticalLayout_6">
+           <property name="spacing">
+            <number>6</number>
+           </property>
            <property name="leftMargin">
-            <number>2</number>
+            <number>9</number>
            </property>
            <property name="topMargin">
-            <number>2</number>
+            <number>9</number>
            </property>
            <property name="rightMargin">
-            <number>2</number>
+            <number>9</number>
            </property>
            <property name="bottomMargin">
-            <number>2</number>
+            <number>9</number>
            </property>
-           <property name="spacing">
-            <number>2</number>
-           </property>
-           <item row="0" column="0">
-            <widget class="QLabel" name="labelFuelUnits">
-             <property name="text">
-              <string>Fuel &amp;Units:</string>
+           <item>
+            <widget class="QGroupBox" name="groupBox">
+             <property name="title">
+              <string>Fuel</string>
              </property>
-             <property name="buddy">
-              <cstring>comboBoxFuelUnits</cstring>
-             </property>
-            </widget>
-           </item>
-           <item row="0" column="1">
-            <widget class="QComboBox" name="comboBoxFuelUnits">
-             <item>
-              <property name="text">
-               <string>Weight (%weight%)</string>
+             <layout class="QGridLayout" name="gridLayout_9">
+              <property name="leftMargin">
+               <number>2</number>
               </property>
-             </item>
-             <item>
-              <property name="text">
-               <string>Volume (%volume%)</string>
+              <property name="topMargin">
+               <number>2</number>
               </property>
-             </item>
-            </widget>
-           </item>
-           <item row="1" column="0">
-            <widget class="QLabel" name="labelFuelType">
-             <property name="text">
-              <string>Fuel &amp;Type:</string>
-             </property>
-             <property name="buddy">
-              <cstring>comboBoxFuelType</cstring>
-             </property>
-            </widget>
-           </item>
-           <item row="1" column="1">
-            <widget class="QComboBox" name="comboBoxFuelType">
-             <item>
-              <property name="text">
-               <string>Avgas</string>
+              <property name="rightMargin">
+               <number>2</number>
               </property>
-             </item>
-             <item>
-              <property name="text">
-               <string>Jetfuel</string>
+              <property name="bottomMargin">
+               <number>2</number>
               </property>
-             </item>
+              <property name="spacing">
+               <number>2</number>
+              </property>
+              <item row="2" column="1">
+               <widget class="QSpinBox" name="spinBoxFuelTrip">
+                <property name="toolTip">
+                 <string>Fuel needed for trip without reserves as calculated by aircraft performance</string>
+                </property>
+                <property name="showGroupSeparator" stdset="0">
+                 <bool>true</bool>
+                </property>
+                <property name="suffix">
+                 <string> %fuel%</string>
+                </property>
+                <property name="maximum">
+                 <number>1000000</number>
+                </property>
+                <property name="singleStep">
+                 <number>100</number>
+                </property>
+               </widget>
+              </item>
+              <item row="1" column="2">
+               <widget class="QCheckBox" name="checkBoxFuelType">
+                <property name="sizePolicy">
+                 <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+                  <horstretch>0</horstretch>
+                  <verstretch>0</verstretch>
+                 </sizepolicy>
+                </property>
+                <property name="toolTip">
+                 <string>Check to change this field for all selected logbook entries</string>
+                </property>
+                <property name="text">
+                 <string/>
+                </property>
+               </widget>
+              </item>
+              <item row="3" column="0">
+               <widget class="QLabel" name="labelFuelBlock">
+                <property name="text">
+                 <string>&amp;Block fuel:</string>
+                </property>
+                <property name="buddy">
+                 <cstring>spinBoxFuelBlock</cstring>
+                </property>
+               </widget>
+              </item>
+              <item row="4" column="0">
+               <widget class="QLabel" name="labelFuelUsed">
+                <property name="text">
+                 <string>&amp;Used fuel:</string>
+                </property>
+                <property name="buddy">
+                 <cstring>spinBoxFuelUsed</cstring>
+                </property>
+               </widget>
+              </item>
+              <item row="2" column="0">
+               <widget class="QLabel" name="labelFuelTrip">
+                <property name="text">
+                 <string>&amp;Trip fuel:</string>
+                </property>
+                <property name="buddy">
+                 <cstring>spinBoxFuelTrip</cstring>
+                </property>
+               </widget>
+              </item>
+              <item row="0" column="0">
+               <widget class="QLabel" name="labelFuelUnits">
+                <property name="text">
+                 <string>Fuel &amp;Units:</string>
+                </property>
+                <property name="buddy">
+                 <cstring>comboBoxFuelUnits</cstring>
+                </property>
+               </widget>
+              </item>
+              <item row="0" column="1">
+               <widget class="QComboBox" name="comboBoxFuelUnits">
+                <item>
+                 <property name="text">
+                  <string>Weight (%weight%)</string>
+                 </property>
+                </item>
+                <item>
+                 <property name="text">
+                  <string>Volume (%volume%)</string>
+                 </property>
+                </item>
+               </widget>
+              </item>
+              <item row="4" column="1">
+               <widget class="QSpinBox" name="spinBoxFuelUsed">
+                <property name="toolTip">
+                 <string>Actual used fuel from takeoff to touchdown</string>
+                </property>
+                <property name="showGroupSeparator" stdset="0">
+                 <bool>true</bool>
+                </property>
+                <property name="suffix">
+                 <string> %fuel%</string>
+                </property>
+                <property name="maximum">
+                 <number>1000000</number>
+                </property>
+                <property name="singleStep">
+                 <number>100</number>
+                </property>
+               </widget>
+              </item>
+              <item row="1" column="0">
+               <widget class="QLabel" name="labelFuelType">
+                <property name="text">
+                 <string>Fuel &amp;Type:</string>
+                </property>
+                <property name="buddy">
+                 <cstring>comboBoxFuelType</cstring>
+                </property>
+               </widget>
+              </item>
+              <item row="1" column="1">
+               <widget class="QComboBox" name="comboBoxFuelType">
+                <item>
+                 <property name="text">
+                  <string>Avgas</string>
+                 </property>
+                </item>
+                <item>
+                 <property name="text">
+                  <string>Jetfuel</string>
+                 </property>
+                </item>
+               </widget>
+              </item>
+              <item row="3" column="1">
+               <widget class="QSpinBox" name="spinBoxFuelBlock">
+                <property name="toolTip">
+                 <string>Fuel to be loaded into aircraft as calculated by aircraft performance</string>
+                </property>
+                <property name="showGroupSeparator" stdset="0">
+                 <bool>true</bool>
+                </property>
+                <property name="suffix">
+                 <string> %fuel%</string>
+                </property>
+                <property name="maximum">
+                 <number>1000000</number>
+                </property>
+                <property name="singleStep">
+                 <number>100</number>
+                </property>
+               </widget>
+              </item>
+             </layout>
             </widget>
            </item>
-           <item row="1" column="2">
-            <widget class="QCheckBox" name="checkBoxFuelType">
-             <property name="sizePolicy">
-              <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-               <horstretch>0</horstretch>
-               <verstretch>0</verstretch>
-              </sizepolicy>
+           <item>
+            <widget class="QGroupBox" name="groupBoxWeight">
+             <property name="title">
+              <string>Weight</string>
              </property>
-             <property name="toolTip">
-              <string>Check to change this field for all selected logbook entries</string>
-             </property>
-             <property name="text">
-              <string/>
-             </property>
+             <layout class="QGridLayout" name="gridLayout_10">
+              <property name="leftMargin">
+               <number>2</number>
+              </property>
+              <property name="topMargin">
+               <number>2</number>
+              </property>
+              <property name="rightMargin">
+               <number>2</number>
+              </property>
+              <property name="bottomMargin">
+               <number>2</number>
+              </property>
+              <property name="spacing">
+               <number>2</number>
+              </property>
+              <item row="0" column="0">
+               <widget class="QLabel" name="labelFuelGrossweight">
+                <property name="text">
+                 <string>&amp;Gross weight at takeoff:</string>
+                </property>
+                <property name="buddy">
+                 <cstring>spinBoxFuelGrossweight</cstring>
+                </property>
+               </widget>
+              </item>
+              <item row="0" column="1">
+               <widget class="QSpinBox" name="spinBoxFuelGrossweight">
+                <property name="showGroupSeparator" stdset="0">
+                 <bool>true</bool>
+                </property>
+                <property name="suffix">
+                 <string> %weight%</string>
+                </property>
+                <property name="maximum">
+                 <number>1000000</number>
+                </property>
+                <property name="singleStep">
+                 <number>100</number>
+                </property>
+               </widget>
+              </item>
+             </layout>
             </widget>
            </item>
-           <item row="2" column="0">
-            <widget class="QLabel" name="labelFuelTrip">
-             <property name="text">
-              <string>&amp;Trip fuel:</string>
-             </property>
-             <property name="buddy">
-              <cstring>spinBoxFuelTrip</cstring>
-             </property>
-            </widget>
-           </item>
-           <item row="2" column="1">
-            <widget class="QSpinBox" name="spinBoxFuelTrip">
-             <property name="toolTip">
-              <string>Fuel needed for trip without reserves as calculated by aircraft performance</string>
-             </property>
-             <property name="showGroupSeparator" stdset="0">
-              <bool>true</bool>
-             </property>
-             <property name="suffix">
-              <string> %fuel%</string>
-             </property>
-             <property name="maximum">
-              <number>1000000</number>
-             </property>
-             <property name="singleStep">
-              <number>100</number>
-             </property>
-            </widget>
-           </item>
-           <item row="3" column="0">
-            <widget class="QLabel" name="labelFuelBlock">
-             <property name="text">
-              <string>&amp;Block fuel:</string>
-             </property>
-             <property name="buddy">
-              <cstring>spinBoxFuelBlock</cstring>
-             </property>
-            </widget>
-           </item>
-           <item row="3" column="1">
-            <widget class="QSpinBox" name="spinBoxFuelBlock">
-             <property name="toolTip">
-              <string>Fuel to be loaded into aircraft as calculated by aircraft performance</string>
-             </property>
-             <property name="showGroupSeparator" stdset="0">
-              <bool>true</bool>
-             </property>
-             <property name="suffix">
-              <string> %fuel%</string>
-             </property>
-             <property name="maximum">
-              <number>1000000</number>
-             </property>
-             <property name="singleStep">
-              <number>100</number>
-             </property>
-            </widget>
-           </item>
-           <item row="4" column="0">
-            <widget class="QLabel" name="labelFuelUsed">
-             <property name="text">
-              <string>&amp;Used fuel:</string>
-             </property>
-             <property name="buddy">
-              <cstring>spinBoxFuelUsed</cstring>
-             </property>
-            </widget>
-           </item>
-           <item row="4" column="1">
-            <widget class="QSpinBox" name="spinBoxFuelUsed">
-             <property name="toolTip">
-              <string>Actual used fuel from takeoff to touchdown</string>
-             </property>
-             <property name="showGroupSeparator" stdset="0">
-              <bool>true</bool>
-             </property>
-             <property name="suffix">
-              <string> %fuel%</string>
-             </property>
-             <property name="maximum">
-              <number>1000000</number>
-             </property>
-             <property name="singleStep">
-              <number>100</number>
-             </property>
-            </widget>
-           </item>
-           <item row="5" column="0" colspan="2">
-            <widget class="Line" name="lineFuelWeight">
-             <property name="orientation">
-              <enum>Qt::Horizontal</enum>
-             </property>
-            </widget>
-           </item>
-           <item row="6" column="0">
-            <widget class="QLabel" name="labelFuelGrossweight">
-             <property name="text">
-              <string>&amp;Gross weight at takeoff:</string>
-             </property>
-             <property name="buddy">
-              <cstring>spinBoxFuelGrossweight</cstring>
-             </property>
-            </widget>
-           </item>
-           <item row="6" column="1">
-            <widget class="QSpinBox" name="spinBoxFuelGrossweight">
-             <property name="showGroupSeparator" stdset="0">
-              <bool>true</bool>
-             </property>
-             <property name="suffix">
-              <string> %weight%</string>
-             </property>
-             <property name="maximum">
-              <number>1000000</number>
-             </property>
-             <property name="singleStep">
-              <number>100</number>
-             </property>
-            </widget>
-           </item>
-           <item row="7" column="0">
+           <item>
             <spacer name="verticalSpacer">
              <property name="orientation">
               <enum>Qt::Vertical</enum>
