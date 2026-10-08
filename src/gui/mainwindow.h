@@ -372,6 +372,7 @@ private:
 
   /* Read settings for all windows, docks, controller and manager classes */
   void restoreStateMain();
+  void restoreMainWindowState();
 
   /* Enable or disable actions */
   void updateActionStates();

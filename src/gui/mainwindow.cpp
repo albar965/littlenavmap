@@ -289,17 +289,10 @@ MainWindow::MainWindow()
         statusBar->setStatusMessage(tr("Options changed."));
     });
 
-    // Setup central widget ==================================================
-    // Set one pixel fixed width
-    // QWidget *centralWidget = new QWidget(this);
-    // centralWidget->setWindowFlags(windowFlags() & ~(Qt::WindowTransparentForInput | Qt::WindowDoesNotAcceptFocus));
-    // centralWidget->setMinimumSize(1, 1);
-    // centralWidget->resize(1, 1);
-    // centralWidget->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Preferred);
-    // centralWidget->hide(); // Potentially messes up docking windows (i.e. Profile dock cannot be shrinked) in certain configurations.
-    // setCentralWidget(centralWidget);
-    centralWidget()->hide();
+    // Remove central widget ==================================================
+    setCentralWidget(nullptr);
 
+    // Create toolbar and dock actions
     setupUi();
 
     // Load all map feature colors
@@ -997,7 +990,6 @@ void MainWindow::setupUi()
   ui->toolBarView->addAction(ui->dockWidgetAircraft->toggleViewAction());
   ui->toolBarView->addAction(ui->dockWidgetProfile->toggleViewAction());
   ui->toolBarView->addAction(ui->dockWidgetInformation->toggleViewAction());
-
 }
 
 void MainWindow::clearProcedureCache()
@@ -3446,7 +3438,6 @@ void MainWindow::mainWindowShown()
   qDebug() << Q_FUNC_INFO << "enter";
 
   Application::showSplashScreenMessage(tr("Showing main window ... "));
-  dockHandler->normalStateToWindow();
 
   // Emit program wide font change signal again to update all widgets
   if(fontChangedFromDefault)
@@ -3502,7 +3493,7 @@ void MainWindow::loadLayoutDelayed(const QString& filename)
 void MainWindow::loadWindowState()
 {
   // Apply layout again to avoid issues with formatting
-  if(!dockHandler->isDelayedFullscreen())
+  if(!dockHandler->isFullScreen())
     dockHandler->normalStateToWindow();
   else
   {
@@ -3510,9 +3501,8 @@ void MainWindow::loadWindowState()
     // Switch to fullscreen now after applying normal layout to avoid a distorted layout
     dockHandler->fullscreenStateToWindow();
 
-    if(centralWidget() != ui->dockWidgetMap)
-      // Hide the map window title bar if map is undockable
-      ui->dockWidgetMap->setTitleBarWidget(new QWidget(ui->dockWidgetMap));
+    // Hide the map window title bar
+    ui->dockWidgetMap->setTitleBarWidget(new QWidget(ui->dockWidgetMap));
 
     // Update action
     ui->actionShowFullscreenMap->blockSignals(true);
@@ -3529,8 +3519,6 @@ void MainWindow::mainWindowShownDelayed()
   qDebug() << Q_FUNC_INFO << "enter";
 
   Application::showSplashScreenMessage(tr("Main window shown ... "));
-
-  loadWindowState();
 
   // Center flight plan after loading - do this delayed to consider window size changes
   const OptionData& optionData = OptionData::instance();
@@ -3815,9 +3803,8 @@ void MainWindow::fullScreenOn()
   // Hide toolbars and docks initially - user can open again if needed and state is saved then
   dockHandler->setFullScreenOn(atools::gui::HIDE_TOOLBARS | atools::gui::HIDE_DOCKS);
 
-  if(centralWidget() != ui->dockWidgetMap)
-    // Add a dummy widget to erase the title bar if map is inside a dock widget
-    ui->dockWidgetMap->setTitleBarWidget(new QWidget(ui->dockWidgetMap));
+  // Add a dummy widget to erase the title bar if map is inside a dock widget
+  ui->dockWidgetMap->setTitleBarWidget(new QWidget(ui->dockWidgetMap));
 
   mapWidget->addFullScreenExitButton();
   mapWidget->setFocus();
@@ -3833,13 +3820,11 @@ void MainWindow::fullScreenOff()
 
   dockHandler->setFullScreenOff();
 
-  if(centralWidget() != ui->dockWidgetMap)
-  {
-    // Delete dummy widget to restore title bar
-    QWidget *oldTitleBar = ui->dockWidgetMap->titleBarWidget();
-    ui->dockWidgetMap->setTitleBarWidget(nullptr);
-    delete oldTitleBar;
-  }
+  // Delete dummy widget to restore title bar
+  QWidget *oldTitleBar = ui->dockWidgetMap->titleBarWidget();
+  ui->dockWidgetMap->setTitleBarWidget(nullptr);
+  delete oldTitleBar;
+
   ui->actionShowStatusbar->blockSignals(true);
   ui->actionShowStatusbar->setChecked(!ui->statusBar->isHidden());
   ui->actionShowStatusbar->blockSignals(false);
@@ -4287,24 +4272,15 @@ void MainWindow::resetTabLayout()
   routeController->resetTabLayout();
 }
 
-void MainWindow::restoreStateMain()
+void MainWindow::restoreMainWindowState()
 {
-  qDebug() << Q_FUNC_INFO << "enter";
-
-  atools::gui::WidgetState widgetState(lnm::MAINWINDOW_WIDGET);
-
   Settings& settings = Settings::instance();
-
-  applyToolBarSize();
-
   const QByteArray dockSettings = settings.valueVar(lnm::MAINWINDOW_WIDGET_DOCKHANDLER).toByteArray();
   if(!Application::isSafeMode() && dockSettings.size() > 256)
   {
     dockHandler->restoreState(dockSettings);
+    loadWindowState();
 
-    // Start with normal state - apply fullscreen later to avoid layout mess up
-    // This does not set or change fullscreen flags
-    dockHandler->normalStateToWindowInitial();
     ui->actionShowFullscreenMap->blockSignals(true);
     ui->actionShowFullscreenMap->setChecked(dockHandler->isFullScreen());
     ui->actionShowFullscreenMap->blockSignals(false);
@@ -4316,6 +4292,18 @@ void MainWindow::restoreStateMain()
   else
     // Use default state saved in application resources
     resetWindowLayoutInternal();
+}
+
+void MainWindow::restoreStateMain()
+{
+  qDebug() << Q_FUNC_INFO << "enter";
+
+  atools::gui::WidgetState widgetState(lnm::MAINWINDOW_WIDGET);
+
+  applyToolBarSize();
+
+  // Restore window state in main event loop after constructor is finished
+  QTimer::singleShot(0, this, &MainWindow::restoreMainWindowState);
 
   // Need to be loaded in constructor first since it reads all options
   // optionsDialog->restoreState();
