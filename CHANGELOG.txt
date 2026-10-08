@@ -33,11 +33,10 @@ normally to fix this.**
   more flexibility which means you can move the map window like any other dock window. See the
   link to the user manual above. This also means that a warning can show up when trying to load
   incompatible layout files which can result in a garbled layout.
-* Embedded default window layout files have been updated for compatibility with Qt 6 to
-  avoid crashes.
-* Reduced default window size for smaller screens.
 * Fixed crash on startup with enabled web server.
 * Fixed status bar fields all hidden after update.
+* The visibility of the status bar fields is now saved correctly. Right click on the status bar
+  to change visible fields.
 * Map detail level is reset to default to avoid loading wrong values from previous versions.
 * Adjusted performance collection to use indicated or actual altitude altitude to detect cruise
   phase more reliably.
@@ -48,6 +47,7 @@ normally to fix this.**
 * Removed options page `Map` and put settings for empty airports to page `Map Display Airports`.
 * Renamed page `Map Font and Scale` to `Map Display` and put map shading options for dark mode and
   sun shading there.
+* Reduced default window size for smaller screens.
 * Other small text corrections in user interface.
 
 ==<<=============================================================================

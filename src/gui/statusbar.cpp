@@ -454,7 +454,7 @@ void StatusBar::restoreState()
 
   for(auto it = labels.begin(); it != labels.end(); ++it)
   {
-    if(state.contains(it.value()))
+    if(state.containsVisible(it.value()))
       state.restore(it.value());
     else
       it.value()->setVisible(true);
