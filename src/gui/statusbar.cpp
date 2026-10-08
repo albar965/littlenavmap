@@ -409,6 +409,11 @@ void StatusBar::styleChanged()
   mapPositionLabel->setText(tr(" — "));
   mapMagvarLabel->setText(tr(" — "));
   timeZoneLabel->setText(tr(" — "));
+
+  shrinkStatusBar();
+
+  // Adjusts the size of the status bar to fit its contents.
+  statusBar->adjustSize();
 }
 
 void StatusBar::setConnectionStatusMessageText(const QString& text, const QString& tooltipText)
