@@ -125,9 +125,9 @@ Name: "es"; MessagesFile: "compiler:Languages\Spanish.isl"
 
 ; ==========================================================================
 [CustomMessages]
-ChangelogMessage=Open the changelog
-en.ChangelogMessage=Open the changelog
-de.ChangelogMessage=Liste der Änderungen öffnen
+;ChangelogMessage=Open the changelog
+;en.ChangelogMessage=Open the changelog
+;de.ChangelogMessage=Liste der Änderungen öffnen
 OpenStartMessage=Open the user manual start page, which contains tips and tricks for first-time users.
 en.OpenStartMessage=Open the user manual start page, which contains tips and tricks for first-time users.
 de.OpenStartMessage=Startseite des Benutzerhandbuchs öffnen, die Tipps und Tricks für Erstbenutzer enthält.
@@ -137,9 +137,9 @@ de.InstallingRedistMessage=Installiere MSVC Redistributables ...
 UserManualMessage=User Manual
 en.UserManualMessage=User Manual
 de.UserManualMessage=Benutzerhandbuch
-ChangelogMessage=Changelog
-en.ChangelogMessage=Changelog
-de.ChangelogMessage=Liste der Änderungen
+;ChangelogMessage=Changelog
+;en.ChangelogMessage=Changelog
+;de.ChangelogMessage=Liste der Änderungen
 ReadmeMessage=Readme
 en.ReadmeMessage=Readme
 de.ReadmeMessage=Liesmich
@@ -376,7 +376,7 @@ Root: HKCR; Subkey: "{#LnmAppNameReg}\shell\open\command"; ValueType: string; Va
 Name: "{autoprograms}\{#LnmAppName} {#AppSuffix}\{#LnmAppName}"; Filename: "{app}\{#LnmAppExeName}"
 Name: "{autoprograms}\{#LnmAppName} {#AppSuffix}\{#LnmAppConnectName}"; Filename: "{app}\{#LnmAppConnectName}\{#LnmAppConnectExeName}"
 Name: "{autoprograms}\{#LnmAppName} {#AppSuffix}\Little Navmap {cm:UserManualMessage} (Online)"; Filename: "{app}\help\Little Navmap User Manual Online.url"
-Name: "{autoprograms}\{#LnmAppName} {#AppSuffix}\{cm:ChangelogMessage}"; Filename: "{app}\CHANGELOG.TXT"
+;Name: "{autoprograms}\{#LnmAppName} {#AppSuffix}\{cm:ChangelogMessage}"; Filename: "{app}\CHANGELOG.TXT"
 Name: "{autoprograms}\{#LnmAppName} {#AppSuffix}\{cm:ReadmeMessage}"; Filename: "{app}\README.TXT"
 Name: "{autodesktop}\{#LnmAppName} {#AppSuffix}"; Filename: "{app}\{#LnmAppExeName}"; Tasks: desktopicon
 
@@ -385,7 +385,7 @@ Name: "{autodesktop}\{#LnmAppName} {#AppSuffix}"; Filename: "{app}\{#LnmAppExeNa
 [Run]
 Filename: "{app}\{#LnmAppExeName}"; Description: "{cm:LaunchProgram,{#StringChange(LnmAppName, '&', '&&')}}"; Flags: nowait postinstall skipifsilent
 Filename: "https://www.littlenavmap.org/manuals/littlenavmap/release/latest/en/START.html"; Description: "{cm:OpenStartMessage}"; Flags: nowait shellexec postinstall skipifsilent
-Filename: "{app}\CHANGELOG.txt"; Description: "{cm:ChangelogMessage}"; Flags: nowait postinstall shellexec skipifsilent
+;Filename: "{app}\CHANGELOG.txt"; Description: "{cm:ChangelogMessage}"; Flags: nowait postinstall shellexec skipifsilent
 #if LnmAppArch == "win64"
   Filename: "{tmp}\VC_redist.x64.exe"; StatusMsg: "{cm:InstallingRedistMessage}"; Parameters: "/quiet /norestart"; Flags: runascurrentuser waituntilterminated
 #elif LnmAppArch == "win32"
