@@ -4272,26 +4272,51 @@ void MainWindow::resetTabLayout()
   routeController->resetTabLayout();
 }
 
-void MainWindow::restoreMainWindowState()
+void MainWindow::restoreMainWindowLayout()
 {
-  Settings& settings = Settings::instance();
-  const QByteArray dockSettings = settings.valueVar(lnm::MAINWINDOW_WIDGET_DOCKHANDLER).toByteArray();
-  if(!Application::isSafeMode() && dockSettings.size() > 256)
+  if(!Application::isSafeMode())
   {
-    dockHandler->restoreState(dockSettings);
-    loadWindowState();
+    const FileCheck *files = NavApp::getCommandLineFiles();
+    if(!files->getLayoutFile().isEmpty())
+    {
+      // Load from command line ==============================
+      qDebug() << Q_FUNC_INFO << "Restoring layout from command line" << files->getLayoutFile();
+      loadLayoutDelayed(files->getLayoutFile());
+    }
+    else if(OptionData::instance().getFlags().testFlag(opts::STARTUP_LOAD_LAYOUT) && !layoutFileHistory->isEmpty())
+    {
+      // Load recent by option ==============================
+      qDebug() << Q_FUNC_INFO << "Restoring layout from recent file" << layoutFileHistory->getTopFile();
+      loadLayoutDelayed(layoutFileHistory->getTopFile());
+    }
+    else
+    {
+      // Load from settings file ==============================
+      const QByteArray dockSettings = Settings::instance().valueVar(lnm::MAINWINDOW_WIDGET_DOCKHANDLER).toByteArray();
 
-    ui->actionShowFullscreenMap->blockSignals(true);
-    ui->actionShowFullscreenMap->setChecked(dockHandler->isFullScreen());
-    ui->actionShowFullscreenMap->blockSignals(false);
-
-    ui->actionShowStatusbar->blockSignals(true);
-    ui->actionShowStatusbar->setChecked(!ui->statusBar->isHidden());
-    ui->actionShowStatusbar->blockSignals(false);
+      // Check for valid dock settings array from ini file
+      if(dockSettings.size() > 256)
+      {
+        qDebug() << Q_FUNC_INFO << "Restoring layout from settings";
+        dockHandler->restoreState(dockSettings);
+        loadWindowState();
+      }
+      else
+        // Use default state embedded in application resources
+        resetWindowLayoutInternal();
+    }
   }
   else
-    // Use default state saved in application resources
+    // Safe mode - use default state embedded in application resources
     resetWindowLayoutInternal();
+
+  ui->actionShowFullscreenMap->blockSignals(true);
+  ui->actionShowFullscreenMap->setChecked(dockHandler->isFullScreen());
+  ui->actionShowFullscreenMap->blockSignals(false);
+
+  ui->actionShowStatusbar->blockSignals(true);
+  ui->actionShowStatusbar->setChecked(!ui->statusBar->isHidden());
+  ui->actionShowStatusbar->blockSignals(false);
 }
 
 void MainWindow::restoreStateMain()
@@ -4303,7 +4328,7 @@ void MainWindow::restoreStateMain()
   applyToolBarSize();
 
   // Restore window state in main event loop after constructor is finished
-  QTimer::singleShot(0, this, &MainWindow::restoreMainWindowState);
+  QTimer::singleShot(0, this, &MainWindow::restoreMainWindowLayout);
 
   // Need to be loaded in constructor first since it reads all options
   // optionsDialog->restoreState();
@@ -4414,18 +4439,10 @@ void MainWindow::restoreStateMain()
 
   ui->dockWidgetMap->show();
 
-  // Load layout file from either command line or recent list ===============================
-  const OptionData& optionData = OptionData::instance();
-  const FileCheck *files = NavApp::getCommandLineFiles();
-
-  if(!files->getLayoutFile().isEmpty())
-    loadLayoutDelayed(files->getLayoutFile());
-  else if(optionData.getFlags().testFlag(opts::STARTUP_LOAD_LAYOUT) && !layoutFileHistory->isEmpty() && !Application::isSafeMode())
-    loadLayoutDelayed(layoutFileHistory->getTopFile());
-  // else layout was already loaded from settings earlier
-
   // Load files passed from the command line =============================
   // Other command line passed files are loaded in route controller and perf controller
+  // Layout is loaded in restoreMainWindowLayout()
+  const FileCheck *files = NavApp::getCommandLineFiles();
   if(!files->getGpxFile().isEmpty())
     trailLoadGpxFile(files->getGpxFile(), files->isForceLoading());
 
