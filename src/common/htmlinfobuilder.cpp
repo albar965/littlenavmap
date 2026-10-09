@@ -244,7 +244,8 @@ void HtmlInfoBuilder::airportText(const MapAirport& airport, const map::WeatherC
   airportTitle(airport, html, rating, true /* procedures */, route);
 
   html.table();
-  if(!info && route != nullptr && !route->isEmpty() && airport.routeIndex != -1)
+  if(!info && route != nullptr && !route->isEmpty() && airport.routeIndex != -1 &&
+     atools::inRange(static_cast<qsizetype>(0), route->size(), static_cast<qsizetype>(airport.routeIndex)))
   {
     // Add flight plan information if airport is a part of it
     if(airport.routeIndex == route->getDestinationAirportLegIndex())
@@ -579,10 +580,12 @@ void HtmlInfoBuilder::airportText(const MapAirport& airport, const map::WeatherC
   {
     MapAirport airportNav = mapQuery->getAirportNav(airport);
 
-    html.small(QStringLiteral("Database: airport_id = %1, ident = %2, navdata %3, xp %4, magvar %5").
-               arg(airport.getId()).arg(airport.ident).arg(airport.navdata).arg(airport.xplane).arg(airport.magvar)).br();
-    html.small(QStringLiteral("Navdatabase: airport_id = %1, ident = %2, navdata %3, xp %4, magvar %5").
-               arg(airportNav.getId()).arg(airportNav.ident).arg(airportNav.navdata).arg(airportNav.xplane).arg(airport.magvar)).br();
+    html.small(QStringLiteral("Database: airport_id = %1, ident = %2, navdata %3, xp %4, magvar %5, routeIndex %6").
+               arg(airport.getId()).arg(airport.ident).arg(airport.navdata).arg(airport.xplane).arg(airport.magvar).
+               arg(airport.routeIndex)).br();
+    html.small(QStringLiteral("Navdatabase: airport_id = %1, ident = %2, navdata %3, xp %4, magvar %5, routeIndex %6").
+               arg(airportNav.getId()).arg(airportNav.ident).arg(airportNav.navdata).arg(airportNav.xplane).arg(airport.magvar).
+               arg(airportNav.routeIndex)).br();
   }
 #endif
 }

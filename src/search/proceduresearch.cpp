@@ -394,7 +394,11 @@ void ProcedureSearch::showProceduresInternal(const map::MapAirport& airportSim, 
 
   savedDepartureFilter = departureFilter;
   savedArrivalFilter = arrivalFilter;
+
   *savedAirportSim = airportSim;
+
+  // routeIndex can get out of sync if flight plan changes - ignore it here
+  savedAirportSim->routeIndex = -1;
 
   if(!silent)
   {
@@ -445,6 +449,10 @@ void ProcedureSearch::showProceduresInternal(const map::MapAirport& airportSim, 
   // Update fields with new data ===================
   *currentAirportSim = airportSim;
   *currentAirportNav = navAirport;
+
+  // routeIndex can get out of sync if flight plan changes - ignore it here
+  currentAirportSim->routeIndex = currentAirportNav->routeIndex = -1;
+
   ui->comboBoxProcedureSearchFilter->setCurrentIndex(searchFilterIndex);
   ui->comboBoxProcedureRunwayFilter->setCurrentIndex(runwayFilterIndex);
   ui->lineEditProcedureSearchIdentFilter->clear();
@@ -1093,6 +1101,9 @@ void ProcedureSearch::restoreState()
     if(!currentAirportSim->isValid() || !currentAirportNav->isValid())
       *currentAirportNav = *currentAirportSim = map::MapAirport();
   }
+
+  // routeIndex can get out of sync if flight plan changes - ignore it here
+  currentAirportSim->routeIndex = currentAirportNav->routeIndex = -1;
 
   updateFilterBoxes();
 
