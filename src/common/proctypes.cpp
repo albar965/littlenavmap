@@ -272,10 +272,10 @@ QString procedureLegFixStr(const MapProcedureLeg& leg)
   if(atools::contains(leg.type, {proc::TRACK_FROM_FIX_TO_DME_DISTANCE, proc::HEADING_TO_DME_DISTANCE_TERMINATION,
                                  proc::COURSE_TO_DME_DISTANCE}))
     // DME distance always uses recommended fix (VOR, etc.)
-    fix = QObject::tr("%1+%2").arg(leg.recFixIdent, atools::roundToInt(leg.distance));
+    fix = QObject::tr("%1+%2").arg(leg.recFixIdent).arg(atools::roundToInt(leg.distance));
   else if(atools::contains(leg.type, {proc::TRACK_FROM_FIX_FROM_DISTANCE}))
     // Track from fix uses fix ident
-    fix = QObject::tr("%1+%2").arg(leg.fixIdent, atools::roundToInt(leg.calculatedDistance));
+    fix = QObject::tr("%1+%2").arg(leg.fixIdent).arg(atools::roundToInt(leg.calculatedDistance));
   else
     fix = leg.fixIdent;
 
