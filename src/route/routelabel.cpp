@@ -322,19 +322,14 @@ void RouteLabel::buildHeaderAirports(atools::util::HtmlBuilder& html, bool widge
     }
   }
   else
-  {
-    departureAirport = tr("%1 (%2)").
-                       arg(flightplan.constFirst().getIdent(), flightplan.constFirst().getWaypointTypeAsDisplayString());
-  }
+    departureAirport = tr("%1 (%2)").arg(flightplan.constFirst().getIdent(), flightplan.constFirst().getWaypointTypeAsDisplayString());
 
   // Add destination to text ==============================================================
   if(route.hasValidDestination())
-    destinationAirport = tr("%1 (%2)").
-                         arg(route.getDestinationAirportLeg().getName(), route.getDestinationAirportLeg().getDisplayIdent());
+    destinationAirport = tr("%1 (%2)").arg(route.getDestinationAirportLeg().getName(), route.getDestinationAirportLeg().getDisplayIdent());
   else
-    destinationAirport = tr("%1 (%2)").
-                         arg(flightplan.at(route.getDestinationAirportLegIndex()).getIdent(),
-                             flightplan.at(route.getDestinationAirportLegIndex()).getWaypointTypeAsDisplayString());
+    destinationAirport = tr("%1 (%2)").arg(flightplan.at(route.getDestinationAirportLegIndex()).getIdent(),
+                                           flightplan.at(route.getDestinationAirportLegIndex()).getWaypointTypeAsDisplayString());
 
   if(!route.isEmpty())
   {

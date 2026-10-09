@@ -1122,8 +1122,11 @@ void DatabaseManager::checkForChangedNavAndSimDatabases()
                            "Always close %2 before copying, overwriting or updating scenery library databases.</p>").
                         arg(files.join(tr("&quot;<br/>&quot;")), QCoreApplication::applicationName()));
 
-        databaseNav->recordFileMetadata();
-        databaseSim->recordFileMetadata();
+        if(databaseNav != nullptr)
+          databaseNav->recordFileMetadata();
+
+        if(databaseSim != nullptr)
+          databaseSim->recordFileMetadata();
       }
     }
     showingDatabaseChangeWarning = false;

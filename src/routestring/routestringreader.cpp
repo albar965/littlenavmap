@@ -1376,11 +1376,9 @@ void RouteStringReader::destinationInternal(map::MapAirport& destAirport, proc::
       }
 
       if(!approach.isEmpty() && approachLegs.isProcedureEmpty())
-        appendWarning(tr("Approach %1 not found for destination airport %2. Ignoring approach.").
-                      arg(approach, destAirport.ident));
+        appendWarning(tr("Approach %1 not found for destination airport %2. Ignoring approach.").arg(approach, destAirport.ident));
       else if(!transition.isEmpty() && approachLegs.isTransitionEmpty())
-        appendWarning(tr("Transition %1 not found for destination airport %2. Ignoring transition.").
-                      arg(transition, destAirport.ident));
+        appendWarning(tr("Transition %1 not found for destination airport %2. Ignoring transition.").arg(transition, destAirport.ident));
     }
     else if(!runway.isEmpty())
     {
@@ -1392,8 +1390,7 @@ void RouteStringReader::destinationInternal(map::MapAirport& destAirport, proc::
         // Create a user defined approach using 1000 ft above threshold and 3 NM final
         procQuery->createCustomApproach(approachLegs, destAirport, runway, 3.f, 1000.f, 0.f);
       else
-        appendWarning(tr("Runway %1 not found for destination airport %2. Ignoring runway.").
-                      arg(runway, destAirport.ident));
+        appendWarning(tr("Runway %1 not found for destination airport %2. Ignoring runway.").arg(runway, destAirport.ident));
     }
 
     if(!approachLegs.isEmpty())
@@ -1782,15 +1779,13 @@ void RouteStringReader::filterAirways(QList<ParseEntry>& resultList, int i)
       }
       else
       {
-        appendWarning(tr("No waypoints found for airway %1. Ignoring flight plan segment.").
-                      arg(airwayName));
+        appendWarning(tr("No waypoints found for airway %1. Ignoring flight plan segment.").arg(airwayName));
         result.airways.clear();
       }
     }
     else
     {
-      appendWarning(tr("No waypoint %1 found at airway %2. Ignoring flight plan segment.").
-                    arg(waypointNameStart, airwayName));
+      appendWarning(tr("No waypoint %1 found at airway %2. Ignoring flight plan segment.").arg(waypointNameStart, airwayName));
       result.airways.clear();
     }
   }
