@@ -4479,41 +4479,39 @@ void RouteController::showCustomApproach(map::MapAirport airport)
 
     if(result == QDialog::Accepted)
     {
+      map::MapRunway runway;
+      map::MapRunwayEnd end;
+      bool airportSelected;
+      procedureDialog.getSelected(runway, end, airportSelected);
+
+      RouteCommand *undoCommand = preChange(tr("Destination changed"));
+
+      if(airportSelected)
+      {
+        // User clicked on airport on top of table
+        if(airportChange)
+          // Select new airport
+          routeSetDestination(airport, false /* undo */);
+        else
+          // Delete approach procedures
+          deleteSelectedLegs(route.hasAnyApproachProcedure() ? QList<int>({route.getDestinationAirportLegIndex() - 1}) : QList<int>(),
+                             false /* selectCurrent */, false /* undo */);
+      }
+      else
+      {
+        // User selected a runway
+        proc::MapProcedureLegs procedure;
+        QueryManager::instance()->getQueriesGui()->getProcedureQuery()->createCustomApproach(procedure, airport, end,
+                                                                                             procedureDialog.getLegDistance(),
+                                                                                             procedureDialog.getEntryAltitude(),
+                                                                                             procedureDialog.getLegOffsetAngle());
+        routeAddProcedure(procedure, false /* undo */);
+      }
+      postChange(undoCommand);
+
       if(procedureDialog.isShowProceduresSelected())
         // User clicked show procedures button - delegate
         emit showProcedures(airport, false /* departureFilter */, true /* arrivalFilter */);
-      else
-      {
-        map::MapRunway runway;
-        map::MapRunwayEnd end;
-        bool airportSelected;
-        procedureDialog.getSelected(runway, end, airportSelected);
-
-        RouteCommand *undoCommand = preChange(tr("Destination changed"));
-
-        if(airportSelected)
-        {
-          // User clicked on airport on top of table
-          if(airportChange)
-            // Select new airport
-            routeSetDestination(airport, false /* undo */);
-          else
-            // Delete approach procedures
-            deleteSelectedLegs(route.hasAnyApproachProcedure() ? QList<int>({route.getDestinationAirportLegIndex() - 1}) : QList<int>(),
-                               false /* selectCurrent */, false /* undo */);
-        }
-        else
-        {
-          // User selected a runway
-          proc::MapProcedureLegs procedure;
-          QueryManager::instance()->getQueriesGui()->getProcedureQuery()->createCustomApproach(procedure, airport, end,
-                                                                                               procedureDialog.getLegDistance(),
-                                                                                               procedureDialog.getEntryAltitude(),
-                                                                                               procedureDialog.getLegOffsetAngle());
-          routeAddProcedure(procedure, false /* undo */);
-        }
-        postChange(undoCommand);
-      }
     }
   }
 }
@@ -4575,45 +4573,43 @@ void RouteController::showCustomDeparture(map::MapAirport airport, const map::Ma
 
     if(result == QDialog::Accepted)
     {
+      map::MapRunway runway;
+      map::MapRunwayEnd end;
+      bool airportSelected;
+      procedureDialog.getSelected(runway, end, airportSelected);
+
+      RouteCommand *undoCommand = preChange(tr("Departure changed"));
+
+      if(airportSelected)
+      {
+        // User clicked on airport on top of table
+        if(airportChange)
+          routeSetDeparture(airport, false /* undo */);
+        else if(route.getSidLegIndex() > 0)
+          deleteSelectedLegs({route.getSidLegIndex()}, false /* selectCurrent */, false /* undo */);
+      }
+      else
+      {
+        // User selected a runway
+        proc::MapProcedureLegs procedure;
+        queries->getProcedureQuery()->createCustomDeparture(procedure, airport, end, procedureDialog.getLegDistance());
+        routeAddProcedure(procedure, false /* undo */);
+      }
+
+      if(parking.isValid())
+        routeSetParkingPosition(parking, false /* undo */);
+
+      if(runwayEnd.isValid())
+        routeSetRunwayEnd(runwayEnd, false /* undo */);
+
+      if(helipad.isValid())
+        routeSetHelipad(helipad, false /* undo */);
+
+      postChange(undoCommand);
+
       if(procedureDialog.isShowProceduresSelected())
         // User clicked show procedures button - delegate to procedure search
         emit showProcedures(airport, true /* departureFilter */, false /* arrivalFilter */);
-      else
-      {
-        map::MapRunway runway;
-        map::MapRunwayEnd end;
-        bool airportSelected;
-        procedureDialog.getSelected(runway, end, airportSelected);
-
-        RouteCommand *undoCommand = preChange(tr("Departure changed"));
-
-        if(airportSelected)
-        {
-          // User clicked on airport on top of table
-          if(airportChange)
-            routeSetDeparture(airport, false /* undo */);
-          else if(route.getSidLegIndex() > 0)
-            deleteSelectedLegs({route.getSidLegIndex()}, false /* selectCurrent */, false /* undo */);
-        }
-        else
-        {
-          // User selected a runway
-          proc::MapProcedureLegs procedure;
-          queries->getProcedureQuery()->createCustomDeparture(procedure, airport, end, procedureDialog.getLegDistance());
-          routeAddProcedure(procedure, false /* undo */);
-        }
-
-        if(parking.isValid())
-          routeSetParkingPosition(parking, false /* undo */);
-
-        if(runwayEnd.isValid())
-          routeSetRunwayEnd(runwayEnd, false /* undo */);
-
-        if(helipad.isValid())
-          routeSetHelipad(helipad, false /* undo */);
-
-        postChange(undoCommand);
-      }
     }
   }
 }

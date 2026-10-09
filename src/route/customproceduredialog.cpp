@@ -50,8 +50,9 @@ CustomProcedureDialog::CustomProcedureDialog(QWidget *parent, const map::MapAirp
   runwayTable->setPreSelectedRunwayEnd(preselectRunwayEndSim);
 
   // Yes is show procedures button
-  ui->buttonBoxCustomProc->button(QDialogButtonBox::Yes)->setText(departureParam ? tr("Show Departure &Procedures") :
-                                                                  tr("Show Arrival/Approach &Procedures"));
+  ui->buttonBoxCustomProc->button(QDialogButtonBox::Yes)->setText(departureParam ?
+                                                                  tr("Ok and Show Departure &Proc.") :
+                                                                  tr("Ok and Show Arrival/Approach &Proc."));
 
   if(!QueryManager::instance()->getQueriesGui()->getMapQuery()->hasDepartureProcedures(mapAirport) && departureParam)
     ui->buttonBoxCustomProc->button(QDialogButtonBox::Yes)->setDisabled(true);
