@@ -47,6 +47,8 @@ normally to fix this.**
 * The visibility of the status bar fields is now saved correctly. Right click on the status bar
   to change visible fields.
 * Map detail level is reset to default to avoid loading wrong values from previous versions.
+* Reduced the number of parallel connections to one for CARTO maps to avoid temporary blocks. The maps
+  can load a bit slower but more reliably now.
 * Adjusted performance collection to use indicated or actual altitude altitude to detect cruise
   phase more reliably.
 * Removed old Ubuntu 22.04 build and added new Ubuntu 26.04 build. Now providing two builds for
