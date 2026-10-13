@@ -5,78 +5,66 @@
      the source code.
 -->
 <dgml xmlns="http://edu.kde.org/marble/dgml/2.0">
-    <document>
-        <head>
-            <!-- the license here applies to the actual map content, not this dgml file. See the license header above for the dgml file license -->
-            <license short="Public Domain">Source: Made with Natural Earth. Free vector and raster map data @ naturalearthdata.com., License: Public Domain</license>
-            <name>Plain Map</name>
-            <target>earth</target>
-            <theme>plain</theme>
-            <icon pixmap="plain-preview.png"/>
-            <shortcut>Ctrl+Alt+6</shortcut>
-
-            <!-- describes whether the map theme item will be hidden (e.g.
-                for a clouds layer): -->
-            <visible> true </visible>
-
-            <!-- The description allows for rich text of course: -->
-            <description><![CDATA[<p>A <i>plain map</i>.</p><p>It uses vector lines to mark coastlines and country borders, etc...</p>]]></description>
-
-            <zoom>
-                <minimum>   900  </minimum>
-                <maximum>  3328  </maximum>
-
-                <!-- describes whether you can zoom trough the levels
-                    continuously -->
-                <discrete> false </discrete>
-            </zoom>
-        </head>
-
-            <!-- Now we create the layer structure that gets handled by the
-    layer management class -->
-
-        <map bgcolor="#99b3cc">
-            <canvas/>
-            <target/>
-
-            <layer name="rivers" backend="geodata">
-                <geodata name="rivers">
-                    <sourcefile> naturalearth/ne_50m_rivers_lake_centerlines.pn2 </sourcefile>
-                    <pen color="#3474df" />
-                </geodata>
-                <geodata name="lake">
-                    <sourcefile> naturalearth/ne_50m_lakes.pn2 </sourcefile>
-                    <brush color="#99b3cc" />
-                    <pen color="transparent" style="nopen"/>
-                </geodata>
-            </layer>
-
-            <layer name="countries" backend="geodata">
-            <geodata name="coast">
-                <sourcefile> naturalearth/ne_50m_land.pn2 </sourcefile>
-                <pen color="transparent" style="nopen"/>
-                <brush color="#f2efe9" />
-            </geodata>
-            <geodata name="border">
-                <sourcefile> naturalearth/ne_50m_admin_0_boundary_lines_land.pn2 </sourcefile>
-                <pen color="#808080" width="1.0" />
-            </geodata>
-            <geodata name="admin1">
-                <sourcefile> naturalearth/ne_50m_admin_1_states_provinces_lines.pn2 </sourcefile>
-                <pen color="#b0b0b0" style="dashline" />
-            </geodata>
-            <geodata name="breakawaydisputed">
-                <sourcefile> naturalearth/ne_50m_admin_0_breakaway_disputed_areas.pn2 </sourcefile>
-                <pen color="#cccbca" width="1" style="dotline"/>
-                <brush color="#cccbca" alpha="0.20" />
-            </geodata>
-            </layer>
-
-            <layer name="cities" backend="geodata">
-                <geodata name="cityplacemarks">
-                    <sourcefile>cityplacemarks.cache</sourcefile>
-                </geodata>
-            </layer>
-        </map>
-    </document>
+  <document>
+    <head>
+      <!-- the license here applies to the actual map content, not this dgml file. See the license header above for the dgml file license -->
+      <license short="Public Domain">Source: Made with Natural Earth. Free vector and raster map data @ naturalearthdata.com., License: Public Domain</license>
+      <name>Plain Map</name>
+      <target>earth</target>
+      <theme>plain</theme>
+      <icon pixmap="plain-preview.png"/>
+      <shortcut>Ctrl+Alt+6</shortcut>
+      <!-- describes whether the map theme item will be hidden (e.g. for a clouds layer): -->
+      <visible>true</visible>
+      <!-- The description allows for rich text of course: -->
+      <description>A plain map. It uses vector lines to mark coastlines and country borders and more.</description>
+      <zoom>
+        <minimum>900</minimum>
+        <maximum>3328</maximum>
+        <!-- describes whether you can zoom trough the levels continuously -->
+        <discrete>false</discrete>
+      </zoom>
+    </head>
+    <!-- Now we create the layer structure that gets handled by the layer management class -->
+    <map bgcolor="#99b3cc">
+      <canvas/>
+      <target/>
+      <layer backend="geodata" name="rivers">
+        <geodata name="rivers">
+          <sourcefile>naturalearth/ne_50m_rivers_lake_centerlines.pn2</sourcefile>
+          <pen color="#3474df"/>
+        </geodata>
+        <geodata name="lake">
+          <sourcefile>naturalearth/ne_50m_lakes.pn2</sourcefile>
+          <brush color="#99b3cc"/>
+          <pen color="transparent" style="nopen"/>
+        </geodata>
+      </layer>
+      <layer backend="geodata" name="countries">
+        <geodata name="coast">
+          <sourcefile>naturalearth/ne_50m_land.pn2</sourcefile>
+          <pen color="transparent" style="nopen"/>
+          <brush color="#f2efe9"/>
+        </geodata>
+        <geodata name="border">
+          <sourcefile>naturalearth/ne_50m_admin_0_boundary_lines_land.pn2</sourcefile>
+          <pen color="#808080" width="1.0"/>
+        </geodata>
+        <geodata name="admin1">
+          <sourcefile>naturalearth/ne_50m_admin_1_states_provinces_lines.pn2</sourcefile>
+          <pen color="#b0b0b0" style="dashline"/>
+        </geodata>
+        <geodata name="breakawaydisputed">
+          <sourcefile>naturalearth/ne_50m_admin_0_breakaway_disputed_areas.pn2</sourcefile>
+          <pen color="#cccbca" style="dotline" width="1"/>
+          <brush alpha="0.20" color="#cccbca"/>
+        </geodata>
+      </layer>
+      <layer backend="geodata" name="cities">
+        <geodata name="cityplacemarks">
+          <sourcefile>cityplacemarks.cache</sourcefile>
+        </geodata>
+      </layer>
+    </map>
+  </document>
 </dgml>

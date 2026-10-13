@@ -5,104 +5,90 @@
      the source code.
 -->
 <dgml xmlns="http://edu.kde.org/marble/dgml/2.0">
-    <document>
-        <head>
-            <!-- the license here applies to the actual map content, not this dgml file. See the license header above for the dgml file license -->
-            <license short="Public Domain">Source: Made with Natural Earth. Free vector and raster map data @ naturalearthdata.com., License: Public Domain</license>
-            <name>Atlas</name>
-            <target>earth</target>
-            <theme>srtm</theme>
-            <icon pixmap="srtm-preview.png"/>
-            <shortcut>Ctrl+Alt+5</shortcut>
-
-            <!-- describes whether the map theme item will be hidden (e.g.
-                for a clouds layer): -->
-            <visible> true </visible>
-
-            <!-- The description allows for rich text of course: -->
-            <description><![CDATA[<p>A <i>classic topographic map</i>.</p><p>It uses vector lines to mark coastlines, country borders etc. and bitmap graphics to create the height relief.</p>]]></description>
-
-            <zoom>
-                <minimum>   900  </minimum>
-                <maximum>  3328  </maximum>
-
-                <!-- describes whether you can zoom trough the levels
-                    continuously -->
-                <discrete> false </discrete>
-            </zoom>
-        </head>
-
-            <!-- Now we create the layer structure that gets handled by the
-    layer management class -->
-
-        <map bgcolor="#99b3cc">
-            <canvas/>
-            <target/>
-
-            <!-- This layer creates the elevation model -->
-            <layer name="srtm" backend="texture" role="dem">
-                <texture name="srtm_data"><!-- type="texture"-->
-                    <sourcedir format="JPG"> earth/srtm </sourcedir>
-                    <installmap> srtm.jpg </installmap>
-                    <storageLayout maximumTileLevel="5"/>
-                </texture>
-            </layer>
-
-            <!-- This layer provides the colorization -->
-            <layer name="colorme" backend="filter">
-                <filter name="texturecolorizer" type="colorize">
-                    <palette type="sea">seacolors.leg</palette>
-                    <palette type="land">landcolors.leg</palette>
-                </filter>
-            </layer>
-
-            <!-- This layer creates the coastlines that are needed to
+  <document>
+    <head>
+      <!-- the license here applies to the actual map content, not this dgml file. See the license header above for the dgml file license -->
+      <license short="Public Domain">Source: Made with Natural Earth. Free vector and raster map data @ naturalearthdata.com., License: Public Domain</license>
+      <name>Atlas</name>
+      <target>earth</target>
+      <theme>srtm</theme>
+      <icon pixmap="srtm-preview.png"/>
+      <shortcut>Ctrl+Alt+5</shortcut>
+      <!-- describes whether the map theme item will be hidden (e.g. for a clouds layer): -->
+      <visible>true</visible>
+      <!-- The description allows for rich text of course: -->
+      <description>A classic topographic map. It uses vector lines to mark coastlines, country borders and more and
+      bitmap graphics to create the height relief.</description>
+      <zoom>
+        <minimum>900</minimum>
+        <maximum>3328</maximum>
+        <!-- describes whether you can zoom trough the levels continuously -->
+        <discrete>false</discrete>
+      </zoom>
+    </head>
+    <!-- Now we create the layer structure that gets handled by the layer management class -->
+    <map bgcolor="#99b3cc">
+      <canvas/>
+      <target/>
+      <!-- This layer creates the elevation model -->
+      <layer backend="texture" name="srtm" role="dem">
+        <texture name="srtm_data">
+          <!-- type="texture"-->
+          <sourcedir format="JPG"> earth/srtm </sourcedir>
+          <installmap> srtm.jpg </installmap>
+          <storageLayout maximumTileLevel="5"/>
+        </texture>
+      </layer>
+      <!-- This layer provides the colorization -->
+      <layer backend="filter" name="colorme">
+        <filter name="texturecolorizer" type="colorize">
+          <palette type="sea">seacolors.leg</palette>
+          <palette type="land">landcolors.leg</palette>
+        </filter>
+      </layer>
+      <!-- This layer creates the coastlines that are needed to
                 colorize the elevation model properly -->
-            <layer name="naturalearth-canvas" backend="geodata">
-                <geodata name="coast" property="land" colorize="land">
-                    <sourcefile> naturalearth/ne_50m_land.pn2 </sourcefile>
-                </geodata>
-                <geodata name="lake" colorize="sea">
-                    <sourcefile> naturalearth/ne_50m_lakes.pn2 </sourcefile>
-                    <brush color="#99b3cc" />
-                    <pen color="transparent" style="nopen"/>
-                </geodata>
-            </layer>
-
-            <layer name="rivers" backend="geodata">
-                <geodata name="rivers">
-                    <sourcefile> naturalearth/ne_50m_rivers_lake_centerlines.pn2 </sourcefile>
-                    <pen color="#3474df" />
-                </geodata>
-            </layer>
-
-            <layer name="countries" backend="geodata">
-            <geodata name="coast">
-                <sourcefile> naturalearth/ne_50m_land.pn2 </sourcefile>
-                <pen color="transparent" style="nopen"/>
-                <brush color="#f2efe9" />
-            </geodata>
-            <geodata name="border">
-                <sourcefile> naturalearth/ne_50m_admin_0_boundary_lines_land.pn2 </sourcefile>
-                <pen color="#606060" width="1.0" />
-            </geodata>
-            <geodata name="admin1">
-                <sourcefile> naturalearth/ne_50m_admin_1_states_provinces_lines.pn2 </sourcefile>
-                <pen color="#b0b0b0" style="dashline" />
-            </geodata>
-            <geodata name="breakawaydisputed">
-                <sourcefile> naturalearth/ne_50m_admin_0_breakaway_disputed_areas.pn2 </sourcefile>
-                <pen color="#cccbca" width="1" style="dotline"/>
-                <brush color="#cccbca" alpha="0.20" />
-            </geodata>
-            </layer>
-
-            <layer name="cities" backend="geodata">
-                <geodata name="cityplacemarks">
-                    <sourcefile>cityplacemarks.cache</sourcefile>
-                </geodata>
-            </layer>
-        </map>
-
-    </document>
+      <layer backend="geodata" name="naturalearth-canvas">
+        <geodata colorize="land" name="coast" property="land">
+          <sourcefile> naturalearth/ne_50m_land.pn2 </sourcefile>
+        </geodata>
+        <geodata colorize="sea" name="lake">
+          <sourcefile> naturalearth/ne_50m_lakes.pn2 </sourcefile>
+          <brush color="#99b3cc"/>
+          <pen color="transparent" style="nopen"/>
+        </geodata>
+      </layer>
+      <layer backend="geodata" name="rivers">
+        <geodata name="rivers">
+          <sourcefile> naturalearth/ne_50m_rivers_lake_centerlines.pn2 </sourcefile>
+          <pen color="#3474df"/>
+        </geodata>
+      </layer>
+      <layer backend="geodata" name="countries">
+        <geodata name="coast">
+          <sourcefile> naturalearth/ne_50m_land.pn2 </sourcefile>
+          <pen color="transparent" style="nopen"/>
+          <brush color="#f2efe9"/>
+        </geodata>
+        <geodata name="border">
+          <sourcefile> naturalearth/ne_50m_admin_0_boundary_lines_land.pn2 </sourcefile>
+          <pen color="#606060" width="1.0"/>
+        </geodata>
+        <geodata name="admin1">
+          <sourcefile> naturalearth/ne_50m_admin_1_states_provinces_lines.pn2 </sourcefile>
+          <pen color="#b0b0b0" style="dashline"/>
+        </geodata>
+        <geodata name="breakawaydisputed">
+          <sourcefile> naturalearth/ne_50m_admin_0_breakaway_disputed_areas.pn2 </sourcefile>
+          <pen color="#cccbca" style="dotline" width="1"/>
+          <brush alpha="0.20" color="#cccbca"/>
+        </geodata>
+      </layer>
+      <layer backend="geodata" name="cities">
+        <geodata name="cityplacemarks">
+          <sourcefile>cityplacemarks.cache</sourcefile>
+        </geodata>
+      </layer>
+    </map>
+  </document>
 </dgml>
