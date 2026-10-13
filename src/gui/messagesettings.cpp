@@ -147,7 +147,6 @@ void messages::resetEssentialMessages()
 
   settings.setValue(lnm::ACTIONS_SHOW_DATABASE_OLD, true);
   settings.setValue(lnm::ACTIONS_SHOW_INVALID_PROC_WARNING, true);
-  settings.setValue(lnm::ACTIONS_SHOW_MAPTHEME_REQUIRES_KEY, true);
   settings.setValue(lnm::ACTIONS_SHOW_NAVDATA_WARNING, true);
   settings.setValue(lnm::ACTIONS_SHOW_OVERWRITE_DATABASE, true);
   settings.setValue(lnm::ACTIONS_SHOW_TRACK_DOWNLOAD_FAIL, true);

@@ -311,7 +311,8 @@ private:
   QHash<QString, int> themeIdToIndexMap;
 
   /* Default OSM theme used as fallback */
-  MapTheme defaultTheme;
+  MapTheme defaultTheme,
+           savedTheme; /* Last successfully applied theme. Used as fall back user switches to a theme with missing keys. */
 
   /* All keys for all maps */
   QMap<QString, QString> mapThemeKeys;

@@ -111,7 +111,6 @@ const QLatin1String ACTIONS_SHOW_WEATHER_DOWNLOAD_FAIL("Actions/DownloadFailed")
 const QLatin1String ACTIONS_SHOW_TRACK_DOWNLOAD_FAIL("Actions/TrackDownloadFailed");
 const QLatin1String ACTIONS_SHOW_LOGBOOK_CONVERSION("Actions/LogbookConversion");
 const QLatin1String ACTIONS_SHOW_SEND_SIMBRIEF("Actions/SendSimBrief");
-const QLatin1String ACTIONS_SHOW_MAPTHEME_REQUIRES_KEY("Actions/MapThemeRequiresKey");
 const QLatin1String ACTIONS_SHOW_FILE_EXPORT_OPTIONS_WARN("Actions/FileExportOptionsWarn");
 const QLatin1String ACTIONS_SHOW_FILE_EXPORT_OPTIONS_WARN_EXP("Actions/FileExportOptionsWarnExp");
 const QLatin1String ACTIONS_SHOW_FLIGHTPLAN_WARN_CONVERT("Actions/FlightplanWarnConvert");

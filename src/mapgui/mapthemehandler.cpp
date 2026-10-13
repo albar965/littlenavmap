@@ -288,6 +288,8 @@ void MapThemeHandler::loadThemes()
   // Fall back to first if default OSM was not found
   if(!defaultTheme.isValid() && !themes.isEmpty())
     defaultTheme = themes.constFirst();
+
+  savedTheme = defaultTheme;
 }
 
 void MapThemeHandler::showThemeLoadingErrors()
@@ -848,49 +850,56 @@ void MapThemeHandler::changeMapTheme()
   }
 
   // Check if theme needs API keys, usernames or tokens ======================================
-  if(theme.hasKeys())
+  // Check if all required values are set
+  bool allKeysSet = true;
+  for(const QString& key : theme.getKeys())
   {
-    // Check if all required values are set
-    bool allValid = true;
-    for(const QString& key : theme.getKeys())
+    if(mapThemeKeys.value(key).isEmpty())
     {
-      if(mapThemeKeys.value(key).isEmpty())
-      {
-        allValid = false;
-        break;
-      }
-    }
-
-    if(!allValid)
-    {
-      // One or more keys are not present or empty - show info dialog =================================
-      // Fetch all keys for map theme
-      QString url;
-      if(!theme.getUrlRef().isEmpty())
-        url = tr("<p>Click here to create an account or to request a key: <a href=\"%1\">%2</a></p>").
-              arg(theme.getUrlRef(), theme.getUrlName().isEmpty() ? tr("Link") : theme.getUrlName());
-
-      atools::gui::Dialog(mainWindow).
-      showInfoMsgBox(lnm::ACTIONS_SHOW_MAPTHEME_REQUIRES_KEY,
-                     tr("<p>The map theme \"%1\" requires additional information.</p>"
-                          "<p>You have to create an user account at the related website and then create an username, an access key or a token.<br/>"
-                          "Most of these services offer a free plan for hobbyists.</p>"
-                          "<p>Then go to menu \"Tools\" -> \"Options\" and to page \"Map Theme Keys\" in Little Navmap and "
-                            "enter the information for the key(s) below:</p>"
-                            "<ul><li>%2</li></ul>"
-                              "<p>The map will not show correctly until this is done.</p>%3").
-                     arg(theme.getName(), theme.getKeys().join(tr("</li><li>")), url),
-                     tr("Do not &show this dialog again."));
+      allKeysSet = false;
+      break;
     }
   }
 
-  qDebug() << Q_FUNC_INFO << themeId << theme;
+  if(!allKeysSet)
+  {
+    // One or more keys are not present or empty - show info dialog =================================
+    // Fetch all keys for map theme
+    QString url;
+    if(!theme.getUrlRef().isEmpty())
+      url = tr("<p>Click here to create an account or to request a key: <a href=\"%1\">%2</a></p>").
+            arg(theme.getUrlRef(), theme.getUrlName().isEmpty() ? tr("Link") : theme.getUrlName());
 
-  mapWidget->setTheme(theme);
-  if(NavApp::getMapPaintWidgetWeb() != nullptr)
-    NavApp::getMapPaintWidgetWeb()->setTheme(theme);
+    atools::gui::Dialog(mainWindow).information(
+      tr("<p>The map theme \"%1\" requires additional information.</p>"
+           "<p>You have to create an account at the related website and then create an username, "
+             "an access key, API key or a token.<br/>"
+             "Most of these services offer a free plan. There is no need to enter credit card information.</p>"
+             "<p>Then go to menu \"Tools\" -> \"Options\" and to page \"Map Theme Keys\" in Little Navmap and "
+               "enter the information for the key or keys below:</p>"
+               "<ul><li>%2</li></ul>"
+                 "<p>You cannot use the map until this is done.</p>%3").
+      arg(theme.getName(), theme.getKeys().join(tr("</li><li>")), url));
 
-  NavApp::setStatusMessage(tr("Map theme changed to %1.").arg(actionGroupMapTheme->checkedAction()->text()));
+    changeMapThemeActions(savedTheme.getId());
+
+    mapWidget->setTheme(savedTheme);
+    if(NavApp::getMapPaintWidgetWeb() != nullptr)
+      NavApp::getMapPaintWidgetWeb()->setTheme(savedTheme);
+
+    NavApp::setStatusMessage(tr("Map theme reverted to %1.").arg(actionGroupMapTheme->checkedAction()->text()));
+  }
+  else
+  {
+    qDebug() << Q_FUNC_INFO << themeId << theme;
+
+    savedTheme = theme;
+    mapWidget->setTheme(theme);
+    if(NavApp::getMapPaintWidgetWeb() != nullptr)
+      NavApp::getMapPaintWidgetWeb()->setTheme(theme);
+
+    NavApp::setStatusMessage(tr("Map theme changed to %1.").arg(actionGroupMapTheme->checkedAction()->text()));
+  }
 }
 
 void MapThemeHandler::changeMapProjection()
