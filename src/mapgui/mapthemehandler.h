@@ -90,7 +90,7 @@ public:
   }
 
   /* Theme id/short name as found in the DGML file for tag "theme" in "header". */
-  const QString& getThemeId() const
+  const QString& getId() const
   {
     return theme;
   }
@@ -158,6 +158,11 @@ public:
   bool isOnline() const
   {
     return online;
+  }
+
+  bool isOffline() const
+  {
+    return !online;
   }
 
   /* Native separators for display filepath of DGML file. */
@@ -274,6 +279,11 @@ public:
    * Windows: C:\Users\YOURUSERNAME\AppData\Local\.marble\data\earth
    * Linux and macOS: $HOME/.local/share/marble/maps/earth */
   static QString getDiskCache();
+
+  const MapTheme& getDefaultTheme() const
+  {
+    return defaultTheme;
+  }
 
 private:
   static QString mapThemeDefaultDir();

@@ -428,7 +428,7 @@ void MapThemeHandler::restoreState()
   atools::settings::Settings& settings = atools::settings::Settings::instance();
 
   // Load Current theme ===================================================
-  QString themeId = defaultTheme.getThemeId();
+  QString themeId = defaultTheme.getId();
   if(settings.contains(lnm::MAP_THEME) && getTheme(settings.valueStr(lnm::MAP_THEME)).isValid())
     // Restore map theme selection
     themeId = settings.valueStr(lnm::MAP_THEME);
@@ -752,7 +752,7 @@ void MapThemeHandler::setupMapThemesUi()
   for(const MapTheme& theme : std::as_const(themes))
   {
     // Check if offline map come after online and add separators
-    if(!theme.isOnline() && online)
+    if(theme.isOffline() && online)
     {
       // Add separator between online and offline maps
       ui->menuViewTheme->addSeparator();
@@ -794,7 +794,7 @@ void MapThemeHandler::setupMapThemesUi()
     action->setActionGroup(actionGroupMapTheme);
 
     // Attach theme name for theme in MapThemeHandler
-    action->setData(theme.getThemeId());
+    action->setData(theme.getId());
     action->setShortcut(theme.getShortcut());
 
     buttonMenu->addAction(action);
@@ -844,7 +844,7 @@ void MapThemeHandler::changeMapTheme()
     qDebug() << Q_FUNC_INFO << "Falling back to default theme due to invalid index" << themeId;
     // No theme for index found - use default OSM
     theme = defaultTheme;
-    themeId = theme.getThemeId();
+    themeId = theme.getId();
   }
 
   // Check if theme needs API keys, usernames or tokens ======================================
@@ -944,7 +944,7 @@ void MapThemeHandler::optionsChanged(const optc::OptionChangeFlags& changeFlags)
     if(!getTheme(curThemeId).isValid())
     {
       // Assign the default theme if the current one was removed
-      curThemeId = defaultTheme.getThemeId();
+      curThemeId = defaultTheme.getId();
       NavApp::getMapWidgetGui()->setTheme(defaultTheme);
 
       if(NavApp::getMapPaintWidgetWeb() != nullptr)
@@ -1023,7 +1023,7 @@ void MapThemeHandler::resetToDefault()
   const QList<QAction *> actions = toolButtonMapTheme->menu()->actions();
   for(QAction *action : actions)
   {
-    if(action->data().toString() == defaultTheme.getThemeId())
+    if(action->data().toString() == defaultTheme.getId())
     {
       action->setChecked(true);
       break;

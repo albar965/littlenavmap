@@ -225,9 +225,9 @@ void MapPaintWidget::setTheme(const MapTheme& theme)
   qDebug() << Q_FUNC_INFO << "setting map theme to" << theme;
 #endif
 
-  if(currentThemeId.isEmpty() || currentThemeId != theme.getThemeId())
+  if(currentThemeId.isEmpty() || currentThemeId != theme.getId())
   {
-    currentThemeId = theme.getThemeId();
+    currentThemeId = theme.getId();
     setThemeInternal(theme);
   }
 }
@@ -244,10 +244,16 @@ void MapPaintWidget::setThemeInternal(const MapTheme& theme)
 
   updateThemeUi(currentThemeId);
 
+  const MapThemeHandler *mapThemeHandler = NavApp::getMapThemeHandler();
+  if(theme.isOffline())
+    // New theme is an offline map switch to the default online map to force cleaning caches
+    setMapThemeId(mapThemeHandler->getDefaultTheme().getDgmlFilepath());
+
   setMapThemeId(theme.getDgmlFilepath());
+
   setShowClouds(false);
 
-  if(NavApp::getMapThemeHandler()->hasPlacemarks(currentThemeId))
+  if(mapThemeHandler->hasPlacemarks(currentThemeId))
     // Add placemark files again - ignored if already loaded
     addPlacemarks();
   else
