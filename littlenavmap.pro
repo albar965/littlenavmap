@@ -804,7 +804,7 @@ OTHER_FILES += \
 # Linux - Copy help and Marble plugins and data
 unix:!macx {
   copydata.commands = mkdir -p $$OUT_PWD/plugins &&
-  copydata.commands += cp -avfu \
+  copydata.commands += cp -avf \
     $$MARBLE_LIB_PATH/marble/plugins/libCachePlugin.so \
     $$MARBLE_LIB_PATH/marble/plugins/libAtmospherePlugin.so \
     $$MARBLE_LIB_PATH/marble/plugins/libCompassFloatItem.so \
@@ -817,19 +817,19 @@ unix:!macx {
     $$MARBLE_LIB_PATH/marble/plugins/libOverviewMap.so \
     $$OUT_PWD/plugins &&
   copydata.commands += mkdir -p $$OUT_PWD/translations &&
-  copydata.commands += cp -avfu $$PWD/translations/*.qm $$OUT_PWD/translations &&
-  copydata.commands += cp -avfu $$ATOOLS_INC_PATH/../translations/*.qm $$OUT_PWD/translations &&
-  copydata.commands += cp -avfu $$MARBLE_INC_PATH/../translations/*.qm $$OUT_PWD/translations &&
-  copydata.commands += cp -avfu $$PWD/help $$OUT_PWD &&
-  copydata.commands += cp -avfu $$PWD/web $$OUT_PWD &&
-  copydata.commands += cp -avfu $$PWD/customize $$OUT_PWD &&
+  copydata.commands += cp -avf $$PWD/translations/*.qm $$OUT_PWD/translations &&
+  copydata.commands += cp -avf $$ATOOLS_INC_PATH/../translations/*.qm $$OUT_PWD/translations &&
+  copydata.commands += cp -avf $$MARBLE_INC_PATH/../translations/*.qm $$OUT_PWD/translations &&
+  copydata.commands += cp -avf $$PWD/help $$OUT_PWD &&
+  copydata.commands += cp -avf $$PWD/web $$OUT_PWD &&
+  copydata.commands += cp -avf $$PWD/customize $$OUT_PWD &&
   copydata.commands += cp -vf $$PWD/resources/config/little_navmap_darkstyle.ini $$OUT_PWD/customize &&
   copydata.commands += cp -vf $$PWD/resources/config/little_navmap_fusionstyle.ini $$OUT_PWD/customize &&
   copydata.commands += cp -vf $$PWD/resources/config/little_navmap_mapstyle.ini $$OUT_PWD/customize &&
   copydata.commands += cp -vf $$PWD/resources/config/maplayers.xml $$OUT_PWD/customize &&
-  copydata.commands += cp -avfu $$PWD/timezone $$OUT_PWD &&
-  copydata.commands += cp -avfu $$PWD/wmm $$OUT_PWD &&
-  copydata.commands += cp -avfu $$PWD/marble/data $$OUT_PWD &&
+  copydata.commands += cp -avf $$PWD/timezone $$OUT_PWD &&
+  copydata.commands += cp -avf $$PWD/wmm $$OUT_PWD &&
+  copydata.commands += cp -avf $$PWD/marble/data $$OUT_PWD &&
   copydata.commands += cp -vf $$PWD/desktop/littlenavmap*.sh $$OUT_PWD &&
   copydata.commands += chmod -v a+x $$OUT_PWD/littlenavmap*.sh
 }
@@ -1102,7 +1102,7 @@ QMAKE_EXTRA_TARGETS += deploy copydata all
       QMAKE_POST_LINK = copy $$p($$OUT_PWD/$${TARGET}.exe) $$p($$OUT_PWD/$${TARGET}.debug) && \
                         strip $$p($$OUT_PWD/$${TARGET}.exe)
     } else {
-      QMAKE_POST_LINK = cp -avfu $$OUT_PWD/$${TARGET} $$OUT_PWD/$${TARGET}.debug && strip $$OUT_PWD/$${TARGET}
+      QMAKE_POST_LINK = cp -avf $$OUT_PWD/$${TARGET} $$OUT_PWD/$${TARGET}.debug && strip $$OUT_PWD/$${TARGET}
     }
   }
 }
