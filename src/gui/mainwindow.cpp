@@ -98,10 +98,11 @@
 #include "weather/windreporter.h"
 #include "web/webcontroller.h"
 
-#include <marble/MarbleAboutDialog.h>
-#include <marble/MarbleModel.h>
 #include <marble/HttpDownloadManager.h>
+#include <marble/MarbleAboutDialog.h>
 #include <marble/MarbleDirs.h>
+#include <marble/MarbleModel.h>
+#include <marble/PluginManager.h>
 
 #include <QCloseEvent>
 #include <QScreen>
@@ -357,6 +358,16 @@ MainWindow::MainWindow()
     Application::showSplashScreenMessage(tr("Creating map ... "));
     qDebug() << Q_FUNC_INFO << "Creating MapWidget";
     mapWidget = new MapWidget(this);
+
+    // All marble widget instances from now on are for web and printing
+    // disable all not needed plugins in the static list in PluginManager
+    PluginManager *pluginManager = mapWidget->model()->pluginManager();
+    pluginManager->blacklistPlugin("AtmospherePlugin");
+    pluginManager->blacklistPlugin("CompassFloatItem");
+    pluginManager->blacklistPlugin("LabelFloatItem");
+    pluginManager->blacklistPlugin("MapScaleFloatItem");
+    pluginManager->blacklistPlugin("NavigationFloatItem");
+    pluginManager->blacklistPlugin("OverviewMap");
 
     // Map widget is a normal dock window
     ui->verticalLayoutMap->replaceWidget(ui->widgetDummyMap, mapWidget);

@@ -260,35 +260,6 @@ struct MapBase
   {
   }
 
-  explicit MapBase(const MapBase& other)
-  {
-    this->operator=(other);
-  }
-
-  explicit MapBase(MapBase && other) noexcept
-  {
-    id = std::move(other.id);
-    position = std::move(other.position);
-    type = std::move(other.type);
-  }
-
-  MapBase& operator=(MapBase&& other) noexcept
-  {
-    id = std::move(other.id);
-    position = std::move(other.position);
-    type = std::move(other.type);
-    return *this;
-  }
-
-  MapBase& operator=(const MapBase& other)
-  {
-    id = other.id;
-    position = other.position;
-    type = other.type;
-
-    return *this;
-  }
-
   int id;
   atools::geo::Pos position;
 
@@ -393,13 +364,6 @@ struct MapBase
   {
     return type;
   }
-
-protected:
-  /* Hide destructor to avoid inadvertent deletion of base */
-  ~MapBase()
-  {
-  }
-
 };
 
 QDebug operator<<(QDebug out, const map::MapBase& obj);
@@ -2044,7 +2008,7 @@ void registerMapMetaTypes();
  * QTypeInfo<TYPE>::isRelocatable * std::is_copy_constructible_v<TYPE > */
 // static_assert(std::is_copy_constructible<map::MapBase>);
 
-Q_DECLARE_TYPEINFO(map::MapBase, Q_RELOCATABLE_TYPE);
+Q_DECLARE_TYPEINFO(map::MapBase, Q_PRIMITIVE_TYPE);
 Q_DECLARE_TYPEINFO(map::MapAirport, Q_RELOCATABLE_TYPE);
 Q_DECLARE_TYPEINFO(map::MapAirportMsa, Q_RELOCATABLE_TYPE);
 Q_DECLARE_TYPEINFO(map::MapAirspace, Q_RELOCATABLE_TYPE);
@@ -2067,10 +2031,10 @@ Q_DECLARE_TYPEINFO(map::MapTaxiPath, Q_RELOCATABLE_TYPE);
 Q_DECLARE_TYPEINFO(map::MapUserpointRoute, Q_RELOCATABLE_TYPE);
 Q_DECLARE_TYPEINFO(map::MapVor, Q_RELOCATABLE_TYPE);
 Q_DECLARE_TYPEINFO(map::MapWaypoint, Q_RELOCATABLE_TYPE);
-Q_DECLARE_TYPEINFO(map::PosCourse, Q_RELOCATABLE_TYPE);
+Q_DECLARE_TYPEINFO(map::PosCourse, Q_PRIMITIVE_TYPE);
 
 /* Type info and serializable objects */
-Q_DECLARE_TYPEINFO(map::MapRef, Q_RELOCATABLE_TYPE);
+Q_DECLARE_TYPEINFO(map::MapRef, Q_PRIMITIVE_TYPE);
 Q_DECLARE_METATYPE(map::MapRef)
 Q_DECLARE_METATYPE(QList<map::MapRef>)
 
