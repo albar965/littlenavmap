@@ -55,7 +55,26 @@ const float MAX_FLIGHT_PLAN_DIST_FOR_CENTER_NM = 40.f;
 // Invalid leg as default value
 const static RouteLeg EMPTY_ROUTELEG;
 
-const static QRegularExpression USER_WP_ID("^WP([0-9]+)$");
+/* Extract waypoint number for standard waypoint names. Returns -1 if not a standard name. */
+int standardWaypointIdent(const QString& ident)
+{
+  if(ident.startsWith(QStringLiteral("WP")))
+  {
+    QString num;
+    for(int i = 2; i < ident.size(); i++)
+    {
+      if(!ident.at(i).isDigit())
+        return -1;
+      else
+        num += ident.at(i);
+    }
+
+    if(!num.isEmpty())
+      return num.toInt();
+  }
+
+  return -1;
+}
 
 Route::Route()
 {
@@ -169,12 +188,12 @@ void Route::clearAll()
 int Route::getNextUserWaypointNumber() const
 {
   /* Get number from user waypoint from user defined waypoint in fs flight plan */
-  int nextNum = 0;
+  int nextNum = -1;
 
   for(const FlightplanEntry& entry : flightplan)
   {
     if(entry.getWaypointType() == atools::fs::pln::entry::USER && entry.getIdent().startsWith("WP"))
-      nextNum = std::max(QString(USER_WP_ID.match(entry.getIdent()).captured(1)).toInt(), nextNum);
+      nextNum = std::max(standardWaypointIdent(entry.getIdent()), nextNum);
   }
   return nextNum + 1;
 }
@@ -873,7 +892,7 @@ void Route::clearAirportRouteIndex(map::MapResult& result) const
 
 bool Route::isStandardWaypointIdent(const QString& ident)
 {
-  return USER_WP_ID.match(ident).hasMatch();
+  return standardWaypointIdent(ident) != -1;
 }
 
 void Route::updateApproachIls()
@@ -1971,13 +1990,12 @@ void Route::updateAll()
 
 void Route::updateWaypointNames()
 {
-  int num = 1;
+  int num = 0;
   for(FlightplanEntry& entry : flightplan)
   {
     if(entry.getWaypointType() == atools::fs::pln::entry::USER && entry.getIdent().startsWith("WP"))
     {
-      QRegularExpressionMatch match = USER_WP_ID.match(entry.getIdent());
-      if(match.hasMatch())
+      if(standardWaypointIdent(entry.getIdent()) != -1)
         entry.setIdent(QStringLiteral("WP%1").arg(num++));
     }
   }

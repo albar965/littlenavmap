@@ -99,7 +99,7 @@ private:
   const Queries *queries;
 
   /* Used to number user defined positions */
-  int curUserpointNumber = 1;
+  int curUserpointNumber = 0;
 };
 
 #endif // LITTLENAVMAP_FLIGHTPLANENTRYBUILDER_H

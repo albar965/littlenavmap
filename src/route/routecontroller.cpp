@@ -6180,7 +6180,7 @@ void RouteController::clearRouteAndUndo()
   fileIfrVfr = pln::VFR;
   fileCruiseAltFt = 0.f;
   clearUndo();
-  entryBuilder->setCurUserpointNumber(1);
+  entryBuilder->setCurUserpointNumber(0);
   updateFlightplanFromWidgets();
 }
 
@@ -6195,7 +6195,7 @@ void RouteController::clearUndo()
 void RouteController::clearRoute()
 {
   route.clearAll();
-  entryBuilder->setCurUserpointNumber(1);
+  entryBuilder->setCurUserpointNumber(0);
   updateFlightplanFromWidgets();
 }
 
