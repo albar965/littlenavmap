@@ -69,75 +69,43 @@ const static int UPDATE_RATE_MS = 250;
 DatabaseLoader::DatabaseLoader(QObject *parent)
   : QObject(parent)
 {
-  databaseInfoText = QObject::tr(
-    "<table>"
-      "<tbody>"
-        "<tr> "
-          "<td width=\"60\"><b>Files:</b>"
-          "</td>    "
-          "<td width=\"60\">&nbsp;&nbsp;&nbsp;&nbsp;%L6"
-          "</td> "
-          "<td width=\"60\"><b>VOR:</b>"
-          "</td> "
-          "<td width=\"60\">&nbsp;&nbsp;&nbsp;&nbsp;%L8"
-          "</td> "
-          "<td width=\"60\"><b>Markers:</b>"
-          "</td>     "
-          "<td width=\"60\">&nbsp;&nbsp;&nbsp;&nbsp;%L11"
-          "</td>"
-        "</tr>"
-        "<tr> "
-          "<td width=\"60\"><b>Airports:</b>"
-          "</td> "
-          "<td width=\"60\">&nbsp;&nbsp;&nbsp;&nbsp;%L7"
-          "</td> "
-          "<td width=\"60\"><b>ILS:</b>"
-          "</td> "
-          "<td width=\"60\">&nbsp;&nbsp;&nbsp;&nbsp;%L9"
-          "</td> "
-          "<td width=\"60\"><b>Waypoints:</b>"
-          "</td>  "
-          "<td width=\"60\">&nbsp;&nbsp;&nbsp;&nbsp;%L12"
-          "</td>"
-        "</tr>"
-        "<tr> "
-          "<td width=\"60\">"
-          "</td>"
-          "<td width=\"60\">"
-          "</td>"
-          "<td width=\"60\"><b>NDB:</b>"
-          "</td> "
-          "<td width=\"60\">&nbsp;&nbsp;&nbsp;&nbsp;%L10"
-          "</td> "
-          "<td width=\"60\"><b>Airspaces:</b>"
-          "</td>  "
-          "<td width=\"60\">&nbsp;&nbsp;&nbsp;&nbsp;%L13"
-          "</td>"
-        "</tr>"
-      "</tbody>"
-    "</table>"
-    );
+  // General contents table also shown in the loading dialog ====================
+  /* *INDENT-OFF* */
+ databaseInfoText = QStringLiteral("<table><tbody>"
+  "<tr>"
+      "<td width=\"60\"><b>%2</b></td>" // Files
+      "<td width=\"60\">&nbsp;&nbsp;&nbsp;&nbsp;%3</td>"
+      "<td width=\"60\"><b>%4</b></td>" // VOR
+      "<td width=\"60\">&nbsp;&nbsp;&nbsp;&nbsp;%5</td>"
+      "<td width=\"60\"><b>%6</b></td>" // Markers
+      "<td width=\"60\">&nbsp;&nbsp;&nbsp;&nbsp;%7</td>"
+    "</tr>"
+    "<tr>"
+      "<td width=\"60\"><b>%8</b></td>"// Airports
+      "<td width=\"60\">&nbsp;&nbsp;&nbsp;&nbsp;%9</td>"
+      "<td width=\"60\"><b>%10</b></td>" // ILS
+      "<td width=\"60\">&nbsp;&nbsp;&nbsp;&nbsp;%11</td>"
+      "<td width=\"60\"><b>%12</b></td>" //Waypoints
+      "<td width=\"60\">&nbsp;&nbsp;&nbsp;&nbsp;%13</td>"
+    "</tr>"
+    "<tr>"
+      "<td width=\"60\"></td>"
+      "<td width=\"60\"></td>"
+      "<td width=\"60\"><b>%14</b></td>" // NDB
+      "<td width=\"60\">&nbsp;&nbsp;&nbsp;&nbsp;%15</td>"
+      "<td width=\"60\"><b>%16</b></td>"//Airspaces
+      "<td width=\"60\">&nbsp;&nbsp;&nbsp;&nbsp;%17</td>"
+    "</tr>"
+  "</tbody></table>");
+  /* *INDENT-ON* */
 
-  databaseTimeText = QObject::tr(
-    "<b>%1</b><br/>" // Scenery:
-    "<br/><br/>" // File:
-    "<b>Time:</b> %2<br/>%3%4"
-      "<b>Errors:</b> %5<br/><br/>"
-      "<big>Found:</big></br>"
-    ) + databaseInfoText;
-
-  databaseLoadingText = QObject::tr(
-    "<b>Scenery:</b> %1 (%2)<br/>"
-    "<b>File:</b> %3<br/><br/>"
-    "<b>Time:</b> %4<br/>"
-    "<b>Errors:</b> %5<br/><br/>"
-    "<big>Found:</big></br>"
-    ) + databaseInfoText;
+  // Header prefixed by errors, scenery files and other ================
+  databaseTextLoading = QObject::tr("%1<br/><br/><b>Found:</b>") % databaseInfoText;
 
   // Initialize aggregated classes used in thread
   navDatabaseErrors = new atools::fs::NavDatabaseErrors;
   navDatabaseOpts = new atools::fs::NavDatabaseOptions;
-  navDatabaseProgressShared = new atools::fs::NavDatabaseProgress;
+  progressShared = new atools::fs::NavDatabaseProgress;
 
   SqlDatabase::addDatabase(dbtools::DATABASE_TYPE, dbtools::DATABASE_NAME_LOADER);
   compileDb = new atools::sql::SqlDatabase(dbtools::DATABASE_NAME_LOADER);
@@ -158,7 +126,7 @@ DatabaseLoader::~DatabaseLoader()
 
   delete navDatabaseOpts;
   delete navDatabaseErrors;
-  delete navDatabaseProgressShared;
+  delete progressShared;
 }
 
 void DatabaseLoader::loadScenery()
@@ -233,9 +201,7 @@ void DatabaseLoader::loadScenery()
   timerThread.restart();
 
   // Initial text
-  progressDialog->setLabelText(databaseTimeText.arg(tr("Counting files ..."), QStringLiteral(), QStringLiteral(),
-                                                    QStringLiteral()).arg(0).arg(0).arg(0).arg(0).arg(0).arg(
-                                 0).arg(0).arg(0).arg(0));
+  progressDialog->setLabelText(labelText(databaseTextLoading, {tr("<b>Counting files ...</b>")}));
 
   // Dialog does not close when clicking cancel
   progressDialog->show();
@@ -331,19 +297,19 @@ void DatabaseLoader::progressCallback()
 
   if(!progressDialog->wasCanceled())
   {
-    QReadLocker locker(&progressLock);
-    if(navDatabaseProgressShared->isFirstCall())
+    QReadLocker locker(&progressSharedLock);
+    if(progressShared->isFirstCall())
     {
       qDebug() << Q_FUNC_INFO << "first call";
       timer.start();
-      progressDialog->setValue(navDatabaseProgressShared->getCurrent());
+      progressDialog->setValue(progressShared->getCurrent());
       progressDialog->setMinimum(0);
-      progressDialog->setMaximum(navDatabaseProgressShared->getTotal());
+      progressDialog->setMaximum(progressShared->getTotal());
     }
 
-    progressDialog->setValue(navDatabaseProgressShared->getCurrent());
+    progressDialog->setValue(progressShared->getCurrent());
 
-    if(navDatabaseProgressShared->isNewOther())
+    if(progressShared->isNewOther())
     {
 #ifdef DEBUG_INFORMATION
       qDebug() << Q_FUNC_INFO << "running other";
@@ -352,66 +318,51 @@ void DatabaseLoader::progressCallback()
       currentBglFilePath.clear();
 
       // Run script etc.
-      progressDialog->setLabelText(
-        databaseTimeText.arg(atools::elideTextShortMiddle(navDatabaseProgressShared->getOtherAction(), MAX_TEXT_LENGTH),
-                             formatter::formatElapsed(timer), QStringLiteral(), QStringLiteral()).
-        arg(navDatabaseProgressShared->getNumErrors()).
-        arg(navDatabaseProgressShared->getNumFiles()).
-        arg(navDatabaseProgressShared->getNumAirports()).
-        arg(navDatabaseProgressShared->getNumVors()).
-        arg(navDatabaseProgressShared->getNumIls()).
-        arg(navDatabaseProgressShared->getNumNdbs()).
-        arg(navDatabaseProgressShared->getNumMarker()).
-        arg(navDatabaseProgressShared->getNumWaypoints()).
-        arg(navDatabaseProgressShared->getNumBoundaries()));
+      progressDialog->setLabelText(labelText(databaseTextLoading, {
+        QStringLiteral("<b>%1</b>").arg(atools::elideTextShortMiddle(progressShared->getOtherAction(), MAX_TEXT_LENGTH)),
+        progressShared->isNavigraphDetected() ? tr("<b>Navigraph navdata update found in simulator.</b>") : QStringLiteral(),
+        tr("<b>Time:</b> %1").arg(formatter::formatElapsed(timer)),
+        tr("<b>Errors:</b> %1").arg(QLocale().toString(progressShared->getNumErrors()))
+      }));
     }
-    else if(navDatabaseProgressShared->isNewSceneryArea() || navDatabaseProgressShared->isNewFile())
+    else if(progressShared->isNewSceneryArea() || progressShared->isNewFile())
     {
 #ifdef DEBUG_INFORMATION
       qDebug() << Q_FUNC_INFO << "running new file or scenery area";
 #endif
 
-      currentBglFilePath = navDatabaseProgressShared->getFilePath();
+      currentBglFilePath = progressShared->getFilePath();
 
-      QString path = atools::nativeCleanPath(navDatabaseProgressShared->getSceneryPath());
-      QString file = navDatabaseProgressShared->getFileName();
+      QString path = atools::nativeCleanPath(progressShared->getSceneryPath());
+      QString file = progressShared->getFileName();
 
       // Switched to a new scenery area
-      progressDialog->setLabelText(
-        databaseLoadingText.arg(atools::elideTextShortMiddle(navDatabaseProgressShared->getSceneryTitle(), MAX_TEXT_LENGTH),
-                                atools::elideTextShortMiddle(path, MAX_TEXT_LENGTH), atools::elideTextShortMiddle(file, MAX_TEXT_LENGTH),
-                                formatter::formatElapsed(timer)).
-        arg(navDatabaseProgressShared->getNumErrors()).
-        arg(navDatabaseProgressShared->getNumFiles()).
-        arg(navDatabaseProgressShared->getNumAirports()).
-        arg(navDatabaseProgressShared->getNumVors()).
-        arg(navDatabaseProgressShared->getNumIls()).
-        arg(navDatabaseProgressShared->getNumNdbs()).
-        arg(navDatabaseProgressShared->getNumMarker()).
-        arg(navDatabaseProgressShared->getNumWaypoints()).
-        arg(navDatabaseProgressShared->getNumBoundaries()));
+      progressDialog->setLabelText(labelText(databaseTextLoading, {
+        tr("<b>Scenery:</b> %1 (%2)").
+        arg(atools::elideTextShortMiddle(progressShared->getSceneryTitle(), MAX_TEXT_LENGTH),
+            atools::elideTextShortMiddle(path, MAX_TEXT_LENGTH)),
+        file.isEmpty() ? QStringLiteral() : tr("<b>File:</b> %1").arg(atools::elideTextShortMiddle(file, MAX_TEXT_LENGTH)),
+        progressShared->isNavigraphDetected() ? tr("<b>Navigraph navdata update found in simulator.</b>") : QStringLiteral(),
+        tr("<b>Time:</b> %1").arg(formatter::formatElapsed(timer)),
+        tr("<b>Errors:</b> %1").arg(QLocale().toString(progressShared->getNumErrors()))
+      }));
     }
-    else if(navDatabaseProgressShared->isLastCall())
+    else if(progressShared->isLastCall())
     {
 #ifdef DEBUG_INFORMATION
       qDebug() << Q_FUNC_INFO << "last call";
 #endif
 
       currentBglFilePath.clear();
-      progressDialog->setValue(navDatabaseProgressShared->getTotal());
+      progressDialog->setValue(progressShared->getTotal());
 
       // Last report
-      progressDialog->setLabelText(
-        databaseTimeText.arg(tr("<big>Done.</big>"), formatter::formatElapsed(timer), QStringLiteral(), QStringLiteral()).
-        arg(navDatabaseProgressShared->getNumErrors()).
-        arg(navDatabaseProgressShared->getNumFiles()).
-        arg(navDatabaseProgressShared->getNumAirports()).
-        arg(navDatabaseProgressShared->getNumVors()).
-        arg(navDatabaseProgressShared->getNumIls()).
-        arg(navDatabaseProgressShared->getNumNdbs()).
-        arg(navDatabaseProgressShared->getNumMarker()).
-        arg(navDatabaseProgressShared->getNumWaypoints()).
-        arg(navDatabaseProgressShared->getNumBoundaries()));
+      progressDialog->setLabelText(labelText(databaseTextLoading, {
+        tr("<b>Done.</b>"),
+        progressShared->isNavigraphDetected() ? tr("<b>Navigraph navdata update found in simulator.</b>") : QStringLiteral(),
+        tr("<b>Time:</b> %1").arg(formatter::formatElapsed(timer)),
+        tr("<b>Errors:</b> %1").arg(QLocale().toString(progressShared->getNumErrors()))
+      }));
     }
   } // if(!progressDialog->wasCanceled())
   else
@@ -419,7 +370,7 @@ void DatabaseLoader::progressCallback()
     qDebug() << Q_FUNC_INFO << "canceled";
 
     // Set flags to canceled to that progressCallbackThread() can return false to quit compilation
-    QWriteLocker locker(&resultFlagsLock);
+    QWriteLocker locker(&resultFlagsSharedLock);
     resultFlagsShared.setFlag(atools::fs::COMPILE_CANCELED);
   }
 }
@@ -435,13 +386,13 @@ bool DatabaseLoader::progressCallbackThread(const atools::fs::NavDatabaseProgres
 
     // Copy progress to memeber
     {
-      QWriteLocker locker(&progressLock);
-      *navDatabaseProgressShared = progress;
+      QWriteLocker locker(&progressSharedLock);
+      *progressShared = progress;
     }
 
     // Check if status indicates that user clicked cancel in progress dialog which is indicated in flags
     {
-      QReadLocker locker(&resultFlagsLock);
+      QReadLocker locker(&resultFlagsSharedLock);
       canceled = resultFlagsShared.testFlag(atools::fs::COMPILE_CANCELED);
     }
 
@@ -530,7 +481,7 @@ void DatabaseLoader::showErrors()
     {
       // Let the error dialog be a child of the progress dialog to avoid issues when other modal dialog windows are open
       TextDialog errorDialog(progressDialog, tr("%1 - Load Scenery Library Results").arg(QCoreApplication::applicationName()),
-                             "SCENERY.html#errors"); // anchor for future use
+                             QStringLiteral("SCENERY.html#errors")); // anchor for future use
 
       // Block only the parent progress dialog
       errorDialog.setWindowModality(Qt::WindowModal);
@@ -560,7 +511,7 @@ void DatabaseLoader::loadSceneryStop()
   if(future.isRunning())
   {
     {
-      QWriteLocker locker(&resultFlagsLock);
+      QWriteLocker locker(&resultFlagsSharedLock);
       // Set cancel flag so progress handler in thread can return false to navdatabase compiler
       resultFlagsShared.setFlag(atools::fs::COMPILE_CANCELED);
     }
@@ -601,4 +552,75 @@ void DatabaseLoader::showProgressWindow() const
     progressDialog->raise();
     progressDialog->activateWindow();
   }
+}
+
+QString DatabaseLoader::getDatabaseInfoText(atools::fs::FsPaths::SimulatorType sim, bool navdataUdpdateDetected, int numFiles,
+                                            int numAirport, int numVor, int numIls, int numNdb, int numMarker, int numWaypoint,
+                                            int numBoundary) const
+{
+  QLocale locale;
+  if(sim != atools::fs::FsPaths::NONE)
+  {
+    QString files, filesNum;
+    if(sim != atools::fs::FsPaths::MSFS_2024)
+    {
+      files = tr("Files:");
+      filesNum = locale.toString(numFiles);
+    }
+    // else no files in MSFS 2024
+
+    // Count only airports in MSFS 2024 with navdata update
+    if(navdataUdpdateDetected && sim == atools::fs::FsPaths::MSFS_2024)
+      return databaseInfoText.arg(tr("Airports:"), locale.toString(numAirport), // Files
+                                  QStringLiteral(), QStringLiteral(), // VOR
+                                  QStringLiteral(), QStringLiteral(), // Marker
+                                  QStringLiteral(), QStringLiteral(), // Airports
+                                  QStringLiteral(), QStringLiteral(), // ILS
+                                  QStringLiteral(), QStringLiteral(), // Waypoints
+                                  QStringLiteral(), QStringLiteral(), // NDB
+                                  QStringLiteral(), QStringLiteral()); // Airspaces
+    else
+      return databaseInfoText.arg(files, filesNum,
+                                  tr("VOR:"), locale.toString(numVor),
+                                  tr("Marker:"), locale.toString(numMarker),
+                                  tr("Airports:"), locale.toString(numAirport),
+                                  tr("ILS:"), locale.toString(numIls),
+                                  tr("Waypoints:"), locale.toString(numWaypoint),
+                                  tr("NDB:"), locale.toString(numNdb),
+                                  tr("Airspaces:"), locale.toString(numBoundary));
+  }
+  else
+    // Database is empty
+    return databaseInfoText.arg(QStringLiteral(), QStringLiteral(), // Files
+                                QStringLiteral(), QStringLiteral(), // VOR
+                                QStringLiteral(), QStringLiteral(), // Marker
+                                QStringLiteral(), QStringLiteral(), // Airports
+                                QStringLiteral(), QStringLiteral(), // ILS
+                                QStringLiteral(), QStringLiteral(), // Waypoints
+                                QStringLiteral(), QStringLiteral(), // NDB
+                                QStringLiteral(), QStringLiteral()); // Airspaces
+}
+
+QString DatabaseLoader::labelText(const QString& textTemplate, QStringList header) const
+{
+  QLocale locale;
+  header.removeAll(QStringLiteral());
+
+  QString files, filesNum;
+  if(selectedFsType != atools::fs::FsPaths::MSFS_2024)
+  {
+    files = tr("Files:");
+    filesNum = locale.toString(progressShared->getNumFiles());
+  }
+
+  return textTemplate.
+         arg(atools::strJoin(header, QStringLiteral("<br/>"))).
+         arg(files).arg(filesNum).
+         arg(tr("Airports:")).arg(locale.toString(progressShared->getNumAirports())).
+         arg(tr("VOR:")).arg(locale.toString(progressShared->getNumVors())).
+         arg(tr("ILS:")).arg(locale.toString(progressShared->getNumIls())).
+         arg(tr("NDB:")).arg(locale.toString(progressShared->getNumNdbs())).
+         arg(tr("Markers:")).arg(locale.toString(progressShared->getNumMarker())).
+         arg(tr("Waypoints:")).arg(locale.toString(progressShared->getNumWaypoints())).
+         arg(tr("Airspaces:")).arg(locale.toString(progressShared->getNumBoundaries()));
 }

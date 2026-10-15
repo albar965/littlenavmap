@@ -79,8 +79,8 @@ const static int SIMCONNECT_LOADING_MINUTES_MAX = 15;
 DatabaseManager::DatabaseManager(QWidget *parent, bool verbose)
   : QObject(parent), parentWidget(parent)
 {
-  databaseMetaText = tr("<p><big>Last Update: %1. Database Version: %2. Program Version: %3.%4</big></p>");
-  databaseAiracCycleText = tr(" AIRAC Cycle %1.");
+  databaseMetaText = tr("<b>Last Database Update:</b> %1. <b>Database Version:</b> %2. <b>Current Version:</b> %3. %4</b>");
+  databaseAiracCycleText = tr(" <b>AIRAC Cycle:</b> %1.");
 
   dialog = new Dialog(parentWidget);
 
@@ -1376,7 +1376,7 @@ void DatabaseManager::checkSceneryOptions(bool manualCheck)
                             tr("<p>Simulator database is empty.</p>"
                                  "<p>Showing Navigraph airports and navaids.</p>"
                                    "<p style='white-space:pre'>You can load the simulator scenery library "
-                                     "database in the menu</br>"
+                                     "database in the menu<br/>"
                                      "\"Scenery Library\" -> \"Load Scenery Library\".</p>"));
       break;
 
@@ -1880,14 +1880,13 @@ void DatabaseManager::restoreState()
   navDatabaseAuto = settings.valueBool(lnm::DATABASE_NAVDB_AUTO, true);
 }
 
-/* Updates metadata, version and object counts in the scenery loading dialog */
-void DatabaseManager::updateDialogInfo(atools::fs::FsPaths::SimulatorType value)
+void DatabaseManager::updateDialogInfo(atools::fs::FsPaths::SimulatorType simulator)
 {
   Q_ASSERT(parentWidget != nullptr);
 
   QString metaText;
 
-  QString databaseFile = buildDatabaseFileName(value);
+  QString databaseFile = buildDatabaseFileName(simulator);
   SqlDatabase tempDb(dbtools::DATABASE_NAME_DLG_INFO_TEMP);
 
   if(QFileInfo::exists(databaseFile))
@@ -1898,10 +1897,12 @@ void DatabaseManager::updateDialogInfo(atools::fs::FsPaths::SimulatorType value)
   }
 
   atools::util::Version applicationVersion = DatabaseMeta::getApplicationVersion();
+  bool hasNavdataUpdate = false;
   if(tempDb.isOpen())
   {
     DatabaseMeta dbmeta(tempDb);
     atools::util::Version databaseVersion = dbmeta.getDatabaseVersion();
+    hasNavdataUpdate = dbmeta.hasProperty(atools::fs::db::PROPERTYNAME_MSFS_NAVIGRAPH_FOUND);
 
     if(!dbmeta.isValid())
       metaText = databaseMetaText.arg(tr("None"), tr("None"), applicationVersion.getVersionString(), QStringLiteral());
@@ -1911,31 +1912,29 @@ void DatabaseManager::updateDialogInfo(atools::fs::FsPaths::SimulatorType value)
       if(!dbmeta.getAiracCycle().isEmpty())
         cycleText = databaseAiracCycleText.arg(dbmeta.getAiracCycle());
 
-      metaText = databaseMetaText.
-                 arg(dbmeta.getLastLoadTime().isValid() ? dbmeta.getLastLoadTime().toString() : tr("None"),
-                     databaseVersion.getVersionString(), applicationVersion.getVersionString(), cycleText);
+      metaText = databaseMetaText.arg(dbmeta.getLastLoadTime().isValid() ? dbmeta.getLastLoadTime().toString() : tr("None"),
+                                      databaseVersion.getVersionString(), applicationVersion.getVersionString(), cycleText);
     }
   }
   else
     metaText = databaseMetaText.arg(tr("None"), tr("None"), applicationVersion.getVersionString(), QStringLiteral());
 
-  QString tableText, databaseInfoText = databaseLoader->getDatabaseInfoText();
-  if(tempDb.isOpen() && dbtools::hasSchema(&tempDb))
+  if(hasNavdataUpdate)
   {
-    atools::sql::SqlUtil util(tempDb);
-
-    // Get row counts for the dialog
-    tableText = databaseInfoText.arg(util.rowCount("bgl_file")).
-                arg(util.rowCount("airport")).
-                arg(util.rowCount("vor")).
-                arg(util.rowCount("ils")).
-                arg(util.rowCount("ndb")).
-                arg(util.rowCount("marker")).
-                arg(util.rowCount("waypoint")).
-                arg(util.rowCount("boundary"));
+    metaText.append(QStringLiteral("<br/>"));
+    if(simulator == atools::fs::FsPaths::MSFS_2024)
+      metaText.append(tr("<b>Navigraph navdata update found in simulator. No navaids loaded.</b>"));
+    else
+      metaText.append(tr("<b>Navigraph navdata update found in simulator.</b>"));
   }
-  else
-    tableText = databaseInfoText.arg(0).arg(0).arg(0).arg(0).arg(0).arg(0).arg(0).arg(0);
+
+  atools::sql::SqlUtil util(tempDb);
+  const QString tableText = databaseLoader->getDatabaseInfoText(tempDb.isOpen() && dbtools::hasSchema(&tempDb) ?
+                                                                simulator : atools::fs::FsPaths::NONE,
+                                                                hasNavdataUpdate,
+                                                                util.rowCount("bgl_file"), util.rowCount("airport"), util.rowCount("vor"),
+                                                                util.rowCount("ils"), util.rowCount("ndb"), util.rowCount("marker"),
+                                                                util.rowCount("waypoint"), util.rowCount("boundary"));
 
   const OptionData& options = OptionData::instance();
   QStringList optionsHeader;
@@ -1943,10 +1942,12 @@ void DatabaseManager::updateDialogInfo(atools::fs::FsPaths::SimulatorType value)
     optionsHeader.append(tr("%1 %2 included for loading").
                          arg(options.getDatabaseInclude().size()).
                          arg(options.getDatabaseInclude().size() > 1 ? tr("extra directories are") : tr("extra directory is")));
+
   if(!options.getDatabaseExclude().isEmpty())
     optionsHeader.append(tr("%1 %2 excluded from loading").
                          arg(options.getDatabaseExclude().size()).
                          arg(options.getDatabaseExclude().size() > 1 ? tr("directories are") : tr("directory is")));
+
   if(!options.getDatabaseAddonExclude().isEmpty())
     optionsHeader.append(tr("%1 %2 excluded from add-on detection").
                          arg(options.getDatabaseAddonExclude().size()).
@@ -1959,7 +1960,7 @@ void DatabaseManager::updateDialogInfo(atools::fs::FsPaths::SimulatorType value)
   }
 
   databaseDialog->setHeader(metaText % atools::strJoin(tr("<p>"), optionsHeader, tr("<br/>"), tr("<br/>"), tr("</p>")) %
-                            tr("<p><big>Currently Loaded:</big></p><p>%1</p>").arg(tableText));
+                            tr("<p><b>Currently Loaded:</b>%1</p>").arg(tableText));
 
   if(tempDb.isOpen())
     tempDb.close();

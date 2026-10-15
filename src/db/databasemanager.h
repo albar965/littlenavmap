@@ -326,6 +326,7 @@ private:
   /* Called by loadSceneryInternalPost() */
   void loadSceneryPost();
 
+  /* Updates metadata, version and object counts in the scenery loading dialog */
   void updateDialogInfo(atools::fs::FsPaths::SimulatorType value);
 
   /* Database stored in settings directory */

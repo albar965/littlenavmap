@@ -69,11 +69,10 @@ public:
   /* Put progress window to foreground if open */
   void showProgressWindow() const;
 
-  /* Return text to display loaded features */
-  const QString& getDatabaseInfoText() const
-  {
-    return databaseInfoText;
-  }
+  /* Return text formatted as HTML table to display loaded features */
+  QString getDatabaseInfoText(atools::fs::FsPaths::SimulatorType sim, bool navdataUdpdateDetected, int numFiles, int numAirport, int numVor,
+                              int numIls, int numNdb, int numMarker, int numWaypoint,
+                              int numBoundary) const;
 
   /* Read inactive scenery elements */
   void setReadInactive(bool value)
@@ -148,15 +147,18 @@ private:
 
   void deleteProgressDialog();
 
+  /* Get text for label with header rows and table for feature counts */
+  QString labelText(const QString& textTemplate, QStringList header) const;
+
   /* Progress dialog is opened on demand */
   DatabaseProgressDialog *progressDialog = nullptr;
 
   /* Dialog display texts */
-  QString databaseLoadingText, databaseTimeText, databaseInfoText;
+  QString databaseTextLoading, databaseInfoText;
 
   atools::fs::NavDatabaseOptions *navDatabaseOpts;
   atools::fs::NavDatabaseErrors *navDatabaseErrors;
-  atools::fs::NavDatabaseProgress *navDatabaseProgressShared; // Shared between thread and main - locked by progressLock
+  atools::fs::NavDatabaseProgress *progressShared; // Shared between thread and main - locked by progressLock
 
   /* Database opened on demand in main and used in thread context */
   atools::sql::SqlDatabase *compileDb = nullptr;
@@ -177,7 +179,7 @@ private:
   /* Calles compileDatabasePost() once thread is finished */
   QFutureWatcher<atools::fs::ResultFlags> watcher;
 
-  QReadWriteLock progressLock, resultFlagsLock;
+  QReadWriteLock progressSharedLock, resultFlagsSharedLock;
 
   /* timer called in thread context to avoid too often updates */
   qint64 progressTimerElapsedThread = 0L;
