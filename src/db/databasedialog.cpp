@@ -95,7 +95,8 @@ DatabaseDialog::~DatabaseDialog()
 
 void DatabaseDialog::basePathEdited(const QString& text)
 {
-  simulators[currentFsType].basePath = fixBasePath(text);
+  if(currentFsType != atools::fs::FsPaths::MSFS_2024)
+    simulators[currentFsType].basePath = fixBasePath(text);
 }
 
 void DatabaseDialog::sceneryConfigFileEdited(const QString& text)
@@ -132,8 +133,7 @@ void DatabaseDialog::simComboChanged(int index)
 void DatabaseDialog::selectBasePathClicked()
 {
   QString path = atools::gui::Dialog(this).openDirectoryDialog(
-    tr("Select Flight Simulator Basepath"), QStringLiteral() /* lnm::DATABASE_BASEPATH */,
-    ui->lineEditDatabaseBasePath->text());
+    tr("Select Flight Simulator Basepath"), QStringLiteral() /* lnm::DATABASE_BASEPATH */, ui->lineEditDatabaseBasePath->text());
 
   if(!path.isEmpty())
   {
@@ -249,7 +249,7 @@ void DatabaseDialog::updateWidgets()
   ui->pushButtonDatabaseBasePath->setDisabled(showMsfs24);
 
   ui->lineEditDatabaseBasePath->blockSignals(true);
-  ui->lineEditDatabaseBasePath->setText(simulators.value(currentFsType).basePath);
+  ui->lineEditDatabaseBasePath->setText(showMsfs24 ? QStringLiteral() : simulators.value(currentFsType).basePath);
   ui->lineEditDatabaseBasePath->blockSignals(false);
 
   // Scenery Configuration File:
