@@ -742,8 +742,10 @@ void MainWindow::dataExchangeDataFetched(atools::util::Properties dataExchangePr
       if(dataExchangeProperties.contains(lnm::STARTUP_COMMAND_ACTIVATE))
       {
         setWindowState((windowState() & ~Qt::WindowMinimized) | Qt::WindowActive);
-        activateWindow();
-        raise();
+
+        QWidget *widget = QApplication::activeModalWidget() != nullptr ? QApplication::activeModalWidget() : this;
+        widget->activateWindow();
+        widget->raise();
       }
     }
   }
