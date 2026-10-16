@@ -676,6 +676,7 @@ void MapWidget::showTooltip(bool update)
   // Position is set by MapWidget::event() on tooltip event
   if(!tooltipGlobalPos.isNull())
   {
+    const QCursor savedCursor = cursor();
     map::AircraftTrailSegment trailSegment;
     Pos pos = getGeoPos(mapFromGlobal(tooltipGlobalPos));
     if(pos.isValid())
@@ -697,6 +698,8 @@ void MapWidget::showTooltip(bool update)
     else
       // Outside of globe
       hideTooltip();
+
+    QTimer::singleShot(0, this, [this, savedCursor]()->void {setCursor(savedCursor);});
   }
 }
 
@@ -1331,7 +1334,7 @@ void MapWidget::mouseDoubleClickEvent(QMouseEvent *event)
   if(noRender())
   {
     // Zoomed to far out - reset cursor and ignore input
-    setCursor(Qt::ArrowCursor);
+    setMouseCursor(Qt::ArrowCursor);
     return;
   }
 
@@ -1658,8 +1661,8 @@ bool MapWidget::eventFilter(QObject *obj, QEvent *event)
 
         // Build HTML
         showTooltip(false /* update */);
-        event->accept();
-        return true;
+        event->accept(); // Call own event handler
+        return true; // Do not process further
       }
     }
   }
@@ -1799,7 +1802,7 @@ void MapWidget::cancelDragUserpoint()
   if(mouseState & ms::DRAG_USER_POINT)
   {
     if(cursor().shape() != Qt::ArrowCursor)
-      setCursor(Qt::ArrowCursor);
+      setMouseCursor(Qt::ArrowCursor);
 
     userpointDragCurrrent = QPoint();
     *userpointBackup = map::MapUserpoint();
@@ -1899,11 +1902,13 @@ void MapWidget::mouseMoveEvent(QMouseEvent *event)
     }
     else if(mouseState.testFlag(ms::DRAG_HOLDING))
     {
+      // Dragging a holding ==========================================
       markers->updateHoldingMarkerPosAndAlt(holdingMarkerBackup->id, pos.alt(holdingMarkerBackup->getAltitude()));
       update();
     }
     else if(mouseState.testFlag(ms::DRAG_RANGE))
     {
+      // Dragging range rings ==========================================
       markers->updateRangeMarkerPos(rangeMarkerBackup->id, pos);
       update();
     }
@@ -1958,7 +1963,7 @@ void MapWidget::mouseMoveEvent(QMouseEvent *event)
 
           // Change cursor at one route point or change cursor above a route line to indicate editing or moving
           if((currentRoutePointIndexEditable != -1 || currentRouteLegIndex != -1) && isDragAndDropEditActive())
-            cursor = Qt::SizeAllCursor;
+            cursor = Qt::CrossCursor; // SizeAllCursor does not work on Linux
 
           // Other markers =======================================================================
           // Get all features since these are also used as a template for userpoints
@@ -1976,11 +1981,11 @@ void MapWidget::mouseMoveEvent(QMouseEvent *event)
 
             // Check for moveable objects and maybe override cursor
             if(isDragAndDropEditActive() && (index.getResult().hasAnyMovableMarker() || index.getResult().hasUserpoints()))
-              cursor = Qt::SizeAllCursor;
+              cursor = Qt::CrossCursor; // SizeAllCursor does not work on Linux
           }
         }
 
-        setCursor(cursor);
+        setMouseCursor(cursor);
       } // if(event->buttons() == Qt::NoButton)
     }
   }
