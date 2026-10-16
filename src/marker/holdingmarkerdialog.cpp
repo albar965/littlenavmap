@@ -33,7 +33,8 @@
 
 const QString HoldingMarkerDialog::DEFAULT_COLOR_STR = QColor(Qt::darkBlue).name(QColor::HexArgb);
 
-HoldingMarkerDialog::HoldingMarkerDialog(QWidget *parent, const map::HoldingMarker& markerParam, const map::MapResult& result, bool editMode)
+HoldingMarkerDialog::HoldingMarkerDialog(QWidget *parent, const map::HoldingMarker& markerParam, const map::MapResult& result,
+                                         bool editMode)
   : MarkerDialog(parent, tr("Holding"), markerParam, result, editMode), ui(new Ui::HoldingMarkerDialog)
 {
   setWindowFlag(Qt::WindowContextHelpButtonHint, false);
@@ -140,11 +141,13 @@ void HoldingMarkerDialog::fillMarkerFromResultAndWidgets()
   // Get navaid information from result
   atools::geo::Pos position;
   getResult()->getParams({map::AIRPORT, map::VOR, map::NDB, map::WAYPOINT, map::USERPOINT}, nullptr, &position, &holdingRef.nav);
-  if(!(holdingRef.nav.magvar < map::INVALID_MAGVAR))
-    holdingRef.nav.magvar = NavApp::getMagVar(position, 0.f);
 
+  // Use navaid position
   if(position.isValidRange())
     marker->position = holdingRef.position = position;
+
+  if(!(holdingRef.nav.magvar < map::INVALID_MAGVAR))
+    holdingRef.nav.magvar = NavApp::getMagVar(marker->position, 0.f);
 
   // Assign saved altitude again
   marker->position.setAltitude(altitude);

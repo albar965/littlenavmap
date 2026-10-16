@@ -2475,8 +2475,9 @@ void HtmlInfoBuilder::holdingMarkerText(const HoldingMarker& marker, HtmlBuilder
   holdingTextInternal(marker.holding, html, marker.text, true /* user */);
 
 #ifdef DEBUG_INFORMATION_INFO
-  html.small(QStringLiteral("[navtype = %1, navident = %2, text = %3, id = %4]").
-             arg(map::mapTypeToString(marker.holding.nav.type).join('|'), marker.holding.nav.ident, marker.text).arg(marker.id));
+  html.small(QStringLiteral("[navtype = %1, navident = %2, text = %3, id = %4, magvar = %5]").
+             arg(map::mapTypeToString(marker.holding.nav.type).join('|'), marker.holding.nav.ident, marker.text).
+             arg(marker.id).arg(marker.holding.nav.magvar));
 #endif
 }
 
@@ -2519,7 +2520,6 @@ void HtmlInfoBuilder::markerTitle(const QString& text, const map::MapNav& nav, f
   }
 
   navaidTitle(html, title, true /* noEntities */);
-
 }
 
 void HtmlInfoBuilder::holdingTextInternal(const MapHolding& holding, HtmlBuilder& html, const QString& userText, bool user) const
@@ -2621,9 +2621,10 @@ void HtmlInfoBuilder::rangeMarkerText(const RangeMarker& marker, atools::util::H
   html.tableEnd();
 
 #ifdef DEBUG_INFORMATION_INFO
-  html.small(QStringLiteral("[attachedToNavaid = %1, navtype = %2, navident = %3, manual label = %4, aircraft range = %5, id = %6]").
+  html.small(QStringLiteral("[attachedToNavaid = %1, navtype = %2, navident = %3, manual label = %4, "
+                            "aircraft range = %5, id = %6, magvar = %7]").
              arg(marker.attachedToNavaid).arg(map::mapTypeToString(marker.nav.type).join('|'), marker.nav.ident).arg(marker.manualLabel).
-             arg(marker.aircraftRange).arg(marker.id));
+             arg(marker.aircraftRange).arg(marker.id).arg(marker.nav.magvar));
 #endif
 }
 
@@ -2657,10 +2658,10 @@ void HtmlInfoBuilder::distanceMarkerText(const DistanceMarker& marker, atools::u
   html.tableEnd();
 
 #ifdef DEBUG_INFORMATION_INFO
-  html.small(QStringLiteral("[manualLabel = %1, navtype = %2, navident = %3, text = %4, id = %5, dx = %6, dy = %7]").
+  html.small(QStringLiteral("[manualLabel = %1, navtype = %2, navident = %3, text = %4, id = %5, dx = %6, dy = %7, magvar = %8]").
              arg(marker.manualLabel).arg(map::mapTypeToString(marker.nav.type).join('|'), marker.nav.ident, marker.text).
              arg(marker.id).arg(std::abs(marker.from.getLonX() - marker.to.getLonX())).
-             arg(std::abs(marker.from.getLatY() - marker.to.getLatY())));
+             arg(std::abs(marker.from.getLatY() - marker.to.getLatY())).arg(marker.nav.magvar));
 #endif
 }
 
@@ -2715,6 +2716,12 @@ void HtmlInfoBuilder::patternMarkerText(const PatternMarker& marker, atools::uti
   html.row2(tr("Pattern altitude:"),
             Unit::altFeet(marker.position.getAltitude(), true /* addUnit */, false /* narrow */, 10.f /* round to */));
   html.tableEnd();
+
+#ifdef DEBUG_INFORMATION_INFO
+  html.small(QStringLiteral("[navtype = %1, navident = %2, id = %3, magvar = %4]").
+             arg(map::mapTypeToString(marker.nav.type).join('|'), marker.nav.ident).
+             arg(marker.id).arg(marker.nav.magvar));
+#endif
 }
 
 void HtmlInfoBuilder::userpointTextInfo(const MapUserpoint& userpoint, HtmlBuilder& html, const Route *) const

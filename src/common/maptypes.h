@@ -107,13 +107,13 @@ struct MapNav
     vorDme = true;
     vorTacan = false;
     vorVortac = false;
-    magvar = 0.f;
+    magvar = map::INVALID_MAGVAR;
   }
 
   MapType type; /* VOR, NDB, AIRPORT, etc. */
   QString ident;
   bool vorDmeOnly, vorDme, vorTacan, vorVortac; /* VOR specific flags */
-  float magvar = 0.f; /* Declination from world or navaid */
+  float magvar = map::INVALID_MAGVAR; /* Declination from world or navaid */
 };
 
 // =====================================================================

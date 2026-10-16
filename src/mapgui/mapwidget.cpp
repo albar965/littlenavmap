@@ -2047,12 +2047,14 @@ void MapWidget::fillFromResult(QString& text, map::MapNav& nav, atools::geo::Pos
 
   // Fill nav and pos
   result.getParams({map::AIRPORT, map::VOR, map::NDB, map::WAYPOINT, map::USERPOINT}, nullptr, &pos, &nav);
-  if(!(nav.magvar < map::INVALID_MAGVAR))
-    nav.magvar = NavApp::getMagVar(pos, 0.f);
 
   // Fallback to given position
   if(!pos.isValidRange())
     pos = currentPos;
+
+  // Calculate declination if not given
+  if(!(nav.magvar < map::INVALID_MAGVAR))
+    nav.magvar = NavApp::getMagVar(pos, 0.f);
 
   // Build distance line depending on selected airport or navaid (color, magvar, etc.)
   text = result.markerLabel();
@@ -2126,7 +2128,7 @@ int MapWidget::addDistanceMarker(const map::MapResult& result, const atools::geo
   // Distance line
   map::DistanceMarker distanceMarker;
   distanceMarker.id = NavApp::getMapMarkers()->getNextMapMarkerId();
-  distanceMarker.position = distanceMarker.to = pos;
+  distanceMarker.position = distanceMarker.from = pos;
 
   fillDistanceMarkerMenu(distanceMarker, pos, result, false /* showMenu */);
 
