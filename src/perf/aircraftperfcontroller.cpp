@@ -779,11 +779,16 @@ void AircraftPerfController::updateReport()
 
     // Display fuel estimates ==========================================================
     const RouteAltitude& altitudeLegs = NavApp::getAltitudeLegs();
-    if(NavApp::getRouteConst().isEmpty())
+    const Route& route = NavApp::getRouteConst();
+    if(route.isEmpty())
       html.p().
       warning(tr("No Flight Plan.")).
       pEnd();
-    else if(altitudeLegs.isEmpty())
+    else if(altitudeLegs.isEmpty() ||
+            // Plan containy only a SID
+            (route.hasAnySidProcedure() && route.getDestinationLeg().isAnyProcedure()) ||
+            // Contains only an approach or an arrival
+            (route.hasAnyArrivalProcedure() && route.getDestinationIndexBeforeProcedure() == 0))
       html.p().
       warning(tr("Cannot calculate fuel report.")).br().
       warning(tr("Invalid Flight Plan.")).
