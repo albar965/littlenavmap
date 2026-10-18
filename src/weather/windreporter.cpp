@@ -20,6 +20,7 @@
 #include "app/navapp.h"
 #include "common/constants.h"
 #include "common/unit.h"
+#include "fs/sc/simconnectdata.h"
 #include "geo/marbleconverter.h"
 #include "grib/windquery.h"
 #include "gui/dialog.h"
@@ -690,6 +691,13 @@ void WindReporter::debugDumpContainerSizes() const
     windQueryOnline->debugDumpContainerSizes();
   qDebug() << Q_FUNC_INFO << "windPosCache.list.size()" << windPosCache.list.size();
 
+}
+
+void WindReporter::simDataChanged(const atools::fs::sc::SimConnectData& simulatorData)
+{
+  const atools::fs::sc::SimConnectUserAircraft& aircraft = simulatorData.getUserAircraftConst();
+  if(aircraft.isValid() && aircraft.isXplane12())
+    currentWindQuery()->simulatorTimeUpdated(aircraft.getXPlaneWeatherTime());
 }
 
 void WindReporter::actionToValues()

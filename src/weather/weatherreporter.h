@@ -31,9 +31,7 @@ namespace map {
 struct MapAirport;
 }
 namespace atools {
-
 namespace util {
-
 class FileChecker;
 class FileSystemWatcher;
 }
@@ -41,6 +39,10 @@ namespace geo {
 class Pos;
 }
 namespace fs {
+namespace sc {
+class SimConnectUserAircraft;
+class SimConnectData;
+}
 namespace weather {
 class Metar;
 class WeatherNetSingle;
@@ -176,8 +178,12 @@ public:
   /* Print the size of all container classes to detect overflow or memory leak conditions */
   void debugDumpContainerSizes() const;
 
-  /* Update IVAO and NOAA timeout periods - timeout is disabled if weather services are not used */
+  /* Update IVAO and NOAA timeout periods - timeout is disabled if weather services are not used.
+   * Also clears and updates X-Plane weather files. */
   void updateTimeouts();
+
+  /* Update X-Plane 12 weather date */
+  void simDataChanged(const atools::fs::sc::SimConnectData& simulatorData);
 
 signals:
   /* Emitted when Active Sky or X-Plane weather file changes or a request to weather was fullfilled */

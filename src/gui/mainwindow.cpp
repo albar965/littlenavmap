@@ -1691,6 +1691,10 @@ void MainWindow::connectAllSlots()
   connect(connectClient, &ConnectClient::dataPacketReceived, infoController, &InfoController::simDataChanged);
   connect(connectClient, &ConnectClient::dataPacketReceived, perfController, &AircraftPerfController::simDataChanged);
 
+  // Update time for X-Plane historical weather
+  connect(connectClient, &ConnectClient::dataPacketReceived, weatherReporter, &WeatherReporter::simDataChanged);
+  connect(connectClient, &ConnectClient::dataPacketReceived, windReporter, &WindReporter::simDataChanged);
+
   connect(connectClient, &ConnectClient::validAircraftReceived, routeController, &RouteController::validAircraftReceived);
   connect(connectClient, &ConnectClient::validAircraftReceived, this, &MainWindow::checkSceneryLibrary);
 

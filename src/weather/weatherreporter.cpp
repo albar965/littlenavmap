@@ -23,6 +23,7 @@
 #include "common/maptools.h"
 #include "common/maptypes.h"
 #include "connect/connectclient.h"
+#include "fs/sc/simconnectdata.h"
 #include "fs/weather/metar.h"
 #include "fs/weather/metarparser.h"
 #include "fs/weather/noaaweatherdownloader.h"
@@ -268,7 +269,7 @@ void WeatherReporter::initXplane()
     QString path = OptionData::instance().getWeatherXplane11Path();
     if(path.isEmpty() && !NavApp::getCurrentSimulatorBasePath().isEmpty())
       // Use default base path if simulator installation was found
-      path = NavApp::getCurrentSimulatorBasePath() % atools::SEP % "METAR.rwx";
+      path = NavApp::getCurrentSimulatorBasePath() % atools::SEP % QStringLiteral("METAR.rwx");
 
     // Set path but do not start watching - loading starts on first access
     xpWeatherReader->setWeatherPath(path, atools::fs::weather::WEATHER_XP11);
@@ -278,7 +279,7 @@ void WeatherReporter::initXplane()
     QString path = OptionData::instance().getWeatherXplane12Path();
     if(path.isEmpty() && !NavApp::getCurrentSimulatorBasePath().isEmpty())
       // Use default base path if simulator installation was found
-      path = NavApp::getCurrentSimulatorBasePath() % atools::SEP % "Output" % atools::SEP % "real weather";
+      path = NavApp::getCurrentSimulatorBasePath() % atools::SEP % QStringLiteral("Output") % atools::SEP % QStringLiteral("real weather");
 
     // Set path but do not start watching - loading starts on first access
     xpWeatherReader->setWeatherPath(path, atools::fs::weather::WEATHER_XP12);
@@ -814,20 +815,9 @@ const atools::fs::weather::Metar& WeatherReporter::getActiveSkyMetar(const QStri
 
 const atools::fs::weather::Metar& WeatherReporter::getXplaneMetar(const QString& station, const atools::geo::Pos& pos)
 {
-  if(xpWeatherReader->getWeatherPath().isEmpty())
-    // Display warnings if path is empty
+  if(xpWeatherReader->getWeatherPath().isEmpty() || xpWeatherReader->needsLoading())
+    // Display warnings if path is empty - Check paths and show warning dialog if invalid
     checkXplanePaths();
-  else if(xpWeatherReader->needsLoading())
-  {
-    // Check paths and show warning dialog if invalid
-    if(checkXplanePaths())
-    {
-      // Loading takes longer - show wait cursor
-      QGuiApplication::setOverrideCursor(Qt::WaitCursor);
-      xpWeatherReader->load();
-      QGuiApplication::restoreOverrideCursor();
-    }
-  }
 
   return xpWeatherReader->getXplaneMetar(station, pos);
 }
@@ -984,28 +974,39 @@ void WeatherReporter::updateTimeouts()
                                                NavApp::getMapWeatherSource() : map::WEATHER_SOURCE_SIMULATOR;
 
   // Disable periodic downloads if feature is not needed
-  optsw::FlagsWeather flags = OptionData::instance().getFlagsWeather();
+  const optsw::FlagsWeather flags = OptionData::instance().getFlagsWeather();
 
-  if(atools::fs::FsPaths::isAnyXplane(simType) && (flags & optsw::WEATHER_INFO_FS || flags & optsw::WEATHER_TOOLTIP_FS ||
-                                                   airportWeatherSource == map::WEATHER_SOURCE_SIMULATOR))
+  if(atools::fs::FsPaths::isAnyXplane(simType) &&
+     (flags.testFlag(optsw::WEATHER_INFO_FS) || flags.testFlag(optsw::WEATHER_TOOLTIP_FS) ||
+      airportWeatherSource == map::WEATHER_SOURCE_SIMULATOR))
     initXplane();
   else
     disableXplane();
 
-  if(flags & optsw::WEATHER_INFO_NOAA || flags & optsw::WEATHER_TOOLTIP_NOAA || airportWeatherSource == map::WEATHER_SOURCE_NOAA)
+  if(flags.testFlag(optsw::WEATHER_INFO_NOAA) || flags.testFlag(optsw::WEATHER_TOOLTIP_NOAA) ||
+     airportWeatherSource == map::WEATHER_SOURCE_NOAA)
     noaaWeather->setUpdatePeriod(onlineWeatherTimeoutSecs);
   else
     noaaWeather->setUpdatePeriod(-1);
 
-  if(flags & optsw::WEATHER_INFO_IVAO || flags & optsw::WEATHER_TOOLTIP_IVAO || airportWeatherSource == map::WEATHER_SOURCE_IVAO)
+  if(flags.testFlag(optsw::WEATHER_INFO_IVAO) || flags.testFlag(optsw::WEATHER_TOOLTIP_IVAO) ||
+     airportWeatherSource == map::WEATHER_SOURCE_IVAO)
     ivaoWeather->setUpdatePeriod(onlineWeatherTimeoutSecs);
   else
     ivaoWeather->setUpdatePeriod(-1);
 
-  if(flags & optsw::WEATHER_INFO_VATSIM || flags & optsw::WEATHER_TOOLTIP_VATSIM || airportWeatherSource == map::WEATHER_SOURCE_VATSIM)
+  if(flags.testFlag(optsw::WEATHER_INFO_VATSIM) || flags.testFlag(optsw::WEATHER_TOOLTIP_VATSIM) ||
+     airportWeatherSource == map::WEATHER_SOURCE_VATSIM)
     vatsimWeather->setUpdatePeriod(onlineWeatherTimeoutSecs);
   else
     vatsimWeather->setUpdatePeriod(-1);
+}
+
+void WeatherReporter::simDataChanged(const atools::fs::sc::SimConnectData& simulatorData)
+{
+  const atools::fs::sc::SimConnectUserAircraft& aircraft = simulatorData.getUserAircraftConst();
+  if(aircraft.isValid() && aircraft.isXplane12())
+    xpWeatherReader->simulatorTimeUpdated(aircraft.getXPlaneWeatherTime());
 }
 
 void WeatherReporter::activeSkyWeatherFilesChanged(const QStringList& paths)

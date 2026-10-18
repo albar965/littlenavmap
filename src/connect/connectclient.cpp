@@ -57,7 +57,7 @@ ConnectClient::ConnectClient(QWidget *parent)
   : QObject(parent), metarIdentCache(WEATHER_TIMEOUT_FS_SECS), parentWidget(parent), notAvailableStations(NOT_AVAILABLE_TIMEOUT_FS_SECS),
 
   // VERSION_NUMBER_TODO update minimum Xpconnect version
-  minimumXpconnectVersion("1.2.2")
+  minimumXpconnectVersion("1.4.2.beta")
 {
   // Create global context to load and unload DLLs
   activationContext = new atools::win::ActivationContext;
@@ -297,7 +297,6 @@ void ConnectClient::disconnectedFromSimulatorDirect()
   manualDisconnect = false;
 }
 
-/* Posts data received directly from simconnect or the socket and caches any metar reports */
 void ConnectClient::postSimConnectData(atools::fs::sc::SimConnectData dataPacket)
 {
   if(dataPacket.getStatus() == atools::fs::sc::OK)
@@ -483,7 +482,6 @@ void ConnectClient::postSimConnectData(atools::fs::sc::SimConnectData dataPacket
     disconnectClicked();
     handleError(status, statusText, xplane, network);
   }
-
 }
 
 void ConnectClient::handleError(atools::fs::sc::SimConnectStatus status, const QString& error, bool xplane, bool network)
@@ -744,13 +742,13 @@ void ConnectClient::showXpconnectVersionWarning(const QString& xpconnectVersion)
     message = tr("<p>You are using an outdated version of the X-Plane Little Xpconnect plugin.<br/>"
                  "Minimum recommended version is \"%1\".</p>"
                  "<p>It is recommended to remove the old plugin and "
-                   "install the included Little Xpconnect in the X-Plane directory \"plugins\".</p>").
+                   "install the plugin using the function \"Install Little Xpconnect in X-Plane Plugins\" in menu \"Tools\".</p>").
               arg(minimumXpconnectVersion.getVersionString());
   else
     message = tr("<p>You are using an outdated version \"%1\" of the X-Plane Little Xpconnect plugin.<br/>"
                  "Minimum recommended version is \"%2\".<p>"
                  "<p>It is recommended to remove the old plugin and "
-                   "install the included Little Xpconnect in X-Plane directory \"plugins\".</p>").
+                   "install the plugin using the function \"Install Little Xpconnect in X-Plane Plugins\" in menu \"Tools\".</p>").
               arg(xpconnectVersion, minimumXpconnectVersion.getVersionString());
 
   atools::gui::DialogButtonList buttonList =

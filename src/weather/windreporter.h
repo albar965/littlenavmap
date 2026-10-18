@@ -167,6 +167,9 @@ public:
   /* Print the size of all container classes to detect overflow or memory leak conditions */
   void debugDumpContainerSizes() const;
 
+  /* Update X-Plane 12 weather date */
+  void simDataChanged(const atools::fs::sc::SimConnectData& simulatorData);
+
 signals:
   /* Emitted when NOAA or X-Plane wind file changes or a request to weather was fullfilled */
   void windUpdated();

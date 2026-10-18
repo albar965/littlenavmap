@@ -141,7 +141,7 @@ signals:
   /* First valid aircraft occurrence after connecting */
   void validAircraftReceived(const atools::fs::sc::SimConnectUserAircraft& userAircraft);
 
-  /* Emitted when a new SimConnect data was received that contains weather data */
+  /* Emitted when a new SimConnect data was received that contains weather data or if the X-Plane weather time changed. */
   void weatherUpdated();
 
   /* Emitted when a connection was established */
@@ -157,6 +157,9 @@ signals:
   void installXpconnect();
 
 private:
+  /* Posts data received directly from simconnect or the socket and caches any metar reports  */
+  void postSimConnectData(atools::fs::sc::SimConnectData dataPacket);
+
   void readFromSocket();
   void readFromSocketError(QAbstractSocket::SocketError);
   void connectedToServerSocket();
@@ -165,7 +168,7 @@ private:
   void connectInternalAuto();
   void writeReplyToSocket(atools::fs::sc::SimConnectReply& reply);
   void disconnectClicked();
-  void postSimConnectData(atools::fs::sc::SimConnectData dataPacket);
+
   void connectedToSimulatorDirect();
   void disconnectedFromSimulatorDirect();
   void autoConnectToggled(bool state);
