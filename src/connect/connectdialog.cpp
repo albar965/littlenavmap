@@ -104,7 +104,7 @@ ConnectDialog::ConnectDialog(QWidget *parent, bool simConnectAvailable)
   connect(ui->tabWidgetConnect, &QTabWidget::currentChanged, this, &ConnectDialog::updateWarningMessage);
 
   comboBoxHandler = new atools::gui::ComboBoxHandler(ui->comboBoxConnectHostname, ui->pushButtonConnectDeleteHostname,
-                                                     lnm::NAVCONNECT_REMOTEHOSTS);
+                                                     QString(), lnm::NAVCONNECT_REMOTEHOSTS);
 
   connect(ui->comboBoxConnectHostname, &QComboBox::editTextChanged, this, &ConnectDialog::updateButtonStates);
   connect(ui->spinBoxConnectUpdateRateFsx, QOverload<int>::of(&QSpinBox::valueChanged), this, &ConnectDialog::updateRateHasChanged);

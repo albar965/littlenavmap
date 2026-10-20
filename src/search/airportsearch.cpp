@@ -284,7 +284,9 @@ AirportSearch::AirportSearch(MainWindow *parent, QTableView *tableView, si::TabS
   iconDelegate = new AirportIconDelegate(columns);
   view->setItemDelegateForColumn(columns->getColumn("ident")->getIndex(), iconDelegate);
 
-  comboBoxHandler = new atools::gui::ComboBoxHandler(ui->comboBoxAirportTextSearch, nullptr, lnm::SEARCHTAB_AIRPORT_IDENT_COMBOBOX_HISTORY);
+  comboBoxHandler = new atools::gui::ComboBoxHandler(ui->comboBoxAirportTextSearch, nullptr,
+                                                     tr("Ident, ICAO, IATA, FAA, local, name, city, country"),
+                                                     lnm::SEARCHTAB_AIRPORT_IDENT_COMBOBOX_HISTORY);
   comboBoxHandler->setMenuTooltipsVisible(NavApp::isMenuToolTipsVisible());
 
   // Assign the callback which builds a part of the where clause for the airport search ======================

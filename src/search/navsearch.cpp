@@ -191,7 +191,8 @@ NavSearch::NavSearch(MainWindow *parent, QTableView *tableView, si::TabSearchId 
   iconDelegate = new NavIconDelegate(columns);
   view->setItemDelegateForColumn(columns->getColumn("ident")->getIndex(), iconDelegate);
 
-  comboBoxHandler = new atools::gui::ComboBoxHandler(ui->comboBoxNavIcaoSearch, nullptr, lnm::SEARCHTAB_NAV_ICAO_COMBOBOX_HISTORY);
+  comboBoxHandler = new atools::gui::ComboBoxHandler(ui->comboBoxNavIcaoSearch, nullptr, tr("ICAO"),
+                                                     lnm::SEARCHTAB_NAV_ICAO_COMBOBOX_HISTORY);
   comboBoxHandler->setMenuTooltipsVisible(NavApp::isMenuToolTipsVisible());
 
   // Assign the callback which builds a part of the where clause for the airport search ======================
