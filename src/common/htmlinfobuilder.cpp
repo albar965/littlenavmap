@@ -478,7 +478,6 @@ void HtmlInfoBuilder::airportText(const MapAirport& airport, const map::WeatherC
       html.p().b(tr("Source for airport weather symbols on the map: ")).
       text(map::mapWeatherSourceString(NavApp::getMapWeatherSource()), ahtml::NOBR).pEnd();
 
-    // Source for map icon display
     html.table();
     addMetarLines(html, weatherContext, NavApp::getMapWeatherSource(), airport);
     html.tableEnd();
@@ -2108,25 +2107,40 @@ void HtmlInfoBuilder::decodedMetar(HtmlBuilder& html, const map::MapAirport& air
   }
 
   // Time and date - not for FSX or P3D =============================================================
+  atools::fs::sc::WeatherTimeSource timeSource = NavApp::getUserAircraft().getXPlaneWeatherTimeSource();
+  QDateTime compareTime = QDateTime::currentDateTimeUtc();
+
   if(!parsed.isFsxP3dFormat())
   {
     QDateTime time = parsed.getTimestamp();
     QString text = formatter::formatDateTimeShortTz(time);
+    QString timelabel(tr("Time:"));
+    if(timeSource == atools::fs::sc::WEATHER_TIME_SRC_SIMULATOR_TIME)
+    {
+      timelabel = tr("Simulator Time");
+      compareTime = NavApp::getUserAircraft().getXPlaneWeatherTime();
+    }
+    else if(timeSource == atools::fs::sc::WEATHER_TIME_SRC_REAL_TIME)
+      timelabel = tr("Real Time");
 
-    qint64 secsTo = time.secsTo(QDateTime::currentDateTimeUtc());
-
+    qint64 secsTo = time.secsTo(compareTime);
     if(secsTo > WEATHER_MAX_AGE_HOURS_ERR_OUTDATED * 3600)
-      html.row2Error(tr("Time:"), text + tr(" (outdated)"));
+      html.row2Error(timelabel, text + tr(" (outdated)"));
     else if(secsTo > WEATHER_MAX_AGE_HOURS_ERR * 3600)
-      html.row2Error(tr("Time:"), text + tr(" (%1 hours old)").arg(secsTo / 3600));
+      html.row2Error(timelabel, text + tr(" (%1 hours old)").arg(secsTo / 3600));
     else if(secsTo > WEATHER_MAX_AGE_HOURS_WARN * 3600)
-      html.row2Warning(tr("Time:"), text + tr(" (%1 hours old)").arg(secsTo / 3600));
+      html.row2Warning(timelabel, text + tr(" (%1 hours old)").arg(secsTo / 3600));
     else
       html.row2(tr("Time: "), text);
   }
 
   if(!parsed.getReportTypeString().isEmpty())
     html.row2(tr("Report type: "), parsed.getReportTypeString());
+
+  if(timeSource == atools::fs::sc::WEATHER_TIME_SRC_SIMULATOR_TIME)
+    html.row2(tr("Time Source: "), tr("Historical weather using simulator time"));
+  else if(timeSource == atools::fs::sc::WEATHER_TIME_SRC_REAL_TIME)
+    html.row2(tr("Time Source: "), tr("Real time"));
 
   HtmlBuilder flightRulesHtml = html.cleared();
   if(mapDisplay)
@@ -5604,7 +5618,7 @@ void HtmlInfoBuilder::addMetarLines(HtmlBuilder& html, const map::WeatherContext
   {
     // Simulator weather =====================================================
     bool mapDisplay = src == WEATHER_SOURCE_SIMULATOR;
-    QString sim = tr("%1 ").arg(NavApp::getCurrentSimulatorShortDisplayName());
+    const QString sim = tr("%1 ").arg(NavApp::getCurrentSimulatorShortDisplayName());
     addMetarLine(html, tr("%1Station").arg(sim), airport, fsMetar.getStation(), mapDisplay);
 
     if(nearest)
@@ -5619,6 +5633,7 @@ void HtmlInfoBuilder::addMetarLines(HtmlBuilder& html, const map::WeatherContext
 
   // NOAA weather =====================================================
   addMetarLine(html, tr("NOAA Station"), airport, weatherContext.noaaMetar.getStation(), src == WEATHER_SOURCE_NOAA);
+
   if(nearest)
     addMetarLine(html, tr("NOAA Nearest"), airport, weatherContext.noaaMetar.getNearest(), src == WEATHER_SOURCE_NOAA);
 
@@ -5627,6 +5642,7 @@ void HtmlInfoBuilder::addMetarLines(HtmlBuilder& html, const map::WeatherContext
 
   // VATSIM weather =====================================================
   addMetarLine(html, tr("VATSIM Station"), airport, weatherContext.vatsimMetar.getStation(), src == WEATHER_SOURCE_VATSIM);
+
   if(nearest)
     addMetarLine(html, tr("VATSIM Nearest"), airport, weatherContext.vatsimMetar.getNearest(), src == WEATHER_SOURCE_VATSIM);
 
@@ -5635,6 +5651,7 @@ void HtmlInfoBuilder::addMetarLines(HtmlBuilder& html, const map::WeatherContext
 
   // IVAO weather =====================================================
   addMetarLine(html, tr("IVAO Station"), airport, weatherContext.ivaoMetar.getStation(), src == WEATHER_SOURCE_IVAO);
+
   if(nearest)
     addMetarLine(html, tr("IVAO Nearest"), airport, weatherContext.ivaoMetar.getNearest(), src == WEATHER_SOURCE_IVAO);
 
@@ -5650,13 +5667,18 @@ void HtmlInfoBuilder::addMetarLine(atools::util::HtmlBuilder& html, const QStrin
   {
     HtmlBuilder weatherHtml = html.cleared();
 
+    QDateTime compareTime = QDateTime::currentDateTimeUtc();
+    QString metarLabel = header % (info ? tr(":") : tr(" METAR:"));
+    if(NavApp::getUserAircraft().getXPlaneWeatherTimeSource() == atools::fs::sc::WEATHER_TIME_SRC_SIMULATOR_TIME)
+      compareTime = NavApp::getUserAircraft().getXPlaneWeatherTime();
+
     if(checkMetar(weatherHtml, metar))
     {
       weatherHtml.text(metar.getMetarDisplayString());
 
       if(!metar.isFsxP3dFormat())
       {
-        qint64 secsTo = metar.getTimestamp().secsTo(QDateTime::currentDateTimeUtc());
+        qint64 secsTo = metar.getTimestamp().secsTo(compareTime);
         if(secsTo > WEATHER_MAX_AGE_HOURS_ERR_OUTDATED * 3600)
           weatherHtml.text(tr(" ")).error(tr("(outdated)"));
         else if(secsTo > WEATHER_MAX_AGE_HOURS_ERR * 3600)
@@ -5665,15 +5687,17 @@ void HtmlInfoBuilder::addMetarLine(atools::util::HtmlBuilder& html, const QStrin
           weatherHtml.text(tr(" ")).warning(tr("(%1 hours old)").arg(secsTo / 3600));
       }
 
-      weatherHtml.nbsp().nbsp();
-      weatherHtml.br();
+      weatherHtml.nbsp().nbsp().br();
       addFlightRulesSuffix(weatherHtml, metar);
 
       // Add METAR suffix for tooltip
       bestRunwaysText(airport, weatherHtml, metar, 4 /* max entries */, false /* details */);
+
+      if(NavApp::getUserAircraft().getXPlaneWeatherTimeSource() == atools::fs::sc::WEATHER_TIME_SRC_SIMULATOR_TIME)
+        weatherHtml.brText(tr("Historical weather using simulator time"));
     }
 
-    html.row2(header % (info ? tr(":") : tr(" METAR:")), weatherHtml);
+    html.row2(metarLabel, weatherHtml);
   }
 }
 
