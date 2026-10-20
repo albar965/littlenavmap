@@ -436,10 +436,12 @@ const QLatin1String OPTIONS_WEBSERVER_DEBUG("Options/WebserverDebug");
 const QLatin1String OPTIONS_DATAEXCHANGE_DEBUG("Options/DataExchangeDebug");
 const QLatin1String OPTIONS_PROCEDURE_DEBUG("Options/ProcedureDebug");
 const QLatin1String OPTIONS_STORAGE_DEBUG("Options/StorageDebug");
-const QLatin1String OPTIONS_VERSION("Options/Version");
 const QLatin1String OPTIONS_NO_USER_AGENT("Options/NoUserAgent");
 const QLatin1String OPTIONS_WEATHER_UPDATE("Options/WeatherUpdate");
 const QLatin1String OPTIONS_WEATHER_UPDATE_RATE_SIM("Options/WeatherUpdateRateSim");
+
+const QLatin1String OPTIONS_VERSION("Options/Version");
+const QLatin1String OPTIONS_VERSIONS_USED("Options/VersionsUsed");
 
 /* Track download URLs from track.cfg */
 const QLatin1String OPTIONS_TRACK_NAT_URL("Track/NatUrl");

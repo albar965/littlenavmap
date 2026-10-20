@@ -520,7 +520,7 @@ private:
 
   void showOfflineHelp();
   void showOnlineDownloads();
-  void showChangelog();
+  void showChangelogFile();
   void showChangelogOnline();
   bool openInSkyVector();
   void clearProcedureCache();

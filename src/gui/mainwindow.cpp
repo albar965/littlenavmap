@@ -842,7 +842,7 @@ void MainWindow::showOnlineDownloads()
   helpHandler->openHelpUrlWeb(lnm::helpOnlineDownloadsUrl, lnm::helpLanguageOnline());
 }
 
-void MainWindow::showChangelog()
+void MainWindow::showChangelogFile()
 {
   desktopServices->openFile(QApplication::applicationDirPath() % atools::SEP % "CHANGELOG.txt");
 }
@@ -3665,14 +3665,23 @@ void MainWindow::mainWindowShownDelayed()
     dialog->showWarnMsgBox(lnm::ACTIONS_SHOW_APPLE_TRANSLOCATION, message, tr("Do not &show this dialog again."));
   }
 #endif
+
   // Version change actions ====================================================
-  if(migrate::getOptionsVersion().isValid() && migrate::getOptionsVersion() < atools::util::Version(QApplication::applicationVersion()))
+  Settings& settings = Settings::instance();
+
+  // Show changelog if not done before ===========================
+  QStringList versionsUsed = settings.valueStrList(lnm::OPTIONS_VERSIONS_USED);
+  if(!versionsUsed.contains(QApplication::applicationVersion()))
+  {
+    versionsUsed.append(QApplication::applicationVersion());
+    settings.setValue(lnm::OPTIONS_VERSIONS_USED, versionsUsed);
+
     // Open online changelog for this version on Github
     showChangelogOnline();
+  }
 
   // First installation actions ====================================================
 
-  Settings& settings = Settings::instance();
 #ifdef DEBUG_INFORMATION_NO_STARTUP_MESSAGES
   if(false)
 #else
