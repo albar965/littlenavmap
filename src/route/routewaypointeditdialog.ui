@@ -192,7 +192,7 @@ Examples: &quot;WP1&quot;, &quot;WP2&quot; or &quot;WP10&quot;.</string>
     </widget>
    </item>
    <item row="4" column="0" colspan="3">
-    <widget class="QLabel" name="labelOptionsUpdatesHint">
+    <widget class="QLabel" name="labelRouteUserWaypointIdentHint">
      <property name="text">
       <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;img src=&quot;:/littlenavmap/resources/icons/bulb.svg&quot;/&gt;&lt;span style=&quot; font-style:italic;&quot;&gt;An ident that begins with “WP” followed by a number is automatically renumbered according to the order in the flight plan. For example: “WP0” or “WP99.”&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
      </property>

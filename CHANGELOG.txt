@@ -4,12 +4,13 @@ This text is partially Markdown, so the formatting might look strange.
 
 ==>>=============================================================================
 
-# Version 3.2.2.beta
+# Version 3.2.3.beta
 
-**This is a beta/test release of Little Navmap which fixes several crashes on startup which
-first appeared in the release 3.2.1.beta.**
+**This beta/test release of Little Navmap fixes broken offline maps and several other issues.
+It also adds support for historical weather in X-Plane.**
 
-**See [Version 3.2.1.beta](https://github.com/albar965/littlenavmap/releases/tag/v3.2.1.beta) for
+**See [Version 3.2.1.beta](https://github.com/albar965/littlenavmap/releases/tag/v3.2.1.beta) and
+[Version 3.2.2.beta](https://github.com/albar965/littlenavmap/releases/tag/v3.2.2.beta) for
 the full changelog.**
 
 **Please note that when reverting to Little Navmap 3.0.18, file names may appear garbled and
@@ -17,6 +18,68 @@ corresponding error messages may be shown if the paths contain special character
 umlauts or accents. This can happen when loading files from one of the menus `Recent`, for example.
 You can ignore the error messages and adjust paths in options and simply reload the affected files
 normally to fix this.**
+
+## Changes from 3.2.2.beta to 3.2.3.beta
+
+### X-Plane
+
+* The minimum recommended version for Little Xpconnect is now 1.4.3.beta. Although you can still
+  use older versions, Little Navmap will display a warning in this case. Reinstall
+  Little Xpconnect from the menu `Tools` in Little Navmap.
+* Enabled reading X-Plane historical weather. Now loading winds aloft and METAR files depending on
+  simulator settings and time. This might also improve #1353. Note that some inaccuracies cannot
+  be avoided.
+* Added indicator `Historical weather using simulator time.` for X-Plane 12 weather in the airport
+  information and in tooltips.
+
+### Markers
+
+* Magnetic declination is now correctly saved with holding and measurement markers which resulted
+  in a wrong course display. To fix this, any previously created markers must be deleted and
+  added again.
+
+### Map
+
+* Offline maps have been updated and display issues on Windows, such as missing country borders
+  and city centers, have been fixed. Fixed wrong cities shown in higher zoom levels on offline maps.
+* Removed overlay plugins for maps drawn in background like web or printing. This fixes
+  the crashes on startup when running the Web Server.
+* Now reverting back to the previous map theme if API keys or other required information is missing.
+  This avoids polluting the map tile cache with watermarked tiles like `API Key Required`.
+  Go to menu `Tools` -> `Files and Directories` -> `Show Map Cache` and delete the related
+  map cache directory if needed.
+
+### User Interface
+
+* Changes in automatic waypoint numbering to start from zero similar to Garmin units.
+* Added hint about automatic waypoint numbering in dialog window `Edit Flight Plan Position`
+  window when using an ident starting with `WP`.
+* Now hiding the navaid numbers when loading the MSFS 2024 scenery library database with the
+  Navigraph navdata update installed in the simulator. Also showing an indication
+  `Navigraph navdata update found in simulator. No navaids loaded.` for installed navdata update.
+  Install the navdata update directly in Little Navmap using the Navigraph FMS Data Manager if
+  you see missing navaids. Also enable `Select Automatically` in menu
+  `Scenery Library` -> `Navigraph`.
+* Unused base path in load scenery library dialog window is now blank for MSFS 2024 to
+  avoid confusion.
+* Corrected missing cross map cursor on Linux Wayland.
+* More user interface improvements.
+
+### Development
+
+* Fixed compilation for Qt versions later than 6.5. Lowered deprecation level to 6.5 and fixed
+  `map::MapBase`. The program can now be compiled using Qt 6.5 to 6.12. #1343
+* Fixed debugging build on Windows to allow the use of the Marble library again.
+
+==<<=============================================================================
+
+# Version 3.2.2.beta
+
+**This is a beta/test release of Little Navmap which fixes several crashes on startup which
+first appeared in the release 3.2.1.beta.**
+
+**See [Version 3.2.1.beta](https://github.com/albar965/littlenavmap/releases/tag/v3.2.1.beta) for
+the full changelog.**
 
 ## Changes from 3.2.1.beta to 3.2.2.beta
 
@@ -61,7 +124,7 @@ normally to fix this.**
 * Reduced default window size for smaller screens.
 * Small text corrections in user interface.
 
-==<<=============================================================================
+=================================================================================
 
 # Version 3.2.1.beta
 

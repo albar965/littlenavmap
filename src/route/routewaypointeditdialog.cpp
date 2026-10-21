@@ -225,6 +225,7 @@ void RouteWaypointEditDialog::setEntryInternal(int index, const atools::fs::pln:
     widgets->setDisabled(true);
     ui->labelRouteUserWaypointHeaderHint->setHidden(false);
     ui->labelRouteUserWaypointHeaderHint->setDisabled(false);
+    ui->labelRouteUserWaypointIdentHint->setHidden(true);
   }
   else
   {
@@ -238,11 +239,16 @@ void RouteWaypointEditDialog::setEntryInternal(int index, const atools::fs::pln:
     {
       setWindowTitle(QCoreApplication::applicationName() + tr(" - Edit Flight Plan Position Remarks"));
 
+      ui->labelRouteUserWaypointIdentHint->setHidden(true);
+
       // Update header with waypoint information
       updateHeaderLabel();
     }
     else
+    {
+      ui->labelRouteUserWaypointIdentHint->setHidden(false);
       setWindowTitle(QCoreApplication::applicationName() + tr(" - Edit Flight Plan Position"));
+    }
   }
 
   // Fill UI

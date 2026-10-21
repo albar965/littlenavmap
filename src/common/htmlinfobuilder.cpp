@@ -2138,7 +2138,7 @@ void HtmlInfoBuilder::decodedMetar(HtmlBuilder& html, const map::MapAirport& air
     html.row2(tr("Report type: "), parsed.getReportTypeString());
 
   if(timeSource == atools::fs::sc::WEATHER_TIME_SRC_SIMULATOR_TIME)
-    html.row2(tr("Time Source: "), tr("Historical weather using simulator time"));
+    html.row2(tr("Time Source: "), tr("Historical weather using simulator time."));
   else if(timeSource == atools::fs::sc::WEATHER_TIME_SRC_REAL_TIME)
     html.row2(tr("Time Source: "), tr("Real time"));
 
@@ -5694,7 +5694,7 @@ void HtmlInfoBuilder::addMetarLine(atools::util::HtmlBuilder& html, const QStrin
       bestRunwaysText(airport, weatherHtml, metar, 4 /* max entries */, false /* details */);
 
       if(NavApp::getUserAircraft().getXPlaneWeatherTimeSource() == atools::fs::sc::WEATHER_TIME_SRC_SIMULATOR_TIME)
-        weatherHtml.brText(tr("Historical weather using simulator time"));
+        weatherHtml.brText(tr("Historical weather using simulator time."));
     }
 
     html.row2(metarLabel, weatherHtml);
