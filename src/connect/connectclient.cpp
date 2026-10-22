@@ -323,16 +323,17 @@ void ConnectClient::postSimConnectData(atools::fs::sc::SimConnectData dataPacket
       // Modify AI aircraft and set shadow flag if a online network aircraft is registered as shadowed in the index
       NavApp::getOnlinedataController()->updateAircraftShadowState(dataPacket);
 
-      if(userAircraft.isFullyValid() && userAircraft.isAnyXplane())
+      if(userAircraft.isAnyXplane() && userAircraft.isValid())
       {
-        int localDateDays;
-        float localTimeSec, zuluTimeSec;
-        userAircraft.getXPlaneDate(localDateDays, localTimeSec, zuluTimeSec);
+        int localDateDays, utcDateDays;
+        float localTimeSec, utcTimeSec;
+        userAircraft.getXPlaneDate(localDateDays, localTimeSec, utcDateDays, utcTimeSec);
+
         if(localDateDays != atools::fs::sc::SC_INVALID_INT)
         {
           QDateTime datetimeLocal, datetimeUtc;
-          NavApp::getTimeZoneManager()->correctDateLocal(datetimeLocal, datetimeUtc, localDateDays, localTimeSec, zuluTimeSec,
-                                                         userAircraft.getPosition().getLonX(), userAircraft.getPosition().getLatY());
+          atools::buidDateUtcAndLocal(datetimeLocal, datetimeUtc, localDateDays, localTimeSec, utcDateDays, utcTimeSec,
+                                      userAircraft.getPosition().getLonX());
           userAircraft.setDateTime(datetimeLocal, datetimeUtc);
         }
       }

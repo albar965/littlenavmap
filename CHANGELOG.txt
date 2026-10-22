@@ -31,6 +31,7 @@ normally to fix this.**
   be avoided.
 * Added indicator `Historical weather using simulator time.` for X-Plane 12 weather in the airport
   information and in tooltips.
+* Fixed wrong date and time calculation for X-Plane 12. Requires X-Plane version 12.4.1 or later.
 
 ### Markers
 
