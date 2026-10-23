@@ -2113,7 +2113,7 @@ void HtmlInfoBuilder::decodedMetar(HtmlBuilder& html, const map::MapAirport& air
   if(!parsed.isFsxP3dFormat())
   {
     QDateTime time = parsed.getTimestamp();
-    QString text = formatter::formatDateTimeShortTz(time);
+    QString text = formatter::dateTimeShortTimezone(time);
     QString timelabel(tr("Time:"));
     if(timeSource == atools::fs::sc::WEATHER_TIME_SRC_SIMULATOR_TIME)
     {
@@ -2967,11 +2967,11 @@ bool HtmlInfoBuilder::logEntryText(MapLogbookEntry logEntry, HtmlBuilder& html) 
     {
       QDateTime departTime = rec.valueDateTime("departure_time");
       if(departTime.isValid())
-        html.row2If(info ? tr("Real time:") : tr("Departure real time:"), formatter::formatDateTimeShortTz(departTime));
+        html.row2If(info ? tr("Real time:") : tr("Departure real time:"), formatter::dateTimeShortTimezone(departTime));
 
       QDateTime departTimeSim = rec.valueDateTime("departure_time_sim");
       if(departTimeSim.isValid())
-        html.row2If(info ? tr("Simulator time:") : tr("Departure simulator time:"), formatter::formatDateTimeShortTz(departTimeSim));
+        html.row2If(info ? tr("Simulator time:") : tr("Departure simulator time:"), formatter::dateTimeShortTimezone(departTimeSim));
     }
 
     if(info)
@@ -2988,11 +2988,11 @@ bool HtmlInfoBuilder::logEntryText(MapLogbookEntry logEntry, HtmlBuilder& html) 
       html.row2If(tr("Runway:"), rec.valueStr("destination_runway"));
       QDateTime destTime = rec.valueDateTime("destination_time");
       if(destTime.isValid())
-        html.row2If(tr("Real time:"), formatter::formatDateTimeShortTz(destTime));
+        html.row2If(tr("Real time:"), formatter::dateTimeShortTimezone(destTime));
 
       QDateTime destTimeSim = rec.valueDateTime("destination_time_sim");
       if(destTimeSim.isValid())
-        html.row2If(tr("Simulator time:"), formatter::formatDateTimeShortTz(destTimeSim));
+        html.row2If(tr("Simulator time:"), formatter::dateTimeShortTimezone(destTimeSim));
 
       if(grossWeight > 0.f)
         html.row2(tr("Gross Weight:"), Unit::weightLbs(grossWeight - usedFuel), ahtml::NO_ENTITIES);
@@ -4134,7 +4134,7 @@ void HtmlInfoBuilder::aircraftTrailText(const AircraftTrailSegment& trailSegment
   QDateTime datetime = QDateTime::fromMSecsSinceEpoch(trailSegment.timestampPos, QTimeZone::UTC);
   bool overrideLocale = OptionData::instance().getFlags().testFlag(opts::GUI_OVERRIDE_LOCALE);
   html.row2(tr("Simulator Date and Time:"),
-            formatter::formatDateTimeSeconds(datetime, overrideLocale) % tr(" ") % datetime.timeZoneAbbreviation());
+            formatter::formatDateTimeSeconds(datetime, overrideLocale) % tr(" ") % formatter::timezoneName(datetime));
 
   // Speed through segment ==================================
   if(atools::geo::meterPerSecToKnots(trailSegment.speed) < 10000.f)
@@ -4174,21 +4174,24 @@ void HtmlInfoBuilder::aircraftTrailText(const AircraftTrailSegment& trailSegment
 
 void HtmlInfoBuilder::dateTimeAndFlown(const SimConnectUserAircraft *userAircraft, HtmlBuilder& html) const
 {
-  html.id(pid::DATE_TIME_REAL).row2(tr("Real Date and Time:"),
+  html.mark();
+  head(html, tr("Date and Time"));
+  html.table();
+  html.id(pid::DATE_TIME_REAL).row2(tr("Real:"),
                                     locale.toString(QDateTime::currentDateTimeUtc(), QLocale::ShortFormat) % tr(" ") %
-                                    QDateTime::currentDateTimeUtc().timeZoneAbbreviation());
+                                     formatter::timezoneName(QDateTime::currentDateTimeUtc()));
 
-  html.id(pid::LOCAL_TIME_REAL).row2(tr("Real Local Time:"),
+  html.id(pid::LOCAL_TIME_REAL).row2(tr("Real Local:"),
                                      locale.toString(QDateTime::currentDateTime(), QLocale::ShortFormat) % tr(" ") %
-                                     QDateTime::currentDateTime().timeZoneAbbreviation());
+                                      formatter::timezoneName(QDateTime::currentDateTime()));
 
-  html.id(pid::DATE_TIME).row2(tr("Simulator Date and Time:"),
+  html.id(pid::DATE_TIME).row2(tr("Simulator:"),
                                locale.toString(userAircraft->getZuluTime(), QLocale::ShortFormat) % tr(" ") %
-                               userAircraft->getZuluTime().timeZoneAbbreviation());
+                                formatter::timezoneName(userAircraft->getZuluTime()));
 
-  html.id(pid::LOCAL_TIME).row2(tr("Simulator Local Time:"),
-                                locale.toString(userAircraft->getLocalTime().time(), QLocale::ShortFormat) % tr(" ") %
-                                userAircraft->getLocalTime().timeZoneAbbreviation()
+  html.id(pid::LOCAL_TIME).row2(tr("Simulator Local:"),
+                                locale.toString(userAircraft->getLocalTime(), QLocale::ShortFormat) % tr(" ") %
+                                 formatter::timezoneName(userAircraft->getLocalTime())
 
 #ifdef DEBUG_INFORMATION_INFO
                                 + "[" + locale.toString(userAircraft->getLocalTime(), QLocale::ShortFormat) + "]"
@@ -4203,7 +4206,8 @@ void HtmlInfoBuilder::dateTimeAndFlown(const SimConnectUserAircraft *userAircraf
     html.id(pid::FLOWN).row2(tr("Flown:"),
                              tr("%1 since takeoff at %2").
                              arg(Unit::distNm(distanceFlownNm), locale.toString(takeoffDateTime.time(), QLocale::ShortFormat)) %
-                             tr(" ") % takeoffDateTime.timeZoneAbbreviation());
+                             tr(" ") %  formatter::timezoneName(takeoffDateTime));
+  html.tableEndIf();
 }
 
 void HtmlInfoBuilder::aircraftProgressText(const atools::fs::sc::SimConnectAircraft& aircraft, HtmlBuilder& html, const Route *route)
@@ -4271,9 +4275,7 @@ void HtmlInfoBuilder::aircraftProgressText(const atools::fs::sc::SimConnectAircr
 
       // ================================================================================
       // Current date and time ========================================
-      html.tableIf();
       dateTimeAndFlown(userAircraft, html);
-      html.tableEndIf();
 
       // Route distances ===============================================================
       if(distToDestNm < map::INVALID_DISTANCE_VALUE)
@@ -4307,7 +4309,7 @@ void HtmlInfoBuilder::aircraftProgressText(const atools::fs::sc::SimConnectAircr
 
           html.id(pid::DEST_DIST_TIME_ARR).row2(destinationText, strJoinVal({
             Unit::distNm(distToDestNm),
-            formatter::formatMinutesHoursLong(fuelTime.timeToDest), formatter::formatTimeShortTz(arrival)}));
+            formatter::formatMinutesHoursLong(fuelTime.timeToDest), formatter::timeShortTimezone(arrival)}));
 
           html.id(pid::DEST_TIME_REAL).row2(tr("Arrival Real Local Time:"),
                                             locale.toString(QDateTime::currentDateTime().
@@ -4373,7 +4375,7 @@ void HtmlInfoBuilder::aircraftProgressText(const atools::fs::sc::SimConnectAircr
             tocHeader.append(tr("Time"));
 
             QDateTime arrival = userAircraft->getZuluTime().addSecs(atools::roundToInt(fuelTime.timeToToc * 3600.f));
-            tocValues.append(formatter::formatTimeShortTz(arrival));
+            tocValues.append(formatter::timeShortTimezone(arrival));
             tocHeader.append(tr("Arrival"));
 
             html.id(pid::TOC_DIST_TIME_ARR).row2(strJoinHdr(tocHeader), strJoinVal(tocValues));
@@ -4421,7 +4423,7 @@ void HtmlInfoBuilder::aircraftProgressText(const atools::fs::sc::SimConnectAircr
             todHeader.append(tr("Time"));
 
             QDateTime arrival = userAircraft->getZuluTime().addSecs(atools::roundToInt(fuelTime.timeToTod * 3600.f));
-            todValues.append(formatter::formatTimeShortTz(arrival));
+            todValues.append(formatter::timeShortTimezone(arrival));
             todHeader.append(tr("Arrival"));
             html.id(pid::TOD_DIST_TIME_ARR).row2(strJoinHdr(todHeader), strJoinVal(todValues));
 
@@ -4592,8 +4594,7 @@ void HtmlInfoBuilder::aircraftProgressText(const atools::fs::sc::SimConnectAircr
 
             // ETA
             QDateTime arrivalNext = userAircraft->getZuluTime().addSecs(atools::roundToInt(fuelTime.timeToNext * 3600.f));
-            distTimeStr.append(locale.toString(arrivalNext.time(), QLocale::ShortFormat) % tr(" ") %
-                               arrivalNext.timeZoneAbbreviation());
+            distTimeStr.append(locale.toString(arrivalNext.time(), QLocale::ShortFormat) % tr(" ") % formatter::timezoneName(arrivalNext));
             distTimeHeader.append(tr("Arrival"));
           }
 
@@ -4745,17 +4746,13 @@ void HtmlInfoBuilder::aircraftProgressText(const atools::fs::sc::SimConnectAircr
         html.warning(tr("No Active Flight Plan Leg. Too far from flight plan."));
       else
         html.b(tr("No Active Flight Plan Leg."));
-      html.tableIf();
       dateTimeAndFlown(userAircraft, html);
-      html.tableEndIf();
     }
   } // if(!route->isEmpty() && userAircraft != nullptr && info)
   else if(info && userAircraft != nullptr)
   {
     html.warning(tr("No Flight Plan."));
-    html.tableIf();
     dateTimeAndFlown(userAircraft, html);
-    html.tableEndIf();
   }
 
   // Add departure and destination for AI ==================================================

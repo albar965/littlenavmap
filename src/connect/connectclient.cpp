@@ -332,8 +332,8 @@ void ConnectClient::postSimConnectData(atools::fs::sc::SimConnectData dataPacket
         if(localDateDays != atools::fs::sc::SC_INVALID_INT)
         {
           QDateTime datetimeLocal, datetimeUtc;
-          atools::buidDateUtcAndLocal(datetimeLocal, datetimeUtc, localDateDays, localTimeSec, utcDateDays, utcTimeSec,
-                                      userAircraft.getPosition().getLonX());
+          atools::buildDateUtcAndLocal(datetimeLocal, datetimeUtc, localDateDays, localTimeSec, utcDateDays, utcTimeSec,
+                                       userAircraft.getPosition().getLonX());
           userAircraft.setDateTime(datetimeLocal, datetimeUtc);
         }
       }

@@ -53,6 +53,8 @@ const static int CLOCK_TIMER_MS = 1000;
 // Minimum label width
 const static int MINIMUM_LABEL_WIDTH = 20;
 
+namespace ahtml = atools::util::html;
+
 StatusBar::StatusBar(QStatusBar *statusBarParam)
   : QObject(statusBarParam),
   GMT(tr("GMT", "Replaces wrong GMT indication in statusbar with UTC")),
@@ -114,20 +116,20 @@ void StatusBar::updateClock() const
   {
     // Get timedate depending on settings in menu ===================================
     QDateTime datetimeText, // Label and first line in tooltip
-              datetimeAlt; // Alternate time in tooltip
+              datetimeTextAlt; // Alternate time in tooltip
     QString timeTypeStr, invalidStr;
     switch(timeType)
     {
       case TIME_UTC_REAL:
         datetimeText = QDateTime::currentDateTimeUtc();
-        datetimeAlt = QDateTime::currentDateTime();
+        datetimeTextAlt = QDateTime::currentDateTime();
         timeTypeStr = tr("UTC real");
         invalidStr = tr(" — ");
         break;
 
       case TIME_LOCAL_REAL:
         datetimeText = QDateTime::currentDateTime();
-        datetimeAlt = QDateTime::currentDateTimeUtc();
+        datetimeTextAlt = QDateTime::currentDateTimeUtc();
         timeTypeStr = tr("local real");
         invalidStr = tr(" — ");
         break;
@@ -136,7 +138,7 @@ void StatusBar::updateClock() const
         if(NavApp::isConnectedAndAircraft())
         {
           datetimeText = NavApp::getUserAircraft().getZuluTime();
-          datetimeAlt = NavApp::getUserAircraft().getLocalTime();
+          datetimeTextAlt = NavApp::getUserAircraft().getLocalTime();
         }
         invalidStr = tr("Not connected to simulator");
         timeTypeStr = tr("UTC simulator");
@@ -146,7 +148,7 @@ void StatusBar::updateClock() const
         if(NavApp::isConnectedAndAircraft())
         {
           datetimeText = NavApp::getUserAircraft().getLocalTime();
-          datetimeAlt = NavApp::getUserAircraft().getZuluTime();
+          datetimeTextAlt = NavApp::getUserAircraft().getZuluTime();
         }
         invalidStr = tr("Not connected to simulator");
         timeTypeStr = tr("local simulator");
@@ -159,26 +161,25 @@ void StatusBar::updateClock() const
     if(datetimeText.isNull())
       timeText = tr(" — ");
     else
-      timeText = datetimeText.toString(QStringLiteral("d   HH:mm:ss %1 ").arg(datetimeText.timeZoneAbbreviation()));
+      timeText = datetimeText.toString(QStringLiteral("d   HH:mm:ss ")) % formatter::timezoneName(datetimeText) % tr(" ");
 
     // Tooltip text ===========================
     if(timeLabel->isVisible())
     {
       atools::util::HtmlBuilder html(false /* backgroundColorUsed */, NavApp::isGuiStyleDark());
-      html.p(atools::util::html::NOBR_WHITESPACE);
+      html.p(ahtml::NOBR_WHITESPACE);
       if(datetimeText.isNull())
       {
         // Time not valid - sim time selected and not connected to simulator
-        html.textBr(tr("Day of month and %1 time.").arg(timeTypeStr), atools::util::html::BOLD);
+        html.textBr(tr("Statusbar shows day of month and %1 time.").arg(timeTypeStr), ahtml::BOLD);
         html.text(invalidStr);
       }
       else
       {
         // Real time or sim time and connected
-        html.textBr(tr("Day of month and %1 time.").arg(timeTypeStr), atools::util::html::BOLD);
-        html.textBr(dateTimeString(datetimeText, invalidStr, timeType == TIME_UTC_SIM || timeType == TIME_LOCAL_SIM),
-                    atools::util::html::ITALIC);
-        html.text(dateTimeString(datetimeAlt, invalidStr, timeType == TIME_UTC_SIM || timeType == TIME_LOCAL_SIM));
+        html.textBr(tr("Statusbar shows day of month and %1 time.").arg(timeTypeStr), ahtml::BOLD);
+        html.textBr(dateTimeString(datetimeText, invalidStr, timeType == TIME_UTC_SIM || timeType == TIME_LOCAL_SIM), ahtml::ITALIC);
+        html.text(dateTimeString(datetimeTextAlt, invalidStr, timeType == TIME_UTC_SIM || timeType == TIME_LOCAL_SIM));
       }
       html.pEnd();
 

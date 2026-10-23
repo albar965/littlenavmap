@@ -61,6 +61,8 @@ normally to fix this.**
   Install the navdata update directly in Little Navmap using the Navigraph FMS Data Manager if
   you see missing navaids. Also enable `Select Automatically` in menu
   `Scenery Library` -> `Navigraph`.
+* Change timezone indication (`CEST` and others) to offset based like `+01:30` since Qt gives wrong
+  timezone names.
 * Unused base path in load scenery library dialog window is now blank for MSFS 2024 to
   avoid confusion.
 * Corrected missing cross map cursor on Linux Wayland.

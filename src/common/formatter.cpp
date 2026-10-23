@@ -456,14 +456,22 @@ QString directionStr(float directionDeg)
   return windDirStr;
 }
 
-QString formatDateTimeShortTz(const QDateTime& datetime)
+QString timezoneName(const QDateTime& datetime)
 {
-  return QObject::tr("%1 %2").arg(QLocale().toString(datetime, QLocale::ShortFormat), datetime.timeZoneAbbreviation());
+  if(datetime.offsetFromUtc() == 0)
+    return QObject::tr("UTC");
+  else
+    return formatTimeZoneOffset(datetime.offsetFromUtc());
 }
 
-QString formatTimeShortTz(const QDateTime& datetime)
+QString dateTimeShortTimezone(const QDateTime& datetime)
 {
-  return QObject::tr("%1 %2").arg(QLocale().toString(datetime.time(), QLocale::ShortFormat), datetime.timeZoneAbbreviation());
+  return QObject::tr("%1 %2").arg(QLocale().toString(datetime, QLocale::ShortFormat), timezoneName(datetime));
+}
+
+QString timeShortTimezone(const QDateTime& datetime)
+{
+  return QObject::tr("%1 %2").arg(QLocale().toString(datetime.time(), QLocale::ShortFormat), timezoneName(datetime));
 }
 
 } // namespace formatter
