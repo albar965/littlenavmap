@@ -25,13 +25,17 @@ normally to fix this.**
 
 * The minimum recommended version for Little Xpconnect is now 1.4.3.beta. Although you can still
   use older versions, Little Navmap will display a warning in this case. Reinstall
-  Little Xpconnect from the menu `Tools` in Little Navmap.
+  Little Xpconnect from the menu `Tools` in Little Navmap to enable X-Plane historical weather.
 * Enabled reading X-Plane historical weather. Now loading winds aloft and METAR files depending on
   simulator settings and time. This might also improve #1353. Note that some inaccuracies cannot
   be avoided.
 * Added indicator `Historical weather using simulator time.` for X-Plane 12 weather in the airport
   information and in tooltips.
 * Fixed wrong date and time calculation for X-Plane 12. Requires X-Plane version 12.4.1 or later.
+* Note that custom weather is not detected for now. Little Navmap will still show real weather from
+  the X-Plane METAR files.
+* Calculated simulator time can be off for an hour for X-Plane 11 since datarefs are missing for a
+  precise calculation.
 
 ### Markers
 
@@ -42,19 +46,21 @@ normally to fix this.**
 ### Map
 
 * Offline maps have been updated and display issues on Windows, such as missing country borders
-  and city centers, have been fixed. Fixed wrong cities shown in higher zoom levels on offline maps.
+  and city centers, have been fixed. Also corrected wrong cities shown in higher zoom levels
+  on offline maps.
 * Removed overlay plugins for maps drawn in background like web or printing. This fixes
   the crashes on startup when running the Web Server.
-* Now reverting back to the previous map theme if API keys or other required information is missing.
-  This avoids polluting the map tile cache with watermarked tiles like `API Key Required`.
-  Go to menu `Tools` -> `Files and Directories` -> `Show Map Cache` and delete the related
-  map cache directory if needed.
+* Now reverting back to the previous map theme after showing an information dialog window
+  if API keys or other required information is missing. This avoids polluting the map tile cache
+  with watermarked tiles like `API Key Required`. Go to menu `Tools` -> `Files and Directories` ->
+  `Show Map Cache` and delete the related map cache directory if needed.
 
 ### User Interface
 
 * Changes in automatic waypoint numbering to start from zero similar to Garmin units.
 * Added hint about automatic waypoint numbering in dialog window `Edit Flight Plan Position`
-  window when using an ident starting with `WP`.
+  window. User waypoints having idents like `WP0` or `WP10` are renumbered automatically in
+  flying order.
 * Now hiding the navaid numbers when loading the MSFS 2024 scenery library database with the
   Navigraph navdata update installed in the simulator. Also showing an indication
   `Navigraph navdata update found in simulator. No navaids loaded.` for installed navdata update.
@@ -66,12 +72,13 @@ normally to fix this.**
 * Unused base path in load scenery library dialog window is now blank for MSFS 2024 to
   avoid confusion.
 * Corrected missing cross map cursor on Linux Wayland.
-* More user interface improvements.
+* More user interface improvements and optmizations.
 
 ### Development
 
 * Fixed compilation for Qt versions later than 6.5. Lowered deprecation level to 6.5 and fixed
   `map::MapBase`. The program can now be compiled using Qt 6.5 to 6.12. #1343
+* Added include to allow compilation on macOS 27. #1394
 * Fixed debugging build on Windows to allow the use of the Marble library again.
 
 ==<<=============================================================================
