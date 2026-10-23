@@ -317,15 +317,16 @@ void HtmlInfoBuilder::airportText(const MapAirport& airport, const map::WeatherC
                 arg(Unit::altFeet(transitionLevel)).arg(transitionLevel / 100.f, 3, 'f', 0, QChar('0')));
   }
 
-  const QDateTime datetime = NavApp::getUtcDateTimeSimOrCurrent();
-  if(datetime.isValid())
+  const QDateTime datetimeCurrentOrSim = NavApp::getUtcDateTimeSimOrCurrent();
+  if(datetimeCurrentOrSim.isValid())
   {
     // Sunrise and sunset =======================================
     if(info)
-      html.row2(tr("Sunrise and sunset:"), sunriseSunsetText(airport.getPosition(), datetime));
+      html.row2(tr("Sunrise and sunset:"), sunriseSunsetText(airport.getPosition(), datetimeCurrentOrSim));
 
     // Time Zone ================================================
     const QTimeZone zone = NavApp::getTimeZone(airport.getPosition());
+    const QTimeZone::TimeType timeType = zone.isDaylightTime(datetimeCurrentOrSim) ? QTimeZone::DaylightTime : QTimeZone::StandardTime;
 
     // Use locale by UI language
     QLocale uiLanguagelocale(OptionData::getLanguageFromConfigFile());
@@ -341,10 +342,10 @@ void HtmlInfoBuilder::airportText(const MapAirport& airport, const map::WeatherC
       timezoneTexts.append(territory);
 
     if(info)
-      timezoneTexts.append(zone.displayName(QTimeZone::StandardTime, QTimeZone::LongName, uiLanguagelocale));
+      timezoneTexts.append(zone.displayName(timeType, QTimeZone::LongName,
+                                            uiLanguagelocale));
 
-    timezoneTexts.append(zone.displayName(QTimeZone::StandardTime, QTimeZone::OffsetName, uiLanguagelocale));
-    timezoneTexts.append(tr("(no DST)"));
+    timezoneTexts.append(zone.displayName(timeType, QTimeZone::OffsetName, uiLanguagelocale));
     html.row2(tr("Time Zone:"), atools::strJoin(timezoneTexts, tr(", ")));
   }
 
@@ -4179,19 +4180,19 @@ void HtmlInfoBuilder::dateTimeAndFlown(const SimConnectUserAircraft *userAircraf
   html.table();
   html.id(pid::DATE_TIME_REAL).row2(tr("Real:"),
                                     locale.toString(QDateTime::currentDateTimeUtc(), QLocale::ShortFormat) % tr(" ") %
-                                     formatter::timezoneName(QDateTime::currentDateTimeUtc()));
+                                    formatter::timezoneName(QDateTime::currentDateTimeUtc()));
 
   html.id(pid::LOCAL_TIME_REAL).row2(tr("Real Local:"),
                                      locale.toString(QDateTime::currentDateTime(), QLocale::ShortFormat) % tr(" ") %
-                                      formatter::timezoneName(QDateTime::currentDateTime()));
+                                     formatter::timezoneName(QDateTime::currentDateTime()));
 
   html.id(pid::DATE_TIME).row2(tr("Simulator:"),
                                locale.toString(userAircraft->getZuluTime(), QLocale::ShortFormat) % tr(" ") %
-                                formatter::timezoneName(userAircraft->getZuluTime()));
+                               formatter::timezoneName(userAircraft->getZuluTime()));
 
   html.id(pid::LOCAL_TIME).row2(tr("Simulator Local:"),
                                 locale.toString(userAircraft->getLocalTime(), QLocale::ShortFormat) % tr(" ") %
-                                 formatter::timezoneName(userAircraft->getLocalTime())
+                                formatter::timezoneName(userAircraft->getLocalTime())
 
 #ifdef DEBUG_INFORMATION_INFO
                                 + "[" + locale.toString(userAircraft->getLocalTime(), QLocale::ShortFormat) + "]"
@@ -4206,7 +4207,7 @@ void HtmlInfoBuilder::dateTimeAndFlown(const SimConnectUserAircraft *userAircraf
     html.id(pid::FLOWN).row2(tr("Flown:"),
                              tr("%1 since takeoff at %2").
                              arg(Unit::distNm(distanceFlownNm), locale.toString(takeoffDateTime.time(), QLocale::ShortFormat)) %
-                             tr(" ") %  formatter::timezoneName(takeoffDateTime));
+                             tr(" ") % formatter::timezoneName(takeoffDateTime));
   html.tableEndIf();
 }
 

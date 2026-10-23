@@ -60,7 +60,7 @@ normally to fix this.**
 * Changes in automatic waypoint numbering to start from zero similar to Garmin units.
 * Added hint about automatic waypoint numbering in dialog window `Edit Flight Plan Position`
   window. User waypoints having idents like `WP0` or `WP10` are renumbered automatically in
-  flying order.
+  flight plan order.
 * Now hiding the navaid numbers when loading the MSFS 2024 scenery library database with the
   Navigraph navdata update installed in the simulator. Also showing an indication
   `Navigraph navdata update found in simulator. No navaids loaded.` for installed navdata update.
@@ -69,10 +69,12 @@ normally to fix this.**
   `Scenery Library` -> `Navigraph`.
 * Change timezone indication (`CEST` and others) to offset based like `+01:30` since Qt gives wrong
   timezone names.
+* Timezones and offsets in the status bar and the airport information now consider daylight
+  savings time. This is calculated based on real time or simulator time.
 * Unused base path in load scenery library dialog window is now blank for MSFS 2024 to
   avoid confusion.
 * Corrected missing cross map cursor on Linux Wayland.
-* More user interface improvements and optmizations.
+* More user interface improvements and optimizations.
 
 ### Development
 

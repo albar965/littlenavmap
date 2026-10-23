@@ -57,7 +57,7 @@ QString formatTimeZoneTextShort(const QTimeZone& timezone, const QDateTime& offs
   if(timezone.isValid())
   {
     QString timeZoneText;
-    const QString offset = formatter::formatTimeZoneOffset(timezone.standardTimeOffset(offsetRefTime));
+    const QString offset = formatter::formatTimeZoneOffset(timezone.offsetFromUtc(offsetRefTime));
     QLocale::Territory territory = timezone.territory();
     QString territoryStr = QLocale::territoryToString(territory);
     if(territory != QLocale::AnyTerritory && !territoryStr.isEmpty() && territoryStr != QStringLiteral("Default"))
