@@ -299,6 +299,7 @@
     <addaction name="actionRouteCenter"/>
     <addaction name="actionMapShowMark"/>
     <addaction name="actionMapJumpCoordinates"/>
+    <addaction name="actionMapGotoAircraftTrackPos"/>
     <addaction name="separator"/>
     <addaction name="actionMapDragAndDropEditMode"/>
     <addaction name="separator"/>
@@ -12849,6 +12850,27 @@ from either the departure parking or the user aircraft while taxiing.</string>
    </property>
    <property name="statusTip">
     <string>Show the center for the airport and navaid distance search</string>
+   </property>
+  </action>
+  <action name="actionMapGotoAircraftTrackPos">
+   <property name="checked">
+    <bool>false</bool>
+   </property>
+   <property name="icon">
+    <iconset resource="../../littlenavmap.qrc">
+     <normaloff>:/littlenavmap/resources/icons/aircrafttrailgoto.svg</normaloff>:/littlenavmap/resources/icons/aircrafttrailgoto.svg</iconset>
+   </property>
+   <property name="text">
+    <string>Go to &amp;last Aircraft Trail Position</string>
+   </property>
+   <property name="toolTip">
+    <string>Go to the last position of the flown aircraft trail</string>
+   </property>
+   <property name="statusTip">
+    <string>Delete simulator aircraft trail from map and elevation profile</string>
+   </property>
+   <property name="shortcut">
+    <string>Alt+Shift+T</string>
    </property>
   </action>
  </widget>

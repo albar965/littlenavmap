@@ -491,7 +491,7 @@ void MapPainterMark::paintLogEntries(const QList<map::MapLogbookEntry>& entries)
             {
               ageo::LineString lineString;
               for(const atools::fs::gpx::TrailPoint& point : points)
-                lineString.append(point.pos.asPos());
+                lineString.append(point.getPos());
 
               if(context->visibleAndResolves(lineString.boundingRect()))
                 visibleTrailGeometries.append(lineString);

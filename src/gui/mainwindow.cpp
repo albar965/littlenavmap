@@ -1627,6 +1627,7 @@ void MainWindow::connectAllSlots()
           this, [this]() {
     deleteAircraftTrail(false /* quiet */);
   });
+  connect(ui->actionMapGotoAircraftTrackPos, &QAction::triggered, mapWidget, &MapWidget::showLastTrackPos);
 
   connect(ui->actionMapShowMark, &QAction::triggered, mapWidget, &MapWidget::showSearchMark);
   connect(ui->actionMapShowHome, &QAction::triggered, mapWidget, &MapWidget::showHome);
@@ -2393,6 +2394,13 @@ void MainWindow::trailLoadGpxFile(const QString& file, bool forceLoading)
         else if(!forceLoading)
           warnTrailPoints(numTruncated, false /* doNotShowAgain */);
       }
+
+      if(NavApp::getStoredTrailEntries() > OptionData::instance().getAircraftTrailMaxPoints())
+        dialog->showInfoMsgBox(lnm::ACTIONS_SHOW_TRAIL_NUM_SHOWN,
+                               tr("Showing %1 of %2 trail points due to limit set "
+                                  "in options on page \"Map Aircraft Trail\".").
+                               arg(OptionData::instance().getAircraftTrailMaxPoints()).arg(NavApp::getStoredTrailEntries()),
+                               tr("Do not &show this dialog again."));
     }
     else
       atools::gui::Dialog::warning(this, tr("The file \"%1\" is no valid GPX file.").arg(file));
@@ -4070,6 +4078,7 @@ void MainWindow::updateActionStates()
 
   ui->actionMapShowAircraftTrack->setEnabled(true);
   ui->actionMapDeleteAircraftTrack->setEnabled(mapWidget->getAircraftTrailSize() > 0 || profileWidget->hasTrailPoints());
+  ui->actionMapGotoAircraftTrackPos->setEnabled(mapWidget->getAircraftTrailSize() > 0);
 
   bool canCalcRoute = route.canCalcRoute();
   ui->actionRouteCalcDirect->setEnabled(canCalcRoute && NavApp::getRouteConst().hasEntries());

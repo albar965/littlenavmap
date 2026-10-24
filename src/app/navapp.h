@@ -357,6 +357,7 @@ public:
   static const AircraftTrail& getAircraftTrail();
 
   static int getMaxStoredTrailEntries();
+  static int getStoredTrailEntries();
 
   static const AircraftTrail& getAircraftTrailLogbook();
   static void deleteAircraftTrailLogbook();
@@ -391,8 +392,8 @@ public:
   static atools::fs::common::MagDecReader *getMagDecReader();
 
   static atools::fs::common::MoraReader *getMoraReader();
-  
-  static atools::timezone::TimeZoneManager* getTimeZoneManager();
+
+  static atools::timezone::TimeZoneManager *getTimeZoneManager();
   static QTimeZone getTimeZone(const atools::geo::Pos& position);
 
   /* Time from either simulator if connected or current time */

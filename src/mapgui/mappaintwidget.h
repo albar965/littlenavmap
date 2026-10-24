@@ -196,6 +196,7 @@ public:
 
   /* Maximum entries stored in trail */
   int getMaxStoredTrailEntries() const;
+  int getStoredTrailEntries() const;
 
   /* Disconnect painter to avoid updates while no data is available */
   void preDatabaseLoad();

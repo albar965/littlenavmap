@@ -618,14 +618,13 @@ const atools::fs::gpx::GpxData *LogdataController::getGpxData(int id)
 
 const AircraftTrail *LogdataController::getAircraftTrail(int id)
 {
-  AircraftTrail *aircraftTrail = aircraftTrailCache.object(id);
-  if(aircraftTrail == nullptr)
+  if(aircraftTrailCache.contains(id))
   {
-    aircraftTrail = new AircraftTrail();
+    AircraftTrail *aircraftTrail = new AircraftTrail();
     aircraftTrail->fillTrailFromGpxData(*getGpxData(id));
     aircraftTrailCache.insert(id, aircraftTrail);
   }
-  return aircraftTrail;
+  return aircraftTrailCache.object(id);
 }
 
 void LogdataController::editLogEntryFromMap(int id)

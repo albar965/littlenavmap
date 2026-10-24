@@ -110,6 +110,7 @@ void messages::resetAllMessages()
   settings.setValue(lnm::ACTIONS_SHOW_UPDATE_FAILED, true);
   settings.setValue(lnm::ACTIONS_SHOW_ZOOM_WARNING, true);
   settings.setValue(lnm::ACTIONS_SHOW_REPLACE_TRAIL, true);
+  settings.setValue(lnm::ACTIONS_SHOW_TRAIL_NUM_SHOWN, true);
 
   settings.setValue(lnm::ACTIONS_SHOW_ROUTE_ALTERNATE_ERROR, true);
   settings.setValue(lnm::ACTIONS_SHOW_ROUTE_ERROR, true);

@@ -1277,6 +1277,11 @@ int NavApp::getMaxStoredTrailEntries()
   return getMapWidgetGui() != nullptr ? getMapWidgetGui()->getMaxStoredTrailEntries() : 0;
 }
 
+int NavApp::getStoredTrailEntries()
+{
+  return getMapWidgetGui() != nullptr ? getMapWidgetGui()->getStoredTrailEntries() : 0;
+}
+
 const AircraftTrail& NavApp::getAircraftTrailLogbook()
 {
   return getMapWidgetGui()->getAircraftTrailLogbook();

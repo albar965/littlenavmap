@@ -310,9 +310,12 @@ int AircraftTrail::appendTrailFromGpxData(const atools::fs::gpx::GpxData& gpxDat
   {
     if(!points.isEmpty())
     {
+      // Add separator for new track
+      if(!isEmpty())
+        append(AircraftTrailPos());
+
       for(const atools::fs::gpx::TrailPoint& point : std::as_const(points))
-        append(AircraftTrailPos(point.pos, point.timestampMs, false));
-      append(AircraftTrailPos());
+        append(AircraftTrailPos(point.getPosD(), point.getTimestampMs(), false));
     }
   }
   int numTruncated = truncateTrail();

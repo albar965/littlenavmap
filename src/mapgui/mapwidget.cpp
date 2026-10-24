@@ -4284,9 +4284,28 @@ void MapWidget::resetSettingsToDefault()
   NavApp::getMapDetailHandler()->defaultMapDetail();
 }
 
+void MapWidget::showLastTrackPos()
+{
+  qDebug() << Q_FUNC_INFO;
+
+  hideTooltip();
+  showAircraft(false);
+
+  if(!aircraftTrail->isEmpty())
+  {
+#ifdef DEBUG_INFORMATION
+    qDebug() << Q_FUNC_INFO << aircraftTrail->constLast().getPosition();
+#endif
+    jumpBackToAircraftStart();
+    centerPosOnMap(aircraftTrail->constLast().getPosition());
+    setDistanceToMap(atools::geo::nmToKm(Unit::rev(OptionData::instance().getMapZoomShowMenu(), Unit::distNmF)));
+    NavApp::getStatusBar()->setStatusMessage(tr("Showing last aircraft trail position."));
+  }
+}
+
 void MapWidget::showSearchMark()
 {
-  qDebug() << "NavMapWidget::showMark" << searchMarkPos;
+  qDebug() << Q_FUNC_INFO << searchMarkPos;
 
   hideTooltip();
   showAircraft(false);
@@ -4618,7 +4637,7 @@ void MapWidget::loadAircraftTrail(const QString& filename, int& numLoaded, int& 
     qDebug() << Q_FUNC_INFO << "Num points" << gpxData.getNumPoints() << "numTruncated" << numTruncated;
 
     if(OptionData::instance().getFlags().testFlag(opts::GUI_CENTER_ROUTE))
-      showRect(gpxData.getTrailRect(), false /* doubleClick */);
+      showRect(gpxData.getTrailRect(OptionData::instance().getAircraftTrailMaxPoints()), false /* doubleClick */);
 
     update();
     emit updateActionStates();

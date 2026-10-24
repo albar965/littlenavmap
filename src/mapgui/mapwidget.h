@@ -148,6 +148,9 @@ public:
   /* Jump to the search center mark using default zoom */
   void showSearchMark();
 
+  /* Jump to the last track position */
+  void showLastTrackPos();
+
   /* Zoom to home position using default zoom */
   void showHome();
 

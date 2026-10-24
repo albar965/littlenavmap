@@ -1102,7 +1102,12 @@ int MapPaintWidget::getAircraftTrailSize() const
 
 int MapPaintWidget::getMaxStoredTrailEntries() const
 {
-  return aircraftTrail != nullptr ? AircraftTrail::getMaxStoredTrailEntries() : 0;
+  return AircraftTrail::getMaxStoredTrailEntries();
+}
+
+int MapPaintWidget::getStoredTrailEntries() const
+{
+  return aircraftTrail != nullptr ? aircraftTrail->size() : 0;
 }
 
 const map::MapResult& MapPaintWidget::getSearchHighlights() const
