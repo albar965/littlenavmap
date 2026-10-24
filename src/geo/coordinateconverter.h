@@ -170,6 +170,7 @@ public:
   /*  Determines whether a geographical feature is big enough so that it should
    * represent a single point on the screen. Does not check if feature bounding rect overlaps viewport. */
   bool resolves(const atools::geo::Rect& rect) const;
+  bool resolvesRelaxed(const atools::geo::Rect& rect) const;
   bool resolves(const atools::geo::Line& line) const;
 
   bool wToSPoints(const atools::geo::Pos& pos, QList<double>& x, double& y, const QSize& size, bool *isHidden) const;

@@ -35,6 +35,9 @@ using namespace atools::geo;
 
 const QSize CoordinateConverter::DEFAULT_WTOS_SIZE(100, 100);
 
+// Maximum polyline length for createPolylinesInternal()
+const int MAX_SCREEN_LINE_LENGTH = 1000;
+
 bool CoordinateConverter::isHidden(const atools::geo::Pos& coords) const
 {
   qreal xr, yr;
@@ -253,7 +256,7 @@ QList<QPolygonF> CoordinateConverter::wToS(const atools::geo::LineString& linest
 QList<QPolygonF> CoordinateConverter::wToS(const Marble::GeoDataLineString& line) const
 {
   QList<QPolygonF *> polygons;
-  viewport->screenCoordinates(line, polygons);
+  viewport->screenCoordinates(line, polygons, false /* checkResolves */);
 
   // Copy polygons and delete pointers
   QList<QPolygonF> retval;
@@ -422,7 +425,7 @@ const QList<QPolygonF *> CoordinateConverter::createPolygonsInternal(const atool
   if(viewport->viewLatLonAltBox().intersects(linearRing.latLonAltBox()) && viewport->resolves(linearRing.latLonAltBox()))
     // Function might return two polygons in Mercator where one is not visible on the screen
     // Polygons will contain more points than the world coordinate polygon
-    viewport->screenCoordinates(linearRing, polygons);
+    viewport->screenCoordinates(linearRing, polygons, false /* checkResolves */);
 
   if(polygons.size() > 1)
   {
@@ -458,6 +461,11 @@ const QList<QPolygonF *> CoordinateConverter::createPolygonsInternal(const atool
 bool CoordinateConverter::resolves(const atools::geo::Rect& rect) const
 {
   return viewport->resolves(mconvert::toGdc(rect));
+}
+
+bool CoordinateConverter::resolvesRelaxed(const atools::geo::Rect& rect) const
+{
+  return viewport->resolvesRelaxed(mconvert::toGdc(rect));
 }
 
 bool CoordinateConverter::resolves(const atools::geo::Line& line) const
@@ -515,7 +523,7 @@ const QList<QPolygonF *> CoordinateConverter::createPolylinesInternal(const atoo
       if(viewport->viewLatLonAltBox().intersects(geoLineStr.latLonAltBox()))
       {
         QList<QPolygonF *> polygons;
-        viewport->screenCoordinates(geoLineStr, polygons);
+        viewport->screenCoordinates(geoLineStr, polygons, false /* checkResolves */);
 
         if(!polygons.isEmpty())
         {
@@ -552,5 +560,31 @@ const QList<QPolygonF *> CoordinateConverter::createPolylinesInternal(const atoo
     }
   }
 
-  return polylineList;
+  // Merge polygon parts into longer strings ==============================
+  QList<QPolygonF *> polylineListMerged;
+  for(int i = 0; i < polylineList.size(); i++)
+  {
+    QPolygonF *poly = polylineList.at(i);
+    if(polylineListMerged.isEmpty())
+    {
+      // First polygon - redirect pointer and null it in the source list to allow qDeleteAll
+      polylineListMerged.append(poly);
+      polylineList[i] = nullptr;
+      continue;
+    }
+    QPolygonF *lastMergedPolygon = polylineListMerged.last();
+    if(poly->constFirst() == lastMergedPolygon->constLast() && lastMergedPolygon->length() < MAX_SCREEN_LINE_LENGTH)
+      // Points overlap and line is not too long - copy rest of current into the last polygon - leave in source list for qDeleteAll
+      lastMergedPolygon->append(poly->mid(1));
+    else
+    {
+      // No overlap or too long - redirect pointer and null it in the source list to allow qDeleteAll
+      polylineListMerged.append(poly);
+      polylineList[i] = nullptr;
+    }
+  }
+
+  releasePolylines(polylineList);
+
+  return polylineListMerged;
 }

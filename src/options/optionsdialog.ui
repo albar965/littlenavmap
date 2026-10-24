@@ -66,7 +66,7 @@
      </widget>
      <widget class="QStackedWidget" name="stackedWidgetOptions">
       <property name="currentIndex">
-       <number>0</number>
+       <number>11</number>
       </property>
       <widget class="QWidget" name="stackedWidgetOptionsStartup">
        <layout class="QVBoxLayout" name="verticalLayout_41">
@@ -2897,8 +2897,8 @@ Note that some fonts, especially large fonts, can result in display errors on th
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>355</width>
-             <height>824</height>
+             <width>572</width>
+             <height>785</height>
             </rect>
            </property>
            <layout class="QVBoxLayout" name="verticalLayout_71">
@@ -3320,8 +3320,8 @@ Note that this function is disabled for X-Plane 12 since the 3D flag is unreliab
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>552</width>
-             <height>868</height>
+             <width>572</width>
+             <height>860</height>
             </rect>
            </property>
            <layout class="QVBoxLayout" name="verticalLayout_20">
@@ -4144,8 +4144,8 @@ to avoid a cluttered up airports</string>
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>428</width>
-             <height>556</height>
+             <width>572</width>
+             <height>535</height>
             </rect>
            </property>
            <layout class="QVBoxLayout" name="verticalLayout_35">
@@ -4619,8 +4619,8 @@ Also used in the elevation profile.</string>
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>554</width>
-             <height>387</height>
+             <width>586</width>
+             <height>531</height>
             </rect>
            </property>
            <layout class="QVBoxLayout" name="verticalLayout_57">
@@ -4813,7 +4813,7 @@ Note that this does not affect the stored trail points.</string>
                   <number>1000000</number>
                  </property>
                  <property name="singleStep">
-                  <number>10000</number>
+                  <number>1000</number>
                  </property>
                  <property name="value">
                   <number>20000</number>
@@ -5791,7 +5791,7 @@ if you hover over the elevation profile.</string>
              <x>0</x>
              <y>0</y>
              <width>319</width>
-             <height>853</height>
+             <height>845</height>
             </rect>
            </property>
            <layout class="QVBoxLayout" name="verticalLayout_63">
