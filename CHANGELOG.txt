@@ -7,7 +7,8 @@ This text is partially Markdown, so the formatting might look strange.
 # Version 3.2.3.beta
 
 **This beta/test release of Little Navmap fixes broken offline maps and several other issues.
-It also adds support for historical weather in X-Plane.**
+It also adds support for historical weather in X-Plane. Please note that neither the program
+translations nor the user manual have been updated.**
 
 **See [Version 3.2.1.beta](https://github.com/albar965/littlenavmap/releases/tag/v3.2.1.beta) and
 [Version 3.2.2.beta](https://github.com/albar965/littlenavmap/releases/tag/v3.2.2.beta) for
@@ -52,8 +53,21 @@ normally to fix this.**
   the crashes on startup when running the Web Server.
 * Now reverting back to the previous map theme after showing an information dialog window
   if API keys or other required information is missing. This avoids polluting the map tile cache
-  with watermarked tiles like `API Key Required`. Go to menu `Tools` -> `Files and Directories` ->
-  `Show Map Cache` and delete the related map cache directory if needed.
+  with watermarked tiles like `API Key Required`. Go to menu
+  `Tools` -> `Files and Directories` -> `Show Map Cache` and delete the related map
+  cache directory if needed.
+* Applied several optimizations to speed up drawing of the aircraft trail and other lines.
+
+### Aircraft Trail
+
+* Added function `Go to last Aircraft Trail Position` in menu `Map`. Use this to go to the last
+  position of your aircraft.
+* Added information dialog window that shows the number of visible and the number of loaded
+  trail points if points are hidden due to the setting
+  `Maximum number of aircraft trail points shown` on options page `Map Aircraft Trail`.
+* Corrected display of aircraft trail. Small segments are now shown when zooming out in
+  spherical projection. Previous display could result in gaps in the trail.
+* Fixed issue where last trail position was invalid after loading from a GPX file.
 
 ### User Interface
 
@@ -71,6 +85,9 @@ normally to fix this.**
   timezone names.
 * Timezones and offsets in the status bar and the airport information now consider daylight
   savings time. This is calculated based on real time or simulator time.
+* Avoiding `Empty Flight Plan` when saving GPX without a plan.
+* Now showing country when entering coordinates in several dialog windows like from
+  menu `Map` -> `Go to coordinates`.
 * Unused base path in load scenery library dialog window is now blank for MSFS 2024 to
   avoid confusion.
 * Corrected missing cross map cursor on Linux Wayland.
