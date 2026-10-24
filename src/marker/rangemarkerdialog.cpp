@@ -286,7 +286,7 @@ void RangeMarkerDialog::coordinatesEdited(const QString&)
 {
   QString message;
   atools::geo::Pos pos;
-  bool valid = formatter::checkCoordinates(message, ui->lineEditRangeMarkerLatLon->text(), &pos);
+  bool valid = formatter::checkCoordinates(&message, ui->lineEditRangeMarkerLatLon->text(), &pos);
 
   // Disable ok for invalid coordinates
   ui->buttonBoxRangeMarker->button(QDialogButtonBox::Ok)->setEnabled(valid);

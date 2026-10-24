@@ -149,7 +149,7 @@ void UserdataDialog::coordsEdited(const QString& text)
 
   QString message;
   atools::geo::Pos pos;
-  bool valid = formatter::checkCoordinates(message, ui->lineEditUserdataLatLon->text(), &pos);
+  bool valid = formatter::checkCoordinates(&message, ui->lineEditUserdataLatLon->text(), true /* country */, &pos);
   ui->buttonBoxUserdata->button(QDialogButtonBox::Ok)->setEnabled(valid);
   ui->labelUserdataCoordStatus->setText(message);
 

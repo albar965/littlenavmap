@@ -100,7 +100,7 @@ void CoordinateDialog::buttonBoxClicked(QAbstractButton *button)
 void CoordinateDialog::coordsEdited(const QString&)
 {
   QString message;
-  bool valid = formatter::checkCoordinates(message, ui->lineEditMapCoordinateLatLon->text());
+  bool valid = formatter::checkCoordinates(&message, ui->lineEditMapCoordinateLatLon->text(), true /* country */);
   ui->buttonBoxMapCoordinate->button(QDialogButtonBox::Ok)->setEnabled(valid);
   ui->labelMapCoordinateCoordStatus->setText(message);
 }

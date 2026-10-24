@@ -342,8 +342,7 @@ void HtmlInfoBuilder::airportText(const MapAirport& airport, const map::WeatherC
       timezoneTexts.append(territory);
 
     if(info)
-      timezoneTexts.append(zone.displayName(timeType, QTimeZone::LongName,
-                                            uiLanguagelocale));
+      timezoneTexts.append(zone.displayName(timeType, QTimeZone::LongName, uiLanguagelocale));
 
     timezoneTexts.append(zone.displayName(timeType, QTimeZone::OffsetName, uiLanguagelocale));
     html.row2(tr("Time Zone:"), atools::strJoin(timezoneTexts, tr(", ")));

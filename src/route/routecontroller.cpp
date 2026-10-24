@@ -4860,7 +4860,7 @@ void RouteController::routeDirectTo(int id, const atools::geo::Pos& userPos, map
 
   bool disable = false;
   proc::procedureTextSuffixDirectTo(route, legIndexDirectTo, &route.value(legIndexDirectTo).getAirport(), &disable);
-  const Pos& userAicraftPos = NavApp::getUserAircraftPos();
+  const Pos& userAircraftPos = NavApp::getUserAircraftPos();
   if(!disable)
   {
     waypointEditDialog->clearAndSave();
@@ -4876,7 +4876,7 @@ void RouteController::routeDirectTo(int id, const atools::geo::Pos& userPos, map
       // Empty route case ============================================================
       // Append positions to empty flight plan
       // Current aircraft position
-      routeAddInternal(-1, userAicraftPos, map::USERPOINTROUTE, legindex::APPEND, true /* presentPos */);
+      routeAddInternal(-1, userAircraftPos, map::USERPOINTROUTE, legindex::APPEND, true /* presentPos */);
 
       // Clicked position or feature
       routeAddInternal(id, userPos, type, legindex::APPEND);
@@ -4890,7 +4890,7 @@ void RouteController::routeDirectTo(int id, const atools::geo::Pos& userPos, map
         routeAddInternal(id, userPos, type, legindex::PREPEND);
 
       // Current aircraft position - prepend before next
-      routeAddInternal(-1, userAicraftPos, map::USERPOINTROUTE, legindex::PREPEND, true /* presentPos */);
+      routeAddInternal(-1, userAircraftPos, map::USERPOINTROUTE, legindex::PREPEND, true /* presentPos */);
     }
     else
     {
@@ -4972,13 +4972,13 @@ void RouteController::routeDirectTo(int id, const atools::geo::Pos& userPos, map
 
         // Insert current position for user aircraft into nearest leg
         if(addPresentPos)
-          routeAddInternal(-1, userAicraftPos, map::USERPOINTROUTE, legindex::AUTO, true /* presentPos */);
+          routeAddInternal(-1, userAircraftPos, map::USERPOINTROUTE, legindex::AUTO, true /* presentPos */);
       }
       else // if(id == -1 && userPos.isValid() && type == map::NONE)
       {
         // To any pos: id -1 userPos Pos(-120.346367,49.243427,0.000000) type NONE legIndexDirectTo -1
         // To any airport or navaid: id 10366 userPos Pos(-120.513565,49.468750,0.000000) type AIRPORT legIndexDirectTo -1
-        int insertIndex = routeAddInternal(-1, userAicraftPos, map::USERPOINTROUTE, legindex::AUTO, true /* presentPos */);
+        int insertIndex = routeAddInternal(-1, userAircraftPos, map::USERPOINTROUTE, legindex::AUTO, true /* presentPos */);
         routeAddInternal(id, userPos, type, insertIndex);
       }
     } // else if(route.getSizeWithoutAlternates() == 1)

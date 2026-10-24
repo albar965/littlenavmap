@@ -761,7 +761,7 @@ void MapPainter::paintAircraftTrail(const QList<LineString>& lineStrings, float 
     if(aircraftPos.isValid() && !lineStrings.constLast().isEmpty())
       lastToAircraft = Line(lineStrings.constLast().constLast(), aircraftPos);
 
-    if(OptionData::instance().getFlags().testFlag(opts::MAP_TRAIL_GRADIENT))
+    if(context->flags.testFlag(opts::MAP_TRAIL_GRADIENT))
     {
       // Draw black or white background as one single line ==========================
       context->painter->setPen(mapcolors::aircraftTrailPenOuter(context->szF(context->thicknessTrail, 2.f)));

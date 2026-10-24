@@ -17,6 +17,7 @@
 
 #include "common/formatter.h"
 
+#include "app/navapp.h"
 #include "atools.h"
 #include "common/mapinvalid.h"
 #include "fs/util/coordinates.h"
@@ -150,7 +151,7 @@ QString formatElapsed(const QElapsedTimer& timer)
   }
 }
 
-bool checkCoords(QString *message, const QString& text, atools::geo::Pos *pos)
+bool checkCoords(QString *message, const QString& text, bool country, atools::geo::Pos *pos)
 {
   bool hemisphere = false;
   atools::geo::Pos readPos = atools::fs::util::fromAnyFormat(text, &hemisphere);
@@ -170,13 +171,20 @@ bool checkCoords(QString *message, const QString& text, atools::geo::Pos *pos)
       if(coords.simplified() != text.simplified())
       {
         if(Unit::getUnitCoords() == opts::COORDS_LATY_LONX || Unit::getUnitCoords() == opts::COORDS_LONX_LATY)
-          *message = QObject::tr("Coordinates are valid: %1 (%2)").arg(coords, Unit::coords(readPos, opts::COORDS_DMS));
+          *message = QObject::tr("Valid: %1 (%2).").arg(coords, Unit::coords(readPos, opts::COORDS_DMS));
         else
-          *message = QObject::tr("Coordinates are valid: %1").arg(coords);
+          *message = QObject::tr("Valid: %1.").arg(coords);
       }
       else
         // Same as in line edit. No need to show again
-        *message = QObject::tr("Coordinates are valid.");
+        *message = QObject::tr("Valid.");
+
+      if(country)
+      {
+        const QString countryText = QLocale::territoryToString(NavApp::getTimeZone(readPos).territory());
+        if(!countryText.isEmpty() && countryText != QStringLiteral("Default"))
+          message->append(QObject::tr(" Country: %1").arg(countryText));
+      }
     }
 
     return true;
@@ -188,14 +196,9 @@ bool checkCoords(QString *message, const QString& text, atools::geo::Pos *pos)
   return false;
 }
 
-bool checkCoordinates(const QString& text, atools::geo::Pos *pos)
+bool checkCoordinates(QString *message, const QString& text, bool country, atools::geo::Pos *pos)
 {
-  return checkCoords(nullptr, text, pos);
-}
-
-bool checkCoordinates(QString& message, const QString& text, atools::geo::Pos *pos)
-{
-  return checkCoords(&message, text, pos);
+  return checkCoords(message, text, country, pos);
 }
 
 QString yearVariant(QString dateTimeFormat)

@@ -36,7 +36,7 @@ namespace mapfunc {
  * Common functions used by paint layers and screen index
  */
 
-/* True if aircraft is visible for current layer and aicraft properties */
+/* True if aircraft is visible for current layer and aircraft properties */
 bool aircraftVisible(const atools::fs::sc::SimConnectAircraft& ac, const MapLayer *layer, bool hideAiOnGround);
 
 /* True if wind barb is shown at confluence point */

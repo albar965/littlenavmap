@@ -11693,7 +11693,7 @@ relation to shown airport</string>
      <normaloff>:/littlenavmap/resources/icons/zoomin.svg</normaloff>:/littlenavmap/resources/icons/zoomin.svg</iconset>
    </property>
    <property name="text">
-    <string>&amp;Jump to Coordinates ...</string>
+    <string>&amp;Go to Coordinates ...</string>
    </property>
    <property name="toolTip">
     <string>Jump to coordinates and zoom distance on the map</string>
