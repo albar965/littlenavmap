@@ -3922,15 +3922,10 @@ void Route::getVerticalPathDeviationTexts(QString *descentDeviation, QString *ve
 
 }
 
-QString Route::buildDefaultFilename(const QString& suffix) const
-{
-  return buildDefaultFilename(QStringLiteral(), suffix);
-}
-
-QString Route::buildDefaultFilename(QString pattern, QString suffix) const
+QString Route::buildDefaultFilename(QString pattern, QString suffix, const QString& emptyText) const
 {
   if(isEmpty())
-    return tr("Empty Flight Plan") + suffix;
+    return emptyText + suffix;
 
   QString type = flightplan.getFlightplanTypeStr();
   QString departName = getDepartureAirportLeg().getName(), departIdent = getDepartureAirportLeg().getDisplayIdent(),
@@ -3952,7 +3947,7 @@ QString Route::buildDefaultFilename(QString pattern, QString suffix) const
 QString Route::buildDefaultFilenameShort(const QString& separator, const QString& suffix) const
 {
   if(isEmpty())
-    return tr("EMPTY") + suffix;
+    return tr("FLIGHTPLAN") + suffix;
 
   QString departIdent = getDepartureAirportLeg().getDisplayIdent(), destIdent = getDestinationAirportLeg().getDisplayIdent();
 

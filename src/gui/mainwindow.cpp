@@ -2628,7 +2628,7 @@ bool MainWindow::routeSaveSelection()
   // Have to get a simple copy of the plan to be able to extract new name
   const Route routeForSelection = routeController->getRouteForSelection();
 
-  QString routeFile = routeSaveFileDialogLnm(routeForSelection.buildDefaultFilename(".lnmpln"));
+  QString routeFile = routeSaveFileDialogLnm(routeForSelection.buildDefaultFilename(QStringLiteral(), ".lnmpln", tr("Flight Plan")));
 
   if(!routeFile.isEmpty())
   {
@@ -2782,7 +2782,7 @@ QString MainWindow::routeSaveFileDialogLnm(const QString& filename)
   return dialog->saveFileDialog(
     tr("Save Flight Plan as LNMPLN Format"),
     tr("Flight Plan Files %1;;All Files (*)").arg(lnm::FILE_PATTERN_LNMPLN), "lnmpln", "Route/LnmPln", atools::documentsDir(),
-    filename.isEmpty() ? NavApp::getRouteConst().buildDefaultFilename(".lnmpln") : filename);
+    filename.isEmpty() ? NavApp::getRouteConst().buildDefaultFilename(QStringLiteral(), ".lnmpln", tr("Flight Plan")) : filename);
 }
 
 bool MainWindow::routeSaveAsLnm()

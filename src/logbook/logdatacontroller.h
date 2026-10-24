@@ -242,7 +242,7 @@ private:
   void perfAttachLnmperf(atools::sql::SqlRecord *record, const QString& filename, QWidget *parent);
   void gpxAttach(atools::sql::SqlRecord *record, QWidget *parent, bool currentTrack);
 
-  QString buildFilename(const atools::sql::SqlRecord *record, const atools::fs::pln::Flightplan& flightplan, const QString& suffix);
+  QString getFlightplanPattern(const atools::sql::SqlRecord *record, const atools::fs::pln::Flightplan& flightplan, const QString& suffix, const QString& emptyText);
 
   void undoTriggered();
   void redoTriggered();

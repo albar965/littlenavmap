@@ -270,7 +270,7 @@ private:
 
   /* Build filename according to pattern set in options. Uses pattern including file suffix from format.
    * Special characters are removed if normalize is true */
-  QString buildDefaultFilename(const RouteExportFormat& format, bool normalize = false);
+  QString buildDefaultFilename(const RouteExportFormat& format, const QString& emptyText, bool normalize = false);
 
   /* Saves all FSX/P3D PLN based formats */
   bool routeExportInternalPln(const RouteExportFormat& format);

@@ -1211,7 +1211,7 @@ void LogdataController::planSaveAs(atools::sql::SqlRecord *record, QWidget *pare
     atools::fs::pln::FlightplanIO().loadLnmGz(flightplan, record->value("flightplan").toByteArray());
 
     // Build filename
-    QString defFilename = buildFilename(record, flightplan, ".lnmpln");
+    QString defFilename = getFlightplanPattern(record, flightplan, ".lnmpln", tr("Flight Plan"));
     QString filename = mainWindow->routeSaveFileDialogLnm(defFilename);
     if(!filename.isEmpty())
       atools::fs::pln::FlightplanIO().saveLnm(flightplan, filename);
@@ -1288,12 +1288,13 @@ void LogdataController::gpxAdd(atools::sql::SqlRecord *record, QWidget *parent)
   }
 }
 
-QString LogdataController::buildFilename(const atools::sql::SqlRecord *record,
-                                         const atools::fs::pln::Flightplan& flightplan, const QString& suffix)
+QString LogdataController::getFlightplanPattern(const atools::sql::SqlRecord *record,
+                                                const atools::fs::pln::Flightplan& flightplan, const QString& suffix,
+                                                const QString& emptyText)
 {
   if(!flightplan.isEmpty())
     // Flight plan is valid - extract name from plan object
-    return flightplan.getFilenamePattern(OptionData::instance().getFlightplanPattern(), suffix,
+    return flightplan.getFilenamePattern(OptionData::instance().getFlightplanPattern(), suffix, emptyText,
                                          NavApp::getCurrentAircraftPerfAircraftType(), Unit::getUnitAlt() == opts::ALT_METER);
   else if(record != nullptr)
   {
@@ -1310,7 +1311,7 @@ QString LogdataController::buildFilename(const atools::sql::SqlRecord *record,
                                                            atools::roundToInt(Unit::altFeetF(route.getCruiseAltitudeFt())));
   }
 
-  return tr("Empty Flight Plan") % suffix;
+  return emptyText % suffix;
 }
 
 void LogdataController::gpxSaveAs(atools::sql::SqlRecord *record, QWidget *parent)
@@ -1331,7 +1332,7 @@ void LogdataController::gpxSaveAs(atools::sql::SqlRecord *record, QWidget *paren
       qDebug() << Q_FUNC_INFO << "Error reading flight plan" << e.what();
     }
 
-    const QString defaultFilename = buildFilename(record, flightplan, ".gpx");
+    const QString defaultFilename = getFlightplanPattern(record, flightplan, ".gpx", tr("Aircraft Trail"));
 
     QString filename = dialog->saveFileDialog(
       tr("Save GPX"),
