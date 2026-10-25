@@ -1005,8 +1005,13 @@ void WeatherReporter::updateTimeouts()
 void WeatherReporter::simDataChanged(const atools::fs::sc::SimConnectData& simulatorData)
 {
   const atools::fs::sc::SimConnectUserAircraft& aircraft = simulatorData.getUserAircraftConst();
+
+  // Update time always
+  xpWeatherReader->setWeatherDatetimeCurrent(aircraft.getXPlaneWeatherTime());
+
+  // Try to reload if files have changed
   if(aircraft.isValid() && aircraft.isXplane12())
-    xpWeatherReader->simulatorTimeUpdated(aircraft.getXPlaneWeatherTime());
+    xpWeatherReader->simulatorTimeUpdated();
 }
 
 void WeatherReporter::activeSkyWeatherFilesChanged(const QStringList& paths)
