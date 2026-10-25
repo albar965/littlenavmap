@@ -304,6 +304,18 @@ public:
     return type & map::PROCEDURE;
   }
 
+  /* SID or SID/transition */
+  bool isAnyDeparture() const
+  {
+    return isAnyProcedure() && procedureLeg.isAnyDeparture();
+  }
+
+  /* STAR or STAR/transition and/or approach or approach/transition */
+  bool isAnyArrival() const
+  {
+    return isAnyProcedure() && procedureLeg.isAnyArrival();
+  }
+
   /* User defined waypoint */
   bool isUser() const;
 

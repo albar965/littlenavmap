@@ -781,32 +781,21 @@ void AircraftPerfController::updateReport()
     const RouteAltitude& altitudeLegs = NavApp::getAltitudeLegs();
     const Route& route = NavApp::getRouteConst();
     if(route.isEmpty())
-      html.p().
-      warning(tr("No Flight Plan.")).
-      pEnd();
-    else if(altitudeLegs.isEmpty() ||
-            // Plan containy only a SID
-            (route.hasAnySidProcedure() && route.getDestinationLeg().isAnyProcedure()) ||
-            // Contains only an approach or an arrival
-            (route.hasAnyArrivalProcedure() && route.getDestinationIndexBeforeProcedure() == 0))
-      html.p().
-      warning(tr("Cannot calculate fuel report.")).br().
-      warning(tr("Invalid Flight Plan.")).
-      pEnd();
+      html.p().warning(tr("No Flight Plan.")).pEnd();
+    else if(!route.isComplete())
+      html.p().warning(tr("Cannot calculate fuel report. Flight Plan not complete.")).pEnd();
+    else if(altitudeLegs.isEmpty())
+      html.p().warning(tr("Cannot calculate fuel report. Invalid Flight Plan.")).pEnd();
     else if(altitudeLegs.hasUnflyableLegs())
-      html.p().
-      warning(tr("Cannot calculate fuel report.")).br().
-      warning(tr("Flight plan has unflyable legs where head wind is larger than cruise speed.")).
-      pEnd();
+      html.p().warning(tr("Cannot calculate fuel report.")).br().
+      warning(tr("Flight plan has unflyable legs where head wind is larger than cruise speed.")).pEnd();
     else if(!altitudeLegs.isValidProfile())
-      html.p().
-      warning(tr("Cannot calculate fuel report.")).br().
+      html.p().warning(tr("Cannot calculate fuel report.")).br().
       warning(tr("Possible reasons:<br/>"
                  "- The flight plan is too short or the cruise altitude is too high.<br/>"
                  "- Climb and descent speeds in the aircraft performance data are too low.<br/>"
                  "- Departure or destination airport elevation is above cruise altitude.<br/>"
-                 "- Cruise altitude violates one or more procedure altitude restrictions.")).
-      pEnd();
+                 "- Cruise altitude violates one or more procedure altitude restrictions.")).pEnd();
   }
 
   // Fuel reports prints all or a part of it depending on valid altitude legs

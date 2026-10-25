@@ -405,6 +405,9 @@ public:
     return !sidLegs.isEmpty();
   }
 
+  /* Only one point or only departure or arrival procedures are an incomplete plan */
+  bool isComplete() const;
+
   /* Get the various procedure names */
   void getSidStarNames(QString& sid, QString& sidTrans, QString& star, QString& starTrans) const;
 

@@ -340,6 +340,11 @@ public:
   /* true if flight plan was loaded in LNMPLN format. Otherwise imported from PLN, FMS, etc. */
   bool isLnmFormatFlightplan() const;
 
+  bool isRouteComplete() const
+  {
+    return route.isComplete();
+  }
+
   QStringList getErrorStrings() const;
   QStringList getMinorErrorStrings() const;
 

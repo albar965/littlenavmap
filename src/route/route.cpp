@@ -225,6 +225,15 @@ bool Route::canEditComment(int index) const
   return value(index).isRoute() && !value(index).isAlternate();
 }
 
+bool Route::isComplete() const
+{
+  return !(size() == 1 ||
+           // Plan containy only a SID
+           (hasAnySidProcedure() && getDestinationLeg().isAnyDeparture()) ||
+           // Contains only an approach or an arrival
+           (hasAnyArrivalProcedure() && value(0).isAnyArrival()));
+}
+
 void Route::getSidStarNames(QString& sid, QString& sidTrans, QString& star, QString& starTrans) const
 {
   sid = sidLegs.procedureFixIdent;

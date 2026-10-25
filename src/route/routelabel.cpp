@@ -707,18 +707,25 @@ void RouteLabel::updateFooterErrorLabel()
   {
     // Collect errors from all controllers =================================
 
-    // Flight plan ============
-    buildErrorLabel(toolTipText, routeErrors,
-                    tr("<nobr><b>Problems on tab \"Flight Plan\":</b></nobr>", "Synchronize name with tab name"));
+    if(!routeController->isRouteComplete())
+      // User is still building plan. Do not create big error messages
+      buildErrorLabel(toolTipText, {tr("Flight Plan is not complete.")},
+                      tr("<nobr><b>Problems on tab \"Flight Plan\":</b></nobr>", "Synchronize name with tab name"));
+    else
+    {
+      // Flight plan ============
+      buildErrorLabel(toolTipText, routeErrors,
+                      tr("<nobr><b>Problems on tab \"Flight Plan\":</b></nobr>", "Synchronize name with tab name"));
 
-    // Elevation profile ============
-    buildErrorLabel(toolTipText, NavApp::getAltitudeLegs().getErrorStrings(),
-                    tr("<nobr><b>Problems when calculating profile for window \"Flight Plan Elevation Profile\":</b></nobr>",
-                       "Synchronize name with window name"));
+      // Elevation profile ============
+      buildErrorLabel(toolTipText, NavApp::getAltitudeLegs().getErrorStrings(),
+                      tr("<nobr><b>Problems when calculating profile for window \"Flight Plan Elevation Profile\":</b></nobr>",
+                         "Synchronize name with window name"));
 
-    // Aircraft performance ============
-    buildErrorLabel(toolTipText, NavApp::getAircraftPerfController()->getErrorStrings(),
-                    tr("<nobr><b>Problems on tab \"Fuel Report\":</b></nobr>", "Synchronize name with tab name"));
+      // Aircraft performance ============
+      buildErrorLabel(toolTipText, NavApp::getAircraftPerfController()->getErrorStrings(),
+                      tr("<nobr><b>Problems on tab \"Fuel Report\":</b></nobr>", "Synchronize name with tab name"));
+    }
   }
 
   // Build tooltip message ====================================
