@@ -279,7 +279,9 @@ QDateTime readDateTime(QString str)
 
 QString windInformationTailHead(float headWindKts, bool addUnit, bool simple)
 {
+#ifdef DEBUG_INFORMATION
   qDebug() << Q_FUNC_INFO << "simple" << simple;
+#endif
   if(std::abs(headWindKts) >= 1.0f)
   {
     QString windPtr;
@@ -296,7 +298,9 @@ QString windInformationTailHead(float headWindKts, bool addUnit, bool simple)
 
 QString windInformationCross(float crossWindKts, bool addUnit, bool simple)
 {
+#ifdef DEBUG_INFORMATION
   qDebug() << Q_FUNC_INFO << "simple" << simple;
+#endif
   QString windPtr;
   if(std::abs(crossWindKts) >= 0.5f) // Rounded up to 1
   {
