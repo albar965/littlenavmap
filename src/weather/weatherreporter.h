@@ -185,6 +185,12 @@ public:
   /* Update X-Plane 12 weather date */
   void simDataChanged(const atools::fs::sc::SimConnectData& simulatorData);
 
+  /* Emitted when a connection was established */
+  void connectedToSimulator();
+
+  /* Emitted when disconnected manually or due to error */
+  void disconnectedFromSimulator();
+
 signals:
   /* Emitted when Active Sky or X-Plane weather file changes or a request to weather was fullfilled */
   void weatherUpdated();

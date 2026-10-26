@@ -1014,6 +1014,16 @@ void WeatherReporter::simDataChanged(const atools::fs::sc::SimConnectData& simul
     xpWeatherReader->simulatorTimeUpdated();
 }
 
+void WeatherReporter::connectedToSimulator()
+{
+  xpWeatherReader->connectedToSimulator();
+}
+
+void WeatherReporter::disconnectedFromSimulator()
+{
+  xpWeatherReader->disconnectedFromSimulator();
+}
+
 void WeatherReporter::activeSkyWeatherFilesChanged(const QStringList& paths)
 {
   if(verbose)

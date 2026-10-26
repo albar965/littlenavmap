@@ -29,7 +29,7 @@ normally to fix this.**
   Little Xpconnect from the menu `Tools` in Little Navmap to enable X-Plane historical weather.
 * Enabled reading X-Plane historical weather. Now loading winds aloft and METAR files depending on
   simulator settings and time. This might also improve #1353. Note that some inaccuracies cannot
-  be avoided.
+  be avoided. The weather is reset to current time when disconnecting the simulator.
 * Added indicator `Historical weather using simulator time.` for X-Plane 12 weather in the airport
   information and in tooltips.
 * Fixed wrong date and time calculation for X-Plane 12. Requires X-Plane version 12.4.1 or later.
@@ -37,6 +37,7 @@ normally to fix this.**
   the X-Plane METAR files.
 * Calculated simulator time can be off for an hour for X-Plane 11 since datarefs are missing for a
   precise calculation.
+* Note that manually set weather is not supported and not shown by Little Navmap.
 
 ### Markers
 
