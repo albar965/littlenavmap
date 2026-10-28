@@ -99,7 +99,6 @@ struct PaintContext
 
   int navAreaSize;
 
-
   /* ===============================================================================
    * Flags from options dialog */
   opts::Flags flags;
@@ -304,12 +303,6 @@ struct PaintContext
   {
     if(verboseDraw)
       renderTimesMs.insert(label, QDateTime::currentMSecsSinceEpoch() - renderTimesMs.value(label));
-  }
-
-  void clearTimer()
-  {
-    if(verboseDraw)
-      renderTimesMs.clear();
   }
 
   /*  Checks visibility by testing overlap with global viewport rect. */

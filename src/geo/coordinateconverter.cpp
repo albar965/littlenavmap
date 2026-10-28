@@ -446,7 +446,7 @@ const QList<QPolygonF *> CoordinateConverter::createPolygonsInternal(const atool
     {
       // Remove all consecutive duplicate points from the range
       polygon->erase(std::unique(polygon->begin(), polygon->end(), [](const QPointF& p1, const QPointF& p2) -> bool {
-        return atools::almostEqual(p1.x(), p2.x(), 0.5) && atools::almostEqual(p1.y(), p2.y(), 0.5);
+        return atools::almostEqual(p1.x(), p2.x(), 2.) && atools::almostEqual(p1.y(), p2.y(), 2.);
       }), polygon->end());
 
       // Close again
@@ -562,29 +562,44 @@ const QList<QPolygonF *> CoordinateConverter::createPolylinesInternal(const atoo
 
   // Merge polygon parts into longer strings ==============================
   QList<QPolygonF *> polylineListMerged;
+  int mergedManhattanLength = 0;
+
   for(int i = 0; i < polylineList.size(); i++)
   {
-    QPolygonF *poly = polylineList.at(i);
-    if(polylineListMerged.isEmpty())
-    {
-      // First polygon - redirect pointer and null it in the source list to allow qDeleteAll
-      polylineListMerged.append(poly);
-      polylineList[i] = nullptr;
-      continue;
-    }
-    QPolygonF *lastMergedPolygon = polylineListMerged.last();
-    if(poly->constFirst() == lastMergedPolygon->constLast() && lastMergedPolygon->length() < MAX_SCREEN_LINE_LENGTH)
-      // Points overlap and line is not too long - copy rest of current into the last polygon - leave in source list for qDeleteAll
-      lastMergedPolygon->append(poly->mid(1));
-    else
+    QPolygonF *polygon = polylineList.at(i);
+
+    // Either first polygon, start/end points do not match or too long
+    if(polylineListMerged.isEmpty() ||
+       polygon->constFirst() != polylineListMerged.last()->constLast() || mergedManhattanLength > MAX_SCREEN_LINE_LENGTH)
     {
       // No overlap or too long - redirect pointer and null it in the source list to allow qDeleteAll
-      polylineListMerged.append(poly);
+      // Start new polygon
+      polylineListMerged.append(polygon);
+      mergedManhattanLength = atools::geo::manhattanLength(*polygon);
       polylineList[i] = nullptr;
+    }
+    else
+    {
+      // Points overlap and line is not too long - copy rest of current into the last polygon - leave in source list for qDeleteAll
+      const QPolygonF poly = polygon->mid(1);
+      polylineListMerged.last()->append(poly);
+      mergedManhattanLength += atools::geo::manhattanLength(poly);
     }
   }
 
   releasePolylines(polylineList);
+
+  if(polylineListMerged.size() > 2)
+  {
+    // Remove all points which are too close together
+    for(QPolygonF *polygon : std::as_const(polylineListMerged))
+    {
+      // Remove all consecutive duplicate points from the range
+      polygon->erase(std::unique(polygon->begin(), polygon->end(), [](const QPointF& p1, const QPointF& p2) -> bool {
+        return atools::almostEqual(p1.x(), p2.x(), 2.) && atools::almostEqual(p1.y(), p2.y(), 2.);
+      }), polygon->end());
+    }
+  }
 
   return polylineListMerged;
 }
