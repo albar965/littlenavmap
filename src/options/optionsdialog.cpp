@@ -1432,6 +1432,9 @@ optc::OptionChangeFlags OptionsDialog::buildFlagsFromChange(const OptionData& sa
                       saved.cacheSizeMemoryProfile != changed.cacheSizeMemoryProfile ||
                       saved.profileBuffer != changed.profileBuffer);
 
+  changeFlags.setFlag(optc::OPTION_CHANGE_FONT_ENGINE,
+                      saved.flags.testFlag(opts::GUI_FREETYPE_FONT_ENGINE) != changed.flags.testFlag(opts::GUI_FREETYPE_FONT_ENGINE));
+
   changeFlags.setFlag(optc::OPTION_CHANGE_WEBSERVER, saved.webDocumentRoot != changed.webDocumentRoot);
 
   changeFlags.setFlag(optc::OPTION_CHANGE_CONNECTION, saved.userAgent != changed.userAgent);
