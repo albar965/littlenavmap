@@ -375,7 +375,7 @@ void RouteWaypointEditDialog::widgetsToEntry(atools::fs::pln::FlightplanEntry& e
     entry.setRegion(ui->lineEditRouteUserWaypointRegion->text());
     entry.setName(ui->lineEditRouteUserWaypointName->text());
 
-    if(formatter::checkCoordinates(nullptr, ui->lineEditRouteUserWaypointLatLon->text(), false /* country */))
+    if(formatter::checkCoordinates(nullptr, ui->lineEditRouteUserWaypointLatLon->text(), false /* country */, nullptr))
     {
       bool hemisphere = false;
       atools::geo::Pos pos = atools::fs::util::fromAnyFormat(ui->lineEditRouteUserWaypointLatLon->text(), &hemisphere);
@@ -410,7 +410,7 @@ void RouteWaypointEditDialog::coordsEdited(const QString&)
   else if(flightplanEntry->getWaypointType() == atools::fs::pln::entry::USER)
   {
     QString message;
-    formatter::checkCoordinates(&message, ui->lineEditRouteUserWaypointLatLon->text(), true /* country */);
+    formatter::checkCoordinates(&message, ui->lineEditRouteUserWaypointLatLon->text(), true /* country */, nullptr);
     ui->labelRouteUserWaypointCoordStatus->setText(message);
   }
 }
