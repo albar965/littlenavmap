@@ -20,6 +20,9 @@ umlauts or accents. This can happen when loading files from one of the menus `Re
 You can ignore the error messages and adjust paths in options and simply reload the affected files
 normally to fix this.**
 
+**See here if you would like to run the beta release besides your stable installation:
+[Little Navmap - User Manual - Portable Execution](https://www.littlenavmap.org/manuals/littlenavmap/release/latest/en/INSTALLATION.html#portable-execution).**
+
 ## Changes from 3.2.2.beta to 3.2.3.beta
 
 ### X-Plane
@@ -69,6 +72,10 @@ normally to fix this.**
 * Corrected display of aircraft trail. Small segments are now shown when zooming out in
   spherical projection. Previous display could result in gaps in the trail.
 * Fixed issue where last trail position was invalid after loading from a GPX file.
+* Lowered maximum number of shown trail points for new installations to 5,000 points to avoid
+  performance issues. Note that points above this number are not deleted but only hidden.
+  Internally up to 5,000,000 points are saved. Change the setting in options on page
+  `Map Aircraft Trail`.
 
 ### User Interface
 
