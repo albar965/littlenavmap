@@ -6,22 +6,43 @@ This text is partially Markdown, so the formatting might look strange.
 
 # Version 3.2.3.beta
 
-**This beta/test release of Little Navmap fixes broken offline maps and several other issues.
-It also adds support for historical weather in X-Plane. Please note that neither the program
-translations nor the user manual have been updated.**
+**This is a beta/test release of Little Navmap which fixes crashes when running the web server,
+fixes broken offline maps and several other issues. It also adds support for historical weather
+in X-Plane.**
 
 **See [Version 3.2.1.beta](https://github.com/albar965/littlenavmap/releases/tag/v3.2.1.beta) and
 [Version 3.2.2.beta](https://github.com/albar965/littlenavmap/releases/tag/v3.2.2.beta) for
-the full changelog.**
+the recent changelogs.**
+
+**Note that neither the program translations nor the user manual have been updated yet.**
+
+**The menu layout and option pages have changed. See below in sections `User Interface` and
+`Options` in the version 3.2.1.beta announcement for more information. Use the search function
+in the options dialog window on the top left if you cannot find a setting.**
+
+**Editing of features on the map has changed. See section `Markers and Userpoints` the
+version 3.2.1.beta announcement.**
+
+**FSX or Prepar3D: Download and install the 32 bit version of Little Navconnect
+[LittleNavconnect-win32-3.0.17.zip](https://github.com/albar965/littlenavmap/releases/download/v3.2.1.beta/LittleNavconnect-win32-3.0.17.zip)
+and connect through it to FSX or Prepar3D. See the included file `README.txt`.**
+
+**See here if you would like to run the beta release besides your stable installation:
+[Little Navmap - User Manual - Portable Execution](https://www.littlenavmap.org/manuals/littlenavmap/release/latest/en/INSTALLATION.html#portable-execution).**
+
+**Also update Little Navconnect and Little Xpconnect if you're using one of these.**
+
+**macOS: Keep in mind that you have to clear the quarantine flag when updating Little Xpconnect. See
+[Little Navmap - User Manual - Clearing the Quarantine Flag on macOS](https://www.littlenavmap.org/manuals/littlenavmap/release/latest/en/XPCONNECT.html#clearing-the-quarantine-flag-on-macos).**
+
+**macOS: Little Navmap is now built into a universal binary containing Intel and Arm architectures.
+Rosetta is not needed anymore to run Little Navmap and Little Navconnect.**
 
 **Please note that when reverting to Little Navmap 3.0.18, file names may appear garbled and
 corresponding error messages may be shown if the paths contain special characters such as
 umlauts or accents. This can happen when loading files from one of the menus `Recent`, for example.
 You can ignore the error messages and adjust paths in options and simply reload the affected files
 normally to fix this.**
-
-**See here if you would like to run the beta release besides your stable installation:
-[Little Navmap - User Manual - Portable Execution](https://www.littlenavmap.org/manuals/littlenavmap/release/latest/en/INSTALLATION.html#portable-execution).**
 
 ## Changes from 3.2.2.beta to 3.2.3.beta
 
@@ -30,17 +51,17 @@ normally to fix this.**
 * The minimum recommended version for Little Xpconnect is now 1.4.3.beta. Although you can still
   use older versions, Little Navmap will display a warning in this case. Reinstall
   Little Xpconnect from the menu `Tools` in Little Navmap to enable X-Plane historical weather.
-* Enabled reading X-Plane historical weather. Now loading winds aloft and METAR files depending on
+* Now reading X-Plane historical weather. Winds aloft and METAR files are loaded depending on
   simulator settings and time. This might also improve #1353. Note that some inaccuracies cannot
-  be avoided. The weather is reset to current time when disconnecting the simulator.
+  be avoided. The weather is reset to the current time when disconnecting the simulator.
 * Added indicator `Historical weather using simulator time.` for X-Plane 12 weather in the airport
   information and in tooltips.
-* Fixed wrong date and time calculation for X-Plane 12. Requires X-Plane version 12.4.1 or later.
+* Fixed wrong date and time calculation for X-Plane 12. This requires X-Plane version 12.4.1 or
+  later.
 * Note that custom weather is not detected for now. Little Navmap will still show real weather from
-  the X-Plane METAR files.
+  the X-Plane METAR files if you build your own weather.
 * Calculated simulator time can be off for an hour for X-Plane 11 since datarefs are missing for a
   precise calculation.
-* Note that manually set weather is not supported and not shown by Little Navmap.
 
 ### Markers
 
@@ -54,28 +75,28 @@ normally to fix this.**
   and city centers, have been fixed. Also corrected wrong cities shown in higher zoom levels
   on offline maps.
 * Removed overlay plugins for maps drawn in background like web or printing. This fixes
-  the crashes on startup when running the Web Server.
+  the crashes on startup when running the web server.
 * Now reverting back to the previous map theme after showing an information dialog window
   if API keys or other required information is missing. This avoids polluting the map tile cache
   with watermarked tiles like `API Key Required`. Go to menu
   `Tools` -> `Files and Directories` -> `Show Map Cache` and delete the related map
   cache directory if needed.
-* Applied several optimizations to speed up drawing of the aircraft trail and other lines.
 
 ### Aircraft Trail
 
 * Added function `Go to last Aircraft Trail Position` in menu `Map`. Use this to go to the last
-  position of your aircraft.
-* Added information dialog window that shows the number of visible and the number of loaded
-  trail points if points are hidden due to the setting
+  saved position of your aircraft.
+* Added information dialog window on loading GPX files that shows the number of visible and the
+  number of loaded trail points if points are hidden due to the setting
   `Maximum number of aircraft trail points shown` on options page `Map Aircraft Trail`.
 * Corrected display of aircraft trail. Small segments are now shown when zooming out in
-  spherical projection. Previous display could result in gaps in the trail.
+  spherical projection.
 * Fixed issue where last trail position was invalid after loading from a GPX file.
 * Lowered maximum number of shown trail points for new installations to 5,000 points to avoid
   performance issues. Note that points above this number are not deleted but only hidden.
   Internally up to 5,000,000 points are saved. Change the setting in options on page
   `Map Aircraft Trail`.
+* Applied several optimizations to speed up drawing of the aircraft trail and other lines.
 
 ### User Interface
 
@@ -89,10 +110,11 @@ normally to fix this.**
   Install the navdata update directly in Little Navmap using the Navigraph FMS Data Manager if
   you see missing navaids. Also enable `Select Automatically` in menu
   `Scenery Library` -> `Navigraph`.
-* Change timezone indication (`CEST` and others) to offset based like `+01:30` since Qt gives wrong
-  timezone names.
+* Change timezone indication (`CEST` and others) to an offset based indication like `+01:30`
+  since the Qt library gives wrong timezone names.
 * Timezones and offsets in the status bar and the airport information now consider daylight
-  savings time. This is calculated based on real time or simulator time.
+  savings time. This is calculated based on real time or simulator time. Removed `(no DST)`
+  indication in all timezone displays.
 * Avoiding `Empty Flight Plan` when saving GPX without a plan.
 * Now showing country when entering coordinates in several dialog windows like from
   menu `Map` -> `Go to coordinates`.
