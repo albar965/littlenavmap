@@ -4038,8 +4038,8 @@ void MainWindow::updateActionStates()
   ui->actionRouteSelectParking->setEnabled(route.hasValidDeparture());
   ui->actionMapShowRoute->setEnabled(true);
   ui->actionMapShowTocTod->setEnabled(true);
-  ui->actionMapShowAlternate->setEnabled(true);
-  ui->actionInfoApproachShowMissedAppr->setEnabled(true);
+  ui->actionMapShowAlternate->setEnabled(ui->actionMapShowRoute->isChecked());
+  ui->actionInfoApproachShowMissedAppr->setEnabled(ui->actionMapShowRoute->isChecked());
   ui->actionMapDragAndDropEditMode->setEnabled(hasFlightplan || hasUserdata || hasAnyMapMarkers);
   ui->actionPrintFlightplan->setEnabled(hasFlightplan);
   ui->actionRouteCopyString->setEnabled(hasFlightplan);

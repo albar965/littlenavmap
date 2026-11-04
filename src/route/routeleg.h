@@ -287,7 +287,7 @@ public:
     return isRoute();
   }
 
-  /* Alterante airport */
+  /* Alternate airport */
   bool isAlternate() const
   {
     return alternate;
@@ -302,6 +302,12 @@ public:
   bool isAnyProcedure() const
   {
     return type & map::PROCEDURE;
+  }
+
+  /* Approach missed procedure */
+  bool isMissed() const
+  {
+    return isAnyProcedure() && procedureLeg.isMissed();
   }
 
   /* SID or SID/transition */

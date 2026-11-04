@@ -902,6 +902,22 @@ void MapContextMenu::insertRemoveMenu(QMenu& menu)
     return map::routeIndex(base) == -1 || (base->type != map::PROCEDURE_POINT && isProcedure(base));
   }), index.end());
 
+  // Remove missed approach if hidden  ============================
+  if(!mapWidget->getShownMapTypes().testFlag(map::MISSED_APPROACH))
+  {
+    index.erase(std::remove_if(index.begin(), index.end(), [this](const map::MapBase *base) -> bool {
+      return isMissed(base);
+    }), index.end());
+  }
+
+  // Remove alternates if hidden  ============================
+  if(!mapWidget->getShownMapDisplayTypes().testFlag(map::FLIGHTPLAN_ALTERNATE))
+  {
+    index.erase(std::remove_if(index.begin(), index.end(), [this](const map::MapBase *base) -> bool {
+      return isAlternate(base);
+    }), index.end());
+  }
+
   // Erase duplicate occasions of procedures which can appear in double used waypoints
   index.eraseDuplicateProcedures();
 
@@ -1381,11 +1397,24 @@ QString MapContextMenu::procedureName(const map::MapBase *base) const
 
 bool MapContextMenu::isProcedure(const map::MapBase *base) const
 {
-  if(base != nullptr)
-  {
-    int routeIndex = map::routeIndex(base);
-    if(routeIndex != -1)
-      return route.value(routeIndex).isAnyProcedure();
-  }
+  int routeIndex = map::routeIndex(base);
+  if(routeIndex != -1)
+    return route.value(routeIndex).isAnyProcedure();
+  return false;
+}
+
+bool MapContextMenu::isAlternate(const map::MapBase *base) const
+{
+  int routeIndex = map::routeIndex(base);
+  if(routeIndex != -1)
+    return route.value(routeIndex).isAlternate();
+  return false;
+}
+
+bool MapContextMenu::isMissed(const map::MapBase *base) const
+{
+  int routeIndex = map::routeIndex(base);
+  if(routeIndex != -1)
+    return route.value(routeIndex).isMissed();
   return false;
 }

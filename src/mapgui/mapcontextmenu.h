@@ -256,6 +256,8 @@ private:
   /* Name of underlying procedure or empty if route leg */
   QString procedureName(const map::MapBase *base) const;
   bool isProcedure(const map::MapBase *base) const;
+  bool isAlternate(const map::MapBase *base) const;
+  bool isMissed(const map::MapBase *base) const;
 
   // Selections
   QAction *selectedAction = nullptr;
