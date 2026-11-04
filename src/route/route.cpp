@@ -632,7 +632,7 @@ bool Route::getRouteDistances(float *distFromStart, float *distToDest,
     for(int i = 0; i <= routeIndex; i++)
     {
       if(!value(i).getProcedureLeg().isMissed() || activeIsMissed || !value(i).isAlternate() || activeIsAlternate)
-        fromStart += value(i).getDistanceTo();
+        fromStart += value(i).getDistanceToNm();
       else
         break;
     }
@@ -661,7 +661,7 @@ bool Route::getRouteDistances(float *distFromStart, float *distToDest,
           for(int i = routeIndex + 1; i < size(); i++)
           {
             if(value(i).getProcedureLeg().isMissed())
-              toDest += value(i).getDistanceTo();
+              toDest += value(i).getDistanceToNm();
           }
           toDest += distToCurrent;
         }
@@ -671,7 +671,7 @@ bool Route::getRouteDistances(float *distFromStart, float *distToDest,
           for(int i = routeIndex + 1; i < size(); i++)
           {
             if(value(i).isAlternate())
-              toDest += value(i).getDistanceTo();
+              toDest += value(i).getDistanceToNm();
           }
           toDest += distToCurrent;
         }
@@ -681,11 +681,11 @@ bool Route::getRouteDistances(float *distFromStart, float *distToDest,
           for(int i = routeIndex; i <= destLegIdx; i++)
           {
             if(!value(i).getProcedureLeg().isMissed() || activeIsMissed || !value(i).isAlternate() || activeIsAlternate)
-              toDest += value(i).getDistanceTo();
+              toDest += value(i).getDistanceToNm();
             else
               break;
           }
-          toDest = toDest - value(routeIndex).getDistanceTo() + distToCurrent;
+          toDest = toDest - value(routeIndex).getDistanceToNm() + distToCurrent;
         }
       }
       if(getSizeWithoutAlternates() > 1)
@@ -725,7 +725,7 @@ float Route::getDistanceFromStart(const Pos& pos) const
     {
       float fromstart = 0.f;
       for(int i = 1; i <= legIndex; i++)
-        fromstart += value(i).getDistanceTo();
+        fromstart += value(i).getDistanceToNm();
 
       return projectedDistance(result, fromstart, legIndex);
     }
@@ -745,7 +745,7 @@ float Route::projectedDistance(const atools::geo::LineDistance& result, float le
     projectionDistance = legFromStart + meterToNm(std::abs(result.distanceFrom2));
   else
     // Middle of flight plan between legs
-    projectionDistance = legFromStart - value(legIndex).getDistanceTo();
+    projectionDistance = legFromStart - value(legIndex).getDistanceToNm();
 
   if(value(legIndex).isAnyProcedure() && value(legIndex).getProcedureLeg().isMissed())
     // Hide aircraft if missed is active
@@ -850,7 +850,7 @@ Pos Route::getPositionAtDistance(float distFromStartNm) const
   int foundIndex = map::INVALID_INDEX_VALUE; // Found leg is from this index to index + 1
   for(int i = 0; i <= getDestinationAirportLegIndex(); i++)
   {
-    total += value(i + 1).getDistanceTo();
+    total += value(i + 1).getDistanceToNm();
     if(total >= distFromStartNm)
     {
       // Distance already within leg
@@ -874,8 +874,8 @@ Pos Route::getPositionAtDistance(float distFromStartNm) const
     }
     else
     {
-      float base = distFromStartNm - (total - leg.getDistanceTo());
-      float fraction = base / leg.getDistanceTo();
+      float base = distFromStartNm - (total - leg.getDistanceToNm());
+      float fraction = base / leg.getDistanceToNm();
       retval = getPrevPositionAt(foundIndex).interpolate(leg.getPosition(), fraction);
     }
   }
@@ -2234,7 +2234,7 @@ void Route::updateDistancesAndCourse()
 
       if(!leg.getProcedureLeg().isMissed())
         // Do not sum up missed legs
-        totalDistance += leg.getDistanceTo();
+        totalDistance += leg.getDistanceToNm();
       else if(beforeDestAirport == nullptr)
         // Remember leg before airport (usually runway if procedure is used)
         beforeDestAirport = last;
@@ -2269,13 +2269,29 @@ void Route::updateBoundingRect()
   atools::geo::LineString positions;
   for(const RouteLeg& leg : std::as_const(*this))
   {
-    positions.append(leg.getPosition());
+    // Get full geometry also for procedures
+    const atools::geo::LineString& geo = leg.getGeometry();
 
     if(leg.isAnyProcedure())
     {
       positions.append(leg.getProcedureLeg().navaids.getPosition(TYPES));
       positions.append(leg.getProcedureLeg().recNavaids.getPosition(TYPES));
     }
+    else if(leg.getDistanceToNm() > 100)
+    {
+      // No procedure and long leg - split at about every 100 NM and add points for bounding
+      for(int i = 0; i < geo.size() - 1; i++)
+      {
+        atools::geo::LineString posInterpolated;
+        int numPoints = atools::roundToInt(leg.getDistanceToNm() / 100.f);
+        if(numPoints > 0)
+          // positions includes at(i) if numPoints > 0 but not at(i+1)
+          geo.at(i).interpolatePoints(geo.at(i + 1), numPoints, posInterpolated);
+        positions.append(posInterpolated);
+      }
+    }
+
+    positions.append(geo);
   }
 
   if(hasDepartureParking())
@@ -2285,7 +2301,6 @@ void Route::updateBoundingRect()
     positions.append(getDepartureStart().position);
 
   boundingRect = atools::geo::bounding(positions);
-
 }
 
 void Route::nearestAllLegIndex(const map::PosCourse& pos, float& crossTrackDistanceMeter,

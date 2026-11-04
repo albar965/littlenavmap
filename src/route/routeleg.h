@@ -231,7 +231,7 @@ public:
   }
 
   /* Great circle distance to this route map object from the predecessor in nautical miles or 0 if first in route */
-  float getDistanceTo() const
+  float getDistanceToNm() const
   {
     return distanceTo;
   }

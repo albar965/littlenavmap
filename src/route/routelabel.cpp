@@ -796,7 +796,7 @@ void RouteLabel::updateFooterSelectionLabel()
           if(index == route.getDestinationAirportLegIndex() && missed)
             continue;
 
-          distanceNm += leg.getDistanceTo();
+          distanceNm += leg.getDistanceToNm();
 
           if(route.isValidProfile())
           {

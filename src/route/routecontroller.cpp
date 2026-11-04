@@ -5426,10 +5426,10 @@ void RouteController::updateTableModelAndErrors()
       // Distance =====================
       if(!afterArrivalAirport)
       {
-        if(leg.getDistanceTo() < map::INVALID_DISTANCE_VALUE /*&& !leg.noDistanceDisplay()*/)
+        if(leg.getDistanceToNm() < map::INVALID_DISTANCE_VALUE /*&& !leg.noDistanceDisplay()*/)
         {
-          cumulatedDistance += leg.getDistanceTo();
-          itemRow[rcol::DIST] = new QStandardItem(Unit::distNm(leg.getDistanceTo(), false));
+          cumulatedDistance += leg.getDistanceToNm();
+          itemRow[rcol::DIST] = new QStandardItem(Unit::distNm(leg.getDistanceToNm(), false));
 
           if(!procedureLeg.isMissed() && !leg.isAlternate())
           {

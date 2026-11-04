@@ -225,15 +225,23 @@ void MapPainterRoute::paintRoute()
   if(route->isEmpty())
     return;
 
-  // Avoid idents popping out at screen border
-  float meter = scale->getMeterPerPixel() * context->painter->fontMetrics().horizontalAdvance(QStringLiteral("XXXXX"));
-  Rect rect = route->getBoundingRect().inflatedMeter(meter, meter);
+  const Rect rect = route->getBoundingRect();
+
+#ifdef DEBUG_ROUTE_PAINT_RECT
+  {
+    atools::util::PainterContextSaver saver(context->painter);
+    context->painter->setPen(Qt::black);
+
+    bool visible, hidden;
+    QPoint pt1 = wToS(rect.getTopLeft(), DEFAULT_WTOS_SIZE, &visible, &hidden);
+    QPoint pt2 = wToS(rect.getBottomRight(), DEFAULT_WTOS_SIZE, &visible, &hidden);
+
+    context->painter->drawRect(QRect(pt1, pt2));
+  }
+#endif
+
   if(route->size() >= 2 && (!context->visibleAndResolves(rect)))
     return;
-
-  atools::util::PainterContextSaver saver(context->painter);
-
-  context->painter->setBrush(Qt::NoBrush);
 
   // Get active route leg
   // Active normally start at 1 - this will consider all legs as not passed
@@ -300,6 +308,9 @@ void MapPainterRoute::paintRoute()
       }
     }
   }
+
+  atools::util::PainterContextSaver saver(context->painter);
+  context->painter->setBrush(Qt::NoBrush);
 
   paintRouteInternal(routeTexts, lines, passedRouteLeg);
 
@@ -722,7 +733,7 @@ void MapPainterRoute::paintInboundOutboundTexts(const TextPlacement& textPlaceme
     // Extend towards the center to calculate rotation later - needed for spherical projection ============================
     Line line(lastLeg.getPosition(), curLeg.getPosition());
     QPointF first2, last2;
-    float lengthToMeter = atools::geo::nmToMeter(curLeg.getDistanceTo());
+    float lengthToMeter = atools::geo::nmToMeter(curLeg.getDistanceToNm());
     float fraction = scale->getMeterPerPixel() * 20.f / lengthToMeter; // Calculate fraction for roughly 20 pixels distance
     wToSBuf(line.interpolate(lengthToMeter, fraction), first2, MARGINS, &firstHidden);
     wToSBuf(line.interpolate(lengthToMeter, 1.f - fraction), last2, MARGINS, &lastHidden);

@@ -769,7 +769,7 @@ void ProfileWidget::paintVasi(QPainter& painter, const Route& route)
     int destIndex = route.getDestinationLegIndex();
     const RouteLeg *leg = &route.value(destIndex);
 
-    if(leg->getDistanceTo() < 0.5f)
+    if(leg->getDistanceToNm() < 0.5f)
       // Unreliable if leg is too short might be misplaced from threshold
       leg = &route.value(destIndex - 1);
 

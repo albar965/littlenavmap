@@ -1244,7 +1244,7 @@ void RouteAltitude::calculateDistances()
       alt.restriction = leg.getProcedureLegAltRestr();
       alt.verticalAngle = leg.getProcedureLeg().verticalAngle;
       alt.geometry.append(QPointF(distanceToLeg, cruiseAltitude));
-      distanceToLeg += leg.getDistanceTo();
+      distanceToLeg += leg.getDistanceToNm();
       alt.geometry.append(QPointF(distanceToLeg, cruiseAltitude));
     }
     // else ignore missed approach dummy legs after destination runway
@@ -1252,7 +1252,7 @@ void RouteAltitude::calculateDistances()
     if(leg.isAlternate())
     {
       alt.geometry.append(QPointF(0., destinationAirportLeg.getAltitude()));
-      alt.geometry.append(QPointF(leg.getDistanceTo(), leg.getAltitude()));
+      alt.geometry.append(QPointF(leg.getDistanceToNm(), leg.getAltitude()));
     }
 
     append(alt);

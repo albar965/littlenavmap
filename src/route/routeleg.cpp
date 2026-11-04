@@ -649,7 +649,7 @@ map::MapUserpointRoute RouteLeg::getUserpointRoute() const
 QStringList RouteLeg::buildLegText(bool dist, bool magCourseFlag, bool trueCourseFlag, bool narrow, int distPrecision,
                                    int degPrecision) const
 {
-  float distance = noDistanceDisplay() || !dist ? map::INVALID_DISTANCE_VALUE : getDistanceTo();
+  float distance = noDistanceDisplay() || !dist ? map::INVALID_DISTANCE_VALUE : getDistanceToNm();
   float courseMag = map::INVALID_COURSE_VALUE, courseTrue = map::INVALID_COURSE_VALUE;
   getMagTrueRealCourse(courseMag, courseTrue);
 
@@ -1175,7 +1175,7 @@ QDebug operator<<(QDebug out, const RouteLeg& leg)
                           << "id " << leg.getId()
                           << ", " << leg.getIdent()
                           << ", " << leg.getMapTypeName()
-                          << ", distance " << leg.getDistanceTo()
+                          << ", distance " << leg.getDistanceToNm()
                           << ", " << leg.getPosition()
                           << ", course start " << leg.getCourseStartMag() << "°M " << leg.getCourseStartTrue() << "°T"
                           << ", course end " << leg.getCourseEndMag() << "°M " << leg.getCourseEndTrue() << "°T"
