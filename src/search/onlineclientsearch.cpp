@@ -131,12 +131,14 @@ void OnlineClientSearch::saveState()
 
 void OnlineClientSearch::restoreState()
 {
-  if(OptionData::instance().getFlags().testFlag(opts::STARTUP_LOAD_SEARCH) && !atools::gui::Application::isSafeMode())
+  if(OptionData::instance().getFlags().testFlag(opts::STARTUP_LOAD_SEARCH) && !NavApp::isSafeModeFlagSet(safemode::SAFE_MODE_INFO_SEARCH))
   {
+    // Load saved search parameters ========================
     atools::gui::WidgetState widgetState(lnm::SEARCHTAB_ONLINE_CLIENT_VIEW_WIDGET);
     widgetState.restore(onlineClientSearchWidgets);
   }
   else
+    // Skip loading parameters ========================
     atools::gui::WidgetState(lnm::SEARCHTAB_ONLINE_CLIENT_VIEW_WIDGET).restore(ui->tableViewOnlineClientSearch);
 
   finishRestore();

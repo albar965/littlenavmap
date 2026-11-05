@@ -20,6 +20,7 @@
 
 #include "gui/application.h"
 
+#include "app/navappsafemode.h"
 #include "common/mapflags.h"
 #include "fs/fspaths.h"
 
@@ -461,10 +462,24 @@ public:
   /* Get all valid files passed on the command line */
   static const FileCheck *getCommandLineFiles();
 
+  /* User decided to skip loading of files due to earlier crash or a total reset of all settings. */
+  static bool isSafeModeFlagSet(safemode::SafeModeFlag flag)
+  {
+    return safeModeFlags.testFlag(safemode::SAFE_MODE_ALL) || safeModeFlags.testFlag(flag);
+  }
+
 private:
   static void initApplication();
   static void readMagDecFromDatabase();
   static void getReportFiles(QStringList& crashReportFiles, QString& reportFilename, bool issueReport);
+
+  /* Creates a lock file and shows a warning dialog if this is already present from a former crash.
+   * Sets safe mode if user chooses to skip file loading.
+   * Always creates a crash report in case of previous unsafe exit.
+   * Specific version for LNM. */
+  static void recordStartAndDetectCrashNav(QWidget *parent, const QString& lockFileParam, const QString& crashReportFile,
+                                           const QStringList& filenames, const QString& helpOnlineUrl, const QString& helpDocument,
+                                           const QString& helpLanguageOnline);
 
   /* Database query helpers and caches */
   static ElevationProvider *elevationProvider;
@@ -507,6 +522,8 @@ private:
   static bool loadingDatabase;
   static bool closeCalled;
   static bool mainWindowVisible;
+
+  static safemode::SafeModeFlags safeModeFlags;
 };
 
 #endif // NAVAPPLICATION_H

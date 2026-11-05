@@ -483,11 +483,14 @@ void MapScreenIndex::saveState() const
 
 void MapScreenIndex::restoreState()
 {
-  const QString filename = atools::settings::Settings::getConfigFilename(lnm::MAP_MARKERS_FILE_SUFFIX);
-  if(atools::checkFile(Q_FUNC_INFO, filename))
-    markers->restore(filename);
-  else
-    markers->restoreFromSettings();
+  if(!NavApp::isSafeModeFlagSet(safemode::SAFE_MODE_MAP_MARKERS))
+  {
+    const QString filename = atools::settings::Settings::getConfigFilename(lnm::MAP_MARKERS_FILE_SUFFIX);
+    if(atools::checkFile(Q_FUNC_INFO, filename))
+      markers->restore(filename);
+    else
+      markers->restoreFromSettings();
+  }
 }
 
 bool MapScreenIndex::hasAnyMapMarkers() const

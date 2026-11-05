@@ -1079,7 +1079,7 @@ void RouteController::restoreState()
     // Load default plan first to avoid data loss ================================================
     if(OptionData::instance().getFlags().testFlag(opts::STARTUP_LOAD_ROUTE))
     {
-      if(!atools::gui::Application::isSafeMode())
+      if(!NavApp::isSafeModeFlagSet(safemode::SAFE_MODE_ROUTE_PERF_TRAIL))
       {
         atools::settings::Settings& settings = atools::settings::Settings::instance();
         QString lastUsedFlightplanFile = settings.valueStr(lnm::ROUTE_FILENAME);

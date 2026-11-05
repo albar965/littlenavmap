@@ -421,8 +421,9 @@ void AirportSearch::saveState()
 void AirportSearch::restoreState()
 {
   atools::gui::WidgetState widgetState(lnm::SEARCHTAB_AIRPORT_WIDGET);
-  if(OptionData::instance().getFlags().testFlag(opts::STARTUP_LOAD_SEARCH) && !atools::gui::Application::isSafeMode())
+  if(OptionData::instance().getFlags().testFlag(opts::STARTUP_LOAD_SEARCH) && !NavApp::isSafeModeFlagSet(safemode::SAFE_MODE_INFO_SEARCH))
   {
+    // Load saved search parameters ========================
     widgetState.restore(airportSearchWidgets);
 
     QSpinBox *minDistanceWidget = columns->getMinDistanceWidget();
@@ -432,6 +433,7 @@ void AirportSearch::restoreState()
   }
   else
   {
+    // Skip loading parameters ========================
     QList<QObject *> objList;
     atools::convertList(objList, airportSearchMenuActions);
     widgetState.restore(objList);

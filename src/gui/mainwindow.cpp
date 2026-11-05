@@ -254,6 +254,11 @@ MainWindow::MainWindow()
 
     // Create dock and mainwindow handler ============================================
     atools::settings::Settings& settings = atools::settings::Settings::instance();
+
+    // Clear all settings if user requested after a crash =================
+    if(NavApp::isSafeModeFlagSet(safemode::SAFE_MODE_ALL))
+      settings.clearSettings();
+
     dockHandler = new atools::gui::DockWidgetHandler(this,
                                                      // Add all available dock widgets here ==========================
                                                      {ui->dockWidgetAircraft, ui->dockWidgetSearch, ui->dockWidgetProfile,
@@ -687,7 +692,6 @@ void MainWindow::deInit()
 #endif
 
     qDebug() << Q_FUNC_INFO << "About to exit";
-    atools::gui::Application::recordExit();
     atools::logging::LoggingGuiAbortHandler::resetGuiAbortFunction();
   }
   else
@@ -3429,7 +3433,7 @@ void MainWindow::openOptionsDialog()
 
     // Add to dock handler to enable auto raise and closing on exit
     // Needs late registration since constructed too early
-    dockHandler->registerDialog(optionsDialog); // unregistered in destructor
+    registerDialogInDockHandler(optionsDialog); // unregistered in destructor
     optionsDialog->show();
   }
 }
@@ -4311,7 +4315,7 @@ void MainWindow::resetTabLayout()
 
 void MainWindow::restoreMainWindowLayout()
 {
-  if(!Application::isSafeMode())
+  if(!NavApp::isSafeModeFlagSet(safemode::SAFE_MODE_LAYOUT))
   {
     const FileCheck *files = NavApp::getCommandLineFiles();
     if(!files->getLayoutFile().isEmpty())
@@ -4444,7 +4448,8 @@ void MainWindow::restoreStateMain()
   updateMapKeys();
 
   widgetState.setBlockSignals(true);
-  if(OptionData::instance().getFlags().testFlag(opts::STARTUP_LOAD_MAP_SETTINGS))
+  if(OptionData::instance().getFlags().testFlag(opts::STARTUP_LOAD_MAP_SETTINGS) &&
+     !NavApp::isSafeModeFlagSet(safemode::SAFE_MODE_MAP_MARKERS))
   {
     // Restore map settings if requested by the user
     widgetState.restore({ui->actionMapShowVor, ui->actionMapShowNdb, ui->actionMapShowWp,

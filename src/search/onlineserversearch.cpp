@@ -68,7 +68,8 @@ void OnlineServerSearch::saveState()
 
 void OnlineServerSearch::restoreState()
 {
-  if(!OptionData::instance().getFlags().testFlag(opts::STARTUP_LOAD_SEARCH) || atools::gui::Application::isSafeMode())
+  if(OptionData::instance().getFlags().testFlag(opts::STARTUP_LOAD_SEARCH) &&
+     !NavApp::isSafeModeFlagSet(safemode::SAFE_MODE_INFO_SEARCH))
     atools::gui::WidgetState(lnm::SEARCHTAB_ONLINE_SERVER_VIEW_WIDGET).restore(ui->tableViewOnlineServerSearch);
 
   finishRestore();

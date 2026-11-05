@@ -267,8 +267,9 @@ void NavSearch::saveState()
 void NavSearch::restoreState()
 {
   atools::gui::WidgetState widgetState(lnm::SEARCHTAB_NAV_WIDGET);
-  if(OptionData::instance().getFlags().testFlag(opts::STARTUP_LOAD_SEARCH) && !atools::gui::Application::isSafeMode())
+  if(OptionData::instance().getFlags().testFlag(opts::STARTUP_LOAD_SEARCH) && !NavApp::isSafeModeFlagSet(safemode::SAFE_MODE_INFO_SEARCH))
   {
+    // Load saved search parameters ========================
     widgetState.restore(navSearchWidgets);
 
     QSpinBox *minDistanceWidget = columns->getMinDistanceWidget();
@@ -278,6 +279,7 @@ void NavSearch::restoreState()
   }
   else
   {
+    // Skip loading parameters ========================
     QList<QObject *> objList;
     atools::convertList(objList, navSearchMenuActions);
     widgetState.restore(objList);

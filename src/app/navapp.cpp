@@ -34,6 +34,7 @@
 #include "fs/db/databasemeta.h"
 #include "fs/perf/aircraftperf.h"
 #include "geo/aircrafttrail.h"
+#include "gui/choicedialog.h"
 #include "gui/dataexchange.h"
 #include "gui/errorhandler.h"
 #include "gui/mainwindow.h"
@@ -59,6 +60,7 @@
 #include "timezone/timezonemanager.h"
 #include "track/trackcontroller.h"
 #include "userdata/userdatacontroller.h"
+#include "util/htmlbuilder.h"
 #include "weather/weatherreporter.h"
 #include "web/webcontroller.h"
 #include "web/webmapcontroller.h"
@@ -68,6 +70,7 @@
 #include <marble/MarbleModel.h>
 
 #include <QIcon>
+#include <QMessageBox>
 #include <QProcess>
 
 ConnectClient *NavApp::connectClient = nullptr;
@@ -94,6 +97,8 @@ WebController *NavApp::webController = nullptr;
 atools::gui::DataExchange *NavApp::dataExchange = nullptr;
 atools::timezone::TimeZoneManager *NavApp::timeZone = nullptr;
 FileCheck *NavApp::fileCheck = nullptr;
+
+safemode::SafeModeFlags NavApp::safeModeFlags = safemode::SAFE_MODE_NONE;
 
 bool NavApp::closeCalled = false;
 bool NavApp::loadingDatabase = false;
@@ -801,8 +806,8 @@ void NavApp::recordStartNavApp()
   QString reportFilename;
   getReportFiles(crashReportFiles, reportFilename, false /* issueReport */);
 
-  Application::recordStartAndDetectCrash(nullptr, Settings::getConfigFilename(".running"), reportFilename, crashReportFiles,
-                                         lnm::helpOnlineUrl, "CRASHREPORT.html", lnm::helpLanguageOnline());
+  NavApp::recordStartAndDetectCrashNav(nullptr, Settings::getConfigFilename(".running"), reportFilename, crashReportFiles,
+                                       lnm::helpOnlineUrl, "CRASHREPORT.html", lnm::helpLanguageOnline());
 #endif
   // Keep command line options to avoid using the wrong configuration folder
 }
@@ -1343,4 +1348,100 @@ UpdateHandler *NavApp::getUpdateHandler()
 atools::win::ActivationContext *NavApp::getActivationContext()
 {
   return getConnectClient()->getActivationContext();
+}
+
+void NavApp::recordStartAndDetectCrashNav(QWidget *parent, const QString& lockFileParam, const QString& crashReportFile,
+                                          const QStringList& filenames,
+                                          const QString& helpOnlineUrl, const QString& helpDocument, const QString& helpLanguageOnline)
+{
+  qDebug() << Q_FUNC_INFO << "Lock file" << lockFileParam;
+
+  // Check if lock file exists - no for last clean exit and yes for crash
+#ifndef DEBUG_INFORMATION_ALWAYS_DETECT_CRASH
+  if(QFile::exists(lockFileParam))
+#endif
+  {
+    qWarning() << Q_FUNC_INFO << "Found previous crash";
+
+    // Do not open splash to avoid dialog re-appearing
+    setShowSplash(false);
+
+    // Build a report with all relevant files in a Zip archive
+    qWarning() << Q_FUNC_INFO << "Creating crash report" << crashReportFile << filenames;
+    buildCrashReport(crashReportFile, filenames);
+
+    QString message = tr("<p><b>%1 did not exit cleanly the last time.</b><br/>"
+                         "This was most likely caused by a crash.</p>"
+                         "<p>A crash report has been generated and saved with all related files in a Zip archive.</p>"
+                           "<p>%2&nbsp;(click to show file in your file manager)</p>"
+                             "<p>You might want to send this file to the author of %1 to investigate the crash.</p>"
+                               "<p><b>Please make sure to use the latest version of %1 before reporting a crash and "
+                                 "describe all steps to reproduce the problem.</b></p>"
+                                 "<p>%3</p>"
+                                   "<p><b>Select options to skip for a safe start or select \"Cancel\" to continue normally.</b></p>").
+                      arg(applicationName(), atools::util::HtmlBuilder::aFilePath(crashReportFile, atools::util::html::NOBR_WHITESPACE),
+                          getContactHtml());
+
+    atools::gui::ChoiceDialog choiceDialog(parent, tr("%1 - Crash Detected").arg(applicationName()), message, QStringLiteral(),
+                                           helpOnlineUrl + helpDocument);
+    choiceDialog.setHelpLanguageOnline(helpLanguageOnline);
+
+    choiceDialog.addCheckBox(safemode::SAFE_MODE_ALL,
+                             tr("&Reset all Settings\n"
+                                "Completely clears all settings except scenery library databases and userpoints."),
+                             QStringLiteral(), false);
+    choiceDialog.addCheckBox(safemode::SAFE_MODE_LAYOUT,
+                             tr("Window &Layout\n"
+                                "Resets the layout of all dock windows and the main window back to default."),
+                             QStringLiteral(), true);
+    choiceDialog.addCheckBox(safemode::SAFE_MODE_ROUTE_PERF_TRAIL,
+                             tr("&Flight Plan, Aircraft Performance, KML and User Aircraft Trail\n"
+                                "Skips loading of the current files and clears the current user aircraft trail."),
+                             QStringLiteral(), true);
+    choiceDialog.addCheckBox(safemode::SAFE_MODE_MAP_MARKERS,
+                             tr("&Map Display Settings and Map Markers\n"
+                                "Resets all map display settings in menu \"View\" and clears all map markers."),
+                             QStringLiteral(), false);
+    choiceDialog.addCheckBox(safemode::SAFE_MODE_INFO_SEARCH,
+                             tr("&Information and Search\n"
+                                "Skips loading of search parameters and content in the information window."),
+                             QStringLiteral(), false);
+    choiceDialog.addSpacer();
+
+    // Callback to disable buttons =======================
+    connect(&choiceDialog, &atools::gui::ChoiceDialog::buttonToggled, [&choiceDialog](int id, bool checked) {
+      if(id == safemode::SAFE_MODE_ALL)
+      {
+        choiceDialog.disableWidget(safemode::SAFE_MODE_LAYOUT, checked);
+        choiceDialog.disableWidget(safemode::SAFE_MODE_ROUTE_PERF_TRAIL, checked);
+        choiceDialog.disableWidget(safemode::SAFE_MODE_MAP_MARKERS, checked);
+        choiceDialog.disableWidget(safemode::SAFE_MODE_INFO_SEARCH, checked);
+      }
+    });
+
+    // Need at least one checked for apply and start =======================
+    choiceDialog.setRequiredAnyChecked({safemode::SAFE_MODE_ALL, safemode::SAFE_MODE_LAYOUT, safemode::SAFE_MODE_ROUTE_PERF_TRAIL,
+                                        safemode::SAFE_MODE_MAP_MARKERS, safemode::SAFE_MODE_INFO_SEARCH});
+
+    // Change button texts
+    choiceDialog.setOkButtonText(tr("&Apply and Start"));
+    choiceDialog.setCancelButtonText(tr("&Continue normal Start"));
+    choiceDialog.setMaximumSize(QGuiApplication::primaryScreen()->availableSize());
+    choiceDialog.adjustSize();
+
+    if(choiceDialog.exec() == QDialog::Accepted)
+    {
+      // Copy button flags to safemode ===========================
+      safeModeFlags.setFlag(safemode::SAFE_MODE_ALL, choiceDialog.isButtonChecked(safemode::SAFE_MODE_ALL));
+      safeModeFlags.setFlag(safemode::SAFE_MODE_LAYOUT, choiceDialog.isButtonChecked(safemode::SAFE_MODE_LAYOUT));
+      safeModeFlags.setFlag(safemode::SAFE_MODE_ROUTE_PERF_TRAIL, choiceDialog.isButtonChecked(safemode::SAFE_MODE_ROUTE_PERF_TRAIL));
+      safeModeFlags.setFlag(safemode::SAFE_MODE_MAP_MARKERS, choiceDialog.isButtonChecked(safemode::SAFE_MODE_MAP_MARKERS));
+      safeModeFlags.setFlag(safemode::SAFE_MODE_INFO_SEARCH, choiceDialog.isButtonChecked(safemode::SAFE_MODE_INFO_SEARCH));
+    }
+  }
+
+  // Remember lock file and write PID into it (PID not used)
+  recordStartup(lockFileParam);
+
+  qWarning() << Q_FUNC_INFO << "Safe mode flags" << safeModeFlags;
 }

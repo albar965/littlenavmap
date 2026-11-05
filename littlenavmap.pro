@@ -296,6 +296,7 @@ SOURCES += \
   src/airspace/airspacetoolbarhandler.cpp \
   src/app/commandline.cpp \
   src/app/navapp.cpp \
+  src/app/navappsafemode.cpp \
   src/common/abstractinfobuilder.cpp \
   src/common/airportfiles.cpp \
   src/common/constants.cpp \
@@ -503,6 +504,7 @@ HEADERS  += \
   src/airspace/airspacetoolbarhandler.h \
   src/app/commandline.h \
   src/app/navapp.h \
+  src/app/navappsafemode.h \
   src/common/abstractinfobuilder.h \
   src/common/airportfiles.h \
   src/common/constants.h \

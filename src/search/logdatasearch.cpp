@@ -207,10 +207,12 @@ void LogdataSearch::saveState()
 void LogdataSearch::restoreState()
 {
   atools::gui::WidgetState widgetState(lnm::SEARCHTAB_LOGDATA_VIEW_WIDGET);
-  if(OptionData::instance().getFlags().testFlag(opts::STARTUP_LOAD_SEARCH) && !atools::gui::Application::isSafeMode())
+  if(OptionData::instance().getFlags().testFlag(opts::STARTUP_LOAD_SEARCH) && !NavApp::isSafeModeFlagSet(safemode::SAFE_MODE_INFO_SEARCH))
+    // Load saved search parameters ========================
     widgetState.restore(logdataSearchWidgets);
   else
   {
+    // Skip loading parameters ========================
     QList<QObject *> objList;
     atools::convertList(objList, logdataSearchMenuActions);
     widgetState.restore(objList);

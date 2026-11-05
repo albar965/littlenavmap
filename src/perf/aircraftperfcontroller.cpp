@@ -1410,7 +1410,7 @@ void AircraftPerfController::restoreState()
   fileHistory->restoreState();
 
   // Load last used performance file or the one passed on the command line
-  if(!atools::gui::Application::isSafeMode())
+  if(!NavApp::isSafeModeFlagSet(safemode::SAFE_MODE_ROUTE_PERF_TRAIL))
   {
     const FileCheck *files = NavApp::getCommandLineFiles();
     QString perfFile = files->getAircraftPerfFile();
@@ -1433,7 +1433,7 @@ void AircraftPerfController::restoreState()
   state.restore({ui->spinBoxAircraftPerformanceWindSpeed, ui->spinBoxAircraftPerformanceWindDirection,
                  ui->spinBoxAircraftPerformanceWindAlt});
 
-  if(!atools::gui::Application::isSafeMode())
+  if(!NavApp::isSafeModeFlagSet(safemode::SAFE_MODE_ROUTE_PERF_TRAIL))
   {
     try
     {

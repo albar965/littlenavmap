@@ -1090,7 +1090,8 @@ void ProcedureSearch::saveState()
 void ProcedureSearch::restoreState()
 {
   atools::settings::Settings& settings = atools::settings::Settings::instance();
-  if(OptionData::instance().getFlags().testFlag(opts::STARTUP_LOAD_SEARCH) && !atools::gui::Application::isSafeMode())
+  if(OptionData::instance().getFlags().testFlag(opts::STARTUP_LOAD_SEARCH) &&
+     !NavApp::isSafeModeFlagSet(safemode::SAFE_MODE_INFO_SEARCH))
   {
     if(NavApp::hasDataInDatabase())
     {
@@ -1108,7 +1109,8 @@ void ProcedureSearch::restoreState()
   updateFilterBoxes();
 
   QSet<int> state;
-  if(OptionData::instance().getFlags().testFlag(opts::STARTUP_LOAD_SEARCH) && !atools::gui::Application::isSafeMode())
+  if(OptionData::instance().getFlags().testFlag(opts::STARTUP_LOAD_SEARCH) &&
+     !NavApp::isSafeModeFlagSet(safemode::SAFE_MODE_INFO_SEARCH))
   {
     atools::gui::WidgetState(lnm::APPROACHTREE_WIDGET).restore({ui->comboBoxProcedureSearchFilter, ui->comboBoxProcedureRunwayFilter,
                                                                 ui->actionSearchProcedureFollowSelection,
@@ -1125,7 +1127,8 @@ void ProcedureSearch::restoreState()
   updateTreeHeader();
   atools::gui::WidgetState(lnm::APPROACHTREE_WIDGET).restore(treeWidget);
 
-  if(OptionData::instance().getFlags().testFlag(opts::STARTUP_LOAD_SEARCH) && !atools::gui::Application::isSafeMode())
+  if(OptionData::instance().getFlags().testFlag(opts::STARTUP_LOAD_SEARCH) &&
+     !NavApp::isSafeModeFlagSet(safemode::SAFE_MODE_INFO_SEARCH))
   {
     // Restoring state will emit above signal
     if(currentAirportNav->isValid() && currentAirportNav->procedure())

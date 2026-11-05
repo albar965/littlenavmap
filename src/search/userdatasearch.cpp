@@ -187,8 +187,9 @@ void UserdataSearch::saveState()
 void UserdataSearch::restoreState()
 {
   atools::gui::WidgetState widgetState(lnm::SEARCHTAB_USERDATA_VIEW_WIDGET);
-  if(OptionData::instance().getFlags().testFlag(opts::STARTUP_LOAD_SEARCH) && !atools::gui::Application::isSafeMode())
+  if(OptionData::instance().getFlags().testFlag(opts::STARTUP_LOAD_SEARCH) && !NavApp::isSafeModeFlagSet(safemode::SAFE_MODE_INFO_SEARCH))
   {
+    // Load saved search parameters ========================
     widgetState.restore(userdataSearchWidgets);
 
     if(!widgetState.contains(ui->comboBoxUserdataType))
@@ -200,6 +201,7 @@ void UserdataSearch::restoreState()
   }
   else
   {
+    // Skip loading parameters ========================
     QList<QObject *> objList;
     atools::convertList(objList, userdataSearchMenuActions);
     widgetState.restore(objList);
