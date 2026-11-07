@@ -412,13 +412,13 @@ private:
                      const map::MapAirport& airport) const;
 
   void addMetarLine(atools::util::HtmlBuilder& html, const QString& header, const map::MapAirport& airport,
-                    const atools::fs::weather::MetarParser& metar, bool mapDisplay) const;
+                    const atools::fs::weather::MetarParser& metar, bool mapDisplay, bool sim) const;
 
   void decodedMetar(atools::util::HtmlBuilder& html, const map::MapAirport& airport,
                     const map::MapAirport& reportAirport, const atools::fs::weather::Metar& metar, bool mapDisplay,
-                    atools::fs::weather::MetarType type) const;
+                    atools::fs::weather::MetarType type, bool sim) const;
 
-  void decodedMetars(atools::util::HtmlBuilder& html, const atools::fs::weather::Metar& metar,
+  void decodedMetarOnline(atools::util::HtmlBuilder& html, const atools::fs::weather::Metar& metar,
                      const map::MapAirport& airport, const QString& weatherService, bool mapDisplay) const;
 
   void addRadionavFixType(atools::util::HtmlBuilder& html, const atools::sql::SqlRecord& recApp) const;
@@ -477,6 +477,8 @@ private:
 
   /* Header for all map markers like measurment lines. Shows information about related navaid, if available.  */
   void markerTitle(const QString& text, const map::MapNav& nav, float courseTrue, atools::util::HtmlBuilder& html, bool user = false) const;
+
+  QString getXplaneWeatherSource() const;
 
   /* Airport, navaid and userpoint icon size */
   QSizeF symbolSize = QSize(18., 18.);
