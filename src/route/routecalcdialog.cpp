@@ -53,7 +53,7 @@ RouteCalcDialog::RouteCalcDialog(QWidget *parent)
   addActions(NavApp::getMainWindowActions());
 
   preferenceTexts = QStringList({
-    tr("Airways and tracks only.\nFastest calculation."),
+    tr("Airways and tracks only."),
     tr("More airways and few direct."),
     tr("More airways and few direct."),
     tr("More airways and less direct."),

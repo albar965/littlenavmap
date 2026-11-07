@@ -66,7 +66,7 @@
      </widget>
      <widget class="QStackedWidget" name="stackedWidgetOptions">
       <property name="currentIndex">
-       <number>11</number>
+       <number>19</number>
       </property>
       <widget class="QWidget" name="stackedWidgetOptionsStartup">
        <layout class="QVBoxLayout" name="verticalLayout_41">
@@ -1583,8 +1583,8 @@ aircraft progress, tooltips and information window.</string>
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>480</width>
-             <height>380</height>
+             <width>586</width>
+             <height>502</height>
             </rect>
            </property>
            <layout class="QVBoxLayout" name="verticalLayout_59">
@@ -1618,19 +1618,6 @@ Does not apply to the flight plan loaded after startup.
                  </property>
                  <property name="text">
                   <string>Center &amp;flight plan or aircraft trail on map after loading</string>
-                 </property>
-                 <property name="checked">
-                  <bool>true</bool>
-                 </property>
-                </widget>
-               </item>
-               <item>
-                <widget class="QCheckBox" name="checkBoxOptionsGuiAddDeparture">
-                 <property name="toolTip">
-                  <string>Add departure parking, runway or airport to an empty flight plan after connecting to simulator.</string>
-                 </property>
-                 <property name="text">
-                  <string>Add &amp;departure and start position to flight plan after connecting to simulator</string>
                  </property>
                  <property name="checked">
                   <bool>true</bool>
@@ -1833,8 +1820,8 @@ Example: &quot;IFR Frankfurt Am Main (EDDF) to Fiumicino (LIRF).lnmpln&quot;</st
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>510</width>
-             <height>486</height>
+             <width>586</width>
+             <height>502</height>
             </rect>
            </property>
            <layout class="QVBoxLayout" name="verticalLayout_12">
@@ -2163,7 +2150,7 @@ Map views might be shown with a larger zoom distance than expected if this optio
              <x>0</x>
              <y>0</y>
              <width>599</width>
-             <height>399</height>
+             <height>488</height>
             </rect>
            </property>
            <layout class="QGridLayout" name="gridLayout_2">
@@ -2627,8 +2614,8 @@ userpoints and logbook entries when hovering the cursor over the map</string>
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>433</width>
-             <height>423</height>
+             <width>586</width>
+             <height>502</height>
             </rect>
            </property>
            <layout class="QVBoxLayout" name="verticalLayout_65">
@@ -2897,8 +2884,8 @@ Note that some fonts, especially large fonts, can result in display errors on th
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>355</width>
-             <height>824</height>
+             <width>572</width>
+             <height>785</height>
             </rect>
            </property>
            <layout class="QVBoxLayout" name="verticalLayout_71">
@@ -3320,8 +3307,8 @@ Note that this function is disabled for X-Plane 12 since the 3D flag is unreliab
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>552</width>
-             <height>868</height>
+             <width>572</width>
+             <height>860</height>
             </rect>
            </property>
            <layout class="QVBoxLayout" name="verticalLayout_20">
@@ -4144,8 +4131,8 @@ to avoid a cluttered up airports</string>
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>428</width>
-             <height>556</height>
+             <width>572</width>
+             <height>535</height>
             </rect>
            </property>
            <layout class="QVBoxLayout" name="verticalLayout_35">
@@ -4620,7 +4607,7 @@ Also used in the elevation profile.</string>
              <x>0</x>
              <y>0</y>
              <width>586</width>
-             <height>531</height>
+             <height>502</height>
             </rect>
            </property>
            <layout class="QVBoxLayout" name="verticalLayout_57">
@@ -4970,8 +4957,8 @@ Note that this does not affect the stored trail points.</string>
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>441</width>
-             <height>673</height>
+             <width>572</width>
+             <height>634</height>
             </rect>
            </property>
            <layout class="QGridLayout" name="gridLayout_35">
@@ -5598,8 +5585,8 @@ if you hover over the elevation profile.</string>
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>183</width>
-             <height>132</height>
+             <width>586</width>
+             <height>502</height>
             </rect>
            </property>
            <layout class="QVBoxLayout" name="verticalLayout_61">
@@ -5671,8 +5658,8 @@ if you hover over the elevation profile.</string>
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>437</width>
-             <height>273</height>
+             <width>586</width>
+             <height>502</height>
             </rect>
            </property>
            <layout class="QVBoxLayout" name="verticalLayout_62">
@@ -5790,8 +5777,8 @@ if you hover over the elevation profile.</string>
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>319</width>
-             <height>845</height>
+             <width>572</width>
+             <height>679</height>
             </rect>
            </property>
            <layout class="QVBoxLayout" name="verticalLayout_63">
@@ -5916,8 +5903,8 @@ if you hover over the elevation profile.</string>
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>328</width>
-             <height>496</height>
+             <width>586</width>
+             <height>502</height>
             </rect>
            </property>
            <layout class="QGridLayout" name="gridLayout_39">
@@ -6386,8 +6373,8 @@ airspace filename has to match the callsign of the online center.</string>
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>462</width>
-             <height>266</height>
+             <width>586</width>
+             <height>502</height>
             </rect>
            </property>
            <layout class="QVBoxLayout" name="verticalLayout_67">
@@ -6550,8 +6537,8 @@ The buffer radius defines the surrounding from where the maximum elevation is ca
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>436</width>
-             <height>279</height>
+             <width>586</width>
+             <height>502</height>
             </rect>
            </property>
            <layout class="QVBoxLayout" name="verticalLayout_60">
@@ -6692,9 +6679,9 @@ Download the file &lt;b&gt;&lt;i&gt;All Tiles in One .zip (all10g.zip)&lt;/i&gt;
            <property name="geometry">
             <rect>
              <x>0</x>
-             <y>0</y>
-             <width>572</width>
-             <height>591</height>
+             <y>-78</y>
+             <width>581</width>
+             <height>620</height>
             </rect>
            </property>
            <layout class="QVBoxLayout" name="verticalLayout_25">
@@ -7023,26 +7010,20 @@ Smaller means closer.</string>
                <property name="spacing">
                 <number>2</number>
                </property>
-               <item row="0" column="2" rowspan="2">
-                <widget class="QSpinBox" name="spinBoxOptionsSimCleanupTableTime">
+               <item row="0" column="0">
+                <widget class="QCheckBox" name="checkBoxOptionsGuiAddDeparture">
                  <property name="toolTip">
-                  <string>Time until the selection is cleared and/or the active leg is put back on top of the flight plan table after user actions like scrolling or selecting.</string>
+                  <string>Add departure parking, runway or airport to an empty flight plan after connecting to simulator.</string>
                  </property>
-                 <property name="suffix">
-                  <string> seconds</string>
+                 <property name="text">
+                  <string>Add &amp;departure and start position to flight plan after connecting to simulator</string>
                  </property>
-                 <property name="minimum">
-                  <number>1</number>
-                 </property>
-                 <property name="maximum">
-                  <number>300</number>
-                 </property>
-                 <property name="value">
-                  <number>10</number>
+                 <property name="checked">
+                  <bool>true</bool>
                  </property>
                 </widget>
                </item>
-               <item row="1" column="0" colspan="2">
+               <item row="3" column="0">
                 <widget class="QCheckBox" name="checkBoxOptionsSimClearSelection">
                  <property name="toolTip">
                   <string>Clears selected (blue) rows in the flight plan table and the related map highlights
@@ -7056,7 +7037,7 @@ after the given timeout while flying.</string>
                  </property>
                 </widget>
                </item>
-               <item row="0" column="0" colspan="2">
+               <item row="4" column="0" colspan="2">
                 <widget class="QCheckBox" name="checkBoxOptionsSimCenterLegTable">
                  <property name="toolTip">
                   <string>User can scroll in the flight plan table but the program will  
@@ -7070,7 +7051,7 @@ put the active leg back on top after the given timeout while flying.</string>
                  </property>
                 </widget>
                </item>
-               <item row="3" column="0">
+               <item row="1" column="0">
                 <widget class="QCheckBox" name="checkBoxOptionsSimHighlightActiveTable">
                  <property name="toolTip">
                   <string>Active flight plan legs are highlighted with magenta color</string>
@@ -7087,6 +7068,25 @@ put the active leg back on top after the given timeout while flying.</string>
                 <widget class="Line" name="line_2">
                  <property name="orientation">
                   <enum>Qt::Horizontal</enum>
+                 </property>
+                </widget>
+               </item>
+               <item row="3" column="2" rowspan="3">
+                <widget class="QSpinBox" name="spinBoxOptionsSimCleanupTableTime">
+                 <property name="toolTip">
+                  <string>Time until the selection is cleared and/or the active leg is put back on top of the flight plan table after user actions like scrolling or selecting.</string>
+                 </property>
+                 <property name="suffix">
+                  <string> seconds</string>
+                 </property>
+                 <property name="minimum">
+                  <number>1</number>
+                 </property>
+                 <property name="maximum">
+                  <number>300</number>
+                 </property>
+                 <property name="value">
+                  <number>10</number>
                  </property>
                 </widget>
                </item>
@@ -7140,8 +7140,8 @@ put the active leg back on top after the given timeout while flying.</string>
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>318</width>
-             <height>202</height>
+             <width>586</width>
+             <height>502</height>
             </rect>
            </property>
            <layout class="QVBoxLayout" name="verticalLayout_26">
@@ -7301,7 +7301,7 @@ Note that this value does not affect flight plan calculation or saving of flight
              <x>0</x>
              <y>0</y>
              <width>450</width>
-             <height>696</height>
+             <height>700</height>
             </rect>
            </property>
            <layout class="QVBoxLayout" name="verticalLayout_27">
@@ -7608,7 +7608,7 @@ Note that this value does not affect flight plan calculation or saving of flight
              <x>0</x>
              <y>0</y>
              <width>245</width>
-             <height>758</height>
+             <height>766</height>
             </rect>
            </property>
            <layout class="QVBoxLayout" name="verticalLayout_28">
@@ -9582,7 +9582,6 @@ Entering a wrong value will cause errors when downloading weather reports.</stri
   <tabstop>checkBoxOptionsUnitTrueCourse</tabstop>
   <tabstop>scrollArea_18</tabstop>
   <tabstop>checkBoxOptionsGuiCenterRoute</tabstop>
-  <tabstop>checkBoxOptionsGuiAddDeparture</tabstop>
   <tabstop>checkBoxOptionsGuiAvoidOverwrite</tabstop>
   <tabstop>lineEditOptionsRouteFilename</tabstop>
   <tabstop>checkBoxOptionsGuiCenterKml</tabstop>
@@ -9699,8 +9698,6 @@ Entering a wrong value will cause errors when downloading weather reports.</stri
   <tabstop>doubleSpinBoxOptionsSimZoomOnLanding</tabstop>
   <tabstop>checkBoxOptionsSimCenterLegTable</tabstop>
   <tabstop>spinBoxOptionsSimCleanupTableTime</tabstop>
-  <tabstop>checkBoxOptionsSimClearSelection</tabstop>
-  <tabstop>checkBoxOptionsSimHighlightActiveTable</tabstop>
   <tabstop>scrollArea_10</tabstop>
   <tabstop>checkBoxOptionsRouteEastWestRule</tabstop>
   <tabstop>comboBoxOptionsRouteAltitudeRuleType</tabstop>
