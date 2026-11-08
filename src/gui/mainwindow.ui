@@ -12870,7 +12870,7 @@ from either the departure parking or the user aircraft while taxiing.</string>
     <string>Go to the last position of the flown aircraft trail</string>
    </property>
    <property name="shortcut">
-    <string>Ctrl+L</string>
+    <string>Ctrl+F</string>
    </property>
   </action>
  </widget>
