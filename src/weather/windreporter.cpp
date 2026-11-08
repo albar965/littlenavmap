@@ -367,7 +367,6 @@ void WindReporter::windDownloadFailed(const QString& error, int errorCode)
 
   if(!downloadErrorReported)
   {
-    // Get rid of splash in case this happens on startup
     atools::gui::Dialog::warning(NavApp::getQMainWidget(), tr("Error downloading or reading wind data: %1 (%2)").arg(error).arg(errorCode));
     downloadErrorReported = true;
   }
