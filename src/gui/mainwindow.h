@@ -608,11 +608,7 @@ private:
   void debugActionTriggeredThrowException();
   void debugActionTriggeredSegfault();
   void debugActionTriggeredAssert();
-
-#ifdef DEBUG_DUMP_SHORTCUTS
-  void printShortcuts();
-
-#endif
+  void debugPrintShortcuts();
 
 #ifdef DEBUG_SIZE_INFORMATION
   virtual void resizeEvent(QResizeEvent *event) override;

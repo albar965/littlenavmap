@@ -4717,9 +4717,7 @@ void MainWindow::saveStateMain()
     }
 #endif
 
-#ifdef DEBUG_DUMP_SHORTCUTS
-    printShortcuts();
-#endif
+    debugPrintShortcuts();
 
     // About to reset all settings and restart application
     if(Application::isRestartApplication() && Application::isResetSettings())
@@ -4933,16 +4931,17 @@ QList<QAction *> MainWindow::getMainWindowActions()
   return actions;
 }
 
-#ifdef DEBUG_DUMP_SHORTCUTS
-void MainWindow::printShortcuts()
+void MainWindow::debugPrintShortcuts()
 {
+#ifdef DEBUG_DUMP_SHORTCUTS
   // Print all main menu and sub menu shortcuts ==============================================
   qDebug() << "===============================================================================";
 
   QString outShortcuts, outItems;
   QTextStream streamShortcuts(&outShortcuts, QIODevice::WriteOnly);
   QTextStream streamItems(&outItems, QIODevice::WriteOnly);
-  QSet<std::pair<QKeySequence, QString> > keys;
+  QSet<std::pair<QKeySequence, QString> > keyActionMap;
+  QSet<QKeySequence> keySet;
   QStringList warnings;
 
   int c1 = 80, c2 = 25;
@@ -4976,7 +4975,7 @@ void MainWindow::printShortcuts()
           {
             if(!subAction->text().isEmpty() && !subAction->shortcut().isEmpty())
             {
-              if(keys.contains(std::make_pair(subAction->shortcut(), subAction->objectName())))
+              if(keySet.contains(subAction->shortcut()))
                 warnings.append(QStringLiteral("Duplicate shortcut \"%1\"").arg(subAction->shortcut().toString()));
 
               streamShortcuts << "| "
@@ -4985,7 +4984,8 @@ void MainWindow::printShortcuts()
                               << ("``" + subAction->shortcut().toString() + "``").leftJustified(c2 - 1)
                               << "|" << Qt::endl;
               streamShortcuts << "+" << QString("-").repeated(c1) << "+" << QString("-").repeated(c2) << "+" << Qt::endl;
-              keys.insert(std::make_pair(subAction->shortcut(), subAction->objectName()));
+              keyActionMap.insert(std::make_pair(subAction->shortcut(), subAction->objectName()));
+              keySet.insert(subAction->shortcut());
             }
 
             if(!submenu.startsWith("Recent") && !subAction->text().isEmpty())
@@ -5024,7 +5024,7 @@ void MainWindow::printShortcuts()
         {
           if(!mainAction->text().isEmpty() && !mainAction->shortcut().isEmpty())
           {
-            if(keys.contains(std::make_pair(mainAction->shortcut(), mainAction->objectName())))
+            if(keySet.contains(mainAction->shortcut()))
               warnings.append(QStringLiteral("Duplicate shortcut \"%1\"").arg(mainAction->shortcut().toString()));
 
             streamShortcuts << "| "
@@ -5033,7 +5033,8 @@ void MainWindow::printShortcuts()
                             << ("``" + mainAction->shortcut().toString() + "``").leftJustified(c2 - 1)
                             << "|" << Qt::endl;
             streamShortcuts << "+" << QString("-").repeated(c1) << "+" << QString("-").repeated(c2) << "+" << Qt::endl;
-            keys.insert(std::make_pair(mainAction->shortcut(), mainAction->objectName()));
+            keyActionMap.insert(std::make_pair(mainAction->shortcut(), mainAction->objectName()));
+            keySet.insert(mainAction->shortcut());
           }
 
           if(!mainAction->text().isEmpty())
@@ -5079,16 +5080,15 @@ void MainWindow::printShortcuts()
   qDebug() << "===============================================================================";
 
   QStringList keysStr;
-  for(const std::pair<QKeySequence, QString>& key: keys)
+  for(const std::pair<QKeySequence, QString>& key: keyActionMap)
     keysStr.append(key.first.toString() % " " % key.second);
   std::sort(keysStr.begin(), keysStr.end());
 
   qInfo().nospace().noquote() << Q_FUNC_INFO << " " << keysStr.join("\n") << Qt::endl;
 
   qDebug() << "===============================================================================";
-}
-
 #endif
+}
 
 void MainWindow::closeEvent(QCloseEvent *event)
 {
