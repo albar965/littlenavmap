@@ -9,7 +9,7 @@ assignees: albar965
 
 **►► Please take a minute and read the instructions below to help me to avoid unnecessary work and additional communication overhead when reporting a bug or requesting new features. ◄◄**
 
-**►►Do not submit AI generated bug reports!◄◄**
+**►► Do not submit AI generated bug reports which often contain a lot of meaningless text and unneeded information. Please take your time to write a concise report. ◄◄**
 
 **►►Look at the [Little Navmap FAQ](https://albar965.github.io/littlenavmap-faq.html) first to see if your problem is already listed.◄◄**
 

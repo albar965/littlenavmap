@@ -2,7 +2,7 @@
 
 **►► Please take a minute and read the instructions below to help me to avoid unnecessary work and additional communication overhead when reporting a bug or requesting new features. ◄◄**
 
-**►► Do not submit AI generated issue slop which contains a lot of meaningless blah-blah, unneeded information and is a waste of my time in general. These are easy to recognize and will be closed or deleted right away. ◄◄**
+**►► Do not submit AI generated issues which often contain a lot of meaningless text and unneeded information. Please take your time to write a concise report. ◄◄**
 
 **►► Delete this text _after reading_ before posting the issue. ◄◄**
 

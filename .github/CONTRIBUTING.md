@@ -4,6 +4,8 @@ Thank you for contributing to _Little Navmap_! Your help is very welcome!
 
 Please note that this project is released with a [Contributor Code of Conduct][code-of-conduct]. By participating in this project you agree to abide by its terms.
 
+**►► You may use AI to generate a pull request but review it before committing. AI tends to apply scattered unneeded changes besides your request. Please clean these up before committing. ◄◄**
+
 ## Branches
 
 Make sure to clone or fork the right branch before adding changes or issuing a pull request.

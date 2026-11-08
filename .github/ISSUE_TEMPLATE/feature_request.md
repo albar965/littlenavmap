@@ -7,7 +7,7 @@ assignees: albar965
 
 ---
 
-**Do not submit AI generated bug reports!**
+**►► Do not submit AI generated feature requests which often contain a lot of meaningless text and unneeded information. Please take your time to write a concise report. ◄◄**
 
 **Is your feature request related to a problem? Please describe.**
 A clear and concise description of what the problem is. Ex. I'm always frustrated when [...]
