@@ -79,7 +79,7 @@ WebApiResponse MapActionsController::imageAction(WebApiRequest request)
     if(format == QLatin1String("jpg"))
     {
       response.headers.replace("Content-Type", "image/jpg");
-      map.pixmap.save(&buffer, "PNG", quality);
+      map.pixmap.save(&buffer, "JPG", quality);
     }
     else if(format == QLatin1String("png"))
     {
