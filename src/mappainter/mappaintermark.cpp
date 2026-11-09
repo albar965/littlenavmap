@@ -648,7 +648,7 @@ void MapPainterMark::paintLogEntries(const QList<map::MapLogbookEntry>& entries)
 
         if(positions.size() >= 2)
         {
-          textPlacement.calculateTextAlongLines({positions.toLine()}, {text.join(tr(","))});
+          textPlacement.calculateTextAlongLine(positions.toLine(), {text.join(tr(","))});
           textPlacement.drawTextAlongLines();
         }
       }
@@ -1498,7 +1498,7 @@ void MapPainterMark::paintDistanceMarkers()
         textPlacement.setMinLengthForText(painter->fontMetrics().averageCharWidth() * 2);
         textPlacement.setDrawFast(context->drawFast);
         textPlacement.setLineWidth(lineWidth);
-        textPlacement.setTextOnLineCenter(true);
+        textPlacement.setTextPosition(TextPlacement::ON_LINE);
         textPlacement.calculateTextAlongLine(line, texts.join('\n'));
         textPlacement.drawTextAlongLines();
       }

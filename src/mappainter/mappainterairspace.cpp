@@ -216,7 +216,7 @@ void MapPainterAirspace::render()
       textPlacement.setArrowForEmpty(false);
       textPlacement.setArrowLeft(QStringLiteral());
       textPlacement.setArrowRight(QStringLiteral());
-      textPlacement.setTextOnTopOfLine(false);
+      textPlacement.setTextPosition(TextPlacement::ABOVE_LINE);
 
       // Adjust text pen and background =======================================
       if(context->flags2.testFlag(opts2::MAP_AIRSPACE_TEXT_BACKGROUND))
@@ -336,11 +336,11 @@ void MapPainterAirspace::render()
 #endif
 
                       // Rotate text to show at the inside of the polygon ==================
-                      TextPlacement::Side side = TextPlacement::CENTER;
+                      TextPlacement::TextSide side = TextPlacement::CENTER_SIDE;
                       if(orientation == atools::util::CLOCKWISE)
-                        side = TextPlacement::RIGHT;
+                        side = TextPlacement::RIGHT_SIDE;
                       else if(orientation == atools::util::COUNTERCLOCKWISE)
-                        side = TextPlacement::LEFT;
+                        side = TextPlacement::LEFT_SIDE;
 
                       // Draw text and set flag to exit loops =====================================================
                       textPlacement.drawTextAlongOneLine(airspaceText, lineDist.getAngle(), lineDist.getCenter(), lineLength, side, offset);

@@ -157,7 +157,7 @@ QString TextPlacement::elideText(const QString& text, const QString& arrow, cons
   return txts.join('\n');
 }
 
-void TextPlacement::drawTextAlongOneLine(QString text, float bearing, const QPointF& textCoord, float textLineLength, Side side,
+void TextPlacement::drawTextAlongOneLine(QString text, float bearing, const QPointF& textCoord, float textLineLength, TextSide side,
                                          float offset) const
 {
   if(!text.isEmpty() || arrowForEmpty)
@@ -224,12 +224,14 @@ void TextPlacement::drawTextAlongOneLine(QString text, float bearing, const QPoi
       double yoffsetAbove = -(lineWidth / 2. + offset + metrics.height() * txts.size() - metrics.ascent());
       double yoffset = 0.; // Negative moves up
 
-      if(side == CENTER || textOnLineCenter)
+      if(side == CENTER_SIDE || textPosition == ON_LINE)
         yoffset = -metrics.height() * txts.size() / 2. + metrics.ascent();
-      else if(side != NONE)
-        yoffset = (side == LEFT && bearing >= 180.) || (side == RIGHT && bearing < 180.) ? yoffsetBelow : yoffsetAbove;
-      else
-        yoffset = textOnTopOfLine || bearing >= 180. ? yoffsetAbove : yoffsetBelow;
+      else if(side != NO_SIDE)
+        yoffset = (side == LEFT_SIDE && bearing >= 180.) || (side == RIGHT_SIDE && bearing < 180.) ? yoffsetBelow : yoffsetAbove;
+      else if(textPosition == ABOVE_LINE)
+        yoffset = yoffsetAbove;
+      else if(textPosition == BELOW_LINE)
+        yoffset = yoffsetBelow;
 
       painter->translate(textCoord.x(), textCoord.y());
       painter->rotate(rotate);

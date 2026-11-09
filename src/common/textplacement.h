@@ -51,7 +51,7 @@ public:
   TextPlacement(QPainter *painterParam, const CoordinateConverter *coordinateConverter, const QRect& screenRectParam);
 
   /* Prepare for drawTextAlongLines and also fills data for getVisibleStartPoints and getStartPoints.
-   *  Lines do not have to form a connected linestring. */
+   * Lines do not have to form a connected linestring. */
   void calculateTextAlongLines(const QList<atools::geo::Line>& lines, const QStringList& lineTexts);
   void calculateTextAlongLine(const atools::geo::Line& line, const QString& lineText);
 
@@ -64,15 +64,14 @@ public:
   void drawTextAlongLines();
   void clearLineTextData();
 
-  /* Side overrides all object set values like setTextOnLineCenter().
+  /* TextSide overrides all object set values like setTextOnLineCenter().
    * Position when looking from p1 to p2 */
-  enum Side
-  {
-    NONE, LEFT, RIGHT, CENTER
-  };
+  enum TextSide {NO_SIDE, LEFT_SIDE, RIGHT_SIDE, CENTER_SIDE};
+
+  enum TextPosition {NO_POS, ABOVE_LINE, ON_LINE, BELOW_LINE};
 
   void drawTextAlongOneLine(QString text, float bearing, const QPointF& textCoord, float textLineLength,
-                            TextPlacement::Side side = NONE, float offset = 2.f) const;
+                            TextPlacement::TextSide side = NO_SIDE, float offset = 2.f) const;
 
   /* Find text position along a great circle route
    *  @param x,y resulting text position
@@ -114,12 +113,6 @@ public:
     fast = value;
   }
 
-  /* Default is true which puts text always above the line. */
-  void setTextOnTopOfLine(bool value)
-  {
-    textOnTopOfLine = value;
-  }
-
   /* Line width in pixel used for text placement */
   void setLineWidth(float value)
   {
@@ -138,12 +131,6 @@ public:
     arrowForEmpty = value;
   }
 
-  /* Place text on top of line. Otherwise above. */
-  void setTextOnLineCenter(bool value)
-  {
-    textOnLineCenter = value;
-  }
-
   /* Minimum line length before text is omitted */
   void setMinLengthForText(int value)
   {
@@ -160,6 +147,12 @@ public:
   void setSectionSeparator(const QString& value)
   {
     sectionSeparator = value;
+  }
+
+  /* Place text on line, above or below. Default is above. */
+  void setTextPosition(TextPlacement::TextPosition textPositionParam)
+  {
+    textPosition = textPositionParam;
   }
 
 private:
@@ -189,7 +182,9 @@ private:
 
   int maximumPoints = 50;
 
-  bool fast = false, textOnTopOfLine = true, textOnLineCenter = false, arrowForEmpty = false;
+  bool fast = false, arrowForEmpty = false;
+  TextPosition textPosition = ABOVE_LINE;
+
   QPainter *painter = nullptr;
   const CoordinateConverter *converter = nullptr;
   QString arrowRight, arrowLeft, sectionSeparator;

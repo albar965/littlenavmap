@@ -18,6 +18,7 @@
 #include "mappainter/mappainterils.h"
 
 #include "common/mapcolors.h"
+#include "common/textplacement.h"
 #include "geo/calculations.h"
 #include "mapgui/maplayer.h"
 #include "mapgui/mapscale.h"
@@ -203,20 +204,10 @@ void MapPainterIls::drawIlsSymbol(const map::MapIls& ils, bool fast)
 
       context->szFont(context->textSizeNavaid);
       painter->setPen(QPen(textColor, 0.5f, Qt::SolidLine, Qt::FlatCap));
-      painter->translate(origin);
-
-      // Position GLS and RNP on the botton and ILS on the top of the feather
-      float width = ils.localizerWidth();
-      if(ils.isAnyGlsRnp())
-        width = -width;
-
-      // Rotate to draw the text upwards so it is readable
-      float rotate = ils.displayHeading > 180.f ?
-                     ils.displayHeading + 90.f - width / 2.f :
-                     atools::geo::opposedCourseDeg(ils.displayHeading) + 90.f + width / 2.f;
+      // painter->translate(origin);
 
       // get an approximation of the ILS length
-      int featherLen = static_cast<int>(std::roundf(scale->getPixelForMeter(nmToMeter(FEATHER_LEN_NM), rotate)));
+      int featherLen = static_cast<int>(std::roundf(scale->getPixelForMeter(nmToMeter(FEATHER_LEN_NM))));
 
       if(featherLen > MIN_LENGTH_FOR_TEXT)
       {
@@ -233,17 +224,27 @@ void MapPainterIls::drawIlsSymbol(const map::MapIls& ils, bool fast)
           painter->setBackgroundMode(Qt::TransparentMode);
         }
 
-        QFontMetricsF metrics(painter->font());
-        double texth = ils.isAnyGlsRnp() ? metrics.height() : -metrics.descent();
+        TextPlacement textPlacement(context->painter, this, context->screenRect);
+        textPlacement.setMinLengthForText(painter->fontMetrics().averageCharWidth() * 2);
+        textPlacement.setDrawFast(context->drawFast);
+        textPlacement.setLineWidth(context->szF(2));
 
-        // Cut text to feather length
-        text = metrics.elidedText(text, Qt::ElideRight, featherLen);
-        double textw = metrics.horizontalAdvance(text);
-        double textpos = ils.displayHeading > 180. ? (featherLen - textw) / 2. : -(featherLen + textw) / 2.;
+        // Position GLS and RNP on the botton and ILS on the top of the feather
+        textPlacement.setTextPosition(ils.isAnyGlsRnp() ? TextPlacement::BELOW_LINE : TextPlacement::ABOVE_LINE);
 
-        painter->rotate(rotate);
-        painter->drawText(QPointF(textpos, texth), text);
-        painter->resetTransform();
+        Line line;
+        if(ils.isAnyGlsRnp())
+          // Use lower line for GLS
+          line = Line(ils.displayHeading > 180.f ? ils.pos2 : ils.pos1, ils.position);
+        else
+          // Use upper line for ILS
+          line = Line(ils.displayHeading > 180.f ? ils.pos1 : ils.pos2, ils.position);
+
+        // Shorten line to keep text out of airports
+        line.setPos2(line.interpolate(0.8));
+
+        textPlacement.calculateTextAlongLine(line, text);
+        textPlacement.drawTextAlongLines();
       }
     }
   }

@@ -569,15 +569,14 @@ void MapPainterRoute::paintRouteInternal(QStringList routeTexts, QList<Line> lin
   if(context->mapLayerRouteText->isRouteTextAndDetail())
   {
     // Do not draw text on the color/black outline - on center only if transparent line or text background selected
-    bool textOnLineCenter = context->flags2.testFlag(opts2::MAP_ROUTE_TEXT_BACKGROUND) ||
-                            context->flags2.testFlag(opts2::MAP_ROUTE_TRANSPARENT);
+    bool textOnLine = context->flags2.testFlag(opts2::MAP_ROUTE_TEXT_BACKGROUND) || context->flags2.testFlag(opts2::MAP_ROUTE_TRANSPARENT);
 
     // Use a text placement configuration without screen buffer to have labels moving correctly
     TextPlacement textPlacement(painter, this, context->screenRect);
     textPlacement.setMinLengthForText(painter->fontMetrics().averageCharWidth() * 2);
     textPlacement.setDrawFast(context->drawFast);
     textPlacement.setLineWidth(outerlinewidth);
-    textPlacement.setTextOnLineCenter(textOnLineCenter);
+    textPlacement.setTextPosition(textOnLine ? TextPlacement::ON_LINE : TextPlacement::ABOVE_LINE);
 
     textPlacement.calculateTextPositions(positions);
     textPlacement.calculateTextAlongLines(lines, routeTexts);
@@ -1065,15 +1064,14 @@ void MapPainterRoute::paintProcedure(QSet<map::MapRef>& idMap, const proc::MapPr
       }
 
       // Do not draw text on the color/black outline - on center only if transparent line or text background selected
-      bool textOnLineCenter = context->flags2.testFlag(opts2::MAP_ROUTE_TEXT_BACKGROUND) ||
-                              context->flags2.testFlag(opts2::MAP_ROUTE_TRANSPARENT);
+      bool textOnLine = context->flags2.testFlag(opts2::MAP_ROUTE_TEXT_BACKGROUND) ||
+                        context->flags2.testFlag(opts2::MAP_ROUTE_TRANSPARENT);
 
       TextPlacement textPlacement(painter, this, context->screenRect);
       textPlacement.setMinLengthForText(painter->fontMetrics().averageCharWidth() * 2);
       textPlacement.setArrowForEmpty(previewAll); // Arrow for empty texts
-      textPlacement.setTextOnLineCenter(textOnLineCenter);
+      textPlacement.setTextPosition(textOnLine ? TextPlacement::ON_LINE : TextPlacement::ABOVE_LINE);
       textPlacement.setDrawFast(context->drawFast);
-      textPlacement.setTextOnTopOfLine(false); // Allow text below line to avoid cluttering up procedures
       textPlacement.setLineWidth(outerlinewidth);
       textPlacement.setColors(textColors);
       textPlacement.calculateTextPositions(positions);

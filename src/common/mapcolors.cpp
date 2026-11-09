@@ -57,7 +57,7 @@ QPen ilsCenterPen(Qt::darkGreen, 1.5, Qt::DashLine);
 QColor ilsSymbolColor(Qt::darkGreen);
 
 QColor glsFillColor(QStringLiteral("#20808080"));
-QColor glsTextColor(20, 20, 20);
+QColor glsTextColor(60, 60, 60);
 QPen glsCenterPen(Qt::darkGray, 1.5, Qt::DashLine);
 QColor glsSymbolColor(Qt::darkGray);
 
