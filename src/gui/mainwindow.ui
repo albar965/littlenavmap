@@ -6512,7 +6512,7 @@ relation to shown airport</string>
   <widget class="QDockWidget" name="dockWidgetMap">
    <property name="minimumSize">
     <size>
-     <width>50</width>
+     <width>99</width>
      <height>50</height>
     </size>
    </property>
@@ -6540,9 +6540,9 @@ relation to shown airport</string>
       <number>0</number>
      </property>
      <item>
-      <widget class="QWidget" name="widgetDummyMap" native="true">
-       <property name="toolTip">
-        <string>Delete the current airport search term from the list.</string>
+      <widget class="QLabel" name="labelMap">
+       <property name="text">
+        <string>Map Placeholder</string>
        </property>
       </widget>
      </item>

@@ -214,8 +214,9 @@ const static double CLICK_MOVE_MIN_DISTANCE_PIXEL = 5.f;
 
 using atools::geo::Pos;
 
-MapWidget::MapWidget(MainWindow *parent)
-  : MapPaintWidget(parent, QueryManager::instance()->getQueriesGui(), true /* visible */, false /* web */), mainWindow(parent)
+MapWidget::MapWidget(MainWindow *parentMainWindow, QWidget *parentWidget)
+  : MapPaintWidget(parentWidget, QueryManager::instance()->getQueriesGui(), true /* visible */, false /* web */),
+  mainWindow(parentMainWindow)
 {
   takeoffLandingLastAircraft = new atools::fs::sc::SimConnectUserAircraft;
   resultTooltip = new map::MapResult;

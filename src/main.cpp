@@ -66,6 +66,11 @@ using atools::gui::Translator;
 
 int main(int argc, char *argv[])
 {
+#ifdef DEBUG_QUIT_ON_LOCK
+  if(Application::hasLockFile())
+    return 0;
+#endif
+
   // Start timer to measure startup time
   Application::setStartingUp();
 

@@ -296,10 +296,11 @@ MainWindow::MainWindow()
     });
 
     // Remove central widget ==================================================
-    setCentralWidget(nullptr);
+    centralWidget()->hide();
 
     // Create toolbar and dock actions
     setupUi();
+
 
     // Load all map feature colors
     Application::showSplashScreenMessage(tr("Loading colors ... "));
@@ -362,7 +363,7 @@ MainWindow::MainWindow()
     // Create map widget and replace dummy widget in window
     Application::showSplashScreenMessage(tr("Creating map ... "));
     qDebug() << Q_FUNC_INFO << "Creating MapWidget";
-    mapWidget = new MapWidget(this);
+    mapWidget = new MapWidget(this, ui->dockWidgetMap);
 
     // All marble widget instances from now on are for web and printing
     // disable all not needed plugins in the static list in PluginManager
@@ -375,7 +376,8 @@ MainWindow::MainWindow()
     pluginManager->blacklistPlugin("OverviewMap");
 
     // Map widget is a normal dock window
-    ui->verticalLayoutMap->replaceWidget(ui->widgetDummyMap, mapWidget);
+    ui->verticalLayoutMap->addWidget(mapWidget);
+    ui->labelMap->hide();
     ui->dockWidgetMap->show();
 
     statusBar = new StatusBar(ui->statusBar);
