@@ -183,6 +183,8 @@ public:
   /* Update tooltips showing the file path. Set "setToolTipsVisible" for menu always to true */
   void updateMenuTooltips();
 
+  void fontChanged();
+
 signals:
   /* Sent if performance or wind has changed */
   void aircraftPerformanceChanged(const atools::fs::perf::AircraftPerf *perf);
@@ -250,6 +252,8 @@ private:
   void updateTabTiltle();
 
   void windText(atools::util::HtmlBuilder& html, const QString& label, float windSpeed, float windDirection, float headWind) const;
+
+  void updateTextBrowserFontSizes();
 
   MainWindow *mainWindow;
 

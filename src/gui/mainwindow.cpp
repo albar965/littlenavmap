@@ -1045,6 +1045,7 @@ void MainWindow::connectAllSlots()
     connect(app, &Application::fontChanged, infoController, &InfoController::fontChanged);
     connect(app, &Application::fontChanged, optionsDialog, &OptionsDialog::fontChanged);
     connect(app, &Application::fontChanged, profileWidget, &ProfileWidget::fontChanged);
+    connect(app, &Application::fontChanged, NavApp::getAircraftPerfController(), &AircraftPerfController::fontChanged);
     connect(app, &Application::fontChanged, NavApp::getDatabaseManager(), &DatabaseManager::fontChanged);
     connect(app, &Application::fontChanged, NavApp::getConnectClient(), &ConnectClient::fontChanged);
   }
