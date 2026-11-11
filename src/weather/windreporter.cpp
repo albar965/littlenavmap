@@ -160,11 +160,11 @@ WindReporter::WindReporter(QObject *parent, atools::fs::FsPaths::SimulatorType t
   verbose = settings.getAndStoreValue(lnm::OPTIONS_WEATHER_DEBUG, false).toBool();
 
   // Real wind ==================
-  windQueryOnline = new atools::grib::WindQuery(parent, verbose);
-  connect(windQueryOnline, &atools::grib::WindQuery::windDataUpdated, this, &WindReporter::windDownloadFinished);
-  connect(windQueryOnline, &atools::grib::WindQuery::windDownloadFailed, this, &WindReporter::windDownloadFailed);
-  connect(windQueryOnline, &atools::grib::WindQuery::windDownloadSslErrors, this, &WindReporter::windDownloadSslErrors);
-  connect(windQueryOnline, &atools::grib::WindQuery::windDownloadProgress, this, &WindReporter::windDownloadProgress);
+  windQuery = new atools::grib::WindQuery(parent, verbose);
+  connect(windQuery, &atools::grib::WindQuery::windDataUpdated, this, &WindReporter::windDownloadFinished);
+  connect(windQuery, &atools::grib::WindQuery::windDownloadFailed, this, &WindReporter::windDownloadFailed);
+  connect(windQuery, &atools::grib::WindQuery::windDownloadSslErrors, this, &WindReporter::windDownloadSslErrors);
+  connect(windQuery, &atools::grib::WindQuery::windDownloadProgress, this, &WindReporter::windDownloadProgress);
 
   // Layers from custom settings ==================
   windQueryManual = new atools::grib::WindQuery(parent, verbose);
@@ -179,7 +179,7 @@ WindReporter::WindReporter(QObject *parent, atools::fs::FsPaths::SimulatorType t
 
 WindReporter::~WindReporter()
 {
-  ATOOLS_DELETE_LOG(windQueryOnline);
+  ATOOLS_DELETE_LOG(windQuery);
   ATOOLS_DELETE_LOG(windQueryManual);
   ATOOLS_DELETE_LOG(actionGroup);
   ATOOLS_DELETE_LOG(windlevelToolButton);
@@ -249,7 +249,7 @@ void WindReporter::updateDataSource()
       if(path.isEmpty())
         path = NavApp::getCurrentSimulatorBasePath() + atools::SEP + "global_winds.grib";
 
-      windQueryOnline->initFromPath(path, atools::fs::weather::WEATHER_XP11);
+      windQuery->initFromPath(path, atools::fs::weather::WEATHER_XP11);
     }
     else if(simType == atools::fs::FsPaths::XPLANE_12)
     {
@@ -258,15 +258,15 @@ void WindReporter::updateDataSource()
         // Use default base path
         path = NavApp::getCurrentSimulatorBasePath() + atools::SEP + "Output" + atools::SEP + "real weather";
 
-      windQueryOnline->initFromPath(path, atools::fs::weather::WEATHER_XP12);
+      windQuery->initFromPath(path, atools::fs::weather::WEATHER_XP12);
     }
   }
   else if(ui->actionMapShowWindNOAA->isChecked())
     // Download from NOAA - will call windDownloadFinished later
-    windQueryOnline->initFromUrl(OptionData::instance().getWeatherNoaaWindBaseUrl());
+    windQuery->initFromUrl(OptionData::instance().getWeatherNoaaWindBaseUrl());
   else if(ui->actionMapShowWindManual->isChecked())
   {
-    windQueryOnline->deinit();
+    windQuery->deinit();
     updateManualRouteWinds();
 
     updateToolButtonState();
@@ -280,7 +280,7 @@ void WindReporter::updateDataSource()
   }
   else // disabled
   {
-    windQueryOnline->deinit();
+    windQuery->deinit();
     updateToolButtonState();
     updateSliderLabel();
 
@@ -302,7 +302,7 @@ void WindReporter::windDownloadFinished()
   if(!isWindManual())
   {
     QDateTime from, to;
-    windQueryOnline->getValidity(from, to);
+    windQuery->getValidity(from, to);
 
     QString validText = from.isValid() && to.isValid() ? tr(" Forecast from %1 to %2 UTC.").
                         arg(QLocale().toString(from, QLocale::ShortFormat),
@@ -316,7 +316,11 @@ void WindReporter::windDownloadFinished()
         break;
 
       case wind::WIND_SOURCE_SIMULATOR:
-        msg = tr("Winds aloft updated from simulator.%1").arg(validText);
+#ifdef DEBUG_INFORMATION
+        msg = tr("Winds aloft updated from simulator.%1 [%2]").arg(validText, windQuery->getCurrentGribFile());
+#else
+        msg = tr("Winds aloft updated from simulator.%1").arg(validText).arg(windQuery->getCurrentGribFile());
+#endif
         break;
 
       case wind::WIND_SOURCE_NOAA:
@@ -358,7 +362,7 @@ void WindReporter::windDownloadSslErrors(const QStringList& errors, const QStrin
                                   QMessageBox::Cancel | QMessageBox::Yes,
                                   QMessageBox::Cancel, QMessageBox::Yes);
 
-  windQueryOnline->setIgnoreSslErrors(result == QMessageBox::Yes);
+  windQuery->setIgnoreSslErrors(result == QMessageBox::Yes);
 }
 
 void WindReporter::windDownloadFailed(const QString& error, int errorCode)
@@ -502,7 +506,7 @@ bool WindReporter::isRouteWindShown() const
 
 bool WindReporter::hasOnlineWindData() const
 {
-  return windQueryOnline->hasWindData();
+  return windQuery->hasWindData();
 }
 
 bool WindReporter::isWindManual() const
@@ -686,17 +690,32 @@ void WindReporter::debugDumpContainerSizes() const
 {
   if(windQueryManual != nullptr)
     windQueryManual->debugDumpContainerSizes();
-  if(windQueryOnline != nullptr)
-    windQueryOnline->debugDumpContainerSizes();
+  if(windQuery != nullptr)
+    windQuery->debugDumpContainerSizes();
   qDebug() << Q_FUNC_INFO << "windPosCache.list.size()" << windPosCache.list.size();
 
+}
+
+void WindReporter::connectedToSimulator()
+{
+  currentWindQuery()->connectedToSimulator();
+}
+
+void WindReporter::disconnectedFromSimulator()
+{
+  currentWindQuery()->disconnectedFromSimulator();
 }
 
 void WindReporter::simDataChanged(const atools::fs::sc::SimConnectData& simulatorData)
 {
   const atools::fs::sc::SimConnectUserAircraft& aircraft = simulatorData.getUserAircraftConst();
+
+  // Update time always
+  currentWindQuery()->setWeatherDatetimeCurrent(aircraft.getXPlaneWeatherTime());
+
+  // Try to reload if files have changed
   if(aircraft.isValid() && aircraft.isXplane12())
-    currentWindQuery()->simulatorTimeUpdated(aircraft.getXPlaneWeatherTime());
+    currentWindQuery()->simulatorTimeUpdated();
 }
 
 void WindReporter::actionToValues()
@@ -923,7 +942,7 @@ void WindReporter::updateManualRouteWinds()
 #ifdef DEBUG_INFORMATION
 QString WindReporter::getDebug(const atools::geo::Pos& pos)
 {
-  atools::grib::WindQuery *windQuery = isWindManual() ? windQueryManual : windQueryOnline;
+  atools::grib::WindQuery *windQuery = isWindManual() ? windQueryManual : windQuery;
   return windQuery->getDebug(pos);
 }
 

@@ -105,7 +105,7 @@ public:
   /* true if wind barbs should be shown at flight plan waypoints */
   bool isRouteWindShown() const;
 
-  /* True if online wind available */
+  /* True if online wind or wind from X-Plane files is available */
   bool hasOnlineWindData() const;
 
   /* true if action "manual" is selected */
@@ -170,6 +170,9 @@ public:
   /* Update X-Plane 12 weather date */
   void simDataChanged(const atools::fs::sc::SimConnectData& simulatorData);
 
+  void connectedToSimulator();
+  void disconnectedFromSimulator();
+
 signals:
   /* Emitted when NOAA or X-Plane wind file changes or a request to weather was fullfilled */
   void windUpdated();
@@ -208,11 +211,11 @@ private:
 
   atools::grib::WindQuery *currentWindQuery() const
   {
-    return isWindManual() ? windQueryManual : windQueryOnline;
+    return isWindManual() ? windQueryManual : windQuery;
   }
 
   /* GRIB wind data query for downloading files and monitoring files- Manual wind if for user setting. */
-  atools::grib::WindQuery *windQueryOnline = nullptr, *windQueryManual = nullptr;
+  atools::grib::WindQuery *windQuery = nullptr, *windQueryManual = nullptr;
 
   /* Toolbar button */
   QToolButton *windlevelToolButton = nullptr;

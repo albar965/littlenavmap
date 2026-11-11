@@ -1703,7 +1703,11 @@ void MainWindow::connectAllSlots()
   connect(connectClient, &ConnectClient::dataPacketReceived, weatherReporter, &WeatherReporter::simDataChanged);
   connect(connectClient, &ConnectClient::connectedToSimulator, weatherReporter, &WeatherReporter::connectedToSimulator);
   connect(connectClient, &ConnectClient::disconnectedFromSimulator, weatherReporter, &WeatherReporter::disconnectedFromSimulator);
+
+  // Update time for X-Plane historical wind
   connect(connectClient, &ConnectClient::dataPacketReceived, windReporter, &WindReporter::simDataChanged);
+  connect(connectClient, &ConnectClient::connectedToSimulator, windReporter, &WindReporter::connectedToSimulator);
+  connect(connectClient, &ConnectClient::disconnectedFromSimulator, windReporter, &WindReporter::disconnectedFromSimulator);
 
   connect(connectClient, &ConnectClient::validAircraftReceived, routeController, &RouteController::validAircraftReceived);
   connect(connectClient, &ConnectClient::validAircraftReceived, this, &MainWindow::checkSceneryLibrary);
