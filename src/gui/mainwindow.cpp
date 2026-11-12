@@ -4283,6 +4283,7 @@ void MainWindow::resetWindowLayout()
   qDebug() << Q_FUNC_INFO;
   saveStateMain();
   resetWindowLayoutInternal();
+  saveStateMain();
 }
 
 void MainWindow::resetWindowLayoutInternal()
@@ -4523,6 +4524,10 @@ void MainWindow::optionsChangedInitial()
 
 void MainWindow::optionsChanged(const optc::OptionChangeFlags& changeFlags)
 {
+  qDebug() << Q_FUNC_INFO;
+
+  saveStateMain();
+
   autoSaveTrailTimer.setInterval(OptionData::instance().getAircraftTrailSaveMinutes() * 60 * 1000);
 
   // The units need to be called before all others
