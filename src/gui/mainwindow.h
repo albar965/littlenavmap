@@ -372,6 +372,8 @@ private:
 
   /* Read settings for all windows, docks, controller and manager classes */
   void restoreStateMain();
+
+  /* Called by QTimer::singleShot() in restoreStateMain() */
   void restoreMainWindowLayout();
 
   /* Enable or disable actions */

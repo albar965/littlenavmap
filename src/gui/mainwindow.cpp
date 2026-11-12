@@ -262,7 +262,7 @@ MainWindow::MainWindow()
     dockHandler = new atools::gui::DockWidgetHandler(this,
                                                      // Add all available dock widgets here ==========================
                                                      {ui->dockWidgetAircraft, ui->dockWidgetSearch, ui->dockWidgetProfile,
-                                                      ui->dockWidgetInformation, ui->dockWidgetRoute},
+                                                      ui->dockWidgetInformation, ui->dockWidgetRoute, ui->dockWidgetMap},
                                                      // Add all available toolbars  here =============================
                                                      {ui->toolBarMain, ui->toolBarMap, ui->toolBarMapOptions,
                                                       ui->toolBarMapOptionsRouteAircraft, ui->toolBarMapOptionsOther,
@@ -300,7 +300,6 @@ MainWindow::MainWindow()
 
     // Create toolbar and dock actions
     setupUi();
-
 
     // Load all map feature colors
     Application::showSplashScreenMessage(tr("Loading colors ... "));
@@ -378,7 +377,7 @@ MainWindow::MainWindow()
     // Map widget is a normal dock window
     ui->verticalLayoutMap->addWidget(mapWidget);
     ui->labelMap->hide();
-    ui->dockWidgetMap->show();
+    // ui->dockWidgetMap->show();
 
     statusBar = new StatusBar(ui->statusBar);
     statusBar->init();
@@ -4322,6 +4321,8 @@ void MainWindow::resetTabLayout()
 
 void MainWindow::restoreMainWindowLayout()
 {
+  qDebug() << Q_FUNC_INFO << "Enter";
+
   if(!NavApp::isSafeModeFlagSet(safemode::SAFE_MODE_LAYOUT))
   {
     const FileCheck *files = NavApp::getCommandLineFiles();
@@ -4365,6 +4366,10 @@ void MainWindow::restoreMainWindowLayout()
   ui->actionShowStatusbar->blockSignals(true);
   ui->actionShowStatusbar->setChecked(!ui->statusBar->isHidden());
   ui->actionShowStatusbar->blockSignals(false);
+
+  dockHandler->hideVisibleFloating();
+
+  qDebug() << Q_FUNC_INFO << "Exit";
 }
 
 void MainWindow::restoreStateMain()
@@ -4374,9 +4379,6 @@ void MainWindow::restoreStateMain()
   atools::gui::WidgetState widgetState(lnm::MAINWINDOW_WIDGET);
 
   applyToolBarSize();
-
-  // Restore window state in main event loop after constructor is finished
-  QTimer::singleShot(0, this, &MainWindow::restoreMainWindowLayout);
 
   // Need to be loaded in constructor first since it reads all options
   // optionsDialog->restoreState();
@@ -4497,6 +4499,10 @@ void MainWindow::restoreStateMain()
 
   if(!files->getMarkersFile().isEmpty())
     loadMarkersFile(files->getMarkersFile(), files->isForceLoading());
+
+  // Restore window state in main event loop after constructor is finished
+  QTimer::singleShot(0, this, &MainWindow::restoreMainWindowLayout);
+  QTimer::singleShot(1000, dockHandler, &atools::gui::DockWidgetHandler::restoreHiddenFloating);
 
   qDebug() << Q_FUNC_INFO << "leave";
 }
