@@ -3847,7 +3847,7 @@ void MainWindow::fullScreenOn()
   qDebug() << Q_FUNC_INFO << "setFullScreenOn";
 
   // Hide toolbars and docks initially - user can open again if needed and state is saved then
-  dockHandler->setFullScreenOn(atools::gui::HIDE_TOOLBARS | atools::gui::HIDE_DOCKS);
+  dockHandler->setFullScreenOn(atools::gui::HIDE_TOOLBARS | atools::gui::HIDE_DOCKS, ui->dockWidgetMap);
 
   // Add a dummy widget to erase the title bar if map is inside a dock widget
   ui->dockWidgetMap->setTitleBarWidget(new QWidget(ui->dockWidgetMap));
