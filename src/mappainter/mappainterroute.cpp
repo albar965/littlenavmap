@@ -111,7 +111,6 @@ void MapPainterRoute::render()
 
 void MapPainterRoute::paintDirectToDeparture()
 {
-
   if(context->mapLayer->isAirportDiagram() && context->objectDisplayTypes.testFlag(map::DIRECT_TO_DEPARTURE) &&
      !NavApp::hasAircraftPassedTakeoffPoint())
   {
@@ -240,9 +239,6 @@ void MapPainterRoute::paintRoute()
   }
 #endif
 
-  if(route->size() >= 2 && (!context->visibleAndResolves(rect)))
-    return;
-
   // Get active route leg
   // Active normally start at 1 - this will consider all legs as not passed
   int activeRouteLeg = route->isActiveValid() ? route->getActiveLegIndex() : 0;
@@ -312,40 +308,44 @@ void MapPainterRoute::paintRoute()
   atools::util::PainterContextSaver saver(context->painter);
   context->painter->setBrush(Qt::NoBrush);
 
-  paintRouteInternal(routeTexts, lines, passedRouteLeg);
+  bool routeResolves = route->size() < 2 || context->visibleAndResolves(rect);
+  paintRouteInternal(routeTexts, lines, passedRouteLeg, routeResolves);
 
-  // Draw procedures ==========================================================================
-  if(context->mapLayerEffective->isApproach())
+  if(routeResolves)
   {
-    // Remember last point across procedures to avoid overlaying text
-    if(!mapPaintWidget->isDistanceCutOff())
+    // Draw procedures ==========================================================================
+    if(context->mapLayerEffective->isApproach())
     {
-      context->startTimer("Route Procedures");
+      // Remember last point across procedures to avoid overlaying text
+      if(!mapPaintWidget->isDistanceCutOff())
+      {
+        context->startTimer("Route Procedures");
 
-      // Draw in reverse flying order to have close legs on top
-      const QColor& flightplanProcedureColor = OptionData::instance().getFlightplanProcedureColor();
+        // Draw in reverse flying order to have close legs on top
+        const QColor& flightplanProcedureColor = OptionData::instance().getFlightplanProcedureColor();
 
-      // Keep de-duplication separate from approach and STAR to avoid lines overlaying symbols
-      QSet<map::MapRef> idMap(routeProcIdMap);
-      if(route->hasAnyApproachProcedure())
-        paintProcedure(idMap, route->getApproachLegs(), route->getApproachLegsOffset(),
-                       flightplanProcedureColor, false /* preview */, false /* previewAll */);
+        // Keep de-duplication separate from approach and STAR to avoid lines overlaying symbols
+        QSet<map::MapRef> idMap(routeProcIdMap);
+        if(route->hasAnyApproachProcedure())
+          paintProcedure(idMap, route->getApproachLegs(), route->getApproachLegsOffset(),
+                         flightplanProcedureColor, false /* preview */, false /* previewAll */);
 
-      if(route->hasAnyStarProcedure())
-        paintProcedure(routeProcIdMap, route->getStarLegs(), route->getStarLegsOffset(), flightplanProcedureColor,
-                       false /* preview */, false /* previewAll */);
-      routeProcIdMap.unite(idMap);
+        if(route->hasAnyStarProcedure())
+          paintProcedure(routeProcIdMap, route->getStarLegs(), route->getStarLegsOffset(), flightplanProcedureColor,
+                         false /* preview */, false /* previewAll */);
+        routeProcIdMap.unite(idMap);
 
-      if(route->hasAnySidProcedure())
-        paintProcedure(routeProcIdMap, route->getSidLegs(), route->getSidLegsOffset(), flightplanProcedureColor,
-                       false /* preview */, false /* previewAll */);
+        if(route->hasAnySidProcedure())
+          paintProcedure(routeProcIdMap, route->getSidLegs(), route->getSidLegsOffset(), flightplanProcedureColor,
+                         false /* preview */, false /* previewAll */);
 
-      context->endTimer("Route Procedures");
+        context->endTimer("Route Procedures");
+      }
     }
-  }
 
-  // Recommended navaids
-  paintRecommended(passedRouteLeg, routeProcIdMap, false /* preview */);
+    // Recommended navaids
+    paintRecommended(passedRouteLeg, routeProcIdMap, false /* preview */);
+  }
 
   // Draw highlight for departure start (parking, helipad or runway end) or airport  ==========================
   if(context->mapLayerRoute->isRouteTextAndDetail())
@@ -451,7 +451,7 @@ void MapPainterRoute::paintRecommended(int passedRouteLeg, QSet<map::MapRef>& id
   } // for(int i = passedRouteLeg; i < route.size(); i++)
 }
 
-void MapPainterRoute::paintRouteInternal(QStringList routeTexts, QList<Line> lines, int passedRouteLeg)
+void MapPainterRoute::paintRouteInternal(QStringList routeTexts, QList<atools::geo::Line> lines, int passedRouteLeg, bool routeResolves)
 {
   const static QMargins MARGINS(100, 100, 100, 100);
 
@@ -468,7 +468,7 @@ void MapPainterRoute::paintRouteInternal(QStringList routeTexts, QList<Line> lin
 
   int destAptIdx = route->getDestinationAirportLegIndex();
 
-  if(!lines.isEmpty())
+  if(routeResolves && !lines.isEmpty())
   {
     // Do not draw a line from runway end to airport center
     if(route->hasAnyApproachProcedure() && destAptIdx != map::INVALID_INDEX_VALUE)
@@ -550,6 +550,7 @@ void MapPainterRoute::paintRouteInternal(QStringList routeTexts, QList<Line> lin
       drawLine(painter, lines.at(activeRouteLeg - 1));
     }
   }
+
   context->szFont(context->textSizeRoute * context->mapLayerRouteText->getRouteFontScale());
 
   // Collect coordinates for text placement and lines first ============================
@@ -566,7 +567,7 @@ void MapPainterRoute::paintRouteInternal(QStringList routeTexts, QList<Line> lin
   painter->setBackground(mapcolors::routeTextBackgroundColor);
   painter->setPen(context->darkMap ? mapcolors::routeTextColorDarkMap : mapcolors::routeTextColor);
 
-  if(context->mapLayerRouteText->isRouteTextAndDetail())
+  if(routeResolves && context->mapLayerRouteText->isRouteTextAndDetail())
   {
     // Do not draw text on the color/black outline - on center only if transparent line or text background selected
     bool textOnLine = context->flags2.testFlag(opts2::MAP_ROUTE_TEXT_BACKGROUND) || context->flags2.testFlag(opts2::MAP_ROUTE_TRANSPARENT);
@@ -610,7 +611,7 @@ void MapPainterRoute::paintRouteInternal(QStringList routeTexts, QList<Line> lin
       visibleStartPointsBuf.clearBit(i);
   }
   // Draw initial and final course arrows but not for VORs
-  if(context->mapLayerRouteText->isRouteTextAndDetail2())
+  if(routeResolves && context->mapLayerRouteText->isRouteTextAndDetail2())
     paintInboundOutboundTexts(textPlacementBuf, passedRouteLeg, false /* vor */);
 
   painter->restore();
@@ -622,7 +623,7 @@ void MapPainterRoute::paintRouteInternal(QStringList routeTexts, QList<Line> lin
   // Draw symbol text
   drawRouteSymbolText(visibleStartPointsBuf, textPlacementBuf.getStartPoints(), false /* preview */);
 
-  if(context->mapLayerRouteText->isRouteTextAndDetail2())
+  if(routeResolves && context->mapLayerRouteText->isRouteTextAndDetail2())
   {
     // Draw initial and final course arrows but VOR only to have text over VOR symbols
     painter->save();
@@ -637,7 +638,7 @@ void MapPainterRoute::paintRouteInternal(QStringList routeTexts, QList<Line> lin
     painter->restore();
   }
 
-  if(context->objectDisplayTypes.testFlag(map::WIND_BARBS_ROUTE) && NavApp::getWindReporter()->hasAnyWindData())
+  if(routeResolves && context->objectDisplayTypes.testFlag(map::WIND_BARBS_ROUTE) && NavApp::getWindReporter()->hasAnyWindData())
     paintWindBarbs(visibleStartPointsBuf, textPlacementBuf.getStartPoints());
 }
 

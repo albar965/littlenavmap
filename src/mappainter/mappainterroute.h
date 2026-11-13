@@ -84,7 +84,7 @@ private:
 
   /* Draw route only legs - not procedures */
   void paintRoute();
-  void paintRouteInternal(QStringList routeTexts, QList<atools::geo::Line> lines, int passedRouteLeg);
+  void paintRouteInternal(QStringList routeTexts, QList<atools::geo::Line> lines, int passedRouteLeg, bool routeResolves);
 
   /* Draw recommended navaids */
   void paintRecommended(int passedRouteLeg, QSet<map::MapRef>& idMap, bool preview);
