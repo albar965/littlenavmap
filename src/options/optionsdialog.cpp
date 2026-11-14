@@ -116,7 +116,10 @@ OptionsDialog::OptionsDialog(QMainWindow *parentWindow)
   setWindowModality(Qt::NonModal);
 
   p = new OptionsPrivate();
+
+  qDebug() << Q_FUNC_INFO << "before setupUi()";
   ui->setupUi(this);
+  qDebug() << Q_FUNC_INFO << "after setupUi()";
 
   savedOptionData = new OptionData;
 

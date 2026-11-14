@@ -66,7 +66,7 @@
      </widget>
      <widget class="QStackedWidget" name="stackedWidgetOptions">
       <property name="currentIndex">
-       <number>19</number>
+       <number>0</number>
       </property>
       <widget class="QWidget" name="stackedWidgetOptionsStartup">
        <layout class="QVBoxLayout" name="verticalLayout_41">
@@ -80,8 +80,8 @@
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>525</width>
-             <height>459</height>
+             <width>660</width>
+             <height>828</height>
             </rect>
            </property>
            <layout class="QVBoxLayout" name="verticalLayout_21">
@@ -437,8 +437,8 @@ This is the file on top of the list &quot;Recent Window Layouts&quot;.</string>
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>514</width>
-             <height>333</height>
+             <width>660</width>
+             <height>828</height>
             </rect>
            </property>
            <layout class="QVBoxLayout" name="verticalLayout_22">
@@ -630,8 +630,8 @@ opening files, modifying the flight plan and other operations.</string>
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>419</width>
-             <height>870</height>
+             <width>660</width>
+             <height>828</height>
             </rect>
            </property>
            <layout class="QVBoxLayout" name="verticalLayout_23">
@@ -1228,8 +1228,8 @@ This does not affect the map window which can be changed separately on the optio
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>560</width>
-             <height>485</height>
+             <width>660</width>
+             <height>828</height>
             </rect>
            </property>
            <layout class="QGridLayout" name="gridLayout_36">
@@ -1583,8 +1583,8 @@ aircraft progress, tooltips and information window.</string>
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>586</width>
-             <height>502</height>
+             <width>660</width>
+             <height>828</height>
             </rect>
            </property>
            <layout class="QVBoxLayout" name="verticalLayout_59">
@@ -1820,8 +1820,8 @@ Example: &quot;IFR Frankfurt Am Main (EDDF) to Fiumicino (LIRF).lnmpln&quot;</st
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>586</width>
-             <height>502</height>
+             <width>660</width>
+             <height>828</height>
             </rect>
            </property>
            <layout class="QVBoxLayout" name="verticalLayout_12">
@@ -2149,8 +2149,8 @@ Map views might be shown with a larger zoom distance than expected if this optio
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>599</width>
-             <height>488</height>
+             <width>660</width>
+             <height>828</height>
             </rect>
            </property>
            <layout class="QGridLayout" name="gridLayout_2">
@@ -2614,8 +2614,8 @@ userpoints and logbook entries when hovering the cursor over the map</string>
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>586</width>
-             <height>502</height>
+             <width>660</width>
+             <height>828</height>
             </rect>
            </property>
            <layout class="QVBoxLayout" name="verticalLayout_65">
@@ -2884,8 +2884,8 @@ Note that some fonts, especially large fonts, can result in display errors on th
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>572</width>
-             <height>785</height>
+             <width>660</width>
+             <height>828</height>
             </rect>
            </property>
            <layout class="QVBoxLayout" name="verticalLayout_71">
@@ -3307,8 +3307,8 @@ Note that this function is disabled for X-Plane 12 since the 3D flag is unreliab
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>572</width>
-             <height>860</height>
+             <width>660</width>
+             <height>828</height>
             </rect>
            </property>
            <layout class="QVBoxLayout" name="verticalLayout_20">
@@ -4131,8 +4131,8 @@ to avoid a cluttered up airports</string>
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>572</width>
-             <height>535</height>
+             <width>660</width>
+             <height>828</height>
             </rect>
            </property>
            <layout class="QVBoxLayout" name="verticalLayout_35">
@@ -4606,8 +4606,8 @@ Also used in the elevation profile.</string>
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>586</width>
-             <height>502</height>
+             <width>660</width>
+             <height>828</height>
             </rect>
            </property>
            <layout class="QVBoxLayout" name="verticalLayout_57">
@@ -4957,8 +4957,8 @@ Note that this does not affect the stored trail points.</string>
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>572</width>
-             <height>634</height>
+             <width>660</width>
+             <height>828</height>
             </rect>
            </property>
            <layout class="QGridLayout" name="gridLayout_35">
@@ -5585,8 +5585,8 @@ if you hover over the elevation profile.</string>
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>586</width>
-             <height>502</height>
+             <width>660</width>
+             <height>828</height>
             </rect>
            </property>
            <layout class="QVBoxLayout" name="verticalLayout_61">
@@ -5658,8 +5658,8 @@ if you hover over the elevation profile.</string>
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>586</width>
-             <height>502</height>
+             <width>660</width>
+             <height>828</height>
             </rect>
            </property>
            <layout class="QVBoxLayout" name="verticalLayout_62">
@@ -5777,8 +5777,8 @@ if you hover over the elevation profile.</string>
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>572</width>
-             <height>679</height>
+             <width>660</width>
+             <height>828</height>
             </rect>
            </property>
            <layout class="QVBoxLayout" name="verticalLayout_63">
@@ -5903,8 +5903,8 @@ if you hover over the elevation profile.</string>
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>586</width>
-             <height>502</height>
+             <width>660</width>
+             <height>828</height>
             </rect>
            </property>
            <layout class="QGridLayout" name="gridLayout_39">
@@ -6373,8 +6373,8 @@ airspace filename has to match the callsign of the online center.</string>
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>586</width>
-             <height>502</height>
+             <width>660</width>
+             <height>828</height>
             </rect>
            </property>
            <layout class="QVBoxLayout" name="verticalLayout_67">
@@ -6537,8 +6537,8 @@ The buffer radius defines the surrounding from where the maximum elevation is ca
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>586</width>
-             <height>502</height>
+             <width>660</width>
+             <height>828</height>
             </rect>
            </property>
            <layout class="QVBoxLayout" name="verticalLayout_60">
@@ -6679,9 +6679,9 @@ Download the file &lt;b&gt;&lt;i&gt;All Tiles in One .zip (all10g.zip)&lt;/i&gt;
            <property name="geometry">
             <rect>
              <x>0</x>
-             <y>-78</y>
-             <width>581</width>
-             <height>620</height>
+             <y>0</y>
+             <width>660</width>
+             <height>828</height>
             </rect>
            </property>
            <layout class="QVBoxLayout" name="verticalLayout_25">
@@ -7140,8 +7140,8 @@ put the active leg back on top after the given timeout while flying.</string>
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>586</width>
-             <height>502</height>
+             <width>660</width>
+             <height>828</height>
             </rect>
            </property>
            <layout class="QVBoxLayout" name="verticalLayout_26">
@@ -7300,8 +7300,8 @@ Note that this value does not affect flight plan calculation or saving of flight
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>450</width>
-             <height>700</height>
+             <width>660</width>
+             <height>828</height>
             </rect>
            </property>
            <layout class="QVBoxLayout" name="verticalLayout_27">
@@ -7607,8 +7607,8 @@ Note that this value does not affect flight plan calculation or saving of flight
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>245</width>
-             <height>766</height>
+             <width>660</width>
+             <height>828</height>
             </rect>
            </property>
            <layout class="QVBoxLayout" name="verticalLayout_28">
@@ -7973,8 +7973,8 @@ If this field is empty, the default Active Sky weather file path will be used wh
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>389</width>
-             <height>375</height>
+             <width>660</width>
+             <height>828</height>
             </rect>
            </property>
            <layout class="QVBoxLayout" name="verticalLayout_29">
@@ -8281,8 +8281,8 @@ If this field is empty, the default Active Sky weather file path will be used wh
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>543</width>
-             <height>429</height>
+             <width>660</width>
+             <height>828</height>
             </rect>
            </property>
            <layout class="QGridLayout" name="gridLayout_37">
@@ -8581,8 +8581,8 @@ Uncheck if you use such an add-on or see issues like a corruped map display.</st
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>395</width>
-             <height>524</height>
+             <width>660</width>
+             <height>828</height>
             </rect>
            </property>
            <layout class="QGridLayout" name="gridLayout_38">
@@ -8950,8 +8950,8 @@ You have to reload the scenery library so that the changes take effect.</string>
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>366</width>
-             <height>1093</height>
+             <width>646</width>
+             <height>851</height>
             </rect>
            </property>
            <layout class="QVBoxLayout" name="verticalLayout_75">
@@ -9558,8 +9558,10 @@ Entering a wrong value will cause errors when downloading weather reports.</stri
   <tabstop>scrollArea_4</tabstop>
   <tabstop>pushButtonOptionsGuiSelectFont</tabstop>
   <tabstop>pushButtonOptionsGuiResetFont</tabstop>
+  <tabstop>lineEditOptionsGuiFont</tabstop>
   <tabstop>checkBoxOptionsFreetype</tabstop>
   <tabstop>checkBoxOptionsGuiTooltipsAll</tabstop>
+  <tabstop>checkBoxOptionsGuiTooltipsLink</tabstop>
   <tabstop>checkBoxOptionsGuiTooltipsMenu</tabstop>
   <tabstop>checkBoxOptionsGuiToolbarSize</tabstop>
   <tabstop>spinBoxOptionsGuiToolbarSize</tabstop>
@@ -9580,19 +9582,31 @@ Entering a wrong value will cause errors when downloading weather reports.</stri
   <tabstop>checkBoxOptionsUnitFuelOther</tabstop>
   <tabstop>comboBoxOptionsUnitCoords</tabstop>
   <tabstop>checkBoxOptionsUnitTrueCourse</tabstop>
+  <tabstop>checkBoxOptionsUnitEnhancedAccuracy</tabstop>
   <tabstop>scrollArea_18</tabstop>
   <tabstop>checkBoxOptionsGuiCenterRoute</tabstop>
   <tabstop>checkBoxOptionsGuiAvoidOverwrite</tabstop>
   <tabstop>lineEditOptionsRouteFilename</tabstop>
+  <tabstop>pushButtonOptionsRouteFilenameShort</tabstop>
+  <tabstop>pushButtonOptionsRouteFilenameLong</tabstop>
+  <tabstop>pushButtonOptionsRouteFilenameFull</tabstop>
   <tabstop>checkBoxOptionsGuiCenterKml</tabstop>
-  <tabstop>checkBoxOptionsMapEmptyAirports</tabstop>
-  <tabstop>checkBoxOptionsMapEmptyAirports3D</tabstop>
-  <tabstop>spinBoxOptionsDisplaySunShadeDarkness</tabstop>
-  <tabstop>spinBoxOptionsGuiThemeMapDimming</tabstop>
+  <tabstop>scrollArea_5</tabstop>
+  <tabstop>radioButtonOptionsMapNavDragMove</tabstop>
+  <tabstop>radioButtonOptionsMapNavClickCenter</tabstop>
+  <tabstop>radioButtonOptionsMapNavTouchscreen</tabstop>
+  <tabstop>spinBoxOptionsMapNavTouchArea</tabstop>
+  <tabstop>doubleSpinBoxOptionsMapZoomShowMap</tabstop>
+  <tabstop>doubleSpinBoxOptionsMapZoomShowMapMenu</tabstop>
+  <tabstop>checkBoxOptionsMapZoomAvoidBlurred</tabstop>
+  <tabstop>comboBoxMapScrollZoomDetails</tabstop>
+  <tabstop>checkBoxOptionsGuiWheel</tabstop>
   <tabstop>scrollArea_20</tabstop>
   <tabstop>spinBoxOptionsMapTooltipRect</tabstop>
   <tabstop>spinBoxOptionsMapClickRect</tabstop>
   <tabstop>checkBoxOptionsMapTooltipVerbose</tabstop>
+  <tabstop>checkBoxOptionsMapTooltipDistBrgFlightplan</tabstop>
+  <tabstop>checkBoxOptionsMapTooltipDistBrgUser</tabstop>
   <tabstop>checkBoxOptionsMapTooltipUserAircraft</tabstop>
   <tabstop>checkBoxOptionsMapTooltipTrail</tabstop>
   <tabstop>checkBoxOptionsMapTooltipAiAircraft</tabstop>
@@ -9608,32 +9622,55 @@ Entering a wrong value will cause errors when downloading weather reports.</stri
   <tabstop>checkBoxOptionsMapClickAirspace</tabstop>
   <tabstop>checkBoxOptionsMapClickAirportProcs</tabstop>
   <tabstop>checkBoxOptionsMapClickFlightplan</tabstop>
-  <tabstop>scrollArea_5</tabstop>
-  <tabstop>radioButtonOptionsMapNavDragMove</tabstop>
-  <tabstop>radioButtonOptionsMapNavClickCenter</tabstop>
-  <tabstop>radioButtonOptionsMapNavTouchscreen</tabstop>
-  <tabstop>spinBoxOptionsMapNavTouchArea</tabstop>
-  <tabstop>doubleSpinBoxOptionsMapZoomShowMap</tabstop>
-  <tabstop>doubleSpinBoxOptionsMapZoomShowMapMenu</tabstop>
-  <tabstop>checkBoxOptionsMapZoomAvoidBlurred</tabstop>
-  <tabstop>comboBoxMapScrollZoomDetails</tabstop>
-  <tabstop>checkBoxOptionsGuiWheel</tabstop>
-  <tabstop>scrollAreaMapDisplay</tabstop>
+  <tabstop>scrollArea_25</tabstop>
   <tabstop>pushButtonOptionsDisplaySelectFont</tabstop>
   <tabstop>pushButtonOptionsDisplayResetFont</tabstop>
+  <tabstop>lineEditOptionsDisplayFont</tabstop>
   <tabstop>spinBoxOptionsDisplayScaleAll</tabstop>
+  <tabstop>spinBoxOptionsDisplaySunShadeDarkness</tabstop>
+  <tabstop>spinBoxOptionsGuiThemeMapDimming</tabstop>
+  <tabstop>scrollArea_27</tabstop>
+  <tabstop>spinBoxOptionsDisplaySymbolSizeAirport</tabstop>
+  <tabstop>spinBoxOptionsDisplayTextSizeAirport</tabstop>
+  <tabstop>checkBoxOptionsMapAirportText</tabstop>
+  <tabstop>checkBoxOptionsMapAirportAddon</tabstop>
+  <tabstop>spinBoxOptionsDisplayTextSizeAirportRunway</tabstop>
+  <tabstop>checkBoxOptionsMapAirportTextRunway</tabstop>
+  <tabstop>spinBoxOptionsDisplayTextSizeAirportTaxiway</tabstop>
+  <tabstop>checkBoxOptionsMapAirportTextTaxiway</tabstop>
+  <tabstop>treeWidgetOptionsDisplayTextOptionsAirport</tabstop>
+  <tabstop>checkBoxOptionsMapEmptyAirports</tabstop>
+  <tabstop>checkBoxOptionsMapEmptyAirports3D</tabstop>
+  <tabstop>scrollAreaMapDisplay</tabstop>
   <tabstop>spinBoxOptionsDisplaySymbolSizeNavaid</tabstop>
   <tabstop>spinBoxOptionsDisplayTextSizeNavaid</tabstop>
   <tabstop>checkBoxOptionsMapNavaidText</tabstop>
+  <tabstop>checkBoxOptionsMapNavaidFill</tabstop>
   <tabstop>spinBoxOptionsDisplayThicknessAirway</tabstop>
   <tabstop>spinBoxOptionsDisplayTextSizeAirway</tabstop>
   <tabstop>checkBoxOptionsMapAirwayText</tabstop>
   <tabstop>spinBoxOptionsDisplayThicknessAirspace</tabstop>
   <tabstop>spinBoxOptionsDisplayTextSizeAirspace</tabstop>
   <tabstop>spinBoxOptionsDisplayTransparencyAirspace</tabstop>
+  <tabstop>checkBoxOptionsMapAirspaceText</tabstop>
   <tabstop>checkBoxOptionsMapAirspaceNoMultZ</tabstop>
+  <tabstop>spinBoxOptionsDisplayThicknessMora</tabstop>
+  <tabstop>spinBoxOptionsDisplayTextSizeMora</tabstop>
+  <tabstop>spinBoxOptionsDisplayTransparencyMora</tabstop>
+  <tabstop>spinBoxOptionsDisplaySymbolSizeAirportWeather</tabstop>
+  <tabstop>spinBoxOptionsDisplaySymbolSizeWindBarbs</tabstop>
+  <tabstop>spinBoxOptionsDisplaySymbolSizeAircraftUser</tabstop>
+  <tabstop>spinBoxOptionsDisplayTextSizeAircraftUser</tabstop>
+  <tabstop>checkBoxOptionsMapUserAircraftText</tabstop>
+  <tabstop>spinBoxOptionsDisplaySymbolSizeAircraftAi</tabstop>
+  <tabstop>spinBoxOptionsDisplayTextSizeAircraftAi</tabstop>
+  <tabstop>checkBoxOptionsMapAiAircraftText</tabstop>
+  <tabstop>checkBoxOptionsMapAiAircraftHideGround</tabstop>
   <tabstop>scrollArea_17</tabstop>
   <tabstop>spinBoxOptionsDisplayThicknessFlightplan</tabstop>
+  <tabstop>spinBoxOptionsDisplaySymbolSizeFlightplan</tabstop>
+  <tabstop>spinBoxOptionsDisplayTextSizeFlightplan</tabstop>
+  <tabstop>checkBoxOptionsMapFlightplanText</tabstop>
   <tabstop>spinBoxOptionsDisplayThicknessFlightplanProfile</tabstop>
   <tabstop>spinBoxOptionsDisplayTextSizeFlightplanProfile</tabstop>
   <tabstop>pushButtonOptionsDisplayFlightplanColor</tabstop>
@@ -9652,20 +9689,36 @@ Entering a wrong value will cause errors when downloading weather reports.</stri
   <tabstop>checkBoxOptionsDisplayTrailGradient</tabstop>
   <tabstop>comboBoxOptionsDisplayTrailGradient</tabstop>
   <tabstop>spinBoxSimMaxTrailPoints</tabstop>
+  <tabstop>spinBoxSimSaveTrackMinutes</tabstop>
   <tabstop>scrollArea_6</tabstop>
   <tabstop>spinBoxOptionsDisplayThicknessUserFeature</tabstop>
   <tabstop>spinBoxOptionsDisplayTextSizeUserFeature</tabstop>
+  <tabstop>spinBoxOptionsDisplayThicknessMeasurement</tabstop>
+  <tabstop>spinBoxOptionsDisplayTextSizeMeasurement</tabstop>
+  <tabstop>spinBoxOptionsDisplayTransparencyAirportMsa</tabstop>
+  <tabstop>spinBoxOptionsDisplayTextSizeAirportMsa</tabstop>
   <tabstop>spinBoxOptionsDisplaySymbolSizeUserpoint</tabstop>
   <tabstop>spinBoxOptionsDisplayTextSizeUserpoint</tabstop>
   <tabstop>checkBoxOptionsMapUserpointText</tabstop>
   <tabstop>spinBoxOptionsDisplayThicknessCompassRose</tabstop>
   <tabstop>spinBoxOptionsDisplayTextSizeCompassRose</tabstop>
+  <tabstop>spinBoxOptionsDisplaySymbolSizeHighlight</tabstop>
+  <tabstop>spinBoxOptionsMapHighlightTransparent</tabstop>
+  <tabstop>checkBoxOptionsMapHighlightTransparent</tabstop>
+  <tabstop>pushButtonOptionsMapHighlightFlightPlanColor</tabstop>
+  <tabstop>pushButtonOptionsMapHighlightSearchColor</tabstop>
+  <tabstop>pushButtonOptionsMapHighlightProfileColor</tabstop>
+  <tabstop>scrollArea_22</tabstop>
   <tabstop>treeWidgetOptionsDisplayTextOptions</tabstop>
+  <tabstop>scrollArea_23</tabstop>
+  <tabstop>lineEditCacheMapThemeDir</tabstop>
+  <tabstop>pushButtonCacheMapThemeDir</tabstop>
+  <tabstop>scrollArea_24</tabstop>
   <tabstop>tableWidgetOptionsMapKeys</tabstop>
   <tabstop>pushButtonOptionsMapboxUser</tabstop>
   <tabstop>scrollArea_7</tabstop>
-  <tabstop>checkBoxDisplayOnlineFileLookup</tabstop>
   <tabstop>checkBoxDisplayOnlineNameLookup</tabstop>
+  <tabstop>checkBoxDisplayOnlineFileLookup</tabstop>
   <tabstop>spinBoxDisplayOnlineObserver</tabstop>
   <tabstop>checkBoxDisplayOnlineObserverRange</tabstop>
   <tabstop>spinBoxDisplayOnlineFir</tabstop>
@@ -9682,6 +9735,16 @@ Entering a wrong value will cause errors when downloading weather reports.</stri
   <tabstop>checkBoxDisplayOnlineAreaRange</tabstop>
   <tabstop>spinBoxDisplayOnlineDeparture</tabstop>
   <tabstop>checkBoxDisplayOnlineDepartureRange</tabstop>
+  <tabstop>scrollArea_26</tabstop>
+  <tabstop>pushButtonOptionsProfileSelectFont</tabstop>
+  <tabstop>pushButtonOptionsProfileResetFont</tabstop>
+  <tabstop>lineEditOptionsProfileFont</tabstop>
+  <tabstop>doubleSpinBoxOptionsProfileBuffer</tabstop>
+  <tabstop>scrollArea_21</tabstop>
+  <tabstop>radioButtonCacheUseOnlineElevation</tabstop>
+  <tabstop>radioButtonCacheUseOffineElevation</tabstop>
+  <tabstop>lineEditCacheOfflineDataPath</tabstop>
+  <tabstop>pushButtonCacheOfflineDataSelect</tabstop>
   <tabstop>scrollArea_9</tabstop>
   <tabstop>radioButtonOptionsSimUpdateLow</tabstop>
   <tabstop>radioButtonOptionsSimUpdateMedium</tabstop>
@@ -9696,6 +9759,9 @@ Entering a wrong value will cause errors when downloading weather reports.</stri
   <tabstop>spinBoxOptionsSimZoomOnTakeoff</tabstop>
   <tabstop>checkBoxOptionsSimZoomOnLanding</tabstop>
   <tabstop>doubleSpinBoxOptionsSimZoomOnLanding</tabstop>
+  <tabstop>checkBoxOptionsGuiAddDeparture</tabstop>
+  <tabstop>checkBoxOptionsSimHighlightActiveTable</tabstop>
+  <tabstop>checkBoxOptionsSimClearSelection</tabstop>
   <tabstop>checkBoxOptionsSimCenterLegTable</tabstop>
   <tabstop>spinBoxOptionsSimCleanupTableTime</tabstop>
   <tabstop>scrollArea_10</tabstop>
@@ -9708,11 +9774,15 @@ Entering a wrong value will cause errors when downloading weather reports.</stri
   <tabstop>checkBoxOptionsWeatherInfoNoaa</tabstop>
   <tabstop>checkBoxOptionsWeatherInfoVatsim</tabstop>
   <tabstop>checkBoxOptionsWeatherInfoIvao</tabstop>
+  <tabstop>checkBoxOptionsWeatherInfoNearest</tabstop>
+  <tabstop>checkBoxOptionsWeatherInfoInterpolated</tabstop>
   <tabstop>checkBoxOptionsWeatherTooltipFs</tabstop>
   <tabstop>checkBoxOptionsWeatherTooltipAsn</tabstop>
   <tabstop>checkBoxOptionsWeatherTooltipNoaa</tabstop>
   <tabstop>checkBoxOptionsWeatherTooltipVatsim</tabstop>
   <tabstop>checkBoxOptionsWeatherTooltipIvao</tabstop>
+  <tabstop>checkBoxOptionsWeatherTooltipNearest</tabstop>
+  <tabstop>checkBoxOptionsWeatherTooltipInterpolated</tabstop>
   <tabstop>scrollArea_12</tabstop>
   <tabstop>lineEditOptionsWeatherXplanePath</tabstop>
   <tabstop>pushButtonOptionsWeatherXplanePathSelect</tabstop>
@@ -9742,18 +9812,9 @@ Entering a wrong value will cause errors when downloading weather reports.</stri
   <tabstop>spinBoxOptionsWebPort</tabstop>
   <tabstop>checkBoxOptionsWebEncrypted</tabstop>
   <tabstop>pushButtonOptionsWebStart</tabstop>
+  <tabstop>pushButtonOptionsWebQrCode</tabstop>
   <tabstop>spinBoxOptionsDisplayScaleAllWeb</tabstop>
   <tabstop>checkBoxOptionsWebScale</tabstop>
-  <tabstop>spinBoxOptionsCacheMemoryMap</tabstop>
-  <tabstop>pushButtonOptionsCacheClearMemory</tabstop>
-  <tabstop>spinBoxOptionsCacheDiskMap</tabstop>
-  <tabstop>pushButtonOptionsCacheShow</tabstop>
-  <tabstop>lineEditCacheMapThemeDir</tabstop>
-  <tabstop>pushButtonCacheMapThemeDir</tabstop>
-  <tabstop>radioButtonCacheUseOnlineElevation</tabstop>
-  <tabstop>radioButtonCacheUseOffineElevation</tabstop>
-  <tabstop>lineEditCacheOfflineDataPath</tabstop>
-  <tabstop>pushButtonCacheOfflineDataSelect</tabstop>
   <tabstop>scrollArea_16</tabstop>
   <tabstop>tableWidgetOptionsDatabaseInclude</tabstop>
   <tabstop>pushButtonOptionsDatabaseAddIncludeDir</tabstop>
@@ -9765,8 +9826,26 @@ Entering a wrong value will cause errors when downloading weather reports.</stri
   <tabstop>tableWidgetOptionsDatabaseExcludeAddon</tabstop>
   <tabstop>pushButtonOptionsDatabaseAddAddon</tabstop>
   <tabstop>pushButtonOptionsDatabaseRemoveAddon</tabstop>
-  <tabstop>checkBoxOptionsMapTooltipDistBrgFlightplan</tabstop>
-  <tabstop>checkBoxOptionsMapTooltipDistBrgUser</tabstop>
+  <tabstop>scrollArea_28</tabstop>
+  <tabstop>spinBoxOptionsCacheMemoryMap</tabstop>
+  <tabstop>pushButtonOptionsCacheClearMemory</tabstop>
+  <tabstop>spinBoxOptionsCacheDiskMap</tabstop>
+  <tabstop>pushButtonOptionsCacheShow</tabstop>
+  <tabstop>spinBoxOptionsCacheMemoryProfile</tabstop>
+  <tabstop>pushButtonOptionsCacheClearProfile</tabstop>
+  <tabstop>lineEditOptionsWeatherNoaaStationsUrl</tabstop>
+  <tabstop>pushButtonOptionsWeatherNoaaTest</tabstop>
+  <tabstop>pushButtonOptionsWeatherNoaaReset</tabstop>
+  <tabstop>lineEditOptionsWeatherNoaaWindUrl</tabstop>
+  <tabstop>pushButtonOptionsWeatherNoaaWindTest</tabstop>
+  <tabstop>pushButtonOptionsWeatherNoaaWindReset</tabstop>
+  <tabstop>lineEditOptionsWeatherVatsimUrl</tabstop>
+  <tabstop>pushButtonOptionsWeatherVatsimTest</tabstop>
+  <tabstop>pushButtonOptionsWeatherVatsimReset</tabstop>
+  <tabstop>lineEditOptionsWeatherIvaoUrl</tabstop>
+  <tabstop>pushButtonOptionsWeatherIvaoTest</tabstop>
+  <tabstop>pushButtonOptionsWeatherIvaoReset</tabstop>
+  <tabstop>lineEditOptionsUserAgent</tabstop>
  </tabstops>
  <resources>
   <include location="../../littlenavmap.qrc"/>

@@ -175,7 +175,9 @@ MainWindow::MainWindow()
   {
     // Have to handle exceptions here since no message handler is active yet and no atools::Application method can catch it
 
+    qDebug() << Q_FUNC_INFO << "before setupUi()";
     ui->setupUi(this);
+    qDebug() << Q_FUNC_INFO << "after setupUi()";
 
     // All tabbars =======================================================================
     tabbarsToResize.append({ui->tabWidgetSearch, ui->tabWidgetRoute, ui->tabWidgetInformation, ui->tabWidgetAirport,
@@ -614,8 +616,9 @@ MainWindow::MainWindow()
 
 MainWindow::~MainWindow()
 {
-  qDebug() << Q_FUNC_INFO;
+  qDebug() << Q_FUNC_INFO << "Enter";
   delete ui;
+  qDebug() << Q_FUNC_INFO << "Exit";
 }
 
 void MainWindow::deInit()
@@ -641,6 +644,8 @@ void MainWindow::deInit()
     // Free all queries
     qDebug() << Q_FUNC_INFO << "QueryManager::instance()->shutdown()";
     QueryManager::instance()->shutdown();
+
+    hide();
 
     ATOOLS_DELETE_LOG(routeStringDialog);
     ATOOLS_DELETE_LOG(routeController);
