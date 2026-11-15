@@ -172,7 +172,7 @@ private:
 
   /* Show message from status.txt */
   void showMessageDialog();
-  QString uncompress(const QByteArray& data, const QString& func, bool utf8);
+  QString uncompressData(const QByteArray& data, const QString& func, bool utf8);
   void startDownloader();
 
   /* Tries to fetch geometry for atc centers from the user geometry database from cache */

@@ -275,7 +275,7 @@ atools::sql::SqlDatabase *OnlinedataController::getDatabase()
   return manager->getDatabase();
 }
 
-QString OnlinedataController::uncompress(const QByteArray& data, const QString& func, bool utf8)
+QString OnlinedataController::uncompressData(const QByteArray& data, const QString& func, bool utf8)
 {
   QByteArray textData = atools::zip::gzipDecompressIf(data, func);
 
@@ -300,7 +300,7 @@ void OnlinedataController::downloadFinished(const QByteArray& data, QString url)
     if(verbose)
       qDebug() << Q_FUNC_INFO << "DOWNLOADING_STATUS";
 
-    QString statusTxt = uncompress(data, Q_FUNC_INFO, false /* utf8 */);
+    QString statusTxt = uncompressData(data, Q_FUNC_INFO, false /* utf8 */);
 
 #ifdef DEBUG_INFORMATION_ONLINE
     atools::strToFile(QDir::tempPath() + "/lnm_status.txt", statusTxt);
@@ -345,7 +345,7 @@ void OnlinedataController::downloadFinished(const QByteArray& data, QString url)
     if(verbose)
       qDebug() << Q_FUNC_INFO << "DOWNLOADING_TRANSCEIVERS";
 
-    QString tranceiversTxt = uncompress(data, Q_FUNC_INFO, true /* utf8 */);
+    QString tranceiversTxt = uncompressData(data, Q_FUNC_INFO, true /* utf8 */);
 
 #ifdef DEBUG_INFORMATION_ONLINE
     atools::strToFile(QDir::tempPath() + "/lnm_tranceivers.json", tranceiversTxt);
@@ -371,7 +371,7 @@ void OnlinedataController::downloadFinished(const QByteArray& data, QString url)
     bool vatsimJson = format == atools::fs::online::VATSIM_JSON3;
     bool ivaoJson = format == atools::fs::online::IVAO_JSON2;
 
-    QString whazzupTxt = uncompress(data, Q_FUNC_INFO, ivaoJson || vatsimJson /* utf8 */);
+    QString whazzupTxt = uncompressData(data, Q_FUNC_INFO, ivaoJson || vatsimJson /* utf8 */);
 
 #ifdef DEBUG_INFORMATION_ONLINE
     atools::strToFile(QDir::tempPath() + "/lnm_whazzup." + (ivaoJson || vatsimJson ? "json" : "txt"), whazzupTxt);
@@ -421,7 +421,7 @@ void OnlinedataController::downloadFinished(const QByteArray& data, QString url)
     if(verbose)
       qDebug() << Q_FUNC_INFO << "DOWNLOADING_WHAZZUP_SERVERS";
 
-    QString serversTxt = uncompress(data, Q_FUNC_INFO, false /* utf8 */);
+    QString serversTxt = uncompressData(data, Q_FUNC_INFO, false /* utf8 */);
     atools::fs::online::Format format = convertFormat(OptionData::instance().getOnlineFormat());
 
 #ifdef DEBUG_INFORMATION_ONLINE
