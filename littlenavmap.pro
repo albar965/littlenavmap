@@ -182,10 +182,7 @@ win32 {
       LIBS += $$SIMCONNECT_PATH_WIN64_MSFS_2024"\lib\SimConnect.lib"
     }
     OPENSSL_PATH_WIN=$$(OPENSSL_PATH_WIN64)
-}
-
-  WINDEPLOY_FLAGS = --compiler-runtime
-  CONFIG(debug, debug|release) : WINDEPLOY_FLAGS += --debug
+  }
 
   DEFINES += _USE_MATH_DEFINES
 
@@ -1073,16 +1070,30 @@ win32 {
   deploy.commands += xcopy /F $$p($$[QT_INSTALL_BINS]/libgcc*.dll) $$p($$DEPLOY_BASE/$$WIN_TARGET_NAME) &&
   deploy.commands += xcopy /F $$p($$[QT_INSTALL_BINS]/libstdc*.dll) $$p($$DEPLOY_BASE/$$WIN_TARGET_NAME) &&
   deploy.commands += xcopy /F $$p($$[QT_INSTALL_BINS]/libwinpthread*.dll) $$p($$DEPLOY_BASE/$$WIN_TARGET_NAME) &&
-  deploy.commands += xcopy /F $$p($$OPENSSL_PATH_WIN\libcrypto*.dll) $$p($$DEPLOY_BASE/$$WIN_TARGET_NAME) &&
-  deploy.commands += xcopy /F $$p($$OPENSSL_PATH_WIN\libssl*.dll) $$p($$DEPLOY_BASE/$$WIN_TARGET_NAME) &&
+  deploy.commands += xcopy /F $$p($$OPENSSL_PATH_WIN/libcrypto*.dll) $$p($$DEPLOY_BASE/$$WIN_TARGET_NAME) &&
+  deploy.commands += xcopy /F $$p($$OPENSSL_PATH_WIN/libssl*.dll) $$p($$DEPLOY_BASE/$$WIN_TARGET_NAME) &&
+  deploy.commands += xcopy /F $$p($$[QT_INSTALL_BINS]/Qt6Core.dll) $$p($$DEPLOY_BASE/$$WIN_TARGET_NAME) &&
+  deploy.commands += xcopy /F $$p($$[QT_INSTALL_BINS]/Qt6Core5Compat.dll) $$p($$DEPLOY_BASE/$$WIN_TARGET_NAME) &&
+  deploy.commands += xcopy /F $$p($$[QT_INSTALL_BINS]/Qt6Widgets.dll) $$p($$DEPLOY_BASE/$$WIN_TARGET_NAME) &&
+  deploy.commands += xcopy /F $$p($$[QT_INSTALL_BINS]/Qt6Gui.dll) $$p($$DEPLOY_BASE/$$WIN_TARGET_NAME) &&
   deploy.commands += xcopy /F $$p($$[QT_INSTALL_BINS]/Qt6Network.dll) $$p($$DEPLOY_BASE/$$WIN_TARGET_NAME) &&
   deploy.commands += xcopy /F $$p($$[QT_INSTALL_BINS]/Qt6PrintSupport.dll) $$p($$DEPLOY_BASE/$$WIN_TARGET_NAME) &&
   deploy.commands += xcopy /F $$p($$[QT_INSTALL_BINS]/Qt6Sql.dll) $$p($$DEPLOY_BASE/$$WIN_TARGET_NAME) &&
-  deploy.commands += xcopy /F $$p($$[QT_INSTALL_BINS]/Qt6OpenGL.dll) $$p($$DEPLOY_BASE/$$WIN_TARGET_NAME) &&
   deploy.commands += xcopy /F $$p($$[QT_INSTALL_BINS]/Qt6Xml.dll) $$p($$DEPLOY_BASE/$$WIN_TARGET_NAME) &&
-  deploy.commands += $$p($$[QT_INSTALL_BINS]/windeployqt) $$WINDEPLOY_FLAGS $$p($$DEPLOY_BASE/$$WIN_TARGET_NAME) &&
-  deploy.commands += del /f /q $$p($$DEPLOY_BASE/$$WIN_TARGET_NAME/sqldrivers/qsqlpsql.dll) &&
-  deploy.commands += del /f /q $$p($$DEPLOY_BASE/$$WIN_TARGET_NAME/sqldrivers/qsqlodbc.dll)
+  deploy.commands += xcopy /F $$p($$[QT_INSTALL_BINS]/Qt6Svg.dll) $$p($$DEPLOY_BASE/$$WIN_TARGET_NAME) &&
+  deploy.commands += mkdir $$p($$DEPLOY_BASE/$$WIN_TARGET_NAME/iconengines) &&
+  deploy.commands += xcopy /F $$p($$[QT_INSTALL_PLUGINS]/iconengines/qsvgicon.dll) $$p($$DEPLOY_BASE/$$WIN_TARGET_NAME/iconengines) &&
+  deploy.commands += mkdir $$p($$DEPLOY_BASE/$$WIN_TARGET_NAME/imageformats) &&
+  deploy.commands += xcopy /F $$p($$[QT_INSTALL_PLUGINS]/imageformats/qgif.dll) $$p($$DEPLOY_BASE/$$WIN_TARGET_NAME/imageformats) &&
+  deploy.commands += xcopy /F $$p($$[QT_INSTALL_PLUGINS]/imageformats/qico.dll) $$p($$DEPLOY_BASE/$$WIN_TARGET_NAME/imageformats) &&
+  deploy.commands += xcopy /F $$p($$[QT_INSTALL_PLUGINS]/imageformats/qjpeg.dll) $$p($$DEPLOY_BASE/$$WIN_TARGET_NAME/imageformats) &&
+  deploy.commands += xcopy /F $$p($$[QT_INSTALL_PLUGINS]/imageformats/qsvg.dll) $$p($$DEPLOY_BASE/$$WIN_TARGET_NAME/imageformats) &&
+  deploy.commands += mkdir $$p($$DEPLOY_BASE/$$WIN_TARGET_NAME/platforms) &&
+  deploy.commands += xcopy /F $$p($$[QT_INSTALL_PLUGINS]/platforms/qwindows.dll) $$p($$DEPLOY_BASE/$$WIN_TARGET_NAME/platforms) &&
+  deploy.commands += mkdir $$p($$DEPLOY_BASE/$$WIN_TARGET_NAME/sqldrivers) &&
+  deploy.commands += xcopy /F $$p($$[QT_INSTALL_PLUGINS]/sqldrivers/qsqlite.dll) $$p($$DEPLOY_BASE/$$WIN_TARGET_NAME/sqldrivers) &&
+  deploy.commands += mkdir $$p($$DEPLOY_BASE/$$WIN_TARGET_NAME/tls) &&
+  deploy.commands += xcopy /F $$p($$[QT_INSTALL_PLUGINS]/tls/qopensslbackend.dll) $$p($$DEPLOY_BASE/$$WIN_TARGET_NAME/tls)
 }
 
 # =====================================================================
@@ -1109,5 +1120,3 @@ QMAKE_EXTRA_TARGETS += deploy copydata all
   }
 }
 
-DISTFILES += \
-  resources/icons/mapedit.svg

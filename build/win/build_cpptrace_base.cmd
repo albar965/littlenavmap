@@ -17,7 +17,7 @@ pushd "%BUILDDIR%"
 IF ERRORLEVEL 1 goto :err
 
 rem  -DCPPTRACE_UNWIND_WITH_WINAPI=On -DCPPTRACE_GET_SYMBOLS_WITH_LIBDWARF=On -DCPPTRACE_DEMANGLE_WITH_CXXABI=On
-C:\Qt\Tools\CMake_64\bin\cmake -Wno-dev -G "MinGW Makefiles" -DCMAKE_BUILD_TYPE=%BUILDTYPE% -DCMAKE_INSTALL_PREFIX=%DEPLOYDIR% ..\cpptrace
+C:\Qt\Tools\CMake_64\bin\cmake -Wno-dev -G "Ninja" -DCMAKE_BUILD_TYPE=%BUILDTYPE% -DCMAKE_INSTALL_PREFIX=%DEPLOYDIR% ..\cpptrace
 IF ERRORLEVEL 1 goto :err
 
 C:\Qt\Tools\CMake_64\bin\cmake --build %BUILDDIR% --target clean
