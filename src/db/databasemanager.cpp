@@ -396,25 +396,27 @@ bool DatabaseManager::checkIncompatibleDatabases(bool *databasesErased)
 
 void DatabaseManager::checkCopyAndPrepareDatabases()
 {
-  QString appDb = buildDatabaseFileNameAppDir(FsPaths::NAVIGRAPH);
-  QString settingsDb = buildDatabaseFileName(FsPaths::NAVIGRAPH);
-  bool hasApp = false, hasSettings = false, settingsNeedsPreparation = false;
-
   QDateTime appLastLoad = QDateTime::fromMSecsSinceEpoch(0), settingsLastLoad = QDateTime::fromMSecsSinceEpoch(0);
   QString appCycle, settingsCycle;
   QString appSource, settingsSource;
 
+  // Database in installation/application folder =============================
+  QString appDb = buildDatabaseFileNameAppDir(FsPaths::NAVIGRAPH);
+  bool hasAppMeta = false;
+
   // Open databases and get loading timestamp from metadata
   if(QFile::exists(appDb))
   {
-    // Database in application directory
     const DatabaseMeta appMeta = databaseMetadataFromFile(appDb);
     appLastLoad = appMeta.getLastLoadTime();
     appCycle = appMeta.getAiracCycle();
     appSource = appMeta.getDataSource();
-    hasApp = true;
+    hasAppMeta = true;
   }
 
+  // Database in settings folder =============================
+  QString settingsDb = buildDatabaseFileName(FsPaths::NAVIGRAPH);
+  bool hasSettingsMeta = false, settingsNeedsPreparation = false;
   if(QFile::exists(settingsDb))
   {
     // Database in settings directory
@@ -423,94 +425,70 @@ void DatabaseManager::checkCopyAndPrepareDatabases()
     settingsCycle = settingsMeta.getAiracCycle();
     settingsSource = settingsMeta.getDataSource();
     settingsNeedsPreparation = settingsMeta.hasScript();
-    hasSettings = true;
+    hasSettingsMeta = true;
   }
+
   int appCycleNum = appCycle.toInt();
   int settingsCycleNum = settingsCycle.toInt();
 
   qInfo() << Q_FUNC_INFO << "settings database" << settingsDb << settingsLastLoad << settingsCycle;
   qInfo() << Q_FUNC_INFO << "app database" << appDb << appLastLoad << appCycle;
-  qInfo() << Q_FUNC_INFO << "hasApp" << hasApp << "hasSettings" << hasSettings << "settingsNeedsPreparation" << settingsNeedsPreparation;
+  qInfo() << Q_FUNC_INFO << "hasApp" << hasAppMeta << "hasDatabaseMeta" << hasSettingsMeta
+          << "settingsNeedsPreparation" << settingsNeedsPreparation;
 
-  if(hasApp)
+  if(hasAppMeta)
   {
-    int result = QMessageBox::Yes;
-
     // Compare cycles first and then compilation time
     if(appCycleNum > settingsCycleNum || (appCycleNum == settingsCycleNum && appLastLoad > settingsLastLoad))
     {
-      if(hasSettings)
+      // We have a database in the application folder and it is newer than the one in the settings folder
+      SimpleWaitDialog *simpleWaitDialog = new SimpleWaitDialog(parentWidget, tr("Preparing %1 Database ...").
+                                                                arg(FsPaths::typeToDisplayName(FsPaths::NAVIGRAPH)));
+
+      bool resultRemove = true, resultCopy = false;
+      // Remove target
+      if(hasSettingsMeta)
       {
-        result = dialog->showQuestionMsgBox(
-          lnm::ACTIONS_SHOW_OVERWRITE_DATABASE,
-          tr("Your current navdata is older than the navdata included in the Little Navmap download archive.<br/><br/>"
-             "Overwrite the current navdata file with the new one?"
-             "<hr/>Current file to overwrite:<br/><br/>"
-             "<i>%1<br/><br/>"
-             "%2, cycle %3, compiled on %4</i>"
-             "<hr/>New file:<br/><br/>"
-             "<i>%5<br/><br/>"
-             "%6, cycle %7, compiled on %8</i><hr/><br/>"
-             ).
-          arg(settingsDb, settingsSource, settingsCycle, QLocale().toString(settingsLastLoad, QLocale::ShortFormat), appDb, appSource,
-              appCycle, QLocale().toString(appLastLoad, QLocale::ShortFormat)),
-          tr("Do not &show this dialog again and skip copying."),
-          QMessageBox::Yes | QMessageBox::No, QMessageBox::No, QMessageBox::No);
+        resultRemove = QFile(settingsDb).remove();
+        qDebug() << Q_FUNC_INFO << "removed" << settingsDb << resultRemove;
       }
 
-      if(result == QMessageBox::Yes)
+      // Copy to target
+      if(resultRemove)
       {
-        // We have a database in the application folder and it is newer than the one in the settings folder
-        SimpleWaitDialog *simpleWaitDialog = new SimpleWaitDialog(parentWidget, tr("Preparing %1 Database ...").
-                                                                  arg(FsPaths::typeToDisplayName(FsPaths::NAVIGRAPH)));
-
-        bool resultRemove = true, resultCopy = false;
-        // Remove target
-        if(hasSettings)
-        {
-          resultRemove = QFile(settingsDb).remove();
-          qDebug() << Q_FUNC_INFO << "removed" << settingsDb << resultRemove;
-        }
-
-        // Copy to target
-        if(resultRemove)
-        {
-          simpleWaitDialog->setLabelText(tr("Preparing %1 Database: Copying file ...").
-                                         arg(FsPaths::typeToDisplayName(FsPaths::NAVIGRAPH)));
-          resultCopy = QFile(appDb).copy(settingsDb);
-          qDebug() << Q_FUNC_INFO << "copied" << appDb << "to" << settingsDb << resultCopy;
-        }
-
-        // Create indexes and delete script afterwards
-        if(resultRemove && resultCopy)
-        {
-          SqlDatabase tempDb(dbtools::DATABASE_NAME_TEMP);
-          dbtools::openDatabaseFile(&tempDb, settingsDb, false /* readonly */, true /* createSchema */);
-          simpleWaitDialog->setLabelText(tr("Preparing %1 Database: Creating indexes ...").
-                                         arg(FsPaths::typeToDisplayName(FsPaths::NAVIGRAPH)));
-          NavDatabase::runPreparationScript(tempDb);
-
-          simpleWaitDialog->setLabelText(tr("Preparing %1 Database: Analyzing ...").arg(FsPaths::typeToDisplayName(FsPaths::NAVIGRAPH)));
-          tempDb.analyze();
-          dbtools::closeDatabaseFile(&tempDb);
-          settingsNeedsPreparation = false;
-        }
-        delete simpleWaitDialog;
-
-        if(!resultRemove)
-          Dialog::warning(parentWidget,
-                          tr("Deleting of database<br/><br/>\"%1\"<br/><br/>failed.<br/><br/>"
-                             "Remove the database file manually and restart the program.").arg(settingsDb));
-
-        if(!resultCopy)
-          Dialog::warning(parentWidget,
-                          tr("Cannot copy database<br/><br/>\"%1\"<br/><br/>to<br/><br/>"
-                             "\"%2\"<br/><br/>.").arg(appDb, settingsDb));
+        simpleWaitDialog->setLabelText(tr("Preparing %1 Database: Copying file ...").
+                                       arg(FsPaths::typeToDisplayName(FsPaths::NAVIGRAPH)));
+        resultCopy = QFile(appDb).copy(settingsDb);
+        qDebug() << Q_FUNC_INFO << "copied" << appDb << "to" << settingsDb << resultCopy;
       }
+
+      // Create indexes and delete script afterwards
+      if(resultRemove && resultCopy)
+      {
+        SqlDatabase tempDb(dbtools::DATABASE_NAME_TEMP);
+        dbtools::openDatabaseFile(&tempDb, settingsDb, false /* readonly */, true /* createSchema */);
+        simpleWaitDialog->setLabelText(tr("Preparing %1 Database: Creating indexes ...").
+                                       arg(FsPaths::typeToDisplayName(FsPaths::NAVIGRAPH)));
+        NavDatabase::runPreparationScript(tempDb);
+
+        simpleWaitDialog->setLabelText(tr("Preparing %1 Database: Analyzing ...").arg(FsPaths::typeToDisplayName(FsPaths::NAVIGRAPH)));
+        tempDb.analyze();
+        dbtools::closeDatabaseFile(&tempDb);
+        settingsNeedsPreparation = false;
+      }
+      delete simpleWaitDialog;
+
+      if(!resultRemove)
+        Dialog::warning(parentWidget, tr("Deleting of database<br/><br/>\"%1\"<br/><br/>failed.<br/><br/>"
+                                         "Remove the database file manually and restart the program.").arg(settingsDb));
+
+      if(!resultCopy)
+        Dialog::warning(parentWidget, tr("Cannot copy database<br/><br/>\"%1\"<br/><br/>to<br/><br/>"
+                                         "\"%2\"<br/><br/>.").arg(appDb, settingsDb));
     }
   }
 
-  if(settingsNeedsPreparation && hasSettings)
+  if(settingsNeedsPreparation && hasSettingsMeta)
   {
     SimpleWaitDialog *simpleWaitDialog = new SimpleWaitDialog(parentWidget, tr("Preparing %1 Database ...").
                                                               arg(FsPaths::typeToDisplayName(FsPaths::NAVIGRAPH)));
