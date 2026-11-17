@@ -7,12 +7,15 @@ setlocal enableextensions
 
 setlocal
 
+set QTINSTALL=C:\Qt
+
 rem Defines the used Qt for all builds
-if defined QTDIR_SHARED ( echo QTDIR_SHARED=%QTDIR_SHARED% ) else ( set QTDIR_SHARED=C:\Qt\%QT_VERSION_STATIC%\mingw_64)
-if defined PATH_SHARED ( echo PATH_SHARED=%PATH_SHARED% ) else ( set PATH_SHARED=C:\Qt\Tools\CMake_64\bin;C:\Qt\Tools\mingw1310_64\bin\;%QTDIR_SHARED%\bin)
+if defined QTDIR_SHARED ( echo QTDIR_SHARED=%QTDIR_SHARED% ) else ( set QTDIR_SHARED=%QTINSTALL%\%QT_VERSION_STATIC%\mingw_64)
+if defined PATH_SHARED ( echo PATH_SHARED=%PATH_SHARED% ) else ( set PATH_SHARED=%QTINSTALL%\Tools\CMake_64\bin;%QTINSTALL%\Tools\mingw1510_64\bin\;%QTDIR_SHARED%\bin)
+
 
 set QTDIR=%QTDIR_SHARED%
-set PATH=%PATH%;%PATH_SHARED%;C:\Qt\Tools\Ninja
+set PATH=%PATH%;%PATH_SHARED%;%QTINSTALL%\Tools\Ninja
 
 echo Cleaning up ... ========================================
 cd %APROJECTS%

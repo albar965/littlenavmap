@@ -33,13 +33,15 @@ if defined ATOOLS_GIT_PATH ( echo ATOOLS_GIT_PATH=%ATOOLS_GIT_PATH% ) else ( set
 rem Windows/qmake cannot deal with paths containing spaces/quotes - defines these variables in the Windows GUI
 rem if defined XPSDK_BASE ( echo %XPSDK_BASE% ) else ( set XPSDK_BASE="%APROJECTS%\X-Plane SDK")
 
+set QTINSTALL=C:\Qt
+
 rem Defines the used Qt for Xpconnect
 if defined QTDIR_STATIC ( echo QTDIR_STATIC=%QTDIR_STATIC% ) else ( set QTDIR_STATIC=%APROJECTS%\qt-%QT_VERSION_STATIC%-static)
-if defined PATH_STATIC ( echo PATH_STATIC=%PATH_STATIC% ) else ( set PATH_STATIC=C:\Qt\Tools\mingw1310_64\bin\;%QTDIR_STATIC%\bin)
+if defined PATH_STATIC ( echo PATH_STATIC=%PATH_STATIC% ) else ( set PATH_STATIC=%QTINSTALL%\Tools\mingw1510_64\bin\;%QTDIR_STATIC%\bin)
 
 rem Defines the used Qt for all builds
-if defined QTDIR_SHARED ( echo QTDIR_SHARED=%QTDIR_SHARED% ) else ( set QTDIR_SHARED=C:\Qt\%QT_VERSION_STATIC%\mingw_64)
-if defined PATH_SHARED ( echo PATH_SHARED=%PATH_SHARED% ) else ( set PATH_SHARED=C:\Qt\Tools\CMake_64\bin;C:\Qt\Tools\mingw1310_64\bin\;%QTDIR_SHARED%\bin)
+if defined QTDIR_SHARED ( echo QTDIR_SHARED=%QTDIR_SHARED% ) else ( set QTDIR_SHARED=%QTINSTALL%\%QT_VERSION_STATIC%\mingw_64)
+if defined PATH_SHARED ( echo PATH_SHARED=%PATH_SHARED% ) else ( set PATH_SHARED=%QTINSTALL%\Tools\CMake_64\bin;%QTINSTALL%\Tools\mingw1510_64\bin\;%QTDIR_SHARED%\bin)
 
 
 

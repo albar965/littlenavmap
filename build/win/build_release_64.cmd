@@ -54,7 +54,7 @@ rem if defined XPSDK_BASE ( echo %XPSDK_BASE% ) else ( set XPSDK_BASE="%APROJECT
 rem Defines the used Qt for all builds
 set QTINSTALL=C:\Qt
 if defined QTDIR_SHARED ( echo QTDIR_SHARED=%QTDIR_SHARED% ) else ( set QTDIR_SHARED=%QTINSTALL%\%QT_VERSION%\mingw_64)
-if defined PATH_SHARED ( echo PATH_SHARED=%PATH_SHARED% ) else ( set PATH_SHARED=%QTINSTALL%\Tools\CMake_64\bin;C:\Qt\Tools\mingw1510_64\bin\;%QTDIR_SHARED%\bin)
+if defined PATH_SHARED ( echo PATH_SHARED=%PATH_SHARED% ) else ( set PATH_SHARED=%QTINSTALL%\Tools\CMake_64\bin;%QTINSTALL%\Tools\mingw1510_64\bin\;%QTDIR_SHARED%\bin)
 
 call build_release_base.cmd nopause
 if errorlevel 1 goto :err
