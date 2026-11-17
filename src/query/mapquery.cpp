@@ -1369,9 +1369,7 @@ const QList<map::MapRunway> *MapQuery::getRunwaysForOverview(int airportId)
   if(!query::valid(Q_FUNC_INFO, runwayOverviewQuery))
     return nullptr;
 
-  if(runwayOverwiewCache.contains(airportId))
-    return runwayOverwiewCache.object(airportId);
-  else
+  if(!runwayOverwiewCache.contains(airportId))
   {
     using atools::geo::Pos;
 
@@ -1386,8 +1384,9 @@ const QList<map::MapRunway> *MapQuery::getRunwaysForOverview(int airportId)
       runways->append(runway);
     }
     runwayOverwiewCache.insert(airportId, runways);
-    return runwayOverwiewCache.object(airportId);
   }
+
+  return runwayOverwiewCache.object(airportId);
 }
 
 /* Get runway end and try lower and higher numbers if nothing was found - adds a dummy entry with airport

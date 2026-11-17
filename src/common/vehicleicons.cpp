@@ -76,9 +76,7 @@ const QIcon VehicleIcons::iconFromCache(const atools::fs::sc::SimConnectAircraft
 
 const QPixmap *VehicleIcons::pixmapFromCache(const PixmapKey& key, int rotate)
 {
-  if(p->aircraftPixmaps.contains(key))
-    return p->aircraftPixmaps.object(key);
-  else
+  if(!p->aircraftPixmaps.contains(key))
   {
     int size = key.size;
     QString name = ":/littlenavmap/resources/icons/aircraft";
@@ -153,8 +151,9 @@ const QPixmap *VehicleIcons::pixmapFromCache(const PixmapKey& key, int rotate)
       newPx = new QPixmap(painterPixmap);
     }
     p->aircraftPixmaps.insert(key, newPx);
-    return newPx;
   }
+
+  return p->aircraftPixmaps.object(key);
 }
 
 const QPixmap *VehicleIcons::pixmapFromCache(const atools::fs::sc::SimConnectAircraft& ac, int size, int rotate)

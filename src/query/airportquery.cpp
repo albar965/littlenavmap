@@ -1133,9 +1133,7 @@ const QList<map::MapTaxiPath> *AirportQuery::getTaxiPaths(int airportId)
   if(!query::valid(Q_FUNC_INFO, taxiparthQuery))
     return nullptr;
 
-  if(taxipathCache.contains(airportId))
-    return taxipathCache.object(airportId);
-  else
+  if(!taxipathCache.contains(airportId))
   {
     taxiparthQuery->bindValue(QStringLiteral(":airportId"), airportId);
     taxiparthQuery->exec();
@@ -1148,8 +1146,9 @@ const QList<map::MapTaxiPath> *AirportQuery::getTaxiPaths(int airportId)
       tps->append(taxiPath);
     }
     taxipathCache.insert(airportId, tps);
-    return taxipathCache.object(airportId);
   }
+
+  return taxipathCache.object(airportId);
 }
 
 const QList<map::MapRunway> *AirportQuery::getRunways(int airportId)
