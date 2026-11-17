@@ -323,7 +323,6 @@ MainWindow::MainWindow()
     // Initialize and connect the data exchange which sends properties from other started instances
     connect(NavApp::getDataExchangeConst(), &atools::gui::DataExchange::dataFetched, this, &MainWindow::dataExchangeDataFetched);
 
-    Application::showSplashScreenMessage(tr("Loading style ... "));
     NavApp::getStyleHandler()->insertMenuItems(ui->menuWindowStyle);
     NavApp::getStyleHandler()->restoreState();
     mapcolors::init();

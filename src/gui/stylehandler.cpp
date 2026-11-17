@@ -21,6 +21,7 @@
 #include "common/constants.h"
 #include "gui/application.h"
 #include "gui/palettesettings.h"
+#include "gui/simplewaitdialog.h"
 #include "settings/settings.h"
 
 #include <QStyle>
@@ -119,13 +120,13 @@ StyleHandler::StyleHandler(QMainWindow *mainWindowParam)
   // Send void styleChanged() on palette changes
   connect(atools::gui::Application::applicationInstance(), &atools::gui::Application::paletteChanged, this, &StyleHandler::paletteChanged);
 
-  QString fusionStyleSheet(
-    "QTabBar::close-button { image: url(:/littlenavmap/resources/icons/close.svg); } "
-    "QTabBar::close-button:hover { image: url(:/littlenavmap/resources/icons/close_hover.svg); }"
-
-    // Separator lines =================
-    // "QFrame[frameShape=\"4\"], QFrame[frameShape=\"5\"] { color: #b8b8b8; }"
-    );
+  QString fusionStyleSheet;
+  // QString fusionStyleSheet(
+  // "QTabBar::close-button { image: url(:/littlenavmap/resources/icons/close.svg); } "
+  // "QTabBar::close-button:hover { image: url(:/littlenavmap/resources/icons/close_hover.svg); }"
+  //// Separator lines =================
+  //// "QFrame[frameShape=\"4\"], QFrame[frameShape=\"5\"] { color: #b8b8b8; }"
+  // );
 
   // Override checked menu items style with icons for windows
 #if defined(Q_OS_WIN32)
@@ -233,31 +234,28 @@ StyleHandler::StyleHandler(QMainWindow *mainWindowParam)
     "QMenu::icon:checked:disabled { background: #808080; border: 2px solid dimgray; border-radius: 2px; }"
 
     // Checkbox images ====================
-    "QCheckBox::indicator:checked { image: url(:/littlenavmap/resources/icons/checkbox_dark_checked.png); }"
-    "QCheckBox::indicator:checked:!enabled { image: url(:/littlenavmap/resources/icons/checkbox_dark_checked_disabled.png); }"
-
-    "QCheckBox::indicator:unchecked { image: url(:/littlenavmap/resources/icons/checkbox_dark_unchecked.png); }"
-    "QCheckBox::indicator:unchecked:!enabled { image: url(:/littlenavmap/resources/icons/checkbox_dark_unchecked_disabled.png); }"
+    // "QCheckBox::indicator:checked { image: url(:/littlenavmap/resources/icons/checkbox_dark_checked.png); }"
+    // "QCheckBox::indicator:checked:!enabled { image: url(:/littlenavmap/resources/icons/checkbox_dark_checked_disabled.png); }"
+    // "QCheckBox::indicator:unchecked { image: url(:/littlenavmap/resources/icons/checkbox_dark_unchecked.png); }"
+    // "QCheckBox::indicator:unchecked:!enabled { image: url(:/littlenavmap/resources/icons/checkbox_dark_unchecked_disabled.png); }"
 
     // Tree view checkboxes ====================
-    "QTreeView::indicator:checked {image: url(:/littlenavmap/resources/icons/checkbox_dark_checked.png);}"
-    "QTreeView::indicator:checked:!enabled {image: url(:/littlenavmap/resources/icons/checkbox_dark_checked_disabled.png);}"
-
-    "QTreeView::indicator:unchecked {image: url(:/littlenavmap/resources/icons/checkbox_dark_unchecked.png);}"
-    "QTreeView::indicator:unchecked:!enabled {image: url(:/littlenavmap/resources/icons/checkbox_dark_unchecked_disabled.png);}"
+    // "QTreeView::indicator:checked {image: url(:/littlenavmap/resources/icons/checkbox_dark_checked.png);}"
+    // "QTreeView::indicator:checked:!enabled {image: url(:/littlenavmap/resources/icons/checkbox_dark_checked_disabled.png);}"
+    // "QTreeView::indicator:unchecked {image: url(:/littlenavmap/resources/icons/checkbox_dark_unchecked.png);}"
+    // "QTreeView::indicator:unchecked:!enabled {image: url(:/littlenavmap/resources/icons/checkbox_dark_unchecked_disabled.png);}"
 
     // Radio button images ====================
-    "QRadioButton::indicator:checked { image: url(:/littlenavmap/resources/icons/radiobutton_dark_checked.png); }"
-    "QRadioButton::indicator:checked:!enabled { image: url(:/littlenavmap/resources/icons/radiobutton_dark_checked_disabled.png); }"
+    // "QRadioButton::indicator:checked { image: url(:/littlenavmap/resources/icons/radiobutton_dark_checked.png); }"
+    // "QRadioButton::indicator:checked:!enabled { image: url(:/littlenavmap/resources/icons/radiobutton_dark_checked_disabled.png); }"
+    // "QRadioButton::indicator:unchecked { image: url(:/littlenavmap/resources/icons/radiobutton_dark_unchecked.png); }"
+    // "QRadioButton::indicator:unchecked:!enabled { image: url(:/littlenavmap/resources/icons/radiobutton_dark_unchecked_disabled.png); }"
 
-    "QRadioButton::indicator:unchecked { image: url(:/littlenavmap/resources/icons/radiobutton_dark_unchecked.png); }"
-    "QRadioButton::indicator:unchecked:!enabled { image: url(:/littlenavmap/resources/icons/radiobutton_dark_unchecked_disabled.png); }"
-
-#if !defined(Q_OS_MACOS)
-    // Night mode shows bright tab bars with this change in macOS
-    "QTabBar::close-button { image: url(:/littlenavmap/resources/icons/close_dark.svg); }"
-    "QTabBar::close-button:hover { image: url(:/littlenavmap/resources/icons/close_dark_hover.svg); }"
-#endif
+    // #if !defined(Q_OS_MACOS)
+    //// Night mode shows bright tab bars with this change in macOS
+    // "QTabBar::close-button { image: url(:/littlenavmap/resources/icons/close_dark.svg); }"
+    // "QTabBar::close-button:hover { image: url(:/littlenavmap/resources/icons/close_dark_hover.svg); }"
+    // #endif
     );
 
   styleDescriptions.append(StyleDescription(STYLE_DARK, STYLE_FUSION, darkStyleSheet, darkPalette, true /* dark */));
@@ -382,10 +380,7 @@ void StyleHandler::menuItemAutoTriggered()
 {
   automaticStyle = menuItemAuto->isChecked();
   updateMenuStatus();
-
-  QGuiApplication::setOverrideCursor(Qt::WaitCursor);
-  applyCurrentStyle();
-  QGuiApplication::restoreOverrideCursor();
+  applyStyleInternal();
 }
 
 void StyleHandler::menuItemTriggered()
@@ -395,18 +390,21 @@ void StyleHandler::menuItemTriggered()
   if(action != nullptr && currentStyleIndex != action->data().toInt())
   {
     currentStyleIndex = action->data().toInt();
-    QGuiApplication::setOverrideCursor(Qt::WaitCursor);
-    applyCurrentStyle();
-    QGuiApplication::restoreOverrideCursor();
+    applyStyleInternal();
   }
 }
 
 void StyleHandler::colorSchemeChanged(Qt::ColorScheme colorScheme)
 {
   qDebug() << Q_FUNC_INFO << colorScheme;
-  QGuiApplication::setOverrideCursor(Qt::WaitCursor);
-  applyCurrentStyle();
-  QGuiApplication::restoreOverrideCursor();
+  applyStyleInternal();
+}
+
+void StyleHandler::applyStyleInternal()
+{
+  atools::gui::SimpleWaitDialog *simpleWaitDialog = new atools::gui::SimpleWaitDialog(mainWindow, tr("Applying style ..."));
+  applyCurrentStyle(false /* initial */);
+  delete simpleWaitDialog;
 }
 
 void StyleHandler::paletteChanged(const QPalette&)
@@ -415,7 +413,7 @@ void StyleHandler::paletteChanged(const QPalette&)
     emit styleChanged();
 }
 
-void StyleHandler::applyCurrentStyle()
+void StyleHandler::applyCurrentStyle(bool initial)
 {
   qDebug() << Q_FUNC_INFO << "index" << currentStyleIndex << "automaticStyle" << automaticStyle;
 
@@ -425,14 +423,19 @@ void StyleHandler::applyCurrentStyle()
   const StyleDescription& styleDescription = styleDescriptions.at(styleIndex());
   emit preStyleChange();
 
+  if(initial)
+    atools::gui::Application::showSplashScreenMessage(tr("Applying style ... "));
+
   // Ownership of the style object is transferred to QApplication
   QStyle *style = QStyleFactory::create(styleDescription.getStyleName());
 
-  if(style != nullptr)
+  if(style != nullptr && (!automaticStyle || !initial))
   {
-    QApplication::setStyle(style);
+    qDebug() << Q_FUNC_INFO << "setStyle()";
+    mainWindow->setStyle(style);
 
     // Set palette sends a signal which is blocked above in paletteChanged()
+    qDebug() << Q_FUNC_INFO << "setPalette()";
     if(automaticStyle)
       // Unchanged system palette
       QApplication::setPalette(systemPalette);
@@ -443,19 +446,22 @@ void StyleHandler::applyCurrentStyle()
       else
         QApplication::setPalette(style->standardPalette());
     }
+
+    if(initial)
+      atools::gui::Application::showSplashScreenMessage(tr("Applying style sheet ... "));
+#if defined(Q_OS_WIN32)
+    if(!automaticStyle && mainWindow->styleSheet() != styleDescription.getStylesheet())
+      // One windows do not use style sheet for automatic style to avoid unreadable tab bar close buttons
+      mainWindow->setStyleSheet(styleDescription.getStylesheet());
+#else
+    if(mainWindow->styleSheet() != styleDescription.getStylesheet())
+      mainWindow->setStyleSheet(styleDescription.getStylesheet());
+#endif
+
+    qDebug() << Q_FUNC_INFO << "styleDescription.getStylesheet()" << styleDescription.getStylesheet();
   }
   else
     qWarning() << Q_FUNC_INFO << "Style is null" << styleDescription.getStyleName();
-
-#if defined(Q_OS_WIN32)
-  if(!automaticStyle)
-    // One windows do not use style sheet for automatic style to avoid unreadable tab bar close buttons
-    atools::gui::Application::applicationInstance()->setStyleSheet(styleDescription.getStylesheet());
-#else
-  atools::gui::Application::applicationInstance()->setStyleSheet(styleDescription.getStylesheet());
-#endif
-
-  qDebug() << Q_FUNC_INFO << "styleDescription.getStylesheet()" << styleDescription.getStylesheet();
 
   // Need to clear due to Qt bug
   QPixmapCache::clear();
@@ -569,6 +575,6 @@ void StyleHandler::restoreState()
       qDebug() << Q_FUNC_INFO << "Default style" << currentStyleName;
   }
 
-  applyCurrentStyle();
+  applyCurrentStyle(true /* initial */);
   updateMenuStatus();
 }

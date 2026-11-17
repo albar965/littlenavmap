@@ -78,7 +78,8 @@ private:
   const static QLatin1String STYLE_WINDOWSVISTA; /* Windows 10 and 11 */
   const static QLatin1String STYLE_WINDOWS; /* Old Windows */
 
-  void applyCurrentStyle();
+  void applyStyleInternal();
+  void applyCurrentStyle(bool initial);
   void menuItemTriggered();
   void menuItemAutoTriggered();
   void updateMenuStatus();
