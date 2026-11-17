@@ -2,6 +2,10 @@
 
 # Script for internal debugging/startup
 
+if [ -f ~/.projects ]; then
+  source ~/.projects
+fi
+
 CONF=debug
 export QT_PATH=${QT_PATH:-"$HOME/Qt"}
 export QT_PREFIX_PATH="${QT_PATH}/${QT_VERSION}/gcc_64"
