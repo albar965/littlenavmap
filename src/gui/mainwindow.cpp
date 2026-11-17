@@ -608,6 +608,7 @@ MainWindow::MainWindow()
   // else use default if not set
 
   // Update manually since no fontChanged is sent on startup for unchanged application font
+  Application::showSplashScreenMessage(tr("Initializing pointers ... "));
   TextPointer::initPointerCharacters(QApplication::font());
   TextPointer::printDebug();
 
@@ -645,8 +646,6 @@ void MainWindow::deInit()
     qDebug() << Q_FUNC_INFO << "QueryManager::instance()->shutdown()";
     QueryManager::instance()->shutdown();
 
-    hide();
-
     ATOOLS_DELETE_LOG(routeStringDialog);
     ATOOLS_DELETE_LOG(routeController);
     ATOOLS_DELETE_LOG(searchController);
@@ -660,7 +659,6 @@ void MainWindow::deInit()
     ATOOLS_DELETE_LOG(kmlFileHistory);
     ATOOLS_DELETE_LOG(layoutFileHistory);
     ATOOLS_DELETE_LOG(markerFileHistory);
-    ATOOLS_DELETE_LOG(optionsDialog);
     ATOOLS_DELETE_LOG(mapWidget);
     ATOOLS_DELETE_LOG(dialog);
     ATOOLS_DELETE_LOG(errorHandler);
@@ -675,6 +673,13 @@ void MainWindow::deInit()
     ATOOLS_DELETE_LOG(simbriefHandler);
     ATOOLS_DELETE_LOG(mapThemeHandler);
     ATOOLS_DELETE_LOG(statusBar);
+
+    // Hide all windows and continue long running shutdown in the background =============
+    QToolTip::hideText();
+    dockHandler->hideAllWindows();
+    Application::processEventsExtended();
+
+    ATOOLS_DELETE_LOG(optionsDialog);
 
     // Delete NavApp members
     NavApp::deInit();
@@ -706,6 +711,9 @@ void MainWindow::deInit()
 
 void MainWindow::dataExchangeDataFetched(atools::util::Properties dataExchangeProperties)
 {
+  if(Application::isShuttingDown())
+    return;
+
   // Check for message from other instance
   if(!dataExchangeProperties.isEmpty())
   {
@@ -3479,7 +3487,8 @@ void MainWindow::mainWindowShown()
 {
   qDebug() << Q_FUNC_INFO << "enter";
 
-  Application::showSplashScreenMessage(tr("Showing main window ... "));
+  // Hide splash once main window is shown
+  NavApp::finishSplashScreen(this);
 
   // Emit program wide font change signal again to update all widgets
   if(fontChangedFromDefault)
@@ -3560,8 +3569,6 @@ void MainWindow::mainWindowShownDelayed()
 {
   qDebug() << Q_FUNC_INFO << "enter";
 
-  Application::showSplashScreenMessage(tr("Main window shown ... "));
-
   // Center flight plan after loading - do this delayed to consider window size changes
   const OptionData& optionData = OptionData::instance();
   if(optionData.getFlags().testFlag(opts::STARTUP_SHOW_ROUTE) && !NavApp::isRouteEmpty())
@@ -3587,9 +3594,6 @@ void MainWindow::mainWindowShownDelayed()
   mapThemeHandler->changeMapTheme();
   mapThemeHandler->changeMapProjection();
   mapWidget->showSavedPosOnStartup();
-
-  Application::closeSplashScreen();
-  statusBar->setStatusMessage(tr("Started."));
 
   if(migrate::getOptionsVersion().isValid() && migrate::getOptionsVersion() <= atools::util::Version("3.0.9"))
   {
@@ -3794,6 +3798,9 @@ void MainWindow::mainWindowShownDelayed()
   shutdownDelayTimer.setSingleShot(true);
   shutdownDelayTimer.setInterval(SHUTDOWN_DELAY_PERIOD_MS);
   shutdownDelayTimer.start();
+
+  Application::closeSplashScreen();
+  statusBar->setStatusMessage(tr("Started."));
 
   qDebug() << Q_FUNC_INFO << "leave";
 }
@@ -4373,8 +4380,6 @@ void MainWindow::restoreMainWindowLayout()
   ui->actionShowStatusbar->setChecked(!ui->statusBar->isHidden());
   ui->actionShowStatusbar->blockSignals(false);
 
-  dockHandler->hideVisibleFloating();
-
   qDebug() << Q_FUNC_INFO << "Exit";
 }
 
@@ -4508,7 +4513,6 @@ void MainWindow::restoreStateMain()
 
   // Restore window state in main event loop after constructor is finished
   QTimer::singleShot(0, this, &MainWindow::restoreMainWindowLayout);
-  QTimer::singleShot(1000, dockHandler, &atools::gui::DockWidgetHandler::restoreHiddenFloating);
 
   qDebug() << Q_FUNC_INFO << "leave";
 }
@@ -5261,6 +5265,7 @@ void MainWindow::showEvent(QShowEvent *event)
 {
   if(firstStart)
   {
+    Application::showSplashScreenMessage(tr("Showing main window ... "));
     emit windowShown();
     firstStart = false;
   }

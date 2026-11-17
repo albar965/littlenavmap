@@ -114,7 +114,6 @@ NavApp::NavApp(int& argc, char **argv, int flags)
 
 NavApp::~NavApp()
 {
-  ATOOLS_DELETE(dataExchange);
 }
 
 void NavApp::initApplication()
@@ -1443,5 +1442,6 @@ void NavApp::recordStartAndDetectCrashNav(QWidget *parent, const QString& lockFi
   // Remember lock file and write PID into it (PID not used)
   recordStartup(lockFileParam);
 
-  qWarning() << Q_FUNC_INFO << "Safe mode flags" << safeModeFlags;
+  if(safeModeFlags != safemode::SAFE_MODE_NONE)
+    qWarning() << Q_FUNC_INFO << "Safe mode flags" << safeModeFlags;
 }

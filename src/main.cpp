@@ -398,6 +398,7 @@ int main(int argc, char *argv[])
       dbManager = new DatabaseManager(nullptr, false /* verbose - log database parameters */);
 
       /* Copy from application directory to settings directory if newer and create indexes if missing */
+      Application::showSplashScreenMessage(QObject::tr("Checking navdata ... "));
       dbManager->checkCopyAndPrepareDatabases();
 
       Application::showSplashScreenMessage(QObject::tr("Checking databases ... "));
@@ -415,9 +416,6 @@ int main(int argc, char *argv[])
         mainWindow.setDatabaseErased(databasesErased);
 
         mainWindow.show();
-
-        // Hide splash once main window is shown
-        NavApp::finishSplashScreen(&mainWindow);
 
         // =============================================================================================
         // Run application
@@ -451,10 +449,10 @@ int main(int argc, char *argv[])
     // Does not return in case of fatal error
   }
 
+  ATOOLS_DELETE_LOG(dbManager);
+
   atools::util::crashhandler::clearStackTrace(Settings::getConfigFilename(lnm::STACKTRACE_SUFFIX, lnm::CRASHREPORTS_DIR));
   NavApp::deInitDataExchange();
-
-  ATOOLS_DELETE_LOG(dbManager);
 
   // Remove lock file
   atools::gui::Application::recordExit();

@@ -335,7 +335,7 @@ private:
 
   void connectAllSlots();
 
-  /* Called by window shown event when the main window is visible the first time */
+  /* Called by window shown event using a queued connection when the main window is visible the first time */
   void mainWindowShown();
   void mainWindowShownDelayed();
 
