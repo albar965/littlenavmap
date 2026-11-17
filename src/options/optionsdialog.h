@@ -312,6 +312,9 @@ private:
   void restoreDialogState();
   void saveDialogState();
 
+  /* Do manual widget focus selection due to performance issues when calling setTabOrder() */
+  virtual bool focusNextPrevChild(bool next) override;
+
   void emitOptionsChanged();
 
   optc::OptionChangeFlags buildFlagsFromChange(const OptionData& saved, const OptionData& changed);
@@ -358,6 +361,11 @@ private:
 
   /* Saved when opening dialog. Can be restored when closing if user answers yes to question */
   OptionData *savedOptionData;
+
+  /* Do manual widget focus selection due to performance issues when calling setTabOrder().
+   List of all widgets and an index mapping the pointer to index in the list to select next or prev. */
+  QList<QWidget *> tabstops;
+  QHash<QWidget *, int> tabstopIndex;
 };
 
 #endif // LITTLENAVMAP_OPTIONSDIALOG_H
