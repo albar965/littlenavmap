@@ -770,12 +770,8 @@ void AircraftPerfController::updateReport()
     QString header = headerList.join(tr(" - "));
 
     if(!header.isEmpty())
-    {
-      html.img(QIcon(":/littlenavmap/resources/icons/aircraftperf.svg"), QStringLiteral(), QStringLiteral(), QSize(symbolSize, symbolSize));
-      html.nbsp().nbsp();
-
-      html.text(header, ahtml::BOLD | ahtml::BIG);
-    }
+      html.imgText(QStringLiteral(":/littlenavmap/resources/icons/aircraftperf.svg"), QSize(symbolSize, symbolSize), header,
+                   ahtml::BOLD | ahtml::BIG);
 
     // Display fuel estimates ==========================================================
     const RouteAltitude& altitudeLegs = NavApp::getAltitudeLegs();
@@ -866,16 +862,14 @@ void AircraftPerfController::updateReportCurrent()
     atools::fs::perf::FlightSegment segment = perfHandler->getCurrentFlightSegment();
 
     // Icon, name and aircraft type =======================================================
-    html.img(QIcon(":/littlenavmap/resources/icons/aircraftperf.svg"), QStringLiteral(), QStringLiteral(), QSize(symbolSize, symbolSize));
-    html.nbsp().nbsp();
-
     QStringList header({curPerfLbs.getName(), curPerfLbs.getAircraftType(), curPerfLbs.getSimulator()});
     header.removeAll(QStringLiteral());
 
-    if(!header.isEmpty())
-      html.text(header.join(tr(" - ")), ahtml::BOLD | ahtml::BIG);
-    else
-      html.text(tr("Unknown Aircraft"), ahtml::BOLD | ahtml::BIG);
+    if(header.isEmpty())
+      header.append(tr("Unknown Aircraft"));
+
+    html.imgText(QStringLiteral(":/littlenavmap/resources/icons/aircraftperf.svg"), QSize(symbolSize, symbolSize), header.join(tr(" - ")),
+                 ahtml::BOLD | ahtml::BIG);
 
     FuelTool ft(curPerfLbs);
 

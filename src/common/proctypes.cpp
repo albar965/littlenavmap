@@ -279,7 +279,7 @@ QString procedureLegFixStr(const MapProcedureLeg& leg)
   else
     fix = leg.fixIdent;
 
-  QString specialType(proc::proceduresLegSecialTypeShortStr(proc::specialType(leg.arincDescrCode)));
+  QString specialType(proc::proceduresLegSpecialTypeShortStr(proc::specialType(leg.arincDescrCode)));
   if(!specialType.isEmpty())
     return QObject::tr("%1 (%2)").arg(fix, specialType);
   else
@@ -296,12 +296,12 @@ proc::ProcedureLegType procedureLegEnum(const QString& type)
   return approachLegTypeToEnum.value(type);
 }
 
-const QString& proceduresLegSecialTypeShortStr(proc::LegSpecialType type)
+const QString& proceduresLegSpecialTypeShortStr(proc::LegSpecialType type)
 {
   return atools::hashValue(specialTypeShortStr, type);
 }
 
-const QString& proceduresLegSecialTypeLongStr(proc::LegSpecialType type)
+const QString& proceduresLegSpecialTypeLongStr(proc::LegSpecialType type)
 {
   return atools::hashValue(specialTypeLongStr, type);
 }

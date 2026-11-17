@@ -725,8 +725,8 @@ bool procedureLegDrawIdent(ProcedureLegType type);
 bool procedureLegFrom(proc::ProcedureLegType type);
 
 /* IAF, FAF, MAP */
-const QString& proceduresLegSecialTypeShortStr(proc::LegSpecialType type);
-const QString& proceduresLegSecialTypeLongStr(proc::LegSpecialType type);
+const QString& proceduresLegSpecialTypeShortStr(proc::LegSpecialType type);
+const QString& proceduresLegSpecialTypeLongStr(proc::LegSpecialType type);
 
 /* Get special leg type from ARINC description code */
 proc::LegSpecialType specialType(const QString& arincDescrCode);

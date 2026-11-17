@@ -127,11 +127,15 @@ HtmlInfoBuilder::~HtmlInfoBuilder()
 
 void HtmlInfoBuilder::airportTitle(const MapAirport& airport, HtmlBuilder& html, int rating, bool procedures, const Route *route) const
 {
+  html.table(0, 0).tr().td();
+
   if(!print)
   {
-    html.img(SymbolPainter::createAirportIcon(airport, symbolSizeTitle.height()), QStringLiteral(), QStringLiteral(), symbolSizeTitle);
+    html.img(SymbolPainter::createAirportIcon(airport, symbolSizeTitle.height()), symbolSizeTitle);
     html.nbsp().nbsp();
   }
+
+  html.tdEnd().td();
 
   // Adapt title to airport status
   Flags titleFlags = ahtml::BOLD;
@@ -165,6 +169,8 @@ void HtmlInfoBuilder::airportTitle(const MapAirport& airport, HtmlBuilder& html,
     if(rating != -1)
       html.nbsp().nbsp().text(atools::ratingString(rating, 5));
   }
+
+  html.tdEnd().trEnd().tableEnd();
 }
 
 void HtmlInfoBuilder::airportProcedureLinkTexts(QString& text, QString& href, const map::MapAirport& airport, const Route *route) const
@@ -1162,9 +1168,10 @@ void HtmlInfoBuilder::ilsTextInternal(const map::MapIls& ils, atools::util::Html
   // Check if text is to be generated for navaid or procedures tab
   if(infoOrTooltip)
   {
-    html.img(map::ilsIcon(ils), QStringLiteral(), QStringLiteral(), symbolSizeTitle);
+    html.table(0, 0).tr().td();
+    html.img(map::ilsIcon(ils), symbolSizeTitle);
     html.nbsp().nbsp();
-
+    html.tdEnd().td();
     navaidTitle(html, text);
 
     if(info && !print)
@@ -1174,6 +1181,8 @@ void HtmlInfoBuilder::ilsTextInternal(const map::MapIls& ils, atools::util::Html
       html.a(tr("Map"), QStringLiteral("lnm://show?id=%1&type=%2&tooltip=showils").
              arg(ils.id).arg(map::ILS), LINK_FLAGS);
     }
+    html.tdEnd().trEnd().tableEnd();
+
     html.table();
   }
   else
@@ -1951,8 +1960,10 @@ void HtmlInfoBuilder::msaMarkerText(const map::MsaMarker& marker, atools::util::
 
 void HtmlInfoBuilder::airportMsaTextInternal(const map::MapAirportMsa& msa, atools::util::HtmlBuilder& html, bool user) const
 {
-  html.img(QIcon(":/littlenavmap/resources/icons/msa.svg"), QStringLiteral(), QStringLiteral(), symbolSizeTitle);
+  html.table(0, 0).tr().td();
+  html.img(QStringLiteral(":/littlenavmap/resources/icons/msa.svg"), symbolSizeTitle);
   html.nbsp().nbsp();
+  html.tdEnd().td();
 
   QString title;
   if(msa.nav.type == map::AIRPORT)
@@ -1988,6 +1999,8 @@ void HtmlInfoBuilder::airportMsaTextInternal(const map::MapAirportMsa& msa, atoo
            arg(mapTypeToTooltip(msa.nav.type, QStringLiteral("show"))), LINK_FLAGS);
   }
 
+  html.tdEnd().trEnd().tableEnd();
+
   html.table();
   html.row2(tr("Radius:"), Unit::distNm(msa.radius));
 
@@ -2017,8 +2030,8 @@ void HtmlInfoBuilder::airportMsaTextInternal(const map::MapAirportMsa& msa, atoo
 
       int actualSize = 0;
       float sizeFactor = info ? (msa.altitudes.size() > 1 ? 5. : 2.) : (msa.altitudes.size() > 1 ? 4. : 2.);
-      QIcon icon = SymbolPainter::createAirportMsaIcon(msa, QToolTip::font(), sizeFactor, &actualSize);
-      html.p().img(icon, QStringLiteral(), QStringLiteral(), QSize(actualSize, actualSize)).pEnd();
+      html.p().img(SymbolPainter::createAirportMsaIcon(msa, QToolTip::font(), sizeFactor, &actualSize),
+                   QSize(actualSize, actualSize)).pEnd();
     }
   }
 
@@ -2339,9 +2352,10 @@ void HtmlInfoBuilder::vorText(const MapVor& vor, HtmlBuilder& html, const Route 
   if(info)
     rec = queries->getInfoQuery()->getVorInformation(vor.id);
 
-  QIcon icon = SymbolPainter::createVorIcon(vor, symbolSizeTitle.height(), NavApp::isGuiStyleDark());
-  html.img(icon, QStringLiteral(), QStringLiteral(), symbolSizeTitle);
+  html.table(0, 0).tr().td();
+  html.img(SymbolPainter::createVorIcon(vor, symbolSizeTitle.height(), NavApp::isGuiStyleDark()), symbolSizeTitle);
   html.nbsp().nbsp();
+  html.tdEnd().td();
 
   QString type = map::vorType(vor);
   navaidTitle(html, type % ": " % capString(vor.name) % " (" % vor.ident % ")");
@@ -2353,6 +2367,7 @@ void HtmlInfoBuilder::vorText(const MapVor& vor, HtmlBuilder& html, const Route 
     html.a(tr("Map"), QStringLiteral("lnm://show?lonx=%1&laty=%2&tooltip=showvor").
            arg(vor.position.getLonX()).arg(vor.position.getLatY()), LINK_FLAGS);
   }
+  html.tdEnd().trEnd().tableEnd();
 
   html.table();
   routeInfoText(html, vor.routeIndex, vor.recommended, route);
@@ -2429,9 +2444,10 @@ void HtmlInfoBuilder::ndbText(const MapNdb& ndb, HtmlBuilder& html, const Route 
   if(info)
     rec = queries->getInfoQuery()->getNdbInformation(ndb.id);
 
-  QIcon icon = SymbolPainter::createNdbIcon(symbolSizeTitle.height(), NavApp::isGuiStyleDark());
-  html.img(icon, QStringLiteral(), QStringLiteral(), symbolSizeTitle);
+  html.table(0, 0).tr().td();
+  html.img(SymbolPainter::createNdbIcon(symbolSizeTitle.height(), NavApp::isGuiStyleDark()), symbolSizeTitle);
   html.nbsp().nbsp();
+  html.tdEnd().td();
 
   navaidTitle(html, tr("NDB: ") % capString(ndb.name) % " (" % ndb.ident % ")");
 
@@ -2442,6 +2458,7 @@ void HtmlInfoBuilder::ndbText(const MapNdb& ndb, HtmlBuilder& html, const Route 
     html.a(tr("Map"), QStringLiteral("lnm://show?lonx=%1&laty=%2&tooltip=showndb").
            arg(ndb.position.getLonX()).arg(ndb.position.getLatY()), LINK_FLAGS);
   }
+  html.tdEnd().trEnd().tableEnd();
 
   html.table();
   routeInfoText(html, ndb.routeIndex, ndb.recommended, route);
@@ -2557,10 +2574,12 @@ void HtmlInfoBuilder::markerTitle(const QString& text, const map::MapNav& nav, f
 
 void HtmlInfoBuilder::holdingTextInternal(const MapHolding& holding, HtmlBuilder& html, const QString& userText, bool user) const
 {
-  html.img(QIcon(":/littlenavmap/resources/icons/enroutehold.svg"), QStringLiteral(), QStringLiteral(), symbolSizeTitle);
+  html.table(0, 0).tr().td();
+  html.img(QStringLiteral(":/littlenavmap/resources/icons/enroutehold.svg"), symbolSizeTitle);
   html.nbsp().nbsp();
-
+  html.tdEnd().td();
   markerTitle(tr("Holding"), holding.nav, holding.courseTrue, html, user);
+  html.tdEnd().trEnd().tableEnd();
 
   html.table();
   // Add bearing/distance to table
@@ -2630,8 +2649,11 @@ void HtmlInfoBuilder::holdingTextInternal(const MapHolding& holding, HtmlBuilder
 
 void HtmlInfoBuilder::rangeMarkerText(const RangeMarker& marker, atools::util::HtmlBuilder& html, const Route *) const
 {
-  html.img(QIcon(":/littlenavmap/resources/icons/rangerings.svg"), QStringLiteral(), QStringLiteral(), symbolSizeTitle);
+  html.table(0, 0).tr().td();
+
+  html.img(QStringLiteral(":/littlenavmap/resources/icons/rangerings.svg"), symbolSizeTitle);
   html.nbsp().nbsp();
+  html.tdEnd().td();
 
   QString title;
   if(marker.attachedToNavaid)
@@ -2640,6 +2662,7 @@ void HtmlInfoBuilder::rangeMarkerText(const RangeMarker& marker, atools::util::H
     title = marker.ranges.size() > 1 ? tr("Range Rings") : tr("Range Ring");
 
   markerTitle(title, marker.nav, map::INVALID_COURSE_VALUE, html, false /* user */);
+  html.tdEnd().trEnd().tableEnd();
 
   html.table();
   html.row2If(tr("Label:"), marker.text);
@@ -2663,13 +2686,16 @@ void HtmlInfoBuilder::rangeMarkerText(const RangeMarker& marker, atools::util::H
 
 void HtmlInfoBuilder::distanceMarkerText(const DistanceMarker& marker, atools::util::HtmlBuilder& html, const Route *) const
 {
-  html.img(QIcon(":/littlenavmap/resources/icons/distancemeasure.svg"), QStringLiteral(), QStringLiteral(), symbolSizeTitle);
+  html.table(0, 0).tr().td();
+  html.img(QStringLiteral(":/littlenavmap/resources/icons/distancemeasure.svg"), symbolSizeTitle);
   html.nbsp().nbsp();
+  html.tdEnd().td();
 
   float initTrue = marker.from.initialBearing(marker.to);
   float finalTrue = marker.from.finalBearing(marker.to);
 
   markerTitle(tr("Distance Measurement"), marker.nav, initTrue, html, false /* user */);
+  html.tdEnd().trEnd().tableEnd();
 
   QString initCourseStr = tr("%L1°M, %L2°T").arg(initTrue - marker.nav.magvar, 0, 'f', 0).arg(initTrue, 0, 'f', 0);
   QString finalCourseStr = tr("%L1°M, %L2°T").arg(finalTrue - marker.nav.magvar, 0, 'f', 0).arg(finalTrue, 0, 'f', 0);
@@ -2736,10 +2762,13 @@ void HtmlInfoBuilder::unlock()
 
 void HtmlInfoBuilder::patternMarkerText(const PatternMarker& marker, atools::util::HtmlBuilder& html, const Route *) const
 {
-  html.img(QIcon(":/littlenavmap/resources/icons/trafficpattern.svg"), QStringLiteral(), QStringLiteral(), symbolSizeTitle);
-  html.nbsp().nbsp();
+  html.table(0, 0).tr().td();
 
+  html.img(QStringLiteral(":/littlenavmap/resources/icons/trafficpattern.svg"), symbolSizeTitle);
+  html.nbsp().nbsp();
+  html.tdEnd().td();
   navaidTitle(html, tr("Traffic Pattern"), true /* noEntities */);
+  html.tdEnd().trEnd().tableEnd();
 
   html.table();
   html.row2If(tr("Airport:"), marker.airportIdent);
@@ -2775,11 +2804,13 @@ bool HtmlInfoBuilder::userpointText(MapUserpoint userpoint, HtmlBuilder& html) c
   // Check if userpoint still exists since it can be deleted in the background
   if(!rec.isEmpty() && userpoint.isValid())
   {
-    QIcon icon(NavApp::getUserdataIcons()->getIconPath(userpoint.userpointType));
-    html.img(icon, QStringLiteral(), QStringLiteral(), QSize(0, symbolSizeTitle.height())); // Pass only height over to avoid stretching the image
+    // Pass only height over to avoid stretching the image
+    html.table(0, 0).tr().td();
+    html.img(NavApp::getUserdataIcons()->getIconPath(userpoint.userpointType), QSize(0, symbolSizeTitle.height()));
     html.nbsp().nbsp();
-
+    html.tdEnd().td();
     navaidTitle(html, tr("Userpoint%1").arg(userpoint.temp ? tr(" (Temporary)") : QStringLiteral()));
+    html.tdEnd().trEnd().tableEnd();
 
     if(info && !print)
     {
@@ -2866,12 +2897,13 @@ bool HtmlInfoBuilder::logEntryText(MapLogbookEntry logEntry, HtmlBuilder& html) 
 
   if(!rec.isEmpty() && logEntry.isValid())
   {
-    html.img(QIcon(":/littlenavmap/resources/icons/logbook.svg"), QStringLiteral(), QStringLiteral(), symbolSizeTitle);
+    html.table(0, 0).tr().td();
+    html.img(QStringLiteral(":/littlenavmap/resources/icons/logbook.svg"), symbolSizeTitle);
     html.nbsp().nbsp();
-
-    navaidTitle(html, tr("Logbook Entry: %1 to %2").
-                arg(logEntry.departureIdent.isEmpty() ? tr("-") : logEntry.departureIdent,
-                    logEntry.destinationIdent.isEmpty() ? tr("-") : logEntry.destinationIdent));
+    html.tdEnd().td();
+    navaidTitle(html, tr("Logbook Entry: %1 to %2").arg(logEntry.departureIdent.isEmpty() ? tr("-") : logEntry.departureIdent,
+                                                        logEntry.destinationIdent.isEmpty() ? tr("-") : logEntry.destinationIdent));
+    html.tdEnd().trEnd().tableEnd();
 
     if(info && !print)
     {
@@ -3109,11 +3141,12 @@ void HtmlInfoBuilder::waypointText(const MapWaypoint& waypoint, HtmlBuilder& htm
   if(info)
     rec = queries->getWaypointTrackQuery()->getWaypointInformation(waypoint.id);
 
-  QIcon icon = SymbolPainter::createWaypointIcon(symbolSizeTitle.height());
-  html.img(icon, QStringLiteral(), QStringLiteral(), symbolSizeTitle);
+  html.table(0, 0).tr().td();
+  html.img(SymbolPainter::createWaypointIcon(symbolSizeTitle.height()), symbolSizeTitle);
   html.nbsp().nbsp();
-
+  html.tdEnd().td();
   navaidTitle(html, tr("Waypoint: ") % waypoint.ident);
+  html.tdEnd().trEnd().tableEnd();
 
   if(info && !print)
   {
@@ -3314,12 +3347,13 @@ bool HtmlInfoBuilder::bearingToUserText(const ageo::Pos& pos, float magVar, Html
 void HtmlInfoBuilder::airspaceText(const MapAirspace& airspace, const atools::sql::SqlRecord& onlineRec, HtmlBuilder& html) const
 {
   const OptionData& optionData = OptionData::instance();
-  QIcon icon = SymbolPainter::createAirspaceIcon(airspace, symbolSizeTitle.height(),
-                                                 optionData.getDisplayThicknessAirspace(),
-                                                 optionData.getDisplayTransparencyAirspace());
 
-  html.img(icon, QStringLiteral(), QStringLiteral(), symbolSizeTitle);
+  html.table(0, 0).tr().td();
+  html.img(SymbolPainter::createAirspaceIcon(airspace, symbolSizeTitle.height(),
+                                             optionData.getDisplayThicknessAirspace(),
+                                             optionData.getDisplayTransparencyAirspace()), symbolSizeTitle);
   html.nbsp().nbsp();
+  html.tdEnd().td();
 
   QString suffix;
   if(airspace.isOnline())
@@ -3347,6 +3381,7 @@ void HtmlInfoBuilder::airspaceText(const MapAirspace& airspace, const atools::sq
     html.a(tr("Map"), QStringLiteral("lnm://show?id=%1&type=%2&source=%3&tooltip=showairspace").
            arg(airspace.id).arg(map::AIRSPACE).arg(airspace.src), LINK_FLAGS);
   }
+  html.tdEnd().trEnd().tableEnd();
 
   QStringList header;
 
@@ -3682,11 +3717,12 @@ void HtmlInfoBuilder::userpointTextRoute(const MapUserpointRoute& userpoint, Htm
   qDebug() << Q_FUNC_INFO;
 #endif
 
-  QIcon icon = SymbolPainter::createUserpointIcon(symbolSizeTitle.height());
-  html.img(icon, QStringLiteral(), QStringLiteral(), symbolSizeTitle);
+  html.table(0, 0).tr().td();
+  html.img(SymbolPainter::createUserpointIcon(symbolSizeTitle.height()), symbolSizeTitle);
   html.nbsp().nbsp();
-
+  html.tdEnd().td();
   navaidTitle(html, tr("Position: ") % userpoint.ident);
+  html.tdEnd().trEnd().tableEnd();
 
   if(!info && userpoint.routeIndex >= 0)
   {
@@ -3721,34 +3757,36 @@ void HtmlInfoBuilder::procedurePointText(const map::MapProcedurePoint& procPoint
   else
     header = map::procedurePointText(procPoint);
 
-  QIcon icon;
+  QString icon;
 
   if(legs->isAnyCustom())
   {
     if(legs->isCustomDeparture())
-      icon = QIcon(":/littlenavmap/resources/icons/runwaydepart.svg");
+      icon = QStringLiteral(":/littlenavmap/resources/icons/runwaydepart.svg");
     else
-      icon = QIcon(":/littlenavmap/resources/icons/runwaydest.svg");
+      icon = QStringLiteral(":/littlenavmap/resources/icons/runwaydest.svg");
   }
   else
   {
     if(leg.mapType.testFlag(proc::PROCEDURE_MISSED))
-      icon = QIcon(":/littlenavmap/resources/icons/missed.svg");
+      icon = QStringLiteral(":/littlenavmap/resources/icons/missed.svg");
     else
-      icon = QIcon(":/littlenavmap/resources/icons/approach.svg");
+      icon = QStringLiteral(":/littlenavmap/resources/icons/approach.svg");
   }
 
-  html.img(icon, QStringLiteral(), QStringLiteral(), symbolSizeTitle);
+  html.table(0, 0).tr().td();
+  html.img(icon, symbolSizeTitle);
   html.nbsp().nbsp();
+  html.tdEnd().td();
 
   if(procPoint.legs->previewColor.isValid() && procPoint.previewAll)
   {
-    QIcon procIcon = SymbolPainter::createProcedurePreviewIcon(procPoint.legs->previewColor, symbolSizeTitle.height());
-    html.img(procIcon, QStringLiteral(), QStringLiteral(), symbolSizeTitle);
+    html.img(SymbolPainter::createProcedurePreviewIcon(procPoint.legs->previewColor, symbolSizeTitle.height()), symbolSizeTitle);
     html.nbsp().nbsp();
   }
 
   navaidTitle(html, header);
+  html.tdEnd().trEnd().tableEnd();
 
   html.table();
 
@@ -3760,40 +3798,36 @@ void HtmlInfoBuilder::procedurePointText(const map::MapProcedurePoint& procPoint
 
   if(!procPoint.previewAll)
   {
-    // Add IAF, MAP, ...
+    // Add IAF, MAP, ... ========================================
+    const QString& type = proc::proceduresLegSpecialTypeLongStr(proc::specialType(leg.arincDescrCode));
+    html.row2If(type.isEmpty() ? tr("Fix:") : tr("%1:").arg(type), leg.fixIdent);
 
-    if(!legs->isCustomDeparture())
+    if(verbose)
     {
-      const QString& type = proc::proceduresLegSecialTypeLongStr(proc::specialType(leg.arincDescrCode));
-      html.row2If(type.isEmpty() ? tr("Fix:") : tr("%1:").arg(type), leg.fixIdent);
+      if(!legs->isAnyCustom())
+        html.row2If(tr("Leg Type:"), proc::procedureLegTypeStr(leg.type));
 
-      if(verbose)
-      {
-        if(!legs->isAnyCustom())
-          html.row2If(tr("Leg Type:"), proc::procedureLegTypeStr(leg.type));
+      if(leg.calculatedDistance > 0.f)
+        html.row2(tr("Distance:"), Unit::distNm(leg.calculatedDistance /*, true, 20, true*/));
 
-        if(leg.calculatedDistance > 0.f)
-          html.row2(tr("Distance:"), Unit::distNm(leg.calculatedDistance /*, true, 20, true*/));
+      if(leg.time > 0.f)
+        html.row2(tr("Time:"), locale.toString(leg.time, 'f', 0) % tr(" min"));
 
-        if(leg.time > 0.f)
-          html.row2(tr("Time:"), locale.toString(leg.time, 'f', 0) % tr(" min"));
+      if(leg.calculatedTrueCourse < map::INVALID_COURSE_VALUE)
+        html.row2(tr("Course:"), courseTextFromTrue(leg.calculatedTrueCourse, leg.magvar), ahtml::NO_ENTITIES);
 
-        if(leg.calculatedTrueCourse < map::INVALID_COURSE_VALUE)
-          html.row2(tr("Course:"), courseTextFromTrue(leg.calculatedTrueCourse, leg.magvar), ahtml::NO_ENTITIES);
+      if(leg.flyover)
+        html.row2(tr("Fly over"));
 
-        if(leg.flyover)
-          html.row2(tr("Fly over"));
-
-        if(!leg.remarks.isEmpty())
-          html.row2(leg.remarks.join(", "));
-      }
-
-      if(leg.altRestriction.isValid())
-        html.row2(tr("Altitude Restriction:"), proc::altRestrictionText(leg.altRestriction));
-
-      if(leg.speedRestriction.isValid())
-        html.row2(tr("Speed Restriction:"), proc::speedRestrictionText(leg.speedRestriction));
+      if(!leg.remarks.isEmpty())
+        html.row2(leg.remarks.join(", "));
     }
+
+    if(leg.altRestriction.isValid())
+      html.row2(tr("Altitude Restriction:"), proc::altRestrictionText(leg.altRestriction));
+
+    if(leg.speedRestriction.isValid())
+      html.row2(tr("Speed Restriction:"), proc::speedRestrictionText(leg.speedRestriction));
 
     if(!leg.turnDirection.isEmpty())
     {
@@ -4110,9 +4144,11 @@ void HtmlInfoBuilder::aircraftTextWeightAndFuel(const atools::fs::sc::SimConnect
 
 void HtmlInfoBuilder::aircraftTrailText(const AircraftTrailSegment& trailSegment, HtmlBuilder& html, bool logbook) const
 {
+  QIcon icon;
+
   if(logbook)
     // Prefix with logbook icon for logbook trails ===========================
-    html.img(QIcon(":/littlenavmap/resources/icons/logbook.svg"), QStringLiteral(), QStringLiteral(), symbolSizeTitle);
+    icon = QIcon(QStringLiteral(":/littlenavmap/resources/icons/logbook.svg"));
 
   if(OptionData::instance().getFlags().testFlag(opts::MAP_TRAIL_GRADIENT))
   {
@@ -4120,15 +4156,15 @@ void HtmlInfoBuilder::aircraftTrailText(const AircraftTrailSegment& trailSegment
     switch(OptionData::instance().getDisplayTrailGradientType())
     {
       case opts::TRAIL_GRADIENT_COLOR_YELLOW_BLUE:
-        html.img(QIcon(":/littlenavmap/resources/icons/icongradientcolors2.svg"), QStringLiteral(), QStringLiteral(), symbolSizeTitle);
+        icon = QIcon(QStringLiteral(":/littlenavmap/resources/icons/icongradientcolors2.svg"));
         break;
 
       case opts::TRAIL_GRADIENT_COLOR_RAINBOW:
-        html.img(QIcon(":/littlenavmap/resources/icons/icongradientcolors.svg"), QStringLiteral(), QStringLiteral(), symbolSizeTitle);
+        icon = QIcon(QStringLiteral(":/littlenavmap/resources/icons/icongradientcolors.svg"));
         break;
 
       case opts::TRAIL_GRADIENT_BLACKWHITE:
-        html.img(QIcon(":/littlenavmap/resources/icons/icongradientblackwhite.svg"), QStringLiteral(), QStringLiteral(), symbolSizeTitle);
+        icon = QIcon(QStringLiteral(":/littlenavmap/resources/icons/icongradientblackwhite.svg"));
         break;
     }
   }
@@ -4136,16 +4172,13 @@ void HtmlInfoBuilder::aircraftTrailText(const AircraftTrailSegment& trailSegment
   {
     // Create icon showing the same line style as configured by the user or logbook icon ==============
     float thicknessTrail = OptionData::instance().getDisplayThicknessTrail() / 100.f;
-    html.img(SymbolPainter::createAircraftTrailIcon(symbolSizeTitle.height(), mapcolors::aircraftTrailPen(thicknessTrail * 2.f)),
-             QStringLiteral(), QStringLiteral(), symbolSizeTitle);
+    icon = SymbolPainter::createAircraftTrailIcon(symbolSizeTitle.height(), mapcolors::aircraftTrailPen(thicknessTrail * 2.f));
   }
 
-  html.nbsp().nbsp();
-
   if(logbook)
-    html.text("Logbook Aircraft Trail", ahtml::BOLD);
+    html.imgText(icon, symbolSizeTitle, tr("Logbook Aircraft Trail"), ahtml::BOLD);
   else
-    html.text("User Aircraft Trail", ahtml::BOLD);
+    html.imgText(icon, symbolSizeTitle, tr("User Aircraft Trail"), ahtml::BOLD);
 
   html.table();
 
@@ -5246,7 +5279,7 @@ QString HtmlInfoBuilder::airportLink(const HtmlBuilder& html, const QString& ide
 
 void HtmlInfoBuilder::aircraftTitle(const atools::fs::sc::SimConnectAircraft& aircraft, HtmlBuilder& html)
 {
-  QIcon icon = NavApp::getVehicleIcons()->iconFromCache(aircraft, symbolSizeVehicle.height(), 45);
+  const QIcon icon = NavApp::getVehicleIcons()->iconFromCache(aircraft, symbolSizeVehicle.height(), 45);
 
   html.tableAtts({
     {"width", "100%"}
@@ -5758,8 +5791,7 @@ void HtmlInfoBuilder::addFlightRulesSuffix(atools::util::HtmlBuilder& html, cons
         symSize *= 0.8;
 
       // Do not enclose img tab with div tags to avoid unwanted line breaks
-      html.img(SymbolPainter::createAirportWeatherIcon(metar, symSize.height()),
-               QStringLiteral(), QStringLiteral(), symSize.toSize(), false /* divEnclose */);
+      html.img(SymbolPainter::createAirportWeatherIcon(metar, symSize.height()), symSize.toSize());
       html.nbsp();
     }
 

@@ -793,7 +793,7 @@ QString RouteController::getFlightplanTableAsHtml(float iconSizePixel, bool prin
       int sizeInt = atools::roundToInt(iconSizePixel);
 
       html.td();
-      html.img(iconForLeg(leg, atools::roundToInt(iconSizePixel)), QStringLiteral(), QStringLiteral(), QSize(sizeInt, sizeInt));
+      html.img(iconForLeg(leg, atools::roundToInt(iconSizePixel)), QSize(sizeInt, sizeInt));
       html.tdEnd();
     }
 
