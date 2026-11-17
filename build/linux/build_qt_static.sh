@@ -19,12 +19,9 @@ mkdir -p $APROJECTS/build-qt-$QT_VERSION_STATIC-static
 echo Configure ... ========================================
 cd $APROJECTS/build-qt-$QT_VERSION_STATIC-static
 bash $APROJECTS/qtbase-everywhere-src-$QT_VERSION_STATIC/configure -openssl-linked -static -release \
-     -prefix $APROJECTS/qt-$QT_VERSION_STATIC-static \
-    -opensource -confirm-license \
-    -no-widgets -no-glib -no-inotify -no-gui -no-icu -no-pch -no-kms -no-directfb -no-eglfs -no-xcb -no-cups -no-gif \
-    -no-ico -no-evdev -no-accessibility -no-opengl -nomake examples -nomake tests -no-dbus -qt-pcre -qt-zlib \
-    -qt-sqlite -no-cups -no-opengl -no-egl -no-libudev -no-evdev -no-libinput -no-mtdev -no-tslib -no-bundled-xcb-xinput -no-xkbcommon \
-    -no-gif -no-ico -no-libpng -no-libjpeg -no-directfb
+    -prefix $APROJECTS/qt-$QT_VERSION_STATIC-static \
+    -opensource -confirm-license -no-widgets -no-glib -no-inotify -no-gui -no-icu -no-pch \
+    -nomake examples -nomake tests -no-dbus -qt-pcre -qt-zlib -qt-sqlite -no-libudev
 
 echo Building ... ========================================
 cd $APROJECTS/build-qt-$QT_VERSION_STATIC-static
