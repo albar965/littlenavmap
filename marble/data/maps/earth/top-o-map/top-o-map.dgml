@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+     This xml file is free software licensed under the GNU LGPL. You can
+     find a copy of this license in LICENSE.txt in the top directory of
+     the source code.
+-->
+<dgml xmlns="http://edu.kde.org/marble/dgml/2.0">
+  <document>
+    <head>
+      <!-- The license here applies to the actual map content, not this dgml file. See the license header above for the dgml file license -->
+      <!-- The content that this license refers to is not distributed with this package -->
+      <license short="© OpenStreetMap / Top-O-Map contributors">Map data: © OpenStreetMap contributors | Elevation data: Copernicus, Sonny | Style based on: © OpenTopoMap | Provided by: Top-O-Map</license>
+      <name>Top-O-Map</name>
+      <target>earth</target>
+      <theme>top-o-map</theme>
+      <icon pixmap="top-o-map-preview.png"/>
+      <shortcut></shortcut>
+      <visible>true</visible>
+      <description><![CDATA[<p><i>Top-O-Map</i> provides high-quality topographic maps for apps and websites. In just a few steps, you can integrate different maps (topographic map, relief map and 3D map) in your application and give your users first-class map material.</p>]]></description>
+      <zoom>
+        <minimum>   900  </minimum>
+        <maximum>  3328  </maximum>
+        <discrete> true</discrete>
+      </zoom>
+    </head>
+    <map bgcolor="#000000">
+      <canvas/>
+      <target/>
+      <layer name="top-o-map" backend="texture">
+        <!-- OpenStreetMap mapnik rendered tiles expire after 14 days -->
+        <texture name="mapnik_data" expire="1209600">
+          <sourcedir format="PNG"> earth/top-o-map </sourcedir>
+          <tileSize width="256" height="256"/>
+          <storageLayout levelZeroColumns="1" levelZeroRows="1" maximumTileLevel="19" mode="Custom"/>
+          <projection name="Mercator"/>
+
+          <downloadUrl protocol="https" host="tile.top-o-map.com" path="/{z}/{x}/{y}.png?key={Top-O-Map API Key}" />
+<!--           <downloadUrl protocol="https" host="tile.top-o-map.com" path="/{z}/{x}/{y}.png" /> -->
+
+          <!-- Use 2 to adapt to OSM requirements http://wiki.openstreetmap.org/wiki/Tile_usage_policy -->
+          <downloadPolicy usage="Browse" maximumConnections="2"/>
+        </texture>
+      </layer>
+    </map>
+  </document>
+</dgml>

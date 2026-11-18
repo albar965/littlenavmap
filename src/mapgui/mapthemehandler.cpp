@@ -874,7 +874,7 @@ void MapThemeHandler::changeMapTheme()
       tr("<p>The map theme \"%1\" requires additional information.</p>"
            "<p>You have to create an account at the related website and then create an username, "
              "an access key, API key or a token.<br/>"
-             "Most of these services offer a free plan. There is no need to enter credit card information.</p>"
+             "Most of these services offer a free plan, while others require a small fee.</p>"
              "<p>Then go to menu \"Tools\" -> \"Options\" and to page \"Map Theme Keys\" in Little Navmap and "
                "enter the information for the key or keys below:</p>"
                "<ul><li>%2</li></ul>"
