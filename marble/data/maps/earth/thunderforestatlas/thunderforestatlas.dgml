@@ -41,11 +41,5 @@
         </texture>
       </layer>
     </map>
-    <settings>
-      <property name="coordinate-grid">
-        <value>false</value>
-        <available>true</available>
-      </property>
-    </settings>
   </document>
 </dgml>
