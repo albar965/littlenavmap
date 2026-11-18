@@ -227,12 +227,11 @@
     <addaction name="separator"/>
     <addaction name="actionHelpChangelog"/>
     <addaction name="separator"/>
+    <addaction name="actionHelpDonate"/>
+    <addaction name="separator"/>
     <addaction name="actionHelpAbout"/>
     <addaction name="actionHelpAboutQt"/>
     <addaction name="actionAboutMarble"/>
-    <addaction name="separator"/>
-    <addaction name="actionHelpDonate"/>
-    <addaction name="actionHelpCheckUpdates"/>
    </widget>
    <widget class="QMenu" name="menuTools">
     <property name="title">
@@ -9006,10 +9005,10 @@ relation to shown airport</string>
   <action name="actionHelpDonate">
    <property name="icon">
     <iconset resource="../../littlenavmap.qrc">
-     <normaloff>:/littlenavmap/resources/icons/about.svg</normaloff>:/littlenavmap/resources/icons/about.svg</iconset>
+     <normaloff>:/littlenavmap/resources/icons/donatehelp.svg</normaloff>:/littlenavmap/resources/icons/donatehelp.svg</iconset>
    </property>
    <property name="text">
-    <string>&amp;Donate for Little Navmap</string>
+    <string>&amp;Support Little Navmap with a donation</string>
    </property>
    <property name="toolTip">
     <string>If you would like show your appreciation you can donate here</string>

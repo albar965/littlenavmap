@@ -367,5 +367,6 @@
         <file>resources/icons/mapdisplaynavaid.svg</file>
         <file>resources/icons/aircrafttrailgoto.svg</file>
         <file>resources/icons/donate.svg</file>
+        <file>resources/icons/donatehelp.svg</file>
     </qresource>
 </RCC>
