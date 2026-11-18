@@ -820,37 +820,66 @@ void ProfileWidget::paintVasi(QPainter& painter, const Route& route)
         // Calculate altitude at end of guide
         // tan a = GK / AK; // tan a * AK = GK;
         float ydiff1 = atools::geo::tanDeg(vasi.first) * featherLen;
+        const QString type = vasi.second;
 
         // Calculate screen points for end of guide
         int yUpper = altitudeY(altitudeLegs.getDestinationAltitude() + ydiff1);
         int xUpper = distanceX(altitudeLegs.getDestinationDistance() - 6.f);
 
+        // Build common geometry
+        QLineF center(x, y, xUpper, yUpper);
+        QLineF top(x, y, xUpper, yUpper - 30);
+        top.setLength(center.length());
+        painter.setPen(Qt::NoPen);
+
         if(xUpper < map::INVALID_INDEX_VALUE && yUpper < map::INVALID_INDEX_VALUE)
         {
-          // Screen difference for +/- one degree
-          // float ydiffUpper = std::tan(atools::geo::toRadians(vasi.first + 1.5f)) * featherLen - ydiff1;
+          if(type == "TRICOLOR")
+          {
+            // Tri-color VASI - amber, green and red ===================================================
+            // Build geometry
+            QLineF upper(x, y, xUpper, yUpper - 12);
+            QLineF lower(x, y, xUpper, yUpper + 12);
+            QLineF bottom(x, y, xUpper, yUpper + 30);
 
-          // Build geometry
-          QLineF center(x, y, xUpper, yUpper);
-          QLineF lower(x, y, xUpper, yUpper + 30 /*(ydiffUpper *verticalScale)*/);
-          QLineF upper(x, y, xUpper, yUpper - 30 /*(ydiffUpper *verticalScale)*/);
+            upper.setLength(center.length());
+            lower.setLength(center.length());
+            bottom.setLength(center.length());
 
-          lower.setLength(center.length());
-          upper.setLength(center.length());
+            // Draw amber top
+            painter.setBrush(mapcolors::profileTricolorVasiAboveColor);
+            painter.drawPolygon(QPolygonF({top.p1(), top.p2(), upper.p2(), upper.p1()}));
 
-          // Draw lower red guide
-          painter.setPen(Qt::NoPen);
-          painter.setBrush(mapcolors::profileVasiBelowColor);
-          painter.drawPolygon(QPolygonF({lower.p1(), lower.p2(), center.p2(), center.p1()}));
+            // Draw green center
+            painter.setBrush(mapcolors::profileTricolorVasiCenterColor);
+            painter.drawPolygon(QPolygonF({upper.p1(), upper.p2(), lower.p2(), lower.p1()}));
 
-          // Draw above white guide
-          painter.setBrush(mapcolors::profileVasiAboveColor);
-          painter.drawPolygon(QPolygonF({upper.p1(), upper.p2(), center.p2(), center.p1()}));
+            // Draw red bottom
+            painter.setBrush(mapcolors::profileTricolorVasiBelowColor);
+            painter.drawPolygon(QPolygonF({lower.p1(), lower.p2(), bottom.p2(), bottom.p1()}));
+          }
+          else
+          {
+            // Other VASI - white and red ===================================================
+            // Build geometry
+            QLineF bottom(x, y, xUpper, yUpper + 30);
 
-          // Draw dashed center line
+            bottom.setLength(center.length());
+
+            // Draw above white guide
+            painter.setBrush(mapcolors::profileVasiAboveColor);
+            painter.drawPolygon(QPolygonF({top.p1(), top.p2(), center.p2(), center.p1()}));
+
+            // Draw lower red guide
+            painter.setBrush(mapcolors::profileVasiBelowColor);
+            painter.drawPolygon(QPolygonF({bottom.p1(), bottom.p2(), center.p2(), center.p1()}));
+          }
+
+          // Draw dashed center line ========================
           painter.setPen(mapcolors::profileVasiCenterPen);
           painter.drawLine(center);
 
+          // Draw VASI text ========================
           painter.setPen(Qt::black);
           if(OptionData::instance().getFlags2().testFlag(opts2::MAP_NAVAID_TEXT_BACKGROUND))
           {
@@ -860,9 +889,8 @@ void ProfileWidget::paintVasi(QPainter& painter, const Route& route)
           else
             painter.setBackgroundMode(Qt::TransparentMode);
 
-          // Draw VASI text ========================
-          double angle = atools::geo::angleFromQt(upper.angle());
-          painter.translate(upper.p2());
+          double angle = atools::geo::angleFromQt(top.angle());
+          painter.translate(top.p2());
           painter.rotate(angle + 90.);
 
           QString txt;

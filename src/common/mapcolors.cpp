@@ -42,6 +42,7 @@ QColor taxiwayNameColor(Qt::black);
 QColor taxiwayNameColorDarkMap(Qt::lightGray);
 
 QColor airportDetailBackColor(Qt::white);
+
 QColor airportEmptyColor(130, 130, 130);
 QColor toweredAirportColor(15, 70, 130);
 QColor unToweredAirportColor(126, 58, 91);
@@ -117,6 +118,10 @@ QColor profileLabelColor(Qt::black);
 QColor profileVasiAboveColor(QColor(QStringLiteral("#70ffffff")));
 QColor profileVasiBelowColor(QColor(QStringLiteral("#70ff0000")));
 
+QColor profileTricolorVasiAboveColor(QColor(QStringLiteral("#b0e0a000")));
+QColor profileTricolorVasiCenterColor(QColor(QStringLiteral("#b000ff00")));
+QColor profileTricolorVasiBelowColor(QColor(QStringLiteral("#70ff0000")));
+
 QColor profileAltRestrictionFill(QColor(255, 255, 90));
 QColor profileAltRestrictionOutline(Qt::black);
 
@@ -157,6 +162,7 @@ QColor touchRegionFillColor(QStringLiteral("#40888888"));
 QColor touchRegionCornerFillColor(QStringLiteral("#80888888"));
 
 QColor aircraftUserLabelColor(Qt::black);
+
 QColor aircraftUserLabelColorBg(255, 255, 150);
 QColor aircraftAiLabelColor(Qt::black);
 QColor aircraftAiLabelColorBg(Qt::white);
@@ -164,16 +170,19 @@ QColor aircraftAiLabelColorBg(Qt::white);
 /* Text along route and approach segments */
 QColor routeTextColor(Qt::black);
 QColor routeTextColorDarkMap(Qt::lightGray);
+
 QColor routeTextColorGray(140, 140, 140);
 QColor routeTextBackgroundColor(255, 255, 255, 200);
 QColor routeProcedureMissedTextColor(90, 90, 90);
 QColor routeProcedureTextColor(Qt::black);
+
 QColor routeProcedurePointColor(90, 90, 90);
 QColor routeProcedurePointFlyoverColor(Qt::black);
 QColor routeUserPointColor(Qt::darkYellow);
 QColor routeInvalidPointColor(Qt::red);
 
 QColor routeDirectToDepartureBackgroundColor(Qt::white);
+
 QPen routeDirectToDeparturePen(QColor(Qt::black), 3., Qt::DotLine, Qt::FlatCap, Qt::MiterJoin);
 
 /* Procedure colors */
@@ -802,6 +811,9 @@ void loadColors()
   loadColor(colorSettings, QStringLiteral("Profile/LabelColor"), profileLabelColor);
   loadColorArgb(colorSettings, QStringLiteral("Profile/VasiAboveColor"), profileVasiAboveColor);
   loadColorArgb(colorSettings, QStringLiteral("Profile/VasiBelowColor"), profileVasiBelowColor);
+  loadColorArgb(colorSettings, QStringLiteral("Profile/TricolorVasiAboveColor"), profileTricolorVasiAboveColor);
+  loadColorArgb(colorSettings, QStringLiteral("Profile/TricolorVasiCenterColor"), profileTricolorVasiCenterColor);
+  loadColorArgb(colorSettings, QStringLiteral("Profile/TricolorVasiBelowColor"), profileTricolorVasiBelowColor);
   loadColor(colorSettings, QStringLiteral("Profile/AltRestrictionFill"), profileAltRestrictionFill);
   loadColor(colorSettings, QStringLiteral("Profile/AltRestrictionOutline"), profileAltRestrictionOutline);
   loadPen(colorSettings, QStringLiteral("Profile/LandOutlinePen"), profileLandOutlinePen);
