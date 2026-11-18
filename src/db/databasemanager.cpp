@@ -667,21 +667,27 @@ void DatabaseManager::insertSimSwitchActions()
 
   if(!file.isEmpty())
   {
+    // 14 29  2026-10-29T08:46:27.502 1 2611  2910261126  JEPPESEN  A424Export 2.193.1.0 little-navmap
     const DatabaseMeta meta = databaseMetadataFromFile(file);
-    QString cycle = meta.getAiracCycle();
-    QString suffix;
+    QString suffix, cycle = meta.getAiracCycle();
+
+    // 2609: 0309011026
+    // 2611: 2910261126
+    // QDate validFrom = QDate::fromString(meta.getValidThrough().mid(0, 4) % meta.getValidThrough().right(2), "ddMMYY");
+    QDate validTo = QDate::fromString(meta.getValidThrough().mid(4, 4) % meta.getValidThrough().right(2), "ddMMyy", 2000);
 
     if(!cycle.isEmpty())
-      suffix = tr(" - AIRAC Cycle %1").arg(cycle);
+    {
+      if(validTo.isValid())
+        suffix = tr(" - AIRAC Cycle %1, valid until %2").arg(cycle, QLocale().toString(validTo, QLocale::ShortFormat));
+      else
+        suffix = tr(" - AIRAC Cycle %1").arg(cycle);
+    }
     else
       suffix = tr(" - No AIRAC Cycle");
 
     if(!meta.hasData())
       suffix += tr(" (database is empty)");
-
-#ifdef DEBUG_INFORMATION
-    suffix += " (" % meta.getLastLoadTime().toString() % " | " % meta.getDataSource() % ")";
-#endif
 
     QString dbname = FsPaths::typeToDisplayName(FsPaths::NAVIGRAPH);
     navDbSubMenu = new QMenu(tr("&%1%2").arg(dbname, suffix));
