@@ -85,6 +85,7 @@ class HelpHandler;
 class DesktopServices;
 class FileHistoryHandler;
 class DockWidgetHandler;
+class SimpleWaitDialog;
 }
 }
 
@@ -691,11 +692,13 @@ private:
           *debugActionPerfEdit = nullptr, *debugActionDumpLayers = nullptr, *debugActionResetUpdate = nullptr,
           *debugActionThrowException = nullptr, *debugActionSegfault = nullptr,
           *debugActionAssert = nullptr, *debugActionMoveAircraft = nullptr, *debugActionExportPlans = nullptr,
-          *debugActionMapPaint = nullptr;
+          *debugActionMapPaint = nullptr, *debugActionRestartApplication = nullptr;
 
   /* Widgets that have to adapted on font change */
   QList<QTabWidget *> tabbarsToResize;
   QList<QWidget *> widgetsToResize;
+
+  atools::gui::SimpleWaitDialog *shutdownWaitDialog = nullptr;
 };
 
 #endif // LITTLENAVMAP_MAINWINDOW_H

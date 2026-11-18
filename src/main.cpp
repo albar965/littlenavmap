@@ -457,6 +457,10 @@ int main(int argc, char *argv[])
   // Remove lock file
   atools::gui::Application::recordExit();
 
+  // All databases and settings file should be closed by now
+  if(Application::isRestartApplication())
+    NavApp::restartApplication(true /* noDataExchange */, Application::isResetWindowLayout());
+
   qInfo() << Q_FUNC_INFO << "Exiting" << retval;
   return retval;
 }

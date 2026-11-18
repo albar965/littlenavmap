@@ -815,8 +815,8 @@ void NavApp::restartApplication(bool noDataExchange, bool resetLayout)
 {
   qDebug() << Q_FUNC_INFO << QCoreApplication::applicationFilePath();
 
-  dataExchange->disable();
-  atools::gui::Application::processEventsExtended();
+  if(dataExchange != nullptr)
+    dataExchange->disable();
 
   setRestartApplication(false /* restartApplicationParam */, false /* resetSettingsParam */, false /* resetWindowLayoutParam */);
 
@@ -845,6 +845,10 @@ void NavApp::restartApplication(bool noDataExchange, bool resetLayout)
   process.setArguments(arguments);
   process.setProgram(QCoreApplication::applicationFilePath());
   process.setWorkingDirectory(QCoreApplication::applicationDirPath());
+
+  qDebug() << Q_FUNC_INFO << "Restart" << QCoreApplication::applicationFilePath()
+           << "dir" << QCoreApplication::applicationDirPath()
+           << "arguments" << arguments;
   bool result = process.startDetached();
 
   if(result)

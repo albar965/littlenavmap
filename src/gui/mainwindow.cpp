@@ -46,6 +46,7 @@
 #include "gui/messagebox.h"
 #include "gui/messagesettings.h"
 #include "gui/qrcodedialog.h"
+#include "gui/simplewaitdialog.h"
 #include "gui/statusbar.h"
 #include "gui/stylehandler.h"
 #include "gui/tabwidgethandler.h"
@@ -530,6 +531,9 @@ MainWindow::MainWindow()
     debugActionResetUpdate = new QAction("DEBUG - Reset update timestamp to -2 days", ui->menuHelp);
     this->addAction(debugActionResetUpdate);
 
+    debugActionRestartApplication = new QAction("DEBUG - Restart application", ui->menuHelp);
+    this->addAction(debugActionRestartApplication);
+
     debugActionThrowException = new QAction("DEBUG - Crash by throwing an exception", ui->menuHelp);
     this->addAction(debugActionThrowException);
 
@@ -561,6 +565,7 @@ MainWindow::MainWindow()
     ui->menuHelp->addAction(debugActionPerfEdit);
     ui->menuHelp->addAction(debugActionDumpLayers);
     ui->menuHelp->addAction(debugActionResetUpdate);
+    ui->menuHelp->addAction(debugActionRestartApplication);
 
     QMenu *crashMenu = new QMenu("DEBUG - Crash", ui->menuHelp);
     crashMenu->addAction(debugActionThrowException);
@@ -581,6 +586,7 @@ MainWindow::MainWindow()
     connect(debugActionPerfEdit, &QAction::triggered, this, &MainWindow::debugActionTriggeredPerfEdit);
     connect(debugActionDumpLayers, &QAction::triggered, this, &MainWindow::debugActionTriggeredDumpLayers);
     connect(debugActionResetUpdate, &QAction::triggered, this, &MainWindow::debugActionTriggeredResetUpdate);
+    connect(debugActionRestartApplication, &QAction::triggered, [this]()->void {restartApplication(false);});
     connect(debugActionThrowException, &QAction::triggered, this, &MainWindow::debugActionTriggeredThrowException);
     connect(debugActionSegfault, &QAction::triggered, this, &MainWindow::debugActionTriggeredSegfault);
     connect(debugActionAssert, &QAction::triggered, this, &MainWindow::debugActionTriggeredAssert);
@@ -631,6 +637,9 @@ void MainWindow::deInit()
     deInitCalled = true;
     Application::setShuttingDown();
 
+    if(Application::isRestartApplication())
+      shutdownWaitDialog = new atools::gui::SimpleWaitDialog(this, tr("Restarting ..."));
+
     qDebug() << Q_FUNC_INFO << "stopping timers";
     statusBar->deInit();
     weatherUpdateTimer.stop();
@@ -676,8 +685,12 @@ void MainWindow::deInit()
 
     // Hide all windows and continue long running shutdown in the background =============
     QToolTip::hideText();
-    dockHandler->hideAllWindows();
-    Application::processEventsExtended();
+
+    if(!Application::isRestartApplication())
+    {
+      dockHandler->hideAllWindows();
+      Application::processEventsExtended();
+    }
 
     ATOOLS_DELETE_LOG(optionsDialog);
 
@@ -711,9 +724,6 @@ void MainWindow::deInit()
 
 void MainWindow::dataExchangeDataFetched(atools::util::Properties dataExchangeProperties)
 {
-  if(Application::isShuttingDown())
-    return;
-
   // Check for message from other instance
   if(!dataExchangeProperties.isEmpty())
   {
@@ -820,19 +830,26 @@ void MainWindow::debugActionTriggeredResetUpdate()
 
 void MainWindow::debugActionTriggeredThrowException()
 {
-  throw std::exception();
+  if(QMessageBox::question(this, QApplication::applicationName(), "This will crash the application.\n\nContinue?") == QMessageBox::Ok)
+    throw std::exception();
 }
 
 void MainWindow::debugActionTriggeredSegfault()
 {
-  char *ptr = nullptr;
-  *ptr = '\0';
+  if(QMessageBox::question(this, QApplication::applicationName(), "This will crash the application.\n\nContinue?") == QMessageBox::Ok)
+  {
+    char *ptr = nullptr;
+    *ptr = '\0';
+  }
 }
 
 void MainWindow::debugActionTriggeredAssert()
 {
-  QList<int> list;
-  list.constFirst();
+  if(QMessageBox::question(this, QApplication::applicationName(), "This will crash the application.\n\nContinue?") == QMessageBox::Ok)
+  {
+    QList<int> list;
+    list.constFirst();
+  }
 }
 
 bool MainWindow::isDebugMovingAircraft() const
@@ -5293,10 +5310,6 @@ void MainWindow::closeEvent(QCloseEvent *event)
   }
   else
     qWarning() << Q_FUNC_INFO << "close called after deInit";
-
-  // All databases and settings file should be closed by now
-  if(Application::isRestartApplication())
-    NavApp::restartApplication(true /* noDataExchange */, Application::isResetWindowLayout());
 
   qDebug() << Q_FUNC_INFO << "Exit quit is" << quit;
 }
