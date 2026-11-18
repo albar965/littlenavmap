@@ -28,10 +28,7 @@ mkdir %APROJECTS%\build-qt-%QT_VERSION_STATIC%-static
 echo Configure ... ========================================
 cd %APROJECTS%\build-qt-%QT_VERSION_STATIC%-static
 
-call %APROJECTS%\qtbase-everywhere-src-%QT_VERSION_STATIC%\configure.bat -static -release -opensource -confirm-license \
-    -prefix %APROJECTS%/qt-%QT_VERSION_STATIC%-static \
-    -no-widgets -no-glib -no-inotify -no-gui -no-icu -no-pch -no-ssl -no-openssl \
-    -nomake examples -nomake tests -no-dbus -qt-pcre -qt-zlib -qt-sqlite -no-libudev
+call %APROJECTS%\qtbase-everywhere-src-%QT_VERSION_STATIC%\configure.bat -static -release -opensource -confirm-license -prefix %APROJECTS%/qt-%QT_VERSION_STATIC%-static -no-widgets -no-glib -no-inotify -no-gui -no-icu -no-pch -no-ssl -no-openssl -nomake examples -nomake tests -no-dbus -qt-pcre -qt-zlib -qt-sqlite -no-libudev
 if errorlevel 1 goto :err
 
 echo Building ... ========================================
