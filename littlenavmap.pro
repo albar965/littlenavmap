@@ -800,6 +800,7 @@ OTHER_FILES += \
 # =====================================================================
 # Local deployment commands for development
 
+# =====================================================================
 # Linux - Copy help and Marble plugins and data
 unix:!macx {
   copydata.commands = mkdir -p $$OUT_PWD/plugins &&
@@ -833,6 +834,7 @@ unix:!macx {
   copydata.commands += chmod -v a+x $$OUT_PWD/littlenavmap*.sh
 }
 
+# =====================================================================
 # Mac OS X - Copy help and Marble plugins and data
 macx {
   copydata.commands += cp -Rv $$PWD/help $$OUT_PWD/littlenavmap.app/Contents/MacOS &&
@@ -853,6 +855,7 @@ macx {
 # =====================================================================
 # Deployment commands
 
+# =====================================================================
 # Linux specific deploy target
 unix:!macx {
   DEPLOY_DIR=\"$$DEPLOY_BASE/$$TARGET_NAME\"
@@ -935,6 +938,7 @@ unix:!macx {
   deploy.commands += rm -fv $$DEPLOY_DIR_LIB/lib*.so.*.debug $$DEPLOY_DIR_LIB/*/lib*.so.*.debug
 }
 
+# =====================================================================
 # Mac specific deploy target
 macx {
   isEqual(GUI_BUILD, "true") {
@@ -1001,6 +1005,7 @@ macx {
   deploy.commands += cp -fv $$PWD/CHANGELOG.txt $$DEPLOY_DIR/CHANGELOG-LittleNavmap.txt
 }
 
+# =====================================================================
 # Windows specific deploy target to "deploy\Little Navmap win64"
 win32 {
   defineReplace(p){return ($$shell_quote($$shell_path($$1)))}

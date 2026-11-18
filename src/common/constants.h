@@ -443,6 +443,7 @@ const QLatin1String OPTIONS_WEATHER_UPDATE_RATE_SIM("Options/WeatherUpdateRateSi
 
 const QLatin1String OPTIONS_VERSION("Options/Version");
 const QLatin1String OPTIONS_VERSIONS_USED("Options/VersionsUsed");
+const QLatin1String OPTIONS_DONATION_TIMESTAMP("Options/DonationTimestamp");
 
 /* Track download URLs from track.cfg */
 const QLatin1String OPTIONS_TRACK_NAT_URL("Track/NatUrl");

@@ -122,6 +122,7 @@
 
 // Shutdown will be delayed if closing early to avoid deadlocks in Marble
 const static int SHUTDOWN_DELAY_PERIOD_MS = 3000;
+const static qint64 DONATION_TIMEOUT_DAYS = 90;
 
 using namespace Marble;
 using atools::settings::Settings;
@@ -3774,6 +3775,46 @@ void MainWindow::mainWindowShownDelayed()
     // Databases were removed - show dialog
     if(databaseManager->hasInstalledSimulators())
       databaseManager->loadScenery();
+  }
+  else
+  {
+    // Show donation dialog if not first start and if the version is neither beta nor development
+#ifndef DEBUG_INFORMATION
+    if(atools::util::Version(Application::applicationVersion()).isStable())
+#endif
+    {
+      // Check if it is time to show a new note
+      qint64 timestampDays = settings.valueLongLong(lnm::OPTIONS_DONATION_TIMESTAMP, 0LL) * 3600LL * 24LL;
+      if(QDateTime::currentSecsSinceEpoch() > timestampDays + DONATION_TIMEOUT_DAYS)
+      {
+        QString text = tr("<p style=\"font-size: xx-large; font-weight: 900; white-space: nowrap;\">"
+                            "Donate to keep Little Navmap running!</p>"
+                            "<p style=\"font-size: large; font-weight: 700;\">"
+                              "If Little Navmap has guided you through more flights than you can count, "
+                              "maybe it is time to return a small favor. "
+                              "Donate a bit and help Little Navmap stay airborne!"
+                            "</p>"
+                            "<p style=\"font-size: large; font-weight: 700; white-space: nowrap;\">"
+                              "Already donated?<br/>"
+                              "Just ignore this, feel proud and press \"Do not show this again for a while\".</p>"
+                              "<p style=\"font-size: large; font-weight: 700; white-space: nowrap;\">"
+                                "<a href=\"%1\">Click here to go to the donations page</a></p>").arg(lnm::helpDonateUrl);
+        Application::closeSplashScreen();
+
+        QMessageBox box(QMessageBox::Information, QCoreApplication::applicationName(), text, QMessageBox::Ok, this);
+        box.setIconPixmap(QIcon(":/littlenavmap/resources/icons/donate.svg").pixmap(QSize(NavApp::getMinButtonSize() * 4)));
+        box.setDefaultButton(QMessageBox::Ok);
+        box.setWindowFlag(Qt::WindowContextHelpButtonHint, false);
+        box.setWindowModality(Qt::ApplicationModal);
+        box.setTextInteractionFlags(Qt::TextSelectableByMouse | Qt::LinksAccessibleByMouse);
+        box.setCheckBox(new QCheckBox(tr("&Do not show this again for a while"), &box));
+        box.exec();
+
+        if(box.checkBox()->isChecked())
+          // Hide for three months
+          settings.setValue(lnm::OPTIONS_DONATION_TIMESTAMP, QDateTime::currentSecsSinceEpoch());
+      }
+    }
   }
 
   // Checks if version of database is smaller than application database version and shows a warning dialog if it is

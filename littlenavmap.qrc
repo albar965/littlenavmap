@@ -366,5 +366,6 @@
         <file>resources/icons/approachoff.svg</file>
         <file>resources/icons/mapdisplaynavaid.svg</file>
         <file>resources/icons/aircrafttrailgoto.svg</file>
+        <file>resources/icons/donate.svg</file>
     </qresource>
 </RCC>
