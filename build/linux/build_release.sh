@@ -99,9 +99,16 @@ rm -rf ${APROJECTS}/build-atools-${CONF_TYPE}
 mkdir -p ${APROJECTS}/build-atools-${CONF_TYPE}
 cd ${APROJECTS}/build-atools-${CONF_TYPE}
 
+# ===========================================================================
+# ========================== Minimal atools
+export ATOOLS_NO_CRASHHANDLER=true
 export ATOOLS_NO_FS=true
 export ATOOLS_NO_GRIB=true
 export ATOOLS_NO_GUI=true
+export ATOOLS_NO_NAVSERVER=true
+export ATOOLS_NO_NETWORK=true
+export ATOOLS_NO_ONLINE=true
+export ATOOLS_NO_QT5COMPAT=true
 export ATOOLS_NO_ROUTING=true
 export ATOOLS_NO_SQL=true
 export ATOOLS_NO_TRACK=true
@@ -109,9 +116,7 @@ export ATOOLS_NO_USERDATA=true
 export ATOOLS_NO_WEATHER=true
 export ATOOLS_NO_WEB=true
 export ATOOLS_NO_WMM=true
-export ATOOLS_NO_NAVSERVER=true
-export ATOOLS_NO_CRASHHANDLER=true
-export ATOOLS_NO_QT5COMPAT=true
+export ATOOLS_NO_ZIP=true
 
 ${QMAKE_STATIC} ${APROJECTS}/atools/atools.pro -spec linux-g++ CONFIG+=${CONF_TYPE}
 nice make

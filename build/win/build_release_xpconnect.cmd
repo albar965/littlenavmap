@@ -72,9 +72,16 @@ set PATH=%PATH%;%PATH_STATIC%
 echo QTDIR=%QTDIR%
 echo PATH=%PATH%
 
+rem ===========================================================================
+rem ========================== Minimal atools
+set ATOOLS_NO_CRASHHANDLER=true
 set ATOOLS_NO_FS=true
 set ATOOLS_NO_GRIB=true
 set ATOOLS_NO_GUI=true
+set ATOOLS_NO_NAVSERVER=true
+set ATOOLS_NO_NETWORK=true
+set ATOOLS_NO_ONLINE=true
+set ATOOLS_NO_QT5COMPAT=true
 set ATOOLS_NO_ROUTING=true
 set ATOOLS_NO_SQL=true
 set ATOOLS_NO_TRACK=true
@@ -82,9 +89,7 @@ set ATOOLS_NO_USERDATA=true
 set ATOOLS_NO_WEATHER=true
 set ATOOLS_NO_WEB=true
 set ATOOLS_NO_WMM=true
-set ATOOLS_NO_NAVSERVER=true
-set ATOOLS_NO_CRASHHANDLER=true
-set ATOOLS_NO_QT5COMPAT=true
+set ATOOLS_NO_ZIP=true
 
 qmake.exe "%APROJECTS%\atools\atools.pro" -spec win32-g++ CONFIG+=%CONF_TYPE%
 if errorlevel 1 goto :err
