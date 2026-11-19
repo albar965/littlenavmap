@@ -34,6 +34,7 @@
 #include "fs/weather/metarparser.h"
 #include "gui/actiontool.h"
 #include "gui/mainwindow.h"
+#include "gui/stylehandler.h"
 #include "gui/translator.h"
 #include "logging/logginghandler.h"
 #include "logging/loggingutil.h"
@@ -56,6 +57,7 @@
 #include <marble/MarbleGlobal.h>
 #include <marble/MarbleDirs.h>
 #include <marble/MarbleDebug.h>
+
 
 using namespace Marble;
 using atools::gui::Application;
@@ -161,6 +163,10 @@ int main(int argc, char *argv[])
 
   // Create application object ===========================================================
   int retval = 0;
+
+  // Set Fusion initially
+  StyleHandler::initStyle();
+
   NavApp app(appArgc, appArgv.data());
 
   DatabaseManager *dbManager = nullptr;

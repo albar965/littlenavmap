@@ -190,6 +190,8 @@ private:
   void horizScrollBarValueChanged();
   void vertScrollBarValueChanged();
 
+  void updateLabelStyle();
+
 #ifdef DEBUG_INFORMATION
   void debugPrintValues();
 

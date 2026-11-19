@@ -36,6 +36,7 @@
 #include <QWindow>
 #include <QStringBuilder>
 #include <QStyleHints>
+#include <QToolTip>
 
 const QLatin1String StyleHandler::STYLE_FUSION("Fusion");
 const QLatin1String StyleHandler::STYLE_DARK("Dark");
@@ -128,20 +129,6 @@ StyleHandler::StyleHandler(QMainWindow *mainWindowParam)
   //// "QFrame[frameShape=\"4\"], QFrame[frameShape=\"5\"] { color: #b8b8b8; }"
   // );
 
-  // Override checked menu items style with icons for windows
-#if defined(Q_OS_WIN32)
-  QString vistaStyleSheet =
-    "QMenu::icon:checked:enabled { background: #90c8f6; border: 2px solid #90c8f6; border-radius: 2px; }"
-    "QMenu::icon:checked:disabled { background: #90c8f6; border: 2px solid #90c8f6; border-radius: 2px; }"
-    // "QMenu::icon:unchecked:enabled { background: lightgray; border: 2px solid lightgray; border-radius: 2px; }"
-    // "QMenu::icon:unchecked:disabled { background: lightgray; border: 2px solid lightgray; border-radius: 2px; }"
-    // "QMenu::item:checked { border-color: lightgray; background: #6f6fda; color: white; }"
-    "QMenu::item:selected { border-color: #91c9f7; background: #91c9f7; color: black; }"
-    "QMenu::item { padding: 2px 2px; }";
-#else
-  QString vistaStyleSheet;
-#endif
-
   // Collect names and palettes from all system styles ===================================
   for(const QString& styleName : QStyleFactory::keys())
   {
@@ -150,6 +137,9 @@ StyleHandler::StyleHandler(QMainWindow *mainWindowParam)
 
     if(style != nullptr)
     {
+      if(styleName == STYLE_WINDOWS || styleName == STYLE_WINDOWSVISTA)
+        continue;
+
       if(styleName == STYLE_FUSION)
       {
         // Try to load fusion palette settings from a ini file in settings
@@ -179,8 +169,6 @@ StyleHandler::StyleHandler(QMainWindow *mainWindowParam)
         styleDescriptions.append(StyleDescription(styleName, styleName, fusionStyleSheet, stylePalette, false /* dark */));
         fusionStyleIndex = styleDescriptions.size() - 1;
       }
-      else if(styleName == STYLE_WINDOWSVISTA || styleName == STYLE_WINDOWS)
-        styleDescriptions.append(StyleDescription(styleName, styleName, vistaStyleSheet, false /* dark */));
       else
         styleDescriptions.append(StyleDescription(styleName, styleName, QStringLiteral(), false /* dark */));
 
@@ -265,12 +253,13 @@ StyleHandler::StyleHandler(QMainWindow *mainWindowParam)
 StyleHandler::~StyleHandler()
 {
   ATOOLS_DELETE(styleActionGroup);
+  ATOOLS_DELETE_LOG(currentStyle);
 }
 
 void StyleHandler::logPalette(const QPalette& palette)
 {
   qDebug() << "Palette =========================================";
-
+  qDebug() << "Active ====================";
   qDebug() << Q_FUNC_INFO << "Window" << palette.color(QPalette::Active, QPalette::Window).name(QColor::HexRgb)
            << "WindowText" << palette.color(QPalette::Active, QPalette::WindowText).name(QColor::HexRgb)
            << "Base" << palette.color(QPalette::Active, QPalette::Base).name(QColor::HexRgb)
@@ -284,6 +273,33 @@ void StyleHandler::logPalette(const QPalette& palette)
            << "Button" << palette.color(QPalette::Active, QPalette::Button).name(QColor::HexRgb)
            << "ButtonText" << palette.color(QPalette::Active, QPalette::ButtonText).name(QColor::HexRgb)
            << "BrightText" << palette.color(QPalette::Active, QPalette::BrightText).name(QColor::HexRgb);
+
+  qDebug() << "Inactive ====================";
+  qDebug() << Q_FUNC_INFO << "Window" << palette.color(QPalette::Inactive, QPalette::Window).name(QColor::HexRgb)
+           << "WindowText" << palette.color(QPalette::Inactive, QPalette::WindowText).name(QColor::HexRgb)
+           << "Base" << palette.color(QPalette::Inactive, QPalette::Base).name(QColor::HexRgb)
+           << "AlternateBase" << palette.color(QPalette::Inactive, QPalette::AlternateBase).name(QColor::HexRgb);
+
+  qDebug() << Q_FUNC_INFO << "ToolTipBase" << palette.color(QPalette::Inactive, QPalette::ToolTipBase).name(QColor::HexRgb)
+           << "ToolTipText" << palette.color(QPalette::Inactive, QPalette::ToolTipText).name(QColor::HexRgb)
+           << "PlaceholderText" << palette.color(QPalette::Inactive, QPalette::PlaceholderText).name(QColor::HexRgb);
+
+  qDebug() << Q_FUNC_INFO << "Text" << palette.color(QPalette::Inactive, QPalette::Text).name(QColor::HexRgb)
+           << "Button" << palette.color(QPalette::Inactive, QPalette::Button).name(QColor::HexRgb)
+           << "ButtonText" << palette.color(QPalette::Inactive, QPalette::ButtonText).name(QColor::HexRgb)
+           << "BrightText" << palette.color(QPalette::Inactive, QPalette::BrightText).name(QColor::HexRgb);
+}
+
+void StyleHandler::applyCurrentStyleInitial()
+{
+  applyCurrentStyle(true /* initial */);
+  updateMenuStatus();
+}
+
+void StyleHandler::initStyle()
+{
+  // Application takes ownership
+  QApplication::setStyle(QStyleFactory::create(STYLE_FUSION));
 }
 
 QString StyleHandler::getCurrentGuiStyleDisplayName() const
@@ -431,34 +447,42 @@ void StyleHandler::applyCurrentStyle(bool initial)
 
   if(style != nullptr && (!automaticStyle || !initial))
   {
-    qDebug() << Q_FUNC_INFO << "setStyle()";
+    qDebug() << Q_FUNC_INFO << "setStyle()" << "automaticStyle" << automaticStyle << "initial" << initial
+             << "name" << style->name() << "display name" << styleDescription.getDisplayName();
+
+    // Sets the widget's GUI style to style. The ownership of the style object is not transferred
     mainWindow->setStyle(style);
+    ATOOLS_DELETE_LOG(currentStyle);
+    currentStyle = style;
 
     // Set palette sends a signal which is blocked above in paletteChanged()
-    qDebug() << Q_FUNC_INFO << "setPalette()";
+    QPalette palette;
     if(automaticStyle)
       // Unchanged system palette
-      QApplication::setPalette(systemPalette);
+      palette = systemPalette;
     else
     {
       if(styleDescription.isPaletteValid())
-        QApplication::setPalette(styleDescription.getPalette());
+        palette = styleDescription.getPalette();
       else
-        QApplication::setPalette(style->standardPalette());
+        palette = style->standardPalette();
     }
 
+    qDebug() << Q_FUNC_INFO << "setPalette()";
+    QApplication::setPalette(palette);
+    QToolTip::setPalette(QApplication::palette());
+    logPalette(palette);
+
+    // Setting style on Windows crashes
+#if !defined(Q_OS_WIN32)
     if(initial)
       atools::gui::Application::showSplashScreenMessage(tr("Applying style sheet ... "));
-#if defined(Q_OS_WIN32)
-    if(!automaticStyle && mainWindow->styleSheet() != styleDescription.getStylesheet())
-      // One windows do not use style sheet for automatic style to avoid unreadable tab bar close buttons
-      mainWindow->setStyleSheet(styleDescription.getStylesheet());
-#else
+
     if(mainWindow->styleSheet() != styleDescription.getStylesheet())
       mainWindow->setStyleSheet(styleDescription.getStylesheet());
-#endif
 
     qDebug() << Q_FUNC_INFO << "styleDescription.getStylesheet()" << styleDescription.getStylesheet();
+#endif
   }
   else
     qWarning() << Q_FUNC_INFO << "Style is null" << styleDescription.getStyleName();
@@ -466,11 +490,10 @@ void StyleHandler::applyCurrentStyle(bool initial)
   // Need to clear due to Qt bug
   QPixmapCache::clear();
 
-  qDebug() << Q_FUNC_INFO << "QApplication::palette() after set" << QApplication::palette();
-  logPalette(QApplication::palette());
-
-  qDebug() << Q_FUNC_INFO << "systemPalette after set" << systemPalette;
-  logPalette(systemPalette);
+  // qDebug() << Q_FUNC_INFO << "QApplication::palette() after set" << QApplication::palette();
+  // logPalette(QApplication::palette());
+  // qDebug() << Q_FUNC_INFO << "systemPalette after set" << systemPalette;
+  // logPalette(systemPalette);
 
 #if defined(Q_OS_WIN32)
   // Workaround for Windows using automatic style and dark. Avoid dark links and blue alternate base.
@@ -574,7 +597,4 @@ void StyleHandler::restoreState()
     else
       qDebug() << Q_FUNC_INFO << "Default style" << currentStyleName;
   }
-
-  applyCurrentStyle(true /* initial */);
-  updateMenuStatus();
 }

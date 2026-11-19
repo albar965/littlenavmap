@@ -120,12 +120,7 @@ ProfileScrollArea::ProfileScrollArea(ProfileWidget *parent, QScrollArea *scrollA
   tooltipLabel->setFrameShape(QFrame::Box); // Black border
   tooltipLabel->setMargin(0);
 
-  // Use tooltip palette
-  tooltipLabel->setPalette(QToolTip::palette());
-#ifndef Q_OS_MACOS
-  tooltipLabel->setForegroundRole(QPalette::ToolTipText);
-  tooltipLabel->setBackgroundRole(QPalette::ToolTipBase);
-#endif
+  updateLabelStyle();
 
   // Shrink font a bit
   QFont font = tooltipLabel->font();
@@ -744,6 +739,8 @@ void ProfileScrollArea::restoreState()
                                                                  ui->actionProfileShowIls, ui->actionProfileShowVasi,
                                                                  ui->actionProfileShowVerticalTrack});
   ui->splitterProfile->setHandleWidth(6);
+
+  updateLabelStyle();
 }
 
 void ProfileScrollArea::restoreSplitter()
@@ -764,6 +761,16 @@ void ProfileScrollArea::restoreSplitter()
     // Save splitter size - user can resize freely after next start
     state.save(ui->splitterProfile);
   }
+}
+
+void ProfileScrollArea::updateLabelStyle()
+{
+#ifndef Q_OS_MACOS
+  if(tooltipLabel != nullptr)
+    tooltipLabel->setStyleSheet(QStringLiteral("QLabel {color: %1; background: %2; }").
+                                arg(QApplication::palette().color(QPalette::Inactive, QPalette::ToolTipText).name(QColor::HexRgb),
+                                    QApplication::palette().color(QPalette::Inactive, QPalette::ToolTipBase).name(QColor::HexRgb)));
+#endif
 }
 
 bool ProfileScrollArea::isPointVisible(const QPoint& point)
@@ -911,6 +918,8 @@ void ProfileScrollArea::styleChanged()
                    " }").
     arg(QApplication::palette().color(QPalette::Window).darker(120).name()));
 #endif
+
+  updateLabelStyle();
   optionsChanged();
 }
 

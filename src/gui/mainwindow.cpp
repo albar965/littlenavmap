@@ -327,6 +327,9 @@ MainWindow::MainWindow()
 
     NavApp::getStyleHandler()->insertMenuItems(ui->menuWindowStyle);
     NavApp::getStyleHandler()->restoreState();
+    NavApp::getStyleHandler()->applyCurrentStyleInitial();
+
+    // Load colors for map features
     mapcolors::init();
 
     // Add actions for flight simulator database switch in main menu

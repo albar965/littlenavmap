@@ -22,6 +22,7 @@
 #include <QList>
 #include <QObject>
 
+class QStyle;
 class QStyleHints;
 class QMenu;
 class QPalette;
@@ -53,6 +54,12 @@ public:
   /* Save and load last used style */
   void saveState() const;
   void restoreState();
+
+  /* Initialize style, style sheet and palette */
+  void applyCurrentStyleInitial();
+
+  /* Set Fusion initially */
+  static void initStyle();
 
   /* Name like "Dark" or "Fusion" */
   QString getCurrentGuiStyleDisplayName() const;
@@ -108,6 +115,8 @@ private:
   QMainWindow *mainWindow;
 
   QStyleHints *styleHints;
+
+  QStyle *currentStyle = nullptr;
 
   QPalette systemPalette, /* Unchanged system palette. Can be dark or bright */
            brightFusionPalette; /* Bright Fusion palette loaded from resources */

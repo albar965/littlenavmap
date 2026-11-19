@@ -554,6 +554,7 @@ OptionsDialog::OptionsDialog(QMainWindow *parentWindow)
   ui->treeWidgetOptionsDisplayTextOptionsAirport->setItemDelegate(gridDelegateAirport);
 
   listWidgetIndex = new atools::gui::ListWidgetIndex(ui->splitterOptions, ui->listWidgetOptionPages, ui->stackedWidgetOptions);
+  listWidgetIndex->styleChanged();
 
   // Add option pages with text, icon and tooltip ========================================
   // The title has to match all text references in the program
@@ -1478,6 +1479,7 @@ void OptionsDialog::styleChanged()
   gridDelegateAirport->styleChanged();
 
   // Update potential search hightlights with new color
+  listWidgetIndex->styleChanged();
   listWidgetIndex->setHighlightColor(NavApp::isGuiStyleDark() ? QColor(200, 0, 0, 200) : QColor(255, 255, 0, 200));
   listWidgetIndex->find(QStringLiteral());
   listWidgetIndex->find(ui->lineEditOptionSearch->text());
