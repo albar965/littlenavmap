@@ -338,6 +338,7 @@ bool MapPaintLayer::render(GeoPainter *painter, ViewportParams *viewport, const 
 #ifdef DEBUG_INFORMATION_PAINT
       qDebug() << Q_FUNC_INFO << "layer" << *mapLayer;
 #endif
+      const OptionData& data = OptionData::instance();
 
       // Clear the airport id cache
       shownParkingAirportIds.clear();
@@ -388,68 +389,67 @@ bool MapPaintLayer::render(GeoPainter *painter, ViewportParams *viewport, const 
       context.maximumRunwayLengthFt = maximumRunwayLengthFt;
 
       // Copy default font
-      context.defaultFont = painter->font();
+      context.defaultFont = data.getMapFont();
+      mapPaintWidget->setFont(context.defaultFont);
       painter->setFont(context.defaultFont);
 
       context.viewportRect = mconvert::fromGdc(viewport->viewLatLonAltBox());
 
       context.screenRect = mapPaintWidget->rect();
 
-      const OptionData& od = OptionData::instance();
-
       // Overall scale different for desktop and web
-      context.scaleAll = (mapPaintWidget->isWeb() ? od.getDisplayScaleAllWeb() : od.getDisplayScaleAll()) / 100.f;
+      context.scaleAll = (mapPaintWidget->isWeb() ? data.getDisplayScaleAllWeb() : data.getDisplayScaleAll()) / 100.f;
 
-      context.symbolSizeAircraftAi = od.getDisplaySymbolSizeAircraftAi() / 100.f;
-      context.symbolSizeAircraftUser = od.getDisplaySymbolSizeAircraftUser() / 100.f;
-      context.symbolSizeAirport = od.getDisplaySymbolSizeAirport() / 100.f;
-      context.symbolSizeRoute = od.getDisplaySymbolSizeFlightplan() / 100.f;
-      context.symbolSizeAirportWeather = od.getDisplaySymbolSizeAirportWeather() / 100.f;
-      context.symbolSizeWindBarbs = od.getDisplaySymbolSizeWindBarbs() / 100.f;
-      context.symbolSizeNavaid = od.getDisplaySymbolSizeNavaid() / 100.f;
-      context.symbolSizeUserpoint = od.getDisplaySymbolSizeUserpoint() / 100.f;
-      context.symbolSizeHighlight = od.getDisplaySymbolSizeHighlight() / 100.f;
-      context.textSizeAircraftAi = od.getDisplayTextSizeAircraftAi() / 100.f;
-      context.textSizeAircraftUser = od.getDisplayTextSizeAircraftUser() / 100.f;
-      context.textSizeAirport = od.getDisplayTextSizeAirport() / 100.f;
-      context.textSizeAirportRunway = od.getDisplayTextSizeAirportRunway() / 100.f;
-      context.textSizeAirportTaxiway = od.getDisplayTextSizeAirportTaxiway() / 100.f;
-      context.textSizeRoute = od.getDisplayTextSizeFlightplan() / 100.f;
-      context.textSizeNavaid = od.getDisplayTextSizeNavaid() / 100.f;
-      context.textSizeAirspace = od.getDisplayTextSizeAirspace() / 100.f;
-      context.textSizeUserpoint = od.getDisplayTextSizeUserpoint() / 100.f;
-      context.textSizeAirway = od.getDisplayTextSizeAirway() / 100.f;
-      context.textSizeCompassRose = od.getDisplayTextSizeCompassRose() / 100.f;
-      context.textSizeMora = od.getDisplayTextSizeMora() / 100.f;
-      context.transparencyMora = od.getDisplayTransparencyMora() / 100.f;
-      context.textSizeAirportMsa = od.getDisplayTextSizeAirportMsa() / 100.f;
-      context.transparencyAirportMsa = od.getDisplayTransparencyAirportMsa() / 100.f;
-      context.transparencyFlightplan = od.getDisplayTransparencyFlightplan() / 100.f;
-      context.transparencyHighlight = od.getDisplayMapHighlightTransparent() / 100.f;
-      context.textSizeRangeMarker = od.getDisplayTextSizeMapMarker() / 100.f;
-      context.textSizeRangeMeasurement = od.getDisplayTextSizeMeasurement() / 100.f;
-      context.thicknessFlightplan = od.getDisplayThicknessFlightplan() / 100.f;
-      context.thicknessTrail = od.getDisplayThicknessTrail() / 100.f;
-      context.thicknessMapMarker = od.getDisplayThicknessMapMarker() / 100.f;
-      context.thicknessMeasurement = od.getDisplayThicknessMeasurement() / 100.f;
-      context.thicknessCompassRose = od.getDisplayThicknessCompassRose() / 100.f;
-      context.thicknessAirway = od.getDisplayThicknessAirway() / 100.f;
-      context.thicknessMora = od.getDisplayThicknessMora() / 100.f;
-      context.displayThicknessAirspace = od.getDisplayThicknessAirspace() / 100.f;
-      context.displayTransparencyAirspace = od.getDisplayTransparencyAirspace() / 100.f;
+      context.symbolSizeAircraftAi = data.getDisplaySymbolSizeAircraftAi() / 100.f;
+      context.symbolSizeAircraftUser = data.getDisplaySymbolSizeAircraftUser() / 100.f;
+      context.symbolSizeAirport = data.getDisplaySymbolSizeAirport() / 100.f;
+      context.symbolSizeRoute = data.getDisplaySymbolSizeFlightplan() / 100.f;
+      context.symbolSizeAirportWeather = data.getDisplaySymbolSizeAirportWeather() / 100.f;
+      context.symbolSizeWindBarbs = data.getDisplaySymbolSizeWindBarbs() / 100.f;
+      context.symbolSizeNavaid = data.getDisplaySymbolSizeNavaid() / 100.f;
+      context.symbolSizeUserpoint = data.getDisplaySymbolSizeUserpoint() / 100.f;
+      context.symbolSizeHighlight = data.getDisplaySymbolSizeHighlight() / 100.f;
+      context.textSizeAircraftAi = data.getDisplayTextSizeAircraftAi() / 100.f;
+      context.textSizeAircraftUser = data.getDisplayTextSizeAircraftUser() / 100.f;
+      context.textSizeAirport = data.getDisplayTextSizeAirport() / 100.f;
+      context.textSizeAirportRunway = data.getDisplayTextSizeAirportRunway() / 100.f;
+      context.textSizeAirportTaxiway = data.getDisplayTextSizeAirportTaxiway() / 100.f;
+      context.textSizeRoute = data.getDisplayTextSizeFlightplan() / 100.f;
+      context.textSizeNavaid = data.getDisplayTextSizeNavaid() / 100.f;
+      context.textSizeAirspace = data.getDisplayTextSizeAirspace() / 100.f;
+      context.textSizeUserpoint = data.getDisplayTextSizeUserpoint() / 100.f;
+      context.textSizeAirway = data.getDisplayTextSizeAirway() / 100.f;
+      context.textSizeCompassRose = data.getDisplayTextSizeCompassRose() / 100.f;
+      context.textSizeMora = data.getDisplayTextSizeMora() / 100.f;
+      context.transparencyMora = data.getDisplayTransparencyMora() / 100.f;
+      context.textSizeAirportMsa = data.getDisplayTextSizeAirportMsa() / 100.f;
+      context.transparencyAirportMsa = data.getDisplayTransparencyAirportMsa() / 100.f;
+      context.transparencyFlightplan = data.getDisplayTransparencyFlightplan() / 100.f;
+      context.transparencyHighlight = data.getDisplayMapHighlightTransparent() / 100.f;
+      context.textSizeRangeMarker = data.getDisplayTextSizeMapMarker() / 100.f;
+      context.textSizeRangeMeasurement = data.getDisplayTextSizeMeasurement() / 100.f;
+      context.thicknessFlightplan = data.getDisplayThicknessFlightplan() / 100.f;
+      context.thicknessTrail = data.getDisplayThicknessTrail() / 100.f;
+      context.thicknessMapMarker = data.getDisplayThicknessMapMarker() / 100.f;
+      context.thicknessMeasurement = data.getDisplayThicknessMeasurement() / 100.f;
+      context.thicknessCompassRose = data.getDisplayThicknessCompassRose() / 100.f;
+      context.thicknessAirway = data.getDisplayThicknessAirway() / 100.f;
+      context.thicknessMora = data.getDisplayThicknessMora() / 100.f;
+      context.displayThicknessAirspace = data.getDisplayThicknessAirspace() / 100.f;
+      context.displayTransparencyAirspace = data.getDisplayTransparencyAirspace() / 100.f;
 
-      context.dispOptsUser = od.getDisplayOptionsUserAircraft();
-      context.dispOptsAi = od.getDisplayOptionsAiAircraft();
-      context.dispOptsAirport = od.getDisplayOptionsAirport();
-      context.dispOptsRose = od.getDisplayOptionsRose();
-      context.dispOptsMeasurement = od.getDisplayOptionsMeasurement();
-      context.dispOptsRoute = od.getDisplayOptionsRoute();
-      context.flags = od.getFlags();
-      context.flags2 = od.getFlags2();
-      context.displayOptionsAirspace = od.getDisplayOptionsAirspace();
-      context.dispOptsNavaid = od.getDisplayOptionsNavAid();
-      context.mapNav = od.getMapNavigation();
-      context.navAreaSize = od.getMapNavTouchAreaSize();
+      context.dispOptsUser = data.getDisplayOptionsUserAircraft();
+      context.dispOptsAi = data.getDisplayOptionsAiAircraft();
+      context.dispOptsAirport = data.getDisplayOptionsAirport();
+      context.dispOptsRose = data.getDisplayOptionsRose();
+      context.dispOptsMeasurement = data.getDisplayOptionsMeasurement();
+      context.dispOptsRoute = data.getDisplayOptionsRoute();
+      context.flags = data.getFlags();
+      context.flags2 = data.getFlags2();
+      context.displayOptionsAirspace = data.getDisplayOptionsAirspace();
+      context.dispOptsNavaid = data.getDisplayOptionsNavAid();
+      context.mapNav = data.getMapNavigation();
+      context.navAreaSize = data.getMapNavTouchAreaSize();
 
       context.verboseDraw = NavApp::getMainWindow()->isDebugMapPaint();
 
