@@ -707,6 +707,7 @@ void MapThemeHandler::setupMapThemesUi()
   // Map themes =========================================
   delete toolButtonMapTheme;
   toolButtonMapTheme = new QToolButton(ui->toolBarMapOptions);
+  toolButtonMapTheme->setObjectName(QStringLiteral("toolButtonMapTheme"));
 
   // Create and add toolbar button =====================================
   toolButtonMapTheme->setIcon(QIcon(":/littlenavmap/resources/icons/map.svg"));

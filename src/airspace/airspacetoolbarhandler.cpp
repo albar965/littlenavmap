@@ -449,17 +449,18 @@ void AirspaceToolBarHandler::createAirspaceToolButton(atools::gui::ActionButtonH
 
   ui->menuViewAirspaces->addSeparator();
 
-  QToolButton *button = new QToolButton(ui->toolBarAirspaces);
-  button->setIcon(QIcon(icon));
-  button->setPopupMode(QToolButton::InstantPopup);
-  button->setToolTip(buttonHelp);
-  button->setStatusTip(buttonHelp);
-  button->setCheckable(true);
-  airspaceToolButtons.append(button);
+  QToolButton *toolButtonAirspaces = new QToolButton(ui->toolBarAirspaces);
+  toolButtonAirspaces->setObjectName(QStringLiteral("toolButtonAirspaces"));
+  toolButtonAirspaces->setIcon(QIcon(icon));
+  toolButtonAirspaces->setPopupMode(QToolButton::InstantPopup);
+  toolButtonAirspaces->setToolTip(buttonHelp);
+  toolButtonAirspaces->setStatusTip(buttonHelp);
+  toolButtonAirspaces->setCheckable(true);
+  airspaceToolButtons.append(toolButtonAirspaces);
 
   // Add tear off menu =======
-  button->setMenu(new QMenu(button));
-  QMenu *buttonMenu = button->menu();
+  toolButtonAirspaces->setMenu(new QMenu(toolButtonAirspaces));
+  QMenu *buttonMenu = toolButtonAirspaces->menu();
   buttonMenu->setToolTipsVisible(true);
   buttonMenu->setTearOffEnabled(true);
 
@@ -573,5 +574,5 @@ void AirspaceToolBarHandler::createAirspaceToolButton(atools::gui::ActionButtonH
     connect(sliderActionAltMax, &asinternal::AirspaceAltSliderAction::sliderReleased, this, &AirspaceToolBarHandler::altSliderChanged);
   }
 
-  ui->toolBarAirspaces->addWidget(button);
+  ui->toolBarAirspaces->addWidget(toolButtonAirspaces);
 }

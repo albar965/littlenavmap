@@ -117,7 +117,7 @@ private:
   apinternal::AirportLabelAction *labelActionRunwayLength = nullptr;
 
   /* Toolbutton getting all actions for dropdown menu */
-  QToolButton *toolButton = nullptr;
+  QToolButton *toolButtonAirports = nullptr;
 
   /* Selection */
   map::MapTypes airportTypes = map::AIRPORT_DEFAULT;

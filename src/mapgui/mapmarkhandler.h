@@ -104,7 +104,7 @@ private:
           *actionHolds = nullptr, *actionAirportMsa = nullptr, *actionPatterns = nullptr;
 
   /* Toolbutton getting all actions for dropdown menu */
-  QToolButton *toolButton = nullptr;
+  QToolButton *toolButtonMapMarks = nullptr;
   map::MapTypes markTypes = map::MARK_ALL;
   MainWindow *mainWindow;
 

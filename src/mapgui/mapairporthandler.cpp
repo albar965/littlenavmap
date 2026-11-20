@@ -264,7 +264,7 @@ MapAirportHandler::MapAirportHandler(QObject *parent)
 MapAirportHandler::~MapAirportHandler()
 {
   ATOOLS_DELETE_LOG(actionGroupAddon);
-  ATOOLS_DELETE_LOG(toolButton);
+  ATOOLS_DELETE_LOG(toolButtonAirports);
 }
 
 void MapAirportHandler::saveState()
@@ -331,26 +331,27 @@ void MapAirportHandler::insertToolbarButton()
 {
   Ui::MainWindow *ui = NavApp::getMainUi();
 
-  toolButton = new QToolButton(ui->toolBarMapOptions);
+  toolButtonAirports = new QToolButton(ui->toolBarMapOptions);
+  toolButtonAirports->setObjectName(QStringLiteral("toolButtonAirports"));
 
   // Connect master switch button
   connect(ui->actionMapShowAirports, &QAction::toggled, this, &MapAirportHandler::toolbarActionTriggered);
 
   // Create and add toolbar button =====================================
-  toolButton->setIcon(QIcon(":/littlenavmap/resources/icons/airportmenu.svg"));
-  toolButton->setPopupMode(QToolButton::InstantPopup);
-  toolButton->setToolTip(tr("Select airport types to show.\n"
-                            "Button is highlighted if any filter is selected."));
-  toolButton->setStatusTip(toolButton->toolTip());
-  toolButton->setCheckable(true);
+  toolButtonAirports->setIcon(QIcon(":/littlenavmap/resources/icons/airportmenu.svg"));
+  toolButtonAirports->setPopupMode(QToolButton::InstantPopup);
+  toolButtonAirports->setToolTip(tr("Select airport types to show.\n"
+                                    "Button is highlighted if any filter is selected."));
+  toolButtonAirports->setStatusTip(toolButtonAirports->toolTip());
+  toolButtonAirports->setCheckable(true);
 
   // Add tear off menu to button =======
-  toolButton->setMenu(new QMenu(toolButton));
-  QMenu *buttonMenu = toolButton->menu();
+  toolButtonAirports->setMenu(new QMenu(toolButtonAirports));
+  QMenu *buttonMenu = toolButtonAirports->menu();
   buttonMenu->setToolTipsVisible(true);
   buttonMenu->setTearOffEnabled(true);
 
-  ui->toolBarMapOptions->insertWidget(ui->actionMapShowAirportWeather, toolButton);
+  ui->toolBarMapOptions->insertWidget(ui->actionMapShowAirportWeather, toolButtonAirports);
 
   // Create and add actions to toolbar and menu =================================
   actionReset = new QAction(tr("&Reset airport display options"), buttonMenu);
@@ -395,7 +396,7 @@ void MapAirportHandler::insertToolbarButton()
   actionMil = addAction(":/littlenavmap/resources/icons/airportmil.svg", tr("&Military"), tr("Show military airports"), QKeySequence());
 
   ui->menuViewAirport->addSeparator();
-  toolButton->menu()->addSeparator();
+  toolButtonAirports->menu()->addSeparator();
 
   actionGroupAddon = new QActionGroup(buttonMenu);
   actionAddonNone = addAction(":/littlenavmap/resources/icons/airportaddonnone.svg", tr("&Add-on no override"),
@@ -412,14 +413,14 @@ void MapAirportHandler::insertToolbarButton()
 
   // Create and add the wrapped actions ================
   buttonMenu->addSeparator();
-  labelActionRunwayLength = new apinternal::AirportLabelAction(toolButton->menu());
-  toolButton->menu()->addAction(labelActionRunwayLength);
+  labelActionRunwayLength = new apinternal::AirportLabelAction(toolButtonAirports->menu());
+  toolButtonAirports->menu()->addAction(labelActionRunwayLength);
 
-  sliderActionRunwayLengthMin = new apinternal::AirportSliderAction(toolButton->menu(), true /* typeMinSlider */);
-  toolButton->menu()->addAction(sliderActionRunwayLengthMin);
+  sliderActionRunwayLengthMin = new apinternal::AirportSliderAction(toolButtonAirports->menu(), true /* typeMinSlider */);
+  toolButtonAirports->menu()->addAction(sliderActionRunwayLengthMin);
 
-  sliderActionRunwayLengthMax = new apinternal::AirportSliderAction(toolButton->menu(), false /* typeMinSlider */);
-  toolButton->menu()->addAction(sliderActionRunwayLengthMax);
+  sliderActionRunwayLengthMax = new apinternal::AirportSliderAction(toolButtonAirports->menu(), false /* typeMinSlider */);
+  toolButtonAirports->menu()->addAction(sliderActionRunwayLengthMax);
 
   // All that are to be disabled if airport master button is off
   allActions.append({
@@ -437,14 +438,14 @@ QAction *MapAirportHandler::addAction(const QString& icon, const QString& text, 
 {
   Ui::MainWindow *ui = NavApp::getMainUi();
 
-  QAction *action = new QAction(QIcon(icon), text, toolButton->menu());
+  QAction *action = new QAction(QIcon(icon), text, toolButtonAirports->menu());
   action->setToolTip(tooltip);
   action->setStatusTip(tooltip);
   action->setCheckable(true);
   action->setShortcut(shortcut);
 
   // Add to button and menu
-  toolButton->menu()->addAction(action);
+  toolButtonAirports->menu()->addAction(action);
   ui->menuViewAirport->addAction(action);
 
   connect(action, &QAction::triggered, this, &MapAirportHandler::toolbarActionTriggered);
@@ -563,11 +564,11 @@ void MapAirportHandler::runwaySliderReleased()
 void MapAirportHandler::updateButtons()
 {
   bool mainChecked = NavApp::getMainUi()->actionMapShowAirports->isChecked();
-  toolButton->setEnabled(mainChecked);
+  toolButtonAirports->setEnabled(mainChecked);
 
   // Depress tool button if different from default
   bool noDefault = isMinimumRunwaySet() || isMaximumRunwaySet() || !airportTypes.testFlag(map::MapTypes(map::AIRPORT_DEFAULT));
-  toolButton->setChecked(noDefault);
+  toolButtonAirports->setChecked(noDefault);
 
   // Reset and addon action
   if(actionReset->isEnabled() != noDefault && mainChecked)

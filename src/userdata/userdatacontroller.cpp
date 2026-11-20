@@ -178,6 +178,7 @@ void UserdataController::addToolbarButton()
 {
   Ui::MainWindow *ui = NavApp::getMainUi();
   userdataToolButton = new QToolButton(ui->toolBarMapOptions);
+  userdataToolButton->setObjectName(QStringLiteral("userdataToolButton"));
 
   // Create and add toolbar button =====================================
   userdataToolButton->setIcon(QIcon(":/littlenavmap/resources/icons/userpoint_POI.svg"));

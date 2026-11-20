@@ -42,7 +42,7 @@ MapMarkHandler::MapMarkHandler(MainWindow *mainWindowParam)
 MapMarkHandler::~MapMarkHandler()
 {
   delete buttonHandler;
-  delete toolButton;
+  delete toolButtonMapMarks;
 }
 
 void MapMarkHandler::saveState()
@@ -126,22 +126,23 @@ void MapMarkHandler::addToolbarButton()
 {
   Ui::MainWindow *ui = NavApp::getMainUi();
 
-  toolButton = new QToolButton(ui->toolBarMapOptions);
+  toolButtonMapMarks = new QToolButton(ui->toolBarMapOptions);
+  toolButtonMapMarks->setObjectName(QStringLiteral("toolButtonMapMarks"));
 
   // Create and add toolbar button =====================================
-  toolButton->setIcon(QIcon(":/littlenavmap/resources/icons/userfeatures.svg"));
-  toolButton->setPopupMode(QToolButton::InstantPopup);
-  toolButton->setToolTip(tr("Select map markers like range rings or holdings for display"));
-  toolButton->setStatusTip(toolButton->toolTip());
-  toolButton->setCheckable(true);
+  toolButtonMapMarks->setIcon(QIcon(":/littlenavmap/resources/icons/userfeatures.svg"));
+  toolButtonMapMarks->setPopupMode(QToolButton::InstantPopup);
+  toolButtonMapMarks->setToolTip(tr("Select map markers like range rings or holdings for display"));
+  toolButtonMapMarks->setStatusTip(toolButtonMapMarks->toolTip());
+  toolButtonMapMarks->setCheckable(true);
 
   // Add tear off menu to button =======
-  toolButton->setMenu(new QMenu(toolButton));
-  QMenu *buttonMenu = toolButton->menu();
+  toolButtonMapMarks->setMenu(new QMenu(toolButtonMapMarks));
+  QMenu *buttonMenu = toolButtonMapMarks->menu();
   buttonMenu->setToolTipsVisible(true);
   buttonMenu->setTearOffEnabled(true);
 
-  ui->toolBarMapOptions->addWidget(toolButton);
+  ui->toolBarMapOptions->addWidget(toolButtonMapMarks);
 
   // Create and add actions to toolbar and menu =================================
   actionAll = new QAction(tr("&All Map Markers"), buttonMenu);
@@ -177,13 +178,13 @@ void MapMarkHandler::addToolbarButton()
 
 QAction *MapMarkHandler::addAction(const QString& icon, const QString& text, const QString& tooltip)
 {
-  QAction *action = new QAction(QIcon(icon), text, toolButton->menu());
+  QAction *action = new QAction(QIcon(icon), text, toolButtonMapMarks->menu());
   action->setToolTip(tooltip);
   action->setStatusTip(tooltip);
   action->setCheckable(true);
 
   buttonHandler->addOtherAction(action);
-  toolButton->menu()->addAction(action);
+  toolButtonMapMarks->menu()->addAction(action);
   NavApp::getMainUi()->menuViewMarkers->addAction(action);
 
   return action;
@@ -192,7 +193,7 @@ QAction *MapMarkHandler::addAction(const QString& icon, const QString& text, con
 void MapMarkHandler::toolbarActionTriggered(QAction *)
 {
   actionsToFlags();
-  toolButton->setChecked(markTypes & map::MARK_ALL);
+  toolButtonMapMarks->setChecked(markTypes & map::MARK_ALL);
   emit updateMarkTypes(markTypes);
 }
 
@@ -200,7 +201,7 @@ void MapMarkHandler::toolbarActionAllTriggered(QAction *)
 {
   markTypes = map::MARK_ALL;
   flagsToActions();
-  toolButton->setChecked(true);
+  toolButtonMapMarks->setChecked(true);
   emit updateMarkTypes(markTypes);
 }
 
@@ -208,7 +209,7 @@ void MapMarkHandler::toolbarActionNoneTriggered(QAction *)
 {
   markTypes = map::NONE;
   flagsToActions();
-  toolButton->setChecked(false);
+  toolButtonMapMarks->setChecked(false);
   emit updateMarkTypes(markTypes);
 }
 
@@ -219,7 +220,7 @@ void MapMarkHandler::flagsToActions()
   actionHolds->setChecked(markTypes.testFlag(map::MARK_HOLDING));
   actionAirportMsa->setChecked(markTypes.testFlag(map::MARK_MSA));
   actionPatterns->setChecked(markTypes.testFlag(map::MARK_PATTERNS));
-  toolButton->setChecked(markTypes & map::MARK_ALL);
+  toolButtonMapMarks->setChecked(markTypes & map::MARK_ALL);
 }
 
 void MapMarkHandler::actionsToFlags()

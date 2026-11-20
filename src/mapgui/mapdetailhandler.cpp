@@ -148,7 +148,7 @@ MapDetailHandler::MapDetailHandler(QWidget *parent)
 
 MapDetailHandler::~MapDetailHandler()
 {
-  delete toolButton;
+  delete toolButtonMapDetail;
 }
 
 void MapDetailHandler::saveState() const
@@ -192,24 +192,25 @@ void MapDetailHandler::insertToolbarButton()
 {
   Ui::MainWindow *ui = NavApp::getMainUi();
 
-  toolButton = new QToolButton(ui->toolBarMap);
+  toolButtonMapDetail = new QToolButton(ui->toolBarMap);
+  toolButtonMapDetail->setObjectName(QStringLiteral("toolButtonMapDetail"));
 
   // Create and add toolbar button =====================================
-  toolButton->setIcon(QIcon(":/littlenavmap/resources/icons/detailmap.svg"));
-  toolButton->setPopupMode(QToolButton::InstantPopup);
-  toolButton->setToolTip(tr("Select map detail level.\n"
-                            "Button is highlighted if detail level is not default."));
-  toolButton->setStatusTip(toolButton->toolTip());
-  toolButton->setCheckable(true);
+  toolButtonMapDetail->setIcon(QIcon(":/littlenavmap/resources/icons/detailmap.svg"));
+  toolButtonMapDetail->setPopupMode(QToolButton::InstantPopup);
+  toolButtonMapDetail->setToolTip(tr("Select map detail level.\n"
+                                     "Button is highlighted if detail level is not default."));
+  toolButtonMapDetail->setStatusTip(toolButtonMapDetail->toolTip());
+  toolButtonMapDetail->setCheckable(true);
 
   // Add tear off menu to button =======
-  toolButton->setMenu(new QMenu(toolButton));
-  QMenu *buttonMenu = toolButton->menu();
+  toolButtonMapDetail->setMenu(new QMenu(toolButtonMapDetail));
+  QMenu *buttonMenu = toolButtonMapDetail->menu();
   buttonMenu->setToolTipsVisible(true);
   buttonMenu->setTearOffEnabled(true);
 
   // Replace dummy action with this widget
-  ui->toolBarMap->insertWidget(ui->actionDetailHandlerDummy, toolButton);
+  ui->toolBarMap->insertWidget(ui->actionDetailHandlerDummy, toolButtonMapDetail);
   ui->toolBarMap->removeAction(ui->actionDetailHandlerDummy);
 
   // Create and add actions to toolbar and menu =================================
@@ -217,8 +218,8 @@ void MapDetailHandler::insertToolbarButton()
   buttonMenu->addSeparator();
 
   // Create and add the wrapped actions ================
-  labelActionDetailLevel = new mdinternal::DetailLabelAction(toolButton->menu());
-  toolButton->menu()->addAction(labelActionDetailLevel);
+  labelActionDetailLevel = new mdinternal::DetailLabelAction(toolButtonMapDetail->menu());
+  toolButtonMapDetail->menu()->addAction(labelActionDetailLevel);
 
 #ifdef Q_OS_MACOS
   QString toolTip = tr("Set detail level for map display (also \"Command++\", \"Command+-\" or \"Command+Mouse Wheel\").");
@@ -226,27 +227,27 @@ void MapDetailHandler::insertToolbarButton()
   QString toolTip = tr("Set detail level for map display (also \"Ctrl++\", \"Ctrl+-\" or \"Ctrl+Mouse Wheel\").");
 #endif
 
-  sliderActionDetailLevel = new mdinternal::DetailSliderAction(toolButton->menu(), lnm::MAP_DETAIL_LEVEL, toolTip,
+  sliderActionDetailLevel = new mdinternal::DetailSliderAction(toolButtonMapDetail->menu(), lnm::MAP_DETAIL_LEVEL, toolTip,
                                                                MapLayerSettings::MAP_MIN_DETAIL_LEVEL,
                                                                MapLayerSettings::MAP_MAX_DETAIL_LEVEL);
-  toolButton->menu()->addAction(sliderActionDetailLevel);
+  toolButtonMapDetail->menu()->addAction(sliderActionDetailLevel);
 
   connect(sliderActionDetailLevel, &mdinternal::DetailSliderAction::valueChanged, this, &MapDetailHandler::detailSliderChanged);
   connect(sliderActionDetailLevel, &mdinternal::DetailSliderAction::sliderReleased, this, &MapDetailHandler::detailSliderChanged);
 
-  labelActionDetailLevelText = new mdinternal::DetailLabelAction(toolButton->menu());
-  toolButton->menu()->addAction(labelActionDetailLevelText);
+  labelActionDetailLevelText = new mdinternal::DetailLabelAction(toolButtonMapDetail->menu());
+  toolButtonMapDetail->menu()->addAction(labelActionDetailLevelText);
 
 #ifdef Q_OS_MACOS
   toolTip = tr("Set detail level for map display labels (also \"Command+Shift++\", \"Command+-\" or \"Command+Ctrl+Mouse Wheel\").");
 #else
   toolTip = tr("Set detail level for map display labels (also \"Ctrl+Shift++\", \"Ctrl+Shift+-\" or \"Ctrl+Shift+Mouse Wheel\").");
 #endif
-  sliderActionDetailLevelText = new mdinternal::DetailSliderAction(toolButton->menu(), lnm::MAP_DETAIL_LEVEL_TEXT, toolTip,
+  sliderActionDetailLevelText = new mdinternal::DetailSliderAction(toolButtonMapDetail->menu(), lnm::MAP_DETAIL_LEVEL_TEXT, toolTip,
                                                                    MapLayerSettings::MAP_MIN_DETAIL_LEVEL_TEXT,
                                                                    MapLayerSettings::MAP_MAX_DETAIL_LEVEL_TEXT);
 
-  toolButton->menu()->addAction(sliderActionDetailLevelText);
+  toolButtonMapDetail->menu()->addAction(sliderActionDetailLevelText);
 
   connect(sliderActionDetailLevelText, &mdinternal::DetailSliderAction::valueChanged, this, &MapDetailHandler::detailSliderChanged);
   connect(sliderActionDetailLevelText, &mdinternal::DetailSliderAction::sliderReleased, this, &MapDetailHandler::detailSliderChanged);
@@ -265,7 +266,7 @@ void MapDetailHandler::updateActions()
   int levelText = getDetailLevelText();
   bool anyChanged = level != MapLayerSettings::MAP_DEFAULT_DETAIL_LEVEL || levelText != MapLayerSettings::MAP_DEFAULT_DETAIL_LEVEL;
 
-  toolButton->setChecked(anyChanged);
+  toolButtonMapDetail->setChecked(anyChanged);
 
   // Update menu actions
   ui->actionMapDetailsDefault->setEnabled(anyChanged);

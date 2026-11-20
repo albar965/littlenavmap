@@ -94,7 +94,7 @@ private:
   mdinternal::DetailLabelAction *labelActionDetailLevelText = nullptr;
 
   /* Toolbutton getting all actions for dropdown menu */
-  QToolButton *toolButton = nullptr;
+  QToolButton *toolButtonMapDetail = nullptr;
 };
 
 namespace mdinternal {

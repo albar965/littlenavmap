@@ -383,6 +383,7 @@ void WindReporter::addToolbarButton()
   // Create and add toolbar button =====================================
   Ui::MainWindow *ui = NavApp::getMainUi();
   windlevelToolButton = new QToolButton(ui->toolBarMapOptions);
+  windlevelToolButton->setObjectName(QStringLiteral("windlevelToolButton"));
   windlevelToolButton->setIcon(QIcon(":/littlenavmap/resources/icons/wind.svg"));
   windlevelToolButton->setPopupMode(QToolButton::InstantPopup);
   windlevelToolButton->setToolTip(tr("Wind forecast altitude levels to display"));
