@@ -61,7 +61,7 @@ using atools::sql::SqlDatabase;
 using atools::sql::SqlTransaction;
 using atools::fs::db::DatabaseMeta;
 using atools::fs::FsPaths;
-using atools::gui::SimpleWaitDialog;
+using atools::gui::SimpleWaitDialogWidget;
 using atools::gui::Application;
 using atools::gui::Dialog;
 using atools::gui::HelpHandler;
@@ -358,12 +358,12 @@ bool DatabaseManager::checkIncompatibleDatabases(bool *databasesErased)
         ok = false;
       else if(result == QMessageBox::Yes)
       {
-        SimpleWaitDialog *simpleWaitDialog = new SimpleWaitDialog(parentWidget, tr("Deleting ..."));
+        atools::gui::SimpleWaitDialog simpleWaitDialog(parentWidget, tr("Deleting ..."));
 
         int i = 0;
         for(const QString& dbfile : databaseFiles)
         {
-          simpleWaitDialog->setLabelText(tr("Erasing database for %1 ...").arg(databaseNames.at(i)));
+          simpleWaitDialog.setLabelText(tr("Erasing database for %1 ...").arg(databaseNames.at(i)));
 
           if(QFile::remove(dbfile))
           {
@@ -387,7 +387,6 @@ bool DatabaseManager::checkIncompatibleDatabases(bool *databasesErased)
           }
           i++;
         }
-        delete simpleWaitDialog;
       }
     }
   }
@@ -442,8 +441,8 @@ void DatabaseManager::checkCopyAndPrepareDatabases()
     if(appCycleNum > settingsCycleNum || (appCycleNum == settingsCycleNum && appLastLoad > settingsLastLoad))
     {
       // We have a database in the application folder and it is newer than the one in the settings folder
-      SimpleWaitDialog *simpleWaitDialog = new SimpleWaitDialog(parentWidget, tr("Preparing %1 Database ...").
-                                                                arg(FsPaths::typeToDisplayName(FsPaths::NAVIGRAPH)));
+      atools::gui::SimpleWaitDialog simpleWaitDialog(parentWidget, tr("Preparing %1 Database ...").
+                                               arg(FsPaths::typeToDisplayName(FsPaths::NAVIGRAPH)));
 
       bool resultRemove = true, resultCopy = false;
       // Remove target
@@ -456,8 +455,8 @@ void DatabaseManager::checkCopyAndPrepareDatabases()
       // Copy to target
       if(resultRemove)
       {
-        simpleWaitDialog->setLabelText(tr("Preparing %1 Database: Copying file ...").
-                                       arg(FsPaths::typeToDisplayName(FsPaths::NAVIGRAPH)));
+        simpleWaitDialog.setLabelText(tr("Preparing %1 Database: Copying file ...").
+                                      arg(FsPaths::typeToDisplayName(FsPaths::NAVIGRAPH)));
         resultCopy = QFile(appDb).copy(settingsDb);
         qDebug() << Q_FUNC_INFO << "copied" << appDb << "to" << settingsDb << resultCopy;
       }
@@ -467,16 +466,16 @@ void DatabaseManager::checkCopyAndPrepareDatabases()
       {
         SqlDatabase tempDb(dbtools::DATABASE_NAME_TEMP);
         dbtools::openDatabaseFile(&tempDb, settingsDb, false /* readonly */, true /* createSchema */);
-        simpleWaitDialog->setLabelText(tr("Preparing %1 Database: Creating indexes ...").
-                                       arg(FsPaths::typeToDisplayName(FsPaths::NAVIGRAPH)));
+        simpleWaitDialog.setLabelText(tr("Preparing %1 Database: Creating indexes ...").
+                                      arg(FsPaths::typeToDisplayName(FsPaths::NAVIGRAPH)));
         NavDatabase::runPreparationScript(tempDb);
 
-        simpleWaitDialog->setLabelText(tr("Preparing %1 Database: Analyzing ...").arg(FsPaths::typeToDisplayName(FsPaths::NAVIGRAPH)));
+        simpleWaitDialog.setLabelText(tr("Preparing %1 Database: Analyzing ...").arg(FsPaths::typeToDisplayName(FsPaths::NAVIGRAPH)));
         tempDb.analyze();
         dbtools::closeDatabaseFile(&tempDb);
         settingsNeedsPreparation = false;
       }
-      delete simpleWaitDialog;
+      simpleWaitDialog.close();
 
       if(!resultRemove)
         Dialog::warning(parentWidget, tr("Deleting of database<br/><br/>\"%1\"<br/><br/>failed.<br/><br/>"
@@ -490,8 +489,8 @@ void DatabaseManager::checkCopyAndPrepareDatabases()
 
   if(settingsNeedsPreparation && hasSettingsMeta)
   {
-    SimpleWaitDialog *simpleWaitDialog = new SimpleWaitDialog(parentWidget, tr("Preparing %1 Database ...").
-                                                              arg(FsPaths::typeToDisplayName(FsPaths::NAVIGRAPH)));
+    atools::gui::SimpleWaitDialog simpleWaitDialog(parentWidget, tr("Preparing %1 Database ...").
+                                             arg(FsPaths::typeToDisplayName(FsPaths::NAVIGRAPH)));
 
     SqlDatabase tempDb(dbtools::DATABASE_NAME_TEMP);
     dbtools::openDatabaseFile(&tempDb, settingsDb, false /* readonly */, true /* createSchema */);
@@ -506,8 +505,6 @@ void DatabaseManager::checkCopyAndPrepareDatabases()
     tempDb.vacuum();
     tempDb.analyze();
     dbtools::closeDatabaseFile(&tempDb);
-
-    delete simpleWaitDialog;
   }
 }
 

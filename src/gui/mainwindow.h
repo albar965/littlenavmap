@@ -85,7 +85,7 @@ class HelpHandler;
 class DesktopServices;
 class FileHistoryHandler;
 class DockWidgetHandler;
-class SimpleWaitDialog;
+class SimpleWaitDialogWidget;
 }
 }
 
@@ -698,7 +698,7 @@ private:
   QList<QTabWidget *> tabbarsToResize;
   QList<QWidget *> widgetsToResize;
 
-  atools::gui::SimpleWaitDialog *shutdownWaitDialog = nullptr;
+  atools::gui::SimpleWaitDialogWidget *shutdownWaitDialog = nullptr;
 };
 
 #endif // LITTLENAVMAP_MAINWINDOW_H

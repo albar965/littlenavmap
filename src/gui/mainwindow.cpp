@@ -641,7 +641,8 @@ void MainWindow::deInit()
     Application::setShuttingDown();
 
     if(Application::isRestartApplication())
-      shutdownWaitDialog = new atools::gui::SimpleWaitDialog(this, tr("Restarting ..."));
+      // Dialog will be deleted by its parent
+      shutdownWaitDialog = new atools::gui::SimpleWaitDialogWidget(this, tr("Restarting ..."));
 
     qDebug() << Q_FUNC_INFO << "stopping timers";
     statusBar->deInit();
