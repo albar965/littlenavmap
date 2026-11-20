@@ -305,9 +305,6 @@ public:
   /* called by StyleHandler for style or palette changes */
   void styleChanged();
 
-  /* Style for toolbar and other buttons */
-  void applyButtonStylesheet();
-
   /* Start installation for Little Xpconnect */
   void installXpconnect();
 

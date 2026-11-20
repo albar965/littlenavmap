@@ -1331,6 +1331,7 @@ bool MapContextMenu::exec(QPoint menuPos, QPoint point)
   buildMainMenu();
 
   // Show the menu ------------------------------------------------
+  NavApp::applyStyleSheetMenu(&mapMenu);
   selectedAction = mapMenu.exec(menuPos + QPoint(3, 3));
 
   if(selectedAction != nullptr)

@@ -206,6 +206,7 @@ RouteStringDialog::RouteStringDialog(QWidget *parent, const QString& settingsSuf
   ui->textEditRouteString->installEventFilter(eventFilter);
 
   NavApp::registerDialogInDockHandler(this);
+  NavApp::applyStyleSheet(this, {ui->pushButtonRouteStringShowHelp, ui->pushButtonRouteStringUndo, ui->pushButtonRouteStringRedo});
 
   // Apply splitter and text formats
   styleChanged();

@@ -2735,6 +2735,7 @@ bool MapWidget::showFeatureSelectionMenu(map::MapRef& mapRef, const map::MapResu
   menu.addAction(new QAction(QIcon(":/littlenavmap/resources/icons/cancel.svg"), tr("&Cancel"), this));
 
   // Execute the menu
+  NavApp::applyStyleSheetMenu(&menu);
   QAction *action = menu.exec(QCursor::pos() + QPoint(3, 3));
 
   bool retval = false;
@@ -2744,6 +2745,7 @@ bool MapWidget::showFeatureSelectionMenu(map::MapRef& mapRef, const map::MapResu
     mapRef = action->data().value<map::MapRef>();
     retval = true;
   }
+
   return retval;
 }
 

@@ -273,6 +273,7 @@ RouteController::RouteController(MainWindow *parentWindow, QTableView *tableView
   tabHandlerRoute = new atools::gui::TabWidgetHandler(ui->tabWidgetRoute, {}, QIcon(":/littlenavmap/resources/icons/tabbutton.svg"),
                                                       tr("Open or close tabs"));
   tabHandlerRoute->init(rc::TabRouteIds, lnm::ROUTEWINDOW_WIDGET_TABS);
+  tabHandlerRoute->setStyleCallback(std::bind(&NavApp::applyStyleSheetMenu, std::placeholders::_1));
 
   // Update units
   units = new UnitStringTool();
@@ -3165,6 +3166,7 @@ void RouteController::tableContextMenu(const QPoint& pos)
 
   // Execute menu =========================================================================================
   // Route legs can get invalid if actions call their own handlers and reorganize the route ==============
+  NavApp::applyStyleSheetMenu(&menu);
   QAction *action = menu.exec(menuPos);
   if(action != nullptr)
     qDebug() << Q_FUNC_INFO << "selected" << action->text();

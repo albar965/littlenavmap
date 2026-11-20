@@ -1551,6 +1551,7 @@ void ProcedureSearch::contextMenu(const QPoint& pos)
   menu.addAction(ui->actionSearchResetView);
 
   // Execute menu =============================================================
+  NavApp::applyStyleSheetMenu(&menu);
   QAction *action = menu.exec(menuPos);
 
   if(action == ui->actionInfoApproachExpandAll)

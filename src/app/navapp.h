@@ -66,6 +66,8 @@ class QAction;
 class QTimeZone;
 
 class FileCheck;
+
+class QMenu;
 namespace map {
 struct MapAirport;
 }
@@ -317,6 +319,9 @@ public:
   static MainWindow *getMainWindow();
   static void registerDialogInDockHandler(QDialog *dialog);
   static void unregisterDialogInDockHandler(QDialog *dialog);
+  static void applyStyleSheet(QWidget *parentWidget, const QList<QWidget *>& buttonWidgets = QList<QWidget *>());
+  static void applyStyleSheetMenu(QMenu *menu);
+
   static QList<QAction *> getMainWindowActions();
   static StatusBar *getStatusBar();
 

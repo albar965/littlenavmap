@@ -105,6 +105,8 @@ ConnectDialog::ConnectDialog(QWidget *parent, bool simConnectAvailable)
 
   comboBoxHandler = new atools::gui::ComboBoxHandler(ui->comboBoxConnectHostname, ui->pushButtonConnectDeleteHostname,
                                                      QString(), lnm::NAVCONNECT_REMOTEHOSTS);
+  comboBoxHandler->setStyleCallback(std::bind(&NavApp::applyStyleSheetMenu, std::placeholders::_1));
+  comboBoxHandler->setMenuTooltipsVisible(NavApp::isMenuToolTipsVisible());
 
   connect(ui->comboBoxConnectHostname, &QComboBox::editTextChanged, this, &ConnectDialog::updateButtonStates);
   connect(ui->spinBoxConnectUpdateRateFsx, QOverload<int>::of(&QSpinBox::valueChanged), this, &ConnectDialog::updateRateHasChanged);

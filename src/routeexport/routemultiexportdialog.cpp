@@ -939,6 +939,7 @@ void RouteMultiExportDialog::tableContextMenu(const QPoint&)
   menu.addAction(noneDebugAction);
 #endif
 
+  NavApp::applyStyleSheetMenu(&menu);
   QAction *action = menu.exec(menuPos);
 
   // Handle actions which are not connected to methods

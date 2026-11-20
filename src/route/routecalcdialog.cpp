@@ -100,6 +100,7 @@ RouteCalcDialog::RouteCalcDialog(QWidget *parent)
 
   // Add to dock handler to enable auto raise and closing on exit
   NavApp::registerDialogInDockHandler(this);
+  NavApp::applyStyleSheet(this, {ui->pushButtonRouteCalcTrackDownload});
 
   ui->buttonBox->button(QDialogButtonBox::Apply)->setDefault(true);
 }

@@ -943,8 +943,8 @@ void WindReporter::updateManualRouteWinds()
 #ifdef DEBUG_INFORMATION
 QString WindReporter::getDebug(const atools::geo::Pos& pos)
 {
-  atools::grib::WindQuery *windQuery = isWindManual() ? windQueryManual : windQuery;
-  return windQuery->getDebug(pos);
+  atools::grib::WindQuery *query = isWindManual() ? windQueryManual : windQuery;
+  return query != nullptr ? query->getDebug(pos) : QStringLiteral();
 }
 
 #endif

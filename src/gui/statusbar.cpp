@@ -343,6 +343,7 @@ void StatusBar::customContextMenuRequested(const QPoint& point)
   menu.addAction(actionLocalSim);
 
   // Show menu =======================================================
+  NavApp::applyStyleSheetMenu(&menu);
   menu.exec(statusBar->mapToGlobal(point + QPoint(3, 3)));
 
   // Load values from menu =======================================================

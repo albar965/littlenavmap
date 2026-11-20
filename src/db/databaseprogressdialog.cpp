@@ -40,6 +40,7 @@ DatabaseProgressDialog::DatabaseProgressDialog(QWidget *parent, const QString& s
 
   // Add to dock handler to enable auto raise and closing on exit as well as applying stay-on-top status from main
   NavApp::registerDialogInDockHandler(this);
+  NavApp::applyStyleSheet(this);
 }
 
 DatabaseProgressDialog::~DatabaseProgressDialog()

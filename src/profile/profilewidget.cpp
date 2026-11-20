@@ -2789,6 +2789,7 @@ void ProfileWidget::showContextMenu(const QPoint& globalPoint)
   menu.addSeparator();
   menu.addAction(ui->actionProfileDisplayOptions);
 
+  NavApp::applyStyleSheetMenu(&menu);
   QAction *action = menu.exec(menuPos);
 
   if(action == ui->actionProfileShowOnMap)

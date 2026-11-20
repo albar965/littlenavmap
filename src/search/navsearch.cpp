@@ -193,6 +193,7 @@ NavSearch::NavSearch(MainWindow *parent, QTableView *tableView, si::TabSearchId 
 
   comboBoxHandler = new atools::gui::ComboBoxHandler(ui->comboBoxNavIcaoSearch, nullptr, tr("ICAO"),
                                                      lnm::SEARCHTAB_NAV_ICAO_COMBOBOX_HISTORY);
+  comboBoxHandler->setStyleCallback(std::bind(&NavApp::applyStyleSheetMenu, std::placeholders::_1));
   comboBoxHandler->setMenuTooltipsVisible(NavApp::isMenuToolTipsVisible());
 
   // Assign the callback which builds a part of the where clause for the airport search ======================

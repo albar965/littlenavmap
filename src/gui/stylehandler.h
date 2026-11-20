@@ -64,11 +64,15 @@ public:
   /* Name like "Dark" or "Fusion" */
   QString getCurrentGuiStyleDisplayName() const;
 
-  /* true if style requires darkening the map */
+  /* true if style requires darkening the map. This can be the internal dark style or one taken from the system. */
   bool isGuiStyleDark() const;
 
   /* true if any fusion based style like Dark or Fusion */
   bool isGuiStyleAnyFusion() const;
+
+  /* Style for toolbar and other buttons */
+  void applyStyleSheet(QWidget *parentWidget, const QList<QWidget *>& buttonWidgets) const;
+  void applyStyleSheet(QMenu *toolButtonMenu, QString buttonStylesheet = QString(), QString menuStylesheet = QString()) const;
 
   static void logPalette(const QPalette& palette);
 
@@ -96,6 +100,8 @@ private:
 
   /* Index to current or dark/fusion */
   int styleIndex() const;
+
+  void styleSheets(QString& buttonStylesheet, QString& menuStyleSheet) const;
 
   /* All system and custom styleDescriptions */
   QList<StyleDescription> styleDescriptions;

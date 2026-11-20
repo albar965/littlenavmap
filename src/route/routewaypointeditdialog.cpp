@@ -135,6 +135,7 @@ RouteWaypointEditDialog::RouteWaypointEditDialog(QWidget *parent)
 
   // Add to dock handler to enable auto raise and closing on exit
   NavApp::registerDialogInDockHandler(this);
+  NavApp::applyStyleSheet(this);
 }
 
 RouteWaypointEditDialog::~RouteWaypointEditDialog()

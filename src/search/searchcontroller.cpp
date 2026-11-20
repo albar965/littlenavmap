@@ -64,6 +64,7 @@ SearchController::SearchController(MainWindow *parent, QTabWidget *tabWidgetSear
   tabHandlerSearch = new atools::gui::TabWidgetHandler(ui->tabWidgetSearch, {}, QIcon(":/littlenavmap/resources/icons/tabbutton.svg"),
                                                        tr("Open or close tabs"));
   tabHandlerSearch->init(si::TabSearchIds, lnm::SEARCHTAB_WIDGET_TABS);
+  tabHandlerSearch->setStyleCallback(std::bind(&NavApp::applyStyleSheetMenu, std::placeholders::_1));
 
   connect(tabHandlerSearch, &atools::gui::TabWidgetHandler::tabChanged, this, &SearchController::tabChanged);
 }

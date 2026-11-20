@@ -1657,6 +1657,7 @@ void SearchBaseTable::contextMenu(const QPoint& point)
   }
 
   // Open menu ========================================================
+  NavApp::applyStyleSheetMenu(&menu);
   QAction *action = menu.exec(menuPos);
 
   if(action != nullptr)

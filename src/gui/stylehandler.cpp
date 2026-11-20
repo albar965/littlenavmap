@@ -37,6 +37,10 @@
 #include <QStringBuilder>
 #include <QStyleHints>
 #include <QToolTip>
+#include <QToolBar>
+#include <QAbstractButton>
+#include <QPushButton>
+#include <QToolButton>
 
 const QLatin1String StyleHandler::STYLE_FUSION("Fusion");
 const QLatin1String StyleHandler::STYLE_DARK("Dark");
@@ -121,14 +125,6 @@ StyleHandler::StyleHandler(QMainWindow *mainWindowParam)
   // Send void styleChanged() on palette changes
   connect(atools::gui::Application::applicationInstance(), &atools::gui::Application::paletteChanged, this, &StyleHandler::paletteChanged);
 
-  QString fusionStyleSheet;
-  // QString fusionStyleSheet(
-  // "QTabBar::close-button { image: url(:/littlenavmap/resources/icons/close.svg); } "
-  // "QTabBar::close-button:hover { image: url(:/littlenavmap/resources/icons/close_hover.svg); }"
-  //// Separator lines =================
-  //// "QFrame[frameShape=\"4\"], QFrame[frameShape=\"5\"] { color: #b8b8b8; }"
-  // );
-
   // Collect names and palettes from all system styles ===================================
   for(const QString& styleName : QStyleFactory::keys())
   {
@@ -166,7 +162,7 @@ StyleHandler::StyleHandler(QMainWindow *mainWindowParam)
           stylePalette = brightFusionPalette;
         }
 
-        styleDescriptions.append(StyleDescription(styleName, styleName, fusionStyleSheet, stylePalette, false /* dark */));
+        styleDescriptions.append(StyleDescription(styleName, styleName, QStringLiteral(), stylePalette, false /* dark */));
         fusionStyleIndex = styleDescriptions.size() - 1;
       }
       else
@@ -246,7 +242,7 @@ StyleHandler::StyleHandler(QMainWindow *mainWindowParam)
     // #endif
     );
 
-  styleDescriptions.append(StyleDescription(STYLE_DARK, STYLE_FUSION, darkStyleSheet, darkPalette, true /* dark */));
+  styleDescriptions.append(StyleDescription(STYLE_DARK, STYLE_FUSION, QStringLiteral(), darkPalette, true /* dark */));
   darkStyleIndex = styleDescriptions.size() - 1;
 }
 
@@ -331,6 +327,151 @@ bool StyleHandler::isGuiStyleAnyFusion() const
 {
   const QString& name = styleDescriptions.at(styleIndex()).getStyleName();
   return name == STYLE_FUSION || name == STYLE_DARK;
+}
+
+void StyleHandler::applyStyleSheet(QMenu *toolButtonMenu, QString buttonStylesheet, QString menuStylesheet) const
+{
+  if(toolButtonMenu != nullptr)
+  {
+    if(buttonStylesheet.isEmpty() || menuStylesheet.isEmpty())
+      styleSheets(buttonStylesheet, menuStylesheet);
+
+    // Tool bar menu button =====================================
+    toolButtonMenu->setStyleSheet(menuStylesheet);
+    for(QAction *toolButtonMenuAction: toolButtonMenu->actions())
+    {
+      // Action for tool bar menu button =====================================
+#ifdef DEBUG_INFORMATION
+      qDebug() << Q_FUNC_INFO << "......" << toolButtonMenuAction->objectName() << toolButtonMenuAction->text();
+#endif
+
+      QAbstractButton *abstractButton = dynamic_cast<QAbstractButton *>(toolButtonMenuAction);
+      if(abstractButton != nullptr)
+      {
+#ifdef DEBUG_INFORMATION
+        qDebug() << Q_FUNC_INFO << "........" << abstractButton->objectName() << abstractButton->text();
+#endif
+
+        abstractButton->setStyleSheet(buttonStylesheet);
+
+        QPushButton *button = dynamic_cast<QPushButton *>(abstractButton);
+        if(button != nullptr && !button->icon().isNull())
+          button->setFlat(true);
+      }
+    }
+  }
+}
+
+void StyleHandler::applyStyleSheet(QWidget *parentWidget, const QList<QWidget *>& buttonWidgets) const
+{
+#ifdef DEBUG_INFORMATION
+  qDebug() << Q_FUNC_INFO << isGuiStyleAnyFusion();
+#endif
+
+  QString buttonStylesheet, menuStylesheet;
+  styleSheets(buttonStylesheet, menuStylesheet);
+
+  // Get all toolbars and widgets to the respective actions
+  if(parentWidget != nullptr)
+  {
+    for(QToolBar *toolBar : parentWidget->findChildren<QToolBar *>())
+    {
+#ifdef DEBUG_INFORMATION
+      qDebug() << Q_FUNC_INFO << toolBar->objectName();
+#endif
+
+      // All toolbar actions =====================================
+      for(QAction *action : toolBar->actions())
+      {
+#ifdef DEBUG_INFORMATION
+        qDebug() << Q_FUNC_INFO << ".." << action->objectName() << action->text();
+#endif
+        QWidget *widgetForAction = toolBar->widgetForAction(action);
+
+        QToolButton *toolButton = dynamic_cast<QToolButton *>(widgetForAction);
+        if(toolButton != nullptr)
+        {
+#ifdef DEBUG_INFORMATION
+          qDebug() << Q_FUNC_INFO << "...." << toolButton->objectName() << toolButton->text();
+#endif
+          applyStyleSheet(toolButton->menu(), buttonStylesheet, menuStylesheet);
+        }
+        else
+        {
+          // Normal push or other button =====================================
+          QAbstractButton *abstractButton = dynamic_cast<QAbstractButton *>(widgetForAction);
+          if(abstractButton != nullptr)
+          {
+#ifdef DEBUG_INFORMATION
+            qDebug() << Q_FUNC_INFO << "...." << abstractButton->objectName() << abstractButton->text();
+#endif
+
+            abstractButton->setStyleSheet(buttonStylesheet);
+
+            QPushButton *pushButton = dynamic_cast<QPushButton *>(abstractButton);
+            if(pushButton != nullptr && !pushButton->icon().isNull())
+              pushButton->setFlat(true);
+          }
+        }
+      }
+    }
+
+    // Set style to all menus =================================================
+    for(QMenu *menu : parentWidget->findChildren<QMenu *>())
+      applyStyleSheet(menu, buttonStylesheet, menuStylesheet);
+  }
+
+  // Get all other toolbar-like buttons ========================================
+  for(QWidget *widget : std::as_const(buttonWidgets))
+  {
+    QPushButton *pushButton = dynamic_cast<QPushButton *>(widget);
+    if(pushButton != nullptr && !pushButton->icon().isNull())
+    {
+#ifdef DEBUG_INFORMATION
+      qDebug() << Q_FUNC_INFO << "...." << pushButton->objectName() << pushButton->text();
+#endif
+
+      pushButton->setStyleSheet(buttonStylesheet);
+      pushButton->setFlat(true);
+    }
+  }
+
+#ifdef DEBUG_INFORMATION
+  qDebug() << Q_FUNC_INFO << "done";
+#endif
+}
+
+void StyleHandler::styleSheets(QString& buttonStylesheet, QString& menuStyleSheet) const
+{
+  if(isGuiStyleAnyFusion())
+  {
+    // Build stylesheet with colors
+    // Limit to QAbstractButton to avoid changing the menu items
+    QPalette palette = QGuiApplication::palette();
+
+    buttonStylesheet = QStringLiteral(
+      "QAbstractButton { border: 1px solid transparent; padding: 1px; margin: 1px; }"
+      "QAbstractButton:checked { border: 1px solid %1; padding: 1px; background: %2; margin: 1px; }"
+      "QAbstractButton:hover { border: 1px solid %3; padding: 1px; margin: 1px; }").
+                       arg(palette.color(QPalette::Active, QPalette::Mid).name(),
+                           palette.color(QPalette::Active, QPalette::Midlight).name(),
+                           palette.color(QPalette::Active, QPalette::Highlight).name());
+
+    if(isGuiStyleDark())
+    {
+      menuStyleSheet =
+        //// Menu item separator ===============
+        QStringLiteral("QMenu::separator { background-color: %1; }").arg(palette.color(QPalette::Light).name()) %
+        QStringLiteral("QMenu::item:selected { border-color: lightgray; background: %1; }").
+        arg(palette.color(QPalette::Highlight).name()) %
+        // Menu padding (internal) ====================
+        "QMenu::item { padding: 3px 3px; margin-left: 3px; }"
+
+        // Thicker frame for selected menu items with icons ====================
+        "QMenu::icon:checked:enabled { background: #808080; border: 1px solid darkgray; border-radius: none; }"
+        "QMenu::icon:checked:disabled { background: #808080; border: 1px solid dimgray; border-radius: none; }";
+    }
+  }
 }
 
 int StyleHandler::styleIndex() const
@@ -418,9 +559,8 @@ void StyleHandler::colorSchemeChanged(Qt::ColorScheme colorScheme)
 
 void StyleHandler::applyStyleInternal()
 {
-  atools::gui::SimpleWaitDialog *simpleWaitDialog = new atools::gui::SimpleWaitDialog(mainWindow, tr("Applying style ..."));
+  atools::gui::SimpleWaitDialog simpleWaitDialog(mainWindow, tr("Applying style ..."));
   applyCurrentStyle(false /* initial */);
-  delete simpleWaitDialog;
 }
 
 void StyleHandler::paletteChanged(const QPalette&)
@@ -472,28 +612,12 @@ void StyleHandler::applyCurrentStyle(bool initial)
     QApplication::setPalette(palette);
     QToolTip::setPalette(QApplication::palette());
     logPalette(palette);
-
-    // Setting style on Windows crashes
-#if !defined(Q_OS_WIN32)
-    if(initial)
-      atools::gui::Application::showSplashScreenMessage(tr("Applying style sheet ... "));
-
-    if(mainWindow->styleSheet() != styleDescription.getStylesheet())
-      mainWindow->setStyleSheet(styleDescription.getStylesheet());
-
-    qDebug() << Q_FUNC_INFO << "styleDescription.getStylesheet()" << styleDescription.getStylesheet();
-#endif
   }
   else
     qWarning() << Q_FUNC_INFO << "Style is null" << styleDescription.getStyleName();
 
   // Need to clear due to Qt bug
   QPixmapCache::clear();
-
-  // qDebug() << Q_FUNC_INFO << "QApplication::palette() after set" << QApplication::palette();
-  // logPalette(QApplication::palette());
-  // qDebug() << Q_FUNC_INFO << "systemPalette after set" << systemPalette;
-  // logPalette(systemPalette);
 
 #if defined(Q_OS_WIN32)
   // Workaround for Windows using automatic style and dark. Avoid dark links and blue alternate base.
@@ -564,11 +688,7 @@ void StyleHandler::restoreState()
     currentStyleIndex = -1;
 
     // Use Fusion on macOS since the Qt apple style is a mess
-#ifdef Q_OS_MACOS
     QString currentStyleName = STYLE_FUSION;
-#else
-    QString currentStyleName = QApplication::style()->objectName();
-#endif
     const QStringList keys = QStyleFactory::keys();
     for(const QString& styleName : keys)
     {

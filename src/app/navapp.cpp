@@ -1091,6 +1091,18 @@ MainWindow *NavApp::getMainWindow()
   return mainWindow;
 }
 
+void NavApp::applyStyleSheet(QWidget *parentWidget, const QList<QWidget *>& buttonWidgets)
+{
+  if(styleHandler != nullptr)
+    styleHandler->applyStyleSheet(parentWidget, buttonWidgets);
+}
+
+void NavApp::applyStyleSheetMenu(QMenu *menu)
+{
+  if(styleHandler != nullptr)
+    styleHandler->applyStyleSheet(menu);
+}
+
 void NavApp::registerDialogInDockHandler(QDialog *dialog)
 {
   mainWindow->registerDialogInDockHandler(dialog);

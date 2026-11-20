@@ -135,11 +135,13 @@ InfoController::InfoController(QWidget *parent)
                                                      QIcon(":/littlenavmap/resources/icons/tabbutton.svg"),
                                                      tr("Open or close tabs"));
   tabHandlerInfo->init(ic::TabInfoIds, lnm::INFOWINDOW_WIDGET_TABS);
+  tabHandlerInfo->setStyleCallback(std::bind(&NavApp::applyStyleSheetMenu, std::placeholders::_1));
 
   tabHandlerAirportInfo = new atools::gui::TabWidgetHandler(ui->tabWidgetAirport, {},
                                                             QIcon(":/littlenavmap/resources/icons/tabbutton.svg"),
                                                             tr("Open or close tabs"));
   tabHandlerAirportInfo->init(ic::TabAirportInfoIds, lnm::INFOWINDOW_WIDGET_AIRPORT_TABS);
+  tabHandlerAirportInfo->setStyleCallback(std::bind(&NavApp::applyStyleSheetMenu, std::placeholders::_1));
 
   QPushButton *pushButtonAircraftHelp = new QPushButton(QIcon(":/littlenavmap/resources/icons/help.svg"), QStringLiteral(),
                                                         ui->tabWidgetAircraft);
@@ -150,6 +152,7 @@ InfoController::InfoController(QWidget *parent)
                                                          QIcon(":/littlenavmap/resources/icons/tabbutton.svg"),
                                                          tr("Open or close tabs"));
   tabHandlerAircraft->init(ic::TabAircraftIds, lnm::INFOWINDOW_WIDGET_AIRCRAFT_TABS);
+  tabHandlerAircraft->setStyleCallback(std::bind(&NavApp::applyStyleSheetMenu, std::placeholders::_1));
 
   // Set search path to silence text browser warnings - information window ============================
   QStringList paths({QApplication::applicationDirPath()});
@@ -289,6 +292,8 @@ void InfoController::showProgressContextMenu(const QPoint& point)
   QMenu *menu = ui->textBrowserAircraftProgressInfo->createStandardContextMenu();
   menu->setToolTipsVisible(NavApp::isMenuToolTipsVisible());
   menu->addAction(ui->actionInfoDisplayOptions);
+
+  NavApp::applyStyleSheetMenu(menu);
   menu->exec(ui->textBrowserAircraftProgressInfo->mapToGlobal(point) + QPoint(3, 3));
   delete menu;
 }

@@ -194,6 +194,7 @@ LogStatisticsDialog::LogStatisticsDialog(QWidget *parent, LogdataController *log
 
   // Add to dock handler to enable auto raise and closing on exit
   NavApp::registerDialogInDockHandler(this);
+  NavApp::applyStyleSheet(this);
 
   ui->buttonBoxLogStats->button(QDialogButtonBox::Close)->setDefault(true);
 }
