@@ -22,6 +22,7 @@
         <maximum>  3328  </maximum>
         <discrete> true</discrete>
       </zoom>
+      <url href="https://top-o-map.com/">Top-O-Map</url>
     </head>
     <map bgcolor="#000000">
       <canvas/>
@@ -34,7 +35,7 @@
           <storageLayout levelZeroColumns="1" levelZeroRows="1" maximumTileLevel="19" mode="Custom"/>
           <projection name="Mercator"/>
 
-          <downloadUrl protocol="https" host="tile.top-o-map.com" path="/{z}/{x}/{y}.png?key={Top-O-Map API Key}" />
+           <downloadUrl protocol="https" host="tile.top-o-map.com" path="/{z}/{x}/{y}.png?key={Top-O-Map API Key}" />
 <!--           <downloadUrl protocol="https" host="tile.top-o-map.com" path="/{z}/{x}/{y}.png" /> -->
 
           <!-- Use 2 to adapt to OSM requirements http://wiki.openstreetmap.org/wiki/Tile_usage_policy -->
