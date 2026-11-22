@@ -66,7 +66,7 @@
      </widget>
      <widget class="QStackedWidget" name="stackedWidgetOptions">
       <property name="currentIndex">
-       <number>15</number>
+       <number>0</number>
       </property>
       <widget class="QWidget" name="stackedWidgetOptionsStartup">
        <layout class="QVBoxLayout" name="verticalLayout_41">
@@ -80,8 +80,8 @@
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>523</width>
-             <height>455</height>
+             <width>585</width>
+             <height>531</height>
             </rect>
            </property>
            <layout class="QVBoxLayout" name="verticalLayout_21">
@@ -437,8 +437,8 @@ This is the file on top of the list &quot;Recent Window Layouts&quot;.</string>
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>513</width>
-             <height>333</height>
+             <width>585</width>
+             <height>531</height>
             </rect>
            </property>
            <layout class="QVBoxLayout" name="verticalLayout_22">
@@ -469,7 +469,7 @@ This is the file on top of the list &quot;Recent Window Layouts&quot;.</string>
                <item row="5" column="0" colspan="2">
                 <widget class="QLabel" name="labelOptionsUnitsHint">
                  <property name="text">
-                  <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;img src=&quot;:/littlenavmap/resources/icons/bulb.svg&quot;/&gt;&lt;span style=&quot; font-style:italic;&quot;&gt;Other numeric units can be &lt;/span&gt;&lt;span style=&quot; font-style:italic;&quot;&gt;changed&lt;/span&gt;&lt;span style=&quot; font-style:italic;&quot;&gt; on page &lt;/span&gt;&lt;a href=&quot;lnm://units&quot;&gt;&lt;span style=&quot; font-style:italic; text-decoration: underline;&quot;&gt;Units&lt;/span&gt;&lt;/a&gt;&lt;span style=&quot; font-style:italic;&quot;&gt;.&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+                  <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;img src=&quot;:/littlenavmap/resources/icons/bulb.svg&quot;/&gt;&lt;span style=&quot; font-style:italic;&quot;&gt;Other numeric units can be changed on page &lt;a href=&quot;lnm://units&quot;&gt;Units&lt;/a&gt;.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
                  </property>
                  <property name="wordWrap">
                   <bool>true</bool>
@@ -630,8 +630,8 @@ opening files, modifying the flight plan and other operations.</string>
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>419</width>
-             <height>882</height>
+             <width>571</width>
+             <height>849</height>
             </rect>
            </property>
            <layout class="QVBoxLayout" name="verticalLayout_23">
@@ -659,8 +659,7 @@ opening files, modifying the flight plan and other operations.</string>
                <item row="5" column="0" colspan="4">
                 <widget class="QCheckBox" name="checkBoxOptionsFreetype">
                  <property name="toolTip">
-                  <string>Enable this if you use scaled fonts in you system settings and/or a monitor with high resolution.
-This will scale the Little Navmap map graphics and icons for better visibility if checked.</string>
+                  <string>Enabling this option results in better and faster text display on the map, especially for rotated labels.</string>
                  </property>
                  <property name="text">
                   <string>&amp;Use FreeType font engine on Windows</string>
@@ -673,7 +672,7 @@ This will scale the Little Navmap map graphics and icons for better visibility i
                <item row="3" column="0" colspan="4">
                 <widget class="QLabel" name="labelOptionsGuiFontHint">
                  <property name="text">
-                  <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Note that not all fonts are suitable for the user interface.&lt;br/&gt;&lt;img src=&quot;:/littlenavmap/resources/icons/bulb.svg&quot;/&gt;&lt;span style=&quot; font-style:italic;&quot;&gt;The map font can be changed on the page &lt;/span&gt;&lt;a href=&quot;lnm://mapdisplayfont&quot;&gt;&lt;span style=&quot; font-style:italic; text-decoration: underline; color:#0057ae;&quot;&gt;Map Display&lt;/span&gt;&lt;/a&gt;&lt;span style=&quot; font-style:italic;&quot;&gt; and the elevation profile font on the page &lt;/span&gt;&lt;a href=&quot;lnm://elevationprofile&quot;&gt;&lt;span style=&quot; font-style:italic; text-decoration: underline; color:#0057ae;&quot;&gt;Elevation Profile&lt;/span&gt;&lt;/a&gt;.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+                  <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;b&gt;Note that not all fonts are suitable for the user interface.&lt;/b&gt;&lt;br/&gt;&lt;img src=&quot;:/littlenavmap/resources/icons/bulb.svg&quot;/&gt;&lt;span style=&quot; font-style:italic;&quot;&gt;The map font can be changed on the page &lt;a href=&quot;lnm://mapdisplayfont&quot;&gt;Map Display&lt;/a&gt; and the elevation profile font on the page &lt;a href=&quot;lnm://elevationprofile&quot;&gt;Elevation Profile&lt;/span&gt;&lt;/a&gt;.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
                  </property>
                  <property name="wordWrap">
                   <bool>true</bool>
@@ -808,7 +807,7 @@ This does not affect the map window which can be changed separately on the optio
                <item>
                 <widget class="QLabel" name="labelOptionsGuiTooltipHint">
                  <property name="text">
-                  <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;img src=&quot;:/littlenavmap/resources/icons/bulb.svg&quot;/&gt;&lt;span style=&quot; font-style:italic;&quot;&gt;You can define tooltip actions separately for each map feature on page &lt;/span&gt;&lt;a href=&quot;lnm://maptooltipsandclicks&quot;&gt;&lt;span style=&quot; font-style:italic; text-decoration: underline;&quot;&gt;Map Tooltips and Clicks&lt;/span&gt;&lt;/a&gt;&lt;span style=&quot; font-style:italic;&quot;&gt;.&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+                  <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;img src=&quot;:/littlenavmap/resources/icons/bulb.svg&quot;/&gt;&lt;span style=&quot; font-style:italic;&quot;&gt;You can define tooltip actions separately for each map feature on page &lt;a href=&quot;lnm://maptooltipsandclicks&quot;&gt;Map Tooltips and Clicks&lt;/a&gt;.&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
                  </property>
                  <property name="wordWrap">
                   <bool>true</bool>
@@ -1228,8 +1227,8 @@ This does not affect the map window which can be changed separately on the optio
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>559</width>
-             <height>483</height>
+             <width>585</width>
+             <height>531</height>
             </rect>
            </property>
            <layout class="QGridLayout" name="gridLayout_36">
@@ -1583,8 +1582,8 @@ aircraft progress, tooltips and information window.</string>
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>470</width>
-             <height>356</height>
+             <width>585</width>
+             <height>531</height>
             </rect>
            </property>
            <layout class="QVBoxLayout" name="verticalLayout_59">
@@ -1790,6 +1789,80 @@ Example: &quot;IFR Frankfurt Am Main (EDDF) to Fiumicino (LIRF).lnmpln&quot;</st
              </widget>
             </item>
             <item>
+             <widget class="QGroupBox" name="groupBox_50">
+              <property name="title">
+               <string>Aircraft Trail Autosave</string>
+              </property>
+              <layout class="QGridLayout" name="gridLayout_32">
+               <property name="leftMargin">
+                <number>2</number>
+               </property>
+               <property name="topMargin">
+                <number>2</number>
+               </property>
+               <property name="rightMargin">
+                <number>2</number>
+               </property>
+               <property name="bottomMargin">
+                <number>2</number>
+               </property>
+               <item row="0" column="0" alignment="Qt::AlignmentFlag::AlignVCenter">
+                <widget class="QLabel" name="labelSimSaveTrack">
+                 <property name="text">
+                  <string>&amp;Save trail automatically every:</string>
+                 </property>
+                 <property name="buddy">
+                  <cstring>spinBoxSimSaveTrackMinutes</cstring>
+                 </property>
+                </widget>
+               </item>
+               <item row="0" column="1">
+                <widget class="QSpinBox" name="spinBoxSimSaveTrackMinutes">
+                 <property name="toolTip">
+                  <string>The shown user aircraft trail will be pruned if it contains more than this number of points. 
+Lower this value to avoid too long tracks and avoid stutters in map display.
+Note that this does not affect the stored trail points.</string>
+                 </property>
+                 <property name="showGroupSeparator" stdset="0">
+                  <bool>true</bool>
+                 </property>
+                 <property name="suffix">
+                  <string> Minutes</string>
+                 </property>
+                 <property name="minimum">
+                  <number>1</number>
+                 </property>
+                 <property name="maximum">
+                  <number>60</number>
+                 </property>
+                 <property name="singleStep">
+                  <number>1</number>
+                 </property>
+                 <property name="value">
+                  <number>5</number>
+                 </property>
+                </widget>
+               </item>
+               <item row="1" column="0" colspan="2">
+                <widget class="QLabel" name="labelOptionsTrailHintOpen">
+                 <property name="text">
+                  <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;img src=&quot;:/littlenavmap/resources/icons/bulb.svg&quot;/&gt;&lt;span style=&quot; font-style:italic;&quot;&gt;Aircraft trails can be loaded and saved in the menu &amp;quot;File&amp;quot; -&amp;gt; &amp;quot;GPS Exchange Format (GPX)&amp;quot;.&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+                 </property>
+                 <property name="wordWrap">
+                  <bool>true</bool>
+                 </property>
+                 <property name="margin">
+                  <number>10</number>
+                 </property>
+                 <property name="textInteractionFlags">
+                  <set>Qt::TextInteractionFlag::LinksAccessibleByMouse|Qt::TextInteractionFlag::TextSelectableByMouse</set>
+                 </property>
+                </widget>
+               </item>
+              </layout>
+             </widget>
+            </item>
+            <item>
              <spacer name="verticalSpacer_26">
               <property name="orientation">
                <enum>Qt::Orientation::Vertical</enum>
@@ -1820,7 +1893,7 @@ Example: &quot;IFR Frankfurt Am Main (EDDF) to Fiumicino (LIRF).lnmpln&quot;</st
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>510</width>
+             <width>571</width>
              <height>485</height>
             </rect>
            </property>
@@ -1913,7 +1986,7 @@ options page &quot;Map Options and Labels&quot; to display a screen center hint.
                <item row="4" column="0" colspan="2">
                 <widget class="QLabel" name="labelOptionsNavigationAidsHint">
                  <property name="text">
-                  <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;img src=&quot;:/littlenavmap/resources/icons/bulb.svg&quot;/&gt;&lt;span style=&quot; font-style:italic;&quot;&gt;Enable &amp;quot;Navigation Aids&amp;quot;, &amp;quot;Center Cross&amp;quot; on options page &lt;/span&gt;&lt;a href=&quot;lnm://mapoptions&quot;&gt;&lt;span style=&quot; font-style:italic; text-decoration: underline;&quot;&gt;Map Options and Labels&lt;/span&gt;&lt;/a&gt;&lt;span style=&quot; font-style:italic;&quot;&gt; to display a screen center hint.&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+                  <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;img src=&quot;:/littlenavmap/resources/icons/bulb.svg&quot;/&gt;&lt;span style=&quot; font-style:italic;&quot;&gt;Enable &amp;quot;Map Navigation Aids&amp;quot; -&gt; &amp;quot;Center Cross&amp;quot; on options page &lt;a href=&quot;lnm://mapoptions&quot;&gt;Map Options and Labels&lt;/a&gt; to display a screen center hint.&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
                  </property>
                  <property name="wordWrap">
                   <bool>true</bool>
@@ -2150,7 +2223,7 @@ Map views might be shown with a larger zoom distance than expected if this optio
              <x>0</x>
              <y>0</y>
              <width>597</width>
-             <height>388</height>
+             <height>392</height>
             </rect>
            </property>
            <layout class="QGridLayout" name="gridLayout_2">
@@ -2614,8 +2687,8 @@ userpoints and logbook entries when hovering the cursor over the map</string>
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>433</width>
-             <height>431</height>
+             <width>585</width>
+             <height>406</height>
             </rect>
            </property>
            <layout class="QVBoxLayout" name="verticalLayout_65">
@@ -2661,7 +2734,7 @@ Note that some fonts, especially large fonts, can result in display errors on th
                <item row="1" column="0" colspan="4">
                 <widget class="QLabel" name="labelOptionsAppFontHint">
                  <property name="text">
-                  <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;img src=&quot;:/littlenavmap/resources/icons/bulb.svg&quot;/&gt;&lt;span style=&quot; font-style:italic;&quot;&gt;Change the font for the whole application on page &lt;/span&gt;&lt;a href=&quot;lnm://displayandtext&quot;&gt;&lt;span style=&quot; font-style:italic; text-decoration: underline; color:#0057ae;&quot;&gt;Display and Text&lt;/span&gt;&lt;/a&gt;&lt;span style=&quot; font-style:italic;&quot;&gt;. The elevation profile font can be changed on the page &lt;/span&gt;&lt;a href=&quot;lnm://elevationprofile&quot;&gt;&lt;span style=&quot; font-style:italic; text-decoration: underline; color:#0057ae;&quot;&gt;Elevation Profile&lt;/span&gt;&lt;/a&gt;. You can change the text and symbole sizes for all map features on the option pages starting with &amp;quot;Map&amp;quot;.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+                  <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;img src=&quot;:/littlenavmap/resources/icons/bulb.svg&quot;/&gt;&lt;span style=&quot; font-style:italic;&quot;&gt;Change the font for the whole application on page &lt;a href=&quot;lnm://displayandtext&quot;&gt;Display and Text&lt;/a&gt;. The elevation profile font can be changed on the page &lt;a href=&quot;lnm://elevationprofile&quot;&gt;Elevation Profile&lt;/a&gt;. You can change the text and symbole sizes for all map features on the option pages starting with &amp;quot;Map&amp;quot;.&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
                  </property>
                  <property name="wordWrap">
                   <bool>true</bool>
@@ -2730,7 +2803,7 @@ Note that some fonts, especially large fonts, can result in display errors on th
                <item row="2" column="0" colspan="3">
                 <widget class="QLabel" name="labelOptionsMapScaleHint">
                  <property name="text">
-                  <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;img src=&quot;:/littlenavmap/resources/icons/bulb.svg&quot;/&gt;&lt;span style=&quot; font-style:italic;&quot;&gt; You can further fine tune the size of individual features below and on the next pages.&lt;br/&gt;&lt;/span&gt;&lt;span style=&quot; font-style:italic;&quot;&gt;Change the scale for the Web Server map on page &lt;/span&gt;&lt;a href=&quot;lnm://webserver&quot;&gt;&lt;span style=&quot; font-style:italic; text-decoration: underline;&quot;&gt;Web Server&lt;/span&gt;&lt;/a&gt;&lt;span style=&quot; font-style:italic;&quot;&gt; separately.&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+                  <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;img src=&quot;:/littlenavmap/resources/icons/bulb.svg&quot;/&gt;&lt;span style=&quot; font-style:italic;&quot;&gt; You can further fine tune the size of individual features below and on the next pages.&lt;br/&gt;Change the scale for the Web Server map on page &lt;a href=&quot;lnm://webserver&quot;&gt;Web Server&lt;/a&gt; separately.&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
                  </property>
                  <property name="wordWrap">
                   <bool>true</bool>
@@ -2884,8 +2957,8 @@ Note that some fonts, especially large fonts, can result in display errors on th
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>355</width>
-             <height>830</height>
+             <width>571</width>
+             <height>779</height>
             </rect>
            </property>
            <layout class="QVBoxLayout" name="verticalLayout_71">
@@ -3002,7 +3075,7 @@ Note that some fonts, especially large fonts, can result in display errors on th
                <item row="3" column="0" colspan="3">
                 <widget class="QLabel" name="labelOptionsAirportSettingsHint">
                  <property name="text">
-                  <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;img src=&quot;:/littlenavmap/resources/icons/bulb.svg&quot;/&gt;&lt;span style=&quot; font-style:italic;&quot;&gt;Exclude add-on directories on page &lt;/span&gt;&lt;a href=&quot;lnm://scenerylibrarydatabase&quot;&gt;&lt;span style=&quot; font-style:italic; text-decoration: underline; color:#0057ae;&quot;&gt;Scenery Library Database&lt;/span&gt;&lt;/a&gt;&lt;span style=&quot; font-style:italic;&quot;&gt; if add-on airports are detected wrongly for certain scenery.&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+                  <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;img src=&quot;:/littlenavmap/resources/icons/bulb.svg&quot;/&gt;&lt;span style=&quot; font-style:italic;&quot;&gt;Exclude add-on directories on page &lt;a href=&quot;lnm://scenerylibrarydatabase&quot;&gt;Scenery Library Database&lt;/a&gt; if add-on airports are detected wrongly for certain scenery.&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
                  </property>
                  <property name="wordWrap">
                   <bool>true</bool>
@@ -3307,8 +3380,8 @@ Note that this function is disabled for X-Plane 12 since the 3D flag is unreliab
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>551</width>
-             <height>877</height>
+             <width>571</width>
+             <height>869</height>
             </rect>
            </property>
            <layout class="QVBoxLayout" name="verticalLayout_20">
@@ -3626,7 +3699,7 @@ Lower values make the airspace more opaque and higher values more transparent.</
                <item row="14" column="0" colspan="3">
                 <widget class="QLabel" name="labelOptionsAirspaceSettingsHint">
                  <property name="text">
-                  <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;img src=&quot;:/littlenavmap/resources/icons/bulb.svg&quot;/&gt;&lt;span style=&quot; font-style:italic;&quot;&gt;Airspace label settings can be found on page &lt;/span&gt;&lt;a href=&quot;lnm://mapoptions&quot;&gt;&lt;span style=&quot; font-style:italic; text-decoration: underline;&quot;&gt;Map Options and Labels&lt;/span&gt;&lt;/a&gt;&lt;span style=&quot; font-style:italic;&quot;&gt; in branch &amp;quot;Airspaces&amp;quot;.&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+                  <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;img src=&quot;:/littlenavmap/resources/icons/bulb.svg&quot;/&gt;&lt;span style=&quot; font-style:italic;&quot;&gt;Airspace label settings can be found on page &lt;a href=&quot;lnm://mapoptions&quot;&gt;Map Options and Labels&lt;/a&gt; in branch &amp;quot;Airspace Labels&amp;quot;.&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
                  </property>
                  <property name="wordWrap">
                   <bool>true</bool>
@@ -4004,7 +4077,7 @@ to avoid a cluttered up airports</string>
                <item row="7" column="0" colspan="3">
                 <widget class="QLabel" name="labelOptionsAiHint">
                  <property name="text">
-                  <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;img src=&quot;:/littlenavmap/resources/icons/bulb.svg&quot;/&gt;&lt;span style=&quot; font-style:italic;&quot;&gt;Label settings for the AI or multiplayer aircraft can be found on page &lt;/span&gt;&lt;a href=&quot;lnm://mapoptions&quot;&gt;&lt;span style=&quot; font-style:italic; text-decoration: underline;&quot;&gt;Map Options and Labels&lt;/span&gt;&lt;/a&gt;&lt;span style=&quot; font-style:italic;&quot;&gt; in branch &amp;quot;AI, Multiplayer and Online Client Aircraft&amp;quot;.&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+                  <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;img src=&quot;:/littlenavmap/resources/icons/bulb.svg&quot;/&gt;&lt;span style=&quot; font-style:italic;&quot;&gt;Label settings for the AI or multiplayer aircraft can be found on page &lt;a href=&quot;lnm://mapoptions&quot;&gt;Map Options and Labels&lt;/a&gt; in branch &amp;quot;AI, Multiplayer and Online Client Aircraft Labels&amp;quot;.&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
                  </property>
                  <property name="wordWrap">
                   <bool>true</bool>
@@ -4020,7 +4093,7 @@ to avoid a cluttered up airports</string>
                <item row="2" column="0" colspan="3">
                 <widget class="QLabel" name="labelOptionsUserAircraftSettingsHint">
                  <property name="text">
-                  <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;img src=&quot;:/littlenavmap/resources/icons/bulb.svg&quot;/&gt;&lt;span style=&quot; font-style:italic;&quot;&gt;Label settings for the user aircraft can be found on page &lt;/span&gt;&lt;a href=&quot;lnm://mapoptions&quot;&gt;&lt;span style=&quot; font-style:italic; text-decoration: underline;&quot;&gt;Map Options and Labels&lt;/span&gt;&lt;/a&gt;&lt;span style=&quot; font-style:italic;&quot;&gt; in branch &amp;quot;User Aircraft&amp;quot;.&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+                  <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;img src=&quot;:/littlenavmap/resources/icons/bulb.svg&quot;/&gt;&lt;span style=&quot; font-style:italic;&quot;&gt;Label settings for the user aircraft can be found on page &lt;a href=&quot;lnm://mapoptions&quot;&gt;Map Options and Labels&lt;/a&gt; in branch &amp;quot;User Aircraft Options and Labels&amp;quot;.&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
                  </property>
                  <property name="wordWrap">
                   <bool>true</bool>
@@ -4131,8 +4204,8 @@ to avoid a cluttered up airports</string>
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>430</width>
-             <height>567</height>
+             <width>571</width>
+             <height>550</height>
             </rect>
            </property>
            <layout class="QVBoxLayout" name="verticalLayout_35">
@@ -4261,7 +4334,7 @@ to avoid a cluttered up airports</string>
                <item row="3" column="0" colspan="3">
                 <widget class="QLabel" name="labelOptionsAppFontRouteHint">
                  <property name="text">
-                  <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;img src=&quot;:/littlenavmap/resources/icons/bulb.svg&quot;/&gt;&lt;span style=&quot; font-style:italic;&quot;&gt;The symbol and text sizes are combined with the settings for airports on page &lt;/span&gt;&lt;a href=&quot;lnm://mapdisplayairports&quot;&gt;&lt;span style=&quot; font-style:italic; text-decoration: underline; color:#0057ae;&quot;&gt;Map Display Airports &lt;/span&gt;&lt;/a&gt;&lt;span style=&quot; font-style:italic;&quot;&gt;and for navaids on page &lt;/span&gt;&lt;a href=&quot;lnm://mapdisplayfeatures&quot;&gt;&lt;span style=&quot; font-style:italic; text-decoration: underline; color:#0057ae;&quot;&gt;Map Display Features&lt;/span&gt;&lt;/a&gt;&lt;span style=&quot; font-style:italic;&quot;&gt;.&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+                  <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;img src=&quot;:/littlenavmap/resources/icons/bulb.svg&quot;/&gt;&lt;span style=&quot; font-style:italic;&quot;&gt;The symbol and text sizes are combined with the settings for airports on page &lt;a href=&quot;lnm://mapdisplayairports&quot;&gt;Map Display Airports&lt;/a&gt; and for navaids on page &lt;a href=&quot;lnm://mapdisplayfeatures&quot;&gt;Map Display Features&lt;/a&gt;.&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
                  </property>
                  <property name="wordWrap">
                   <bool>true</bool>
@@ -4464,7 +4537,7 @@ Also used in the elevation profile.</string>
                <item row="6" column="0" colspan="4">
                 <widget class="QLabel" name="labelOptionsFlightPlanLabelHint">
                  <property name="text">
-                  <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;img src=&quot;:/littlenavmap/resources/icons/bulb.svg&quot;/&gt;&lt;span style=&quot; font-style:italic;&quot;&gt;Flight plan label settings can be found on page &lt;/span&gt;&lt;a href=&quot;lnm://mapoptions&quot;&gt;&lt;span style=&quot; font-style:italic; text-decoration: underline;&quot;&gt;Map Options and Labels&lt;/span&gt;&lt;/a&gt;&lt;span style=&quot; font-style:italic;&quot;&gt; in branch &amp;quot;Flight Plan&amp;quot;.&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+                  <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;img src=&quot;:/littlenavmap/resources/icons/bulb.svg&quot;/&gt;&lt;span style=&quot; font-style:italic;&quot;&gt;Flight plan label settings can be found on page &lt;a href=&quot;lnm://mapoptions&quot;&gt;Map Options and Labels&lt;/a&gt; in branch &amp;quot;Flight Plan Labels&amp;quot;.&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
                  </property>
                  <property name="wordWrap">
                   <bool>true</bool>
@@ -4606,8 +4679,8 @@ Also used in the elevation profile.</string>
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>554</width>
-             <height>395</height>
+             <width>585</width>
+             <height>406</height>
             </rect>
            </property>
            <layout class="QVBoxLayout" name="verticalLayout_57">
@@ -4853,80 +4926,6 @@ Note that this does not affect the stored trail points.</string>
              </widget>
             </item>
             <item>
-             <widget class="QGroupBox" name="groupBox_50">
-              <property name="title">
-               <string>Aircraft Trail Autosave</string>
-              </property>
-              <layout class="QGridLayout" name="gridLayout_32">
-               <property name="leftMargin">
-                <number>2</number>
-               </property>
-               <property name="topMargin">
-                <number>2</number>
-               </property>
-               <property name="rightMargin">
-                <number>2</number>
-               </property>
-               <property name="bottomMargin">
-                <number>2</number>
-               </property>
-               <item row="0" column="1">
-                <widget class="QSpinBox" name="spinBoxSimSaveTrackMinutes">
-                 <property name="toolTip">
-                  <string>The shown user aircraft trail will be pruned if it contains more than this number of points. 
-Lower this value to avoid too long tracks and avoid stutters in map display.
-Note that this does not affect the stored trail points.</string>
-                 </property>
-                 <property name="showGroupSeparator" stdset="0">
-                  <bool>true</bool>
-                 </property>
-                 <property name="suffix">
-                  <string> Minutes</string>
-                 </property>
-                 <property name="minimum">
-                  <number>1</number>
-                 </property>
-                 <property name="maximum">
-                  <number>60</number>
-                 </property>
-                 <property name="singleStep">
-                  <number>1</number>
-                 </property>
-                 <property name="value">
-                  <number>5</number>
-                 </property>
-                </widget>
-               </item>
-               <item row="0" column="0" alignment="Qt::AlignmentFlag::AlignVCenter">
-                <widget class="QLabel" name="labelSimSaveTrack">
-                 <property name="text">
-                  <string>&amp;Save trail automatically every:</string>
-                 </property>
-                 <property name="buddy">
-                  <cstring>spinBoxSimSaveTrackMinutes</cstring>
-                 </property>
-                </widget>
-               </item>
-              </layout>
-             </widget>
-            </item>
-            <item>
-             <widget class="QLabel" name="labelOptionsTrailHintOpen">
-              <property name="text">
-               <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;img src=&quot;:/littlenavmap/resources/icons/bulb.svg&quot;/&gt;&lt;span style=&quot; font-style:italic;&quot;&gt;Aircraft trails can be loaded and saved in the menu &amp;quot;File&amp;quot; -&amp;gt; &amp;quot;GPS Exchange Format (GPX)&amp;quot;.&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-              </property>
-              <property name="wordWrap">
-               <bool>true</bool>
-              </property>
-              <property name="margin">
-               <number>10</number>
-              </property>
-              <property name="textInteractionFlags">
-               <set>Qt::TextInteractionFlag::LinksAccessibleByMouse|Qt::TextInteractionFlag::TextSelectableByMouse</set>
-              </property>
-             </widget>
-            </item>
-            <item>
              <spacer name="verticalSpacer_23">
               <property name="orientation">
                <enum>Qt::Orientation::Vertical</enum>
@@ -4957,8 +4956,8 @@ Note that this does not affect the stored trail points.</string>
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>446</width>
-             <height>684</height>
+             <width>571</width>
+             <height>633</height>
             </rect>
            </property>
            <layout class="QGridLayout" name="gridLayout_35">
@@ -5167,7 +5166,7 @@ Note that this does not affect the stored trail points.</string>
                <item row="5" column="2" colspan="4">
                 <widget class="QLabel" name="labelOptionsMeasurmentHint">
                  <property name="text">
-                  <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;img src=&quot;:/littlenavmap/resources/icons/bulb.svg&quot;/&gt;&lt;span style=&quot; font-style:italic;&quot;&gt;Label settings for distance measurement lines can be found on page &lt;/span&gt;&lt;a href=&quot;lnm://mapoptions&quot;&gt;&lt;span style=&quot; font-style:italic; text-decoration: underline;&quot;&gt;Map Options and Labels&lt;/span&gt;&lt;/a&gt;&lt;span style=&quot; font-style:italic;&quot;&gt; in branch &amp;quot;Measurement Lines&amp;quot;.&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+                  <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;img src=&quot;:/littlenavmap/resources/icons/bulb.svg&quot;/&gt;&lt;span style=&quot; font-style:italic;&quot;&gt;Label settings for distance measurement lines can be found on page &lt;a href=&quot;lnm://mapoptions&quot;&gt;Map Options and Labels&lt;/a&gt; in branch &amp;quot;Measurement Line Labels&amp;quot;.&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
                  </property>
                  <property name="wordWrap">
                   <bool>true</bool>
@@ -5208,7 +5207,7 @@ Note that this does not affect the stored trail points.</string>
                <item row="15" column="2" colspan="4">
                 <widget class="QLabel" name="labelOptionsCompassRoseHint">
                  <property name="text">
-                  <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;img src=&quot;:/littlenavmap/resources/icons/bulb.svg&quot;/&gt;&lt;span style=&quot; font-style:italic;&quot;&gt;Compass rose label settings can be found on page &lt;/span&gt;&lt;a href=&quot;lnm://mapoptions&quot;&gt;&lt;span style=&quot; font-style:italic; text-decoration: underline;&quot;&gt;Map Options and Labels&lt;/span&gt;&lt;/a&gt;&lt;span style=&quot; font-style:italic;&quot;&gt; in branch &amp;quot;Compass Rose&amp;quot;.&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+                  <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;img src=&quot;:/littlenavmap/resources/icons/bulb.svg&quot;/&gt;&lt;span style=&quot; font-style:italic;&quot;&gt;Compass rose label settings can be found on page &lt;a href=&quot;lnm://mapoptions&quot;&gt;Map Options and Labels&lt;/a&gt; in branch &amp;quot;Compass Rose Options and Labels&amp;quot;.&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
                  </property>
                  <property name="wordWrap">
                   <bool>true</bool>
@@ -5658,8 +5657,8 @@ if you hover over the elevation profile.</string>
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>443</width>
-             <height>260</height>
+             <width>395</width>
+             <height>273</height>
             </rect>
            </property>
            <layout class="QVBoxLayout" name="verticalLayout_62">
@@ -5700,7 +5699,7 @@ if you hover over the elevation profile.</string>
                <item row="1" column="2">
                 <widget class="QPushButton" name="pushButtonCacheMapThemeDir">
                  <property name="text">
-                  <string>Select &amp;Themes Directory ...</string>
+                  <string>Select &amp;Directory ...</string>
                  </property>
                 </widget>
                </item>
@@ -5720,7 +5719,7 @@ if you hover over the elevation profile.</string>
                <item row="3" column="0" colspan="3">
                 <widget class="QLabel" name="labelOptionsMapThemeDirRestartHint">
                  <property name="text">
-                  <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;A restart is required to detect new map themes after changing the path or after installing new map themes.&lt;br/&gt;&lt;/span&gt;&lt;img src=&quot;:/littlenavmap/resources/icons/bulb.svg&quot;/&gt;&lt;span style=&quot; font-style:italic;&quot;&gt;Map theme API keys for themes requiring an account can be entered on page &lt;/span&gt;&lt;a href=&quot;lnm://mapkeys&quot;&gt;&lt;span style=&quot; font-style:italic; text-decoration: underline; color:#0057ae;&quot;&gt;Map Theme Keys&lt;/span&gt;&lt;/a&gt;&lt;span style=&quot; font-style:italic;&quot;&gt;.&lt;/span&gt;&lt;/p&gt;&lt;p&gt;&lt;a href=&quot;lnm://openmapcache&quot;&gt;&lt;span style=&quot; font-weight:700; font-style:italic; text-decoration: underline; color:#0057ae;&quot;&gt;Click here&lt;/span&gt;&lt;/a&gt;&lt;span style=&quot; font-style:italic;&quot;&gt; to open the tile cache directory in your file manager&lt;/span&gt;.&lt;span style=&quot; font-style:italic;&quot;&gt; If needed, simply delete the directory of the respective map theme from there.&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+                  <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;A restart is required to detect new map themes after changing the path or after installing new map themes.&lt;br/&gt;&lt;/span&gt;&lt;img src=&quot;:/littlenavmap/resources/icons/bulb.svg&quot;/&gt;&lt;span style=&quot; font-style:italic;&quot;&gt;Map theme API keys for themes requiring an account can be entered on page &lt;a href=&quot;lnm://mapkeys&quot;&gt;Map Theme Keys&lt;/a&gt;.&lt;/span&gt;&lt;/p&gt;&lt;p&gt;&lt;a href=&quot;lnm://openmapcache&quot;&gt;Click here&lt;/a&gt; to open the tile cache directory in your file manager. If needed, simply delete the directory of the respective map theme from there.&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
                  </property>
                  <property name="wordWrap">
                   <bool>true</bool>
@@ -5777,8 +5776,8 @@ if you hover over the elevation profile.</string>
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>571</width>
-             <height>701</height>
+             <width>319</width>
+             <height>850</height>
             </rect>
            </property>
            <layout class="QVBoxLayout" name="verticalLayout_63">
@@ -5791,7 +5790,16 @@ if you hover over the elevation profile.</string>
                <item>
                 <widget class="QLabel" name="labelMapApiKeysHint">
                  <property name="text">
-                  <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;You can enter login information, tokens or API keys for map services which need an user account.&lt;/p&gt;&lt;p&gt;Click one of the following links to go directly to the account pages of the respective map services. You may need to sign in or create an account.&lt;br/&gt;- &lt;a href=&quot;https://carto.com/basemaps/apikey/&quot;&gt;&lt;span style=&quot; font-weight:700; text-decoration: underline; color:#0057ae;&quot;&gt;CARTO API Key Request&lt;br/&gt;&lt;/span&gt;&lt;/a&gt;- &lt;a href=&quot;https://account.mapbox.com/&quot;&gt;&lt;span style=&quot; font-weight:700; text-decoration: underline; color:#0057ae;&quot;&gt;Mapbox Account page&lt;/span&gt;&lt;/a&gt;&lt;br/&gt;- &lt;a href=&quot;https://cloud.maptiler.com/account/keys/&quot;&gt;&lt;span style=&quot; font-weight:700; text-decoration: underline; color:#0057ae;&quot;&gt;Maptiler Cloud Account API key page&lt;/span&gt;&lt;/a&gt;&lt;br/&gt;- &lt;a href=&quot;https://stadiamaps.com/stamen/onboarding/create-account/&quot;&gt;&lt;span style=&quot; font-weight:700; text-decoration: underline; color:#0057ae;&quot;&gt;Stadia Maps / StamenTerrain&lt;/span&gt;&lt;/a&gt;&lt;a href=&quot;https://top-o-map.com/&quot;&gt;&lt;span style=&quot; font-weight:700; text-decoration: underline; color:#0057ae;&quot;&gt;&lt;br/&gt;&lt;/span&gt;&lt;/a&gt;- &lt;a href=&quot;https://manage.thunderforest.com/dashboard&quot;&gt;&lt;span style=&quot; font-weight:700; text-decoration: underline; color:#0057ae;&quot;&gt;Thunderforest Console&lt;br/&gt;&lt;/span&gt;&lt;/a&gt;- &lt;a href=&quot;https://top-o-map.com/&quot;&gt;&lt;span style=&quot; font-weight:700; text-decoration: underline; color:#0057ae;&quot;&gt;Top-O-Map&lt;/span&gt;&lt;/a&gt;&lt;br/&gt;&lt;br/&gt;&lt;span style=&quot; font-weight:700;&quot;&gt;A restart might be needed after changing keys. Most of these services offer a free plan, while others require a small fee. Click the help button for details.&lt;br/&gt;&lt;br/&gt;►► Do not show these keys publicly in forums on screenshots. ◄◄&lt;/span&gt;&lt;/p&gt;&lt;p&gt;Double click a value to edit.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+                  <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;You can enter login information, tokens or API keys for map services which need an user account.&lt;/p&gt;
+&lt;p&gt;Click one of the following links to go directly to the account pages of the respective map services. You may need to sign in or create an account.&lt;br/&gt;
+- &lt;a href=&quot;https://carto.com/basemaps/apikey/&quot;&gt;&lt;b&gt;CARTO API Key Request&lt;/b&gt;&lt;/a&gt;&lt;br/&gt;
+- &lt;a href=&quot;https://account.mapbox.com/&quot;&gt;&lt;b&gt;Mapbox Account page&lt;/b&gt;&lt;/a&gt;&lt;br/&gt;
+- &lt;a href=&quot;https://cloud.maptiler.com/account/keys/&quot;&gt;&lt;b&gt;Maptiler Cloud Account API key page&lt;/b&gt;&lt;/a&gt;&lt;br/&gt;
+- &lt;a href=&quot;https://stadiamaps.com/stamen/onboarding/create-account/&quot;&gt;&lt;b&gt;Stadia Maps / StamenTerrain&lt;/b&gt;&lt;/a&gt;&lt;br/&gt;
+- &lt;a href=&quot;https://manage.thunderforest.com/dashboard&quot;&gt;&lt;b&gt;Thunderforest Console&lt;/b&gt;&lt;br/&gt;&lt;/a&gt;
+- &lt;a href=&quot;https://top-o-map.com/&quot;&gt;&lt;b&gt;Top-O-Map&lt;/b&gt;&lt;/a&gt;
+&lt;br/&gt;&lt;br/&gt;
+&lt;span style=&quot; font-weight:700;&quot;&gt;A restart might be needed after changing keys. Most of these services offer a free plan, while others require a small fee. Click the help button for details.&lt;br/&gt;&lt;br/&gt;►► Do not show these keys publicly in forums on screenshots. ◄◄&lt;/span&gt;&lt;/p&gt;&lt;p&gt;Double click a value to edit.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
                  </property>
                  <property name="wordWrap">
                   <bool>true</bool>
@@ -5869,7 +5877,7 @@ if you hover over the elevation profile.</string>
                <item>
                 <widget class="QLabel" name="labelOptionsMapThemesHint">
                  <property name="text">
-                  <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;img src=&quot;:/littlenavmap/resources/icons/bulb.svg&quot;/&gt;&lt;span style=&quot; font-style:italic;&quot;&gt;Change the path to additional map themes on page &lt;/span&gt;&lt;a href=&quot;lnm://mapthemes&quot;&gt;&lt;span style=&quot; font-style:italic; text-decoration: underline; color:#0057ae;&quot;&gt;Map Themes&lt;/span&gt;&lt;/a&gt;&lt;span style=&quot; font-style:italic;&quot;&gt;. Click the help button for installation instructions.&lt;/span&gt;&lt;/p&gt;&lt;p&gt;&lt;a href=&quot;lnm://openmapcache&quot;&gt;&lt;span style=&quot; font-weight:700; font-style:italic; text-decoration: underline; color:#0057ae;&quot;&gt;Click here&lt;/span&gt;&lt;/a&gt;&lt;span style=&quot; font-style:italic;&quot;&gt; to open the tile cache directory in your file manager&lt;/span&gt;.&lt;span style=&quot; font-style:italic;&quot;&gt; If needed, simply delete the directory of the respective map theme from there.&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+                  <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;img src=&quot;:/littlenavmap/resources/icons/bulb.svg&quot;/&gt;&lt;span style=&quot; font-style:italic;&quot;&gt;Change the path to additional map themes on page &lt;a href=&quot;lnm://mapthemes&quot;&gt;Map Themes&lt;/a&gt;. Click the help button for installation instructions.&lt;/span&gt;&lt;/p&gt;&lt;p&gt;&lt;span style=&quot; font-style:italic;&quot;&gt;&lt;a href=&quot;lnm://openmapcache&quot;&gt;Click here&lt;/a&gt; to open the tile cache directory in your file manager&lt;/span&gt;.&lt;span style=&quot; font-style:italic;&quot;&gt; If needed, simply delete the directory of the respective map theme from there.&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
                  </property>
                  <property name="wordWrap">
                   <bool>true</bool>
@@ -5904,7 +5912,7 @@ if you hover over the elevation profile.</string>
              <x>0</x>
              <y>0</y>
              <width>328</width>
-             <height>502</height>
+             <height>494</height>
             </rect>
            </property>
            <layout class="QGridLayout" name="gridLayout_39">
@@ -6339,7 +6347,7 @@ airspace filename has to match the callsign of the online center.</string>
                <item row="9" column="0" colspan="3">
                 <widget class="QLabel" name="labelOptionsOnlineHint">
                  <property name="text">
-                  <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;img src=&quot;:/littlenavmap/resources/icons/bulb.svg&quot;/&gt;&lt;span style=&quot; font-style:italic;&quot;&gt;Enable online networks on page &lt;/span&gt;&lt;a href=&quot;lnm://onlineflying&quot;&gt;&lt;span style=&quot; font-style:italic;&quot;&gt;Online Flying&lt;/span&gt;&lt;/a&gt;&lt;span style=&quot; font-style:italic;&quot;&gt;.&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+                  <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;img src=&quot;:/littlenavmap/resources/icons/bulb.svg&quot;/&gt;&lt;span style=&quot; font-style:italic;&quot;&gt;Enable online networks on page &lt;a href=&quot;lnm://onlineflying&quot;&gt;Online Flying&lt;/span&gt;&lt;/a&gt;.&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
                  </property>
                  <property name="wordWrap">
                   <bool>true</bool>
@@ -6374,7 +6382,7 @@ airspace filename has to match the callsign of the online center.</string>
              <x>0</x>
              <y>0</y>
              <width>462</width>
-             <height>270</height>
+             <height>266</height>
             </rect>
            </property>
            <layout class="QVBoxLayout" name="verticalLayout_67">
@@ -6420,7 +6428,7 @@ Note that some fonts, especially large fonts, can result in display errors on th
                <item row="1" column="0" colspan="4">
                 <widget class="QLabel" name="labelOptionsAppFontHintProfile">
                  <property name="text">
-                  <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;img src=&quot;:/littlenavmap/resources/icons/bulb.svg&quot;/&gt;&lt;span style=&quot; font-style:italic;&quot;&gt;Change the font for the whole application on page &lt;/span&gt;&lt;a href=&quot;lnm://displayandtext&quot;&gt;&lt;span style=&quot; font-style:italic; text-decoration: underline; color:#0057ae;&quot;&gt;Display and Text&lt;/span&gt;&lt;/a&gt;&lt;span style=&quot; font-style:italic;&quot;&gt;. You can change text and symbole sizes for the elevation profile on some of the option pages starting with &amp;quot;Map&amp;quot;.&lt;/span&gt;&lt;/p&gt;&lt;p&gt;&lt;span style=&quot; font-style:italic;&quot;&gt;Enable or disable shown features in main menu &amp;quot;Tools&amp;quot; -&amp;gt; &amp;quot;Elevation Profile Display Options&amp;quot;.&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+                  <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;img src=&quot;:/littlenavmap/resources/icons/bulb.svg&quot;/&gt;&lt;span style=&quot; font-style:italic;&quot;&gt;Change the font for the whole application on page &lt;a href=&quot;lnm://displayandtext&quot;&gt;Display and Text&lt;/a&gt;. You can change text and symbole sizes for the elevation profile on some of the option pages starting with &amp;quot;Map&amp;quot;.&lt;/span&gt;&lt;/p&gt;&lt;p&gt;&lt;span style=&quot; font-style:italic;&quot;&gt;Enable or disable shown features in main menu &amp;quot;Tools&amp;quot; -&amp;gt; &amp;quot;Elevation Profile Display Options&amp;quot;.&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
                  </property>
                  <property name="wordWrap">
                   <bool>true</bool>
@@ -6537,8 +6545,8 @@ The buffer radius defines the surrounding from where the maximum elevation is ca
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>441</width>
-             <height>278</height>
+             <width>399</width>
+             <height>312</height>
             </rect>
            </property>
            <layout class="QVBoxLayout" name="verticalLayout_60">
@@ -6608,7 +6616,7 @@ Has a 30 arc second grid (approximately 900 meter near the equator).</string>
                 <widget class="QLabel" name="labelCacheGlobePathDownload">
                  <property name="text">
                   <string>&lt;p&gt;&lt;a href=&quot;https://www.ngdc.noaa.gov/mgg/topo/gltiles.html&quot;&gt;&lt;b&gt;Open the download page for the GLOBE data in your browser&lt;/b&gt;&lt;/a&gt;&lt;br/&gt;
-Download the file &lt;b&gt;&lt;i&gt;All Tiles in One .zip (all10g.zip)&lt;/i&gt;&lt;/b&gt; from the page and extract the archive to an arbitrary place, e.g in &lt;i&gt;Documents&lt;/i&gt;. Then click &lt;i&gt;Select GLOBE Directory ...&lt;/i&gt; above and select the directory with the extracted files.&lt;/p&gt;
+Download the file &lt;b&gt;&lt;i&gt;All Tiles in One .zip (all10g.zip)&lt;/i&gt;&lt;/b&gt; from the page and extract the archive to an arbitrary place, e.g in &lt;i&gt;Documents&lt;/i&gt;. Then click &lt;i&gt;Select Directory ...&lt;/i&gt; above and select the directory with the extracted files.&lt;/p&gt;
 
 &lt;p&gt;&lt;a href=&quot;%1&quot;&gt;&lt;b&gt;Show more information in the &lt;i&gt;Little Navmap&lt;/i&gt; online manual&lt;/b&gt;&lt;/a&gt;&lt;/p&gt;</string>
                  </property>
@@ -6629,7 +6637,7 @@ Download the file &lt;b&gt;&lt;i&gt;All Tiles in One .zip (all10g.zip)&lt;/i&gt;
                <item row="1" column="2">
                 <widget class="QPushButton" name="pushButtonCacheOfflineDataSelect">
                  <property name="text">
-                  <string>&amp;Select GLOBE Directory ...</string>
+                  <string>&amp;Select Directory ...</string>
                  </property>
                 </widget>
                </item>
@@ -7301,7 +7309,7 @@ Note that this value does not affect flight plan calculation or saving of flight
              <x>0</x>
              <y>0</y>
              <width>448</width>
-             <height>688</height>
+             <height>671</height>
             </rect>
            </property>
            <layout class="QVBoxLayout" name="verticalLayout_27">
@@ -7398,22 +7406,6 @@ Note that this value does not affect flight plan calculation or saving of flight
                  </property>
                 </widget>
                </item>
-               <item row="0" column="0">
-                <widget class="QLabel" name="label_7">
-                 <property name="text">
-                  <string>Define which weather service METARs are to be shown in the information dock window for an airport.</string>
-                 </property>
-                 <property name="wordWrap">
-                  <bool>true</bool>
-                 </property>
-                 <property name="margin">
-                  <number>10</number>
-                 </property>
-                 <property name="textInteractionFlags">
-                  <set>Qt::TextInteractionFlag::LinksAccessibleByMouse|Qt::TextInteractionFlag::TextSelectableByMouse</set>
-                 </property>
-                </widget>
-               </item>
                <item row="2" column="0">
                 <widget class="QCheckBox" name="checkBoxOptionsWeatherInfoAsn">
                  <property name="text">
@@ -7428,6 +7420,22 @@ Note that this value does not affect flight plan calculation or saving of flight
                 <widget class="Line" name="line_10">
                  <property name="orientation">
                   <enum>Qt::Orientation::Horizontal</enum>
+                 </property>
+                </widget>
+               </item>
+               <item row="0" column="0" colspan="2">
+                <widget class="QLabel" name="label_7">
+                 <property name="text">
+                  <string>Define which weather service METARs are to be shown in the information dock window for an airport.</string>
+                 </property>
+                 <property name="wordWrap">
+                  <bool>true</bool>
+                 </property>
+                 <property name="margin">
+                  <number>10</number>
+                 </property>
+                 <property name="textInteractionFlags">
+                  <set>Qt::TextInteractionFlag::LinksAccessibleByMouse|Qt::TextInteractionFlag::TextSelectableByMouse</set>
                  </property>
                 </widget>
                </item>
@@ -7566,7 +7574,7 @@ Note that this value does not affect flight plan calculation or saving of flight
             <item>
              <widget class="QLabel" name="labelOptionsWeatherHint">
               <property name="text">
-               <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;img src=&quot;:/littlenavmap/resources/icons/bulb.svg&quot;/&gt;&lt;span style=&quot; font-style:italic;&quot;&gt;See in the main menu &amp;quot;Weather&amp;quot; for more options to display winds aloft and weather at airports.&lt;br/&gt;The page &lt;/span&gt;&lt;a href=&quot;lnm://weatherfiles&quot;&gt;&lt;span style=&quot; font-style:italic; text-decoration: underline;&quot;&gt;Weather Files&lt;/span&gt;&lt;/a&gt;&lt;span style=&quot; font-style:italic;&quot;&gt; allows to select paths if non-standard simulator installations are used.&lt;/span&gt;&lt;/p&gt;&lt;p&gt;&lt;span style=&quot; font-style:italic;&quot;&gt;Disable unneeded options to improve performance.&lt;/span&gt;&lt;/p&gt;&lt;p&gt;&lt;span style=&quot; font-style:italic;&quot;&gt;The source for selection &amp;quot;Flight Simulator&amp;quot; depends on the simulator connection and the selected scenery library.&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+               <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;img src=&quot;:/littlenavmap/resources/icons/bulb.svg&quot;/&gt;&lt;span style=&quot; font-style:italic;&quot;&gt;See in the main menu &amp;quot;Weather&amp;quot; for more options to display winds aloft and weather at airports.&lt;br/&gt;The page &lt;a href=&quot;lnm://weatherfiles&quot;&gt;Weather Files&lt;/a&gt; allows to select paths if non-standard simulator installations are used.&lt;/span&gt;&lt;/p&gt;&lt;p&gt;&lt;span style=&quot; font-style:italic;&quot;&gt;Disable unneeded options to improve performance.&lt;/span&gt;&lt;/p&gt;&lt;p&gt;&lt;span style=&quot; font-style:italic;&quot;&gt;The source for selection &amp;quot;Flight Simulator&amp;quot; depends on the simulator connection and the selected scenery library.&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
               </property>
               <property name="wordWrap">
                <bool>true</bool>
@@ -8581,8 +8589,8 @@ Uncheck if you use such an add-on or see issues like a corruped map display.</st
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>395</width>
-             <height>524</height>
+             <width>585</width>
+             <height>531</height>
             </rect>
            </property>
            <layout class="QGridLayout" name="gridLayout_38">
@@ -8950,8 +8958,8 @@ You have to reload the scenery library so that the changes take effect.</string>
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>369</width>
-             <height>1105</height>
+             <width>571</width>
+             <height>876</height>
             </rect>
            </property>
            <layout class="QVBoxLayout" name="verticalLayout_75">
@@ -9399,7 +9407,7 @@ Entering a wrong value will cause errors when downloading weather reports.</stri
                  </property>
                 </widget>
                </item>
-               <item row="8" column="1">
+               <item row="8" column="1" colspan="3">
                 <widget class="QLabel" name="labelOptionsCacheConnectionsDefaultsHint">
                  <property name="text">
                   <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;img src=&quot;:/littlenavmap/resources/icons/bulb.svg&quot;/&gt;&lt;span style=&quot; font-style:italic;&quot;&gt;Leave these options at default or empty (press &amp;quot;Reset&amp;quot;) if you are not running special setups such as networked connections where weather needs to be loaded from network shares, for example.&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
@@ -9461,7 +9469,7 @@ Entering a wrong value will cause errors when downloading weather reports.</stri
                <item row="2" column="0" colspan="2">
                 <widget class="QLabel" name="labelOptionsUserAgentHint">
                  <property name="text">
-                  <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;img src=&quot;:/littlenavmap/resources/icons/bulb.svg&quot;/&gt;&lt;span style=&quot; font-style:italic;&quot;&gt;The user agent is a code which is sent to a map web server for client identification. It includes operating system information, preferred languages, program name and version. You can change it here for more privacy.&lt;/span&gt;&lt;/p&gt;&lt;p&gt;&lt;a href=&quot;lnm://openmapcache&quot;&gt;&lt;span style=&quot; font-weight:700; font-style:italic; text-decoration: underline; color:#0057ae;&quot;&gt;Click here&lt;/span&gt;&lt;/a&gt;&lt;span style=&quot; font-style:italic;&quot;&gt; to open the tile cache directory in your file manager&lt;/span&gt;.&lt;span style=&quot; font-style:italic;&quot;&gt; If needed, simply delete the directory of the respective map theme from there.&lt;/span&gt;&lt;/p&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;A restart is required after changing the user agent.&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+                  <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;img src=&quot;:/littlenavmap/resources/icons/bulb.svg&quot;/&gt;&lt;span style=&quot; font-style:italic;&quot;&gt;The user agent is a code which is sent to a map web server for client identification. It includes operating system information, preferred languages, program name and version. You can change it here for more privacy.&lt;/span&gt;&lt;/p&gt;&lt;p&gt;&lt;span style=&quot; font-style:italic;&quot;&gt;&lt;a href=&quot;lnm://openmapcache&quot;&gt;Click here&lt;/a&gt; to open the tile cache directory in your file manager. If needed, simply delete the directory of the respective map theme from there.&lt;/span&gt;&lt;/p&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;A restart is required after changing the user agent.&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
                  </property>
                  <property name="wordWrap">
                   <bool>true</bool>

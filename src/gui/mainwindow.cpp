@@ -204,9 +204,7 @@ MainWindow::MainWindow()
 
     // setAttribute(Qt::WA_DeleteOnClose);
 
-    QString helpFileOffline = HelpHandler::getHelpFile(lnm::helpOfflineFile, OptionData::getLanguageFromConfigFile());
-    qDebug() << Q_FUNC_INFO << "Offline help" << helpFileOffline;
-    ui->actionHelpContentsOffline->setVisible(!helpFileOffline.isEmpty() && QFile::exists(helpFileOffline));
+    // QString helpFileOffline = HelpHandler::getHelpFile(lnm::helpOfflineFile, OptionData::getLanguageFromConfigFile());
 
 #if defined(Q_OS_MACOS)
     // Reset menu roles to no role if not manually set to avoid side effects from goofy Qt behavior on macOS
@@ -1486,7 +1484,6 @@ void MainWindow::connectAllSlots()
     helpHandler->openHelpUrlWeb(lnm::helpOnlineLegendUrl, lnm::helpLanguageOnline());
   });
 
-  connect(ui->actionHelpContentsOffline, &QAction::triggered, this, &MainWindow::showOfflineHelp);
   connect(ui->actionHelpDownloads, &QAction::triggered, this, &MainWindow::showOnlineDownloads);
   connect(ui->actionHelpChangelog, &QAction::triggered, this, &MainWindow::showChangelogOnline);
   connect(ui->actionHelpAbout, &QAction::triggered, helpHandler, &atools::gui::HelpHandler::about);
@@ -4326,7 +4323,7 @@ void MainWindow::resetAllSettings()
   atools::gui::MessageBox box(this);
   box.setMessage(tr("<p><b>This will reset all options, window layout, dialog layout, "
                       "aircraft trail, map position history and file histories "
-                      "back to default and restart %1.</b></p>"
+                      "back to default and will restart %1.</b></p>"
                       "<p>Map Markers like range rings or traffic patterns as well as "
                         "scenery, logbook and userpoint databases are not affected.</p>"
                         "<p>A copy of the settings file</p>"

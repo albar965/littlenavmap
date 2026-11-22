@@ -23,7 +23,7 @@
    <string>Little Navmap</string>
   </property>
   <property name="dockOptions">
-   <set>QMainWindow::AllowNestedDocks|QMainWindow::AllowTabbedDocks</set>
+   <set>QMainWindow::DockOption::AllowNestedDocks|QMainWindow::DockOption::AllowTabbedDocks</set>
   </property>
   <widget class="QWidget" name="centralWidget">
    <layout class="QVBoxLayout" name="verticalLayout_10"/>
@@ -218,7 +218,6 @@
      <addaction name="actionHelpUserManualLegend"/>
     </widget>
     <addaction name="actionHelpUserManualContents"/>
-    <addaction name="actionHelpContentsOffline"/>
     <addaction name="menuHelpUserManualImportantChapters"/>
     <addaction name="separator"/>
     <addaction name="actionHelpFaq"/>
@@ -633,7 +632,7 @@
   </widget>
   <widget class="QStatusBar" name="statusBar">
    <property name="contextMenuPolicy">
-    <enum>Qt::CustomContextMenu</enum>
+    <enum>Qt::ContextMenuPolicy::CustomContextMenu</enum>
    </property>
    <property name="sizeGripEnabled">
     <bool>false</bool>
@@ -676,10 +675,10 @@
         </size>
        </property>
        <property name="contextMenuPolicy">
-        <enum>Qt::CustomContextMenu</enum>
+        <enum>Qt::ContextMenuPolicy::CustomContextMenu</enum>
        </property>
        <property name="tabShape">
-        <enum>QTabWidget::Rounded</enum>
+        <enum>QTabWidget::TabShape::Rounded</enum>
        </property>
        <property name="currentIndex">
         <number>0</number>
@@ -732,7 +731,7 @@
                 </sizepolicy>
                </property>
                <property name="contextMenuPolicy">
-                <enum>Qt::CustomContextMenu</enum>
+                <enum>Qt::ContextMenuPolicy::CustomContextMenu</enum>
                </property>
                <property name="toolTip">
                 <string>Airport ident (ICAO, IATA, FAA or local), name, city, state, province, country or area code.
@@ -751,7 +750,7 @@ Searches for partial text in all fields. Note that not all fields are available 
                 <number>20</number>
                </property>
                <property name="insertPolicy">
-                <enum>QComboBox::InsertAtTop</enum>
+                <enum>QComboBox::InsertPolicy::InsertAtTop</enum>
                </property>
                <property name="placeholderText">
                 <string>Ident, name, city, state, province, country or area code</string>
@@ -828,10 +827,10 @@ Searches for partial text in all fields. Note that not all fields are available 
                  <normaloff>:/littlenavmap/resources/icons/menubutton.svg</normaloff>:/littlenavmap/resources/icons/menubutton.svg</iconset>
                </property>
                <property name="popupMode">
-                <enum>QToolButton::InstantPopup</enum>
+                <enum>QToolButton::ToolButtonPopupMode::InstantPopup</enum>
                </property>
                <property name="toolButtonStyle">
-                <enum>Qt::ToolButtonTextBesideIcon</enum>
+                <enum>Qt::ToolButtonStyle::ToolButtonTextBesideIcon</enum>
                </property>
               </widget>
              </item>
@@ -846,7 +845,7 @@ Searches for partial text in all fields. Note that not all fields are available 
               <number>2</number>
              </property>
              <property name="orientation">
-              <enum>Qt::Horizontal</enum>
+              <enum>Qt::Orientation::Horizontal</enum>
              </property>
             </widget>
            </item>
@@ -984,7 +983,7 @@ Not available for all simulators.</string>
               <number>2</number>
              </property>
              <property name="orientation">
-              <enum>Qt::Horizontal</enum>
+              <enum>Qt::Orientation::Horizontal</enum>
              </property>
             </widget>
            </item>
@@ -1199,7 +1198,7 @@ Not available for all simulators.</string>
               <number>2</number>
              </property>
              <property name="orientation">
-              <enum>Qt::Horizontal</enum>
+              <enum>Qt::Orientation::Horizontal</enum>
              </property>
             </widget>
            </item>
@@ -1322,7 +1321,7 @@ Not available for all simulators.</string>
               <number>2</number>
              </property>
              <property name="orientation">
-              <enum>Qt::Horizontal</enum>
+              <enum>Qt::Orientation::Horizontal</enum>
              </property>
             </widget>
            </item>
@@ -1346,7 +1345,7 @@ Not available for all simulators.</string>
                 <string>&amp;Rwy:</string>
                </property>
                <property name="alignment">
-                <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+                <set>Qt::AlignmentFlag::AlignRight|Qt::AlignmentFlag::AlignTrailing|Qt::AlignmentFlag::AlignVCenter</set>
                </property>
                <property name="buddy">
                 <cstring>spinBoxAirportRunwaysMinSearch</cstring>
@@ -1467,7 +1466,7 @@ Not available for all simulators.</string>
               <number>2</number>
              </property>
              <property name="orientation">
-              <enum>Qt::Horizontal</enum>
+              <enum>Qt::Orientation::Horizontal</enum>
              </property>
             </widget>
            </item>
@@ -1559,7 +1558,7 @@ Not available for all simulators.</string>
            <item>
             <widget class="Line" name="lineAirportDistSearch">
              <property name="frameShadow">
-              <enum>QFrame::Sunken</enum>
+              <enum>QFrame::Shadow::Sunken</enum>
              </property>
              <property name="lineWidth">
               <number>4</number>
@@ -1568,7 +1567,7 @@ Not available for all simulators.</string>
               <number>2</number>
              </property>
              <property name="orientation">
-              <enum>Qt::Horizontal</enum>
+              <enum>Qt::Orientation::Horizontal</enum>
              </property>
             </widget>
            </item>
@@ -1701,7 +1700,7 @@ Not available for all simulators.</string>
            <item>
             <widget class="Line" name="lineAirportFlightplanSearch">
              <property name="frameShadow">
-              <enum>QFrame::Sunken</enum>
+              <enum>QFrame::Shadow::Sunken</enum>
              </property>
              <property name="lineWidth">
               <number>4</number>
@@ -1710,7 +1709,7 @@ Not available for all simulators.</string>
               <number>2</number>
              </property>
              <property name="orientation">
-              <enum>Qt::Horizontal</enum>
+              <enum>Qt::Orientation::Horizontal</enum>
              </property>
             </widget>
            </item>
@@ -1812,7 +1811,7 @@ Not available for all simulators.</string>
            <item>
             <widget class="Line" name="lineAirportScenerySearch">
              <property name="frameShadow">
-              <enum>QFrame::Sunken</enum>
+              <enum>QFrame::Shadow::Sunken</enum>
              </property>
              <property name="lineWidth">
               <number>4</number>
@@ -1821,7 +1820,7 @@ Not available for all simulators.</string>
               <number>2</number>
              </property>
              <property name="orientation">
-              <enum>Qt::Horizontal</enum>
+              <enum>Qt::Orientation::Horizontal</enum>
              </property>
             </widget>
            </item>
@@ -1878,10 +1877,10 @@ Not available for all simulators.</string>
               </font>
              </property>
              <property name="contextMenuPolicy">
-              <enum>Qt::CustomContextMenu</enum>
+              <enum>Qt::ContextMenuPolicy::CustomContextMenu</enum>
              </property>
              <property name="editTriggers">
-              <set>QAbstractItemView::NoEditTriggers</set>
+              <set>QAbstractItemView::EditTrigger::NoEditTriggers</set>
              </property>
              <property name="tabKeyNavigation">
               <bool>false</bool>
@@ -1896,13 +1895,13 @@ Not available for all simulators.</string>
               <bool>true</bool>
              </property>
              <property name="selectionMode">
-              <enum>QAbstractItemView::ExtendedSelection</enum>
+              <enum>QAbstractItemView::SelectionMode::ExtendedSelection</enum>
              </property>
              <property name="selectionBehavior">
-              <enum>QAbstractItemView::SelectRows</enum>
+              <enum>QAbstractItemView::SelectionBehavior::SelectRows</enum>
              </property>
              <property name="horizontalScrollMode">
-              <enum>QAbstractItemView::ScrollPerPixel</enum>
+              <enum>QAbstractItemView::ScrollMode::ScrollPerPixel</enum>
              </property>
              <property name="sortingEnabled">
               <bool>true</bool>
@@ -1933,7 +1932,7 @@ Not available for all simulators.</string>
               <bool>true</bool>
              </property>
              <property name="textInteractionFlags">
-              <set>Qt::TextSelectableByMouse</set>
+              <set>Qt::TextInteractionFlag::TextSelectableByMouse</set>
              </property>
             </widget>
            </item>
@@ -1946,7 +1945,7 @@ Not available for all simulators.</string>
               <bool>true</bool>
              </property>
              <property name="textInteractionFlags">
-              <set>Qt::TextSelectableByMouse</set>
+              <set>Qt::TextInteractionFlag::TextSelectableByMouse</set>
              </property>
             </widget>
            </item>
@@ -2008,7 +2007,7 @@ Not available for all simulators.</string>
                 </size>
                </property>
                <property name="contextMenuPolicy">
-                <enum>Qt::CustomContextMenu</enum>
+                <enum>Qt::ContextMenuPolicy::CustomContextMenu</enum>
                </property>
                <property name="toolTip">
                 <string>Navaid ICAO ident</string>
@@ -2026,7 +2025,7 @@ Not available for all simulators.</string>
                 <number>20</number>
                </property>
                <property name="insertPolicy">
-                <enum>QComboBox::InsertAtTop</enum>
+                <enum>QComboBox::InsertPolicy::InsertAtTop</enum>
                </property>
                <property name="placeholderText">
                 <string>Ident</string>
@@ -2172,10 +2171,10 @@ Not available for all simulators.</string>
                  <normaloff>:/littlenavmap/resources/icons/menubutton.svg</normaloff>:/littlenavmap/resources/icons/menubutton.svg</iconset>
                </property>
                <property name="popupMode">
-                <enum>QToolButton::InstantPopup</enum>
+                <enum>QToolButton::ToolButtonPopupMode::InstantPopup</enum>
                </property>
                <property name="toolButtonStyle">
-                <enum>Qt::ToolButtonTextBesideIcon</enum>
+                <enum>Qt::ToolButtonStyle::ToolButtonTextBesideIcon</enum>
                </property>
               </widget>
              </item>
@@ -2190,7 +2189,7 @@ Not available for all simulators.</string>
               <number>2</number>
              </property>
              <property name="orientation">
-              <enum>Qt::Horizontal</enum>
+              <enum>Qt::Orientation::Horizontal</enum>
              </property>
             </widget>
            </item>
@@ -2396,7 +2395,7 @@ Not available for all simulators.</string>
               <number>2</number>
              </property>
              <property name="orientation">
-              <enum>Qt::Horizontal</enum>
+              <enum>Qt::Orientation::Horizontal</enum>
              </property>
             </widget>
            </item>
@@ -2538,7 +2537,7 @@ Not available for all simulators.</string>
               <number>2</number>
              </property>
              <property name="orientation">
-              <enum>Qt::Horizontal</enum>
+              <enum>Qt::Orientation::Horizontal</enum>
              </property>
             </widget>
            </item>
@@ -2598,10 +2597,10 @@ Not available for all simulators.</string>
               </font>
              </property>
              <property name="contextMenuPolicy">
-              <enum>Qt::CustomContextMenu</enum>
+              <enum>Qt::ContextMenuPolicy::CustomContextMenu</enum>
              </property>
              <property name="editTriggers">
-              <set>QAbstractItemView::NoEditTriggers</set>
+              <set>QAbstractItemView::EditTrigger::NoEditTriggers</set>
              </property>
              <property name="tabKeyNavigation">
               <bool>false</bool>
@@ -2616,13 +2615,13 @@ Not available for all simulators.</string>
               <bool>true</bool>
              </property>
              <property name="selectionMode">
-              <enum>QAbstractItemView::ExtendedSelection</enum>
+              <enum>QAbstractItemView::SelectionMode::ExtendedSelection</enum>
              </property>
              <property name="selectionBehavior">
-              <enum>QAbstractItemView::SelectRows</enum>
+              <enum>QAbstractItemView::SelectionBehavior::SelectRows</enum>
              </property>
              <property name="horizontalScrollMode">
-              <enum>QAbstractItemView::ScrollPerPixel</enum>
+              <enum>QAbstractItemView::ScrollMode::ScrollPerPixel</enum>
              </property>
              <property name="sortingEnabled">
               <bool>true</bool>
@@ -2653,7 +2652,7 @@ Not available for all simulators.</string>
               <bool>true</bool>
              </property>
              <property name="textInteractionFlags">
-              <set>Qt::TextSelectableByMouse</set>
+              <set>Qt::TextInteractionFlag::TextSelectableByMouse</set>
              </property>
             </widget>
            </item>
@@ -2666,7 +2665,7 @@ Not available for all simulators.</string>
               <bool>true</bool>
              </property>
              <property name="textInteractionFlags">
-              <set>Qt::TextSelectableByMouse</set>
+              <set>Qt::TextInteractionFlag::TextSelectableByMouse</set>
              </property>
             </widget>
            </item>
@@ -2854,7 +2853,7 @@ Hides all items not beginning with the specified search term.</string>
             <bool>true</bool>
            </property>
            <property name="textInteractionFlags">
-            <set>Qt::LinksAccessibleByMouse|Qt::TextSelectableByMouse</set>
+            <set>Qt::TextInteractionFlag::LinksAccessibleByMouse|Qt::TextInteractionFlag::TextSelectableByMouse</set>
            </property>
           </widget>
          </item>
@@ -2867,7 +2866,7 @@ Hides all items not beginning with the specified search term.</string>
             <bool>true</bool>
            </property>
            <property name="textInteractionFlags">
-            <set>Qt::LinksAccessibleByMouse|Qt::TextSelectableByMouse</set>
+            <set>Qt::TextInteractionFlag::LinksAccessibleByMouse|Qt::TextInteractionFlag::TextSelectableByMouse</set>
            </property>
           </widget>
          </item>
@@ -2880,10 +2879,10 @@ Hides all items not beginning with the specified search term.</string>
             </size>
            </property>
            <property name="contextMenuPolicy">
-            <enum>Qt::CustomContextMenu</enum>
+            <enum>Qt::ContextMenuPolicy::CustomContextMenu</enum>
            </property>
            <property name="editTriggers">
-            <set>QAbstractItemView::NoEditTriggers</set>
+            <set>QAbstractItemView::EditTrigger::NoEditTriggers</set>
            </property>
            <property name="showDropIndicator" stdset="0">
             <bool>false</bool>
@@ -3003,7 +3002,7 @@ Hides all items not beginning with the specified search term.</string>
               <number>30</number>
              </property>
              <property name="insertPolicy">
-              <enum>QComboBox::NoInsert</enum>
+              <enum>QComboBox::InsertPolicy::NoInsert</enum>
              </property>
              <property name="frame">
               <bool>true</bool>
@@ -3064,7 +3063,7 @@ Hides all items not beginning with the specified search term.</string>
            <item>
             <widget class="Line" name="line">
              <property name="orientation">
-              <enum>Qt::Vertical</enum>
+              <enum>Qt::Orientation::Vertical</enum>
              </property>
             </widget>
            </item>
@@ -3135,10 +3134,10 @@ Hides all items not beginning with the specified search term.</string>
                <normaloff>:/littlenavmap/resources/icons/menubutton.svg</normaloff>:/littlenavmap/resources/icons/menubutton.svg</iconset>
              </property>
              <property name="popupMode">
-              <enum>QToolButton::InstantPopup</enum>
+              <enum>QToolButton::ToolButtonPopupMode::InstantPopup</enum>
              </property>
              <property name="toolButtonStyle">
-              <enum>Qt::ToolButtonTextBesideIcon</enum>
+              <enum>Qt::ToolButtonStyle::ToolButtonTextBesideIcon</enum>
              </property>
             </widget>
            </item>
@@ -3153,7 +3152,7 @@ Hides all items not beginning with the specified search term.</string>
             <number>2</number>
            </property>
            <property name="orientation">
-            <enum>Qt::Horizontal</enum>
+            <enum>Qt::Orientation::Horizontal</enum>
            </property>
           </widget>
          </item>
@@ -3251,10 +3250,10 @@ Hides all items not beginning with the specified search term.</string>
             </font>
            </property>
            <property name="contextMenuPolicy">
-            <enum>Qt::CustomContextMenu</enum>
+            <enum>Qt::ContextMenuPolicy::CustomContextMenu</enum>
            </property>
            <property name="editTriggers">
-            <set>QAbstractItemView::NoEditTriggers</set>
+            <set>QAbstractItemView::EditTrigger::NoEditTriggers</set>
            </property>
            <property name="tabKeyNavigation">
             <bool>false</bool>
@@ -3269,13 +3268,13 @@ Hides all items not beginning with the specified search term.</string>
             <bool>true</bool>
            </property>
            <property name="selectionMode">
-            <enum>QAbstractItemView::ExtendedSelection</enum>
+            <enum>QAbstractItemView::SelectionMode::ExtendedSelection</enum>
            </property>
            <property name="selectionBehavior">
-            <enum>QAbstractItemView::SelectRows</enum>
+            <enum>QAbstractItemView::SelectionBehavior::SelectRows</enum>
            </property>
            <property name="horizontalScrollMode">
-            <enum>QAbstractItemView::ScrollPerPixel</enum>
+            <enum>QAbstractItemView::ScrollMode::ScrollPerPixel</enum>
            </property>
            <property name="sortingEnabled">
             <bool>true</bool>
@@ -3303,7 +3302,7 @@ Hides all items not beginning with the specified search term.</string>
             <bool>true</bool>
            </property>
            <property name="textInteractionFlags">
-            <set>Qt::TextSelectableByMouse</set>
+            <set>Qt::TextInteractionFlag::TextSelectableByMouse</set>
            </property>
           </widget>
          </item>
@@ -3439,7 +3438,7 @@ Matches any visited airport.</string>
            <item>
             <widget class="Line" name="line_5">
              <property name="orientation">
-              <enum>Qt::Vertical</enum>
+              <enum>Qt::Orientation::Vertical</enum>
              </property>
             </widget>
            </item>
@@ -3510,10 +3509,10 @@ Matches any visited airport.</string>
                <normaloff>:/littlenavmap/resources/icons/menubutton.svg</normaloff>:/littlenavmap/resources/icons/menubutton.svg</iconset>
              </property>
              <property name="popupMode">
-              <enum>QToolButton::InstantPopup</enum>
+              <enum>QToolButton::ToolButtonPopupMode::InstantPopup</enum>
              </property>
              <property name="toolButtonStyle">
-              <enum>Qt::ToolButtonTextBesideIcon</enum>
+              <enum>Qt::ToolButtonStyle::ToolButtonTextBesideIcon</enum>
              </property>
             </widget>
            </item>
@@ -3528,7 +3527,7 @@ Matches any visited airport.</string>
             <number>2</number>
            </property>
            <property name="orientation">
-            <enum>Qt::Horizontal</enum>
+            <enum>Qt::Orientation::Horizontal</enum>
            </property>
           </widget>
          </item>
@@ -3697,7 +3696,7 @@ Matches any visited airport.</string>
             <number>2</number>
            </property>
            <property name="orientation">
-            <enum>Qt::Horizontal</enum>
+            <enum>Qt::Orientation::Horizontal</enum>
            </property>
           </widget>
          </item>
@@ -3788,10 +3787,10 @@ Matches any visited airport.</string>
             </font>
            </property>
            <property name="contextMenuPolicy">
-            <enum>Qt::CustomContextMenu</enum>
+            <enum>Qt::ContextMenuPolicy::CustomContextMenu</enum>
            </property>
            <property name="editTriggers">
-            <set>QAbstractItemView::NoEditTriggers</set>
+            <set>QAbstractItemView::EditTrigger::NoEditTriggers</set>
            </property>
            <property name="tabKeyNavigation">
             <bool>false</bool>
@@ -3806,13 +3805,13 @@ Matches any visited airport.</string>
             <bool>true</bool>
            </property>
            <property name="selectionMode">
-            <enum>QAbstractItemView::ExtendedSelection</enum>
+            <enum>QAbstractItemView::SelectionMode::ExtendedSelection</enum>
            </property>
            <property name="selectionBehavior">
-            <enum>QAbstractItemView::SelectRows</enum>
+            <enum>QAbstractItemView::SelectionBehavior::SelectRows</enum>
            </property>
            <property name="horizontalScrollMode">
-            <enum>QAbstractItemView::ScrollPerPixel</enum>
+            <enum>QAbstractItemView::ScrollMode::ScrollPerPixel</enum>
            </property>
            <property name="sortingEnabled">
             <bool>true</bool>
@@ -3840,7 +3839,7 @@ Matches any visited airport.</string>
             <bool>true</bool>
            </property>
            <property name="textInteractionFlags">
-            <set>Qt::TextSelectableByMouse</set>
+            <set>Qt::TextInteractionFlag::TextSelectableByMouse</set>
            </property>
           </widget>
          </item>
@@ -4051,10 +4050,10 @@ Matches any visited airport.</string>
             </font>
            </property>
            <property name="contextMenuPolicy">
-            <enum>Qt::CustomContextMenu</enum>
+            <enum>Qt::ContextMenuPolicy::CustomContextMenu</enum>
            </property>
            <property name="editTriggers">
-            <set>QAbstractItemView::NoEditTriggers</set>
+            <set>QAbstractItemView::EditTrigger::NoEditTriggers</set>
            </property>
            <property name="tabKeyNavigation">
             <bool>false</bool>
@@ -4069,10 +4068,10 @@ Matches any visited airport.</string>
             <bool>true</bool>
            </property>
            <property name="selectionBehavior">
-            <enum>QAbstractItemView::SelectRows</enum>
+            <enum>QAbstractItemView::SelectionBehavior::SelectRows</enum>
            </property>
            <property name="horizontalScrollMode">
-            <enum>QAbstractItemView::ScrollPerPixel</enum>
+            <enum>QAbstractItemView::ScrollMode::ScrollPerPixel</enum>
            </property>
            <property name="sortingEnabled">
             <bool>true</bool>
@@ -4097,7 +4096,7 @@ Matches any visited airport.</string>
             <bool>true</bool>
            </property>
            <property name="textInteractionFlags">
-            <set>Qt::TextSelectableByMouse</set>
+            <set>Qt::TextInteractionFlag::TextSelectableByMouse</set>
            </property>
           </widget>
          </item>
@@ -4312,10 +4311,10 @@ Matches any visited airport.</string>
             </font>
            </property>
            <property name="contextMenuPolicy">
-            <enum>Qt::CustomContextMenu</enum>
+            <enum>Qt::ContextMenuPolicy::CustomContextMenu</enum>
            </property>
            <property name="editTriggers">
-            <set>QAbstractItemView::NoEditTriggers</set>
+            <set>QAbstractItemView::EditTrigger::NoEditTriggers</set>
            </property>
            <property name="tabKeyNavigation">
             <bool>false</bool>
@@ -4330,10 +4329,10 @@ Matches any visited airport.</string>
             <bool>true</bool>
            </property>
            <property name="selectionBehavior">
-            <enum>QAbstractItemView::SelectRows</enum>
+            <enum>QAbstractItemView::SelectionBehavior::SelectRows</enum>
            </property>
            <property name="horizontalScrollMode">
-            <enum>QAbstractItemView::ScrollPerPixel</enum>
+            <enum>QAbstractItemView::ScrollMode::ScrollPerPixel</enum>
            </property>
            <property name="sortingEnabled">
             <bool>true</bool>
@@ -4358,7 +4357,7 @@ Matches any visited airport.</string>
             <bool>true</bool>
            </property>
            <property name="textInteractionFlags">
-            <set>Qt::TextSelectableByMouse</set>
+            <set>Qt::TextInteractionFlag::TextSelectableByMouse</set>
            </property>
           </widget>
          </item>
@@ -4401,10 +4400,10 @@ Matches any visited airport.</string>
             </font>
            </property>
            <property name="contextMenuPolicy">
-            <enum>Qt::CustomContextMenu</enum>
+            <enum>Qt::ContextMenuPolicy::CustomContextMenu</enum>
            </property>
            <property name="editTriggers">
-            <set>QAbstractItemView::NoEditTriggers</set>
+            <set>QAbstractItemView::EditTrigger::NoEditTriggers</set>
            </property>
            <property name="tabKeyNavigation">
             <bool>false</bool>
@@ -4419,10 +4418,10 @@ Matches any visited airport.</string>
             <bool>true</bool>
            </property>
            <property name="selectionBehavior">
-            <enum>QAbstractItemView::SelectRows</enum>
+            <enum>QAbstractItemView::SelectionBehavior::SelectRows</enum>
            </property>
            <property name="horizontalScrollMode">
-            <enum>QAbstractItemView::ScrollPerPixel</enum>
+            <enum>QAbstractItemView::ScrollMode::ScrollPerPixel</enum>
            </property>
            <property name="sortingEnabled">
             <bool>true</bool>
@@ -4678,7 +4677,7 @@ Matches any visited airport.</string>
               <bool>true</bool>
              </property>
              <property name="textInteractionFlags">
-              <set>Qt::LinksAccessibleByMouse|Qt::TextSelectableByMouse</set>
+              <set>Qt::TextInteractionFlag::LinksAccessibleByMouse|Qt::TextInteractionFlag::TextSelectableByMouse</set>
              </property>
             </widget>
            </item>
@@ -4714,7 +4713,7 @@ Matches any visited airport.</string>
             </font>
            </property>
            <property name="editTriggers">
-            <set>QAbstractItemView::NoEditTriggers</set>
+            <set>QAbstractItemView::EditTrigger::NoEditTriggers</set>
            </property>
            <property name="tabKeyNavigation">
             <bool>false</bool>
@@ -4723,22 +4722,22 @@ Matches any visited airport.</string>
             <bool>false</bool>
            </property>
            <property name="dragDropMode">
-            <enum>QAbstractItemView::NoDragDrop</enum>
+            <enum>QAbstractItemView::DragDropMode::NoDragDrop</enum>
            </property>
            <property name="defaultDropAction">
-            <enum>Qt::IgnoreAction</enum>
+            <enum>Qt::DropAction::IgnoreAction</enum>
            </property>
            <property name="alternatingRowColors">
             <bool>true</bool>
            </property>
            <property name="selectionMode">
-            <enum>QAbstractItemView::ExtendedSelection</enum>
+            <enum>QAbstractItemView::SelectionMode::ExtendedSelection</enum>
            </property>
            <property name="selectionBehavior">
-            <enum>QAbstractItemView::SelectRows</enum>
+            <enum>QAbstractItemView::SelectionBehavior::SelectRows</enum>
            </property>
            <property name="horizontalScrollMode">
-            <enum>QAbstractItemView::ScrollPerPixel</enum>
+            <enum>QAbstractItemView::ScrollMode::ScrollPerPixel</enum>
            </property>
            <property name="wordWrap">
             <bool>false</bool>
@@ -4800,7 +4799,7 @@ Matches any visited airport.</string>
             <bool>true</bool>
            </property>
            <property name="textInteractionFlags">
-            <set>Qt::LinksAccessibleByMouse|Qt::TextSelectableByMouse</set>
+            <set>Qt::TextInteractionFlag::LinksAccessibleByMouse|Qt::TextInteractionFlag::TextSelectableByMouse</set>
            </property>
           </widget>
          </item>
@@ -4886,17 +4885,17 @@ Matches any visited airport.</string>
                 <bool>true</bool>
                </property>
                <property name="popupMode">
-                <enum>QToolButton::InstantPopup</enum>
+                <enum>QToolButton::ToolButtonPopupMode::InstantPopup</enum>
                </property>
                <property name="toolButtonStyle">
-                <enum>Qt::ToolButtonTextBesideIcon</enum>
+                <enum>Qt::ToolButtonStyle::ToolButtonTextBesideIcon</enum>
                </property>
               </widget>
              </item>
              <item>
               <spacer name="horizontalSpacer_2">
                <property name="orientation">
-                <enum>Qt::Horizontal</enum>
+                <enum>Qt::Orientation::Horizontal</enum>
                </property>
                <property name="sizeHint" stdset="0">
                 <size>
@@ -4932,7 +4931,7 @@ Matches any visited airport.</string>
              <item>
               <widget class="Line" name="line_4">
                <property name="orientation">
-                <enum>Qt::Vertical</enum>
+                <enum>Qt::Orientation::Vertical</enum>
                </property>
               </widget>
              </item>
@@ -4985,7 +4984,7 @@ Matches any visited airport.</string>
              <item>
               <widget class="Line" name="line_3">
                <property name="orientation">
-                <enum>Qt::Vertical</enum>
+                <enum>Qt::Orientation::Vertical</enum>
                </property>
               </widget>
              </item>
@@ -5225,7 +5224,7 @@ Wind speed will be interpolated between this altitude and ground level.</string>
            <item>
             <spacer name="horizontalSpacer_3">
              <property name="orientation">
-              <enum>Qt::Horizontal</enum>
+              <enum>Qt::Orientation::Horizontal</enum>
              </property>
              <property name="sizeHint" stdset="0">
               <size>
@@ -5332,13 +5331,13 @@ Wind speed will be interpolated between this altitude and ground level.</string>
         <string/>
        </property>
        <property name="alignment">
-        <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignTop</set>
+        <set>Qt::AlignmentFlag::AlignLeading|Qt::AlignmentFlag::AlignLeft|Qt::AlignmentFlag::AlignTop</set>
        </property>
        <property name="wordWrap">
         <bool>true</bool>
        </property>
        <property name="textInteractionFlags">
-        <set>Qt::TextSelectableByMouse</set>
+        <set>Qt::TextInteractionFlag::TextSelectableByMouse</set>
        </property>
       </widget>
      </item>
@@ -5348,13 +5347,13 @@ Wind speed will be interpolated between this altitude and ground level.</string>
         <string/>
        </property>
        <property name="alignment">
-        <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignTop</set>
+        <set>Qt::AlignmentFlag::AlignLeading|Qt::AlignmentFlag::AlignLeft|Qt::AlignmentFlag::AlignTop</set>
        </property>
        <property name="wordWrap">
         <bool>true</bool>
        </property>
        <property name="textInteractionFlags">
-        <set>Qt::TextSelectableByMouse</set>
+        <set>Qt::TextInteractionFlag::TextSelectableByMouse</set>
        </property>
       </widget>
      </item>
@@ -5392,7 +5391,7 @@ Wind speed will be interpolated between this altitude and ground level.</string>
      <item>
       <widget class="QTabWidget" name="tabWidgetInformation">
        <property name="tabShape">
-        <enum>QTabWidget::Rounded</enum>
+        <enum>QTabWidget::TabShape::Rounded</enum>
        </property>
        <property name="currentIndex">
         <number>0</number>
@@ -5991,7 +5990,7 @@ relation to shown airport</string>
      <item>
       <widget class="QSplitter" name="splitterProfile">
        <property name="orientation">
-        <enum>Qt::Horizontal</enum>
+        <enum>Qt::Orientation::Horizontal</enum>
        </property>
        <widget class="QWidget" name="layoutWidgetProfileDrawing">
         <layout class="QGridLayout" name="gridLayoutProfileDrawing">
@@ -6007,7 +6006,7 @@ relation to shown airport</string>
             </size>
            </property>
            <property name="focusPolicy">
-            <enum>Qt::StrongFocus</enum>
+            <enum>Qt::FocusPolicy::StrongFocus</enum>
            </property>
           </widget>
          </item>
@@ -6026,7 +6025,7 @@ relation to shown airport</string>
             <bool>true</bool>
            </property>
            <property name="textInteractionFlags">
-            <set>Qt::LinksAccessibleByMouse|Qt::TextSelectableByMouse</set>
+            <set>Qt::TextInteractionFlag::LinksAccessibleByMouse|Qt::TextInteractionFlag::TextSelectableByMouse</set>
            </property>
           </widget>
          </item>
@@ -6042,13 +6041,13 @@ relation to shown airport</string>
             <number>1</number>
            </property>
            <property name="verticalScrollBarPolicy">
-            <enum>Qt::ScrollBarAlwaysOn</enum>
+            <enum>Qt::ScrollBarPolicy::ScrollBarAlwaysOn</enum>
            </property>
            <property name="horizontalScrollBarPolicy">
-            <enum>Qt::ScrollBarAlwaysOn</enum>
+            <enum>Qt::ScrollBarPolicy::ScrollBarAlwaysOn</enum>
            </property>
            <property name="alignment">
-            <set>Qt::AlignBottom|Qt::AlignLeading|Qt::AlignLeft</set>
+            <set>Qt::AlignmentFlag::AlignBottom|Qt::AlignmentFlag::AlignLeading|Qt::AlignmentFlag::AlignLeft</set>
            </property>
            <widget class="QWidget" name="scrollAreaWidgetContentsProfile">
             <property name="geometry">
@@ -6088,7 +6087,7 @@ relation to shown airport</string>
             </size>
            </property>
            <property name="focusPolicy">
-            <enum>Qt::StrongFocus</enum>
+            <enum>Qt::FocusPolicy::StrongFocus</enum>
            </property>
           </widget>
          </item>
@@ -6113,7 +6112,7 @@ relation to shown airport</string>
            <item>
             <spacer name="horizontalSpacer_5">
              <property name="orientation">
-              <enum>Qt::Horizontal</enum>
+              <enum>Qt::Orientation::Horizontal</enum>
              </property>
              <property name="sizeHint" stdset="0">
               <size>
@@ -6205,7 +6204,7 @@ relation to shown airport</string>
            <item>
             <widget class="Line" name="line_6">
              <property name="orientation">
-              <enum>Qt::Horizontal</enum>
+              <enum>Qt::Orientation::Horizontal</enum>
              </property>
             </widget>
            </item>
@@ -6280,10 +6279,10 @@ relation to shown airport</string>
                 <number>1</number>
                </property>
                <property name="orientation">
-                <enum>Qt::Vertical</enum>
+                <enum>Qt::Orientation::Vertical</enum>
                </property>
                <property name="tickPosition">
-                <enum>QSlider::NoTicks</enum>
+                <enum>QSlider::TickPosition::NoTicks</enum>
                </property>
                <property name="tickInterval">
                 <number>4</number>
@@ -6311,10 +6310,10 @@ relation to shown airport</string>
                 <number>1</number>
                </property>
                <property name="orientation">
-                <enum>Qt::Vertical</enum>
+                <enum>Qt::Orientation::Vertical</enum>
                </property>
                <property name="tickPosition">
-                <enum>QSlider::NoTicks</enum>
+                <enum>QSlider::TickPosition::NoTicks</enum>
                </property>
                <property name="tickInterval">
                 <number>4</number>
@@ -6453,7 +6452,7 @@ relation to shown airport</string>
             </size>
            </property>
            <property name="contextMenuPolicy">
-            <enum>Qt::CustomContextMenu</enum>
+            <enum>Qt::ContextMenuPolicy::CustomContextMenu</enum>
            </property>
            <property name="readOnly">
             <bool>true</bool>
@@ -6516,7 +6515,7 @@ relation to shown airport</string>
     </size>
    </property>
    <property name="features">
-    <set>QDockWidget::DockWidgetFloatable|QDockWidget::DockWidgetMovable</set>
+    <set>QDockWidget::DockWidgetFeature::DockWidgetFloatable|QDockWidget::DockWidgetFeature::DockWidgetMovable</set>
    </property>
    <property name="windowTitle">
     <string>Map</string>
@@ -7075,7 +7074,7 @@ relation to shown airport</string>
     <string>Ctrl+Q</string>
    </property>
    <property name="menuRole">
-    <enum>QAction::QuitRole</enum>
+    <enum>QAction::MenuRole::QuitRole</enum>
    </property>
   </action>
   <action name="actionShowStatusbar">
@@ -7128,7 +7127,7 @@ relation to shown airport</string>
     <string>About Little Navmap</string>
    </property>
    <property name="menuRole">
-    <enum>QAction::AboutRole</enum>
+    <enum>QAction::MenuRole::AboutRole</enum>
    </property>
   </action>
   <action name="actionHelpAboutQt">
@@ -7146,7 +7145,7 @@ relation to shown airport</string>
     <string>About Qt</string>
    </property>
    <property name="menuRole">
-    <enum>QAction::AboutQtRole</enum>
+    <enum>QAction::MenuRole::AboutQtRole</enum>
    </property>
   </action>
   <action name="actionOptions">
@@ -7167,7 +7166,7 @@ relation to shown airport</string>
     <string>Ctrl+Shift+,</string>
    </property>
    <property name="menuRole">
-    <enum>QAction::PreferencesRole</enum>
+    <enum>QAction::MenuRole::PreferencesRole</enum>
    </property>
   </action>
   <action name="actionAirportSearchShowAllOptions">
@@ -7961,7 +7960,7 @@ relation to shown airport</string>
     <string>About the Marble Widget</string>
    </property>
    <property name="menuRole">
-    <enum>QAction::NoRole</enum>
+    <enum>QAction::MenuRole::NoRole</enum>
    </property>
   </action>
   <action name="actionMapShowGrid">
@@ -8574,21 +8573,6 @@ relation to shown airport</string>
     <string>Show or hide the navigation map floating overlay</string>
    </property>
   </action>
-  <action name="actionHelpContentsOffline">
-   <property name="icon">
-    <iconset resource="../../littlenavmap.qrc">
-     <normaloff>:/littlenavmap/resources/icons/help.svg</normaloff>:/littlenavmap/resources/icons/help.svg</iconset>
-   </property>
-   <property name="text">
-    <string>&amp;User Manual (Offline, PDF)</string>
-   </property>
-   <property name="toolTip">
-    <string>Show the offline help also including the legend in a PDF viewer</string>
-   </property>
-   <property name="statusTip">
-    <string>Show the offline help also including the legend in a PDF viewer</string>
-   </property>
-  </action>
   <action name="actionInfoApproachExpandAll">
    <property name="text">
     <string>&amp;Expand All</string>
@@ -8999,7 +8983,7 @@ relation to shown airport</string>
     <string>Check for Updates</string>
    </property>
    <property name="menuRole">
-    <enum>QAction::NoRole</enum>
+    <enum>QAction::MenuRole::NoRole</enum>
    </property>
   </action>
   <action name="actionHelpDonate">
@@ -9017,7 +9001,7 @@ relation to shown airport</string>
     <string>If you would like show your appreciation you can donate here</string>
    </property>
    <property name="menuRole">
-    <enum>QAction::NoRole</enum>
+    <enum>QAction::MenuRole::NoRole</enum>
    </property>
   </action>
   <action name="actionRouteSaveAsFms11">
@@ -10037,7 +10021,7 @@ relation to shown airport</string>
     <string>F4</string>
    </property>
    <property name="shortcutContext">
-    <enum>Qt::ApplicationShortcut</enum>
+    <enum>Qt::ShortcutContext::ApplicationShortcut</enum>
    </property>
   </action>
   <action name="actionShortcutNavaidSearch">
@@ -10054,7 +10038,7 @@ relation to shown airport</string>
     <string>F5</string>
    </property>
    <property name="shortcutContext">
-    <enum>Qt::ApplicationShortcut</enum>
+    <enum>Qt::ShortcutContext::ApplicationShortcut</enum>
    </property>
   </action>
   <action name="actionShortcutUserpointSearch">
@@ -10071,7 +10055,7 @@ relation to shown airport</string>
     <string>F6</string>
    </property>
    <property name="shortcutContext">
-    <enum>Qt::ApplicationShortcut</enum>
+    <enum>Qt::ShortcutContext::ApplicationShortcut</enum>
    </property>
   </action>
   <action name="actionShortcutFlightPlan">
@@ -10088,7 +10072,7 @@ relation to shown airport</string>
     <string>F7</string>
    </property>
    <property name="shortcutContext">
-    <enum>Qt::ApplicationShortcut</enum>
+    <enum>Qt::ShortcutContext::ApplicationShortcut</enum>
    </property>
   </action>
   <action name="actionShortcutAirportInformation">
@@ -10105,7 +10089,7 @@ relation to shown airport</string>
     <string>F9</string>
    </property>
    <property name="shortcutContext">
-    <enum>Qt::ApplicationShortcut</enum>
+    <enum>Qt::ShortcutContext::ApplicationShortcut</enum>
    </property>
   </action>
   <action name="actionShortcutAirportWeather">
@@ -10122,7 +10106,7 @@ relation to shown airport</string>
     <string>F10</string>
    </property>
    <property name="shortcutContext">
-    <enum>Qt::ApplicationShortcut</enum>
+    <enum>Qt::ShortcutContext::ApplicationShortcut</enum>
    </property>
   </action>
   <action name="actionShortcutNavaidInformation">
@@ -10139,7 +10123,7 @@ relation to shown airport</string>
     <string>Shift+F11</string>
    </property>
    <property name="shortcutContext">
-    <enum>Qt::ApplicationShortcut</enum>
+    <enum>Qt::ShortcutContext::ApplicationShortcut</enum>
    </property>
   </action>
   <action name="actionShortcutAircraftPerformance">
@@ -10156,7 +10140,7 @@ relation to shown airport</string>
     <string>F8</string>
    </property>
    <property name="shortcutContext">
-    <enum>Qt::ApplicationShortcut</enum>
+    <enum>Qt::ShortcutContext::ApplicationShortcut</enum>
    </property>
   </action>
   <action name="actionShortcutAircraftProgress">
@@ -10173,7 +10157,7 @@ relation to shown airport</string>
     <string>F12</string>
    </property>
    <property name="shortcutContext">
-    <enum>Qt::ApplicationShortcut</enum>
+    <enum>Qt::ShortcutContext::ApplicationShortcut</enum>
    </property>
   </action>
   <action name="actionRouteSaveAsFlightGear">
@@ -10230,7 +10214,7 @@ relation to shown airport</string>
     <string>F2</string>
    </property>
    <property name="shortcutContext">
-    <enum>Qt::ApplicationShortcut</enum>
+    <enum>Qt::ShortcutContext::ApplicationShortcut</enum>
    </property>
   </action>
   <action name="actionShortcutProfile">
@@ -10247,7 +10231,7 @@ relation to shown airport</string>
     <string>F3</string>
    </property>
    <property name="shortcutContext">
-    <enum>Qt::ApplicationShortcut</enum>
+    <enum>Qt::ShortcutContext::ApplicationShortcut</enum>
    </property>
   </action>
   <action name="actionSaveMapAsImageAviTab">
@@ -10521,7 +10505,7 @@ relation to shown airport</string>
     <string>Shift+F6</string>
    </property>
    <property name="shortcutContext">
-    <enum>Qt::ApplicationShortcut</enum>
+    <enum>Qt::ShortcutContext::ApplicationShortcut</enum>
    </property>
   </action>
   <action name="actionLogdataRouteOpen">
@@ -10846,7 +10830,7 @@ relation to shown airport</string>
     <string>Shift+F7</string>
    </property>
    <property name="shortcutContext">
-    <enum>Qt::ApplicationShortcut</enum>
+    <enum>Qt::ShortcutContext::ApplicationShortcut</enum>
    </property>
   </action>
   <action name="actionMapShowTracks">
@@ -12573,7 +12557,7 @@ relation to shown airport</string>
     <string>Shift+F5</string>
    </property>
    <property name="shortcutContext">
-    <enum>Qt::ApplicationShortcut</enum>
+    <enum>Qt::ShortcutContext::ApplicationShortcut</enum>
    </property>
   </action>
   <action name="actionRouteRandom">

@@ -868,7 +868,7 @@ void MapThemeHandler::changeMapTheme()
     // Fetch all keys for map theme
     QString url;
     if(!theme.getUrlRef().isEmpty())
-      url = tr("<p>Click here to create an account or to request a key: <a href=\"%1\">%2</a></p>").
+      url = tr("<p>Click here to create an account or to request a key: <a href=\"%1\"><b>%2</b></a></p>").
             arg(theme.getUrlRef(), theme.getUrlName().isEmpty() ? tr("Link") : theme.getUrlName());
 
     atools::gui::Dialog(mainWindow).information(
@@ -1020,7 +1020,7 @@ void MapThemeHandler::validateMapThemeDirectories(QWidget *parent)
                                             "Go to menu \"Tools\" -> \"Options\" and then to page \"Map Themes\". "
                                             "Clear the input field \"Directory for additional map themes\" "
                                             "with the wrong path to disable themes or "
-                                            "click \"Select Themes Directory\" and select the correct folder.",
+                                            "click \"Select Directory\" and select the correct folder.",
                                             "Syncronize with texts in menu and options dialog").arg(msg.join(tr(",\n"))));
 }
 

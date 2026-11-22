@@ -4451,7 +4451,8 @@ void RouteController::showCustomApproach(map::MapAirport airport)
     bool destination;
     proc::procedureFlags(route, &airport, nullptr, &destination);
     QString dialogHeader = destination ? tr("Select destination runway.") : tr("Select destination airport and runway.");
-    dialogHeader.append(tr("\nSelect the airport to clear approach procedures or runway assignments."));
+    dialogHeader.append(tr("\nSelect the airport to clear approach procedures or runway assignments.\n"
+                           "Selecting a runway from the list will insert additional waypoints for approach guidance in the flight plan."));
 
     // Get the simulator runway end id to pre-select runway end row in dialog =================================
     // Check if there is already a STAR or an approach to fetch current runway selection
@@ -4543,7 +4544,7 @@ void RouteController::showCustomDeparture(map::MapAirport airport, const map::Ma
     proc::procedureFlags(route, &airport, &departure);
     QString dialogHeader = departure ? tr("Select departure runway.") : tr("Select departure airport and runway.");
     dialogHeader.append(tr("\nSelect the airport to clear departure procedures or runway assignments.\n"
-                           "Selecting a runway from the list will insert additional waypoints for guidance in the flight plan."));
+                           "Selecting a runway from the list will insert additional waypoints for departure guidance in the flight plan."));
 
     // Get the simulator runway end id to pre-select runway end row in dialog =================================
     // Check if there is already a SID to fetch current runway selection

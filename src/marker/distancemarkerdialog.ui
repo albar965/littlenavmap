@@ -30,7 +30,7 @@
    <item row="3" column="0" colspan="2">
     <widget class="QLabel" name="labelDistanceMarkerHint">
      <property name="text">
-      <string>Leave the label field blank so that the name is automatically assigned based on airports or navigation aids at the line origin.</string>
+      <string>Leave the label field blank so that the name is automatically assigned based on airports or navigation aids at the origin.</string>
      </property>
      <property name="wordWrap">
       <bool>true</bool>

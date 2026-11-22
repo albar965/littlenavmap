@@ -233,10 +233,10 @@ void StatusBar::setupLabels()
   addLabel(mapPositionLabel, "mapPositionLabel", QStringLiteral(), tr("Coordinates and elevation at cursor position."));
   addLabel(mapMagvarLabel, "mapMagvarLabel", QStringLiteral(), tr("Magnetic declination at cursor position."));
   addLabel(timeZoneLabel, "timeZoneLabel", QStringLiteral(),
-           tr("Time Zone country and offset from UTC (excluding DST) at cursor position."));
+           tr("Time Zone, country and offset from UTC at cursor position."));
   addLabel(timeLabel, "timeLabel");
 
-  // Status bar takes ownership of filter which handles tooltip on click
+  // Status bar takes ownership of filter which handleks tooltip on click
   statusBar->installEventFilter(new StatusBarEventFilter(statusBar, connectStatusLabel));
 
   connect(statusBar, &QStatusBar::messageChanged, this, &StatusBar::statusMessageChanged);
@@ -769,7 +769,7 @@ void StatusBar::updateDetailLabelTooltip()
          "</b></small><hr/>");
 #else
     tooltipHint =
-      tr("<small><b>Adjust detail levels in menu \"View\" or using \"Ctrl+Mouse Wheel\" and \"Ctrl+Shft+Mouse Wheel\"."
+      tr("<small><b>Adjust detail levels in menu \"View\" or using \"Ctrl+Mouse Wheel\" and \"Ctrl+Shift+Mouse Wheel\"."
          "</b></small><hr/>");
 #endif
 

@@ -264,8 +264,8 @@ void ElevationProvider::showErrors()
     // Warn outside the mutex lock to avoid deadlocks
     atools::gui::Dialog::warning(NavApp::getQMainWidget(),
                                  tr("GLOBE elevation data directory is not valid:<br/>\"%1\"<br/><br/>"
-                                    "Go to main menu -&gt; \"Tools\" -&gt; \"Options\" and then<br/>"
-                                    "to page \"Elevation Data\". Then click \"Select GLOBE Directory\" and<br/>"
+                                    "Go to menu \"Tools\" -&gt; \"Options\" and then<br/>"
+                                    "to page \"Elevation Data\". Then click \"Select Directory\" and<br/>"
                                     "select the correct place with the GLOBE elevation files.",
                                     "Keep instructions in sync with translated menus").arg(path));
 
