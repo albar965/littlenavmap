@@ -86,8 +86,9 @@ private:
 
   const static QLatin1String STYLE_FUSION; /* Fusion */
   const static QLatin1String STYLE_DARK; /* Dark / Fusion */
-  const static QLatin1String STYLE_WINDOWSVISTA; /* Windows 10 and 11 */
-  const static QLatin1String STYLE_WINDOWS; /* Old Windows */
+  const static QLatin1String STYLE_WINDOWSVISTA; /* Windows 10 and 11 - disabled */
+  const static QLatin1String STYLE_WINDOWS; /* Old Windows - disabled */
+  const static QLatin1String STYLE_MACOS; /* Apple - disabled */
 
   void applyStyleInternal();
   void applyCurrentStyle(bool initial);

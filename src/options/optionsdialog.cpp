@@ -694,7 +694,7 @@ OptionsDialog::OptionsDialog(QMainWindow *parentWindow)
   addPageListItem(QStringLiteral("connections"),
                   tr("Advanced"),
                   tr("Change cache parameters and connection parameters."),
-                  QStringLiteral(":/littlenavmap/resources/icons/network.svg"));
+                  QStringLiteral(":/littlenavmap/resources/icons/settings.svg"));
 
   // Build tree settings to map tab =====================================================
   // Airport =====================================================

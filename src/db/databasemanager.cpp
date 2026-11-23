@@ -671,8 +671,12 @@ void DatabaseManager::insertSimSwitchActions()
     // 2609: 0309011026
     // 2611: 2910261126
     // QDate validFrom = QDate::fromString(meta.getValidThrough().mid(0, 4) % meta.getValidThrough().right(2), "ddMMYY");
-    QDate validTo = QDate::fromString(meta.getValidThrough().mid(4, 4) % meta.getValidThrough().right(2), "ddMMyy", 2000);
 
+#if QT_VERSION >= QT_VERSION_CHECK(6, 7, 0)
+    QDate validTo = QDate::fromString(meta.getValidThrough().mid(4, 4) % meta.getValidThrough().right(2), "ddMMyy", 2000);
+#else
+    QDate validTo = QDate::fromString(meta.getValidThrough().mid(4, 4) % QStringLiteral("20") % meta.getValidThrough().right(2), "ddMMyyyy");
+#endif
     if(!cycle.isEmpty())
     {
       if(validTo.isValid())

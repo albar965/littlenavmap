@@ -46,6 +46,7 @@ const QLatin1String StyleHandler::STYLE_FUSION("Fusion");
 const QLatin1String StyleHandler::STYLE_DARK("Dark");
 const QLatin1String StyleHandler::STYLE_WINDOWSVISTA("windowsvista");
 const QLatin1String StyleHandler::STYLE_WINDOWS("Windows");
+const QLatin1String StyleHandler::STYLE_MACOS("macOS");
 
 const static QLatin1String STYLE_COLOR_GROUP("StyleColors");
 
@@ -133,7 +134,7 @@ StyleHandler::StyleHandler(QMainWindow *mainWindowParam)
 
     if(style != nullptr)
     {
-      if(styleName == STYLE_WINDOWS || styleName == STYLE_WINDOWSVISTA)
+      if(styleName == STYLE_WINDOWS || styleName == STYLE_WINDOWSVISTA || styleName == STYLE_MACOS)
         continue;
 
       if(styleName == STYLE_FUSION)
