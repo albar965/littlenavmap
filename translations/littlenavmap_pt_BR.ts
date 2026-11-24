@@ -104,9 +104,9 @@ Guardar alterações?</translation>
         <translation>Segmento de voo %1.</translation>
     </message>
     <message>
-        <location filename="../src/perf/aircraftperfcontroller.cpp" line="726"/>
-        <location filename="../src/perf/aircraftperfcontroller.cpp" line="727"/>
+        <location filename="../src/perf/aircraftperfcontroller.cpp" line="729"/>
         <location filename="../src/perf/aircraftperfcontroller.cpp" line="730"/>
+        <location filename="../src/perf/aircraftperfcontroller.cpp" line="733"/>
         <source> *</source>
         <translation></translation>
     </message>
@@ -119,88 +119,88 @@ Guardar alterações?</translation>
         <translation type="vanished">Atual segmento  de voo: %1.</translation>
     </message>
     <message>
-        <location filename="../src/perf/aircraftperfcontroller.cpp" line="905"/>
-        <location filename="../src/perf/aircraftperfcontroller.cpp" line="1196"/>
+        <location filename="../src/perf/aircraftperfcontroller.cpp" line="914"/>
+        <location filename="../src/perf/aircraftperfcontroller.cpp" line="1205"/>
         <source>Fuel</source>
         <translation>Combustível</translation>
     </message>
     <message>
-        <location filename="../src/perf/aircraftperfcontroller.cpp" line="907"/>
-        <location filename="../src/perf/aircraftperfcontroller.cpp" line="1199"/>
+        <location filename="../src/perf/aircraftperfcontroller.cpp" line="916"/>
+        <location filename="../src/perf/aircraftperfcontroller.cpp" line="1208"/>
         <source>Fuel Type:</source>
         <translation>Tipo de Combustível:</translation>
     </message>
     <message>
-        <location filename="../src/perf/aircraftperfcontroller.cpp" line="907"/>
-        <location filename="../src/perf/aircraftperfcontroller.cpp" line="1199"/>
+        <location filename="../src/perf/aircraftperfcontroller.cpp" line="916"/>
+        <location filename="../src/perf/aircraftperfcontroller.cpp" line="1208"/>
         <source>Avgas</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../src/perf/aircraftperfcontroller.cpp" line="907"/>
-        <location filename="../src/perf/aircraftperfcontroller.cpp" line="1199"/>
+        <location filename="../src/perf/aircraftperfcontroller.cpp" line="916"/>
+        <location filename="../src/perf/aircraftperfcontroller.cpp" line="1208"/>
         <source>Jetfuel</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../src/perf/aircraftperfcontroller.cpp" line="909"/>
+        <location filename="../src/perf/aircraftperfcontroller.cpp" line="918"/>
         <source>Total Fuel Consumed:</source>
         <translation>Consumo Total de Combustível:</translation>
     </message>
     <message>
-        <location filename="../src/perf/aircraftperfcontroller.cpp" line="910"/>
-        <location filename="../src/perf/aircraftperfcontroller.cpp" line="912"/>
+        <location filename="../src/perf/aircraftperfcontroller.cpp" line="919"/>
+        <location filename="../src/perf/aircraftperfcontroller.cpp" line="921"/>
         <source>—</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/perf/aircraftperfcontroller.cpp" line="912"/>
-        <location filename="../src/perf/aircraftperfcontroller.cpp" line="1230"/>
+        <location filename="../src/perf/aircraftperfcontroller.cpp" line="921"/>
+        <location filename="../src/perf/aircraftperfcontroller.cpp" line="1239"/>
         <source>Taxi Fuel:</source>
         <translation>Combustível de Taxi:</translation>
     </message>
     <message>
-        <location filename="../src/perf/aircraftperfcontroller.cpp" line="919"/>
+        <location filename="../src/perf/aircraftperfcontroller.cpp" line="928"/>
         <source>Average Performance</source>
         <translation>Performance Média</translation>
     </message>
     <message>
-        <location filename="../src/perf/aircraftperfcontroller.cpp" line="919"/>
+        <location filename="../src/perf/aircraftperfcontroller.cpp" line="928"/>
         <source>Climb</source>
         <translation>Subida</translation>
     </message>
     <message>
-        <location filename="../src/perf/aircraftperfcontroller.cpp" line="922"/>
-        <location filename="../src/perf/aircraftperfcontroller.cpp" line="933"/>
+        <location filename="../src/perf/aircraftperfcontroller.cpp" line="931"/>
         <location filename="../src/perf/aircraftperfcontroller.cpp" line="942"/>
+        <location filename="../src/perf/aircraftperfcontroller.cpp" line="951"/>
         <source>True Airspeed:</source>
         <translation>Velocidade Relativa Verdadeira (TAS):</translation>
     </message>
     <message>
-        <location filename="../src/perf/aircraftperfcontroller.cpp" line="923"/>
-        <location filename="../src/perf/aircraftperfcontroller.cpp" line="944"/>
+        <location filename="../src/perf/aircraftperfcontroller.cpp" line="932"/>
+        <location filename="../src/perf/aircraftperfcontroller.cpp" line="953"/>
         <source>Vertical Speed:</source>
         <translation>Velocidade Vertical:</translation>
     </message>
     <message>
-        <location filename="../src/perf/aircraftperfcontroller.cpp" line="925"/>
         <location filename="../src/perf/aircraftperfcontroller.cpp" line="934"/>
-        <location filename="../src/perf/aircraftperfcontroller.cpp" line="947"/>
+        <location filename="../src/perf/aircraftperfcontroller.cpp" line="943"/>
+        <location filename="../src/perf/aircraftperfcontroller.cpp" line="956"/>
         <source>Fuel Flow:</source>
         <translation>Fluxo de Combustível:</translation>
     </message>
     <message>
-        <location filename="../src/perf/aircraftperfcontroller.cpp" line="931"/>
+        <location filename="../src/perf/aircraftperfcontroller.cpp" line="940"/>
         <source>Cruise</source>
         <translation>Cruzeiro</translation>
     </message>
     <message>
-        <location filename="../src/perf/aircraftperfcontroller.cpp" line="940"/>
+        <location filename="../src/perf/aircraftperfcontroller.cpp" line="949"/>
         <source>Descent</source>
         <translation>Descida</translation>
     </message>
     <message>
-        <location filename="../src/perf/aircraftperfcontroller.cpp" line="787"/>
+        <location filename="../src/perf/aircraftperfcontroller.cpp" line="793"/>
         <source>Flight plan has unflyable legs where head wind is larger than cruise speed.</source>
         <translation>O plano de voo tem fixos que não podem ser voadas, pois a velocidade do vento de proa é maior que a velocidade de cruzeiro.</translation>
     </message>
@@ -221,8 +221,8 @@ Guardar alterações?</translation>
         <translation>Resetar a coleção de performance e perder todos os valores atuais?</translation>
     </message>
     <message>
-        <location filename="../src/perf/aircraftperfcontroller.cpp" line="770"/>
-        <location filename="../src/perf/aircraftperfcontroller.cpp" line="871"/>
+        <location filename="../src/perf/aircraftperfcontroller.cpp" line="776"/>
+        <location filename="../src/perf/aircraftperfcontroller.cpp" line="880"/>
         <source> - </source>
         <translation></translation>
     </message>
@@ -243,59 +243,59 @@ Guardar alterações?</translation>
         <translation type="vanished">Arquivo de Performance</translation>
     </message>
     <message>
-        <location filename="../src/perf/aircraftperfcontroller.cpp" line="961"/>
+        <location filename="../src/perf/aircraftperfcontroller.cpp" line="970"/>
         <source>Performance File:</source>
         <translation>Arquivo de Performance:</translation>
     </message>
     <message>
-        <location filename="../src/perf/aircraftperfcontroller.cpp" line="1022"/>
+        <location filename="../src/perf/aircraftperfcontroller.cpp" line="1031"/>
         <source>Aircraft Performance %1 - %2</source>
         <translation>Performance da aeronave %1 - %2</translation>
     </message>
     <message>
-        <location filename="../src/perf/aircraftperfcontroller.cpp" line="1034"/>
+        <location filename="../src/perf/aircraftperfcontroller.cpp" line="1043"/>
         <source>usable fuel</source>
         <translation>combustível total a bordo</translation>
     </message>
     <message>
-        <location filename="../src/perf/aircraftperfcontroller.cpp" line="1036"/>
+        <location filename="../src/perf/aircraftperfcontroller.cpp" line="1045"/>
         <source>reserve fuel</source>
         <translation>combustível reserva</translation>
     </message>
     <message>
-        <location filename="../src/perf/aircraftperfcontroller.cpp" line="1038"/>
+        <location filename="../src/perf/aircraftperfcontroller.cpp" line="1047"/>
         <source>climb fuel flow</source>
         <translation>fluxo de combustível de subida</translation>
     </message>
     <message>
-        <location filename="../src/perf/aircraftperfcontroller.cpp" line="1040"/>
+        <location filename="../src/perf/aircraftperfcontroller.cpp" line="1049"/>
         <source>cruise fuel flow</source>
         <translation>fluxo de combustível em cruzeiro</translation>
     </message>
     <message>
-        <location filename="../src/perf/aircraftperfcontroller.cpp" line="1042"/>
+        <location filename="../src/perf/aircraftperfcontroller.cpp" line="1051"/>
         <source>descent fuel flow</source>
         <translation>fluxo de combustível na descida</translation>
     </message>
     <message>
-        <location filename="../src/perf/aircraftperfcontroller.cpp" line="1044"/>
+        <location filename="../src/perf/aircraftperfcontroller.cpp" line="1053"/>
         <source>alternate fuel flow</source>
         <translation>fluxo alternativo de combustível</translation>
     </message>
     <message>
-        <location filename="../src/perf/aircraftperfcontroller.cpp" line="1048"/>
+        <location filename="../src/perf/aircraftperfcontroller.cpp" line="1057"/>
         <source>Invalid value for %1.</source>
         <translation>Valor inválido para %1.</translation>
     </message>
     <message>
-        <location filename="../src/perf/aircraftperfcontroller.cpp" line="1048"/>
+        <location filename="../src/perf/aircraftperfcontroller.cpp" line="1057"/>
         <source>Invalid values for %1.</source>
         <translation>Valores inválidos para %1.</translation>
     </message>
     <message>
-        <location filename="../src/perf/aircraftperfcontroller.cpp" line="895"/>
-        <location filename="../src/perf/aircraftperfcontroller.cpp" line="1009"/>
-        <location filename="../src/perf/aircraftperfcontroller.cpp" line="1048"/>
+        <location filename="../src/perf/aircraftperfcontroller.cpp" line="904"/>
+        <location filename="../src/perf/aircraftperfcontroller.cpp" line="1018"/>
+        <location filename="../src/perf/aircraftperfcontroller.cpp" line="1057"/>
         <source>, </source>
         <translation></translation>
     </message>
@@ -312,18 +312,18 @@ Guardar alterações?</translation>
         <translation type="vanished">O tipo de aeronave não está definido.</translation>
     </message>
     <message>
-        <location filename="../src/perf/aircraftperfcontroller.cpp" line="1168"/>
+        <location filename="../src/perf/aircraftperfcontroller.cpp" line="1177"/>
         <source>Flight Plan</source>
         <translation>Plano de Voo</translation>
     </message>
     <message>
-        <location filename="../src/perf/aircraftperfcontroller.cpp" line="1172"/>
+        <location filename="../src/perf/aircraftperfcontroller.cpp" line="1181"/>
         <source>Distance and Time:</source>
         <translation>Distância e Tempo:</translation>
     </message>
     <message>
-        <location filename="../src/perf/aircraftperfcontroller.cpp" line="1151"/>
-        <location filename="../src/perf/aircraftperfcontroller.cpp" line="1172"/>
+        <location filename="../src/perf/aircraftperfcontroller.cpp" line="1160"/>
+        <location filename="../src/perf/aircraftperfcontroller.cpp" line="1181"/>
         <source>%1, %2</source>
         <translation></translation>
     </message>
@@ -348,23 +348,23 @@ Guardar alterações?</translation>
         <translation>Arquivo de Performance da Aeronave %1;;Arquivo de Performance em formato antigo %2;;Todos os Arquivos (*)</translation>
     </message>
     <message>
-        <location filename="../src/perf/aircraftperfcontroller.cpp" line="780"/>
+        <location filename="../src/perf/aircraftperfcontroller.cpp" line="786"/>
         <source>No Flight Plan.</source>
         <translation>Nenhum Plano de Voo.</translation>
     </message>
     <message>
-        <location filename="../src/perf/aircraftperfcontroller.cpp" line="782"/>
+        <location filename="../src/perf/aircraftperfcontroller.cpp" line="788"/>
         <source>Cannot calculate fuel report. Flight Plan not complete.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/perf/aircraftperfcontroller.cpp" line="784"/>
+        <location filename="../src/perf/aircraftperfcontroller.cpp" line="790"/>
         <source>Cannot calculate fuel report. Invalid Flight Plan.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/perf/aircraftperfcontroller.cpp" line="786"/>
-        <location filename="../src/perf/aircraftperfcontroller.cpp" line="789"/>
+        <location filename="../src/perf/aircraftperfcontroller.cpp" line="792"/>
+        <location filename="../src/perf/aircraftperfcontroller.cpp" line="795"/>
         <source>Cannot calculate fuel report.</source>
         <translation>Não é possível calcular o relatório de combustível.</translation>
     </message>
@@ -377,24 +377,24 @@ Guardar alterações?</translation>
         <translation type="vanished">O plano de voo é muito curto ou a altitude de cruzeiro está muito alta.&lt;br/&gt;Verifique também as velocidades de subida e descida nos dados de performance da aeronave.</translation>
     </message>
     <message>
-        <location filename="../src/perf/aircraftperfcontroller.cpp" line="806"/>
-        <location filename="../src/perf/aircraftperfcontroller.cpp" line="1282"/>
+        <location filename="../src/perf/aircraftperfcontroller.cpp" line="812"/>
+        <location filename="../src/perf/aircraftperfcontroller.cpp" line="1291"/>
         <source>Remarks</source>
         <translation>Observações</translation>
     </message>
     <message>
-        <location filename="../src/perf/aircraftperfcontroller.cpp" line="869"/>
+        <location filename="../src/perf/aircraftperfcontroller.cpp" line="878"/>
         <source>Unknown Aircraft</source>
         <translation>Aeronave Desconhecida</translation>
     </message>
     <message>
-        <location filename="../src/perf/aircraftperfcontroller.cpp" line="886"/>
+        <location filename="../src/perf/aircraftperfcontroller.cpp" line="895"/>
         <source>Performance collection done. You can now merge the current data and then restart the collection using the buttons above to record a new flight.</source>
         <translation>Coleta de performance concluída. Você pode agora mesclar os dados atuais e então reiniciar a coleta usando os botões acima para gravar um novo voo.</translation>
     </message>
     <message>
-        <location filename="../src/perf/aircraftperfcontroller.cpp" line="889"/>
-        <location filename="../src/perf/aircraftperfcontroller.cpp" line="1138"/>
+        <location filename="../src/perf/aircraftperfcontroller.cpp" line="898"/>
+        <location filename="../src/perf/aircraftperfcontroller.cpp" line="1147"/>
         <source>Aircraft</source>
         <translation>Aeronave</translation>
     </message>
@@ -403,7 +403,7 @@ Guardar alterações?</translation>
         <translation type="vanished">Estado atual do voo: </translation>
     </message>
     <message>
-        <location filename="../src/perf/aircraftperfcontroller.cpp" line="892"/>
+        <location filename="../src/perf/aircraftperfcontroller.cpp" line="901"/>
         <source>, &lt;b&gt;Finished.&lt;/b&gt;</source>
         <translation>, &lt;b&gt;Finalizou.&lt;/b&gt;</translation>
     </message>
@@ -412,48 +412,48 @@ Guardar alterações?</translation>
         <translation type="vanished">Status da Aeronave: </translation>
     </message>
     <message>
-        <location filename="../src/perf/aircraftperfcontroller.cpp" line="882"/>
+        <location filename="../src/perf/aircraftperfcontroller.cpp" line="891"/>
         <source>No flight detected.</source>
         <translation>Nenhum voo detectado.</translation>
     </message>
     <message>
-        <location filename="../src/perf/aircraftperfcontroller.cpp" line="891"/>
+        <location filename="../src/perf/aircraftperfcontroller.cpp" line="900"/>
         <source>Flight segment:</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/perf/aircraftperfcontroller.cpp" line="895"/>
+        <location filename="../src/perf/aircraftperfcontroller.cpp" line="904"/>
         <source>Aircraft status:</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/perf/aircraftperfcontroller.cpp" line="924"/>
-        <location filename="../src/perf/aircraftperfcontroller.cpp" line="945"/>
+        <location filename="../src/perf/aircraftperfcontroller.cpp" line="933"/>
+        <location filename="../src/perf/aircraftperfcontroller.cpp" line="954"/>
         <source> &lt;b&gt;%1&lt;/b&gt;</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../src/perf/aircraftperfcontroller.cpp" line="993"/>
+        <location filename="../src/perf/aircraftperfcontroller.cpp" line="1002"/>
         <source>Hard and soft surface</source>
         <translation>Superfície estruturadas e simples</translation>
     </message>
     <message>
-        <location filename="../src/perf/aircraftperfcontroller.cpp" line="996"/>
+        <location filename="../src/perf/aircraftperfcontroller.cpp" line="1005"/>
         <source>Hard surface</source>
         <translation>Superfície estruturada</translation>
     </message>
     <message>
-        <location filename="../src/perf/aircraftperfcontroller.cpp" line="999"/>
+        <location filename="../src/perf/aircraftperfcontroller.cpp" line="1008"/>
         <source>Water</source>
         <translation>Água</translation>
     </message>
     <message>
-        <location filename="../src/perf/aircraftperfcontroller.cpp" line="1002"/>
+        <location filename="../src/perf/aircraftperfcontroller.cpp" line="1011"/>
         <source>Amphibian</source>
         <translation>Anfíbio</translation>
     </message>
     <message>
-        <location filename="../src/perf/aircraftperfcontroller.cpp" line="1009"/>
+        <location filename="../src/perf/aircraftperfcontroller.cpp" line="1018"/>
         <source>Minimum runway:</source>
         <translation>Pista mínima:</translation>
     </message>
@@ -470,37 +470,37 @@ Guardar alterações?</translation>
         <translation type="vanished">Simulador &quot;%1&quot; ≠ Arquivo de Performance &quot;%2&quot;.</translation>
     </message>
     <message>
-        <location filename="../src/perf/aircraftperfcontroller.cpp" line="1140"/>
+        <location filename="../src/perf/aircraftperfcontroller.cpp" line="1149"/>
         <source>Estimated range with reserve:</source>
         <translation>Alcance estimado com reserva:</translation>
     </message>
     <message>
-        <location filename="../src/perf/aircraftperfcontroller.cpp" line="1202"/>
+        <location filename="../src/perf/aircraftperfcontroller.cpp" line="1211"/>
         <source>Usable Fuel:</source>
         <translation>Combustível Total a Bordo:</translation>
     </message>
     <message>
-        <location filename="../src/perf/aircraftperfcontroller.cpp" line="1154"/>
+        <location filename="../src/perf/aircraftperfcontroller.cpp" line="1163"/>
         <source>Cruise fuel flow not set</source>
         <translation>Fluxo de combustível de cruzeiro não definido</translation>
     </message>
     <message>
-        <location filename="../src/perf/aircraftperfcontroller.cpp" line="790"/>
+        <location filename="../src/perf/aircraftperfcontroller.cpp" line="796"/>
         <source>Possible reasons:&lt;br/&gt;- The flight plan is too short or the cruise altitude is too high.&lt;br/&gt;- Climb and descent speeds in the aircraft performance data are too low.&lt;br/&gt;- Departure or destination airport elevation is above cruise altitude.&lt;br/&gt;- Cruise altitude violates one or more procedure altitude restrictions.</source>
         <translation>Possíveis razões:&lt;br/&gt;- O plano de voo é muito curto ou a altitude de cruzeiro é muito alta.&lt;br/&gt;- As velocidades de subida e descida nos dados de performance da aeronave são muito baixas.&lt;br/&gt;- Elevação do aeroporto de partida ou destino está acima da altitude de cruzeiro.&lt;br/&gt;- A altitude de cruzeiro viola uma ou mais restrições de altitude de procedimento.</translation>
     </message>
     <message>
-        <location filename="../src/perf/aircraftperfcontroller.cpp" line="878"/>
+        <location filename="../src/perf/aircraftperfcontroller.cpp" line="887"/>
         <source>No flight plan.</source>
         <translation>Nenhum plano de voo.</translation>
     </message>
     <message>
-        <location filename="../src/perf/aircraftperfcontroller.cpp" line="1032"/>
+        <location filename="../src/perf/aircraftperfcontroller.cpp" line="1041"/>
         <source>aircraft type</source>
         <translation>tipo de aeronave</translation>
     </message>
     <message>
-        <location filename="../src/perf/aircraftperfcontroller.cpp" line="1063"/>
+        <location filename="../src/perf/aircraftperfcontroller.cpp" line="1072"/>
         <source>Climb fuel flow is smaller than cruise fuel flow.</source>
         <translation>O fluxo de combustível de subida é menor que o fluxo de combustível de cruzeiro.</translation>
     </message>
@@ -509,17 +509,17 @@ Guardar alterações?</translation>
         <translation type="vanished">O fluxo de combustível de descida é maior que o fluxo de combustível de cruzeiro.</translation>
     </message>
     <message>
-        <location filename="../src/perf/aircraftperfcontroller.cpp" line="1072"/>
+        <location filename="../src/perf/aircraftperfcontroller.cpp" line="1081"/>
         <source>Climb speed is higher than cruise speed.</source>
         <translation>A velocidade de subida é maior que a velocidade de cruzeiro.</translation>
     </message>
     <message>
-        <location filename="../src/perf/aircraftperfcontroller.cpp" line="1074"/>
+        <location filename="../src/perf/aircraftperfcontroller.cpp" line="1083"/>
         <source>Descent speed is much smaller than cruise speed.</source>
         <translation>A velocidade de descida é muito menor que a velocidade de cruzeiro.</translation>
     </message>
     <message>
-        <location filename="../src/perf/aircraftperfcontroller.cpp" line="1079"/>
+        <location filename="../src/perf/aircraftperfcontroller.cpp" line="1088"/>
         <source>Aircraft type is empty. Use an official ICAO code like &quot;B738&quot;, &quot;BE9L&quot; or &quot;C172&quot;.</source>
         <translation>O tipo de aeronave está vazio. Use um código ICAO oficial como &quot;B738&quot;, &quot;BE9L&quot; ou &quot;C172&quot;.</translation>
     </message>
@@ -528,17 +528,17 @@ Guardar alterações?</translation>
         <translation type="vanished">O tipo de aeronave &quot;%1&quot; não é válido. Use códigos ICAO oficiais como &quot;B738&quot;, &quot;BE9L&quot; ou &quot;C172&quot;.</translation>
     </message>
     <message>
-        <location filename="../src/perf/aircraftperfcontroller.cpp" line="1087"/>
+        <location filename="../src/perf/aircraftperfcontroller.cpp" line="1096"/>
         <source>Possible problems found:</source>
         <translation>Possíveis problemas encontrados:</translation>
     </message>
     <message>
-        <location filename="../src/perf/aircraftperfcontroller.cpp" line="1097"/>
+        <location filename="../src/perf/aircraftperfcontroller.cpp" line="1106"/>
         <source>Block fuel of %1 exceeds usable of %2.</source>
         <translation>O combustível block de %1 excede o utilizável de %2.</translation>
     </message>
     <message>
-        <location filename="../src/perf/aircraftperfcontroller.cpp" line="1107"/>
+        <location filename="../src/perf/aircraftperfcontroller.cpp" line="1116"/>
         <source>Reserve fuel of %1 exceeds usable of %2.</source>
         <translation>O combustível de reserva de %1 excede o utilizável de %2.</translation>
     </message>
@@ -547,72 +547,72 @@ Guardar alterações?</translation>
         <translation type="vanished">O tipo de aeronave do usuário &quot;%1&quot; no simulador não é igual ao tipo &quot;%2&quot; usado no arquivo de performance.</translation>
     </message>
     <message>
-        <location filename="../src/perf/aircraftperfcontroller.cpp" line="1157"/>
+        <location filename="../src/perf/aircraftperfcontroller.cpp" line="1166"/>
         <source>Cruise speed not set</source>
         <translation>Velocidade de cruzeiro não definida</translation>
     </message>
     <message>
-        <location filename="../src/perf/aircraftperfcontroller.cpp" line="1160"/>
+        <location filename="../src/perf/aircraftperfcontroller.cpp" line="1169"/>
         <source>Usable fuel not set</source>
         <translation>Combustível a bordo não definido</translation>
     </message>
     <message>
-        <location filename="../src/perf/aircraftperfcontroller.cpp" line="1176"/>
+        <location filename="../src/perf/aircraftperfcontroller.cpp" line="1185"/>
         <source>Distance:</source>
         <translation>Distância:</translation>
     </message>
     <message>
-        <location filename="../src/perf/aircraftperfcontroller.cpp" line="1176"/>
+        <location filename="../src/perf/aircraftperfcontroller.cpp" line="1185"/>
         <source>%1</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../src/perf/aircraftperfcontroller.cpp" line="1179"/>
+        <location filename="../src/perf/aircraftperfcontroller.cpp" line="1188"/>
         <source>Average Ground Speed:</source>
         <translation>Ground Speed Médio:</translation>
     </message>
     <message>
-        <location filename="../src/perf/aircraftperfcontroller.cpp" line="1180"/>
+        <location filename="../src/perf/aircraftperfcontroller.cpp" line="1189"/>
         <source>True Airspeed at Cruise:</source>
         <translation>Velocidade Relativa Verdadeira (TAS) no Cruzeiro:</translation>
     </message>
     <message>
-        <location filename="../src/perf/aircraftperfcontroller.cpp" line="1184"/>
+        <location filename="../src/perf/aircraftperfcontroller.cpp" line="1193"/>
         <source>Mach at cruise:</source>
         <translation>Mach no cruzeiro:</translation>
     </message>
     <message>
-        <location filename="../src/perf/aircraftperfcontroller.cpp" line="1187"/>
+        <location filename="../src/perf/aircraftperfcontroller.cpp" line="1196"/>
         <source>Average wind total</source>
         <translation>Vento médio total</translation>
     </message>
     <message>
-        <location filename="../src/perf/aircraftperfcontroller.cpp" line="1189"/>
+        <location filename="../src/perf/aircraftperfcontroller.cpp" line="1198"/>
         <source>Average wind at cruise</source>
         <translation>Vendo médio no cruzeiro</translation>
     </message>
     <message>
-        <location filename="../src/perf/aircraftperfcontroller.cpp" line="1211"/>
+        <location filename="../src/perf/aircraftperfcontroller.cpp" line="1220"/>
         <source>&lt;br/&gt;&lt;b&gt;%1 % of usable Fuel&lt;/b&gt;</source>
         <translation>&lt;br/&gt;&lt;b&gt;%1 % de combustível utilizável&lt;/b&gt;</translation>
     </message>
     <message>
-        <location filename="../src/perf/aircraftperfcontroller.cpp" line="1341"/>
+        <location filename="../src/perf/aircraftperfcontroller.cpp" line="1350"/>
         <source>%1°T, %2</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../src/perf/aircraftperfcontroller.cpp" line="1356"/>
+        <location filename="../src/perf/aircraftperfcontroller.cpp" line="1365"/>
         <source>tailwind</source>
         <translation>vento de cauda</translation>
     </message>
     <message>
-        <location filename="../src/perf/aircraftperfcontroller.cpp" line="1358"/>
+        <location filename="../src/perf/aircraftperfcontroller.cpp" line="1367"/>
         <source>%1 %2 %3</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../src/perf/aircraftperfcontroller.cpp" line="1362"/>
+        <location filename="../src/perf/aircraftperfcontroller.cpp" line="1371"/>
         <source>%1 (%2):</source>
         <translation></translation>
     </message>
@@ -621,23 +621,23 @@ Guardar alterações?</translation>
         <translation type="vanished">Vento médio (%1):</translation>
     </message>
     <message>
-        <location filename="../src/perf/aircraftperfcontroller.cpp" line="1364"/>
+        <location filename="../src/perf/aircraftperfcontroller.cpp" line="1373"/>
         <source>
 </source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../src/perf/aircraftperfcontroller.cpp" line="1367"/>
+        <location filename="../src/perf/aircraftperfcontroller.cpp" line="1376"/>
         <source>No head- or tailwind</source>
         <translation>Nenhum vento de proa- ou de calda</translation>
     </message>
     <message>
-        <location filename="../src/perf/aircraftperfcontroller.cpp" line="1367"/>
+        <location filename="../src/perf/aircraftperfcontroller.cpp" line="1376"/>
         <source>No wind</source>
         <translation>Nenhum vento</translation>
     </message>
     <message>
-        <location filename="../src/perf/aircraftperfcontroller.cpp" line="1351"/>
+        <location filename="../src/perf/aircraftperfcontroller.cpp" line="1360"/>
         <source>headwind</source>
         <translation>vento de proa</translation>
     </message>
@@ -646,12 +646,12 @@ Guardar alterações?</translation>
         <translation type="obsolete">Nenhum</translation>
     </message>
     <message>
-        <location filename="../src/perf/aircraftperfcontroller.cpp" line="1196"/>
+        <location filename="../src/perf/aircraftperfcontroller.cpp" line="1205"/>
         <source>Fuel Plan</source>
         <translation>Plano de Combustível</translation>
     </message>
     <message>
-        <location filename="../src/perf/aircraftperfcontroller.cpp" line="1206"/>
+        <location filename="../src/perf/aircraftperfcontroller.cpp" line="1215"/>
         <source>Trip Fuel:</source>
         <translation></translation>
     </message>
@@ -660,101 +660,101 @@ Guardar alterações?</translation>
         <translation type="vanished">&lt;br/&gt;%1 % de Combustível a bordo</translation>
     </message>
     <message>
-        <location filename="../src/perf/aircraftperfcontroller.cpp" line="1065"/>
+        <location filename="../src/perf/aircraftperfcontroller.cpp" line="1074"/>
         <source>Descent fuel flow is much higher than cruise fuel flow.</source>
         <translation>O fluxo de combustível de descida é muito maior do que o fluxo de combustível de cruzeiro.</translation>
     </message>
     <message>
-        <location filename="../src/perf/aircraftperfcontroller.cpp" line="1122"/>
+        <location filename="../src/perf/aircraftperfcontroller.cpp" line="1131"/>
         <source>User aircraft type &quot;%1&quot; in simulator is not equal to type &quot;%2&quot; used in performance file.
 Load the matching aircraft performance file or adapt the field &quot;Aircraft type&quot; in the currently loaded file.</source>
         <translation>O tipo de aeronave do usuário &quot;%1&quot; no simulador não é igual ao tipo &quot;%2&quot; usado no arquivo de performance.
 Carregue o arquivo de performance da aeronave correspondente ou adapte o campo &quot;Tipo de aeronave&quot; no arquivo atualmente carregado.</translation>
     </message>
     <message>
-        <location filename="../src/perf/aircraftperfcontroller.cpp" line="1216"/>
+        <location filename="../src/perf/aircraftperfcontroller.cpp" line="1225"/>
         <source>Block Fuel:</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../src/perf/aircraftperfcontroller.cpp" line="1218"/>
+        <location filename="../src/perf/aircraftperfcontroller.cpp" line="1227"/>
         <source>Fuel at Destination:</source>
         <translation>Combustível no Destino:</translation>
     </message>
     <message>
-        <location filename="../src/perf/aircraftperfcontroller.cpp" line="1221"/>
+        <location filename="../src/perf/aircraftperfcontroller.cpp" line="1230"/>
         <source>Alternate Fuel:</source>
         <translation>Combustível Alternativo:</translation>
     </message>
     <message>
-        <location filename="../src/perf/aircraftperfcontroller.cpp" line="1227"/>
+        <location filename="../src/perf/aircraftperfcontroller.cpp" line="1236"/>
         <source>Reserve Fuel:</source>
         <translation>Combustível Reserva:</translation>
     </message>
     <message>
-        <location filename="../src/perf/aircraftperfcontroller.cpp" line="1233"/>
+        <location filename="../src/perf/aircraftperfcontroller.cpp" line="1242"/>
         <source>Extra Fuel:</source>
         <translation>Combustível Extra:</translation>
     </message>
     <message>
-        <location filename="../src/perf/aircraftperfcontroller.cpp" line="1238"/>
-        <location filename="../src/perf/aircraftperfcontroller.cpp" line="1242"/>
+        <location filename="../src/perf/aircraftperfcontroller.cpp" line="1247"/>
+        <location filename="../src/perf/aircraftperfcontroller.cpp" line="1251"/>
         <source>Contingency Fuel:</source>
         <translation>Combustível de Contingência:</translation>
     </message>
     <message>
-        <location filename="../src/perf/aircraftperfcontroller.cpp" line="1238"/>
+        <location filename="../src/perf/aircraftperfcontroller.cpp" line="1247"/>
         <source>%1 %, %2</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../src/perf/aircraftperfcontroller.cpp" line="1242"/>
+        <location filename="../src/perf/aircraftperfcontroller.cpp" line="1251"/>
         <source>%1 %</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../src/perf/aircraftperfcontroller.cpp" line="1250"/>
+        <location filename="../src/perf/aircraftperfcontroller.cpp" line="1259"/>
         <source>Climb and Descent</source>
         <translation>Subida e Descida</translation>
     </message>
     <message>
-        <location filename="../src/perf/aircraftperfcontroller.cpp" line="1254"/>
+        <location filename="../src/perf/aircraftperfcontroller.cpp" line="1263"/>
         <source>Climb:</source>
         <translation>Subida:</translation>
     </message>
     <message>
-        <location filename="../src/perf/aircraftperfcontroller.cpp" line="1254"/>
-        <location filename="../src/perf/aircraftperfcontroller.cpp" line="1267"/>
+        <location filename="../src/perf/aircraftperfcontroller.cpp" line="1263"/>
+        <location filename="../src/perf/aircraftperfcontroller.cpp" line="1276"/>
         <source>%1 at %2, %3° Flight Path Angle</source>
         <translation>%1 em %2, %3° Angulo do Voo</translation>
     </message>
     <message>
-        <location filename="../src/perf/aircraftperfcontroller.cpp" line="1259"/>
+        <location filename="../src/perf/aircraftperfcontroller.cpp" line="1268"/>
         <source>Time to Climb:</source>
         <translation>Tempo para a subida:</translation>
     </message>
     <message>
-        <location filename="../src/perf/aircraftperfcontroller.cpp" line="1262"/>
+        <location filename="../src/perf/aircraftperfcontroller.cpp" line="1271"/>
         <source>Climb not valid</source>
         <translation>Subida não é válida</translation>
     </message>
     <message>
-        <location filename="../src/perf/aircraftperfcontroller.cpp" line="1267"/>
+        <location filename="../src/perf/aircraftperfcontroller.cpp" line="1276"/>
         <source>Descent:</source>
         <translation>Descida:</translation>
     </message>
     <message>
-        <location filename="../src/perf/aircraftperfcontroller.cpp" line="1271"/>
+        <location filename="../src/perf/aircraftperfcontroller.cpp" line="1280"/>
         <source>Descent Rule of Thumb:</source>
         <translation>Regra de descida:</translation>
     </message>
     <message>
-        <location filename="../src/perf/aircraftperfcontroller.cpp" line="1271"/>
+        <location filename="../src/perf/aircraftperfcontroller.cpp" line="1280"/>
         <source>%1 per %2 %3</source>
         <translation>%1 por %2 %3</translation>
     </message>
     <message>
-        <location filename="../src/perf/aircraftperfcontroller.cpp" line="1276"/>
+        <location filename="../src/perf/aircraftperfcontroller.cpp" line="1285"/>
         <source>Descent not valid</source>
         <translation>Descida não é válida</translation>
     </message>
@@ -2944,14 +2944,14 @@ compatíveis e são carregados, se possível.</translation>
 <context>
     <name>ConnectClient</name>
     <message>
-        <location filename="../src/connect/connectclient.cpp" line="914"/>
+        <location filename="../src/connect/connectclient.cpp" line="917"/>
         <source>
 Will retry to connect.</source>
         <translation>
 Tente conectar novamente.</translation>
     </message>
     <message>
-        <location filename="../src/connect/connectclient.cpp" line="711"/>
+        <location filename="../src/connect/connectclient.cpp" line="714"/>
         <source>Auto connect switched off.</source>
         <translation>Conexão automática desligada.</translation>
     </message>
@@ -2978,23 +2978,23 @@ Tente conectar novamente.</translation>
     </message>
     <message>
         <location filename="../src/connect/connectclient.cpp" line="257"/>
-        <location filename="../src/connect/connectclient.cpp" line="1034"/>
+        <location filename="../src/connect/connectclient.cpp" line="1037"/>
         <source>Connected to simulator.</source>
         <translation>Conectado ao simulador.</translation>
     </message>
     <message>
         <location filename="../src/connect/connectclient.cpp" line="292"/>
-        <location filename="../src/connect/connectclient.cpp" line="977"/>
+        <location filename="../src/connect/connectclient.cpp" line="980"/>
         <source>Disconnected from simulator.</source>
         <translation>Desconectado do simulador.</translation>
     </message>
     <message>
-        <location filename="../src/connect/connectclient.cpp" line="493"/>
+        <location filename="../src/connect/connectclient.cpp" line="496"/>
         <source>Little Xpconnect</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../src/connect/connectclient.cpp" line="495"/>
+        <location filename="../src/connect/connectclient.cpp" line="498"/>
         <source>Little Navconnect</source>
         <translation></translation>
     </message>
@@ -3004,7 +3004,7 @@ Tente conectar novamente.</translation>
         <translation type="vanished">Atualize &lt;i&gt;%1&lt;/i&gt; para a versão mais recente.&lt;br/&gt;A versão instalada de &lt;i&gt;%1&lt;/i&gt;&lt;br/&gt;não é compatível com esta versão do Little Navmap.&lt;br/&gt; &lt;br/&gt;Instale a versão mais recente de &lt;i&gt;%1&lt;/i&gt;.</translation>
     </message>
     <message>
-        <location filename="../src/connect/connectclient.cpp" line="513"/>
+        <location filename="../src/connect/connectclient.cpp" line="516"/>
         <source>The connection is not reliable.&lt;br/&gt;&lt;br/&gt;Check your network or installation.</source>
         <translation>A conexão não é confiável.&lt;br/&gt;&lt;br/&gt;Verifique sua conexão ou instalação.</translation>
     </message>
@@ -3013,12 +3013,12 @@ Tente conectar novamente.</translation>
         <translation type="vanished">&lt;p&gt;Erro ao receber dados de &lt;i&gt;%1&lt;/i&gt;:&lt;/p&gt;&lt;p&gt;%2&lt;/p&gt;&lt;p&gt;%3&lt;/p&gt;</translation>
     </message>
     <message>
-        <location filename="../src/connect/connectclient.cpp" line="956"/>
+        <location filename="../src/connect/connectclient.cpp" line="959"/>
         <source>Connect Error</source>
         <translation>Erro de Conexão</translation>
     </message>
     <message>
-        <location filename="../src/connect/connectclient.cpp" line="1025"/>
+        <location filename="../src/connect/connectclient.cpp" line="1028"/>
         <source>Connected</source>
         <translation>Conectado</translation>
     </message>
@@ -3033,12 +3033,12 @@ Tente conectar novamente.</translation>
         <translation>Conectado com o flight simulator na rede (%1).</translation>
     </message>
     <message>
-        <location filename="../src/connect/connectclient.cpp" line="504"/>
+        <location filename="../src/connect/connectclient.cpp" line="507"/>
         <source>Update %1 to the latest version.&lt;br/&gt;The installed version of %1&lt;br/&gt;is not compatible with this version of Little Navmap.&lt;br/&gt;&lt;br/&gt;Install the latest version of %1 which you can always find in the Little Navmap installation directory.</source>
         <translation>Atualize %1 para a versão mais recente.&lt;br/&gt;A versão instalada de %1&lt;br/&gt;não é compatível com esta versão do Little Navmap.&lt;br/&gt;&lt;br/&gt;Instale a versão mais recente de %1 que você pode encontre sempre no diretório de instalação do Little Navmap.</translation>
     </message>
     <message>
-        <location filename="../src/connect/connectclient.cpp" line="520"/>
+        <location filename="../src/connect/connectclient.cpp" line="523"/>
         <source>&lt;p&gt;Error receiving data from %1:&lt;/p&gt;&lt;p&gt;%2&lt;/p&gt;&lt;p&gt;%3&lt;/p&gt;</source>
         <translation>&lt;p&gt;Erro ao receber dados de %1:&lt;/p&gt;&lt;p&gt;%2&lt;/p&gt;&lt;p&gt;%3&lt;/p&gt;</translation>
     </message>
@@ -3051,12 +3051,12 @@ Tente conectar novamente.</translation>
         <translation type="vanished">&lt;p&gt;Você está usando uma versão desatualizada “%1” do plugin X-Plane Little Xpconnect.&lt;br/&gt;A versão mínima recomendada é “%2”.&lt;p&gt;&lt;p&gt;É recomendado remover o plugin antigo e instalar o Little Xpconnect incluído no diretório “plugins” do X-Plane.&lt;/p&gt;</translation>
     </message>
     <message>
-        <location filename="../src/connect/connectclient.cpp" line="758"/>
+        <location filename="../src/connect/connectclient.cpp" line="761"/>
         <source>&amp;Install Now ...</source>
         <translation>&amp;Instalar Agora ...</translation>
     </message>
     <message>
-        <location filename="../src/connect/connectclient.cpp" line="779"/>
+        <location filename="../src/connect/connectclient.cpp" line="782"/>
         <source>Too many errors when trying to connect to simulator.
 
 Not matching simulator interface or other SimConnect problem.
@@ -3075,37 +3075,37 @@ Certifique-se de usar a versão correta de %1 com o simulador correto:
 Você precisa reiniciar %1 para continuar.</translation>
     </message>
     <message>
-        <location filename="../src/connect/connectclient.cpp" line="819"/>
+        <location filename="../src/connect/connectclient.cpp" line="822"/>
         <source>Error (%1) ...</source>
         <translation>Erro (%1)...</translation>
     </message>
     <message>
-        <location filename="../src/connect/connectclient.cpp" line="820"/>
+        <location filename="../src/connect/connectclient.cpp" line="823"/>
         <source>Too many errors when trying to connect to simulator (%1).</source>
         <translation>Muitos erros ao tentar conectar ao simulador (%1).</translation>
     </message>
     <message>
-        <location filename="../src/connect/connectclient.cpp" line="1026"/>
+        <location filename="../src/connect/connectclient.cpp" line="1029"/>
         <source>Connected to remote flight simulator on &quot;%1&quot;.</source>
         <translation>Conectado remotamente com o flight simulator em &quot;%1&quot;.</translation>
     </message>
     <message>
-        <location filename="../src/connect/connectclient.cpp" line="823"/>
+        <location filename="../src/connect/connectclient.cpp" line="826"/>
         <source>Connecting (%1) ...</source>
         <oldsource>Connecting (%1)...</oldsource>
         <translation>Conectando (%1) ...</translation>
     </message>
     <message>
-        <location filename="../src/connect/connectclient.cpp" line="832"/>
-        <location filename="../src/connect/connectclient.cpp" line="950"/>
+        <location filename="../src/connect/connectclient.cpp" line="835"/>
+        <location filename="../src/connect/connectclient.cpp" line="953"/>
         <source>Connecting ...</source>
         <oldsource>Connecting...</oldsource>
         <translation>Conectando ...</translation>
     </message>
     <message>
         <location filename="../src/connect/connectclient.cpp" line="281"/>
-        <location filename="../src/connect/connectclient.cpp" line="711"/>
-        <location filename="../src/connect/connectclient.cpp" line="943"/>
+        <location filename="../src/connect/connectclient.cpp" line="714"/>
+        <location filename="../src/connect/connectclient.cpp" line="946"/>
         <source>Disconnected</source>
         <translation>Disconectado</translation>
     </message>
@@ -3115,32 +3115,32 @@ Você precisa reiniciar %1 para continuar.</translation>
         <translation>Disconectado do flight simulator local.</translation>
     </message>
     <message>
-        <location filename="../src/connect/connectclient.cpp" line="743"/>
+        <location filename="../src/connect/connectclient.cpp" line="746"/>
         <source>&lt;p&gt;You are using an outdated version of the X-Plane Little Xpconnect plugin.&lt;br/&gt;Minimum recommended version is &quot;%1&quot;.&lt;/p&gt;&lt;p&gt;It is recommended to remove the old plugin and install the plugin using the function &quot;Install Little Xpconnect in X-Plane Plugins&quot; in menu &quot;Tools&quot;.&lt;/p&gt;</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/connect/connectclient.cpp" line="749"/>
+        <location filename="../src/connect/connectclient.cpp" line="752"/>
         <source>&lt;p&gt;You are using an outdated version &quot;%1&quot; of the X-Plane Little Xpconnect plugin.&lt;br/&gt;Minimum recommended version is &quot;%2&quot;.&lt;p&gt;&lt;p&gt;It is recommended to remove the old plugin and install the plugin using the function &quot;Install Little Xpconnect in X-Plane Plugins&quot; in menu &quot;Tools&quot;.&lt;/p&gt;</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/connect/connectclient.cpp" line="944"/>
+        <location filename="../src/connect/connectclient.cpp" line="947"/>
         <source>Disconnected from remote flight simulator on &quot;%1&quot;.</source>
         <translation>Disconectado da conexão remota com o flight simulator &quot;%1&quot;.</translation>
     </message>
     <message>
-        <location filename="../src/connect/connectclient.cpp" line="906"/>
+        <location filename="../src/connect/connectclient.cpp" line="909"/>
         <source>Do not &amp;show this dialog again.</source>
         <translation>Não &amp;mostre este diálogo novamente.</translation>
     </message>
     <message>
-        <location filename="../src/connect/connectclient.cpp" line="957"/>
+        <location filename="../src/connect/connectclient.cpp" line="960"/>
         <source>Error in server connection to &quot;%1&quot;: %2 (%3)</source>
         <translation>Erro no servidor para se conectar com &quot;%1&quot;: %2 (%3)</translation>
     </message>
     <message>
-        <location filename="../src/connect/connectclient.cpp" line="911"/>
+        <location filename="../src/connect/connectclient.cpp" line="914"/>
         <source>Error in server connection: %1 (%2).%3</source>
         <translation>Erro na conexão com o servidor: %1 (%2).%3</translation>
     </message>
@@ -3149,14 +3149,14 @@ Você precisa reiniciar %1 para continuar.</translation>
         <translation type="vanished">Erro na leitura dos dados do Little Navconnect: %1.</translation>
     </message>
     <message>
-        <location filename="../src/connect/connectclient.cpp" line="951"/>
+        <location filename="../src/connect/connectclient.cpp" line="954"/>
         <source>Error while trying to connect to &quot;%1&quot;: %2 (%3).
 Will retry.</source>
         <translation>Erro enquanto tentava se conectar com &quot;%1&quot;: %2 (%3).
 Tente novamente.</translation>
     </message>
     <message>
-        <location filename="../src/connect/connectclient.cpp" line="1007"/>
+        <location filename="../src/connect/connectclient.cpp" line="1010"/>
         <source>Error writing reply to Little Navconnect: %1.</source>
         <translation>Erro enquanto tentava entregar uma resposta para Little Navconnect: %1.</translation>
     </message>
@@ -3166,17 +3166,17 @@ Tente novamente.</translation>
         <translation>FSX ou Prepar3D</translation>
     </message>
     <message>
-        <location filename="../src/connect/connectclient.cpp" line="905"/>
+        <location filename="../src/connect/connectclient.cpp" line="908"/>
         <source>Remote end closed connection.</source>
         <translation>Conexão remota fechada e encerrada.</translation>
     </message>
     <message>
-        <location filename="../src/connect/connectclient.cpp" line="824"/>
+        <location filename="../src/connect/connectclient.cpp" line="827"/>
         <source>Trying to connect to local flight simulator (%1).</source>
         <translation>Tentando se conectar com o flight simulator (%1).</translation>
     </message>
     <message>
-        <location filename="../src/connect/connectclient.cpp" line="833"/>
+        <location filename="../src/connect/connectclient.cpp" line="836"/>
         <source>Trying to connect to remote flight simulator on &quot;%1&quot;.</source>
         <translation>Tentando fazer uma conexão remota com o flight simulator &quot;%1&quot;.</translation>
     </message>
@@ -4017,7 +4017,7 @@ Para evitar relatórios meteorológicos desatualizados, sempre altere o caminho 
         <translation type="vanished">Contando arquivos ...</translation>
     </message>
     <message>
-        <location filename="../src/db/databaseloader.cpp" line="251"/>
+        <location filename="../src/db/databaseloader.cpp" line="243"/>
         <source>Processed files:
 %1
 </source>
@@ -4030,184 +4030,189 @@ Para evitar relatórios meteorológicos desatualizados, sempre altere o caminho 
         <translation type="vanished">&lt;big&gt;Feito.&lt;/big&gt;</translation>
     </message>
     <message>
-        <location filename="../src/db/databaseloader.cpp" line="204"/>
+        <location filename="../src/db/databaseloader.cpp" line="95"/>
+        <source>%1&lt;br/&gt;&lt;br/&gt;&lt;b&gt;Found:&lt;/b&gt;</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/db/databaseloader.cpp" line="196"/>
         <source>&lt;b&gt;Counting files ...&lt;/b&gt;</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/db/databaseloader.cpp" line="323"/>
-        <location filename="../src/db/databaseloader.cpp" line="345"/>
-        <location filename="../src/db/databaseloader.cpp" line="362"/>
+        <location filename="../src/db/databaseloader.cpp" line="315"/>
+        <location filename="../src/db/databaseloader.cpp" line="337"/>
+        <location filename="../src/db/databaseloader.cpp" line="354"/>
         <source>&lt;b&gt;Navigraph navdata update found in simulator.&lt;/b&gt;</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/db/databaseloader.cpp" line="324"/>
-        <location filename="../src/db/databaseloader.cpp" line="346"/>
-        <location filename="../src/db/databaseloader.cpp" line="363"/>
+        <location filename="../src/db/databaseloader.cpp" line="316"/>
+        <location filename="../src/db/databaseloader.cpp" line="338"/>
+        <location filename="../src/db/databaseloader.cpp" line="355"/>
         <source>&lt;b&gt;Time:&lt;/b&gt; %1</source>
         <translation type="unfinished">&lt;b&gt;Tempo:&lt;/b&gt; %1</translation>
     </message>
     <message>
-        <location filename="../src/db/databaseloader.cpp" line="325"/>
-        <location filename="../src/db/databaseloader.cpp" line="347"/>
-        <location filename="../src/db/databaseloader.cpp" line="364"/>
+        <location filename="../src/db/databaseloader.cpp" line="317"/>
+        <location filename="../src/db/databaseloader.cpp" line="339"/>
+        <location filename="../src/db/databaseloader.cpp" line="356"/>
         <source>&lt;b&gt;Errors:&lt;/b&gt; %1</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/db/databaseloader.cpp" line="341"/>
+        <location filename="../src/db/databaseloader.cpp" line="333"/>
         <source>&lt;b&gt;Scenery:&lt;/b&gt; %1 (%2)</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/db/databaseloader.cpp" line="344"/>
+        <location filename="../src/db/databaseloader.cpp" line="336"/>
         <source>&lt;b&gt;File:&lt;/b&gt; %1</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/db/databaseloader.cpp" line="361"/>
+        <location filename="../src/db/databaseloader.cpp" line="353"/>
         <source>&lt;b&gt;Done.&lt;/b&gt;</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/db/databaseloader.cpp" line="419"/>
-        <location filename="../src/db/databaseloader.cpp" line="422"/>
+        <location filename="../src/db/databaseloader.cpp" line="411"/>
+        <location filename="../src/db/databaseloader.cpp" line="414"/>
         <source>%1 %2</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../src/db/databaseloader.cpp" line="419"/>
+        <location filename="../src/db/databaseloader.cpp" line="411"/>
         <source>errors</source>
         <translation>erros</translation>
     </message>
     <message>
-        <location filename="../src/db/databaseloader.cpp" line="419"/>
+        <location filename="../src/db/databaseloader.cpp" line="411"/>
         <source>error</source>
         <translation>Erro</translation>
     </message>
     <message>
-        <location filename="../src/db/databaseloader.cpp" line="423"/>
+        <location filename="../src/db/databaseloader.cpp" line="415"/>
         <source>notes</source>
         <comment>Database loading notes</comment>
         <translation>notas</translation>
     </message>
     <message>
-        <location filename="../src/db/databaseloader.cpp" line="424"/>
+        <location filename="../src/db/databaseloader.cpp" line="416"/>
         <source>note</source>
         <comment>Database loading notes</comment>
         <translation>nota</translation>
     </message>
     <message>
-        <location filename="../src/db/databaseloader.cpp" line="427"/>
+        <location filename="../src/db/databaseloader.cpp" line="419"/>
         <source>&lt;h3&gt;Found %1 in %2 scenery entries when loading the scenery database&lt;/h3&gt;</source>
         <translation>&lt;h3&gt;Encontrado %1 em %2 entradas de cenário ao carregar o banco de dados de cenário&lt;/h3&gt;</translation>
     </message>
     <message>
-        <location filename="../src/db/databaseloader.cpp" line="428"/>
+        <location filename="../src/db/databaseloader.cpp" line="420"/>
         <source>, </source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../src/db/databaseloader.cpp" line="428"/>
+        <location filename="../src/db/databaseloader.cpp" line="420"/>
         <source> and </source>
         <translation> e </translation>
     </message>
     <message>
-        <location filename="../src/db/databaseloader.cpp" line="433"/>
+        <location filename="../src/db/databaseloader.cpp" line="425"/>
         <source>&lt;b&gt;If you wish to report these errors attach the log and configuration files to your report, add all other available information and send it to the contact address below.&lt;/b&gt;&lt;hr/&gt;%1&lt;hr/&gt;%2</source>
         <translation>&lt;b&gt;Se você deseja relatar esses erros, anexe os arquivos de log e configuração ao seu relatório, adicione todas as outras informações disponíveis e envie-as para o endereço de contato abaixo.&lt;/b&gt;&lt;hr/&gt;%1&lt;hr/&gt;%2</translation>
     </message>
     <message>
-        <location filename="../src/db/databaseloader.cpp" line="440"/>
+        <location filename="../src/db/databaseloader.cpp" line="432"/>
         <source>&lt;hr/&gt;Some files or scenery directories could not be read.&lt;br/&gt;You should check if the airports of the affected sceneries display correctly and show the correct information.&lt;hr/&gt;</source>
         <translation>&lt;hr/&gt;Alguns arquivos ou diretórios de cenários não puderam ser lidos.&lt;br/&gt;Você deve verificar se os aeroportos dos cenários afetados são exibidos corretamente e mostram as informações corretas.&lt;hr/&gt;</translation>
     </message>
     <message>
-        <location filename="../src/db/databaseloader.cpp" line="446"/>
+        <location filename="../src/db/databaseloader.cpp" line="438"/>
         <source>&lt;hr/&gt;Some files or scenery directories could not be read properly due to encrypted airport data.&lt;hr/&gt;</source>
         <translation>&lt;hr/&gt;Alguns arquivos ou diretórios de cenário não puderam ser lidos corretamente devido a dados criptografados do aeroporto.&lt;hr/&gt;</translation>
     </message>
     <message>
-        <location filename="../src/db/databaseloader.cpp" line="454"/>
+        <location filename="../src/db/databaseloader.cpp" line="446"/>
         <source>&lt;b&gt;More scenery entries ...&lt;/b&gt;</source>
         <translation>&lt;b&gt;Mais entradas de cenário ...&lt;/b&gt;</translation>
     </message>
     <message>
-        <location filename="../src/db/databaseloader.cpp" line="459"/>
+        <location filename="../src/db/databaseloader.cpp" line="451"/>
         <source>&lt;b&gt;Scenery Title: %1&lt;/b&gt;&lt;br/&gt;</source>
         <translation>&lt;b&gt;Título do Cenário: %1&lt;/b&gt;&lt;br/&gt;</translation>
     </message>
     <message>
-        <location filename="../src/db/databaseloader.cpp" line="468"/>
+        <location filename="../src/db/databaseloader.cpp" line="460"/>
         <source>&lt;b&gt;More files ...&lt;/b&gt;</source>
         <translation>&lt;b&gt;Mais arquivos ...&lt;/b&gt;</translation>
     </message>
     <message>
-        <location filename="../src/db/databaseloader.cpp" line="473"/>
+        <location filename="../src/db/databaseloader.cpp" line="465"/>
         <source>&lt;b&gt;File:&lt;/b&gt; &quot;%1&quot;&lt;br/&gt;&lt;b&gt;Message:&lt;/b&gt; %2&lt;br/&gt;</source>
         <translation>&lt;b&gt;Arquivo:&lt;/b&gt; &quot;%1&quot;&lt;br/&gt;&lt;b&gt;Mensagem:&lt;/b&gt; %2&lt;br/&gt;</translation>
     </message>
     <message>
-        <location filename="../src/db/databaseloader.cpp" line="483"/>
+        <location filename="../src/db/databaseloader.cpp" line="475"/>
         <source>%1 - Load Scenery Library Results</source>
         <translation>%1 - Carregar resultados da biblioteca de cenários</translation>
     </message>
     <message>
-        <location filename="../src/db/databaseloader.cpp" line="491"/>
+        <location filename="../src/db/databaseloader.cpp" line="483"/>
         <source>&amp;Do not show hints again and open this dialog only for errors.</source>
         <translation>&amp;Não mostrar dicas novamente e abrir este diálogo apenas para erros.</translation>
     </message>
     <message>
-        <location filename="../src/db/databaseloader.cpp" line="567"/>
-        <location filename="../src/db/databaseloader.cpp" line="612"/>
+        <location filename="../src/db/databaseloader.cpp" line="559"/>
+        <location filename="../src/db/databaseloader.cpp" line="604"/>
         <source>Files:</source>
         <translation type="unfinished">Arquivos:</translation>
     </message>
     <message>
-        <location filename="../src/db/databaseloader.cpp" line="574"/>
-        <location filename="../src/db/databaseloader.cpp" line="586"/>
-        <location filename="../src/db/databaseloader.cpp" line="619"/>
+        <location filename="../src/db/databaseloader.cpp" line="566"/>
+        <location filename="../src/db/databaseloader.cpp" line="578"/>
+        <location filename="../src/db/databaseloader.cpp" line="611"/>
         <source>Airports:</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/db/databaseloader.cpp" line="584"/>
-        <location filename="../src/db/databaseloader.cpp" line="620"/>
+        <location filename="../src/db/databaseloader.cpp" line="576"/>
+        <location filename="../src/db/databaseloader.cpp" line="612"/>
         <source>VOR:</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/db/databaseloader.cpp" line="585"/>
+        <location filename="../src/db/databaseloader.cpp" line="577"/>
         <source>Marker:</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/db/databaseloader.cpp" line="587"/>
-        <location filename="../src/db/databaseloader.cpp" line="621"/>
+        <location filename="../src/db/databaseloader.cpp" line="579"/>
+        <location filename="../src/db/databaseloader.cpp" line="613"/>
         <source>ILS:</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/db/databaseloader.cpp" line="588"/>
-        <location filename="../src/db/databaseloader.cpp" line="624"/>
+        <location filename="../src/db/databaseloader.cpp" line="580"/>
+        <location filename="../src/db/databaseloader.cpp" line="616"/>
         <source>Waypoints:</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/db/databaseloader.cpp" line="589"/>
-        <location filename="../src/db/databaseloader.cpp" line="622"/>
+        <location filename="../src/db/databaseloader.cpp" line="581"/>
+        <location filename="../src/db/databaseloader.cpp" line="614"/>
         <source>NDB:</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/db/databaseloader.cpp" line="590"/>
-        <location filename="../src/db/databaseloader.cpp" line="625"/>
+        <location filename="../src/db/databaseloader.cpp" line="582"/>
+        <location filename="../src/db/databaseloader.cpp" line="617"/>
         <source>Airspaces:</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/db/databaseloader.cpp" line="623"/>
+        <location filename="../src/db/databaseloader.cpp" line="615"/>
         <source>Markers:</source>
         <translation type="unfinished"></translation>
     </message>
@@ -4215,8 +4220,8 @@ Para evitar relatórios meteorológicos desatualizados, sempre altere o caminho 
 <context>
     <name>DatabaseManager</name>
     <message>
-        <location filename="../src/db/databasemanager.cpp" line="681"/>
-        <location filename="../src/db/databasemanager.cpp" line="760"/>
+        <location filename="../src/db/databasemanager.cpp" line="685"/>
+        <location filename="../src/db/databasemanager.cpp" line="764"/>
         <source> - AIRAC Cycle %1</source>
         <translation> - Ciclo Airac %1</translation>
     </message>
@@ -4280,105 +4285,105 @@ Ative a opção &quot;Ler entradas de cenários inativos ou desativados&quot; ou
         <translation>Carregar Biblioteca de Cenários (sem simulador)</translation>
     </message>
     <message>
-        <location filename="../src/db/databasemanager.cpp" line="679"/>
+        <location filename="../src/db/databasemanager.cpp" line="683"/>
         <source> - AIRAC Cycle %1, valid until %2</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/db/databasemanager.cpp" line="684"/>
+        <location filename="../src/db/databasemanager.cpp" line="688"/>
         <source> - No AIRAC Cycle</source>
         <translation> - Sem Ciclo AIRAC</translation>
     </message>
     <message>
-        <location filename="../src/db/databasemanager.cpp" line="687"/>
+        <location filename="../src/db/databasemanager.cpp" line="691"/>
         <source> (database is empty)</source>
         <translation> (o banco de dados está vazio)</translation>
     </message>
     <message>
-        <location filename="../src/db/databasemanager.cpp" line="690"/>
+        <location filename="../src/db/databasemanager.cpp" line="694"/>
         <source>&amp;%1%2</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../src/db/databasemanager.cpp" line="694"/>
+        <location filename="../src/db/databasemanager.cpp" line="698"/>
         <source>&amp;Select Automatically</source>
         <translation>&amp;Selecionar Automaticamente</translation>
     </message>
     <message>
-        <location filename="../src/db/databasemanager.cpp" line="697"/>
+        <location filename="../src/db/databasemanager.cpp" line="701"/>
         <source>Select best navdata mode for simulator</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../src/db/databasemanager.cpp" line="742"/>
+        <location filename="../src/db/databasemanager.cpp" line="746"/>
         <source>No Scenery Library and no Simulator found</source>
         <translation>Nenhuma Biblioteca de Cenários e nenhum Simulador encontrado</translation>
     </message>
     <message>
-        <location filename="../src/db/databasemanager.cpp" line="743"/>
+        <location filename="../src/db/databasemanager.cpp" line="747"/>
         <source>No scenery library database and no simulator found</source>
         <translation>Nenhum banco de dados de biblioteca de cenários e nenhum simulador encontrado</translation>
     </message>
     <message>
-        <location filename="../src/db/databasemanager.cpp" line="765"/>
+        <location filename="../src/db/databasemanager.cpp" line="769"/>
         <source>empty</source>
         <translation>vazio</translation>
     </message>
     <message>
-        <location filename="../src/db/databasemanager.cpp" line="769"/>
+        <location filename="../src/db/databasemanager.cpp" line="773"/>
         <source>prev. version - reload advised</source>
         <translation>versão anterior - novo carregamento é aconselhado</translation>
     </message>
     <message>
-        <location filename="../src/db/databasemanager.cpp" line="773"/>
+        <location filename="../src/db/databasemanager.cpp" line="777"/>
         <source>%1 days old - reload advised</source>
         <translation>%1 dias de idade - recarregamento recomendado</translation>
     </message>
     <message>
-        <location filename="../src/db/databasemanager.cpp" line="778"/>
+        <location filename="../src/db/databasemanager.cpp" line="782"/>
         <source>no simulator</source>
         <translation>sem simulador</translation>
     </message>
     <message>
-        <location filename="../src/db/databasemanager.cpp" line="781"/>
+        <location filename="../src/db/databasemanager.cpp" line="785"/>
         <source> (%1)</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../src/db/databasemanager.cpp" line="781"/>
-        <location filename="../src/db/databasemanager.cpp" line="1939"/>
+        <location filename="../src/db/databasemanager.cpp" line="785"/>
+        <location filename="../src/db/databasemanager.cpp" line="1943"/>
         <source>, </source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../src/db/databasemanager.cpp" line="783"/>
+        <location filename="../src/db/databasemanager.cpp" line="787"/>
         <source>&amp;%1 %2%3</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../src/db/databasemanager.cpp" line="1357"/>
+        <location filename="../src/db/databasemanager.cpp" line="1361"/>
         <source>&lt;p&gt;Simulator database is empty.&lt;/p&gt;&lt;p&gt;Showing Navigraph airports and navaids.&lt;/p&gt;&lt;p style=&apos;white-space:pre&apos;&gt;You can load the simulator scenery library database in the menu&lt;br/&gt;&quot;Scenery Library&quot; -&gt; &quot;Load Scenery Library&quot;.&lt;/p&gt;</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/db/databasemanager.cpp" line="1380"/>
+        <location filename="../src/db/databasemanager.cpp" line="1384"/>
         <source>&lt;p style=&apos;white-space:pre&apos;&gt;You are using MSFS 2020 or 2024 with the Navigraph navdata update.&lt;/p&gt;&lt;p&gt;You should update the Little Navmap navdata with the Navigraph FMS Data Manager as well and use the right scenery library mode &quot;Use Navigraph for Navaids and Procedures&quot; to avoid issues with airport information in Little Navmap.&lt;/p&gt;&lt;p style=&apos;white-space:pre&apos;&gt;You can change the mode manually in the menu&lt;br/&gt;&quot;Scenery Library&quot; -&gt; &quot;Navigraph&quot; -&gt; &quot;Use Navigraph for Navaids and Procedures&quot;.&lt;/p&gt;&lt;p&gt;Correct the scenery library mode now?&lt;/p&gt;</source>
         <comment>Sync texts with menu items</comment>
         <translation>&lt;p style=&apos;white-space:pre&apos;&gt;Você está usando o MSFS 2020 ou 2024 com a atualização de dados de navegação do Navigraph.&lt;/p&gt;&lt;p&gt;Você deve atualizar os dados de navegação do Little Navmap com o Navigraph FMS Data Manager também e usar o modo correto da biblioteca de cenários &quot;Usar Navigraph para Navaids e Procedimentos&quot; para evitar problemas com informações de aeroportos no Little Navmap.&lt;/p&gt;&lt;p style=&apos;white-space:pre&apos;&gt;Você pode alterar o modo manualmente no menu&lt;br/&gt;&quot;Biblioteca de Cenários&quot; -&gt; &quot;Navigraph&quot; -&gt; &quot;Usar Navigraph para Navaids e Procedimentos&quot;.&lt;/p&gt;&lt;p&gt;Corrigir o modo da biblioteca de cenários agora?&lt;/p&gt;</translation>
     </message>
     <message>
-        <location filename="../src/db/databasemanager.cpp" line="1397"/>
+        <location filename="../src/db/databasemanager.cpp" line="1401"/>
         <source>&lt;p style=&apos;white-space:pre&apos;&gt;You are using MSFS 2020 or 2024 without the Navigraph navdata update.&lt;/p&gt;&lt;p&gt;You should use the scenery library mode &quot;Do not use Navigraph Database&quot; to avoid issues with airport information in Little Navmap.&lt;/p&gt;&lt;p style=&apos;white-space:pre&apos;&gt;You can change the mode manually in the menu&lt;br/&gt;&quot;Scenery Library&quot; -&gt; &quot;Navigraph&quot; -&gt; &quot;Do not use Navigraph Database&quot;.&lt;/p&gt;&lt;p&gt;Correct the scenery library mode now?&lt;/p&gt;</source>
         <comment>Sync texts with menu items</comment>
         <translation>&lt;p style=&apos;white-space:pre&apos;&gt;Você está usando o MSFS 2020 ou 2024 sem a atualização de dados de navegação do Navigraph.&lt;/p&gt;&lt;p&gt;Você deve usar o modo da biblioteca de cenários &quot;Não usar o banco de dados do Navigraph&quot; para evitar problemas com informações de aeroportos no Little Navmap.&lt;/p&gt;&lt;p style=&apos;white-space:pre&apos;&gt;Você pode alterar o modo manualmente no menu&lt;br/&gt;&quot;Biblioteca de Cenários&quot; -&gt; &quot;Navigraph&quot; -&gt; &quot;Não usar o banco de dados do Navigraph&quot;.&lt;/p&gt;&lt;p&gt;Corrigir o modo da biblioteca de cenários agora?&lt;/p&gt;</translation>
     </message>
     <message>
-        <location filename="../src/db/databasemanager.cpp" line="1907"/>
+        <location filename="../src/db/databasemanager.cpp" line="1911"/>
         <source>&lt;b&gt;Navigraph navdata update found in simulator. No navaids loaded.&lt;/b&gt;</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/db/databasemanager.cpp" line="1909"/>
+        <location filename="../src/db/databasemanager.cpp" line="1913"/>
         <source>&lt;b&gt;Navigraph navdata update found in simulator.&lt;/b&gt;</source>
         <translation type="unfinished"></translation>
     </message>
@@ -4395,79 +4400,79 @@ Ative a opção &quot;Ler entradas de cenários inativos ou desativados&quot; ou
         <translation type="vanished">Nenhum problema encontrado. O modo da biblioteca de cenários está correto.</translation>
     </message>
     <message>
-        <location filename="../src/db/databasemanager.cpp" line="1923"/>
+        <location filename="../src/db/databasemanager.cpp" line="1927"/>
         <source>%1 %2 included for loading</source>
         <translation>%1 %2 incluído para carregamento</translation>
     </message>
     <message>
-        <location filename="../src/db/databasemanager.cpp" line="1925"/>
+        <location filename="../src/db/databasemanager.cpp" line="1929"/>
         <source>extra directories are</source>
         <translation>Diretórios adicionais são</translation>
     </message>
     <message>
-        <location filename="../src/db/databasemanager.cpp" line="1925"/>
+        <location filename="../src/db/databasemanager.cpp" line="1929"/>
         <source>extra directory is</source>
         <translation>O diretório adicional é</translation>
     </message>
     <message>
-        <location filename="../src/db/databasemanager.cpp" line="1928"/>
+        <location filename="../src/db/databasemanager.cpp" line="1932"/>
         <source>%1 %2 excluded from loading</source>
         <translation>%1 %2 excluído do carregamento</translation>
     </message>
     <message>
-        <location filename="../src/db/databasemanager.cpp" line="1930"/>
-        <location filename="../src/db/databasemanager.cpp" line="1935"/>
+        <location filename="../src/db/databasemanager.cpp" line="1934"/>
+        <location filename="../src/db/databasemanager.cpp" line="1939"/>
         <source>directories are</source>
         <translation>Os diretórios são</translation>
     </message>
     <message>
-        <location filename="../src/db/databasemanager.cpp" line="1930"/>
-        <location filename="../src/db/databasemanager.cpp" line="1935"/>
+        <location filename="../src/db/databasemanager.cpp" line="1934"/>
+        <location filename="../src/db/databasemanager.cpp" line="1939"/>
         <source>directory is</source>
         <translation>O diretório é</translation>
     </message>
     <message>
-        <location filename="../src/db/databasemanager.cpp" line="1933"/>
+        <location filename="../src/db/databasemanager.cpp" line="1937"/>
         <source>%1 %2 excluded from add-on detection</source>
         <translation>%1 %2 excluído da detecção de complementos</translation>
     </message>
     <message>
-        <location filename="../src/db/databasemanager.cpp" line="1939"/>
+        <location filename="../src/db/databasemanager.cpp" line="1943"/>
         <source>&lt;b&gt;Note:&lt;/b&gt; </source>
         <translation>&lt;b&gt;Observação:&lt;/b&gt; </translation>
     </message>
     <message>
-        <location filename="../src/db/databasemanager.cpp" line="1939"/>
+        <location filename="../src/db/databasemanager.cpp" line="1943"/>
         <source> and </source>
         <translation> e </translation>
     </message>
     <message>
-        <location filename="../src/db/databasemanager.cpp" line="1939"/>
+        <location filename="../src/db/databasemanager.cpp" line="1943"/>
         <source>.</source>
         <translation>.</translation>
     </message>
     <message>
-        <location filename="../src/db/databasemanager.cpp" line="1940"/>
+        <location filename="../src/db/databasemanager.cpp" line="1944"/>
         <source>Included and excluded directories can be changed in options on page &quot;Scenery Library Database&quot;.</source>
         <translation>Os diretórios incluídos e excluídos podem ser alterados nas opções na página &quot;Banco de Dados da Biblioteca de Cenários&quot;.</translation>
     </message>
     <message>
-        <location filename="../src/db/databasemanager.cpp" line="1943"/>
+        <location filename="../src/db/databasemanager.cpp" line="1947"/>
         <source>&lt;p&gt;</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../src/db/databasemanager.cpp" line="1943"/>
+        <location filename="../src/db/databasemanager.cpp" line="1947"/>
         <source>&lt;/p&gt;</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../src/db/databasemanager.cpp" line="1944"/>
+        <location filename="../src/db/databasemanager.cpp" line="1948"/>
         <source>&lt;p&gt;&lt;b&gt;Currently Loaded:&lt;/b&gt;%1&lt;/p&gt;</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/db/databasemanager.cpp" line="2054"/>
+        <location filename="../src/db/databasemanager.cpp" line="2058"/>
         <source>&lt;p&gt;%1&lt;/p&gt;&lt;p&gt;It is advised to reload the scenery library database after each Little Navmap update, after installing new add-on scenery or after a flight simulator update to enable new features or benefit from bug fixes.&lt;/p&gt;&lt;p&gt;You can do this in menu &quot;Scenery Library&quot; -&gt; &quot;Load Scenery Library&quot;.&lt;/p&gt;&lt;p&gt;Open the &quot;Load Scenery Library&quot; dialog window now?&lt;/p&gt;</source>
         <translation>&lt;p&gt;%1&lt;/p&gt;&lt;p&gt;É recomendado recarregar o banco de dados da biblioteca de cenários após cada atualização do Little Navmap, após instalar novos cenários de complementos ou após uma atualização do simulador de voo para habilitar novos recursos ou se beneficiar de correções de bugs.&lt;/p&gt;&lt;p&gt;Você pode fazer isso no menu &quot;Biblioteca de Cenários&quot; -&gt; &quot;Carregar Biblioteca de Cenários&quot;.&lt;/p&gt;&lt;p&gt;Abrir a janela de diálogo &quot;Carregar Biblioteca de Cenários&quot; agora?&lt;/p&gt;</translation>
     </message>
@@ -4480,7 +4485,7 @@ Ative a opção &quot;Ler entradas de cenários inativos ou desativados&quot; ou
         <translation type="vanished">&lt;p&gt;Observe que as informações do aeroporto são limitadas neste modo.&lt;br/&gt;Isso significa que pátios, pistas de táxi, posições de estacionamento, informações da superfície da pista e outras informações não estão disponíveis.&lt;br/&gt;Aeroportos menores podem estar ausentes e o layout da pista pode estar ausente não correspondem ao layout da pista no simulador.&lt;/p&gt;&lt;p&gt;&lt;a href=&quot;%1&quot;&gt;Clique aqui para obter mais informações no manual online do Little Navmap&lt;/a&gt;&lt;/p&gt;</translation>
     </message>
     <message>
-        <location filename="../src/db/databasemanager.cpp" line="1104"/>
+        <location filename="../src/db/databasemanager.cpp" line="1108"/>
         <source>&amp;quot;&lt;br/&gt;&amp;quot;</source>
         <translation></translation>
     </message>
@@ -4490,14 +4495,14 @@ Ative a opção &quot;Ler entradas de cenários inativos ou desativados&quot; ou
         <translation type="vanished">&lt;p&gt;Você está usando MSFS com a atualização de dados de navegação do Navigraph.&lt;/p&gt;&lt;p&gt;Você precisa atualizar os dados de navegação do Little Navmap com o Navigraph FMS Data Manager e usar o modo de biblioteca de cenário correto &quot;Usar Navigraph para Navaids e Procedimentos&quot; para evite problemas com as informações do aeroporto no Little Navmap.&lt;/p&gt;&lt;p&gt;Você pode alterar o modo manualmente no menu &quot;Biblioteca de dados&quot; -&gt; &quot;Navigraph&quot; -&gt; &quot;Usar Navigraph para Navaids e Procedimentos&quot;.&lt;/p&gt;&lt; p&gt;Corrigir o modo da biblioteca de dados agora?&lt;/p&gt;</translation>
     </message>
     <message>
-        <location filename="../src/db/databasemanager.cpp" line="1390"/>
-        <location filename="../src/db/databasemanager.cpp" line="1405"/>
-        <location filename="../src/db/databasemanager.cpp" line="1421"/>
-        <location filename="../src/db/databasemanager.cpp" line="1437"/>
-        <location filename="../src/db/databasemanager.cpp" line="1456"/>
-        <location filename="../src/db/databasemanager.cpp" line="1473"/>
-        <location filename="../src/db/databasemanager.cpp" line="1486"/>
-        <location filename="../src/db/databasemanager.cpp" line="1506"/>
+        <location filename="../src/db/databasemanager.cpp" line="1394"/>
+        <location filename="../src/db/databasemanager.cpp" line="1409"/>
+        <location filename="../src/db/databasemanager.cpp" line="1425"/>
+        <location filename="../src/db/databasemanager.cpp" line="1441"/>
+        <location filename="../src/db/databasemanager.cpp" line="1460"/>
+        <location filename="../src/db/databasemanager.cpp" line="1477"/>
+        <location filename="../src/db/databasemanager.cpp" line="1490"/>
+        <location filename="../src/db/databasemanager.cpp" line="1510"/>
         <source>Do not &amp;show this dialog again and always correct mode after loading.</source>
         <translation>Não &amp;mostre esta caixa de diálogo novamente e sempre corrija o modo após o carregamento.</translation>
     </message>
@@ -4507,17 +4512,17 @@ Ative a opção &quot;Ler entradas de cenários inativos ou desativados&quot; ou
         <translation type="vanished">&lt;p&gt;Seu modo de biblioteca de dados atual é &quot;Usar Navigraph para todos os recursos&quot;.&lt;/p&gt;&lt;p&gt;Observe que as informações do aeroporto são limitadas neste modo. Isso significa que pátios, pistas de táxi, posições de estacionamento, superfícies de pista e muito mais não estão disponíveis, aeroportos menores estarão ausentes e o layout da pista pode não corresponder ao do simulador.&lt;/p&gt;&lt;p&gt;Você pode alterar isso manualmente no menu &quot;Biblioteca de dados&quot; -&gt; &quot;Navigraph&quot; -&gt; &quot;Usar Navigraph para Navaids e Procedimentos&quot;.&lt;/p&gt;&lt;p&gt;Corrigir o modo de biblioteca de dados agora?&lt;/p&gt;</translation>
     </message>
     <message>
-        <location filename="../src/db/databasemanager.cpp" line="1527"/>
+        <location filename="../src/db/databasemanager.cpp" line="1531"/>
         <source>&lt;p&gt;Click &quot;Reset paths&quot; in the dialog &quot;Load Scenery Library&quot; for a possible fix.&lt;/p&gt;</source>
         <translation>&lt;p&gt;Clique em &quot;Redefinir caminhos&quot; na caixa de diálogo &quot;Carregar biblioteca de cenários&quot; para uma possível correção.&lt;/p&gt;</translation>
     </message>
     <message>
-        <location filename="../src/db/databasemanager.cpp" line="1532"/>
+        <location filename="../src/db/databasemanager.cpp" line="1536"/>
         <source>&lt;p style=&apos;white-space:pre&apos;&gt;Cannot read base path &quot;%1&quot;.&lt;br/&gt;&lt;br/&gt;Reason:&lt;br/&gt;%2&lt;br/&gt;&lt;br/&gt;Either the &quot;OneStore&quot; or the &quot;Steam&quot; paths have to exist.&lt;br/&gt;The path &quot;Community&quot; is always needed for add-ons.&lt;/p&gt;%3</source>
         <translation>&lt;p style=&apos;white-space:pre&apos;&gt;Não é possível ler o caminho base &quot;%1&quot;.&lt;br/&gt;&lt;br/&gt;Razão:&lt;br/&gt;%2&lt;br/&gt;&lt;br/&gt;Ou o &quot;OneStore&quot; ou os caminhos &quot;Steam&quot; devem existir.&lt;br/&gt;O caminho &quot;Community&quot; é sempre necessário para complementos.&lt;/p&gt;%3</translation>
     </message>
     <message>
-        <location filename="../src/db/databasemanager.cpp" line="1551"/>
+        <location filename="../src/db/databasemanager.cpp" line="1555"/>
         <source>&lt;p style=&apos;white-space:pre&apos;&gt;Cannot read base path &quot;%1&quot;.&lt;br/&gt;&lt;br/&gt;Reason:&lt;br/&gt;%2&lt;/p&gt;%3</source>
         <translation>&lt;p style=&apos;white-space:pre&apos;&gt;Não é possível ler o caminho base &quot;%1&quot;.&lt;br/&gt;&lt;br/&gt;Razão:&lt;br/&gt;%2&lt;/p&gt;%3</translation>
     </message>
@@ -4530,12 +4535,12 @@ Ative a opção &quot;Ler entradas de cenários inativos ou desativados&quot; ou
         <translation type="vanished">&lt;b&gt;Mais arquivos ...&lt;/b&gt;</translation>
     </message>
     <message>
-        <location filename="../src/db/databasemanager.cpp" line="2041"/>
+        <location filename="../src/db/databasemanager.cpp" line="2045"/>
         <source>The scenery library database was created using a previous version of Little Navmap.</source>
         <translation>O banco de dados da biblioteca de cenários foi criado usando uma versão anterior do Little Navmap.</translation>
     </message>
     <message>
-        <location filename="../src/db/databasemanager.cpp" line="2046"/>
+        <location filename="../src/db/databasemanager.cpp" line="2050"/>
         <source>Scenery library database was not reloaded for more than %1 days.</source>
         <translation>O banco de dados da biblioteca de cenários não foi recarregado por mais de %1 dias.</translation>
     </message>
@@ -4544,16 +4549,16 @@ Ative a opção &quot;Ler entradas de cenários inativos ou desativados&quot; ou
         <translation type="vanished">&lt;p&gt;%1&lt;/p&gt;&lt;p&gt;Recomenda-se recarregar o banco de dados da biblioteca de cenários após cada atualização do Little Navmap, após a instalação de um novo cenário adicional ou após uma atualização do simulador de voo para habilitar novos recursos ou se beneficiar de correções de bugs. &lt;/p&gt;&lt;p&gt;Você pode fazer isso no menu &quot;Biblioteca de dados&quot; -&gt; &quot;Recarregar biblioteca de cenário&quot;.&lt;/p&gt;</translation>
     </message>
     <message>
-        <location filename="../src/db/databasemanager.cpp" line="1943"/>
-        <location filename="../src/db/databasemanager.cpp" line="1943"/>
-        <location filename="../src/db/databasemanager.cpp" line="2062"/>
+        <location filename="../src/db/databasemanager.cpp" line="1947"/>
+        <location filename="../src/db/databasemanager.cpp" line="1947"/>
+        <location filename="../src/db/databasemanager.cpp" line="2066"/>
         <source>&lt;br/&gt;</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../src/db/databasemanager.cpp" line="1603"/>
-        <location filename="../src/db/databasemanager.cpp" line="1691"/>
-        <location filename="../src/db/databasemanager.cpp" line="2063"/>
+        <location filename="../src/db/databasemanager.cpp" line="1607"/>
+        <location filename="../src/db/databasemanager.cpp" line="1695"/>
+        <location filename="../src/db/databasemanager.cpp" line="2067"/>
         <source>Do not &amp;show this dialog again.</source>
         <translation>Não &amp;mostre este diálogo novamente.</translation>
     </message>
@@ -4562,7 +4567,7 @@ Ative a opção &quot;Ler entradas de cenários inativos ou desativados&quot; ou
         <translation type="vanished">&lt;b&gt;Mais entradas de cenário ...&lt;/b&gt;</translation>
     </message>
     <message>
-        <location filename="../src/db/databasemanager.cpp" line="1101"/>
+        <location filename="../src/db/databasemanager.cpp" line="1105"/>
         <source>&lt;p&gt;Detected a modification of one or more database files:&lt;br/&gt;&quot;%1&quot;&lt;br/&gt;&lt;br/&gt;Always close %2 before copying, overwriting or updating scenery library databases.&lt;/p&gt;</source>
         <oldsource>&lt;p style=&quot;white-space:pre&quot;&gt;Detected a modification of one or more database files:&lt;br/&gt;&lt;br/&gt;&amp;quot;%1&amp;quot;&lt;br/&gt;&lt;br/&gt;Always close &lt;i&gt;%2&lt;/i&gt; before copying, overwriting or updating scenery library databases.&lt;/p&gt;</oldsource>
         <translation>&lt;p&gt;Foi detectada uma modificação em um ou mais arquivos de banco de dados:&lt;br/&gt;&quot;%1&quot;&lt;br/&gt;&lt;br/&gt;Sempre feche %2 antes de copiar, sobrescrever ou atualizar os bancos de dados da biblioteca de cenários.&lt;/p&gt;</translation>
@@ -4576,12 +4581,12 @@ Ative a opção &quot;Ler entradas de cenários inativos ou desativados&quot; ou
         <translation type="vanished">&lt;p style=&apos;white-space:pre&apos;&gt;Não é possível ler o caminho de base &quot;%1&quot;.&lt;br/&gt;&lt;br/&gt;Razão:&lt;br/&gt;%2&lt;/p&gt;</translation>
     </message>
     <message>
-        <location filename="../src/db/databasemanager.cpp" line="1568"/>
+        <location filename="../src/db/databasemanager.cpp" line="1572"/>
         <source>&lt;p style=&apos;white-space:pre&apos;&gt;Cannot read scenery configuration &quot;%1&quot;.&lt;br/&gt;&lt;br/&gt;Reason:&lt;br/&gt;%2&lt;br/&gt;&lt;br/&gt;Enable the option &quot;Read inactive or disabled Scenery Entries&quot;&lt;br/&gt;or start X-Plane once to create the file.&lt;/p&gt;</source>
         <translation>&lt;p style=&apos;white-space:pre&apos;&gt;Não é possível ler a configuração do cenário &quot;%1&quot;.&lt;br/&gt;&lt;br/&gt;Razão:&lt;br/&gt;%2&lt;br/&gt;&lt;br/&gt;Habilite a opção &quot;Ler entradas de cenários inativos ou desabilitados&quot;&lt;br/&gt;ou inicie o X-Plane uma vez para criar o arquivo.&lt;/p&gt;</translation>
     </message>
     <message>
-        <location filename="../src/db/databasemanager.cpp" line="1585"/>
+        <location filename="../src/db/databasemanager.cpp" line="1589"/>
         <source>&lt;p style=&apos;white-space:pre&apos;&gt;Cannot read scenery configuration &quot;%1&quot;.&lt;br/&gt;&lt;br/&gt;Reason:&lt;br/&gt;%2&lt;/p&gt;</source>
         <translation>&lt;p style=&apos;white-space:pre&apos;&gt;Não é possível ler a configuração do cenário &quot;%1&quot;.&lt;br/&gt;&lt;br/&gt;Razão:&lt;br/&gt;%2&lt;/p&gt;</translation>
     </message>
@@ -4647,22 +4652,22 @@ Exiting now.</oldsource>
         <translation>Exclusão do banco de dados&lt;br/&gt;&lt;br/&gt;&quot;%1&quot;&lt;br/&gt;&lt;br/&gt;falhou.&lt;br/&gt;&lt;br/&gt;Remova o arquivo do banco de dados manualmente e reinicie o programa.</translation>
     </message>
     <message>
-        <location filename="../src/db/databasemanager.cpp" line="824"/>
+        <location filename="../src/db/databasemanager.cpp" line="828"/>
         <source>&lt;p style=&apos;white-space:pre&apos;&gt;The scenery mode &quot;%1&quot; ignores all airports of the simulator.&lt;p/&gt;&lt;p&gt;Airport information is limited in this mode.&lt;br/&gt;This means that aprons, taxiways, parking positions, runway surface information and other information is not available.&lt;br/&gt;Smaller airports might be missing and runway layout might not match the runway layout in the simulator.&lt;/p&gt;&lt;p&gt;&lt;b&gt;Normally you should not use this mode.&lt;/b&gt;&lt;/p&gt;&lt;p&gt;Really switch to mode &quot;%1&quot; now?&lt;/p&gt;&lt;p&gt;&lt;a href=&quot;%1&quot;&gt;Click here for more information in the Little Navmap online manual&lt;/a&gt;&lt;/p&gt;</source>
         <translation>&lt;p style=&apos;white-space:pre&apos;&gt;O modo cenário &quot;%1&quot; ignora todos os aeroportos do simulador.&lt;p/&gt;&lt;p&gt;As informações do aeroporto são limitadas neste modo.&lt;br/&gt;Isso significa que pátios, pistas de táxi, posições de estacionamento, informações da superfície da pista e outras informações não estão disponíveis.&lt;br/&gt;Aeroportos menores podem estar faltando e o layout da pista pode não corresponder ao layout da pista no simulador.&lt;/p&gt;&lt;p&gt;&lt;b&gt;Normalmente você deve não usar este modo.&lt;/b&gt;&lt;/p&gt;&lt;p&gt;Realmente mudar para o modo &quot;%1&quot; agora?&lt;/p&gt;&lt;p&gt;&lt;a href=&quot;%1&quot;&gt;Clique aqui para mais informações no Little Manual on-line Navmap&lt;/a&gt;&lt;/p&gt;</translation>
     </message>
     <message>
-        <location filename="../src/db/databasemanager.cpp" line="834"/>
+        <location filename="../src/db/databasemanager.cpp" line="838"/>
         <source>Do not &amp;show this dialog again and switch the mode.</source>
         <translation>Não &amp;mostre esta caixa de diálogo novamente e alterne o modo.</translation>
     </message>
     <message>
-        <location filename="../src/db/databasemanager.cpp" line="872"/>
+        <location filename="../src/db/databasemanager.cpp" line="876"/>
         <source>Disabled %1.</source>
         <translation>Desativado %1.</translation>
     </message>
     <message>
-        <location filename="../src/db/databasemanager.cpp" line="717"/>
+        <location filename="../src/db/databasemanager.cpp" line="721"/>
         <source>Do &amp;not use %1 database</source>
         <translation>&amp;Não use o banco de dados da %1</translation>
     </message>
@@ -4671,7 +4676,7 @@ Exiting now.</oldsource>
         <translation type="vanished">Não &amp;mostre esta caixa de diálogo novamente e ignore no futuro.</translation>
     </message>
     <message>
-        <location filename="../src/db/databasemanager.cpp" line="720"/>
+        <location filename="../src/db/databasemanager.cpp" line="724"/>
         <source>Do not use %1 database</source>
         <translation>Não use %1 banco de dados</translation>
     </message>
@@ -4680,12 +4685,12 @@ Exiting now.</oldsource>
         <translation type="vanished">&lt;p&gt;Observe que as informações do aeroporto são limitadas neste modo.&lt;br/&gt; Isso significa que aprons, parking, pista, informações da superfície da pista e outras informações não estão disponíveis.&lt;/p&gt;&lt;p&gt;Além disso, aeroportos menores podem estar faltando.&lt;/p&gt;&lt;p&gt;O layout da pista de decolagem pode não corresponder ao layout da pista no simulador se você usar ações ou cenários de aeroportos mais antigos.&lt;/p&gt;&lt;p&gt;&lt;b&gt;Clique no link abaixo para mais informações:&lt;br/&gt;&lt;br/&gt;&lt;a href=&quot;%1&quot;&gt;Online Manual - Navigation Databases&lt;/a&gt;&lt;/b&gt;&lt;br/&gt;&lt;/p&gt;</translation>
     </message>
     <message>
-        <location filename="../src/db/databasemanager.cpp" line="862"/>
+        <location filename="../src/db/databasemanager.cpp" line="866"/>
         <source>Enabled all features for %1.</source>
         <translation>Habilitar todos os recursos para %1.</translation>
     </message>
     <message>
-        <location filename="../src/db/databasemanager.cpp" line="867"/>
+        <location filename="../src/db/databasemanager.cpp" line="871"/>
         <source>Enabled navaids, airways, airspaces and procedures for %1.</source>
         <translation>Habilitar navaids, aerovias,espaços aéreos e procedimentos para %1.</translation>
     </message>
@@ -4705,18 +4710,18 @@ Exiting now.</oldsource>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/db/databasemanager.cpp" line="973"/>
+        <location filename="../src/db/databasemanager.cpp" line="977"/>
         <source>Cannot open database. Error message:&lt;br/&gt;&lt;br/&gt;%1&lt;br/&gt;&lt;br/&gt;File is either malformed or this is an internal error.&lt;br/&gt;&lt;br/&gt;You might want to report this to the developer.&lt;br/&gt;&lt;br/&gt;Exiting now.</source>
         <oldsource>Cannot open database. Error message:&lt;br/&gt;&lt;br/&gt;%1&lt;br/&gt;&lt;br/&gt;File is either malformed or this is an internal error.&lt;br/&gt;&lt;br/&gt;You might want to report this.&lt;br/&gt;&lt;br/&gt;Exiting now.</oldsource>
         <translation>Não é possível abrir o banco de dados. Mensagem de erro:&lt;br/&gt;&lt;br/&gt;%1&lt;br/&gt;&lt;br/&gt;O arquivo está malformado ou há um erro interno.&lt;br/&gt;&lt;br/&gt;Você pode querer relatar isso ao desenvolvedor.&lt;br/&gt;&lt;br/&gt;Saindo agora.</translation>
     </message>
     <message>
-        <location filename="../src/db/databasemanager.cpp" line="1349"/>
+        <location filename="../src/db/databasemanager.cpp" line="1353"/>
         <source>&lt;p&gt;Scenery library mode is correct. Mode is set automatically by Little Navmap.&lt;/p&gt;</source>
         <translation>&lt;p&gt;O modo da biblioteca de cenários está correto. O modo é definido automaticamente pelo Little Navmap.&lt;/p&gt;</translation>
     </message>
     <message>
-        <location filename="../src/db/databasemanager.cpp" line="1350"/>
+        <location filename="../src/db/databasemanager.cpp" line="1354"/>
         <source>&lt;p&gt;No issues found. Scenery library mode is correct and set manually in menu &quot;Scenery Library&quot;.&lt;/p&gt;</source>
         <translation>&lt;p&gt;Nenhum problema encontrado. O modo da biblioteca de cenários está correto e definido manualmente no menu &quot;Biblioteca de Cenários&quot;.&lt;/p&gt;</translation>
     </message>
@@ -4725,7 +4730,7 @@ Exiting now.</oldsource>
         <translation type="vanished">&lt;p&gt;O banco de dados do simulador está vazio.&lt;/p&gt;&lt;p&gt;Mostrando aeroportos e navaids do Navigraph.&lt;/p&gt;&lt;p style=&apos;white-space:pre&apos;&gt;Você pode carregar o banco de dados da biblioteca de cenários do simulador no menu&lt;/br&gt;&quot;Biblioteca de Cenários&quot; -&gt; &quot;Carregar Biblioteca de Cenários&quot;.&lt;/p&gt;</translation>
     </message>
     <message>
-        <location filename="../src/db/databasemanager.cpp" line="1367"/>
+        <location filename="../src/db/databasemanager.cpp" line="1371"/>
         <source>&lt;p&gt;Simulator database is empty.&lt;/p&gt;&lt;p style=&apos;white-space:pre&apos;&gt;You can load the simulator scenery library database in the menu&lt;br/&gt;&quot;Scenery Library&quot; -&gt; &quot;Load Scenery Library&quot;.&lt;/p&gt;&lt;p style=&apos;white-space:pre&apos;&gt;Alternatively, you can switch to Navigraph only data in the menu&lt;br/&gt;&quot;Scenery Library&quot; -&gt; &quot;Navigraph&quot; -&gt; &quot;Use Navigraph for all Features&quot;.&lt;/p&gt;</source>
         <translation>&lt;p&gt;O banco de dados do simulador está vazio.&lt;/p&gt;&lt;p style=&apos;white-space:pre&apos;&gt;Você pode carregar o banco de dados da biblioteca de cenários do simulador no menu&lt;br/&gt;&quot;Biblioteca de Cenários&quot; -&gt; &quot;Carregar Biblioteca de Cenários&quot;.&lt;/p&gt;&lt;p style=&apos;white-space:pre&apos;&gt;Alternativamente, você pode mudar para dados exclusivos do Navigraph no menu&lt;br/&gt;&quot;Biblioteca de Cenários&quot; -&gt; &quot;Navigraph&quot; -&gt; &quot;Usar Navigraph para todos os Recursos&quot;.&lt;/p&gt;</translation>
     </message>
@@ -4750,7 +4755,7 @@ Exiting now.</oldsource>
         <translation type="vanished">&lt;p style=&apos;white-space:pre&apos;&gt;O ciclo AIRAC %1 de seus dados de navegação é mais antigo que o ciclo simulador %2.&lt;/p&gt;&lt;p&gt;Isso pode resultar em mensagens de aviso ao carregar planos de voo no X-Plane .&lt;/p&gt;&lt;p&gt;Atualize o Little Navmap navdata para usar o mesmo ciclo que o X-Plane navdata com o Navigraph FMS Data Manager para corrigir isso.&lt;/p&gt;&lt;p&gt;Você também pode usar o modo de biblioteca de cenários &quot; Não use o Navigraph Database&quot; para obter todos os dados do simulador.&lt;/p&gt;&lt;p style=&apos;white-space:pre&apos;&gt;Você pode alterar isso manualmente no menu&lt;br/&gt;&quot;Biblioteca de Dados&quot; -&gt; &quot;Navigraph &quot; -&gt; &quot;Não usar banco de dados Navigraph&quot;.&lt;/p&gt;&lt;p&gt;Corrigir o modo de biblioteca de cenário agora?&lt;/p&gt;</translation>
     </message>
     <message>
-        <location filename="../src/db/databasemanager.cpp" line="1493"/>
+        <location filename="../src/db/databasemanager.cpp" line="1497"/>
         <source>&lt;p style=&apos;white-space:pre&apos;&gt;Your current scenery library mode is &quot;Use Navigraph for all Features&quot;.&lt;/p&gt;&lt;p&gt;All information from the simulator scenery library is ignored in this mode.&lt;/p&gt;&lt;p&gt;Note that airport information is limited in this mode. This means that aprons, taxiways, parking positions, runway surfaces and more are not available, smaller airports will be missing and the runway layout might not match the one in the simulator.&lt;/p&gt;&lt;p style=&apos;white-space:pre&apos;&gt;You can change this manually in the menu&lt;br/&gt;&quot;Scenery Library&quot; -&gt; &quot;Navigraph&quot; -&gt; &quot;Use Navigraph for Navaids and Procedures&quot;.&lt;/p&gt;&lt;p&gt;&lt;b&gt;Normally you should not use this mode.&lt;/b&gt;&lt;/p&gt;&lt;p&gt;Correct the scenery library mode now?&lt;/p&gt;</source>
         <comment>Sync texts with menu items</comment>
         <translation>&lt;p style=&apos;white-space:pre&apos;&gt;Seu modo de biblioteca de cenários atual é &quot;Usar Navigraph para todos os recursos&quot;.&lt;/p&gt;&lt;p&gt;Todas as informações da biblioteca de cenários do simulador são ignoradas neste modo.&lt;/p&gt; &lt;p&gt;Observe que as informações do aeroporto são limitadas neste modo. Isso significa que pátios, pistas de táxi, posições de estacionamento, superfícies de pista e muito mais não estão disponíveis, aeroportos menores estarão ausentes e o layout da pista pode não corresponder ao do simulador.&lt;/p&gt;&lt;p style=&apos;white-space:pre &apos;&gt;Você pode alterar isso manualmente no menu&lt;br/&gt;&quot;Biblioteca de Cenários&quot; -&gt; &quot;Navigraph&quot; -&gt; &quot;Usar Navigraph para navaids e procedimentos&quot;.&lt;/p&gt;&lt;p&gt;&lt;b&gt;Normalmente, você não deve usar isso modo.&lt;/b&gt;&lt;/p&gt;&lt;p&gt;Corrigir o modo de biblioteca de cenário agora?&lt;/p&gt;</translation>
@@ -4773,47 +4778,47 @@ You can load the simulator scenery library database in the menu
 Você pode carregar o banco de dados da biblioteca de cenários do simulador no menu &quot;Biblioteca de Dados&quot; -&gt; &quot;Carregar Biblioteca de Cenários&quot;.</translation>
     </message>
     <message>
-        <location filename="../src/db/databasemanager.cpp" line="1412"/>
+        <location filename="../src/db/databasemanager.cpp" line="1416"/>
         <source>&lt;p style=&apos;white-space:pre&apos;&gt;The AIRAC cycle %1 of your navigation data is equal to the simulator cycle.&lt;p&gt;&lt;p&gt;You should use the scenery library mode &quot;Use Navigraph for Navaids and Procedures&quot; to fetch airports from the simulator and navdata from the update.&lt;/p&gt;&lt;p style=&apos;white-space:pre&apos;&gt;You can change this manually in the menu&lt;br/&gt;&quot;Scenery Library&quot; -&gt; &quot;Navigraph&quot; -&gt; &quot;Use Navigraph for Navaids and Procedures&quot;.&lt;/p&gt;&lt;p&gt;Correct the scenery library mode now?&lt;/p&gt;</source>
         <comment>Sync texts with menu items</comment>
         <translation>&lt;p style=&apos;white-space:pre&apos;&gt;O ciclo AIRAC %1 dos seus dados de navegação é igual ao ciclo do simulador.&lt;/p&gt;&lt;p&gt;Você deve usar o modo da biblioteca de cenários &quot;Usar Navigraph para Navaids e Procedimentos&quot; para obter aeroportos do simulador e dados de navegação da atualização.&lt;/p&gt;&lt;p style=&apos;white-space:pre&apos;&gt;Você pode alterar isso manualmente no menu&lt;br/&gt;&quot;Biblioteca de Cenários&quot; -&gt; &quot;Navigraph&quot; -&gt; &quot;Usar Navigraph para Navaids e Procedimentos&quot;.&lt;/p&gt;&lt;p&gt;Corrigir o modo da biblioteca de cenários agora?&lt;/p&gt;</translation>
     </message>
     <message>
-        <location filename="../src/db/databasemanager.cpp" line="1428"/>
+        <location filename="../src/db/databasemanager.cpp" line="1432"/>
         <source>&lt;p style=&apos;white-space:pre&apos;&gt;The AIRAC cycle %1 of the Little Navmap navigation data is newer than the simulator cycle %2.&lt;/p&gt;&lt;p&gt;Update the X-Plane navdata to use the same cycle as the Little Navmap navdata. Reload the scenery library to fix this.&lt;/p&gt;&lt;p style=&apos;white-space:pre&apos;&gt;You can change this manually in the menu&lt;br/&gt;&quot;Scenery Library&quot; -&gt; &quot;Navigraph&quot; -&gt; &quot;Do not use Navigraph Database&quot;.&lt;/p&gt;&lt;p&gt;Correct the scenery library mode now?&lt;/p&gt;</source>
         <comment>Sync texts with menu items</comment>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/db/databasemanager.cpp" line="1444"/>
+        <location filename="../src/db/databasemanager.cpp" line="1448"/>
         <source>&lt;p style=&apos;white-space:pre&apos;&gt;The AIRAC cycle %1 of your navigation data is older than the simulator cycle %2.&lt;/p&gt;&lt;p&gt;This can result in warning messages when loading flight plans in X-Plane.&lt;/p&gt;&lt;p&gt;Update the Little Navmap navdata to use the same cycle as the X-Plane navdata with the Navigraph FMS Data Manager to fix this.&lt;/p&gt;&lt;p&gt;You can also use the scenery library mode &quot;Do not use Navigraph Database&quot; to fetch all data from the simulator.&lt;/p&gt;&lt;p style=&apos;white-space:pre&apos;&gt;You can change this manually in the menu&lt;br/&gt;&quot;Scenery Library&quot; -&gt; &quot;Navigraph&quot; -&gt; &quot;Do not use Navigraph Database&quot;.&lt;/p&gt;&lt;p&gt;Correct the scenery library mode now?&lt;/p&gt;</source>
         <comment>Sync texts with menu items</comment>
         <translation>&lt;p style=&apos;white-space:pre&apos;&gt;O ciclo AIRAC %1 dos seus dados de navegação é mais antigo do que o ciclo do simulador %2.&lt;/p&gt;&lt;p&gt;Isso pode resultar em mensagens de aviso ao carregar planos de voo no X-Plane.&lt;/p&gt;&lt;p&gt;Atualize os dados de navegação do Little Navmap para usar o mesmo ciclo dos dados de navegação do X-Plane com o Navigraph FMS Data Manager para corrigir isso.&lt;/p&gt;&lt;p&gt;Você também pode usar o modo da biblioteca de cenários &quot;Não usar Banco de Dados Navigraph&quot; para obter todos os dados do simulador.&lt;/p&gt;&lt;p style=&apos;white-space:pre&apos;&gt;Você pode alterar isso manualmente no menu&lt;br/&gt;&quot;Biblioteca de Cenários&quot; -&gt; &quot;Navigraph&quot; -&gt; &quot;Não usar Banco de Dados Navigraph&quot;.&lt;/p&gt;&lt;p&gt;Corrigir o modo da biblioteca de cenários agora?&lt;/p&gt;</translation>
     </message>
     <message>
-        <location filename="../src/db/databasemanager.cpp" line="1463"/>
+        <location filename="../src/db/databasemanager.cpp" line="1467"/>
         <source>&lt;p style=&apos;white-space:pre&apos;&gt;Your navdata based on AIRAC cycle %1 is outdated.&lt;/p&gt;&lt;p&gt;This can result in warning messages when loading flight plans.&lt;/p&gt;&lt;p&gt;Update the Little Navmap navdata with the Navigraph FMS Data Manager to fix this.&lt;/p&gt;&lt;p&gt;You can also use the scenery library mode &quot;Do not use Navigraph Database&quot; to fetch all data from the simulator.&lt;/p&gt;&lt;p style=&apos;white-space:pre&apos;&gt;You can change this manually in the menu&lt;br/&gt;&quot;Scenery Library&quot; -&gt; &quot;Navigraph&quot; -&gt; &quot;Do not use Navigraph Database&quot;.&lt;/p&gt;&lt;p&gt;Correct the scenery library mode now?&lt;/p&gt;</source>
         <comment>Sync texts with menu items</comment>
         <translation>&lt;p style=&apos;white-space:pre&apos;&gt;Seus dados de navegação baseados no ciclo AIRAC %1 estão desatualizados.&lt;/p&gt;&lt;p&gt;Isso pode resultar em mensagens de aviso ao carregar planos de voo.&lt;/p&gt;&lt;p&gt;Atualize os dados de navegação do Little Navmap com o Navigraph FMS Data Manager para corrigir isso.&lt;/p&gt;&lt;p&gt;Você também pode usar o modo da biblioteca de cenários &quot;Não usar Banco de Dados Navigraph&quot; para obter todos os dados do simulador.&lt;/p&gt;&lt;p style=&apos;white-space:pre&apos;&gt;Você pode alterar isso manualmente no menu&lt;br/&gt;&quot;Biblioteca de Cenários&quot; -&gt; &quot;Navigraph&quot; -&gt; &quot;Não usar Banco de Dados Navigraph&quot;.&lt;/p&gt;&lt;p&gt;Corrigir o modo da biblioteca de cenários agora?&lt;/p&gt;</translation>
     </message>
     <message>
-        <location filename="../src/db/databasemanager.cpp" line="1480"/>
+        <location filename="../src/db/databasemanager.cpp" line="1484"/>
         <source>&lt;p style=&apos;white-space:pre&apos;&gt;&lt;p&gt;You are using an updated Navigraph database with a not optimal scenery library mode.&lt;/p&gt;&lt;p style=&apos;white-space:pre&apos;&gt;You can fix this in the menu&lt;br/&gt;&quot;Scenery Library&quot; -&gt; &quot;Navigraph&quot; -&gt; &quot;Use Navigraph for Navaids and Procedures&quot;.&lt;/p&gt;&lt;p&gt;Correct the scenery library mode now?&lt;/p&gt;</source>
         <comment>Sync texts with menu items</comment>
         <translation>&lt;p style=&apos;white-space:pre&apos;&gt;&lt;p&gt;Você está usando um banco de dados Navigraph atualizado com um modo de biblioteca de cenários não otimizado.&lt;/p&gt;&lt;p style=&apos;white-space:pre&apos;&gt;Você pode corrigir isso no menu&lt;br/&gt;&quot;Biblioteca de Cenários&quot; -&gt; &quot;Navigraph&quot; -&gt; &quot;Usar Navigraph para Navaids e Procedimentos&quot;.&lt;/p&gt;&lt;p&gt;Corrigir o modo da biblioteca de cenários agora?&lt;/p&gt;</translation>
     </message>
     <message>
-        <location filename="../src/db/databasemanager.cpp" line="1518"/>
+        <location filename="../src/db/databasemanager.cpp" line="1522"/>
         <source>You cannot load the MSFS 2024 scenery library using Little Navmap 32-bit.</source>
         <translation>Você não pode carregar a biblioteca de cenários do MSFS 2024 usando o Little Navmap 32-bit.</translation>
     </message>
     <message>
-        <location filename="../src/db/databasemanager.cpp" line="1543"/>
+        <location filename="../src/db/databasemanager.cpp" line="1547"/>
         <source>&lt;p style=&apos;white-space:pre&apos;&gt;Cannot read base path &quot;%1&quot;.&lt;br/&gt;&lt;br/&gt;Reason:&lt;br/&gt;%2&lt;br/&gt;&lt;/p&gt;%3</source>
         <translation>&lt;p style=&apos;white-space:pre&apos;&gt;Não foi possível ler o caminho base &quot;%1&quot;.&lt;br/&gt;&lt;br/&gt;Motivo:&lt;br/&gt;%2&lt;br/&gt;&lt;/p&gt;%3</translation>
     </message>
     <message>
-        <location filename="../src/db/databasemanager.cpp" line="1596"/>
+        <location filename="../src/db/databasemanager.cpp" line="1600"/>
         <source>Note that the connection to the flight simulator has to be paused while loading data from the simulator.
 You will not see user aircraft updates while loading.
 
@@ -4826,7 +4831,7 @@ Você não verá atualizações da aeronave do usuário durante o carregamento.
 Observe que o processo de carregamento pode demorar um pouco. Espere de %1 a %2 minutos. Enquanto isso, você pode continuar a usar o %3 normalmente.</translation>
     </message>
     <message>
-        <location filename="../src/db/databasemanager.cpp" line="1609"/>
+        <location filename="../src/db/databasemanager.cpp" line="1613"/>
         <source>Cannot connect to Microsoft Flight Simulator 2024, which is required for Little Navmap to load data.
 
 Start Microsoft Flight Simulator 2024, wait until the user interface of the simulator is visible showing the start button. Then press &quot;Ok&quot; to continue.
@@ -4844,27 +4849,27 @@ Inicie o Microsoft Flight Simulator 2024, aguarde até que a interface do usuár
 Observe que o processo de carregamento pode demorar um pouco. Espere de %1 a %2 minutos. Enquanto isso, você pode continuar a usar %3 normalmente.</translation>
     </message>
     <message>
-        <location filename="../src/db/databasemanager.cpp" line="1689"/>
+        <location filename="../src/db/databasemanager.cpp" line="1693"/>
         <source>Note that you can put the scenery library loading window into the background and continue working with Little Navmap while it is loading.</source>
         <translation>Observe que você pode colocar a janela de carregamento da biblioteca de cenários em segundo plano e continuar trabalhando com o Little Navmap durante o carregamento.</translation>
     </message>
     <message>
-        <location filename="../src/db/databasemanager.cpp" line="1708"/>
+        <location filename="../src/db/databasemanager.cpp" line="1712"/>
         <source>&lt;b&gt;Caught exception while compiling scenery library.&lt;/b&gt;%3</source>
         <translation>&lt;b&gt;Exceção detectada durante a compilação da biblioteca de cenários.&lt;/b&gt;%3</translation>
     </message>
     <message>
-        <location filename="../src/db/databasemanager.cpp" line="1714"/>
+        <location filename="../src/db/databasemanager.cpp" line="1718"/>
         <source>&lt;b&gt;Caught unknown exception while compiling scenery library.&lt;/b&gt;</source>
         <oldsource>&lt;b&gt;Caught unknown exception while compiling scenery library.&lt;/b&gt;%3</oldsource>
         <translation>&lt;b&gt;Exceção desconhecida detectada durante a compilação da biblioteca de cenários.&lt;/b&gt;</translation>
     </message>
     <message>
-        <location filename="../src/db/databasemanager.cpp" line="1889"/>
-        <location filename="../src/db/databasemanager.cpp" line="1889"/>
-        <location filename="../src/db/databasemanager.cpp" line="1896"/>
-        <location filename="../src/db/databasemanager.cpp" line="1901"/>
-        <location filename="../src/db/databasemanager.cpp" line="1901"/>
+        <location filename="../src/db/databasemanager.cpp" line="1893"/>
+        <location filename="../src/db/databasemanager.cpp" line="1893"/>
+        <location filename="../src/db/databasemanager.cpp" line="1900"/>
+        <location filename="../src/db/databasemanager.cpp" line="1905"/>
+        <location filename="../src/db/databasemanager.cpp" line="1905"/>
         <source>None</source>
         <translation>Nenhum</translation>
     </message>
@@ -4898,12 +4903,12 @@ Observe que o processo de carregamento pode demorar um pouco. Espere de %1 a %2 
 </translation>
     </message>
     <message>
-        <location filename="../src/db/databasemanager.cpp" line="784"/>
+        <location filename="../src/db/databasemanager.cpp" line="788"/>
         <source>Switch to %1 database</source>
         <translation>Mude para %1 banco de dados</translation>
     </message>
     <message>
-        <location filename="../src/db/databasemanager.cpp" line="939"/>
+        <location filename="../src/db/databasemanager.cpp" line="943"/>
         <source>Switched to %1.</source>
         <translation>Mudou para %1.</translation>
     </message>
@@ -4926,22 +4931,22 @@ Observe que o processo de carregamento pode demorar um pouco. Espere de %1 a %2 
         <translation>Os bancos de dados para os simuladores abaixo não são compatíveis com esta versão do programa ou foram carregados de forma incompleta:&lt;br/&gt;&lt;br/&gt;%1&lt;br/&gt;&lt;br/&gt;Apague-os?&lt;br/&gt;&lt;br/&gt;%2</translation>
     </message>
     <message>
-        <location filename="../src/db/databasemanager.cpp" line="710"/>
+        <location filename="../src/db/databasemanager.cpp" line="714"/>
         <source>Use %1 for &amp;Navaids and Procedures</source>
         <translation>Usar %1 para &amp;Navaids e Procedimentos</translation>
     </message>
     <message>
-        <location filename="../src/db/databasemanager.cpp" line="703"/>
+        <location filename="../src/db/databasemanager.cpp" line="707"/>
         <source>Use %1 for &amp;all Features</source>
         <translation>Usar %1 para &amp;todos os Recursos</translation>
     </message>
     <message>
-        <location filename="../src/db/databasemanager.cpp" line="706"/>
+        <location filename="../src/db/databasemanager.cpp" line="710"/>
         <source>Use all of %1 database features</source>
         <translation>Usar para todos os %1 recursos do banco de dados</translation>
     </message>
     <message>
-        <location filename="../src/db/databasemanager.cpp" line="713"/>
+        <location filename="../src/db/databasemanager.cpp" line="717"/>
         <source>Use only navaids, airways, airspaces and procedures from %1 database</source>
         <translation>Use somente navaids, aerovia, espaço aéreo e procedimentos para %1 banco de dados</translation>
     </message>
@@ -5223,24 +5228,24 @@ and use color and label as above.</source>
         <translation type="vanished">&lt;p&gt;Os dados de elevação online, que são usados por padrão para o perfil de elevação, são limitados e contêm muitos erros.&lt;br/&gt;Portanto, é recomendável baixar e usar os dados de elevação offline do GLOBE, que fornecem cobertura mundial.&lt;/p&gt;&lt;p&gt;vá ao menu principal -&amp;gt; &quot;Configurações&quot; -&amp;gt; &quot;e, em seguida, para a página &quot;Cache e arquivos&quot; para adicionar os dados GLOBE.&lt;/p&gt;&lt;p&gt;&lt;a href=&quot;%1&quot;&gt;Clique aqui para mais informações no manual online do Little Navmap&lt;/a&gt;&lt;/p&gt;</translation>
     </message>
     <message>
-        <location filename="../src/common/elevationprovider.cpp" line="266"/>
+        <location filename="../src/common/elevationprovider.cpp" line="265"/>
         <source>GLOBE elevation data directory is not valid:&lt;br/&gt;&quot;%1&quot;&lt;br/&gt;&lt;br/&gt;Go to menu &quot;Tools&quot; -&amp;gt; &quot;Options&quot; and then&lt;br/&gt;to page &quot;Elevation Data&quot;. Then click &quot;Select Directory&quot; and&lt;br/&gt;select the correct place with the GLOBE elevation files.</source>
         <comment>Keep instructions in sync with translated menus</comment>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/common/elevationprovider.cpp" line="277"/>
-        <source>&lt;p&gt;The online elevation data which is used by default for the elevation profile is limited and has some small issues.&lt;br/&gt;Therefore, it is recommended to download and use the offline GLOBE elevation data which provides world wide coverage.&lt;/p&gt;&lt;p&gt;Go to the main menu -&amp;gt; &quot;Tools&quot; -&amp;gt; &quot;Options&quot; and then to page &quot;Elevation Data&quot; to add the GLOBE data.&lt;/p&gt;&lt;p&gt;&lt;a href=&quot;%1&quot;&gt;Click here for more information in the Little Navmap online manual&lt;/a&gt;&lt;/p&gt;</source>
+        <location filename="../src/common/elevationprovider.cpp" line="276"/>
+        <source>&lt;p&gt;The online elevation data which is used by default for the elevation profile is limited and has issues.&lt;br/&gt;Therefore, it is strongly recommended to download and use the offline GLOBE elevation data which provides world wide coverage and significantly faster calculation.&lt;/p&gt;&lt;p&gt;Go to the main menu -&amp;gt; &quot;Tools&quot; -&amp;gt; &quot;Options&quot; and then to page &quot;Elevation Data&quot;. Follow the instructions on the options page to add the GLOBE data.&lt;/p&gt;&lt;p&gt;&lt;a href=&quot;%1&quot;&gt;Click here for more information in the Little Navmap online manual&lt;/a&gt;&lt;/p&gt;</source>
         <comment>Keep instructions in sync with translated menus</comment>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/common/elevationprovider.cpp" line="285"/>
+        <location filename="../src/common/elevationprovider.cpp" line="286"/>
         <source>Do not &amp;show this dialog again.</source>
         <translation>Não &amp;mostre este diálogo novamente.</translation>
     </message>
     <message>
-        <location filename="../src/common/elevationprovider.cpp" line="260"/>
+        <location filename="../src/common/elevationprovider.cpp" line="259"/>
         <source>Cannot open GLOBE data in directory&lt;br/&gt;&quot;%1&quot;</source>
         <oldsource>Cannot open GLOBE data in directory&lt;br/&gt;&lt;i&gt;%1&lt;/i&gt;</oldsource>
         <translation>Não foi possível abrir os dados GLOBE no diretório&lt;br/&gt;&quot;%1&quot;</translation>
@@ -9152,7 +9157,7 @@ Aplicar o layout da janela carregado mesmo assim?</translation>
         <translation type="vanished">&lt;p style=&apos;white-space:pre&apos;&gt;é um planejador de voo de código aberto gratuito, ferramenta de navegação, mapa móvel,&lt;br/&gt;sistema de busca de aeroportos e informações de aeroportos&lt;br/&gt;para X-Plane 11, X-Plane 12, Flight Simulator X, Prepar3D e Microsoft Flight Simulator 2020.&lt;/p&gt;&lt;p&gt;&lt;b&gt;&lt;a href=&quot;%1&quot;&gt;Doe aqui para apoiar o desenvolvimento de %2&lt;/a&gt;.&lt;/b&gt;&lt;/p&gt;&lt;p&gt;Este software está licenciado sob &lt;a href=&quot;http://www.gnu.org/licenses/gpl-3.0&quot;&gt;GPL3&lt;/a&gt; ou qualquer versão posterior.&lt;/p&gt;&lt;p&gt;O código-fonte para este aplicativo está disponível em &lt;a href=&quot;https://github.com/albar965&quot;&gt;GitHub&lt;/a&gt;.&lt;/p&gt;&lt;p&gt;Mais sobre meus projetos em &lt;a href=&quot;https://www.littlenavmap.org&quot;&gt;www.littlenavmap.org&lt;/a&gt;.&lt;/p&gt;&lt;p&gt;&lt;b&gt;Direitos autorais 2015-2024 Alexander Barthel&lt;/b&gt;&lt;/p&gt;</translation>
     </message>
     <message>
-        <location filename="../src/gui/mainwindow.cpp" line="996"/>
+        <location filename="../src/gui/mainwindow.cpp" line="993"/>
         <source>Alt+3</source>
         <translation></translation>
     </message>
@@ -10061,7 +10066,7 @@ Guardar alterações?</translation>
         <translation>Todos os diálogos de mesagem foram resetados.</translation>
     </message>
     <message>
-        <location filename="../src/gui/mainwindow.cpp" line="982"/>
+        <location filename="../src/gui/mainwindow.cpp" line="979"/>
         <source>Alt+1</source>
         <translation></translation>
     </message>
@@ -10086,17 +10091,17 @@ Guardar alterações?</translation>
         <translation type="vanished">Projeção de mapa mostrando um globo</translation>
     </message>
     <message>
-        <location filename="../src/gui/mainwindow.cpp" line="989"/>
+        <location filename="../src/gui/mainwindow.cpp" line="986"/>
         <source>Alt+2</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../src/gui/mainwindow.cpp" line="1003"/>
+        <location filename="../src/gui/mainwindow.cpp" line="1000"/>
         <source>Alt+4</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../src/gui/mainwindow.cpp" line="1010"/>
+        <location filename="../src/gui/mainwindow.cpp" line="1007"/>
         <source>Alt+5</source>
         <translation></translation>
     </message>
@@ -16928,11 +16933,11 @@ Salvar alterações?</translation>
         <translation type="vanished">Abrir Plano de Voo</translation>
     </message>
     <message>
-        <location filename="../src/gui/mainwindow.cpp" line="983"/>
-        <location filename="../src/gui/mainwindow.cpp" line="990"/>
-        <location filename="../src/gui/mainwindow.cpp" line="997"/>
-        <location filename="../src/gui/mainwindow.cpp" line="1004"/>
-        <location filename="../src/gui/mainwindow.cpp" line="1011"/>
+        <location filename="../src/gui/mainwindow.cpp" line="980"/>
+        <location filename="../src/gui/mainwindow.cpp" line="987"/>
+        <location filename="../src/gui/mainwindow.cpp" line="994"/>
+        <location filename="../src/gui/mainwindow.cpp" line="1001"/>
+        <location filename="../src/gui/mainwindow.cpp" line="1008"/>
         <source>Open or show the %1 dock window</source>
         <translation>Abrir ou mostrar a/o %1 na dock da janela</translation>
     </message>
@@ -24467,16 +24472,16 @@ You can save your current map markers from menu &quot;Markers&quot; to a file.</
     </message>
     <message>
         <location filename="../src/mapgui/mapthemehandler.cpp" line="871"/>
-        <source>&lt;p&gt;Click here to create an account or to request a key: &lt;a href=&quot;%1&quot;&gt;&lt;b&gt;%2&lt;/b&gt;&lt;/a&gt;&lt;/p&gt;</source>
+        <source>&lt;p style=&apos;white-space:pre&apos;&gt;Click here to create an account or to request a key:&lt;br/&gt;&lt;a href=&quot;%1&quot;&gt;&lt;b&gt;&lt;big&gt;%2&lt;/big&gt;&lt;/b&gt;&lt;/a&gt;&lt;/p&gt;</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/mapgui/mapthemehandler.cpp" line="891"/>
+        <location filename="../src/mapgui/mapthemehandler.cpp" line="892"/>
         <source>Map theme reverted to %1.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/mapgui/mapthemehandler.cpp" line="1019"/>
+        <location filename="../src/mapgui/mapthemehandler.cpp" line="1020"/>
         <source>Base path(s) for map themes not found.
 %1
 
@@ -24489,12 +24494,12 @@ Go to menu &quot;Tools&quot; -&gt; &quot;Options&quot; and then to page &quot;Ma
         <translation type="vanished">&lt;p&gt;Clique aqui para criar uma conta: &lt;a href=&quot;%1&quot;&gt;%2&lt;/a&gt;&lt;/p&gt;</translation>
     </message>
     <message>
-        <location filename="../src/mapgui/mapthemehandler.cpp" line="872"/>
+        <location filename="../src/mapgui/mapthemehandler.cpp" line="873"/>
         <source>Link</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../src/mapgui/mapthemehandler.cpp" line="875"/>
+        <location filename="../src/mapgui/mapthemehandler.cpp" line="876"/>
         <source>&lt;p&gt;The map theme &quot;%1&quot; requires additional information.&lt;/p&gt;&lt;p&gt;You have to create an account at the related website and then create an username, an access key, API key or a token.&lt;br/&gt;Most of these services offer a free plan, while others require a small fee.&lt;/p&gt;&lt;p&gt;Then go to menu &quot;Tools&quot; -&gt; &quot;Options&quot; and to page &quot;Map Theme Keys&quot; in Little Navmap and enter the information for the key or keys below:&lt;/p&gt;&lt;ul&gt;&lt;li&gt;%2&lt;/li&gt;&lt;/ul&gt;&lt;p&gt;You cannot use the map until this is done.&lt;/p&gt;%3</source>
         <translation type="unfinished"></translation>
     </message>
@@ -24503,7 +24508,7 @@ Go to menu &quot;Tools&quot; -&gt; &quot;Options&quot; and then to page &quot;Ma
         <translation type="vanished">&lt;p&gt;O tema do mapa &quot;%1&quot; requer informações adicionais.&lt;/p&gt;&lt;p&gt;Você deve criar uma conta de usuário no site relacionado e, em seguida, criar um nome de usuário, uma chave de acesso ou um token.&lt;br/&gt;A maioria desses serviços oferecem um plano gratuito para amadores.&lt;/p&gt;&lt;p&gt;Em seguida, vá ao menu &quot;Configurações&quot; -&gt; &quot;Opções&quot; e à página &quot;Chaves de exibição do mapa&quot; no Little Navmap e insira as informações para a(s) chave(s) abaixo:&lt;/p&gt;&lt;ul&gt;&lt;li&gt;%2&lt;/li&gt;&lt;/ul&gt;&lt;p&gt;O mapa não será exibido corretamente até que isso seja feito.&lt;/p&gt;%3</translation>
     </message>
     <message>
-        <location filename="../src/mapgui/mapthemehandler.cpp" line="883"/>
+        <location filename="../src/mapgui/mapthemehandler.cpp" line="884"/>
         <source>&lt;/li&gt;&lt;li&gt;</source>
         <translation></translation>
     </message>
@@ -24512,37 +24517,37 @@ Go to menu &quot;Tools&quot; -&gt; &quot;Options&quot; and then to page &quot;Ma
         <translation type="vanished">Não &amp;mostre este diálogo novamente.</translation>
     </message>
     <message>
-        <location filename="../src/mapgui/mapthemehandler.cpp" line="902"/>
+        <location filename="../src/mapgui/mapthemehandler.cpp" line="903"/>
         <source>Map theme changed to %1.</source>
         <translation>Tema do mapa mudou para %1.</translation>
     </message>
     <message>
-        <location filename="../src/mapgui/mapthemehandler.cpp" line="917"/>
+        <location filename="../src/mapgui/mapthemehandler.cpp" line="918"/>
         <source>Mercator</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../src/mapgui/mapthemehandler.cpp" line="922"/>
+        <location filename="../src/mapgui/mapthemehandler.cpp" line="923"/>
         <source>Spherical</source>
         <translation>Esférico</translation>
     </message>
     <message>
-        <location filename="../src/mapgui/mapthemehandler.cpp" line="928"/>
+        <location filename="../src/mapgui/mapthemehandler.cpp" line="929"/>
         <source>Map projection changed to %1.</source>
         <translation>Projeção do mapa mudou para %1.</translation>
     </message>
     <message>
-        <location filename="../src/mapgui/mapthemehandler.cpp" line="978"/>
+        <location filename="../src/mapgui/mapthemehandler.cpp" line="979"/>
         <source>Directory is set to the included stock themes. You have to set a directory outside of the installation.</source>
         <translation>O diretório está definido para os temas de estoque incluídos. Você precisa definir um diretório fora da instalação.</translation>
     </message>
     <message>
-        <location filename="../src/mapgui/mapthemehandler.cpp" line="993"/>
+        <location filename="../src/mapgui/mapthemehandler.cpp" line="994"/>
         <source>Directory is valid. No map themes found inside.</source>
         <translation>O diretório é válido. Nenhum tema de mapa encontrado no interior.</translation>
     </message>
     <message>
-        <location filename="../src/mapgui/mapthemehandler.cpp" line="995"/>
+        <location filename="../src/mapgui/mapthemehandler.cpp" line="996"/>
         <source>Directory is valid. %1 %2 found.</source>
         <translation>O diretório é válido. %1 %2 encontrado(s).</translation>
     </message>
@@ -24559,7 +24564,7 @@ Vá ao menu &quot;Configurações&quot; -&gt; &quot;Opções&quot; e depois à p
     </message>
     <message>
         <location filename="../src/mapgui/mapthemehandler.cpp" line="313"/>
-        <location filename="../src/mapgui/mapthemehandler.cpp" line="995"/>
+        <location filename="../src/mapgui/mapthemehandler.cpp" line="996"/>
         <source>map themes</source>
         <translation>temas do mapa</translation>
     </message>
@@ -24608,7 +24613,7 @@ Vá ao menu &quot;Configurações&quot; -&gt; &quot;Opções&quot; e depois à p
     </message>
     <message>
         <location filename="../src/mapgui/mapthemehandler.cpp" line="313"/>
-        <location filename="../src/mapgui/mapthemehandler.cpp" line="995"/>
+        <location filename="../src/mapgui/mapthemehandler.cpp" line="996"/>
         <source>map theme</source>
         <translation>tema do mapa</translation>
     </message>
@@ -24619,7 +24624,7 @@ Vá ao menu &quot;Configurações&quot; -&gt; &quot;Opções&quot; e depois à p
 %1</translation>
     </message>
     <message>
-        <location filename="../src/mapgui/mapthemehandler.cpp" line="1024"/>
+        <location filename="../src/mapgui/mapthemehandler.cpp" line="1025"/>
         <source>,
 </source>
         <translation></translation>
@@ -25884,52 +25889,52 @@ Assegure-se de que o mapa preencha a janela completamente.</translation>
         <translation>Ao ler a declinação magnética do banco de dados:</translation>
     </message>
     <message>
-        <location filename="../src/app/navapp.cpp" line="1388"/>
+        <location filename="../src/app/navapp.cpp" line="1390"/>
         <source>&lt;p&gt;&lt;b&gt;%1 did not exit cleanly the last time.&lt;/b&gt;&lt;br/&gt;This was most likely caused by a crash.&lt;/p&gt;&lt;p&gt;A crash report has been generated and saved with all related files in a Zip archive.&lt;/p&gt;&lt;p&gt;%2&amp;nbsp;(click to show file in your file manager)&lt;/p&gt;&lt;p&gt;You might want to send this file to the author of %1 to investigate the crash.&lt;/p&gt;&lt;p&gt;&lt;b&gt;Please make sure to use the latest version of %1 before reporting a crash and describe all steps to reproduce the problem.&lt;/b&gt;&lt;/p&gt;&lt;p&gt;%3&lt;/p&gt;&lt;p&gt;&lt;b&gt;Select options to skip for a safe start or select &quot;Cancel&quot; to continue normally.&lt;/b&gt;&lt;/p&gt;</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/app/navapp.cpp" line="1400"/>
+        <location filename="../src/app/navapp.cpp" line="1402"/>
         <source>%1 - Crash Detected</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/app/navapp.cpp" line="1405"/>
+        <location filename="../src/app/navapp.cpp" line="1407"/>
         <source>&amp;Reset all Settings
 Completely clears all settings except scenery library databases and userpoints.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/app/navapp.cpp" line="1409"/>
+        <location filename="../src/app/navapp.cpp" line="1411"/>
         <source>Window &amp;Layout
 Resets the layout of all dock windows and the main window back to default.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/app/navapp.cpp" line="1413"/>
+        <location filename="../src/app/navapp.cpp" line="1415"/>
         <source>&amp;Flight Plan, Aircraft Performance, KML and User Aircraft Trail
 Skips loading of the current files and clears the current user aircraft trail.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/app/navapp.cpp" line="1417"/>
+        <location filename="../src/app/navapp.cpp" line="1419"/>
         <source>&amp;Map Display Settings and Map Markers
 Resets all map display settings in menu &quot;View&quot; and clears all map markers.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/app/navapp.cpp" line="1421"/>
+        <location filename="../src/app/navapp.cpp" line="1423"/>
         <source>&amp;Information and Search
 Skips loading of search parameters and content in the information window.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/app/navapp.cpp" line="1442"/>
+        <location filename="../src/app/navapp.cpp" line="1444"/>
         <source>&amp;Apply and Start</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/app/navapp.cpp" line="1443"/>
+        <location filename="../src/app/navapp.cpp" line="1445"/>
         <source>&amp;Continue normal Start</source>
         <translation type="unfinished"></translation>
     </message>
@@ -37554,8 +37559,8 @@ Needs GLOBE offline elevation data installed.</source>
     </message>
     <message>
         <location filename="../src/profile/profilewidget.cpp" line="752"/>
-        <location filename="../src/profile/profilewidget.cpp" line="1811"/>
-        <location filename="../src/profile/profilewidget.cpp" line="1813"/>
+        <location filename="../src/profile/profilewidget.cpp" line="1816"/>
+        <location filename="../src/profile/profilewidget.cpp" line="1818"/>
         <source> %1</source>
         <oldsource> ►</oldsource>
         <translation></translation>
@@ -37590,33 +37595,33 @@ Needs GLOBE offline elevation data installed.</source>
         <translation type="vanished">Plano de Voo não é válido.</translation>
     </message>
     <message>
-        <location filename="../src/profile/profilewidget.cpp" line="1358"/>
+        <location filename="../src/profile/profilewidget.cpp" line="1363"/>
         <source> /</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../src/profile/profilewidget.cpp" line="1365"/>
-        <location filename="../src/profile/profilewidget.cpp" line="1368"/>
+        <location filename="../src/profile/profilewidget.cpp" line="1370"/>
+        <location filename="../src/profile/profilewidget.cpp" line="1373"/>
         <source> / </source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../src/profile/profilewidget.cpp" line="2556"/>
+        <location filename="../src/profile/profilewidget.cpp" line="2575"/>
         <source>to</source>
         <translation>para</translation>
     </message>
     <message>
-        <location filename="../src/profile/profilewidget.cpp" line="2574"/>
+        <location filename="../src/profile/profilewidget.cpp" line="2596"/>
         <source>from</source>
         <translation>de</translation>
     </message>
     <message>
-        <location filename="../src/profile/profilewidget.cpp" line="2597"/>
+        <location filename="../src/profile/profilewidget.cpp" line="2619"/>
         <source>, %1, %2 %3</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../src/profile/profilewidget.cpp" line="2602"/>
+        <location filename="../src/profile/profilewidget.cpp" line="2624"/>
         <source>Course: </source>
         <translation>Curso: </translation>
     </message>
@@ -37625,127 +37630,133 @@ Needs GLOBE offline elevation data installed.</source>
         <translation type="vanished">Proa: </translation>
     </message>
     <message>
-        <location filename="../src/profile/profilewidget.cpp" line="1684"/>
+        <location filename="../src/profile/profilewidget.cpp" line="1689"/>
         <source>TOC %1</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../src/profile/profilewidget.cpp" line="1702"/>
+        <location filename="../src/profile/profilewidget.cpp" line="1707"/>
         <source>TOD %1</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../src/profile/profilewidget.cpp" line="1797"/>
+        <location filename="../src/profile/profilewidget.cpp" line="1802"/>
         <source>IND %1</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../src/profile/profilewidget.cpp" line="1801"/>
+        <location filename="../src/profile/profilewidget.cpp" line="1806"/>
         <source>ALT %1</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../src/profile/profilewidget.cpp" line="1873"/>
+        <location filename="../src/profile/profilewidget.cpp" line="1878"/>
         <source> Initializing ... </source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/profile/profilewidget.cpp" line="1891"/>
+        <location filename="../src/profile/profilewidget.cpp" line="1896"/>
         <source>No Flight Plan.
 A departure and destination, as well as a valid elevation profile, are needed.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/profile/profilewidget.cpp" line="1912"/>
+        <location filename="../src/profile/profilewidget.cpp" line="1917"/>
         <source>The flight plan is not valid.
 A departure and destination, as well as a valid elevation profile, are needed.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/profile/profilewidget.cpp" line="1928"/>
+        <location filename="../src/profile/profilewidget.cpp" line="1921"/>
+        <source>
+Flight plan legs should not be longer than %1 NM when using the online elevation data.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/profile/profilewidget.cpp" line="1939"/>
         <source> Calculating elevation profile ... </source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/profile/profilewidget.cpp" line="2619"/>
+        <location filename="../src/profile/profilewidget.cpp" line="2641"/>
         <source>Heading: </source>
         <comment>Aircraft heading</comment>
         <translation>Proa: </translation>
     </message>
     <message>
-        <location filename="../src/profile/profilewidget.cpp" line="2630"/>
+        <location filename="../src/profile/profilewidget.cpp" line="2652"/>
         <source>Required Flight Path Angle: </source>
         <translation>Ângulo de trajetória de voo necessário: </translation>
     </message>
     <message>
-        <location filename="../src/profile/profilewidget.cpp" line="2630"/>
+        <location filename="../src/profile/profilewidget.cpp" line="2652"/>
         <source>Flight path angle: </source>
         <translation>Ângulo de trajetória de voo: </translation>
     </message>
     <message>
-        <location filename="../src/profile/profilewidget.cpp" line="2631"/>
+        <location filename="../src/profile/profilewidget.cpp" line="2653"/>
         <source>%L1 °</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../src/profile/profilewidget.cpp" line="2639"/>
-        <location filename="../src/profile/profilewidget.cpp" line="2649"/>
+        <location filename="../src/profile/profilewidget.cpp" line="2661"/>
+        <location filename="../src/profile/profilewidget.cpp" line="2671"/>
         <source>%1 above</source>
         <translation>%1 acima</translation>
     </message>
     <message>
-        <location filename="../src/profile/profilewidget.cpp" line="2642"/>
-        <location filename="../src/profile/profilewidget.cpp" line="2653"/>
+        <location filename="../src/profile/profilewidget.cpp" line="2664"/>
+        <location filename="../src/profile/profilewidget.cpp" line="2675"/>
         <source>, </source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../src/profile/profilewidget.cpp" line="2642"/>
+        <location filename="../src/profile/profilewidget.cpp" line="2664"/>
         <source>Ground: </source>
         <translation>Solo: </translation>
     </message>
     <message>
-        <location filename="../src/profile/profilewidget.cpp" line="2652"/>
+        <location filename="../src/profile/profilewidget.cpp" line="2674"/>
         <source>Ground max. in %1 radius: </source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/profile/profilewidget.cpp" line="2657"/>
+        <location filename="../src/profile/profilewidget.cpp" line="2679"/>
         <source>Leg Safe Altitude: </source>
         <translation>Fixo de Altitude Segura: </translation>
     </message>
     <message>
-        <location filename="../src/profile/profilewidget.cpp" line="2667"/>
+        <location filename="../src/profile/profilewidget.cpp" line="2689"/>
         <source>%1°M, %2</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../src/profile/profilewidget.cpp" line="2685"/>
+        <location filename="../src/profile/profilewidget.cpp" line="2707"/>
         <source> %L1 °]</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../src/profile/profilewidget.cpp" line="2880"/>
+        <location filename="../src/profile/profilewidget.cpp" line="2902"/>
         <source>&lt;b&gt;Vert. Path Deviation:&lt;/b&gt; %1</source>
         <translation>&lt;b&gt;Desvio do Caminho Vertical:&lt;/b&gt; %1</translation>
     </message>
     <message>
-        <location filename="../src/profile/profilewidget.cpp" line="2884"/>
+        <location filename="../src/profile/profilewidget.cpp" line="2906"/>
         <source>&lt;b&gt;Required Angle and Speed:&lt;/b&gt; %1</source>
         <translation>&lt;b&gt;Ângulo e Velocidade Necessários:&lt;/b&gt; %1</translation>
     </message>
     <message>
-        <location filename="../src/profile/profilewidget.cpp" line="2884"/>
+        <location filename="../src/profile/profilewidget.cpp" line="2906"/>
         <source>&lt;b&gt;Angle and Speed:&lt;/b&gt; %1</source>
         <translation>&lt;b&gt;Ângulo e Velocidade:&lt;/b&gt; %1</translation>
     </message>
     <message>
-        <location filename="../src/profile/profilewidget.cpp" line="2890"/>
+        <location filename="../src/profile/profilewidget.cpp" line="2912"/>
         <source>&lt;b&gt;Destination:&lt;/b&gt; %1</source>
         <translation>&lt;b&gt;Destino:&lt;/b&gt; %1</translation>
     </message>
     <message>
-        <location filename="../src/profile/profilewidget.cpp" line="2899"/>
+        <location filename="../src/profile/profilewidget.cpp" line="2921"/>
         <source>,&amp;nbsp;&amp;nbsp;&amp;nbsp;</source>
         <comment>Separator for profile header</comment>
         <translation></translation>
@@ -37759,7 +37770,7 @@ A departure and destination, as well as a valid elevation profile, are needed.</
         <translation type="vanished">&lt;b&gt;Destino: %1 (%2). Ponto de Descida: %3%4.&lt;/b&gt;&amp;nbsp;&amp;nbsp;</translation>
     </message>
     <message>
-        <location filename="../src/profile/profilewidget.cpp" line="2870"/>
+        <location filename="../src/profile/profilewidget.cpp" line="2892"/>
         <source> (%1)</source>
         <translation></translation>
     </message>
@@ -37772,17 +37783,17 @@ A departure and destination, as well as a valid elevation profile, are needed.</
         <translation type="vanished">, %1Vento %2°M, %3</translation>
     </message>
     <message>
-        <location filename="../src/profile/profilewidget.cpp" line="2670"/>
+        <location filename="../src/profile/profilewidget.cpp" line="2692"/>
         <source>Manual </source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../src/profile/profilewidget.cpp" line="2670"/>
+        <location filename="../src/profile/profilewidget.cpp" line="2692"/>
         <source>%1Wind: </source>
         <translation>%1 Vento: </translation>
     </message>
     <message>
-        <location filename="../src/profile/profilewidget.cpp" line="2680"/>
+        <location filename="../src/profile/profilewidget.cpp" line="2702"/>
         <source>, %1 %2</source>
         <translation></translation>
     </message>
@@ -37811,38 +37822,38 @@ A departure and destination, as well as a valid elevation profile, are needed.</
         <translation type="vanished">Plano de Voo não é válido</translation>
     </message>
     <message>
-        <location filename="../src/profile/profilewidget.cpp" line="1355"/>
+        <location filename="../src/profile/profilewidget.cpp" line="1360"/>
         <source> %1° %2 </source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../src/profile/profilewidget.cpp" line="1831"/>
+        <location filename="../src/profile/profilewidget.cpp" line="1836"/>
         <source> %1 N</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../src/profile/profilewidget.cpp" line="2590"/>
-        <location filename="../src/profile/profilewidget.cpp" line="2593"/>
+        <location filename="../src/profile/profilewidget.cpp" line="2612"/>
+        <location filename="../src/profile/profilewidget.cpp" line="2615"/>
         <source> %1 </source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../src/profile/profilewidget.cpp" line="2842"/>
+        <location filename="../src/profile/profilewidget.cpp" line="2864"/>
         <source>&lt;b&gt;Alternate:&lt;/b&gt; %1</source>
         <translation>&lt;b&gt;Alternativo:&lt;/b&gt; %1</translation>
     </message>
     <message>
-        <location filename="../src/profile/profilewidget.cpp" line="2860"/>
+        <location filename="../src/profile/profilewidget.cpp" line="2882"/>
         <source>&lt;b&gt;Destination:&lt;/b&gt; %1 (%2)</source>
         <translation>&lt;b&gt;Destino:&lt;/b&gt; %1 (%2)</translation>
     </message>
     <message>
-        <location filename="../src/profile/profilewidget.cpp" line="2868"/>
+        <location filename="../src/profile/profilewidget.cpp" line="2890"/>
         <source>&lt;b&gt;Top of Descent:&lt;/b&gt; %1%2</source>
         <translation>&lt;b&gt;Ponto de Descida:&lt;/b&gt; %1%2</translation>
     </message>
     <message>
-        <location filename="../src/profile/profilewidget.cpp" line="2869"/>
+        <location filename="../src/profile/profilewidget.cpp" line="2891"/>
         <source>Passed</source>
         <translation>Passou</translation>
     </message>
@@ -42216,11 +42227,6 @@ Calculado com base no perfil de performance da aeronave.</translation>
         <location filename="../src/route/routelabel.cpp" line="644"/>
         <source>/</source>
         <translation></translation>
-    </message>
-    <message>
-        <location filename="../src/db/databaseloader.cpp" line="103"/>
-        <source>%1&lt;br/&gt;&lt;br/&gt;&lt;b&gt;Found:&lt;/b&gt;</source>
-        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -49504,37 +49510,37 @@ Reduza os detalhes do mapa no menu &quot;Visão&quot;.</translation>
 <context>
     <name>StyleHandler</name>
     <message>
-        <location filename="../src/gui/stylehandler.cpp" line="489"/>
+        <location filename="../src/gui/stylehandler.cpp" line="490"/>
         <source>&amp;Select automatically</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/gui/stylehandler.cpp" line="492"/>
+        <location filename="../src/gui/stylehandler.cpp" line="493"/>
         <source>Switch user interface style based on system settings</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/gui/stylehandler.cpp" line="506"/>
+        <location filename="../src/gui/stylehandler.cpp" line="507"/>
         <source>Switch user interface style to &quot;%1&quot;</source>
         <translation>Alterar o estilo da interface do usuário para &quot;%1&quot;</translation>
     </message>
     <message>
-        <location filename="../src/gui/stylehandler.cpp" line="511"/>
+        <location filename="../src/gui/stylehandler.cpp" line="512"/>
         <source>Shift+F2</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../src/gui/stylehandler.cpp" line="516"/>
+        <location filename="../src/gui/stylehandler.cpp" line="517"/>
         <source>Shift+F3</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../src/gui/stylehandler.cpp" line="562"/>
+        <location filename="../src/gui/stylehandler.cpp" line="563"/>
         <source>Applying style ...</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/gui/stylehandler.cpp" line="583"/>
+        <location filename="../src/gui/stylehandler.cpp" line="584"/>
         <source>Applying style ... </source>
         <translation type="unfinished"></translation>
     </message>
