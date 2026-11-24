@@ -95,7 +95,6 @@ void messages::resetAllMessages()
   settings.setValue(lnm::ACTIONS_SHOW_DELETE_TRAIL, true);
   settings.setValue(lnm::ACTIONS_SHOW_DISCONNECT_INFO, true);
   settings.setValue(lnm::ACTIONS_SHOW_INSTALL_DIRS, true);
-  settings.setValue(lnm::ACTIONS_SHOW_INSTALL_GLOBE, true);
   settings.setValue(lnm::ACTIONS_SHOW_LOAD_FLP_WARN, true);
   settings.setValue(lnm::ACTIONS_SHOW_LOAD_ALT_WARN, true);
   settings.setValue(lnm::ACTIONS_SHOW_LOAD_ALT_CORRECTED, true);
@@ -176,4 +175,5 @@ void messages::resetEssentialMessages()
   settings.setValue(lnm::ACTIONS_SHOW_APPLE_TRANSLOCATION, true);
   settings.setValue(lnm::ACTIONS_SHOW_OPTIONS_RELOAD_SCENERY_LIBRARY, true);
   settings.setValue(lnm::ACTIONS_SHOW_CUSTOM_PROCEDURE_DIALOG, true);
+  settings.setValue(lnm::ACTIONS_SHOW_INSTALL_GLOBE, true);
 }

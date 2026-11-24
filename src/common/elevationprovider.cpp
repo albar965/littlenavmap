@@ -32,7 +32,6 @@
 #include "common/constants.h"
 #endif
 
-
 #include <marble/GeoDataCoordinates.h>
 #include <marble/ElevationModel.h>
 
@@ -275,9 +274,11 @@ void ElevationProvider::showErrors()
 #ifndef DEBUG_INFORMATION_NO_STARTUP_MESSAGES
     QUrl url = atools::gui::HelpHandler::getHelpUrlWeb(lnm::helpOnlineInstallGlobeUrl, lnm::helpLanguageOnline());
     QString message = tr(
-      "<p>The online elevation data which is used by default for the elevation profile is limited and has some small issues.<br/>"
-      "Therefore, it is recommended to download and use the offline GLOBE elevation data which provides world wide coverage.</p>"
-      "<p>Go to the main menu -&gt; \"Tools\" -&gt; \"Options\" and then to page \"Elevation Data\" to add the GLOBE data.</p>"
+      "<p>The online elevation data which is used by default for the elevation profile is limited and has issues.<br/>"
+      "Therefore, it is strongly recommended to download and use the offline GLOBE elevation data which provides world wide "
+      "coverage and significantly faster calculation.</p>"
+      "<p>Go to the main menu -&gt; \"Tools\" -&gt; \"Options\" and then to page \"Elevation Data\". "
+        "Follow the instructions on the options page to add the GLOBE data.</p>"
         "<p><a href=\"%1\">Click here for more information in the Little Navmap online manual</a></p>",
       "Keep instructions in sync with translated menus").arg(url.toString());
 

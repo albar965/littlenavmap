@@ -64,7 +64,7 @@ static const int ELEVATION_CHANGE_ONLINE_UPDATE_TIMEOUT_MS = 5000;
 static const int ELEVATION_CHANGE_OFFLINE_UPDATE_TIMEOUT_MS = 100;
 
 /* Do not calculate a profile for legs longer than this value */
-static const int ELEVATION_MAX_LEG_NM = 2000;
+static const int ELEVATION_MAX_LEG_NM = 1000;
 
 /* Zoom to aircraft + 100 NM or to aircraft to destination */
 static const float ZOOM_DESTINATION_MAX_AHEAD = 100.f;
@@ -573,7 +573,7 @@ bool ProfileWidget::isCalculating() const
 bool ProfileWidget::hasValidRouteForDisplay() const
 {
   const Route& route = NavApp::getRouteConst();
-  return legList->hasLegs() && route.getSizeWithoutAlternates() >= 2 &&
+  return !waypointX.isEmpty() && legList->hasLegs() && route.getSizeWithoutAlternates() >= 2 &&
          route.getAltitudeLegs().size() >= 2 &&
          route.size() == route.getAltitudeLegs().size();
 }
@@ -942,6 +942,9 @@ void ProfileWidget::paintEvent(QPaintEvent *)
   static const text::Flag TEXTFLAGS = text::IDENT;
   static const text::Attribute TEXTATTS = text::ROUTE_BG_COLOR | text::ABS;
 
+  if(NavApp::isShuttingDown())
+    return;
+
   // Saved route that was used to create the geometry
   const Route& route = legList->route;
 
@@ -1025,13 +1028,15 @@ void ProfileWidget::paintEvent(QPaintEvent *)
   painter.fillRect(paintMargin, 0, rect().width() - paintMargin * 2, rect().height(), mapcolors::profileSkyColor);
 
   // Draw the ground ======================================================
-  if(displayOptions.testFlag(optsp::PROFILE_GROUND_AROUND))
+  // Lighter green in vicinity
+  if(displayOptions.testFlag(optsp::PROFILE_GROUND_AROUND) && NavApp::isGlobeOfflineProvider())
   {
     painter.setBrush(mapcolors::profileLandColorOuter);
     painter.setPen(mapcolors::profileLandOutlinePen);
     painter.drawPolygon(landPolygonOuter);
   }
 
+  // Dark green below plan
   if(displayOptions.testFlag(optsp::PROFILE_GROUND))
   {
     painter.setBrush(mapcolors::profileLandColorInner);
@@ -1428,7 +1433,7 @@ void ProfileWidget::paintEvent(QPaintEvent *)
       const proc::MapProcedureLeg& procedureLeg = leg.getProcedureLeg();
 
       waypointIndex--;
-      if(altLegs.at(waypointIndex).isEmpty())
+      if(!atools::inRange(altLegs, waypointIndex) || altLegs.at(waypointIndex).isEmpty())
         continue;
 
       int legScreenWidth = calcLegScreenWidth(altLegs, waypointIndex) - 10;
@@ -1488,7 +1493,7 @@ void ProfileWidget::paintEvent(QPaintEvent *)
       const proc::MapProcedureLeg& procedureLeg = leg.getProcedureLeg();
 
       waypointIndex--;
-      if(altLegs.at(waypointIndex).isEmpty())
+      if(!atools::inRange(altLegs, waypointIndex) || altLegs.at(waypointIndex).isEmpty())
         continue;
 
       int legScreenWidth = calcLegScreenWidth(altLegs, waypointIndex) - 10;
@@ -1524,7 +1529,7 @@ void ProfileWidget::paintEvent(QPaintEvent *)
     for(int routeIndex : indexes)
     {
       waypointIndex--;
-      if(altLegs.at(waypointIndex).isEmpty())
+      if(!atools::inRange(altLegs, waypointIndex) || altLegs.at(waypointIndex).isEmpty())
         continue;
 
       const RouteLeg& leg = route.value(routeIndex);
@@ -1568,7 +1573,7 @@ void ProfileWidget::paintEvent(QPaintEvent *)
     {
       waypointIndex--;
 
-      if(altLegs.at(waypointIndex).isEmpty())
+      if(!atools::inRange(altLegs, waypointIndex) || altLegs.at(waypointIndex).isEmpty())
         continue;
 
       if(routeIndex < activeRouteLeg - 1)
@@ -1614,13 +1619,13 @@ void ProfileWidget::paintEvent(QPaintEvent *)
     waypointIndex = waypointX.size();
     for(int routeIndex : indexes)
     {
-      const RouteLeg& leg = route.value(routeIndex);
       waypointIndex--;
-      if(altLegs.at(waypointIndex).isEmpty())
+      if(!atools::inRange(altLegs, waypointIndex) || altLegs.at(waypointIndex).isEmpty())
         continue;
-      QPoint symPt(altLegs.at(waypointIndex).constLast());
+      const QPoint symPt(altLegs.at(waypointIndex).constLast());
 
       // Draw all airport except destination and departure
+      const RouteLeg& leg = route.value(routeIndex);
       if(leg.getMapType() == map::AIRPORT && routeIndex > 0 && routeIndex < route.getDestinationAirportLegIndex())
       {
         symbolPainter.drawAirportSymbol(&painter, leg.getAirport(), symPt.x(), symPt.y(), airportSize, sf::FILL_ROUTE, false, false, false);
@@ -1908,9 +1913,15 @@ void ProfileWidget::paintInvalidRouteMessage(QPainter& painter)
   painter.setPen(atools::util::HtmlBuilder::COLOR_FOREGROUND_WARNING);
   painter.setBackground(atools::util::HtmlBuilder::COLOR_BACKGROUND_WARNING);
   painter.setBackgroundMode(Qt::OpaqueMode);
-  painter.drawText(rect().translated(textX, textY), Qt::AlignLeft,
-                   tr("The flight plan is not valid.\n"
-                      "A departure and destination, as well as a valid elevation profile, are needed."));
+
+  QString message = tr("The flight plan is not valid.\n"
+                       "A departure and destination, as well as a valid elevation profile, are needed.");
+
+  if(!NavApp::isGlobeOfflineProvider())
+    message += tr("\nFlight plan legs should not be longer than %1 NM when using the online elevation data.").
+               arg(QLocale().toString(ELEVATION_MAX_LEG_NM));
+
+  painter.drawText(rect().translated(textX, textY), Qt::AlignLeft, message);
 }
 
 void ProfileWidget::paintCalculatingMessage(QPainter& painter)
@@ -2222,13 +2233,23 @@ ElevationLegList ProfileWidget::fetchRouteElevationsThread(ElevationLegList legs
   legs.elevationLegsOuter.clear();
   legs.geometry.clear();
 
+  // Return empty result for too short route
   if(legs.route.getSizeWithoutAlternates() <= 1)
-    // Return empty result
     return ElevationLegList();
 
+  // Return empty result for missing profile calculation
   if(legs.route.getAltitudeLegs().isEmpty())
-    // Return empty result
     return ElevationLegList();
+
+  // Check if any legs are too long when using online data
+  if(!NavApp::isGlobeOfflineProvider())
+  {
+    for(int i = 1; i <= legs.route.getDestinationLegIndex(); i++)
+    {
+      if(legs.route.getAltitudeLegAt(i).getDistanceTo() > ELEVATION_MAX_LEG_NM)
+        return ElevationLegList();
+    }
+  }
 
   // Total calculated distance across all legs
   double totalDistanceNmInner = 0., totalDistanceNmOuter = 0.;
@@ -2246,35 +2267,49 @@ ElevationLegList ProfileWidget::fetchRouteElevationsThread(ElevationLegList legs
       break;
 
     // Skip for too long segments when using the marble online provider
-    if(altitudeLeg.getDistanceTo() < ELEVATION_MAX_LEG_NM || NavApp::isGlobeOfflineProvider())
+    LineString geometry = altitudeLeg.getGeoLineString();
+
+    geometry.removeInvalid();
+    if(geometry.size() == 1)
+      geometry.append(geometry.constFirst());
+
+    legs.geometry.append(geometry);
+
+    // Includes first and last point - both do *not* have the same size
+    LineString elevationsInner, elevationsOuter;
+    if(!fetchRouteElevations(elevationsInner, geometry, optsp::ELEVATION_SAMPLE_RADIUS_INNER_NM, true /* precision */))
+      return ElevationLegList();
+
+    if(elevationsInner.isEmpty())
+      return ElevationLegList();
+
+    if(NavApp::isGlobeOfflineProvider())
     {
-      LineString geometry = altitudeLeg.getGeoLineString();
-
-      geometry.removeInvalid();
-      if(geometry.size() == 1)
-        geometry.append(geometry.constFirst());
-
-      // Includes first and last point - both do *not* have the same size
-      LineString elevationsInner;
-      if(!fetchRouteElevations(elevationsInner, geometry, optsp::ELEVATION_SAMPLE_RADIUS_INNER_NM, true /* precision */))
-        return ElevationLegList();
-
-      LineString elevationsOuter;
       if(!fetchRouteElevations(elevationsOuter, geometry, elevationSampleRadiusOuterNm, false /* precision */))
         return ElevationLegList();
 
-      if(elevationsInner.isEmpty() || elevationsOuter.isEmpty())
+      if(elevationsOuter.isEmpty())
         return ElevationLegList();
-
-      legs.geometry.append(geometry);
-
-      fillElevationLeg(legInner, legs, totalDistanceNmInner, elevationsInner, altitudeLeg);
-      fillElevationLeg(legOuter, legs, totalDistanceNmOuter, elevationsOuter, altitudeLeg);
     }
 
+    // Calculate inner - elevation below flight plan line =============================
+    fillElevationLeg(legInner, legInner.maxElevationFt, totalDistanceNmInner, elevationsInner, altitudeLeg);
     legs.elevationLegsInner.append(legInner);
-    legs.elevationLegsOuter.append(legOuter);
 
+    if(NavApp::isGlobeOfflineProvider())
+    {
+      // Calculate outer - elevation in vicinity of the flight plan line =============================
+      fillElevationLeg(legOuter, legOuter.maxElevationFt, totalDistanceNmOuter, elevationsOuter, altitudeLeg);
+      legs.elevationLegsOuter.append(legOuter);
+    }
+    else
+    {
+      legs.elevationLegsOuter.append(legInner);
+      totalDistanceNmOuter = totalDistanceNmInner;
+      legOuter.maxElevationFt = legInner.maxElevationFt;
+    }
+
+    legs.maxElevationFt = std::max(legs.maxElevationFt, std::max(legOuter.maxElevationFt, legInner.maxElevationFt));
   } // for(int i = 1; i <= legs.route.getDestinationLegIndex(); i++)
 
 #ifdef DEBUG_INFORMATION
@@ -2284,80 +2319,61 @@ ElevationLegList ProfileWidget::fetchRouteElevationsThread(ElevationLegList legs
   return legs;
 }
 
-bool ProfileWidget::fillElevationLeg(ElevationLeg& leg, ElevationLegList& legs, double& totalDistanceNm,
-                                     const atools::geo::LineString& elevations,
-                                     const RouteAltitudeLeg& altitudeLeg) const
+bool ProfileWidget::fillElevationLeg(ElevationLeg& leg, float& maxElevationFt, double& totalDistanceNm,
+                                     const atools::geo::LineString& elevations, const RouteAltitudeLeg& altitudeLeg) const
 {
   leg.ident = altitudeLeg.getIdent();
 
   // Used to adapt distances of all legs to total distance due to inaccuracies
   double scale = 1.;
 
-  // Skip for too long segments when using the marble online provider
-  if(altitudeLeg.getDistanceTo() < ELEVATION_MAX_LEG_NM || NavApp::isGlobeOfflineProvider())
+  double distNm = totalDistanceNm;
+  // Loop over all elevation points for the current leg
+  Pos lastPos;
+  for(int j = 0; j < elevations.size(); j++)
   {
-    double distNm = totalDistanceNm;
-    // Loop over all elevation points for the current leg
-    Pos lastPos;
-    for(int j = 0; j < elevations.size(); j++)
-    {
-      if(futurePrivate->terminateThreadSignal)
-        return false;
+    if(futurePrivate->terminateThreadSignal)
+      return false;
 
-      Pos coord = elevations[j];
-      float altFeet = atools::geo::meterToFeet(coord.getAltitude());
-      coord.setAltitude(altFeet);
+    Pos coord = elevations[j];
+    float altFeet = atools::geo::meterToFeet(coord.getAltitude());
+    coord.setAltitude(altFeet);
 
-      // Adjust maximum
-      if(altFeet > leg.maxElevationFt)
-        leg.maxElevationFt = altFeet;
+    // Adjust maximum
+    if(altFeet > maxElevationFt)
+      maxElevationFt = altFeet;
 
-      if(altFeet > legs.maxElevationFt)
-        legs.maxElevationFt = altFeet;
+    if(altFeet > maxElevationFt)
+      maxElevationFt = altFeet;
 
-      if(j > 0)
-        // Update total distance
-        distNm += atools::geo::meterToNm(lastPos.distanceMeterToDouble(coord));
+    if(j > 0)
+      // Update total distance
+      distNm += atools::geo::meterToNm(lastPos.distanceMeterToDouble(coord));
 
-      // Coordinate with elevation
-      leg.elevation.append(coord);
+    // Coordinate with elevation
+    leg.elevation.append(coord);
 
-      // Distance to elevation point from departure
-      leg.distances.append(distNm);
+    // Distance to elevation point from departure
+    leg.distances.append(distNm);
 
-      lastPos = coord;
-    }
+    lastPos = coord;
+  }
 
-    float distanceTo = altitudeLeg.getDistanceTo();
-    totalDistanceNm += distanceTo;
+  float distanceTo = altitudeLeg.getDistanceTo();
+  totalDistanceNm += distanceTo;
 
-    if(!leg.distances.isEmpty())
-    {
-      double lastDist = leg.distances.constLast();
-      if(atools::almostNotEqual(lastDist, totalDistanceNm))
-        // Accumulated distance is different from route total distance - adjust
-        // This can happen with the online elevation provider which does not return all points exactly on the leg
-        scale = totalDistanceNm / leg.distances.constLast();
-    }
-  } // if(altitudeLeg.getDistanceTo() < ELEVATION_MAX_LEG_NM || globe)
-  else
-    fillLongElevationLeg(leg, legs, totalDistanceNm, altitudeLeg);
+  if(!leg.distances.isEmpty())
+  {
+    double lastDist = leg.distances.constLast();
+    if(atools::almostNotEqual(lastDist, totalDistanceNm))
+      // Accumulated distance is different from route total distance - adjust
+      // This can happen with the online elevation provider which does not return all points exactly on the leg
+      scale = totalDistanceNm / leg.distances.constLast();
+  }
 
   applyCorrection(leg, scale);
 
   return true;
-}
-
-void ProfileWidget::fillLongElevationLeg(ElevationLeg& leg, ElevationLegList& legs, double& totalDistanceNm,
-                                         const RouteAltitudeLeg& altitudeLeg) const
-{
-  // Skip long segment
-  leg.distances.append(totalDistanceNm);
-  totalDistanceNm += atools::geo::meterToNm(altitudeLeg.getGeoLineString().lengthMeter());
-  leg.distances.append(totalDistanceNm);
-  leg.elevation = altitudeLeg.getGeoLineString();
-  leg.elevation.setAltitude(0.f);
-  legs.geometry.append(altitudeLeg.getGeoLineString());
 }
 
 void ProfileWidget::applyCorrection(ElevationLeg& leg, double scale) const
@@ -2399,6 +2415,9 @@ atools::geo::Pos ProfileWidget::calculatePos(int x)
 void ProfileWidget::calculateDistancesAndPos(int x, atools::geo::Pos& pos, int *routeIndex, float *distance,
                                              float *distanceToGo, float *groundElevationInner, float *groundElevationOuter, float *maxElev)
 {
+  if(waypointX.isEmpty())
+    return;
+
   if(x > waypointX.constLast())
     x = waypointX.constLast();
 
@@ -2486,7 +2505,7 @@ const ElevationLeg& ProfileWidget::legFromPos(float& groundElevation, const QLis
 
 void ProfileWidget::mouseMoveEvent(QMouseEvent *mouseEvent)
 {
-  if(!widgetVisible || !legList->hasLegs() || legList->route.isEmpty())
+  if(!widgetVisible || !legList->hasLegs() || legList->route.isEmpty() || waypointX.isEmpty())
     return;
 
   if(rubberBand == nullptr)
@@ -2559,6 +2578,9 @@ void ProfileWidget::buildTooltipText(int x, bool force)
   int index;
   float distance, distanceToGo, groundElevationInner, groundElevationOuter, maxElev;
   calculateDistancesAndPos(x, lastTooltipPos, &index, &distance, &distanceToGo, &groundElevationInner, &groundElevationOuter, &maxElev);
+
+  if(!lastTooltipPos.isValid())
+    return;
 
   if(!displayOpts.testFlag(optsp::PROFILE_TOOLTIP))
     // No tooltip but highlight selected. hightlight and follow need calculateDistancesAndPos() and lastTooltipPos

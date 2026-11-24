@@ -312,11 +312,8 @@ private:
   void calculateLandmass(QPolygon& landPolygon, const QList<ElevationLeg>& elevationLegs, int width, int height) const;
 
   /* Fill leg, leg list distances, altitudes and maximum altitude for leg and plan */
-  bool fillElevationLeg(ElevationLeg& leg, ElevationLegList& legs, double& totalDistanceNm, const atools::geo::LineString& elevations,
+  bool fillElevationLeg(ElevationLeg& leg, float& maxElevationFt, double& totalDistanceNm, const atools::geo::LineString& elevations,
                         const RouteAltitudeLeg& altitudeLeg) const;
-
-  /* Fill dummy values for a too long leg */
-  void fillLongElevationLeg(ElevationLeg& leg, ElevationLegList& legs, double& totalDistanceNm, const RouteAltitudeLeg& altitudeLeg) const;
 
   /* Adjust a correction for all distances in the leg.
    * This can happen with the online elevation provider which does not return all points exactly on the leg */
