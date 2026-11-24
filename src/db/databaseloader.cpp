@@ -71,36 +71,28 @@ DatabaseLoader::DatabaseLoader(QObject *parent)
 {
   // General contents table also shown in the loading dialog ====================
   /* *INDENT-OFF* */
- databaseInfoText = QStringLiteral("<table><tbody>"
+ databaseInfoText = QStringLiteral("<table width=\"70%\"><tbody>"
   "<tr>"
-      "<td width=\"60\"><b>%2</b></td>" // Files
-      "<td width=\"60\">&nbsp;&nbsp;&nbsp;&nbsp;%3</td>"
-      "<td width=\"60\"><b>%4</b></td>" // VOR
-      "<td width=\"60\">&nbsp;&nbsp;&nbsp;&nbsp;%5</td>"
-      "<td width=\"60\"><b>%6</b></td>" // Markers
-      "<td width=\"60\">&nbsp;&nbsp;&nbsp;&nbsp;%7</td>"
+      "<td {style}><b>%2</b></td><td {style}>%3</td>"// Files
+      "<td {style}><b>%4</b></td><td {style}>%5</td>"// VOR
+      "<td {style}><b>%6</b></td><td {style}>%7</td>"// Markers
     "</tr>"
     "<tr>"
-      "<td width=\"60\"><b>%8</b></td>"// Airports
-      "<td width=\"60\">&nbsp;&nbsp;&nbsp;&nbsp;%9</td>"
-      "<td width=\"60\"><b>%10</b></td>" // ILS
-      "<td width=\"60\">&nbsp;&nbsp;&nbsp;&nbsp;%11</td>"
-      "<td width=\"60\"><b>%12</b></td>" //Waypoints
-      "<td width=\"60\">&nbsp;&nbsp;&nbsp;&nbsp;%13</td>"
+      "<td {style}><b>%8</b></td><td {style}>%9</td>"// Airports
+      "<td {style}><b>%10</b></td><td {style}>%11</td>"// ILS
+      "<td {style}><b>%12</b></td><td {style}>%13</td>"//Waypoints
     "</tr>"
     "<tr>"
-      "<td width=\"60\"></td>"
-      "<td width=\"60\"></td>"
-      "<td width=\"60\"><b>%14</b></td>" // NDB
-      "<td width=\"60\">&nbsp;&nbsp;&nbsp;&nbsp;%15</td>"
-      "<td width=\"60\"><b>%16</b></td>"//Airspaces
-      "<td width=\"60\">&nbsp;&nbsp;&nbsp;&nbsp;%17</td>"
+      "<td ></td><td></td>" // Empty cell
+      "<td {style}><b>%14</b></td><td {style}>%15</td>"// NDB
+      "<td {style}><b>%16</b></td><td {style}>%17</td>"//Airspaces
     "</tr>"
   "</tbody></table>");
   /* *INDENT-ON* */
+  databaseInfoText.replace(QStringLiteral("{style}"), QStringLiteral("style=\"text-align: right;\""));
 
   // Header prefixed by errors, scenery files and other ================
-  databaseTextLoading = QObject::tr("%1<br/><br/><b>Found:</b>") % databaseInfoText;
+  databaseTextLoading = tr("%1<br/><br/><b>Found:</b>") % databaseInfoText;
 
   // Initialize aggregated classes used in thread
   navDatabaseErrors = new atools::fs::NavDatabaseErrors;
@@ -616,11 +608,11 @@ QString DatabaseLoader::labelText(const QString& textTemplate, QStringList heade
   return textTemplate.
          arg(atools::strJoin(header, QStringLiteral("<br/>"))).
          arg(files).arg(filesNum).
-         arg(tr("Airports:")).arg(locale.toString(progressShared->getNumAirports())).
-         arg(tr("VOR:")).arg(locale.toString(progressShared->getNumVors())).
-         arg(tr("ILS:")).arg(locale.toString(progressShared->getNumIls())).
-         arg(tr("NDB:")).arg(locale.toString(progressShared->getNumNdbs())).
-         arg(tr("Markers:")).arg(locale.toString(progressShared->getNumMarker())).
-         arg(tr("Waypoints:")).arg(locale.toString(progressShared->getNumWaypoints())).
-         arg(tr("Airspaces:")).arg(locale.toString(progressShared->getNumBoundaries()));
+         arg(tr("Airports:"), locale.toString(progressShared->getNumAirports()),
+             tr("VOR:"), locale.toString(progressShared->getNumVors()),
+             tr("ILS:"), locale.toString(progressShared->getNumIls()),
+             tr("NDB:"), locale.toString(progressShared->getNumNdbs()),
+             tr("Markers:"), locale.toString(progressShared->getNumMarker()),
+             tr("Waypoints:"), locale.toString(progressShared->getNumWaypoints()),
+             tr("Airspaces:"), locale.toString(progressShared->getNumBoundaries()));
 }
