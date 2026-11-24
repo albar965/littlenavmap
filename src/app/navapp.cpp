@@ -1160,7 +1160,9 @@ RouteController *NavApp::getRouteController()
 
 atools::gui::TabWidgetHandler *NavApp::getRouteTabHandler()
 {
-  return getRouteController()->getTabHandler();
+  if(getRouteController() != nullptr)
+    return getRouteController()->getTabHandler();
+  return nullptr;
 }
 
 const InfoController *NavApp::getInfoController()

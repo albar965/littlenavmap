@@ -1172,7 +1172,7 @@ void RouteController::restoreState()
 
   units->update();
 
-  connect(NavApp::getRouteTabHandler(), &atools::gui::TabWidgetHandler::tabOpened, this, &RouteController::updateRouteTabChangedStatus);
+  connect(tabHandlerRoute, &atools::gui::TabWidgetHandler::tabOpened, this, &RouteController::updateRouteTabChangedStatus);
 }
 
 void RouteController::resetWindowLayout()
@@ -4622,7 +4622,7 @@ void RouteController::updateRouteTabChangedStatus()
   Ui::MainWindow *ui = NavApp::getMainUi();
 
   // Update status in flight plan table
-  int idxRoute = NavApp::getRouteTabHandler()->getIndexForId(rc::ROUTE);
+  int idxRoute = tabHandlerRoute->getIndexForId(rc::ROUTE);
   if(idxRoute != -1)
   {
     if(hasChanged())
@@ -4635,7 +4635,7 @@ void RouteController::updateRouteTabChangedStatus()
   }
 
   // Update status in remarks tab
-  int idxRemark = NavApp::getRouteTabHandler()->getIndexForId(rc::REMARKS);
+  int idxRemark = tabHandlerRoute->getIndexForId(rc::REMARKS);
   if(idxRemark != -1)
   {
     // Add star only if remarks contain text

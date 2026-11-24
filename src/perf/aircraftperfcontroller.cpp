@@ -717,6 +717,9 @@ void AircraftPerfController::connectAllSlots()
 
 void AircraftPerfController::updateTabTiltle()
 {
+  if(NavApp::getRouteTabHandler() == nullptr)
+    return;
+
   Ui::MainWindow *ui = NavApp::getMainUi();
   int idx = NavApp::getRouteTabHandler()->getIndexForId(rc::AIRCRAFT);
   if(idx != -1)
@@ -755,6 +758,9 @@ void AircraftPerfController::updateActionStates()
 void AircraftPerfController::updateReport()
 {
   errorTooltips.clear();
+
+  if(NavApp::getRouteTabHandler() == nullptr)
+    return;
 
   Ui::MainWindow *ui = NavApp::getMainUi();
   HtmlBuilder html(true /* backgroundColorUsed */, NavApp::isGuiStyleDark());
@@ -852,6 +858,9 @@ void AircraftPerfController::updateReport()
 void AircraftPerfController::updateReportCurrent()
 {
   Ui::MainWindow *ui = NavApp::getMainUi();
+
+  if(NavApp::getRouteTabHandler() == nullptr)
+    return;
 
   if(NavApp::getRouteTabHandler()->getCurrentTabId() == rc::COLLECTION && ui->dockWidgetRoute->isVisible())
   {

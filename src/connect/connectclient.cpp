@@ -299,6 +299,9 @@ void ConnectClient::disconnectedFromSimulatorDirect()
 
 void ConnectClient::postSimConnectData(atools::fs::sc::SimConnectData dataPacket)
 {
+  if(NavApp::isShuttingDown())
+    return;
+
   if(dataPacket.getStatus() == atools::fs::sc::OK)
   {
     // Check for empty weather replies or metar replys. Aircraft is not valid in this case.

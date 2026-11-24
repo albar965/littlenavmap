@@ -690,10 +690,7 @@ void MainWindow::deInit()
     QToolTip::hideText();
 
     if(!Application::isRestartApplication())
-    {
       dockHandler->hideAllWindows();
-      Application::processEventsExtended();
-    }
 
     ATOOLS_DELETE_LOG(optionsDialog);
 
@@ -1900,6 +1897,9 @@ void MainWindow::actionShortcutLogbookSearchTriggered()
 void MainWindow::actionShortcutRouteTriggered(QWidget *focusWidget, int tabId, bool forceShow)
 {
   atools::gui::TabWidgetHandler *routeTabHandler = NavApp::getRouteTabHandler();
+  if(routeTabHandler == nullptr)
+    return;
+
   if(forceShow || routeTabHandler->getCurrentTabId() != tabId || !atools::gui::hasAnyChildFocus(ui->dockWidgetRoute))
   {
     dockHandler->activateWindow(ui->dockWidgetRoute);
