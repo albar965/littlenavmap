@@ -9142,16 +9142,16 @@ You have to reload the scenery library so that the changes take effect.</string>
                   <string> MB</string>
                  </property>
                  <property name="minimum">
-                  <number>500</number>
+                  <number>1000</number>
                  </property>
                  <property name="maximum">
-                  <number>2000</number>
+                  <number>3000</number>
                  </property>
                  <property name="singleStep">
                   <number>100</number>
                  </property>
                  <property name="value">
-                  <number>1000</number>
+                  <number>2000</number>
                  </property>
                 </widget>
                </item>

@@ -379,6 +379,9 @@ void checkAndMigrateSettings()
         removeAndLog("Map/DetailLevelText2");
       }
 
+      if(optionsVersion <= Version("3.2.3.beta"))
+        removeAndLog("OptionsDialog/Widget_spinBoxOptionsCacheMemoryProfile");
+
       qInfo() << Q_FUNC_INFO << "Clearing all essential messages since version differs";
       messages::resetEssentialMessages();
 
