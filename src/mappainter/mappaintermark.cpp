@@ -192,6 +192,7 @@ void MapPainterMark::paintHighlights()
   {
     if(entry.departurePos.isValid())
       logIds.insert(entry.departure.id);
+
     if(entry.destinationPos.isValid())
       logIds.insert(entry.destination.id);
   }
@@ -266,10 +267,8 @@ void MapPainterMark::paintHighlights()
     if(wToS(posSize.first, x, y))
     {
       // Adjust to highlight size in options
-      float size = context->szF(context->symbolSizeHighlight, posSize.second);
-
       // Make radius a bit bigger and set minimum
-      float radius = std::max(size / 2.f * 1.4f, 6.f);
+      float radius = std::max(context->szF(context->symbolSizeHighlight, posSize.second), 6.f);
 
       if(!context->drawFast && !transparent)
       {
@@ -372,11 +371,11 @@ void MapPainterMark::paintHighlights()
   }
 
   // Draw highlights from the flight plan view =====================================================
-  if(mapLayer->isAirport())
-    radius = std::max(radius, static_cast<float>(mapLayer->getAirportSymbolSize()));
 
-  if(transparent)
-    radius *= 0.75f;
+  // Make circle size dependent on flight plan line width
+  radius = context->flags2.testFlag(opts2::MAP_ROUTE_TRANSPARENT) ?
+           context->szF(context->thicknessFlightplan, 10) :
+           context->szF(context->thicknessFlightplan, 7);
 
   atools::geo::LineString positions;
   const Route& route = NavApp::getRouteConst();
