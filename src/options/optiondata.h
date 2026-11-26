@@ -884,7 +884,7 @@ private:
   int cacheSizeMemoryMap = 1000;
 
   // ui->spinBoxOptionsCacheMemoryProfile
-  int cacheSizeMemoryProfile = 2000;
+  int cacheSizeMemoryProfile = 1000;
 
   // ui->doubleSpinBoxOptionsProfileBuffer
   float profileBuffer = 5.f;

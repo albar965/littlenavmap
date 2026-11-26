@@ -109,8 +109,7 @@ private:
   bool warnWrongGlobePath = false, warnOpenFiles = false, startup = false;
 
   /* Need to synchronize here since it is called from profile widget thread */
-  mutable QMutex mutex;
-
+  QMutex mutex;
 };
 
 #endif // LITTLENAVMAP_ELEVATIONPROVIDER_H

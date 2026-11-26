@@ -56,18 +56,21 @@ ElevationProvider::ElevationProvider(QObject *parent)
 
 ElevationProvider::~ElevationProvider()
 {
-  delete globeReader;
+  ATOOLS_DELETE_LOG(globeReader);
 }
 
 void ElevationProvider::clearCache()
 {
   if(isGlobeOfflineProvider())
+  {
+    QMutexLocker locker(&mutex);
     globeReader->clearCache();
+  }
 }
 
 void ElevationProvider::marbleUpdateAvailable()
 {
-  if(!isGlobeOfflineProvider())
+  if(!isGlobeOfflineProvider() && !NavApp::isShuttingDown())
     emit updateAvailable();
 }
 
@@ -161,7 +164,6 @@ void ElevationProvider::getElevationsMeter(atools::geo::LineString& elevations, 
   for(Pos& pos : elevations)
     // Limit ground altitude
     pos.setAltitude(std::min(pos.getAltitude(), ALTITUDE_LIMIT_METER));
-
 }
 
 bool ElevationProvider::isGlobeOfflineProvider() const
@@ -187,7 +189,10 @@ void ElevationProvider::optionsChanged(const optc::OptionChangeFlags& changeFlag
     updateReader(false /* startup */);
 
     if(isGlobeOfflineProvider())
+    {
+      QMutexLocker locker(&mutex);
       globeReader->setCacheMaxBytes(OptionData::instance().getCacheSizeMemoryProfileMb() * 1000000L);
+    }
   }
 }
 
@@ -229,7 +234,7 @@ void ElevationProvider::updateReader(bool startupParam)
 
         qDebug() << Q_FUNC_INFO << "Opening GLOBE files";
 
-        if(!globeReader->openFiles())
+        if(!globeReader->collectFileNames())
         {
           delete globeReader;
           globeReader = nullptr;
