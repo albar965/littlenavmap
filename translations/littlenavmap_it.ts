@@ -5292,24 +5292,24 @@ and use color and label as above.</source>
         <translation type="vanished">&lt;p&gt;I dati altimetrici online utilizzati di default per il profilo altimetrico sono limitati e presentano molti errori.&lt;br/&gt;Pertanto, si consiglia di scaricare e utilizzare i dati altimetrici GLOBE offline che forniscono una copertura mondiale.&lt;/p&gt;&lt;p&gt;Andare al menu principale -&amp;gt; &quot;Strumenti&quot; -&amp;gt; &quot;Opzioni&quot; e poi alla pagina &quot;Cache e file&quot; per aggiungere i dati GLOBE.&lt;/p&gt;&lt;p&gt;&lt;a href=&quot;%1&quot;&gt;Cliccare qui per maggiori informazioni nel manuale online di Little Navmap&lt;/a&gt;&lt;/p&gt;</translation>
     </message>
     <message>
-        <location filename="../src/common/elevationprovider.cpp" line="265"/>
+        <location filename="../src/common/elevationprovider.cpp" line="270"/>
         <source>GLOBE elevation data directory is not valid:&lt;br/&gt;&quot;%1&quot;&lt;br/&gt;&lt;br/&gt;Go to menu &quot;Tools&quot; -&amp;gt; &quot;Options&quot; and then&lt;br/&gt;to page &quot;Elevation Data&quot;. Then click &quot;Select Directory&quot; and&lt;br/&gt;select the correct place with the GLOBE elevation files.</source>
         <comment>Keep instructions in sync with translated menus</comment>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/common/elevationprovider.cpp" line="276"/>
+        <location filename="../src/common/elevationprovider.cpp" line="281"/>
         <source>&lt;p&gt;The online elevation data which is used by default for the elevation profile is limited and has issues.&lt;br/&gt;Therefore, it is strongly recommended to download and use the offline GLOBE elevation data which provides world wide coverage and significantly faster calculation.&lt;/p&gt;&lt;p&gt;Go to the main menu -&amp;gt; &quot;Tools&quot; -&amp;gt; &quot;Options&quot; and then to page &quot;Elevation Data&quot;. Follow the instructions on the options page to add the GLOBE data.&lt;/p&gt;&lt;p&gt;&lt;a href=&quot;%1&quot;&gt;Click here for more information in the Little Navmap online manual&lt;/a&gt;&lt;/p&gt;</source>
         <comment>Keep instructions in sync with translated menus</comment>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/common/elevationprovider.cpp" line="286"/>
+        <location filename="../src/common/elevationprovider.cpp" line="291"/>
         <source>Do not &amp;show this dialog again.</source>
         <translation>Non &amp;mostrare più questo messaggio.</translation>
     </message>
     <message>
-        <location filename="../src/common/elevationprovider.cpp" line="259"/>
+        <location filename="../src/common/elevationprovider.cpp" line="264"/>
         <source>Cannot open GLOBE data in directory&lt;br/&gt;&quot;%1&quot;</source>
         <oldsource>Cannot open GLOBE data in directory&lt;br/&gt;&lt;i&gt;%1&lt;/i&gt;</oldsource>
         <translation>Non posso aprire la cartella con i dati GLOBE&lt;br/&gt;&quot;%1&quot;</translation>
@@ -25314,7 +25314,7 @@ Andare al menu “Strumenti” -&gt; “Opzioni” e poi alla pagina “Cache e 
         <translation type="vanished">V</translation>
     </message>
     <message>
-        <location filename="../src/mapgui/mapvisible.cpp" line="193"/>
+        <location filename="../src/mapgui/mapvisible.cpp" line="196"/>
         <source>VOR (V)</source>
         <translation>VOR (V)</translation>
     </message>
@@ -25323,7 +25323,7 @@ Andare al menu “Strumenti” -&gt; “Opzioni” e poi alla pagina “Cache e 
         <translation type="vanished">N</translation>
     </message>
     <message>
-        <location filename="../src/mapgui/mapvisible.cpp" line="199"/>
+        <location filename="../src/mapgui/mapvisible.cpp" line="202"/>
         <source>NDB (N)</source>
         <translation>NDB (N)</translation>
     </message>
@@ -25332,7 +25332,7 @@ Andare al menu “Strumenti” -&gt; “Opzioni” e poi alla pagina “Cache e 
         <translation type="vanished">I</translation>
     </message>
     <message>
-        <location filename="../src/mapgui/mapvisible.cpp" line="211"/>
+        <location filename="../src/mapgui/mapvisible.cpp" line="214"/>
         <source>ILS (I)</source>
         <translation>ILS (I)</translation>
     </message>
@@ -25370,169 +25370,169 @@ Andare al menu “Strumenti” -&gt; “Opzioni” e poi alla pagina “Cache e 
         <translation>S</translation>
     </message>
     <message>
-        <location filename="../src/mapgui/mapvisible.cpp" line="131"/>
+        <location filename="../src/mapgui/mapvisible.cpp" line="136"/>
         <source>E</source>
         <comment>Airport status</comment>
         <translation>E</translation>
     </message>
     <message>
-        <location filename="../src/mapgui/mapvisible.cpp" line="137"/>
+        <location filename="../src/mapgui/mapvisible.cpp" line="142"/>
         <source>O</source>
         <comment>Airport status</comment>
         <translation>O</translation>
     </message>
     <message>
-        <location filename="../src/mapgui/mapvisible.cpp" line="145"/>
+        <location filename="../src/mapgui/mapvisible.cpp" line="150"/>
         <source>L</source>
         <comment>Airport status</comment>
         <translation>L</translation>
     </message>
     <message>
-        <location filename="../src/mapgui/mapvisible.cpp" line="153"/>
+        <location filename="../src/mapgui/mapvisible.cpp" line="158"/>
         <source>P</source>
         <comment>Airport status</comment>
         <translation>P</translation>
     </message>
     <message>
-        <location filename="../src/mapgui/mapvisible.cpp" line="159"/>
+        <location filename="../src/mapgui/mapvisible.cpp" line="164"/>
         <source>C</source>
         <comment>Airport status</comment>
         <translation>C</translation>
     </message>
     <message>
-        <location filename="../src/mapgui/mapvisible.cpp" line="165"/>
+        <location filename="../src/mapgui/mapvisible.cpp" line="170"/>
         <source>M</source>
         <comment>Airport status</comment>
         <translation>M</translation>
     </message>
     <message>
-        <location filename="../src/mapgui/mapvisible.cpp" line="171"/>
+        <location filename="../src/mapgui/mapvisible.cpp" line="176"/>
         <source>AZ</source>
         <comment>Airport status</comment>
         <translation>AZ</translation>
     </message>
     <message>
-        <location filename="../src/mapgui/mapvisible.cpp" line="176"/>
+        <location filename="../src/mapgui/mapvisible.cpp" line="181"/>
         <source>AF</source>
         <comment>Airport status</comment>
         <translation>AF</translation>
     </message>
     <message>
-        <location filename="../src/mapgui/mapvisible.cpp" line="192"/>
+        <location filename="../src/mapgui/mapvisible.cpp" line="195"/>
         <source>V</source>
         <comment>Navaid short type</comment>
         <translation>V</translation>
     </message>
     <message>
-        <location filename="../src/mapgui/mapvisible.cpp" line="198"/>
+        <location filename="../src/mapgui/mapvisible.cpp" line="201"/>
         <source>N</source>
         <comment>Navaid short type</comment>
         <translation>N</translation>
     </message>
     <message>
-        <location filename="../src/mapgui/mapvisible.cpp" line="204"/>
+        <location filename="../src/mapgui/mapvisible.cpp" line="207"/>
         <source>W</source>
         <comment>Navaid short type</comment>
         <translation>W</translation>
     </message>
     <message>
-        <location filename="../src/mapgui/mapvisible.cpp" line="210"/>
+        <location filename="../src/mapgui/mapvisible.cpp" line="213"/>
         <source>I</source>
         <comment>Navaid short type</comment>
         <translation>I</translation>
     </message>
     <message>
-        <location filename="../src/mapgui/mapvisible.cpp" line="216"/>
+        <location filename="../src/mapgui/mapvisible.cpp" line="219"/>
         <source>G</source>
         <comment>Navaid short type</comment>
         <translation>G</translation>
     </message>
     <message>
-        <location filename="../src/mapgui/mapvisible.cpp" line="222"/>
+        <location filename="../src/mapgui/mapvisible.cpp" line="225"/>
         <source>LA</source>
         <comment>Airway short type</comment>
         <translation>LA</translation>
     </message>
     <message>
-        <location filename="../src/mapgui/mapvisible.cpp" line="228"/>
+        <location filename="../src/mapgui/mapvisible.cpp" line="231"/>
         <source>HA</source>
         <comment>Airway short type</comment>
         <translation>HA</translation>
     </message>
     <message>
-        <location filename="../src/mapgui/mapvisible.cpp" line="234"/>
+        <location filename="../src/mapgui/mapvisible.cpp" line="237"/>
         <source>T</source>
         <comment>Track short indicator</comment>
         <translation>T</translation>
     </message>
     <message>
-        <location filename="../src/mapgui/mapvisible.cpp" line="240"/>
+        <location filename="../src/mapgui/mapvisible.cpp" line="243"/>
         <source>H</source>
         <comment>Holding short indicator</comment>
         <translation>H</translation>
     </message>
     <message>
-        <location filename="../src/mapgui/mapvisible.cpp" line="343"/>
+        <location filename="../src/mapgui/mapvisible.cpp" line="342"/>
         <source>A&gt;</source>
         <comment>Aircraft indicator</comment>
         <translation>A&gt;</translation>
     </message>
     <message>
-        <location filename="../src/mapgui/mapvisible.cpp" line="348"/>
+        <location filename="../src/mapgui/mapvisible.cpp" line="347"/>
         <source>A</source>
         <comment>Aircraft indicator</comment>
         <translation>A</translation>
     </message>
     <message>
-        <location filename="../src/mapgui/mapvisible.cpp" line="354"/>
+        <location filename="../src/mapgui/mapvisible.cpp" line="353"/>
         <source>G</source>
         <comment>Aircraft indicator</comment>
         <translation>G</translation>
     </message>
     <message>
-        <location filename="../src/mapgui/mapvisible.cpp" line="364"/>
+        <location filename="../src/mapgui/mapvisible.cpp" line="363"/>
         <source>S&gt;</source>
         <comment>Ship indicator</comment>
         <translation>S&gt;</translation>
     </message>
     <message>
-        <location filename="../src/mapgui/mapvisible.cpp" line="369"/>
+        <location filename="../src/mapgui/mapvisible.cpp" line="368"/>
         <source>S</source>
         <comment>Ship indicator</comment>
         <translation>S</translation>
     </message>
     <message>
-        <location filename="../src/mapgui/mapvisible.cpp" line="389"/>
+        <location filename="../src/mapgui/mapvisible.cpp" line="387"/>
         <source>AW</source>
         <comment>Airport weather indicator</comment>
         <translation>AW</translation>
     </message>
     <message>
-        <location filename="../src/mapgui/mapvisible.cpp" line="401"/>
+        <location filename="../src/mapgui/mapvisible.cpp" line="397"/>
         <source>W</source>
         <comment>Wind indicator</comment>
         <translation>W</translation>
     </message>
     <message>
-        <location filename="../src/mapgui/mapvisible.cpp" line="411"/>
+        <location filename="../src/mapgui/mapvisible.cpp" line="405"/>
         <source>F</source>
         <comment>Flight plan indicator</comment>
         <translation>F</translation>
     </message>
     <message>
-        <location filename="../src/mapgui/mapvisible.cpp" line="419"/>
+        <location filename="../src/mapgui/mapvisible.cpp" line="411"/>
         <source>T</source>
         <comment>Trail indicator</comment>
         <translation>T</translation>
     </message>
     <message>
-        <location filename="../src/mapgui/mapvisible.cpp" line="433"/>
+        <location filename="../src/mapgui/mapvisible.cpp" line="423"/>
         <source>Map Markers: </source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/mapgui/mapvisible.cpp" line="452"/>
-        <location filename="../src/mapgui/mapvisible.cpp" line="458"/>
+        <location filename="../src/mapgui/mapvisible.cpp" line="442"/>
+        <location filename="../src/mapgui/mapvisible.cpp" line="448"/>
         <source> — </source>
         <oldsource>—</oldsource>
         <translation> — </translation>
@@ -25577,15 +25577,15 @@ Andare al menu “Strumenti” -&gt; “Opzioni” e poi alla pagina “Cache e 
     </message>
     <message>
         <location filename="../src/mapgui/mapvisible.cpp" line="112"/>
-        <location filename="../src/mapgui/mapvisible.cpp" line="180"/>
-        <location filename="../src/mapgui/mapvisible.cpp" line="428"/>
-        <location filename="../src/mapgui/mapvisible.cpp" line="433"/>
+        <location filename="../src/mapgui/mapvisible.cpp" line="185"/>
+        <location filename="../src/mapgui/mapvisible.cpp" line="418"/>
+        <location filename="../src/mapgui/mapvisible.cpp" line="423"/>
         <source>, </source>
         <translation>, </translation>
     </message>
     <message>
         <location filename="../src/mapgui/mapvisible.cpp" line="112"/>
-        <location filename="../src/mapgui/mapvisible.cpp" line="180"/>
+        <location filename="../src/mapgui/mapvisible.cpp" line="185"/>
         <source> and </source>
         <translation> e </translation>
     </message>
@@ -25599,7 +25599,7 @@ Andare al menu “Strumenti” -&gt; “Opzioni” e poi alla pagina “Cache e 
         <translation type="vanished">Con lunghezza pista &gt; %1.</translation>
     </message>
     <message>
-        <location filename="../src/mapgui/mapvisible.cpp" line="130"/>
+        <location filename="../src/mapgui/mapvisible.cpp" line="135"/>
         <source>empty with zero rating (E)</source>
         <translation>vuoto con rating zero (E)</translation>
     </message>
@@ -25608,7 +25608,7 @@ Andare al menu “Strumenti” -&gt; “Opzioni” e poi alla pagina “Cache e 
         <translation type="vanished">E</translation>
     </message>
     <message>
-        <location filename="../src/mapgui/mapvisible.cpp" line="136"/>
+        <location filename="../src/mapgui/mapvisible.cpp" line="141"/>
         <source>heliports (O)</source>
         <translation>eliporti (O)</translation>
     </message>
@@ -25617,12 +25617,12 @@ Andare al menu “Strumenti” -&gt; “Opzioni” e poi alla pagina “Cache e 
         <translation type="vanished">O</translation>
     </message>
     <message>
-        <location filename="../src/mapgui/mapvisible.cpp" line="141"/>
+        <location filename="../src/mapgui/mapvisible.cpp" line="146"/>
         <source>unlighted</source>
         <translation>non illuminato</translation>
     </message>
     <message>
-        <location filename="../src/mapgui/mapvisible.cpp" line="144"/>
+        <location filename="../src/mapgui/mapvisible.cpp" line="149"/>
         <source>only lighted (L)</source>
         <translation>solo illuminato (L)</translation>
     </message>
@@ -25631,13 +25631,13 @@ Andare al menu “Strumenti” -&gt; “Opzioni” e poi alla pagina “Cache e 
         <translation type="vanished">L</translation>
     </message>
     <message>
-        <location filename="../src/mapgui/mapvisible.cpp" line="149"/>
+        <location filename="../src/mapgui/mapvisible.cpp" line="154"/>
         <source>without procedure</source>
         <oldsource>without approach procedure</oldsource>
         <translation>senza procedure</translation>
     </message>
     <message>
-        <location filename="../src/mapgui/mapvisible.cpp" line="152"/>
+        <location filename="../src/mapgui/mapvisible.cpp" line="157"/>
         <source>only with procedure (P)</source>
         <oldsource>only with approach procedure (P)</oldsource>
         <translation>solo con procedure (P)</translation>
@@ -25647,7 +25647,7 @@ Andare al menu “Strumenti” -&gt; “Opzioni” e poi alla pagina “Cache e 
         <translation type="vanished">P</translation>
     </message>
     <message>
-        <location filename="../src/mapgui/mapvisible.cpp" line="158"/>
+        <location filename="../src/mapgui/mapvisible.cpp" line="163"/>
         <source>closed (C)</source>
         <translation>chiuso (C)</translation>
     </message>
@@ -25656,7 +25656,7 @@ Andare al menu “Strumenti” -&gt; “Opzioni” e poi alla pagina “Cache e 
         <translation type="vanished">C</translation>
     </message>
     <message>
-        <location filename="../src/mapgui/mapvisible.cpp" line="164"/>
+        <location filename="../src/mapgui/mapvisible.cpp" line="169"/>
         <source>military (M)</source>
         <translation>militare (M)</translation>
     </message>
@@ -25665,7 +25665,7 @@ Andare al menu “Strumenti” -&gt; “Opzioni” e poi alla pagina “Cache e 
         <translation type="vanished">M</translation>
     </message>
     <message>
-        <location filename="../src/mapgui/mapvisible.cpp" line="170"/>
+        <location filename="../src/mapgui/mapvisible.cpp" line="175"/>
         <source>add-on overrides zoom (AZ)</source>
         <oldsource>add-on display forced (A)</oldsource>
         <translation>il componente aggiuntivo sovrascrive lo zoom (AZ)</translation>
@@ -25676,7 +25676,7 @@ Andare al menu “Strumenti” -&gt; “Opzioni” e poi alla pagina “Cache e 
         <translation type="vanished">AZ</translation>
     </message>
     <message>
-        <location filename="../src/mapgui/mapvisible.cpp" line="175"/>
+        <location filename="../src/mapgui/mapvisible.cpp" line="180"/>
         <source>add-on overrides zoom and filter (AF)</source>
         <translation>il componente aggiuntivo sostituisce lo zoom e il filtro (AF)</translation>
     </message>
@@ -25685,22 +25685,21 @@ Andare al menu “Strumenti” -&gt; “Opzioni” e poi alla pagina “Cache e 
         <translation type="vanished">AF</translation>
     </message>
     <message>
-        <location filename="../src/mapgui/mapvisible.cpp" line="180"/>
+        <location filename="../src/mapgui/mapvisible.cpp" line="185"/>
         <source>Showing </source>
         <translation>Visualizzazione </translation>
     </message>
     <message>
-        <location filename="../src/mapgui/mapvisible.cpp" line="180"/>
+        <location filename="../src/mapgui/mapvisible.cpp" line="185"/>
         <source>.</source>
         <translation>.</translation>
     </message>
     <message>
-        <location filename="../src/mapgui/mapvisible.cpp" line="186"/>
         <source>No airports</source>
-        <translation>Nessun aeroporto</translation>
+        <translation type="vanished">Nessun aeroporto</translation>
     </message>
     <message>
-        <location filename="../src/mapgui/mapvisible.cpp" line="205"/>
+        <location filename="../src/mapgui/mapvisible.cpp" line="208"/>
         <source>Waypoints (W)</source>
         <translation>Punti rotta (W)</translation>
     </message>
@@ -25709,7 +25708,7 @@ Andare al menu “Strumenti” -&gt; “Opzioni” e poi alla pagina “Cache e 
         <translation type="vanished">G</translation>
     </message>
     <message>
-        <location filename="../src/mapgui/mapvisible.cpp" line="217"/>
+        <location filename="../src/mapgui/mapvisible.cpp" line="220"/>
         <source>GLS (G)</source>
         <translation>GLS (G)</translation>
     </message>
@@ -25719,7 +25718,7 @@ Andare al menu “Strumenti” -&gt; “Opzioni” e poi alla pagina “Cache e 
         <translation type="vanished">HA</translation>
     </message>
     <message>
-        <location filename="../src/mapgui/mapvisible.cpp" line="229"/>
+        <location filename="../src/mapgui/mapvisible.cpp" line="232"/>
         <source>High Airways (HA)</source>
         <oldsource>Jet Airways (JA)</oldsource>
         <translation>Aerovie Superiori (HA)</translation>
@@ -25729,12 +25728,12 @@ Andare al menu “Strumenti” -&gt; “Opzioni” e poi alla pagina “Cache e 
         <translation type="vanished">T</translation>
     </message>
     <message>
-        <location filename="../src/mapgui/mapvisible.cpp" line="235"/>
+        <location filename="../src/mapgui/mapvisible.cpp" line="238"/>
         <source>Tracks (T)</source>
         <translation>Traccia (T)</translation>
     </message>
     <message>
-        <location filename="../src/mapgui/mapvisible.cpp" line="385"/>
+        <location filename="../src/mapgui/mapvisible.cpp" line="383"/>
         <source>Airport weather source (AW): </source>
         <translation>Fonte meteo aeroporto (AW): </translation>
     </message>
@@ -25743,17 +25742,17 @@ Andare al menu “Strumenti” -&gt; “Opzioni” e poi alla pagina “Cache e 
         <translation type="vanished">AW</translation>
     </message>
     <message>
-        <location filename="../src/mapgui/mapvisible.cpp" line="397"/>
+        <location filename="../src/mapgui/mapvisible.cpp" line="393"/>
         <source>Wind shown (W): </source>
         <translation>Vento mostrato (W): </translation>
     </message>
     <message>
-        <location filename="../src/mapgui/mapvisible.cpp" line="455"/>
+        <location filename="../src/mapgui/mapvisible.cpp" line="445"/>
         <source>/</source>
         <translation>/</translation>
     </message>
     <message>
-        <location filename="../src/mapgui/mapvisible.cpp" line="458"/>
+        <location filename="../src/mapgui/mapvisible.cpp" line="448"/>
         <source>Nothing shown. Zoom in to see map features.</source>
         <translation>Non è mostrato nulla. Ingrandire per vedere le caratteristiche della mappa.</translation>
     </message>
@@ -25763,49 +25762,49 @@ Andare al menu “Strumenti” -&gt; “Opzioni” e poi alla pagina “Cache e 
         <translation type="vanished">LA</translation>
     </message>
     <message>
-        <location filename="../src/mapgui/mapvisible.cpp" line="223"/>
+        <location filename="../src/mapgui/mapvisible.cpp" line="226"/>
         <source>Low Airways (LA)</source>
         <oldsource>Victor Airways (VA)</oldsource>
         <translation>Aerovie Inferiori (LA)</translation>
     </message>
     <message>
-        <location filename="../src/mapgui/mapvisible.cpp" line="241"/>
+        <location filename="../src/mapgui/mapvisible.cpp" line="244"/>
         <source>Holdings (H)</source>
         <translation>Circuiti di attesa (H)</translation>
     </message>
     <message>
-        <location filename="../src/mapgui/mapvisible.cpp" line="246"/>
+        <location filename="../src/mapgui/mapvisible.cpp" line="249"/>
         <source>MSA</source>
         <translation>MSA</translation>
     </message>
     <message>
-        <location filename="../src/mapgui/mapvisible.cpp" line="247"/>
+        <location filename="../src/mapgui/mapvisible.cpp" line="250"/>
         <source>MSA Sectors (MSA)</source>
         <oldsource>Airport MSA (MSA)</oldsource>
         <translation>Settori MSA (MSA)</translation>
     </message>
     <message>
-        <location filename="../src/mapgui/mapvisible.cpp" line="252"/>
+        <location filename="../src/mapgui/mapvisible.cpp" line="255"/>
         <source>MORA</source>
         <translation>MORA</translation>
     </message>
     <message>
-        <location filename="../src/mapgui/mapvisible.cpp" line="253"/>
+        <location filename="../src/mapgui/mapvisible.cpp" line="256"/>
         <source>MORA Grid (MORA)</source>
         <translation>Griglia MORA (MORA)</translation>
     </message>
     <message>
-        <location filename="../src/mapgui/mapvisible.cpp" line="272"/>
+        <location filename="../src/mapgui/mapvisible.cpp" line="275"/>
         <source>ICAO</source>
         <translation>ICAO</translation>
     </message>
     <message>
-        <location filename="../src/mapgui/mapvisible.cpp" line="273"/>
+        <location filename="../src/mapgui/mapvisible.cpp" line="276"/>
         <source>Class A-E (ICAO)</source>
         <translation>Classe A E (ICAO)</translation>
     </message>
     <message>
-        <location filename="../src/mapgui/mapvisible.cpp" line="278"/>
+        <location filename="../src/mapgui/mapvisible.cpp" line="281"/>
         <source>F,G</source>
         <oldsource>FIR</oldsource>
         <translation>F,G</translation>
@@ -25815,44 +25814,43 @@ Andare al menu “Strumenti” -&gt; “Opzioni” e poi alla pagina “Cache e 
         <translation type="vanished">Regione Informazione di Volo, classe F e/o G (FIR)</translation>
     </message>
     <message>
-        <location filename="../src/mapgui/mapvisible.cpp" line="290"/>
+        <location filename="../src/mapgui/mapvisible.cpp" line="293"/>
         <source>RSTR</source>
         <translation>RSTR</translation>
     </message>
     <message>
-        <location filename="../src/mapgui/mapvisible.cpp" line="291"/>
+        <location filename="../src/mapgui/mapvisible.cpp" line="294"/>
         <source>Restricted (RSTR)</source>
         <translation>Con Restrizioni (RSTR)</translation>
     </message>
     <message>
-        <location filename="../src/mapgui/mapvisible.cpp" line="296"/>
+        <location filename="../src/mapgui/mapvisible.cpp" line="299"/>
         <source>SPEC</source>
         <translation>SPEC</translation>
     </message>
     <message>
-        <location filename="../src/mapgui/mapvisible.cpp" line="297"/>
+        <location filename="../src/mapgui/mapvisible.cpp" line="300"/>
         <source>Special (SPEC)</source>
         <translation>Speciale (SPEC)</translation>
     </message>
     <message>
-        <location filename="../src/mapgui/mapvisible.cpp" line="302"/>
+        <location filename="../src/mapgui/mapvisible.cpp" line="305"/>
         <source>OTR</source>
         <translation>OTR</translation>
     </message>
     <message>
-        <location filename="../src/mapgui/mapvisible.cpp" line="303"/>
+        <location filename="../src/mapgui/mapvisible.cpp" line="306"/>
         <source>Centers and others (OTR)</source>
         <translation>Centri e altri (OTR)</translation>
     </message>
     <message>
-        <location filename="../src/mapgui/mapvisible.cpp" line="310"/>
+        <location filename="../src/mapgui/mapvisible.cpp" line="313"/>
         <source>Navaids: </source>
         <translation>Radioassistenze: </translation>
     </message>
     <message>
-        <location filename="../src/mapgui/mapvisible.cpp" line="312"/>
         <source>No navaids</source>
-        <translation>Nessuna Radioassistenza</translation>
+        <translation type="vanished">Nessuna Radioassistenza</translation>
     </message>
     <message>
         <source>Airspaces and Online Centers: </source>
@@ -25871,7 +25869,7 @@ Andare al menu “Strumenti” -&gt; “Opzioni” e poi alla pagina “Cache e 
         <translation type="vanished">Gruppi di Centri Online: </translation>
     </message>
     <message>
-        <location filename="../src/mapgui/mapvisible.cpp" line="318"/>
+        <location filename="../src/mapgui/mapvisible.cpp" line="319"/>
         <source>Airspace Groups: </source>
         <translation>Gruppi di Spazi Aerei: </translation>
     </message>
@@ -25887,12 +25885,11 @@ Andare al menu “Strumenti” -&gt; “Opzioni” e poi alla pagina “Cache e 
         <translation>AI / Multigiocatore / Client Online: </translation>
     </message>
     <message>
-        <location filename="../src/mapgui/mapvisible.cpp" line="379"/>
         <source>No AI / Multiplayer / online client</source>
-        <translation>Nessun AI / Multigiocatore / Client Online</translation>
+        <translation type="vanished">Nessun AI / Multigiocatore / Client Online</translation>
     </message>
     <message>
-        <location filename="../src/mapgui/mapvisible.cpp" line="317"/>
+        <location filename="../src/mapgui/mapvisible.cpp" line="318"/>
         <source>Airspaces: </source>
         <translation>Spazi aerei: </translation>
     </message>
@@ -25906,52 +25903,51 @@ Andare al menu “Strumenti” -&gt; “Opzioni” e poi alla pagina “Cache e 
         <translation type="vanished">Aeroporti aggiuntivi</translation>
     </message>
     <message>
-        <location filename="../src/mapgui/mapvisible.cpp" line="279"/>
+        <location filename="../src/mapgui/mapvisible.cpp" line="282"/>
         <source>Class F and/or G</source>
         <translation>Classe F e/o G</translation>
     </message>
     <message>
-        <location filename="../src/mapgui/mapvisible.cpp" line="284"/>
+        <location filename="../src/mapgui/mapvisible.cpp" line="287"/>
         <source>FIR,UIR</source>
         <translation>FIR,UIR</translation>
     </message>
     <message>
-        <location filename="../src/mapgui/mapvisible.cpp" line="285"/>
+        <location filename="../src/mapgui/mapvisible.cpp" line="288"/>
         <source>Flight and/or Upper Information Regions</source>
         <translation>Regioni di Volo e/o di Informazione Superiore</translation>
     </message>
     <message>
-        <location filename="../src/mapgui/mapvisible.cpp" line="319"/>
+        <location filename="../src/mapgui/mapvisible.cpp" line="320"/>
         <source>Airspace Sources: </source>
         <translation>Origini Spazio aereo: </translation>
     </message>
     <message>
-        <location filename="../src/mapgui/mapvisible.cpp" line="329"/>
         <source>No airspaces</source>
-        <translation>Nussun spazio aereo</translation>
+        <translation type="vanished">Nussun spazio aereo</translation>
     </message>
     <message>
-        <location filename="../src/mapgui/mapvisible.cpp" line="342"/>
+        <location filename="../src/mapgui/mapvisible.cpp" line="341"/>
         <source>Aircraft &gt; %1 ft</source>
         <translation>Aereo &gt; %1 piedi</translation>
     </message>
     <message>
-        <location filename="../src/mapgui/mapvisible.cpp" line="347"/>
+        <location filename="../src/mapgui/mapvisible.cpp" line="346"/>
         <source>Aircraft</source>
         <translation>Aereo</translation>
     </message>
     <message>
-        <location filename="../src/mapgui/mapvisible.cpp" line="353"/>
+        <location filename="../src/mapgui/mapvisible.cpp" line="352"/>
         <source> on ground</source>
         <translation> al suolo</translation>
     </message>
     <message>
-        <location filename="../src/mapgui/mapvisible.cpp" line="363"/>
+        <location filename="../src/mapgui/mapvisible.cpp" line="362"/>
         <source>Ships &gt; %1 ft</source>
         <translation>Navi &gt; %1 piedi</translation>
     </message>
     <message>
-        <location filename="../src/mapgui/mapvisible.cpp" line="368"/>
+        <location filename="../src/mapgui/mapvisible.cpp" line="367"/>
         <source>Ships</source>
         <translation>Navi</translation>
     </message>
@@ -25960,27 +25956,24 @@ Andare al menu “Strumenti” -&gt; “Opzioni” e poi alla pagina “Cache e 
         <translation type="vanished">Fonte meteo aeroporto: </translation>
     </message>
     <message>
-        <location filename="../src/mapgui/mapvisible.cpp" line="392"/>
         <source>No airport weather shown</source>
-        <translation>Nessun meteo dell&apos;aeroporto mostrato</translation>
+        <translation type="vanished">Nessun meteo dell&apos;aeroporto mostrato</translation>
     </message>
     <message>
         <source>Wind shown: </source>
         <translation type="vanished">Vento mostrato: </translation>
     </message>
     <message>
-        <location filename="../src/mapgui/mapvisible.cpp" line="398"/>
+        <location filename="../src/mapgui/mapvisible.cpp" line="394"/>
         <source> Wind source: </source>
         <translation> Origine del vento: </translation>
     </message>
     <message>
-        <location filename="../src/mapgui/mapvisible.cpp" line="404"/>
-        <location filename="../src/mapgui/mapvisible.cpp" line="414"/>
         <source>No wind shown</source>
-        <translation>Nessun vento mostrato</translation>
+        <translation type="vanished">Nessun vento mostrato</translation>
     </message>
     <message>
-        <location filename="../src/mapgui/mapvisible.cpp" line="410"/>
+        <location filename="../src/mapgui/mapvisible.cpp" line="404"/>
         <source>Flight plan (F)</source>
         <translation>Piano di volo (F)</translation>
     </message>
@@ -25989,19 +25982,18 @@ Andare al menu “Strumenti” -&gt; “Opzioni” e poi alla pagina “Cache e 
         <translation type="vanished">F</translation>
     </message>
     <message>
-        <location filename="../src/mapgui/mapvisible.cpp" line="418"/>
+        <location filename="../src/mapgui/mapvisible.cpp" line="410"/>
         <source>Aircraft trail (T)</source>
         <oldsource>Aircraft track (T)</oldsource>
         <translation>Percorso dell&apos;aereo (T)</translation>
     </message>
     <message>
-        <location filename="../src/mapgui/mapvisible.cpp" line="422"/>
         <source>No aircraft trail shown</source>
         <oldsource>No aircraft track shown</oldsource>
-        <translation>Non è mostrata la traccia dell&apos;aereo</translation>
+        <translation type="vanished">Non è mostrata la traccia dell&apos;aereo</translation>
     </message>
     <message>
-        <location filename="../src/mapgui/mapvisible.cpp" line="428"/>
+        <location filename="../src/mapgui/mapvisible.cpp" line="418"/>
         <source>Userpoints: </source>
         <translation>Punti utente: </translation>
     </message>
@@ -26010,12 +26002,12 @@ Andare al menu “Strumenti” -&gt; “Opzioni” e poi alla pagina “Cache e 
         <translation type="vanished">Funzionalità utente: </translation>
     </message>
     <message>
+        <location filename="../src/mapgui/mapvisible.cpp" line="429"/>
+        <location filename="../src/mapgui/mapvisible.cpp" line="431"/>
+        <location filename="../src/mapgui/mapvisible.cpp" line="433"/>
+        <location filename="../src/mapgui/mapvisible.cpp" line="435"/>
+        <location filename="../src/mapgui/mapvisible.cpp" line="437"/>
         <location filename="../src/mapgui/mapvisible.cpp" line="439"/>
-        <location filename="../src/mapgui/mapvisible.cpp" line="441"/>
-        <location filename="../src/mapgui/mapvisible.cpp" line="443"/>
-        <location filename="../src/mapgui/mapvisible.cpp" line="445"/>
-        <location filename="../src/mapgui/mapvisible.cpp" line="447"/>
-        <location filename="../src/mapgui/mapvisible.cpp" line="449"/>
         <source>,</source>
         <translation>,</translation>
     </message>
@@ -51024,29 +51016,31 @@ Totale Viaggi: %1.</translation>
     </message>
     <message>
         <location filename="../src/gui/statusbar.cpp" line="126"/>
-        <source>UTC real</source>
+        <source>UTC real time</source>
+        <comment>Status bar time tooltip head</comment>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../src/gui/statusbar.cpp" line="127"/>
         <location filename="../src/gui/statusbar.cpp" line="134"/>
         <location filename="../src/gui/statusbar.cpp" line="162"/>
-        <location filename="../src/gui/statusbar.cpp" line="411"/>
-        <location filename="../src/gui/statusbar.cpp" line="412"/>
-        <location filename="../src/gui/statusbar.cpp" line="413"/>
-        <location filename="../src/gui/statusbar.cpp" line="621"/>
+        <location filename="../src/gui/statusbar.cpp" line="416"/>
+        <location filename="../src/gui/statusbar.cpp" line="417"/>
+        <location filename="../src/gui/statusbar.cpp" line="418"/>
         <location filename="../src/gui/statusbar.cpp" line="626"/>
         <location filename="../src/gui/statusbar.cpp" line="631"/>
-        <location filename="../src/gui/statusbar.cpp" line="694"/>
-        <location filename="../src/gui/statusbar.cpp" line="696"/>
-        <location filename="../src/gui/statusbar.cpp" line="700"/>
+        <location filename="../src/gui/statusbar.cpp" line="636"/>
+        <location filename="../src/gui/statusbar.cpp" line="699"/>
         <location filename="../src/gui/statusbar.cpp" line="701"/>
+        <location filename="../src/gui/statusbar.cpp" line="705"/>
+        <location filename="../src/gui/statusbar.cpp" line="706"/>
         <source> — </source>
         <translation type="unfinished"> — </translation>
     </message>
     <message>
         <location filename="../src/gui/statusbar.cpp" line="133"/>
-        <source>local real</source>
+        <source>local real time</source>
+        <comment>Status bar time tooltip head</comment>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -51056,236 +51050,237 @@ Totale Viaggi: %1.</translation>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/gui/statusbar.cpp" line="144"/>
-        <source>UTC simulator</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../src/gui/statusbar.cpp" line="154"/>
-        <source>local simulator</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <location filename="../src/gui/statusbar.cpp" line="164"/>
         <source> </source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/gui/statusbar.cpp" line="174"/>
-        <location filename="../src/gui/statusbar.cpp" line="180"/>
-        <source>Statusbar shows day of month and %1 time.</source>
+        <location filename="../src/gui/statusbar.cpp" line="144"/>
+        <source>UTC simulator time</source>
+        <comment>Status bar time tooltip head</comment>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/gui/statusbar.cpp" line="202"/>
+        <location filename="../src/gui/statusbar.cpp" line="154"/>
+        <source>local simulator time</source>
+        <comment>Status bar time tooltip head</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/gui/statusbar.cpp" line="172"/>
+        <source>Right click to change time.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/gui/statusbar.cpp" line="177"/>
+        <location filename="../src/gui/statusbar.cpp" line="183"/>
+        <source>Statusbar shows day of month and %1.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/gui/statusbar.cpp" line="205"/>
+        <source>Local simulator: </source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/gui/statusbar.cpp" line="205"/>
+        <source>Real simulator: </source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/gui/statusbar.cpp" line="206"/>
+        <location filename="../src/gui/statusbar.cpp" line="206"/>
+        <source>UTC simulator: </source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/gui/statusbar.cpp" line="208"/>
         <source>%1%2 (%3)</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/gui/statusbar.cpp" line="204"/>
-        <source>Local%1: </source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../src/gui/statusbar.cpp" line="204"/>
-        <location filename="../src/gui/statusbar.cpp" line="205"/>
-        <source> simulator</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../src/gui/statusbar.cpp" line="204"/>
-        <location filename="../src/gui/statusbar.cpp" line="205"/>
-        <source> real</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../src/gui/statusbar.cpp" line="205"/>
-        <source>UTC%1: </source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../src/gui/statusbar.cpp" line="228"/>
+        <location filename="../src/gui/statusbar.cpp" line="233"/>
         <source>Not connected.</source>
         <translation type="unfinished">Non connesso.</translation>
     </message>
     <message>
-        <location filename="../src/gui/statusbar.cpp" line="228"/>
+        <location filename="../src/gui/statusbar.cpp" line="233"/>
         <source>Simulator connection status.</source>
         <translation type="unfinished">Stato della connessione del simulatore.</translation>
     </message>
     <message>
-        <location filename="../src/gui/statusbar.cpp" line="230"/>
-        <location filename="../src/gui/statusbar.cpp" line="776"/>
+        <location filename="../src/gui/statusbar.cpp" line="235"/>
+        <location filename="../src/gui/statusbar.cpp" line="781"/>
         <source>Map detail level / text label level.</source>
         <translation type="unfinished">Livello di dettaglio della mappa / livello dell&apos;etichetta di testo.</translation>
     </message>
     <message>
-        <location filename="../src/gui/statusbar.cpp" line="231"/>
+        <location filename="../src/gui/statusbar.cpp" line="236"/>
         <source>Map rendering and download status.</source>
         <translation type="unfinished">Stato del rendering della mappa e di download.</translation>
     </message>
     <message>
-        <location filename="../src/gui/statusbar.cpp" line="232"/>
+        <location filename="../src/gui/statusbar.cpp" line="237"/>
         <source>Map view distance to ground.</source>
         <translation type="unfinished">Mappa vista distanza da terra.</translation>
     </message>
     <message>
-        <location filename="../src/gui/statusbar.cpp" line="233"/>
+        <location filename="../src/gui/statusbar.cpp" line="238"/>
         <source>Coordinates and elevation at cursor position.</source>
         <translation type="unfinished">Coordinate e elevazione alla posizione del cursore.</translation>
     </message>
     <message>
-        <location filename="../src/gui/statusbar.cpp" line="234"/>
+        <location filename="../src/gui/statusbar.cpp" line="239"/>
         <source>Magnetic declination at cursor position.</source>
         <translation type="unfinished">Declinazione magnetica alla posizione del cursore.</translation>
     </message>
     <message>
-        <location filename="../src/gui/statusbar.cpp" line="236"/>
+        <location filename="../src/gui/statusbar.cpp" line="241"/>
         <source>Time Zone, country and offset from UTC at cursor position.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/gui/statusbar.cpp" line="262"/>
+        <location filename="../src/gui/statusbar.cpp" line="267"/>
         <source>You can show the status bar again by enabling &quot;Show Statusbar&quot; in main menu &quot;Window&quot;.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/gui/statusbar.cpp" line="264"/>
+        <location filename="../src/gui/statusbar.cpp" line="269"/>
         <source>Do not &amp;show this dialog again.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/gui/statusbar.cpp" line="278"/>
+        <location filename="../src/gui/statusbar.cpp" line="283"/>
         <source>&amp;Show Statusbar</source>
         <translation type="unfinished">&amp;Mostra la Barra di Stato</translation>
     </message>
     <message>
-        <location filename="../src/gui/statusbar.cpp" line="279"/>
+        <location filename="../src/gui/statusbar.cpp" line="284"/>
         <source>Deselect to hide the status bar</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/gui/statusbar.cpp" line="288"/>
+        <location filename="../src/gui/statusbar.cpp" line="293"/>
         <source>&amp;Simulator connection status</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/gui/statusbar.cpp" line="289"/>
+        <location filename="../src/gui/statusbar.cpp" line="294"/>
         <source>Shows if Little Navmap is connected to the simulator</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/gui/statusbar.cpp" line="290"/>
+        <location filename="../src/gui/statusbar.cpp" line="295"/>
         <source>Map &amp;content indicator</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/gui/statusbar.cpp" line="291"/>
+        <location filename="../src/gui/statusbar.cpp" line="296"/>
         <source>Shows visible features on the map</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/gui/statusbar.cpp" line="292"/>
+        <location filename="../src/gui/statusbar.cpp" line="297"/>
         <source>Map &amp;detail level and map label level</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/gui/statusbar.cpp" line="293"/>
+        <location filename="../src/gui/statusbar.cpp" line="298"/>
         <source>Shows map detail levels as set in menu &quot;View&quot;</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/gui/statusbar.cpp" line="294"/>
+        <location filename="../src/gui/statusbar.cpp" line="299"/>
         <source>&amp;Online map download progress indicator</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/gui/statusbar.cpp" line="295"/>
+        <location filename="../src/gui/statusbar.cpp" line="300"/>
         <source>Show the download status for the background map</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/gui/statusbar.cpp" line="296"/>
+        <location filename="../src/gui/statusbar.cpp" line="301"/>
         <source>&amp;Zoom Distance</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/gui/statusbar.cpp" line="297"/>
+        <location filename="../src/gui/statusbar.cpp" line="302"/>
         <source>Zoom distance to map surface</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/gui/statusbar.cpp" line="298"/>
+        <location filename="../src/gui/statusbar.cpp" line="303"/>
         <source>&amp;Cursor Coordinates</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/gui/statusbar.cpp" line="299"/>
+        <location filename="../src/gui/statusbar.cpp" line="304"/>
         <source>Map coordinates and altitude at cursor position</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/gui/statusbar.cpp" line="300"/>
+        <location filename="../src/gui/statusbar.cpp" line="305"/>
         <source>&amp;Magnetic Declination</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/gui/statusbar.cpp" line="301"/>
+        <location filename="../src/gui/statusbar.cpp" line="306"/>
         <source>Magnetic declination at map cursor position</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/gui/statusbar.cpp" line="302"/>
+        <location filename="../src/gui/statusbar.cpp" line="307"/>
         <source>&amp;Country and Time Zone</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/gui/statusbar.cpp" line="303"/>
+        <location filename="../src/gui/statusbar.cpp" line="308"/>
         <source>Country and time zone at map cursor position</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/gui/statusbar.cpp" line="306"/>
+        <location filename="../src/gui/statusbar.cpp" line="311"/>
         <source>&amp;Time</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/gui/statusbar.cpp" line="307"/>
+        <location filename="../src/gui/statusbar.cpp" line="312"/>
         <source>Current or simulator time</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/gui/statusbar.cpp" line="313"/>
+        <location filename="../src/gui/statusbar.cpp" line="318"/>
         <source>&amp;UTC Real Time</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/gui/statusbar.cpp" line="321"/>
+        <location filename="../src/gui/statusbar.cpp" line="326"/>
         <source>&amp;Local Real Time</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/gui/statusbar.cpp" line="329"/>
+        <location filename="../src/gui/statusbar.cpp" line="334"/>
         <source>&amp;UTC Simulator Time</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/gui/statusbar.cpp" line="337"/>
+        <location filename="../src/gui/statusbar.cpp" line="342"/>
         <source>&amp;Local Simulator Time</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/gui/statusbar.cpp" line="478"/>
+        <location filename="../src/gui/statusbar.cpp" line="483"/>
         <source>%1/%2</source>
         <translation type="unfinished">%1/%2</translation>
     </message>
     <message>
-        <location filename="../src/gui/statusbar.cpp" line="482"/>
+        <location filename="../src/gui/statusbar.cpp" line="487"/>
         <source>&lt;small&gt;&lt;b&gt;Connect to flight simulator or change connection settings in menu &quot;Tools&quot;&lt;/b&gt;&lt;/small&gt;&lt;hr/&gt;</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/gui/statusbar.cpp" line="487"/>
+        <location filename="../src/gui/statusbar.cpp" line="492"/>
         <source>Simulator:
 %1
 
@@ -51298,12 +51293,12 @@ Rete Online:
 %2</translation>
     </message>
     <message>
-        <location filename="../src/gui/statusbar.cpp" line="513"/>
+        <location filename="../src/gui/statusbar.cpp" line="518"/>
         <source>Too many objects</source>
         <translation type="unfinished">Troppi oggetti</translation>
     </message>
     <message>
-        <location filename="../src/gui/statusbar.cpp" line="514"/>
+        <location filename="../src/gui/statusbar.cpp" line="519"/>
         <source>Too many objects to show on map.
 Display might be incomplete.
 Reduce map details in the &quot;View&quot; menu.</source>
@@ -51313,38 +51308,38 @@ La visualizzazione potrebbe essere incompleta.
 Riduci i dettagli della mappa nel menu &quot;Visualizza&quot;.</translation>
     </message>
     <message>
-        <location filename="../src/gui/statusbar.cpp" line="556"/>
+        <location filename="../src/gui/statusbar.cpp" line="561"/>
         <source>Done</source>
         <translation type="unfinished">Fatto</translation>
     </message>
     <message>
-        <location filename="../src/gui/statusbar.cpp" line="560"/>
+        <location filename="../src/gui/statusbar.cpp" line="565"/>
         <source>Updating</source>
         <translation type="unfinished">In aggiornamento</translation>
     </message>
     <message>
-        <location filename="../src/gui/statusbar.cpp" line="564"/>
+        <location filename="../src/gui/statusbar.cpp" line="569"/>
         <source>Loading</source>
         <translation type="unfinished">In caricamento</translation>
     </message>
     <message>
-        <location filename="../src/gui/statusbar.cpp" line="568"/>
+        <location filename="../src/gui/statusbar.cpp" line="573"/>
         <source>Incomplete</source>
         <translation type="unfinished">Incompleto</translation>
     </message>
     <message>
-        <location filename="../src/gui/statusbar.cpp" line="571"/>
+        <location filename="../src/gui/statusbar.cpp" line="576"/>
         <source>Unknown</source>
         <translation type="unfinished">Sconosciuto</translation>
     </message>
     <message>
-        <location filename="../src/gui/statusbar.cpp" line="653"/>
-        <location filename="../src/gui/statusbar.cpp" line="682"/>
+        <location filename="../src/gui/statusbar.cpp" line="658"/>
+        <location filename="../src/gui/statusbar.cpp" line="687"/>
         <source> / </source>
         <translation type="unfinished"> / </translation>
     </message>
     <message>
-        <location filename="../src/gui/statusbar.cpp" line="772"/>
+        <location filename="../src/gui/statusbar.cpp" line="777"/>
         <source>&lt;small&gt;&lt;b&gt;Adjust detail levels in menu &quot;View&quot; or using &quot;Ctrl+Mouse Wheel&quot; and &quot;Ctrl+Shift+Mouse Wheel&quot;.&lt;/b&gt;&lt;/small&gt;&lt;hr/&gt;</source>
         <translation type="unfinished"></translation>
     </message>
@@ -51357,57 +51352,57 @@ Riduci i dettagli della mappa nel menu &quot;Visualizza&quot;.</translation>
         <translation type="obsolete">%1</translation>
     </message>
     <message>
-        <location filename="../src/gui/statusbar.cpp" line="724"/>
+        <location filename="../src/gui/statusbar.cpp" line="729"/>
         <source>&lt;p style=&apos;white-space:pre&apos;&gt;&lt;b&gt;Messages:&lt;/b&gt;</source>
         <translation type="unfinished">&lt;p style=&apos;white-space:pre&apos;&gt;&lt;b&gt;Messaggi:&lt;/b&gt;</translation>
     </message>
     <message>
-        <location filename="../src/gui/statusbar.cpp" line="728"/>
+        <location filename="../src/gui/statusbar.cpp" line="733"/>
         <source>...</source>
         <translation type="unfinished">...</translation>
     </message>
     <message>
-        <location filename="../src/gui/statusbar.cpp" line="731"/>
+        <location filename="../src/gui/statusbar.cpp" line="736"/>
         <source>%1: %2</source>
         <translation type="unfinished">%1: %2</translation>
     </message>
     <message>
-        <location filename="../src/gui/statusbar.cpp" line="732"/>
+        <location filename="../src/gui/statusbar.cpp" line="737"/>
         <source>hh:mm:ss</source>
         <translation type="unfinished">hh:mm:ss</translation>
     </message>
     <message>
-        <location filename="../src/gui/statusbar.cpp" line="734"/>
+        <location filename="../src/gui/statusbar.cpp" line="739"/>
         <source>&lt;br/&gt;</source>
         <translation type="unfinished">&lt;br/&gt;</translation>
     </message>
     <message>
-        <location filename="../src/gui/statusbar.cpp" line="734"/>
+        <location filename="../src/gui/statusbar.cpp" line="739"/>
         <source>&lt;/p&gt;</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/gui/statusbar.cpp" line="754"/>
+        <location filename="../src/gui/statusbar.cpp" line="759"/>
         <source>No Messages</source>
         <translation type="unfinished">Nessun Messaggio</translation>
     </message>
     <message>
-        <location filename="../src/gui/statusbar.cpp" line="756"/>
+        <location filename="../src/gui/statusbar.cpp" line="761"/>
         <source>%1 %2</source>
         <translation type="unfinished">%1 %2</translation>
     </message>
     <message>
-        <location filename="../src/gui/statusbar.cpp" line="758"/>
+        <location filename="../src/gui/statusbar.cpp" line="763"/>
         <source>Messages</source>
         <translation type="unfinished">Messaggi</translation>
     </message>
     <message>
-        <location filename="../src/gui/statusbar.cpp" line="758"/>
+        <location filename="../src/gui/statusbar.cpp" line="763"/>
         <source>Message</source>
         <translation type="unfinished">Messaggio</translation>
     </message>
     <message>
-        <location filename="../src/gui/statusbar.cpp" line="768"/>
+        <location filename="../src/gui/statusbar.cpp" line="773"/>
         <source>&lt;small&gt;&lt;b&gt;Adjust detail levels in menu &quot;View&quot; or using &quot;Command+Mouse Wheel&quot; and &quot;Command+Ctrl+Mouse Wheel&quot;.&lt;/b&gt;&lt;/small&gt;&lt;hr/&gt;</source>
         <translation type="unfinished"></translation>
     </message>
