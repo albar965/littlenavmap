@@ -581,7 +581,7 @@ void MapAirportHandler::updateButtons()
     action->setEnabled(mainChecked);
 }
 
-QString MapAirportHandler::getRunwayText() const
+QString MapAirportHandler::getRunwayText(bool sliderText) const
 {
   int runwayLengthMin = getMinimumRunwayFt();
   int runwayLengthMax = getMaximumRunwayFt();
@@ -617,7 +617,7 @@ QString MapAirportHandler::getRunwayText() const
     else
       text = tr("Maximum runway length %1.").arg(Unit::distShortFeet(runwayLengthMax));
   }
-  else
+  else if(sliderText)
     text = tr("No runway length limit. Set minimum and maximum below.");
 
   return text;
@@ -625,5 +625,5 @@ QString MapAirportHandler::getRunwayText() const
 
 void MapAirportHandler::updateRunwayLabel()
 {
-  labelActionRunwayLength->setText(getRunwayText());
+  labelActionRunwayLength->setText(getRunwayText(true /* sliderText */));
 }

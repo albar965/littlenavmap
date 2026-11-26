@@ -342,14 +342,14 @@ void StyleHandler::applyStyleSheet(QMenu *toolButtonMenu, QString buttonStyleshe
     for(QAction *toolButtonMenuAction: toolButtonMenu->actions())
     {
       // Action for tool bar menu button =====================================
-#ifdef DEBUG_INFORMATION
+#ifdef DEBUG_INFORMATION_STYLE_WIDGETS
       qDebug() << Q_FUNC_INFO << "......" << toolButtonMenuAction->objectName() << toolButtonMenuAction->text();
 #endif
 
       QAbstractButton *abstractButton = dynamic_cast<QAbstractButton *>(toolButtonMenuAction);
       if(abstractButton != nullptr)
       {
-#ifdef DEBUG_INFORMATION
+#ifdef DEBUG_INFORMATION_STYLE_WIDGETS
         qDebug() << Q_FUNC_INFO << "........" << abstractButton->objectName() << abstractButton->text();
 #endif
 

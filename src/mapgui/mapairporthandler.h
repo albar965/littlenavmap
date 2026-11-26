@@ -79,7 +79,7 @@ public:
   void optionsChanged(const optc::OptionChangeFlags& changeFlags);
 
   /* Get text like "Runway length between %1 and %2." or "No runway length limit." */
-  QString getRunwayText() const;
+  QString getRunwayText(bool sliderText) const;
 
 signals:
   /* Redraw map */

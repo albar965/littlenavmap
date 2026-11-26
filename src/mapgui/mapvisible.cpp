@@ -113,16 +113,21 @@ void MapVisible::updateVisibleObjectsStatusBar()
         }
 
         // Airport runway limitations
+        int minRunwayLength = layer->getMinRunwayLength();
         const MapAirportHandler *airportHandler = NavApp::getMapAirportHandler();
-        int minRunwayLength = std::max(airportHandler->getMinimumRunwayFt(), layer->getMinRunwayLength());
-        if(minRunwayLength != -1)
+        if(airportHandler->isMinimumRunwaySet() || layer->getMinRunwayLength() > 0)
+          minRunwayLength = std::max(airportHandler->getMinimumRunwayFt(), minRunwayLength);
+
+        if(minRunwayLength > 0)
           apShort.append(">" % QLocale().toString(minRunwayLength / 100));
 
-        int maxRunwayLength = airportHandler->getMaximumRunwayFt();
-        if(maxRunwayLength != -1)
-          apShort.append("<" % QLocale().toString(maxRunwayLength / 100));
+        if(airportHandler->isMaximumRunwaySet())
+          apShort.append("<" % QLocale().toString(airportHandler->getMaximumRunwayFt() / 100));
 
-        tooltip.text(airportHandler->getRunwayText()).br();
+        QString runwayText = airportHandler->getRunwayText(false /* sliderText */);
+
+        if(!runwayText.isEmpty())
+          tooltip.textBr(runwayText);
 
         QStringList features;
         if(shown.testFlag(map::AIRPORT_EMPTY))
@@ -182,8 +187,6 @@ void MapVisible::updateVisibleObjectsStatusBar()
 
         airportShortLabel.append(apShort);
       }
-      else
-        tooltip.tr().td(tr("No airports")).trEnd();
 
       QStringList navaidLabel, navaidsTooltip;
       // Collect navaid information ==========================================================
@@ -308,8 +311,6 @@ void MapVisible::updateVisibleObjectsStatusBar()
 
       if(!navaidsTooltip.isEmpty())
         tooltip.tr().td().b(tr("Navaids: ")).text(navaidsTooltip.join(", ")).tdEnd().trEnd();
-      else
-        tooltip.tr().td(tr("No navaids")).trEnd();
 
       QString asText, asGroupText, asSrcText;
       if(shown.testFlag(map::AIRSPACE))
@@ -325,8 +326,6 @@ void MapVisible::updateVisibleObjectsStatusBar()
         tooltip.tr().td().b(asGroupText).text(airspaceGroupTooltip.join(", ")).tdEnd().trEnd();
         tooltip.tr().td().b(asText).text(airspacesTooltip.join(", ")).tdEnd().trEnd();
       }
-      else
-        tooltip.tr().td(tr("No airspaces")).trEnd();
 
       // Collect AI information ==========================================================
       QStringList aiLabel;
@@ -370,13 +369,12 @@ void MapVisible::updateVisibleObjectsStatusBar()
           }
         }
       }
+
       if(shown.testFlag(map::AIRCRAFT_AI) && NavApp::isOnlineNetworkActive())
         ai.append(tr("%1 Clients / Aircraft").arg(NavApp::getOnlineNetworkTranslated()));
 
       if(!ai.isEmpty())
         tooltip.tr().td().b(tr("AI / Multiplayer / online client: ")).text(ai.join(", ")).tdEnd().trEnd();
-      else
-        tooltip.tr().td(tr("No AI / Multiplayer / online client")).trEnd();
 
       // Weather ==========================================================
       QStringList weatherLabel;
@@ -388,8 +386,6 @@ void MapVisible::updateVisibleObjectsStatusBar()
         if(paintLayer->getMapWeatherSource() != map::WEATHER_SOURCE_DISABLED)
           weatherLabel.append(tr("AW", "Airport weather indicator"));
       }
-      else
-        tooltip.tr().td(tr("No airport weather shown")).trEnd();
 
       if(shownDispTypes.testFlag(map::WIND_BARBS) && layer->getWindBarbs() > 0)
       {
@@ -400,8 +396,6 @@ void MapVisible::updateVisibleObjectsStatusBar()
         if(windReporter->isWindShown() && windReporter->getSource() != wind::WIND_SOURCE_DISABLED)
           weatherLabel.append(tr("W", "Wind indicator"));
       }
-      else
-        tooltip.tr().td(tr("No wind shown")).trEnd();
 
       // Flight plan and track ==========================================================
       QStringList routeLabel;
@@ -410,16 +404,12 @@ void MapVisible::updateVisibleObjectsStatusBar()
         tooltip.tr().td().b(tr("Flight plan (F)")).tdEnd().trEnd();
         routeLabel.append(tr("F", "Flight plan indicator"));
       }
-      else
-        tooltip.tr().td(tr("No wind shown")).trEnd();
 
       if(shown.testFlag(map::AIRCRAFT_TRAIL)) // Always shown until cut off distance
       {
         tooltip.tr().td().b(tr("Aircraft trail (T)")).tdEnd().trEnd();
         routeLabel.append(tr("T", "Trail indicator"));
       }
-      else
-        tooltip.tr().td(tr("No aircraft trail shown")).trEnd();
 
       if(layer->isUserpoint())
       {
