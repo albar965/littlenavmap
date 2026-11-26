@@ -179,7 +179,7 @@
         <AirportMsaSymbolScale>8</AirportMsaSymbolScale>
         <AirportSymbolSize>20</AirportSymbolSize>
         <AirportWeatherSymbolSize>14</AirportWeatherSymbolSize>
-        <MarkerSymbolSize>24</MarkerSymbolSize>
+        <MarkerSymbolSize>26</MarkerSymbolSize>
         <MaximumTextLengthAirport>30</MaximumTextLengthAirport>
         <MaximumTextLengthAirportMinor>30</MaximumTextLengthAirportMinor>
         <MaximumTextLengthUserpoint>30</MaximumTextLengthUserpoint>
@@ -206,9 +206,11 @@
       <!-- =================================================================================== -->
       <Layer MaximumRangeKm="2">
         <AirportDiagramDetail2>false</AirportDiagramDetail2>
+        <MarkerSymbolSize>24</MarkerSymbolSize>
       </Layer>
       <!-- =================================================================================== -->
       <Layer MaximumRangeKm="5">
+        <MarkerSymbolSize>16</MarkerSymbolSize>
         <AirportDiagramDetail>false</AirportDiagramDetail>
         <AirportMsaSymbolScale>5</AirportMsaSymbolScale>
         <MaximumTextLengthUserpoint>20</MaximumTextLengthUserpoint>
