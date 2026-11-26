@@ -123,14 +123,14 @@ void StatusBar::updateClock() const
       case TIME_UTC_REAL:
         datetimeText = QDateTime::currentDateTimeUtc();
         datetimeTextAlt = QDateTime::currentDateTime();
-        timeTypeStr = tr("UTC real");
+        timeTypeStr = tr("UTC real time", "Status bar time tooltip head");
         invalidStr = tr(" — ");
         break;
 
       case TIME_LOCAL_REAL:
         datetimeText = QDateTime::currentDateTime();
         datetimeTextAlt = QDateTime::currentDateTimeUtc();
-        timeTypeStr = tr("local real");
+        timeTypeStr = tr("local real time", "Status bar time tooltip head");
         invalidStr = tr(" — ");
         break;
 
@@ -141,7 +141,7 @@ void StatusBar::updateClock() const
           datetimeTextAlt = NavApp::getUserAircraft().getLocalTime();
         }
         invalidStr = tr("Not connected to simulator");
-        timeTypeStr = tr("UTC simulator");
+        timeTypeStr = tr("UTC simulator time", "Status bar time tooltip head");
         break;
 
       case TIME_LOCAL_SIM:
@@ -151,7 +151,7 @@ void StatusBar::updateClock() const
           datetimeTextAlt = NavApp::getUserAircraft().getZuluTime();
         }
         invalidStr = tr("Not connected to simulator");
-        timeTypeStr = tr("local simulator");
+        timeTypeStr = tr("local simulator time", "Status bar time tooltip head");
         break;
     }
 
@@ -167,21 +167,23 @@ void StatusBar::updateClock() const
     if(timeLabel->isVisible())
     {
       atools::util::HtmlBuilder html(false /* backgroundColorUsed */, NavApp::isGuiStyleDark());
-      html.p(ahtml::NOBR_WHITESPACE);
+
+      if(OptionData::instance().getFlags().testFlag(opts::ENABLE_TOOLTIPS_LINK))
+        html.small().b(tr("Right click to change time.")).smallEnd().hr();
+
       if(datetimeText.isNull())
       {
         // Time not valid - sim time selected and not connected to simulator
-        html.textBr(tr("Statusbar shows day of month and %1 time.").arg(timeTypeStr), ahtml::BOLD);
-        html.text(invalidStr);
+        html.nobr(tr("Statusbar shows day of month and %1.").arg(timeTypeStr), ahtml::BOLD).br();
+        html.nobr(invalidStr);
       }
       else
       {
         // Real time or sim time and connected
-        html.textBr(tr("Statusbar shows day of month and %1 time.").arg(timeTypeStr), ahtml::BOLD);
-        html.textBr(dateTimeString(datetimeText, invalidStr, timeType == TIME_UTC_SIM || timeType == TIME_LOCAL_SIM), ahtml::ITALIC);
-        html.text(dateTimeString(datetimeTextAlt, invalidStr, timeType == TIME_UTC_SIM || timeType == TIME_LOCAL_SIM));
+        html.nobr(tr("Statusbar shows day of month and %1.").arg(timeTypeStr), ahtml::BOLD).br();
+        html.nobr(dateTimeString(datetimeText, invalidStr, timeType == TIME_UTC_SIM || timeType == TIME_LOCAL_SIM), ahtml::ITALIC).br();
+        html.nobr(dateTimeString(datetimeTextAlt, invalidStr, timeType == TIME_UTC_SIM || timeType == TIME_LOCAL_SIM));
       }
-      html.pEnd();
 
       // Do not use setToolTip(). This allows to update time on the fly with seconds ticking
       if(timeLabel->rect().contains(timeLabel->mapFromGlobal(QCursor::pos())))
@@ -199,12 +201,15 @@ void StatusBar::updateClock() const
 QString StatusBar::dateTimeString(const QDateTime& datetime, const QString& invalidStr, bool sim) const
 {
   if(datetime.isValid())
+  {
+    const QString localTime = sim ? tr("Local simulator: ") : tr("Real simulator: ");
+    const QString utcTime = sim ? tr("UTC simulator: ") : tr("UTC simulator: ");
+
     return tr("%1%2 (%3)").
-           arg(datetime.timeZone() == QDateTime::currentDateTime().timeZone() ?
-               tr("Local%1: ").arg(sim ? tr(" simulator") : tr(" real")) :
-               tr("UTC%1: ").arg(sim ? tr(" simulator") : tr(" real")),
+           arg(datetime.timeZone() == QDateTime::currentDateTime().timeZone() ? localTime : utcTime,
                QLocale().toString(datetime).replace(GMT, UTC).replace(UTC % QStringLiteral(" ") % UTC, UTC),
                formatter::formatTimeZoneOffset(datetime.timeZone().standardTimeOffset(datetime)));
+  }
   else
     return invalidStr;
 }
