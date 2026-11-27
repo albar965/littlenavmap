@@ -11,10 +11,10 @@ has a lot of small improvements and a complete German program translation.**
 
 **Little Navmap for Windows and Linux is now based on Qt 6.12.0 library which means that a new
 foundation is used. This port was needed to avoid the numerous bugs in Qt 6.5 which caused crashes
-on Windows and Linux. As a result the program startup is now a bit slower. The general performance
-did not change and should be even better than in previous versions. Note that the program takes
-some time to shutdown. Application windows will disappear immediately when closing but Qt needs
-some time in the background for cleanup. Keep this in mind when restarting the program.**
+on Windows and Linux. As a result the program startup is now a bit slower but the general
+performance did not change. Note that the program takes some time to shutdown. Application windows
+will disappear immediately when closing but Qt needs some time in the background for cleanup. Keep
+this in mind when restarting the program.**
 
 **Note that except German no program translations have been updated yet.
 The user manual has not been updated yet either.**
@@ -32,11 +32,12 @@ version 3.2.1.beta announcement. See links below.**
 [Version 3.2.3.beta](https://github.com/albar965/littlenavmap/releases/tag/v3.2.3.beta) for
 recent changelogs.**
 
-**FSX or Prepar3D: Download and install the 32 bit version of Little Navconnect
+**FSX or Prepar3D: You have to download and install the 32 bit version of Little Navconnect
 [LittleNavconnect-win32-3.0.17.zip](https://github.com/albar965/littlenavmap/releases/download/v3.2.1.beta/LittleNavconnect-win32-3.0.17.zip)
 and connect through it to FSX or Prepar3D. See the included file `README.txt`.**
 
-**See here if you would like to run the beta release fully independent besides your stable installation:
+**See here if you would like to run the beta release fully independent besides your
+stable installation:
 [Little Navmap - User Manual - Portable Execution](https://www.littlenavmap.org/manuals/littlenavmap/release/latest/en/INSTALLATION.html#portable-execution).**
 
 **Also update Little Navconnect and Little Xpconnect if you're using one of these.**
@@ -64,58 +65,54 @@ normally to fix this.**
 * Several issues with styles, colors, information and tooltip formatting fixed around the program.
 * Removed update menu item from `Help` since the same can be done in options on
   page `Startup and Updates`.
-* Now hiding windows early on shutdown. The program can be still active for half a minute depending
-  on hardware.
+* Now hiding windows early on shutdown. The program can be still active in the background for a
+  few seconds up to half a minute.
 * Added wait dialog when closing to indicate slow shutdown when restarting program.
 * Changed application font now also applied to performance tabs in flight plan window.
 * Changed overlapping keyboard shortcuts.
-  `Ctrl+F` is now used for `Map` -> `Go to last user aircraft tail position` and
-  `Ctrl+L` is still `Activate flight plan leg` in the flight plan table context menu.
+  `Ctrl+F` is now used for `Map` -> `Go to last user aircraft tail position`.
 * Better crash detection dialog window. Now offering options to skip the loading of certain
   settings to avoid loss of all settings. As a first start use the default settings after a crash.
 
 ### Elevation Profile
 
-* Fixed several issues in elevation profile to avoid missing elevation tiles when using GLOBE data.
+* Fixed several issues in elevation profile which resulted in randomly missing elevation tiles
+  when using the offline GLOBE elevation data.
 * Fixed Crash in elevation profile when using long flight plan segments with online elevation data.
   Now avoiding profile calculation with message when plan segments are longer than 1000 NM. Note
   that this does not affect the offline GLOBE data. #1403
-* Now showing tri-color VASI in correct layout and colors in elevation profile.
+* Showing tri-color VASI in correct layout and colors in elevation profile now.
 
 ### Options
 
-* Fixed performance issues. Now building search index late on first search. Tooltip is now used to
-  window to show error message. Widgets are now disable instead of hidden if search is invalid
-  or not found.
 * Renamed option page `Connections and Cache` to `Advanced`.
-* Moved trail autosave option to page `Files`.
+* Moved the trail auto save option to page `Files`.
 * Option `Add departure and start position to flight plan after connecting to simulator` moved
   to page `Simulator Aircraft`.
+* Now building search index late on first search for a faster startup.
 
 ### Map
 
-* Added Top-O-Map and Top-O-Map relief map themes. See [Top-O-Map](https://top-o-map.com).
-* Fixed map display font resetting after style change.
-* Fixed missing tooltip for logbook trail.
+* Added Top-O-Map and Top-O-Map relief map themes which both require a key.
+  See [Top-O-Map](https://top-o-map.com).
 * Fixed disappearing flight plan segments on the map when zooming in.
-* Better text placement for ILS labels. Now moving texts to keep them visible. Fixed wrong text
-  placement in some cases around ILS.
+* Better text placement for ILS labels and fixed wrong text placement in some cases around ILS.
 * Fixed map server returning PNG for JPG image requests. #1398
 * Fixed issue with map missing in full screen mode.
-* Cleanup in DGML map theme files. Removed unused elements.
+* Cleanup in DGML map theme files and example. Removed unused elements.
+* More map and tooltip related improvements and fixes.
 
 ### Scenery Library
 
-* Added AIRAC validity time to menu 'Scenery Library`.
 * Fixed detection of Navigraph update which resulted in all airports marked as add-on. Navigraph
   update is now detected if a folder starting with `navigraph-navdata` was found.
+* Added AIRAC validity time to menu 'Scenery Library`.
 * The included 1801 database is now updated silently without question dialog.
 
 ### X-Plane
 
 * Now also reading X-Plane historical wind data according to simulator settings
   `Simulator time` or `Real time`.
-* Added notification if X-Plane 12 weather cannot be shown.
 * Fixed Linux build of Little Xpconnect where too many shared libraries were used.
 * Fixed potential crash in X-Plane connection handler in Little Navmap. Note that this did not
   affect X-Plane.
