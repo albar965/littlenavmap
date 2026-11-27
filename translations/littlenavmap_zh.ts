@@ -23145,74 +23145,74 @@ You can save your current map markers from menu &quot;Markers&quot; to a file.</
 <context>
     <name>MapPainterMark</name>
     <message>
-        <location filename="../src/mappainter/mappaintermark.cpp" line="642"/>
+        <location filename="../src/mappainter/mappaintermark.cpp" line="641"/>
         <source>%1 to %2</source>
         <translation>%1 到 %2</translation>
     </message>
     <message>
-        <location filename="../src/mappainter/mappaintermark.cpp" line="651"/>
+        <location filename="../src/mappainter/mappaintermark.cpp" line="650"/>
         <source>,</source>
         <translation>，</translation>
     </message>
     <message>
-        <location filename="../src/mappainter/mappaintermark.cpp" line="915"/>
-        <location filename="../src/mappainter/mappaintermark.cpp" line="1265"/>
+        <location filename="../src/mappainter/mappaintermark.cpp" line="914"/>
+        <location filename="../src/mappainter/mappaintermark.cpp" line="1264"/>
         <source>%1%2</source>
         <translation>%1%2</translation>
     </message>
     <message>
-        <location filename="../src/mappainter/mappaintermark.cpp" line="1036"/>
+        <location filename="../src/mappainter/mappaintermark.cpp" line="1035"/>
         <source> (RSV)</source>
         <comment>Acronym for reserve on the map</comment>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/mappainter/mappaintermark.cpp" line="1215"/>
+        <location filename="../src/mappainter/mappaintermark.cpp" line="1214"/>
         <source>N</source>
         <comment>North</comment>
         <translation>北</translation>
     </message>
     <message>
-        <location filename="../src/mappainter/mappaintermark.cpp" line="1217"/>
+        <location filename="../src/mappainter/mappaintermark.cpp" line="1216"/>
         <source>E</source>
         <comment>East</comment>
         <translation>东</translation>
     </message>
     <message>
-        <location filename="../src/mappainter/mappaintermark.cpp" line="1219"/>
+        <location filename="../src/mappainter/mappaintermark.cpp" line="1218"/>
         <source>S</source>
         <comment>South</comment>
         <translation>南</translation>
     </message>
     <message>
-        <location filename="../src/mappainter/mappaintermark.cpp" line="1221"/>
+        <location filename="../src/mappainter/mappaintermark.cpp" line="1220"/>
         <source>W</source>
         <comment>West</comment>
         <translation>西</translation>
     </message>
     <message>
-        <location filename="../src/mappainter/mappaintermark.cpp" line="1333"/>
+        <location filename="../src/mappainter/mappaintermark.cpp" line="1332"/>
         <source>%1°T</source>
         <translation>%1°T</translation>
     </message>
     <message>
-        <location filename="../src/mappainter/mappaintermark.cpp" line="1335"/>
+        <location filename="../src/mappainter/mappaintermark.cpp" line="1334"/>
         <source>%1°M</source>
         <translation>%1°M</translation>
     </message>
     <message>
-        <location filename="../src/mappainter/mappaintermark.cpp" line="1337"/>
+        <location filename="../src/mappainter/mappaintermark.cpp" line="1336"/>
         <source>TRK</source>
         <translation>航迹</translation>
     </message>
     <message>
-        <location filename="../src/mappainter/mappaintermark.cpp" line="1377"/>
+        <location filename="../src/mappainter/mappaintermark.cpp" line="1376"/>
         <source>/</source>
         <translation>/</translation>
     </message>
     <message>
-        <location filename="../src/mappainter/mappaintermark.cpp" line="1419"/>
-        <location filename="../src/mappainter/mappaintermark.cpp" line="1422"/>
+        <location filename="../src/mappainter/mappaintermark.cpp" line="1418"/>
+        <location filename="../src/mappainter/mappaintermark.cpp" line="1421"/>
         <source> / </source>
         <translation> / </translation>
     </message>
@@ -23260,12 +23260,12 @@ You can save your current map markers from menu &quot;Markers&quot; to a file.</
         <translation type="vanished">%1/%2/%3</translation>
     </message>
     <message>
-        <location filename="../src/mappainter/mappaintermark.cpp" line="1651"/>
+        <location filename="../src/mappainter/mappaintermark.cpp" line="1650"/>
         <source>%1/%2</source>
         <translation>%1/%2</translation>
     </message>
     <message>
-        <location filename="../src/mappainter/mappaintermark.cpp" line="1660"/>
+        <location filename="../src/mappainter/mappaintermark.cpp" line="1659"/>
         <source>RW%1/%2</source>
         <translation>跑道 %1/%2</translation>
     </message>
